@@ -58,6 +58,24 @@ namespace Test {
    * \ingroup TaskTest
    */
   //@{
+  /**
+   * \brief Stream used for logging
+   *
+   * The olog is buffered and printed only if an error has
+   * occured.
+   */
+  extern std::ostringstream olog;
+
+  /// Simple class for describing identation
+  class ind {
+  public:
+    /// Which indentation level
+    int l;
+    /// Indent by level \a i
+    ind(int i) : l(i) {}
+  };
+
+
   /// Iterator for propagation kinds
   class PropKinds {
   private:
@@ -120,6 +138,8 @@ namespace Test {
     Base* next(void) const;
     /// Run test
     virtual bool run(const Options& opt) = 0;
+    /// Throw a coin whether to compute a fixpoint
+    static bool fixpoint(const Options& opt);
     /// Destructor
     virtual ~Base(void);
 
@@ -135,6 +155,13 @@ namespace Test {
  * \relates Test::Base
  */
 int main(int argc, char* argv[]);
+
+/**
+ * \brief Print indentation
+ * \relates Test::ind
+ */
+std::ostream&
+operator<<(std::ostream& os, const Test::ind& i);
 
 #include "test/test.icc"
 

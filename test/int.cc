@@ -37,12 +37,12 @@
  *
  */
 
-#include "gecode/serialization.hh"
 #include "test/int.hh"
-#include "test/log.hh"
+
 #include <algorithm>
 
 namespace Test { namespace Int {
+
 
   /*
    * Complete assignments
@@ -70,12 +70,6 @@ namespace Test { namespace Int {
     a--;
   }
 
-  class ind {
-  public:
-    int i;
-    ind(int j) : i(j) {}
-  };
-
 }}
 
 std::ostream&
@@ -87,93 +81,117 @@ operator<<(std::ostream& os, const Test::Int::Assignment& a) {
   return os;
 }
 
-std::ostream&
-operator<<(std::ostream& os, const Test::Int::ind& i) {
-  for (int j=i.i; j--; )
-    os << "  ";
-  return os;
-}
-
 namespace Test { namespace Int {
 
-
-
+  /// Space for executing tests
   class TestSpace : public Gecode::Space {
   public:
+    /// Variables to be tested
     Gecode::IntVarArray x;
-  private:
+    /// Control variable for reified propagators
+    Gecode::BoolVar b;
+    /// Whether the test is for a reified propagator
+    bool reified;
+    /// The test currently run
+    Test* test;
+    /// The options
     const Options opt;
 
   public:
-    TestSpace(int n, Gecode::IntSet& d, const Options& o, bool log=true)
-      : x(this, n, d), opt(o) {
+    /**
+     * \brief Create test space
+     *
+     * Creates \a n variables with domain \a d and stores whether
+     * the test is for a refied propagator (\a r), the test itself
+     * (\a t) and the options (\a o). 
+     *
+     */
+    TestSpace(int n, Gecode::IntSet& d, bool r,
+              Test* t, const Options& o, bool log=true)
+      : x(this,n,d), b(this,0,1), reified(r), test(t), opt(o) {
       if (opt.log && log) {
-        std::cerr << ind(2) << "Initial: ";
-        state();
-        std::cerr << std::endl;
+        olog << ind(2) << "Initial: x[]=" << x;
+        if (reified)
+          olog << " b=" << b;
+        olog << std::endl;
       }
     }
+    /// Constructor for cloning \a s
     TestSpace(bool share, TestSpace& s) 
-      : Gecode::Space(share,s), opt(s.opt) {
+      : Gecode::Space(share,s), reified(s.reified), test(s.test), opt(s.opt) {
       x.update(this, share, s.x);
+      b.update(this, share, s.b);
     }
+    /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
       return new TestSpace(share,*this);
     }
-  
-    void state(void) {
-      if (opt.log) {
-        std::cerr << "x={";
-        for (int i=0; i<x.size(); i++)
-          std::cerr << x[i] << ((i<x.size()-1) ? "," : "");
-        std::cerr << "};";
-      }
-    }
-    bool failed(void) {
-      if (opt.log) {
-        std::cerr << ind(3) << "Fixpoint: ";
-        state();
-        bool f=(status() == Gecode::SS_FAILED);
-        std::cerr << std::endl << ind(3) << "     -->  ";
-        state();
-        std::cerr << std::endl;
-        return f;
-      } else {
-        return status() == Gecode::SS_FAILED;
-      }
-    }
 
-    /// Perform tell operation on \a x[i]
-    void rel(int i, Gecode::IntRelType irt, int n) {
-      if (opt.log) {
-        std::cerr << ind(4) << "x[" << i << "] ";
-        switch (irt) {
-        case Gecode::IRT_EQ: std::cerr << "="; break;
-        case Gecode::IRT_NQ: std::cerr << "!="; break;
-        case Gecode::IRT_LQ: std::cerr << "<="; break;
-        case Gecode::IRT_LE: std::cerr << "<"; break;
-        case Gecode::IRT_GQ: std::cerr << ">="; break;
-        case Gecode::IRT_GR: std::cerr << ">"; break;
-        }
-        std::cerr << " " << n << std::endl;
-      }
-      Gecode::rel(this, x[i], irt, n);
-    }
-    /// Assign all variables to values in \a a
-    void assign(const Assignment& a) {
-      using namespace Gecode;
-      for (int i=a.size(); i--; ) {
-        rel(i, IRT_EQ, a[i]);
-        if ((Base::rand(opt.fixprob) == 0) && failed())
-          return;
-      }
-    }
     /// Test whether all variables are assigned
     bool assigned(void) const {
       for (int i=x.size(); i--; )
         if (!x[i].assigned())
           return false;
       return true;
+    }
+
+    /// Post propagator
+    void post(void) {
+      if (reified){
+        test->post(this,x,b);
+        if (opt.log)
+          olog << ind(3) << "Posting reified propagator" << std::endl;
+      } else {
+        test->post(this,x);
+        if (opt.log)
+          olog << ind(3) << "Posting propagator" << std::endl;
+      }
+    }
+    /// Compute a fixpoint and check for failure
+    bool failed(void) {
+      if (opt.log) {
+        olog << ind(3) << "Fixpoint: " << x;
+        bool f=(status() == Gecode::SS_FAILED);
+        olog << std::endl << ind(3) << "     -->  " << x << std::endl;
+        return f;
+      } else {
+        return status() == Gecode::SS_FAILED;
+      }
+    }
+    /// Perform integer tell operation on \a x[i]
+    void rel(int i, Gecode::IntRelType irt, int n) {
+      if (opt.log) {
+        olog << ind(4) << "x[" << i << "] ";
+        switch (irt) {
+        case Gecode::IRT_EQ: olog << "="; break;
+        case Gecode::IRT_NQ: olog << "!="; break;
+        case Gecode::IRT_LQ: olog << "<="; break;
+        case Gecode::IRT_LE: olog << "<"; break;
+        case Gecode::IRT_GQ: olog << ">="; break;
+        case Gecode::IRT_GR: olog << ">"; break;
+        }
+        olog << " " << n << std::endl;
+      }
+      Gecode::rel(this, x[i], irt, n);
+    }
+    /// Perform Boolean tell on \a b
+    void rel(bool sol) {
+      int n = sol ? 1 : 0;
+      assert(reified);
+      if (opt.log) 
+        olog << ind(4) << "b = " << n << std::endl;
+      Gecode::rel(this, b, Gecode::IRT_EQ, n);
+    }
+    /// Assign all (or all but one, if \a skip is true) variables to values in \a a
+    void assign(const Assignment& a, bool skip=false) {
+      using namespace Gecode;
+      int i = skip ? Base::rand(a.size()) : -1;
+      for (int j=a.size(); j--; ) 
+        if (i != j) {
+          rel(j, IRT_EQ, a[j]);
+          if (Base::fixpoint(opt) && failed())
+            return;
+        }
     }
     /// Prune some random values for some random variable
     void prune(void) {
@@ -197,12 +215,8 @@ namespace Test { namespace Int {
         rel(i, IRT_NQ, v);
       }
     }
-
-    static Gecode::BoolVar unused;
-
-    bool prune(const Assignment& a, Test& it,
-               bool r, Gecode::BoolVar& b = unused) {
-      using namespace Gecode;
+    /// Prune values but not those in assignment \a a
+    bool prune(const Assignment& a) {
       // Select variable to be pruned
       int i = Base::rand(x.size());
       while (x[i].assigned())
@@ -214,7 +228,7 @@ namespace Test { namespace Int {
           int v=a[i]+1+Base::rand(static_cast
                                   <unsigned int>(x[i].max()-a[i]));
           assert((v > a[i]) && (v <= x[i].max()));
-          rel(i, IRT_LE, v);
+          rel(i, Gecode::IRT_LE, v);
         }
         break;
       case 1:
@@ -222,7 +236,7 @@ namespace Test { namespace Int {
           int v=x[i].min()+Base::rand(static_cast
                                       <unsigned int>(a[i]-x[i].min()));
           assert((v < a[i]) && (v >= x[i].min()));
-          rel(i, IRT_GR, v);
+          rel(i, Gecode::IRT_GR, v);
         }
         break;
       default:
@@ -246,62 +260,35 @@ namespace Test { namespace Int {
             }
             skip -= it.width(); ++it;
           }
-          rel(i, IRT_NQ, v);
+          rel(i, Gecode::IRT_NQ, v);
           break;
         }
       }
-      if (Base::rand(opt.fixprob) == 0) {
+      if (Base::fixpoint(opt)) {
         if (failed())
           return true;
         TestSpace* c = static_cast<TestSpace*>(clone());
-        if (!r) {
-          it.post(c,c->x);
-          Log::log("Post again");
-          if (c->failed()) {
-            delete c;
-            return false;
-          }
-          for (int i=x.size(); i--; )
-            if (x[i].size() != c->x[i].size()) {
-              Log::print(c->x, "x");
-              delete c;
-              return false;
-            }
-        } else {
-          Log::print(b, "b");
-          BoolVar cb(c,0,1);
-          Log::initial(cb, "cb");
-          it.post(c,c->x,cb);
-          Log::fixpoint();
-          if (c->status() == SS_FAILED) {
-            Log::print(c->x, "x");
-            Log::print(cb, "cb");
-            delete c;
-            return false;
-          }
-          if (cb.size() != b.size()) {
-            Log::print(c->x, "x");
-            Log::print(cb, "cb");
-            delete c;
-            return false;
-          }
-          for (int i=x.size(); i--; )
-            if (x[i].size() != c->x[i].size()) {
-              Log::print(c->x, "x");
-              Log::print(cb, "cb");
-              delete c;
-              return false;
-            }
+        if (opt.log)
+          olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+        c->post();
+        if (c->failed()) {
+          delete c; return false;
         }
+        for (int i=x.size(); i--; )
+          if (x[i].size() != c->x[i].size()) {
+            delete c; return false;
+          }
+        if (reified && (b.size() != c->b.size())) {
+          delete c; return false;
+        }
+        if (opt.log)
+          olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
         delete c;
       }                                                
       return true;
     }
 
   };
-
-  Gecode::BoolVar TestSpace::unused;
-
 
   const Gecode::IntConLevel IntConLevels::icls[] =
     {Gecode::ICL_DOM,Gecode::ICL_BND,Gecode::ICL_VAL};
@@ -315,18 +302,21 @@ namespace Test { namespace Int {
     return new CpltAssignment(arity,dom);
   }
 
+
   /// Check the test result and handle failed test
-#define CHECK_TEST(T,M)                         \
-if (opt.log)                                    \
-  std::cerr << ind(3) << "Check: " << (M) << std::endl;           \
-if (!(T)) {                                     \
-  problem = (M); delete s; goto failed;         \
+#define CHECK_TEST(T,M)                                         \
+if (opt.log)                                                    \
+  olog << ind(3) << "Check: " << (M) << std::endl;              \
+if (!(T)) {                                                     \
+  problem = (M); delete s; goto failed;                         \
 }
 
   /// Start new test
-#define START_TEST(T)                            \
-  if (opt.log)                                   \
-     std::cerr << ind(2) << "Testing: " << (T) << std::endl; \
+#define START_TEST(T)                                           \
+  if (opt.log) {                                                \
+     olog.str("");                                              \
+     olog << ind(2) << "Testing: " << (T) << std::endl;         \
+  }                                                             \
   test = (T);
 
 
@@ -345,7 +335,7 @@ if (!(T)) {                                     \
     Assignment& a = *ap;
 
     // Set up space for all solution search
-    TestSpace* search_s = new TestSpace(arity,dom,opt,false);
+    TestSpace* search_s = new TestSpace(arity,dom,false,this,opt,false);
     post(search_s,search_s->x);
     branch(search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
     DFS<TestSpace> e_s(search_s);
@@ -354,15 +344,29 @@ if (!(T)) {                                     \
     while (a()) {
       bool sol = solution(a);
       if (opt.log)
-        std::cerr << ind(1)
-                  << "Assignment: " << a 
-                  << (sol ? " (solution)" : " (no solution)")
-                  << std::endl;
+        olog << ind(1) << "Assignment: " << a 
+             << (sol ? " (solution)" : " (no solution)")
+             << std::endl;
 
       START_TEST("Assignment (after posting)");
       {
-        TestSpace* s = new TestSpace(arity,dom,opt);
-        post(s,s->x);
+        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        s->post();
+        s->assign(a);
+        if (sol) {
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumtion");
+        } else {
+          CHECK_TEST(s->failed(), "Solved on non-solution");
+        }
+        delete s;
+      }
+      START_TEST("Partial assignment (after posting)");
+      {
+        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        s->post();
+        s->assign(a,true);
+        (void) s->failed();
         s->assign(a);
         if (sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
@@ -374,9 +378,24 @@ if (!(T)) {                                     \
       }
       START_TEST("Assignment (before posting)");
       {      
-        TestSpace* s = new TestSpace(arity,dom,opt);
+        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
         s->assign(a); 
-        post(s,s->x);
+        s->post();
+        if (sol) {
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumtion");
+        } else {
+          CHECK_TEST(s->failed(), "Solved on non-solution");
+        }
+        delete s;
+      }
+      START_TEST("Partial assignment (before posting)");
+      {      
+        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        s->assign(a,true); 
+        s->post();
+        (void) s->failed();
+        s->assign(a);
         if (sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(s->propagators()==0, "No subsumtion");
@@ -387,10 +406,10 @@ if (!(T)) {                                     \
       }
       START_TEST("Prune");
       {      
-        TestSpace* s = new TestSpace(arity,dom,opt);
-        post(s,s->x);
+        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        s->post();
         while (!s->failed() && !s->assigned())
-          if (!s->prune(a,*this,false)) {
+          if (!s->prune(a)) {
             problem = "No fixpoint";
             delete s;
             goto failed;
@@ -408,15 +427,9 @@ if (!(T)) {                                     \
       if (reified) {
         START_TEST("Assignment reified (rewrite after post)");
         {      
-          TestSpace* s = new TestSpace(arity,dom,opt);
-          BoolVar b(s,0,1);
-          Log::initial(b, "b");
-          post(s,s->x,b);
-          if (sol) {
-            rel(s, b, IRT_EQ, 1);
-          } else {
-            rel(s, b, IRT_EQ, 0);
-          }
+          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          s->post();
+          s->rel(sol);
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumtion");
@@ -424,15 +437,9 @@ if (!(T)) {                                     \
         }
         START_TEST("Assignment reified (immediate rewrite)");
         {        
-          TestSpace* s = new TestSpace(arity,dom,opt);
-          BoolVar b(s,0,1);
-          Log::initial(b, "b");
-          if (sol) {
-            rel(s, b, IRT_EQ, 1);
-          } else {
-            rel(s, b, IRT_EQ, 0);
-          }
-          post(s,s->x,b);
+          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          s->rel(sol);
+          s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumtion");
@@ -440,57 +447,51 @@ if (!(T)) {                                     \
         }
         START_TEST("Assignment reified (before posting)");
         {        
-          TestSpace* s = new TestSpace(arity,dom,opt);
-          BoolVar b(s,0,1);
-          Log::initial(b, "b");
+          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
           s->assign(a); 
-          post(s,s->x,b);
+          s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumtion");
-          CHECK_TEST(b.assigned(), "Control variable unassigned");
+          CHECK_TEST(s->b.assigned(), "Control variable unassigned");
           if (sol) {
-            CHECK_TEST(b.val()==1, "Zero on solution");
+            CHECK_TEST(s->b.val()==1, "Zero on solution");
           } else {
-            CHECK_TEST(b.val()==0, "One on non-solution");
+            CHECK_TEST(s->b.val()==0, "One on non-solution");
           }
           delete s;
         }
         START_TEST("Assignment reified (after posting)");
         {        
-          TestSpace* s = new TestSpace(arity,dom,opt);
-          BoolVar b(s,0,1);
-          Log::initial(b, "b");
-          post(s,s->x,b);
+          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumtion");
-          CHECK_TEST(b.assigned(), "Control variable unassigned");
+          CHECK_TEST(s->b.assigned(), "Control variable unassigned");
           if (sol) {
-            CHECK_TEST(b.val()==1, "Zero on solution");
+            CHECK_TEST(s->b.val()==1, "Zero on solution");
           } else {
-            CHECK_TEST(b.val()==0, "One on non-solution");
+            CHECK_TEST(s->b.val()==0, "One on non-solution");
           }
           delete s;
         }
         START_TEST("Prune reified");
         {        
-          TestSpace* s = new TestSpace(arity,dom,opt);
-          BoolVar b(s,0,1);
-          Log::initial(b, "b");
-          post(s,s->x,b);
-          while (!s->failed() && !s->assigned() && !b.assigned())
-            if (!s->prune(a,*this,true,b)) {
+          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          s->post();
+          while (!s->failed() && !s->assigned() && !s->b.assigned())
+            if (!s->prune(a)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
             }
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumtion");
-          CHECK_TEST(b.assigned(), "Control variable unassigned");
+          CHECK_TEST(s->b.assigned(), "Control variable unassigned");
           if (sol) {
-            CHECK_TEST(b.val()==1, "Zero on solution");
+            CHECK_TEST(s->b.val()==1, "Zero on solution");
           } else {
-            CHECK_TEST(b.val()==0, "One on non-solution");
+            CHECK_TEST(s->b.val()==0, "One on non-solution");
           }
           delete s;
         }
@@ -523,8 +524,8 @@ if (!(T)) {                                     \
 
     if ((icl == ICL_DOM) && testdomcon) {
       START_TEST("Full domain consistency");
-      TestSpace* s = new TestSpace(arity,dom,opt);
-      post(s,s->x);
+      TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+      s->post();
       while (!s->failed() && !s->assigned())
         s->prune();
       CHECK_TEST(!s->failed(), "Failed");
@@ -536,12 +537,11 @@ if (!(T)) {                                     \
     return true;
 
   failed:
-    std::cout   << "FAILURE" << std::endl
-                << "\t" << "Test:       " << test << std::endl
-                << "\t" << "Problem:    " << problem << std::endl;
+    olog << "FAILURE" << std::endl
+         << ind(1) << "Test:       " << test << std::endl
+         << ind(1) << "Problem:    " << problem << std::endl;
     if (a())
-      std::cout << "\t" << "Assignment: " << a << std::endl;
-
+      olog << ind(1) << "Assignment: " << a << std::endl;
     delete ap;
 
     return false;

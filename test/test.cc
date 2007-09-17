@@ -56,6 +56,9 @@
 
 namespace Test {
 
+  // Log stream
+  std::ostringstream olog;
+
   /*
    * Iterator for propagation kinds
    *
@@ -114,7 +117,7 @@ namespace Test {
       std::cout << "  -fixprob " << o.fixprob;
     std::cout << "  -test " << name << std::endl;
     if (o.log)
-      Log::print();
+      std::cout << olog.str();
   }
 
   void
@@ -211,7 +214,6 @@ main(int argc, char* argv[]) {
   Options o;
   o.parse(argc, argv);
   Base::rand.seed(o.seed);
-  Log::logging(o.log);
 
   for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
     try {
@@ -249,13 +251,20 @@ main(int argc, char* argv[]) {
       std::cout << "Exception in \"Gecode::" << e.what()
                 << "." << std::endl
                 << "Stopping..." << std::endl;
-          report_error(o, t->name());
-          if (o.stop) 
-            return 1;
+      report_error(o, t->name());
+      if (o.stop) 
+        return 1;
     }
   next:;
   }
   return 0;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const Test::ind& i) {
+  for (int j=i.l; j--; )
+    os << "  ";
+  return os;
 }
 
 // STATISTICS: test-core
