@@ -40,7 +40,6 @@
  */
 
 #include "test/set.hh"
-#include "test/log.hh"
 #include "gecode/iter.hh"
 #include <algorithm>
 
@@ -124,52 +123,152 @@ operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
 
 namespace Test { namespace Set {
 
-#define FORCE_FIX                               \
-do {                                            \
-  if (Base::rand(opt.fixprob) == 0) {        \
-    Log::fixpoint();                            \
-    if (status() == SS_FAILED) return;          \
-  }                                             \
-} while(false)
-
+  /// Space for executing set tests
   class SetTestSpace : public Space {
   public:
+    /// Set variables to be tested
     SetVarArray x;
+    /// Int variables to be tested
     IntVarArray y;
-  private:
-    const Options opt;
+    /// How many integer variables are used by the test
     int withInt;
+    /// Control variable for reified propagators
+    BoolVar b;
+    /// Whether the test is for a reified propagator
+    bool reified;
+    /// The test currently run
+    SetTest* test;
+    /// The options
+    const Options opt;
+
   public:
-    SetTestSpace(int n, IntSet& d, int _withInt, const Options& o)
-      : x(this, n, IntSet::empty, d), y(this, _withInt, d),
-        opt(o), withInt(_withInt) {
-      Log::initial(x, "x");
+    /**
+      * \brief Create test space
+      *
+      * Creates \a n set variables with domain \a d,
+      * \a i integer variables with domain \a d, and stores whether
+      * the test is for a refied propagator (\a r), the test itself
+      * (\a t) and the options (\a o). 
+      * 
+      */
+    SetTestSpace(int n, IntSet& d, int i, bool r, SetTest* t,
+                 const Options& o, bool log=true)
+      : x(this, n, IntSet::empty, d), y(this, i, d), withInt(i),
+        b(this, 0, 1), reified(r), test(t), opt(o) {
+      if (opt.log && log) {
+        olog << ind(2) << "Initial: x[]=" << x;
+        olog << " y[]=" << y;
+        if (reified)
+          olog << " b=" << b;
+        olog << std::endl;
+      }
     }
-    SetTestSpace(bool share, SetTestSpace& s) : Space(share,s), opt(s.opt),
-                                                withInt(s.withInt) {
+    
+    /// Constructor for cloning \a s
+    SetTestSpace(bool share, SetTestSpace& s)
+    : Space(share,s), withInt(s.withInt), reified(s.reified), test(s.test), 
+      opt(s.opt) {
       x.update(this, share, s.x);
       y.update(this, share, s.y);
+      b.update(this, share, s.b);
     }
+
+    /// Copy space during cloning
     virtual Space* copy(bool share) {
       return new SetTestSpace(share,*this);
     }
-    bool failed(void) {
-      return status() == SS_FAILED;
+
+    /// Post propagator
+    void post(void) {
+      if (reified){
+        test->post(this,x,y,b);
+        if (opt.log)
+          olog << ind(3) << "Posting reified propagator" << std::endl;
+      } else {
+        test->post(this,x,y);
+        if (opt.log)
+          olog << ind(3) << "Posting propagator" << std::endl;
+      }
     }
+    /// Compute a fixpoint and check for failure
+    bool failed(void) {
+      if (opt.log) {
+        olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=";
+        bool f=(status() == Gecode::SS_FAILED);
+        olog << std::endl << ind(3) << "     -->  x[]=" << x 
+             << " y[]=" << y << std::endl;
+        return f;
+      } else {
+        return status() == Gecode::SS_FAILED;
+      }
+    }
+
+    /// Perform set tell operation on \a x[i]
+    void rel(int i, Gecode::SetRelType srt, const IntSet& is) {
+      if (opt.log) {
+        olog << ind(4) << "x[" << i << "] ";
+        switch (srt) {
+        case Gecode::SRT_EQ: olog << "="; break;
+        case Gecode::SRT_NQ: olog << "!="; break;
+        case Gecode::SRT_SUB: olog << "<="; break;
+        case Gecode::SRT_SUP: olog << ">="; break;
+        case Gecode::SRT_DISJ: olog << "||"; break;
+        case Gecode::SRT_CMPL: olog << "^-1 = "; break;
+        }
+        olog << is << std::endl;
+      }
+      Gecode::dom(this, x[i], srt, is);
+    }
+    /// Perform cardinality tell operation on \a x[i]
+    void cardinality(int i, int cmin, int cmax) {
+      if (opt.log) {
+        olog << ind(4) << cmin << " <= #(x[" << i << "]) <= " << cmax
+             << std::endl;
+      }
+      Gecode::cardinality(this, x[i], cmin, cmax);
+    }
+    /// Perform integer tell operation on \a y[i]
+    void rel(int i, Gecode::IntRelType irt, int n) {
+      if (opt.log) {
+        olog << ind(4) << "y[" << i << "] ";
+        switch (irt) {
+        case Gecode::IRT_EQ: olog << "="; break;
+        case Gecode::IRT_NQ: olog << "!="; break;
+        case Gecode::IRT_LQ: olog << "<="; break;
+        case Gecode::IRT_LE: olog << "<"; break;
+        case Gecode::IRT_GQ: olog << ">="; break;
+        case Gecode::IRT_GR: olog << ">"; break;
+        }
+        olog << " " << n << std::endl;
+      }
+      Gecode::rel(this, y[i], irt, n);
+    }
+    /// Perform Boolean tell on \a b
+    void rel(bool sol) {
+      int n = sol ? 1 : 0;
+      assert(reified);
+      if (opt.log) 
+        olog << ind(4) << "b = " << n << std::endl;
+      Gecode::rel(this, b, Gecode::IRT_EQ, n);
+    }
+
+    /// Assign all variables to values in \a a
     void assign(const SetAssignment& a) {
       for (int i=a.size(); i--; ) {
         CountableSetRanges csv(a.lub, a[i]);
         IntSet ai(csv);
-        Log::assign(Log::mk_name("x", i), ai);
-        dom(this, x[i], SRT_EQ, ai);
-        FORCE_FIX;
+        rel(i, SRT_EQ, ai);
+        if (Base::fixpoint(opt) && failed())
+          return;
       }
       for (int i=withInt; i--; ) {
-        Log::assign(Log::mk_name("y", i), a.ints()[i]);
-        rel(this, y[i], IRT_EQ, a.ints()[i]);
-        FORCE_FIX;
+        rel(i, IRT_EQ, a.ints()[i]);
+        if (Base::fixpoint(opt) && failed())
+          return;
       }
     }
+
+    /// Test whether all variables are assigned
     bool assigned(void) const {
       for (int i=x.size(); i--; )
         if (!x[i].assigned())
@@ -180,99 +279,61 @@ do {                                            \
       return true;
     }
 
-    void removeFromLub(int v, SetVar& x, int i, const SetAssignment& a) {
-      SetVarUnknownRanges ur(x);
+    void removeFromLub(int v, int i, const SetAssignment& a) {
+      SetVarUnknownRanges ur(x[i]);
       CountableSetRanges air(a.lub, a[i]);
       Iter::Ranges::Diff<SetVarUnknownRanges, CountableSetRanges>
         diff(ur, air);
       Iter::Ranges::ToValues<Iter::Ranges::Diff
         <SetVarUnknownRanges, CountableSetRanges> > diffV(diff);
       for (int j=0; j<v; j++, ++diffV);
-      Log::prune(x, Log::mk_name("x", i), SRT_DISJ, diffV.val());
-      dom(this, x, SRT_DISJ, diffV.val());
-      Log::prune_result(x);
+      rel(i, SRT_DISJ, IntSet(diffV.val(), diffV.val()));
     }
 
-    void addToGlb(int v, SetVar& x, int i, const SetAssignment& a) {
-      SetVarUnknownRanges ur(x);
+    void addToGlb(int v, int i, const SetAssignment& a) {
+      SetVarUnknownRanges ur(x[i]);
       CountableSetRanges air(a.lub, a[i]);
       Iter::Ranges::Inter<SetVarUnknownRanges, CountableSetRanges>
         inter(ur, air);
       Iter::Ranges::ToValues<Iter::Ranges::Inter
         <SetVarUnknownRanges, CountableSetRanges> > interV(inter);
       for (int j=0; j<v; j++, ++interV);
-      Log::prune(x, Log::mk_name("x", i), SRT_SUP, interV.val());
-      dom(this, x, SRT_SUP, interV.val());
-      Log::prune_result(x);
+      rel(i, SRT_SUP, IntSet(interV.val(), interV.val()));
     }
 
-    bool fixprob(SetTest& st, bool r, BoolVar& b) {
-      Log::fixpoint();                                
-      if (status() == SS_FAILED)
+    bool fixprob(void) {
+      if (failed())
         return true;
       SetTestSpace* c = static_cast<SetTestSpace*>(clone());
-      Log::print(c->x, "x");
-      if (c->y.size() > 0) Log::print(c->y, "y");
-      if (!r) {
-        st.post(c,c->x,c->y);
-        Log::fixpoint();
-        if (c->status() == SS_FAILED) {
-          Log::print(c->x, "x");
-          if (c->y.size() > 0) Log::print(c->y, "y");
-          delete c;
-          return false;
-        }
-        for (int i=x.size(); i--; ) {
-          if (x[i].glbSize() != c->x[i].glbSize() ||
-              x[i].lubSize() != c->x[i].lubSize() ||
-              x[i].cardMin() != c->x[i].cardMin() ||
-              x[i].cardMax() != c->x[i].cardMax()) {
-            Log::print(c->x, "x");
-            if (c->y.size() > 0) Log::print(c->y, "y");
-            delete c;
-            return false;
-          }
-        }
-      } else {
-        Log::print(b, "b");
-        BoolVar cb(c,0,1);
-        Log::initial(cb, "cb");
-        st.post(c,c->x,c->y,cb);
-        Log::fixpoint();
-        if (c->status() == SS_FAILED) {
-          Log::print(c->x, "x");
-          if (c->y.size() > 0) Log::print(c->y, "y");
-          Log::print(cb, "cb");
-          delete c;
-          return false;
-        }
-        if (cb.size() != b.size()) {
-          Log::print(c->x, "x");
-          if (c->y.size() > 0) Log::print(c->y, "y");
-          Log::print(cb, "cb");
-          delete c;
-          return false;
-        }
-        for (int i=x.size(); i--; )
-          if (x[i].glbSize() != c->x[i].glbSize() ||
-              x[i].lubSize() != c->x[i].lubSize() ||
-              x[i].cardMin() != c->x[i].cardMin() ||
-              x[i].cardMax() != c->x[i].cardMax() ) {
-            Log::print(c->x, "x");
-            if (c->y.size() > 0) Log::print(c->y, "y");
-            Log::print(cb, "cb");
-            delete c;
-            return false;
-          }
+      if (opt.log)
+        olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+      c->post();
+      if (c->failed()) {
+        delete c; return false;
       }
+
+      for (int i=x.size(); i--; )
+        if (x[i].glbSize() != c->x[i].glbSize() ||
+            x[i].lubSize() != c->x[i].lubSize() ||
+            x[i].cardMin() != c->x[i].cardMin() ||
+            x[i].cardMax() != c->x[i].cardMax()) {
+          delete c;
+          return false;
+        }
+      for (int i=y.size(); i--; )
+        if (y[i].size() != c->y[i].size()) {
+          delete c; return false;
+        }
+      if (reified && (b.size() != c->b.size())) {
+        delete c; return false;
+      }
+      if (opt.log)
+        olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
       delete c;
       return true;
     }
 
-    static BoolVar unused;
-
-    bool prune(const SetAssignment& a, SetTest& st,
-               bool r, BoolVar& b=unused) {
+    bool prune(const SetAssignment& a) {
       bool setsAssigned = true;
       for (int j=x.size(); j--; )
         if (!x[j].assigned()) {
@@ -304,24 +365,25 @@ do {                                            \
         }
         // Prune int var
 
-
         // Select mode for pruning
-        int m=Base::rand(3);
-        if ((m == 0) && (a.ints()[i] < y[i].max())) {
-          int v=a.ints()[i]+1+
-            Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
-          assert((v > a.ints()[i]) && (v <= y[i].max()));
-          Log::prune(y[i], Log::mk_name("y", i), IRT_LE, v);
-          rel(this, y[i], IRT_LE, v);
-          Log::prune_result(y[i]);
-        } else if ((m == 1) && (a.ints()[i] > y[i].min())) {
-          int v=y[i].min()+
-            Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
-          assert((v < a.ints()[i]) && (v >= y[i].min()));
-          Log::prune(y[i], Log::mk_name("y", i), IRT_GR, v);
-          rel(this, y[i], IRT_GR, v);
-          Log::prune_result(y[i]);
-        } else  {
+        switch (Base::rand(3)) {
+        case 0:
+          if (a.ints()[i] < y[i].max()) {
+            int v=a.ints()[i]+1+
+              Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+            assert((v > a.ints()[i]) && (v <= y[i].max()));
+            rel(i, IRT_LE, v);
+          }
+          break;
+        case 1:
+          if (a.ints()[i] > y[i].min()) {
+            int v=y[i].min()+
+              Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+            assert((v < a.ints()[i]) && (v >= y[i].min()));
+            rel(i, IRT_GR, v);
+          }
+          break;
+        default:
           int v;
           Gecode::Int::ViewRanges<Gecode::Int::IntView> it(y[i]);
           unsigned int skip = Base::rand(y[i].size()-1);
@@ -342,13 +404,9 @@ do {                                            \
             skip -= it.width();
             ++it;
           }
-          Log::prune(y[i], Log::mk_name("y", i), IRT_NQ, v);
-          rel(this, y[i], IRT_NQ, v);
-          Log::prune_result(y[i]);
+          rel(i, IRT_NQ, v);
         }
-        if (Base::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
-          return false;
-        return true;
+        return (!Base::fixpoint(opt) || fixprob());
       }
       while (x[i].assigned()) {
         i = (i+1) % x.size();
@@ -366,55 +424,67 @@ do {                                            \
       unsigned int aisize = Iter::Ranges::size(aisizer);
 
       // Select mode for pruning
-      int m=Base::rand(5);
-      if (m==0 && inter()) {
-        int v = Base::rand(Iter::Ranges::size(inter));
-        addToGlb(v, x[i], i, a);
-      } else if (m==1 && diff()) {
-        int v = Base::rand(Iter::Ranges::size(diff));
-        removeFromLub(v, x[i], i, a);
-      } else if (m==2 && x[i].cardMin() < aisize) {
-        unsigned int newc = x[i].cardMin() + 1 +
-          Base::rand(aisize - x[i].cardMin());
-        assert( newc > x[i].cardMin() );
-        assert( newc <= aisize );
-        Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
-        cardinality(this, x[i], newc, Limits::Set::card_max);
-        Log::prune_result(x[i]);
-      } else if (m==3 && x[i].cardMax() > aisize) {
-        unsigned int newc = x[i].cardMax() - 1 -
-          Base::rand(x[i].cardMax() - aisize);
-        assert( newc < x[i].cardMax() );
-        assert( newc >= aisize );
-        Log::prune(x[i], Log::mk_name("x", i), 0, newc);
-        cardinality(this, x[i], 0, newc);
-        Log::prune_result(x[i]);
-      } else {
+      switch (Base::rand(5)) {
+      case 0:
         if (inter()) {
           int v = Base::rand(Iter::Ranges::size(inter));
-          addToGlb(v, x[i], i, a);
+          addToGlb(v, i, a);
+        }
+        break;
+      case 1:
+        if (diff()) {
+          int v = Base::rand(Iter::Ranges::size(diff));
+          removeFromLub(v, i, a);
+        }
+        break;
+      case 2:
+        if (x[i].cardMin() < aisize) {
+          unsigned int newc = x[i].cardMin() + 1 +
+            Base::rand(aisize - x[i].cardMin());
+          assert( newc > x[i].cardMin() );
+          assert( newc <= aisize );
+          cardinality(i, newc, Limits::Set::card_max);
+        }
+        break;
+      case 3:
+        if (x[i].cardMax() > aisize) {
+          unsigned int newc = x[i].cardMax() - 1 -
+            Base::rand(x[i].cardMax() - aisize);
+          assert( newc < x[i].cardMax() );
+          assert( newc >= aisize );
+          cardinality(i, 0, newc);
+        }
+        break;
+      default:
+        if (inter()) {
+          int v = Base::rand(Iter::Ranges::size(inter));
+          addToGlb(v, i, a);
         } else {
           int v = Base::rand(Iter::Ranges::size(diff));
-          removeFromLub(v, x[i], i, a);
-        }
+          removeFromLub(v, i, a);
+        }      
       }
-      if (Base::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
-        return false;
-
-      return true;
+      return (!Base::fixpoint(opt) || fixprob());
     }
 
   };
 
-  BoolVar SetTestSpace::unused;
 
-
-#define CHECK(T,M)                                 \
-if (!(T)) {                                         \
-  problem = (M);                                 \
-  delete s;                                        \
-  goto failed;                                         \
+  /// Check the test result and handle failed test
+#define CHECK_TEST(T,M)                                         \
+if (opt.log)                                                    \
+  olog << ind(3) << "Check: " << (M) << std::endl;              \
+if (!(T)) {                                                     \
+  problem = (M); delete s; goto failed;                         \
 }
+
+  /// Start new test
+#define START_TEST(T)                                           \
+  if (opt.log) {                                                \
+     olog.str("");                                              \
+     olog << ind(2) << "Testing: " << (T) << std::endl;         \
+  }                                                             \
+  test = (T);
 
   bool
   SetTest::run(const Options& opt) {
@@ -425,103 +495,103 @@ if (!(T)) {                                         \
     SetAssignment& a = *ap;
     while (a()) {
       bool is_sol = solution(a);
+      if (opt.log)
+        olog << ind(1) << "Assignment: " << a 
+             << (is_sol ? " (solution)" : " (no solution)")
+             << std::endl;
+
+      START_TEST("Assignment (after posting)");
       {
-        test = "Assignment (after posting)";
-        Log::reset();
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
-        post(s,s->x,s->y); s->assign(a);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this,opt);
+        s->post();
+        s->assign(a);
         if (is_sol) {
-          CHECK(!s->failed(), "Failed on solution");
-          CHECK(s->propagators()==0, "No subsumtion");
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumtion");
         } else {
-          CHECK(s->failed(), "Solved on non-solution");
+          CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
       }
+      START_TEST("Assignment (before posting)");
       {
-        test = "Assignment (before posting)";
-        Log::reset();
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
-        s->assign(a); post(s,s->x,s->y);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this,opt);
+        s->assign(a);
+        s->post();
         if (is_sol) {
-          CHECK(!s->failed(), "Failed on solution");
-          CHECK(s->propagators()==0, "No subsumtion");
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumtion");
         } else {
-          CHECK(s->failed(), "Solved on non-solution");
+          CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
       }
       if (reified) {
-        test = "Assignment reified (before posting)";
-        Log::reset();
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
-        BoolVar b(s,0,1);
-        s->assign(a); post(s,s->x,s->y,b);
-        CHECK(!s->failed(), "Failed");
-        CHECK(s->propagators()==0, "No subsumtion");
-        CHECK(b.assigned(), "Control variable unassigned");
+        START_TEST("Assignment reified (before posting)");
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this,opt);
+        s->assign(a);
+        s->post();
+        CHECK_TEST(!s->failed(), "Failed");
+        CHECK_TEST(s->propagators()==0, "No subsumtion");
+        CHECK_TEST(s->b.assigned(), "Control variable unassigned");
         if (is_sol) {
-          CHECK(b.val()==1, "Zero on solution");
+          CHECK_TEST(s->b.val()==1, "Zero on solution");
         } else {
-          CHECK(b.val()==0, "One on non-solution");
+          CHECK_TEST(s->b.val()==0, "One on non-solution");
         }
         delete s;
       }
       if (reified) {
-        test = "Assignment reified (after posting)";
-        Log::reset();
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
-        BoolVar b(s,0,1);
-        post(s,s->x,s->y,b); s->assign(a);
-        CHECK(!s->failed(), "Failed");
-        CHECK(s->propagators()==0, "No subsumtion");
-        CHECK(b.assigned(), "Control variable unassigned");
+        START_TEST("Assignment reified (after posting)");
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this,opt);
+        s->post();
+        s->assign(a);
+        CHECK_TEST(!s->failed(), "Failed");
+        CHECK_TEST(s->propagators()==0, "No subsumtion");
+        CHECK_TEST(s->b.assigned(), "Control variable unassigned");
         if (is_sol) {
-          CHECK(b.val()==1, "Zero on solution");
+          CHECK_TEST(s->b.val()==1, "Zero on solution");
         } else {
-          CHECK(b.val()==0, "One on non-solution");
+          CHECK_TEST(s->b.val()==0, "One on non-solution");
         }
         delete s;
       }
+      START_TEST("Prune");
       {
-        test = "Prune";
-        Log::reset();
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
-        post(s,s->x,s->y);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this,opt);
+        s->post();
         while (!s->failed() && !s->assigned())
-           if (!s->prune(a,*this,false)) {
+           if (!s->prune(a)) {
              problem = "No fixpoint";
              delete s;
              goto failed;
            }
         s->assign(a);
         if (is_sol) {
-          CHECK(!s->failed(), "Failed on solution");
-          CHECK(s->propagators()==0, "No subsumtion");
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumtion");
         } else {
-          CHECK(s->failed(), "Solved on non-solution");
+          CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
       }
       if (reified) {
-        test = "Prune reified";
-        Log::reset();
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
-        BoolVar b(s,0,1);
-        post(s,s->x,s->y,b);
-        while (!s->assigned() && !b.assigned())
-           if (!s->prune(a,*this,true,b)) {
+        START_TEST("Prune reified");
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this,opt);
+        s->post();
+        while (!s->assigned() && !s->b.assigned())
+           if (!s->prune(a)) {
              problem = "No fixpoint";
              delete s;
              goto failed;
            }
-        CHECK(!s->failed(), "Failed");
-        CHECK(s->propagators()==0, "No subsumtion");
-        CHECK(b.assigned(), "Control variable unassigned");
+        CHECK_TEST(!s->failed(), "Failed");
+        CHECK_TEST(s->propagators()==0, "No subsumtion");
+        CHECK_TEST(s->b.assigned(), "Control variable unassigned");
         if (is_sol) {
-          CHECK(b.val()==1, "Zero on solution");
+          CHECK_TEST(s->b.val()==1, "Zero on solution");
         } else {
-          CHECK(b.val()==0, "One on non-solution");
+          CHECK_TEST(s->b.val()==0, "One on non-solution");
         }
         delete s;
       }
@@ -530,15 +600,19 @@ if (!(T)) {                                         \
     delete ap;
     return true;
    failed:
-    std::cout << "FAILURE" << std::endl
-              << "\t" << "Test:       " << test << std::endl
-              << "\t" << "Problem:    " << problem << std::endl
-              << "\t" << "SetAssignment: " << a << std::endl;
-    delete ap;
-    return false;
+     olog << "FAILURE" << std::endl
+          << ind(1) << "Test:       " << test << std::endl
+          << ind(1) << "Problem:    " << problem << std::endl;
+     if (a())
+       olog << ind(1) << "Assignment: " << a << std::endl;
+     delete ap;
+
+     return false;
   }
 
-#undef CHECK
 }}
+
+#undef START_TEST
+#undef CHECK_TEST
 
 // STATISTICS: test-set

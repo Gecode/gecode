@@ -36,7 +36,6 @@
  */
 
 #include "test/branch.hh"
-#include "test/log.hh"
 
 #include <algorithm>
 #include <map>
@@ -66,7 +65,7 @@ private:
 public:
   BranchTestSpace(int n, IntSet& d, const Options& o)
     : x(this, n, d), opt(o) {
-    Log::initial(x, "x");
+    // Log::initial(x, "x");
   }
   BranchTestSpace(bool share, BranchTestSpace& s) : Space(share,s), opt(s.opt) {
     x.update(this, share, s.x);
