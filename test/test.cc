@@ -39,9 +39,6 @@
 
 #include "test/test.hh"
 
-#include "test/log.hh"
-
-
 #ifdef GECODE_HAVE_MTRACE
 #include <mcheck.h>
 #endif

@@ -690,12 +690,12 @@ endif
 
 ifeq "@enable_set_vars@" "yes"
 TESTSRC0 = \
-	test log int set branch $(CPLTSETTEST) \
+	test int set branch $(CPLTSETTEST) \
 	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLCPLTSETTESTSRC0) \
 	$(BRANCHTESTSRC0:%=branch/%)
 else
 TESTSRC0 = \
-	test log int branch $(CPLTSETTEST) \
+	test int branch $(CPLTSETTEST) \
 	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLCPLTSETTESTSRC0) \
 	$(BRANCHTESTSRC0:%=branch/%)
 endif
