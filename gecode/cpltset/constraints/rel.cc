@@ -43,6 +43,11 @@ namespace Gecode {
 
   namespace CpltSet { namespace Rel {
 
+    /**
+     * \namespace Gecode::CpltSet::Rel
+     * \brief Propagators for relation constraints
+     */
+
     template <class View>
     void rel_post(Space* home, View x, CpltSetRelType r, View y) {
 

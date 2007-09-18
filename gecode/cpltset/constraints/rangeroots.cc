@@ -44,6 +44,11 @@ namespace Gecode {
 
   namespace CpltSet { namespace RangeRoots {
     
+    /**
+     * \namespace Gecode::CpltSet::RangeRoots
+     * \brief Propagators for range/roots constraints
+     */
+    
     /*
      * Posting functions
      *

@@ -43,6 +43,12 @@ using namespace Gecode::CpltSet;
 namespace Gecode {
 
   namespace CpltSet { namespace Distinct {
+
+    /**
+     * \namespace Gecode::CpltSet::Distinct
+     * \brief Propagators for distinctness constraints
+     */
+
     template <class View>
     void distinct(Space* home, ViewArray<View>& x) {
   

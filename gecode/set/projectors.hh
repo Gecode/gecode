@@ -265,6 +265,7 @@ namespace Gecode {
   ///\name Formulas for specifying set constraints
   //@{
 
+  /// Formulas for specifying set constraints
   class Formula {
   public:
     enum Operator { AND, OR, IMPL, EQUIV };
@@ -295,15 +296,15 @@ namespace Gecode {
     
   };
 
-  /// Return formula \f$f\land g\f$
+  /// Return formula \f$f\land g\f$ \relates Formula
   Formula operator&(const Formula& f, const Formula& g);
-  /// Return formula \f$f\lor g\f$
+  /// Return formula \f$f\lor g\f$ \relates Formula
   Formula operator|(const Formula& f, const Formula& g);
-  /// Return formula \f$\lnot f\f$
+  /// Return formula \f$\lnot f\f$ \relates Formula
   Formula operator-(const Formula& f);
-  /// Return formula \f$f\rightarrow f\f$
+  /// Return formula \f$f\rightarrow f\f$ \relates Formula
   Formula operator>>(const Formula& f, const Formula& g);
-  /// Return formula \f$f\leftrightarrow g\f$
+  /// Return formula \f$f\leftrightarrow g\f$ \relates Formula
   Formula operator==(const Formula& f, const Formula& g);
 
   //@}

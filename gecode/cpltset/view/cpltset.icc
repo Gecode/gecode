@@ -291,6 +291,7 @@ namespace Gecode { namespace CpltSet {
   }
 }
   namespace Set {
+  /// Range iterator for greatest lower bound of CpltSet view
   template <>
   class GlbRanges<CpltSet::CpltSetView> : public Set::GlbRanges<CpltSet::CpltSetVarImp*> {
   public:
@@ -317,6 +318,7 @@ namespace Gecode { namespace CpltSet {
     GlbRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
   }
 
+  /// Range iterator for least upper bound of CpltSet view
   template <>
   class LubRanges<CpltSet::CpltSetView> : public Set::LubRanges<CpltSet::CpltSetVarImp*> {
   public:
@@ -403,6 +405,7 @@ namespace Gecode { namespace CpltSet {
   }
   }
   namespace Set {
+  /// Range iterator for the unknown set of CpltSet view
   template <>
   class UnknownRanges<CpltSet::CpltSetView> : public Set::UnknownRanges<CpltSet::CpltSetVarImp*> {
   public:

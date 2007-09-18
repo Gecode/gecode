@@ -44,6 +44,11 @@ namespace Gecode {
 
   namespace CpltSet { namespace Partition {
 
+    /**
+     * \namespace Gecode::CpltSet::Partition
+     * \brief Propagators for partition constraints
+     */
+
     template <class View>
     void build_partition(ViewArray<View>& x, bdd& d0) {
       // make it more readable

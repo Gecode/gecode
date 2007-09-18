@@ -44,6 +44,11 @@ namespace Gecode {
 
   namespace CpltSet { namespace Select {
 
+    /**
+     * \namespace Gecode::CpltSet::Select
+     * \brief Propagators for selection constraints
+     */
+
     template <class View>
     forceinline void 
     selectNonEmptySub_post(Space* home, ViewArray<View> x) {

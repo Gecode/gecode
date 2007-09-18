@@ -51,6 +51,7 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     ReflectionException(const char* what) : Exception("Reflection", what) {}
   };
+
   /// Exception: no reflection defined
   class NoReflectionDefinedException : public ReflectionException {
   public:

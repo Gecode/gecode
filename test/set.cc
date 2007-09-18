@@ -47,9 +47,9 @@ namespace Test { namespace Set {
 
   CountableSet::CountableSet(const Gecode::IntSet& d0) : d(d0), cur(0) {
     Gecode::IntSetRanges isr(d);
-    lubmax = static_cast<unsigned int>
-      (pow(static_cast<double>(2.0),
-           static_cast<int>(Iter::Ranges::size(isr))));
+    lubmax =
+      static_cast<unsigned int>(pow(static_cast<double>(2.0),
+        static_cast<int>(Gecode::Iter::Ranges::size(isr))));
   }
 
   void CountableSet::operator++(void) {
@@ -60,16 +60,16 @@ namespace Test { namespace Set {
     d = d0;
     cur = 0;
     Gecode::IntSetRanges isr(d);
-    lubmax = static_cast<unsigned int>
-      (pow(static_cast<double>(2.0),
-           static_cast<int>(Gecode::Iter::Ranges::size(isr))));
+    lubmax =
+      static_cast<unsigned int>(pow(static_cast<double>(2.0),
+        static_cast<int>(Gecode::Iter::Ranges::size(isr))));
   }
 
   int CountableSet::val(void) const {
     return cur;
   }
 
-  SetAssignment::SetAssignment(int n0, const IntSet& d0, int _withInt)
+  SetAssignment::SetAssignment(int n0, const Gecode::IntSet& d0, int _withInt)
     : n(n0), dsv(new CountableSet[n]), ir(_withInt, d0), done(false), lub(d0), 
       withInt(_withInt) {
     for (int i=n; i--; )
@@ -111,7 +111,7 @@ operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
   os << "{";
   for (int i=0; i<n; i++) {
     Test::Set::CountableSetRanges csv(a.lub, a[i]);
-    IntSet icsv(csv);
+    Gecode::IntSet icsv(csv);
     os << icsv << ((i!=n-1) ? "," : "}");
   }
   if (a.withInt > 0)
@@ -164,8 +164,13 @@ namespace Test { namespace Set {
     
     /// Constructor for cloning \a s
     SetTestSpace(bool share, SetTestSpace& s)
+<<<<<<< .mine
+    : Gecode::Space(share,s), withInt(s.withInt),
+      reified(s.reified), test(s.test), 
+=======
     : Gecode::Space(share,s), 
       withInt(s.withInt), reified(s.reified), test(s.test), 
+>>>>>>> .r5045
       opt(s.opt) {
       x.update(this, share, s.x);
       y.update(this, share, s.y);
@@ -203,7 +208,7 @@ namespace Test { namespace Set {
     }
 
     /// Perform set tell operation on \a x[i]
-    void rel(int i, Gecode::SetRelType srt, const IntSet& is) {
+    void rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is) {
       if (opt.log) {
         olog << ind(4) << "x[" << i << "] ";
         switch (srt) {
@@ -255,13 +260,13 @@ namespace Test { namespace Set {
     void assign(const SetAssignment& a) {
       for (int i=a.size(); i--; ) {
         CountableSetRanges csv(a.lub, a[i]);
-        IntSet ai(csv);
-        rel(i, SRT_EQ, ai);
+        Gecode::IntSet ai(csv);
+        rel(i, Gecode::SRT_EQ, ai);
         if (Base::fixpoint(opt) && failed())
           return;
       }
       for (int i=withInt; i--; ) {
-        rel(i, IRT_EQ, a.ints()[i]);
+        rel(i, Gecode::IRT_EQ, a.ints()[i]);
         if (Base::fixpoint(opt) && failed())
           return;
       }
@@ -279,27 +284,35 @@ namespace Test { namespace Set {
     }
     /// Remove value \a v from the upper bound of \a x[i]
     void removeFromLub(int v, int i, const SetAssignment& a) {
+<<<<<<< .mine
+      Gecode::SetVarUnknownRanges ur(x[i]);
+=======
       using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
+>>>>>>> .r5045
       CountableSetRanges air(a.lub, a[i]);
-      Iter::Ranges::Diff<SetVarUnknownRanges, CountableSetRanges>
-        diff(ur, air);
-      Iter::Ranges::ToValues<Iter::Ranges::Diff
-        <SetVarUnknownRanges, CountableSetRanges> > diffV(diff);
+      Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, 
+        CountableSetRanges> diff(ur, air);
+      Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff
+        <Gecode::SetVarUnknownRanges, CountableSetRanges> > diffV(diff);
       for (int j=0; j<v; j++, ++diffV);
-      rel(i, SRT_DISJ, IntSet(diffV.val(), diffV.val()));
+      rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
     }
     /// Remove value \a v from the lower bound of \a x[i]
     void addToGlb(int v, int i, const SetAssignment& a) {
+<<<<<<< .mine
+      Gecode::SetVarUnknownRanges ur(x[i]);
+=======
       using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
+>>>>>>> .r5045
       CountableSetRanges air(a.lub, a[i]);
-      Iter::Ranges::Inter<SetVarUnknownRanges, CountableSetRanges>
-        inter(ur, air);
-      Iter::Ranges::ToValues<Iter::Ranges::Inter
-        <SetVarUnknownRanges, CountableSetRanges> > interV(inter);
+      Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, 
+        CountableSetRanges> inter(ur, air);
+      Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter
+        <Gecode::SetVarUnknownRanges, CountableSetRanges> > interV(inter);
       for (int j=0; j<v; j++, ++interV);
-      rel(i, SRT_SUP, IntSet(interV.val(), interV.val()));
+      rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
     }
     /// Perform fixpoint computation
     bool fixprob(void) {
@@ -374,7 +387,7 @@ namespace Test { namespace Set {
             int v=a.ints()[i]+1+
               Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
             assert((v > a.ints()[i]) && (v <= y[i].max()));
-            rel(i, IRT_LE, v);
+            rel(i, Gecode::IRT_LE, v);
           }
           break;
         case 1:
@@ -382,7 +395,7 @@ namespace Test { namespace Set {
             int v=y[i].min()+
               Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
             assert((v < a.ints()[i]) && (v >= y[i].min()));
-            rel(i, IRT_GR, v);
+            rel(i, Gecode::IRT_GR, v);
           }
           break;
         default:
@@ -406,36 +419,36 @@ namespace Test { namespace Set {
             skip -= it.width();
             ++it;
           }
-          rel(i, IRT_NQ, v);
+          rel(i, Gecode::IRT_NQ, v);
         }
         return (!Base::fixpoint(opt) || fixprob());
       }
       while (x[i].assigned()) {
         i = (i+1) % x.size();
       }
-      SetVarUnknownRanges ur1(x[i]);
+      Gecode::SetVarUnknownRanges ur1(x[i]);
       CountableSetRanges air1(a.lub, a[i]);
-      Iter::Ranges::Diff<SetVarUnknownRanges, CountableSetRanges>
-        diff(ur1, air1);
-      SetVarUnknownRanges ur2(x[i]);
+      Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, 
+        CountableSetRanges> diff(ur1, air1);
+      Gecode::SetVarUnknownRanges ur2(x[i]);
       CountableSetRanges air2(a.lub, a[i]);
-      Iter::Ranges::Inter<SetVarUnknownRanges, CountableSetRanges>
-        inter(ur2, air2);
+      Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, 
+        CountableSetRanges> inter(ur2, air2);
 
       CountableSetRanges aisizer(a.lub, a[i]);
-      unsigned int aisize = Iter::Ranges::size(aisizer);
+      unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
 
       // Select mode for pruning
       switch (Base::rand(5)) {
       case 0:
         if (inter()) {
-          int v = Base::rand(Iter::Ranges::size(inter));
+          int v = Base::rand(Gecode::Iter::Ranges::size(inter));
           addToGlb(v, i, a);
         }
         break;
       case 1:
         if (diff()) {
-          int v = Base::rand(Iter::Ranges::size(diff));
+          int v = Base::rand(Gecode::Iter::Ranges::size(diff));
           removeFromLub(v, i, a);
         }
         break;
@@ -445,7 +458,7 @@ namespace Test { namespace Set {
             Base::rand(aisize - x[i].cardMin());
           assert( newc > x[i].cardMin() );
           assert( newc <= aisize );
-          cardinality(i, newc, Limits::Set::card_max);
+          cardinality(i, newc, Gecode::Limits::Set::card_max);
         }
         break;
       case 3:
@@ -459,10 +472,10 @@ namespace Test { namespace Set {
         break;
       default:
         if (inter()) {
-          int v = Base::rand(Iter::Ranges::size(inter));
+          int v = Base::rand(Gecode::Iter::Ranges::size(inter));
           addToGlb(v, i, a);
         } else {
-          int v = Base::rand(Iter::Ranges::size(diff));
+          int v = Base::rand(Gecode::Iter::Ranges::size(diff));
           removeFromLub(v, i, a);
         }      
       }

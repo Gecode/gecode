@@ -43,6 +43,12 @@ namespace Gecode {
   
   namespace CpltSet { namespace AtMost {
     
+    /**
+     * \namespace Gecode::CpltSet::AtMost
+     * \brief Propagators for intersection constraints with cardinality 
+     * restrictions
+     */
+    
     template <class View>
     void 
     atmostOne_post(Space* home, ViewArray<View>& x, int c) {

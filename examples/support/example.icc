@@ -116,102 +116,102 @@ Example::run(const Options& o) {
     switch (o.mode()) {
     case EM_SOLUTION:
       {
-	Timer t;
-	int i = o.solutions();
-	t.start();
-	Script* s = new Script(o);
-	unsigned int n_p = 0;
-	unsigned int n_b = 0;
+        Timer t;
+        int i = o.solutions();
+        t.start();
+        Script* s = new Script(o);
+        unsigned int n_p = 0;
+        unsigned int n_b = 0;
         unsigned long int p = 0;
-	if (s->status(p) != SS_FAILED) {
-	  n_p = s->propagators();
-	  n_b = s->branchings();
-	}
-	Search::Stop* stop = FailTimeStop::create(o.fail(), o.time());
-	Engine<Script> e(s,o.c_d(),o.a_d(),stop);
-	delete s;
-	do {
-	  Example* ex = e.next();
-	  if (ex == NULL)
-	    break;
-	  ex->print();
-	  delete ex;
-	} while (--i != 0);
-	Search::Statistics stat = e.statistics();
-	cout << endl;
-	cout << "Initial" << endl
-	     << "\tpropagators:   " << n_p << endl
-	     << "\tbranchings:    " << n_b << endl
-	     << endl
-	     << "Summary" << endl
-	     << "\truntime:       " << t.stop() << endl
-	     << "\tsolutions:     " 
+        if (s->status(p) != SS_FAILED) {
+          n_p = s->propagators();
+          n_b = s->branchings();
+        }
+        Search::Stop* stop = FailTimeStop::create(o.fail(), o.time());
+        Engine<Script> e(s,o.c_d(),o.a_d(),stop);
+        delete s;
+        do {
+          Example* ex = e.next();
+          if (ex == NULL)
+            break;
+          ex->print();
+          delete ex;
+        } while (--i != 0);
+        Search::Statistics stat = e.statistics();
+        cout << endl;
+        cout << "Initial" << endl
+             << "\tpropagators:   " << n_p << endl
+             << "\tbranchings:    " << n_b << endl
+             << endl
+             << "Summary" << endl
+             << "\truntime:       " << t.stop() << endl
+             << "\tsolutions:     " 
              << abs(static_cast<int>(o.solutions()) - i) << endl
-	     << "\tpropagations:  " << p+stat.propagate << endl
-	     << "\tfailures:      " << stat.fail << endl
-	     << "\tclones:        " << stat.clone << endl
-	     << "\tcommits:       " << stat.commit << endl
-	     << "\tpeak memory:   "
-	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
-	     << endl;
+             << "\tpropagations:  " << p+stat.propagate << endl
+             << "\tfailures:      " << stat.fail << endl
+             << "\tclones:        " << stat.clone << endl
+             << "\tcommits:       " << stat.commit << endl
+             << "\tpeak memory:   "
+             << static_cast<int>((stat.memory+1023) / 1024) << " KB"
+             << endl;
       }
       break;
     case EM_STAT:
       {
-	int i = o.solutions();
-	Script* s = new Script(o);
-	unsigned int n_p = 0;
-	unsigned int n_b = 0;
+        int i = o.solutions();
+        Script* s = new Script(o);
+        unsigned int n_p = 0;
+        unsigned int n_b = 0;
         unsigned long int p = 0;
-	if (s->status(p) != SS_FAILED) {
-	  n_p = s->propagators();
-	  n_b = s->branchings();
-	}
-	Engine<Script> e(s,o.c_d(),o.a_d());
-	delete s;
-	do {
-	  Example* ex = e.next();
-	  if (ex == NULL)
-	    break;
-	  delete ex;
-	} while (--i != 0);
-	Search::Statistics stat = e.statistics();
-	cout << endl
-	     << "\tpropagators:   " << n_p << endl
-	     << "\tbranchings:    " << n_b << endl
-	     << "\tsolutions:     " 
+        if (s->status(p) != SS_FAILED) {
+          n_p = s->propagators();
+          n_b = s->branchings();
+        }
+        Engine<Script> e(s,o.c_d(),o.a_d());
+        delete s;
+        do {
+          Example* ex = e.next();
+          if (ex == NULL)
+            break;
+          delete ex;
+        } while (--i != 0);
+        Search::Statistics stat = e.statistics();
+        cout << endl
+             << "\tpropagators:   " << n_p << endl
+             << "\tbranchings:    " << n_b << endl
+             << "\tsolutions:     " 
              << abs(static_cast<int>(o.solutions()) - i) << endl
-	     << "\tpropagations:  " << p+stat.propagate << endl
-	     << "\tfailures:      " << stat.fail << endl
-	     << "\tclones:        " << stat.clone << endl
-	     << "\tcommits:       " << stat.commit << endl
-	     << "\tpeak memory:   "
-	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
-	     << endl;
+             << "\tpropagations:  " << p+stat.propagate << endl
+             << "\tfailures:      " << stat.fail << endl
+             << "\tclones:        " << stat.clone << endl
+             << "\tcommits:       " << stat.commit << endl
+             << "\tpeak memory:   "
+             << static_cast<int>((stat.memory+1023) / 1024) << " KB"
+             << endl;
       }
       break;
     case EM_TIME:
       {
-	Timer t;
-	GECODE_AUTOARRAY(double,ts,o.samples());
-	for (unsigned int s = o.samples(); s--; ) {
-	  t.start();
-	  for (unsigned int k = o.iterations(); k--; ) {
-	    unsigned int i = o.solutions();
-	    Script* s = new Script(o);
-	    Engine<Script> e(s,o.c_d(),o.a_d());
-	    delete s;
-	    do {
-	      Example* ex = e.next();
-	      if (ex == NULL)
-		break;
-	      delete ex;
-	    } while (--i != 0);
-	  }
-	  ts[s] = t.stop() / o.iterations();
-	}
-	double m = am(ts,o.samples());
-	double d = dev(ts,o.samples()) * 100.0;
+        Timer t;
+        GECODE_AUTOARRAY(double,ts,o.samples());
+        for (unsigned int s = o.samples(); s--; ) {
+          t.start();
+          for (unsigned int k = o.iterations(); k--; ) {
+            unsigned int i = o.solutions();
+            Script* s = new Script(o);
+            Engine<Script> e(s,o.c_d(),o.a_d());
+            delete s;
+            do {
+              Example* ex = e.next();
+              if (ex == NULL)
+                break;
+              delete ex;
+            } while (--i != 0);
+          }
+          ts[s] = t.stop() / o.iterations();
+        }
+        double m = am(ts,o.samples());
+        double d = dev(ts,o.samples()) * 100.0;
         cout << "\tRuntime: "
              << setw(20) << right
              << showpoint << fixed
@@ -223,7 +223,7 @@ Example::run(const Options& o) {
     }
   } catch (Exception e) {
     cout << "Exception: " << e.what() << "." << endl
-	 << "Stopping..." << endl;
+         << "Stopping..." << endl;
   }
 }
 

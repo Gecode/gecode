@@ -238,8 +238,6 @@ namespace Gecode { namespace CpltSet {
     int ymin = y.initialLubMin();
 
     GECODE_AUTOARRAY(bdd, layer, n);
-    // the use of autoarray now requires explicit initialization
-    // otherwise the bdd nodes are not known in the global table
     for (int i = n; i--;) 
       layer[i].init();
 
@@ -289,8 +287,6 @@ namespace Gecode { namespace CpltSet {
   extcardlqgq(Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y, 
               unsigned int cl, unsigned int cr, int n, int r) {
     GECODE_AUTOARRAY(bdd, layer, n);
-    // the use of autoarray now requires explicit initialization
-    // otherwise the bdd nodes are not known in the global table
     for (int i = n; i--;) 
       layer[i].init();
 
@@ -428,10 +424,6 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   bdd 
   extcardcheck(View0& x, View1& y, unsigned int cl, unsigned int cr) {
-    // Ad 1)
-    // we need bddview instead of bddvar in the interface
-    // this requires us to publish the protected valididx function
-    //
     // Ad 2)
     // we need manager and variable offset for the bddtable
     // because we do not want to rewrite the code for the simple checks

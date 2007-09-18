@@ -109,6 +109,7 @@ namespace Test { namespace Set {
     };
     ConvexHull _convexhull("Convex::ConvexHull");
 
+    /// Sharing test for convex hull propagator
     class ConvexHullS : public SetTest {
     public:
       /// Create and register test

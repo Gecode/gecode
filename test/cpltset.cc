@@ -60,22 +60,19 @@ if (!(T)) {                                                     \
   }                                                             \
   test = (T);
 
-using namespace Gecode;
-using namespace Test::Set;
-
 namespace Test { namespace CpltSet {
 
   /// Space for executing CpltSet tests
-  class CpltSetTestSpace : public Space {
+  class CpltSetTestSpace : public Gecode::Space {
   public:
     /// Set variables to be tested
-    CpltSetVarArray x;
+    Gecode::CpltSetVarArray x;
     /// Int variables to be tested
-    IntVarArray y;
+    Gecode::IntVarArray y;
     /// How many integer variables are used by the test
     int withInt;
     /// Control variable for reified propagators
-    BoolVar b;
+    Gecode::BoolVar b;
     /// Whether the test is for a reified propagator
     bool reified;
     /// The test currently run
@@ -93,9 +90,9 @@ namespace Test { namespace CpltSet {
       * (\a t) and the options (\a o). 
       * 
       */
-    CpltSetTestSpace(int n, IntSet& d, int i, bool r, CpltSetTest* t,
+    CpltSetTestSpace(int n, Gecode::IntSet& d, int i, bool r, CpltSetTest* t,
                      const Options& o, bool log=true)
-      : x(this, n, IntSet::empty, d), y(this, i, d), withInt(i),
+      : x(this, n, Gecode::IntSet::empty, d), y(this, i, d), withInt(i),
         b(this, 0, 1), reified(r), test(t), opt(o) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
@@ -146,7 +143,7 @@ namespace Test { namespace CpltSet {
     }
 
     /// Perform set tell operation on \a x[i]
-    void rel(int i, Gecode::SetRelType srt, const IntSet& is) {
+    void rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is) {
       if (opt.log) {
         olog << ind(4) << "x[" << i << "] ";
         switch (srt) {
@@ -195,16 +192,16 @@ namespace Test { namespace CpltSet {
     }
 
     /// Assign all variables to values in \a a
-    void assign(const SetAssignment& a) {
+    void assign(const Test::Set::SetAssignment& a) {
       for (int i=a.size(); i--; ) {
-        CountableSetRanges csv(a.lub, a[i]);
-        IntSet ai(csv);
-        rel(i, SRT_EQ, ai);
+        Test::Set::CountableSetRanges csv(a.lub, a[i]);
+        Gecode::IntSet ai(csv);
+        rel(i, Gecode::SRT_EQ, ai);
         if (Base::fixpoint(opt) && failed())
           return;
       }
       for (int i=withInt; i--; ) {
-        rel(i, IRT_EQ, a.ints()[i]);
+        rel(i, Gecode::IRT_EQ, a.ints()[i]);
         if (Base::fixpoint(opt) && failed())
           return;
       }
@@ -221,26 +218,28 @@ namespace Test { namespace CpltSet {
       return true;
     }
 
-    void removeFromLub(int v, int i, const SetAssignment& a) {
-      CpltSetVarUnknownRanges ur(x[i]);
-      CountableSetRanges air(a.lub, a[i]);
-      Iter::Ranges::Diff<CpltSetVarUnknownRanges, CountableSetRanges>
-        diff(ur, air);
-      Iter::Ranges::ToValues<Iter::Ranges::Diff
-        <CpltSetVarUnknownRanges, CountableSetRanges> > diffV(diff);
+    void removeFromLub(int v, int i, const Test::Set::SetAssignment& a) {
+      Gecode::CpltSetVarUnknownRanges ur(x[i]);
+      Test::Set::CountableSetRanges air(a.lub, a[i]);
+      Gecode::Iter::Ranges::Diff<Gecode::CpltSetVarUnknownRanges, 
+        Test::Set::CountableSetRanges> diff(ur, air);
+      Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff
+        <Gecode::CpltSetVarUnknownRanges, Test::Set::CountableSetRanges> > 
+          diffV(diff);
       for (int j=0; j<v; j++, ++diffV);
-      rel(i, SRT_DISJ, IntSet(diffV.val(), diffV.val()));
+      rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
     }
 
-    void addToGlb(int v, int i, const SetAssignment& a) {
-      CpltSetVarUnknownRanges ur(x[i]);
-      CountableSetRanges air(a.lub, a[i]);
-      Iter::Ranges::Inter<CpltSetVarUnknownRanges, CountableSetRanges>
-        inter(ur, air);
-      Iter::Ranges::ToValues<Iter::Ranges::Inter
-        <CpltSetVarUnknownRanges, CountableSetRanges> > interV(inter);
+    void addToGlb(int v, int i, const Test::Set::SetAssignment& a) {
+      Gecode::CpltSetVarUnknownRanges ur(x[i]);
+      Test::Set::CountableSetRanges air(a.lub, a[i]);
+      Gecode::Iter::Ranges::Inter<Gecode::CpltSetVarUnknownRanges, 
+        Test::Set::CountableSetRanges> inter(ur, air);
+      Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter
+        <Gecode::CpltSetVarUnknownRanges, Test::Set::CountableSetRanges> > 
+          interV(inter);
       for (int j=0; j<v; j++, ++interV);
-      rel(i, SRT_SUP, IntSet(interV.val(), interV.val()));
+      rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
     }
 
     bool fixprob(void) {
@@ -273,7 +272,7 @@ namespace Test { namespace CpltSet {
       return true;
     }
 
-    bool prune(const SetAssignment& a) {
+    bool prune(const Test::Set::SetAssignment& a) {
       bool setsAssigned = true;
       for (int j=x.size(); j--; )
         if (!x[j].assigned()) {
@@ -312,7 +311,7 @@ namespace Test { namespace CpltSet {
             int v=a.ints()[i]+1+
               Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
             assert((v > a.ints()[i]) && (v <= y[i].max()));
-            rel(i, IRT_LE, v);
+            rel(i, Gecode::IRT_LE, v);
           }
           break;
         case 1:
@@ -320,7 +319,7 @@ namespace Test { namespace CpltSet {
             int v=y[i].min()+
               Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
             assert((v < a.ints()[i]) && (v >= y[i].min()));
-            rel(i, IRT_GR, v);
+            rel(i, Gecode::IRT_GR, v);
           }
           break;
         default:
@@ -344,36 +343,36 @@ namespace Test { namespace CpltSet {
             skip -= it.width();
             ++it;
           }
-          rel(i, IRT_NQ, v);
+          rel(i, Gecode::IRT_NQ, v);
         }
         return (!Base::fixpoint(opt) || fixprob());
       }
       while (x[i].assigned()) {
         i = (i+1) % x.size();
       }
-      CpltSetVarUnknownRanges ur1(x[i]);
-      CountableSetRanges air1(a.lub, a[i]);
-      Iter::Ranges::Diff<CpltSetVarUnknownRanges, CountableSetRanges>
-        diff(ur1, air1);
-      CpltSetVarUnknownRanges ur2(x[i]);
-      CountableSetRanges air2(a.lub, a[i]);
-      Iter::Ranges::Inter<CpltSetVarUnknownRanges, CountableSetRanges>
-        inter(ur2, air2);
+      Gecode::CpltSetVarUnknownRanges ur1(x[i]);
+      Test::Set::CountableSetRanges air1(a.lub, a[i]);
+      Gecode::Iter::Ranges::Diff<Gecode::CpltSetVarUnknownRanges, 
+        Test::Set::CountableSetRanges> diff(ur1, air1);
+      Gecode::CpltSetVarUnknownRanges ur2(x[i]);
+      Test::Set::CountableSetRanges air2(a.lub, a[i]);
+      Gecode::Iter::Ranges::Inter<Gecode::CpltSetVarUnknownRanges, 
+        Test::Set::CountableSetRanges> inter(ur2, air2);
 
-      CountableSetRanges aisizer(a.lub, a[i]);
-      unsigned int aisize = Iter::Ranges::size(aisizer);
+      Test::Set::CountableSetRanges aisizer(a.lub, a[i]);
+      unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
 
       // Select mode for pruning
       switch (Base::rand(5)) {
       case 0:
         if (inter()) {
-          int v = Base::rand(Iter::Ranges::size(inter));
+          int v = Base::rand(Gecode::Iter::Ranges::size(inter));
           addToGlb(v, i, a);
         }
         break;
       case 1:
         if (diff()) {
-          int v = Base::rand(Iter::Ranges::size(diff));
+          int v = Base::rand(Gecode::Iter::Ranges::size(diff));
           removeFromLub(v, i, a);
         }
         break;
@@ -383,7 +382,7 @@ namespace Test { namespace CpltSet {
             Base::rand(aisize - x[i].cardMin());
           assert( newc > x[i].cardMin() );
           assert( newc <= aisize );
-          cardinality(i, newc, Limits::Set::card_max);
+          cardinality(i, newc, Gecode::Limits::Set::card_max);
         }
         break;
       case 3:
@@ -397,10 +396,10 @@ namespace Test { namespace CpltSet {
         break;
       default:
         if (inter()) {
-          int v = Base::rand(Iter::Ranges::size(inter));
+          int v = Base::rand(Gecode::Iter::Ranges::size(inter));
           addToGlb(v, i, a);
         } else {
-          int v = Base::rand(Iter::Ranges::size(diff));
+          int v = Base::rand(Gecode::Iter::Ranges::size(diff));
           removeFromLub(v, i, a);
         }      
       }
@@ -413,8 +412,9 @@ namespace Test { namespace CpltSet {
     const char* test    = "NONE";
     const char* problem = "NONE";
 
-    SetAssignment* ap = new SetAssignment(arity,lub,withInt);
-    SetAssignment& a = *ap;
+    Test::Set::SetAssignment* ap =
+      new Test::Set::SetAssignment(arity,lub,withInt);
+    Test::Set::SetAssignment& a = *ap;
   
     Gecode::CpltSet::manager.dispose();
     Gecode::CpltSet::manager.init(10000,10000);

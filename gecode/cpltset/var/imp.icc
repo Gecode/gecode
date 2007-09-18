@@ -1088,6 +1088,9 @@ namespace Gecode { namespace CpltSet {
 }
 
 namespace Set {
+
+  /** \brief Range iterator for greatest lower bound of CpltSet variable 
+    * implementation */
   template <> 
   class GlbRanges<CpltSet::CpltSetVarImp*> 
     : public Iter::Values::ToRanges<CpltSet::GlbValues<CpltSet::CpltSetVarImp*> > {
@@ -1118,6 +1121,8 @@ namespace Set {
     Iter::Values::ToRanges<CpltSet::GlbValues<CpltSet::CpltSetVarImp*> >::init(v);
   }
 
+  /** \brief Range iterator for least upper bound of CpltSet variable 
+    * implementation */
   template <> 
   class LubRanges<CpltSet::CpltSetVarImp*> 
   : public 
@@ -1149,6 +1154,7 @@ namespace Set {
     Iter::Values::ToRanges<CpltSet::LubValues<CpltSet::CpltSetVarImp*> >::init(v);
   }
   
+  /// Range iterator for the unknown set of CpltSet variable implementation
   template <> 
   class UnknownRanges<CpltSet::CpltSetVarImp*> 
     : public Iter::Values::ToRanges<CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> > {
