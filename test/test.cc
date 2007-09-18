@@ -105,6 +105,8 @@ namespace Test {
       std::cout << olog.str();
   }
 
+  std::vector<std::pair<bool, const char*> > testpat;
+    
   void
   Options::parse(int argc, char* argv[]) {
     using namespace std;
@@ -112,8 +114,6 @@ namespace Test {
     using std::make_pair;
     using std::pair;
   
-    vector<pair<bool, const char*> > testpat;
-    
     static const char* bool2str[] =
       { "false", "true" };
     int i = 1;
