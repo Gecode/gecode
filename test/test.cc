@@ -93,26 +93,14 @@ namespace Test {
   
   Base::~Base(void) {}
   
-  Gecode::Support::RandomGenerator 
-  Base::rand = Gecode::Support::RandomGenerator();
+  Gecode::Support::RandomGenerator Base::rand 
+  = Gecode::Support::RandomGenerator();
   
-
-
-
-
-  using std::vector;
-  using std::make_pair;
-  using std::pair;
-  
-  vector<pair<bool, const char*> > testpat;
-  
-
-
   void report_error(const Options& o, std::string name) {
     std::cout << "Options: -seed " << o.seed;
     if (o.fixprob != o.deffixprob)
-      std::cout << "  -fixprob " << o.fixprob;
-    std::cout << "  -test " << name << std::endl;
+      std::cout << " -fixprob " << o.fixprob;
+    std::cout << " -test " << name << std::endl;
     if (o.log)
       std::cout << olog.str();
   }
@@ -120,6 +108,12 @@ namespace Test {
   void
   Options::parse(int argc, char* argv[]) {
     using namespace std;
+    using std::vector;
+    using std::make_pair;
+    using std::pair;
+  
+    vector<pair<bool, const char*> > testpat;
+    
     static const char* bool2str[] =
       { "false", "true" };
     int i = 1;
