@@ -40,6 +40,11 @@
 
 #include "gecode/set/projectors.hh"
 
+/**
+ * \namespace Gecode::Set::Projection
+ * \brief Support for set projectors
+ */
+
 namespace Gecode { namespace Set { namespace Projection {
 
   /**

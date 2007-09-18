@@ -57,6 +57,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     ViewValues<View> v;
   };
 
+  /// Information for performing a recorded tell
   template<class View>
   class TellInfo {
   public:

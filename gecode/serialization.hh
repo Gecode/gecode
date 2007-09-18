@@ -74,6 +74,7 @@ namespace Gecode {
   GECODE_SERIALIZATION_EXPORT
   void emitFlatzinc(Space* home, Reflection::VarMap& m, std::ostream& os);
 
+  /// Serialization support
   namespace Serialization {
 
     /// Deserialization from VarSpec and ActorSpec

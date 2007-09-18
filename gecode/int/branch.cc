@@ -215,6 +215,7 @@ namespace Gecode {
   namespace Int { namespace Branch {
 
     template<class View, class Val, template <class> class SelView>
+    /// Register reflection for branchings
     class Creator {
     public:
       Reflection::Registrar<ViewValBranching<View,Val,SelView<View>,

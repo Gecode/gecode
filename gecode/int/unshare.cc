@@ -38,9 +38,14 @@
 #include "gecode/int/rel.hh"
 #include "gecode/int/bool.hh"
 
+/**
+ * \namespace Gecode::Int::Unshare
+ * \brief Unsharing shared variables
+ */
+
 namespace Gecode { 
 
-  namespace Int { namespace Unshare {
+ namespace Int { namespace Unshare {
 
     /// Check order for variables
     template <class Var>

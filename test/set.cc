@@ -40,31 +40,29 @@
  */
 
 #include "test/set.hh"
-#include "gecode/iter.hh"
-#include <algorithm>
 
-using namespace Gecode;
+#include <algorithm>
 
 namespace Test { namespace Set {
 
-  CountableSet::CountableSet(const IntSet& d0) : d(d0), cur(0) {
-    IntSetRanges isr(d);
-    lubmax =
-      static_cast<unsigned int>(pow(static_cast<double>(2.0),
-        static_cast<int>(Iter::Ranges::size(isr))));
+  CountableSet::CountableSet(const Gecode::IntSet& d0) : d(d0), cur(0) {
+    Gecode::IntSetRanges isr(d);
+    lubmax = static_cast<unsigned int>
+      (pow(static_cast<double>(2.0),
+           static_cast<int>(Iter::Ranges::size(isr))));
   }
 
   void CountableSet::operator++(void) {
     cur++;
   }
 
-  void CountableSet::init(const IntSet& d0) {
+  void CountableSet::init(const Gecode::IntSet& d0) {
     d = d0;
     cur = 0;
-    IntSetRanges isr(d);
-    lubmax =
-      static_cast<unsigned int>(pow(static_cast<double>(2.0),
-        static_cast<int>(Iter::Ranges::size(isr))));
+    Gecode::IntSetRanges isr(d);
+    lubmax = static_cast<unsigned int>
+      (pow(static_cast<double>(2.0),
+           static_cast<int>(Gecode::Iter::Ranges::size(isr))));
   }
 
   int CountableSet::val(void) const {
@@ -124,16 +122,16 @@ operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
 namespace Test { namespace Set {
 
   /// Space for executing set tests
-  class SetTestSpace : public Space {
+  class SetTestSpace : public Gecode::Space {
   public:
     /// Set variables to be tested
-    SetVarArray x;
+    Gecode::SetVarArray x;
     /// Int variables to be tested
-    IntVarArray y;
+    Gecode::IntVarArray y;
     /// How many integer variables are used by the test
     int withInt;
     /// Control variable for reified propagators
-    BoolVar b;
+    Gecode::BoolVar b;
     /// Whether the test is for a reified propagator
     bool reified;
     /// The test currently run
@@ -151,9 +149,9 @@ namespace Test { namespace Set {
       * (\a t) and the options (\a o). 
       * 
       */
-    SetTestSpace(int n, IntSet& d, int i, bool r, SetTest* t,
+    SetTestSpace(int n, Gecode::IntSet& d, int i, bool r, SetTest* t,
                  const Options& o, bool log=true)
-      : x(this, n, IntSet::empty, d), y(this, i, d), withInt(i),
+      : x(this, n, Gecode::IntSet::empty, d), y(this, i, d), withInt(i),
         b(this, 0, 1), reified(r), test(t), opt(o) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
@@ -166,7 +164,8 @@ namespace Test { namespace Set {
     
     /// Constructor for cloning \a s
     SetTestSpace(bool share, SetTestSpace& s)
-    : Space(share,s), withInt(s.withInt), reified(s.reified), test(s.test), 
+    : Gecode::Space(share,s), 
+      withInt(s.withInt), reified(s.reified), test(s.test), 
       opt(s.opt) {
       x.update(this, share, s.x);
       y.update(this, share, s.y);
@@ -174,7 +173,7 @@ namespace Test { namespace Set {
     }
 
     /// Copy space during cloning
-    virtual Space* copy(bool share) {
+    virtual Gecode::Space* copy(bool share) {
       return new SetTestSpace(share,*this);
     }
 
@@ -278,8 +277,9 @@ namespace Test { namespace Set {
           return false;
       return true;
     }
-
+    /// Remove value \a v from the upper bound of \a x[i]
     void removeFromLub(int v, int i, const SetAssignment& a) {
+      using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
       CountableSetRanges air(a.lub, a[i]);
       Iter::Ranges::Diff<SetVarUnknownRanges, CountableSetRanges>
@@ -289,8 +289,9 @@ namespace Test { namespace Set {
       for (int j=0; j<v; j++, ++diffV);
       rel(i, SRT_DISJ, IntSet(diffV.val(), diffV.val()));
     }
-
+    /// Remove value \a v from the lower bound of \a x[i]
     void addToGlb(int v, int i, const SetAssignment& a) {
+      using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
       CountableSetRanges air(a.lub, a[i]);
       Iter::Ranges::Inter<SetVarUnknownRanges, CountableSetRanges>
@@ -300,7 +301,7 @@ namespace Test { namespace Set {
       for (int j=0; j<v; j++, ++interV);
       rel(i, SRT_SUP, IntSet(interV.val(), interV.val()));
     }
-
+    /// Perform fixpoint computation
     bool fixprob(void) {
       if (failed())
         return true;
@@ -332,8 +333,9 @@ namespace Test { namespace Set {
       delete c;
       return true;
     }
-
+    /// Perform random pruning
     bool prune(const SetAssignment& a) {
+      using namespace Gecode;
       bool setsAssigned = true;
       for (int j=x.size(); j--; )
         if (!x[j].assigned()) {

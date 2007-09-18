@@ -42,7 +42,10 @@ namespace Gecode {
   /// Range and value iterators
   namespace Iter {
      /// Range iterators
-     namespace Ranges {}
+     namespace Ranges {
+       /// Range iterators with virtual member functions
+       namespace Virt {}
+     }
      /// Value iterators
      namespace Values {}
   }

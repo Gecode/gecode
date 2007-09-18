@@ -102,6 +102,10 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     RelTest operator()(VA,VC);
   };
+  /**
+   * \brief Class for bounds-equality test (specialized)
+   *
+   */
   template <class VA>
   class RelTestBnd<VA,ConstIntView> {
   public:
@@ -117,6 +121,10 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     RelTest operator()(VA,VC);
   };
+  /**
+   * \brief Class for domain-equality test (specialized)
+   *
+   */
   template <class VA>
   class RelTestDom<VA,ConstIntView> {
   public:
