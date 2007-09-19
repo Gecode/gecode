@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::Speed::advise(Space* home, Advisor* _a, const Delta* d) {
+  GqBoolInt<VX>::Speed::advise(Space* home, Advisor* _a, const Delta*) {
     ViewAdvisor<VX>* a = static_cast<ViewAdvisor<VX>*>(_a);
     if (n_s == 0)
       return ES_SUBSUMED_FIX(a,home,co);

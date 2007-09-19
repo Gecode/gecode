@@ -84,7 +84,7 @@ namespace Gecode { namespace Support {
      * whereas position \c entries()-1 corresponds to the
      * element pushed last.
      */
-    const T& operator [] (int i) const;
+    const T& operator[](int i) const;
 
     /// Return size of stack
     size_t size(void) const;
@@ -95,14 +95,16 @@ namespace Gecode { namespace Support {
   void
   DynamicStack<T>::resize(void) {
     int nl = (limit * 3) / 2;
-    stack = Memory::brealloc<T>(stack,limit,nl);
+    stack = Memory::brealloc<T>(stack,
+                                static_cast<size_t>(limit),
+                                static_cast<size_t>(nl));
     limit = nl;
   }
 
   template <class T>
   forceinline
   DynamicStack<T>::DynamicStack(int n)
-    : limit(n), tos(0), stack(Memory::bmalloc<T>(n)) {}
+    : limit(n), tos(0), stack(Memory::bmalloc<T>(static_cast<size_t>(n))) {}
 
   template <class T>
   forceinline
@@ -144,20 +146,20 @@ namespace Gecode { namespace Support {
 
   template <class T>
   forceinline T&
-  DynamicStack<T>::operator [] (int i) {
+  DynamicStack<T>::operator[](int i) {
     return stack[i];
   }
 
   template <class T>
   forceinline const T&
-  DynamicStack<T>::operator [] (int i) const {
+  DynamicStack<T>::operator[](int i) const {
     return stack[i];
   }
 
   template <class T>
   forceinline size_t
   DynamicStack<T>::size(void) const {
-    return (limit * sizeof(T)) + sizeof(DynamicStack<T>);
+    return (static_cast<size_t>(limit) * sizeof(T)) + sizeof(DynamicStack<T>);
   }
 
 }}

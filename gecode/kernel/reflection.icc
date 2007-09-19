@@ -640,6 +640,7 @@ namespace Gecode { namespace Reflection {
     _dom->_n = n;
   }
   
+  // @CHECK: not inlined
   forceinline Support::Symbol
   VarSpec::name(void) const {
     return _dom->_n;
@@ -655,6 +656,7 @@ namespace Gecode { namespace Reflection {
     return _dom->_vti;
   }
 
+  // @CHECK: not inlined
   forceinline Arg*
   VarSpec::dom(void) const {
     return _dom->_dom;
@@ -713,6 +715,7 @@ namespace Gecode { namespace Reflection {
     return _args->n;
   }
 
+  // @CHECK: not inlined
   forceinline Support::Symbol
   ActorSpec::name(void) const {
     return _args->_name;

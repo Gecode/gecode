@@ -45,8 +45,8 @@ namespace Gecode { namespace Int {
 
   forceinline bool
   IntVarImp::closer_min(int n) const {
-    unsigned int l = n - dom.min();
-    unsigned int r = dom.max() - n;
+    unsigned int l = static_cast<unsigned int>(n - dom.min());
+    unsigned int r = static_cast<unsigned int>(dom.max() - n);
     return l < r;
   }
 
@@ -375,7 +375,7 @@ namespace Gecode { namespace Int {
   }
 
   Reflection::Arg*
-  IntVarImp::spec(Space* home, Reflection::VarMap& m) {
+  IntVarImp::spec(Space*, Reflection::VarMap& m) {
     int varIndex = m.index(this);
     if (varIndex != -1)
       return new Reflection::VarArg(varIndex);

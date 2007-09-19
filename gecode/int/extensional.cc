@@ -67,7 +67,7 @@ namespace Gecode {
 
   void
   extensional(Space* home, const IntVarArgs& x, const Table& table, 
-              IntConLevel icl, PropKind pk) {
+              IntConLevel, PropKind pk) {
     using namespace Int;
     if (home->failed()) return;
 
@@ -94,7 +94,7 @@ namespace Gecode {
 
   void
   extensional(Space* home, const IntArgs& c, const IntVarArgs& x, 
-              const Table& table, IntConLevel icl, PropKind pk) {
+              const Table& table, IntConLevel, PropKind pk) {
     using namespace Int;
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");

@@ -378,7 +378,7 @@ namespace Gecode { namespace Int { namespace Linear {
     int mod = MOD_SL | MOD_SU;
 
     do {
-      if (mod & MOD_SL != 0) {
+      if ((mod & MOD_SL) != 0) {
         mod -= MOD_SL;
         // Propagate lower bound for positive Boolean views
         {
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Linear {
           }
         }
       }
-      if (mod & MOD_SU) {
+      if ((mod & MOD_SU) != 0) {
         mod -= MOD_SU;
         // Propagate upper bound for positive Boolean views
         {

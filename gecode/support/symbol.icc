@@ -108,7 +108,7 @@ namespace Gecode { namespace Support {
     /// Concatenate with \a s0, making \a s0 unusable!
     Symbol& operator+(const Symbol& s0);
     /// Make a copy
-    GECODE_SUPPORT_EXPORT Symbol copy(void) const;
+    Symbol copy(void) const;
     /// Hash value according to modulo \a M
     int hash(int m) const;
     /// Print this Symbol to \a os

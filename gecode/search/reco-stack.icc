@@ -171,7 +171,7 @@ namespace Gecode { namespace Search {
     Space* s;             // Last clone
     int l = lc(s);        // Position of last clone
     int n = ds.entries(); // Number of stack entries
-    d = n - l;            // New distance, if no adaptive recomputation
+    d = static_cast<unsigned int>(n - l); // New distance, if no adaptive recomputation
 
     if (constrained) {
       // The space on the stack could be failed now as an additional
@@ -198,7 +198,7 @@ namespace Gecode { namespace Search {
       for (int i=l; i<n; i++)
         commit(s,i);
     } else {
-      int m = l + (d >> 1); // Middle between copy and top
+      int m = l + static_cast<int>(d >> 1); // Middle between copy and top
       int i = l;            // To iterate over all entries
       // Recompute up to middle
       for (; i<m; i++ )
@@ -220,7 +220,7 @@ namespace Gecode { namespace Search {
         stat.clone++;
         ds[i].space(s->clone(true,stat.propagate));
         stat.adapt(ds[i].space());
-        d = n-i;
+        d = static_cast<unsigned int>(n-i);
       }
       // Finally do the remaining commits
       for (; i<n; i++)

@@ -558,7 +558,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Reflection::ActorSpec&
-  LayeredGraph<View>::spec(Space* home, Reflection::VarMap& m) {
+  LayeredGraph<View>::spec(Space*, Reflection::VarMap&) {
     throw Reflection::ReflectionException("Not implemented");
   }
 

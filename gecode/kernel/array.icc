@@ -1154,7 +1154,7 @@ namespace Gecode {
   forceinline T*
   ArgArrayBase<T>::allocate(int n) {
     return (n > onstack_size) ?
-      Memory::bmalloc<T>(n) : &onstack[0];
+      Memory::bmalloc<T>(static_cast<size_t>(n)) : &onstack[0];
   }
 
   template <class T>

@@ -44,7 +44,7 @@ namespace Gecode { namespace Int {
   BoolVarImp BoolVarImp::s_zero(0);
 
   Reflection::Arg*
-  BoolVarImp::spec(Space* home, Reflection::VarMap& m) {
+  BoolVarImp::spec(Space*, Reflection::VarMap& m) {
     int specIndex = m.index(this);
     if (specIndex != -1)
       return new Reflection::VarArg(specIndex);
