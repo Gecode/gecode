@@ -69,7 +69,7 @@ namespace Gecode { namespace Support {
       bool own;
 
       /// Construct from a given Symbol \a s0, which is copied if \a copy is true.
-      SO(const char* s0, bool copy);
+      GECODE_SUPPORT_EXPORT SO(const char* s0, bool copy);
       /// Append \a s0
       GECODE_SUPPORT_EXPORT void append(SO* s0);
       /// Compare with \a other for equality
@@ -115,11 +115,6 @@ namespace Gecode { namespace Support {
     GECODE_SUPPORT_EXPORT std::ostream& print(std::ostream& os) const;    
   };
 
-  forceinline
-  Symbol::SO::SO(const char* s0, bool copy)
-    : use_cnt(0),
-      s(copy ? strdup(s0) : const_cast<char*>(s0)), own(copy) {}
-
   forceinline bool
   Symbol::SO::cancel(void) { return --use_cnt == 0; }
 
@@ -136,7 +131,7 @@ namespace Gecode { namespace Support {
     return h;
   }
 
-  inline unsigned int
+  forceinline unsigned int
   Symbol::SO::size(void) const {
     return strlen(s);
   }

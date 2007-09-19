@@ -182,17 +182,17 @@ namespace Gecode { namespace Reflection {
     int n;
   public:
     /// Constructor
-	IntArrayArgRanges(Reflection::IntArrayArg* a0);
+    IntArrayArgRanges(Reflection::IntArrayArg* a0);
     /// Test whether iterator is still at a valid range
-	bool operator()(void);
+    bool operator()(void);
     /// Move iterator to next range
-	void operator++(void);
+    void operator++(void);
     /// Minimum of current range
-	int min(void) const;
+    int min(void) const;
     /// Maximum of current range
-	int max(void) const;
+    int max(void) const;
     /// Width of current range
-	unsigned int width(void) const;
+    unsigned int width(void) const;
   };
 
   /**
@@ -291,6 +291,8 @@ namespace Gecode { namespace Reflection {
       ~Arguments(void);
     };
     Arguments* _args;
+    /// Resize argument array
+    GECODE_KERNEL_EXPORT void resize(void);
   public:
     /// Construct actor specification with \a name
     ActorSpec(const Support::Symbol& name);
@@ -567,7 +569,8 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline
-  IntArrayArgRanges::IntArrayArgRanges(Reflection::IntArrayArg* a0) : a(a0), n(0) {}
+  IntArrayArgRanges::IntArrayArgRanges(Reflection::IntArrayArg* a0) 
+    : a(a0), n(0) {}
 
   forceinline bool
   IntArrayArgRanges::operator()(void) { return n < a->size(); }
@@ -733,16 +736,8 @@ namespace Gecode { namespace Reflection {
 
   forceinline void
   ActorSpec::add(Arg* arg) {
-    if (_args->n == _args->size) {
-      // resize
-      _args->size = _args->size * 3 / 2;
-      Arg** newargs =
-        static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*_args->size));
-      for (int i=_args->n; i--;)
-        newargs[i] = _args->a[i];
-      Memory::free(_args->a);
-      _args->a = newargs;
-    }
+    if (_args->n == _args->size)
+      resize();
     _args->a[_args->n] = arg;
     _args->n++;
   }
@@ -850,26 +845,26 @@ namespace Reflection {
 
   /// Mangle name with type information
   template <class View0>
-  forceinline Support::Symbol
+  Support::Symbol
   mangle(Support::Symbol name) {
     return name + "<" + TypeOf<View0>::t() + ">";    
   }
   /// Mangle name with type information
   template <class View0, class View1>
-  forceinline Support::Symbol
+  Support::Symbol
   mangle(Support::Symbol name) {
     return name + "<" + TypeOf<View0>::t() + "," + TypeOf<View1>::t() + ">";
   }
   /// Mangle name with type information
   template <class View0, bool b>
-  forceinline Support::Symbol
+  Support::Symbol
   mangle(Support::Symbol name) {
     return name + "<" + TypeOf<View0>::t()
          + "," + (b ? "true" : "false") + ">";
   }
   /// Mangle name with type information
   template <class View0, class View1, class View2>
-  forceinline Support::Symbol
+  Support::Symbol
   mangle(Support::Symbol name) {
     return name + "<" + TypeOf<View0>::t()
          + "," + TypeOf<View1>::t() + ","
@@ -877,7 +872,7 @@ namespace Reflection {
   }
   /// Mangle name with type information
   template <class View0, class View1, bool b>
-  forceinline Support::Symbol
+  Support::Symbol
   mangle(Support::Symbol name) {
     return name + "<" + TypeOf<View0>::t()
          + "," + TypeOf<View1>::t()
@@ -885,7 +880,7 @@ namespace Reflection {
   }
   /// Mangle name with type information
   template <class View0, class View1, class View2, class View3>
-  forceinline Support::Symbol
+  Support::Symbol
   mangle(Support::Symbol name) {
     return name + "<" + TypeOf<View0>::t()
          + "," + TypeOf<View1>::t()
@@ -894,7 +889,7 @@ namespace Reflection {
   }
   /// Mangle name with type information
   template <class View0, class View1, class View2, bool b>
-  forceinline Support::Symbol
+  Support::Symbol
   mangle(Support::Symbol name) {
     return name + "<" + TypeOf<View0>::t()
          + "," + TypeOf<View1>::t()
@@ -903,9 +898,8 @@ namespace Reflection {
   }
   
   template <class P>
-  forceinline
   Registrar<P>::Registrar(void) {
-    // registry.add(P::name(), &P::post);
+    //    registry.add(P::name(), &P::post);
   }
 
 }}

@@ -52,6 +52,10 @@ namespace Gecode { namespace Support {
     return d;
   }
 
+  Symbol::SO::SO(const char* s0, bool copy)
+    : use_cnt(0),
+      s(copy ? strdup(s0) : const_cast<char*>(s0)), own(copy) {}
+
   void
   Symbol::SO::append(SO* so0) {
     if (so0 == NULL)

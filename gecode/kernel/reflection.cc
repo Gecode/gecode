@@ -39,6 +39,17 @@
 
 namespace Gecode { namespace Reflection {
 
+  void
+  ActorSpec::resize(void) {
+    _args->size = _args->size * 3 / 2;
+    Arg** newargs =
+      static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*_args->size));
+    for (int i=_args->n; i--;)
+      newargs[i] = _args->a[i];
+    Memory::free(_args->a);
+    _args->a = newargs;
+  }
+
   // Registry
   
   Registry registry;
