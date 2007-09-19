@@ -111,32 +111,25 @@ namespace Test {
     
   void
   Options::parse(int argc, char* argv[]) {
-    using namespace std;
-    using std::vector;
-    using std::make_pair;
-    using std::pair;
-  
-    static const char* bool2str[] =
-      { "false", "true" };
     int i = 1;
-    const char* e = NULL;
     while (i < argc) {
       if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
         std::cerr << "Options for testing:" << std::endl
                   << "\t-seed (unsigned int or \"time\") default: " 
                   << seed << std::endl
-                  << "\t\tthe seed for the random numbers (an integer),"
+                  << "\t\tseed for random number generator (unsigned int),"
                   << std::endl
-                  << "\t\tor the word time for a random seed based on "
+                  << "\t\tor \"time\" for a random seed based on "
                   << "current time" << std::endl
-                  << "\t-fixprob (unsigned int) default: " <<fixprob<< std::endl
+                  << "\t-fixprob (unsigned int) default: " 
+                  << fixprob << std::endl
                   << "\t\t1/fixprob is the probability of computing a fixpoint"
                   << std::endl
                   << "\t-iter (unsigned int) default: " <<iter<< std::endl
                   << "\t\tthe number of iterations" << std::endl
                   << "\t-test (string) default: (none)" << std::endl
                   << "\t\tsimple pattern for the tests to run" << std::endl
-                  << "\t\tprefixing the pattern by a - negates the pattern"
+                  << "\t\tprefixing the pattern with \"-\" negates the pattern"
                   << std::endl
                   << "\t\tmultiple pattern-options may be given" << std::endl
                   << "\t-log"
@@ -148,32 +141,29 @@ namespace Test {
                   << "\t\twith text as the default style"
                   << std::endl
                   << "\t-stop (boolean) default: "
-                  << bool2str[stop] << std::endl
+                  << (stop ? "true" : "false") << std::endl
                   << "\t\tstop on first error or continue" << std::endl
           ;
         exit(EXIT_SUCCESS);
       } else if (!strcmp(argv[i],"-seed")) {
         if (++i == argc) goto missing;
         if (!strcmp(argv[i],"time")) {
-          seed = static_cast<int>(time(NULL));
+          seed = static_cast<unsigned int>(time(NULL));
         } else {
-          seed = atoi(argv[i]);
+          seed = static_cast<unsigned int>(atoi(argv[i]));
         }
       } else if (!strcmp(argv[i],"-iter")) {
         if (++i == argc) goto missing;
-        iter = atoi(argv[i]);
+        iter = static_cast<unsigned int>(atoi(argv[i]));
       } else if (!strcmp(argv[i],"-fixprob")) {
         if (++i == argc) goto missing;
-        fixprob = atoi(argv[i]);
+        fixprob = static_cast<unsigned int>(atoi(argv[i]));
       } else if (!strcmp(argv[i],"-test")) {
         if (++i == argc) goto missing;
-        int offset = 0;
-        bool negative = false;
-        if (argv[i][0] == '-') {
-          negative = true;
-          offset = 1;
-        }
-        testpat.push_back(make_pair(negative, argv[i] + offset));
+        if (argv[i][0] == '-')
+          testpat.push_back(std::make_pair(true, argv[i] + 1));
+        else
+          testpat.push_back(std::make_pair(false, argv[i]));
       } else if (!strcmp(argv[i],"-log")) {
         log = true;
       } else if (!strcmp(argv[i],"-stop")) {
@@ -188,10 +178,8 @@ namespace Test {
     }
     return;
   missing:
-    e = "missing parameter";
-  error:
     std::cerr << "Erroneous argument (" << argv[i-1] << ")" << std::endl
-              << e << std::endl;
+              << "  missing parameter" << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -226,10 +214,10 @@ main(int argc, char* argv[]) {
       }
       std::cout << t->name() << " ";
       std::cout.flush();
-      for (int i = opt.iter; i--; ) {
+      for (unsigned int i = opt.iter; i--; ) {
         opt.seed = Base::rand.seed();
         if (t->run()) {
-          std::cout << "+";
+          std::cout << '+';
           std::cout.flush();
         } else {
           std::cout << "-" << std::endl;

@@ -56,7 +56,8 @@ namespace Test { namespace Int {
   
   inline
   CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
-    : Assignment(n,d), dsv(new Gecode::IntSetValues[n]) {
+    : Assignment(n,d), 
+      dsv(new Gecode::IntSetValues[static_cast<unsigned int>(n)]) {
     for (int i=n; i--; )
       dsv[i].init(d);
   }

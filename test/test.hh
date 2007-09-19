@@ -98,13 +98,13 @@ namespace Test {
   class Options {
   public:
     /// The random seed to be used
-    int seed;
+    unsigned int seed;
     /// Number of iterations for each test
-    int iter;
+    unsigned int iter;
     /// Default number of iterations
     static const int defiter = 5;
     /// The probability for computing a fixpoint
-    int fixprob;
+    unsigned int fixprob;
     /// Default fixpoint probaibility
     static const int deffixprob = 10;
     /// Whether to stop on an error
