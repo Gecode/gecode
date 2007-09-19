@@ -170,7 +170,7 @@ namespace Test {
       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
                         Gecode::BoolVar b);
       /// Perform test
-      virtual bool run(const Options& opt);
+      virtual bool run(void);
       /// \name Mapping scalar values to strings
       //@{
       /// Map propagation kind to string

@@ -61,7 +61,7 @@ namespace Test {
       /// Construct and register test
       CompleteTest(const std::string& s, int a, const Gecode::IntSet& d);
       /// Perform test
-      virtual bool run(const Options& opt);
+      virtual bool run(void);
       /// Post propagators on variables \a x
       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
     };

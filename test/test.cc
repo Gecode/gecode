@@ -95,13 +95,15 @@ namespace Test {
   
   Gecode::Support::RandomGenerator Base::rand 
   = Gecode::Support::RandomGenerator();
+
+  Options opt;
   
-  void report_error(const Options& o, std::string name) {
-    std::cout << "Options: -seed " << o.seed;
-    if (o.fixprob != o.deffixprob)
-      std::cout << " -fixprob " << o.fixprob;
+  void report_error(std::string name) {
+    std::cout << "Options: -seed " << opt.seed;
+    if (opt.fixprob != opt.deffixprob)
+      std::cout << " -fixprob " << opt.fixprob;
     std::cout << " -test " << name << std::endl;
-    if (o.log)
+    if (opt.log)
       std::cout << olog.str();
   }
 
@@ -202,9 +204,8 @@ main(int argc, char* argv[]) {
   mtrace();
 #endif
 
-  Options o;
-  o.parse(argc, argv);
-  Base::rand.seed(o.seed);
+  opt.parse(argc, argv);
+  Base::rand.seed(opt.seed);
 
   for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
     try {
@@ -225,15 +226,15 @@ main(int argc, char* argv[]) {
       }
       std::cout << t->name() << " ";
       std::cout.flush();
-      for (int i = o.iter; i--; ) {
-        o.seed = Base::rand.seed();
-        if (t->run(o)) {
+      for (int i = opt.iter; i--; ) {
+        opt.seed = Base::rand.seed();
+        if (t->run()) {
           std::cout << "+";
           std::cout.flush();
         } else {
           std::cout << "-" << std::endl;
-          report_error(o, t->name());
-          if (o.stop) 
+          report_error(t->name());
+          if (opt.stop) 
             return 1;
         }
       }
@@ -242,8 +243,8 @@ main(int argc, char* argv[]) {
       std::cout << "Exception in \"Gecode::" << e.what()
                 << "." << std::endl
                 << "Stopping..." << std::endl;
-      report_error(o, t->name());
-      if (o.stop) 
+      report_error(t->name());
+      if (opt.stop) 
         return 1;
     }
   next:;

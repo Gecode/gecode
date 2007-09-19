@@ -94,21 +94,18 @@ namespace Test { namespace Int {
     bool reified;
     /// The test currently run
     Test* test;
-    /// The options
-    const Options opt;
 
   public:
     /**
      * \brief Create test space
      *
      * Creates \a n variables with domain \a d and stores whether
-     * the test is for a refied propagator (\a r), the test itself
-     * (\a t) and the options (\a o). 
+     * the test is for a refied propagator (\a r), and the test itself
+     * (\a t). 
      *
      */
-    TestSpace(int n, Gecode::IntSet& d, bool r,
-              Test* t, const Options& o, bool log=true)
-      : x(this,n,d), b(this,0,1), reified(r), test(t), opt(o) {
+    TestSpace(int n, Gecode::IntSet& d, bool r, Test* t, bool log=true)
+      : x(this,n,d), b(this,0,1), reified(r), test(t) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
         if (reified)
@@ -118,7 +115,7 @@ namespace Test { namespace Int {
     }
     /// Constructor for cloning \a s
     TestSpace(bool share, TestSpace& s) 
-      : Gecode::Space(share,s), reified(s.reified), test(s.test), opt(s.opt) {
+      : Gecode::Space(share,s), reified(s.reified), test(s.test) {
       x.update(this, share, s.x);
       b.update(this, share, s.b);
     }
@@ -189,7 +186,7 @@ namespace Test { namespace Int {
       for (int j=a.size(); j--; ) 
         if (i != j) {
           rel(j, IRT_EQ, a[j]);
-          if (Base::fixpoint(opt) && failed())
+          if (Base::fixpoint() && failed())
             return;
         }
     }
@@ -264,7 +261,7 @@ namespace Test { namespace Int {
           break;
         }
       }
-      if (Base::fixpoint(opt)) {
+      if (Base::fixpoint()) {
         if (failed())
           return true;
         TestSpace* c = static_cast<TestSpace*>(clone());
@@ -325,7 +322,7 @@ if (!(T)) {                                                     \
              Gecode::BoolVar b) {}
 
   bool
-  Test::run(const Options& opt) {
+  Test::run(void) {
     using namespace Gecode;
     const char* test    = "NONE";
     const char* problem = "NONE";
@@ -335,7 +332,7 @@ if (!(T)) {                                                     \
     Assignment& a = *ap;
 
     // Set up space for all solution search
-    TestSpace* search_s = new TestSpace(arity,dom,false,this,opt,false);
+    TestSpace* search_s = new TestSpace(arity,dom,false,this,false);
     post(search_s,search_s->x);
     branch(search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
     DFS<TestSpace> e_s(search_s);
@@ -350,7 +347,7 @@ if (!(T)) {                                                     \
 
       START_TEST("Assignment (after posting)");
       {
-        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        TestSpace* s = new TestSpace(arity,dom,false,this);
         s->post();
         s->assign(a);
         if (sol) {
@@ -363,7 +360,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Partial assignment (after posting)");
       {
-        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        TestSpace* s = new TestSpace(arity,dom,false,this);
         s->post();
         s->assign(a,true);
         (void) s->failed();
@@ -378,7 +375,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Assignment (before posting)");
       {      
-        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        TestSpace* s = new TestSpace(arity,dom,false,this);
         s->assign(a); 
         s->post();
         if (sol) {
@@ -391,7 +388,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Partial assignment (before posting)");
       {      
-        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        TestSpace* s = new TestSpace(arity,dom,false,this);
         s->assign(a,true); 
         s->post();
         (void) s->failed();
@@ -406,7 +403,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Prune");
       {      
-        TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+        TestSpace* s = new TestSpace(arity,dom,false,this);
         s->post();
         while (!s->failed() && !s->assigned())
           if (!s->prune(a)) {
@@ -427,7 +424,7 @@ if (!(T)) {                                                     \
       if (reified) {
         START_TEST("Assignment reified (rewrite after post)");
         {      
-          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
           s->rel(sol);
           s->assign(a);
@@ -437,7 +434,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Assignment reified (immediate rewrite)");
         {        
-          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          TestSpace* s = new TestSpace(arity,dom,true,this);
           s->rel(sol);
           s->post();
           s->assign(a);
@@ -447,7 +444,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Assignment reified (before posting)");
         {        
-          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          TestSpace* s = new TestSpace(arity,dom,true,this);
           s->assign(a); 
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
@@ -462,7 +459,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Assignment reified (after posting)");
         {        
-          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
@@ -477,7 +474,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Prune reified");
         {        
-          TestSpace* s = new TestSpace(arity,dom,true,this,opt);
+          TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
           while (!s->failed() && !s->assigned() && !s->b.assigned())
             if (!s->prune(a)) {
@@ -524,7 +521,7 @@ if (!(T)) {                                                     \
 
     if ((icl == ICL_DOM) && testdomcon) {
       START_TEST("Full domain consistency");
-      TestSpace* s = new TestSpace(arity,dom,false,this,opt);
+      TestSpace* s = new TestSpace(arity,dom,false,this);
       s->post();
       while (!s->failed() && !s->assigned())
         s->prune();

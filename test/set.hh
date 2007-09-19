@@ -220,7 +220,7 @@ namespace Test {
       virtual void post(Gecode::Space* home, Gecode::SetVarArray& x,
                         Gecode::IntVarArray& y, Gecode::BoolVar b) {}
       /// Perform test
-      virtual bool run(const Options& opt);
+      virtual bool run(void);
     };
     //@}
 }}

@@ -118,6 +118,9 @@ namespace Test {
     void parse(int argc, char* argv[]);
   };
   
+  /// The options
+  extern Options opt;
+
   /// Base class for all tests to be run
   class Base {
   private:
@@ -137,9 +140,9 @@ namespace Test {
     /// Return next test
     Base* next(void) const;
     /// Run test
-    virtual bool run(const Options& opt) = 0;
+    virtual bool run(void) = 0;
     /// Throw a coin whether to compute a fixpoint
-    static bool fixpoint(const Options& opt);
+    static bool fixpoint(void);
     /// Destructor
     virtual ~Base(void);
 

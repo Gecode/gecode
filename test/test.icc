@@ -84,7 +84,7 @@ namespace Test {
     return _next;
   }
   inline bool
-  Base::fixpoint(const Options& opt) {
+  Base::fixpoint(void) {
     return rand(opt.fixprob) == 0;
   }
 

@@ -155,7 +155,7 @@ namespace Test { namespace Branch {
   }
 
   bool
-  CompleteTest::run(const Options& opt) {
+  CompleteTest::run(void) {
     using std::map;
     using std::vector;
     using std::string;

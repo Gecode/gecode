@@ -136,8 +136,6 @@ namespace Test { namespace Set {
     bool reified;
     /// The test currently run
     SetTest* test;
-    /// The options
-    const Options opt;
 
   public:
     /**
@@ -145,14 +143,14 @@ namespace Test { namespace Set {
       *
       * Creates \a n set variables with domain \a d,
       * \a i integer variables with domain \a d, and stores whether
-      * the test is for a refied propagator (\a r), the test itself
-      * (\a t) and the options (\a o). 
+      * the test is for a refied propagator (\a r), and the test itself
+      * (\a t).
       * 
       */
     SetTestSpace(int n, Gecode::IntSet& d, int i, bool r, SetTest* t,
-                 const Options& o, bool log=true)
+                 bool log=true)
       : x(this, n, Gecode::IntSet::empty, d), y(this, i, d), withInt(i),
-        b(this, 0, 1), reified(r), test(t), opt(o) {
+        b(this, 0, 1), reified(r), test(t) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
         olog << " y[]=" << y;
@@ -164,14 +162,8 @@ namespace Test { namespace Set {
     
     /// Constructor for cloning \a s
     SetTestSpace(bool share, SetTestSpace& s)
-<<<<<<< .mine
     : Gecode::Space(share,s), withInt(s.withInt),
-      reified(s.reified), test(s.test), 
-=======
-    : Gecode::Space(share,s), 
-      withInt(s.withInt), reified(s.reified), test(s.test), 
->>>>>>> .r5045
-      opt(s.opt) {
+      reified(s.reified), test(s.test) {
       x.update(this, share, s.x);
       y.update(this, share, s.y);
       b.update(this, share, s.b);
@@ -262,12 +254,12 @@ namespace Test { namespace Set {
         CountableSetRanges csv(a.lub, a[i]);
         Gecode::IntSet ai(csv);
         rel(i, Gecode::SRT_EQ, ai);
-        if (Base::fixpoint(opt) && failed())
+        if (Base::fixpoint() && failed())
           return;
       }
       for (int i=withInt; i--; ) {
         rel(i, Gecode::IRT_EQ, a.ints()[i]);
-        if (Base::fixpoint(opt) && failed())
+        if (Base::fixpoint() && failed())
           return;
       }
     }
@@ -284,12 +276,8 @@ namespace Test { namespace Set {
     }
     /// Remove value \a v from the upper bound of \a x[i]
     void removeFromLub(int v, int i, const SetAssignment& a) {
-<<<<<<< .mine
-      Gecode::SetVarUnknownRanges ur(x[i]);
-=======
       using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
->>>>>>> .r5045
       CountableSetRanges air(a.lub, a[i]);
       Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, 
         CountableSetRanges> diff(ur, air);
@@ -300,12 +288,8 @@ namespace Test { namespace Set {
     }
     /// Remove value \a v from the lower bound of \a x[i]
     void addToGlb(int v, int i, const SetAssignment& a) {
-<<<<<<< .mine
-      Gecode::SetVarUnknownRanges ur(x[i]);
-=======
       using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
->>>>>>> .r5045
       CountableSetRanges air(a.lub, a[i]);
       Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, 
         CountableSetRanges> inter(ur, air);
@@ -421,7 +405,7 @@ namespace Test { namespace Set {
           }
           rel(i, Gecode::IRT_NQ, v);
         }
-        return (!Base::fixpoint(opt) || fixprob());
+        return (!Base::fixpoint() || fixprob());
       }
       while (x[i].assigned()) {
         i = (i+1) % x.size();
@@ -479,7 +463,7 @@ namespace Test { namespace Set {
           removeFromLub(v, i, a);
         }      
       }
-      return (!Base::fixpoint(opt) || fixprob());
+      return (!Base::fixpoint() || fixprob());
     }
 
   };
@@ -502,7 +486,7 @@ if (!(T)) {                                                     \
   test = (T);
 
   bool
-  SetTest::run(const Options& opt) {
+  SetTest::run(void) {
     const char* test    = "NONE";
     const char* problem = "NONE";
 
@@ -517,7 +501,7 @@ if (!(T)) {                                                     \
 
       START_TEST("Assignment (after posting)");
       {
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this,opt);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
         s->post();
         s->assign(a);
         if (is_sol) {
@@ -530,7 +514,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Assignment (before posting)");
       {
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this,opt);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
         s->assign(a);
         s->post();
         if (is_sol) {
@@ -543,7 +527,7 @@ if (!(T)) {                                                     \
       }
       if (reified) {
         START_TEST("Assignment reified (before posting)");
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this,opt);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this);
         s->assign(a);
         s->post();
         CHECK_TEST(!s->failed(), "Failed");
@@ -558,7 +542,7 @@ if (!(T)) {                                                     \
       }
       if (reified) {
         START_TEST("Assignment reified (after posting)");
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this,opt);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this);
         s->post();
         s->assign(a);
         CHECK_TEST(!s->failed(), "Failed");
@@ -573,7 +557,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Prune");
       {
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this,opt);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
         s->post();
         while (!s->failed() && !s->assigned())
            if (!s->prune(a)) {
@@ -592,7 +576,7 @@ if (!(T)) {                                                     \
       }
       if (reified) {
         START_TEST("Prune reified");
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this,opt);
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this);
         s->post();
         while (!s->assigned() && !s->b.assigned())
            if (!s->prune(a)) {
