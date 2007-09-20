@@ -43,7 +43,26 @@
 
 namespace Gecode { namespace Support {
 
-  char*
+  forceinline void* 
+  Symbol::SO::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
+  forceinline void
+  Symbol::SO::operator delete(void* p) {
+    Memory::free(p);
+  }
+  forceinline bool
+  Symbol::SO::cancel(void) { return --use_cnt == 0; }
+
+  forceinline void
+  Symbol::SO::subscribe(void) { ++use_cnt; }
+
+  forceinline unsigned int
+  Symbol::SO::size(void) const {
+    return strlen(s);
+  }
+
+  forceinline char*
   Symbol::SO::strdup(const char* s) {
     unsigned int n = strlen(s)+1;
     char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
@@ -52,11 +71,22 @@ namespace Gecode { namespace Support {
     return d;
   }
 
+  forceinline 
   Symbol::SO::SO(const char* s0, bool copy)
     : use_cnt(0),
       s(copy ? strdup(s0) : const_cast<char*>(s0)), own(copy) {}
 
-  void
+  forceinline int
+  Symbol::SO::hash(int m) const {
+    int h = 0;
+    int pos = 0;
+    while (s[pos] != 0) {
+      h = (127 * h + s[pos++]) % m;
+    }
+    return h;
+  }
+
+  forceinline void
   Symbol::SO::append(SO* so0) {
     if (so0 == NULL)
       return;
@@ -73,7 +103,7 @@ namespace Gecode { namespace Support {
     own = true;
   }
 
-  bool
+  forceinline bool
   Symbol::SO::eq(const SO* other) const {
     if (this == other)
       return true;
@@ -82,19 +112,77 @@ namespace Gecode { namespace Support {
     return (!strcmp(s, other->s));
   }
   
-  Symbol::SO*
-  Symbol::SO::copy(void) const {
-    return new SO(s, own);
-  }
-
   std::ostream&
   Symbol::SO::print(std::ostream& os) const {
     return os << s;
   }
 
-  void
-  Symbol::dispose(void) {
-    if (so && so->cancel()) {
+
+  Symbol::Symbol(void) : so(NULL) {}
+
+  Symbol::Symbol(const char* s0, bool copy)
+    : so(new SO(s0, copy)) {
+    so->subscribe();
+  }
+
+  Symbol::Symbol(const Symbol& s0) {
+    so = s0.so;
+    if (so)
+      so->subscribe();
+  }
+
+  const Symbol&
+  Symbol::operator=(const Symbol& s0) {
+    if (this != &s0) {
+      if (so->own)
+        Memory::free(so->s);
+      delete so;
+      so = s0.so;
+      if (so)
+        so->subscribe();
+    }
+    return *this;
+  }
+  
+  bool
+  Symbol::empty(void) const {
+    return so==NULL;
+  }
+  
+  Symbol
+  Symbol::operator+(const Symbol& s0) {
+    if (so == NULL) {
+      so = s0.so;
+      if (so)
+        so->subscribe();
+    } else if (s0.so != NULL) {
+      so->append(s0.so);
+    }
+    return *this;
+  }
+  
+  int
+  Symbol::hash(int m) const {
+    if (so == NULL)
+      return 0;
+    return so->hash(m);
+  }
+
+  bool
+  Symbol::operator==(const Symbol& s0) const {
+    if (so == NULL)
+      return (s0.so == NULL);
+    return so->eq(s0.so);
+  }
+  
+  std::ostream&
+  Symbol::print(std::ostream& os) const {
+    if (so) return so->print(os);
+    return os;
+  }
+
+  Symbol::~Symbol(void) {
+    if ((so != NULL) && so->cancel()) {
       if (so->own)
         Memory::free(so->s);
       delete so;

@@ -46,7 +46,7 @@ namespace Gecode { namespace Support {
   /** \brief Immutable Symbols
     *
     */
-  class Symbol {
+  class GECODE_SUPPORT_EXPORT Symbol {
   private:
     
     /** \brief Reference-counted Symbol objects
@@ -55,7 +55,7 @@ namespace Gecode { namespace Support {
     class SO {
     public:
       /// Duplicate string \a s
-      GECODE_SUPPORT_EXPORT static char* strdup(const char* s);
+      static char* strdup(const char* s);
       /// The reference count
       unsigned int use_cnt;
       /// Reference counting: cancel subscription
@@ -69,19 +69,21 @@ namespace Gecode { namespace Support {
       bool own;
 
       /// Construct from a given Symbol \a s0, which is copied if \a copy is true.
-      GECODE_SUPPORT_EXPORT SO(const char* s0, bool copy);
+      SO(const char* s0, bool copy);
       /// Append \a s0
-      GECODE_SUPPORT_EXPORT void append(SO* s0);
+      void append(SO* s0);
       /// Compare with \a other for equality
-      GECODE_SUPPORT_EXPORT bool eq(const SO* other) const;
+      bool eq(const SO* other) const;
       /// Return size of the Symbol
       unsigned int size(void) const;
-      /// Return a copy
-      GECODE_SUPPORT_EXPORT SO* copy(void) const;
       /// Hash value according to modulo \a M
       int hash(int m) const;
       /// Output to \a os
-      GECODE_SUPPORT_EXPORT std::ostream& print(std::ostream& os) const;
+      std::ostream& print(std::ostream& os) const;
+      /// Allocate memory from heap
+      static void* operator new(size_t s);
+      /// Free memory allocated from heap
+      static void  operator delete(void* p);
     };
 
     /// The Symbol object
@@ -91,127 +93,25 @@ namespace Gecode { namespace Support {
     Symbol(void);
     /// Construct Symbol from \a s0, make a copy if \a copy is true.
     Symbol(const char* s0, bool copy = false);
-    /// Destructor
-    ~Symbol(void);
     /// Copy constructor
     Symbol(const Symbol& s0);
     /// Assignment operator
     const Symbol& operator=(const Symbol& s0);
     /// Deallocate memory
-    GECODE_SUPPORT_EXPORT void dispose(void);
-    
+    void dispose(void);
     /// Test if this Symbol is equal to \a s0
     bool operator==(const Symbol& s0) const;
     /// Return if Symbol is empty
     bool empty(void) const;
-    
     /// Concatenate with \a s0, making \a s0 unusable!
-    Symbol& operator+(const Symbol& s0);
-    /// Make a copy
-    Symbol copy(void) const;
+    Symbol operator+(const Symbol& s0);
     /// Hash value according to modulo \a M
     int hash(int m) const;
     /// Print this Symbol to \a os
-    GECODE_SUPPORT_EXPORT std::ostream& print(std::ostream& os) const;    
+    std::ostream& print(std::ostream& os) const;    
+    /// Destructor
+    ~Symbol(void);
   };
-
-  forceinline bool
-  Symbol::SO::cancel(void) { return --use_cnt == 0; }
-
-  forceinline void
-  Symbol::SO::subscribe(void) { ++use_cnt; }
-
-  forceinline int
-  Symbol::SO::hash(int m) const {
-    int h = 0;
-    int pos = 0;
-    while (s[pos] != 0) {
-      h = (127 * h + s[pos++]) % m;
-    }
-    return h;
-  }
-
-  forceinline unsigned int
-  Symbol::SO::size(void) const {
-    return strlen(s);
-  }
-
-  forceinline
-  Symbol::Symbol(void) : so(NULL) {}
-
-  forceinline
-  Symbol::Symbol(const char* s0, bool copy) {
-    so = new SO(s0, copy);
-    so->subscribe();
-  }
-
-  forceinline
-  Symbol::~Symbol(void) {
-    dispose();
-  }
-
-  forceinline
-  Symbol::Symbol(const Symbol& s0) {
-    so = s0.so;
-    if (so)
-      so->subscribe();
-  }
-
-  forceinline const Symbol&
-  Symbol::operator=(const Symbol& s0) {
-    if (this != &s0) {
-      dispose();
-      so = s0.so;
-      if (so)
-        so->subscribe();
-    }
-    return *this;
-  }
-  
-  forceinline bool
-  Symbol::empty(void) const {
-    return so==NULL;
-  }
-  
-  forceinline Symbol&
-  Symbol::operator+(const Symbol& s0) {
-    if (so == NULL) {
-      so = s0.so;
-      if (so)
-        so->subscribe();
-    } else if (s0.so != NULL) {
-      so->append(s0.so);
-    }
-    return *this;
-  }
-  
-  forceinline Symbol
-  Symbol::copy(void) const {
-    Symbol ret;
-    if (so)
-      ret.so = so->copy();
-    return ret;
-  }
-
-  forceinline int
-  Symbol::hash(int m) const {
-    if (so == NULL)
-      return 0;
-    return so->hash(m);
-  }
-
-  forceinline bool
-  Symbol::operator==(const Symbol& s0) const {
-    if (so == NULL)
-      return (s0.so == NULL);
-    return so->eq(s0.so);
-  }
-  
-  forceinline std::ostream&
-  Symbol::print(std::ostream& os) const {
-    if (so) return so->print(os);
-    return os;
-  }
   
 }}
 
