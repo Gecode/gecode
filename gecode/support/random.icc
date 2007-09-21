@@ -84,7 +84,7 @@ namespace Gecode { namespace Support {
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
   forceinline 
   LinearCongruentialGenerator<m,a,q,r>::
-  LinearCongruentialGenerator(unsigned int _s = 1) {
+  LinearCongruentialGenerator(unsigned int _s) {
     seed(_s);
   }
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
