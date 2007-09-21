@@ -134,9 +134,11 @@ namespace Gecode { namespace Support {
   const Symbol&
   Symbol::operator=(const Symbol& s0) {
     if (this != &s0) {
-      if (so->own)
-        Memory::free(so->s);
-      delete so;
+      if (so && so->cancel()) {
+        if (so->own)
+          Memory::free(so->s);
+        delete so;
+      }
       so = s0.so;
       if (so)
         so->subscribe();
@@ -150,7 +152,19 @@ namespace Gecode { namespace Support {
   }
   
   Symbol
-  Symbol::operator+(const Symbol& s0) {
+  Symbol::copy(void) const {
+    Symbol ret;
+    if (so == NULL) {
+      ret.so = NULL;
+    } else {
+      ret.so = new SO(so->s, true);
+      ret.so->subscribe();
+    }
+    return ret;
+  }
+
+  Symbol&
+  Symbol::operator+=(const Symbol& s0) {
     if (so == NULL) {
       so = s0.so;
       if (so)

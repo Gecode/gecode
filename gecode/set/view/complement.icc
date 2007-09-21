@@ -297,9 +297,10 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline Support::Symbol
   ComplementView<View>::type(void) {
-    return
-      Support::Symbol("Set::ComplementView<") +
-      View::type() + ">";
+    Support::Symbol t("Set::ComplementView<");
+    t += View::type();
+    t += ">";
+    return t;
   }
 
   /*

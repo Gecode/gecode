@@ -846,55 +846,114 @@ namespace Reflection {
   /// Mangle name with type information
   template <class View0>
   Support::Symbol
-  mangle(Support::Symbol name) {
-    return name + "<" + TypeOf<View0>::t() + ">";    
-  }
-  /// Mangle name with type information
-  template <class View0, class View1>
-  Support::Symbol
-  mangle(Support::Symbol name) {
-    return name + "<" + TypeOf<View0>::t() + "," + TypeOf<View1>::t() + ">";
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ">";
+    return mangled;
   }
   /// Mangle name with type information
   template <class View0, bool b>
   Support::Symbol
-  mangle(Support::Symbol name) {
-    return name + "<" + TypeOf<View0>::t()
-         + "," + (b ? "true" : "false") + ">";
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += (b ? "true" : "false");
+    mangled += ">";
+    return mangled;
   }
   /// Mangle name with type information
-  template <class View0, class View1, class View2>
+  template <class View0, class View1>
   Support::Symbol
-  mangle(Support::Symbol name) {
-    return name + "<" + TypeOf<View0>::t()
-         + "," + TypeOf<View1>::t() + ","
-         + TypeOf<View2>::t() + ">";
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ">";
+    return mangled;
   }
   /// Mangle name with type information
   template <class View0, class View1, bool b>
   Support::Symbol
-  mangle(Support::Symbol name) {
-    return name + "<" + TypeOf<View0>::t()
-         + "," + TypeOf<View1>::t()
-         + "," + (b ? "true" : "false") + ">";
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += (b ? "true" : "false");
+    mangled += ">";
+    return mangled;
   }
   /// Mangle name with type information
-  template <class View0, class View1, class View2, class View3>
+  template <class View0, class View1, class View2>
   Support::Symbol
-  mangle(Support::Symbol name) {
-    return name + "<" + TypeOf<View0>::t()
-         + "," + TypeOf<View1>::t()
-         + "," + TypeOf<View2>::t()
-         + "," + TypeOf<View3>::t() + ">";
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ">";
+    return mangled;
   }
   /// Mangle name with type information
   template <class View0, class View1, class View2, bool b>
   Support::Symbol
-  mangle(Support::Symbol name) {
-    return name + "<" + TypeOf<View0>::t()
-         + "," + TypeOf<View1>::t()
-         + "," + TypeOf<View2>::t()
-         + "," + (b ? "true" : "false") + ">";
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += (b ? "true" : "false");
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle name with type information
+  template <class View0, class View1, class View2, class View3>
+  Support::Symbol
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle name with type information
+  template <class View0, class View1, class View2, class View3, bool b>
+  Support::Symbol
+  mangle(const Support::Symbol& name) {
+    Support::Symbol mangled = name.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ",";
+    mangled += (b ? "true" : "false");
+    mangled += ">";
+    return mangled;
   }
   
   template <class P>

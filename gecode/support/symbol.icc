@@ -103,8 +103,10 @@ namespace Gecode { namespace Support {
     bool operator==(const Symbol& s0) const;
     /// Return if Symbol is empty
     bool empty(void) const;
-    /// Concatenate with \a s0, making \a s0 unusable!
-    Symbol operator+(const Symbol& s0);
+    /// Return a copy
+    Symbol copy(void) const;
+    /// Concatenate with \a s
+    Symbol& operator+=(const Symbol& s);
     /// Hash value according to modulo \a M
     int hash(int m) const;
     /// Print this Symbol to \a os

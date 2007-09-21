@@ -262,9 +262,10 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline Support::Symbol
   OffsetSetView<View>::type(void) {
-    return
-      Support::Symbol("Set::OffsetSetView<") +
-      View::type() + ">";
+    Support::Symbol t("Set::OffsetSetView<");
+    t += View::type();
+    t += ">";
+    return t;
   }
 
   /*

@@ -269,17 +269,20 @@ namespace Gecode { namespace Reflection {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n.copy()+Support::Symbol(s.str().c_str(), true));
+      Support::Symbol nn = n.copy();
+      nn += Support::Symbol(s.str().c_str(), true);
+      put(home, x[i], nn);
     }
   }
   template <class Var> void
   VarMap::putArray(Space* home, const VarArray<Var>& x,
                    const Support::Symbol& n) {
-    Support::Symbol nn = n.copy();
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n.copy()+Support::Symbol(s.str().c_str(), true));
+      Support::Symbol nn = n.copy();
+      nn += Support::Symbol(s.str().c_str(), true);
+      put(home, x[i], nn);
     }
   }
 
