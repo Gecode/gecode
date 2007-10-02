@@ -162,13 +162,12 @@ namespace Gecode { namespace Reflection {
     void operator++(void);
   };
 
-
   template <class Var> void
   VarMap::put(Space* home, const Var& x, const Support::Symbol& n) {
     typename VarViewTraits<Var>::View v(x);
     name(v.variable(), n);
     Reflection::Arg* a = v.spec(home, *this);
-    delete a;
+    Arg::dispose(a);
   }
 
   template <class Var> void

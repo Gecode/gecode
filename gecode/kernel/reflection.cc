@@ -186,12 +186,21 @@ namespace Gecode { namespace Reflection {
       throw ReflectionException("not a StringArg");
     return arg1.s;
   }
+
+#if defined(_MSC_VER)
+#define strdup _strdup
+#endif
+
   Arg*
   Arg::newString(const char* s) {
     Arg* ret = new Arg(STRING_ARG);
     ret->arg1.s = strdup(s);
     return ret;    
   }
+
+#if defined(_MSC_VER)
+#undef strdup
+#endif
 
   bool
   Arg::isPair(void) const {
@@ -237,6 +246,11 @@ namespace Gecode { namespace Reflection {
     default:
       break;
     }
+  }
+
+  void
+  Arg::dispose(Arg* a) {
+    delete a;
   }
 
   const Arg*
@@ -324,7 +338,7 @@ namespace Gecode { namespace Reflection {
 
   inline
   VarSpec::Domain::~Domain(void) {
-    delete _dom;    
+    Arg::dispose(_dom);
   }
 
   VarSpec::VarSpec(Support::Symbol vti, Arg* dom) 
@@ -411,7 +425,7 @@ namespace Gecode { namespace Reflection {
   inline
   ActorSpec::Arguments::~Arguments(void) {
     for (int i=n; i--;)
-      delete a[i];
+      Arg::dispose(a[i]);
     Memory::free(a);
   }
 

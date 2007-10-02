@@ -130,10 +130,12 @@ namespace Gecode { namespace Reflection {
     Arg*         second(void) const;
     /// Create new pair argument from \a a and \a b
     static Arg*  newPair(Arg* a, Arg* b);
-    
+    /// Deallocate argument
+    static void dispose(Arg* a);    
+  protected:
     /// Destructor
     ~Arg(void);
-  private:
+    /// Constructor
     Arg(argtype t);
   };
   

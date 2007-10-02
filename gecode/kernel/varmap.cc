@@ -157,7 +157,7 @@ namespace Gecode { namespace Reflection {
 
   void
   VarMapIter::operator++(void) { i++; }  
-  
+
 }}
 
 // STATISTICS: kernel-core
