@@ -199,10 +199,10 @@ namespace Gecode { namespace Int { namespace Element {
   View<VA,VB,VC,pc_ac>::spec(Space* home, Reflection::VarMap& m,
                              const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    Reflection::IntArrayArg* ai = new Reflection::IntArrayArg(n);
+    Reflection::IntArrayArg* ai = Reflection::Arg::newIntArray(n);
     for (int i=n; i--;)
       (*ai)[i] = iv[i].idx;
-    Reflection::ArrayArg* a = new Reflection::ArrayArg(n);
+    Reflection::ArrayArg* a = Reflection::Arg::newArray(n);
     for (int i=n; i--;)
       (*a)[i] = iv[i].view.spec(home, m);
     return s << x0.spec(home, m)

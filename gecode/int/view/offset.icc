@@ -299,8 +299,8 @@ namespace Gecode {
      */
     forceinline Reflection::Arg*
     OffsetView::spec(Space* home, Reflection::VarMap& m) {
-      return new Reflection::PairArg(new Reflection::IntArg(c), 
-                                     view.spec(home, m));
+      return Reflection::Arg::newPair(Reflection::Arg::newInt(c), 
+                                      view.spec(home, m));
     }
     forceinline Support::Symbol
     OffsetView::type(void) {

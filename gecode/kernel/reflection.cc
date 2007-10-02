@@ -103,139 +103,174 @@ namespace Gecode { namespace Reflection {
    * Arguments
    *
    */
+
+  Arg::Arg(argtype t0) : t(t0) {}
   
   bool
-  Arg::isInt(void) {
-    return (dynamic_cast<IntArg*>(this) != NULL);
+  Arg::isInt(void) const {
+    return t == INT_ARG;
   }
   int
-  Arg::toInt(void) {
-    IntArg* ia = dynamic_cast<IntArg*>(this);
-    if (ia == NULL)
+  Arg::toInt(void) const {
+    if (!isInt())
       throw ReflectionException("not an IntArg");
-    return ia->i;
+    return arg1.i;
+  }
+  Arg*
+  Arg::newInt(int i) {
+    Arg* ret = new Arg(INT_ARG);
+    ret->arg1.i = i;
+    return ret;
   }
 
   bool
-  Arg::isVar(void) {
-    return (dynamic_cast<VarArg*>(this) != NULL);
+  Arg::isVar(void) const {
+    return (t == VAR_ARG);
   }
   int
-  Arg::toVar(void) {
-    VarArg* va = dynamic_cast<VarArg*>(this);
-    if (va == NULL)
+  Arg::toVar(void) const {
+    if (!isVar())
       throw ReflectionException("not a VarArg");
-    return va->i;
+    return arg1.i;
+  }
+  Arg*
+  Arg::newVar(int i) {
+    Arg* ret = new Arg(VAR_ARG);
+    ret->arg1.i = i;
+    return ret;
   }
 
   bool
-  Arg::isArray(void) {
-    return (dynamic_cast<ArrayArg*>(this) != NULL);
+  Arg::isArray(void) const {
+    return (t == ARRAY_ARG);
   }
   ArrayArg*
   Arg::toArray(void) {
-    ArrayArg* aa = dynamic_cast<ArrayArg*>(this);
-    if (aa == NULL)
+    if (!isArray())
       throw ReflectionException("not an ArrayArg");
-    return aa;
+    return static_cast<ArrayArg*>(this);
   }
+  ArrayArg*
+  Arg::newArray(int n) {
+    Arg* ret = new Arg(ARRAY_ARG);
+    ret->arg1.i = n;
+    ret->arg2.aa = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
+    return static_cast<ArrayArg*>(ret);
+  }
+
   bool
-  Arg::isIntArray(void) {
-    return (dynamic_cast<IntArrayArg*>(this) != NULL);
+  Arg::isIntArray(void) const {
+    return (t == INT_ARRAY_ARG);
   }
   IntArrayArg*
   Arg::toIntArray(void) {
-    IntArrayArg* aa = dynamic_cast<IntArrayArg*>(this);
-    if (aa == NULL)
+    if (!isIntArray())
       throw ReflectionException("not an IntArrayArg");
-    return aa;
+    return static_cast<IntArrayArg*>(this);
+  }
+  IntArrayArg*
+  Arg::newIntArray(int n) {
+    Arg* ret = new Arg(INT_ARRAY_ARG);
+    ret->arg1.i = n;
+    ret->arg2.ia = static_cast<int*>(Memory::malloc(sizeof(int)*n));
+    return static_cast<IntArrayArg*>(ret);
   }
 
   bool
-  Arg::isString(void) {
-    return (dynamic_cast<StringArg*>(this) != NULL);
+  Arg::isString(void) const {
+    return (t == STRING_ARG);
   }
-  Support::Symbol
-  Arg::toString(void) {
-    StringArg* sa = dynamic_cast<StringArg*>(this);
-    if (sa == NULL)
+  const char*
+  Arg::toString(void) const {
+    if (!isString())
       throw ReflectionException("not a StringArg");
-    return sa->s;
+    return arg1.s;
+  }
+  Arg*
+  Arg::newString(const char* s) {
+    Arg* ret = new Arg(STRING_ARG);
+    ret->arg1.s = strdup(s);
+    return ret;    
   }
 
   bool
-  Arg::isPair(void) {
-    return (dynamic_cast<PairArg*>(this) != NULL);
+  Arg::isPair(void) const {
+    return (t == PAIR_ARG);
   }
   Arg*
-  Arg::first(void) {
-    PairArg* pa = dynamic_cast<PairArg*>(this);
-    if (pa == NULL)
+  Arg::first(void) const {
+    if (!isPair())
       throw ReflectionException("not a PairArg");
-    return pa->a;
+    return arg1.first;
   }
   Arg*
-  Arg::second(void) {
-    PairArg* pa = dynamic_cast<PairArg*>(this);
-    if (pa == NULL)
+  Arg::second(void) const {
+    if (!isPair())
       throw ReflectionException("not a PairArg");
-    return pa->b;
+    return arg2.second;
+  }
+  Arg*
+  Arg::newPair(Arg* a, Arg* b) {
+    Arg* ret = new Arg(PAIR_ARG);
+    ret->arg1.first = a;
+    ret->arg2.second = b;
+    return ret;
   }
 
-  Arg::~Arg(void) {}
-
-  IntArg::IntArg(int i0) : i(i0) {}
+  Arg::~Arg(void) {
+    switch (t) {
+    case ARRAY_ARG:
+      for (int i=arg1.i; i--;)
+        delete arg2.aa[i];
+      Memory::free(arg2.aa);
+      break;
+    case INT_ARRAY_ARG:
+      Memory::free(arg2.aa);
+      break;
+    case PAIR_ARG:
+      delete arg1.first;
+      delete arg2.second;
+      break;
+    case STRING_ARG:
+      ::free(arg1.s);
+      break;
+    default:
+      break;
+    }
+  }
 
   const Arg*
   ArrayArg::operator[](int i) const {
-    if (i >= n)
+    if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
-    return a[i];
+    return arg2.aa[i];
   }
   Arg*&
   ArrayArg::operator[](int i) {
-    if (i >= n)
+    if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
-    return a[i];
+    return arg2.aa[i];
   }
   int
   ArrayArg::size(void) const {
-    return n;
-  }
-
-  ArrayArg::ArrayArg(int n0) : n(n0) {
-    a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
-  }
-
-  ArrayArg::~ArrayArg(void) {
-    for (int i=n; i--;)
-      delete a[i];
-    Memory::free(a);
+    return arg1.i;
   }
 
   const int&
   IntArrayArg::operator[](int i) const {
-    if (i >= n)
+    if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
-    return a[i];
+    return arg2.ia[i];
   }
   int&
   IntArrayArg::operator[](int i) {
-    if (i >= n)
+    if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
-    return a[i];
+    return arg2.ia[i];
   }
   int
   IntArrayArg::size(void) const {
-    return n;
-  }
-
-  IntArrayArg::IntArrayArg(int n0) : n(n0) {
-    a = static_cast<int*>(Memory::malloc(sizeof(int)*n));
-  }
-
-  IntArrayArg::~IntArrayArg(void) {
-    Memory::free(a);
+    return arg1.i;
   }
 
   IntArrayArgRanges::IntArrayArgRanges(Reflection::IntArrayArg* a0) 
@@ -257,17 +292,6 @@ namespace Gecode { namespace Reflection {
   IntArrayArgRanges::width(void) const { 
     return static_cast<unsigned int>(max() - min()) + 1; 
   }
-
-  StringArg::StringArg(const Support::Symbol& s0) : s(s0) {}
-
-  PairArg::PairArg(Arg* a0, Arg* b0) : a(a0), b(b0) {}
-
-  PairArg::~PairArg(void) {
-    delete a;
-    delete b;
-  }
-
-  VarArg::VarArg(int i0) : i(i0) {}
 
   //
   // VarSpec
@@ -464,17 +488,17 @@ namespace Gecode { namespace Reflection {
   
   ActorSpec&
   ActorSpec::operator<<(int i) {
-    return (*this) << new IntArg(i);
+    return (*this) << Arg::newInt(i);
   }
 
   ActorSpec&
   ActorSpec::operator<<(unsigned int i) {
-    return (*this) << new IntArg(static_cast<int>(i));
+    return (*this) << Arg::newInt(static_cast<int>(i));
   }
 
   ActorSpec&
   ActorSpec::operator<<(double i) {
-    return (*this) << new IntArg(static_cast<int>(i));
+    return (*this) << Arg::newInt(static_cast<int>(i));
   }
 
   /*

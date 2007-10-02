@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
              << duration.spec(home, m)
              << end.spec(home, m)
              << height.spec(home, m)
-             << new Reflection::IntArrayArg(limit)
+             << Reflection::Arg::newIntArray(limit)
              << at_most;
   }
 

@@ -198,8 +198,8 @@ namespace Gecode {
       }
       
       if ((*a)[0]->isPair()) {
-        ArrayArg* aa = new ArrayArg(a->size());
-        ArrayArg* ab = new ArrayArg(a->size());
+        ArrayArg* aa = Arg::newArray(a->size());
+        ArrayArg* ab = Arg::newArray(a->size());
         for (int i=0; i<a->size(); i++) {
           (*aa)[i] = (*a)[i]->first();
           (*ab)[i] = (*a)[i]->second();

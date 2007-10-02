@@ -61,7 +61,6 @@ namespace Gecode { namespace Reflection {
   
   class ArrayArg;
   class IntArrayArg;
-  class StringArg;
   
   /**
     * \brief Arguments for actor and variable specifications
@@ -70,59 +69,74 @@ namespace Gecode { namespace Reflection {
     */
   class GECODE_KERNEL_EXPORT Arg {
   public:
+    enum argtype {
+      INT_ARG,VAR_ARG,ARRAY_ARG,
+      INT_ARRAY_ARG,STRING_ARG,PAIR_ARG };
+    const argtype t;
+    union {
+      int i;
+      char* s;
+      Arg* first;
+    } arg1;
+    union {
+      Arg* second;
+      Arg** aa;
+      int* ia;
+    } arg2;
+    
     /// Test if this represents an integer
-    bool         isInt(void);
+    bool         isInt(void) const;
     /// Return the integer that this argument represents
-    int          toInt(void);
+    int          toInt(void) const;
+    /// Create new int argument
+    static Arg*  newInt(int i);
+    
     /// Test if this represents a variable
-    bool         isVar(void);
+    bool         isVar(void) const;
     /// Return the variable number that this argument represents
-    int          toVar(void);
+    int          toVar(void) const;
+    /// Create new variable argument
+    static Arg*  newVar(int i);
+    
     /// Test if this represents an array
-    bool         isArray(void);
+    bool             isArray(void) const;
     /// Return the array that this argument represents
-    ArrayArg*    toArray(void);
+    ArrayArg*        toArray(void);
+    /// Create new array argument with size \a n
+    static ArrayArg* newArray(int n);
+    
     /// Test if this represents an array
-    bool         isIntArray(void);
+    bool                isIntArray(void) const;
     /// Return the array that this argument represents
-    IntArrayArg* toIntArray(void);
+    IntArrayArg*        toIntArray(void);
+    /// Create new integer array argument with size \a n
+    static IntArrayArg* newIntArray(int n);
+    /// Create new integer array argument from given array \a a
+    template <class A>
+    static IntArrayArg* newIntArray(const A& a);
+
     /// Test if this represents a string
-    bool         isString(void);
+    bool         isString(void) const;
     /// Return the string that this argument represents
-    Support::Symbol toString(void);
+    const char*  toString(void) const;
+    /// Create new string argument
+    static Arg*  newString(const char* s);
+    
     /// Test if this represents a pair
-    bool         isPair(void);
+    bool         isPair(void) const;
     /// Return the first component of the pair that this argument represents
-    Arg*         first(void);
+    Arg*         first(void) const;
     /// Return the second component of the pair that this argument represents
-    Arg*         second(void);
+    Arg*         second(void) const;
+    /// Create new pair argument from \a a and \a b
+    static Arg*  newPair(Arg* a, Arg* b);
+    
     /// Destructor
-    virtual ~Arg(void);
+    ~Arg(void);
+  private:
+    Arg(argtype t);
   };
   
-  /**
-    * \brief Integer arguments
-    * \ingroup TaskModelReflect
-    */
-  class GECODE_KERNEL_EXPORT IntArg : public Arg {
-  public:
-    /// Constructor
-    IntArg(int i0);
-    /// The integer represented by this argument
-    int i;
-  };
-
-  /**
-    * \brief %Variable arguments
-    * \ingroup TaskModelReflect
-    */
-  class GECODE_KERNEL_EXPORT VarArg : public Arg {
-  public:
-    /// Constructor
-    VarArg(int i0);
-    /// The variable number represented by this argument
-    int i;
-  };
 
   /**
     * \brief Array arguments
@@ -130,16 +144,9 @@ namespace Gecode { namespace Reflection {
     */
   class GECODE_KERNEL_EXPORT ArrayArg : public Arg {
   private:
-    /// Size of the array
-    int  n;
-    /// The actual array
-    Arg** a;
+    /// Use Arg::newArray instead
+    ArrayArg(void);
   public:
-    /// Constructor
-    ArrayArg(int n0);
-    /// Destructor
-    virtual ~ArrayArg(void);
-    
     const Arg* operator[](int i) const;
     Arg*& operator[](int i);
     int size(void) const;
@@ -151,18 +158,9 @@ namespace Gecode { namespace Reflection {
     */
   class GECODE_KERNEL_EXPORT IntArrayArg : public Arg {
   private:
-    /// Size of the array
-    int  n;
-    /// The actual array
-    int* a;    
+    /// Use Arg::newIntArray instead
+    IntArrayArg(void);
   public:
-    /// Constructor
-    IntArrayArg(int n0);
-    /// Construct from given array \a a
-    template <class A> IntArrayArg(const A& a);
-    /// Destructor
-    virtual ~IntArrayArg(void);
-    
     const int& operator[](int i) const;
     int& operator[](int i);
     int size(void) const;
@@ -193,34 +191,6 @@ namespace Gecode { namespace Reflection {
     int max(void) const;
     /// Width of current range
     unsigned int width(void) const;
-  };
-
-  /**
-    * \brief String arguments
-    * \ingroup TaskModelReflect
-    */
-  class GECODE_KERNEL_EXPORT StringArg : public Arg {
-  public:
-    /// Constructor
-    StringArg(const Support::Symbol& s0);
-    /// The string represented by this argument
-    Support::Symbol s;
-  };
-  
-  /**
-    * \brief Pair arguments
-    * \ingroup TaskModelReflect
-    */
-  class GECODE_KERNEL_EXPORT PairArg : public Arg {
-  public:
-    /// Constructor
-    PairArg(Arg* a0, Arg* b0);
-    /// Destructor
-    virtual ~PairArg(void);
-    /// The first component
-    Arg* a;
-    /// The second component
-    Arg* b;
   };
   
   /**
@@ -395,12 +365,15 @@ namespace Gecode { namespace Reflection {
    * Implementations
    **************************************/
   
-
   template<class A>
-  IntArrayArg::IntArrayArg(const A& a0) : n(a0.size()) {
-    a = static_cast<int*>(Memory::malloc(sizeof(int)*n));
-    for (int i=n; i--;)
-      a[i] = a0[i];
+  IntArrayArg*
+  Arg::newIntArray(const A& a0) {
+    IntArrayArg* ret = static_cast<IntArrayArg*>(new Arg(INT_ARRAY_ARG));
+    ret->arg1.i = a0.size();
+    ret->arg2.ia = static_cast<int*>(Memory::malloc(sizeof(int)*ret->arg1.i));
+    for (int i=ret->arg1.i; i--;)
+      ret->arg2.ia[i] = a0[i];
+    return ret;
   }
 
   

@@ -232,7 +232,7 @@ namespace Gecode {
     //@{
     /// Return specification for this array, using variable map \a m
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
-      return new Reflection::ArrayArg(0);
+      return Reflection::Arg::newArray(0);
     }
     //@}
 

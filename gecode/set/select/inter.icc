@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace Select {
     int count = 0;
     for (IntSetRanges ur(universe); ur(); ++ur)
       count++;
-    Reflection::IntArrayArg* a = new Reflection::IntArrayArg(count*2);
+    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
     count = 0;
     for (IntSetRanges ur(universe); ur(); ++ur) {
       (*a)[count++] = ur.min();

@@ -144,7 +144,7 @@ namespace Gecode { namespace Set {
   SetVarImp::spec(Space* home, Reflection::VarMap& m) {
     int specIndex = m.index(this);
     if (specIndex != -1)
-      return new Reflection::VarArg(specIndex);
+      return Reflection::Arg::newVar(specIndex);
 
     int glbsize = 0;
     {
@@ -152,7 +152,7 @@ namespace Gecode { namespace Set {
       while (lrs()) { glbsize++; ++lrs; }
     }
     
-    Reflection::IntArrayArg* glbdom = new Reflection::IntArrayArg(glbsize*2);
+    Reflection::IntArrayArg* glbdom = Reflection::Arg::newIntArray(glbsize*2);
     BndSetRanges lr(glb);
     for (int count=0; lr(); ++lr) {
       (*glbdom)[count++] = lr.min();
@@ -166,19 +166,20 @@ namespace Gecode { namespace Set {
     }
     
     BndSetRanges ur(lub);
-    Reflection::IntArrayArg* lubdom = new Reflection::IntArrayArg(lubsize*2);
+    Reflection::IntArrayArg* lubdom = Reflection::Arg::newIntArray(lubsize*2);
     for (int count=0; ur(); ++ur) {
       (*lubdom)[count++] = ur.min();
       (*lubdom)[count++] = ur.max();
     }
 
-    Reflection::PairArg* pair =
-      new Reflection::PairArg(new Reflection::PairArg(glbdom, new Reflection::IntArg(_cardMin)),
-                        new Reflection::PairArg(lubdom, new Reflection::IntArg(_cardMax)));
+    Reflection::Arg* pair =
+      Reflection::Arg::newPair(
+        Reflection::Arg::newPair(glbdom, Reflection::Arg::newInt(_cardMin)),
+        Reflection::Arg::newPair(lubdom, Reflection::Arg::newInt(_cardMax)));
 
     Reflection::VarSpec* spec =
       new Reflection::VarSpec(Support::Symbol("VTI_SET"), pair);
-    return (new Reflection::VarArg(m.put(this, spec)));
+    return (Reflection::Arg::newVar(m.put(this, spec)));
   }
 
 }}

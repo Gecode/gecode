@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Dom {
     int count=0;
     for (IntSetRanges isr(is); isr(); ++isr)
       count++;
-    Reflection::IntArrayArg* a = new Reflection::IntArrayArg(count*2);
+    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
     count = 0;
     for (IntSetRanges isr(is); isr(); ++isr) {
       (*a)[count++] = isr.min();

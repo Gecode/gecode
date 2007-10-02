@@ -201,8 +201,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                        const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
 
-    Reflection::IntArrayArg* c_p =
-      new Reflection::IntArrayArg(p.size());
+    Reflection::IntArrayArg* c_p = Reflection::Arg::newIntArray(p.size());
     ViewArray<BoolView> b_p(home, p.size());
     int count = 0;
     for (ScaleBool* f = p.fst(); f != p.lst(); f++) {
@@ -210,8 +209,7 @@ namespace Gecode { namespace Int { namespace Linear {
       b_p[count++]  = f->x;
     }
 
-    Reflection::IntArrayArg* c_n =
-      new Reflection::IntArrayArg(n.size());
+    Reflection::IntArrayArg* c_n = Reflection::Arg::newIntArray(n.size());
     ViewArray<BoolView> b_n(home, n.size());
     count = 0;
     for (ScaleBool* f = n.fst(); f != n.lst(); f++) {

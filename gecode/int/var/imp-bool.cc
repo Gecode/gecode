@@ -47,11 +47,11 @@ namespace Gecode { namespace Int {
   BoolVarImp::spec(Space*, Reflection::VarMap& m) {
     int specIndex = m.index(this);
     if (specIndex != -1)
-      return new Reflection::VarArg(specIndex);
+      return Reflection::Arg::newVar(specIndex);
     Reflection::VarSpec* spec =
       new Reflection::VarSpec(
-        Support::Symbol("VTI_BOOL"), new Reflection::IntArg(dom));
-    return (new Reflection::VarArg(m.put(this, spec)));
+        Support::Symbol("VTI_BOOL"), Reflection::Arg::newInt(dom));
+    return (Reflection::Arg::newVar(m.put(this, spec)));
   }
 
 }}

@@ -78,12 +78,12 @@ namespace Gecode { namespace Set { namespace Select {
   Reflection::ActorSpec&
   SelectUnionConst<SView,RView>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
-    Reflection::ArrayArg* a = new Reflection::ArrayArg(iv.size());
+    Reflection::ArrayArg* a = Reflection::Arg::newArray(iv.size());
     for (int i=0; i<iv.size(); i++) {
       int count = 0;
       for (IntSetRanges isr(iv[i]); isr(); ++isr)
         count++;
-      Reflection::IntArrayArg* aa = new Reflection::IntArrayArg(count*2);
+      Reflection::IntArrayArg* aa = Reflection::Arg::newIntArray(count*2);
       count = 0;
       for (IntSetRanges isr(iv[i]); isr(); ++isr) {
         (*aa)[count++] = isr.min();

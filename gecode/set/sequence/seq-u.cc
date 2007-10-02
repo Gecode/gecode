@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     int count = 0;
     for (BndSetRanges uod(unionOfDets); uod(); ++uod)
       count++;
-    Reflection::IntArrayArg* a = new Reflection::IntArrayArg(count*2);
+    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
     count = 0;
     for (BndSetRanges uod(unionOfDets); uod(); ++uod) {
       (*a)[count++] = uod.min();

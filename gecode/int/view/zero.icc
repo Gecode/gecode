@@ -288,7 +288,7 @@ namespace Gecode {
      */
     forceinline Reflection::Arg*
     ZeroIntView::spec(Space*, Reflection::VarMap&) {
-      return new Reflection::IntArg(0);
+      return Reflection::Arg::newInt(0);
     }
     forceinline Support::Symbol
     ZeroIntView::type(void) {

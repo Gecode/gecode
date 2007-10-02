@@ -256,7 +256,8 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline Reflection::Arg*
   OffsetSetView<View>::spec(Space* home, Reflection::VarMap& m) {
-    return new Reflection::PairArg(new Reflection::IntArg(k), view.spec(home, m));
+    return Reflection::Arg::newPair(Reflection::Arg::newInt(k), 
+                                    view.spec(home, m));
   }
 
   template <class View>

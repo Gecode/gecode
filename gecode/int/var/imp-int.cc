@@ -378,7 +378,7 @@ namespace Gecode { namespace Int {
   IntVarImp::spec(Space*, Reflection::VarMap& m) {
     int varIndex = m.index(this);
     if (varIndex != -1)
-      return new Reflection::VarArg(varIndex);
+      return Reflection::Arg::newVar(varIndex);
 
     int count = 0;
     const RangeList* p=NULL;
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int {
       const RangeList* n = c->next(p); p=c; c=n;
       count++;
     }
-    Reflection::IntArrayArg* args = new Reflection::IntArrayArg(count*2);
+    Reflection::IntArrayArg* args = Reflection::Arg::newIntArray(count*2);
 
     Reflection::VarSpec* spec = new 
       Reflection::VarSpec(Support::Symbol("VTI_INT"), args);
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int {
       const RangeList* n = c->next(p); p=c; c=n;
     }
 
-    return new Reflection::VarArg(m.put(this, spec));
+    return Reflection::Arg::newVar(m.put(this, spec));
   }
 
 

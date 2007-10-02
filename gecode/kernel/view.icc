@@ -621,7 +621,7 @@ namespace Gecode {
   template <class View, unsigned int n>
   forceinline Reflection::Arg*
   ViewTuple<View,n>::spec(Space* home, Reflection::VarMap& vm) {
-    Reflection::ArrayArg* a = new Reflection::ArrayArg(n);
+    Reflection::ArrayArg* a = Reflection::Arg::newArray(n);
     for (int i=n; i--; )
       (*a)[i] = x[i].spec(home, vm);
     return a;

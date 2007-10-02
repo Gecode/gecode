@@ -348,7 +348,8 @@ namespace Gecode {
     template <class Val, class UnsVal>
     forceinline Reflection::Arg*
     ScaleView<Val,UnsVal>::spec(Space* home, Reflection::VarMap& m) {
-      return new Reflection::PairArg(new Reflection::IntArg(a), view.spec(home, m));
+      return Reflection::Arg::newPair(Reflection::Arg::newInt(a), 
+                                      view.spec(home, m));
     }
     template <class Val, class UnsVal>
     forceinline Support::Symbol
