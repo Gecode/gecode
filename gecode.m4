@@ -618,6 +618,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
 
     dnl flags for creating optimized dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD -MD])
+    dnl linker flags
+    AC_GECODE_ADD_TO_LDFLAGS([-link -DEBUG -OPT:REF -OPT:ICF])
   else
     dnl compiler flags for a debug build
     AC_GECODE_ADD_TO_COMPILERFLAGS([-Zi -wd4355])  
@@ -632,8 +634,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     AC_MSG_ERROR([Static linking not supported for Windows/cl.])
   fi
 
-  dnl linker flags
-  AC_GECODE_ADD_TO_LDFLAGS([-link])
   AC_SUBST(DLLPATH, "")
 
   dnl file extensions

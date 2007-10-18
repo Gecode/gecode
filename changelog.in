@@ -69,6 +69,16 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	other
+What:	new
+Rank:	minor
+Thanks:	Filip Konvicka
+[DESCRIPTION]
+On windows with MSVC, always build program database files to ease
+debugging of applications using Gecode (files are also included in
+packages).
+
+[ENTRY]
 Module:	int
 What:	new
 Rank:	minor

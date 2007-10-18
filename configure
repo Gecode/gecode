@@ -7436,6 +7436,7 @@ _ACEOF
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD -MD"
+        LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-link -DEBUG -OPT:REF -OPT:ICF"
   else
         CFLAGS="${CFLAGS}${CFLAGS:+ }-Zi -wd4355"
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi -wd4355"
@@ -7453,7 +7454,6 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
    { (exit 1); exit 1; }; }
   fi
 
-    LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-link"
   DLLPATH=""
 
 
@@ -8804,6 +8804,7 @@ _ACEOF
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD -MD"
+        LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-link -DEBUG -OPT:REF -OPT:ICF"
   else
         CFLAGS="${CFLAGS}${CFLAGS:+ }-Zi -wd4355"
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi -wd4355"
@@ -8821,7 +8822,6 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
    { (exit 1); exit 1; }; }
   fi
 
-    LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-link"
   DLLPATH=""
 
 
