@@ -927,7 +927,7 @@ namespace Gecode {
    * \brief Base-class for branchings
    *
    * Note that branchings cannot be created inside a propagator
-   * (no idea why one would like to that anyway). If you do that
+   * (no idea why one would like to do that anyway). If you do that
    * the system will explode in a truly interesting way.
    *
    * \ingroup TaskActor

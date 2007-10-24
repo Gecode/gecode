@@ -141,7 +141,7 @@ namespace Test {
       /**
        * \brief Constructor
        *
-       * Constructs a test with name \a t and arity \a a and variable
+       * Constructs a test with name \a s and arity \a a and variable
        * domain \a d. Also tests for a reified constraint, 
        * if \a r is true. Consistency level and propagation kind are 
        * maintained for convenience.
@@ -152,7 +152,7 @@ namespace Test {
       /**
        * \brief Constructor
        *
-       * Constructs a test with name \a t and arity \a a and variable
+       * Constructs a test with name \a s and arity \a a and variable
        * domain \a min ... \a max. Also tests for a reified constraint, 
        * if \a r is true. Consistency level and propagation kind are
        * maintained for convenience.
