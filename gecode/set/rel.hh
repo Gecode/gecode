@@ -79,6 +79,9 @@ namespace Gecode { namespace Set { namespace Rel {
     static  ExecStatus post(Space* home,View0 x,View1 y);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -109,6 +112,9 @@ namespace Gecode { namespace Set { namespace Rel {
     static  ExecStatus post(Space* home,View0 x,View1 y);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -145,6 +151,9 @@ namespace Gecode { namespace Set { namespace Rel {
                            Gecode::Int::BoolView b);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -175,6 +184,9 @@ namespace Gecode { namespace Set { namespace Rel {
     static  ExecStatus  post(Space* home,View0,View1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -211,6 +223,9 @@ namespace Gecode { namespace Set { namespace Rel {
                            Gecode::Int::BoolView b);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -241,6 +256,9 @@ namespace Gecode { namespace Set { namespace Rel {
     static  ExecStatus  post(Space* home,View0,View1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -274,6 +292,9 @@ namespace Gecode { namespace Set { namespace Rel {
     static ExecStatus post(Space* home, View0, ConstantView);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };

@@ -85,6 +85,17 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1, class View2>
+  void
+  SuperOfInter<View0,View1,View2>::post(Space* home,
+                                        const Reflection::VarMap& vars,
+                                        const Reflection::ActorSpec& spec) {
+    View0 x0(home, vars, spec[0]);
+    View1 x1(home, vars, spec[1]);
+    View2 x2(home, vars, spec[2]);
+    (void) new (home) SuperOfInter(home,x0,x1,x2);
+  }
+
+  template <class View0, class View1, class View2>
   ExecStatus
   SuperOfInter<View0,View1,View2>::propagate(Space* home) {
 

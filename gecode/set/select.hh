@@ -83,6 +83,9 @@ namespace Gecode { namespace Set { namespace Select {
     virtual ExecStatus  propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
@@ -122,6 +125,9 @@ namespace Gecode { namespace Set { namespace Select {
     virtual ExecStatus  propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
@@ -161,6 +167,9 @@ namespace Gecode { namespace Set { namespace Select {
     virtual ExecStatus  propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /** Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
@@ -198,6 +207,9 @@ namespace Gecode { namespace Set { namespace Select {
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 

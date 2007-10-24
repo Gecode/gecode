@@ -159,6 +159,14 @@ namespace Gecode { namespace Set { namespace Int {
     return s << xs.spec(home, m) << ys.spec(home, m);
   }
 
+  template <class View>
+  void
+  ChannelInt<View>::post(Space* home, const Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    ViewArray<Gecode::Int::IntView> x0(home, vars, spec[0]);
+    ViewArray<View> x1(home, vars, spec[1]);
+    (void) new (home) ChannelInt<View>(home,x0,x1);
+  }
 
 }}}
 

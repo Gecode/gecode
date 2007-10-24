@@ -80,6 +80,16 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
+  void
+  ReSubset<View0,View1>::post(Space* home, const Reflection::VarMap& vars,
+                              const Reflection::ActorSpec& spec) {
+    View0 x0(home, vars, spec[0]);
+    View1 x1(home, vars, spec[1]);
+    Gecode::Int::BoolView b(home, vars, spec[2]);
+    (void) new (home) ReSubset(home,x0,x1,b);
+  }
+
+  template <class View0, class View1>
   size_t
   ReSubset<View0,View1>::dispose(Space* home) {
     assert(!home->failed());

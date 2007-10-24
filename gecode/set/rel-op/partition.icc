@@ -104,6 +104,18 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
+  void
+  PartitionN<View0,View1>::post(Space* home,
+                                const Reflection::VarMap& vars,
+                                const Reflection::ActorSpec& spec) {
+    ViewArray<View0> x0(home, vars, spec[0]);
+    View1 x1(home, vars, spec[1]);
+    Reflection::IntArrayArgRanges zr(spec[2]->toIntArray());
+    IntSet z(zr);
+    (void) new (home) PartitionN(home,x0,z,x1);
+  }
+
+  template <class View0, class View1>
   ExecStatus PartitionN<View0,View1>::post(Space* home, ViewArray<View0>& x,
                                            View1 y) {
     switch (x.size()) {

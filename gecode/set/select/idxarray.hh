@@ -70,6 +70,9 @@ namespace Gecode { namespace Set { namespace Select {
     IdxViewArray(void);
     /// Copy constructor
     IdxViewArray(const IdxViewArray<View>&);
+    /// Initialize from specification \a spec with variables \a vars
+    IdxViewArray(Space* home, const Reflection::VarMap& vars,
+                 Reflection::Arg* spec);
 
     /// Construct an IdxViewArray from \a x
     IdxViewArray(Space* home, const SetVarArgs& x);

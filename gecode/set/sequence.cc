@@ -59,6 +59,11 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Sequence::SeqU::post(home, x,y));
   }
 
+  namespace {
+    GECODE_REGISTER1(Sequence::Seq);
+    GECODE_REGISTER1(Sequence::SeqU);
+  }
+
 }
 
 // STATISTICS: set-post

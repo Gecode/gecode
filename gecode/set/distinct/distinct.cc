@@ -146,6 +146,20 @@ namespace Gecode { namespace Set { namespace Distinct {
     return ES_NOFIX;
   }
 
-}}}
+  void
+  Distinct::post(Space* home, const Reflection::VarMap& vars,
+                 const Reflection::ActorSpec& spec) {
+    ViewArray<SetView> s(home, vars, spec[0]);
+    int c = spec[1]->toInt();
+    (void) new (home) Distinct(home,s,c);
+  }
+
+}}
+
+namespace {
+  GECODE_REGISTER1(Set::Distinct::Distinct);
+}
+
+}
 
 // STATISTICS: set-prop

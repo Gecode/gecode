@@ -54,40 +54,43 @@ namespace Gecode { namespace Set { namespace RelOp {
    * \brief Standard set operation propagators
    */
 
-   /**
-    * \brief %Propagator for the superset of intersection
-    *
-    * Requires \code #include "gecode/set/rel-op.hh" \endcode
-    * \ingroup FuncSetProp
-    */
+  /**
+   * \brief %Propagator for the superset of intersection
+   *
+   * Requires \code #include "gecode/set/rel-op.hh" \endcode
+   * \ingroup FuncSetProp
+   */
   
-   template <class View0, class View1, class View2>
-   class SuperOfInter :
-    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_CLUB> {
-   protected:
-     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_CLUB>::x0;
-     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_CLUB>::x1;
-     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_CLUB>::x2;
-     /// Constructor for cloning \a p
-     SuperOfInter(Space* home, bool share,SuperOfInter& p);
-     /// Constructor for posting
-     SuperOfInter(Space* home,View0, View1, View2);
-   public:
-     /// Copy propagator during cloning
-     virtual Actor*      copy(Space* home,bool);
-     /// Perform propagation
-     virtual ExecStatus  propagate(Space* home);
-     /// Post propagator \f$ z \supseteq x \cap y\f$ 
-     static  ExecStatus  post(Space* home, View0 x, View1 y, View2 z);
-     /// Specification for this propagator
-     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-     /// Name of this propagator
-     static Support::Symbol name(void);
-   };
+  template <class View0, class View1, class View2>
+  class SuperOfInter :
+  public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                              View2,PC_SET_CLUB> {
+  protected:
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                               View2,PC_SET_CLUB>::x0;
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                               View2,PC_SET_CLUB>::x1;
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                               View2,PC_SET_CLUB>::x2;
+    /// Constructor for cloning \a p
+    SuperOfInter(Space* home, bool share,SuperOfInter& p);
+    /// Constructor for posting
+    SuperOfInter(Space* home,View0, View1, View2);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space* home,bool);
+    /// Perform propagation
+    virtual ExecStatus  propagate(Space* home);
+    /// Post propagator \f$ z \supseteq x \cap y\f$ 
+    static  ExecStatus  post(Space* home, View0 x, View1 y, View2 z);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol name(void);
+  };
 
   /**
    * \brief %Propagator for the subset of union
@@ -119,6 +122,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -130,33 +136,36 @@ namespace Gecode { namespace Set { namespace RelOp {
     * Requires \code #include "gecode/set/rel-op.hh" \endcode
     * \ingroup FuncSetProp
     */
-   template <class View0, class View1, class View2>
-   class Intersection:
-    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_ANY> {
-   protected:
-     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_ANY>::x0;
-     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_ANY>::x1;
-     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_ANY>::x2;
-     /// Constructor for cloning \a p
-     Intersection(Space* home, bool share,Intersection& p);
-     /// Constructor for posting
-     Intersection(Space* home,View0,View1,View2);
-   public:
-     /// Copy propagator during cloning
-     virtual Actor*      copy(Space* home,bool);
-     /// Perform propagation
-     virtual ExecStatus  propagate(Space* home);
-     /// Post propagator \f$ z=x\cap y\f$ 
-     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
-     /// Specification for this propagator
-     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-     /// Name of this propagator
-     static Support::Symbol name(void);
-   };
+  template <class View0, class View1, class View2>
+  class Intersection:
+  public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                              View2,PC_SET_ANY> {
+  protected:
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                               View2,PC_SET_ANY>::x0;
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                               View2,PC_SET_ANY>::x1;
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                               View2,PC_SET_ANY>::x2;
+    /// Constructor for cloning \a p
+    Intersection(Space* home, bool share,Intersection& p);
+    /// Constructor for posting
+    Intersection(Space* home,View0,View1,View2);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space* home,bool);
+    /// Perform propagation
+    virtual ExecStatus  propagate(Space* home);
+    /// Post propagator \f$ z=x\cap y\f$ 
+    static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol name(void);
+  };
 
   /**
    * \brief %Propagator for ternary union
@@ -188,6 +197,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -227,6 +239,9 @@ namespace Gecode { namespace Set { namespace RelOp {
                              const IntSet& z,View1 x);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -266,6 +281,9 @@ namespace Gecode { namespace Set { namespace RelOp {
                              const IntSet& z,View1 x);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -306,6 +324,9 @@ namespace Gecode { namespace Set { namespace RelOp {
                              const IntSet& z,View1 x);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };

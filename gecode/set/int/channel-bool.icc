@@ -288,6 +288,15 @@ namespace Gecode { namespace Set { namespace Int {
     return Super::spec(home, m, name());
   }
   
+  template <class View>
+  void
+  ChannelBool<View>::post(Space* home, const Reflection::VarMap& vars,
+                          const Reflection::ActorSpec& spec) {
+    ViewArray<Gecode::Int::BoolView> x0(home, vars, spec[0]);
+    View x1(home, vars, spec[1]);
+    (void) new (home) ChannelBool<View>(home,x0,x1);
+  }
+
 }}}
 
 // STATISTICS: set-prop

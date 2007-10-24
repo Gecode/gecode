@@ -103,6 +103,15 @@ namespace Gecode { namespace Set { namespace Int {
    return ES_FIX;
   }
 
+  template <class View>
+  void
+  Card<View>::post(Space* home, const Reflection::VarMap& vars,
+                   const Reflection::ActorSpec& spec) {
+    View x0(home, vars, spec[0]);
+    Gecode::Int::IntView x1(home, vars, spec[1]);
+    (void) new (home) Card<View>(home,x0,x1);
+  }
+
 }}}
 
 // STATISTICS: set-prop

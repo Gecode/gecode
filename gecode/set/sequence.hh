@@ -76,6 +76,9 @@ namespace Gecode { namespace Set { namespace Sequence {
     static ExecStatus post(Space* home,ViewArray<SetView>);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -106,6 +109,9 @@ namespace Gecode { namespace Set { namespace Sequence {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 

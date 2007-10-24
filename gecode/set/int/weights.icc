@@ -347,6 +347,23 @@ namespace Gecode { namespace Set { namespace Int {
              << y.spec(home, m);
   }
 
+  template <class View>
+  void
+  Weights<View>::post(Space* home, const Reflection::VarMap& vars,
+                      const Reflection::ActorSpec& spec) {
+    Reflection::IntArrayArg* elementsArg = spec[0]->toIntArray();
+    Reflection::IntArrayArg* weightsArg = spec[1]->toIntArray();
+    IntArgs elements(elementsArg->size());
+    IntArgs weights(weightsArg->size());
+    for (int i=elementsArg->size(); i--;)
+      elements[i] = (*elementsArg)[i];
+    for (int i=weightsArg->size(); i--;)
+      weights[i] = (*weightsArg)[i];
+    View x0(home, vars, spec[2]);
+    Gecode::Int::IntView x1(home, vars, spec[3]);
+    (void) new (home) Weights<View>(home,elements,weights,x0,x1);
+  }
+
 }}}
 
 // STATISTICS: set-prop

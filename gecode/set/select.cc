@@ -168,6 +168,21 @@ namespace Gecode {
     Set::Select::IdxViewArray<SetView> iv(home, x);
     GECODE_ES_FAIL(home,Select::SelectDisjoint::post(home,iv,y));
   }
+
+  namespace {
+    GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SingletonView> >);
+    GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SetView> >);
+    GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::SingletonView>);
+    GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::SetView>);
+    GECODE_REGISTER1(Select::SelectDisjoint);
+    GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SingletonView> >);
+    GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SetView> >);
+    GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::SingletonView>);
+    GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::SetView>);
+    GECODE_REGISTER2(Select::SelectIntersection<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SetView> >);
+    GECODE_REGISTER2(Select::SelectIntersection<Gecode::Set::SetView, Gecode::Set::SetView>);
+    
+  }
   
 }
 

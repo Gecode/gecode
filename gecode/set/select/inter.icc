@@ -97,6 +97,19 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
+  void
+  SelectIntersection<SView,RView>::post(Space* home,
+                                        const Reflection::VarMap& vars,
+                                        const Reflection::ActorSpec& spec) {
+    Reflection::IntArrayArgRanges ur(spec[0]->toIntArray());
+    IntSet universe(ur);
+    SView x0(home, vars, spec[1]);
+    IdxViewArray<SView> iv(home, vars, spec[2]);
+    RView x1(home, vars, spec[3]);
+    (void) new (home) SelectIntersection(home, x0, iv, x1, universe);
+  }
+
+  template <class SView, class RView>
   size_t
   SelectIntersection<SView,RView>::dispose(Space* home) {
     unforce(home);

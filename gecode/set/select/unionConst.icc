@@ -98,6 +98,23 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
+  void
+  SelectUnionConst<SView,RView>::post(Space* home,
+                                      const Reflection::VarMap& vars,
+                                      const Reflection::ActorSpec& spec) {
+    SView x0(home, vars, spec[0]);
+    Reflection::ArrayArg* sets = spec[1]->toArray();
+    SharedArray<IntSet> iv(sets->size());
+    for (int i=sets->size(); i--; ) {
+      Reflection::IntArrayArgRanges r((*sets)[i]->toIntArray());
+      IntSet is(r);
+      iv[i] = is;
+    }
+    RView x1(home, vars, spec[2]);
+    (void) new (home) SelectUnionConst(home, x0, iv, x1);
+  }
+
+  template <class SView, class RView>
   size_t
   SelectUnionConst<SView,RView>::dispose(Space* home) {
     unforce(home);

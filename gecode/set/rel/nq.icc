@@ -93,6 +93,15 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
+  void
+  Distinct<View0,View1>::post(Space* home, const Reflection::VarMap& vars,
+                              const Reflection::ActorSpec& spec) {
+    View0 x0(home, vars, spec[0]);
+    View1 x1(home, vars, spec[1]);
+    (void) new (home) Distinct(home,x0,x1);
+  }
+
+  template <class View0, class View1>
   ExecStatus
   Distinct<View0,View1>::propagate(Space* home) {
     assert(x0.assigned()||x1.assigned());
@@ -134,6 +143,15 @@ namespace Gecode { namespace Set { namespace Rel {
     Reflection::ActorSpec& s =
       UnaryPropagator<View0,PC_SET_ANY>::spec(home, m, name());
     return s << y.spec(home, m);
+  }
+
+  template <class View0>
+  void
+  DistinctDoit<View0>::post(Space* home, const Reflection::VarMap& vars,
+                            const Reflection::ActorSpec& spec) {
+    View0 x0(home, vars, spec[0]);
+    ConstantView x1(home, vars, spec[1]);
+    (void) new (home) DistinctDoit(home,x0,x1);
   }
 
   template <class View0>

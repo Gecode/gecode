@@ -156,10 +156,20 @@ namespace Gecode {
     if (home->failed()) return;
     Set::SetView xv(x);
     Int::IntView yv(y);
-    GECODE_ES_FAIL(home,Set::Int::Weights<Set::SetView>::post(home,elements,weights,x,y));
+    GECODE_ES_FAIL(home,Set::Int::Weights<Set::SetView>::post(home,elements,
+                                                              weights,x,y));
+  }
+
+  namespace {
+    GECODE_REGISTER1(Set::Int::MinElement<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::MaxElement<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::Card<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::Match<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::ChannelInt<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::ChannelBool<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::Weights<Set::SetView>);
   }
 
 }
 
 // STATISTICS: set-post
-

@@ -51,6 +51,13 @@ namespace Gecode { namespace Set {
     : DerivedViewBase<View>(s0) {}
 
   template <class View>
+  forceinline
+  ComplementView<View>::ComplementView(Space* home,
+                                       const Reflection::VarMap& vars,
+                                       Reflection::Arg* arg)
+  : DerivedViewBase<View>(View(home, vars, arg)) {}
+
+  template <class View>
   forceinline ModEvent
   ComplementView<View>::me_negateset(ModEvent me) {
     switch(me) {

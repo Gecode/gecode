@@ -160,6 +160,37 @@ namespace Gecode {
     }
   }
 
+  namespace {
+
+    GECODE_REGISTER3(RelOp::Union<SingletonView, SingletonView, SetView>);
+    GECODE_REGISTER3(RelOp::Union<SetView, SetView, ComplementView<SetView> >);
+    GECODE_REGISTER3(RelOp::Union<SetView, SetView, SetView>);
+
+    GECODE_REGISTER2(Set::RelOp::UnionN<SetView,SetView>);
+    GECODE_REGISTER2(Set::RelOp::UnionN<SingletonView,SetView>);
+
+    GECODE_REGISTER3(RelOp::Intersection<SingletonView, SingletonView, SetView>);
+    GECODE_REGISTER3(RelOp::Intersection<SetView, ComplementView<SetView>, SetView>);
+    GECODE_REGISTER3(RelOp::Intersection<SetView, ComplementView<SetView>, ComplementView<SetView> >);
+    GECODE_REGISTER3(RelOp::Intersection<SetView, SetView, ComplementView<SetView> >);
+    GECODE_REGISTER3(RelOp::Intersection<SetView, SetView, SetView>);
+
+    GECODE_REGISTER2(Set::RelOp::IntersectionN<SetView,SetView>);
+    GECODE_REGISTER2(Set::RelOp::IntersectionN<SingletonView,SetView>);
+
+    GECODE_REGISTER2(Set::RelOp::PartitionN<SetView,SetView>);
+    GECODE_REGISTER2(Set::RelOp::PartitionN<SingletonView,SetView>);
+
+    GECODE_REGISTER3(RelOp::SubOfUnion<SetView, SetView, ConstantView>);
+    GECODE_REGISTER3(RelOp::SubOfUnion<SetView, SetView, SetView>);
+
+    GECODE_REGISTER3(RelOp::SuperOfInter<SetView, SingletonView, EmptyView>);
+    GECODE_REGISTER3(RelOp::SuperOfInter<SetView, ComplementView<SetView>, SetView>);
+    GECODE_REGISTER3(RelOp::SuperOfInter<SetView, SetView, EmptyView>);
+    GECODE_REGISTER3(RelOp::SuperOfInter<SetView, SetView, SetView>);
+
+  }
+
 }
 
 // STATISTICS: set-post

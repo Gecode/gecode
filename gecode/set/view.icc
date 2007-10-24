@@ -71,6 +71,9 @@ namespace Gecode {
       SetView(const SetVar& x);
       /// Initialize from set variable \a x
       SetView(SetVarImp* x);
+      /// Initialize from specification
+      SetView(Space* home, const Reflection::VarMap& vars,
+              Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -243,6 +246,9 @@ namespace Gecode {
       ConstantView(void);
       /// Construct with \a s as the domain
       ConstantView(Space* home, const IntSet& s);
+      /// Initialize from specification
+      ConstantView(Space* home, const Reflection::VarMap& vars,
+                   Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -423,6 +429,9 @@ namespace Gecode {
       //@{
       /// Default constructor
       EmptyView(void);
+      /// Initialize from specification
+      EmptyView(Space* home, const Reflection::VarMap& vars,
+                Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -605,6 +614,9 @@ namespace Gecode {
       //@{
       /// Default constructor
       UniverseView(void);
+      /// Initialize from specification
+      UniverseView(Space* home, const Reflection::VarMap& vars,
+                   Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -801,6 +813,9 @@ namespace Gecode {
       SingletonView(void);
       /// Initialize with integer view \a x
       SingletonView(Gecode::Int::IntView& x);
+      /// Initialize from specification
+      SingletonView(Space* home, const Reflection::VarMap& vars,
+                    Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -997,6 +1012,9 @@ namespace Gecode {
       ComplementView(void);
       /// Initialize with set view x
       ComplementView(View& x);
+      /// Initialize from specification
+      ComplementView(Space* home, const Reflection::VarMap& vars,
+                     Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -1245,6 +1263,9 @@ namespace Gecode {
       OffsetSetView(void);
       /// Initialize with set view \a x and offset \a k0
       OffsetSetView(View& x, int k0);
+      /// Initialize from specification
+      OffsetSetView(Space* home, const Reflection::VarMap& vars,
+                    Reflection::Arg* arg);
       //@}
 
       /// \name Value access

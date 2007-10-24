@@ -76,6 +76,16 @@ namespace Gecode { namespace Set { namespace Sequence {
     return s << a;
   }
 
+  void
+  SeqU::post(Space* home, const Reflection::VarMap& vars,
+             const Reflection::ActorSpec& spec) {
+    ViewArray<SetView> x0(home, vars, spec[0]);
+    SetView x1(home, vars, spec[1]);
+    Reflection::IntArrayArgRanges r(spec[2]->toIntArray());
+    SeqU* sequprop = new (home) SeqU(home, x0, x1);
+    sequprop->unionOfDets.includeI(home, r);
+  }
+
   ExecStatus
   SeqU::propagateSeqUnion(Space* home,
                           bool& modified, ViewArray<SetView>& x,

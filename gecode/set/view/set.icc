@@ -56,6 +56,11 @@ namespace Gecode { namespace Set {
   forceinline
   SetView::SetView(SetVarImp* y)
     : VariableViewBase<SetVarImp>(y) {}
+  forceinline
+  SetView::SetView(Space* /*home*/, const Reflection::VarMap& vars,
+                   Reflection::Arg* arg)
+  : VariableViewBase<SetVarImp>(
+      static_cast<SetVarImp*>(vars.var(arg->toVar()))) {}
 
 
   /*

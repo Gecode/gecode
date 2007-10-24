@@ -51,6 +51,14 @@ namespace Gecode { namespace Set {
     : DerivedViewBase<View>(s0), k(k0) {}
 
   template <class View>
+  forceinline
+  OffsetSetView<View>::OffsetSetView(Space* home,
+                                     const Reflection::VarMap& vars,
+                                     Reflection::Arg* arg)
+  : DerivedViewBase<View>(View(home, vars, arg->second())), 
+    k(arg->first()->toInt()) {}
+
+  template <class View>
   forceinline bool
   OffsetSetView<View>::assigned(void) const { return view.assigned(); }
 

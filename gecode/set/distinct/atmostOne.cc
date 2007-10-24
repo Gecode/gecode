@@ -172,6 +172,20 @@ namespace Gecode { namespace Set { namespace Distinct {
     return ES_NOFIX;
   }
 
-}}}
+  void
+  AtmostOne::post(Space* home, const Reflection::VarMap& vars,
+                  const Reflection::ActorSpec& spec) {
+    ViewArray<SetView> s(home, vars, spec[0]);
+    int c = spec[1]->toInt();
+    (void) new (home) AtmostOne(home,s,c);
+  }
+
+}}
+
+namespace {
+  GECODE_REGISTER1(Set::Distinct::AtmostOne);
+}
+
+}
 
 // STATISTICS: set-prop

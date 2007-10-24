@@ -88,6 +88,17 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1, class View2>
+  void
+  Union<View0,View1,View2>::post(Space* home,
+                                 const Reflection::VarMap& vars,
+                                 const Reflection::ActorSpec& spec) {
+    View0 x0(home, vars, spec[0]);
+    View1 x1(home, vars, spec[1]);
+    View2 x2(home, vars, spec[2]);
+    (void) new (home) Union(home,x0,x1,x2);
+  }
+
+  template <class View0, class View1, class View2>
   ExecStatus
   Union<View0,View1,View2>::propagate(Space* home) {
     // This propagator implements the constraint
@@ -302,6 +313,18 @@ namespace Gecode { namespace Set { namespace RelOp {
       (*a)[count++] = uod.max();
     }
     return s << a;
+  }
+
+  template <class View0, class View1>
+  void
+  UnionN<View0,View1>::post(Space* home,
+                            const Reflection::VarMap& vars,
+                            const Reflection::ActorSpec& spec) {
+    ViewArray<View0> x0(home, vars, spec[0]);
+    View1 x1(home, vars, spec[1]);
+    Reflection::IntArrayArgRanges zr(spec[2]->toIntArray());
+    IntSet z(zr);
+    (void) new (home) UnionN(home,x0,z,x1);
   }
 
   template <class View0, class View1>

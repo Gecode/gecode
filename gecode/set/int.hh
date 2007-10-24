@@ -75,6 +75,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -105,6 +108,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -135,6 +141,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -173,6 +182,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -222,6 +234,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -301,6 +316,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -345,6 +363,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
   };
@@ -361,4 +382,3 @@ namespace Gecode { namespace Set { namespace Int {
 #endif
 
 // STATISTICS: set-prop
-

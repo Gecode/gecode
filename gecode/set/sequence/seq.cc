@@ -65,6 +65,13 @@ namespace Gecode { namespace Set { namespace Sequence {
     return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, name());
   }
 
+  void
+  Seq::post(Space* home, const Reflection::VarMap& vars,
+             const Reflection::ActorSpec& spec) {
+    ViewArray<SetView> x0(home, vars, spec[0]);
+    (void) new (home) Seq(home, x0);
+  }
+
   ExecStatus
   Seq::propagate(Space* home) {
     bool modified = false;

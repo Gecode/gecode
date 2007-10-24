@@ -59,6 +59,14 @@ namespace Gecode { namespace Set { namespace Select {
     return s << iv.spec(home, m) << x1.spec(home, m);
   }
 
+  void
+  SelectDisjoint::post(Space* home, const Reflection::VarMap& vars,
+                       const Reflection::ActorSpec& spec) {
+    IdxViewArray<SetView> iv(home, vars, spec[0]);
+    SetView x1(home, vars, spec[1]);
+    (void) new (home) SelectDisjoint(home, iv, x1);
+  }
+
   size_t
   SelectDisjoint::dispose(Space* home) {
     assert(!home->failed());

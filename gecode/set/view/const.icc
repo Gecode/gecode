@@ -99,6 +99,15 @@ namespace Gecode { namespace Set {
     }
   }
 
+  forceinline
+  ConstantView::ConstantView(Space* home,
+                             const Reflection::VarMap& vars,
+                             Reflection::Arg* arg) {
+    Reflection::IntArrayArgRanges r(arg->toIntArray());      
+    IntSet is(r);
+    ConstantView(home, is);
+  }
+
   forceinline bool
   ConstantView::assigned(void) const { return true; }
 
@@ -333,6 +342,11 @@ namespace Gecode { namespace Set {
   forceinline
   EmptyView::EmptyView(void) {}
 
+  forceinline
+  EmptyView::EmptyView(Space* home,
+                       const Reflection::VarMap& vars,
+                       Reflection::Arg* arg) {}
+
 
   forceinline bool
   EmptyView::assigned(void) const { return true; }
@@ -504,6 +518,11 @@ namespace Gecode { namespace Set {
 
   forceinline
   UniverseView::UniverseView(void) {}
+
+  forceinline
+  UniverseView::UniverseView(Space* home,
+                             const Reflection::VarMap& vars,
+                             Reflection::Arg* arg) {}
 
   forceinline bool
   UniverseView::assigned(void) const { return true; }

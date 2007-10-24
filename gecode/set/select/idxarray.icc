@@ -126,10 +126,29 @@ namespace Gecode { namespace Set { namespace Select {
   IdxViewArray<View>::spec(Space* home, Reflection::VarMap& m) {
     if (n == 0)
       return NULL;
+    Reflection::IntArrayArg* is = Reflection::Arg::newIntArray(n);
+    for (int i = 0; i<n; i++)
+      (*is)[i] = xs[i].idx;
     Reflection::ArrayArg* s = Reflection::Arg::newArray(n);
     for (int i = 0; i<n; i++)
       (*s)[i] = xs[i].var.spec(home, m);
-    return s;
+    return Reflection::Arg::newPair(is,s);
+  }
+
+  template <class View>
+  IdxViewArray<View>::IdxViewArray(Space* home,
+                                   const Reflection::VarMap& vars,
+                                   Reflection::Arg* spec) : xs(NULL) {
+    Reflection::IntArrayArg* is = spec->first()->toIntArray();
+    Reflection::ArrayArg* s = spec->second()->toArray();
+    n = is->size();
+    if (n>0) {
+      xs = IdxView<View>::allocate(home, n);
+      for (int i = n; i--; ) {
+        View xavv(home, vars, (*s)[i]);
+        xs[i].idx = (*is)[i]; xs[i].var = xavv;
+      }
+    }                                     
   }
 
 }}}

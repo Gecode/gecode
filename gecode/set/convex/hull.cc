@@ -120,6 +120,20 @@ namespace Gecode { namespace Set { namespace Convex {
     return ES_NOFIX;
   }
 
-}}}
+  void
+  ConvexHull::post(Space* home, const Reflection::VarMap& vars,
+               const Reflection::ActorSpec& spec) {
+    SetView s0(home, vars, spec[0]);
+    SetView s1(home, vars, spec[1]);
+    (void) new (home) ConvexHull(home,s0,s1);
+  }
+
+}}
+
+namespace {
+  GECODE_REGISTER1(Set::Convex::ConvexHull);
+}
+
+}
 
 // STATISTICS: set-prop
