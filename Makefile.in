@@ -143,6 +143,7 @@ BUDDYHDR0 = \
 	bddtree.h \
 	bvec.h \
 	cache.h \
+	config.h \
 	fdd.h \
 	imatrix.h \
 	kernel.h \
@@ -276,7 +277,7 @@ INTHDR0 = \
 	linear/bool-int.icc linear/bool-view.icc linear/bool-scale.icc \
 	extensional/dfa.icc extensional/layered-graph.icc \
 	extensional/table.icc extensional/base.icc \
-	extensional/basic.icc extensional/incremental.icc \
+	extensional/basic.icc extensional/incremental.icc extensional/bitset.hh \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sorted/matching.icc sorted/narrowing.icc \
 	sorted/order.icc sorted/propagate.icc sorted/sortsup.icc \
@@ -343,7 +344,7 @@ SETVARIMP = \
 SETHDR0 =								     \
 	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
 	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
-	select/idxarray.hh						     \
+	int/channel-bool.icc select/idxarray.hh						     \
 	select/idxarray.icc select/inter.icc select/union.icc \
 	select/unionConst.icc \
 	select/disjoint.icc array.icc var/imp.icc var/integerset.icc	     \
@@ -364,8 +365,8 @@ SETHDR0 =								     \
 	projectors.hh projectors-compiler.hh				     \
 	projectors/projector.icc					     \
 	projectors/projector-set.icc projectors/set-expr.icc		     \
-	projectors/propagator/nary.icc					     \
-	projectors/propagator/re-nary.icc				     \
+	projectors/propagator.hh projectors/propagator/nary.icc		     \
+	projectors/propagator/card.icc projectors/propagator/re-nary.icc     \
 	projectors/formula.icc
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
@@ -1062,6 +1063,31 @@ Makefile: $(top_srcdir)/Makefile.in config.status
 	./config.status --file $@:$<
 doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
 	./config.status --file $@:$<
+
+#
+# Source distribution
+#
+
+DIST_FILES=configure.ac configure Makefile.in gecode.m4 \
+	doxygen.conf.in doxygen.hh.in misc/gecode.pc.in misc/gecode-search.pc.in \
+	misc/gecode-minimodel.pc.in gecode/config.hh.in \
+	gecode/int/var-imp-int.vis \
+	gecode/int/var-imp-bool.vis \
+	gecode/set/var-imp.vis \
+	gecode/cpltset/var-imp.vis \
+	examples/support.hh \
+	examples/support/example.icc \
+	examples/support/options.icc
+
+distdir:
+	rm -rf gecode-$(VERSION) && \
+	mkdir -p gecode-$(VERSION) && \
+	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLSRC) $(DIST_FILES)) | \
+	  (cd gecode-$(VERSION) && tar xf -)
+
+dist: distdir
+	tar chof - gecode-$(VERSION) | gzip -c >gecode-$(VERSION).tar.gz
+	rm -rf gecode-$(VERSION)
 
 #
 # Documentation
