@@ -63,25 +63,33 @@
 #
 
 [RELEASE]
-Version:	2.0.0
-Date:		unknown
+Version: 2.0.0
+Date:    unknown
 [DESCRIPTION]
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
-Module:	other
-What:	new
-Rank:	minor
-Thanks:	Filip Konvicka
+Module: other
+What:   new
+Rank:   minor
+Thanks: Martin Mann
+[DESCRIPTION]
+Added dist and distdir targets for creating a source distribution.
+
+[ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks: Filip Konvicka
 [DESCRIPTION]
 On windows with MSVC, always build program database files to ease
 debugging of applications using Gecode (files are also included in
 packages).
 
 [ENTRY]
-Module:	int
-What:	new
-Rank:	minor
+Module: int
+What:   new
+Rank:   minor
 [DESCRIPTION]
 Added new variable selection based on largest or smallest
 quotient of size and degree.
