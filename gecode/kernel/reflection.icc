@@ -235,6 +235,8 @@ namespace Gecode { namespace Reflection {
     Arguments* _args;
     /// Resize argument array
     void resize(void);
+    friend class SpecIter;
+    void queue(int q);
   public:
     /// Construct actor specification with \a name
     ActorSpec(const Support::Symbol& name);
@@ -255,6 +257,8 @@ namespace Gecode { namespace Reflection {
     Support::Symbol name(void) const;
     /// Return if name is not empty
     bool hasName(void) const;
+    /// Return queue where the actor is currently schedules
+    int queue(void) const;
 
     /// Add \a a to specification \a spec
     ActorSpec& operator<<(Arg* a);
@@ -283,6 +287,8 @@ namespace Gecode { namespace Reflection {
     VarMap*    m;
     /// The space for which to iterate the actors
     Space*     s;
+    /// The queue to iterate
+    int        queue;
     /// The current actor
     ActorLink *cur;
     /// The current ActorSpec

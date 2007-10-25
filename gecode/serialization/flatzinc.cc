@@ -262,10 +262,6 @@ namespace Gecode {
   }
   
   void emitFlatzinc(Space* home, VarMap& vm, ostream& os) {
-    if (home->status() == SS_FAILED)
-      throw Exception("Serialization",
-        "Attempt to serialize failed space");
-
     VarMapIter vmi(vm);
     int varCount = 0;
     for (SpecIter si = home->actorSpecs(vm); si(); ++si) {

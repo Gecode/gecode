@@ -403,6 +403,8 @@ namespace Gecode { namespace Reflection {
     int   n;
     /// The arguments of this actor
     Arg** a;
+    /// The queue where the actor is schedules
+    int queue;
     /// Reference counter
     int r;
     /// Construct empty arguments
@@ -481,6 +483,11 @@ namespace Gecode { namespace Reflection {
     return !_args->_name.empty();
   }
 
+  int
+  ActorSpec::queue(void) const {
+    return _args->queue;
+  }
+
   ActorSpec::~ActorSpec(void) {
     if (--_args->r == 0)
       delete _args;
@@ -515,6 +522,11 @@ namespace Gecode { namespace Reflection {
     return (*this) << Arg::newInt(static_cast<int>(i));
   }
 
+  void
+  ActorSpec::queue(int q) {
+    _args->queue = q;
+  }
+
   /*
    * Specification iterator
    *
@@ -525,19 +537,32 @@ namespace Gecode { namespace Reflection {
     return cur != &s->a_actors;
   }
 
-  SpecIter::SpecIter(Space* s0, VarMap& m0) : m(&m0), s(s0),
-    curSpec(NULL) {
-    cur = s->a_actors.next();
-    if ((*this)())
-      curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
-  }
-
   void
   SpecIter::operator++(void) {
     delete curSpec;
     cur = cur->next();
-    if ((*this)())
+    while (queue > 0 && cur == &s->pool[queue]) {
+      queue--;
+      cur = &s->pool[queue];
+      cur = cur->next();
+    }
+    if (queue == 0 && cur == &s->pool[0]) {
+      queue--;
+      cur = s->a_actors.next();
+    }
+    if ((*this)()) {
       curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
+      curSpec->queue(queue);
+    }
+  }
+
+  SpecIter::SpecIter(Space* s0, VarMap& m0)
+  : m(&m0), s(s0), queue(s0->pool_next), curSpec(NULL) {
+    if (queue >= 0)
+      cur = &s->pool[queue];
+    else
+      cur = &s->a_actors;
+    ++(*this);
   }
 
   ActorSpec&
