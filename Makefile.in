@@ -1069,7 +1069,9 @@ doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
 #
 
 DIST_FILES=configure.ac configure Makefile.in gecode.m4 \
-	doxygen.conf.in doxygen.hh.in misc/gecode.pc.in misc/gecode-search.pc.in \
+	doxygen.conf.in doxygen.hh.in misc/gecode.pc.in \
+	changelog.in \
+	misc/gecode-search.pc.in \
 	misc/gecode-minimodel.pc.in gecode/config.hh.in \
 	gecode/int/var-imp-int.vis \
 	gecode/int/var-imp-bool.vis \
@@ -1077,12 +1079,20 @@ DIST_FILES=configure.ac configure Makefile.in gecode.m4 \
 	gecode/cpltset/var-imp.vis \
 	examples/support.hh \
 	examples/support/example.icc \
-	examples/support/options.icc
+	examples/support/options.icc \
+	misc/doxygen/back.png misc/doxygen/gecode-logo-100.png \
+	misc/doxygen/stylesheet.css misc/doxygen/footer.html \
+	misc/doxygen/header.html misc/genlicense.perl \
+	misc/genstatistics.perl misc/getrevision.perl \
+	misc/genchangelog.perl misc/genvarimp.perl \
+	misc/gentxtchangelog.perl misc/makedepend.perl \
+	misc/AppleHelpbookInfo.plist
 
 distdir:
 	rm -rf gecode-$(VERSION) && \
 	mkdir -p gecode-$(VERSION) && \
-	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLSRC) $(DIST_FILES)) | \
+	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLSRC) $(TESTSRC) \ 
+	  $(TESTHDR) $(DIST_FILES)) | \
 	  (cd gecode-$(VERSION) && tar xf -)
 
 dist: distdir

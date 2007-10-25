@@ -124,3 +124,5 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
 }}}
+
+// STATISTICS: set-prop

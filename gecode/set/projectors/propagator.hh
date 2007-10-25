@@ -161,3 +161,5 @@ namespace Gecode { namespace Set { namespace Projection {
 #include "gecode/set/projectors/propagator/card.icc"
   
 #endif
+
+// STATISTICS: set-prop
