@@ -1068,9 +1068,10 @@ doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
 # Source distribution
 #
 
-DIST_FILES=configure.ac configure Makefile.in gecode.m4 \
+DIST_FILES= \
+	configure.ac configure Makefile.in gecode.m4 \
 	doxygen.conf.in doxygen.hh.in misc/gecode.pc.in \
-	changelog.in \
+	changelog.in LICENSE \
 	misc/gecode-search.pc.in \
 	misc/gecode-minimodel.pc.in gecode/config.hh.in \
 	gecode/int/var-imp-int.vis \
@@ -1091,8 +1092,9 @@ DIST_FILES=configure.ac configure Makefile.in gecode.m4 \
 distdir:
 	rm -rf gecode-$(VERSION) && \
 	mkdir -p gecode-$(VERSION) && \
-	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLSRC) $(TESTSRC) \ 
-	  $(TESTHDR) $(DIST_FILES)) | \
+	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLSRC)) | \
+	  (cd gecode-$(VERSION) && tar xf -) && \
+	(cd $(top_srcdir) && tar cf - $(TESTSRC) $(TESTHDR) $(DIST_FILES)) | \
 	  (cd gecode-$(VERSION) && tar xf -)
 
 dist: distdir
