@@ -69,6 +69,14 @@ Date:    unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+Thanks:	Helmut Simonis
+[DESCRIPTION]
+New example: Kakuro puzzles.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

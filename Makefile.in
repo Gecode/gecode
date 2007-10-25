@@ -548,7 +548,7 @@ INTEXAMPLESRC0 =						\
 	magic-sequence magic-square				\
 	money ortho-latin perfect-square			\
 	partition photo queens					\
-	sudoku nonogram pentominoes				\
+	sudoku kakuro nonogram pentominoes			\
 	crowded-chess black-hole minesweeper domino		\
 	sports-league all-interval				\
 	langford-number warehouses				\
