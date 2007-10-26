@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   void
-  EqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
+  EqTer<Val,A,B,C>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     A x0(home, vars, spec[0]);
     B x1(home, vars, spec[1]);
@@ -243,7 +243,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   void
-  NqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
+  NqTer<Val,A,B,C>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     A x0(home, vars, spec[0]);
     B x1(home, vars, spec[1]);
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   void
-  LqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
+  LqTer<Val,A,B,C>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     A x0(home, vars, spec[0]);
     B x1(home, vars, spec[1]);

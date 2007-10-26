@@ -154,7 +154,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   void
-  EqInt<VX,VY>::post(Space* home, const Reflection::VarMap& vars,
+  EqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   void
-  GqInt<VX,VY>::post(Space* home, const Reflection::VarMap& vars,
+  GqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
@@ -393,7 +393,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   void
-  LqInt<VX,VY>::post(Space* home, const Reflection::VarMap& vars,
+  LqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
@@ -536,7 +536,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   void
-  NqInt<VX,VY>::post(Space* home, const Reflection::VarMap& vars,
+  NqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     VX x0(home, vars, spec[0]);
     VX x1(home, vars, spec[1]);

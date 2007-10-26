@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq c\f$
     static  ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
@@ -381,7 +381,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -421,7 +421,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -461,7 +461,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);

@@ -290,7 +290,7 @@ namespace Gecode { namespace Set { namespace Int {
   
   template <class View>
   void
-  ChannelBool<View>::post(Space* home, const Reflection::VarMap& vars,
+  ChannelBool<View>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     ViewArray<Gecode::Int::BoolView> x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);

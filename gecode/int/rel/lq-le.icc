@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   void
-  Lq<View>::post(Space* home, const Reflection::VarMap& vars,
+  Lq<View>::post(Space* home, Reflection::VarMap& vars,
                  const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   void
-  Le<View>::post(Space* home, const Reflection::VarMap& vars,
+  Le<View>::post(Space* home, Reflection::VarMap& vars,
                  const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
@@ -225,7 +225,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   void
-  ReLq<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+  ReLq<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                             const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   void
-  ReLqInt<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+  ReLqInt<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     CtrlView b(home, vars, spec[1]);

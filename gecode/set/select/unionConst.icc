@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   void
   SelectUnionConst<SView,RView>::post(Space* home,
-                                      const Reflection::VarMap& vars,
+                                      Reflection::VarMap& vars,
                                       const Reflection::ActorSpec& spec) {
     SView x0(home, vars, spec[0]);
     Reflection::ArrayArg* sets = spec[1]->toArray();

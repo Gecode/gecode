@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Mangled name
     static Support::Symbol name(void);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
     static ExecStatus post(Space* home, View x, int min, int max, BoolView b);
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Mangled name
     static Support::Symbol name(void);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
     static ExecStatus post(Space* home, View x, const IntSet& s, BoolView b);

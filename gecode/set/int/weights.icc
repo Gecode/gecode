@@ -349,7 +349,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   void
-  Weights<View>::post(Space* home, const Reflection::VarMap& vars,
+  Weights<View>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     Reflection::IntArrayArg* elementsArg = spec[0]->toIntArray();
     Reflection::IntArrayArg* weightsArg = spec[1]->toIntArray();

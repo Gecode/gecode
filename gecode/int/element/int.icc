@@ -402,7 +402,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   void
-  Int<ViewA,ViewB>::post(Space* home, const Reflection::VarMap& vars,
+  Int<ViewA,ViewB>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     ViewA x0(home, vars, spec[0]);
     ViewB x1(home, vars, spec[1]);

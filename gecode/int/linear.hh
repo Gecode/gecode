@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -279,7 +279,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -449,7 +449,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -491,7 +491,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -533,7 +533,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -660,7 +660,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -701,7 +701,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -742,7 +742,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -782,7 +782,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -822,7 +822,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -863,7 +863,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -969,7 +969,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
-      static void post(Space* home, const Reflection::VarMap& vars,
+      static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol name(void);
@@ -995,7 +995,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
-      static void post(Space* home, const Reflection::VarMap& vars,
+      static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol name(void);
@@ -1035,7 +1035,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
-      static void post(Space* home, const Reflection::VarMap& vars,
+      static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol name(void);
@@ -1061,7 +1061,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
-      static void post(Space* home, const Reflection::VarMap& vars,
+      static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol name(void);
@@ -1103,7 +1103,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -1170,7 +1170,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -1203,7 +1203,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -1236,7 +1236,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -1392,7 +1392,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -1426,7 +1426,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);
@@ -1460,7 +1460,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol name(void);

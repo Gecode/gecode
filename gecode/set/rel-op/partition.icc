@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   void
   PartitionN<View0,View1>::post(Space* home,
-                                const Reflection::VarMap& vars,
+                                Reflection::VarMap& vars,
                                 const Reflection::ActorSpec& spec) {
     ViewArray<View0> x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);

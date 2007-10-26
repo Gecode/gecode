@@ -418,7 +418,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   void
-  Eq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+  Eq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
@@ -484,7 +484,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   void
-  ReEq<Val,P,N,Ctrl>::post(Space* home, const Reflection::VarMap& vars,
+  ReEq<Val,P,N,Ctrl>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
@@ -657,7 +657,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   void
-  Nq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+  Nq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
@@ -828,7 +828,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   void
-  Lq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+  Lq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
@@ -960,7 +960,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   void
-  ReLq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+  ReLq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);

@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   void
-  Convex::post(Space* home, const Reflection::VarMap& vars,
+  Convex::post(Space* home, Reflection::VarMap& vars,
                const Reflection::ActorSpec& spec) {
     SetView s(home, vars, spec[0]);
     (void) new (home) Convex(home,s);

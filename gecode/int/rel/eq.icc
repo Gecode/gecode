@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View0, class View1>
   void
-  EqBnd<View0,View1>::post(Space* home, const Reflection::VarMap& vars,
+  EqBnd<View0,View1>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     View0 x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View0, class View1>
   void
-  EqDom<View0,View1>::post(Space* home, const Reflection::VarMap& vars,
+  EqDom<View0,View1>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     View0 x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);
@@ -279,7 +279,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   void
-  NaryEqDom<View>::post(Space* home, const Reflection::VarMap& vars,
+  NaryEqDom<View>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) NaryEqDom<View>(home, x);
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   void
-  NaryEqBnd<View>::post(Space* home, const Reflection::VarMap& vars,
+  NaryEqBnd<View>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) NaryEqBnd<View>(home, x);
@@ -529,7 +529,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   void
-  ReEqDom<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+  ReEqDom<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
@@ -610,7 +610,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   void
-  ReEqBnd<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+  ReEqBnd<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
@@ -698,7 +698,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   void
-  ReEqDomInt<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+  ReEqDomInt<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     CtrlView b(home, vars, spec[1]);
@@ -798,7 +798,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   void
-  ReEqBndInt<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+  ReEqBndInt<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     CtrlView b(home, vars, spec[1]);

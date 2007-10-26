@@ -102,7 +102,7 @@ namespace Gecode {
     /// Name of this branching
     static Support::Symbol name(void);
     /// Post branching according to specification
-    static void post(Space* home, const Reflection::VarMap& m,
+    static void post(Space* home, Reflection::VarMap& m,
                      const Reflection::ActorSpec& spec);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
@@ -147,7 +147,7 @@ namespace Gecode {
     /// Name of this assignment
     static Support::Symbol name(void);
     /// Post assignment according to specification
-    static void post(Space* home, const Reflection::VarMap& m,
+    static void post(Space* home, Reflection::VarMap& m,
                      const Reflection::ActorSpec& spec);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
@@ -305,7 +305,7 @@ namespace Gecode {
   template <class View, class Val, class ViewSel, class ValSel>
   void
   ViewValBranching<View,Val,ViewSel,ValSel>
-    ::post(Space* home, const Reflection::VarMap& vars,
+    ::post(Space* home, Reflection::VarMap& vars,
            const Reflection::ActorSpec& spec) {
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) ViewValBranching<View,Val,ViewSel,ValSel>(home, x);
@@ -389,7 +389,7 @@ namespace Gecode {
   template <class View, class Val, class ValSel>
   void
   ViewValAssignment<View,Val,ValSel>
-    ::post(Space* home, const Reflection::VarMap& vars,
+    ::post(Space* home, Reflection::VarMap& vars,
            const Reflection::ActorSpec& spec) {
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) ViewValAssignment<View,Val,ValSel>(home, x);

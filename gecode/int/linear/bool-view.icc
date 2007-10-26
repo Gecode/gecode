@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   void
-  EqBoolView<XV,YV>::post(Space* home, const Reflection::VarMap& vars,
+  EqBoolView<XV,YV>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     ViewArray<XV> x(home, vars, spec[0]);
     YV y(home, vars, spec[1]);
@@ -259,7 +259,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   void
-  NqBoolView<XV,YV>::post(Space* home, const Reflection::VarMap& vars,
+  NqBoolView<XV,YV>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     ViewArray<XV> x(home, vars, spec[0]);
     YV y(home, vars, spec[1]);
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   void
-  GqBoolView<XV,YV>::post(Space* home, const Reflection::VarMap& vars,
+  GqBoolView<XV,YV>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     ViewArray<XV> x(home, vars, spec[0]);
     YV y(home, vars, spec[1]);

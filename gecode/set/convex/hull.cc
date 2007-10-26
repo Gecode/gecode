@@ -121,7 +121,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   void
-  ConvexHull::post(Space* home, const Reflection::VarMap& vars,
+  ConvexHull::post(Space* home, Reflection::VarMap& vars,
                const Reflection::ActorSpec& spec) {
     SetView s0(home, vars, spec[0]);
     SetView s1(home, vars, spec[1]);

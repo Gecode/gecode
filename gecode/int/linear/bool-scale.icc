@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   void
-  EqBoolScale<SBAP,SBAN,VX>::post(Space* home, const Reflection::VarMap& vars,
+  EqBoolScale<SBAP,SBAN,VX>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
     Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
@@ -538,7 +538,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   void
-  LqBoolScale<SBAP,SBAN,VX>::post(Space* home, const Reflection::VarMap& vars,
+  LqBoolScale<SBAP,SBAN,VX>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
     Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
@@ -731,7 +731,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   void
-  NqBoolScale<SBAP,SBAN,VX>::post(Space* home, const Reflection::VarMap& vars,
+  NqBoolScale<SBAP,SBAN,VX>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
     Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
     ViewArray<BoolView> b_pv(home, vars, spec[1]);

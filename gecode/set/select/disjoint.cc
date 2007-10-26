@@ -60,7 +60,7 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   void
-  SelectDisjoint::post(Space* home, const Reflection::VarMap& vars,
+  SelectDisjoint::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     IdxViewArray<SetView> iv(home, vars, spec[0]);
     SetView x1(home, vars, spec[1]);

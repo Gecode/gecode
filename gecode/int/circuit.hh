@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Post propagator according to specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);

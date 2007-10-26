@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   void
-  Dom<View,shared>::post(Space* home, const Reflection::VarMap& vars,
+  Dom<View,shared>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     int n = spec.noOfArgs();
     DomInfo<View>* vi

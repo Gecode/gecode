@@ -105,7 +105,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   void
-  Card<View>::post(Space* home, const Reflection::VarMap& vars,
+  Card<View>::post(Space* home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     Gecode::Int::IntView x1(home, vars, spec[1]);

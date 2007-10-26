@@ -94,7 +94,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   void
-  Distinct<View0,View1>::post(Space* home, const Reflection::VarMap& vars,
+  Distinct<View0,View1>::post(Space* home, Reflection::VarMap& vars,
                               const Reflection::ActorSpec& spec) {
     View0 x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);
@@ -147,7 +147,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0>
   void
-  DistinctDoit<View0>::post(Space* home, const Reflection::VarMap& vars,
+  DistinctDoit<View0>::post(Space* home, Reflection::VarMap& vars,
                             const Reflection::ActorSpec& spec) {
     View0 x0(home, vars, spec[0]);
     ConstantView x1(home, vars, spec[1]);

@@ -173,7 +173,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   void
-  AtmostOne::post(Space* home, const Reflection::VarMap& vars,
+  AtmostOne::post(Space* home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     ViewArray<SetView> s(home, vars, spec[0]);
     int c = spec[1]->toInt();

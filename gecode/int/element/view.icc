@@ -390,7 +390,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   void
-  ViewBnd<VA,VB,VC>::post(Space* home, const Reflection::VarMap& vars,
+  ViewBnd<VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
     VB x0(home, vars, spec[0]);
@@ -514,7 +514,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   void
-  ViewDom<VA,VB,VC>::post(Space* home, const Reflection::VarMap& vars,
+  ViewDom<VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
     VB x0(home, vars, spec[0]);

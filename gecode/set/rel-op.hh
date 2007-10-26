@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -161,7 +161,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -198,7 +198,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -240,7 +240,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -282,7 +282,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
@@ -325,7 +325,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);

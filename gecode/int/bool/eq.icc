@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   void
-  Eq<BVA,BVB>::post(Space* home, const Reflection::VarMap& vars,
+  Eq<BVA,BVB>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     BVA b0(home, vars, spec[0]);
     BVB b1(home, vars, spec[1]);
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  NaryEq<BV>::post(Space* home, const Reflection::VarMap& vars,
+  NaryEq<BV>::post(Space* home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     ViewArray<BV> x(home, vars, spec[0]);
     (void) new (home) NaryEq<BV>(home, x);

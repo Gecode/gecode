@@ -147,7 +147,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   void
-  Distinct::post(Space* home, const Reflection::VarMap& vars,
+  Distinct::post(Space* home, Reflection::VarMap& vars,
                  const Reflection::ActorSpec& spec) {
     ViewArray<SetView> s(home, vars, spec[0]);
     int c = spec[1]->toInt();

@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   void
   SelectIntersection<SView,RView>::post(Space* home,
-                                        const Reflection::VarMap& vars,
+                                        Reflection::VarMap& vars,
                                         const Reflection::ActorSpec& spec) {
     Reflection::IntArrayArgRanges ur(spec[0]->toIntArray());
     IntSet universe(ur);

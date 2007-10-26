@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   void
-  GqBoolInt<VX>::Memory::post(Space* home, const Reflection::VarMap& vars,
+  GqBoolInt<VX>::Memory::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int c   = spec[1]->toInt();
@@ -282,7 +282,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   void
-  GqBoolInt<VX>::Speed::post(Space* home, const Reflection::VarMap& vars,
+  GqBoolInt<VX>::Speed::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
@@ -413,7 +413,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   void
-  EqBoolInt<VX>::Memory::post(Space* home, const Reflection::VarMap& vars,
+  EqBoolInt<VX>::Memory::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
@@ -504,7 +504,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   void
-  EqBoolInt<VX>::Speed::post(Space* home, const Reflection::VarMap& vars,
+  EqBoolInt<VX>::Speed::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
@@ -689,7 +689,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   void
-  NqBoolInt<VX>::post(Space* home, const Reflection::VarMap& vars,
+  NqBoolInt<VX>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     VX x0(home, vars, spec[0]);
     VX x1(home, vars, spec[1]);

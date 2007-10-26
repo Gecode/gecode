@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post using specification
-    static void post(Space* home, const Reflection::VarMap& vars,
+    static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);    
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  OrTrueSubsumed<BV>::post(Space* home, const Reflection::VarMap& vars,
+  OrTrueSubsumed<BV>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   void
-  BinOrTrue<BVA,BVB>::post(Space* home, const Reflection::VarMap& vars,
+  BinOrTrue<BVA,BVB>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     BVA b0(home, vars, spec[0]);
     BVB b1(home, vars, spec[1]);
@@ -339,7 +339,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  TerOrTrue<BV>::post(Space* home, const Reflection::VarMap& vars,
+  TerOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
@@ -542,7 +542,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  QuadOrTrue<BV>::post(Space* home, const Reflection::VarMap& vars,
+  QuadOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
@@ -708,7 +708,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   void
-  Or<BVA,BVB,BVC>::post(Space* home, const Reflection::VarMap& vars,
+  Or<BVA,BVB,BVC>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
     BVA b0(home, vars, spec[0]);
     BVB b1(home, vars, spec[1]);
@@ -860,7 +860,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  NaryOrTrue<BV>::post(Space* home, const Reflection::VarMap& vars,
+  NaryOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
@@ -966,7 +966,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  NaryOr<BV>::post(Space* home, const Reflection::VarMap& vars,
+  NaryOr<BV>::post(Space* home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     ViewArray<BV> b(home, vars, spec[0]);
     BV b0(home, vars, spec[1]);

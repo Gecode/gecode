@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   void
   SelectUnion<SView,RView>::post(Space* home,
-                                 const Reflection::VarMap& vars,
+                                 Reflection::VarMap& vars,
                                  const Reflection::ActorSpec& spec) {
     SView x0(home, vars, spec[0]);
     IdxViewArray<SView> iv(home, vars, spec[1]);

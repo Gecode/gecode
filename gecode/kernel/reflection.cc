@@ -62,7 +62,7 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  Registry::post(Space* home, const VarMap& vm, const ActorSpec& spec) {
+  Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) {
     poster p = NULL;
       
     if (!posters.get(spec.name(),p)) {

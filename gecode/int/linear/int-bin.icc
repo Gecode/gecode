@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B>
   void
-  EqBin<Val,A,B>::post(Space* home, const Reflection::VarMap& vars,
+  EqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class Ctrl>
   void
-  ReEqBin<Val,A,B,Ctrl>::post(Space* home, const Reflection::VarMap& vars,
+  ReEqBin<Val,A,B,Ctrl>::post(Space* home, Reflection::VarMap& vars,
                               const Reflection::ActorSpec& spec) {
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
@@ -366,7 +366,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B>
   void
-  NqBin<Val,A,B>::post(Space* home, const Reflection::VarMap& vars,
+  NqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
@@ -436,7 +436,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B>
   void
-  LqBin<Val,A,B>::post(Space* home, const Reflection::VarMap& vars,
+  LqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
@@ -504,7 +504,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B>
   void
-  GqBin<Val,A,B>::post(Space* home, const Reflection::VarMap& vars,
+  GqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
@@ -566,7 +566,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B>
   void
-  ReLqBin<Val,A,B>::post(Space* home, const Reflection::VarMap& vars,
+  ReLqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);

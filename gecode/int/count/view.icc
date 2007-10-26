@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  EqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
+  EqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     VY y(home, vars, spec[1]);
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  NqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
+  NqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     VY y(home, vars, spec[1]);
@@ -340,7 +340,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  LqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
+  LqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     VY y(home, vars, spec[1]);
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  GqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
+  GqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     VY y(home, vars, spec[1]);

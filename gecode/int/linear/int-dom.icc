@@ -425,7 +425,7 @@ namespace Gecode { namespace Int { namespace Linear {
   
   template <class Val, class View>
   void
-  DomEq<Val,View>::post(Space* home, const Reflection::VarMap& vars,
+  DomEq<Val,View>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
     ViewArray<View> x(home, vars, spec[0]);
     ViewArray<View> y(home, vars, spec[1]);

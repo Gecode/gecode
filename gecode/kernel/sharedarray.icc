@@ -109,7 +109,7 @@ namespace Gecode {
     Reflection::Arg* spec(Reflection::VarMap& vm) const;
     
     /// Recreate from specification
-    SharedArray(const Reflection::VarMap& vm, Reflection::Arg* arg);
+    SharedArray(Reflection::VarMap& vm, Reflection::Arg* arg);
     
   };
 
@@ -242,7 +242,7 @@ namespace Gecode {
   }
   
   template <class T>
-  SharedArray<T>::SharedArray(const Reflection::VarMap& vm,
+  SharedArray<T>::SharedArray(Reflection::VarMap& vm,
                               Reflection::Arg* arg) {
     if (arg->isInt()) {
       object(static_cast<SAO*>(vm.getSharedObject(arg->toInt())));
@@ -252,8 +252,7 @@ namespace Gecode {
       for (int i=a->size(); i--; ) {
         (*this)[i] = SharedArraySerialization<T>::t((*a)[i]);
       }
-// TODO
-//      vm.putMasterObject(object());
+      vm.putMasterObject(object());
     }
   }
 

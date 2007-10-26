@@ -308,7 +308,7 @@ namespace Gecode { namespace Reflection {
   class GECODE_KERNEL_EXPORT Registry {
   public:
     /// The type of constraint posting functions
-    typedef void (*poster) (Space*, const VarMap&, const ActorSpec&);
+    typedef void (*poster) (Space*, VarMap&, const ActorSpec&);
     /// The type of variable creation functions
     typedef VarBase* (*varCreator) (Space*, VarSpec&);
     /// The type of variable domain constraint functions
@@ -321,7 +321,7 @@ namespace Gecode { namespace Reflection {
     void constrainVar(Space* home, VarBase* v, VarSpec& spec);
 
     /// Post constraint in \a home for \a spec using variables \a vars
-    void post(Space* home, const VarMap& vm, const ActorSpec& spec);
+    void post(Space* home, VarMap& vm, const ActorSpec& spec);
 
     /// Register variable creation function for \a vti
     void add(Support::Symbol vti, varCreator vc);

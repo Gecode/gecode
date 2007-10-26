@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   void
-  ReIntSet<View>::post(Space* home, const Reflection::VarMap& vars,
+  ReIntSet<View>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     BoolView b(home, vars, spec[1]);

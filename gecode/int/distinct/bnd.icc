@@ -365,7 +365,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  Bnd<View>::post(Space* home, const Reflection::VarMap& vars,
+  Bnd<View>::post(Space* home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) Bnd<View>(home, x);

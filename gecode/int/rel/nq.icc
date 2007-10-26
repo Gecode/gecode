@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   void
-  Nq<View>::post(Space* home, const Reflection::VarMap& vars,
+  Nq<View>::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   void
-  NaryNq<View>::post(Space* home, const Reflection::VarMap& vars,
+  NaryNq<View>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     ViewArray<View> x(home, vars, spec[0]);
     ViewArray<View> y(home, vars, spec[1]);
