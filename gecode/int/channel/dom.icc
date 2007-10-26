@@ -212,11 +212,11 @@ namespace Gecode { namespace Int { namespace Channel {
                          const Reflection::ActorSpec& spec) {
     int n = spec.noOfArgs();
     DomInfo<View>* vi
-      = DomInfo<View>::allocate(home,2*n);
+      = DomInfo<View>::allocate(home,n);
     for (int i=0; i<n; i++) {
       vi[i].init(View(home, vars, spec[i]),n);
     }
-    (void) new (home) Dom<View,shared>(home,n,vi);
+    (void) new (home) Dom<View,shared>(home,n/2,vi);
   }
 
   template <class View, bool shared>
