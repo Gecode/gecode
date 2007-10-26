@@ -251,9 +251,9 @@ namespace Gecode {
     GECODE_REGISTER2(Rel::NoSubSet<SetView, SetView>);
     GECODE_REGISTER2(Rel::ReSubset<ConstantView, SetView>);
     GECODE_REGISTER2(Rel::ReSubset<SingletonView, SetView>);
-    GECODE_REGISTER2(Rel::ReSubset<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::ReSubset<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::ReSubset<ComplementView<SetView>, SetView>);
+    GECODE_REGISTER2(Rel::ReSubset<ConstantView, ComplementView<SetView> >);
+    GECODE_REGISTER2(Rel::ReSubset<SingletonView, ComplementView<SetView> >);
+    GECODE_REGISTER2(Rel::ReSubset<SetView, ComplementView<SetView> >);
     GECODE_REGISTER2(Rel::ReSubset<SetView, ConstantView>);
     GECODE_REGISTER2(Rel::ReSubset<SetView, SingletonView>);
     GECODE_REGISTER2(Rel::ReSubset<SetView, SetView>);  
