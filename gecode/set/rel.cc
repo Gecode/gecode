@@ -110,8 +110,7 @@ namespace Gecode {
         BoolVar notb(home, 0, 1);
         rel(home, b, IRT_NQ, notb);
         GECODE_ES_FAIL(home,
-                       (ReEq<View0,View1>::post(home,
-                                                           x,y,notb)));
+                       (ReEq<View0,View1>::post(home,x,y,notb)));
       }
       break;
     case SRT_SUB:
@@ -133,8 +132,8 @@ namespace Gecode {
 
         ComplementView<View0> xc(x);
         GECODE_ES_FAIL(home,
-                       (ReSubset<ComplementView<View0>,View1>
-                        ::post(home, xc, y, b)));
+                       (ReSubset<View1,ComplementView<View0> >
+                        ::post(home, y, xc, b)));
       }
       break;
     case SRT_CMPL:
