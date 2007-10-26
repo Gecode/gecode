@@ -44,7 +44,7 @@ namespace Gecode { namespace Reflection {
    *
    */
 
-  VarMap::VarMap(void) : n(0) {}
+  VarMap::VarMap(void) : n(0), so(0) {}
 
   VarMap::~VarMap(void) {
     for (int i=n; i--;)
@@ -145,6 +145,26 @@ namespace Gecode { namespace Reflection {
     return newIndex;
   }
   
+  void
+  VarMap::putMasterObject(void* obj) {
+    sharedObjectMap.put(obj, so);
+    sharedObjects[so++] = obj;
+  }
+
+  int
+  VarMap::getSharedIndex(void* obj) const {
+    int idx;
+    if (sharedObjectMap.get(obj, idx))
+      return idx;
+    return -1;
+  }
+  
+  void*
+  VarMap::getSharedObject(int i) const {
+    assert(i < so);
+    return sharedObjects[i];
+  }
+
   /* Variable map iterator */
 
   VarMapIter::VarMapIter(VarMap& m0) : m(&m0), i(0) {}

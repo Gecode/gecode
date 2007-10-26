@@ -153,6 +153,13 @@
 #include "gecode/kernel/varmap.icc"
 
 /*
+ * Shared arrays
+ *
+ */
+
+#include "gecode/kernel/sharedarray.icc"
+
+/*
  * Common propagator and branching patterns
  *
  */

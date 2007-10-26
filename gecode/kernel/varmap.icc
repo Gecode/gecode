@@ -54,12 +54,20 @@ namespace Gecode { namespace Reflection {
     Support::PtrMap<VarBase,Support::Symbol> varToName;
     /// Map variable implementations to indices
     Support::PtrMap<VarBase,int> m;
-    /// Number of indices in use
+    /// Map shared objects to indices
+    Support::PtrMap<void,int>    sharedObjectMap;
+
+    /// Number of variable indices in use
     int n;
+    /// Number of shared object indices in use
+    int so;
+    
     /// Map indices to variable implementations
     Support::DynamicArray<VarBase*>  vars;
     /// Map indices to variable specifications
     Support::DynamicArray<VarSpec*>  specs;
+    /// Map indices to shared objects
+    Support::DynamicArray<void*>     sharedObjects;
   public:
     /// Default constructor
     VarMap(void);
@@ -101,6 +109,13 @@ namespace Gecode { namespace Reflection {
 
     /// Insert specification \a vs for variable \a x, return index
     int put(VarBase* x, VarSpec* vs);
+
+    /// Insert a shared object into the table
+    void putMasterObject(void* obj);
+    /// Get the index of a shared object from the table
+    int getSharedIndex(void* obj) const;
+    /// Get the shared object stored at index \a i
+    void* getSharedObject(int i) const;
 
     /// \name Interface for modeling
     //@{
