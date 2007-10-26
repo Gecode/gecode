@@ -81,7 +81,28 @@ namespace Gecode { namespace Serialization {
     }
 #ifdef GECODE_HAVE_SET_VARS
     VarBase* createSetVar(Space* home, Reflection::VarSpec& spec) {
-      return NULL;
+      int cardMin = spec.dom()->first()->second()->toInt();
+      int cardMax = spec.dom()->second()->second()->toInt();
+      Reflection::IntArrayArgRanges 
+        glb(spec.dom()->first()->first()->toIntArray());
+      Reflection::IntArrayArgRanges 
+        lub(spec.dom()->second()->first()->toIntArray());
+      VarBase* ret = Set::SetView(SetVar(home, IntSet(glb), IntSet(lub), 
+                                  cardMin, cardMax)).variable();
+      return ret;
+    }
+    void constrainSetVar(Space* home, VarBase* v,
+                         Reflection::VarSpec& spec) {
+      int cardMin = spec.dom()->first()->second()->toInt();
+      int cardMax = spec.dom()->second()->second()->toInt();
+      Reflection::IntArrayArgRanges 
+        glb(spec.dom()->first()->first()->toIntArray());
+      Reflection::IntArrayArgRanges 
+        lub(spec.dom()->second()->first()->toIntArray());
+      SetVar sv(Set::SetView(static_cast<Set::SetVarImp*>(v)));
+      dom(home, sv, SRT_SUP, IntSet(glb));
+      dom(home, sv, SRT_SUB, IntSet(lub));
+      cardinality(home, sv, cardMin, cardMax);
     }
 #endif
 
@@ -94,6 +115,7 @@ namespace Gecode { namespace Serialization {
         Reflection::registry.add("VTI_BOOL", constrainBoolVar);
 #ifdef GECODE_HAVE_SET_VARS
         Reflection::registry.add("VTI_SET", createSetVar);
+        Reflection::registry.add("VTI_SET", constrainSetVar);
 #endif
       }
     };
