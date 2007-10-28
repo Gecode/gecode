@@ -36,6 +36,7 @@
  */
 
 #include "examples/support.hh"
+#include "gecode/minimodel.hh"
 
 namespace {
 
@@ -314,7 +315,7 @@ namespace {
     13,13, 4,28,    19,13, 2,13,    -1
   };
 
-  // Hard, Author: TAKEI+Daisuke
+  // Hard, Author: TAKEI Daisuke
   const int k9[] = {
     // Dimension w x h
     22,14,
@@ -350,15 +351,76 @@ namespace {
   };
   //@}
 
-  /// An array of all examples
+  /// Array of all examples
   const int* examples[] = {
     &k0[0], &k1[0], &k2[0], &k3[0], &k4[0], 
     &k5[0], &k6[0], &k7[0], &k8[0], &k9[0]
   };
-  /// The number of examples
+  /// Number of examples
   const unsigned int n_examples = sizeof(examples)/sizeof(char*);
 
+  /// Class for solutions of a distinct-linear constraint
+  class DistinctLinear : public Space {
+  public:
+    /// The variables
+    IntVarArray x;
+    /// The actual problem
+    DistinctLinear(int n, int s) : x(this,n,1,9) {
+      distinct(this, x);
+      linear(this, x, IRT_EQ, s);
+      branch(this, x, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+    }
+    /// Constructor for cloning \a s
+    DistinctLinear(bool share, DistinctLinear& s) : Space(share,s) {
+      x.update(this, share, s.x);
+    }
+    /// Perform copying during cloning
+    virtual Space*
+    copy(bool share) {
+      return new DistinctLinear(share,*this);
+    }
+  };
+
+  /// Generate a DFA for \a n distinct variables with sum \a s
+  DFA generate(int n, int c) {
+    // Setup search engine that enumerates all solutions
+    DistinctLinear* e = new DistinctLinear(n,c);
+    DFS<DistinctLinear> d(e);
+    delete e;
+    // Remember in \a ts the previous transitions
+    DFA::Transition* ts = new DFA::Transition[n];
+    for (int i=n; i--; )
+      ts[i].symbol = 0;
+    ts[0].i_state = 0;
+    // Record all transitions in \a ts_all
+    Support::DynamicArray<DFA::Transition> ts_all;
+    int ts_next = 0;
+    int n_state = 2;
+    while (DistinctLinear* s = d.next()) {
+      int i=0;
+      // Skip common prefix
+      for (; ts[i].symbol == s->x[i].val(); i++) {}
+      // Generate transitions for new suffix
+      int i_state = ts[i].i_state;
+      for (;i<n;i++) {
+        ts[i].i_state = i_state;
+        ts[i].symbol  = s->x[i].val();
+        ts[i].o_state = i_state = n_state++;
+        ts_all[ts_next++] = ts[i];
+      }
+      // Fix final state to 1
+      ts_all[ts_next-1].o_state = 1;
+      delete s;
+    }
+    delete [] ts;
+    ts_all[ts_next].i_state = -1;
+    int final[2] = {1,-1};
+    DFA dfa(0,&ts_all[0],final);
+    return dfa;
+  }
+
 }
+
 
 /**
  * \brief %Example: Kakuro
@@ -369,31 +431,93 @@ namespace {
  */
 class Kakuro : public Example {
 protected:
-  const int w; ///< Width of board
-  const int h; ///< Height of board
+  const int w;    ///< Width of board
+  const int h;    ///< Height of board
   IntVarArray _b; ///< Variables for board
 public:
+  /// Propagation variants
+  enum {
+    PROP_DECOMPOSE, ///< Decompose constraints
+    PROP_COMBINE,   ///< Combine distinct and linear constraint
+  };
   /// Access the field at position \a x, \a y
   IntVar& b(int x, int y) {
-    assert((x >= 0) && (x < w));
-    assert((y >= 0) && (y < h));
+    assert((x >= 0) && (x < w) && (y >= 0) && (y < h));
     return _b[x+y*w];
   }
   /// Init the field at position \a x, \a y if necessary
   void init(int x, int y) {
-    if (b(x,y).min() > 0)
-      return;
-    b(x,y).init(this,1,9);
+    if (b(x,y).min() == 0)
+      b(x,y).init(this,1,9);
+  }
+  void
+  distinctlinear(const IntVarArgs& x, int c, const SizeOptions& opt) {
+    // This is quite naive in that DFAs are recomputed: they should
+    // be cached...
+    if (opt.propagation() == PROP_DECOMPOSE) {
+      distinct(this, x, opt.icl());
+      linear(this, x, IRT_EQ, c, opt.icl());
+    } else {
+      int n=x.size();
+      switch (n) {
+      case 0:
+        break;
+      case 1:
+        rel(this, x[0], IRT_EQ, c);
+        break;
+      case 8:
+        // Prune the single missing digit
+        for (int i=n; i--; )
+          rel(this, x[i], IRT_NQ, n*(n+1)/2 - c);
+        // Fall through
+      case 9:
+        distinct(this, x, ICL_DOM);
+        break;
+      default:
+        if (c == n*(n+1)/2) {
+          // sum has unique decomposition: 1 + ... + n
+          for (int i=n; i--; )
+            rel(this, x[i], IRT_LQ, n);
+          distinct(this, x, ICL_DOM);
+        } else if (c == n*(n+1)/2 + 1) {
+          // sum has unique decomposition: 1 + ... + n-1 + n+1
+          for (int i=n; i--; ) {
+            rel(this, x[i], IRT_LQ, n+1);
+            rel(this, x[i], IRT_NQ, n);
+          }
+          distinct(this, x, ICL_DOM);
+        } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2) {
+          // sum has unique decomposition: (9-n+1) + (9-n+2) + ... + 9
+          for (int i=n; i--; )
+            rel(this, x[i], IRT_GQ, 9-n+1);
+          distinct(this, x, ICL_DOM);
+        } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2 + 1) {
+          // sum has unique decomposition: (9-n) + (9-n+2) + ... + 9
+          for (int i=n; i--; ) {
+            rel(this, x[i], IRT_GQ, 9-n);
+            rel(this, x[i], IRT_NQ, 9-n+1);
+          }
+          distinct(this, x, ICL_DOM);
+        } else if (n == 2) {
+          IntArgs e(c);
+          e[0]=0;
+          for (int i=1; i<c; i++)
+            e[i]=(c-i == i) ? 0 : c-i;
+          element(this, e, x[0], x[1]);
+        } else {
+          extensional(this, x, generate(n,c));
+        }
+      }
+    }
   }
   /// The actual problem
   Kakuro(const SizeOptions& opt)
-    : w(examples[opt.size()][0]), 
-      h(examples[opt.size()][1]), 
+    : w(examples[opt.size()][0]),  h(examples[opt.size()][1]), 
       _b(this,w*h) {
     IntVar black(this,0,0);
     // Initialize all fields as black (unused). Only if a field
     // is actually used in a constraint, create a fresh variable
-    // for it.
+    // for it (done via init).
     for (int i=w*h; i--; )
       _b[i] = black;
     const int* k = &examples[opt.size()][2];
@@ -401,22 +525,20 @@ public:
     while (*k >= 0) {
       int x=*k++; int y=*k++; int n=*k++; int s=*k++;
       IntVarArgs col(n);
-      for (int i=0; i<n; i++) {
+      for (int i=n; i--; ) {
         init(x,y+i+1); col[i]=b(x,y+i+1);
       }
-      distinct(this, col, opt.icl());
-      linear(this, col, IRT_EQ, s, opt.icl());
+      distinctlinear(col,s,opt);
     }
     k++;
     // Process horizontal constraints
     while (*k >= 0) {
       int x=*k++; int y=*k++; int n=*k++; int s=*k++;
       IntVarArgs row(n);
-      for (int i=0; i<n; i++) {
+      for (int i=n; i--; ) {
         init(x+i+1,y); row[i]=b(x+i+1,y);
       }
-      distinct(this, row, opt.icl());
-      linear(this, row, IRT_EQ, s, opt.icl());
+      distinctlinear(row,s,opt);
     }
     branch(this, _b, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN); 
   }
@@ -435,7 +557,10 @@ public:
     for (int y=0; y<h; y++) {
       std::cout << '\t';
       for (int x=0; x<w; x++)
-        std::cout << b(x,y) << ' ';
+        if (b(x,y).min() == 0)
+          std::cout << ". ";
+        else
+          std::cout << b(x,y) << ' ';
       std::cout << std::endl;
     }
   }
@@ -448,6 +573,11 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Kakuro");
+  opt.propagation(Kakuro::PROP_DECOMPOSE);
+  opt.propagation(Kakuro::PROP_DECOMPOSE,
+                  "decompose","decompose distinct and linear constraints");
+  opt.propagation(Kakuro::PROP_COMBINE,
+                  "combine","combine distinct and linear constraints");
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
