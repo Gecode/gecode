@@ -156,8 +156,8 @@ Options::Options(const char* n)
     _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
 
     _mode("-mode","how to execute example",EM_SOLUTION),
-    _samples("-samples","how many samples (time mode)") ,
-    _iterations("-iterations","iterations per sample (time mode)")
+    _samples("-samples","how many samples (time mode)",1),
+    _iterations("-iterations","iterations per sample (time mode)",1)
 {
 
   _pk.add(PK_DEF, "def"); _pk.add(PK_SPEED, "speed");
