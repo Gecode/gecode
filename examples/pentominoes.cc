@@ -545,8 +545,8 @@ static const TileSpec puzzle1[] =
      "XXX"}
   };
 
-// Packing number 2 from examples/packing.cc
-static const TileSpec packing2[] =
+// Perfect square number 2 from examples/perfect-square.cc
+static const TileSpec square2[] =
   {
     // Width and height of board
     {10, 10, ""},
@@ -806,7 +806,7 @@ static const TileSpec pentomino3x20[] =
   };
 
 /// List of specifications
-const TileSpec *specs[] = {puzzle0, puzzle1, packing2,
+const TileSpec *specs[] = {puzzle0, puzzle1, square2,
                            pentomino6x10,pentomino5x12,
                            pentomino4x15,pentomino3x20};
 /// Number of specifications
