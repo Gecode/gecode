@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
-    static Support::Symbol name(void);
+    static Gecode::Support::Symbol name(void);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Post propagator on views \a x and DFA \a d
