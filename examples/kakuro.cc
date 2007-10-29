@@ -486,11 +486,9 @@ public:
     if (b(x,y).min() == 0)
       b(x,y).init(this,1,9);
   }
-  void
-  distinctlinear(DfaCache& dc, 
-                 const IntVarArgs& x, int c, const SizeOptions& opt) {
-    // This is quite naive in that DFAs are recomputed: they should
-    // be cached...
+  /// Post a distinct-linear constraint on variables \a x with sum \a c
+  void distinctlinear(DfaCache& dc, const IntVarArgs& x, int c, 
+                      const SizeOptions& opt) {
     if (opt.propagation() == PROP_DECOMPOSE) {
       distinct(this, x, opt.icl());
       linear(this, x, IRT_EQ, c, opt.icl());
@@ -498,53 +496,52 @@ public:
       int n=x.size();
       switch (n) {
       case 0:
-        break;
+        return;
       case 1:
         rel(this, x[0], IRT_EQ, c);
-        break;
+        return;
       case 8:
         // Prune the single missing digit
         for (int i=n; i--; )
           rel(this, x[i], IRT_NQ, n*(n+1)/2 - c);
-        // Fall through
+        break;
       case 9:
-        distinct(this, x, ICL_DOM);
         break;
       default:
         if (c == n*(n+1)/2) {
           // sum has unique decomposition: 1 + ... + n
           for (int i=n; i--; )
             rel(this, x[i], IRT_LQ, n);
-          distinct(this, x, ICL_DOM);
         } else if (c == n*(n+1)/2 + 1) {
           // sum has unique decomposition: 1 + ... + n-1 + n+1
           for (int i=n; i--; ) {
             rel(this, x[i], IRT_LQ, n+1);
             rel(this, x[i], IRT_NQ, n);
           }
-          distinct(this, x, ICL_DOM);
         } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2) {
           // sum has unique decomposition: (9-n+1) + (9-n+2) + ... + 9
           for (int i=n; i--; )
             rel(this, x[i], IRT_GQ, 9-n+1);
-          distinct(this, x, ICL_DOM);
         } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2 + 1) {
           // sum has unique decomposition: (9-n) + (9-n+2) + ... + 9
           for (int i=n; i--; ) {
             rel(this, x[i], IRT_GQ, 9-n);
             rel(this, x[i], IRT_NQ, 9-n+1);
           }
-          distinct(this, x, ICL_DOM);
         } else if (n == 2) {
+          // Just use element constraint with no two equal digits
           IntArgs e(c);
           e[0]=0;
           for (int i=1; i<c; i++)
             e[i]=(c-i == i) ? 0 : c-i;
           element(this, e, x[0], x[1]);
+          return;
         } else {
           extensional(this, x, dc.get(n,c));
+          return;
         }
       }
+      distinct(this, x, ICL_DOM);
     }
   }
   /// The actual problem
@@ -612,7 +609,7 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Kakuro");
-  opt.propagation(Kakuro::PROP_DECOMPOSE);
+  opt.propagation(Kakuro::PROP_COMBINE);
   opt.propagation(Kakuro::PROP_DECOMPOSE,
                   "decompose","decompose distinct and linear constraints");
   opt.propagation(Kakuro::PROP_COMBINE,
