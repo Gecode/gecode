@@ -359,65 +359,101 @@ namespace {
   /// Number of examples
   const unsigned int n_examples = sizeof(examples)/sizeof(char*);
 
-  /// Class for solutions of a distinct-linear constraint
-  class DistinctLinear : public Space {
-  public:
-    /// The variables
-    IntVarArray x;
-    /// The actual problem
-    DistinctLinear(int n, int s) : x(this,n,1,9) {
-      distinct(this, x);
-      linear(this, x, IRT_EQ, s);
-      branch(this, x, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
-    }
-    /// Constructor for cloning \a s
-    DistinctLinear(bool share, DistinctLinear& s) : Space(share,s) {
-      x.update(this, share, s.x);
-    }
-    /// Perform copying during cloning
-    virtual Space*
-    copy(bool share) {
-      return new DistinctLinear(share,*this);
-    }
-  };
-
-  /// Generate a DFA for \a n distinct variables with sum \a s
-  DFA generate(int n, int c) {
-    // Setup search engine that enumerates all solutions
-    DistinctLinear* e = new DistinctLinear(n,c);
-    DFS<DistinctLinear> d(e);
-    delete e;
-    // Remember in \a ts the previous transitions
-    DFA::Transition* ts = new DFA::Transition[n];
-    for (int i=n; i--; )
-      ts[i].symbol = 0;
-    ts[0].i_state = 0;
-    // Record all transitions in \a ts_all
-    Support::DynamicArray<DFA::Transition> ts_all;
-    int ts_next = 0;
-    int n_state = 2;
-    while (DistinctLinear* s = d.next()) {
-      int i=0;
-      // Skip common prefix
-      for (; ts[i].symbol == s->x[i].val(); i++) {}
-      // Generate transitions for new suffix
-      int i_state = ts[i].i_state;
-      for (;i<n;i++) {
-        ts[i].i_state = i_state;
-        ts[i].symbol  = s->x[i].val();
-        ts[i].o_state = i_state = n_state++;
-        ts_all[ts_next++] = ts[i];
+  /// Class to remember already computed DFAs
+  class DfaCache {
+  private:
+    class Entry {
+    public:
+      int n;       ///< Number of variables
+      int c;       ///< Sum of variables
+      DFA d;       ///< The previously computed DFA
+      Entry* next; ///< The next cache entry
+    };
+    Entry* cache; ///< Where all entries start
+    /// Class for solutions of a distinct-linear constraint
+    class DistinctLinear : public Space {
+    public:
+      /// The variables
+      IntVarArray x;
+      /// The actual problem
+      DistinctLinear(int n, int s) : x(this,n,1,9) {
+        distinct(this, x);
+        linear(this, x, IRT_EQ, s);
+        branch(this, x, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
       }
-      // Fix final state to 1
-      ts_all[ts_next-1].o_state = 1;
-      delete s;
+      /// Constructor for cloning \a s
+      DistinctLinear(bool share, DistinctLinear& s) : Space(share,s) {
+        x.update(this, share, s.x);
+      }
+      /// Perform copying during cloning
+      virtual Space*
+      copy(bool share) {
+        return new DistinctLinear(share,*this);
+      }
+    };
+    /// Generate a DFA for \a n distinct variables with sum \a c
+    static DFA generate(int n, int c) {
+      // Setup search engine that enumerates all solutions
+      DistinctLinear* e = new DistinctLinear(n,c);
+      DFS<DistinctLinear> d(e);
+      delete e;
+      // Remember in \a ts the previous transitions
+      DFA::Transition* ts = new DFA::Transition[n];
+      for (int i=n; i--; )
+        ts[i].symbol = 0;
+      ts[0].i_state = 0;
+      // Record all transitions in \a ts_all
+      Support::DynamicArray<DFA::Transition> ts_all;
+      int ts_next = 0;
+      int n_state = 2;
+      while (DistinctLinear* s = d.next()) {
+        int i=0;
+        // Skip common prefix
+        for (; ts[i].symbol == s->x[i].val(); i++) {}
+        // Generate transitions for new suffix
+        int i_state = ts[i].i_state;
+        for (;i<n;i++) {
+          ts[i].i_state = i_state;
+          ts[i].symbol  = s->x[i].val();
+          ts[i].o_state = i_state = n_state++;
+          ts_all[ts_next++] = ts[i];
+        }
+        // Fix final state to 1
+        ts_all[ts_next-1].o_state = 1;
+        delete s;
+      }
+      delete [] ts;
+      ts_all[ts_next].i_state = -1;
+      int final[2] = {1,-1};
+      DFA dfa(0,&ts_all[0],final);
+      return dfa;
     }
-    delete [] ts;
-    ts_all[ts_next].i_state = -1;
-    int final[2] = {1,-1};
-    DFA dfa(0,&ts_all[0],final);
-    return dfa;
-  }
+  public:
+    /// Initialize cache as empty
+    DfaCache(void) : cache(NULL) {}
+    /// Return possibly cached DFA for \a n distinct variables with sum \a c
+    DFA get(int n, int c) {
+      for (Entry* e = cache; e != NULL; e = e->next)
+        if ((e->n == n) && (e->c == c))
+          return e->d;
+      Entry* e = new Entry;
+      e->n = n;
+      e->c = c;
+      e->d = generate(n,c);
+      e->next = cache;
+      cache = e;
+      return cache->d;
+    }
+    /// Delete cache entries
+    ~DfaCache(void) {
+      Entry* e = cache; 
+      while (e != NULL) {
+        Entry* d = e;
+        e = e->next;
+        delete d;
+      }
+    } 
+  };
 
 }
 
@@ -451,7 +487,8 @@ public:
       b(x,y).init(this,1,9);
   }
   void
-  distinctlinear(const IntVarArgs& x, int c, const SizeOptions& opt) {
+  distinctlinear(DfaCache& dc, 
+                 const IntVarArgs& x, int c, const SizeOptions& opt) {
     // This is quite naive in that DFAs are recomputed: they should
     // be cached...
     if (opt.propagation() == PROP_DECOMPOSE) {
@@ -505,7 +542,7 @@ public:
             e[i]=(c-i == i) ? 0 : c-i;
           element(this, e, x[0], x[1]);
         } else {
-          extensional(this, x, generate(n,c));
+          extensional(this, x, dc.get(n,c));
         }
       }
     }
@@ -521,6 +558,8 @@ public:
     for (int i=w*h; i--; )
       _b[i] = black;
     const int* k = &examples[opt.size()][2];
+    // Cache computed DFAs
+    DfaCache dc;
     // Process vertical constraints
     while (*k >= 0) {
       int x=*k++; int y=*k++; int n=*k++; int s=*k++;
@@ -528,7 +567,7 @@ public:
       for (int i=n; i--; ) {
         init(x,y+i+1); col[i]=b(x,y+i+1);
       }
-      distinctlinear(col,s,opt);
+      distinctlinear(dc,col,s,opt);
     }
     k++;
     // Process horizontal constraints
@@ -538,7 +577,7 @@ public:
       for (int i=n; i--; ) {
         init(x+i+1,y); row[i]=b(x+i+1,y);
       }
-      distinctlinear(row,s,opt);
+      distinctlinear(dc,row,s,opt);
     }
     branch(this, _b, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN); 
   }
