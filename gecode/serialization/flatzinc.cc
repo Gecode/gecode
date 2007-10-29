@@ -257,13 +257,48 @@ namespace Gecode {
         emitArray(os, a, vm);
         return;
       }
+      if (arg->isSharedReference()) {
+        os << "_array" << arg->toSharedReference();
+        return;
+      }
+      assert(!arg->isSharedObject());
+      throw Exception("Serialization", "Specification not understood");
     }
     
+  }
+
+  void emitSharedObject(ostream& os, int soCount, VarMap& vm, Arg* arg0) {
+    Arg* arg = arg0->toSharedObject();
+    if (arg->isIntArray()) {
+      IntArrayArg* a = arg->toIntArray();
+      os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
+      os << "[";
+      for (int i=0; i<a->size(); i++) {
+        os << (*a)[i];
+        if (i<a->size()-1)
+          os << ", ";
+      }
+      os << "];" << std::endl;
+      return;
+    }
+    if (arg->isArray()) {
+      ArrayArg* a = arg->toArray();
+      os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
+      if (a->size() == 0) {
+        os << "[];" << std::endl;
+        return;
+      }
+      emitArray(os, a, vm);
+      os << ";" << std::endl;
+      return;
+    }
+    return;    
   }
   
   void emitFlatzinc(Space* home, VarMap& vm, ostream& os) {
     VarMapIter vmi(vm);
     int varCount = 0;
+    int soCount = 0;
     for (SpecIter si = home->actorSpecs(vm); si(); ++si) {
       ActorSpec& s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
@@ -278,13 +313,25 @@ namespace Gecode {
 #endif        
       }
 
-      os << "constraint " << s.name() << "(";
+      int soBase = soCount;
       for (int i=0; i<s.noOfArgs(); i++) {
-        emitArg(os, s[i], vm);
+        if (s[i]->isSharedObject())
+          emitSharedObject(os, soBase++, vm, s[i]);
+      }
+
+      os << "constraint " << s.name() << "(";
+
+      soBase = soCount;
+      for (int i=0; i<s.noOfArgs(); i++) {
+        if (s[i]->isSharedObject())
+          os << "_array" << soBase++;
+        else
+          emitArg(os, s[i], vm);
         if (i<s.noOfArgs()-1)
           os << ", ";
       }
       os << ");" << endl;
+      soCount = soBase;
     }
     
     

@@ -130,6 +130,9 @@ namespace Gecode {
     }
   }
 
+  GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::IntView>);
+  GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::BoolView>);
+
 }
 
 // STATISTICS: int-post

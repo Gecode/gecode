@@ -226,6 +226,40 @@ namespace Gecode { namespace Reflection {
     return ret;
   }
 
+  bool
+  Arg::isSharedObject(void) const {
+    return (t == SHARED_OBJECT_ARG);
+  }
+  Arg*
+  Arg::toSharedObject(void) const {
+    if (!isSharedObject())
+      throw ReflectionException("not a SharedObjectArg");
+    return arg1.first;
+  }
+  Arg*
+  Arg::newSharedObject(Arg* a) {
+    Arg* ret = new Arg(SHARED_OBJECT_ARG);
+    ret->arg1.first = a;
+    return ret;
+  }
+  
+  bool
+  Arg::isSharedReference(void) const {
+    return (t == SHARED_REF_ARG);
+  }
+  int
+  Arg::toSharedReference(void) const {
+    if (!isSharedReference())
+      throw ReflectionException("not a SharedReferenceArg");
+    return arg1.i;
+  }
+  Arg*
+  Arg::newSharedReference(int ref) {
+    Arg* ret = new Arg(SHARED_REF_ARG);
+    ret->arg1.i = ref;
+    return ret;
+  }
+
   Arg::~Arg(void) {
     switch (t) {
     case ARRAY_ARG:
@@ -242,6 +276,9 @@ namespace Gecode { namespace Reflection {
       break;
     case STRING_ARG:
       ::free(arg1.s);
+      break;
+    case SHARED_OBJECT_ARG:
+      delete arg1.first;
       break;
     default:
       break;

@@ -467,6 +467,88 @@ namespace Gecode {
     object(d);
   }
 
+  DFA::DFA(Reflection::VarMap& vm, Reflection::Arg* arg) {
+    if (arg->isSharedReference()) {
+      DFAI* d = 
+        static_cast<DFAI*>(vm.getSharedObject(arg->toSharedReference()));
+      object(d);
+      return;
+    }
+    
+    Reflection::IntArrayArg* a = arg->toSharedObject()->toIntArray();
+
+    // All done... Construct the automaton
+
+    int n_trans = (a->size() - 4) / 3;
+    DFAI* d = new DFAI(n_trans);
+    d->n_states  = (*a)[0];
+    d->n_symbols = (*a)[1];
+    d->final_fst = (*a)[2];
+    d->final_lst = (*a)[3];
+    d->n_trans   = n_trans;
+    for (int i=0; i<n_trans; i++) {
+      d->trans[i].i_state = (*a)[4+3*i+0];
+      d->trans[i].symbol  = (*a)[4+3*i+1];
+      d->trans[i].o_state = (*a)[4+3*i+2];
+    }
+    {
+      // Compute smallest logarithm larger than n_symbols
+      int n_log = 1;
+      while (d->n_symbols >= static_cast<unsigned int>(1<<n_log))
+        n_log++;
+      d->n_log = n_log;
+      // Allocate memory
+      DFAI::HashEntry* table = static_cast<DFAI::HashEntry*>
+        (Memory::malloc(sizeof(DFAI::HashEntry)*(1<<n_log)));
+      d->table = table;
+      // Initialize table
+      for (int i=(1<<n_log); i--; ) {
+        table[i].symbol = Limits::Int::int_min-1;
+        table[i].fst = table[i].lst = NULL;
+      }
+      int mask = (1 << n_log) - 1;
+      // Enter transitions to table
+      for (int i = 0; i<n_trans; ) {
+        int s = d->trans[i].symbol;
+        Transition* fst = &d->trans[i];
+        i++;
+        while ((i<n_trans) && (d->trans[i].symbol == s))
+          i++;
+        Transition* lst = &d->trans[i];
+        // Enter with linear collision resolution
+        int p = s & mask;
+        while (table[p].fst != NULL)
+          p = (p+1) & mask;
+        table[p].symbol = s;
+        table[p].fst    = fst;
+        table[p].lst    = lst;
+      }
+    }
+    object(d);    
+    vm.putMasterObject(object());
+  }
+
+  Reflection::Arg*
+  DFA::spec(Reflection::VarMap& vm) const {
+    int sharedIndex = vm.getSharedIndex(object());
+    if (sharedIndex >= 0)
+      return Reflection::Arg::newSharedReference(sharedIndex);
+    Reflection::IntArrayArg* a = 
+      Reflection::Arg::newIntArray(static_cast<int>(4+3*n_transitions()));
+    (*a)[0] = n_states();
+    (*a)[1] = n_symbols();
+    (*a)[2] = final_fst();
+    (*a)[3] = final_lst();
+    const DFAI* o = static_cast<DFAI*>(object());
+    for (unsigned int i=0; i<n_transitions(); i++ ) {
+      (*a)[4+3*i+0] = o->trans[i].i_state;
+      (*a)[4+3*i+1] = o->trans[i].symbol;
+      (*a)[4+3*i+2] = o->trans[i].o_state;
+    }
+    vm.putMasterObject(object());
+    return Reflection::Arg::newSharedObject(a);    
+  }
+
   SharedHandle::Object*
   DFA::DFAI::copy(void) const {
     DFAI* d = new DFAI(n_trans);

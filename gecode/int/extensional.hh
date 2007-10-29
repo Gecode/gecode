@@ -141,6 +141,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled name of this propagator
+    static Support::Symbol name(void);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Post propagator on views \a x and DFA \a d

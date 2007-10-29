@@ -397,7 +397,7 @@ namespace Gecode { namespace Int { namespace Element {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     return s << x0.spec(home, m)
              << x1.spec(home, m)
-             << c.spec(m);
+             << Reflection::Arg::newIntArray(c);
   }
 
   template <class ViewA, class ViewB>
@@ -406,7 +406,11 @@ namespace Gecode { namespace Int { namespace Element {
                          const Reflection::ActorSpec& spec) {
     ViewA x0(home, vars, spec[0]);
     ViewB x1(home, vars, spec[1]);
-    IntSharedArray is(vars, spec[2]);
+    Reflection::IntArrayArg* a = spec[2]->toIntArray();
+    IntSharedArray is(a->size());
+    for (int i=a->size(); i--; ) {
+      is[i] = (*a)[i];
+    }
     (void) new (home) Int<ViewA,ViewB>(home, is, x0, x1);
   }
 

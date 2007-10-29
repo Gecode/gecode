@@ -233,21 +233,21 @@ namespace Gecode {
   SharedArray<T>::spec(Reflection::VarMap& vm) const {
     int sharedIndex = vm.getSharedIndex(object());
     if (sharedIndex >= 0)
-      return Reflection::Arg::newInt(sharedIndex);
+      return Reflection::Arg::newSharedReference(sharedIndex);
     Reflection::ArrayArg* a = Reflection::Arg::newArray(size());
     for (int i=size(); i--; )
       (*a)[i] = SharedArraySerialization<T>::t((*this)[i]);
     vm.putMasterObject(object());
-    return a;
+    return Reflection::Arg::newSharedObject(a);
   }
   
   template <class T>
   SharedArray<T>::SharedArray(Reflection::VarMap& vm,
                               Reflection::Arg* arg) {
-    if (arg->isInt()) {
-      object(static_cast<SAO*>(vm.getSharedObject(arg->toInt())));
+    if (arg->isSharedReference()) {
+      object(static_cast<SAO*>(vm.getSharedObject(arg->toSharedReference())));
     } else {
-      Reflection::ArrayArg* a = arg->toArray();
+      Reflection::ArrayArg* a = arg->toSharedObject()->toArray();
       object(new SAO(a->size()));
       for (int i=a->size(); i--; ) {
         (*this)[i] = SharedArraySerialization<T>::t((*a)[i]);

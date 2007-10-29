@@ -71,7 +71,8 @@ namespace Gecode { namespace Reflection {
   public:
     enum argtype {
       INT_ARG,VAR_ARG,ARRAY_ARG,
-      INT_ARRAY_ARG,STRING_ARG,PAIR_ARG };
+      INT_ARRAY_ARG,STRING_ARG,PAIR_ARG,
+      SHARED_OBJECT_ARG, SHARED_REF_ARG };
     const argtype t;
     union {
       int i;
@@ -130,6 +131,21 @@ namespace Gecode { namespace Reflection {
     Arg*         second(void) const;
     /// Create new pair argument from \a a and \a b
     static Arg*  newPair(Arg* a, Arg* b);
+    
+    /// Test if this represents a shared object
+    bool         isSharedObject(void) const;
+    /// Return the shared object that this argument represents
+    Arg*         toSharedObject(void) const;
+    /// Create new shared object
+    static Arg*  newSharedObject(Arg* a);
+    
+    /// Test if this represents a shared object reference
+    bool         isSharedReference(void) const;
+    /// Return the shared object that this argument represents
+    int          toSharedReference(void) const;
+    /// Create new reference to shared object
+    static Arg*  newSharedReference(int ref);
+    
     /// Deallocate argument
     static void dispose(Arg* a);    
   protected:

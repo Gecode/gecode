@@ -557,9 +557,26 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
+  Gecode::Support::Symbol
+  LayeredGraph<View>::name(void) {
+    return Reflection::mangle<View>("Int::Extensional::LayeredGraph");
+  }
+
+  template <class View>
   Reflection::ActorSpec&
-  LayeredGraph<View>::spec(Space*, Reflection::VarMap&) {
-    throw Reflection::ReflectionException("Not implemented");
+  LayeredGraph<View>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    return s << x.spec(home, m)
+             << dfa.spec(m);
+  }
+
+  template <class View>
+  void
+  LayeredGraph<View>::post(Space* home, Reflection::VarMap& vars,
+                           const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    DFA dfa(vars, spec[1]);
+    (void) new (home) LayeredGraph<View>(home,x,dfa);    
   }
 
   template <class View>
