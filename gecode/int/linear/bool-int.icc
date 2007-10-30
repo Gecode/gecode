@@ -702,16 +702,21 @@ namespace Gecode { namespace Int { namespace Linear {
                       const Reflection::ActorSpec& spec) {
     VX x0(home, vars, spec[0]);
     VX x1(home, vars, spec[1]);
-    ViewArray<VX> xx(home, vars, spec[2]);
     int c = spec[3]->toInt();
-    
-    ViewArray<VX> x(home, xx.size()+2);
-    for (int i=x.size(); i--; )
-      x[i] = xx[i];
-    x[x.size()]   = x0;
-    x[x.size()+1] = x1;
-    
-    (void) new (home) NqBoolInt<VX>(home, x, c);
+
+    if (spec[2] == NULL) {
+      ViewArray<VX> x(home, 2);
+      x[0] = x0; x[1] = x1;
+      (void) new (home) NqBoolInt<VX>(home, x, c);
+    } else {
+      Reflection::ArrayArg* a = spec[2]->toArray();
+      ViewArray<VX> x(home, a->size()+2);
+      for (int i=a->size(); i--; )
+        x[i] = VX(home, vars, (*a)[i]);
+      x[a->size()]   = x0;
+      x[a->size()+1] = x1;
+      (void) new (home) NqBoolInt<VX>(home, x, c);
+    }
   }
 
   template<class VX>
