@@ -668,6 +668,10 @@ namespace Gecode {
   template <class View>
   ViewArray<View>::ViewArray(Space* home, const Reflection::VarMap& vars,
                              Reflection::Arg* spec) {
+    if (spec == NULL) {
+      n = 0;
+      return;
+    }
     Reflection::ArrayArg* a = spec->toArray();
     n = a->size();
     x = (n>0) ? static_cast<View*>(home->alloc(sizeof(View)*n)) : NULL;
