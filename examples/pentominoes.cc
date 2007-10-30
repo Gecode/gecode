@@ -8,6 +8,7 @@
  *
  *  Copyright:
  *     Mikael Lagerkvist, 2006
+ *     Guido Tack, 2006
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -132,7 +133,7 @@ namespace {
  * in one of its rotations.
  *
  * The most famous instance of such a puzzle is the Pentominoes
- * puzzle, where the peces are all pieces formed by 5 four-connected
+ * puzzle, where the pieces are all pieces formed by 5 four-connected
  * squares.
  *
  *
@@ -140,7 +141,7 @@ namespace {
  *
  * The variables for the model is the grid of squares that the  pieces
  * are placed on, where each of the variables for the squares takes
- * the value of the number of the piece which is placed over it.
+ * the value of the number of the piece which is placed overonto it.
  *
  * 
  * \section ExamplePentominoesOnePiece Placing one piece
@@ -235,8 +236,8 @@ namespace {
  * value selection is minimum value first.
  *
  * The static value selection allows us to order the pieces in the
- * specification of the problem. The pieces are approximately order by
- * largness of hardness to place.
+ * specification of the problem. The pieces are approximately ordered by
+ * largness or hardness to place.
  *
  *
  * \section ExamplePentominoesSymmetries Removing board symmetries
@@ -302,7 +303,7 @@ private:
     REG res;
     char *t2 = new char[width*height];
     int w2, h2;
-    tsymmfunc syms[] = {id};//, flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
+    tsymmfunc syms[] = {id, flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
     int symscnt = sizeof(syms)/sizeof(tsymmfunc);
     for (int i = 0; i < symscnt; ++i) {
       syms[i](spec[t].tile, spec[t].width, spec[t].height, t2, w2, h2);
@@ -318,8 +319,10 @@ public:
   /// Construction of the model.
   Pentominoes(const SizeOptions& opt)
     : spec(specs[opt.size()]), 
-      width(spec[0].width+1), height(spec[0].height),
-      ntiles(spec[1].width), filled(spec[1].height),
+      width(spec[0].width+1), // Add one for extra row at end.
+      height(spec[0].height),
+      ntiles(spec[1].width), 
+      filled(spec[1].height),
       board(this, width*height, filled,ntiles+1) {
     spec += 2; // No need for the specification-part any longer
     
@@ -403,7 +406,7 @@ public:
       }
     }
       
-    // Install branchings
+    // Install branching
     branch(this, board, INT_VAR_NONE, INT_VAL_MIN);
   }
   
