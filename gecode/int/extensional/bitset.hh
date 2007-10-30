@@ -107,4 +107,4 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 #endif /* __GECODE_EXTENSIONAL_BITSET_HH__ */
 
-// STATISTICS: int-any
+// STATISTICS: int-other

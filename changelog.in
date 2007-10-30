@@ -81,7 +81,7 @@ What:   new
 Rank:   minor
 Thanks:	Helmut Simonis
 [DESCRIPTION]
-New example: Kakuro puzzles.
+New example: %Kakuro puzzles.
 
 [ENTRY]
 Module: other
@@ -89,7 +89,7 @@ What:   new
 Rank:   minor
 Thanks: Martin Mann
 [DESCRIPTION]
-Added dist and distdir targets for creating a source distribution.
+Added dist and distdir targets for creating source distribution.
 
 [ENTRY]
 Module: other
@@ -111,7 +111,7 @@ quotient of size and degree.
 
 [ENTRY]
 Module: other
-What:   change
+What:   new
 Rank:   minor
 [DESCRIPTION]
 Variable arrays, view arrays, and argument arrays can directly be printed
@@ -134,8 +134,8 @@ Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Shared arrays are now available in the kernel (where the properly
-belong). This entails that they are avilable in the Gecode
+Shared arrays are now available in the kernel (where they properly
+belong). This entails that they are available in the Gecode
 namespace and not in Gecode::Support.
 
 [ENTRY]
@@ -198,7 +198,7 @@ the minimodel module.
 [ENTRY]
 Module: example
 What:   change
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 Most examples have been cleaned up.
 
@@ -207,7 +207,7 @@ Module: example
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The parsing of commandline arguments has been completely redone and
+Parsing of commandline arguments has been completely redone and
 is much more extensible and flexible.
 
 [ENTRY]
@@ -269,6 +269,13 @@ value iterators are supported and the operations can be told to
 perform more efficient destructive updates.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Sortedness constraints have been renamed to sorted constraints.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
@@ -294,7 +301,7 @@ Added advisors as an abstraction for incremental propagation:
 advisors are executed for their propagator whenever their view
 changes. Advisors, when not being used, add one word of overhead
 to each variable and slow down the system in the worst case by
-less than 5%. In average, no slowdown can be observed.
+less than 1%. In average, no slowdown can be observed.
 
 [ENTRY]
 Module: int
@@ -325,7 +332,7 @@ Module: example
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added a model for the travelling salesman problem, mostly
+Added a model for the traveling salesman problem, mostly
 intended to exercise the new circuit constraint (as the model is not
 very competitive).
 
@@ -442,7 +449,7 @@ unneeded) and actors and spaces now have allocated member
 functions for returning how much memory is allocated by a space.
 
 Moreover, the memory reported by some propagators has been
-ingnored. Note that this flaw did not affect the bechmark figures
+ignored. Note that this flaw did not affect the benchmark figures
 on the %Gecode webpage.
 
 [ENTRY]
@@ -591,14 +598,14 @@ Module: test
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added simple testing for the branchings.
+Added simple testing for branchings.
 
 [ENTRY]
 Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-The way how propagators report subsumtion and partial fixpoints
+The way how propagators report subsumption and partial fixpoints
 has changed. Now, a propagator must first call dispose (which
 then cancels subscriptions and possibly frees external resources)
 and only then can return that the propagator is subsumed. For
@@ -613,7 +620,7 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The use of the consistency options were a little confusing, now
-the rule is: the level of constistency increases from ICL_VAL to
+the rule is: the level of consistency increases from ICL_VAL to
 ICL_BND to ICL_DOM.
 
 [ENTRY]
@@ -621,7 +628,7 @@ Module: minimodel
 What:   performance
 Rank:   minor
 [DESCRIPTION]
-Boolean expressions errorneously decomposed into ternary Boolean
+Boolean expressions erroneously decomposed into ternary Boolean
 constraints, while not incorrect rather inefficient for large
 Boolean expressions.
 
@@ -642,7 +649,7 @@ to always use this macro!
 
 [ENTRY]
 Module: example
-What:   change
+What:   bug
 Rank:   minor
 Bug:    46
 [DESCRIPTION]
@@ -748,7 +755,7 @@ Rank:   minor
 [DESCRIPTION]
 Propagators and branchings that require disposal when a space is
 deleted must now be explicitly registered via a force function
-and explictly deregistered by an unforce function.
+and explicitly deregistered by an unforce function.
 
 [ENTRY]
 Module: int
@@ -770,7 +777,7 @@ What:   new
 Rank:   major
 [DESCRIPTION]
 New example: Pentominoes. The example uses extensional-constraints
-specifed as regular expressions to place irregular-shaped pieces on a
+specified as regular expressions to place irregular-shaped pieces on a
 board.
 
 
@@ -807,7 +814,7 @@ What:   performance
 Rank:   minor
 [DESCRIPTION]
 Bounds-consistent distinct eliminates assigned variables more 
-aggresively (can save up to 10% runtime in some cases).
+aggressively (can save up to 10% runtime in some cases).
 
 [ENTRY]
 Module: int
@@ -876,7 +883,7 @@ Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
-Make count constraints with integer number of equal ocurrences
+Make count constraints with integer number of equal occurrences
 more incremental using dynamic subscriptions (gives a 20-30%
 speedup).
 
@@ -1312,7 +1319,7 @@ Module: kernel
 What:   performance
 Rank:   minor
 [DESCRIPTION]
-More aggresive inlining for cancelling subscriptions.
+More aggressive inlining for canceling subscriptions.
 
 [ENTRY]
 Module: search
@@ -1335,7 +1342,7 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-Cancelling subscriptions on views and variable implementations now
+Canceling subscriptions on views and variable implementations now
 require also a home space (this has become possible due to not using
 destructors but ordinary "dispose" member functions).
 
@@ -1394,7 +1401,7 @@ Version:	1.1.0
 Date:		2006-04-10
 [DESCRIPTION]
 This minor release adds some new constraints (see below), adds support
-for stopping search engines based on definable criterias, and some other
+for stopping search engines based on definable criteria, and some other
 small fixes. Most notably, the test infrastructure has been extended to
 also check whether propagators correctly claim that they have computed
 a fixpoint (now all invariants a propagator must obey in Gecode are covered
@@ -1583,7 +1590,7 @@ and channelVarVal to channel.
 
 [ENTRY]
 Module: int
-What: 	performace
+What: 	performance
 Rank: 	major
 [DESCRIPTION]
 Improved initialization of domain-consistent distinct propagator,
