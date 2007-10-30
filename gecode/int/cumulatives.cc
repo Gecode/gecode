@@ -216,6 +216,15 @@ namespace Gecode {
                      height, limit, at_most, cl);
   }
 
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::ConstIntView, Int::IntView, Int::ConstIntView, Int::IntView>);
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::ConstIntView, Int::IntView, Int::IntView, Int::IntView>);
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::ConstIntView, Int::ConstIntView, Int::IntView, Int::IntView>);
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::ConstIntView, Int::ConstIntView, Int::ConstIntView, Int::IntView>);
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::IntView, Int::ConstIntView, Int::IntView, Int::IntView>);
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::IntView, Int::ConstIntView, Int::ConstIntView, Int::IntView>);
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::IntView, Int::IntView, Int::ConstIntView, Int::IntView>);
+  GECODE_REGISTER4(Int::Cumulatives::Val<Int::IntView, Int::IntView, Int::IntView, Int::IntView>);
+
 }
 
 // STATISTICS: int-post

@@ -163,6 +163,24 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
+  void
+  Val<ViewM,ViewD,ViewH,View>::post(Space* home, Reflection::VarMap& vars,
+                                    const Reflection::ActorSpec& spec) {
+    ViewArray<ViewM> machine(home, vars, spec[0]);
+    ViewArray<View>  start(home, vars, spec[1]);
+    ViewArray<ViewD> duration(home, vars, spec[2]);
+    ViewArray<View>  end(home, vars, spec[3]);
+    ViewArray<ViewH> height(home, vars, spec[4]);
+    Reflection::IntArrayArg* limitA = spec[5]->toIntArray();
+    IntArgs limit(limitA->size());
+    for (int i=limitA->size(); i--; )
+      limit[i] = (*limitA)[i];
+    bool at_most = spec[6]->toInt();
+    (void) new (home) Val(home,machine,start,duration,
+                          end,height,limit,at_most);
+  }
+
+  template <class ViewM, class ViewD, class ViewH, class View>
   Actor*
   Val<ViewM,ViewD,ViewH,View>::copy(Space* home, bool share) {
     return new (home) Val<ViewM,ViewD,ViewH,View>(home,share,*this);
