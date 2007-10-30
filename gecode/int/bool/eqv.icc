@@ -61,14 +61,14 @@ namespace Gecode { namespace Int { namespace Bool {
       if (b0.one()) {
         if (b1.one()) {
           GECODE_ME_CHECK(b2.one(home)); return ES_OK;
-        } else if (b2.zero()) {
+        } else if (b1.zero()) {
           GECODE_ME_CHECK(b2.zero(home)); return ES_OK;
         }
       }
       if (b0.zero()) {
         if (b1.one()) {
           GECODE_ME_CHECK(b2.zero(home)); return ES_OK;
-        } else if (b2.zero()) {
+        } else if (b1.zero()) {
           GECODE_ME_CHECK(b2.one(home)); return ES_OK;
         }
       }
