@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   Support::Symbol
   LinkSingle::name(void) {
-    return Support::Symbol("Int::Channel::Val");
+    return Support::Symbol("Int::Channel::LinkSingle");
   }
 
   Reflection::ActorSpec&

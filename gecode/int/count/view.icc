@@ -403,7 +403,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   Support::Symbol
   GqView<VX,VY,VZ,shr>::name(void) {
-    return Reflection::mangle<VX,VY,VZ>("Int::Count::GqView");
+    return Reflection::mangle<VX,VY,VZ,shr>("Int::Count::GqView");
   }
 
   template <class VX, class VY, class VZ, bool shr>

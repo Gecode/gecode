@@ -112,7 +112,6 @@ namespace Gecode {
   GECODE_REGISTER1(Arithmetic::NaryMax<MinusView>);
   GECODE_REGISTER1(Arithmetic::Square<IntView>);
   GECODE_REGISTER2(Arithmetic::SquarePlus<IntView,IntView>);
-  GECODE_REGISTER2(Arithmetic::SquarePlus<IntView,IntView>);
   GECODE_REGISTER2(Arithmetic::SquarePlus<MinusView,IntView>);
 
 }

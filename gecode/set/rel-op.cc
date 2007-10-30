@@ -181,7 +181,6 @@ namespace Gecode {
     GECODE_REGISTER2(Set::RelOp::PartitionN<SetView,SetView>);
     GECODE_REGISTER2(Set::RelOp::PartitionN<SingletonView,SetView>);
 
-    GECODE_REGISTER3(RelOp::SubOfUnion<SetView, SetView, ConstantView>);
     GECODE_REGISTER3(RelOp::SubOfUnion<SetView, SetView, SetView>);
 
     GECODE_REGISTER3(RelOp::SuperOfInter<SetView, SingletonView, EmptyView>);

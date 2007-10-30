@@ -176,18 +176,15 @@ namespace Gecode { namespace Int { namespace Rel {
   NaryNq<View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
       BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::spec(home, m, name());
-    ViewArray<View> a(home, x.size()+2);
+    Reflection::ArrayArg* a = Reflection::Arg::newArray(x.size());
     for (int i=x.size(); i--; )
-      a[i] = x[i][0];
-    a[x.size()] = x0[0];
-    a[x.size()+1] = x1[0];
-    s << a.spec(home, m);
+      (*a)[i] = x[i][0].spec(home, m);
+    s << a;
 
+    Reflection::ArrayArg* b = Reflection::Arg::newArray(x.size());
     for (int i=x.size(); i--; )
-      a[i] = x[i][1];
-    a[x.size()] = x0[1];
-    a[x.size()+1] = x1[1];
-    s << a.spec(home, m);
+      (*b)[i] = x[i][1].spec(home, m);
+    s << b;
 
     return s;
   }
@@ -196,14 +193,19 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   NaryNq<View>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
-    ViewArray<View> x(home, vars, spec[0]);
-    ViewArray<View> y(home, vars, spec[1]);
+    ViewTuple<View,2> x0(home, vars, spec[0]);
+    ViewTuple<View,2> x1(home, vars, spec[1]);
+
+    Reflection::ArrayArg* x = spec[2]->toArray();
+    Reflection::ArrayArg* y = spec[3]->toArray();
     
-    ViewArray<ViewTuple<View,2> > xy(home, x.size());
-    for (int i=x.size(); i--; ) {
-      xy[i][0] = x[i];
-      xy[i][1] = y[i];
+    ViewArray<ViewTuple<View,2> > xy(home, x->size()+2);
+    for (int i=x->size(); i--; ) {
+      xy[i][0] = View(home, vars, (*x)[i]);
+      xy[i][1] = View(home, vars, (*y)[i]);
     }
+    xy[x->size()]   = x0;
+    xy[x->size()+1] = x1;
     (void) new (home) NaryNq<View>(home, xy);
   }
 

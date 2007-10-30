@@ -392,7 +392,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class Val, class VA, class VB, class VC>
   Support::Symbol
   MultPlus<Val,VA,VB,VC>::name(void) {
-    return Reflection::mangle<VA,VB,VC>("Int::Arithmetic::MultPlus");
+    return Reflection::mangle<VA,VB,VC,Val>("Int::Arithmetic::MultPlus");
   }
 
   template <class Val, class VA, class VB, class VC>

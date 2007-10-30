@@ -159,15 +159,14 @@ namespace Gecode { namespace Int { namespace Linear {
   SpeedLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m,
                             const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    int noOfAdvisors = 0;
-    for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as, ++noOfAdvisors) {}
     Reflection::ArrayArg* a = 
-      Reflection::Arg::newArray(x.size()+noOfAdvisors);
+      Reflection::Arg::newArray(x.size()+n_s);
     int i = 0;
     for (; i<x.size(); i++)
       (*a)[i] = x[i].spec(home, m);
     for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as, ++i)
       (*a)[i] = as.advisor()->view().spec(home, m);
+    assert ( i == x.size() + n_s );
     return s << a << c;
   }
 
@@ -502,7 +501,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   inline Support::Symbol
   EqBoolInt<VX>::Speed::name(void) {
-    return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Speed");
+    return Reflection::mangle<VX>("Int::Linear::EqBoolInt::Speed");
   }
 
   template <class VX>
