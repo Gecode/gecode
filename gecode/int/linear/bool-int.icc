@@ -159,7 +159,16 @@ namespace Gecode { namespace Int { namespace Linear {
   SpeedLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m,
                             const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    return s << x.spec(home, m) << c;
+    int noOfAdvisors = 0;
+    for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as, ++noOfAdvisors) {}
+    Reflection::ArrayArg* a = 
+      Reflection::Arg::newArray(x.size()+noOfAdvisors);
+    int i = 0;
+    for (; i<x.size(); i++)
+      (*a)[i] = x[i].spec(home, m);
+    for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as, ++i)
+      (*a)[i] = as.advisor()->view().spec(home, m);
+    return s << a << c;
   }
 
   /*
