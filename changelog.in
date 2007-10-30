@@ -69,6 +69,13 @@ Date:    unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: set
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed buggy distinct propagator for finite sets.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

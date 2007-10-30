@@ -50,15 +50,6 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Distinct::AtmostOne::post(home, x, c));
   }
 
-  void
-  distinct(Space* home, const SetVarArgs& xa, unsigned int c) {
-    if (home->failed()) return;
-    if (xa.size() < 2)
-      return;
-    ViewArray<SetView> x(home,xa);
-    GECODE_ES_FAIL(home,Distinct::Distinct::post(home, x, c));
-  }
-
 }
 
 // STATISTICS: set-post

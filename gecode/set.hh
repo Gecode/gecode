@@ -309,10 +309,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   atmostOne(Space* home, const SetVarArgs& x, unsigned int c);
 
-  /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : x_i\neq x_j\f$
-  GECODE_SET_EXPORT void
-  distinct(Space* home, const SetVarArgs& x, unsigned int c);
-
   //@}
 
   /**

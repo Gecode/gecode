@@ -39,7 +39,6 @@
 #define __GECODE_SET_ATMOSTONE_HH__
 
 #include "gecode/set.hh"
-#include "gecode/set/distinct/binomial.icc"
 
 namespace Gecode { namespace Set { namespace Distinct {
 
@@ -81,48 +80,9 @@ namespace Gecode { namespace Set { namespace Distinct {
     static Support::Symbol name(void);
   };
 
-  /**
-   * \brief %Propagator for the n-ary distinct constraint with fixed cardinalities
-   *
-   * Requires \code #include "gecode/set/distinct.hh" \endcode
-   * \ingroup FuncSetProp   
-   */
-
-  class Distinct :
-    public NaryPropagator<SetView, PC_SET_ANY> {
-  protected:
-    /// Binomial coefficients table
-    Binomial bin;
-    /// Cardinality of the sets
-    unsigned int c;
-    /// Constructor for cloning \a p
-    Distinct(Space* home, bool share,Distinct& p);
-    /// Constructor for posting
-    Distinct(Space* home,ViewArray<SetView>&,unsigned int);
-  public:
-    /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home, bool);
-    /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
-    static ExecStatus post(Space* home,ViewArray<SetView> x,unsigned int c);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol name(void);
-  };
-
-
 }}}
 
 #include "gecode/set/distinct/atmostOne.icc"
-#include "gecode/set/distinct/distinct.icc"
 
 #endif
 

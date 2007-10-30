@@ -329,8 +329,7 @@ SETSRC0 =								 \
 	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
 	int.cc								 \
 	select.cc select/disjoint.cc sequence.cc			 \
-	distinct.cc distinct/binomial.cc				 \
-	distinct/atmostOne.cc distinct/distinct.cc			 \
+	distinct.cc distinct/atmostOne.cc				 \
 	sequence/seq.cc sequence/seq-u.cc array.cc var/imp.cc		 \
 	var/integerset.cc var/set.cc view/print.cc			 \
 	projectors.cc							 \
