@@ -246,11 +246,11 @@ namespace Gecode { namespace Int { namespace Channel {
                          const Reflection::ActorSpec& spec) {
     int n = spec.noOfArgs();
     ValInfo<View>* vi
-      = ValInfo<View>::allocate(home,2*n);
+      = ValInfo<View>::allocate(home,n);
     for (int i=0; i<n; i++) {
       vi[i].init(View(home, vars, spec[i]),n);
     }
-    (void) new (home) Val<View,shared>(home,n,vi);
+    (void) new (home) Val<View,shared>(home,n/2,vi);
   }
 
   template <class View, bool shared>
