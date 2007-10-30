@@ -3883,8 +3883,7 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.icc ./gecode/search.hh ./gecode/search/bab.icc \
 	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
 	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
-	./gecode/search/stop.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
-	./gecode/serialization/deserializer.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
 	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
@@ -4014,8 +4013,7 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.icc ./gecode/search.hh ./gecode/search/bab.icc \
 	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
 	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
-	./gecode/search/stop.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
-	./gecode/serialization/deserializer.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
 	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
@@ -5010,8 +5008,7 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
 	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/serialization.hh \
-	./gecode/serialization/boost.icc ./gecode/serialization/deserializer.icc ./gecode/support.hh \
+	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
 	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
@@ -5046,8 +5043,7 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
 	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/serialization.hh \
-	./gecode/serialization/boost.icc ./gecode/serialization/deserializer.icc ./gecode/set.hh \
+	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
 	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
 	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \

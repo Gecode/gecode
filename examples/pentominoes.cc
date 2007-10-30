@@ -592,6 +592,113 @@ static const TileSpec square2[] =
      "XX"}
   };
 
+// Perfect square number 3 from examples/perfect-square.cc
+static const TileSpec square3[] =
+  {
+    // Width and height of board
+    {20, 20, ""},
+    // Number of tiles and whether the board is filled
+    {17, true, ""},
+    {9, 9,
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+     "XXXXXXXXX"
+    },
+    {8, 8,
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+    },
+    {8, 8,
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+     "XXXXXXXX"
+    },
+    {7, 7,
+     "XXXXXXX"
+     "XXXXXXX"
+     "XXXXXXX"
+     "XXXXXXX"
+     "XXXXXXX"
+     "XXXXXXX"
+     "XXXXXXX"
+    },
+    {5, 5,
+     "XXXXX"
+     "XXXXX"
+     "XXXXX"
+     "XXXXX"
+     "XXXXX"
+    },
+    {4, 4,
+     "XXXX"
+     "XXXX"
+     "XXXX"
+     "XXXX"},
+    {4, 4,
+     "XXXX"
+     "XXXX"
+     "XXXX"
+     "XXXX"},
+    {4, 4,
+     "XXXX"
+     "XXXX"
+     "XXXX"
+     "XXXX"},
+    {4, 4,
+     "XXXX"
+     "XXXX"
+     "XXXX"
+     "XXXX"},
+    {4, 4,
+     "XXXX"
+     "XXXX"
+     "XXXX"
+     "XXXX"},
+    {3, 3,
+     "XXX"
+     "XXX"
+     "XXX"},
+    {3, 3,
+     "XXX"
+     "XXX"
+     "XXX"},
+    {3, 3,
+     "XXX"
+     "XXX"
+     "XXX"},
+    {2, 2,
+     "XX"
+     "XX"},
+    {2, 2,
+     "XX"
+     "XX"},
+    {1, 1,
+     "X"},
+    {1, 1,
+     "X"}
+  };
+
+//const int s3_s[] = {9,8,8,7,5,4,4,4,4,4,3,3,3,2,2,1,1,0};
+//const SquareSpec s3(20,20,s3_s);
+
+
 static const TileSpec pentomino6x10[] =
   {
     // Width and height of board
@@ -809,7 +916,7 @@ static const TileSpec pentomino3x20[] =
   };
 
 /// List of specifications
-const TileSpec *specs[] = {puzzle0, puzzle1, square2,
+const TileSpec *specs[] = {puzzle0, puzzle1, square2, square3,
                            pentomino6x10,pentomino5x12,
                            pentomino4x15,pentomino3x20};
 /// Number of specifications
