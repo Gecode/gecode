@@ -695,10 +695,6 @@ static const TileSpec square3[] =
      "X"}
   };
 
-//const int s3_s[] = {9,8,8,7,5,4,4,4,4,4,3,3,3,2,2,1,1,0};
-//const SquareSpec s3(20,20,s3_s);
-
-
 static const TileSpec pentomino6x10[] =
   {
     // Width and height of board
