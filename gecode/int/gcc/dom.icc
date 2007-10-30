@@ -143,15 +143,24 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   Support::Symbol
   Dom<View,Card,isView>::name(void) {
-    return Reflection::mangle<View,Card,bool>("Int::GCC::Dom");
+    return Reflection::mangle<View,Card,isView>("Int::GCC::Dom");
   }
 
   template <class View, class Card, bool isView>
   Reflection::ActorSpec&
   Dom<View,Card,isView>::spec(Space* home, Reflection::VarMap& m) {
     return Propagator::spec(home, m, name())
-      << x.spec(home, m) << y.spec(home, m) << k.spec(home, m) << isView
-      << card_fixed;
+      << y.spec(home, m) << k.spec(home, m) << card_fixed;
+  }
+
+  template <class View, class Card, bool isView>
+  void
+  Dom<View,Card,isView>::post(Space* home, Reflection::VarMap& vars,
+                              const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    ViewArray<Card> k(home, vars, spec[1]);
+    bool card_fixed = spec[2]->toInt();
+    (void) new (home) Dom(home, x, k, card_fixed);
   }
   
   /// \brief Perform domain propagation.

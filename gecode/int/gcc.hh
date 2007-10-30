@@ -104,7 +104,6 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include "gecode/int/gcc.hh" \endcode
    * \ingroup FuncIntProp
    */
-
   template <class View, class Card, bool isView>
   class Bnd{
   public:
@@ -167,6 +166,9 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space* home, bool share);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
@@ -200,7 +202,6 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include "gecode/int/gcc.hh" \endcode
    * \ingroup FuncIntProp
    */
-
   template <class View, class Card, bool isView>
   class Dom : public Propagator {
   protected:
@@ -251,6 +252,9 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual ExecStatus  propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /**
@@ -269,8 +273,6 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include "gecode/int/gcc.hh" \endcode
    * \ingroup FuncIntProp
    */
-
-
   template <class View, class Card, bool isView>
   class Val : public Propagator {
   protected:
@@ -294,6 +296,9 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual ExecStatus  propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol name(void);
     /**

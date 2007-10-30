@@ -94,14 +94,23 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   Support::Symbol
   Val<View, Card, isView>::name(void) {
-    return Reflection::mangle<View,Card,bool>("Int::GCC::Val");
+    return Reflection::mangle<View,Card,isView>("Int::GCC::Val");
   }
 
   template <class View, class Card, bool isView>
   Reflection::ActorSpec&
   Val<View,Card,isView>::spec(Space* home, Reflection::VarMap& m) {
     return Propagator::spec(home, m, name())
-      << x.spec(home, m) << k.spec(home, m) << isView;
+      << x.spec(home, m) << k.spec(home, m);
+  }
+
+  template <class View, class Card, bool isView>
+  void
+  Val<View,Card,isView>::post(Space* home, Reflection::VarMap& vars,
+                              const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    ViewArray<Card> k(home, vars, spec[1]);
+    (void) new (home) Val(home, x, k);
   }
 
   template <class View, class Card, bool isView>
