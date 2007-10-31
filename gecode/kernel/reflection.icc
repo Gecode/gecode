@@ -79,7 +79,7 @@ namespace Gecode { namespace Reflection {
       INT_ARG,VAR_ARG,ARRAY_ARG,
       INT_ARRAY_ARG,STRING_ARG,PAIR_ARG,
       SHARED_OBJECT_ARG, SHARED_REF_ARG };
-    const argtype t;
+    argtype t;
     union {
       int i;
       char* s;
@@ -97,6 +97,8 @@ namespace Gecode { namespace Reflection {
     int          toInt(void) const;
     /// Create new int argument
     static Arg*  newInt(int i);
+    /// Initialize this as an int argument
+    void         initInt(int i);
     
     /// Test if this represents a variable
     bool         isVar(void) const;
@@ -104,23 +106,33 @@ namespace Gecode { namespace Reflection {
     int          toVar(void) const;
     /// Create new variable argument
     static Arg*  newVar(int i);
+    /// Initialize this as a variable argument
+    void         initVar(int i);
     
     /// Test if this represents an array
     bool             isArray(void) const;
     /// Return the array that this argument represents
     ArrayArg*        toArray(void);
+    /// Return the array that this argument represents
+    const ArrayArg*  toArray(void) const;
     /// Create new array argument with size \a n
     static ArrayArg* newArray(int n);
+    /// Initialize this as an array argument with size \a n
+    void         initArray(int n);
     
     /// Test if this represents an array
     bool                isIntArray(void) const;
     /// Return the array that this argument represents
     IntArrayArg*        toIntArray(void);
+    /// Return the array that this argument represents
+    const IntArrayArg*  toIntArray(void) const;
     /// Create new integer array argument with size \a n
     static IntArrayArg* newIntArray(int n);
     /// Create new integer array argument from given array \a a
     template <class A>
     static IntArrayArg* newIntArray(const A& a);
+    /// Initialize this as an int array argument with size \a n
+    void         initIntArray(int n);
 
     /// Test if this represents a string
     bool         isString(void) const;
@@ -128,6 +140,8 @@ namespace Gecode { namespace Reflection {
     const char*  toString(void) const;
     /// Create new string argument
     static Arg*  newString(const char* s);
+    /// Initialize this as a string argument
+    void         initString(const char* s);
     
     /// Test if this represents a pair
     bool         isPair(void) const;
@@ -137,6 +151,8 @@ namespace Gecode { namespace Reflection {
     Arg*         second(void) const;
     /// Create new pair argument from \a a and \a b
     static Arg*  newPair(Arg* a, Arg* b);
+    /// Initialize this as a pair argument from \a a and \a b
+    void         initPair(Arg* a, Arg* b);
     
     /// Test if this represents a shared object
     bool         isSharedObject(void) const;
@@ -144,6 +160,8 @@ namespace Gecode { namespace Reflection {
     Arg*         toSharedObject(void) const;
     /// Create new shared object
     static Arg*  newSharedObject(Arg* a);
+    /// Initialize this as a shared object
+    void         initSharedObject(Arg* a);
     
     /// Test if this represents a shared object reference
     bool         isSharedReference(void) const;
@@ -151,14 +169,15 @@ namespace Gecode { namespace Reflection {
     int          toSharedReference(void) const;
     /// Create new reference to shared object
     static Arg*  newSharedReference(int ref);
+    /// Initialize this as a reference to a shared object
+    void         initSharedReference(int ref);
     
     /// Deallocate argument
     static void dispose(Arg* a);    
-  protected:
-    /// Destructor
-    ~Arg(void);
     /// Constructor
     Arg(argtype t);
+    /// Destructor
+    ~Arg(void);
   };
   
 

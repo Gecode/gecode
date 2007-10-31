@@ -40,17 +40,16 @@
 using namespace std;
 
 namespace Gecode {
-  using namespace Reflection;
   
   namespace {
     
-    void emitIntVar(ostream& os, int varNo, VarSpec& vs) {
+    void emitIntVar(ostream& os, int varNo, Reflection::VarSpec& vs) {
       os << "var ";
-      Arg* dom = vs.dom();
+      Reflection::Arg* dom = vs.dom();
       if (!dom->isIntArray())
         throw Exception("Serialization",
         "Internal error: invalid domain specification for IntVar.");
-      IntArrayArg* a = dom->toIntArray();
+      Reflection::IntArrayArg* a = dom->toIntArray();
       if (a->size() == 2) {
         os << (*a)[0] << ".." << (*a)[1];
       } else {
@@ -67,9 +66,9 @@ namespace Gecode {
       else
         os << ": _v" << varNo << ";" << endl;      
     }
-    void emitBoolVar(ostream& os, int varNo, VarSpec& vs) {
+    void emitBoolVar(ostream& os, int varNo, Reflection::VarSpec& vs) {
       os << "var ";
-      Arg* dom = vs.dom();
+      Reflection::Arg* dom = vs.dom();
       if (!dom->isInt())
         throw Exception("Serialization",
         "Internal error: invalid domain specification for BoolVar.");
@@ -88,9 +87,9 @@ namespace Gecode {
         os << ": _v" << varNo << ";" << endl;
     }
 #ifdef GECODE_HAVE_SET_VARS
-    void emitSetVar(ostream& os, int varNo, VarSpec& vs) {
+    void emitSetVar(ostream& os, int varNo, Reflection::VarSpec& vs) {
       os << "var set of ";
-      Arg* dom = vs.dom();
+      Reflection::Arg* dom = vs.dom();
       if (! (dom->isPair() && 
              dom->first()->isPair() && dom->second()->isPair() &&
              dom->first()->first()->isIntArray() &&
@@ -104,7 +103,7 @@ namespace Gecode {
       int ubCard = 0;
       
       // Output upper bound
-      IntArrayArg* a = dom->second()->first()->toIntArray();
+      Reflection::IntArrayArg* a = dom->second()->first()->toIntArray();
       if (a->size() == 2) {
         os << (*a)[0] << ".." << (*a)[1];
         ubCard = (*a)[1] - (*a)[0];
@@ -161,20 +160,22 @@ namespace Gecode {
     }
 #endif
     
-    void emitVar(ostream& os, int v, VarMap& vm) {
-      VarSpec& vs = vm.spec(v);
+    void emitVar(ostream& os, int v, Reflection::VarMap& vm) {
+      Reflection::VarSpec& vs = vm.spec(v);
       if (vs.name().empty())
         os << "_v" << v;
       else
         os << vs.name();
     }
     
-    void emitVarArray(ostream& os, ArrayArg* a, VarMap& vm) {
+    void emitVarArray(ostream& os, Reflection::ArrayArg* a, 
+                      Reflection::VarMap& vm) {
       for (int i=0; i<a->size(); i++)
         emitVar(os, (*a)[i]->toVar(), vm);
     }
     
-    void emitArray(ostream& os, ArrayArg* a, VarMap& vm) {
+    void emitArray(ostream& os, Reflection::ArrayArg* a,
+                   Reflection::VarMap& vm) {
       if ((*a)[0]->isInt()) {
         os << "[";
         for (int i=0; i<a->size(); i++) {
@@ -198,8 +199,8 @@ namespace Gecode {
       }
       
       if ((*a)[0]->isPair()) {
-        ArrayArg* aa = Arg::newArray(a->size());
-        ArrayArg* ab = Arg::newArray(a->size());
+        Reflection::ArrayArg* aa = Reflection::Arg::newArray(a->size());
+        Reflection::ArrayArg* ab = Reflection::Arg::newArray(a->size());
         for (int i=0; i<a->size(); i++) {
           (*aa)[i] = (*a)[i]->first();
           (*ab)[i] = (*a)[i]->second();
@@ -220,7 +221,7 @@ namespace Gecode {
       throw Exception("Serialization", "Specification not understood");
     }
     
-    void emitArg(ostream& os, Arg* arg, VarMap& vm) {
+    void emitArg(ostream& os, Reflection::Arg* arg, Reflection::VarMap& vm) {
       if (arg->isInt()) {
         os << arg->toInt();
         return;
@@ -230,7 +231,7 @@ namespace Gecode {
         return;
       }
       if (arg->isVar()) {
-        VarSpec& s = vm.spec(arg->toVar());
+        Reflection::VarSpec& s = vm.spec(arg->toVar());
         if (s.name().empty())
           os << "_v" << arg->toVar();
         else
@@ -238,7 +239,7 @@ namespace Gecode {
         return;
       }
       if (arg->isIntArray()) {
-        IntArrayArg* a = arg->toIntArray();
+        Reflection::IntArrayArg* a = arg->toIntArray();
         os << "[";
         for (int i=0; i<a->size(); i++) {
           os << (*a)[i];
@@ -249,7 +250,7 @@ namespace Gecode {
         return;
       }
       if (arg->isArray()) {
-        ArrayArg* a = arg->toArray();
+        Reflection::ArrayArg* a = arg->toArray();
         if (a->size() == 0) {
           os << "[]";
           return;
@@ -267,10 +268,11 @@ namespace Gecode {
     
   }
 
-  void emitSharedObject(ostream& os, int soCount, VarMap& vm, Arg* arg0) {
-    Arg* arg = arg0->toSharedObject();
+  void emitSharedObject(ostream& os, int soCount, Reflection::VarMap& vm,
+                        Reflection::Arg* arg0) {
+    Reflection::Arg* arg = arg0->toSharedObject();
     if (arg->isIntArray()) {
-      IntArrayArg* a = arg->toIntArray();
+      Reflection::IntArrayArg* a = arg->toIntArray();
       os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
       os << "[";
       for (int i=0; i<a->size(); i++) {
@@ -282,7 +284,7 @@ namespace Gecode {
       return;
     }
     if (arg->isArray()) {
-      ArrayArg* a = arg->toArray();
+      Reflection::ArrayArg* a = arg->toArray();
       os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
       if (a->size() == 0) {
         os << "[];" << std::endl;
@@ -295,14 +297,14 @@ namespace Gecode {
     return;    
   }
   
-  void emitFlatzinc(Space* home, VarMap& vm, ostream& os) {
-    VarMapIter vmi(vm);
+  void emitFlatzinc(Space* home, Reflection::VarMap& vm, ostream& os) {
+    Reflection::VarMapIter vmi(vm);
     int varCount = 0;
     int soCount = 0;
-    for (SpecIter si = home->actorSpecs(vm); si(); ++si) {
-      ActorSpec& s = si.actor();
+    for (Reflection::SpecIter si = home->actorSpecs(vm); si(); ++si) {
+      Reflection::ActorSpec& s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
-        VarSpec& vs = vmi.var();
+        Reflection::VarSpec& vs = vmi.var();
         if (vs.vti() == "VTI_INT")
           emitIntVar(os, varCount, vs);
         else if (vs.vti() == "VTI_BOOL")
@@ -333,9 +335,6 @@ namespace Gecode {
       os << ");" << endl;
       soCount = soBase;
     }
-    
-    
-    
   }
   
 }

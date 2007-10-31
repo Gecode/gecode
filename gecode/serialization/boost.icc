@@ -40,7 +40,7 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/base_object.hpp>
-#include "gecode/support/symbol.hh"
+#include "gecode/support.hh"
 #include <sstream>
 
 namespace boost { namespace serialization {
@@ -49,261 +49,180 @@ namespace boost { namespace serialization {
   // Gecode::Reflection::Arg
 
   template<class Archive>
+  inline void save_construct_data(
+      Archive & ar, const Gecode::Reflection::Arg* t,
+      const unsigned int file_version
+  ){
+      // save data required to construct instance
+      ar << t->t;
+  }
+
+  template<class Archive>
+  inline void load_construct_data(
+      Archive & ar, Gecode::Reflection::Arg* t,
+      const unsigned int file_version
+  ){
+      // retrieve data from archive required to construct new instance
+      int m;
+      ar >> m;
+      // invoke inplace constructor to initialize instance of my_class
+      ::new(t)
+        Gecode::Reflection::Arg(static_cast<Gecode::Reflection::Arg::argtype>(m));
+      // t->initInt(m);
+  }
+
+  template<class Archive>
+  inline void load(
+    Archive& ar, Gecode::Reflection::Arg& arg,
+    unsigned int file_version
+  ){
+    using namespace Gecode::Reflection;
+    switch (arg.t) {
+      case Arg::INT_ARG:
+      {
+        int m; ar >> m;
+        arg.initInt(m);
+      }
+      break;
+      case Arg::VAR_ARG:
+      {
+        int m; ar >> m;
+        arg.initVar(m);
+      }
+      break;
+      case Arg::ARRAY_ARG:
+      {
+        int m; ar >> m;
+        arg.initArray(m);
+        ArrayArg* array = arg.toArray();
+        for (int i=0; i<m; i++) {
+          Arg* k;
+          ar >> k;
+          (*array)[i] = k;
+        }        
+      }
+      break;
+      case Arg::INT_ARRAY_ARG:
+      {
+        int m; ar >> m;
+        arg.initArray(m);
+        IntArrayArg* array = arg.toIntArray();
+        for (int i=0; i<m; i++) {
+          int k;
+          ar >> k;
+          (*array)[i] = k;
+        }        
+      }
+      break;
+      case Arg::STRING_ARG:
+      {
+        std::string s;
+        ar >> s;
+        arg.initString(s.c_str());
+      }
+      break;
+      case Arg::PAIR_ARG:
+      {
+        Arg* a; ar >> a;
+        Arg* b; ar >> b;
+        arg.initPair(a,b);
+      }
+      break;
+      case Arg::SHARED_OBJECT_ARG:
+      {
+        Arg* a; ar >> a;
+        arg.initSharedObject(a);
+      }
+      break;
+      case Arg::SHARED_REF_ARG:
+      {
+        int m; ar >> m;
+        arg.initSharedReference(m);
+      }
+      break;
+    }
+  }
+
+  template<class Archive>
+  void save(
+    Archive& ar,
+    const Gecode::Reflection::Arg& arg,
+    const unsigned int file_version
+  ) {
+    using namespace Gecode::Reflection;
+    switch (arg.t) {
+      case Arg::INT_ARG:
+      {
+        int m = arg.toInt();
+        ar << m;
+      }
+      break;
+      case Arg::VAR_ARG:
+      {
+        int m = arg.toVar();
+        ar << m;
+      }
+      break;
+      case Arg::ARRAY_ARG:
+      {
+        const ArrayArg* array = arg.toArray();
+        int s = array->size();
+        ar << s;
+        for (int i=0; i<s; i++) {
+          const Arg* a = (*array)[i];
+          ar << a;
+        }        
+      }
+      break;
+      case Arg::INT_ARRAY_ARG:
+      {
+        const IntArrayArg* array = arg.toIntArray();
+        int s = array->size();
+        ar << s;
+        for (int i=0; i<s; i++) {
+          int a = (*array)[i];
+          ar << a;
+        }        
+      }
+      break;
+      case Arg::STRING_ARG:
+      {
+        std::stringstream oss;
+        oss << arg.toString();
+        std::string s = oss.str();
+        ar << s;
+      }
+      break;
+      case Arg::PAIR_ARG:
+      {
+        Arg* a = arg.first();
+        ar << a;
+        a = arg.second();
+        ar << a;
+      }
+      break;
+      case Arg::SHARED_OBJECT_ARG:
+      {
+        Arg* a = arg.toSharedObject();
+        ar << a;
+      }
+      break;
+      case Arg::SHARED_REF_ARG:
+      {
+        int m = arg.toSharedReference();
+        ar << m;
+      }
+      break;
+    }
+  }
+
+  template<class Archive>
   void serialize(
     Archive& ar,
     Gecode::Reflection::Arg& arg,
     const unsigned int file_version
   ) {
-  }
-
-  /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::IntArg
-
-  template<class Archive>
-  inline void save_construct_data(
-      Archive & ar, const Gecode::Reflection::IntArg* t,
-      const unsigned int file_version
-  ){
-      // save data required to construct instance
-      ar << t->i;
-  }
-
-  template<class Archive>
-  inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::IntArg* t,
-      const unsigned int file_version
-  ){
-      // retrieve data from archive required to construct new instance
-      int m;
-      ar >> m;
-      // invoke inplace constructor to initialize instance of my_class
-      ::new(t)Gecode::Reflection::IntArg(m);
-  }
-  template<class Archive>
-  void serialize(
-    Archive& ar,
-    Gecode::Reflection::IntArg& arg,
-    const unsigned int file_version
-  ) {
-    ar & boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
-  }
-
-  /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::IntArg
-
-  template<class Archive>
-  inline void save_construct_data(
-      Archive & ar, const Gecode::Reflection::VarArg* t,
-      const unsigned int file_version
-  ){
-      // save data required to construct instance
-      ar << t->i;
-  }
-  template<class Archive>
-  inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::VarArg* t,
-      const unsigned int file_version
-  ){
-      // retrieve data from archive required to construct new instance
-      int m;
-      ar >> m;
-      // invoke inplace constructor to initialize instance of my_class
-      ::new(t)Gecode::Reflection::VarArg(m);
-  }
-  template<class Archive>
-  void serialize(
-    Archive& ar,
-    Gecode::Reflection::VarArg& arg,
-    const unsigned int file_version
-  ) {
-    ar & boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
-  }
-
-  /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::IntArrayArg
-
-  template<class Archive>
-  inline void save_construct_data(
-      Archive & ar, const Gecode::Reflection::IntArrayArg* t,
-      const unsigned int file_version
-  ){
-    // save data required to construct instance
-    int size = t->size();
-    ar << size;
-  }
-  template<class Archive>
-  inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::IntArrayArg* t,
-      const unsigned int file_version
-  ){
-      // retrieve data from archive required to construct new instance
-      int m;
-      ar >> m;
-      // invoke inplace constructor to initialize instance of my_class
-      ::new(t)Gecode::Reflection::IntArrayArg(m);
-  }
-  template<class Archive>
-  void save(
-    Archive& ar,
-    const Gecode::Reflection::IntArrayArg& arg,
-    const unsigned int file_version
-  ) {
-    ar << boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
-    for (int i=0; i<arg.size(); i++) {
-      int k = arg[i];
-      ar << k;
-    }
-  }
-  template<class Archive>
-  void load(
-    Archive& ar,
-    Gecode::Reflection::IntArrayArg& arg,
-    const unsigned int file_version
-  ) {
-    ar >> boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
-    for (int i=0; i<arg.size(); i++) {
-      int k;
-      ar >> k;
-      arg[i] = k;
-    }
-  }
-  template<class Archive>
-  void serialize(
-    Archive& ar,
-    Gecode::Reflection::IntArrayArg& arg,
-    const unsigned int file_version
-  ) {
     split_free(ar, arg, file_version);
-  }
-
-  /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::ArrayArg<Arg*>
-  
-  template<class Archive>
-  inline void save_construct_data(
-      Archive & ar,
-      const Gecode::Reflection::ArrayArg* t,
-      const unsigned int file_version
-  ){
-    // save data required to construct instance
-    int size = t->size();
-    ar << size;
-  }
-  template<class Archive>
-  inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::ArrayArg* t,
-      const unsigned int file_version
-  ){
-      // retrieve data from archive required to construct new instance
-      int m;
-      ar >> m;
-      // invoke inplace constructor to initialize instance of my_class
-      ::new(t)Gecode::Reflection::ArrayArg(m);
-  }
-  template<class Archive>
-  void save(
-    Archive& ar,
-    const Gecode::Reflection::ArrayArg& arg,
-    const unsigned int file_version
-  ) {
-    ar << boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
-    for (int i=0; i<arg.size(); i++) {
-      const Gecode::Reflection::Arg* const k = arg[i];
-      ar << k;
-    }
-  }
-  template<class Archive>
-  void load(
-    Archive& ar,
-    Gecode::Reflection::ArrayArg& arg,
-    const unsigned int file_version
-  ) {
-    ar >> boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
-    for (int i=0; i<arg.size(); i++) {
-      Gecode::Reflection::Arg* k;
-      ar >> k;
-      arg[i] = k;
-    }
-  }
-  template<class Archive>
-  void serialize(
-    Archive& ar,
-    Gecode::Reflection::ArrayArg& arg,
-    const unsigned int file_version
-  ) {
-    split_free(ar, arg, file_version);
-  }
-
-
-  /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::StringArg
-
-  template<class Archive>
-  inline void save_construct_data(
-      Archive & ar,
-      const Gecode::Reflection::StringArg* t,
-      const unsigned int file_version
-  ){
-    // save data required to construct instance
-    std::stringstream oss;
-    oss << t->s;
-    std::string s = oss.str();
-    ar << s;
-  }
-  template<class Archive>
-  inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::StringArg* t,
-      const unsigned int file_version
-  ){
-    // retrieve data from archive required to construct new instance
-    std::string s;
-    ar >> s;
-    // invoke inplace constructor to initialize instance of my_class
-    ::new(t)Gecode::Reflection::StringArg(
-      Gecode::Support::Symbol(s.c_str(),true));
-  }
-  template<class Archive>
-  void serialize(
-    Archive& ar,
-    Gecode::Reflection::StringArg& arg,
-    const unsigned int file_version
-  ) {
-    ar & boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
-  }
-
-  /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::PairArg
-
-  template<class Archive>
-  inline void save_construct_data(
-      Archive & ar,
-      const Gecode::Reflection::PairArg* t,
-      const unsigned int file_version
-  ){
-    // save data required to construct instance
-    Gecode::Reflection::Arg* const a = t->a;
-    Gecode::Reflection::Arg* const b = t->b;
-    ar << a << b;
-  }
-  template<class Archive>
-  inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::PairArg* t,
-      const unsigned int file_version
-  ){
-    // retrieve data from archive required to construct new instance
-    Gecode::Reflection::Arg* a;
-    Gecode::Reflection::Arg* b;
-    ar >> a >> b;
-    // invoke inplace constructor to initialize instance of my_class
-    ::new(t)Gecode::Reflection::PairArg(a,b);
-  }
-  template<class Archive>
-  void serialize(
-    Archive& ar,
-    Gecode::Reflection::PairArg& arg,
-    const unsigned int file_version
-  ) {
-    ar & boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
   }
   
   /////////////////////////////////////////////////////////////////////////
@@ -369,12 +288,7 @@ namespace boost { namespace serialization {
   
 }}
 
-BOOST_CLASS_EXPORT(Gecode::Reflection::IntArg)
-BOOST_CLASS_EXPORT(Gecode::Reflection::VarArg)
-BOOST_CLASS_EXPORT(Gecode::Reflection::IntArrayArg)
-BOOST_CLASS_EXPORT(Gecode::Reflection::ArrayArg)
-BOOST_CLASS_EXPORT(Gecode::Reflection::StringArg)
-BOOST_CLASS_EXPORT(Gecode::Reflection::PairArg)
+BOOST_CLASS_EXPORT(Gecode::Reflection::Arg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::ActorSpec)
 
 // STATISTICS: serialization-any

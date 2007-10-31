@@ -122,6 +122,11 @@ namespace Gecode { namespace Reflection {
     ret->arg1.i = i;
     return ret;
   }
+  void
+  Arg::initInt(int i) {
+    t = INT_ARG;
+    arg1.i = i;
+  }
 
   bool
   Arg::isVar(void) const {
@@ -138,6 +143,11 @@ namespace Gecode { namespace Reflection {
     Arg* ret = new Arg(VAR_ARG);
     ret->arg1.i = i;
     return ret;
+  }
+  void
+  Arg::initVar(int i) {
+    t = VAR_ARG;
+    arg1.i = i;
   }
 
   bool
@@ -157,6 +167,12 @@ namespace Gecode { namespace Reflection {
     ret->arg2.aa = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
     return static_cast<ArrayArg*>(ret);
   }
+  void
+  Arg::initArray(int n) {
+    t = ARRAY_ARG;
+    arg1.i = n;
+    arg2.aa = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
+  }
 
   bool
   Arg::isIntArray(void) const {
@@ -174,6 +190,12 @@ namespace Gecode { namespace Reflection {
     ret->arg1.i = n;
     ret->arg2.ia = static_cast<int*>(Memory::malloc(sizeof(int)*n));
     return static_cast<IntArrayArg*>(ret);
+  }
+  void
+  Arg::initIntArray(int n) {
+    t = INT_ARRAY_ARG;
+    arg1.i = n;
+    arg2.ia = static_cast<int*>(Memory::malloc(sizeof(int)*n));
   }
 
   bool
@@ -196,6 +218,11 @@ namespace Gecode { namespace Reflection {
     Arg* ret = new Arg(STRING_ARG);
     ret->arg1.s = strdup(s);
     return ret;    
+  }
+  void
+  Arg::initString(const char* s) {
+    t = STRING_ARG;
+    arg1.s = strdup(s);
   }
 
 #if defined(_MSC_VER)
@@ -225,6 +252,12 @@ namespace Gecode { namespace Reflection {
     ret->arg2.second = b;
     return ret;
   }
+  void
+  Arg::initPair(Arg* a, Arg* b) {
+    t = PAIR_ARG;
+    arg1.first = a;
+    arg2.second = b;
+  }
 
   bool
   Arg::isSharedObject(void) const {
@@ -242,6 +275,11 @@ namespace Gecode { namespace Reflection {
     ret->arg1.first = a;
     return ret;
   }
+  void
+  Arg::initSharedObject(Arg* a) {
+    t = SHARED_OBJECT_ARG;
+    arg1.first = a;
+  }
   
   bool
   Arg::isSharedReference(void) const {
@@ -258,6 +296,11 @@ namespace Gecode { namespace Reflection {
     Arg* ret = new Arg(SHARED_REF_ARG);
     ret->arg1.i = ref;
     return ret;
+  }
+  void
+  Arg::initSharedReference(int ref) {
+    t = SHARED_REF_ARG;
+    arg1.i = ref;
   }
 
   Arg::~Arg(void) {
