@@ -433,7 +433,7 @@ namespace Gecode {
       }
       d->n_symbols = n_symbols;
     }
-    d->fillTable();
+    d->fill();
     object(d);
   }
 
@@ -461,7 +461,7 @@ namespace Gecode {
       d->trans[i].symbol  = (*a)[4+3*i+1];
       d->trans[i].o_state = (*a)[4+3*i+2];
     }
-    d->fillTable();
+    d->fill();
     object(d);    
     vm.putMasterObject(object());
   }
@@ -494,12 +494,26 @@ namespace Gecode {
     d->n_trans   = n_trans;
     d->final_fst = final_fst;
     d->final_lst = final_lst;
+    d->n_log     = n_log;
+    d->table = static_cast<HashEntry*>
+      (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
     memcpy(&d->trans[0], &trans[0], sizeof(Transition)*n_trans);
+    memcpy(&d->table[0], &table[0], sizeof(HashEntry)*(1<<n_log));
     return d;
   }
 
+  DFA::DFAI::DFAI(void) 
+    : SharedHandle::Object(true),
+      n_states(1), n_symbols(0), n_trans(0), 
+      final_fst(0), final_lst(0),
+      trans(NULL) {
+    fill();
+  }
+
+  DFA::DFAI DFA::DFAI::epsilon;
+
   void
-  DFA::DFAI::fillTable(void) {
+  DFA::DFAI::fill(void) {
     // Compute smallest logarithm larger than n_symbols
     n_log = 1;
     while (n_symbols >= static_cast<unsigned int>(1<<n_log))

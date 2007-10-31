@@ -58,7 +58,7 @@ namespace Gecode {
     /// Specification of transition range
     class HashEntry {
     public:
-      int symbol;                 ///< Symbol
+      int symbol;            ///< Symbol
       const Transition* fst; ///< First transition for the symbol
       const Transition* lst; ///< Last transition for the symbol
     };
@@ -67,30 +67,34 @@ namespace Gecode {
     /// Size of table (as binary logarithm)
     int n_log;
     /// Fill hash table
-    GECODE_INT_EXPORT void fillTable(void);
+    GECODE_INT_EXPORT void fill(void);
     /// Initialize automaton implementation with \a nt transitions
     DFAI(unsigned int nt);
+    /// Initialize automaton implementation as empty
+    GECODE_INT_EXPORT DFAI(void);
     /// Delete automaton implemenentation
     virtual ~DFAI(void);
     /// Create a copy
     GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
+    /// Default automaton
+    GECODE_INT_EXPORT static DFAI epsilon;
   };
   
   forceinline
   DFA::DFAI::DFAI(unsigned int nt)
-    : trans(static_cast<Transition*>
-            (Memory::malloc(sizeof(Transition)*nt))) {}
+    : trans(nt == 0 ? NULL :
+            static_cast<Transition*>(Memory::malloc(sizeof(Transition)*nt))) {}
   
   forceinline
   DFA::DFAI::~DFAI(void) {
-    Memory::free(trans);
+    if (n_trans > 0)
+      Memory::free(trans);
     Memory::free(table);
   }
 
   forceinline
-  DFA::DFA(void) {
-    assert(object() == NULL);
-  }
+  DFA::DFA(void) : SharedHandle(&DFAI::epsilon) {}
+
 
   forceinline
   DFA::DFA(const DFA& d)

@@ -238,6 +238,42 @@ namespace Test { namespace Int {
        }
      };
    
+     /// Test for empty DFA
+     class RegEmptyDFA : public Test {
+     public:
+       /// Create and register test
+       RegEmptyDFA(void) : Test("Extensional::Reg::Empty::DFA",1,0,0) {
+         testsearch = false;
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::DFA d;
+         Gecode::extensional(home, x, d);
+       }
+     };
+   
+     /// Test for empty regular expression
+     class RegEmptyREG : public Test {
+     public:
+       /// Create and register test
+       RegEmptyREG(void) : Test("Extensional::Reg::Empty::REG",1,0,0) {
+         testsearch = false;
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::REG r;
+         Gecode::extensional(home, x, r);
+       }
+     };
+   
      RegSimpleA ra;
      RegSimpleB rb;
    
@@ -247,6 +283,9 @@ namespace Test { namespace Int {
      RegSharedB rsb;
      RegSharedC rsc;
      RegSharedD rsd;
+
+     RegEmptyDFA redfa;
+     RegEmptyREG rereg;
      //@}
    
 

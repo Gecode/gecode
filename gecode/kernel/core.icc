@@ -90,8 +90,8 @@ namespace Gecode {
       /// The forwarding pointer used for forwarding
       Object* fwd;
     public:
-      /// Initialize but do not regard object as being used!
-      Object(void);
+      /// Initialize, regard as always in use if \a used is true
+      Object(bool used=false);
       /// Return fresh copy for unshared update
       virtual Object* copy(void) const = 0;
       /// Delete shared object
@@ -1441,8 +1441,8 @@ namespace Gecode {
   }
 
   forceinline
-  SharedHandle::Object::Object(void) 
-    : use_cnt(0), fwd(NULL) {}
+  SharedHandle::Object::Object(bool used) 
+    : use_cnt(used ? 1 : 0), fwd(NULL) {}
   forceinline
   SharedHandle::Object::~Object(void) {
     assert(use_cnt == 0);

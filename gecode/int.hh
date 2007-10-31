@@ -1055,7 +1055,7 @@ namespace Gecode {
     };
   public:
     friend class Transitions;
-    /// Default constructor
+    /// Initialize for DFA accepting the empty word
     DFA(void);
     /**
      * \brief Initialize DFA
@@ -1066,6 +1066,7 @@ namespace Gecode {
      * - Final states are given by \a f, where the last final element
      *   must be -1.
      * - Minimizes the DFA, if \a minimize is true.
+     * - Note that the transitions must be deterministic.
      */
     GECODE_INT_EXPORT
     DFA(int s, Transition t[], int f[], bool minimize=true);
