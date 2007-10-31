@@ -43,84 +43,50 @@ namespace Gecode {
    * \brief Data stored for a Table
    *
    */
-  class Table::TableI {
-  private:
-    /// Possible dfa for rewriting into regular
-    //DFA _dfa;
-    //bool dfa_exists;
+  class TupleSet::TupleSetI : public SharedHandle::Object {
   public:
-    /// How often is the Table implementation referred to
-    unsigned int* use_cnt;
     /// Arity
     int arity;
-    /// Number of tuples
+    /// Number of Tuples
     int size;
     /// Tuples index
-    tuple** tuples;
+    Tuple** tuples;
     /// Tuples data
     int* data;
     /// Excess storage
     int excess;
     /// Minimum and maximum in domain-values
     int min, max;
-    /// Domainsize
+    /// Domain size
     int domsize;
     /// Initial last structure
-    tuple** last;
+    Tuple** last;
     /// Pointer to NULL-pointer
-    tuple* nullptr;
+    Tuple* nullptr;
 
-    // Default initialization
-    void init(void) {
-      use_cnt = Memory::bmalloc<unsigned int>(1);
-      *use_cnt = 1;
-      arity = -1;
-      size = 0;
-      tuples = NULL;
-      data = NULL;
-      excess = 0;
-      min = Limits::Int::int_max;
-      max = Limits::Int::int_min;
-      domsize = -1;
-      last = NULL;
-      nullptr = NULL;
-      //_dfa = DFA();
-      //dfa_exists = false;
-    }
-    /// Add tuple. Assumes that arity matches.
+    /// Add Tuple. Assumes that arity matches.
     template <class T>
     void add(T t);
-    /// Create a copy
-    GECODE_INT_EXPORT TableI* copy(void);
-    /// Finalize datastructure (disallows additions of more tuples)
+    /// Finalize datastructure (disallows additions of more Tuples)
     GECODE_INT_EXPORT void finalize(void);
     /// Is datastructure finalized
-    bool finalized(void) { 
-      assert(*use_cnt);
+    bool finalized(void) const { 
       assert((excess == -1 && domsize >= 0) ||
              (excess != -1 && domsize == -1)); 
       return excess == -1; 
     }
 
-    /// Dispose
-    void dispose(void) {
-      --*use_cnt;
-      if (*use_cnt == 0) {
-        excess = -2;
-        //Memory::free(use_cnt);
-        //Memory::free(tuples);
-        //Memory::free(data);
-        //Memory::free(last);
-      }
-    }
-
-    /// Get DFA (datastructure must be finalized first)
-    //GECODE_INT_EXPORT DFA dfa(void);
+    /// Initialize as empty tuple set
+    TupleSetI(void);
+    /// Delete  implementation
+    virtual ~TupleSetI(void);
+    /// Create a copy
+    GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
   };
 
   template <class T>
   void
-  Table::TableI::add(T t){
+  TupleSet::TupleSetI::add(T t){
     assert(arity  != -1); // Arity has been set
     assert(excess != -1); // Tuples may still be added
     if (excess == 0) {
@@ -138,90 +104,93 @@ namespace Gecode {
     }
     ++size;
   }
+
+
+  forceinline
+  TupleSet::TupleSetI::TupleSetI(void) 
+    : arity(-1),
+      size(0),
+      tuples(NULL),
+      data(NULL),
+      excess(0),
+      min(Limits::Int::int_max),
+      max(Limits::Int::int_min),
+      domsize(-1),
+      last(NULL),
+      nullptr(NULL)
+  {}
+
+  forceinline
+  TupleSet::TupleSetI::~TupleSetI(void) {
+    excess = -2;
+    Memory::free(tuples);
+    Memory::free(data);
+    Memory::free(last);
+  }
   
 
   forceinline
-  Table::Table(void) : tablei(Memory::bmalloc<TableI>(1)) {
-    tablei->init();
-  }
-
-  inline void
-  Table::add(const IntArgs& tuple) {
-    assert(tablei->arity == -1 ||
-           tablei->arity == tuple.size());
-    tablei->arity = tuple.size();
-    tablei->add(tuple);
-  }
-
-  inline void
-  Table::finalize(void) {
-    tablei->finalize();
-  }
-
-  inline int
-  Table::arity(void) {
-    assert(tablei->arity != -1);
-    return tablei->arity;
-  }
-  inline int
-  Table::tuples(void) {
-    assert(tablei->finalized());
-    return tablei->size;
-  }
-  inline Table::tuple
-  Table::operator[](int i) {
-    assert(tablei->finalized());
-    return tablei->data + i*tablei->arity;
-  }
-
-  /*
-  inline DFA
-  Table::dfa(void) {
-    if (!tablei->finalized()) tablei->finalize();
-    return tablei->dfa();
-  }
-  */
-  forceinline
-  Table::Table(const Table& d)
-    : tablei(d.tablei) {
-    ++*tablei->use_cnt;
-  }
-
-  inline void
-  Table::update(Space* home, bool share, Table& d) {
-    if (share) {
-      tablei->dispose();
-      if (tablei->use_cnt == 0) {
-        Memory::free(tablei);
-      }
-      tablei = d.tablei;
-    } else {
-      tablei = d.tablei->copy();
-    }
-    ++*tablei->use_cnt;
+  TupleSet::TupleSet(void) {
+    TupleSetI* imp = new TupleSetI;
+    object(imp);
   }
 
   forceinline
-  Table::~Table(void) {
-    tablei->dispose();
-    if (tablei->use_cnt == 0) {
-      Memory::free(tablei);
-    }
+  TupleSet::TupleSet(const TupleSet& ts) 
+    : SharedHandle(ts) {}
+
+  inline TupleSet::TupleSetI*
+  TupleSet::implementation(void) {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    return imp;
   }
 
-  forceinline const Table&
-  Table::operator=(const Table& d) {
-    if (&d != this) {
-      tablei->dispose();
-      if (tablei->use_cnt == 0) {
-        Memory::free(tablei);
-      }
-      tablei = d.tablei;
-      ++*tablei->use_cnt;
-    }
-    return *this;
+  inline void
+  TupleSet::add(const IntArgs& tuple) {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    assert(imp->arity == -1 ||
+           imp->arity == tuple.size());
+    imp->arity = tuple.size();
+    imp->add(tuple);
   }
 
+  inline void
+  TupleSet::finalize(void) {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    if (!imp->finalized())
+      imp->finalize();
+  }
+
+  inline int
+  TupleSet::arity(void) const {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    assert(imp->arity != -1);
+    return imp->arity;
+  }
+  inline int
+  TupleSet::tuples(void) const {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    assert(imp->finalized());
+    return imp->size;
+  }
+  inline TupleSet::Tuple
+  TupleSet::operator[](int i) const {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    assert(imp->finalized());
+    return imp->data + i*imp->arity;
+  }
+  inline int
+  TupleSet::min(void) const {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    assert(imp->finalized());
+    return imp->min;
+  }
+  inline int
+  TupleSet::max(void) const {
+    TupleSetI* imp = static_cast<TupleSetI*>(object());
+    assert(imp->finalized());
+    return imp->max;
+  }
 }
 
 #endif

@@ -1123,47 +1123,40 @@ namespace Gecode {
   extensional(Space* home, const BoolVarArgs& x, DFA d,
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
-  /** \brief Class represeting table of tuples.
+  /** \brief Class represeting a set of tuples.
    */
-  class Table {
+  class TupleSet : public SharedHandle {
   public:
     /** \brief Type of a tuple. 
      *
      * The arity of the tuple is left implicit.
      */
-    typedef int* tuple;
+    typedef int* Tuple;
 
     /// Class for table data
-    class TableI;
-    TableI* tablei;
+    class TupleSetI;
+    /// Get implementation
+    TupleSetI* implementation(void);
 
-    /// Default construction of table
-    Table(void);
-    /// Initialize by Table \a d (Table is shared)
-    Table(const Table& d);
-    /// Initialize by Table \a d (Table is shared)
-    const Table& operator=(const Table&);
-    /// Destructor
-    ~Table(void);
-    /**
-     * \brief Update this Table to \a d
-     *
-     * If \a share is true, share the same \a d. If not, create
-     * an independent copy from \a d.
-     */
-    void update(Space* home, bool share, Table& d);
+    /// Default construction otablef tuple set
+    TupleSet(void);
+    /// Initialize by TupleSet \a d (tuple set is shared)
+    TupleSet(const TupleSet& d);
 
-    /// Add tuple to table
+    /// Add tuple to tuple set
     void add(const IntArgs& tuple);
-    //DFA dfa(void);
-    /// Finalize table
+    /// Finalize tuple set
     void finalize(void);
-    /// get arity of table
-    int  arity(void);
-    /// get number of tuples
-    int tuples(void);
+    /// Arity of tuple set
+    int  arity(void) const;
+    /// Number of tuples
+    int tuples(void) const;
     /// Get tuple i
-    tuple operator[](int i);
+    Tuple operator[](int i) const;
+    /// Minimum domain size
+    int min(void) const;
+    /// Maximum domain size
+    int max(void) const;
   };
 
   /** \brief Post propagator for \f$x\in T\f$.
@@ -1181,7 +1174,7 @@ namespace Gecode {
    * for the incremental algorithm (\a pk = \a PK_SPEED).
    */
   GECODE_INT_EXPORT void
-  extensional(Space* home, const IntVarArgs& x, const Table& t, 
+  extensional(Space* home, const IntVarArgs& x, const TupleSet& t, 
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   
   /** \brief Post propagator for \f$\langle x_0+O_0, x_1+O_1, \cdots, x_{n-1}+O_{n-1}\rangle\in T\f$.
@@ -1203,13 +1196,13 @@ namespace Gecode {
    * for the incremental algorithm (\a pk = \a PK_SPEED).
    */
   GECODE_INT_EXPORT void
-  extensional(Space* home, const IntArgs& c, const IntVarArgs& x, const Table& t, 
+  extensional(Space* home, const IntArgs& c, const IntVarArgs& x, const TupleSet& t, 
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 }
 
 #include "gecode/int/extensional/dfa.icc"
-#include "gecode/int/extensional/table.icc"
+#include "gecode/int/extensional/tuple-set.icc"
 
 namespace Gecode {
 
@@ -1551,6 +1544,12 @@ namespace Gecode {
  */
 GECODE_INT_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::DFA& d);
+
+/** \relates Gecode::TupleSet
+ * Print TupleSet \a ts
+ */
+GECODE_INT_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::TupleSet& ts);
 
 #endif
 

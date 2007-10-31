@@ -66,9 +66,9 @@ namespace Gecode {
     HashEntry* table;
     /// Size of table (as binary logarithm)
     int n_log;
-    /// Initialize automation implementation with \a nt transitions
+    /// Initialize automaton implementation with \a nt transitions
     DFAI(unsigned int nt);
-    /// Delete automation implemenentation
+    /// Delete automaton implemenentation
     virtual ~DFAI(void);
     /// Create a copy
     GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;

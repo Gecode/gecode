@@ -42,13 +42,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline
-  Base<View,subscribe>::Base(Space* home, ViewArray<View>& x0, const Table& t)
-    : Propagator(home), x(x0), table(t), last_data(NULL) {
+  Base<View,subscribe>::Base(Space* home, ViewArray<View>& x0, const TupleSet& t)
+    : Propagator(home), x(x0), tupleSet(t), last_data(NULL) {
     if (subscribe)
       x.subscribe(home, this, PC_INT_DOM);
 
-    if (!table.tablei->finalized()) table.tablei->finalize();
-    init_last(home, table.tablei->last);
+    if (!ts()->finalized()) ts()->finalize();
+    init_last(home, ts()->last);
 
     this->force(home);
   }
@@ -58,54 +58,52 @@ namespace Gecode { namespace Int { namespace Extensional {
   Base<View,subscribe>::Base(Space* home, bool share, Base<View,subscribe>& p)
     : Propagator(home,share,p), last_data(NULL) {
     x.update(home, share, p.x);
-    table.update(home, share, p.table);
+    tupleSet.update(home, share, p.tupleSet);
 
     init_last(home, p.last_data);
   }
 
   template <class View, bool subscribe>
   forceinline void
-  Base<View,subscribe>::init_last(Space* home, tuple** source) {
+  Base<View,subscribe>::init_last(Space* home, Tuple** source) {
     if (last_data == NULL) {
-      int literals = table.tablei->domsize*x.size();
-      last_data = static_cast<tuple**>(home->alloc(literals*sizeof(tuple*)));
+      int literals = ts()->domsize*x.size();
+      last_data = static_cast<Tuple**>(home->alloc(literals*sizeof(Tuple*)));
       for (int i = literals; i--; ) {
         last_data[i] = source[i];
       }
-      /*
-      for (int i = 0; i < x.size(); ++i) {
-        int domsize = table.tablei->domsize;
-        for (int d = 0; d < domsize; ++d) {
-          tuple* l = last_data[(i*domsize) + d];
-        }
-      }
-      */
     }
   }
 
   template <class View, bool subscribe>
+  forceinline TupleSet::TupleSetI*
+  Base<View,subscribe>::ts(void) {
+    return tupleSet.implementation();
+  }
+
+  template <class View, bool subscribe>
   PropCost
-  Base<View,subscribe>::cost() const {
+  Base<View,subscribe>::cost(void) const {
     return PC_QUADRATIC_HI;
   }
 
 #define GECODE_LAST_TUPLE(l) (*(l))
 
   template <class View, bool subscribe>
-  forceinline tuple
+  forceinline Tuple
   Base<View,subscribe>::last(int var, int val) {
-    return GECODE_LAST_TUPLE(last_data[(var*table.tablei->domsize) + val]);
+    return GECODE_LAST_TUPLE(last_data[(var*ts()->domsize) + val]);
   }
 
   template <class View, bool subscribe>
-  forceinline tuple
+  forceinline Tuple
   Base<View,subscribe>::last_next(int var, int val) {
     assert(last(var, val) != NULL);
-    assert(last(var, val)[var] == val+table.tablei->min);
-    int pos = (var*table.tablei->domsize) + val;
+    assert(last(var, val)[var] == val+ts()->min);
+    int pos = (var*ts()->domsize) + val;
     ++(last_data[pos]);
-    if (last(var,val)[var] != (val+table.tablei->min))
-      last_data[pos] = table.tablei->nullptr;
+    if (last(var,val)[var] != (val+ts()->min))
+      last_data[pos] = ts()->nullptr;
     return last(var, val);
   }
 
@@ -113,13 +111,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, bool subscribe>
   forceinline void
   Base<View,subscribe>::init_dom(Space* home, Domain dom) {
-    // \todo use offset!!!
-    int domsize = table.tablei->domsize;
+    int domsize = ts()->domsize;
     for (int i = x.size(); i--; ) {
       dom[i].init(home, domsize);
       ViewValues<View> vv(x[i]);
       while (vv()) {
-        dom[i].set(vv.val());
+        dom[i].set(vv.val()-ts()->min);
         ++vv;
       }
     }
@@ -127,17 +124,17 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline bool
-  Base<View,subscribe>::valid(tuple t, Domain dom) {
+  Base<View,subscribe>::valid(Tuple t, Domain dom) {
     for (int i = x.size(); i--; )
-      if (!dom[i].get(t[i]))
+      if (!dom[i].get(t[i]-ts()->min))
         return false;
     return true;
   }
 #undef GECODE_LAST_TUPLE
   template <class View, bool subscribe>
-  forceinline tuple
+  forceinline Tuple
   Base<View,subscribe>::find_support(Domain dom, int var, int val) {
-    tuple l = last(var, val);
+    Tuple l = last(var, val);
     while (l != NULL && !valid(l, dom)) {
       l = last_next(var, val);
     }
@@ -150,14 +147,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   Base<View,subscribe>::dispose(Space* home) {
     this->unforce(home);
     (void) Propagator::dispose(home);
-    (void) table.~Table();    
     if (!home->failed()) {
       if (subscribe)
         x.cancel(home,this,PC_INT_DOM);
       // take care of last_data
-      int literals = table.tablei->domsize*x.size();    
-      home->reuse(last_data, sizeof(tuple*)*literals);
+      int literals = ts()->domsize*x.size();    
+      home->reuse(last_data, sizeof(Tuple*)*literals);
     }
+    (void) tupleSet.~TupleSet();    
     return sizeof(*this);
   }
 }}}

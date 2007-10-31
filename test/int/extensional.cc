@@ -251,10 +251,10 @@ namespace Test { namespace Int {
    
 
 
-     class Table1 : public Test {
+     class TupleSet1 : public Test {
      public:
        /// Create and register test
-       Table1(const char* t, Gecode::PropKind pk0)
+       TupleSet1(const char* t, Gecode::PropKind pk0)
          : Test(t,4,1,5,false,Gecode::ICL_DOM,pk0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -269,7 +269,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Table t;
+         TupleSet t;
          IntArgs t1(4,  2, 1, 2, 4);
          IntArgs t2(4,  2, 2, 1, 4);
          IntArgs t3(4,  4, 3, 4, 1);
@@ -286,15 +286,15 @@ namespace Test { namespace Int {
      };
 
      namespace {
-       Table1 _tab1b("Extensional::Table::Basic::1", Gecode::PK_MEMORY);
-       Table1 _tab1i("Extensional::Table::Incremental::1", Gecode::PK_SPEED);
+       TupleSet1 _tab1b("Extensional::TupleSet::Basic::1", Gecode::PK_MEMORY);
+       TupleSet1 _tab1i("Extensional::TupleSet::Incremental::1", Gecode::PK_SPEED);
      }
 
-     class Table2 : public Test {
-       mutable Gecode::Table t;
+     class TupleSet2 : public Test {
+       mutable Gecode::TupleSet t;
      public:
        /// Create and register test
-       Table2(const char* name, Gecode::PropKind pk0)
+       TupleSet2(const char* name, Gecode::PropKind pk0)
          : Test(name,4,1,5,false,Gecode::ICL_DOM,pk0) {
          using namespace Gecode;
          IntArgs t1 (4,  2, 1, 2, 4);
@@ -322,9 +322,9 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          using namespace Gecode;
          for (int i = 0; i < t.tuples(); ++i) {
-           Table::tuple l = t[i];
+           TupleSet::Tuple l = t[i];
            bool same = true;
-           for (int j = 0; j < x.size() && same; ++j) {
+           for (int j = 0; j < t.arity() && same; ++j) {
              if (l[j] != x[j]) same = false;
            }
            if (same) return true;
@@ -339,8 +339,8 @@ namespace Test { namespace Int {
      };
 
      namespace {
-       Table2 _tab2b("Extensional::Table::Basic::2", Gecode::PK_MEMORY);
-       Table2 _tab2i("Extensional::Table::Incremental::2", Gecode::PK_SPEED);
+       TupleSet2 _tab2b("Extensional::TupleSet::Basic::2", Gecode::PK_MEMORY);
+       TupleSet2 _tab2i("Extensional::TupleSet::Incremental::2", Gecode::PK_SPEED);
      }
    }
 }}

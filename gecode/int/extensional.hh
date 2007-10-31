@@ -161,15 +161,15 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 namespace Gecode { namespace Int { namespace Extensional {
 
-  typedef Table::tuple tuple;
-  typedef BitSet<unsigned long>* Domain;
+  typedef TupleSet::Tuple Tuple;
+  typedef BitSet<unsigned long long>* Domain;
 
   /**
-   * \brief Base for domain-consistent extensional proipagation.
+   * \brief Base for domain-consistent extensional propagation.
    *
    * This class contains support for implementing domain consistent
-   * extensional propagation algorithms that use positive tables and
-   * the \a last data structure.
+   * extensional propagation algorithms that use positive tuple sets and
+   * a \a last data structure.
    *
    * Requires \code #include "gecode/int/extensional.hh" \endcode
    * \ingroup FuncIntProp
@@ -177,24 +177,26 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, bool subscribe = true>
   class Base : public Propagator {
   protected:
-    ViewArray<View> x;
-    Table table;
-    tuple** last_data;
+    ViewArray<View> x; ///< Variables
+    TupleSet tupleSet; ///< Definition of constraint
+    Tuple** last_data; ///< Last tuple looked at
+    /// Access real tuple-set
+    TupleSet::TupleSetI* ts(void);
 
     /// Constructor for cloning \a p
     Base(Space* home, bool share, Base<View,subscribe>& p);
     /// Constructor for posting
-    Base(Space* home, ViewArray<View>& x, const Table& t);
+    Base(Space* home, ViewArray<View>& x, const TupleSet& t);
 
-    void  init_last(Space* home, tuple** source);
-    tuple last(int var, int val);
-    tuple last_next(int var, int val);
+    void  init_last(Space* home, Tuple** source);
+    Tuple last(int var, int val);
+    Tuple last_next(int var, int val);
     void  init_dom(Space* home, Domain dom);
-    bool  valid(tuple t, Domain dom);
-    tuple find_support(Domain dom, int var, int val);
+    bool  valid(Tuple t, Domain dom);
+    Tuple find_support(Domain dom, int var, int val);
 
   public:
-    virtual PropCost cost() const;
+    virtual PropCost cost(void) const;
 
     // Dispose propagator
     virtual size_t dispose(Space* home);
@@ -220,7 +222,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   class Basic : public Base<View> {
   protected:
     using Base<View>::x;
-    using Base<View>::table;
+    using Base<View>::tupleSet;
+    using Base<View>::ts;
     using Base<View>::last;
     using Base<View>::last_next;
     using Base<View>::init_last;
@@ -230,7 +233,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for cloning \a p
     Basic(Space* home, bool share, Basic<View>& p);
     /// Constructor for posting
-    Basic(Space* home, ViewArray<View>& x, const Table& t);
+    Basic(Space* home, ViewArray<View>& x, const TupleSet& t);
 
   public:
     /// Perform propagation
@@ -247,7 +250,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Name of this propagator
     virtual const char* name(void) const;    
     /// Post propagator for views \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x, const Table& t);
+    static ExecStatus post(Space* home, ViewArray<View>& x, const TupleSet& t);
   };
 }}}
 
@@ -268,15 +271,16 @@ namespace Gecode { namespace Int { namespace Extensional {
   class Incremental : public Base<View, false> {
   protected:
     using Base<View, false>::x;
-    using Base<View, false>::table;
+    using Base<View, false>::tupleSet;
+    using Base<View, false>::ts;
     using Base<View, false>::last;
     using Base<View, false>::last_next;
     using Base<View, false>::init_last;
     using Base<View, false>::init_dom;
     struct SupportEntry : public FreeList {
     public:
-      /// Supporting tuple
-      tuple t;
+      /// Supporting Tuple
+      Tuple t;
       /// Next support
       SupportEntry* next;
       
@@ -284,8 +288,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       //@{
       /// Default constructor (noop)
       SupportEntry(void);
-      /// Initialize with tuple and next (defaulting to NULL)
-      SupportEntry(tuple t0, SupportEntry* n0 = NULL);
+      /// Initialize with Tuple and next (defaulting to NULL)
+      SupportEntry(Tuple t0, SupportEntry* n0 = NULL);
       //@}
       
       /// \name Memory management
@@ -329,12 +333,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for cloning \a p
     Incremental(Space* home, bool share, Incremental<View>& p);
     /// Constructor for posting
-    Incremental(Space* home, ViewArray<View>& x, const Table& t);
+    Incremental(Space* home, ViewArray<View>& x, const TupleSet& t);
 
     void   find_support(Space* home, Domain dom, int var, int val);
     void   init_support(Space* home);
-    void    add_support(Space* home, tuple l);
-    void remove_support(Space* home, tuple l, int var, int val);
+    void    add_support(Space* home, Tuple l);
+    void remove_support(Space* home, Tuple l, int var, int val);
     SupportEntry* support(int var, int val);
   public:
     /// Perform propagation
@@ -351,7 +355,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Name of this propagator
     virtual const char* name(void) const;    
     /// Post propagator for views \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x, const Table& t);
+    static ExecStatus post(Space* home, ViewArray<View>& x, const TupleSet& t);
     // Dispose propagator
     size_t dispose(Space* home);
 

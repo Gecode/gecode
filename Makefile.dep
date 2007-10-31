@@ -151,7 +151,7 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -181,7 +181,7 @@ gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/var/imp-int$(OBJSUFFIX) gecode/int/var/imp-int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-body.icc ./gecode/int/var/imp-int-hdr.icc \
@@ -212,7 +212,7 @@ gecode/int/var/imp-int$(OBJSUFFIX) gecode/int/var/imp-int$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/int/var/imp-bool$(OBJSUFFIX) gecode/int/var/imp-bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-body.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
@@ -243,7 +243,7 @@ gecode/int/var/imp-bool$(OBJSUFFIX) gecode/int/var/imp-bool$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -273,7 +273,7 @@ gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -303,7 +303,7 @@ gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/view/print$(OBJSUFFIX) gecode/int/view/print$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -333,7 +333,7 @@ gecode/int/view/print$(OBJSUFFIX) gecode/int/view/print$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/array$(OBJSUFFIX) gecode/int/array$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -365,7 +365,7 @@ gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/bool.hh ./gecode/int/bool/base.icc ./gecode/int/bool/eq.icc \
 	./gecode/int/bool/eqv.icc ./gecode/int/bool/lq.icc ./gecode/int/bool/or.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -397,7 +397,7 @@ gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -425,9 +425,9 @@ gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
 	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
-gecode/int/extensional/table$(OBJSUFFIX) gecode/int/extensional/table$(SBJSUFFIX): \
+gecode/int/extensional/tuple-set$(OBJSUFFIX) gecode/int/extensional/tuple-set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -459,7 +459,7 @@ gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional.hh ./gecode/int/extensional/base.icc \
 	./gecode/int/extensional/basic.icc ./gecode/int/extensional/bitset.hh ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/incremental.icc ./gecode/int/extensional/layered-graph.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/extensional/incremental.icc ./gecode/int/extensional/layered-graph.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -492,7 +492,7 @@ gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/dom.hh ./gecode/int/dom/range.icc ./gecode/int/dom/spec.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -524,7 +524,7 @@ gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -557,7 +557,7 @@ gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/element.hh ./gecode/int/element/int.icc ./gecode/int/element/view.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -591,7 +591,7 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/count.hh ./gecode/int/count/int.icc ./gecode/int/count/rel.icc \
 	./gecode/int/count/view.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/rel.hh ./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc \
 	./gecode/int/rel/lq-le.icc ./gecode/int/rel/nq.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -624,7 +624,7 @@ gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/arithmetic.hh \
 	./gecode/int/arithmetic/abs.icc ./gecode/int/arithmetic/max.icc ./gecode/int/arithmetic/mult.icc \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/linear.hh \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/linear.hh \
 	./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc \
 	./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc \
 	./gecode/int/linear/int-noview.icc ./gecode/int/linear/int-ter.icc ./gecode/int/linear/post.icc \
@@ -659,7 +659,7 @@ gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -694,7 +694,7 @@ gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -728,7 +728,7 @@ gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -762,7 +762,7 @@ gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX):
 	./gecode/vti.icc 
 gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -797,7 +797,7 @@ gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 gecode/int/branch$(OBJSUFFIX) gecode/int/branch$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/branch.hh ./gecode/int/branch/select-val.icc ./gecode/int/branch/select-view.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -830,7 +830,7 @@ gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
 	./gecode/int/distinct/combptr.icc ./gecode/int/distinct/dom.icc ./gecode/int/distinct/edge.icc \
 	./gecode/int/distinct/node.icc ./gecode/int/distinct/ter-dom.icc ./gecode/int/distinct/val.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -863,7 +863,7 @@ gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/cumulatives.hh ./gecode/int/cumulatives/val.icc ./gecode/int/exception.icc \
-	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
+	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
 	./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc ./gecode/int/linear/int-ter.icc \
@@ -899,7 +899,7 @@ gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
 	./gecode/int/distinct/combptr.icc ./gecode/int/distinct/dom.icc ./gecode/int/distinct/edge.icc \
 	./gecode/int/distinct/node.icc ./gecode/int/distinct/ter-dom.icc ./gecode/int/distinct/val.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/sorted.hh ./gecode/int/sorted/matching.icc \
@@ -933,7 +933,7 @@ gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/gcc.hh ./gecode/int/gcc/bnd.icc ./gecode/int/gcc/dom.icc \
 	./gecode/int/gcc/gccbndsup.icc ./gecode/int/gcc/graphsup.icc ./gecode/int/gcc/lbc.icc \
 	./gecode/int/gcc/occur.icc ./gecode/int/gcc/ubc.icc ./gecode/int/gcc/val.icc \
@@ -971,7 +971,7 @@ gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
 	./gecode/int/distinct/combptr.icc ./gecode/int/distinct/dom.icc ./gecode/int/distinct/edge.icc \
 	./gecode/int/distinct/node.icc ./gecode/int/distinct/ter-dom.icc ./gecode/int/distinct/val.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -1008,7 +1008,7 @@ gecode/int/channel/link-single$(OBJSUFFIX) gecode/int/channel/link-single$(SBJSU
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
 	./gecode/int/distinct/combptr.icc ./gecode/int/distinct/dom.icc ./gecode/int/distinct/edge.icc \
 	./gecode/int/distinct/node.icc ./gecode/int/distinct/ter-dom.icc ./gecode/int/distinct/val.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -1045,7 +1045,7 @@ gecode/int/channel/link-multi$(OBJSUFFIX) gecode/int/channel/link-multi$(SBJSUFF
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
 	./gecode/int/distinct/combptr.icc ./gecode/int/distinct/dom.icc ./gecode/int/distinct/edge.icc \
 	./gecode/int/distinct/node.icc ./gecode/int/distinct/ter-dom.icc ./gecode/int/distinct/val.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -1082,7 +1082,7 @@ gecode/int/circuit$(OBJSUFFIX) gecode/int/circuit$(SBJSUFFIX): \
 	./gecode/int/distinct/bnd.icc ./gecode/int/distinct/combptr.icc ./gecode/int/distinct/dom.icc \
 	./gecode/int/distinct/edge.icc ./gecode/int/distinct/node.icc ./gecode/int/distinct/ter-dom.icc \
 	./gecode/int/distinct/val.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/rel.hh ./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc \
 	./gecode/int/rel/lq-le.icc ./gecode/int/rel/nq.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1115,7 +1115,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/bool.hh ./gecode/int/bool/base.icc ./gecode/int/bool/eq.icc \
 	./gecode/int/bool/eqv.icc ./gecode/int/bool/lq.icc ./gecode/int/bool/or.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -1147,7 +1147,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1184,7 +1184,7 @@ gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1225,7 +1225,7 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1262,7 +1262,7 @@ gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1299,7 +1299,7 @@ gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1336,7 +1336,7 @@ gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1375,7 +1375,7 @@ gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1419,7 +1419,7 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1460,7 +1460,7 @@ gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1501,7 +1501,7 @@ gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1542,7 +1542,7 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1586,7 +1586,7 @@ gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1630,7 +1630,7 @@ gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1670,7 +1670,7 @@ gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1707,7 +1707,7 @@ gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/vti.icc 
 gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1744,7 +1744,7 @@ gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFF
 	./gecode/vti.icc 
 gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1784,7 +1784,7 @@ gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1824,7 +1824,7 @@ gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1860,7 +1860,7 @@ gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/var/imp$(OBJSUFFIX) gecode/set/var/imp$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1896,7 +1896,7 @@ gecode/set/var/imp$(OBJSUFFIX) gecode/set/var/imp$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/var/integerset$(OBJSUFFIX) gecode/set/var/integerset$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1932,7 +1932,7 @@ gecode/set/var/integerset$(OBJSUFFIX) gecode/set/var/integerset$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -1968,7 +1968,7 @@ gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/view/print$(OBJSUFFIX) gecode/set/view/print$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2004,7 +2004,7 @@ gecode/set/view/print$(OBJSUFFIX) gecode/set/view/print$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/projectors$(OBJSUFFIX) gecode/set/projectors$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2043,7 +2043,7 @@ gecode/set/projectors$(OBJSUFFIX) gecode/set/projectors$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/projectors/set-expr$(OBJSUFFIX) gecode/set/projectors/set-expr$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2081,7 +2081,7 @@ gecode/set/projectors/set-expr$(OBJSUFFIX) gecode/set/projectors/set-expr$(SBJSU
 	./gecode/vti.icc 
 gecode/set/projectors/projector$(OBJSUFFIX) gecode/set/projectors/projector$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2119,7 +2119,7 @@ gecode/set/projectors/projector$(OBJSUFFIX) gecode/set/projectors/projector$(SBJ
 	./gecode/vti.icc 
 gecode/set/projectors/projector-set$(OBJSUFFIX) gecode/set/projectors/projector-set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2157,7 +2157,7 @@ gecode/set/projectors/projector-set$(OBJSUFFIX) gecode/set/projectors/projector-
 	./gecode/vti.icc 
 gecode/set/projectors/propagator/re-nary$(OBJSUFFIX) gecode/set/projectors/propagator/re-nary$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2196,7 +2196,7 @@ gecode/set/projectors/propagator/re-nary$(OBJSUFFIX) gecode/set/projectors/propa
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/projectors/compiler$(OBJSUFFIX) gecode/set/projectors/compiler$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2234,7 +2234,7 @@ gecode/set/projectors/compiler$(OBJSUFFIX) gecode/set/projectors/compiler$(SBJSU
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2277,7 +2277,7 @@ gecode/cpltset/branch$(OBJSUFFIX) gecode/cpltset/branch$(SBJSUFFIX): \
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2317,7 +2317,7 @@ gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2357,7 +2357,7 @@ gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2397,7 +2397,7 @@ gecode/cpltset/bddmanager$(OBJSUFFIX) gecode/cpltset/bddmanager$(SBJSUFFIX): \
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2438,7 +2438,7 @@ gecode/cpltset/var/imp$(OBJSUFFIX) gecode/cpltset/var/imp$(SBJSUFFIX): \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2478,7 +2478,7 @@ gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): \
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2518,7 +2518,7 @@ gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2561,7 +2561,7 @@ gecode/cpltset/constraints/singleton$(OBJSUFFIX) gecode/cpltset/constraints/sing
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2601,7 +2601,7 @@ gecode/cpltset/constraints/dom$(OBJSUFFIX) gecode/cpltset/constraints/dom$(SBJSU
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -2644,7 +2644,7 @@ gecode/cpltset/constraints/rel$(OBJSUFFIX) gecode/cpltset/constraints/rel$(SBJSU
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2687,7 +2687,7 @@ gecode/cpltset/constraints/cardinality$(OBJSUFFIX) gecode/cpltset/constraints/ca
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2730,7 +2730,7 @@ gecode/cpltset/constraints/atmost$(OBJSUFFIX) gecode/cpltset/constraints/atmost$
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2773,7 +2773,7 @@ gecode/cpltset/constraints/partition$(OBJSUFFIX) gecode/cpltset/constraints/part
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2816,7 +2816,7 @@ gecode/cpltset/constraints/select$(OBJSUFFIX) gecode/cpltset/constraints/select$
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2859,7 +2859,7 @@ gecode/cpltset/constraints/distinct$(OBJSUFFIX) gecode/cpltset/constraints/disti
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2902,7 +2902,7 @@ gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/ran
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
 	./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/singleton.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/table.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
+	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
 	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
 	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
@@ -2938,7 +2938,7 @@ gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/ran
 	./gecode/vti.icc 
 gecode/minimodel/scheduling$(OBJSUFFIX) gecode/minimodel/scheduling$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -2974,7 +2974,7 @@ gecode/minimodel/scheduling$(OBJSUFFIX) gecode/minimodel/scheduling$(SBJSUFFIX):
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3010,7 +3010,7 @@ gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/minimodel/arithmetic$(OBJSUFFIX) gecode/minimodel/arithmetic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3046,7 +3046,7 @@ gecode/minimodel/arithmetic$(OBJSUFFIX) gecode/minimodel/arithmetic$(SBJSUFFIX):
 	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3109,7 +3109,7 @@ gecode/serialization/deserializer$(OBJSUFFIX) gecode/serialization/deserializer$
 gecode/serialization/registry$(OBJSUFFIX) gecode/serialization/registry$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/element.hh ./gecode/int/element/int.icc ./gecode/int/element/view.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
 	./gecode/int/rel/nq.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
@@ -3162,7 +3162,7 @@ gecode/serialization/boost$(OBJSUFFIX) gecode/serialization/boost$(SBJSUFFIX): \
 examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3202,7 +3202,7 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3242,7 +3242,7 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -3276,7 +3276,7 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3316,7 +3316,7 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -3350,7 +3350,7 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3390,7 +3390,7 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3430,7 +3430,7 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -3464,7 +3464,7 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3504,7 +3504,7 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3544,7 +3544,7 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3584,7 +3584,7 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3624,7 +3624,7 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3664,7 +3664,7 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3704,7 +3704,7 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -3738,7 +3738,7 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3778,7 +3778,7 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -3812,7 +3812,7 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3852,7 +3852,7 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3896,7 +3896,7 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc \
 	./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc \
 	./gecode/cpltset/view/singleton.icc ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3942,7 +3942,7 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -3982,7 +3982,7 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4022,7 +4022,7 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4062,7 +4062,7 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4102,7 +4102,7 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4142,7 +4142,7 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4182,7 +4182,7 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4222,7 +4222,7 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4262,7 +4262,7 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4302,7 +4302,7 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4342,7 +4342,7 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4382,7 +4382,7 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4416,7 +4416,7 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4450,7 +4450,7 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4484,7 +4484,7 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4518,7 +4518,7 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4552,7 +4552,7 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4586,7 +4586,7 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4620,7 +4620,7 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4654,7 +4654,7 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4688,7 +4688,7 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4728,7 +4728,7 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4768,7 +4768,7 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4814,7 +4814,7 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4854,7 +4854,7 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -4900,7 +4900,7 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4934,7 +4934,7 @@ examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
 examples/support/example$(OBJSUFFIX) examples/support/example$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -4983,7 +4983,7 @@ test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./test/test.icc 
 test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5016,50 +5016,9 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
 	./test/int.hh ./test/int.icc ./test/test.hh \
 	./test/test.icc 
-test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
 test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5093,7 +5052,7 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./test/branch.hh ./test/test.hh ./test/test.icc 
 test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5133,7 +5092,7 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5168,7 +5127,7 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./test/test.icc 
 test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5203,7 +5162,7 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./test/test.icc 
 test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5243,7 +5202,7 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5278,7 +5237,7 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./test/test.icc 
 test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5313,7 +5272,7 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./test/test.icc 
 test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5348,7 +5307,7 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./test/test.icc 
 test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5388,7 +5347,7 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5428,7 +5387,7 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5468,7 +5427,7 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5508,7 +5467,7 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5548,7 +5507,7 @@ test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/minimodel$(OBJSUFFIX) test/int/minimodel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
 	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
@@ -5588,7 +5547,7 @@ test/int/minimodel$(OBJSUFFIX) test/int/minimodel$(SBJSUFFIX): \
 	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5623,7 +5582,7 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./test/test.icc 
 test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5658,7 +5617,7 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./test/test.icc 
 test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
@@ -5691,390 +5650,9 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
 	./test/int.hh ./test/int.icc ./test/test.hh \
 	./test/test.icc 
-test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
-test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
-test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
-test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
-test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
-test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
-	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
-	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
-	./gecode/int/linear/int-ter.icc ./gecode/int/linear/post.icc ./gecode/int/propagator.icc \
-	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
-	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
-	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
-	./gecode/int/view/bool.icc ./gecode/int/view/constint.icc ./gecode/int/view/int.icc \
-	./gecode/int/view/iter.icc ./gecode/int/view/minus.icc ./gecode/int/view/offset.icc \
-	./gecode/int/view/rtest.icc ./gecode/int/view/scale.icc ./gecode/int/view/zero.icc \
-	./gecode/iter.hh ./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc \
-	./gecode/iter/ranges-array.icc ./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc \
-	./gecode/iter/ranges-diff.icc ./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc \
-	./gecode/iter/ranges-minmax.icc ./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc \
-	./gecode/iter/ranges-operations.icc ./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc \
-	./gecode/iter/ranges-singleton.icc ./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc \
-	./gecode/iter/ranges-values.icc ./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc \
-	./gecode/iter/values-offset.icc ./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc \
-	./gecode/iter/values-unique.icc ./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc \
-	./gecode/iter/virtual-ranges-union.icc ./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh \
-	./gecode/kernel/advisor.icc ./gecode/kernel/array.icc ./gecode/kernel/branching.icc \
-	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
-	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/varmap.icc ./gecode/kernel/view.icc ./gecode/limits.hh \
-	./gecode/minimodel.hh ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
-	./gecode/minimodel/exception.icc ./gecode/minimodel/lin-expr.icc ./gecode/minimodel/lin-rel.icc \
-	./gecode/minimodel/matrix.icc ./gecode/search.hh ./gecode/search/bab.icc \
-	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
-	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
-	./gecode/search/stop.icc ./gecode/set.hh ./gecode/set/array.icc \
-	./gecode/set/exception.icc ./gecode/set/propagator.icc ./gecode/set/var.icc \
-	./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc \
-	./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc ./gecode/set/var/set.icc \
-	./gecode/set/view.icc ./gecode/set/view/complement.icc ./gecode/set/view/const.icc \
-	./gecode/set/view/offset.icc ./gecode/set/view/set.icc ./gecode/set/view/singleton.icc \
-	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc ./test/int.hh ./test/int.icc \
-	./test/set.hh ./test/test.hh ./test/test.icc 
-test/set/select$(OBJSUFFIX) test/set/select$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
-test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
-	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
-	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
-	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
-	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
-	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
-	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
-	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
-	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
-	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
-	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
-	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
-	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
-	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
-	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
-	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
-	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
-	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/set.hh \
-	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
-	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/set.hh ./test/test.hh \
-	./test/test.icc 
-test/set/projection$(OBJSUFFIX) test/set/projection$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
-	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
-	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
-	./gecode/int/linear/int-dom.icc ./gecode/int/linear/int-nary.icc ./gecode/int/linear/int-noview.icc \
-	./gecode/int/linear/int-ter.icc ./gecode/int/linear/post.icc ./gecode/int/propagator.icc \
-	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
-	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
-	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
-	./gecode/int/view/bool.icc ./gecode/int/view/constint.icc ./gecode/int/view/int.icc \
-	./gecode/int/view/iter.icc ./gecode/int/view/minus.icc ./gecode/int/view/offset.icc \
-	./gecode/int/view/rtest.icc ./gecode/int/view/scale.icc ./gecode/int/view/zero.icc \
-	./gecode/iter.hh ./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc \
-	./gecode/iter/ranges-array.icc ./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc \
-	./gecode/iter/ranges-diff.icc ./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc \
-	./gecode/iter/ranges-minmax.icc ./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc \
-	./gecode/iter/ranges-operations.icc ./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc \
-	./gecode/iter/ranges-singleton.icc ./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc \
-	./gecode/iter/ranges-values.icc ./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc \
-	./gecode/iter/values-offset.icc ./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc \
-	./gecode/iter/values-unique.icc ./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc \
-	./gecode/iter/virtual-ranges-union.icc ./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh \
-	./gecode/kernel/advisor.icc ./gecode/kernel/array.icc ./gecode/kernel/branching.icc \
-	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
-	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/sharedarray.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/varmap.icc ./gecode/kernel/view.icc ./gecode/limits.hh \
-	./gecode/minimodel.hh ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
-	./gecode/minimodel/exception.icc ./gecode/minimodel/lin-expr.icc ./gecode/minimodel/lin-rel.icc \
-	./gecode/minimodel/matrix.icc ./gecode/search.hh ./gecode/search/bab.icc \
-	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
-	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
-	./gecode/search/stop.icc ./gecode/set.hh ./gecode/set/array.icc \
-	./gecode/set/exception.icc ./gecode/set/projectors.hh ./gecode/set/projectors/formula.icc \
-	./gecode/set/projectors/projector-set.icc ./gecode/set/projectors/projector.icc ./gecode/set/projectors/set-expr.icc \
-	./gecode/set/propagator.icc ./gecode/set/var.icc ./gecode/set/var/delta.icc \
-	./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc \
-	./gecode/set/var/iter.icc ./gecode/set/var/set.icc ./gecode/set/view.icc \
-	./gecode/set/view/complement.icc ./gecode/set/view/const.icc ./gecode/set/view/offset.icc \
-	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
-	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
-	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/set.hh \
-	./test/test.hh ./test/test.icc 
 test/branch/distinct$(OBJSUFFIX) test/branch/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
-	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
 	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \

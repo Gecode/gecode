@@ -246,7 +246,7 @@ SEARCHBUILDDIRS = search
 INTSRC0 = \
 	int-set.cc var/imp-int.cc var/imp-bool.cc var/int.cc var/bool.cc \
 	view/print.cc array.cc bool.cc \
-	extensional/dfa.cc extensional/table.cc extensional.cc \
+	extensional/dfa.cc extensional/tuple-set.cc extensional.cc \
 	dom.cc rel.cc element.cc count.cc arithmetic.cc \
 	linear/int-post.cc linear-int.cc \
 	linear/bool-post.cc linear-bool.cc \
@@ -276,7 +276,7 @@ INTHDR0 = \
 	linear/int-nary.icc linear/int-dom.icc \
 	linear/bool-int.icc linear/bool-view.icc linear/bool-scale.icc \
 	extensional/dfa.icc extensional/layered-graph.icc \
-	extensional/table.icc extensional/base.icc \
+	extensional/tuple-set.icc extensional/base.icc \
 	extensional/basic.icc extensional/incremental.icc extensional/bitset.hh \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sorted/matching.icc sorted/narrowing.icc \

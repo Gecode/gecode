@@ -37,20 +37,20 @@
 
 #include "gecode/int.hh"
 
-#include "gecode/int/extensional/table.icc"
+#include "gecode/int/extensional/tuple-set.icc"
 
 namespace {
-  typedef ::Gecode::Table::tuple tuple;
+  typedef ::Gecode::TupleSet::Tuple Tuple;
 
   /**
-   * \brief Full tuple compare
+   * \brief Full Tuple compare
    */
   class FullTupleCompare {
     int arity;
   public:
     FullTupleCompare(int a) : arity(a) {}
     bool
-    operator()(const tuple& a, const tuple& b) {
+    operator()(const Tuple& a, const Tuple& b) {
       for (int i = 0; i < arity; ++i) {
         if (a[i] < b[i]) {
           return true;
@@ -75,7 +75,7 @@ namespace {
     TuplePosCompare(int p) : pos(p) {}
 
     bool
-    operator()(const tuple& a, const tuple& b) {
+    operator()(const Tuple& a, const Tuple& b) {
       if (a[pos] == b[pos]) return a < b;
       return a[pos] < b[pos];
     }
@@ -91,18 +91,18 @@ namespace {
     TupleKeyCompare(int p) : pos(p) {}
 
     bool
-    operator()(const tuple& a, const tuple& b) {
+    operator()(const Tuple& a, const Tuple& b) {
       return a[pos] < b[pos];
     }
 
 
     forceinline bool
-    operator()(const int& a, const tuple& b) {
+    operator()(const int& a, const Tuple& b) {
       return a < b[pos];
     }
 
     forceinline bool
-    operator()(const tuple& a, const int& b) {
+    operator()(const Tuple& a, const int& b) {
       return a[pos] < b;
     }
   };
@@ -110,14 +110,14 @@ namespace {
 
 
 std::ostream&
-operator<<(std::ostream& os, const Gecode::Table& table) {
-  os << "Number of tuples: " << table.tablei->size << std::endl
+operator<<(std::ostream& os, const Gecode::TupleSet& ts) {
+  os << "Number of tuples: " << ts.tuples() << std::endl
      << "Tuples:" << std::endl;
-  for (int i = 0; i < table.tablei->size; ++i) {
+  for (int i = 0; i < ts.tuples(); ++i) {
     os << '\t';
-    for (int j = 0; i < table.tablei->arity; ++j) {
+    for (int j = 0; j < ts.arity(); ++j) {
       os.width(3);
-      os << " " << table.tablei->tuples[0][i][j];
+      os << " " << ts[i][j];
     }
     os << std::endl;
   }
@@ -127,23 +127,23 @@ operator<<(std::ostream& os, const Gecode::Table& table) {
 namespace Gecode {
 
   void
-  Table::TableI::finalize(void) {
+  TupleSet::TupleSetI::finalize(void) {
     assert(!finalized());
     assert(tuples == NULL);
 
     // Add final largest tuple
     IntArgs ia(arity);
     for (int i = arity; i--; ) ia[i] = Limits::Int::int_max+1;
-    int smin = min, smax = max;
+    int real_min = min, real_max = max;
     add(ia);
-    min = smin; max = smax;
+    min = real_min; max = real_max;
 
     // Domainsize
     domsize = max - min + 1;
 
     // Allocate tuple indexing data-structures
-    tuples = Memory::bmalloc<tuple*>(arity);
-    tuple* tuple_data = Memory::bmalloc<tuple>(size*arity+1);
+    tuples = Memory::bmalloc<Tuple*>(arity);
+    Tuple* tuple_data = Memory::bmalloc<Tuple>(size*arity+1);
     tuple_data[size*arity] = NULL;
     nullptr = tuple_data+(size*arity);
 
@@ -177,11 +177,11 @@ namespace Gecode {
     }
 
     // Set up initial last-structure
-    last = Memory::bmalloc<tuple*>(domsize*arity);
+    last = Memory::bmalloc<Tuple*>(domsize*arity);
     for (int i = arity; i--; ) {
       TupleKeyCompare tkc(i);
       for (int d = domsize; d--; ) {
-        tuple* l = Support::binarysearch(tuples[i], size, min+d, tkc);
+        Tuple* l = Support::binarysearch(tuples[i], size, min+d, tkc);
         if (l && *l && (*l)[i] == min+d)
           last[(i*domsize) + d] = l;
         else
@@ -192,47 +192,28 @@ namespace Gecode {
     assert(finalized());
   }
 
-  Table::TableI*
-  Table::TableI::copy(void) {
+  SharedHandle::Object*
+  TupleSet::TupleSetI::copy(void) const {
     assert(finalized());
-    TableI* d     = new TableI();
-    d->use_cnt    = use_cnt;
+    TupleSetI* d  = new TupleSetI();
     d->arity      = arity;
     d->size       = size;
-    d->tuples     = tuples;
-    d->data       = data;
+    //d->tuples     = tuples;
+    //d->data       = data;
     d->excess     = -1;
-    //d->_dfa       = _dfa;
-    //d->dfa_exists = dfa_exists;
     d->min        = min;
     d->max        = max;
     d->domsize    = domsize;
-    d->last       = last;
+    //d->last       = last;
     d->nullptr    = nullptr;
+    d->data = Memory::bmalloc<int>(size*arity);
+    memcpy(&d->data[0], &data[0], sizeof(int)*size*arity);
+    d->tuples = Memory::bmalloc<Tuple*>(arity);
+    memcpy(&d->tuples[0], &tuples[0], sizeof(Tuple*)*arity); /// fixme
+    d->last = Memory::bmalloc<Tuple*>(domsize*arity);
+    memcpy(&d->last[0], &last[0], sizeof(Tuple*)*domsize*arity); /// fixme
     return d;
   }
-  /*
-  DFA
-  Table::TableI::dfa(void) {
-    assert(finalized());
-    if (dfa_exists)
-      return _dfa;
-    dfa_exists = true;
-
-    // Set up regular expression
-    REG r;
-    for (int t = size; t--; ) {
-      REG tuple;
-      for (int i = 0; i < arity; ++i)
-        tuple = tuple + REG(tuples[0][t][i]);
-      r = r | tuple;
-    }
-    derr << "Regular expression for table is " << r << std::endl;
-    _dfa = DFA(r);
-    derr << "DFA for table is " << _dfa << std::endl;
-    return _dfa;
-  }
-  */
 }
 
 // STATISTICS: int-prop

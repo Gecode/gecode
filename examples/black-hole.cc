@@ -197,8 +197,9 @@ public:
   };
   /// Propagation of palcement-rules
   enum {
-    PROPAGATION_REIFIED,    ///< Reified propagation
-    PROPAGATION_EXTENSIONAL ///< Extensional propagation
+    PROPAGATION_REIFIED, ///< Reified propagation
+    PROPAGATION_DFA,     ///< Extensional propagation using automatons
+    PROPAGATION_TABLE    ///< Extensional propagation using tables
   };
   /// Actual model
   BlackHole(const SizeOptions& opt) 
@@ -227,7 +228,7 @@ public:
         post(this, abs(this, minus(this, x1, x2, ICL_DOM), ICL_DOM) 
              == diff, ICL_DOM);
       }
-    } else { // opt.propagation() == PROPAGATION_EXTENSIONAL
+    } else if (opt.propagation() == PROPAGATION_DFA) {
       // Build table for allowed tuples
       REG expression;
       for (int r = 13; r--; ) {
@@ -250,6 +251,27 @@ public:
         extensional(this, iva, table);
       }
 
+    } else { // opt.propagation() == PROPAGATION_TABLE)
+      // Build table for allowed tuples
+      TupleSet tupleSet;
+      for (int r = 13; r--; ) {
+        for (int s1 = 4; s1--; ) {
+          for (int s2 = 4; s2--; ) {
+            for (int i = -1; i <= 1; i+=2) {
+              IntArgs t(2);
+              t[0] = r+13*s1;
+              t[1] = (r+i+52+13*s2)%52;
+              tupleSet.add(t);
+            }
+          }
+        }
+      }
+
+      for (int i = 51; i--; ) {
+        IntVarArgs iva(2);
+        iva[0] = x[i]; iva[1] = x[i+1];
+        extensional(this, iva, tupleSet, ICL_DOM, opt.pk());
+      }
     }
     // A card must be played before the one under it.
     for (int i = 17; i--; )
@@ -348,12 +370,15 @@ main(int argc, char* argv[]) {
   opt.model(BlackHole::MODEL_SYMMETRY);
   opt.model(BlackHole::MODEL_NONE,"none");
   opt.model(BlackHole::MODEL_SYMMETRY,"symmetry");
-  opt.propagation(BlackHole::PROPAGATION_EXTENSIONAL);
+  opt.propagation(BlackHole::PROPAGATION_TABLE);
   opt.propagation(BlackHole::PROPAGATION_REIFIED,
                   "reified", "use reified propagation");
-  opt.propagation(BlackHole::PROPAGATION_EXTENSIONAL,
-                  "ext", "use extensional propagation");
+  opt.propagation(BlackHole::PROPAGATION_DFA,
+                  "dfa", "use DFA-based extensional propagation");
+  opt.propagation(BlackHole::PROPAGATION_TABLE,
+                  "table", "use TupleSet-based extensional propagation");
   opt.icl(ICL_DOM);
+  opt.pk(PK_SPEED);
   opt.parse(argc,argv);
   // Generates the new board
   generate(opt.size());

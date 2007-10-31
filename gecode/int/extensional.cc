@@ -66,41 +66,46 @@ namespace Gecode {
   }
 
   void
-  extensional(Space* home, const IntVarArgs& x, const Table& table, 
+  extensional(Space* home, const IntVarArgs& x, const TupleSet& tupleSet, 
               IntConLevel, PropKind pk) {
     using namespace Int;
     if (home->failed()) return;
+    const_cast<TupleSet&>(tupleSet).finalize();
+
+    if (tupleSet.arity() != x.size())
+      throw ArgumentSizeMismatch("Int::extensional");
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
 
     // All variables in the correct domain
     for (int i = xv.size(); i--; ) {
-      GECODE_ME_FAIL(home, xv[i].gq(home, table.tablei->min));
-      GECODE_ME_FAIL(home, xv[i].lq(home, table.tablei->max));
+      GECODE_ME_FAIL(home, xv[i].gq(home, tupleSet.min()));
+      GECODE_ME_FAIL(home, xv[i].lq(home, tupleSet.max()));
     }
 
     switch (pk) {
     case PK_SPEED:
       GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::
-                           post(home,xv,table)));
+                           post(home,xv,tupleSet)));
       break;
     default:
       GECODE_ES_FAIL(home,(Extensional::Basic<IntView>::
-                           post(home,xv,table)));
+                           post(home,xv,tupleSet)));
       break;
     }
   }
 
   void
   extensional(Space* home, const IntArgs& c, const IntVarArgs& x, 
-              const Table& table, IntConLevel, PropKind pk) {
+              const TupleSet& tupleSet, IntConLevel, PropKind pk) {
     using namespace Int;
+    if (home->failed()) return;
+    const_cast<TupleSet&>(tupleSet).finalize();
+
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
-    if (!table.tablei->finalized())
-      table.tablei->finalize();
-    if (table.tablei->arity != x.size())
+    if (tupleSet.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (home->failed()) return;
 
@@ -114,18 +119,18 @@ namespace Gecode {
 
     // All variables in the correct domain
     for (int i = cx.size(); i--; ) {
-      GECODE_ME_FAIL(home, cx[i].gq(home, table.tablei->min));
-      GECODE_ME_FAIL(home, cx[i].lq(home, table.tablei->max));
+      GECODE_ME_FAIL(home, cx[i].gq(home, tupleSet.min()));
+      GECODE_ME_FAIL(home, cx[i].lq(home, tupleSet.max()));
     }
 
     switch (pk) {
     case PK_SPEED:
       GECODE_ES_FAIL(home,(Extensional::Incremental<OffsetView>::
-                           post(home,cx,table)));
+                           post(home,cx,tupleSet)));
       break;
     default:
       GECODE_ES_FAIL(home,(Extensional::Basic<OffsetView>::
-                           post(home,cx,table)));
+                           post(home,cx,tupleSet)));
       break;
     }
   }

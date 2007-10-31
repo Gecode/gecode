@@ -38,6 +38,8 @@
 #ifndef __GECODE_EXTENSIONAL_BITSET_HH__
 #define __GECODE_EXTENSIONAL_BITSET_HH__
 
+#include <climits>
+
 namespace Gecode { namespace Int { namespace Extensional {
 
   /** \brief 
@@ -78,7 +80,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<typename Base>
   forceinline void
   BitSet<Base>::init(Space* home, int s, bool value) {
-    size = static_cast<int>(std::ceil(static_cast<double>(s)/(8*sizeof(Base))));
+    size = static_cast<int>(std::ceil(static_cast<double>(s)
+                                      /(CHAR_BIT*sizeof(Base))));
     data = static_cast<Base*>(home->alloc(size*sizeof(Base)));
     Base ival = value ? ~0 : 0;
     for (int i = size; i--; ) data[i] = ival;
@@ -87,21 +90,21 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<typename Base>
   forceinline bool
   BitSet<Base>::get(unsigned int i) {
-    unsigned int pos = i / (sizeof(Base)*8);
-    unsigned int bit = i % (sizeof(Base)*8);
+    unsigned int pos = i / (sizeof(Base)*CHAR_BIT);
+    unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
     assert(pos < size);
-    return data[pos] & (1 << bit);
+    return data[pos] & ((Base)1 << bit);
   }
   template<typename Base>
   forceinline void
   BitSet<Base>::set(unsigned int i, bool value) {
-    unsigned int pos = i / (sizeof(Base)*8);
-    unsigned int bit = i % (sizeof(Base)*8);
+    unsigned int pos = i / (sizeof(Base)*CHAR_BIT);
+    unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
     assert(pos < size);
     if (value)
-      data[pos] |= (1 << bit);
+      data[pos] |= ((Base)1 << bit);
     else
-      data[pos] &= ~(1 << bit);
+      data[pos] &= ~((Base)1 << bit);
   }
 }}}
 

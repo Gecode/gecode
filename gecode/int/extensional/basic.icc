@@ -43,13 +43,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline
-  Basic<View>::Basic(Space* home, ViewArray<View>& x, const Table& t)
+  Basic<View>::Basic(Space* home, ViewArray<View>& x, const TupleSet& t)
     : Base<View>(home,x,t) {
   }
 
   template <class View>
   ExecStatus
-  Basic<View>::post(Space* home, ViewArray<View>& x, const Table& t) {
+  Basic<View>::post(Space* home, ViewArray<View>& x, const TupleSet& t) {
     (void) new (home) Basic<View>(home,x,t);
     return ES_OK;
   }
@@ -86,16 +86,16 @@ namespace Gecode { namespace Int { namespace Extensional {
     ///// Domain consistent propagation
     //// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
-    GECODE_AUTOARRAY(BitSet<unsigned long>, dom, x.size());
+    GECODE_AUTOARRAY(BitSet<unsigned long long>, dom, x.size());
     init_dom(home, dom);
 
     /// Bit-sets for processed values.
-    GECODE_AUTOARRAY(BitSet<unsigned long>, has_support, x.size());
-    for (int i = x.size(); i--; ) has_support[i].init(home, table.tablei->domsize);
+    GECODE_AUTOARRAY(BitSet<unsigned long long>, has_support, x.size());
+    for (int i = x.size(); i--; ) has_support[i].init(home, ts()->domsize);
  
 
     /// Values to prune
-    GECODE_AUTOARRAY(int,nq, table.tablei->domsize*x.size());
+    GECODE_AUTOARRAY(int,nq, ts()->domsize*x.size());
     int n_nq = 0;
 
     
@@ -108,10 +108,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
       while (vv()) {
         // Value offset for indexing
-        int val = vv.val() - table.tablei->min;
+        int val = vv.val() - ts()->min;
         if (!has_support[var].get(val)) {
           // Find support for value vv.val() in variable var
-          tuple l = find_support(dom, var, val);
+          Tuple l = find_support(dom, var, val);
           if (l == NULL) {
             // No possible supports left
             nq[n_nq] = vv.val();
@@ -121,12 +121,12 @@ namespace Gecode { namespace Int { namespace Extensional {
             // Only forward direction marking is needed since all
             // previous values have been checked
             for (int i = x.size(); i-- >var; ) {
-              has_support[i].set(l[i]- table.tablei->min);
-              assert(has_support[i].get(l[i]- table.tablei->min));
+              has_support[i].set(l[i]- ts()->min);
+              assert(has_support[i].get(l[i]- ts()->min));
             }
 #ifndef NDEBUG
             for (int i = var; i-->1; )
-              assert(has_support[i].get(l[i]- table.tablei->min));
+              assert(has_support[i].get(l[i]- ts()->min));
 #endif
           }
         }
