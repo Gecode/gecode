@@ -432,38 +432,8 @@ namespace Gecode {
           i++;
       }
       d->n_symbols = n_symbols;
-      // Compute smallest logarithm larger than n_symbols
-      int n_log = 1;
-      while (n_symbols >= static_cast<unsigned int>(1<<n_log))
-        n_log++;
-      d->n_log = n_log;
-      // Allocate memory
-      DFAI::HashEntry* table = static_cast<DFAI::HashEntry*>
-        (Memory::malloc(sizeof(DFAI::HashEntry)*(1<<n_log)));
-      d->table = table;
-      // Initialize table
-      for (int i=(1<<n_log); i--; ) {
-        table[i].symbol = Limits::Int::int_min-1;
-        table[i].fst = table[i].lst = NULL;
-      }
-      int mask = (1 << n_log) - 1;
-      // Enter transitions to table
-      for (int i = 0; i<m_trans; ) {
-        int s = d->trans[i].symbol;
-        Transition* fst = &d->trans[i];
-        i++;
-        while ((i<m_trans) && (d->trans[i].symbol == s))
-          i++;
-        Transition* lst = &d->trans[i];
-        // Enter with linear collision resolution
-        int p = s & mask;
-        while (table[p].fst != NULL)
-          p = (p+1) & mask;
-        table[p].symbol = s;
-        table[p].fst    = fst;
-        table[p].lst    = lst;
-      }
     }
+    d->fillTable();
     object(d);
   }
 
@@ -491,39 +461,7 @@ namespace Gecode {
       d->trans[i].symbol  = (*a)[4+3*i+1];
       d->trans[i].o_state = (*a)[4+3*i+2];
     }
-    {
-      // Compute smallest logarithm larger than n_symbols
-      int n_log = 1;
-      while (d->n_symbols >= static_cast<unsigned int>(1<<n_log))
-        n_log++;
-      d->n_log = n_log;
-      // Allocate memory
-      DFAI::HashEntry* table = static_cast<DFAI::HashEntry*>
-        (Memory::malloc(sizeof(DFAI::HashEntry)*(1<<n_log)));
-      d->table = table;
-      // Initialize table
-      for (int i=(1<<n_log); i--; ) {
-        table[i].symbol = Limits::Int::int_min-1;
-        table[i].fst = table[i].lst = NULL;
-      }
-      int mask = (1 << n_log) - 1;
-      // Enter transitions to table
-      for (int i = 0; i<n_trans; ) {
-        int s = d->trans[i].symbol;
-        Transition* fst = &d->trans[i];
-        i++;
-        while ((i<n_trans) && (d->trans[i].symbol == s))
-          i++;
-        Transition* lst = &d->trans[i];
-        // Enter with linear collision resolution
-        int p = s & mask;
-        while (table[p].fst != NULL)
-          p = (p+1) & mask;
-        table[p].symbol = s;
-        table[p].fst    = fst;
-        table[p].lst    = lst;
-      }
-    }
+    d->fillTable();
     object(d);    
     vm.putMasterObject(object());
   }
@@ -558,6 +496,39 @@ namespace Gecode {
     d->final_lst = final_lst;
     memcpy(&d->trans[0], &trans[0], sizeof(Transition)*n_trans);
     return d;
+  }
+
+  void
+  DFA::DFAI::fillTable(void) {
+    // Compute smallest logarithm larger than n_symbols
+    n_log = 1;
+    while (n_symbols >= static_cast<unsigned int>(1<<n_log))
+      n_log++;
+    // Allocate memory
+    table = static_cast<HashEntry*>
+      (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
+    // Initialize table
+    for (int i=(1<<n_log); i--; ) {
+      table[i].symbol = Limits::Int::int_min-1;
+      table[i].fst = table[i].lst = NULL;
+    }
+    int mask = (1 << n_log) - 1;
+    // Enter transitions to table
+    for (unsigned int i = 0; i<n_trans; ) {
+      int s = trans[i].symbol;
+      Transition* fst = &trans[i];
+      i++;
+      while ((i<n_trans) && (trans[i].symbol == s))
+        i++;
+      Transition* lst = &trans[i];
+      // Enter with linear collision resolution
+      int p = s & mask;
+      while (table[p].fst != NULL)
+        p = (p+1) & mask;
+      table[p].symbol = s;
+      table[p].fst    = fst;
+      table[p].lst    = lst;
+    }
   }
 
 }

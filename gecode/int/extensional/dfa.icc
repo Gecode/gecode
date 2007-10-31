@@ -66,6 +66,8 @@ namespace Gecode {
     HashEntry* table;
     /// Size of table (as binary logarithm)
     int n_log;
+    /// Fill hash table
+    GECODE_INT_EXPORT void fillTable(void);
     /// Initialize automaton implementation with \a nt transitions
     DFAI(unsigned int nt);
     /// Delete automaton implemenentation
