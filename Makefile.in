@@ -716,6 +716,7 @@ BUILDDIRS = \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(CPLTSETBUILDDIRS:%=gecode/%) \
+	$(SERBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
