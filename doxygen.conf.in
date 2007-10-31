@@ -511,7 +511,9 @@ RECURSIVE              = YES
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = \
-	contribs gecode/support/buddy
+	contribs gecode/support/buddy \
+	gecode/serialization/boost.icc \
+	gecode/serialization/boost.cc
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
