@@ -62,9 +62,9 @@ namespace Test { namespace Int {
            const Gecode::IntArgs& a0, Gecode::IntRelType irt0, 
            Gecode::IntConLevel icl=Gecode::ICL_BND)
          : Test("Linear::Int::"+
-                   str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
-                   a0.size(),d,icl != Gecode::ICL_DOM,icl), 
-           a(a0), irt(irt0) {}
+                str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
+                a0.size(),d,icl != Gecode::ICL_DOM,icl), 
+         a(a0), irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double e = 0.0;
@@ -98,8 +98,8 @@ namespace Test { namespace Int {
                Gecode::IntRelType irt0, int c0,
                Gecode::PropKind pk=Gecode::PK_DEF)
          : Test("Linear::Bool::Int::"+
-                   str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0)+"::"+str(pk),
-                   a0.size(),0,1,false,Gecode::ICL_DEF,pk), 
+                str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0)+"::"+str(pk),
+                a0.size(),0,1,false,Gecode::ICL_DEF,pk), 
            a(a0), irt(irt0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -129,8 +129,7 @@ namespace Test { namespace Int {
        BoolVar(const std::string& s, 
                int min, int max, const Gecode::IntArgs& a0, 
                Gecode::IntRelType irt0)
-         : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,
-                   a0.size()+1,min,max), 
+         : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,min,max), 
            a(a0), irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -227,7 +226,7 @@ namespace Test { namespace Int {
                (void) new BoolInt("3",a3,irts.irt(),c);
                (void) new BoolInt("4",a4,irts.irt(),-c);
                (void) new BoolInt("5",a5,irts.irt(),c);
-               (void) new BoolInt("5",a5,irts.irt(),-c);
+               (void) new BoolInt("6",a5,irts.irt(),-c);
              }
            
    
@@ -235,8 +234,8 @@ namespace Test { namespace Int {
              IntArgs a1(i, av1);
              IntArgs a2(i, av2);
              for (IntRelTypes irts; irts(); ++irts) {
-               (void) new BoolVar("1",0,5,a1,irts.irt());
-               (void) new BoolVar("2",-5,0,a2,irts.irt());
+               (void) new BoolVar("1::"+Test::str(i),0,5,a1,irts.irt());
+               (void) new BoolVar("2::"+Test::str(i),-5,0,a2,irts.irt());
              }
            }
            
