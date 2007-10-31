@@ -1009,8 +1009,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - <code>test</code> compiles the test suite
  *  - <code>doc</code> generates this reference documentation using doxygen
  *  - <code>installdoc</code> installs the documentation
- *  - <code>dist</code> creates a source distribution as a tgz archive 
- *  - <code>distdir</code> creates a source distribution in a directory
+ *  - <code>dist</code> creates a source distribution as a tgz archive, not 
+ *    including the contributions found in the <code>contribs</code> directory
+ *  - <code>distdir</code> creates a source distribution in a directory, not 
+ *    including the contributions found in the <code>contribs</code> directory
  *  - <code>distdoc</code> creates tgz and zip archives of the documentation
  *  - <code>distzip</code> creates a binary distribution as a zip archive
  *  - <code>disttgz</code> creates a binary distribution as a tgz archive
