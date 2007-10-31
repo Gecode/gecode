@@ -95,7 +95,7 @@ namespace Test {
       virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x,
                         Gecode::IntVarArray& y, Gecode::BoolVar b) {}
       /// Perform test
-      virtual bool run(const Options& opt);
+      virtual bool run(void);
 
       template <class I>
       int iter2int(I& r, int u) const{

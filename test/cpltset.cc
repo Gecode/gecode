@@ -197,12 +197,12 @@ namespace Test { namespace CpltSet {
         Test::Set::CountableSetRanges csv(a.lub, a[i]);
         Gecode::IntSet ai(csv);
         rel(i, Gecode::SRT_EQ, ai);
-        if (Base::fixpoint(opt) && failed())
+        if (Base::fixpoint() && failed())
           return;
       }
       for (int i=withInt; i--; ) {
         rel(i, Gecode::IRT_EQ, a.ints()[i]);
-        if (Base::fixpoint(opt) && failed())
+        if (Base::fixpoint() && failed())
           return;
       }
     }
@@ -345,7 +345,7 @@ namespace Test { namespace CpltSet {
           }
           rel(i, Gecode::IRT_NQ, v);
         }
-        return (!Base::fixpoint(opt) || fixprob());
+        return (!Base::fixpoint() || fixprob());
       }
       while (x[i].assigned()) {
         i = (i+1) % x.size();
@@ -403,12 +403,12 @@ namespace Test { namespace CpltSet {
           removeFromLub(v, i, a);
         }      
       }
-      return (!Base::fixpoint(opt) || fixprob());
+      return (!Base::fixpoint() || fixprob());
     }
   };
 
   bool 
-  CpltSetTest::run(const Options& opt) {
+  CpltSetTest::run(void) {
     const char* test    = "NONE";
     const char* problem = "NONE";
 
