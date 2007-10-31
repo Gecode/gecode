@@ -853,29 +853,6 @@ static void addref_rec(int r, char *dep)
 }
 
 
-static void addDependencies(char *dep)
-{
-   // printf("addDependencies()\n");
-   int n,m;
-
-   for (n=0 ; n<bddvarnum ; n++)
-   {
-     // printf("n=%d: ", n);
-      for (m=n ; m<bddvarnum ; m++)
-      {
-	// printf("*");
-	 if (dep[n]  &&  dep[m])
-	 {
-	    imatrixSet(iactmtx, n,m);
-	    imatrixSet(iactmtx, m,n);
-	 }
-      }
-      // printf("\n");
-   }
-   // printf("end addDependencies()\n");
-}
-
-
 /* Make sure all nodes are recursively reference counted and store info about
    nodes that are refcou. externally. This info is used at last to revert
    to the standard GBC mode.
