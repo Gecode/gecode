@@ -51,6 +51,71 @@ const int kval[] = {
   109
 };
 
+namespace {
+  /** \brief Set of valid positions for the bishops.
+   * \relates CrowdedChess
+   */
+  TupleSet bishops;
+  /** \brief Class for solving the bishops sub-problem.
+   * \relates CrowdedChess
+   */
+  class Bishops : public Space {
+  public:
+    const int n;
+    BoolVarArray k;
+    bool valid_pos(int i, int j) {
+      return (i >= 0 && i < n) && (j >= 0 && j < n);
+    }
+    Bishops(int size)
+      : n(size), k(this,n*n,0,1) {
+      MiniModel::Matrix<BoolVarArray> kb(k, n, n);
+      for (int l = n; l--; ) {
+        const int il = (n-1) - l;
+        BoolVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
+        for (int i = 0; i <= l; ++i) {
+          d1[i] = kb(i+il, i);
+          d2[i] = kb(i, i+il);
+          d3[i] = kb((n-1)-i-il, i);
+          d4[i] = kb((n-1)-i, i+il);
+        }
+
+        linear(this, d1, IRT_LQ, 1);
+        linear(this, d2, IRT_LQ, 1);
+        linear(this, d3, IRT_LQ, 1);
+        linear(this, d4, IRT_LQ, 1);
+      }
+
+      linear(this, k, IRT_EQ, 2*n - 2);
+      // Forced bishop placement from crowded chess model
+      rel(this, kb(n-1,   0), IRT_EQ, 1);
+      rel(this, kb(n-1, n-1), IRT_EQ, 1);
+      branch(this, k, INT_VAR_DEGREE_MAX, INT_VAL_MAX);
+    }
+    Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
+      k.update(this, share, s.k);
+    }
+    virtual Space* copy(bool share) {
+      return new Bishops(share,*this);
+    }
+  };
+  /** \brief Initialize bishops.
+   * \relates CrowdedChess
+   */
+  void init_bishops(int size) {
+    Bishops* prob = new Bishops(size);
+    DFS<Bishops> e(prob); IntArgs ia(size*size);
+    delete prob;
+
+    while (Bishops* s = e.next()) {
+      for (int i = size*size; i--; )
+        ia[i] = s->k[i].val();
+      bishops.add(ia);
+      delete s;
+    }
+
+    bishops.finalize();
+  }
+}
 /**
    \brief %Example: Crowded Chessboard
 
@@ -160,6 +225,11 @@ protected:
 
 
 public:
+  enum {
+    PROP_TUPLE_SET, ///< Propagate bishops placement extensionally
+    PROP_DECOMPOSE  ///< Propagate bishops placement with decomposition
+  };
+
   /// The model of the problem
   CrowdedChess(const SizeOptions& opt)
     : n(opt.size()), 
@@ -226,10 +296,18 @@ public:
       count(this, d2, Q, IRT_LQ, 1, opt.icl());
       count(this, d3, Q, IRT_LQ, 1, opt.icl());
       count(this, d4, Q, IRT_LQ, 1, opt.icl());
-      count(this, d1, B, IRT_LQ, 1, opt.icl());
-      count(this, d2, B, IRT_LQ, 1, opt.icl());
-      count(this, d3, B, IRT_LQ, 1, opt.icl());
-      count(this, d4, B, IRT_LQ, 1, opt.icl());
+      if (opt.propagation() == PROP_DECOMPOSE) {
+        count(this, d1, B, IRT_LQ, 1, opt.icl());
+        count(this, d2, B, IRT_LQ, 1, opt.icl());
+        count(this, d3, B, IRT_LQ, 1, opt.icl());
+        count(this, d4, B, IRT_LQ, 1, opt.icl());
+      }
+    }
+    if (opt.propagation() == PROP_TUPLE_SET) {
+      IntVarArgs b(s.size());
+      for (int i = s.size(); i--; )
+        b[i] = channel(this, post(this, ~(s[i] == B)));
+      extensional(this, b, bishops, opt.icl(), opt.pk());
     }
 
     // Handle knigths
@@ -315,6 +393,13 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("CrowdedChess");
+  opt.propagation(CrowdedChess::PROP_TUPLE_SET);
+  opt.propagation(CrowdedChess::PROP_TUPLE_SET,
+                  "extensional", 
+                  "Use extensional propagation for bishops-placement");
+  opt.propagation(CrowdedChess::PROP_DECOMPOSE,
+                  "decompose", 
+                  "Use decomposed propagation for bishops-placement");
   opt.icl(ICL_DOM);
   opt.size(7);
   opt.parse(argc,argv);
@@ -322,6 +407,7 @@ main(int argc, char* argv[]) {
     std::cerr << "Error: size must be at least 5" << std::endl;
     return 1;
   }
+  init_bishops(opt.size());
   Example::run<CrowdedChess,DFS,SizeOptions>(opt);
   return 0;
 }

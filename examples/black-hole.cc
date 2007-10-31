@@ -195,11 +195,11 @@ public:
     MODEL_NONE,    ///< No symmetry breaking
     MODEL_SYMMETRY ///< Breaking conditional symmetries
   };
-  /// Propagation of palcement-rules
+  /// Propagation of placement-rules
   enum {
-    PROPAGATION_REIFIED, ///< Reified propagation
-    PROPAGATION_DFA,     ///< Extensional propagation using automatons
-    PROPAGATION_TABLE    ///< Extensional propagation using tables
+    PROPAGATION_REIFIED,  ///< Reified propagation
+    PROPAGATION_DFA,      ///< Extensional propagation using automatons
+    PROPAGATION_TUPLE_SET ///< Extensional propagation using tables
   };
   /// Actual model
   BlackHole(const SizeOptions& opt) 
@@ -251,7 +251,7 @@ public:
         extensional(this, iva, table);
       }
 
-    } else { // opt.propagation() == PROPAGATION_TABLE)
+    } else { // opt.propagation() == PROPAGATION_TUPLE_SET)
       // Build table for allowed tuples
       TupleSet tupleSet;
       for (int r = 13; r--; ) {
@@ -370,15 +370,14 @@ main(int argc, char* argv[]) {
   opt.model(BlackHole::MODEL_SYMMETRY);
   opt.model(BlackHole::MODEL_NONE,"none");
   opt.model(BlackHole::MODEL_SYMMETRY,"symmetry");
-  opt.propagation(BlackHole::PROPAGATION_TABLE);
+  opt.propagation(BlackHole::PROPAGATION_TUPLE_SET);
   opt.propagation(BlackHole::PROPAGATION_REIFIED,
                   "reified", "use reified propagation");
   opt.propagation(BlackHole::PROPAGATION_DFA,
                   "dfa", "use DFA-based extensional propagation");
-  opt.propagation(BlackHole::PROPAGATION_TABLE,
+  opt.propagation(BlackHole::PROPAGATION_TUPLES_SET,
                   "table", "use TupleSet-based extensional propagation");
   opt.icl(ICL_DOM);
-  opt.pk(PK_SPEED);
   opt.parse(argc,argv);
   // Generates the new board
   generate(opt.size());
