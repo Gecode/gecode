@@ -38,6 +38,7 @@
  */
 
 #include "test/int.hh"
+#include "gecode/serialization.hh"
 
 #include <algorithm>
 
@@ -86,6 +87,8 @@ namespace Test { namespace Int {
   /// Space for executing tests
   class TestSpace : public Gecode::Space {
   public:
+    /// Initial domain
+    Gecode::IntSet d;
     /// Variables to be tested
     Gecode::IntVarArray x;
     /// Control variable for reified propagators
@@ -99,13 +102,13 @@ namespace Test { namespace Int {
     /**
      * \brief Create test space
      *
-     * Creates \a n variables with domain \a d and stores whether
+     * Creates \a n variables with domain \a d0 and stores whether
      * the test is for a refied propagator (\a r), and the test itself
      * (\a t). 
      *
      */
-    TestSpace(int n, Gecode::IntSet& d, bool r, Test* t, bool log=true)
-      : x(this,n,d), b(this,0,1), reified(r), test(t) {
+    TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log=true)
+      : d(d0), x(this,n,d), b(this,0,1), reified(r), test(t) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
         if (reified)
@@ -115,13 +118,56 @@ namespace Test { namespace Int {
     }
     /// Constructor for cloning \a s
     TestSpace(bool share, TestSpace& s) 
-      : Gecode::Space(share,s), reified(s.reified), test(s.test) {
+      : Gecode::Space(share,s), d(s.d), reified(s.reified), test(s.test) {
       x.update(this, share, s.x);
       b.update(this, share, s.b);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
       return new TestSpace(share,*this);
+    }
+
+    TestSpace* cloneWithReflection(void) {
+      TestSpace* c = new TestSpace(x.size(), d, reified, test);
+      Gecode::Reflection::VarMap vm;
+      vm.putArray(this, x, "x");
+      vm.put(this, b, "b");
+      Gecode::Reflection::VarMap cvm;
+      cvm.registerArray(c, c->x, "x");
+      cvm.registerVar(c, c->b, "b");
+      Gecode::Serialization::Deserializer d(c, cvm);
+      Gecode::Reflection::VarMapIter vmi(vm);
+      try {
+        for (Gecode::Reflection::SpecIter si = actorSpecs(vm); si(); ++si) {
+          Gecode::Reflection::ActorSpec& s = si.actor();
+          for (; vmi(); ++vmi) {
+            try {
+              d.var(vmi.var());
+            } catch (Gecode::Reflection::ReflectionException e) {
+              return NULL;
+            }
+          }
+          try {
+            d.post(s);
+          } catch (Gecode::Reflection::ReflectionException e) {
+            return NULL;
+          }
+        }
+        for (; vmi(); ++vmi) {
+          try {
+            d.var(vmi.var());
+          } catch (Gecode::Reflection::ReflectionException e) {
+            return NULL;
+          }
+        }
+        assert(c != NULL);
+        if (failed()) {
+          c->fail();
+        }
+        return c;
+      } catch (Gecode::Reflection::ReflectionException e) {
+        return static_cast<TestSpace*>(clone());
+      }
     }
 
     /// Test whether all variables are assigned
@@ -348,15 +394,37 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,false,this);
+        TestSpace* sc;
         s->post();
-        s->assign(a);
-        if (sol) {
-          CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumtion");
-        } else {
-          CHECK_TEST(s->failed(), "Solved on non-solution");
+        switch (Base::rand(3)) {
+          case 0:
+            olog << "No copy" << std::endl;
+            sc = s;
+            s = NULL;
+            break;
+          case 1:
+            olog << "Reflection copy" << std::endl;
+            sc = s->cloneWithReflection();
+            CHECK_TEST(sc != NULL, "Reflection error");
+            break;
+          case 2:
+            olog << "Unshared copy" << std::endl;
+            if (s->status() != SS_FAILED) {
+              sc = static_cast<TestSpace*>(s->clone(false));
+            } else {
+              sc = s; s = NULL;
+            }
+            break;
+          default: assert(false);
         }
-        delete s;
+        sc->assign(a);
+        if (sol) {
+          CHECK_TEST(!sc->failed(), "Failed on solution");
+          CHECK_TEST(sc->propagators()==0, "No subsumtion");
+        } else {
+          CHECK_TEST(sc->failed(), "Solved on non-solution");
+        }
+        delete s; delete sc;
       }
       START_TEST("Partial assignment (after posting)");
       {
