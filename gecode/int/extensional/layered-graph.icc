@@ -513,7 +513,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline size_t
   LayeredGraph<View>::dispose(Space* home) {
     this->unforce(home);
-    assert(home->failed() || c.empty());
+    c.dispose(home);
     dfa.~DFA();
     (void) Propagator::dispose(home);
     return sizeof(*this);
