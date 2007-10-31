@@ -159,7 +159,7 @@ dnl Definition of variable types
 dnl Include contributor's vtis
 dnl @VTIS@
 
-AC_GECODE_VTI(cpltset, finite set library using complete domain representation, no,
+AC_GECODE_VTI(cpltset, finite set library using complete domain representation, yes,
 	     [AC_DEFINE(GECODE_HAVE_CPLTSET_VARS)])
 
 AC_GECODE_VTI(set,
