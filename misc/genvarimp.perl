@@ -224,6 +224,7 @@ $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
 $class = "${name}VarImpBase";
 $diffc = "${name}MeDiff";
 $base  = "Gecode::Variable<VTI_$VTI,$maxpc,$diffc>";
+$file  =~ s|^../||g;
 
 ## Check whether there is only one real event
 if ($me_n == 3) {
