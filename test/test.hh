@@ -106,7 +106,7 @@ namespace Test {
     /// The probability for computing a fixpoint
     unsigned int fixprob;
     /// Default fixpoint probaibility
-    static const int deffixprob = 10;
+    static const unsigned int deffixprob = 10;
     /// Whether to stop on an error
     bool stop;
     /// Whether to log the tests

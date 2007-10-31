@@ -182,7 +182,7 @@ namespace Test { namespace Int {
     /// Assign all (or all but one, if \a skip is true) variables to values in \a a
     void assign(const Assignment& a, bool skip=false) {
       using namespace Gecode;
-      int i = skip ? Base::rand(a.size()) : -1;
+      int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
       for (int j=a.size(); j--; ) 
         if (i != j) {
           rel(j, IRT_EQ, a[j]);
