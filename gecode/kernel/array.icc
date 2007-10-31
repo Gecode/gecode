@@ -674,7 +674,10 @@ namespace Gecode {
     }
     Reflection::ArrayArg* a = spec->toArray();
     n = a->size();
-    x = (n>0) ? static_cast<View*>(home->alloc(sizeof(View)*n)) : NULL;
+    if (n>=0)
+      x = static_cast<View*>(home->alloc(sizeof(View)*n));
+    else 
+      x = NULL;
     for (int i=n; i--;)
       x[i] = View(home, vars, (*a)[i]);
   }
