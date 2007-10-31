@@ -202,5 +202,5 @@ AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 
 AC_CONFIG_FILES([Makefile doxygen.conf doxygen.hh
-	misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc])
+	misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc misc/gecode-minimodel.pc])
 AC_OUTPUT

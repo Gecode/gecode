@@ -7,8 +7,8 @@
 #     Guido Tack, 2005
 #
 #  Last modified:
-#     $Date$ by $Author$
-#     $Revision$
+#     $Date: 2007-08-09 15:30:21 +0200 (Thu, 09 Aug 2007) $ by $Author: tack $
+#     $Revision: 4790 $
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:
@@ -38,8 +38,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: Gecode Minimodel
+Name: Gecode Serialization
 Description: Generic Constraint Development Environment Minimodel
 Version: @VERSION@
-Libs: @MINUSLDIR@ @LINKLIBDIR@@LINKPREFIX@@SUPPORT@@LINKSUFFIX@ @LINKLIBDIR@@LINKPREFIX@@KERNEL@@LINKSUFFIX@ @LINKLIBDIR@@LINKPREFIX@@MM@@LINKSUFFIX@
+Libs: @MINUSLDIR@ @LINKLIBDIR@@LINKPREFIX@@SUPPORT@@LINKSUFFIX@ @LINKLIBDIR@@LINKPREFIX@@KERNEL@@LINKSUFFIX@ @LINKLIBDIR@@LINKPREFIX@@SER@@LINKSUFFIX@
 Cflags: -I${includedir} @PKG_CONFIG_CXXFLAGS@
