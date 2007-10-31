@@ -71,6 +71,17 @@
 
 namespace Gecode {
 
+  /**
+   * \brief Produce FlatZinc-like representation of \a home
+   * \ingroup TaskSerialization
+   *
+   * A FlatZinc-like representation of the space \a home is written
+   * to \a os, respecting the variable names established by \a m.
+   *
+   * The generated code is not completely FlatZinc-compatible, as
+   * propagator names are represented as C++-style template names.
+   *
+   */
   GECODE_SERIALIZATION_EXPORT
   void emitFlatzinc(Space* home, Reflection::VarMap& m, std::ostream& os);
 
@@ -81,7 +92,14 @@ namespace Gecode {
      * \brief Serialization and deserialization support
      */
 
-    /// Deserialization from VarSpec and ActorSpec
+    /**
+     * \brief Deserialization from VarSpec and ActorSpec
+     * \ingroup TaskSerialization
+     *
+     * A Deserializer allows you to install variables and propagators in a 
+     * Space using variable and actor specifications.
+     *
+     */
     class Deserializer {
     private:
       /// The space in which to create variables and post constraints
@@ -113,10 +131,16 @@ namespace Gecode {
 #ifdef GECODE_HAVE_BOOST_SERIALIZATION
 
 namespace Gecode {
-  /// Serialize \a actors to \a os
+  /**
+   * \brief Serialize \a actors to \a os
+   * \ingroup TaskSerialization
+   */ 
   void boostTextSerialization(std::ostream& os,
     const std::vector<Reflection::ActorSpec*>& actors);
-  /// Deserialize \a is into \a actors
+  /**
+   * \brief Deserialize \a is into \a actors
+   * \ingroup TaskSerialization
+   */
   void boostTextSerialization(std::istream& is,
     std::vector<Reflection::ActorSpec*>& actors);
 }

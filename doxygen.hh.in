@@ -125,16 +125,6 @@
  */
 
 /**
- * \defgroup TaskModelReflect Reflection API
- *
- * The reflection API provides information about the propagators, branchings,
- * and variables in a space.
- * Requires \code #include "gecode/kernel.hh" \endcode
- *
- * \ingroup TaskModel
- */
-
-/**
  * \defgroup TaskSearch Programming search engines
  * \ingroup Task
  */
@@ -172,6 +162,41 @@
 /**
  * \defgroup TaskTest Testing
  * \ingroup Task
+ */
+
+/**
+ * \defgroup TaskReflSer Reflection and serialization
+ * \ingroup Task
+ *
+ * Reflection allows you to query a Space object for the propagators, 
+ * branchings, and variables that it contains.
+ *
+ * Serialization provides methods for producing a text or binary 
+ * representation of a space that can be used to recreate a copy of the space.
+ */
+
+/**
+ * \defgroup TaskReflection Reflection API
+ *
+ * The reflection API provides information about the propagators, branchings,
+ * and variables in a space.
+ *
+ * Requires \code #include "gecode/kernel.hh" \endcode
+ *
+ * \ingroup TaskReflSer
+ */
+
+/**
+ * \defgroup TaskSerialization Serialization
+ *
+ * The serialization API lets you produce text or binary representations of a 
+ * space, and recreate a copy of the original space from that representation.  
+ * It provides funcionality for creating variables and posting propagators in 
+ * a space using the specifications obtained through reflection.
+ *
+ * Requires \code #include "gecode/serialization.hh" \endcode
+ *
+ * \ingroup TaskReflSer
  */
 
 /**
@@ -670,14 +695,21 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * quite straightforward. There are the following header files for inclusion:
  *  - gecode/kernel.hh must always be included (the header files below
  *    also always include kernel.hh).
+ *  - gecode/support.hh must be included in order to use the funcionality in 
+ *    \ref FuncSupport (the support.hh header is included from kernel.hh)
  *  - gecode/search.hh must be included, if search engines are used 
  *    (see for example \ref TaskModelSearch).
  *  - gecode/int.hh must be included, if any integer functionality is used
  *    (see for example \ref TaskModelInt and \ref TaskActorInt).
  *  - gecode/set.hh must be included, if any finite set functionality is used
  *    (see for example \ref TaskModelSet and \ref TaskActorSet).
+ *  - gecode/cpltset.hh must be included, if any complete finite set 
+ *    functionality is used
+ *    (see for example \ref TaskModelCpltSet and \ref TaskActorCpltSet).
  *  - gecode/minimodel.hh must be included, if direct modelling support
  *    is used (see for example \ref TaskModelMiniModel).
+ *  - gecode/serialization.hh must be included, if support for serialization
+ *    is used.
  *
  * Other functionality is available through a set of header files. For example
  * to access the implementation of particular propagators, a particular header
@@ -689,6 +721,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * Setting the exact name for a library on a particular platform aside,
  * inclusion of header files basically coincides with against which
  * library must be linked. That is:
+ *  - If gecode/support.hh is included, linking againg the support library is 
+ *    required.
  *  - If gecode/kernel.hh is included, linking against the kernel library is
  *    required.
  *  - If gecode/search.hh is included, linking against the search library is
@@ -697,10 +731,14 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    required.
  *  - If gecode/set.hh is included, linking against the set library is
  *    required.
+ *  - If gecode/cpltset.hh is included, linking against the cpltset library is
+ *    required.
  *  - If gecode/minimodel.hh is included, linking against the minimodel
  *    library is required.
+ *  - If gecode/serialization.hh is included, linking against the 
+ *    serialization library is required.
  *
- * The functionality in \ref FuncSupport and \ref FuncIter require no
+ * The functionality in \ref FuncIter requires no
  * library for linking. Reusing integer or set propagators of course
  * require the integer or set library.
  *
@@ -717,7 +755,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - Search library and DLL: GecodeSearch.lib and GecodeSearch.dll
  *  - Integer library and DLL: GecodeInt.lib and GecodeInt.dll
  *  - Set library and DLL: GecodeSet.lib and GecodeSet.dll
+ *  - CpltSet library and DLL: GecodeCpltSet.lib and GecodeCpltSet.dll
  *  - Minimodel library and DLL: GecodeMiniModel.lib and GecodeMiniModel.dll
+ *  - Serialization library and DLL: GecodeSerialization.lib and 
+ *    GecodeSerialization.dll
  *
  * \subsection SULB Unix (Linux, MacOS X)
  *
@@ -729,7 +770,9 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - Search library: libgecodesearch.&lt;EXT&gt;
  *  - Integer library: libgecodeint.&lt;EXT&gt;
  *  - Set library: libgecodeset.&lt;EXT&gt;
+ *  - CpltSet library: libgecodecpltset.&lt;EXT&gt;
  *  - Minimodel library: libgecodeminimodel.&lt;EXT&gt;
+ *  - Serialization library: libgecodeserialization.&lt;EXT&gt;
  *
  * where &lt;EXT&gt; depends on the library type and platform:
  *
@@ -779,7 +822,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *     from <a href="http://gcc.gnu.org/">the GCC home page</a>. It is included
  *     in all Linux distributions and the Apple MacOS X developer tools.
  *     %Gecode requires at least version 3.4 of gcc. We recommend using version
- *     4.0 or higher. Very unfortunately, the parser used in versions of gcc
+ *     4.2 or higher. Very unfortunately, the parser used in versions of gcc
  *     before 3.4 is broken and hence cannot compile %Gecode.
  *   - The Intel C++ compiler for Windows and Linux. Please note that this
  *     compiler was only tested using the evaluation license available from
@@ -966,6 +1009,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - <code>test</code> compiles the test suite
  *  - <code>doc</code> generates this reference documentation using doxygen
  *  - <code>installdoc</code> installs the documentation
+ *  - <code>dist</code> creates a source distribution as a tgz archive 
+ *  - <code>distdir</code> creates a source distribution in a directory
  *  - <code>distdoc</code> creates tgz and zip archives of the documentation
  *  - <code>distzip</code> creates a binary distribution as a zip archive
  *  - <code>disttgz</code> creates a binary distribution as a tgz archive

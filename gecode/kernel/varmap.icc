@@ -43,7 +43,7 @@ namespace Gecode { namespace Reflection {
 
   /**
     * \brief Mapping %Gecode variables to variable specifications
-    * \ingroup TaskModelReflect
+    * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT VarMap {
     friend class VarMapIter;
@@ -158,7 +158,7 @@ namespace Gecode { namespace Reflection {
     * currently known variables have been iterated, but it will later become
     * available again once new variables are encountered.
     *
-    * \ingroup TaskModelReflect
+    * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT VarMapIter {
   private:
