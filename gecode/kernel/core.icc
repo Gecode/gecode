@@ -1725,7 +1725,6 @@ namespace Gecode {
   forceinline void
   Council<A>::dispose(Space* home) {
     ActorLink* a = advisors;
-    //    advisors = NULL;
     while (a != NULL) {
       if (!static_cast<A*>(a)->disposed())
         static_cast<A*>(a)->dispose(home,*this); 
