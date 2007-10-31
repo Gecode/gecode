@@ -538,24 +538,24 @@ if (!(T)) {                                                     \
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
         SetTestSpace* sc;
         s->post();
-        switch (Base::rand(3)) {
+        switch (Base::rand(2)) {
           case 0:
             olog << "No copy" << std::endl;
             sc = s;
             s = NULL;
             break;
           case 1:
-            olog << "Reflection copy" << std::endl;
-            sc = s->cloneWithReflection();
-            CHECK_TEST(sc != NULL, "Reflection error");
-            break;
-          case 2:
             olog << "Unshared copy" << std::endl;
             if (s->status() != Gecode::SS_FAILED) {
               sc = static_cast<SetTestSpace*>(s->clone(false));
             } else {
               sc = s; s = NULL;
             }
+            break;
+          case 2:
+            olog << "Reflection copy" << std::endl;
+            sc = s->cloneWithReflection();
+            CHECK_TEST(sc != NULL, "Reflection error");
             break;
           default: assert(false);          
         }
