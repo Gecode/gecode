@@ -49,18 +49,51 @@ namespace Gecode {
     if (home->failed()) return;
     IntView x(x0);
     switch (r) {
-    case IRT_EQ:
-      GECODE_ME_FAIL(home,x.eq(home,n)); break;
+    case IRT_EQ: GECODE_ME_FAIL(home,x.eq(home,n)); break;
+    case IRT_NQ: GECODE_ME_FAIL(home,x.nq(home,n)); break;
+    case IRT_LQ: GECODE_ME_FAIL(home,x.lq(home,n)); break;
+    case IRT_LE: GECODE_ME_FAIL(home,x.le(home,n)); break;
+    case IRT_GQ: GECODE_ME_FAIL(home,x.gq(home,n)); break;
+    case IRT_GR: GECODE_ME_FAIL(home,x.gr(home,n)); break;
+    default: throw UnknownRelation("Int::rel");
+    }
+  }
+
+  void
+  rel(Space* home, const IntVarArgs& x, IntRelType r, int n, 
+      IntConLevel, PropKind) {
+    if (home->failed()) return;
+    switch (r) {
+    case IRT_EQ: 
+      for (int i=x.size(); i--; ) {
+        IntView xi(x[i]); GECODE_ME_FAIL(home,xi.eq(home,n));
+      }
+      break;
     case IRT_NQ:
-      GECODE_ME_FAIL(home,x.nq(home,n)); break;
+      for (int i=x.size(); i--; ) {
+        IntView xi(x[i]); GECODE_ME_FAIL(home,xi.nq(home,n));
+      }
+      break;
     case IRT_LQ:
-      GECODE_ME_FAIL(home,x.lq(home,n)); break;
+      for (int i=x.size(); i--; ) {
+        IntView xi(x[i]); GECODE_ME_FAIL(home,xi.lq(home,n));
+      }
+      break;
     case IRT_LE:
-      GECODE_ME_FAIL(home,x.le(home,n)); break;
+      for (int i=x.size(); i--; ) {
+        IntView xi(x[i]); GECODE_ME_FAIL(home,xi.le(home,n));
+      }
+      break;
     case IRT_GQ:
-      GECODE_ME_FAIL(home,x.gq(home,n)); break;
+      for (int i=x.size(); i--; ) {
+        IntView xi(x[i]); GECODE_ME_FAIL(home,xi.gq(home,n));
+      }
+      break;
     case IRT_GR:
-      GECODE_ME_FAIL(home,x.gr(home,n)); break;
+      for (int i=x.size(); i--; ) {
+        IntView xi(x[i]); GECODE_ME_FAIL(home,xi.gr(home,n));
+      }
+      break;
     default:
       throw UnknownRelation("Int::rel");
     }
@@ -88,6 +121,54 @@ namespace Gecode {
       std::swap(x0,x1); // Fall through
     case IRT_LE:
       GECODE_ES_FAIL(home,Rel::Le<IntView>::post(home,x0,x1)); break;
+    default:
+      throw UnknownRelation("Int::rel");
+    }
+  }
+
+  void
+  rel(Space* home, const IntVarArgs& x, IntRelType r, IntVar y, 
+      IntConLevel icl, PropKind) {
+    if (home->failed()) return;
+    switch (r) {
+    case IRT_EQ:
+      {
+        ViewArray<IntView> xv(home,x.size()+1);
+        xv[x.size()]=y;
+        for (int i=x.size(); i--; )
+          xv[i]=x[i];
+        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+          GECODE_ES_FAIL(home,Rel::NaryEqDom<IntView>::post(home,xv));
+        } else {
+          GECODE_ES_FAIL(home,Rel::NaryEqBnd<IntView>::post(home,xv));
+        }
+      }
+      break;
+    case IRT_NQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Rel::Nq<IntView>::post(home,x[i],y)); 
+      }
+      break;
+    case IRT_GQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Rel::Lq<IntView>::post(home,y,x[i])); 
+      }
+      break;
+    case IRT_LQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Rel::Lq<IntView>::post(home,x[i],y)); 
+      }
+      break;
+    case IRT_GR:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Rel::Le<IntView>::post(home,y,x[i])); 
+      }
+      break;
+    case IRT_LE:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Rel::Le<IntView>::post(home,x[i],y)); 
+      }
+      break;
     default:
       throw UnknownRelation("Int::rel");
     }

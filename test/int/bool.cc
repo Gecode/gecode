@@ -157,7 +157,7 @@ namespace Test { namespace Int {
          BoolVarArgs b(2*(x.size()-1));
          for (int i=x.size()-1; i--; )
            b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, b, BOT_AND, channel(home,x[x.size()-1]));
+         rel(home, BOT_AND, b, channel(home,x[x.size()-1]));
        }
      };
      
@@ -179,7 +179,7 @@ namespace Test { namespace Int {
          BoolVarArgs b(2*x.size());
          for (int i=x.size(); i--; )
            b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, b, BOT_AND, 0);
+         rel(home, BOT_AND, b, 0);
        }
      };
    
@@ -201,7 +201,7 @@ namespace Test { namespace Int {
          BoolVarArgs b(2*(x.size()-1));
          for (int i=x.size()-1; i--; )
            b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, b, BOT_OR, channel(home,x[x.size()-1]));
+         rel(home, BOT_OR, b, channel(home,x[x.size()-1]));
        }
      };
      
@@ -223,7 +223,7 @@ namespace Test { namespace Int {
          BoolVarArgs b(2*x.size());
          for (int i=x.size(); i--; )
            b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, b, BOT_OR, 1);
+         rel(home, BOT_OR, b, 1);
        }
      };
    

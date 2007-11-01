@@ -113,6 +113,52 @@ namespace Gecode {
   }
 
   void
+  rel(Space* home, const BoolVarArgs& x, IntRelType r, BoolVar y, 
+      IntConLevel, PropKind) {
+    using namespace Int;
+    if (home->failed()) return;
+    switch (r) {
+    case IRT_EQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
+                             ::post(home,x[i],y)));
+      }
+      break;
+    case IRT_NQ: 
+      {
+        NegBoolView n(y);
+        for (int i=x.size(); i--; ) {
+          GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
+                               ::post(home,x[i],n)));
+        }
+      }
+      break;
+    case IRT_GQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Bool::Lq<BoolView>::post(home,y,x[i])); 
+      }
+      break;
+    case IRT_LQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Bool::Lq<BoolView>::post(home,x[i],y)); 
+      }
+      break;
+    case IRT_GR:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Bool::Le<BoolView>::post(home,y,x[i])); 
+      }
+      break;
+    case IRT_LE:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(home,Bool::Le<BoolView>::post(home,x[i],y)); 
+      }
+      break;
+    default:
+      throw UnknownRelation("Int::rel");
+    }
+  }
+
+  void
   rel(Space* home, BoolVar x0, IntRelType r, int n, IntConLevel, PropKind) {
     using namespace Int;
     if (home->failed()) return;
@@ -140,6 +186,58 @@ namespace Gecode {
       case IRT_NQ:
       case IRT_LE:
         GECODE_ME_FAIL(home,x.zero(home)); break;
+      case IRT_GR:
+        home->fail(); break;
+      case IRT_LQ:
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else {
+      throw NotZeroOne("Int::rel");
+    }
+  }
+
+  void
+  rel(Space* home, const BoolVarArgs& x, IntRelType r, int n, 
+      IntConLevel, PropKind) {
+    using namespace Int;
+    if (home->failed()) return;
+    if (n == 0) {
+      switch (r) {
+      case IRT_LQ:
+      case IRT_EQ:
+        for (int i=x.size(); i--; ) {
+          BoolView xi(x[i]); GECODE_ME_FAIL(home,xi.zero(home)); 
+        }
+        break;
+      case IRT_NQ:
+      case IRT_GR:
+        for (int i=x.size(); i--; ) {
+          BoolView xi(x[i]); GECODE_ME_FAIL(home,xi.one(home)); 
+        }
+        break;
+      case IRT_LE:
+        home->fail(); break;
+      case IRT_GQ:
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else if (n == 1) {
+      switch (r) {
+      case IRT_GQ:
+      case IRT_EQ:
+        for (int i=x.size(); i--; ) {
+          BoolView xi(x[i]); GECODE_ME_FAIL(home,xi.one(home)); 
+        }
+        break;
+      case IRT_NQ:
+      case IRT_LE:
+        for (int i=x.size(); i--; ) {
+          BoolView xi(x[i]); GECODE_ME_FAIL(home,xi.zero(home)); 
+        }
+        break;
       case IRT_GR:
         home->fail(); break;
       case IRT_LQ:
@@ -269,18 +367,12 @@ namespace Gecode {
     using namespace Int;
     if (home->failed()) return;
     switch (o) {
-    case BOT_AND:
-      post_and(home,x0,x1,x2); break;
-    case BOT_OR:
-      post_or(home,x0,x1,x2); break;
-    case BOT_IMP:
-      post_imp(home,x0,x1,x2); break;
-    case BOT_EQV:
-      post_eqv(home,x0,x1,x2); break;
-    case BOT_XOR:
-      post_xor(home,x0,x1,x2); break;
-    default:
-      throw UnknownBoolOp("Int::rel");
+    case BOT_AND: post_and(home,x0,x1,x2); break;
+    case BOT_OR:  post_or(home,x0,x1,x2); break;
+    case BOT_IMP: post_imp(home,x0,x1,x2); break;
+    case BOT_EQV: post_eqv(home,x0,x1,x2); break;
+    case BOT_XOR: post_xor(home,x0,x1,x2); break;
+    default: throw UnknownBoolOp("Int::rel");
     }
   }
 
@@ -366,7 +458,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, BoolOpType o, BoolVar y, 
+  rel(Space* home, BoolOpType o, const BoolVarArgs& x, BoolVar y, 
       IntConLevel, PropKind) {
     using namespace Int;
     if (home->failed()) return;
@@ -432,7 +524,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, BoolOpType o, int n, 
+  rel(Space* home, BoolOpType o, const BoolVarArgs& x, int n, 
       IntConLevel, PropKind) {
     using namespace Int;
     if ((n < 0) || (n > 1))

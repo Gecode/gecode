@@ -140,7 +140,7 @@ public:
       BoolVarArgs store_by_supplier(n_stores);
       for (int j=0; j<n_stores; j++)
         store_by_supplier[j] = post(this, ~(supplier[j] == i));
-      rel(this, store_by_supplier, BOT_OR, open[i]);
+      rel(this, BOT_OR, store_by_supplier, open[i]);
     }
 
     branch(this, cost, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);

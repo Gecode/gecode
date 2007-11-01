@@ -362,9 +362,21 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x0, IntRelType r, IntVar x1,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /** \brief Post propagators for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+   *
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const IntVarArgs& x, IntRelType r, IntVar y,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /// Propagates \f$ x \sim_r c\f$
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x, IntRelType r, int c,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /// Propagates \f$ x_i \sim_r c \f$ for all \f$0\leq i<|x|\f$
+  GECODE_INT_EXPORT void
+  rel(Space* home, const IntVarArgs& x, IntRelType r, int c,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$ (x_0 \sim_r x_1)\Leftrightarrow b\f$
    *
@@ -428,6 +440,10 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /// Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+  GECODE_INT_EXPORT void
+  rel(Space* home, const BoolVarArgs& x, IntRelType r, BoolVar y,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /**
    * \brief Propagates \f$ x \sim_r n\f$
    *
@@ -436,6 +452,15 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space* home, BoolVar x, IntRelType r, int n,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /**
+   * \brief Propagates \f$ x_i \sim_r n \f$ for all \f$0\leq i<|x|\f$
+   *
+   * Throws an exception of type Int::NotZeroOne, if \a n is neither
+   * 0 or 1.
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const BoolVarArgs& x, IntRelType r, int n,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
@@ -487,7 +512,7 @@ namespace Gecode {
    * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
    */
   GECODE_INT_EXPORT void
-  rel(Space* home, const BoolVarArgs& x, BoolOpType o, BoolVar y,
+  rel(Space* home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
@@ -501,7 +526,7 @@ namespace Gecode {
    * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
    */
   GECODE_INT_EXPORT void
-  rel(Space* home, const BoolVarArgs& x, BoolOpType o, int n,
+  rel(Space* home, BoolOpType o, const BoolVarArgs& x, int n,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 

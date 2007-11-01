@@ -550,32 +550,25 @@ public:
         return;
       case 8:
         // Prune the single missing digit
-        for (int i=n; i--; )
-          rel(this, x[i], IRT_NQ, n*(n+1)/2 - c);
+        rel(this, x, IRT_NQ, n*(n+1)/2 - c);
         break;
       case 9:
         break;
       default:
         if (c == n*(n+1)/2) {
           // sum has unique decomposition: 1 + ... + n
-          for (int i=n; i--; )
-            rel(this, x[i], IRT_LQ, n);
+          rel(this, x, IRT_LQ, n);
         } else if (c == n*(n+1)/2 + 1) {
           // sum has unique decomposition: 1 + ... + n-1 + n+1
-          for (int i=n; i--; ) {
-            rel(this, x[i], IRT_LQ, n+1);
-            rel(this, x[i], IRT_NQ, n);
-          }
+          rel(this, x, IRT_LQ, n+1);
+          rel(this, x, IRT_NQ, n);
         } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2) {
           // sum has unique decomposition: (9-n+1) + (9-n+2) + ... + 9
-          for (int i=n; i--; )
-            rel(this, x[i], IRT_GQ, 9-n+1);
+          rel(this, x, IRT_GQ, 9-n+1);
         } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2 + 1) {
           // sum has unique decomposition: (9-n) + (9-n+2) + ... + 9
-          for (int i=n; i--; ) {
-            rel(this, x[i], IRT_GQ, 9-n);
-            rel(this, x[i], IRT_NQ, 9-n+1);
-          }
+          rel(this, x, IRT_GQ, 9-n);
+          rel(this, x, IRT_NQ, 9-n+1);
         } else if (n == 2) {
           // Just use element constraint with no two equal digits
           IntArgs e(c);

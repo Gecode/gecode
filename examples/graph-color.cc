@@ -329,8 +329,7 @@ public:
     : g(opt.size() == 1 ? g2 : g1),
       v(this,g.n_v,0,g.n_v),
       m(this,0,g.n_v) {
-    for (int i = g.n_v; i--; )
-      rel(this, v[i], IRT_LQ, m);
+    rel(this, v, IRT_LQ, m);
     for (int i = 0; g.e[i] != -1; i += 2)
       rel(this, v[g.e[i]], IRT_NQ, v[g.e[i+1]]);
 

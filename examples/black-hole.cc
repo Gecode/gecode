@@ -311,7 +311,7 @@ public:
               ba[pos++] = post(this, ~(y[o1] < y[layout[pile[o2]][i]]));
             // Cond holds when all the above holds
             BoolVar cond(this, 0, 1);
-            rel(this, ba, BOT_AND, cond);
+            rel(this, BOT_AND, ba, cond);
             
             // If cond is fulfilled, then we can order the cards
             // cond -> (y[o1] < y[o2])
