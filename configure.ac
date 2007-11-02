@@ -163,15 +163,18 @@ dnl Definition of variable types
 dnl Include contributor's vtis
 dnl @VTIS@
 
-AC_GECODE_VTI(cpltset, finite set library using complete domain representation (implies --enable-set-vars), yes,
-	     [AC_DEFINE(GECODE_HAVE_CPLTSET_VARS)
-	      enable_set_vars="yes";])
-
 AC_GECODE_VTI(set,
 	[finite set library (implies --enable-int-vars)],
 	yes,
 	[AC_DEFINE(GECODE_HAVE_SET_VARS)
 	 enable_int_vars="yes";])
+
+if test "${enable_set_vars}" != "yes"; then
+	enable_cpltset_vars="no"
+fi
+
+AC_GECODE_VTI(cpltset, finite set library using complete domain representation (can only be used with --enable-set-vars), yes,
+	     [AC_DEFINE(GECODE_HAVE_CPLTSET_VARS)])
 
 AC_GECODE_VTI(int, finite domain library, yes,
 	      [AC_DEFINE(GECODE_HAVE_INT_VARS)
