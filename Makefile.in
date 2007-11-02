@@ -490,7 +490,7 @@ MMBUILDDIRS	= minimodel
 SERSRC0 = \
 	flatzinc.cc deserializer.cc registry.cc boost.cc
 SERHDR0 = \
-	deserializer.icc boost.icc
+	boost.icc
 
 SERSRC 		= $(SERSRC0:%=gecode/serialization/%)
 SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)

@@ -396,7 +396,7 @@ if (!(T)) {                                                     \
         TestSpace* s = new TestSpace(arity,dom,false,this);
         TestSpace* sc;
         s->post();
-        switch (Base::rand(2)) {
+        switch (Base::rand(3)) {
           case 0:
             olog << "No copy" << std::endl;
             sc = s;

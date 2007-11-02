@@ -72,7 +72,7 @@ namespace Gecode { namespace Reflection {
     /// Default constructor
     VarMap(void);
     /// Destructor
-    ~VarMap(void);
+    MSCVIRTUAL ~VarMap(void);
     
     /// Return index for variable \a x
     int index(VarBase* x) const;

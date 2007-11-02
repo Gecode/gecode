@@ -39,6 +39,16 @@
 
 namespace Gecode { namespace Serialization {
   
+  Deserializer::Deserializer(Space* home0, Reflection::VarMap& m0)
+    : home(home0), m(m0) {}
+
+  Deserializer::~Deserializer(void) {}
+    
+  Reflection::VarMap&
+  Deserializer::varMap(void) const {
+    return m;
+  }
+
   void
   Deserializer::var(Reflection::VarSpec& spec) {
 	  VarBase* vb;

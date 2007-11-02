@@ -177,7 +177,7 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     Arg(argtype t);
     /// Destructor
-    ~Arg(void);
+    MSCVIRTUAL ~Arg(void);
   };
   
 
@@ -253,7 +253,7 @@ namespace Gecode { namespace Reflection {
     /// Assignment operator
     const VarSpec& operator=(const VarSpec& s);
     /// Destructor
-    ~VarSpec(void);
+    MSCVIRTUAL ~VarSpec(void);
     /// Set the name for this variable
     void name(const Support::Symbol& n0);
     /// Get the name of this variable
@@ -286,7 +286,7 @@ namespace Gecode { namespace Reflection {
     /// Assignment operator
     const ActorSpec& operator=(const ActorSpec& s);
     /// Destructor
-    ~ActorSpec(void);
+    MSCVIRTUAL ~ActorSpec(void);
     
     /// Return argument \a i
     Arg* operator[](int i) const;

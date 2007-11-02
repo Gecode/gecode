@@ -100,7 +100,7 @@ namespace Gecode {
      * Space using variable and actor specifications.
      *
      */
-    class Deserializer {
+    class GECODE_SERIALIZATION_EXPORT Deserializer {
     private:
       /// The space in which to create variables and post constraints
       Space* home;
@@ -110,16 +110,17 @@ namespace Gecode {
     public:
       /// Constructor
       Deserializer(Space* home0, Reflection::VarMap& m0);
+
+      /// Destructor
+      MSCVIRTUAL ~Deserializer(void);
       
       /// Return the VarMap
       Reflection::VarMap& varMap(void) const;
       
       /// Create a new variable from \a spec
-      GECODE_SERIALIZATION_EXPORT
       void var(Reflection::VarSpec& spec);
 
       /// Post the constraint defined by \a spec
-      GECODE_SERIALIZATION_EXPORT
       void post(Reflection::ActorSpec& spec);
     };
   
@@ -148,8 +149,6 @@ namespace Gecode {
 #include "gecode/serialization/boost.icc"
 
 #endif
-
-#include "gecode/serialization/deserializer.icc"
 
 #endif
 
