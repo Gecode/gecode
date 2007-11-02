@@ -69,6 +69,13 @@ namespace Gecode { namespace Int { namespace Circuit {
   Base<View>::connected(Space* home) {
     int n = x.size();
 
+    /// First non-assigned node.
+    int start = 0;
+    while (x[start].assigned()) {
+      start = x[start].val();
+      if (start == 0) break;
+    }
+
     /// Information needed for checking scc's
     GECODE_AUTOARRAY(SsccInfo<View>,si,n);
     unsigned int n_edges = 0;
@@ -111,8 +118,8 @@ namespace Gecode { namespace Int { namespace Circuit {
      *
      */
 
-    // Start always at node 0
-    int i = 0;
+    // Start always at node start
+    int i = start;
     // Counter for scc
     int cnt = 0;
     // Smallest preorder number of last subtree (initially, the root node)
@@ -146,13 +153,13 @@ namespace Gecode { namespace Int { namespace Circuit {
     } while (si[i].v());
     if (si[i].min < si[i].low) {
       si[i].low = si[i].min;
-    } else if (i != 0) {
+    } else if (i != start) {
       // If it is not the first node visited, there is more than one SCC
       return ES_FAILED;
     }
     if (!next.empty()) {
       i=next.pop(); 
-      if (i == 0) {
+      if (i == start) {
         // No back edge
         if (back == 0)
           return ES_FAILED;
