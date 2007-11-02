@@ -182,7 +182,7 @@ namespace Gecode { namespace Reflection {
     typename VarViewTraits<Var>::View v(x);
     name(v.variable(), n);
     Reflection::Arg* a = v.spec(home, *this);
-    Arg::dispose(a);
+    delete a;
   }
 
   template <class Var> void

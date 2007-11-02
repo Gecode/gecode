@@ -45,6 +45,14 @@
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
+/**
+  * \brief Workaround for a bug in the Microsoft C++ compiler
+  *
+  * Details for the bug can be found in
+  * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
+  */
+#define MSCVIRTUAL virtual
+
 #ifdef GECODE_BUILD_SUPPORT
 #define GECODE_SUPPORT_EXPORT __declspec( dllexport )
 #else
@@ -52,6 +60,14 @@
 #endif
 
 #else
+
+/**
+  * \brief Workaround for a bug in the Microsoft C++ compiler
+  *
+  * Details for the bug can be found in
+  * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
+  */
+#define MSCVIRTUAL
 
 #ifdef GCC_HASCLASSVISIBILITY
 

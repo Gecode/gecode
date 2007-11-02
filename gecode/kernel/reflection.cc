@@ -328,11 +328,6 @@ namespace Gecode { namespace Reflection {
     }
   }
 
-  void
-  Arg::dispose(Arg* a) {
-    delete a;
-  }
-
   const Arg*
   ArrayArg::operator[](int i) const {
     if (i >= arg1.i)
@@ -418,7 +413,7 @@ namespace Gecode { namespace Reflection {
 
   inline
   VarSpec::Domain::~Domain(void) {
-    Arg::dispose(_dom);
+    delete _dom;
   }
 
   VarSpec::VarSpec(Support::Symbol vti, Arg* dom) 
@@ -507,7 +502,7 @@ namespace Gecode { namespace Reflection {
   inline
   ActorSpec::Arguments::~Arguments(void) {
     for (int i=n; i--;)
-      Arg::dispose(a[i]);
+      delete a[i];
     Memory::free(a);
   }
 

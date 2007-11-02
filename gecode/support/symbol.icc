@@ -112,7 +112,7 @@ namespace Gecode { namespace Support {
     /// Print this Symbol to \a os
     std::ostream& print(std::ostream& os) const;    
     /// Destructor
-    ~Symbol(void);
+    MSCVIRTUAL ~Symbol(void);
   };
   
 }}
