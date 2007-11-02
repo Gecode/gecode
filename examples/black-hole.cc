@@ -375,7 +375,7 @@ main(int argc, char* argv[]) {
                   "reified", "use reified propagation");
   opt.propagation(BlackHole::PROPAGATION_DFA,
                   "dfa", "use DFA-based extensional propagation");
-  opt.propagation(BlackHole::PROPAGATION_TUPLES_SET,
+  opt.propagation(BlackHole::PROPAGATION_TUPLE_SET,
                   "table", "use TupleSet-based extensional propagation");
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
