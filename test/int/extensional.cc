@@ -274,31 +274,16 @@ namespace Test { namespace Int {
        }
      };
    
-     RegSimpleA ra;
-     RegSimpleB rb;
-   
-     RegDistinct rd;
-   
-     RegSharedA rsa;
-     RegSharedB rsb;
-     RegSharedC rsc;
-     RegSharedD rsd;
-
-     RegEmptyDFA redfa;
-     RegEmptyREG rereg;
-     //@}
-   
-
-
-     class TupleSet1 : public Test {
+     /// Test with tuple set
+     class TupleSetA : public Test {
      public:
        /// Create and register test
-       TupleSet1(const char* t, Gecode::PropKind pk0)
-         : Test(t,4,1,5,false,Gecode::ICL_DOM,pk0) {}
+       TupleSetA(Gecode::PropKind pk)
+         : Test("Extensional::TupleSet::A::"+str(pk),
+                4,1,5,false,Gecode::ICL_DOM,pk) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return (
-                 (x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
+         return ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
                  (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
                  (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
                  (x[0] == 3 && x[1] == 3 && x[2] == 3 && x[3] == 2) ||
@@ -324,17 +309,14 @@ namespace Test { namespace Int {
        }
      };
 
-     namespace {
-       TupleSet1 _tab1b("Extensional::TupleSet::Basic::1", Gecode::PK_MEMORY);
-       TupleSet1 _tab1i("Extensional::TupleSet::Incremental::1", Gecode::PK_SPEED);
-     }
-
-     class TupleSet2 : public Test {
+     /// Test with tuple set
+     class TupleSetB : public Test {
        mutable Gecode::TupleSet t;
      public:
        /// Create and register test
-       TupleSet2(const char* name, Gecode::PropKind pk0)
-         : Test(name,4,1,5,false,Gecode::ICL_DOM,pk0) {
+       TupleSetB(Gecode::PropKind pk)
+         : Test("Extensional::TupleSet::B::"+str(pk),
+                4,1,5,false,Gecode::ICL_DOM,pk) {
          using namespace Gecode;
          IntArgs t1 (4,  2, 1, 2, 4);
          IntArgs t2 (4,  2, 2, 1, 4);
@@ -363,9 +345,8 @@ namespace Test { namespace Int {
          for (int i = 0; i < t.tuples(); ++i) {
            TupleSet::Tuple l = t[i];
            bool same = true;
-           for (int j = 0; j < t.arity() && same; ++j) {
+           for (int j = 0; j < t.arity() && same; ++j)
              if (l[j] != x[j]) same = false;
-           }
            if (same) return true;
          }
          return false;
@@ -377,10 +358,28 @@ namespace Test { namespace Int {
        }
      };
 
-     namespace {
-       TupleSet2 _tab2b("Extensional::TupleSet::Basic::2", Gecode::PK_MEMORY);
-       TupleSet2 _tab2i("Extensional::TupleSet::Incremental::2", Gecode::PK_SPEED);
-     }
+
+     RegSimpleA ra;
+     RegSimpleB rb;
+   
+     RegDistinct rd;
+   
+     RegSharedA rsa;
+     RegSharedB rsb;
+     RegSharedC rsc;
+     RegSharedD rsd;
+
+     RegEmptyDFA redfa;
+     RegEmptyREG rereg;
+
+
+     TupleSetA tsam(Gecode::PK_MEMORY);
+     TupleSetA tsas(Gecode::PK_SPEED);
+
+     TupleSetB tsbm(Gecode::PK_MEMORY);
+     TupleSetB tsbs(Gecode::PK_SPEED);
+     //@}
+
    }
 }}
 
