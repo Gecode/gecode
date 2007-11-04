@@ -502,16 +502,6 @@ namespace Gecode {
     return d;
   }
 
-  DFA::DFAI::DFAI(void) 
-    : SharedHandle::Object(true),
-      n_states(1), n_symbols(0), n_trans(0), 
-      final_fst(0), final_lst(0),
-      trans(NULL) {
-    fill();
-  }
-
-  DFA::DFAI DFA::DFAI::epsilon;
-
   void
   DFA::DFAI::fill(void) {
     // Compute smallest logarithm larger than n_symbols

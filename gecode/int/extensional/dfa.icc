@@ -76,8 +76,6 @@ namespace Gecode {
     virtual ~DFAI(void);
     /// Create a copy
     GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
-    /// Default automaton
-    GECODE_INT_EXPORT static DFAI epsilon;
   };
   
   forceinline
@@ -93,7 +91,7 @@ namespace Gecode {
   }
 
   forceinline
-  DFA::DFA(void) : SharedHandle(&DFAI::epsilon) {}
+  DFA::DFA(void) {}
 
 
   forceinline
@@ -102,40 +100,46 @@ namespace Gecode {
 
   forceinline unsigned int
   DFA::n_states(void) const {
-    return static_cast<DFAI*>(object())->n_states;
+    const DFAI* d = static_cast<DFAI*>(object());
+    return (d == NULL) ? 1 : d->n_states;
   }
 
   forceinline unsigned int
   DFA::n_symbols(void) const {
-    return static_cast<DFAI*>(object())->n_symbols;
+    const DFAI* d = static_cast<DFAI*>(object());
+    return (d == NULL) ? 0 : d->n_symbols;
   }
 
   forceinline unsigned int
   DFA::n_transitions(void) const {
-    return static_cast<DFAI*>(object())->n_trans;
+    const DFAI* d = static_cast<DFAI*>(object());
+    return (d == NULL) ? 0 : d->n_trans;
   }
 
   forceinline int
   DFA::final_fst(void) const {
-    return static_cast<DFAI*>(object())->final_fst;
+    const DFAI* d = static_cast<DFAI*>(object());
+    return (d == NULL) ? 0 : d->final_fst;
   }
 
   forceinline int
   DFA::final_lst(void) const {
-    return static_cast<DFAI*>(object())->final_lst;
+    const DFAI* d = static_cast<DFAI*>(object());
+    return (d == NULL) ? 0 : d->final_lst;
   }
 
   forceinline int
   DFA::symbol_min(void) const {
-    const DFAI* o = static_cast<DFAI*>(object());
-    return (o->n_trans > 0) ? o->trans[0].symbol : Limits::Int::int_min;
+    const DFAI* d = static_cast<DFAI*>(object());
+    return ((d != NULL) && (d->n_trans > 0)) ? 
+      d->trans[0].symbol : Limits::Int::int_min;
   }
 
   forceinline int
   DFA::symbol_max(void) const {
-    const DFAI* o = static_cast<DFAI*>(object());
-    return (o->n_trans > 0) ? 
-      o->trans[o->n_trans-1].symbol : Limits::Int::int_max;
+    const DFAI* d = static_cast<DFAI*>(object());
+    return ((d != NULL) && (d->n_trans > 0)) ? 
+      d->trans[d->n_trans-1].symbol : Limits::Int::int_max;
   }
 
 
@@ -146,19 +150,29 @@ namespace Gecode {
    */
 
   forceinline
-  DFA::Transitions::Transitions(const DFA& d)
-    : c_trans(&static_cast<DFAI*>(d.object())->trans[0]), 
-      e_trans(c_trans+static_cast<DFAI*>(d.object())->n_trans) {}
+  DFA::Transitions::Transitions(const DFA& d) {
+    const DFAI* o = static_cast<DFAI*>(d.object());
+    if (o != NULL) {
+      c_trans = &o->trans[0];
+      e_trans = c_trans+o->n_trans;
+    } else {
+      c_trans = e_trans = NULL;
+    }
+  }
 
   forceinline
   DFA::Transitions::Transitions(const DFA& d, int n) {
     const DFAI* o = static_cast<DFAI*>(d.object());
-    int mask = (1<<o->n_log)-1;
-    int p = n & mask;
-    while ((o->table[p].symbol != n) && (o->table[p].fst != NULL))
-      p = (p+1) & mask;
-    c_trans = o->table[p].fst;
-    e_trans = o->table[p].lst;
+    if (o != NULL) {
+      int mask = (1<<o->n_log)-1;
+      int p = n & mask;
+      while ((o->table[p].symbol != n) && (o->table[p].fst != NULL))
+        p = (p+1) & mask;
+      c_trans = o->table[p].fst;
+      e_trans = o->table[p].lst;
+    } else {
+      c_trans = e_trans = NULL;
+    }
   }
 
   forceinline bool
@@ -192,9 +206,15 @@ namespace Gecode {
    */
 
   forceinline
-  DFA::Symbols::Symbols(const DFA& d)
-    : c_trans(&static_cast<DFAI*>(d.object())->trans[0]), 
-      e_trans(c_trans+static_cast<DFAI*>(d.object())->n_trans) {}
+  DFA::Symbols::Symbols(const DFA& d) {
+    const DFAI* o = static_cast<DFAI*>(d.object());
+    if (o != NULL) {
+      c_trans = &o->trans[0];
+      e_trans = c_trans+o->n_trans;
+    } else {
+      c_trans = e_trans = NULL;
+    }
+  }
 
   forceinline bool
   DFA::Symbols::operator()(void) const {
