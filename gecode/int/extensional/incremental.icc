@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     // Add initial supports
-    GECODE_AUTOARRAY(BitSet<unsigned long long>, dom, x.size());
+    GECODE_AUTOARRAY(BitSet, dom, x.size());
     init_dom(home, dom);
     for (int i = x.size(); i--; ) {
       ViewValues<View> vv(x[i]);
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(!work.empty() || unassigned==0);
     /// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
-    GECODE_AUTOARRAY(BitSet<unsigned long long>, dom, x.size());
+    GECODE_AUTOARRAY(BitSet, dom, x.size());
     init_dom(home, dom);
 
     /// Work loop

@@ -1146,11 +1146,11 @@ namespace Gecode {
   extensional(Space* home, const BoolVarArgs& x, DFA d,
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
-  /** \brief Class represeting a set of tuples.
+  /** \brief Class represeting a set of tuples
    */
   class TupleSet : public SharedHandle {
   public:
-    /** \brief Type of a tuple. 
+    /** \brief Type of a tuple
      *
      * The arity of the tuple is left implicit.
      */
@@ -1161,7 +1161,7 @@ namespace Gecode {
     /// Get implementation
     TupleSetI* implementation(void);
 
-    /// Default construction otablef tuple set
+    /// Default construction of table tuple set
     TupleSet(void);
     /// Initialize by TupleSet \a d (tuple set is shared)
     TupleSet(const TupleSet& d);
@@ -1171,7 +1171,7 @@ namespace Gecode {
     /// Finalize tuple set
     void finalize(void);
     /// Arity of tuple set
-    int  arity(void) const;
+    int arity(void) const;
     /// Number of tuples
     int tuples(void) const;
     /// Get tuple i

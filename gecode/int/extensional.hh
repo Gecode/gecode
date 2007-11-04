@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 namespace Gecode { namespace Int { namespace Extensional {
 
   typedef TupleSet::Tuple Tuple;
-  typedef BitSet<unsigned long long>* Domain;
+  typedef BitSet* Domain;
 
   /**
    * \brief Base for domain-consistent extensional propagation.

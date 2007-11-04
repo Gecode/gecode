@@ -3,8 +3,12 @@
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
  *     Mikael Lagerkvist, 2007
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,51 +39,35 @@
  *
  */
 
-#ifndef __GECODE_EXTENSIONAL_BITSET_HH__
-#define __GECODE_EXTENSIONAL_BITSET_HH__
-
 #include <climits>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
-  /** \brief 
-   *
-   * Requires \code #include "gecode/extensional/bitset.hh" \endcode
-   * \ingroup FuncExtensional
-   */
-  template<typename Base>
+  /// Simple bitsets
   class BitSet {
+    /// Basetype for bits
+    typedef unsigned int Base;
+    /// Stored bits
     Base* data;
+    /// Size of bitset
     unsigned int size;
   public:
     /// Default (empty) initialization of BitSet
-    BitSet(void) : data(NULL), size(0) {}
-
+    BitSet(void);
     /// BitSet with space for \a s bits. The bits are  set to \a value.
-    BitSet(Space *home, int s, bool value = false) 
-      : data(NULL), size(0) {
-      init(home, s, value);
-    }
-
-    /// Copy BitSet \a bs.
-    BitSet(Space *home, const BitSet<Base>& bs)
-      : data(home->alloc(bs.size*sizeof(Base))), size(bs.size) {
-      for (int i = size; i--; ) data[i] = bs.data[i];
-    }
-    
-    /// Initialise BitSet with space for \a s bits. The bits are  set to \a value.
-    void init(Space *home, int s, bool value = false);
-    
-    /// Access value at bit \a i.
+    BitSet(Space* home, int s, bool value = false);
+    /// Copy BitSet \a bs
+    BitSet(Space* home, const BitSet& bs);
+    /// Initialize BitSet for \a s bits. The bits are  set to \a value.
+    void init(Space *home, int s, bool value=false);
+    /// Access value at bit \a i
     bool get(unsigned int i);
-    /// Set value at bit \a i to \a value.
-    void set(unsigned int i, bool value = true);
+    /// Set value at bit \a i to \a value
+    void set(unsigned int i, bool value=true);
   };
   
-
-  template<typename Base>
   forceinline void
-  BitSet<Base>::init(Space* home, int s, bool value) {
+  BitSet::init(Space* home, int s, bool value) {
     size = static_cast<int>(std::ceil(static_cast<double>(s)
                                       /(CHAR_BIT*sizeof(Base))));
     data = static_cast<Base*>(home->alloc(size*sizeof(Base)));
@@ -87,17 +75,29 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i = size; i--; ) data[i] = ival;
   }
 
-  template<typename Base>
+  forceinline
+  BitSet::BitSet(void) : data(NULL), size(0) {}
+
+  forceinline
+  BitSet::BitSet(Space *home, int s, bool value) 
+    : data(NULL), size(0) {
+    init(home, s, value);
+  }
+  forceinline
+  BitSet::BitSet(Space *home, const BitSet& bs)
+    : data(static_cast<Base*>(home->alloc(bs.size*sizeof(Base)))), 
+      size(bs.size) {
+    for (int i = size; i--; ) data[i] = bs.data[i];
+  }
   forceinline bool
-  BitSet<Base>::get(unsigned int i) {
+  BitSet::get(unsigned int i) {
     unsigned int pos = i / (sizeof(Base)*CHAR_BIT);
     unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
     assert(pos < size);
     return data[pos] & ((Base)1 << bit);
   }
-  template<typename Base>
   forceinline void
-  BitSet<Base>::set(unsigned int i, bool value) {
+  BitSet::set(unsigned int i, bool value) {
     unsigned int pos = i / (sizeof(Base)*CHAR_BIT);
     unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
     assert(pos < size);
@@ -106,8 +106,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     else
       data[pos] &= ~((Base)1 << bit);
   }
+
 }}}
 
-#endif /* __GECODE_EXTENSIONAL_BITSET_HH__ */
-
 // STATISTICS: int-other
+
