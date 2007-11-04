@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 #include "gecode/int/extensional/layered-graph.icc"
 
 
-#include "gecode/int/extensional/bitset.hh"
+#include "gecode/int/extensional/bitset.icc"
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   typedef BitSet* Domain;
 
   /**
-   * \brief Base for domain-consistent extensional propagation.
+   * \brief Base for domain-consistent extensional propagation
    *
    * This class contains support for implementing domain consistent
    * extensional propagation algorithms that use positive tuple sets and

@@ -277,7 +277,8 @@ INTHDR0 = \
 	linear/bool-int.icc linear/bool-view.icc linear/bool-scale.icc \
 	extensional/dfa.icc extensional/layered-graph.icc \
 	extensional/tuple-set.icc extensional/base.icc \
-	extensional/basic.icc extensional/incremental.icc extensional/bitset.hh \
+	extensional/basic.icc extensional/incremental.icc \
+	extensional/bitset.icc \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sorted/matching.icc sorted/narrowing.icc \
 	sorted/order.icc sorted/propagate.icc sorted/sortsup.icc \
