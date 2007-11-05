@@ -70,7 +70,8 @@ namespace Gecode {
               IntConLevel, PropKind pk) {
     using namespace Int;
     if (home->failed()) return;
-    const_cast<TupleSet&>(tupleSet).finalize();
+    if (!tupleSet.finalized())
+      throw new ArgumentNotFinalized("Int::extensional");
 
     if (tupleSet.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
@@ -101,7 +102,8 @@ namespace Gecode {
               const TupleSet& tupleSet, IntConLevel, PropKind pk) {
     using namespace Int;
     if (home->failed()) return;
-    const_cast<TupleSet&>(tupleSet).finalize();
+    if (!tupleSet.finalized())
+      throw new ArgumentNotFinalized("Int::extensional");
 
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");

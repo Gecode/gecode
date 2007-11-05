@@ -401,7 +401,7 @@ main(int argc, char* argv[]) {
                   "decompose", 
                   "Use decomposed propagation for bishops-placement");
   opt.icl(ICL_DOM);
-  opt.size(7);
+  opt.size(8);
   opt.parse(argc,argv);
   if (opt.size() < 5) {
     std::cerr << "Error: size must be at least 5" << std::endl;

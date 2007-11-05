@@ -126,6 +126,7 @@ namespace Gecode {
    * views with which propagators and branchings compute.
    * \ingroup TaskActor
    */
+
   template <class View>
   class ViewArray {
   private:
@@ -669,15 +670,16 @@ namespace Gecode {
   ViewArray<View>::ViewArray(Space* home, const Reflection::VarMap& vars,
                              Reflection::Arg* spec) {
     if (spec == NULL) {
+      x = NULL;
       n = 0;
       return;
     }
     Reflection::ArrayArg* a = spec->toArray();
     n = a->size();
-    if (n>=0)
-      x = static_cast<View*>(home->alloc(sizeof(View)*n));
-    else 
-      x = NULL;
+    //if (n>=0)
+    x = n>=0 ? static_cast<View*>(home->alloc(sizeof(View)*n)) : NULL;
+      //else 
+      //x = NULL;
     for (int i=n; i--;)
       x[i] = View(home, vars, (*a)[i]);
   }

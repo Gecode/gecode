@@ -361,6 +361,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
       home->reuse(support_data, sizeof(SupportEntry*)*literals);
     }
+    work.~WorkStack();
     (void) ac.dispose(home);
 
     (void) Base<View,false>::dispose(home);

@@ -116,6 +116,13 @@ namespace Gecode { namespace Int {
     UnknownBranching(const char* l);
   };
 
+  /// %Exception: Argument not finalized
+  class ArgumentNotFinalized : public Exception {
+  public:
+    /// Initialize with location \a l
+    ArgumentNotFinalized(const char* l);
+  };
+
   //@}
 
 
@@ -168,6 +175,10 @@ namespace Gecode { namespace Int {
   inline
   UnknownBranching::UnknownBranching(const char* l)
     : Exception(l,"Unknown branching type") {}
+
+  inline
+  ArgumentNotFinalized::ArgumentNotFinalized(const char* l)
+    : Exception(l,"Argument is not finalized") {}
 
 }}
 

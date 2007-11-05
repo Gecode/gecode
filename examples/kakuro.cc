@@ -452,6 +452,7 @@ namespace {
       ts.add(ia);
       delete s;
     }
+    ts.finalize();
     return ts;
   }
   

@@ -304,6 +304,7 @@ namespace Test { namespace Int {
          t.add(t3);
          t.add(t4);
          t.add(t5);
+         t.finalize();
 
          extensional(home, x, t, ICL_DEF, pk);
        }
@@ -338,6 +339,7 @@ namespace Test { namespace Int {
          t.add(t8);
          t.add(t9);
          t.add(t10);
+         t.finalize();
        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {

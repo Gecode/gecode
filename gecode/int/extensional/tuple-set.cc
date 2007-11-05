@@ -106,6 +106,7 @@ namespace {
       return a[pos] < b;
     }
   };
+
 }
 
 
@@ -126,10 +127,11 @@ operator<<(std::ostream& os, const Gecode::TupleSet& ts) {
 
 namespace Gecode {
 
-  void
+  void*
   TupleSet::TupleSetI::finalize(void) {
     assert(!finalized());
     assert(tuples == NULL);
+    void* retval;
 
     // Add final largest tuple
     IntArgs ia(arity);
@@ -143,7 +145,7 @@ namespace Gecode {
 
     // Allocate tuple indexing data-structures
     tuples = Memory::bmalloc<Tuple*>(arity);
-    Tuple* tuple_data = Memory::bmalloc<Tuple>(size*arity+1);
+    tuple_data = Memory::bmalloc<Tuple>(size*arity+1);
     tuple_data[size*arity] = NULL;
     nullptr = tuple_data+(size*arity);
 
@@ -164,6 +166,7 @@ namespace Gecode {
     }
 
     //Memory::free(data);
+    retval = data;
     data = new_data;
     excess = -1;
 
@@ -179,41 +182,72 @@ namespace Gecode {
     // Set up initial last-structure
     last = Memory::bmalloc<Tuple*>(domsize*arity);
     for (int i = arity; i--; ) {
-      TupleKeyCompare tkc(i);
-      for (int d = domsize; d--; ) {
-        Tuple* l = Support::binarysearch(tuples[i], size, min+d, tkc);
-        if (l && *l && (*l)[i] == min+d)
-          last[(i*domsize) + d] = l;
-        else
+      Tuple* t = tuples[i];
+      for (int d = 0; d < domsize; ++d) {
+        while (t && *t && (*t)[i] < min+d) {
+          ++t;
+        }
+        if (t && *t && (*t)[i] == min+d) {
+          last[(i*domsize) + d] = t;
+          ++t;
+        } else {
           last[(i*domsize) + d] = nullptr;
+        }
       }
     }
     
     assert(finalized());
+
+    return retval;
   }
 
   SharedHandle::Object*
   TupleSet::TupleSetI::copy(void) const {
     assert(finalized());
-    TupleSetI* d  = new TupleSetI();
+    TupleSetI* d  = new TupleSetI;
     d->arity      = arity;
     d->size       = size;
-    //d->tuples     = tuples;
-    //d->data       = data;
-    d->excess     = -1;
+    d->excess     = excess;
     d->min        = min;
     d->max        = max;
     d->domsize    = domsize;
-    //d->last       = last;
-    d->nullptr    = nullptr;
+
+    // Table data
     d->data = Memory::bmalloc<int>(size*arity);
     memcpy(&d->data[0], &data[0], sizeof(int)*size*arity);
+
+    // Indexing data
     d->tuples = Memory::bmalloc<Tuple*>(arity);
-    memcpy(&d->tuples[0], &tuples[0], sizeof(Tuple*)*arity); /// fixme
+    d->tuple_data = Memory::bmalloc<Tuple>(size*arity+1);
+    d->tuple_data[size*arity] = NULL;
+    d->nullptr = d->tuple_data+(size*arity);
+
+    // Rearrange the tuples for faster comparisons.
+    for (int i = arity; i--; )
+      d->tuples[i] = d->tuple_data + (i * size);
+    for (int a = arity; a--; ) {
+      for (int i = size; i--; ) {
+        d->tuples[a][i] = d->data + (tuples[a][i]-data);
+      }
+    }
+
+    // Last data
     d->last = Memory::bmalloc<Tuple*>(domsize*arity);
-    memcpy(&d->last[0], &last[0], sizeof(Tuple*)*domsize*arity); /// fixme
+    for (int i = domsize+arity; i--; ) {
+      d->last[i] = d->tuple_data + (last[i]-tuple_data);
+    }
+
     return d;
   }
+
+  TupleSet::TupleSetI::~TupleSetI(void) {
+    excess = -2;
+    Memory::free(tuples);
+    Memory::free(tuple_data);
+    Memory::free(data);
+    Memory::free(last);
+  }  
+
 }
 
 // STATISTICS: int-prop

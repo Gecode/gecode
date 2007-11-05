@@ -1161,7 +1161,7 @@ namespace Gecode {
     /// Get implementation
     TupleSetI* implementation(void);
 
-    /// Default construction of table tuple set
+    /// Construct empty tuple
     TupleSet(void);
     /// Initialize by TupleSet \a d (tuple set is shared)
     TupleSet(const TupleSet& d);
@@ -1170,6 +1170,8 @@ namespace Gecode {
     void add(const IntArgs& tuple);
     /// Finalize tuple set
     void finalize(void);
+    /// Is tuple set finalized
+    bool finalized(void) const;
     /// Arity of tuple set
     int arity(void) const;
     /// Number of tuples
@@ -1185,8 +1187,10 @@ namespace Gecode {
   /** \brief Post propagator for \f$x\in T\f$.
    *
    * \li Supports implementations optimized for memory (\a pk = \a
-   * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
+   *     PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentNotFinalized if the
+   *     TupleSet has not been finalized.
    *
    * \warning If the domains for the \f$x_i\f$ are not dense and
    * have similar bounds, lots of memory will be wasted (memory
@@ -1205,6 +1209,8 @@ namespace Gecode {
    * \li Supports implementations optimized for memory (\a pk = \a
    * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentNotFinalized if the
+   *     TupleSet has not been finalized.
    * \li Throws an exception of type Int::NumericalOverflow, if
    *     the integers in \a n exceed the limits in Limits::Int.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if

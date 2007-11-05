@@ -2,16 +2,14 @@ gecode/support/exception$(OBJSUFFIX) gecode/support/exception$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/support/symbol$(OBJSUFFIX) gecode/support/symbol$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/support/buddy/bddio.c$(OBJSUFFIX) gecode/support/buddy/bddio.c$(SBJSUFFIX): \
 	./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h 
 gecode/support/buddy/bddop.c$(OBJSUFFIX) gecode/support/buddy/bddop.c$(SBJSUFFIX): \
@@ -50,9 +48,9 @@ gecode/kernel/core$(OBJSUFFIX) gecode/kernel/core$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/kernel/reflection$(OBJSUFFIX) gecode/kernel/reflection$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -62,9 +60,9 @@ gecode/kernel/reflection$(OBJSUFFIX) gecode/kernel/reflection$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/kernel/varmap$(OBJSUFFIX) gecode/kernel/varmap$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -74,9 +72,9 @@ gecode/kernel/varmap$(OBJSUFFIX) gecode/kernel/varmap$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -86,9 +84,9 @@ gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -101,9 +99,9 @@ gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/search/lds$(OBJSUFFIX) gecode/search/lds$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -116,9 +114,9 @@ gecode/search/lds$(OBJSUFFIX) gecode/search/lds$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -131,9 +129,9 @@ gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -146,9 +144,9 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -176,9 +174,9 @@ gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/var/imp-int$(OBJSUFFIX) gecode/int/var/imp-int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -207,9 +205,8 @@ gecode/int/var/imp-int$(OBJSUFFIX) gecode/int/var/imp-int$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/var/imp-bool$(OBJSUFFIX) gecode/int/var/imp-bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -238,9 +235,8 @@ gecode/int/var/imp-bool$(OBJSUFFIX) gecode/int/var/imp-bool$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -268,9 +264,9 @@ gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -298,9 +294,9 @@ gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/view/print$(OBJSUFFIX) gecode/int/view/print$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -328,9 +324,9 @@ gecode/int/view/print$(OBJSUFFIX) gecode/int/view/print$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/array$(OBJSUFFIX) gecode/int/array$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -358,9 +354,9 @@ gecode/int/array$(OBJSUFFIX) gecode/int/array$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/bool.hh ./gecode/int/bool/base.icc ./gecode/int/bool/eq.icc \
@@ -392,9 +388,9 @@ gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -422,9 +418,9 @@ gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/extensional/tuple-set$(OBJSUFFIX) gecode/int/extensional/tuple-set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -452,9 +448,9 @@ gecode/int/extensional/tuple-set$(OBJSUFFIX) gecode/int/extensional/tuple-set$(S
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional.hh ./gecode/int/extensional/base.icc \
@@ -486,9 +482,9 @@ gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/dom.hh ./gecode/int/dom/range.icc ./gecode/int/dom/spec.icc \
@@ -519,9 +515,9 @@ gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -551,9 +547,9 @@ gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/element.hh ./gecode/int/element/int.icc ./gecode/int/element/view.icc \
@@ -584,9 +580,9 @@ gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/count.hh ./gecode/int/count/int.icc ./gecode/int/count/rel.icc \
@@ -617,9 +613,9 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/arithmetic.hh \
 	./gecode/int/arithmetic/abs.icc ./gecode/int/arithmetic/max.icc ./gecode/int/arithmetic/mult.icc \
@@ -654,9 +650,8 @@ gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -689,9 +684,9 @@ gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -723,9 +718,8 @@ gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -757,9 +751,8 @@ gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX):
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -791,9 +784,8 @@ gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/branch$(OBJSUFFIX) gecode/int/branch$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/branch.hh ./gecode/int/branch/select-val.icc ./gecode/int/branch/select-view.icc \
@@ -822,9 +814,9 @@ gecode/int/branch$(OBJSUFFIX) gecode/int/branch$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
@@ -857,9 +849,9 @@ gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/cumulatives.hh ./gecode/int/cumulatives/val.icc ./gecode/int/exception.icc \
@@ -891,9 +883,9 @@ gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
@@ -928,9 +920,9 @@ gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -961,9 +953,9 @@ gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/channel.hh ./gecode/int/channel/base.icc ./gecode/int/channel/dom.icc \
@@ -998,9 +990,9 @@ gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/channel/link-single$(OBJSUFFIX) gecode/int/channel/link-single$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/channel.hh ./gecode/int/channel/base.icc ./gecode/int/channel/dom.icc \
@@ -1035,9 +1027,9 @@ gecode/int/channel/link-single$(OBJSUFFIX) gecode/int/channel/link-single$(SBJSU
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/channel/link-multi$(OBJSUFFIX) gecode/int/channel/link-multi$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/channel.hh ./gecode/int/channel/base.icc ./gecode/int/channel/dom.icc \
@@ -1072,9 +1064,9 @@ gecode/int/channel/link-multi$(OBJSUFFIX) gecode/int/channel/link-multi$(SBJSUFF
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/int/circuit$(OBJSUFFIX) gecode/int/circuit$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/circuit.hh ./gecode/int/circuit/base.icc ./gecode/int/circuit/dom.icc \
@@ -1108,9 +1100,9 @@ gecode/int/circuit$(OBJSUFFIX) gecode/int/circuit$(SBJSUFFIX): \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/bool.hh ./gecode/int/bool/base.icc ./gecode/int/bool/eq.icc \
@@ -1142,9 +1134,9 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1179,9 +1171,9 @@ gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1220,9 +1212,9 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1257,9 +1249,9 @@ gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1294,9 +1286,9 @@ gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1331,9 +1323,9 @@ gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1370,9 +1362,8 @@ gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1414,9 +1405,8 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1455,9 +1445,9 @@ gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1496,9 +1486,9 @@ gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1537,9 +1527,9 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1581,9 +1571,8 @@ gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1625,9 +1614,8 @@ gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1665,9 +1653,9 @@ gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1702,9 +1690,8 @@ gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1739,9 +1726,8 @@ gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFF
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1779,9 +1765,9 @@ gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1819,9 +1805,9 @@ gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1855,9 +1841,9 @@ gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/var/imp$(OBJSUFFIX) gecode/set/var/imp$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1891,9 +1877,9 @@ gecode/set/var/imp$(OBJSUFFIX) gecode/set/var/imp$(SBJSUFFIX): \
 	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/var/integerset$(OBJSUFFIX) gecode/set/var/integerset$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1927,9 +1913,9 @@ gecode/set/var/integerset$(OBJSUFFIX) gecode/set/var/integerset$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1963,9 +1949,9 @@ gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/view/print$(OBJSUFFIX) gecode/set/view/print$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -1999,9 +1985,9 @@ gecode/set/view/print$(OBJSUFFIX) gecode/set/view/print$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/projectors$(OBJSUFFIX) gecode/set/projectors$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2038,9 +2024,9 @@ gecode/set/projectors$(OBJSUFFIX) gecode/set/projectors$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/projectors/set-expr$(OBJSUFFIX) gecode/set/projectors/set-expr$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2076,9 +2062,8 @@ gecode/set/projectors/set-expr$(OBJSUFFIX) gecode/set/projectors/set-expr$(SBJSU
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/projectors/projector$(OBJSUFFIX) gecode/set/projectors/projector$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2114,9 +2099,8 @@ gecode/set/projectors/projector$(OBJSUFFIX) gecode/set/projectors/projector$(SBJ
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/projectors/projector-set$(OBJSUFFIX) gecode/set/projectors/projector-set$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2152,9 +2136,8 @@ gecode/set/projectors/projector-set$(OBJSUFFIX) gecode/set/projectors/projector-
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/set/projectors/propagator/re-nary$(OBJSUFFIX) gecode/set/projectors/propagator/re-nary$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2191,9 +2174,9 @@ gecode/set/projectors/propagator/re-nary$(OBJSUFFIX) gecode/set/projectors/propa
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/projectors/compiler$(OBJSUFFIX) gecode/set/projectors/compiler$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2229,9 +2212,9 @@ gecode/set/projectors/compiler$(OBJSUFFIX) gecode/set/projectors/compiler$(SBJSU
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2267,9 +2250,9 @@ gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFF
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/cpltset/branch$(OBJSUFFIX) gecode/cpltset/branch$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/branch.hh ./gecode/cpltset/branch/select-val.icc \
@@ -2308,9 +2291,9 @@ gecode/cpltset/branch$(OBJSUFFIX) gecode/cpltset/branch$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/buddy/bdd.h ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
@@ -2348,9 +2331,9 @@ gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/buddy/bdd.h ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
@@ -2388,9 +2371,9 @@ gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/buddy/bdd.h ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/bddmanager$(OBJSUFFIX) gecode/cpltset/bddmanager$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
@@ -2428,9 +2411,9 @@ gecode/cpltset/bddmanager$(OBJSUFFIX) gecode/cpltset/bddmanager$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/buddy/bdd.h ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/var/imp$(OBJSUFFIX) gecode/cpltset/var/imp$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
@@ -2469,9 +2452,8 @@ gecode/cpltset/var/imp$(OBJSUFFIX) gecode/cpltset/var/imp$(SBJSUFFIX): \
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
@@ -2509,9 +2491,9 @@ gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/buddy/bdd.h ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
@@ -2549,9 +2531,9 @@ gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/buddy/bdd.h ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/singleton$(OBJSUFFIX) gecode/cpltset/constraints/singleton$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2592,9 +2574,8 @@ gecode/cpltset/constraints/singleton$(OBJSUFFIX) gecode/cpltset/constraints/sing
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/dom$(OBJSUFFIX) gecode/cpltset/constraints/dom$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
@@ -2632,9 +2613,9 @@ gecode/cpltset/constraints/dom$(OBJSUFFIX) gecode/cpltset/constraints/dom$(SBJSU
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/buddy/bdd.h ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/rel$(OBJSUFFIX) gecode/cpltset/constraints/rel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2675,9 +2656,8 @@ gecode/cpltset/constraints/rel$(OBJSUFFIX) gecode/cpltset/constraints/rel$(SBJSU
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/cardinality$(OBJSUFFIX) gecode/cpltset/constraints/cardinality$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2718,9 +2698,8 @@ gecode/cpltset/constraints/cardinality$(OBJSUFFIX) gecode/cpltset/constraints/ca
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/atmost$(OBJSUFFIX) gecode/cpltset/constraints/atmost$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2761,9 +2740,8 @@ gecode/cpltset/constraints/atmost$(OBJSUFFIX) gecode/cpltset/constraints/atmost$
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/partition$(OBJSUFFIX) gecode/cpltset/constraints/partition$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2804,9 +2782,8 @@ gecode/cpltset/constraints/partition$(OBJSUFFIX) gecode/cpltset/constraints/part
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/select$(OBJSUFFIX) gecode/cpltset/constraints/select$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2847,9 +2824,8 @@ gecode/cpltset/constraints/select$(OBJSUFFIX) gecode/cpltset/constraints/select$
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/distinct$(OBJSUFFIX) gecode/cpltset/constraints/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2890,9 +2866,8 @@ gecode/cpltset/constraints/distinct$(OBJSUFFIX) gecode/cpltset/constraints/disti
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/rangeroots$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/propagators.hh \
@@ -2933,9 +2908,8 @@ gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/ran
 	./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/minimodel/scheduling$(OBJSUFFIX) gecode/minimodel/scheduling$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -2969,9 +2943,9 @@ gecode/minimodel/scheduling$(OBJSUFFIX) gecode/minimodel/scheduling$(SBJSUFFIX):
 	./gecode/minimodel/matrix.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -3005,9 +2979,9 @@ gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/minimodel/arithmetic$(OBJSUFFIX) gecode/minimodel/arithmetic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -3041,9 +3015,9 @@ gecode/minimodel/arithmetic$(OBJSUFFIX) gecode/minimodel/arithmetic$(SBJSUFFIX):
 	./gecode/minimodel/matrix.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -3077,9 +3051,9 @@ gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/serialization/flatzinc$(OBJSUFFIX) gecode/serialization/flatzinc$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -3090,9 +3064,8 @@ gecode/serialization/flatzinc$(OBJSUFFIX) gecode/serialization/flatzinc$(SBJSUFF
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/serialization/deserializer$(OBJSUFFIX) gecode/serialization/deserializer$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -3103,9 +3076,8 @@ gecode/serialization/deserializer$(OBJSUFFIX) gecode/serialization/deserializer$
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/serialization/registry$(OBJSUFFIX) gecode/serialization/registry$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/element.hh ./gecode/int/element/int.icc ./gecode/int/element/view.icc \
@@ -3142,9 +3114,9 @@ gecode/serialization/registry$(OBJSUFFIX) gecode/serialization/registry$(SBJSUFF
 	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 gecode/serialization/boost$(OBJSUFFIX) gecode/serialization/boost$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -3155,9 +3127,8 @@ gecode/serialization/boost$(OBJSUFFIX) gecode/serialization/boost$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3195,9 +3166,9 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3235,9 +3206,9 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3269,9 +3240,9 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3309,9 +3280,9 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3343,9 +3314,9 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3383,9 +3354,9 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3423,9 +3394,9 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3457,9 +3428,9 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3497,9 +3468,9 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3537,9 +3508,9 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3577,9 +3548,9 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3617,9 +3588,9 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3657,9 +3628,9 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3697,9 +3668,9 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3731,9 +3702,9 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3771,9 +3742,9 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3805,9 +3776,9 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3845,9 +3816,9 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3885,9 +3856,9 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
@@ -3935,9 +3906,9 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/buddy/bdd.h \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -3975,9 +3946,9 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4015,9 +3986,9 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4055,9 +4026,9 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4095,9 +4066,9 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4135,9 +4106,9 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4175,9 +4146,9 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4215,9 +4186,9 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4255,9 +4226,9 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4295,9 +4266,9 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4335,9 +4306,9 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4375,9 +4346,9 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4409,9 +4380,9 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4443,9 +4414,9 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4477,9 +4448,9 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4511,9 +4482,9 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4545,9 +4516,9 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4579,9 +4550,9 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4613,9 +4584,9 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4647,9 +4618,9 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4681,9 +4652,9 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4721,9 +4692,9 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4761,9 +4732,9 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4807,9 +4778,8 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4847,9 +4817,9 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4893,9 +4863,8 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
 	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
 	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4927,9 +4896,9 @@ examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 examples/support/example$(OBJSUFFIX) examples/support/example$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
@@ -4961,9 +4930,9 @@ examples/support/example$(OBJSUFFIX) examples/support/example$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc 
 test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -4976,10 +4945,9 @@ test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/test.hh ./test/test.icc 
 test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5011,10 +4979,10 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/serialization/boost.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5045,10 +5013,10 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/branch.hh ./test/test.hh ./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/branch.hh \
+	./test/test.hh ./test/test.icc 
 test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5085,10 +5053,10 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5119,11 +5087,10 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5154,11 +5121,10 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5195,10 +5161,10 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5229,11 +5195,10 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5264,11 +5229,10 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5299,11 +5263,10 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5340,10 +5303,10 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5380,10 +5343,10 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5420,10 +5383,10 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5460,10 +5423,10 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5500,10 +5463,10 @@ test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/minimodel$(OBJSUFFIX) test/int/minimodel$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5540,10 +5503,10 @@ test/int/minimodel$(OBJSUFFIX) test/int/minimodel$(SBJSUFFIX): \
 	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
 	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
-	./test/int.icc ./test/test.hh ./test/test.icc 
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc ./test/int.hh ./test/int.icc \
+	./test/test.hh ./test/test.icc 
 test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5574,11 +5537,10 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5609,11 +5571,10 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5644,11 +5605,10 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/int.hh ./test/int.icc ./test/test.hh \
-	./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
+	./test/int.icc ./test/test.hh ./test/test.icc 
 test/branch/distinct$(OBJSUFFIX) test/branch/distinct$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc \
@@ -5679,7 +5639,7 @@ test/branch/distinct$(OBJSUFFIX) test/branch/distinct$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/dynamic-array.icc \
 	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/map.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/search.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc \
-	./test/branch.hh ./test/test.hh ./test/test.icc 
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc ./gecode/vti.icc ./test/branch.hh \
+	./test/test.hh ./test/test.icc 

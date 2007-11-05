@@ -121,7 +121,7 @@ SUPPORTSRC0 = \
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
 	dynamic-stack exception map memory \
-	random search sentinel-stack sort \
+	random sentinel-stack sort \
 	static-pqueue static-stack symbol
 
 BUDDYSRC0 = \
