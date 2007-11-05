@@ -40,7 +40,10 @@
  */
 
 #include "test/set.hh"
+
+#ifdef GECODE_HAVE_SERIALIZATION
 #include "gecode/serialization.hh"
+#endif
 
 #include <algorithm>
 
@@ -178,6 +181,7 @@ namespace Test { namespace Set {
     }
 
     SetTestSpace* cloneWithReflection(void) {
+#ifdef GECODE_HAVE_SERIALIZATION
       SetTestSpace* c = new SetTestSpace(x.size(), d, withInt, reified, test);
       Gecode::Reflection::VarMap vm;
       vm.putArray(this, x, "x");
@@ -192,20 +196,36 @@ namespace Test { namespace Set {
       try {
         for (Gecode::Reflection::SpecIter si = actorSpecs(vm); si(); ++si) {
           Gecode::Reflection::ActorSpec& s = si.actor();
-          for (; vmi(); ++vmi)
-            d.var(vmi.var());
-          d.post(s);
+          for (; vmi(); ++vmi) {
+            try {
+              d.var(vmi.var());
+            } catch (Gecode::Reflection::ReflectionException e) {
+              return NULL;
+            }            
+          }
+          try {
+            d.post(s);
+          } catch (Gecode::Reflection::ReflectionException e) {
+            return NULL;
+          }
         }
-        for (; vmi(); ++vmi)
-          d.var(vmi.var());
+        for (; vmi(); ++vmi) {
+          try {
+            d.var(vmi.var());
+          } catch (Gecode::Reflection::ReflectionException e) {
+            return NULL;
+          }
+        }
         assert(c != NULL);
         if (failed())
           c->fail();
         return c;
       } catch (Gecode::Reflection::ReflectionException e) {
-        olog << "Reflection error: " << e.what() << std::endl;
-        return NULL;
+        return static_cast<SetTestSpace*>(clone());
       }
+#else
+      return static_cast<SetTestSpace*>(clone());
+#endif
     }
 
     /// Post propagator
@@ -223,9 +243,10 @@ namespace Test { namespace Set {
     /// Compute a fixpoint and check for failure
     bool failed(void) {
       if (opt.log) {
-        olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=";
+        olog << ind(3) << "Fixpoint: x[]=" << x
+             << " y[]=" << y << std::endl;
         bool f=(status() == Gecode::SS_FAILED);
-        olog << std::endl << ind(3) << "     -->  x[]=" << x 
+        olog << ind(3) << "     -->  x[]=" << x 
              << " y[]=" << y << std::endl;
         return f;
       } else {

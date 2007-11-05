@@ -132,9 +132,10 @@ namespace Test { namespace CpltSet {
     /// Compute a fixpoint and check for failure
     bool failed(void) {
       if (opt.log) {
-        olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=";
+        olog << ind(3) << "Fixpoint: x[]=" << x
+             << " y[]=" << y << std::endl;
         bool f=(status() == Gecode::SS_FAILED);
-        olog << std::endl << ind(3) << "     -->  x[]=" << x 
+        olog << ind(3) << "     -->  x[]=" << x 
              << " y[]=" << y << std::endl;
         return f;
       } else {

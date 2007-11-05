@@ -68,6 +68,9 @@
 /* Whether to include audit code */
 #undef GECODE_AUDIT
 
+/* Whether serialization support is built */
+#undef GECODE_HAVE_SERIALIZATION
+
 /* Whether to compile with boost serialization support */
 #undef GECODE_HAVE_BOOST_SERIALIZATION
 

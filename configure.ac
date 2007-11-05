@@ -195,7 +195,8 @@ AC_GECODE_ENABLE_MODULE(minimodel, yes,
 	[build modeling support library for the enabled variable types])
 
 AC_GECODE_ENABLE_MODULE(serialization, yes,
-	[build serialization library])
+	[build serialization library],
+	[AC_DEFINE(GECODE_HAVE_SERIALIZATION)])
 
 AC_GECODE_ENABLE_MODULE(search, yes,
         [build search engines])
