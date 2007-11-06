@@ -44,53 +44,51 @@ using namespace Gecode::Int;
 
 namespace Gecode { namespace Set {
 
-/* 
- * Printing a bound
- *
- */
-template <class I>
-static void
-printBound(std::ostream& os, I& r) {
-  os << '{';
-  while (r()) {
-    if (r.min() == r.max()) {
-      os << r.min();
-    } else if (r.min()+1 == r.max()) {
-      os << r.min() << " " << r.max();
-    } else {
-      os << r.min() << "#" << r.max();
+  /* 
+   * Printing a bound
+   *
+   */
+  template <class I>
+  static void
+  printBound(std::ostream& os, I& r) {
+    os << '{';
+    while (r()) {
+      if (r.min() == r.max()) {
+        os << r.min();
+      } else if (r.min()+1 == r.max()) {
+        os << r.min() << "," << r.max();
+      } else {
+        os << r.min() << ".." << r.max();
+      }
+      ++r;
+      if (!r()) break;
+      os << ',';
     }
-    ++r;
-    if (!r()) break;
-    os << ' ';
+    os << '}';
   }
-  os << '}';
-}
     
-/*
- * Printing a variable or view from the data generaly available
- *
- */
-template <class IL, class IU>
-static void
-printVar(std::ostream& os, const bool assigned, IL& lb, IU& ub,
-         unsigned int cardMin, unsigned int cardMax) {
-  if (assigned) {
-    printBound(os, ub);
-    os << "#" << cardMin;
-  } else {
-    os << "_{";
-    printBound(os,lb);
-    os << "..";
-    printBound(os,ub);
-    os << "}";
-    if (cardMin==cardMax) {
-      os << "#" <<cardMin;
+  /*
+   * Printing a variable or view from the data generaly available
+   *
+   */
+  template <class IL, class IU>
+  static void
+  printVar(std::ostream& os, const bool assigned, IL& lb, IU& ub,
+           unsigned int cardMin, unsigned int cardMax) {
+    if (assigned) {
+      printBound(os, ub);
+      os << "#(" << cardMin << ")";
     } else {
-      os << "#{" << cardMin << "," << cardMax << "}";
+      printBound(os,lb);
+      os << "..";
+      printBound(os,ub);
+      if (cardMin==cardMax) {
+        os << "#(" <<cardMin << ")";
+      } else {
+        os << "#(" << cardMin << "," << cardMax << ")";
+      }
     }
   }
-}
 
 }}
 
@@ -117,20 +115,27 @@ operator<<(std::ostream& os, const EmptyView&) {
 
 std::ostream&
 operator<<(std::ostream& os, const UniverseView&) {
-  return os << "{" << Gecode::Limits::Set::int_min << "#"
-            << Gecode::Limits::Set::int_max << "}#"
-            << Gecode::Limits::Set::card_max;
+  return os << "{" << Gecode::Limits::Set::int_min << ".."
+            << Gecode::Limits::Set::int_max << "}#("
+            << Gecode::Limits::Set::card_max << ")";
 }
 
 std::ostream&
 operator<<(std::ostream& os, const ConstantView& s) {
-  return os << "{?}#?";
+  LubRanges<ConstantView> ub(s);
+  printBound(os, ub);
+  return os << "#(" << s.cardMin() << ")";
 }
 
 std::ostream&
-operator<<(std::ostream& os, const SingletonView&) {
-  return os << "{?}#1";
+operator<<(std::ostream& os, const SingletonView& s) {
+  if (s.assigned()) {
+    return os << "{" << s.glbMin() << "}#(1)";
+  }
+  LubRanges<SingletonView> ub(s);
+  os << "{}..";
+  printBound(os, ub);
+  return os << "#(1)";
 }
 
 // STATISTICS: set-var
-

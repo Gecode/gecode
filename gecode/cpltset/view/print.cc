@@ -36,31 +36,31 @@
  */
 
 #include "gecode/cpltset.hh"
+#include "gecode/support/buddy/kernel.h"
 
 namespace Gecode { namespace CpltSet {
 
+  /* 
+   * Printing a bound
+   *
+   */
   template <class I>
   static void
-  printRange(std::ostream& os, I& i) {
-    os << "{";
-    if (i()) {
-      if (i.min() == i.max()) {
-        os << i.min();
+  printBound(std::ostream& os, I& r) {
+    os << '{';
+    while (r()) {
+      if (r.min() == r.max()) {
+        os << r.min();
+      } else if (r.min()+1 == r.max()) {
+        os << r.min() << "," << r.max();
       } else {
-        os << i.min() << "#"<< i.max();
+        os << r.min() << ".." << r.max();
       }
-      ++i;
+      ++r;
+      if (!r()) break;
+      os << ',';
     }
-    while(i()) {
-      os << ",";
-      if (i.min() == i.max()) {
-        os << i.min();
-      } else {
-        os << i.min() << "#"<< i.max();
-      }
-      ++i;
-    }
-    os << "}";
+    os << '}';
   }
 
   template <class I>
@@ -79,17 +79,67 @@ namespace Gecode { namespace CpltSet {
     os << "}";
   }
 
-  template <class I, class J>
-  static void
-  printVar(bool assigned, std::ostream& os, I& glb, J& lub) {
-    if (assigned) {
-      printRange(os, lub);
-    } else {
-      // std::cout << "not assigned print glb and lub";
-      printRange(os, glb);
-      os << "..";
-      printRange(os, lub);
+  bool printBddDom(std::ostream& os, int off, int min, int width, bool first,
+                   char* profile, bdd& r) {
+    if (r == bdd_true())
+    {
+      if (!first)
+        os << ",";
+      bool assigned = true;
+      int last = -1;
+      int lastUnknown = -1;
+      for (int i = 0; i<width; i++) {
+        if (profile[i] < 0) {
+          assigned = false; lastUnknown = i;
+        }
+        if (profile[i] == 1) {
+          last = i; lastUnknown = i;
+        }
+      }
+      if (assigned) {
+        os << "{";
+        for (int i = 0; i<=last; i++) {
+          if (profile[i] == 1)
+            os << min+i << (i<last ? "," : "");
+        }
+        os << "}";
+      } else {
+        os << "{";
+        for (int i = 0; i<=last; i++) {
+          if (profile[i] == 1)
+            os << min+i << (i<last ? "," : "");
+        }
+        os << "}..{";
+        for (int i = 0; i<=lastUnknown; i++) {
+          if (profile[i] != 0)
+            os << min+i << (i<lastUnknown ? "," : "");
+        }
+        os << "}";
+      }
+      return false;
     }
+
+    if (r == bdd_false())
+      return first;
+
+    if (bdd_low(r) != bdd_false()) {
+      profile[bddlevel2var[r.getlevel()]-off] = 0;
+      for (int v=bdd_low(r).getlevel()-1 ; v>r.getlevel() ; --v) {
+        profile[bddlevel2var[v]-off] = -1;
+      }
+      bdd rlow = bdd_low(r);
+      first = printBddDom(os, off, min, width, first, profile, rlow);
+    }
+
+    if (bdd_high(r) != bdd_false()) {
+      profile[bddlevel2var[r.getlevel()]-off] = 1;
+      for (int v=bdd_high(r).getlevel()-1 ; v>r.getlevel() ; --v) {
+        profile[bddlevel2var[v]-off] = -1;
+      }
+      bdd rhigh = bdd_high(r);
+      first = printBddDom(os, off, min, width, first, profile, rhigh);
+    }
+    return first;
   }
 
 }}
@@ -104,13 +154,20 @@ using namespace Gecode::CpltSet;
 std::ostream&
 operator<<(std::ostream& os, const CpltSetView& x) {
   bool assigned = x.assigned();
-  // std::cout << "print level = " << l << "\n";
   if (assigned) {
     GlbValues<CpltSetView> glb(x);
-    printValue(os, glb);
+    Iter::Values::ToRanges<GlbValues<CpltSetView> > glbr(glb);
+    printBound(os, glbr);
   } else {
-    DomValues<CpltSetView> dom(x);
-    printValue(os, dom);
+    bdd dom = x.dom();
+    os << "{";
+    char* profile = Memory::bmalloc<char>(x.tableWidth());
+    for (int i=x.tableWidth(); i--;)
+      profile[i] = -1;
+    printBddDom(os, x.offset(), x.initialLubMin(), x.tableWidth(), true, 
+                profile, dom);
+    Memory::free(profile);
+    os << "}";
   }
   return os;
 }
@@ -126,15 +183,8 @@ operator<<(std::ostream& os, const SingletonCpltSetView& x) {
 
 std::ostream&
 operator<< (std::ostream& os, const CpltSetVar& x) {
-  bool assigned = x.assigned();
-  if (assigned) {
-    CpltSetVarGlbValues glb(x);
-    printValue(os, glb);
-  } else {
-    CpltSetVarDomValues dom(x);
-    printValue(os, dom);
-  }
-  return os;
+  CpltSetView xv(x);
+  return os << xv;
 }
 
 // STATISTICS: cpltset-var
