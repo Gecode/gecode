@@ -143,22 +143,15 @@ namespace Gecode {
     }
 
     forceinline void 
-    range_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+    range_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
               const CpltSetVar& t) {
       int n = x.size();
       CpltSetView selview(s);
       CpltSetView unionview(t);
 
-      ViewArray<Gecode::Int::IntView> iv(home, n);
-      for (int i = 0; i < n; i++) {
-        iv[i] = x[i];
-      }
-      ViewArray<SingletonCpltSetView> sbv(home, n);
-      for (int i = 0; i < n; i++) {
-        int rmin = std::min(unionview.initialLubMin(), iv[i].min());
-        int rmax = std::max(unionview.initialLubMax(), iv[i].max());
-        sbv[i].init(rmin, rmax, iv[i]);
-      }
+      ViewArray<CpltSetView> sbv(home, n);
+      for (int i = 0; i < n; i++)
+        sbv[i] = x[i];
 
       range_post(home, sbv, selview, unionview);
     }
@@ -209,7 +202,7 @@ namespace Gecode {
 
       for (int j = 0; j < n; j++) {    
         bdd subset = bdd_true();
-        LubValues<SingletonCpltSetView> lub(seq[j]);
+        LubValues<CpltSetView> lub(seq[j]);
         for (unsigned int k = 0; k < xrange; k++) {
           int seqmin = seq[j].initialLubMin();
           int seqmax = seq[j].initialLubMax();
@@ -258,21 +251,16 @@ namespace Gecode {
     }
 
     forceinline void 
-    roots_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+    roots_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
               const CpltSetVar& t, const CpltSetVarArgs& allvars) {
       int n = x.size();
 
       CpltSetView selview(s);
       CpltSetView unionview(t);
 
-      ViewArray<Gecode::Int::IntView> iv(home, n);
-      for (int i = 0; i < n; i++) {
-        iv[i] = x[i];
-      }
-      ViewArray<SingletonCpltSetView> sbv(home, n);
-      for (int i = 0; i < n; i++) {
-        sbv[i].init(iv[i].min(), iv[i].max(), iv[i]);
-      }
+      ViewArray<CpltSetView> sbv(home, n);
+      for (int i = 0; i < n; i++)
+        sbv[i] = x[i];
 
       // do ordering
       ViewArray<CpltSetView> vars(home, allvars.size());
@@ -311,23 +299,16 @@ namespace Gecode {
 
 
     forceinline void 
-    nvalue_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+    nvalue_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
                const CpltSetVar& t, 
                int usedvalues, const CpltSetVarArgs& allvars) {
       int n = x.size();
       CpltSetView selview(s);
       CpltSetView unionview(t);
 
-      ViewArray<Gecode::Int::IntView> iv(home, n);
-      for (int i = 0; i < n; i++) {
-        iv[i] = x[i];
-      }
-      ViewArray<SingletonCpltSetView> sbv(home, n);
-      for (int i = 0; i < n; i++) {
-        int rmin = std::min(unionview.initialLubMin(), iv[i].min());
-        int rmax = std::max(unionview.initialLubMax(), iv[i].max());
-        sbv[i].init(rmin, rmax, iv[i]);
-      }
+      ViewArray<CpltSetView> sbv(home, n);
+      for (int i = 0; i < n; i++)
+        sbv[i] = x[i];
 
       // do ordering
       ViewArray<CpltSetView> vars(home, allvars.size());
@@ -390,37 +371,24 @@ namespace Gecode {
 
 
     forceinline void 
-    uses_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+    uses_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
              const CpltSetVar& t, 
-             const IntVarArgs& y, const CpltSetVar& u, const CpltSetVar& v) {
+             const CpltSetVarArgs& y, const CpltSetVar& u,
+             const CpltSetVar& v) {
       int n = x.size();
       CpltSetView selview(s);
       CpltSetView unionview(t);
 
-      ViewArray<Gecode::Int::IntView> iv(home, n);
-      for (int i = 0; i < n; i++) {
-        iv[i] = x[i];
-      }
-      ViewArray<SingletonCpltSetView> sbv(home, n);
-      for (int i = 0; i < n; i++) {
-        int rmin = std::min(unionview.initialLubMin(), iv[i].min());
-        int rmax = std::max(unionview.initialLubMax(), iv[i].max());
-        sbv[i].init(rmin, rmax, iv[i]);
-      }
+      ViewArray<CpltSetView> sbv(home, n);
+      for (int i = 0; i < n; i++)
+        sbv[i] = x[i];
 
       CpltSetView selviewprime(u);
       CpltSetView unionviewprime(v);
       int m = y.size();
-      ViewArray<Gecode::Int::IntView> ivprime(home, m);
-      for (int i = 0; i < m; i++) {
-        ivprime[i] = y[i];
-      }
-      ViewArray<SingletonCpltSetView> sbvprime(home, m);
-      for (int i = 0; i < m; i++) {
-        int rmin = std::min(unionviewprime.initialLubMin(), ivprime[i].min());
-        int rmax = std::max(unionviewprime.initialLubMax(), ivprime[i].max());
-        sbvprime[i].init(rmin, rmax, ivprime[i]);
-      }
+      ViewArray<CpltSetView> sbvprime(home, m);
+      for (int i = 0; i < m; i++)
+        sbvprime[i] = y[i];
 
       uses_post(home, sbv, selview, unionview, 
                 sbvprime, selviewprime, unionviewprime);
@@ -460,28 +428,29 @@ namespace Gecode {
   
   using namespace CpltSet::RangeRoots;
 
-  void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t) {
+  void range(Space* home, const CpltSetVarArgs& x, CpltSetVar s,
+             CpltSetVar t) {
     range_con(home, x, s, t);
   }
 
-  void roots(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
+  void roots(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
              const CpltSetVarArgs& allvars) {
     roots_con(home, x, s, t, allvars);
   }
 
   // constraints using the range constraint
-  void alldifferent(Space* home, const IntVarArgs& x, CpltSetVar s, 
+  void alldifferent(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
                     CpltSetVar t, const CpltSetVarArgs& allvars) {
     nvalue_con(home, x, s, t, x.size(), allvars);
   }
 
-  void nvalue(Space* home, const IntVarArgs& x, CpltSetVar s, 
+  void nvalue(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
                     CpltSetVar t, int n, const CpltSetVarArgs& allvars) {
     nvalue_con(home, x, s, t, n, allvars);
   }
 
-  void uses(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-            const IntVarArgs& y, CpltSetVar u, CpltSetVar v) {
+  void uses(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
+            const CpltSetVarArgs& y, CpltSetVar u, CpltSetVar v) {
     uses_con(home, x, s, t, y, u, v);
   }
 

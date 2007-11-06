@@ -168,10 +168,6 @@ namespace Gecode {
 
   //@{
   
-  /// Post propagator for \f$ dom(x) \sim_r y\f$
-  GECODE_CPLTSET_EXPORT void
-  rel(Space* home, IntVar x, CpltSetRelType r, CpltSetVar s);
-
   /// Post propagator for \f$ x \sim_r y\f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, CpltSetRelType r, CpltSetVar y);
@@ -283,10 +279,6 @@ namespace Gecode {
   GECODE_CPLTSET_EXPORT void
   partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y);
 
-  /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
-  GECODE_CPLTSET_EXPORT void
-  partition(Space* home, const IntVarArgs& x, const CpltSetVar& y);
-
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
    *                       \forall i,j\in \{0, \dots, n-1\}, i\neq j: 
@@ -332,29 +324,29 @@ namespace Gecode {
   selectNonEmptySub(Space* home, const CpltSetVarArgs& x,
                     CpltSetVar s, CpltSetVar t);
 
-  /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
+  /// Post propagator for \f$ t = \bigcup_{i\subseteq s}  x_i \f$
   GECODE_CPLTSET_EXPORT void
-  range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t);
+  range(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t);
 
-  /// Post propagator for \f$ s = \bigcup_{x_i \in t} i \f$
+  /// Post propagator for \f$ s = \bigcup_{x_i \subseteq t} i \f$
   GECODE_CPLTSET_EXPORT void
-  roots(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
+  roots(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
         const CpltSetVarArgs& allvars);
 
   /** \brief Post propagator for \f$ x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x| 
-   *  \wedge t = \bigcup_{i\in s}  x_i \f$
+   *  \wedge t = \bigcup_{i\subseteq s}  x_i \f$
    */ 
   GECODE_CPLTSET_EXPORT void
-  alldifferent(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-               const CpltSetVarArgs& allvars);
+  alldifferent(Space* home, const CpltSetVarArgs& x, CpltSetVar s,
+               CpltSetVar t, const CpltSetVarArgs& allvars);
 
   /** \brief Post propagator for \f$ |\displaystyle\bigcup_{i = 0}^{|x| - 1} x_i| = n 
-   *  \wedge t = \bigcup_{i\in s}  x_i \f$
+   *  \wedge t = \bigcup_{i\subseteq s}  x_i \f$
    * 
    */
   GECODE_CPLTSET_EXPORT void
-  nvalue(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, int n,
-         const CpltSetVarArgs& allvars);
+  nvalue(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
+         int n, const CpltSetVarArgs& allvars);
 
   /** \brief Post propagator for \f$ t = \bigcup_{i\in s} x_i \wedge v = \bigcup_{i\in u} y_i
    *  \wedge v \subseteq t \f$
@@ -363,7 +355,7 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   uses(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t,
-       const IntVarArgs& y, CpltSetVar u, CpltSetVar v);
+       const CpltSetVarArgs& y, CpltSetVar u, CpltSetVar v);
   //@}
 
 

@@ -351,25 +351,6 @@ namespace Gecode {
       CpltSetView yv(y);
       partition_post(home, bv, yv, withlex, lex, withcard, d);
     }
-
-    // For testing purposes only supported for bddviews
-    template <class Rel>
-    forceinline void 
-    partition_con(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
-                  bool withlex, Rel lex, bool withcard, int d) {
-      ViewArray<Int::IntView> bv(home, x);
-      int n = x.size();
-      ViewArray<SingletonCpltSetView> sv(home, n);
-      for (int i = 0; i < n; i++) {
-        sv[i].init(bv[i].min(), bv[i].max(), bv[i]);
-      }
-
-      CpltSetView yv(y);
-      // this wont work as there is no post function for different views
-      // i.e. bddsingleton + bddview
-
-      partition_post(home, sv, yv, withlex, lex, withcard, d);
-    }
     
   }} // end namespace CpltSet::Partition
 
@@ -380,10 +361,6 @@ namespace Gecode {
   }
 
   void partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y) {
-    partition_con(home, x, y, false, SRT_EQ, false, -1);
-  }
-
-  void partition(Space* home, const IntVarArgs& x, const CpltSetVar& y) {
     partition_con(home, x, y, false, SRT_EQ, false, -1);
   }
 

@@ -482,15 +482,6 @@ namespace Gecode {
       rel_post(home, xv, r, yv);
     }  
 
-
-    template <class Rel>
-    void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s) {
-      Gecode::Int::IntView iv(x);
-      CpltSetView bv(s);
-      SingletonCpltSetView single(iv.min(), iv.max(), iv);
-      rel_post(home, single, r, bv);
-    }  
-
     template <class Rel, class Op>
     forceinline void
     rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y,
@@ -505,14 +496,6 @@ namespace Gecode {
   }} // end namespace CpltSet::Rel
   
   using namespace CpltSet::Rel;
-
-  void rel(Space* home, IntVar x, CpltSetRelType r, CpltSetVar y) {
-    rel_con(home, x, r, y);
-  }
-
-  void rel(Space* home, IntVar x, SetRelType r, CpltSetVar y) {
-      rel_con(home, x, r, y);
-  }
 
   void rel(Space* home, CpltSetVar x, CpltSetRelType r, CpltSetVar y) {
     rel_con(home, x, r, y);

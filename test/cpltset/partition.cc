@@ -203,37 +203,6 @@ namespace Test { namespace CpltSet {
     CpltSetPartitionNaryOneSmaller 
       _cpltsetpartitionnaryonesmaller("Partition::NaryOne::Smaller");
 
-    /// Test for partition of integer variables constraint
-    class CpltSetPartitionNaryOneInt : public CpltSetTest {
-    public:
-      /// Create and register test
-      CpltSetPartitionNaryOneInt(const char* t)
-      : CpltSetTest(t,1,ds_13,false, 2, 200, 10) {}
-      /// Test whether \a x is solution
-      virtual bool solution(const SetAssignment& x) const {
-        Iter::Ranges::Singleton y0(x.ints()[0], x.ints()[0]);
-        Iter::Ranges::Singleton y1(x.ints()[1], x.ints()[1]);
-        Iter::Ranges::Union<Iter::Ranges::Singleton, Iter::Ranges::Singleton> 
-          u(y0, y1);
-
-        CountableSetRanges xr(x.lub, x[0]);
-
-        bool disjoint = x.ints()[0] != x.ints()[1];
-        bool isunion  = Iter::Ranges::equal(u, xr);
-
-        return disjoint && isunion;
-      }
-
-      /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y) {
-        CpltSetVar z = x[0];
-        partition(home, y, z);
-      }
-    };
-
-    CpltSetPartitionNaryOneInt 
-      _cpltsetpartitionnaryoneint("Partition::NaryOne::Int");
-
     //@}
 
 }}}

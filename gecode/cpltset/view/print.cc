@@ -157,15 +157,6 @@ operator<<(std::ostream& os, const CpltSetView& x) {
   return os;
 }
 
-/**
- * \brief Print set variable view
- */
-std::ostream&
-operator<<(std::ostream& os, const SingletonCpltSetView& x) {
-  os << x.base();
-  return os;
-}
-
 std::ostream&
 operator<< (std::ostream& os, const CpltSetVar& x) {
   CpltSetView xv(x);
