@@ -390,7 +390,6 @@ namespace Gecode {
       //@}
     };
 
-
   }
 
   /** \name View comparison

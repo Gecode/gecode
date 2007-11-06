@@ -198,22 +198,6 @@ namespace Gecode {
   CpltSetVarLubValues::val(void) const {return iter.val();}
 
   forceinline
-  CpltSetVarDomValues::CpltSetVarDomValues(void) {}
-
-  forceinline
-  CpltSetVarDomValues::CpltSetVarDomValues(const CpltSetVar& x)
-  : iter(x.variable()) {}
-  
-  forceinline bool
-  CpltSetVarDomValues::operator()(void) const { return iter(); }
-  
-  forceinline void
-  CpltSetVarDomValues::operator++(void) { ++iter; }
-
-  forceinline IntSet
-  CpltSetVarDomValues::val(void)  { return iter.val(); }
-
-  forceinline
   CpltSetVarUnknownRanges::CpltSetVarUnknownRanges(void) {}
 
   forceinline

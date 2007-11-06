@@ -52,43 +52,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    *
    */
 
-
-  /**
-   * \brief Class for selecting minimum value
-   *
-   * All value selection classes require 
-   * \code #include "gecode/cpltset/branch.hh" \endcode
-   * \ingroup FuncCpltSetSelVal
-   */
-  template <bool exclude>
-  class ValMin {
-  public:
-    /// Return minimum value of view \a x
-    IntSet val(const Space*, CpltSetView x);
-    /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, CpltSetView x, IntSet v);
-    /// Type of this value selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
-   * \brief Class for selecting maximum value
-   *
-   * All value selection classes require 
-   * \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncCpltSetSelVal
-   */
-  template <bool exclude>
-  class ValMax {
-  public:
-    /// Return maximum value of view \a x
-    IntSet val(const Space*, CpltSetView x) const;
-    /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, CpltSetView x, IntSet v);
-    /// Type of this value selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
   /**
    * \brief Class for selecting minimum value of unknown ranges
    *
@@ -108,7 +71,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   };
 
   /**
-   * \brief Class for selecting minimum value of unknown ranges
+   * \brief Class for selecting maximum value of unknown ranges
    *
    * All value selection classes require 
    * \code #include "gecode/set/branch.hh" \endcode

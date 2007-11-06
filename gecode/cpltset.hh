@@ -384,10 +384,6 @@ namespace Gecode {
   
   /// Which values to select first for branching 
   enum CpltSetValBranch { 
-    CPLTSET_VAL_MIN,                  ///< Select first domain value and try equality
-    CPLTSET_VAL_MAX,                  ///< Select last  domain value and try equality
-    CPLTSET_VAL_MIN_EX_FIRST,         ///< Select first domain value and try disequality
-    CPLTSET_VAL_MAX_EX_FIRST,         ///< Select last  domain value and try disequality
     CPLTSET_VAL_MIN_UNKNOWN,          ///< Select smallest element in unknown set and try to include it
     CPLTSET_VAL_MAX_UNKNOWN,          ///< Select largest  element in unknown set and try to include it
     CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST, ///< Select smallest element in unknown set and try to exclude it

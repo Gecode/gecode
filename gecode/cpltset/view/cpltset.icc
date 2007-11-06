@@ -236,33 +236,6 @@ namespace Gecode { namespace CpltSet {
     return Support::Symbol("CpltSet::CpltSetView");
   }
 
-  /// Iterator for the values of a bdd view
-  template <>
-  class DomValues<CpltSetView> : public DomValues<CpltSetVarImp*> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    DomValues(void);
-    /// Initialize with ranges for variable implementation \a x
-    DomValues(const CpltSetView& x);
-    /// Initialize with ranges for variable implementation \a x
-    void init(const CpltSetView& x);
-    //@}    
-  };
-
-  forceinline
-  DomValues<CpltSetView>::DomValues(void) {}
-
-  forceinline
-  DomValues<CpltSetView>::DomValues(const CpltSetView& x) 
-    : DomValues<CpltSetVarImp*>(x.variable()) {}
-
-  forceinline void
-  DomValues<CpltSetView>::init(const CpltSetView& x) {
-    DomValues<CpltSetVarImp*>::init(x.variable());
-  }
-
   /// Iterator for the values in the greatest lower bound of a CpltSetView
   template <>
   class GlbValues<CpltSetView> : public GlbValues<CpltSetVarImp*> {
@@ -432,6 +405,7 @@ namespace Gecode { namespace CpltSet {
     Set::UnknownRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
   }
   }
+
 }
 
 

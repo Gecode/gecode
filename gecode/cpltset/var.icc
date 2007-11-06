@@ -48,33 +48,6 @@ namespace Gecode { namespace CpltSet {
     UNDET = 5
   };
 
-  /// Iterate all sets in the domain of a CpltSet variable
-  template <class T> class DomValues {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    DomValues(void);
-    /// Initialize with least upper bound ranges for set variable \a x
-    DomValues(const T& x);
-    /// Initialize with least upper bound ranges for set variable \a x
-    void init(const T& x);
-    //@}
-
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator++(void);
-    //@}
-    /// \name Value access
-    //@{
-    /// Return current value
-    IntSet val(void) const;
-    //@}
-  };
-
   /// Iterate the values in the greatest lower bound of a CpltSetvariable
   template <class T> class GlbValues {
   public:
@@ -165,7 +138,6 @@ namespace Gecode { namespace CpltSet {
     friend class BddIterator;
     friend class DomBddIterator;
 
-    friend class DomValues<CpltSetVarImp*>;
     friend class GlbValues<CpltSetVarImp*>;
     friend class LubValues<CpltSetVarImp*>;
     friend class UnknownValues<CpltSetVarImp*>;
@@ -782,19 +754,6 @@ namespace Gecode {
     int val(void) const;
   };
 
-  /// Value iterator for the domain of a bdd variable
-  class CpltSetVarDomValues {
-  private:
-    CpltSet::DomValues<CpltSet::CpltSetVarImp*> iter;
-  public:
-    CpltSetVarDomValues(void);
-    CpltSetVarDomValues(const CpltSetVar& x);
-    bool operator()(void) const;
-    void operator++(void);
-    IntSet val(void) ;
-  };
-
-
   /// Range iterator for the unknown set of a bdd variable
   class CpltSetVarUnknownRanges {
   private:
@@ -807,7 +766,6 @@ namespace Gecode {
     int min(void) const;
     int max(void) const;
   };
-
 
 }
 
