@@ -127,11 +127,10 @@ operator<<(std::ostream& os, const Gecode::TupleSet& ts) {
 
 namespace Gecode {
 
-  void*
+  void
   TupleSet::TupleSetI::finalize(void) {
     assert(!finalized());
     assert(tuples == NULL);
-    void* retval;
 
     // Add final largest tuple
     IntArgs ia(arity);
@@ -165,8 +164,7 @@ namespace Gecode {
       }
     }
 
-    //Memory::free(data);
-    retval = data;
+    Memory::free(data);
     data = new_data;
     excess = -1;
 
@@ -197,8 +195,15 @@ namespace Gecode {
     }
     
     assert(finalized());
+  }
 
-    return retval;
+  void
+  TupleSet::TupleSetI::resize(void) {
+    assert(excess == 0);
+    int ndatasize = static_cast<int>(1+size*1.5);
+    data = Memory::brealloc<int>(data, size * arity, 
+                                 ndatasize * arity);
+    excess = ndatasize - size;
   }
 
   SharedHandle::Object*

@@ -1189,8 +1189,6 @@ namespace Gecode {
    * \li Supports implementations optimized for memory (\a pk = \a
    *     PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
-   * \li Throws an exception of type Int::ArgumentNotFinalized if the
-   *     TupleSet has not been finalized.
    *
    * \warning If the domains for the \f$x_i\f$ are not dense and
    * have similar bounds, lots of memory will be wasted (memory
@@ -1209,8 +1207,6 @@ namespace Gecode {
    * \li Supports implementations optimized for memory (\a pk = \a
    * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
-   * \li Throws an exception of type Int::ArgumentNotFinalized if the
-   *     TupleSet has not been finalized.
    * \li Throws an exception of type Int::NumericalOverflow, if
    *     the integers in \a n exceed the limits in Limits::Int.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if

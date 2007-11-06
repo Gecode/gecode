@@ -266,7 +266,6 @@ public:
           }
         }
       }
-      tupleSet.finalize();
 
       for (int i = 51; i--; ) {
         IntVarArgs iva(2);

@@ -71,7 +71,9 @@ namespace Gecode {
     template <class T>
     void add(T t);
     /// Finalize datastructure (disallows additions of more Tuples)
-    GECODE_INT_EXPORT void* finalize(void);
+    GECODE_INT_EXPORT void finalize(void);
+    /// Resize data cache
+    GECODE_INT_EXPORT void resize(void);
     /// Is datastructure finalized
     bool finalized(void) const { 
       assert((excess == -1 && domsize >= 0) ||
@@ -108,12 +110,8 @@ namespace Gecode {
   TupleSet::TupleSetI::add(T t){
     assert(arity  != -1); // Arity has been set
     assert(excess != -1); // Tuples may still be added
-    if (excess == 0) {
-      int ndatasize = static_cast<int>(1+size*1.5);
-      data = Memory::brealloc<int>(data, size * arity, 
-                                   ndatasize * arity);
-      excess = ndatasize - size;
-    }
+    if (excess == 0) resize();
+    assert(excess >= 0);
     --excess;
     int end = size*arity;
     for (int i = arity; i--; ) {
@@ -157,7 +155,7 @@ namespace Gecode {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     if (!imp->finalized()) {
-      Memory::free(imp->finalize());
+      imp->finalize();
     }
   }
 

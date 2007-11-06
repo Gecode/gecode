@@ -71,7 +71,7 @@ namespace Gecode {
     using namespace Int;
     if (home->failed()) return;
     if (!tupleSet.finalized())
-      throw new ArgumentNotFinalized("Int::extensional");
+      const_cast<TupleSet&>(tupleSet).finalize();
 
     if (tupleSet.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
@@ -103,7 +103,7 @@ namespace Gecode {
     using namespace Int;
     if (home->failed()) return;
     if (!tupleSet.finalized())
-      throw new ArgumentNotFinalized("Int::extensional");
+      const_cast<TupleSet&>(tupleSet).finalize();
 
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
