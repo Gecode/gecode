@@ -63,22 +63,7 @@ namespace Gecode { namespace CpltSet {
     os << '}';
   }
 
-  template <class I>
-  static void
-  printValue(std::ostream& os, I& i) {
-    os << "{";
-    if (i()) {
-      os << i.val();
-      ++i;
-    }
-    while(i()) {
-      os << ",";
-      os << i.val();
-      ++i;
-    }
-    os << "}";
-  }
-
+  /// Print the domain represented by \a r to \a os
   bool printBddDom(std::ostream& os, int off, int min, int width, bool first,
                    char* profile, bdd& r) {
     if (r == bdd_true())
