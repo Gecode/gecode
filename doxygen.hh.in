@@ -824,10 +824,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *     %Gecode requires at least version 3.4 of gcc. We recommend using version
  *     4.2 or higher. Very unfortunately, the parser used in versions of gcc
  *     before 3.4 is broken and hence cannot compile %Gecode.
- *   - The Intel C++ compiler for Windows and Linux. Please note that this
- *     compiler was only tested using the evaluation license available from
- *     Intel. If you encounter problems or have suggestions for improvements,
- *     please let us know.
+ *
+ * The Intel C++ compiler is currently not supported.
  *
  * \section CompConf Configuring the sources
  *
@@ -841,12 +839,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - When using the Microsoft Visual C++ compiler, add
  *    <code>CC=cl CXX=cl</code> to your
  *    invocation of <code>configure</code>
- *  - When using the Intel C++ compiler under Windows, add
- *    <code>CC=icl CXX=icl</code> to your
- *    invokation of configure.
- *  - When using the Intel C++ compiler under Linux, add
- *    <code>CC=icc CXX=icpc</code> to your
- *    invokation of configure.
  *  - To install %Gecode somewhere else than the default
  *    <code>/usr/local</code>, use the <code>--prefix=[...]</code> switch
  *  - You can enable and disable the individual modules %Gecode consists of
@@ -978,7 +970,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * platform:
  *
  *  - <code>--with-host-os=[linux|darwin|windows]</code>
- *  - <code>--with-compiler-vendor=[gnu|microsoft|intel]</code>
+ *  - <code>--with-compiler-vendor=[gnu|microsoft]</code>
  *
  * Using the first option, you can state that your platform should behave like
  * Linux, Darwin (which is actually BSD), or Windows. This affects mainly
@@ -986,8 +978,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * The second option says
  * that your compiler can be used very much like the gnu compiler
- * <code>gcc</code>, the Microsoft compiler <code>cl</code>, or the Intel
- * compiler <code>icl</code>. Please let us know of any successfull attempt at
+ * <code>gcc</code>, or the Microsoft compiler <code>cl</code>.
+ * Please let us know of any successfull attempt at
  * compiling Gecode on other platforms.
  *
  * \section Useful Makefile targets
