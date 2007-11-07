@@ -102,7 +102,7 @@ namespace Gecode { namespace Set {
   forceinline
   ConstantView::ConstantView(Space* home,
                              const Reflection::VarMap& vars,
-                             Reflection::Arg* arg) {
+                             Reflection::Arg* arg) : ranges(NULL), size(0), domSize(0) {
     Reflection::IntArrayArgRanges r(arg->toIntArray());      
     IntSet is(r);
     ConstantView(home, is);
