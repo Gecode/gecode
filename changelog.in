@@ -69,6 +69,14 @@ Date:    unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+[DESCRIPTION]
+When compiling with gcc, the default visibility of symbols in the
+generated dynamic library is set to hidden.
+
+[ENTRY]
 Module: set
 What:   removed
 Rank:   minor
