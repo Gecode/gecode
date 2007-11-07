@@ -38,6 +38,10 @@
 #ifndef __GECODE_SUPPORT_HH__
 #define __GECODE_SUPPORT_HH__
 
+#include <cassert>
+
+#include "gecode/config.hh"
+
 /*
  * Support for DLLs under Windows
  *
@@ -79,10 +83,6 @@
 
 #endif
 #endif
-
-#include <cassert>
-
-#include "gecode/config.hh"
 
 /*
  * Basic support needed everywhere

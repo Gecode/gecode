@@ -38,6 +38,8 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
+#pragma GCC visibility push(default)
+
 /*=== Includes =========================================================*/
 
 #include <limits.h>
@@ -225,6 +227,8 @@ extern void   bdd_cpp_init(void);
 #ifdef CPLUSPLUS
 }
 #endif
+
+#pragma GCC visibility pop
 
 #endif /* _KERNEL_H */
 

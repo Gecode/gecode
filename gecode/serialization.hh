@@ -38,6 +38,8 @@
 #ifndef __GECODE_SERIALIZATION_HH__
 #define __GECODE_SERIALIZATION_HH__
 
+#include "gecode/kernel.hh"
+
 /*
  * Support for DLLs under Windows
  *
@@ -65,7 +67,6 @@
 #endif
 #endif
 
-#include "gecode/kernel.hh"
 #include <iostream>
 #include <vector>
 

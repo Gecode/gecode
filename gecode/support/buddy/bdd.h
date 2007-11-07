@@ -38,6 +38,7 @@
 #ifndef _BDD_H
 #define _BDD_H
 
+#pragma GCC visibility push(default)
 
 /*
  * Support for DLLs under Windows
@@ -64,7 +65,6 @@
 
 #endif
 #endif
-
 
    /* Allow this headerfile to define C++ constructs if requested */
 #ifdef __cplusplus
@@ -923,6 +923,8 @@ typedef void (*bddstrmhandler)(std::ostream &, int);
 extern GECODE_SUPPORT_EXPORT bddstrmhandler bdd_strm_hook(bddstrmhandler);
 
 #endif /* CPLUSPLUS */
+
+#pragma GCC visibility pop
 
 #endif /* _BDD_H */
 

@@ -44,7 +44,8 @@ namespace Gecode {
    *
    */
   
-  class TupleSet::TupleSetI : public SharedHandle::Object {
+  class GECODE_VTABLE_EXPORT TupleSet::TupleSetI
+   : public SharedHandle::Object {
   public:
     /// Arity
     int arity;

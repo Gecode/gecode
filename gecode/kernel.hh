@@ -57,6 +57,8 @@
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
+#define GECODE_VTABLE_EXPORT
+
 #ifdef GECODE_BUILD_KERNEL
 #define GECODE_KERNEL_EXPORT __declspec( dllexport )
 #else
@@ -67,10 +69,12 @@
 
 #ifdef GCC_HASCLASSVISIBILITY
 
+#define GECODE_VTABLE_EXPORT __attribute__ ((visibility("default")))
 #define GECODE_KERNEL_EXPORT __attribute__ ((visibility("default")))
 
 #else
 
+#define GECODE_VTABLE_EXPORT
 #define GECODE_KERNEL_EXPORT
 
 #endif

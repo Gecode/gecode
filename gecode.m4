@@ -521,14 +521,13 @@ AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
 AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
   	[AC_ARG_ENABLE([gcc-visibility],
 	   AC_HELP_STRING([--enable-gcc-visibility],
-	     [use gcc visibility attributes @<:@default=no@:>@]))
+	     [use gcc visibility attributes @<:@default=yes@:>@]))
 	 AC_MSG_CHECKING(whether to use gcc visibility attributes)
-	 if test "${enable_gcc_visibility:-no}" = "yes"; then
+	 if test "${enable_gcc_visibility:-yes}" = "yes"; then
 	    AC_MSG_RESULT(yes)
 	    AC_GECODE_CHECK_CXXFLAG([-fvisibility=hidden],
 	      [AC_DEFINE(GCC_HASCLASSVISIBILITY)
-	        AC_GECODE_ADD_TO_COMPILERFLAGS([-fvisibility=hidden])
-	        AC_GECODE_CHECK_CXXFLAG([-fno-rtti])],
+	       AC_GECODE_ADD_TO_COMPILERFLAGS([-fvisibility=hidden])],
 	       [])
 	 else
 	    AC_MSG_RESULT(no)
@@ -565,8 +564,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
   case $host_os in
      darwin*)
        AC_SUBST(need_soname, "yes")
-       AC_GECODE_ADD_TO_DLLFLAGS([-Wl,-single_module])
-			 AC_GECODE_ADD_TO_DLLFLAGS("-dynamiclib")
+       AC_GECODE_ADD_TO_DLLFLAGS("-dynamiclib")
        AC_SUBST(DLLEXT, "${ac_gecode_soversion}.0.dylib")
        AC_SUBST(SOSUFFIX, ".${ac_gecode_soversion}.dylib")
        AC_SUBST(SOLINKSUFFIX, ".dylib")
