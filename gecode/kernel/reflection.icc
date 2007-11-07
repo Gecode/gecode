@@ -347,7 +347,10 @@ namespace Gecode { namespace Reflection {
     * \brief Registry of constraint posting and variable creation functions
     * \ingroup TaskReflection
     */
-  class GECODE_KERNEL_EXPORT Registry {
+  class Registry {
+  private:
+    class RegistryObject;
+    RegistryObject* ro;
   public:
     /// The type of constraint posting functions
     typedef void (*poster) (Space*, VarMap&, const ActorSpec&);
@@ -356,30 +359,35 @@ namespace Gecode { namespace Reflection {
     /// The type of variable domain constraint functions
     typedef void (*varConstrainer) (Space*, VarBase*, VarSpec&);
 
+    /// Constructor
+    GECODE_KERNEL_EXPORT Registry(void);
+    /// Destructor
+    GECODE_KERNEL_EXPORT MSCVIRTUAL ~Registry(void);
+
     /// Create a new variable in \a home from \a spec and return it
-    VarBase* createVar(Space* home, VarSpec& spec);
+    GECODE_KERNEL_EXPORT VarBase* createVar(Space* home, VarSpec& spec);
 
     /// Constrain \a v to \a spec
-    void constrainVar(Space* home, VarBase* v, VarSpec& spec);
+    GECODE_KERNEL_EXPORT void
+    constrainVar(Space* home, VarBase* v, VarSpec& spec);
 
     /// Post constraint in \a home for \a spec using variables \a vars
-    void post(Space* home, VarMap& vm, const ActorSpec& spec);
+    GECODE_KERNEL_EXPORT void
+    post(Space* home, VarMap& vm, const ActorSpec& spec);
 
     /// Register variable creation function for \a vti
-    void add(Support::Symbol vti, varCreator vc);
+    GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varCreator vc);
     /// Register variable domain constraining function for \a vti
-    void add(Support::Symbol vti, varConstrainer vc);
+    GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varConstrainer vc);
     /// Register constraint posting function for constraint name \a id
-    void add(const Support::Symbol& id, poster p);
+    GECODE_KERNEL_EXPORT void add(const Support::Symbol& id, poster p);
     /// Print list of all registered posters to \a out
-    void print(std::ostream& out);
+    GECODE_KERNEL_EXPORT void print(std::ostream& out);
   private:
-    /// The registry of constraint posting functions
-    Support::SymbolMap<poster> posters;
-    /// The registry of variable creation functions
-    Support::SymbolMap<varCreator> varCreators;
-    /// The registry of variable creation functions
-    Support::SymbolMap<varConstrainer> varConstrainers;
+    /// Do not allow copying
+    Registry(const Registry&);
+    /// Do not allow assignment
+    Registry& operator=(const Registry&);
   };
   
   /// The registry object \ingroup TaskReflection

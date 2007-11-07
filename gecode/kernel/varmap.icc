@@ -48,26 +48,14 @@ namespace Gecode { namespace Reflection {
   class GECODE_KERNEL_EXPORT VarMap {
     friend class VarMapIter;
   private:
-    /// Map variable names to variable implementations
-    Support::SymbolMap<VarBase*> nameToVar;
-    /// Map variable implementations to variable names
-    Support::PtrMap<VarBase,Support::Symbol> varToName;
-    /// Map variable implementations to indices
-    Support::PtrMap<VarBase,int> m;
-    /// Map shared objects to indices
-    Support::PtrMap<void,int>    sharedObjectMap;
+    class VarMapObj;
+    VarMapObj* vo;
 
     /// Number of variable indices in use
     int n;
     /// Number of shared object indices in use
     int so;
     
-    /// Map indices to variable implementations
-    Support::DynamicArray<VarBase*>  vars;
-    /// Map indices to variable specifications
-    Support::DynamicArray<VarSpec*>  specs;
-    /// Map indices to shared objects
-    Support::DynamicArray<void*>     sharedObjects;
   public:
     /// Default constructor
     VarMap(void);

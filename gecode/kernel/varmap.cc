@@ -44,79 +44,99 @@ namespace Gecode { namespace Reflection {
    *
    */
 
-  VarMap::VarMap(void) : n(0), so(0) {}
+  class VarMap::VarMapObj {
+  public:
+    /// Map variable names to variable implementations
+    Support::SymbolMap<VarBase*> nameToVar;
+    /// Map variable implementations to variable names
+    Support::PtrMap<VarBase,Support::Symbol> varToName;
+    /// Map variable implementations to indices
+    Support::PtrMap<VarBase,int> m;
+    /// Map shared objects to indices
+    Support::PtrMap<void,int>    sharedObjectMap;
+
+    /// Map indices to variable implementations
+    Support::DynamicArray<VarBase*>  vars;
+    /// Map indices to variable specifications
+    Support::DynamicArray<VarSpec*>  specs;
+    /// Map indices to shared objects
+    Support::DynamicArray<void*>     sharedObjects;
+  };
+
+  VarMap::VarMap(void) : vo(new VarMapObj()), n(0), so(0) {}
 
   VarMap::~VarMap(void) {
     for (int i=n; i--;)
-      delete specs[i];
+      delete vo->specs[i];
+    delete vo;
   }
 
   int
   VarMap::index(VarBase* x) const {
     int i;
-    return m.get(x,i) ? i : -1;
+    return vo->m.get(x,i) ? i : -1;
   }
 
   int
   VarMap::index(const Support::Symbol& n) const {
     VarBase* v;      
-    return nameToVar.get(n, v) ? index(v) : -1;
+    return vo->nameToVar.get(n, v) ? index(v) : -1;
   }
 
   bool
   VarMap::nameIsKnown(const Support::Symbol& n) const {
     VarBase* v;
-    return nameToVar.get(n,v);
+    return vo->nameToVar.get(n,v);
   }
 
   bool
   VarMap::hasName(VarBase* x) const {
     Support::Symbol s;
-    return varToName.get(x,s);
+    return vo->varToName.get(x,s);
   }
 
   bool
   VarMap::hasName(int i) const {
     Support::Symbol s;
-    return varToName.get(vars[i], s);
+    return vo->varToName.get(vo->vars[i], s);
   }
 
   Support::Symbol
   VarMap::name(VarBase* x) const {
     Support::Symbol s;
-    varToName.get(x,s);
+    vo->varToName.get(x,s);
     return s;
   }
 
   Support::Symbol
   VarMap::name(int i) const {
     Support::Symbol s;
-    varToName.get(vars[i],s);
+    vo->varToName.get(vo->vars[i],s);
     return s;
   }
 
   VarBase*
   VarMap::var(const Support::Symbol& n) const {
     VarBase* v;
-    return nameToVar.get(n,v) ? v : NULL;
+    return vo->nameToVar.get(n,v) ? v : NULL;
   }
 
   VarBase*
   VarMap::var(int i) const {
-    return vars[i];
+    return vo->vars[i];
   }
 
   VarSpec&
   VarMap::spec(VarBase* x) const {
     int i;
-    if (!m.get(x,i))
+    if (!vo->m.get(x,i))
       throw new ReflectionException("Variable not in VarMap");
-    return *specs[i];
+    return *vo->specs[i];
   }
 
   VarSpec&
   VarMap::spec(int i) const {
-    return *specs[i];
+    return *vo->specs[i];
   }
 
   VarSpec&
@@ -126,35 +146,35 @@ namespace Gecode { namespace Reflection {
 
   void
   VarMap::name(VarBase* x, const Support::Symbol& n) {
-    nameToVar.put(n, x);
-    varToName.put(x, n);
+    vo->nameToVar.put(n, x);
+    vo->varToName.put(x, n);
   }
 
   int
   VarMap::put(VarBase* x, VarSpec* spec) {
     int newIndex = n++;
-    m.put(x, newIndex);
-    specs[newIndex] = spec;
-    vars[newIndex] = x;
+    vo->m.put(x, newIndex);
+    vo->specs[newIndex] = spec;
+    vo->vars[newIndex] = x;
     if (hasName(x)) {
       spec->name(name(x));
     } else if (spec->hasName()) {
-      nameToVar.put(spec->name(), x);
-      varToName.put(x, spec->name());
+      vo->nameToVar.put(spec->name(), x);
+      vo->varToName.put(x, spec->name());
     }
     return newIndex;
   }
   
   void
   VarMap::putMasterObject(void* obj) {
-    sharedObjectMap.put(obj, so);
-    sharedObjects[so++] = obj;
+    vo->sharedObjectMap.put(obj, so);
+    vo->sharedObjects[so++] = obj;
   }
 
   int
   VarMap::getSharedIndex(void* obj) const {
     int idx;
-    if (sharedObjectMap.get(obj, idx))
+    if (vo->sharedObjectMap.get(obj, idx))
       return idx;
     return -1;
   }
@@ -162,7 +182,7 @@ namespace Gecode { namespace Reflection {
   void*
   VarMap::getSharedObject(int i) const {
     assert(i < so);
-    return sharedObjects[i];
+    return vo->sharedObjects[i];
   }
 
   /* Variable map iterator */
@@ -173,7 +193,7 @@ namespace Gecode { namespace Reflection {
   VarMapIter::operator()(void) const { return i<m->n; }
 
   VarSpec&
-  VarMapIter::var(void) const { return *m->specs[i]; }
+  VarMapIter::var(void) const { return *m->vo->specs[i]; }
 
   void
   VarMapIter::operator++(void) { i++; }  

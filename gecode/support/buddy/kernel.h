@@ -95,21 +95,21 @@ typedef struct s_BddNode /* Node table entry */
 extern "C" {
 #endif
 
-extern int       bddrunning;         /* Flag - package initialized */
-extern int       bdderrorcond;       /* Some error condition was met */
-extern int       bddnodesize;        /* Number of allocated nodes */
-extern int       bddmaxnodesize;     /* Maximum allowed number of nodes */
-extern int       bddmaxnodeincrease; /* Max. # of nodes used to inc. table */
-extern BddNode*  bddnodes;           /* All of the bdd nodes */
-extern int       bddvarnum;          /* Number of defined BDD variables */
-extern int*      bddrefstack;        /* Internal node reference stack */
-extern int*      bddrefstacktop;     /* Internal node reference stack top */
-extern int*      bddvar2level;
-extern int*      bddlevel2var;
-extern jmp_buf   bddexception;
-extern int       bddreorderdisabled;
-extern int       bddresized;
-extern bddCacheStat bddcachestats;
+extern GECODE_SUPPORT_EXPORT int       bddrunning;         /* Flag - package initialized */
+extern GECODE_SUPPORT_EXPORT int       bdderrorcond;       /* Some error condition was met */
+extern GECODE_SUPPORT_EXPORT int       bddnodesize;        /* Number of allocated nodes */
+extern GECODE_SUPPORT_EXPORT int       bddmaxnodesize;     /* Maximum allowed number of nodes */
+extern GECODE_SUPPORT_EXPORT int       bddmaxnodeincrease; /* Max. # of nodes used to inc. table */
+extern GECODE_SUPPORT_EXPORT BddNode*  bddnodes;           /* All of the bdd nodes */
+extern GECODE_SUPPORT_EXPORT int       bddvarnum;          /* Number of defined BDD variables */
+extern GECODE_SUPPORT_EXPORT int*      bddrefstack;        /* Internal node reference stack */
+extern GECODE_SUPPORT_EXPORT int*      bddrefstacktop;     /* Internal node reference stack top */
+extern GECODE_SUPPORT_EXPORT int*      bddvar2level;
+extern GECODE_SUPPORT_EXPORT int*      bddlevel2var;
+extern GECODE_SUPPORT_EXPORT jmp_buf   bddexception;
+extern GECODE_SUPPORT_EXPORT int       bddreorderdisabled;
+extern GECODE_SUPPORT_EXPORT int       bddresized;
+extern GECODE_SUPPORT_EXPORT bddCacheStat bddcachestats;
 
 #ifdef CPLUSPLUS
 }

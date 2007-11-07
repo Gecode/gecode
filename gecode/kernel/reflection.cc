@@ -40,13 +40,27 @@
 namespace Gecode { namespace Reflection {
 
   // Registry
+
+  class Registry::RegistryObject {
+  public:
+    /// The registry of constraint posting functions
+    Support::SymbolMap<poster> posters;
+    /// The registry of variable creation functions
+    Support::SymbolMap<varCreator> varCreators;
+    /// The registry of variable creation functions
+    Support::SymbolMap<varConstrainer> varConstrainers;
+  };
   
+  Registry::Registry(void) : ro(new RegistryObject()) {}
+
+  Registry::~Registry(void) { delete ro; }
+
   Registry registry;
   
   VarBase*
   Registry::createVar(Space* home, VarSpec& spec) {
     varCreator vc = NULL;
-    if (!varCreators.get(spec.vti(),vc)) {
+    if (!ro->varCreators.get(spec.vti(),vc)) {
       throw Reflection::ReflectionException("VTI not found");
     }
     return vc(home, spec);
@@ -55,7 +69,7 @@ namespace Gecode { namespace Reflection {
   void
   Registry::constrainVar(Space* home, VarBase* v, VarSpec& spec) {
     varConstrainer vc = NULL;
-    if (!varConstrainers.get(spec.vti(),vc)) {
+    if (!ro->varConstrainers.get(spec.vti(),vc)) {
       throw Reflection::ReflectionException("VTI not found");
     }
     vc(home, v, spec);
@@ -65,7 +79,7 @@ namespace Gecode { namespace Reflection {
   Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) {
     poster p = NULL;
       
-    if (!posters.get(spec.name(),p)) {
+    if (!ro->posters.get(spec.name(),p)) {
       throw Reflection::ReflectionException("Constraint not found");
     }
     p(home, vm, spec);
@@ -73,17 +87,17 @@ namespace Gecode { namespace Reflection {
 
   void
   Registry::add(Support::Symbol vti, varCreator vc) {
-    varCreators.put(vti, vc);
+    ro->varCreators.put(vti, vc);
   }
 
   void
   Registry::add(Support::Symbol vti, varConstrainer vc) {
-    varConstrainers.put(vti, vc);
+    ro->varConstrainers.put(vti, vc);
   }
 
   void
   Registry::add(const Support::Symbol& id, poster p) {
-    posters.put(id, p);
+    ro->posters.put(id, p);
   }
 
   void
