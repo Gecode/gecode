@@ -10,35 +10,72 @@ gecode/support/symbol$(OBJSUFFIX) gecode/support/symbol$(SBJSUFFIX): \
 	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
 	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
-gecode/support/buddy/bddio.c$(OBJSUFFIX) gecode/support/buddy/bddio.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h 
-gecode/support/buddy/bddop.c$(OBJSUFFIX) gecode/support/buddy/bddop.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h ./gecode/support/buddy/kernel.h 
-gecode/support/buddy/bvec.c$(OBJSUFFIX) gecode/support/buddy/bvec.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/bvec.h ./gecode/support/buddy/fdd.h \
+gecode/support/buddy/bddio$(OBJSUFFIX) gecode/support/buddy/bddio$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/bddop$(OBJSUFFIX) gecode/support/buddy/bddop$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h \
 	./gecode/support/buddy/kernel.h 
-gecode/support/buddy/cache.c$(OBJSUFFIX) gecode/support/buddy/cache.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h ./gecode/support/buddy/kernel.h \
-	./gecode/support/buddy/prime.h 
+gecode/support/buddy/bvec$(OBJSUFFIX) gecode/support/buddy/bvec$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bvec.h \
+	./gecode/support/buddy/fdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/cache$(OBJSUFFIX) gecode/support/buddy/cache$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h \
+	./gecode/support/buddy/kernel.h ./gecode/support/buddy/prime.h 
 gecode/support/buddy/cppext$(OBJSUFFIX) gecode/support/buddy/cppext$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/bvec.h ./gecode/support/buddy/fdd.h \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bvec.h \
+	./gecode/support/buddy/fdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/fdd$(OBJSUFFIX) gecode/support/buddy/fdd$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/fdd.h \
 	./gecode/support/buddy/kernel.h 
-gecode/support/buddy/fdd.c$(OBJSUFFIX) gecode/support/buddy/fdd.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/fdd.h ./gecode/support/buddy/kernel.h 
-gecode/support/buddy/imatrix.c$(OBJSUFFIX) gecode/support/buddy/imatrix.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/imatrix.h ./gecode/support/buddy/kernel.h 
-gecode/support/buddy/kernel.c$(OBJSUFFIX) gecode/support/buddy/kernel.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h ./gecode/support/buddy/config.h \
-	./gecode/support/buddy/kernel.h ./gecode/support/buddy/prime.h 
-gecode/support/buddy/pairs.c$(OBJSUFFIX) gecode/support/buddy/pairs.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h 
-gecode/support/buddy/prime.c$(OBJSUFFIX) gecode/support/buddy/prime.c$(SBJSUFFIX): \
+gecode/support/buddy/imatrix$(OBJSUFFIX) gecode/support/buddy/imatrix$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/imatrix.h \
+	./gecode/support/buddy/kernel.h 
+gecode/support/buddy/kernel$(OBJSUFFIX) gecode/support/buddy/kernel$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h \
+	./gecode/support/buddy/config.h ./gecode/support/buddy/kernel.h ./gecode/support/buddy/prime.h 
+gecode/support/buddy/pairs$(OBJSUFFIX) gecode/support/buddy/pairs$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/prime$(OBJSUFFIX) gecode/support/buddy/prime$(SBJSUFFIX): \
 	./gecode/support/buddy/prime.h 
-gecode/support/buddy/reorder.c$(OBJSUFFIX) gecode/support/buddy/reorder.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/bddtree.h ./gecode/support/buddy/imatrix.h \
+gecode/support/buddy/reorder$(OBJSUFFIX) gecode/support/buddy/reorder$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bddtree.h \
+	./gecode/support/buddy/imatrix.h ./gecode/support/buddy/kernel.h ./gecode/support/buddy/prime.h 
+gecode/support/buddy/tree$(OBJSUFFIX) gecode/support/buddy/tree$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bddtree.h \
+	./gecode/support/buddy/kernel.h 
+gecode/support/buddy/bddio$(OBJSUFFIX) gecode/support/buddy/bddio$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/bddop$(OBJSUFFIX) gecode/support/buddy/bddop$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h \
+	./gecode/support/buddy/kernel.h 
+gecode/support/buddy/bvec$(OBJSUFFIX) gecode/support/buddy/bvec$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bvec.h \
+	./gecode/support/buddy/fdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/cache$(OBJSUFFIX) gecode/support/buddy/cache$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h \
 	./gecode/support/buddy/kernel.h ./gecode/support/buddy/prime.h 
-gecode/support/buddy/tree.c$(OBJSUFFIX) gecode/support/buddy/tree.c$(SBJSUFFIX): \
-	./gecode/support/buddy/bdd.h ./gecode/support/buddy/bddtree.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/cppext$(OBJSUFFIX) gecode/support/buddy/cppext$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bvec.h \
+	./gecode/support/buddy/fdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/fdd$(OBJSUFFIX) gecode/support/buddy/fdd$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/fdd.h \
+	./gecode/support/buddy/kernel.h 
+gecode/support/buddy/imatrix$(OBJSUFFIX) gecode/support/buddy/imatrix$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/imatrix.h \
+	./gecode/support/buddy/kernel.h 
+gecode/support/buddy/kernel$(OBJSUFFIX) gecode/support/buddy/kernel$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/cache.h \
+	./gecode/support/buddy/config.h ./gecode/support/buddy/kernel.h ./gecode/support/buddy/prime.h 
+gecode/support/buddy/pairs$(OBJSUFFIX) gecode/support/buddy/pairs$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h 
+gecode/support/buddy/prime$(OBJSUFFIX) gecode/support/buddy/prime$(SBJSUFFIX): \
+	./gecode/support/buddy/prime.h 
+gecode/support/buddy/reorder$(OBJSUFFIX) gecode/support/buddy/reorder$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bddtree.h \
+	./gecode/support/buddy/imatrix.h ./gecode/support/buddy/kernel.h ./gecode/support/buddy/prime.h 
+gecode/support/buddy/tree$(OBJSUFFIX) gecode/support/buddy/tree$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/support/buddy/bdd.h ./gecode/support/buddy/bddtree.h \
+	./gecode/support/buddy/kernel.h 
 gecode/kernel/core$(OBJSUFFIX) gecode/kernel/core$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -3853,12 +3890,12 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.icc ./gecode/search.hh ./gecode/search/bab.icc \
 	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
 	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
-	./gecode/search/stop.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
-	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
+	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
@@ -3982,12 +4019,12 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.icc ./gecode/search.hh ./gecode/search/bab.icc \
 	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
 	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
-	./gecode/search/stop.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
-	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc ./gecode/vti.icc 
+	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
+	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \

@@ -65,7 +65,7 @@ while ($target = $ARGV[$i++]) {
     }
     close FILE;
   }
-  $target =~ s|\.cc||og;
+  $target =~ s|\.cc?||og;
   print "$target\$(OBJSUFFIX) $target\$(SBJSUFFIX): ";
   $l = 3;
   foreach $g (sort(keys(%done))) {
