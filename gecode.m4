@@ -564,6 +564,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
   case $host_os in
      darwin*)
        AC_SUBST(need_soname, "yes")
+       AC_GECODE_ADD_TO_DLLFLAGS([-Wl,-single_module])
        AC_GECODE_ADD_TO_DLLFLAGS("-dynamiclib")
        AC_SUBST(DLLEXT, "${ac_gecode_soversion}.0.dylib")
        AC_SUBST(SOSUFFIX, ".${ac_gecode_soversion}.dylib")

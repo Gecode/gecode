@@ -5739,6 +5739,7 @@ gnu)
      darwin*)
        need_soname="yes"
 
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-Wl,-single_module"
        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-dynamiclib""
        DLLEXT="${ac_gecode_soversion}.0.dylib"
 
@@ -7483,6 +7484,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
      darwin*)
        need_soname="yes"
 
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-Wl,-single_module"
        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-dynamiclib""
        DLLEXT="${ac_gecode_soversion}.0.dylib"
 
