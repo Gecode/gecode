@@ -557,7 +557,7 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (after posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
-        SetTestSpace* sc;
+        SetTestSpace* sc = NULL;
         s->post();
         switch (Base::rand(3)) {
           case 0:

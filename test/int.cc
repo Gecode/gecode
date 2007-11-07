@@ -398,7 +398,7 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,false,this);
-        TestSpace* sc;
+        TestSpace* sc = NULL;
         s->post();
         switch (Base::rand(3)) {
           case 0:
