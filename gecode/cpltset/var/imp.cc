@@ -74,10 +74,11 @@ namespace Gecode { namespace CpltSet {
     _level = -1;
 
     if (!manager.leaf(c)) {
-      Support::DynamicArray<bdd> dummy(n);
+      SharedArray<bdd> dummy(n);
       nodes = dummy;
     
       for (int i = n; i--; ){
+        new (&nodes[i]) bdd;
         nodes[i].init();
       }
 

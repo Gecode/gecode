@@ -376,7 +376,7 @@ namespace Gecode { namespace CpltSet {
     NodeStatus flag;
     bool singleton;
     // Explores the iterated bdd
-    Support::DynamicArray<bdd> nodes;
+    SharedArray<bdd> nodes;
     // Left end of the nodes array
     int l;
     // Right end of the nodes array
