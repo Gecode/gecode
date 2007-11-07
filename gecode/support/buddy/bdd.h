@@ -38,7 +38,11 @@
 #ifndef _BDD_H
 #define _BDD_H
 
+#include "gecode/config.hh"
+
+#ifdef GCC_HASCLASSVISIBILITY
 #pragma GCC visibility push(default)
+#endif
 
 /*
  * Support for DLLs under Windows
@@ -924,7 +928,9 @@ extern GECODE_SUPPORT_EXPORT bddstrmhandler bdd_strm_hook(bddstrmhandler);
 
 #endif /* CPLUSPLUS */
 
+#ifdef GCC_HASCLASSVISIBILITY
 #pragma GCC visibility pop
+#endif
 
 #endif /* _BDD_H */
 

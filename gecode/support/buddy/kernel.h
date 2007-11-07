@@ -38,7 +38,11 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
+#include "gecode/config.hh"
+
+#ifdef GCC_HASCLASSVISIBILITY
 #pragma GCC visibility push(default)
+#endif
 
 /*=== Includes =========================================================*/
 
@@ -228,7 +232,9 @@ extern void   bdd_cpp_init(void);
 }
 #endif
 
+#ifdef GCC_HASCLASSVISIBILITY
 #pragma GCC visibility pop
+#endif
 
 #endif /* _KERNEL_H */
 
