@@ -65,6 +65,28 @@ m4_include([gecode.m4])
 dnl check whether we have pkgconfig and should generate config files for it
 AC_GECODE_PKGCONFIG
 
+dnl check whether we have certain programs we need
+AC_CHECK_PROG(PROG_DIFF, diff, [ok])
+ if test "${PROG_DIFF}x" = "x"; then
+    AC_MSG_ERROR([In order to compile Gecode, you need the diff tool.])
+ fi
+AC_CHECK_PROG(PROG_TAR, tar, [ok])
+ if test "${PROG_TAR}x" = "x"; then
+    AC_MSG_ERROR([In order to compile Gecode, you need the tar tool.])
+ fi
+AC_CHECK_PROG(PROG_MAKE, make, [ok])
+ if test "${PROG_MAKE}x" = "x"; then
+    AC_MSG_ERROR([In order to compile Gecode, you need the make tool.])
+ fi
+AC_CHECK_PROG(PROG_SED, sed, [ok])
+ if test "${PROG_SED}x" = "x"; then
+    AC_MSG_ERROR([In order to compile Gecode, you need the sed tool.])
+ fi
+AC_CHECK_PROG(PROG_PERL, perl, [ok])
+ if test "${PROG_PERL}x" = "x"; then
+    AC_MSG_ERROR([In order to compile Gecode, you need perl.])
+ fi
+
 dnl determine the operating system
 AC_GECODE_GET_OS
 

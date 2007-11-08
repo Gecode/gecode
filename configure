@@ -667,6 +667,11 @@ ac_ct_CC
 RANLIB
 PKGCONFIG
 HAVE_PKGCONFIG
+PROG_DIFF
+PROG_TAR
+PROG_MAKE
+PROG_SED
+PROG_PERL
 CXXCPP
 BUILDSTATIC
 BUILDDLL
@@ -3276,9 +3281,8 @@ ac_config_commands="$ac_config_commands vti.icc"
 
 
 
-if test -n "$ac_tool_prefix"; then
-  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
-set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+# Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
 { echo "$as_me:$LINENO: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
 if test "${ac_cv_prog_PKGCONFIG+set}" = set; then
@@ -3294,7 +3298,7 @@ do
   test -z "$as_dir" && as_dir=.
   for ac_exec_ext in '' $ac_executable_extensions; do
   if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_prog_PKGCONFIG="${ac_tool_prefix}pkg-config"
+    ac_cv_prog_PKGCONFIG="found"
     echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
     break 2
   fi
@@ -3314,64 +3318,6 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
-fi
-if test -z "$ac_cv_prog_PKGCONFIG"; then
-  ac_ct_PKGCONFIG=$PKGCONFIG
-  # Extract the first word of "pkg-config", so it can be a program name with args.
-set dummy pkg-config; ac_word=$2
-{ echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
-if test "${ac_cv_prog_ac_ct_PKGCONFIG+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test -n "$ac_ct_PKGCONFIG"; then
-  ac_cv_prog_ac_ct_PKGCONFIG="$ac_ct_PKGCONFIG" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_prog_ac_ct_PKGCONFIG="pkg-config"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-fi
-fi
-ac_ct_PKGCONFIG=$ac_cv_prog_ac_ct_PKGCONFIG
-if test -n "$ac_ct_PKGCONFIG"; then
-  { echo "$as_me:$LINENO: result: $ac_ct_PKGCONFIG" >&5
-echo "${ECHO_T}$ac_ct_PKGCONFIG" >&6; }
-else
-  { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-fi
-
-  if test "x$ac_ct_PKGCONFIG" = x; then
-    PKGCONFIG=""
-  else
-    case $cross_compiling:$ac_tool_warned in
-yes:)
-{ echo "$as_me:$LINENO: WARNING: In the future, Autoconf will not detect cross-tools
-whose name does not start with the host triplet.  If you think this
-configuration is useful to you, please write to autoconf@gnu.org." >&5
-echo "$as_me: WARNING: In the future, Autoconf will not detect cross-tools
-whose name does not start with the host triplet.  If you think this
-configuration is useful to you, please write to autoconf@gnu.org." >&2;}
-ac_tool_warned=yes ;;
-esac
-    PKGCONFIG=$ac_ct_PKGCONFIG
-  fi
-else
-  PKGCONFIG="$ac_cv_prog_PKGCONFIG"
-fi
-
 	 { echo "$as_me:$LINENO: checking whether to generate pkg-config files" >&5
 echo $ECHO_N "checking whether to generate pkg-config files... $ECHO_C" >&6; }
 	 if test "${PKGCONFIG}x" = "x"; then
@@ -3385,6 +3331,217 @@ echo "${ECHO_T}yes" >&6; }
 	    HAVE_PKGCONFIG="yes"
 
 	 fi
+
+# Extract the first word of "diff", so it can be a program name with args.
+set dummy diff; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_prog_PROG_DIFF+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$PROG_DIFF"; then
+  ac_cv_prog_PROG_DIFF="$PROG_DIFF" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PROG_DIFF="ok"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+PROG_DIFF=$ac_cv_prog_PROG_DIFF
+if test -n "$PROG_DIFF"; then
+  { echo "$as_me:$LINENO: result: $PROG_DIFF" >&5
+echo "${ECHO_T}$PROG_DIFF" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+ if test "${PROG_DIFF}x" = "x"; then
+    { { echo "$as_me:$LINENO: error: In order to compile Gecode, you need the diff tool." >&5
+echo "$as_me: error: In order to compile Gecode, you need the diff tool." >&2;}
+   { (exit 1); exit 1; }; }
+ fi
+# Extract the first word of "tar", so it can be a program name with args.
+set dummy tar; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_prog_PROG_TAR+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$PROG_TAR"; then
+  ac_cv_prog_PROG_TAR="$PROG_TAR" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PROG_TAR="ok"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+PROG_TAR=$ac_cv_prog_PROG_TAR
+if test -n "$PROG_TAR"; then
+  { echo "$as_me:$LINENO: result: $PROG_TAR" >&5
+echo "${ECHO_T}$PROG_TAR" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+ if test "${PROG_TAR}x" = "x"; then
+    { { echo "$as_me:$LINENO: error: In order to compile Gecode, you need the tar tool." >&5
+echo "$as_me: error: In order to compile Gecode, you need the tar tool." >&2;}
+   { (exit 1); exit 1; }; }
+ fi
+# Extract the first word of "make", so it can be a program name with args.
+set dummy make; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_prog_PROG_MAKE+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$PROG_MAKE"; then
+  ac_cv_prog_PROG_MAKE="$PROG_MAKE" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PROG_MAKE="ok"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+PROG_MAKE=$ac_cv_prog_PROG_MAKE
+if test -n "$PROG_MAKE"; then
+  { echo "$as_me:$LINENO: result: $PROG_MAKE" >&5
+echo "${ECHO_T}$PROG_MAKE" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+ if test "${PROG_MAKE}x" = "x"; then
+    { { echo "$as_me:$LINENO: error: In order to compile Gecode, you need the make tool." >&5
+echo "$as_me: error: In order to compile Gecode, you need the make tool." >&2;}
+   { (exit 1); exit 1; }; }
+ fi
+# Extract the first word of "sed", so it can be a program name with args.
+set dummy sed; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_prog_PROG_SED+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$PROG_SED"; then
+  ac_cv_prog_PROG_SED="$PROG_SED" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PROG_SED="ok"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+PROG_SED=$ac_cv_prog_PROG_SED
+if test -n "$PROG_SED"; then
+  { echo "$as_me:$LINENO: result: $PROG_SED" >&5
+echo "${ECHO_T}$PROG_SED" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+ if test "${PROG_SED}x" = "x"; then
+    { { echo "$as_me:$LINENO: error: In order to compile Gecode, you need the sed tool." >&5
+echo "$as_me: error: In order to compile Gecode, you need the sed tool." >&2;}
+   { (exit 1); exit 1; }; }
+ fi
+# Extract the first word of "perl", so it can be a program name with args.
+set dummy perl; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_prog_PROG_PERL+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$PROG_PERL"; then
+  ac_cv_prog_PROG_PERL="$PROG_PERL" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PROG_PERL="ok"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+PROG_PERL=$ac_cv_prog_PROG_PERL
+if test -n "$PROG_PERL"; then
+  { echo "$as_me:$LINENO: result: $PROG_PERL" >&5
+echo "${ECHO_T}$PROG_PERL" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+ if test "${PROG_PERL}x" = "x"; then
+    { { echo "$as_me:$LINENO: error: In order to compile Gecode, you need perl." >&5
+echo "$as_me: error: In order to compile Gecode, you need perl." >&2;}
+   { (exit 1); exit 1; }; }
+ fi
 
 
 # Check whether --with-host-os was given.
@@ -10152,6 +10309,11 @@ ac_ct_CC!$ac_ct_CC$ac_delim
 RANLIB!$RANLIB$ac_delim
 PKGCONFIG!$PKGCONFIG$ac_delim
 HAVE_PKGCONFIG!$HAVE_PKGCONFIG$ac_delim
+PROG_DIFF!$PROG_DIFF$ac_delim
+PROG_TAR!$PROG_TAR$ac_delim
+PROG_MAKE!$PROG_MAKE$ac_delim
+PROG_SED!$PROG_SED$ac_delim
+PROG_PERL!$PROG_PERL$ac_delim
 CXXCPP!$CXXCPP$ac_delim
 BUILDSTATIC!$BUILDSTATIC$ac_delim
 BUILDDLL!$BUILDDLL$ac_delim
@@ -10193,11 +10355,6 @@ LINKPREFIX!$LINKPREFIX$ac_delim
 LINKSUFFIX!$LINKSUFFIX$ac_delim
 LINKOUTPUT!$LINKOUTPUT$ac_delim
 EXEOUTPUT!$EXEOUTPUT$ac_delim
-SUPPORT!$SUPPORT$ac_delim
-KERNEL!$KERNEL$ac_delim
-SEARCH!$SEARCH$ac_delim
-INT!$INT$ac_delim
-SET!$SET$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -10239,6 +10396,11 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+SUPPORT!$SUPPORT$ac_delim
+KERNEL!$KERNEL$ac_delim
+SEARCH!$SEARCH$ac_delim
+INT!$INT$ac_delim
+SET!$SET$ac_delim
 CPLTSET!$CPLTSET$ac_delim
 MM!$MM$ac_delim
 SER!$SER$ac_delim
@@ -10263,7 +10425,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 22; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 27; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

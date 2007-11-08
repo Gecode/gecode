@@ -37,7 +37,7 @@ dnl
 
 dnl check whether we have pkgconfig and should generate config files for it
 AC_DEFUN([AC_GECODE_PKGCONFIG],
-	[AC_CHECK_TOOL(PKGCONFIG, pkg-config)
+	[AC_CHECK_PROG(PKGCONFIG, pkg-config, [found])
 	 AC_MSG_CHECKING(whether to generate pkg-config files)
 	 if test "${PKGCONFIG}x" = "x"; then
 	    AC_MSG_RESULT(no)

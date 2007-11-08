@@ -804,7 +804,9 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - GNU make
  *  - sed
  *  - cp
+ *  - diff
  *  - tar
+ *  - perl
  *
  * These are available in all standard installations of Linux. On MacOS X,
  * you need to install the Apple developer tools. For
