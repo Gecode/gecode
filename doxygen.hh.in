@@ -1014,3 +1014,69 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  */
 
+
+/**
+ * \page PageHowToChange_2 How to Change to Gecode 2.0.0
+ *
+
+As Gecode 2.0.0 is a major revision of Gecode, your programs are
+likely to require some modifications before they work again. All
+modifications are straightforward, though.
+
+This short summary is how to adapt your models, for changes to
+propagator implementations, etc, please consult the changelog.
+
+IntVar and BoolVar
+
+Boolean variables (BoolVar) are not any longer integer variables
+(IntVar). The same holds for variable arrays (BoolVarArray,
+IntVarArray). So, you can not mix Boolean and integer variables
+in the same array (use two different arrays) and you can not cast
+between them. If you want to link the value of a BoolVar to the
+value of an IntVar you have to use a \ref TaskModelIntChannel
+"channel constraint".  Posting constraints remains unchanged, as
+all constraints offer two overloaded versions (one for IntVar,
+one for BoolVar).
+
+regular
+
+The regular constraint has been renamed to extensional (after
+all, it is an extensionally specified constraint). The old name
+is still available in the MiniModel module. If you want to use
+regular expressions, you have to add
+   \code #include "gecode/int/minimodel.hh" \endcode
+to your file as they moved to the MiniModel module.
+
+Boolean constraints
+
+In order to make the interface to Boolean constraints more
+regular and similar to set constraints, Boolean constraints are
+available as rel constraints. That is, instead of
+   \code bool_and(home, x, y, z); \endcode
+you have to write
+   \code rel(home, x, BOT_AND, y, z); \endcode
+Likewise, for arrays you have to write
+   \code rel(home, BOT_AND, x, y); \endcode
+instead of
+   \code bool_and(home, x, y); \endcode
+More information is available \ref TaskModelIntRelBool "here".
+
+Branching
+
+Values and types for selecting how to branch have been made uniform. 
+Replace BVAL_* by INT_VAL_*, BVAR_* by INT_VAR_*, and so on.
+
+Global cardinality constraint
+
+The interface for the global cardinality constraint has been
+simplified.  The constraint is now called count. Please check the
+documentation for \ref TaskModelIntCard "details".
+
+ 
+Sortedness constraint
+
+The sortedness constraint has been renamed to sorted.
+
+
+
+*/

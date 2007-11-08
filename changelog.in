@@ -64,9 +64,14 @@
 
 [RELEASE]
 Version: 2.0.0
-Date:    unknown
+Date:    2007-11-11
 [DESCRIPTION]
 The best Gecode ever... Done with supernatural powers!
+
+As Gecode 2.0.0 is a major release, you might have to adapt your
+programs:  \ref PageHowToChange_2 "How to Change to Gecode 2.0.0".
+
+
 
 [ENTRY]
 Module: other
@@ -122,8 +127,8 @@ Module: other
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Variable arrays, view arrays, and argument arrays can directly be printed
-on standard output streams.
+Variable arrays, view arrays, and argument arrays can directly be
+printed on standard output streams.
 
 [ENTRY]
 Module: other
@@ -167,15 +172,17 @@ Module: set
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added channeling propagator between a SetVar and a BoolVarArray that 
-propagates the characteristic function of the set to the Boolean variables.
+Added channeling propagator between a SetVar and a BoolVarArray
+that propagates the characteristic function of the set to the
+Boolean variables.
 
 [ENTRY]
 Module: set
 What:   performance
 Rank:   minor
 [DESCRIPTION]
-Changed the datastructure for set variables to use singly-linked lists.
+Changed the datastructure for set variables to use singly-linked
+lists.
 
 [ENTRY]
 Module: other
@@ -223,8 +230,8 @@ Module: other
 What:   change
 Rank:   minor
 [DESCRIPTION]
-All of Gecode has been put under the MIT license (which the previous license 
-was a simple rewording of).
+All of Gecode has been put under the MIT license (which the
+previous license was a simple rewording of).
 
 [ENTRY]
 Module: other
@@ -247,8 +254,9 @@ Module: cpltset
 What:   new
 Rank:   major
 [DESCRIPTION]
-Finite integer set variables with complete domain representation, based on 
-binary decision diagrams (BDDs), have been added as a new variable type.
+Finite integer set variables with complete domain representation,
+based on binary decision diagrams (BDDs), have been added as a
+new variable type.
 
 [ENTRY]
 Module: kernel
@@ -263,8 +271,9 @@ Module: kernel
 What:   bug
 Rank:   major
 [DESCRIPTION]
-Branching ids were not properly initialized. This was a serious problem if you 
-posted branchings in spaces other than the root space.
+Branching ids were not properly initialized. This was a serious
+problem if you posted branchings in spaces other than the root
+space.
 
 [ENTRY]
 Module: int
@@ -565,9 +574,10 @@ Module: kernel
 What: 	bug
 Rank: 	minor
 [DESCRIPTION]
-Subscription to constant views now should use the propagate member function
-from a variable implementation: it guarantees execution of a propagator at
-least once (int and set views have been adopted accordingly).
+Subscription to constant views now should use the propagate
+member function from a variable implementation: it guarantees
+execution of a propagator at least once (int and set views have
+been adopted accordingly).
 
 [ENTRY]
 Module: int
@@ -689,8 +699,8 @@ Module: set
 What:   performance
 Rank:   minor
 [DESCRIPTION]
-Performance of the tell operations on finite set variables was improved. 
-Especially the intersect operation benefits from this.
+Performance of the tell operations on finite set variables was
+improved.  Especially the intersect operation benefits from this.
 
 [ENTRY]
 Module: int
@@ -712,7 +722,8 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
-All branching classes for value and view selection are now parametric.
+All branching classes for value and view selection are now
+parametric.
 
 [ENTRY]
 Module: int
@@ -784,9 +795,9 @@ Module: example
 What:   new
 Rank:   major
 [DESCRIPTION]
-New example: Pentominoes. The example uses extensional-constraints
-specified as regular expressions to place irregular-shaped pieces on a
-board.
+New example: Pentominoes. The example uses extensional
+constraints specified as regular expressions to place
+irregular-shaped pieces on a board.
 
 
 
