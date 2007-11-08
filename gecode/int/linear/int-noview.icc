@@ -82,55 +82,104 @@ namespace Gecode {
       bool assigned(void) const { return true; }
 
       /// Test whether \a n is contained in domain
-      bool in(int n) const { return false; }
+      bool in(int n) const { n=n; return false; }
       /// Test whether \a n is contained in domain
-      bool in(double n) const { return false; }
+      bool in(double n) const { n=n; return false; }
       //@}
 
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n) { return ME_INT_NONE; }
+      ModEvent lq(Space* home, int n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n) { return ME_INT_NONE; }
+      ModEvent lq(Space* home, double n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n) { return ME_INT_NONE; }
+      ModEvent le(Space* home, int n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n) { return ME_INT_NONE; }
+      ModEvent le(Space* home, double n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n) { return ME_INT_NONE; }
+      ModEvent gq(Space* home, int n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n) { return ME_INT_NONE; }
+      ModEvent gq(Space* home, double n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n) { return ME_INT_NONE; }
+      ModEvent gr(Space* home, int n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n) { return ME_INT_NONE; }
+      ModEvent gr(Space* home, double n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n) { return ME_INT_NONE; }
+      ModEvent nq(Space* home, int n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n) { return ME_INT_NONE; }
+      ModEvent nq(Space* home, double n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n) { return ME_INT_NONE; }
+      ModEvent eq(Space* home, int n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n) { return ME_INT_NONE; }
+      ModEvent eq(Space* home, double n) {
+        (void)home; (void)n;
+        return ME_INT_NONE;
+      }
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me) {}
+      static void schedule(Space* home, Propagator* p, ModEvent me) {
+        (void)home; (void)p; (void)me;
+      }
       /// Return modification event of propagator \a p for view
-      static ModEvent pme(const Propagator* p) { return ME_INT_NONE; }
+      static ModEvent pme(const Propagator* p) {
+        (void)p;
+        return ME_INT_NONE;
+      }
       /// Translate modification event \a me to propagator modification event for view
-      static PropModEvent pme(ModEvent me) { return ME_INT_NONE; }
+      static PropModEvent pme(ModEvent me) {
+        (void)me;
+        return ME_INT_NONE;
+      }
       //@}
 
       /// \name Dependencies
       //@{
       /// Subscribe propagator \a p with propagation condition \a pc to view
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true) {}
+      void subscribe(Space* home, Propagator* p, PropCond pc,
+                     bool process=true) {
+        (void)home; (void)p; (void) pc; (void)process;
+      }
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc) {}
+      void cancel(Space* home, Propagator* p, PropCond pc) {
+        (void)home; (void)p; (void) pc;
+      }
       /// Subscribe advisor to view
       void subscribe(Space*, Advisor*) {};
       /// Cancel subscription of advisor
@@ -140,13 +189,16 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, NoView& x) {}
+      void update(Space* home, bool share, NoView& x) {
+        (void)home; (void)share; (void)x;
+      }
       //@}
 
       /// \name Serialization
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
+        (void)home; (void)m;
         return NULL;
       }
       /// Type of this view
@@ -158,13 +210,13 @@ namespace Gecode {
       /// \name View comparison
       //@{
       /// Test whether this view is the same as \a x
-      bool operator ==(const NoView& x) const { return true; }
+      bool operator ==(const NoView& x) const { (void)x; return true; }
       /// Test whether this view is not the same as \a x
-      bool operator !=(const NoView& x) const { return false; }
+      bool operator !=(const NoView& x) const { (void)x; return false; }
       /// Test whether this view is smaller than \a x (arbitrary order)
-      bool operator < (const NoView& x) const { return false; }
+      bool operator < (const NoView& x) const { (void)x; return false; }
       /// Test whether this view is larger than \a x (arbitrary order)
-      bool operator > (const NoView& x) const { return false; }
+      bool operator > (const NoView& x) const { (void)x; return false; }
       //@}
     };
 
@@ -183,7 +235,7 @@ namespace Gecode {
     /// Default constructor (array of size 0)
     ViewArray(void) {}
     /// Allocate array with \a m variables
-    ViewArray(Space* home, int m) {}
+    ViewArray(Space* home, int m) { (void)home; (void)m; }
     /// Initialize
     ViewArray(const ViewArray<Int::Linear::NoView>&) {}
     /// Initialize
@@ -199,21 +251,29 @@ namespace Gecode {
     /// Return size of array (number of elements)
     int size(void) const { return 0; }
     /// Decrease size of array (number of elements)
-    void size(int n) {}
+    void size(int n) { (void)n; }
     //@}
 
     /// \name Array elements
     //@{
     /// Return view at position \a i
-    Int::Linear::NoView operator[](int i) { Int::Linear::NoView n; return n; }
+    Int::Linear::NoView operator[](int i) {
+      (void) i;
+      Int::Linear::NoView n;
+      return n;
+    }
     //@}
 
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p with propagation condition \a pc to all views
-    void subscribe(Space*, Propagator* p, PropCond pc, bool process=true) {}
+    void subscribe(Space*, Propagator* p, PropCond pc, bool process=true) {
+      (void)p; (void)pc; (void)process;
+    }
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
-    void cancel(Space* home, Propagator* p, PropCond pc) {}
+    void cancel(Space* home, Propagator* p, PropCond pc) {
+      (void)home; (void)p; (void)pc;
+    }
     //@}
 
     /// \name Cloning
@@ -225,13 +285,16 @@ namespace Gecode {
      * data structures. Otherwise, for each of them an independent
      * copy is created.
      */
-    void update(Space*, bool share, ViewArray<Int::Linear::NoView>& a) {}
+    void update(Space*, bool share, ViewArray<Int::Linear::NoView>& a) {
+      (void)share; (void)a;
+    }
     //@}
 
     /// \name Serialization
     //@{
     /// Return specification for this array, using variable map \a m
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
+      (void)home; (void)m;
       return Reflection::Arg::newArray(0);
     }
     //@}
@@ -240,21 +303,25 @@ namespace Gecode {
     /// \name Moving elements
     //@{
     /// Move assigned view from position 0 to position \a i (shift elements to the left)
-    void move_fst(int i) {}
+    void move_fst(int i) { (void)i; }
     /// Move assigned view from position \c size()-1 to position \a i (truncate array by one)
-    void move_lst(int i) {}
+    void move_lst(int i) { (void)i; }
     /** \brief Move view from position 0 to position \a i (shift elements to the left)
      *
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
-    void move_fst(int i, Propagator* p, PropCond pc) {}
+    void move_fst(int i, Propagator* p, PropCond pc) {
+      (void)i; (void)p; (void)pc;
+    }
     /** \brief Move view from position \c size()-1 to position \a i (truncate array by one)
      *
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
-    void move_lst(int i, Propagator* p, PropCond pc) {}
+    void move_lst(int i, Propagator* p, PropCond pc) {
+      (void)i; (void)p; (void)pc;
+    }
     //@}
 
     /// \name Dropping elements
@@ -268,14 +335,18 @@ namespace Gecode {
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions 0 to \a i-1.
      */
-    void drop_fst(int i, Propagator* p, PropCond pc) {}
+    void drop_fst(int i, Propagator* p, PropCond pc) {
+      (void)i; (void)p; (void)pc;
+    }
     /** \brief Drop assigned views from positions \a i+1 to \c size()-1 from array
      *
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions \a i+1 to
      * \c size()-1.
      */
-    void drop_lst(int i, Propagator* p, PropCond pc) {}
+    void drop_lst(int i, Propagator* p, PropCond pc) {
+      (void)i; (void)p; (void)pc;
+    }
     //@}
 
     /// \name View equality
@@ -283,7 +354,10 @@ namespace Gecode {
     /// Test whether array has equal views
     bool equal(void) const { return false; }
     /// Test whether array contains view equal to \a y
-    bool equal(const Int::Linear::NoView& y) const {return false; }
+    bool equal(const Int::Linear::NoView& y) const {
+      (void)y;
+      return false;
+    }
     /// Remove all duplicate views from array (changes element order)
     void unique(void) {}
     //@}
@@ -293,7 +367,10 @@ namespace Gecode {
     /// Test whether array has shared views
     bool shared(void) const { return false; }
     /// Test whether array contains view shared with \a y
-    bool shared(const Int::Linear::NoView& y) const { return false; }
+    bool shared(const Int::Linear::NoView& y) const {
+      (void)y;
+      return false;
+    }
     //@}
 
   private:

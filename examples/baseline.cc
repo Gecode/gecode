@@ -49,7 +49,7 @@ protected:
   IntVarArray x;
 public:
   /// The actual problem
-  Baseline(const Options& opt)
+  Baseline(const Options&)
     : x(this,1,0,1) {
     branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
   }

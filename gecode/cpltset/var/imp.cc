@@ -55,7 +55,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   Reflection::Arg*
-  CpltSetVarImp::spec(Space* home, Reflection::VarMap& m) {
+  CpltSetVarImp::spec(Space*, Reflection::VarMap&) {
     // \todo FIXME implemente reflection
     return NULL;
   }

@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template <class View, class Tuple, bool Perm>
   inline void
-  sort_sigma(ViewArray<Tuple>& xz, bool fixed) {
+  sort_sigma(ViewArray<Tuple>& xz, bool) {
     int xs = xz.size();
 
     // test for equal bounds

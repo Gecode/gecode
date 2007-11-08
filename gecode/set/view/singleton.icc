@@ -141,12 +141,12 @@ namespace Gecode {
                                       view.val() : BndSet::MAX_OF_EMPTY; }
 
     forceinline ModEvent
-    SingletonView::cardMin(Space* home,unsigned int c) {
+    SingletonView::cardMin(Space*, unsigned int c) {
       return c<=1 ? ME_SET_NONE : ME_SET_FAILED;
     }
 
     forceinline ModEvent
-    SingletonView::cardMax(Space* home,unsigned int c) {
+    SingletonView::cardMax(Space*, unsigned int c) {
       return c<1 ? ME_SET_FAILED : ME_SET_NONE;
     }
 

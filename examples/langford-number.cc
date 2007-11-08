@@ -92,7 +92,7 @@ public:
   };
   /// Construct model
   LangfordNumber(const LangfordNumberOptions& opt)
-    : n(opt.n), k(opt.k), y(this,k*n,1,n) {
+    : k(opt.k), n(opt.n), y(this,k*n,1,n) {
 
     switch (opt.propagation()) {
     case PROP_REIFIED:
@@ -182,7 +182,7 @@ public:
 
   /// Constructor for cloning \a l
   LangfordNumber(bool share, LangfordNumber& l)
-    : Example(share, l), n(l.n), k(l.k) {
+    : Example(share, l), k(l.k), n(l.n) {
     y.update(this, share, l.y);
 
   }

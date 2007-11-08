@@ -92,13 +92,13 @@ namespace Test {
       virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x,
                         Gecode::IntVarArray& y) = 0;
       /// Post reified propagator
-      virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x,
-                        Gecode::IntVarArray& y, Gecode::BoolVar b) {}
+      virtual void post(Gecode::Space*, Gecode::CpltSetVarArray&,
+                        Gecode::IntVarArray&, Gecode::BoolVar) {}
       /// Perform test
       virtual bool run(void);
 
       template <class I>
-      int iter2int(I& r, int u) const{
+      int iter2int(I& r, int) const{
         if (!r()) {
           return 0;
         }

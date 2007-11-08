@@ -184,38 +184,38 @@ namespace Gecode {
      */
     template <class I>
     forceinline ModEvent
-    ConstIntView::narrow_r(Space* home, I& i, bool) {
+    ConstIntView::narrow_r(Space*, I& i, bool) {
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::inter_r(Space* home, I& i, bool) {
+    ConstIntView::inter_r(Space*, I& i, bool) {
       while (i() && (i.max() < x)) 
         ++i;
       return (i() && (i.min() <= x)) ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::minus_r(Space* home, I& i, bool) {
+    ConstIntView::minus_r(Space*, I& i, bool) {
       while (i() && (i.max() < x)) 
         ++i;
       return (i() && (i.min() <= x)) ? ME_INT_FAILED : ME_INT_NONE;
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::narrow_v(Space* home, I& i, bool) {
+    ConstIntView::narrow_v(Space*, I& i, bool) {
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::inter_v(Space* home, I& i, bool) {
+    ConstIntView::inter_v(Space*, I& i, bool) {
       while (i() && (i.val() < x)) 
         ++i;
       return (i() && (i.val() == x)) ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::minus_v(Space* home, I& i, bool) {
+    ConstIntView::minus_v(Space*, I& i, bool) {
       while (i() && (i.val() < x)) 
         ++i;
       return (i() && (i.val() == x)) ? ME_INT_FAILED : ME_INT_NONE;

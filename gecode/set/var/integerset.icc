@@ -89,12 +89,12 @@ namespace Gecode { namespace Set {
   RangeList::operator delete(void*) {}
 
   forceinline void
-  RangeList::operator delete(void*, Space* home) {
+  RangeList::operator delete(void*, Space*) {
     GECODE_NEVER;
   }
 
   forceinline void*
-  RangeList::operator new(size_t s, Space* home) {
+  RangeList::operator new(size_t, Space* home) {
     assert(s == sizeof(RangeList));
     return home->fl_alloc<sizeof(RangeList)>();
   }
@@ -320,7 +320,7 @@ namespace Gecode { namespace Set {
    */
 
   forceinline
-  GLBndSet::GLBndSet(Space* home) {}
+  GLBndSet::GLBndSet(Space*) {}
 
   forceinline
   GLBndSet::GLBndSet(Space* home, int mi, int ma)

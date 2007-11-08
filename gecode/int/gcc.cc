@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View>
   forceinline int
-  x_card(ViewArray<View>& x, IntConLevel icl) {
+  x_card(ViewArray<View>& x, IntConLevel) {
     int n = x.size();
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, n);
     for (int i = n; i--; ){

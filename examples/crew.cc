@@ -94,7 +94,7 @@ public:
   SetVarArray flight;
 
   /// The actual model
-  Crew(const Options& o) :
+  Crew(const Options&) :
     flight(this,noOfFlights,IntSet::empty,0,noOfEmployees-1)
   {
     IntSet stewardsDS(stewards,noOfStewards);

@@ -353,8 +353,8 @@ namespace Gecode {
     // BddOp and BddRel
     // 
     template <class View>
-    void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o,   
-                  CpltSetRelType r) {
+    void rel_post(Space*, ViewArray<View>&, CpltSetOpType,   
+                  CpltSetRelType) {
       throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
     }
 
@@ -406,8 +406,8 @@ namespace Gecode {
     // SetOp and BddRel
     // 
     template <class View>
-    void rel_post(Space* home, ViewArray<View>& x, SetOpType o,
-                  CpltSetRelType r) {
+    void rel_post(Space*, ViewArray<View>&, SetOpType,
+                  CpltSetRelType) {
       throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
     }
     // not yet implemented Bddrel SRT_LE and lex-stuff

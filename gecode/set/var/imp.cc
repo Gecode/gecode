@@ -141,7 +141,7 @@ namespace Gecode { namespace Set {
   }
 
   Reflection::Arg*
-  SetVarImp::spec(Space* home, Reflection::VarMap& m) {
+  SetVarImp::spec(Space*, Reflection::VarMap& m) {
     int specIndex = m.index(this);
     if (specIndex != -1)
       return Reflection::Arg::newVar(specIndex);

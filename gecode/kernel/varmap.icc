@@ -197,7 +197,7 @@ namespace Gecode { namespace Reflection {
   }
 
   template <class Var> void
-  VarMap::registerVar(Space* home, const Var& x, const Support::Symbol& n) {
+  VarMap::registerVar(Space*, const Var& x, const Support::Symbol& n) {
     typename VarViewTraits<Var>::View v(x);
     name(v.variable(), n);
   }

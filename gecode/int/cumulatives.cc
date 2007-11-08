@@ -99,7 +99,7 @@ namespace Gecode {
                      const IntVarArgs& start, const Duration& duration,
                      const IntVarArgs& end, const Height& height,
                      const IntArgs& limit, bool at_most,
-                     IntConLevel cl) {
+                     IntConLevel) {
       if (home->failed()) return;
 
       if (machine.size() != start.size()  ||

@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, class Tuple>
   inline void
-  computesccs(Space* home,
+  computesccs(Space*,
               ViewArray<Tuple>& xz,
               ViewArray<View>& y,
               int phi[],
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Sorted {
               ViewArray<Tuple>& xz,
               ViewArray<View>& y,
               int tau[],
-              int phi[],
+              int[],
               int scclist[],
               SccComponent sinfo[],
               bool& nofix) {

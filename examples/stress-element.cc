@@ -59,7 +59,7 @@ protected:
   IntVarArray x;
 public:
   /// The actual problem
-  StressElement(const Options& opt)
+  StressElement(const Options&)
     : x(this,n,0,n-1) {
 
     IntVarArgs s(n);

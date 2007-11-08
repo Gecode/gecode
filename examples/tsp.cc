@@ -203,7 +203,7 @@ namespace {
   Problem PD(PD_n,PD_d);
 
   Problem ps[] = {PA,PB,PC,PD};
-  const int ps_n = sizeof(ps) / sizeof(Problem);
+  const unsigned int ps_n = sizeof(ps) / sizeof(Problem);
 
 }
 

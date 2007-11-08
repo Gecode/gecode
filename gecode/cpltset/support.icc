@@ -233,7 +233,7 @@ namespace Gecode { namespace CpltSet {
   template <class I, class View0, class View1>
   bdd 
   extcardeq(Gecode::Iter::Ranges::ValCache<I>& inter, 
-            View0& x, View1& y, unsigned int c, int n, int r) {
+            View0& x, View1& y, unsigned int c, int n, int) {
     int xmin = x.initialLubMin();
     int ymin = y.initialLubMin();
 
@@ -508,7 +508,7 @@ namespace Gecode { namespace CpltSet {
   // extcard with const intset
   template <class I>
   bdd 
-  cardConst(int xtab, int xoff, int xmin, int cl, int cr, I& is) {
+  cardConst(int, int xoff, int xmin, int cl, int cr, I& is) {
     // Invariant: We require that the IntSet provided is a subset of the 
     // variable range
     Gecode::Iter::Ranges::ToValues<I> ir(is);

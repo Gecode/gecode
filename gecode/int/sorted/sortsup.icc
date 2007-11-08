@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, class Tuple, bool Perm>
   inline bool
-  check_subsumption(Space* home,
+  check_subsumption(Space*,
                     ViewArray<Tuple>& xz,
                     ViewArray<View>& y,
                     bool& subsumed,
@@ -418,7 +418,7 @@ namespace Gecode { namespace Int { namespace Sorted {
                  ViewArray<View>& y,
                  bool& subsumed,
                  bool& match_fixed,
-                 bool& nofix,
+                 bool&,
                  bool& noperm_bc) {
 
     bool x_complete = true;

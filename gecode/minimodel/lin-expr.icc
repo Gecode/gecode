@@ -323,7 +323,7 @@ operator*(int a, const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t) {
 namespace Gecode {
 
   forceinline IntVar
-  post(Space* home, const IntVar& x, IntConLevel) {
+  post(Space*, const IntVar& x, IntConLevel) {
     return x;
   }
 

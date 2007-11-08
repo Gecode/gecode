@@ -56,7 +56,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntVarArgs& x, IntRelType r, int c, BoolVar b, 
-         IntConLevel icl, PropKind) {
+         IntConLevel, PropKind) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {

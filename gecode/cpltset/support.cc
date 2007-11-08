@@ -342,7 +342,7 @@ namespace Gecode { namespace CpltSet {
 
   // iterate to the next level of nodes
   void 
-  extcardbounds(int& markref, bdd& c, int& n, int& l, int& r,
+  extcardbounds(int& markref, bdd&, int& n, int& l, int& r,
                 bool& singleton, int& _level, 
                 Support::DynamicArray<bdd>& nodes, 
                 int& curmin, int& curmax) {

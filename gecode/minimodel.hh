@@ -759,12 +759,14 @@ namespace Gecode {
   /// Return Boolean variable equal to \f$x\f$
   inline BoolVar
   channel(Space* home, IntVar x, IntConLevel icl=ICL_DEF) {
+    (void)icl;
     BoolVar b(home,0,1); channel(home,b,x);
     return b;
   }
   /// Return integer variable equal to \f$x\f$
   inline IntVar
   channel(Space* home, BoolVar b, IntConLevel icl=ICL_DEF) {
+    (void)icl;
     IntVar x(home,0,1); channel(home,b,x);
     return x;
   }

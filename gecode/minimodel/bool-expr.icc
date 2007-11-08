@@ -89,6 +89,7 @@ namespace Gecode { namespace MiniModel {
   inline
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t)
     : n(new Node) {
+    (void)t;
     assert(t == BT_NOT);
     n->same = 1;
     n->t    = BT_NOT;
@@ -197,7 +198,7 @@ namespace Gecode {
   }
 
   inline BoolVar
-  post(Space* home, const BoolVar& b, IntConLevel) {
+  post(Space*, const BoolVar& b, IntConLevel) {
     return b;
   }
 

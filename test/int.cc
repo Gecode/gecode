@@ -368,8 +368,8 @@ if (!(T)) {                                                     \
 
 
   void 
-  Test::post(Gecode::Space* home, Gecode::IntVarArray& x, 
-             Gecode::BoolVar b) {}
+  Test::post(Gecode::Space*, Gecode::IntVarArray&, 
+             Gecode::BoolVar) {}
 
   bool
   Test::run(void) {

@@ -97,10 +97,6 @@ namespace Gecode { namespace Int { namespace Sorted {
     virtual PropCost cost (void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    static Support::Symbol name(void);
     /// Post propagator for the views \a xz and \a y
     static  ExecStatus post(Space*, ViewArray<Tuple>&, ViewArray<View>&);
   };

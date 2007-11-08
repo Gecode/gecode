@@ -70,7 +70,6 @@ namespace Gecode { namespace Support {
   forceinline unsigned int 
   LinearCongruentialGenerator<m,a,q,r>::next(void) {
     s = a*(s%q) - r*(s/q);
-    if (s<0) s += m;
     unsigned int res = s;
     if (s==0) s = 1;
     return res;

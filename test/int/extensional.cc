@@ -247,6 +247,7 @@ namespace Test { namespace Int {
        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
+         (void)x;
          return false;
        }
        /// Post constraint on \a x
@@ -265,6 +266,7 @@ namespace Test { namespace Int {
        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
+         (void)x;
          return false;
        }
        /// Post constraint on \a x

@@ -110,7 +110,7 @@ class BlackHoleBranch : Branching {
   
 public:
   /// Check status of branching, return true if alternatives left. 
-  virtual bool status(const Space* home) const {
+  virtual bool status(const Space*) const {
     for (pos = 0; pos < x.size(); ++pos) {
       if (!x[pos].assigned()) {
         int w = 4;
@@ -127,7 +127,7 @@ public:
     return false;
   }
   /// Return branching description
-  virtual BranchingDesc* description(const Space* home) const {
+  virtual BranchingDesc* description(const Space*) const {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
     return new PosValDesc<int>(this, pos, val);
   }

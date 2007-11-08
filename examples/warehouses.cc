@@ -102,7 +102,7 @@ protected:
   IntVar total;
 public:
   /// Actual model
-  Warehouses(const Options& opt)
+  Warehouses(const Options&)
     : supplier(this, n_stores, 0, n_suppliers-1),
       open(this, n_suppliers, 0, 1),
       cost(this, n_stores, 0, Limits::Int::int_max),

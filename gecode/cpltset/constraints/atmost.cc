@@ -88,7 +88,7 @@ namespace Gecode {
     template <class View>
     void 
     atmost_post(Space* home, ViewArray<View>& x, int c, 
-                SetRelType lex, int card) {
+                SetRelType, int) {
       if (home->failed()) return;
 
       unsigned int x1_tab = x[1].tableWidth();
@@ -283,7 +283,7 @@ namespace Gecode {
 
     template <class View>
     void 
-    atmost_post(Space* home, View& x, View& y, int c, SetRelType lex,
+    atmost_post(Space* home, View& x, View& y, int c, SetRelType,
                 int card) {
       if (home->failed()) return;
 

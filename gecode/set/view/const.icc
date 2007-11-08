@@ -101,8 +101,9 @@ namespace Gecode { namespace Set {
 
   forceinline
   ConstantView::ConstantView(Space* home,
-                             const Reflection::VarMap& vars,
-                             Reflection::Arg* arg) : ranges(NULL), size(0), domSize(0) {
+                             const Reflection::VarMap&,
+                             Reflection::Arg* arg)
+   : ranges(NULL), size(0), domSize(0) {
     Reflection::IntArrayArgRanges r(arg->toIntArray());      
     IntSet is(r);
     ConstantView(home, is);
@@ -159,27 +160,27 @@ namespace Gecode { namespace Set {
   ConstantView::glbMax(void) const { return lubMax(); }
 
   forceinline ModEvent
-  ConstantView::cardMin(Space* home,unsigned int c) {
+  ConstantView::cardMin(Space*,unsigned int c) {
     return c<=domSize ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::cardMax(Space* home,unsigned int c) {
+  ConstantView::cardMax(Space*,unsigned int c) {
     return c>=domSize ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::include(Space* home,int c) {
+  ConstantView::include(Space*,int c) {
     return contains(c) ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::exclude(Space* home,int c) {
+  ConstantView::exclude(Space*,int c) {
     return contains(c) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   forceinline ModEvent
-  ConstantView::intersect(Space* home,int c) {
+  ConstantView::intersect(Space*,int c) {
     return (size==0 ||
             (size==1 &&
              ranges[0]==ranges[1] && ranges[0]==c)) ?
@@ -187,13 +188,13 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  ConstantView::intersect(Space* home,int i,int j) {
+  ConstantView::intersect(Space*,int i,int j) {
     return (glbMin()>=i && glbMax()<=j) ?
       ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::include(Space* home,int i,int j) {
+  ConstantView::include(Space*,int i,int j) {
     Iter::Ranges::Singleton single(i,j);
     ArrayRanges ar(ranges, size);
     return (single() && Iter::Ranges::subset(single, ar)) ?
@@ -201,7 +202,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  ConstantView::exclude(Space* home,int i,int j) {
+  ConstantView::exclude(Space*,int i,int j) {
     Iter::Ranges::Singleton single(i,j);
     ArrayRanges ar(ranges, size);
     return (single() && Iter::Ranges::subset(single, ar)) ?
@@ -209,19 +210,19 @@ namespace Gecode { namespace Set {
   }
 
   template <class I> ModEvent
-  ConstantView::excludeI(Space* home,I& i) {
+  ConstantView::excludeI(Space*,I& i) {
     ArrayRanges ar(ranges, size);
     return (i() && Iter::Ranges::subset(i, ar)) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template <class I> ModEvent
-  ConstantView::includeI(Space* home,I& i) {
+  ConstantView::includeI(Space*,I& i) {
     ArrayRanges ar(ranges, size);
     return Iter::Ranges::subset(i, ar) ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   template <class I> ModEvent
-  ConstantView::intersectI(Space* home,I& i) {
+  ConstantView::intersectI(Space*,I& i) {
     ArrayRanges ar(ranges, size);
     return Iter::Ranges::subset(ar, i) ? ME_SET_NONE : ME_SET_FAILED;
   }
@@ -252,7 +253,7 @@ namespace Gecode { namespace Set {
   ConstantView::cancel(Space*,Advisor*) {}
 
   forceinline void
-  ConstantView::update(Space* home, bool share, ConstantView& p) {
+  ConstantView::update(Space* home, bool, ConstantView& p) {
     // dispose old ranges
     if (size>0) {
       home->reuse(ranges, 2*size*sizeof(int));
@@ -273,7 +274,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline Reflection::Arg*
-  ConstantView::spec(Space* home, Reflection::VarMap& m) {
+  ConstantView::spec(Space*, Reflection::VarMap&) {
     int count = 0;
     for (ArrayRanges ars(ranges, size); ars(); ++ars) {
       count++;
@@ -298,43 +299,43 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  ConstantView::modevent(const Delta* d) {
+  ConstantView::modevent(const Delta*) {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
   
   forceinline int
-  ConstantView::glbMin(const Delta* d) const {
+  ConstantView::glbMin(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  ConstantView::glbMax(const Delta* d) const {
+  ConstantView::glbMax(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  ConstantView::glbAny(const Delta* d) const {
+  ConstantView::glbAny(const Delta*) const {
     GECODE_NEVER;
     return false;
   }
 
   forceinline int
-  ConstantView::lubMin(const Delta* d) const {
+  ConstantView::lubMin(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  ConstantView::lubMax(const Delta* d) const {
+  ConstantView::lubMax(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  ConstantView::lubAny(const Delta* d) const {
+  ConstantView::lubAny(const Delta*) const {
     GECODE_NEVER;
     return false;
   }
@@ -343,9 +344,8 @@ namespace Gecode { namespace Set {
   EmptyView::EmptyView(void) {}
 
   forceinline
-  EmptyView::EmptyView(Space* home,
-                       const Reflection::VarMap& vars,
-                       Reflection::Arg* arg) {}
+  EmptyView::EmptyView(Space*, const Reflection::VarMap&,
+                       Reflection::Arg*) {}
 
 
   forceinline bool
@@ -385,47 +385,47 @@ namespace Gecode { namespace Set {
   EmptyView::glbMax(void) const { return 0; }
 
   forceinline ModEvent
-  EmptyView::cardMin(Space* home,unsigned int c) {
+  EmptyView::cardMin(Space*,unsigned int c) {
     return c==0 ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  EmptyView::cardMax(Space* home,unsigned int c) {
+  EmptyView::cardMax(Space*,unsigned int) {
     return ME_SET_NONE;
   }
 
 
   forceinline ModEvent
-  EmptyView::include(Space* home,int) {
+  EmptyView::include(Space*,int) {
     return ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  EmptyView::exclude(Space* home,int) { return ME_SET_NONE; }
+  EmptyView::exclude(Space*,int) { return ME_SET_NONE; }
 
   forceinline ModEvent
-  EmptyView::intersect(Space* home,int) { return ME_SET_NONE; }
+  EmptyView::intersect(Space*,int) { return ME_SET_NONE; }
 
   forceinline ModEvent
-  EmptyView::intersect(Space* home,int,int) { return ME_SET_NONE; }
+  EmptyView::intersect(Space*,int,int) { return ME_SET_NONE; }
 
   forceinline ModEvent
-  EmptyView::include(Space* home,int,int) {
+  EmptyView::include(Space*,int,int) {
     return ME_SET_FAILED; }
 
   forceinline ModEvent
-  EmptyView::exclude(Space* home,int,int) { return ME_SET_NONE; }
+  EmptyView::exclude(Space*,int,int) { return ME_SET_NONE; }
 
   template <class I> ModEvent
-  EmptyView::excludeI(Space* home,I&) { return ME_SET_NONE; }
+  EmptyView::excludeI(Space*,I&) { return ME_SET_NONE; }
 
   template <class I> ModEvent
-  EmptyView::includeI(Space* home,I& i) {
+  EmptyView::includeI(Space*,I& i) {
     return i() ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template <class I> ModEvent
-  EmptyView::intersectI(Space* home,I&) {
+  EmptyView::intersectI(Space*,I&) {
     return ME_SET_NONE;
   }
 
@@ -455,10 +455,10 @@ namespace Gecode { namespace Set {
 
 
   forceinline void
-  EmptyView::update(Space* home, bool, EmptyView&) {}
+  EmptyView::update(Space*, bool, EmptyView&) {}
 
   forceinline Reflection::Arg*
-  EmptyView::spec(Space* home, Reflection::VarMap& m) {
+  EmptyView::spec(Space*, Reflection::VarMap&) {
     return NULL;
   }
 
@@ -473,43 +473,43 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  EmptyView::modevent(const Delta* d) {
+  EmptyView::modevent(const Delta*) {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
   
   forceinline int
-  EmptyView::glbMin(const Delta* d) const {
+  EmptyView::glbMin(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  EmptyView::glbMax(const Delta* d) const {
+  EmptyView::glbMax(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  EmptyView::glbAny(const Delta* d) const {
+  EmptyView::glbAny(const Delta*) const {
     GECODE_NEVER;
     return false;
   }
 
   forceinline int
-  EmptyView::lubMin(const Delta* d) const {
+  EmptyView::lubMin(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  EmptyView::lubMax(const Delta* d) const {
+  EmptyView::lubMax(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  EmptyView::lubAny(const Delta* d) const {
+  EmptyView::lubAny(const Delta*) const {
     GECODE_NEVER;
     return false;
   }
@@ -520,9 +520,9 @@ namespace Gecode { namespace Set {
   UniverseView::UniverseView(void) {}
 
   forceinline
-  UniverseView::UniverseView(Space* home,
-                             const Reflection::VarMap& vars,
-                             Reflection::Arg* arg) {}
+  UniverseView::UniverseView(Space*,
+                             const Reflection::VarMap&,
+                             Reflection::Arg*) {}
 
   forceinline bool
   UniverseView::assigned(void) const { return true; }
@@ -561,49 +561,49 @@ namespace Gecode { namespace Set {
   UniverseView::glbMax(void) const { return Limits::Set::card_max; }
 
   forceinline ModEvent
-  UniverseView::cardMin(Space* home,unsigned int c) {
+  UniverseView::cardMin(Space*,unsigned int c) {
     return c>Limits::Set::card_max ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   forceinline ModEvent
-  UniverseView::cardMax(Space* home,unsigned int c) {
+  UniverseView::cardMax(Space*,unsigned int c) {
     return c>=Limits::Set::card_max ? ME_SET_NONE : ME_SET_FAILED;
   }
 
 
   forceinline ModEvent
-  UniverseView::include(Space* home,int) {
+  UniverseView::include(Space*,int) {
     return ME_SET_NONE;
   }
 
   forceinline ModEvent
-  UniverseView::exclude(Space* home,int) { return ME_SET_FAILED; }
+  UniverseView::exclude(Space*,int) { return ME_SET_FAILED; }
 
   forceinline ModEvent
-  UniverseView::intersect(Space* home,int) { return ME_SET_FAILED; }
+  UniverseView::intersect(Space*,int) { return ME_SET_FAILED; }
 
   forceinline ModEvent
-  UniverseView::include(Space* home,int,int) { return ME_SET_NONE; }
+  UniverseView::include(Space*,int,int) { return ME_SET_NONE; }
 
   forceinline ModEvent
-  UniverseView::exclude(Space* home,int,int) { return ME_SET_FAILED; }
+  UniverseView::exclude(Space*,int,int) { return ME_SET_FAILED; }
 
   template <class I> ModEvent
-  UniverseView::excludeI(Space* home,I& i) {
+  UniverseView::excludeI(Space*,I& i) {
     return i() ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template <class I> forceinline ModEvent
-  UniverseView::includeI(Space* home,I&) { return ME_SET_NONE; }
+  UniverseView::includeI(Space*,I&) { return ME_SET_NONE; }
 
   forceinline ModEvent
-  UniverseView::intersect(Space* home,int i,int j) {
+  UniverseView::intersect(Space*,int i,int j) {
     return (i>Limits::Set::int_min ||
-            i<Limits::Set::int_max) ? ME_SET_FAILED : ME_SET_NONE;
+            j<Limits::Set::int_max) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template <class I> forceinline ModEvent
-  UniverseView::intersectI(Space* home,I& i) {
+  UniverseView::intersectI(Space*,I& i) {
     return (i() &&
             (i.min()>Limits::Set::int_min ||
              i.max()<Limits::Set::int_max) ) ?
@@ -636,10 +636,10 @@ namespace Gecode { namespace Set {
 
 
   forceinline void
-  UniverseView::update(Space* home, bool, UniverseView&) {}
+  UniverseView::update(Space*, bool, UniverseView&) {}
 
   forceinline Reflection::Arg*
-  UniverseView::spec(Space* home, Reflection::VarMap& m) {
+  UniverseView::spec(Space*, Reflection::VarMap&) {
     return NULL;
   }
 
@@ -654,43 +654,43 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  UniverseView::modevent(const Delta* d) {
+  UniverseView::modevent(const Delta*) {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
   
   forceinline int
-  UniverseView::glbMin(const Delta* d) const {
+  UniverseView::glbMin(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  UniverseView::glbMax(const Delta* d) const {
+  UniverseView::glbMax(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  UniverseView::glbAny(const Delta* d) const {
+  UniverseView::glbAny(const Delta*) const {
     GECODE_NEVER;
     return false;
   }
 
   forceinline int
-  UniverseView::lubMin(const Delta* d) const {
+  UniverseView::lubMin(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  UniverseView::lubMax(const Delta* d) const {
+  UniverseView::lubMax(const Delta*) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  UniverseView::lubAny(const Delta* d) const {
+  UniverseView::lubAny(const Delta*) const {
     GECODE_NEVER;
     return false;
   }
@@ -712,9 +712,9 @@ namespace Gecode { namespace Set {
     /// Default constructor
     LubRanges(void) {}
     /// Initialize with ranges for view \a x
-    LubRanges(const EmptyView& x) {}
+    LubRanges(const EmptyView& x) { (void)x; }
     /// Initialize with ranges for view \a x
-    void init(const EmptyView& x) {}
+    void init(const EmptyView& x) { (void)x; }
     //@}
   };
 
@@ -730,9 +730,9 @@ namespace Gecode { namespace Set {
     /// Default constructor
     GlbRanges(void) {}
     /// Initialize with ranges for view \a x
-    GlbRanges(const EmptyView& x) {}
+    GlbRanges(const EmptyView& x) { (void)x; }
     /// Initialize with ranges for view \a x
-    void init(const EmptyView& x) {}
+    void init(const EmptyView& x) { (void)x; }
     //@}
   };
 
@@ -752,9 +752,11 @@ namespace Gecode { namespace Set {
     /// Initialize with ranges for view \a x
     LubRanges(const UniverseView& x)
       : Iter::Ranges::Singleton(Limits::Set::int_min,
-                                Limits::Set::int_max) {}
+                                Limits::Set::int_max) {
+        (void)x;
+      }
     /// Initialize with ranges for view \a x
-    void init(const UniverseView& x) {}
+    void init(const UniverseView& x) { (void)x; }
     //@}
   };
 
@@ -774,9 +776,11 @@ namespace Gecode { namespace Set {
     /// Initialize with ranges for view \a x
     GlbRanges(const UniverseView& x)
       : Iter::Ranges::Singleton(Limits::Set::int_min,
-                                Limits::Set::int_max) {}
+                                Limits::Set::int_max) {
+      (void)x;
+    }
     /// Initialize with ranges for view \a x
-    void init(const UniverseView& x) {}
+    void init(const UniverseView& x) { (void)x; }
     //@}
   };
 

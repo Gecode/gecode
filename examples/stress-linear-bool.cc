@@ -54,7 +54,7 @@ public:
     
     linear(this, x, IRT_GQ, 2*opt.size());
 
-    for (int i=0; i<opt.size(); i++) {
+    for (unsigned int i=0; i<opt.size(); i++) {
       // Assign a variable
       rel(this, x[opt.size()-1-i], IRT_EQ, 0);
       // Propagate

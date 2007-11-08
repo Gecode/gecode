@@ -577,13 +577,13 @@ namespace Gecode {
   template <class View, unsigned int n>
   forceinline const View&
   ViewTuple<View,n>::operator[](unsigned int i) const {
-    assert((i>=0)&&(i<n));
+    assert(i<n);
     return x[i];
   }
   template <class View, unsigned int n>
   forceinline View&
   ViewTuple<View,n>::operator[](unsigned int i) {
-    assert((i>=0)&&(i<n));
+    assert(i<n);
     return x[i];
   }
 

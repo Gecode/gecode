@@ -230,8 +230,7 @@ namespace Gecode {
 
     template <class View>
     void partition_post(Space* home, ViewArray<View>& x, View& y, 
-                        bool withlex, SetRelType lex, 
-                        bool withcard, int d) {
+                        bool, SetRelType, bool, int) {
       if (home->failed()) return;
 
       int n = x.size();
@@ -262,8 +261,8 @@ namespace Gecode {
     }
 
     template <class View>
-    void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
-                        SetRelType lex, bool withcard, int d) {
+    void partition_post(Space* home, ViewArray<View>& x, bool,
+                        SetRelType, bool withcard, int d) {
       if (home->failed()) return;
 
       int n = x.size();

@@ -83,6 +83,7 @@ namespace Test { namespace Set {
         : SetTest(t,1,ds_33,true) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
+        (void)x;
         return false;
       }
       /// Post constraint on \a x
@@ -127,6 +128,7 @@ namespace Test { namespace Set {
         : SetTest(t,1,ds_33,true) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
+        (void)x;
         return true;
       }
       /// Post constraint on \a x
@@ -171,6 +173,7 @@ namespace Test { namespace Set {
         : SetTest(t,1,ds_33,true) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
+        (void)x;
         return true;
       }
       /// Post constraint on \a x
@@ -257,6 +260,7 @@ namespace Test { namespace Set {
         : SetTest(t,1,ds_33,true) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
+        (void)x;
         return false;
       }
       /// Post constraint on \a x

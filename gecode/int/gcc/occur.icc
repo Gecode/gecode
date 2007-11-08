@@ -125,7 +125,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline void
-  OccurBndsView::init(Space* home, int min, int max, int val) {
+  OccurBndsView::init(Space*, int min, int max, int val) {
     _min = min; _max=max;
     c = val;
     count = 0;
@@ -202,7 +202,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline Reflection::Arg*
-  OccurBndsView::spec(Space* home, Reflection::VarMap& m) {
+  OccurBndsView::spec(Space*, Reflection::VarMap&) {
     return Reflection::Arg::newPair(
       Reflection::Arg::newPair(Reflection::Arg::newInt(_min),
         Reflection::Arg::newInt(_max)),
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline
-  OccurBndsView::OccurBndsView(Space* home, const Reflection::VarMap& m, 
+  OccurBndsView::OccurBndsView(Space*, const Reflection::VarMap&,
                                Reflection::Arg* arg) {
     _min = arg->first()->first()->toInt();
     _max = arg->first()->second()->toInt();

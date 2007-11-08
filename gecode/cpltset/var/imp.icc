@@ -207,7 +207,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   forceinline void 
-  CpltSetVarImp::dispose(Space* home) {
+  CpltSetVarImp::dispose(Space*) {
     manager.dispose(domain);
     // only variables with nodes in the table need to be disposed
     if (!(_offset == 0 && 

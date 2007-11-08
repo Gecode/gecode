@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template <class View, class Tuple, bool Perm>
   inline bool
-  glover(Space* home,
+  glover(Space*,
          ViewArray<Tuple>& xz,
          ViewArray<View>& y,
          int tau[],
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    */
   template <class View, class Tuple, bool Perm>
   inline bool
-  revglover(Space* home,
+  revglover(Space*,
             ViewArray<Tuple>& xz,
             ViewArray<View>& y,
             int tau[],

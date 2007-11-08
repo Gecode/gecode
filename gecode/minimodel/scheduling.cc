@@ -128,7 +128,7 @@ namespace Gecode {
     }
 
     /// Return the IntVar  \a iv directly
-    IntVar make_intvar(Space *home, IntVar iv)
+    IntVar make_intvar(Space*, IntVar iv)
     {
       return iv;
     }

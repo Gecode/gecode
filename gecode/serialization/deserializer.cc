@@ -51,7 +51,7 @@ namespace Gecode { namespace Serialization {
 
   void
   Deserializer::var(Reflection::VarSpec& spec) {
-	  VarBase* vb;
+	  VarBase* vb = NULL;
     if (!spec.name().empty() &&
         (vb = m.var(spec.name())) != NULL) {
       // TODO: assert that spec and original var are compatible,

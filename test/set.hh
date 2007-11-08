@@ -217,8 +217,8 @@ namespace Test {
       virtual void post(Gecode::Space* home, Gecode::SetVarArray& x, 
                         Gecode::IntVarArray& y) = 0;
       /// Post reified propagator
-      virtual void post(Gecode::Space* home, Gecode::SetVarArray& x,
-                        Gecode::IntVarArray& y, Gecode::BoolVar b) {}
+      virtual void post(Gecode::Space*, Gecode::SetVarArray&,
+                        Gecode::IntVarArray&, Gecode::BoolVar) {}
       /// Perform test
       virtual bool run(void);
     };

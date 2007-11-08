@@ -621,7 +621,7 @@ namespace Gecode { namespace Int { namespace GCC {
   VVGNode::VVGNode(void){} //no-op
 
   forceinline void*
-  VVGNode::operator new(size_t n, void* p){
+  VVGNode::operator new(size_t, void* p){
     return p;
   }
 
