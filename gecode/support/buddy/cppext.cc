@@ -118,7 +118,7 @@ int bdd_setbddpairs(bddPair *pair, int *oldvar, const bdd *newvar, int size)
    
    for (int n=0,e=0 ; n<size ; n++)
       if ((e=bdd_setbddpair(pair, oldvar[n], newvar[n].root)) < 0)
-	 return e;
+         return e;
    
    return 0;
 }
@@ -180,9 +180,9 @@ SHORT   {* Specifies a printing callback handler *}
 PROTO   {* bddstrmhandler bdd_strm_hook(bddstrmhandler handler) *}
 DESCR   {* A printing callback handler for use with BDDs is used to
            convert the BDD variable number into something readable by the
-	   end user. Typically the handler will print a string name
-	   instead of the number. A handler could look like this:
-	   \begin{verbatim}
+           end user. Typically the handler will print a string name
+           instead of the number. A handler could look like this:
+           \begin{verbatim}
 void printhandler(ostream &o, int var)
 {
    extern char **names;
@@ -192,10 +192,10 @@ void printhandler(ostream &o, int var)
 
            \noindent
            The handler can then be passed to BuDDy like this:
-	   {\tt bdd\_strm\_hook(printhandler)}.
+           {\tt bdd\_strm\_hook(printhandler)}.
 
-	   No default handler is supplied. The argument {\tt handler} may be
-	   NULL if no handler is needed. *}
+           No default handler is supplied. The argument {\tt handler} may be
+           NULL if no handler is needed. *}
 RETURN  {* The old handler *}
 ALSO    {* bdd\_printset, bdd\_file\_hook, fdd\_strm\_hook *}
 */
@@ -213,15 +213,15 @@ ostream &operator<<(ostream &o, const bdd &r)
    {
       if (r.root < 2)
       {
-	 o << (r.root == 0 ? "F" : "T");
-	 return o;
+         o << (r.root == 0 ? "F" : "T");
+         return o;
       }
       
       int *set = new int[bddvarnum];
       if (set == NULL)
       {
-	 bdd_error(BDD_MEMORY);
-	 return o;
+         bdd_error(BDD_MEMORY);
+         return o;
       }
       
       memset(set, 0, sizeof(int) * bddvarnum);
@@ -233,28 +233,28 @@ ostream &operator<<(ostream &o, const bdd &r)
    {
       o << "ROOT: " << r.root << "\n";
       if (r.root < 2)
-	 return o;
+         return o;
       
       bdd_mark(r.root);
 
       for (int n=0 ; n<bddnodesize ; n++)
       {
-	 if (LEVEL(n) & MARKON)
-	 {
-	    BddNode *node = &bddnodes[n];
-	 
-	    LEVELp(node) &= MARKOFF;
+         if (LEVEL(n) & MARKON)
+         {
+            BddNode *node = &bddnodes[n];
+         
+            LEVELp(node) &= MARKOFF;
 
-	    o << "[" << setw(5) << n << "] ";
-	    if (strmhandler_bdd)
-	       strmhandler_bdd(o,bddlevel2var[LEVELp(node)]);
-	    else
-	       o << setw(3) << bddlevel2var[LEVELp(node)];
-	    o << " :";
-	    o << " " << setw(3) << LOWp(node);
-	    o << " " << setw(3) << HIGHp(node);
-	    o << "\n";
-	 }
+            o << "[" << setw(5) << n << "] ";
+            if (strmhandler_bdd)
+               strmhandler_bdd(o,bddlevel2var[LEVELp(node)]);
+            else
+               o << setw(3) << bddlevel2var[LEVELp(node)];
+            o << " :";
+            o << " " << setw(3) << LOWp(node);
+            o << " " << setw(3) << HIGHp(node);
+            o << "\n";
+         }
       }
    }
    else
@@ -275,15 +275,15 @@ ostream &operator<<(ostream &o, const bdd &r)
    {
       if (ISCONST(r.root))
       {
-	 o << (r == 0 ? "F" : "T");
-	 return o;
+         o << (r == 0 ? "F" : "T");
+         return o;
       }
       
       int *set = new int[bddvarnum];
       if (set == NULL)
       {
-	 bdd_error(BDD_MEMORY);
-	 return o;
+         bdd_error(BDD_MEMORY);
+         return o;
       }
       
       memset(set, 0, sizeof(int) * bddvarnum);
@@ -303,22 +303,22 @@ PROTO   {* ostream &operator<<(ostream &o, const bdd_ioformat &f)
 ostream &operator<<(ostream &o, const bdd &r) *}
 DESCR   {* BDDs can be printed in various formats using the C++ iostreams
            library. The formats are the those used in {\tt bdd\_printset},
-	   {\tt bdd\_printtable}, {\tt fdd\_printset} and {\tt bdd\_printdot}.
-	   The format can be specified with the following format objects:
-	   \begin{tabular}{ll}\\
-	     {\tt bddset } & BDD level set format \\
-	     {\tt bddtable } & BDD level table format \\
-	     {\tt bdddot }   & Output for use with Dot \\
-	     {\tt bddall }   & The whole node table \\
-	     {\tt fddset }   & FDD level set format \\
-	   \end{tabular}\\
+           {\tt bdd\_printtable}, {\tt fdd\_printset} and {\tt bdd\_printdot}.
+           The format can be specified with the following format objects:
+           \begin{tabular}{ll}\\
+             {\tt bddset } & BDD level set format \\
+             {\tt bddtable } & BDD level table format \\
+             {\tt bdddot }   & Output for use with Dot \\
+             {\tt bddall }   & The whole node table \\
+             {\tt fddset }   & FDD level set format \\
+           \end{tabular}\\
 
-	   \noindent
-	   So a BDD {\tt x} can for example be printed as a table with the
-	   command\\
+           \noindent
+           So a BDD {\tt x} can for example be printed as a table with the
+           command\\
 
-	   \indent {\tt cout << bddtable << x << endl}.
-	   *}
+           \indent {\tt cout << bddtable << x << endl}.
+           *}
 RETURN  {* The specified output stream *}
 ALSO    {* bdd\_strm\_hook, fdd\_strm\_hook *}
 */
@@ -332,19 +332,19 @@ ostream &operator<<(ostream &o, const bdd_ioformat &f)
    {
       for (int n=0 ; n<bddnodesize ; n++)
       {
-	 const BddNode *node = &bddnodes[n];
-	 
-	 if (LOWp(node) != -1)
-	 {
-	    o << "[" << setw(5) << n << "] ";
-	    if (strmhandler_bdd)
-	       strmhandler_bdd(o,bddlevel2var[LEVELp(node)]);
-	    else
-	       o << setw(3) << bddlevel2var[LEVELp(node)] << " :";
-	    o << " " << setw(3) << LOWp(node);
-	    o << " " << setw(3) << HIGHp(node);
-	    o << "\n";
-	 }
+         const BddNode *node = &bddnodes[n];
+         
+         if (LOWp(node) != -1)
+         {
+            o << "[" << setw(5) << n << "] ";
+            if (strmhandler_bdd)
+               strmhandler_bdd(o,bddlevel2var[LEVELp(node)]);
+            else
+               o << setw(3) << bddlevel2var[LEVELp(node)] << " :";
+            o << " " << setw(3) << LOWp(node);
+            o << " " << setw(3) << HIGHp(node);
+            o << "\n";
+         }
       }
    }
    
@@ -367,17 +367,17 @@ static void bdd_printset_rec(ostream& o, int r, int* set)
       
       for (n=0 ; n<bddvarnum ; n++)
       {
-	 if (set[n] > 0)
-	 {
-	    if (!first)
-	       o << ", ";
-	    first = 0;
-	    if (strmhandler_bdd)
-	       strmhandler_bdd(o,bddlevel2var[n]);
-	    else
-	       o << bddlevel2var[n];
-	    o << ":" << (set[n]==2 ? 1 : 0);
-	 }
+         if (set[n] > 0)
+         {
+            if (!first)
+               o << ", ";
+            first = 0;
+            if (strmhandler_bdd)
+               strmhandler_bdd(o,bddlevel2var[n]);
+            else
+               o << bddlevel2var[n];
+            o << ":" << (set[n]==2 ? 1 : 0);
+         }
       }
 
       o << ">";
@@ -431,53 +431,53 @@ static void fdd_printset_rec(ostream &o, int r, int *set)
       o << "<";
       first=1;
       int fdvarnum = fdd_domainnum();
-	 
+         
       for (n=0 ; n<fdvarnum ; n++)
       {
-	 int firstval=1;
-	 used = 0;
-	 int binsize = fdd_varnum(n);
-	 int *vars = fdd_vars(n);
-	 
-	 for (m=0 ; m<binsize ; m++)
-	    if (set[vars[m]] != 0)
-	       used = 1;
-	 
-	 if (used)
-	 {
-	    if (!first)
-	       o << ", ";
-	    first = 0;
-	    if (strmhandler_fdd)
-	       strmhandler_fdd(o, n);
-	    else
-	       o << n;
-	    o << ":";
+         int firstval=1;
+         used = 0;
+         int binsize = fdd_varnum(n);
+         int *vars = fdd_vars(n);
+         
+         for (m=0 ; m<binsize ; m++)
+            if (set[vars[m]] != 0)
+               used = 1;
+         
+         if (used)
+         {
+            if (!first)
+               o << ", ";
+            first = 0;
+            if (strmhandler_fdd)
+               strmhandler_fdd(o, n);
+            else
+               o << n;
+            o << ":";
 
-	    for (m=0 ; m<(1<<binsize) ; m++)
-	    {
-	       binval = fdddec2bin(n, m);
-	       ok=1;
-	       
-	       for (i=0 ; i<binsize && ok ; i++)
-		  if (set[vars[i]] == 1  &&  binval[i] != 0)
-		     ok = 0;
-		  else
-		  if (set[vars[i]] == 2  &&  binval[i] != 1)
-		     ok = 0;
+            for (m=0 ; m<(1<<binsize) ; m++)
+            {
+               binval = fdddec2bin(n, m);
+               ok=1;
+               
+               for (i=0 ; i<binsize && ok ; i++)
+                  if (set[vars[i]] == 1  &&  binval[i] != 0)
+                     ok = 0;
+                  else
+                  if (set[vars[i]] == 2  &&  binval[i] != 1)
+                     ok = 0;
 
-	       if (ok)
-	       {
-		  if (firstval)
-		     o << m;
-		  else
-		     o << "/" << m;
-		  firstval = 0;
-	       }
+               if (ok)
+               {
+                  if (firstval)
+                     o << m;
+                  else
+                     o << "/" << m;
+                  firstval = 0;
+               }
 
-	       free(binval);
-	    }
-	 }
+               free(binval);
+            }
+         }
       }
 
       o << ">";
@@ -504,9 +504,9 @@ SHORT   {* Specifies a printing callback handler *}
 PROTO   {* bddstrmhandler fdd_strm_hook(bddstrmhandler handler) *}
 DESCR   {* A printing callback handler for use with FDDs is used to
            convert the FDD integer identifier into something readable by the
-	   end user. Typically the handler will print a string name
-	   instead of the identifier. A handler could look like this:
-	   \begin{verbatim}
+           end user. Typically the handler will print a string name
+           instead of the identifier. A handler could look like this:
+           \begin{verbatim}
 void printhandler(ostream &o, int var)
 {
    extern char **names;
@@ -516,10 +516,10 @@ void printhandler(ostream &o, int var)
 
            \noindent
            The handler can then be passed to BuDDy like this:
-	   {\tt fdd\_strm\_hook(printhandler)}.
+           {\tt fdd\_strm\_hook(printhandler)}.
 
-	   No default handler is supplied. The argument {\tt handler} may be
-	   NULL if no handler is needed. *}
+           No default handler is supplied. The argument {\tt handler} may be
+           NULL if no handler is needed. *}
 RETURN  {* The old handler *}
 ALSO    {* fdd\_printset, bdd\_file\_hook *}
 */
@@ -557,7 +557,7 @@ void bvec::set(int bitnum, const bdd &b)
 /*======================================================================*/
 
 bvec bvec_map1(const bvec &a,
-	       bdd (*fun)(const bdd &))
+               bdd (*fun)(const bdd &))
 {
    bvec res;
    int n;
@@ -571,7 +571,7 @@ bvec bvec_map1(const bvec &a,
 
 
 bvec bvec_map2(const bvec &a, const bvec &b,
-	       bdd (*fun)(const bdd &, const bdd &))
+               bdd (*fun)(const bdd &, const bdd &))
 {
    bvec res;
    int n;
@@ -591,7 +591,7 @@ bvec bvec_map2(const bvec &a, const bvec &b,
 
 
 bvec bvec_map3(const bvec &a, const bvec &b, const bvec &c,
-	       bdd (*fun)(const bdd &, const bdd &, const bdd &))
+               bdd (*fun)(const bdd &, const bdd &, const bdd &))
 {
    bvec res;
    int n;

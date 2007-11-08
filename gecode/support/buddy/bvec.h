@@ -54,9 +54,9 @@ PROTO   {* typedef struct s_bvec
 typedef BVEC bvec; *}
 DESCR   {* This data structure is used to store boolean vectors. The field
            {\tt bitnum} is the number of elements in the vector and the
-	   field {\tt bitvec} contains the actual BDDs in the vector.
-	   The C++ version of {\tt bvec} is documented at the beginning of
-	   this document *}
+           field {\tt bitvec} contains the actual BDDs in the vector.
+           The C++ version of {\tt bvec} is documented at the beginning of
+           this document *}
 */
 typedef struct s_bvec
 {
@@ -152,11 +152,11 @@ private:
    friend int  bvec_val(const bvec &e);   
    friend bvec bvec_copy(const bvec &v);
    friend bvec bvec_map1(const bvec &a,
-			 bdd (*fun)(const bdd &));
+                         bdd (*fun)(const bdd &));
    friend bvec bvec_map2(const bvec &a, const bvec &b,
-			 bdd (*fun)(const bdd &, const bdd &));
+                         bdd (*fun)(const bdd &, const bdd &));
    friend bvec bvec_map3(const bvec &a, const bvec &b, const bvec &c,
-			 bdd (*fun)(const bdd &, const bdd &, const bdd &));
+                         bdd (*fun)(const bdd &, const bdd &, const bdd &));
    friend bvec bvec_add(const bvec &left, const bvec &right);
    friend bvec bvec_sub(const bvec &left, const bvec &right);
    friend bvec bvec_mulfixed(const bvec &e, int c);

@@ -60,10 +60,10 @@ imatrix* imatrixNew(int size)
    {
       if ((mtx->rows[n]=NEW(char,size/8+1)) == NULL)
       {
-	 for (m=0 ; m<n ; m++)
-	    free(mtx->rows[m]);
-	 free(mtx);
-	 return NULL;
+         for (m=0 ; m<n ; m++)
+            free(mtx->rows[m]);
+         free(mtx);
+         return NULL;
       }
 
       memset(mtx->rows[n], 0, size/8+1);
@@ -101,7 +101,7 @@ void imatrixFPrint(imatrix *mtx, FILE *ofile)
    {
       fprintf(ofile, "%2d %c", y, y < 26 ? (y+'a') : (y-26)+'A');
       for (x=0 ; x<mtx->size ; x++)
-	 fprintf(ofile, "%c", imatrixDepends(mtx,y,x) ? 'x' : ' ');
+         fprintf(ofile, "%c", imatrixDepends(mtx,y,x) ? 'x' : ' ');
       fprintf(ofile, "\n");
    }
 }

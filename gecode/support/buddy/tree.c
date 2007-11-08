@@ -54,7 +54,7 @@ static void update_seq(BddTree *t)
    
    for (n=t->first ; n<=t->last ; n++)
       if (bddvar2level[n] < bddvar2level[low])
-	 low = n;
+         low = n;
 
    for (n=t->first ; n<=t->last ; n++)
       t->seq[bddvar2level[n]-bddvar2level[low]] = n;
@@ -90,7 +90,7 @@ void bddtree_del(BddTree *t)
 
 
 BddTree *bddtree_addrange_rec(BddTree *t, BddTree *prev,
-			      int first, int last, int fixed, int id)
+                              int first, int last, int fixed, int id)
 {
    if (first < 0  ||  last < 0  ||  last < first)
       return NULL;
@@ -99,7 +99,7 @@ BddTree *bddtree_addrange_rec(BddTree *t, BddTree *prev,
    if (t == NULL)
    {
       if ((t=bddtree_new(id)) == NULL)
-	 return NULL;
+         return NULL;
       t->first = first;
       t->fixed = fixed;
       t->seq = NEW(int,last-first+1);
@@ -118,7 +118,7 @@ BddTree *bddtree_addrange_rec(BddTree *t, BddTree *prev,
    {
       BddTree *tnew = bddtree_new(id);
       if (tnew == NULL)
-	 return NULL;
+         return NULL;
       tnew->first = first;
       tnew->last = last;
       tnew->fixed = fixed;
@@ -141,7 +141,7 @@ BddTree *bddtree_addrange_rec(BddTree *t, BddTree *prev,
    if (first >= t->first  &&  last <= t->last)
    {
       t->nextlevel =
-	 bddtree_addrange_rec(t->nextlevel,NULL,first,last,fixed,id);
+         bddtree_addrange_rec(t->nextlevel,NULL,first,last,fixed,id);
       return t;
    }
 
@@ -153,31 +153,31 @@ BddTree *bddtree_addrange_rec(BddTree *t, BddTree *prev,
 
       while (1)
       {
-	    /* Partial cover ->error */
-	 if (last >= this->first  &&  last < this->last)
-	    return NULL;
+            /* Partial cover ->error */
+         if (last >= this->first  &&  last < this->last)
+            return NULL;
 
-	 if (this->next == NULL  ||  last < this->next->first)
-	 {
-	    tnew = bddtree_new(id);
-	    if (tnew == NULL)
-	       return NULL;
-	    tnew->first = first;
-	    tnew->last = last;
-	    tnew->fixed = fixed;
-	    tnew->seq = NEW(int,last-first+1);
-	    update_seq(tnew);
-	    tnew->nextlevel = t;
-	    tnew->next = this->next;
-	    tnew->prev = t->prev;
-	    if (this->next != NULL)
-	       this->next->prev = tnew;
-	    this->next = NULL;
-	    t->prev = NULL;
-	    return tnew;
-	 }
-	 
-	 this = this->next;
+         if (this->next == NULL  ||  last < this->next->first)
+         {
+            tnew = bddtree_new(id);
+            if (tnew == NULL)
+               return NULL;
+            tnew->first = first;
+            tnew->last = last;
+            tnew->fixed = fixed;
+            tnew->seq = NEW(int,last-first+1);
+            update_seq(tnew);
+            tnew->nextlevel = t;
+            tnew->next = this->next;
+            tnew->prev = t->prev;
+            if (this->next != NULL)
+               this->next->prev = tnew;
+            this->next = NULL;
+            t->prev = NULL;
+            return tnew;
+         }
+         
+         this = this->next;
       }
       
    }

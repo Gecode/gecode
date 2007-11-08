@@ -63,7 +63,7 @@ void bdd_pairs_done(void)
    {
       bddPair *next = p->next;
       for (n=0 ; n<bddvarnum ; n++)
-	 bdd_delref( p->result[n] );
+         bdd_delref( p->result[n] );
       free(p->result);
       free(p);
       p = next;
@@ -80,7 +80,7 @@ static int update_pairsid(void)
       bddPair *p;
       pairsid = 0;
       for (p=pairs ; p!=NULL ; p=p->next)
-	 p->id = pairsid++;
+         p->id = pairsid++;
       bdd_operator_reset();
    }
 
@@ -108,7 +108,7 @@ void bdd_pairs_vardown(int level)
       p->result[level+1] = tmp;
       
       if (p->last == level)
-	 p->last++;
+         p->last++;
    }
 }
 
@@ -121,10 +121,10 @@ int bdd_pairs_resize(int oldsize, int newsize)
    for (p=pairs ; p!=NULL ; p=p->next)
    {
       if ((p->result=(BDD*)realloc(p->result,sizeof(BDD)*newsize)) == NULL)
-	 return bdd_error(BDD_MEMORY);
+         return bdd_error(BDD_MEMORY);
 
       for (n=oldsize ; n<newsize ; n++)
-	 p->result[n] = bdd_ithvar(bddlevel2var[n]);
+         p->result[n] = bdd_ithvar(bddlevel2var[n]);
    }
 
    return 0;
@@ -138,8 +138,8 @@ SHORT   {* creates an empty variable pair table *}
 PROTO   {* bddPair *bdd_newpair(void) *}
 DESCR   {* Variable pairs of the type {\tt bddPair} are used in
            {\tt bdd\_replace} to define which variables to replace with
-	   other variables. This function allocates such an empty table. The
-	   table can be freed by a call to {\em bdd\_freepair}. *}
+           other variables. This function allocates such an empty table. The
+           table can be freed by a call to {\em bdd\_freepair}. *}
 RETURN  {* Returns a new table of pairs. *}
 ALSO    {* bdd\_freepair, bdd\_replace, bdd\_setpair, bdd\_setpairs *}
 */
@@ -181,15 +181,15 @@ PROTO   {* int bdd_setpair(bddPair *pair, int oldvar, int newvar)
 int bdd_setbddpair(bddPair *pair, BDD oldvar, BDD newvar) *}
 DESCR   {* Adds the pair {\tt (oldvar,newvar)} to the table of pairs
            {\tt pair}. This results in {\tt oldvar} being substituted
-	   with {\tt newvar} in a call to {\tt bdd\_replace}. In the first
-	   version {\tt newvar} is an integer representing the variable
-	   to be replaced with the old variable.
-	   In the second version {\tt oldvar} is a BDD.
-	   In this case the variable {\tt oldvar} is substituted with the
-	   BDD {\tt newvar}.
-	   The possibility to substitute with any BDD as {\tt newvar} is
-	   utilized in bdd\_compose, whereas only the topmost variable
-	   in the BDD is used in bdd\_replace. *}
+           with {\tt newvar} in a call to {\tt bdd\_replace}. In the first
+           version {\tt newvar} is an integer representing the variable
+           to be replaced with the old variable.
+           In the second version {\tt oldvar} is a BDD.
+           In this case the variable {\tt oldvar} is substituted with the
+           BDD {\tt newvar}.
+           The possibility to substitute with any BDD as {\tt newvar} is
+           utilized in bdd\_compose, whereas only the topmost variable
+           in the BDD is used in bdd\_replace. *}
 RETURN  {* Zero on success, otherwise a negative error code. *}
 ALSO    {* bdd\_newpair, bdd\_setpairs, bdd\_resetpair, bdd\_replace, bdd\_compose *}
 */
@@ -257,7 +257,7 @@ int bdd_setpairs(bddPair *pair, int *oldvar, int *newvar, int size)
    
    for (n=0 ; n<size ; n++)
       if ((e=bdd_setpair(pair, oldvar[n], newvar[n])) < 0)
-	 return e;
+         return e;
    
    return 0;
 }
@@ -271,7 +271,7 @@ int bdd_setbddpairs(bddPair *pair, int *oldvar, BDD *newvar, int size)
    
    for (n=0 ; n<size ; n++)
       if ((e=bdd_setbddpair(pair, oldvar[n], newvar[n])) < 0)
-	 return e;
+         return e;
    
    return 0;
 }
@@ -297,10 +297,10 @@ void bdd_freepair(bddPair *p)
    {
       bddPair *bp = pairs;
       while (bp != NULL  &&  bp->next != p)
-	 bp = bp->next;
+         bp = bp->next;
 
       if (bp != NULL)
-	 bp->next = p->next;
+         bp->next = p->next;
    }
    else
       pairs = p->next;

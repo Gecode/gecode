@@ -233,7 +233,7 @@ SHORT   {* relational product *}
 PROTO   {* #define bdd_relprod(a,b,var) bdd_appex(a,b,bddop_and,var) *}
 DESCR   {* Calculates the relational product of {\tt a} and {\tt b} as
            {\tt a AND b} with the variables in {\tt var} quantified out
-	   afterwards. *}
+           afterwards. *}
 RETURN  {* The relational product or {\tt bddfalse} on errors. *}
 ALSO    {* bdd\_appex *}
 */

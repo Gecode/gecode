@@ -110,8 +110,11 @@ static BddCache misccache;          /* Cache for other results */
 static int cacheratio;
 static BDD satPolarity;
 static int firstReorder;            /* Used instead of local variable in order
-				       to avoid compiler warning about 'first'
-				       being clobbered by setjmp */
+                                       to avoid compiler warning about 'first'
+                                       being clobbered by setjmp */
+static BDD bddParam;                /* Used instead of local variable in order
+                                       to avoid compiler warning about 'r'
+                                       being clobbered by setjmp */
 
 static char*            allsatProfile; /* Variable profile for bdd_allsat() */
 static bddallsathandler allsatHandler; /* Callback handler for bdd_allsat() */
@@ -261,12 +264,12 @@ SHORT   {* Sets the cache ratio for the operator caches *}
 PROTO   {* int bdd_setcacheratio(int r) *}
 DESCR   {* The ratio between the number of nodes in the nodetable
            and the number of entries in the operator cachetables is called
-	   the cache ratio. So a cache ratio of say, four, allocates one cache
-	   entry for each four unique node entries. This value can be set with
-	   {\tt bdd\_setcacheratio} to any positive value. When this is done
-	   the caches are resized instantly to fit the new ratio.
-	   The default is a fixed cache size determined at
-	   initialization time. *}
+           the cache ratio. So a cache ratio of say, four, allocates one cache
+           entry for each four unique node entries. This value can be set with
+           {\tt bdd\_setcacheratio} to any positive value. When this is done
+           the caches are resized instantly to fit the new ratio.
+           The default is a fixed cache size determined at
+           initialization time. *}
 RETURN  {* The previous cache ratio or a negative number on error. *}
 ALSO    {* bdd\_init *}
 */
@@ -308,15 +311,15 @@ PROTO   {* BDD bdd_buildcube(int value, int width, BDD *var)
 BDD bdd_ibuildcube(int value, int width, int *var)*}
 DESCR   {* This function builds a cube from the variables in {\tt
            var}. It does so by interpreting the {\tt width} low order
-	   bits of {\tt value} as a bit mask--a set bit indicates that the
-	   variable should be added in it's positive form, and a cleared
-	   bit the opposite. The most significant bits are encoded with
-	   the first variables in {\tt var}. Consider as an example
-	   the call {\tt bdd\_buildcube(0xB, 4, var)}. This corresponds
-	   to the expression: $var[0] \conj \neg var[1] \conj var[2]
-	   \conj var[3]$. The first version of the function takes an array
-	   of BDDs, whereas the second takes an array of variable numbers
-	   as used in {\tt bdd\_ithvar}. *}
+           bits of {\tt value} as a bit mask--a set bit indicates that the
+           variable should be added in it's positive form, and a cleared
+           bit the opposite. The most significant bits are encoded with
+           the first variables in {\tt var}. Consider as an example
+           the call {\tt bdd\_buildcube(0xB, 4, var)}. This corresponds
+           to the expression: $var[0] \conj \neg var[1] \conj var[2]
+           \conj var[3]$. The first version of the function takes an array
+           of BDDs, whereas the second takes an array of variable numbers
+           as used in {\tt bdd\_ithvar}. *}
 RETURN  {* The resulting cube *}
 ALSO    {* bdd\_ithvar, fdd\_ithvar *}
 */
@@ -331,9 +334,9 @@ BDD bdd_buildcube(int value, int width, BDD *variables)
       BDD v;
       
       if (value & 0x1)
-	 v = bdd_addref( variables[width-z-1] );
+         v = bdd_addref( variables[width-z-1] );
       else
-	 v = bdd_addref( bdd_not(variables[width-z-1]) );
+         v = bdd_addref( bdd_not(variables[width-z-1]) );
 
       bdd_addref(result);
       tmp = bdd_apply(result,v,bddop_and);
@@ -358,9 +361,9 @@ BDD bdd_ibuildcube(int value, int width, int *variables)
       BDD v;
       
       if (value & 0x1)
-	 v = bdd_ithvar(variables[width-z-1]);
+         v = bdd_ithvar(variables[width-z-1]);
       else
-	 v = bdd_nithvar(variables[width-z-1]);
+         v = bdd_nithvar(variables[width-z-1]);
 
       bdd_addref(result);
       tmp = bdd_apply(result,v,bddop_and);
@@ -382,7 +385,7 @@ SHORT   {* negates a bdd *}
 PROTO   {* BDD bdd_not(BDD r) *}
 DESCR   {* Negates the BDD {\tt r} by exchanging
            all references to the zero-terminal with references to the
-	   one-terminal and vice versa. *}
+           one-terminal and vice versa. *}
 RETURN  {* The negated bdd. *}
 */
 BDD bdd_not(BDD r)
@@ -397,16 +400,16 @@ BDD bdd_not(BDD r)
       INITREF;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = not_rec(r);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -460,10 +463,10 @@ SHORT   {* basic bdd operations *}
 PROTO   {* BDD bdd_apply(BDD left, BDD right, int opr) *}
 DESCR   {* The {\tt bdd\_apply} function performs all of the basic
            bdd operations with two operands, such as AND, OR etc.
-	   The {\tt left} argument is the left bdd operand and {\tt right}
-	   is the right operand. The {\tt opr} argument is the requested
-	   operation and must be one of the following\\
-	   
+           The {\tt left} argument is the left bdd operand and {\tt right}
+           is the right operand. The {\tt opr} argument is the requested
+           operation and must be one of the following\\
+           
    \begin{tabular}{lllc}
      {\bf Identifier}    & {\bf Description} & {\bf Truth table}
         & {\bf C++ opr.} \\
@@ -510,17 +513,17 @@ BDD bdd_apply(BDD l, BDD r, int op)
       applyop = op;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = apply_rec(l, r);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
    
@@ -538,47 +541,47 @@ static BDD apply_rec(BDD l, BDD r)
    {
     case bddop_and:
        if (l == r)
-	  return l;
+          return l;
        if (ISZERO(l)  ||  ISZERO(r))
-	  return 0;
+          return 0;
        if (ISONE(l))
-	  return r;
+          return r;
        if (ISONE(r))
-	  return l;
+          return l;
        break;
     case bddop_or:
        if (l == r)
-	  return l;
+          return l;
        if (ISONE(l)  ||  ISONE(r))
-	  return 1;
+          return 1;
        if (ISZERO(l))
-	  return r;
+          return r;
        if (ISZERO(r))
-	  return l;
+          return l;
        break;
     case bddop_xor:
        if (l == r)
-	  return 0;
+          return 0;
        if (ISZERO(l))
-	  return r;
+          return r;
        if (ISZERO(r))
-	  return l;
+          return l;
        break;
     case bddop_nand:
        if (ISZERO(l) || ISZERO(r))
-	  return 1;
+          return 1;
        break;
     case bddop_nor:
        if (ISONE(l)  ||  ISONE(r))
-	  return 0;
+          return 0;
        break;
    case bddop_imp:
       if (ISZERO(l))
-	 return 1;
+         return 1;
       if (ISONE(l))
-	 return r;
+         return r;
       if (ISONE(r))
-	 return 1;
+         return 1;
       break;
    }
 
@@ -591,9 +594,9 @@ static BDD apply_rec(BDD l, BDD r)
       if (entry->a == l  &&  entry->b == r  &&  entry->c == applyop)
       {
 #ifdef CACHESTATS
-	 bddcachestats.opHit++;
+         bddcachestats.opHit++;
 #endif
-	 return entry->r.res;
+         return entry->r.res;
       }
 #ifdef CACHESTATS
       bddcachestats.opMiss++;
@@ -601,22 +604,22 @@ static BDD apply_rec(BDD l, BDD r)
       
       if (LEVEL(l) == LEVEL(r))
       {
-	 PUSHREF( apply_rec(LOW(l), LOW(r)) );
-	 PUSHREF( apply_rec(HIGH(l), HIGH(r)) );
-	 res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
+         PUSHREF( apply_rec(LOW(l), LOW(r)) );
+         PUSHREF( apply_rec(HIGH(l), HIGH(r)) );
+         res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
       }
       else
       if (LEVEL(l) < LEVEL(r))
       {
-	 PUSHREF( apply_rec(LOW(l), r) );
-	 PUSHREF( apply_rec(HIGH(l), r) );
-	 res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
+         PUSHREF( apply_rec(LOW(l), r) );
+         PUSHREF( apply_rec(HIGH(l), r) );
+         res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
       }
       else
       {
-	 PUSHREF( apply_rec(l, LOW(r)) );
-	 PUSHREF( apply_rec(l, HIGH(r)) );
-	 res = bdd_makenode(LEVEL(r), READREF(2), READREF(1));
+         PUSHREF( apply_rec(l, LOW(r)) );
+         PUSHREF( apply_rec(l, HIGH(r)) );
+         res = bdd_makenode(LEVEL(r), READREF(2), READREF(1));
       }
 
       POPREF(2);
@@ -715,9 +718,9 @@ SHORT   {* if-then-else operator *}
 PROTO   {* BDD bdd_ite(BDD f, BDD g, BDD h) *}
 DESCR   {* Calculates the BDD for the expression
            $(f \conj g) \disj (\neg f \conj h)$ more efficiently than doing
-	   the three operations separately. {\tt bdd\_ite} can also be used
-	   for conjunction, disjunction and any other boolean operator, but
-	   is not as efficient for the binary and unary operations. *}
+           the three operations separately. {\tt bdd\_ite} can also be used
+           for conjunction, disjunction and any other boolean operator, but
+           is not as efficient for the binary and unary operations. *}
 RETURN  {* The BDD for $(f \conj g) \disj (\neg f \conj h)$ *}
 ALSO    {* bdd\_apply *}
 */
@@ -736,17 +739,17 @@ BDD bdd_ite(BDD f, BDD g, BDD h)
       INITREF;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = ite_rec(f,g,h);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -787,22 +790,22 @@ static BDD ite_rec(BDD f, BDD g, BDD h)
    {
       if (LEVEL(f) == LEVEL(h))
       {
-	 PUSHREF( ite_rec(LOW(f), LOW(g), LOW(h)) );
-	 PUSHREF( ite_rec(HIGH(f), HIGH(g), HIGH(h)) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         PUSHREF( ite_rec(LOW(f), LOW(g), LOW(h)) );
+         PUSHREF( ite_rec(HIGH(f), HIGH(g), HIGH(h)) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
       }
       else
       if (LEVEL(f) < LEVEL(h))
       {
-	 PUSHREF( ite_rec(LOW(f), LOW(g), h) );
-	 PUSHREF( ite_rec(HIGH(f), HIGH(g), h) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         PUSHREF( ite_rec(LOW(f), LOW(g), h) );
+         PUSHREF( ite_rec(HIGH(f), HIGH(g), h) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
       }
       else /* f > h */
       {
-	 PUSHREF( ite_rec(f, g, LOW(h)) );
-	 PUSHREF( ite_rec(f, g, HIGH(h)) );
-	 res = bdd_makenode(LEVEL(h), READREF(2), READREF(1));
+         PUSHREF( ite_rec(f, g, LOW(h)) );
+         PUSHREF( ite_rec(f, g, HIGH(h)) );
+         res = bdd_makenode(LEVEL(h), READREF(2), READREF(1));
       }
    }
    else
@@ -810,44 +813,44 @@ static BDD ite_rec(BDD f, BDD g, BDD h)
    {
       if (LEVEL(f) == LEVEL(h))
       {
-	 PUSHREF( ite_rec(LOW(f), g, LOW(h)) );
-	 PUSHREF( ite_rec(HIGH(f), g, HIGH(h)) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         PUSHREF( ite_rec(LOW(f), g, LOW(h)) );
+         PUSHREF( ite_rec(HIGH(f), g, HIGH(h)) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
       }
       else
       if (LEVEL(f) < LEVEL(h))
       {
-	 PUSHREF( ite_rec(LOW(f), g, h) );
-	 PUSHREF( ite_rec(HIGH(f), g, h) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         PUSHREF( ite_rec(LOW(f), g, h) );
+         PUSHREF( ite_rec(HIGH(f), g, h) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
       }
       else /* f > h */
       {
-	 PUSHREF( ite_rec(f, g, LOW(h)) );
-	 PUSHREF( ite_rec(f, g, HIGH(h)) );
-	 res = bdd_makenode(LEVEL(h), READREF(2), READREF(1));
+         PUSHREF( ite_rec(f, g, LOW(h)) );
+         PUSHREF( ite_rec(f, g, HIGH(h)) );
+         res = bdd_makenode(LEVEL(h), READREF(2), READREF(1));
       }
    }
    else /* f > g */
    {
       if (LEVEL(g) == LEVEL(h))
       {
-	 PUSHREF( ite_rec(f, LOW(g), LOW(h)) );
-	 PUSHREF( ite_rec(f, HIGH(g), HIGH(h)) );
-	 res = bdd_makenode(LEVEL(g), READREF(2), READREF(1));
+         PUSHREF( ite_rec(f, LOW(g), LOW(h)) );
+         PUSHREF( ite_rec(f, HIGH(g), HIGH(h)) );
+         res = bdd_makenode(LEVEL(g), READREF(2), READREF(1));
       }
       else
       if (LEVEL(g) < LEVEL(h))
       {
-	 PUSHREF( ite_rec(f, LOW(g), h) );
-	 PUSHREF( ite_rec(f, HIGH(g), h) );
-	 res = bdd_makenode(LEVEL(g), READREF(2), READREF(1));
+         PUSHREF( ite_rec(f, LOW(g), h) );
+         PUSHREF( ite_rec(f, HIGH(g), h) );
+         res = bdd_makenode(LEVEL(g), READREF(2), READREF(1));
       }
       else /* g > h */
       {
-	 PUSHREF( ite_rec(f, g, LOW(h)) );
-	 PUSHREF( ite_rec(f, g, HIGH(h)) );
-	 res = bdd_makenode(LEVEL(h), READREF(2), READREF(1));
+         PUSHREF( ite_rec(f, g, LOW(h)) );
+         PUSHREF( ite_rec(f, g, HIGH(h)) );
+         res = bdd_makenode(LEVEL(h), READREF(2), READREF(1));
       }
    }
 
@@ -871,22 +874,22 @@ SHORT   {* restric a set of variables to constant values *}
 PROTO   {* BDD bdd_restrict(BDD r, BDD var) *}
 DESCR   {* This function restricts the variables in {\tt r} to constant
            true or false. How this is done
-	   depends on how the variables are included in the variable set
-	   {\tt var}. If they
-	   are included in their positive form then they are restricted to
-	   true and vice versa. Unfortunately it is not possible to
-	   insert variables in their negated form using {\tt bdd\_makeset},
-	   so the variable set has to be build manually as a
-	   conjunction of the variables. Example: Assume variable 1 should be
-	   restricted to true and variable 3 to false.
-	   \begin{verbatim}
+           depends on how the variables are included in the variable set
+           {\tt var}. If they
+           are included in their positive form then they are restricted to
+           true and vice versa. Unfortunately it is not possible to
+           insert variables in their negated form using {\tt bdd\_makeset},
+           so the variable set has to be build manually as a
+           conjunction of the variables. Example: Assume variable 1 should be
+           restricted to true and variable 3 to false.
+           \begin{verbatim}
   bdd X = make_user_bdd();
   bdd R1 = bdd_ithvar(1);
   bdd R2 = bdd_nithvar(3);
   bdd R = bdd_addref( bdd_apply(R1,R2, bddop_and) );
   bdd RES = bdd_addref( bdd_restrict(X,R) );
 \end{verbatim}
-	   *}
+           *}
 RETURN  {* The restricted bdd. *}
 ALSO    {* bdd\_makeset, bdd\_exist, bdd\_forall *}
 */
@@ -894,6 +897,7 @@ BDD bdd_restrict(BDD r, BDD var)
 {
    BDD res;
    firstReorder = 1;
+   bddParam = r;
    
    CHECKa(r,bddfalse);
    CHECKa(var,bddfalse);
@@ -905,23 +909,23 @@ BDD bdd_restrict(BDD r, BDD var)
    if (setjmp(bddexception) == 0)
    {
       if (varset2svartable(var) < 0)
-	 return bddfalse;
+         return bddfalse;
 
       INITREF;
       miscid = (var << 3) | CACHEID_RESTRICT;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
-      res = restrict_rec(r);
+         bdd_disable_reorder();
+      res = restrict_rec(bddParam);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -953,9 +957,9 @@ static int restrict_rec(int r)
    if (INSVARSET(LEVEL(r)))
    {
       if (quantvarset[LEVEL(r)] > 0)
-	 res = restrict_rec(HIGH(r));
+         res = restrict_rec(HIGH(r));
       else
-	 res = restrict_rec(LOW(r));
+         res = restrict_rec(LOW(r));
    }
    else
    {
@@ -1000,17 +1004,17 @@ BDD bdd_constrain(BDD f, BDD c)
       miscid = CACHEID_CONSTRAIN;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = constrain_rec(f, c);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1048,15 +1052,15 @@ static BDD constrain_rec(BDD f, BDD c)
    if (LEVEL(f) == LEVEL(c))
    {
       if (ISZERO(LOW(c)))
-	 res = constrain_rec(HIGH(f), HIGH(c));
+         res = constrain_rec(HIGH(f), HIGH(c));
       else if (ISZERO(HIGH(c)))
-	 res = constrain_rec(LOW(f), LOW(c));
+         res = constrain_rec(LOW(f), LOW(c));
       else
       {
-	 PUSHREF( constrain_rec(LOW(f), LOW(c)) );
-	 PUSHREF( constrain_rec(HIGH(f), HIGH(c)) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
-	 POPREF(2);
+         PUSHREF( constrain_rec(LOW(f), LOW(c)) );
+         PUSHREF( constrain_rec(HIGH(f), HIGH(c)) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         POPREF(2);
       }
    }
    else
@@ -1070,15 +1074,15 @@ static BDD constrain_rec(BDD f, BDD c)
    else
    {
       if (ISZERO(LOW(c)))
-	 res = constrain_rec(f, HIGH(c));
+         res = constrain_rec(f, HIGH(c));
       else if (ISZERO(HIGH(c)))
-	 res = constrain_rec(f, LOW(c));
+         res = constrain_rec(f, LOW(c));
       else
       {
-	 PUSHREF( constrain_rec(f, LOW(c)) );
-	 PUSHREF( constrain_rec(f, HIGH(c)) );
-	 res = bdd_makenode(LEVEL(c), READREF(2), READREF(1));
-	 POPREF(2);
+         PUSHREF( constrain_rec(f, LOW(c)) );
+         PUSHREF( constrain_rec(f, HIGH(c)) );
+         res = bdd_makenode(LEVEL(c), READREF(2), READREF(1));
+         POPREF(2);
       }
    }
 
@@ -1100,9 +1104,9 @@ SHORT   {* replaces variables with other variables *}
 PROTO   {* BDD bdd_replace(BDD r, bddPair *pair) *}
 DESCR   {* Replaces all variables in the BDD {\tt r} with the variables
            defined by {\tt pair}. Each entry in {\tt pair} consists of a
-	   old and a new variable. Whenever the old variable is found in
-	   {\tt r} then a new node with the new variable is inserted instead.
-	*}
+           old and a new variable. Whenever the old variable is found in
+           {\tt r} then a new node with the new variable is inserted instead.
+        *}
 ALSO   {* bdd\_newpair, bdd\_setpair, bdd\_setpairs *}
 RETURN {* The result of the operation. *}
 */
@@ -1122,17 +1126,17 @@ BDD bdd_replace(BDD r, bddPair *pair)
       replaceid = (pair->id << 2) | CACHEID_REPLACE;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = replace_rec(r);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1246,17 +1250,17 @@ BDD bdd_compose(BDD f, BDD g, int var)
       replaceid = (composelevel << 2) | CACHEID_COMPOSE;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = compose_rec(f, g);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1289,22 +1293,22 @@ static BDD compose_rec(BDD f, BDD g)
    {
       if (LEVEL(f) == LEVEL(g))
       {
-	 PUSHREF( compose_rec(LOW(f), LOW(g)) );
-	 PUSHREF( compose_rec(HIGH(f), HIGH(g)) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         PUSHREF( compose_rec(LOW(f), LOW(g)) );
+         PUSHREF( compose_rec(HIGH(f), HIGH(g)) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
       }
       else
       if (LEVEL(f) < LEVEL(g))
       {
-	 PUSHREF( compose_rec(LOW(f), g) );
-	 PUSHREF( compose_rec(HIGH(f), g) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         PUSHREF( compose_rec(LOW(f), g) );
+         PUSHREF( compose_rec(HIGH(f), g) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
       }
       else
       {
-	 PUSHREF( compose_rec(f, LOW(g)) );
-	 PUSHREF( compose_rec(f, HIGH(g)) );
-	 res = bdd_makenode(LEVEL(g), READREF(2), READREF(1));
+         PUSHREF( compose_rec(f, LOW(g)) );
+         PUSHREF( compose_rec(f, HIGH(g)) );
+         res = bdd_makenode(LEVEL(g), READREF(2), READREF(1));
       }
       POPREF(2);
    }
@@ -1330,16 +1334,16 @@ SHORT   {* simultaneous functional composition *}
 PROTO   {* BDD bdd_veccompose(BDD f, bddPair *pair) *}
 DESCR   {* Uses the pairs of variables and BDDs in {\tt pair} to make
            the simultaneous substitution: $f[g_1/V_1, \ldots, g_n/V_n]$.
-	   In this way one or more BDDs
-	   may be substituted in one step. The BDDs in
-	   {\tt pair} may depend on the variables they are substituting.
+           In this way one or more BDDs
+           may be substituted in one step. The BDDs in
+           {\tt pair} may depend on the variables they are substituting.
            {\tt bdd\_compose} may be used instead of
-	   {\tt bdd\_replace} but is not as efficient when $g_i$ is a
-	   single variable, the same applies to {\tt bdd\_restrict}.
-	   Note that simultaneous substitution is not necessarily the same
-	   as repeated substitution. Example:
-	   $(x_1 \disj x_2)[x_3/x_1,x_4/x_3] = (x_3 \disj x_2) \neq
-	   ((x_1 \disj x_2)[x_3/x_1])[x_4/x_3] = (x_4 \disj x_2)$. *}
+           {\tt bdd\_replace} but is not as efficient when $g_i$ is a
+           single variable, the same applies to {\tt bdd\_restrict}.
+           Note that simultaneous substitution is not necessarily the same
+           as repeated substitution. Example:
+           $(x_1 \disj x_2)[x_3/x_1,x_4/x_3] = (x_3 \disj x_2) \neq
+           ((x_1 \disj x_2)[x_3/x_1])[x_4/x_3] = (x_4 \disj x_2)$. *}
 RETURN  {* The composed BDD *}
 ALSO    {* bdd\_compose, bdd\_replace, bdd\_restrict *}
 */
@@ -1359,17 +1363,17 @@ BDD bdd_veccompose(BDD f, bddPair *pair)
       replacelast = pair->last;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = veccompose_rec(f);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1420,8 +1424,8 @@ SHORT   {* coudert and Madre's restrict function *}
 PROTO   {* BDD bdd_simplify(BDD f, BDD d) *}
 DESCR   {* Tries to simplify the BDD {\tt f} by restricting it to the
            domaine covered by {\tt d}. No checks are done to see if the
-	   result is actually smaller than the input. This can be done
-	   by the user with a call to {\tt bdd\_nodecount}. *}
+           result is actually smaller than the input. This can be done
+           by the user with a call to {\tt bdd\_nodecount}. *}
 ALSO    {* bdd\_restrict *}
 RETURN  {* The simplified BDD *}
 */
@@ -1440,17 +1444,17 @@ BDD bdd_simplify(BDD f, BDD d)
       applyop = bddop_or;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = simplify_rec(f, d);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1487,16 +1491,16 @@ static BDD simplify_rec(BDD f, BDD d)
    if (LEVEL(f) == LEVEL(d))
    {
       if (ISZERO(LOW(d)))
-	 res = simplify_rec(HIGH(f), HIGH(d));
+         res = simplify_rec(HIGH(f), HIGH(d));
       else
       if (ISZERO(HIGH(d)))
-	 res = simplify_rec(LOW(f), LOW(d));
+         res = simplify_rec(LOW(f), LOW(d));
       else
       {
-	 PUSHREF( simplify_rec(LOW(f),	LOW(d)) );
-	 PUSHREF( simplify_rec(HIGH(f), HIGH(d)) );
-	 res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
-	 POPREF(2);
+         PUSHREF( simplify_rec(LOW(f),        LOW(d)) );
+         PUSHREF( simplify_rec(HIGH(f), HIGH(d)) );
+         res = bdd_makenode(LEVEL(f), READREF(2), READREF(1));
+         POPREF(2);
       }
    }
    else
@@ -1539,6 +1543,7 @@ BDD bdd_exist(BDD r, BDD var)
 {
    BDD res;
    firstReorder = 1;
+   bddParam = r;
    
    CHECKa(r, bddfalse);
    CHECKa(var, bddfalse);
@@ -1550,24 +1555,24 @@ BDD bdd_exist(BDD r, BDD var)
    if (setjmp(bddexception) == 0)
    {
       if (varset2vartable(var) < 0)
-	 return bddfalse;
+         return bddfalse;
 
       INITREF;
       quantid = (var << 3) | CACHEID_EXIST; /* FIXME: range */
       applyop = bddop_or;
 
       if (!firstReorder)
-	 bdd_disable_reorder();
-      res = quant_rec(r);
+         bdd_disable_reorder();
+      res = quant_rec(bddParam);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1590,6 +1595,7 @@ BDD bdd_forall(BDD r, BDD var)
 {
    BDD res;
    firstReorder = 1;
+   bddParam = r;
    
    CHECKa(r, bddfalse);
    CHECKa(var, bddfalse);
@@ -1601,24 +1607,24 @@ BDD bdd_forall(BDD r, BDD var)
    if (setjmp(bddexception) == 0)
    {
       if (varset2vartable(var) < 0)
-	 return bddfalse;
+         return bddfalse;
 
       INITREF;
       quantid = (var << 3) | CACHEID_FORALL;
       applyop = bddop_and;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
-      res = quant_rec(r);
+         bdd_disable_reorder();
+      res = quant_rec(bddParam);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1634,9 +1640,9 @@ SHORT   {* unique quantification of variables *}
 PROTO   {* BDD bdd_unique(BDD r, BDD var) *}
 DESCR   {* Removes all occurences in {\tt r} of variables in the set
            {\tt var} by unique quantification. This type of quantification
-	   uses a XOR operator instead of an OR operator as in the
-	   existential quantification, and an AND operator as in the
-	   universal quantification. *}
+           uses a XOR operator instead of an OR operator as in the
+           existential quantification, and an AND operator as in the
+           universal quantification. *}
 ALSO    {* bdd\_exist, bdd\_forall, bdd\_makeset *}
 RETURN  {* The quantified BDD. *}
 */
@@ -1644,6 +1650,7 @@ BDD bdd_unique(BDD r, BDD var)
 {
    BDD res;
    firstReorder = 1;
+   bddParam = r;
    
    CHECKa(r, bddfalse);
    CHECKa(var, bddfalse);
@@ -1655,24 +1662,24 @@ BDD bdd_unique(BDD r, BDD var)
    if (setjmp(bddexception) == 0)
    {
       if (varset2vartable(var) < 0)
-	 return bddfalse;
+         return bddfalse;
 
       INITREF;
       quantid = (var << 3) | CACHEID_UNIQUE;
       applyop = bddop_xor;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
-      res = quant_rec(r);
+         bdd_disable_reorder();
+      res = quant_rec(bddParam);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1728,14 +1735,14 @@ SHORT   {* apply operation and existential quantification *}
 PROTO   {* BDD bdd_appex(BDD left, BDD right, int opr, BDD var) *}
 DESCR   {* Applies the binary operator {\tt opr} to the arguments
            {\tt left} and {\tt right} and then performs an existential
-	   quantification of the variables from the variable set
-	   {\tt var}. This is done in a bottom up manner such that both the
-	   apply and quantification is done on the lower nodes before
-	   stepping up to the higher nodes. This makes the {\tt bdd\_appex}
-	   function much more efficient than an apply operation followed
-	   by a quantification. If the operator is a conjunction then this
-	   is similar to the relational product of the two BDDs.
-	   \index{relational product} *}
+           quantification of the variables from the variable set
+           {\tt var}. This is done in a bottom up manner such that both the
+           apply and quantification is done on the lower nodes before
+           stepping up to the higher nodes. This makes the {\tt bdd\_appex}
+           function much more efficient than an apply operation followed
+           by a quantification. If the operator is a conjunction then this
+           is similar to the relational product of the two BDDs.
+           \index{relational product} *}
 ALSO    {* bdd\_appall, bdd\_appuni, bdd\_apply, bdd\_exist, bdd\_forall, bdd\_unique, bdd\_makeset *}
 RETURN  {* The result of the operation. *}
 */
@@ -1761,7 +1768,7 @@ BDD bdd_appex(BDD l, BDD r, int opr, BDD var)
    if (setjmp(bddexception) == 0)
    {
       if (varset2vartable(var) < 0)
-	 return bddfalse;
+         return bddfalse;
    
       INITREF;
       applyop = bddop_or;
@@ -1770,17 +1777,17 @@ BDD bdd_appex(BDD l, BDD r, int opr, BDD var)
       quantid = (appexid << 3) | CACHEID_APPEX;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = appquant_rec(l, r);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
    
@@ -1796,12 +1803,12 @@ SHORT   {* apply operation and universal quantification *}
 PROTO   {* BDD bdd_appall(BDD left, BDD right, int opr, BDD var) *}
 DESCR   {* Applies the binary operator {\tt opr} to the arguments
            {\tt left} and {\tt right} and then performs an universal
-	   quantification of the variables from the variable set
-	   {\tt var}. This is done in a bottom up manner such that both the
-	   apply and quantification is done on the lower nodes before
-	   stepping up to the higher nodes. This makes the {\tt bdd\_appall}
-	   function much more efficient than an apply operation followed
-	   by a quantification. *}
+           quantification of the variables from the variable set
+           {\tt var}. This is done in a bottom up manner such that both the
+           apply and quantification is done on the lower nodes before
+           stepping up to the higher nodes. This makes the {\tt bdd\_appall}
+           function much more efficient than an apply operation followed
+           by a quantification. *}
 ALSO    {* bdd\_appex, bdd\_appuni, bdd\_apply, bdd\_exist, bdd\_forall, bdd\_unique, bdd\_makeset *}
 RETURN  {* The result of the operation. *}
 */
@@ -1827,7 +1834,7 @@ BDD bdd_appall(BDD l, BDD r, int opr, BDD var)
    if (setjmp(bddexception) == 0)
    {
       if (varset2vartable(var) < 0)
-	 return bddfalse;
+         return bddfalse;
 
       INITREF;
       applyop = bddop_and;
@@ -1836,17 +1843,17 @@ BDD bdd_appall(BDD l, BDD r, int opr, BDD var)
       quantid = (appexid << 3) | CACHEID_APPAL;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = appquant_rec(l, r);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1862,12 +1869,12 @@ SHORT   {* apply operation and unique quantification *}
 PROTO   {* BDD bdd_appuni(BDD left, BDD right, int opr, BDD var) *}
 DESCR   {* Applies the binary operator {\tt opr} to the arguments
            {\tt left} and {\tt right} and then performs a unique
-	   quantification of the variables from the variable set
-	   {\tt var}. This is done in a bottom up manner such that both the
-	   apply and quantification is done on the lower nodes before
-	   stepping up to the higher nodes. This makes the {\tt bdd\_appuni}
-	   function much more efficient than an apply operation followed
-	   by a quantification. *}
+           quantification of the variables from the variable set
+           {\tt var}. This is done in a bottom up manner such that both the
+           apply and quantification is done on the lower nodes before
+           stepping up to the higher nodes. This makes the {\tt bdd\_appuni}
+           function much more efficient than an apply operation followed
+           by a quantification. *}
 ALSO    {* bdd\_appex, bdd\_appall, bdd\_apply, bdd\_exist, bdd\_unique, bdd\_forall, bdd\_makeset *}
 RETURN  {* The result of the operation. *}
 */
@@ -1893,7 +1900,7 @@ BDD bdd_appuni(BDD l, BDD r, int opr, BDD var)
    if (setjmp(bddexception) == 0)
    {
       if (varset2vartable(var) < 0)
-	 return bddfalse;
+         return bddfalse;
 
       INITREF;
       applyop = bddop_xor;
@@ -1902,17 +1909,17 @@ BDD bdd_appuni(BDD l, BDD r, int opr, BDD var)
       quantid = (appexid << 3) | CACHEID_APPUN;
       
       if (!firstReorder)
-	 bdd_disable_reorder();
+         bdd_disable_reorder();
       res = appquant_rec(l, r);
       if (!firstReorder)
-	 bdd_enable_reorder();
+         bdd_enable_reorder();
    }
    else
    {
       bdd_checkreorder();
 
       if (firstReorder-- == 1)
-	 goto again;
+         goto again;
       res = BDDZERO;  /* avoid warning about res being uninitialized */
    }
 
@@ -1930,39 +1937,39 @@ static int appquant_rec(int l, int r)
    {
     case bddop_and:
        if (l == 0  ||  r == 0)
-	  return 0;
+          return 0;
        if (l == r)
-	  return quant_rec(l);
+          return quant_rec(l);
        if (l == 1)
-	  return quant_rec(r);
+          return quant_rec(r);
        if (r == 1)
-	  return quant_rec(l);
+          return quant_rec(l);
        break;
     case bddop_or:
        if (l == 1  ||  r == 1)
-	  return 1;
+          return 1;
        if (l == r)
-	  return quant_rec(l);
+          return quant_rec(l);
        if (l == 0)
-	  return quant_rec(r);
+          return quant_rec(r);
        if (r == 0)
-	  return quant_rec(l);
+          return quant_rec(l);
        break;
     case bddop_xor:
        if (l == r)
-	  return 0;
+          return 0;
        if (l == 0)
-	  return quant_rec(r);
+          return quant_rec(r);
        if (r == 0)
-	  return quant_rec(l);
+          return quant_rec(l);
        break;
     case bddop_nand:
        if (l == 0  ||  r == 0)
-	  return 1;
+          return 1;
        break;
     case bddop_nor:
        if (l == 1  ||  r == 1)
-	  return 0;
+          return 0;
        break;
    }
    
@@ -1982,9 +1989,9 @@ static int appquant_rec(int l, int r)
       if (entry->a == l  &&  entry->b == r  &&  entry->c == appexid)
       {
 #ifdef CACHESTATS
-	 bddcachestats.opHit++;
+         bddcachestats.opHit++;
 #endif
-	 return entry->r.res;
+         return entry->r.res;
       }
 #ifdef CACHESTATS
       bddcachestats.opMiss++;
@@ -1992,31 +1999,31 @@ static int appquant_rec(int l, int r)
 
       if (LEVEL(l) == LEVEL(r))
       {
-	 PUSHREF( appquant_rec(LOW(l), LOW(r)) );
-	 PUSHREF( appquant_rec(HIGH(l), HIGH(r)) );
-	 if (INVARSET(LEVEL(l)))
-	    res = apply_rec(READREF(2), READREF(1));
-	 else
-	    res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
+         PUSHREF( appquant_rec(LOW(l), LOW(r)) );
+         PUSHREF( appquant_rec(HIGH(l), HIGH(r)) );
+         if (INVARSET(LEVEL(l)))
+            res = apply_rec(READREF(2), READREF(1));
+         else
+            res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
       }
       else
       if (LEVEL(l) < LEVEL(r))
       {
-	 PUSHREF( appquant_rec(LOW(l), r) );
-	 PUSHREF( appquant_rec(HIGH(l), r) );
-	 if (INVARSET(LEVEL(l)))
-	    res = apply_rec(READREF(2), READREF(1));
-	 else
-	    res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
+         PUSHREF( appquant_rec(LOW(l), r) );
+         PUSHREF( appquant_rec(HIGH(l), r) );
+         if (INVARSET(LEVEL(l)))
+            res = apply_rec(READREF(2), READREF(1));
+         else
+            res = bdd_makenode(LEVEL(l), READREF(2), READREF(1));
       }
       else
       {
-	 PUSHREF( appquant_rec(l, LOW(r)) );
-	 PUSHREF( appquant_rec(l, HIGH(r)) );
-	 if (INVARSET(LEVEL(r)))
-	    res = apply_rec(READREF(2), READREF(1));
-	 else
-	    res = bdd_makenode(LEVEL(r), READREF(2), READREF(1));
+         PUSHREF( appquant_rec(l, LOW(r)) );
+         PUSHREF( appquant_rec(l, HIGH(r)) );
+         if (INVARSET(LEVEL(r)))
+            res = apply_rec(READREF(2), READREF(1));
+         else
+            res = bdd_makenode(LEVEL(r), READREF(2), READREF(1));
       }
 
       POPREF(2);
@@ -2095,11 +2102,11 @@ BDD bdd_support(BDD r)
    for (n=supportMax ; n>=supportMin ; --n)
       if (supportSet[n] == supportID)
       {
-	 register BDD tmp;
-	 bdd_addref(res);
-	 tmp = bdd_makenode(n, 0, res);
-	 bdd_delref(res);
-	 res = tmp;
+         register BDD tmp;
+         bdd_addref(res);
+         tmp = bdd_makenode(n, 0, res);
+         bdd_delref(res);
+         res = tmp;
       }
    
    bdd_enable_reorder();
@@ -2140,7 +2147,7 @@ SHORT   {* finds one satisfying variable assignment *}
 PROTO   {* BDD bdd_satone(BDD r) *}
 DESCR   {* Finds a BDD with at most one variable at each level. This BDD
            implies {\tt r} and is not false unless {\tt r} is
-	   false. *}
+           false. *}
 ALSO    {* bdd\_allsat bdd\_satoneset, bdd\_fullsatone, bdd\_satcount, bdd\_satcountln *}
 RETURN  {* The result of the operation. *}
 */
@@ -2189,11 +2196,11 @@ SHORT   {* finds one satisfying variable assignment *}
 PROTO   {* BDD bdd_satoneset(BDD r, BDD var, BDD pol) *}
 DESCR   {* Finds a minterm in {\tt r}. The {\tt var} argument is a
            variable set that defines a set of variables that {\em must} be
-	   mentioned in the result. The polarity of these variables in
-	   result---in case they are undefined in {\tt r}---are defined
-	   by the {\tt pol} parameter. If {\tt pol} is the false BDD then
-	   the variables will be in negative form, and otherwise they will
-	   be in positive form. *}
+           mentioned in the result. The polarity of these variables in
+           result---in case they are undefined in {\tt r}---are defined
+           by the {\tt pol} parameter. If {\tt pol} is the false BDD then
+           the variables will be in negative form, and otherwise they will
+           be in positive form. *}
 ALSO    {* bdd\_allsat bdd\_satone, bdd\_fullsatone, bdd\_satcount, bdd\_satcountln *}
 RETURN  {* The result of the operation. *}
 */
@@ -2232,34 +2239,34 @@ static BDD satoneset_rec(BDD r, BDD var)
    {
       if (ISZERO(LOW(r)))
       {
-	 BDD res = satoneset_rec(HIGH(r), var);
-	 return PUSHREF( bdd_makenode(LEVEL(r), BDDZERO, res) );
+         BDD res = satoneset_rec(HIGH(r), var);
+         return PUSHREF( bdd_makenode(LEVEL(r), BDDZERO, res) );
       }
       else
       {
-	 BDD res = satoneset_rec(LOW(r), var);
-	 return PUSHREF( bdd_makenode(LEVEL(r), res, BDDZERO) );
+         BDD res = satoneset_rec(LOW(r), var);
+         return PUSHREF( bdd_makenode(LEVEL(r), res, BDDZERO) );
       }
    }
    else if (LEVEL(var) < LEVEL(r))
    {
       BDD res = satoneset_rec(r, HIGH(var));
       if (satPolarity == BDDONE)
-	 return PUSHREF( bdd_makenode(LEVEL(var), BDDZERO, res) );
+         return PUSHREF( bdd_makenode(LEVEL(var), BDDZERO, res) );
       else
-	 return PUSHREF( bdd_makenode(LEVEL(var), res, BDDZERO) );
+         return PUSHREF( bdd_makenode(LEVEL(var), res, BDDZERO) );
    }
    else /* LEVEL(r) == LEVEL(var) */
    {
       if (ISZERO(LOW(r)))
       {
-	 BDD res = satoneset_rec(HIGH(r), HIGH(var));
-	 return PUSHREF( bdd_makenode(LEVEL(r), BDDZERO, res) );
+         BDD res = satoneset_rec(HIGH(r), HIGH(var));
+         return PUSHREF( bdd_makenode(LEVEL(r), BDDZERO, res) );
       }
       else
       {
-	 BDD res = satoneset_rec(LOW(r), HIGH(var));
-	 return PUSHREF( bdd_makenode(LEVEL(r), res, BDDZERO) );
+         BDD res = satoneset_rec(LOW(r), HIGH(var));
+         return PUSHREF( bdd_makenode(LEVEL(r), res, BDDZERO) );
       }
    }
    
@@ -2275,7 +2282,7 @@ SHORT   {* finds one satisfying variable assignment *}
 PROTO   {* BDD bdd_fullsatone(BDD r) *}
 DESCR   {* Finds a BDD with exactly one variable at all levels. This BDD
            implies {\tt r} and is not false unless {\tt r} is
-	   false. *}
+           false. *}
 ALSO    {* bdd\_allsat bdd\_satone, bdd\_satoneset, bdd\_satcount, bdd\_satcountln *}
 RETURN  {* The result of the operation. *}
 */
@@ -2317,7 +2324,7 @@ static int fullsatone_rec(int r)
       
       for (v=LEVEL(LOW(r))-1 ; v>LEVEL(r) ; v--)
       {
-	 res = PUSHREF( bdd_makenode(v, res, 0) );
+         res = PUSHREF( bdd_makenode(v, res, 0) );
       }
 
       return PUSHREF( bdd_makenode(LEVEL(r), res, 0) );
@@ -2329,7 +2336,7 @@ static int fullsatone_rec(int r)
       
       for (v=LEVEL(HIGH(r))-1 ; v>LEVEL(r) ; v--)
       {
-	 res = PUSHREF( bdd_makenode(v, res, 0) );
+         res = PUSHREF( bdd_makenode(v, res, 0) );
       }
 
       return PUSHREF( bdd_makenode(LEVEL(r), 0, res) );
@@ -2346,15 +2353,15 @@ SHORT   {* finds all satisfying variable assignments *}
 PROTO   {* BDD bdd_satone(BDD r, bddallsathandler handler) *}
 DESCR   {* Iterates through all legal variable assignments (those
            that make the BDD come true) for the  bdd {\tt r} and
-	   calls the callback handler {\tt handler} for each of them.
-	   The array passed to {\tt handler} contains one entry for
-	   each of the globaly defined variables. Each entry is either
-	   0 if the variable is false, 1 if it is true, and -1 if it
-	   is a don't care.
+           calls the callback handler {\tt handler} for each of them.
+           The array passed to {\tt handler} contains one entry for
+           each of the globaly defined variables. Each entry is either
+           0 if the variable is false, 1 if it is true, and -1 if it
+           is a don't care.
 
-	   The following is an example of a callback handler that
-	   prints 'X' for don't cares, '0' for zero, and '1' for one:
-	   \begin{verbatim}
+           The following is an example of a callback handler that
+           prints 'X' for don't cares, '0' for zero, and '1' for one:
+           \begin{verbatim}
 void allsatPrintHandler(char* varset, int size)
 {
   for (int v=0; v<size ; ++v)
@@ -2366,9 +2373,9 @@ void allsatPrintHandler(char* varset, int size)
 \end{verbatim}
 
            \noindent
-	   The handler can be used like this:
-	   {\tt bdd\_allsat(r, allsatPrintHandler); } *}
-	   
+           The handler can be used like this:
+           {\tt bdd\_allsat(r, allsatPrintHandler); } *}
+           
 ALSO    {* bdd\_satone bdd\_satoneset, bdd\_fullsatone, bdd\_satcount, bdd\_satcountln *}
 */
 void bdd_allsat(BDD r, bddallsathandler handler)
@@ -2411,10 +2418,10 @@ static void allsat_rec(BDD r)
       int v;
 
       allsatProfile[bddlevel2var[LEVEL(r)]] = 0;
-	 
+         
       for (v=LEVEL(LOW(r))-1 ; v>LEVEL(r) ; --v)
       {
-	 allsatProfile[bddlevel2var[v]] = -1;
+         allsatProfile[bddlevel2var[v]] = -1;
       }
       
       allsat_rec(LOW(r));
@@ -2425,10 +2432,10 @@ static void allsat_rec(BDD r)
       int v;
 
       allsatProfile[bddlevel2var[LEVEL(r)]] = 1;
-	 
+         
       for (v=LEVEL(HIGH(r))-1 ; v>LEVEL(r) ; --v)
       {
-	 allsatProfile[bddlevel2var[v]] = -1;
+         allsatProfile[bddlevel2var[v]] = -1;
       }
       
       allsat_rec(HIGH(r));
@@ -2447,10 +2454,10 @@ PROTO   {* double bdd_satcount(BDD r)
 double bdd_satcountset(BDD r, BDD varset) *}
 DESCR   {* Calculates how many possible variable assignments there exists
            such that {\tt r} is satisfied (true). All defined
-	   variables are considered in the first version. In the
-	   second version, only the variables in the variable
-	   set {\tt varset} are considered. This makes the function a
-	   {\em lot} slower. *}
+           variables are considered in the first version. In the
+           second version, only the variables in the variable
+           set {\tt varset} are considered. This makes the function a
+           {\em lot} slower. *}
 ALSO    {* bdd\_satone, bdd\_fullsatone, bdd\_satcountln *}
 RETURN  {* The number of possible assignments. *}
 */
@@ -2524,15 +2531,15 @@ SHORT   {* calculates the log. number of satisfying variable assignments *}
 PROTO   {* double bdd_satcountln(BDD r)
 double bdd_satcountlnset(BDD r, BDD varset)*}
 DESCR   {* Calculates how many possible variable assignments there
-	   exists such that {\tt r} is satisfied (true) and returns
-	   the logarithm of this. The result is calculated in such a
-	   manner that it is practically impossible to get an
-	   overflow, which is very possible for {\tt bdd\_satcount} if
-	   the number of defined variables is too large. All defined
-	   variables are considered in the first version. In the
-	   second version, only the variables in the variable
-	   set {\tt varset} are considered. This makes the function
-	   a {\em lot} slower! *}
+           exists such that {\tt r} is satisfied (true) and returns
+           the logarithm of this. The result is calculated in such a
+           manner that it is practically impossible to get an
+           overflow, which is very possible for {\tt bdd\_satcount} if
+           the number of defined variables is too large. All defined
+           variables are considered in the first version. In the
+           second version, only the variables in the variable
+           set {\tt varset} are considered. This makes the function
+           a {\em lot} slower! *}
 ALSO    {* bdd\_satone, bdd\_fullsatone, bdd\_satcount *}
 RETURN {* The logarithm of the number of possible assignments. *} */
 double bdd_satcountln(BDD r)
@@ -2642,8 +2649,8 @@ SHORT   {* counts the number of shared nodes in an array of BDDs *}
 PROTO   {* int bdd_anodecount(BDD *r, int num) *}
 DESCR   {* Traverses all of the BDDs in {\tt r} and counts all distinct nodes
            that are used in the BDDs--if a node is used in more than one
-	   BDD then it only counts once. The {\tt num} parameter holds the
-	   size of the array. *}
+           BDD then it only counts once. The {\tt num} parameter holds the
+           size of the array. *}
 RETURN  {* The number of nodes *}
 ALSO    {* bdd\_nodecount *}
 */
@@ -2671,9 +2678,9 @@ SHORT   {* returns a variable profile *}
 PROTO   {* int *bdd_varprofile(BDD r) *}
 DESCR   {* Counts the number of times each variable occurs in the
            bdd {\tt r}. The result is stored and returned in an integer array
-	   where the i'th position stores the number of times the i'th
-	   variable occured in the BDD. It is the users responsibility to
-	   free the array again using a call to {\tt free}. *}
+           where the i'th position stores the number of times the i'th
+           variable occured in the BDD. It is the users responsibility to
+           free the array again using a call to {\tt free}. *}
 RETURN  {* A pointer to an integer array with the profile or NULL if an
            error occured. *}
 */
@@ -2821,13 +2828,13 @@ static int varset2svartable(BDD r)
    {
       if (ISZERO(LOW(n)))
       {
-	 quantvarset[LEVEL(n)] = quantvarsetID;
-	 n = HIGH(n);
+         quantvarset[LEVEL(n)] = quantvarsetID;
+         n = HIGH(n);
       }
       else
       {
-	 quantvarset[LEVEL(n)] = -quantvarsetID;
-	 n = LOW(n);
+         quantvarset[LEVEL(n)] = -quantvarsetID;
+         n = LOW(n);
       }
       quantlast = LEVEL(n);
    }

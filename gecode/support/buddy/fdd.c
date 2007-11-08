@@ -87,7 +87,7 @@ void bdd_fdd_done(void)
    if (domain != NULL)
    {
       for (n=0 ; n<fdvarnum ; n++)
-	 Domain_done(&domain[n]);
+         Domain_done(&domain[n]);
       free(domain);
    }
 
@@ -103,20 +103,20 @@ PROTO   {* int fdd_extdomain(int *dom, int num) *}
 DESCR   {* Extends the set of finite domain blocks with the {\tt num}
            domains in
            {\tt dom}. Each entry in {\tt dom} defines the size of a new
-	   finite domain which later on can be used for finite state machine
-	   traversal and other operations on finte domains. Each domain
-	   allocates $\log_2(|dom[i]|)$ BDD variables to be used later.
-	   The ordering is interleaved for the domains defined in each
-	   call to {\tt bdd\_extdomain}. This means that assuming domain
-	   $D_0$ needs 2 BDD variables $x_1$ and $x_2$, and another domain
-	   $D_1$ needs 4 BDD variables $y_1,y_2,y_3$ and $y_4$, then the
-	   order will be $x_1,y_1,x_2,y_2,y_3,y_4$. The index of the first
-	   domain in {\tt dom} is returned. The index of the other domains
-	   are offset from this index with the same offset as in {\tt dom}.
+           finite domain which later on can be used for finite state machine
+           traversal and other operations on finte domains. Each domain
+           allocates $\log_2(|dom[i]|)$ BDD variables to be used later.
+           The ordering is interleaved for the domains defined in each
+           call to {\tt bdd\_extdomain}. This means that assuming domain
+           $D_0$ needs 2 BDD variables $x_1$ and $x_2$, and another domain
+           $D_1$ needs 4 BDD variables $y_1,y_2,y_3$ and $y_4$, then the
+           order will be $x_1,y_1,x_2,y_2,y_3,y_4$. The index of the first
+           domain in {\tt dom} is returned. The index of the other domains
+           are offset from this index with the same offset as in {\tt dom}.
 
-	   The BDD variables needed to encode the domain are created for the
-	   purpose and do not interfere with the BDD variables already in
-	   use. *}
+           The BDD variables needed to encode the domain are created for the
+           purpose and do not interfere with the BDD variables already in
+           use. *}
 RETURN  {* The index of the first domain or a negative error code. *}
 ALSO    {* fdd\_ithvar, fdd\_equals, fdd\_overlapdomain *}
 */
@@ -135,17 +135,17 @@ int fdd_extdomain(int *dom, int num)
    {
       fdvaralloc = num;
       if ((domain=(Domain*)malloc(sizeof(Domain)*num)) == NULL)
-	 return bdd_error(BDD_MEMORY);
+         return bdd_error(BDD_MEMORY);
    }
    else  /* Allocated before */
    {
       if (fdvarnum + num > fdvaralloc)
       {
          fdvaralloc += (num > fdvaralloc) ? num : fdvaralloc;
-	 
-	 domain = (Domain*)realloc(domain, sizeof(Domain)*fdvaralloc);
-	 if (domain == NULL)
-	    return bdd_error(BDD_MEMORY);
+         
+         domain = (Domain*)realloc(domain, sizeof(Domain)*fdvaralloc);
+         if (domain == NULL)
+            return bdd_error(BDD_MEMORY);
       }
    }
 
@@ -166,17 +166,17 @@ int fdd_extdomain(int *dom, int num)
       more = 0;
 
       for (n=0 ; n<num ; n++)
-	 if (bn < domain[n+fdvarnum].binsize)
-	 {
-	    more = 1;
-	    domain[n+fdvarnum].ivar[bn] = binoffset++;
-	 }
+         if (bn < domain[n+fdvarnum].binsize)
+         {
+            more = 1;
+            domain[n+fdvarnum].ivar[bn] = binoffset++;
+         }
    }
 
    for (n=0 ; n<num ; n++)
    {
       domain[n+fdvarnum].var = bdd_makeset(domain[n+fdvarnum].ivar,
-					   domain[n+fdvarnum].binsize);
+                                           domain[n+fdvarnum].binsize);
       bdd_addref(domain[n+fdvarnum].var);
    }
 
@@ -194,13 +194,13 @@ SHORT   {* combine two FDD blocks into one *}
 PROTO   {* int fdd_overlapdomain(int v1, int v2) *}
 DESCR   {* This function takes two FDD blocks and merges them into a new one,
            such that the new one is encoded using both sets of BDD variables.
-	   If {\tt v1} is encoded using the BDD variables $a_1, \ldots,
-	   a_n$ and has a domain of $[0,N_1]$, and {\tt v2} is encoded using
-	   $b_1, \ldots, b_n$ and has a domain of $[0,N_2]$, then the result
-	   will be encoded using the BDD variables $a_1, \ldots, a_n, b_1,
-	   \ldots, b_n$ and have the domain $[0,N_1*N_2]$. The use of this
-	   function may result in some strange output from
-	   {\tt fdd\_printset}. *}
+           If {\tt v1} is encoded using the BDD variables $a_1, \ldots,
+           a_n$ and has a domain of $[0,N_1]$, and {\tt v2} is encoded using
+           $b_1, \ldots, b_n$ and has a domain of $[0,N_2]$, then the result
+           will be encoded using the BDD variables $a_1, \ldots, a_n, b_1,
+           \ldots, b_n$ and have the domain $[0,N_1*N_2]$. The use of this
+           function may result in some strange output from
+           {\tt fdd\_printset}. *}
 RETURN  {* The index of the finite domain block *}
 ALSO    {* fdd\_extdomain *}
 */
@@ -221,7 +221,7 @@ int fdd_overlapdomain(int v1, int v2)
       
       domain = (Domain*)realloc(domain, sizeof(Domain)*fdvaralloc);
       if (domain == NULL)
-	 return bdd_error(BDD_MEMORY);
+         return bdd_error(BDD_MEMORY);
    }
 
    d = &domain[fdvarnum];
@@ -233,7 +233,7 @@ int fdd_overlapdomain(int v1, int v2)
       d->ivar[n] = domain[v1].ivar[n];
    for (n=0 ; n<domain[v2].binsize ; n++)
       d->ivar[domain[v1].binsize+n] = domain[v2].ivar[n];
-	 
+         
    d->var = bdd_makeset(d->ivar, d->binsize);
    bdd_addref(d->var);
    
@@ -329,9 +329,9 @@ SHORT   {* all BDD variables associated with a finite domain block *}
 PROTO   {* int *fdd_vars(int var) *}
 DESCR   {* Returns an integer array containing the BDD variables used to
            define the finite domain block {\tt var}. The size of the array
-	   is the number of variables used to define the finite domain block.
-	   The array will have the Least Significant Bit at pos 0. The
-	   array must {\em not} be deallocated. *}
+           is the number of variables used to define the finite domain block.
+           The array will have the Least Significant Bit at pos 0. The
+           array must {\em not} be deallocated. *}
 RETURN  {* Integer array contaning the variable numbers or NULL if
            {\tt v} is an unknown block. *}
 ALSO    {* fdd\_varnum *}
@@ -366,11 +366,11 @@ SHORT   {* the BDD for the i'th FDD set to a specific value *}
 PROTO   {* BDD fdd_ithvar(int var, int val) *}
 DESCR   {* Returns the BDD that defines the value {\tt val} for the
            finite domain block {\tt var}. The encoding places the
-	   Least Significant Bit at the top of the BDD tree
-	   (which means they will have the lowest variable index).
-	   The returned BDD will be $V_0 \conj V_1 \conj \ldots
-	   \conj V_N$ where each $V_i$ will be in positive or negative form
-	   depending on the value of {\tt val}. *}
+           Least Significant Bit at the top of the BDD tree
+           (which means they will have the lowest variable index).
+           The returned BDD will be $V_0 \conj V_1 \conj \ldots
+           \conj V_N$ where each $V_i$ will be in positive or negative form
+           depending on the value of {\tt val}. *}
 RETURN  {* The correct BDD or the constant false BDD on error. *}
 ALSO    {* fdd\_ithset *}
 */
@@ -402,9 +402,9 @@ BDD fdd_ithvar(int var, int val)
       bdd_addref(v);
       
       if (val & 0x1)
-	 tmp = bdd_apply(bdd_ithvar(domain[var].ivar[n]), v, bddop_and);
+         tmp = bdd_apply(bdd_ithvar(domain[var].ivar[n]), v, bddop_and);
       else
-	 tmp = bdd_apply(bdd_nithvar(domain[var].ivar[n]), v, bddop_and);
+         tmp = bdd_apply(bdd_nithvar(domain[var].ivar[n]), v, bddop_and);
 
       bdd_delref(v);
       v = tmp;
@@ -452,9 +452,9 @@ SHORT   {* Finds one satisfying value of all FDD variables *}
 PROTO   {* int* fdd_scanallvar(BDD r) *}
 DESCR   {* Finds one satisfying assignment in {\tt r} of all the defined
            FDD variables. Each value is stored in an array which is
-	   returned. The size of this array is exactly the number of
-	   FDD variables defined. It is the user's responsibility to
-	   free this array using {\tt free()}. *}
+           returned. The size of this array is exactly the number of
+           FDD variables defined. It is the user's responsibility to
+           free this array using {\tt free()}. *}
 RETURN  {* An array with all satisfying values. If {\tt r} is the trivially
            false BDD, then NULL is returned. *}
 ALSO    {* fdd\_scanvar *}
@@ -478,13 +478,13 @@ int* fdd_scanallvar(BDD r)
    {
       if (!ISZERO(LOW(p)))
       {
-	 store[bddlevel2var[LEVEL(p)]] = 0;
-	 p = LOW(p);
+         store[bddlevel2var[LEVEL(p)]] = 0;
+         p = LOW(p);
       }
       else
       {
-	 store[bddlevel2var[LEVEL(p)]] = 1;
-	 p = HIGH(p);
+         store[bddlevel2var[LEVEL(p)]] = 1;
+         p = HIGH(p);
       }
    }
 
@@ -496,10 +496,10 @@ int* fdd_scanallvar(BDD r)
       int val=0;
       
       for (m=domain[n].binsize-1 ; m>=0 ; m--)
-	 if ( store[domain[n].ivar[m]] )
-	    val = val*2 + 1;
+         if ( store[domain[n].ivar[m]] )
+            val = val*2 + 1;
          else
-	    val = val*2;
+            val = val*2;
       
       res[n] = val;
    }
@@ -543,9 +543,9 @@ SHORT   {* BDD encoding of the domain of a FDD variable *}
 PROTO   {* BDD fdd_domain(int var) *}
 DESCR   {* Returns what corresponds to a disjunction of all possible
            values of the variable  {\tt var}.
-	   This is more efficient than doing
-	   {\tt fdd\_ithvar(var,0) OR fdd\_ithvar(var,1) ...} explicitely
-	   for all values in the domain of {\tt var}. *}
+           This is more efficient than doing
+           {\tt fdd\_ithvar(var,0) OR fdd\_ithvar(var,1) ...} explicitely
+           for all values in the domain of {\tt var}. *}
 RETURN  {* The encoding of the domain*}
 */
 BDD fdd_domain(int var)
@@ -577,9 +577,9 @@ BDD fdd_domain(int var)
       BDD tmp;
       
       if (val & 0x1)
-	 tmp = bdd_apply( bdd_nithvar(dom->ivar[n]), d, bddop_or );
+         tmp = bdd_apply( bdd_nithvar(dom->ivar[n]), d, bddop_or );
       else
-	 tmp = bdd_apply( bdd_nithvar(dom->ivar[n]), d, bddop_and );
+         tmp = bdd_apply( bdd_nithvar(dom->ivar[n]), d, bddop_and );
 
       val >>= 1;
 
@@ -599,8 +599,8 @@ SHORT   {* returns a BDD setting two FD. blocks equal *}
 PROTO   {* BDD fdd_equals(int f, int g) *}
 DESCR   {* Builds a BDD which is true for all the possible assignments to
            the variable blocks {\tt f} and {\tt g} that makes the blocks
-	   equal. This is more or less just a shorthand for calling
-	   {\tt fdd\_equ()}. *}
+           equal. This is more or less just a shorthand for calling
+           {\tt fdd\_equ()}. *}
 RETURN  {* The correct BDD or the constant false on errors. *}
 */
 BDD fdd_equals(int left, int right)
@@ -628,8 +628,8 @@ BDD fdd_equals(int left, int right)
    for (n=0 ; n<domain[left].binsize ; n++)
    {
       tmp1 = bdd_addref( bdd_apply(bdd_ithvar(domain[left].ivar[n]),
-				   bdd_ithvar(domain[right].ivar[n]),
-				   bddop_biimp) );
+                                   bdd_ithvar(domain[right].ivar[n]),
+                                   bddop_biimp) );
       
       tmp2 = bdd_addref( bdd_apply(e, tmp1, bddop_and) );
       bdd_delref(tmp1);
@@ -653,9 +653,9 @@ SHORT   {* Specifies a printing callback handler *}
 PROTO   {* bddfilehandler fdd_file_hook(bddfilehandler handler) *}
 DESCR   {* A printing callback handler for use with FDDs is used to
            convert the FDD integer identifier into something readable by the
-	   end user. Typically the handler will print a string name
-	   instead of the identifier. A handler could look like this:
-	   \begin{verbatim}
+           end user. Typically the handler will print a string name
+           instead of the identifier. A handler could look like this:
+           \begin{verbatim}
 void printhandler(FILE *o, int var)
 {
    extern char **names;
@@ -665,10 +665,10 @@ void printhandler(FILE *o, int var)
 
            \noindent
            The handler can then be passed to BuDDy like this:
-	   {\tt fdd\_file\_hook(printhandler)}.
+           {\tt fdd\_file\_hook(printhandler)}.
 
-	   No default handler is supplied. The argument {\tt handler} may be
-	   NULL if no handler is needed. *}
+           No default handler is supplied. The argument {\tt handler} may be
+           NULL if no handler is needed. *}
 RETURN  {* The old handler *}
 ALSO    {* fdd\_printset, bdd\_file\_hook *}
 */
@@ -688,10 +688,10 @@ PROTO   {* void fdd_printset(BDD r)
 void fdd_fprintset(FILE *ofile, BDD f) *}
 DESCR   {* Prints the BDD {\tt f} using a set notation as in
            {\tt bdd\_printset} but with the index of the finite domain blocks
-	   included instead of the BDD variables. It is possible to specify
-	   a printing callback function with {\tt fdd\_file\_hook} or
-	   {\tt fdd\_strm\_hook} which can be used to print the FDD
-	   identifier in a readable form. *}
+           included instead of the BDD variables. It is possible to specify
+           a printing callback function with {\tt fdd\_file\_hook} or
+           {\tt fdd\_strm\_hook} which can be used to print the FDD
+           identifier in a readable form. *}
 ALSO    {* bdd\_printset, fdd\_file\_hook, fdd\_strm\_hook *}
 */
 void fdd_printset(BDD r)
@@ -748,50 +748,50 @@ static void fdd_printset_rec(FILE *ofile, int r, int *set)
 
       for (n=0 ; n<fdvarnum ; n++)
       {
-	 int firstval=1;
-	 used = 0;
+         int firstval=1;
+         used = 0;
 
-	 for (m=0 ; m<domain[n].binsize ; m++)
-	    if (set[domain[n].ivar[m]] != 0)
-	       used = 1;
-	 
-	 if (used)
-	 {
-	    if (!first)
-	       fprintf(ofile, ", ");
-	    first = 0;
-	    if (filehandler)
-	       filehandler(ofile, n);
-	    else
-	       fprintf(ofile, "%d", n);
-	    printf(":");
+         for (m=0 ; m<domain[n].binsize ; m++)
+            if (set[domain[n].ivar[m]] != 0)
+               used = 1;
+         
+         if (used)
+         {
+            if (!first)
+               fprintf(ofile, ", ");
+            first = 0;
+            if (filehandler)
+               filehandler(ofile, n);
+            else
+               fprintf(ofile, "%d", n);
+            printf(":");
 
-	    var = domain[n].ivar;
-	    
-	    for (m=0 ; m<(1<<domain[n].binsize) ; m++)
-	    {
-	       binval = fdddec2bin(n, m);
-	       ok=1;
-	       
-	       for (i=0 ; i<domain[n].binsize && ok ; i++)
-		  if (set[var[i]] == 1  &&  binval[i] != 0)
-		     ok = 0;
-		  else
-		  if (set[var[i]] == 2  &&  binval[i] != 1)
-		     ok = 0;
+            var = domain[n].ivar;
+            
+            for (m=0 ; m<(1<<domain[n].binsize) ; m++)
+            {
+               binval = fdddec2bin(n, m);
+               ok=1;
+               
+               for (i=0 ; i<domain[n].binsize && ok ; i++)
+                  if (set[var[i]] == 1  &&  binval[i] != 0)
+                     ok = 0;
+                  else
+                  if (set[var[i]] == 2  &&  binval[i] != 1)
+                     ok = 0;
 
-	       if (ok)
-	       {
-		  if (firstval)
-		     fprintf(ofile, "%d", m);
-		  else
-		     fprintf(ofile, "/%d", m);
-		  firstval = 0;
-	       }
+               if (ok)
+               {
+                  if (firstval)
+                     fprintf(ofile, "%d", m);
+                  else
+                     fprintf(ofile, "/%d", m);
+                  firstval = 0;
+               }
 
-	       free(binval);
-	    }
-	 }
+               free(binval);
+            }
+         }
       }
 
       fprintf(ofile, ">");
@@ -818,9 +818,9 @@ SHORT   {* scans a variable set *}
 PROTO   {* int fdd_scanset(BDD r, int **varset, int *varnum) *}
 DESCR   {* Scans the BDD {\tt r} to find all occurences of FDD variables
            and then stores these in {\tt varset}. {\tt varset} will be set
-	   to point to an array of size {\tt varnum} which will contain
-	   the indices of the found FDD variables. It is the users
-	   responsibility to free {\tt varset} after use. *}
+           to point to an array of size {\tt varnum} which will contain
+           the indices of the found FDD variables. It is the users
+           responsibility to free {\tt varset} after use. *}
 RETURN  {* Zero on success or a negative error code on error. *}
 ALSO    {* fdd\_makeset *}
 */
@@ -841,12 +841,12 @@ int fdd_scanset(BDD r, int **varset, int *varnum)
       
       for (m=0 ; m<domain[n].binsize && !found ; m++)
       {
-	 for (i=0 ; i<fn && !found ; i++)
-	    if (domain[n].ivar[m] == fv[i])
-	    {
-	       num++;
-	       found=1;
-	    }
+         for (i=0 ; i<fn && !found ; i++)
+            if (domain[n].ivar[m] == fv[i])
+            {
+               num++;
+               found=1;
+            }
       }
    }
 
@@ -859,12 +859,12 @@ int fdd_scanset(BDD r, int **varset, int *varnum)
       
       for (m=0 ; m<domain[n].binsize && !found ; m++)
       {
-	 for (i=0 ; i<fn && !found ; i++)
-	    if (domain[n].ivar[m] == fv[i])
-	    {
-	       (*varset)[num++] = n;
-	       found=1;
-	    }
+         for (i=0 ; i<fn && !found ; i++)
+            if (domain[n].ivar[m] == fv[i])
+            {
+               (*varset)[num++] = n;
+               found=1;
+            }
       }
    }
 
@@ -883,7 +883,7 @@ SHORT   {* creates a variable set for N finite domain blocks *}
 PROTO   {* BDD fdd_makeset(int *varset, int varnum) *}
 DESCR   {* Returns a BDD defining all the variable sets used to define
            the variable blocks in the array {\tt varset}. The argument
-	   {\tt varnum} defines the size of {\tt varset}. *}
+           {\tt varnum} defines the size of {\tt varset}. *}
 RETURN  {* The correct BDD or the constant false on errors. *}
 ALSO    {* fdd\_ithset, bdd\_makeset *}
 */
@@ -901,10 +901,10 @@ BDD fdd_makeset(int *varset, int varnum)
    for (n=0 ; n<varnum ; n++)
       if (varset[n] < 0  ||  varset[n] >= fdvarnum)
       {
-	 bdd_error(BDD_VAR);
-	 return bddfalse;
+         bdd_error(BDD_VAR);
+         return bddfalse;
       }
-	  
+          
    for (n=0 ; n<varnum ; n++)
    {
       bdd_addref(res);
@@ -924,7 +924,7 @@ SHORT   {* adds a new variable block for reordering *}
 PROTO   {* int fdd_intaddvarblock(int first, int last, int fixed) *}
 DESCR   {* Works exactly like {\tt bdd\_addvarblock} except that
            {\tt fdd\_intaddvarblock} takes a range of FDD variables
-	   instead of BDD variables. *}
+           instead of BDD variables. *}
 RETURN  {* Zero on success, otherwise a negative error code. *}
 ALSO    {* bdd\_addvarblock, bdd\_intaddvarblock, bdd\_reorder *}
 */
@@ -961,8 +961,8 @@ SHORT   {* defines a pair for two finite domain blocks *}
 PROTO   {* int fdd_setpair(bddPair *pair, int p1, int p2) *}
 DESCR   {* Defines each variable in the finite domain block {\tt p1} to
            be paired with the corresponding variable in {\tt p2}. The result
-	   is stored in {\tt pair} which must be allocated using
-	   {\tt bdd\_makepair}. *}
+           is stored in {\tt pair} which must be allocated using
+           {\tt bdd\_makepair}. *}
 RETURN  {* Zero on success or a negative error code on error. *}
 ALSO    {* fdd\_setpairs *}
 */
@@ -981,7 +981,7 @@ int fdd_setpair(bddPair *pair, int p1, int p2)
 
    for (n=0 ; n<domain[p1].binsize ; n++)
       if ((e=bdd_setpair(pair, domain[p1].ivar[n], domain[p2].ivar[n])) < 0)
-	 return e;
+         return e;
 
    return 0;
 }
@@ -994,9 +994,9 @@ SHORT   {* defines N pairs for finite domain blocks *}
 PROTO   {* int fdd_setpairs(bddPair *pair, int *p1, int *p2, int size) *}
 DESCR   {* Defines each variable in all the finite domain blocks listed in
            the array {\tt p1} to be paired with the corresponding variable
-	   in {\tt p2}. The result
-	   is stored in {\tt pair} which must be allocated using
-	   {\tt bdd\_makeset}.*}
+           in {\tt p2}. The result
+           is stored in {\tt pair} which must be allocated using
+           {\tt bdd\_makeset}.*}
 RETURN  {* Zero on success or a negative error code on error. *}
 ALSO    {* bdd\_setpair *}
 */
@@ -1009,11 +1009,11 @@ int fdd_setpairs(bddPair *pair, int *p1, int *p2, int size)
    
    for (n=0 ; n<size ; n++)
       if (p1[n]<0 || p1[n]>=fdvarnum || p2[n]<0 || p2[n]>=fdvarnum)
-	 return bdd_error(BDD_VAR);
+         return bdd_error(BDD_VAR);
    
    for (n=0 ; n<size ; n++)
       if ((e=fdd_setpair(pair, p1[n], p2[n])) < 0)
-	 return e;
+         return e;
 
    return 0;
 }
@@ -1065,7 +1065,7 @@ int *fdddec2bin(int var, int val)
    while (val > 0)
    {
       if (val & 0x1)
-	 res[n] = 1;
+         res[n] = 1;
       val >>= 1;
       n++;
    }

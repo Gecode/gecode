@@ -153,20 +153,20 @@ SHORT  {* initializes the BDD package *}
 PROTO  {* int bdd_init(int nodesize, int cachesize) *}
 DESCR  {* This function initiates the bdd package and {\em must} be called
           before any bdd operations are done. The argument {\tt nodesize}
-	  is the initial number of nodes in the nodetable and {\tt cachesize}
-	  is the fixed size of the internal caches. Typical values for
-	  {\tt nodesize} are 10000 nodes for small test examples and up to
-	  1000000 nodes for large examples. A cache size of 10000 seems to
-	  work good even for large examples, but lesser values should do it
-	  for smaller examples.
+          is the initial number of nodes in the nodetable and {\tt cachesize}
+          is the fixed size of the internal caches. Typical values for
+          {\tt nodesize} are 10000 nodes for small test examples and up to
+          1000000 nodes for large examples. A cache size of 10000 seems to
+          work good even for large examples, but lesser values should do it
+          for smaller examples.
 
-	  The number of cache entries can also be set to depend on the size
-	  of the nodetable using a call to {\tt bdd\_setcacheratio}.
-	  
-	  The initial number of nodes is not critical for any bdd operation
-	  as the table will be resized whenever there are to few nodes left
-	  after a garbage collection. But it does have some impact on the
-	  efficency of the operations. *}
+          The number of cache entries can also be set to depend on the size
+          of the nodetable using a call to {\tt bdd\_setcacheratio}.
+          
+          The initial number of nodes is not critical for any bdd operation
+          as the table will be resized whenever there are to few nodes left
+          after a garbage collection. But it does have some impact on the
+          efficency of the operations. *}
 RETURN {* If no errors occur then 0 is returned, otherwise
           a negative error code. *}
 ALSO   {* bdd\_done, bdd\_resize\_hook *}
@@ -301,8 +301,8 @@ SHORT   {* set the number of used bdd variables *}
 PROTO   {* int bdd_setvarnum(int num) *}
 DESCR   {* This function is used to define the number of variables used in
            the bdd package. It may be called more than one time, but only
-	   to increase the number of variables. The argument
-	   {\tt num} is the number of variables to use. *}
+           to increase the number of variables. The argument
+           {\tt num} is the number of variables to use. *}
 RETURN  {* Zero on succes, otherwise a negative error code. *}
 ALSO    {* bdd\_ithvar, bdd\_varnum, bdd\_extvarnum *}
 */
@@ -329,33 +329,33 @@ int bdd_setvarnum(int num)
    if (bddvarset == NULL)
    {
       if ((bddvarset=(BDD*)malloc(sizeof(BDD)*num*2)) == NULL)
-	 return bdd_error(BDD_MEMORY);
+         return bdd_error(BDD_MEMORY);
       if ((bddlevel2var=(int*)malloc(sizeof(int)*(num+1))) == NULL)
       {
-	 free(bddvarset);
-	 return bdd_error(BDD_MEMORY);
+         free(bddvarset);
+         return bdd_error(BDD_MEMORY);
       }
       if ((bddvar2level=(int*)malloc(sizeof(int)*(num+1))) == NULL)
       {
-	 free(bddvarset);
-	 free(bddlevel2var);
-	 return bdd_error(BDD_MEMORY);
+         free(bddvarset);
+         free(bddlevel2var);
+         return bdd_error(BDD_MEMORY);
       }
    }
    else
    {
       if ((bddvarset=(BDD*)realloc(bddvarset,sizeof(BDD)*num*2)) == NULL)
-	 return bdd_error(BDD_MEMORY);
+         return bdd_error(BDD_MEMORY);
       if ((bddlevel2var=(int*)realloc(bddlevel2var,sizeof(int)*(num+1))) == NULL)
       {
-	 free(bddvarset);
-	 return bdd_error(BDD_MEMORY);
+         free(bddvarset);
+         return bdd_error(BDD_MEMORY);
       }
       if ((bddvar2level=(int*)realloc(bddvar2level,sizeof(int)*(num+1))) == NULL)
       {
-	 free(bddvarset);
-	 free(bddlevel2var);
-	 return bdd_error(BDD_MEMORY);
+         free(bddvarset);
+         free(bddlevel2var);
+         return bdd_error(BDD_MEMORY);
       }
    }
 
@@ -371,8 +371,8 @@ int bdd_setvarnum(int num)
       
       if (bdderrorcond)
       {
-	 bddvarnum = bdv;
-	 return -bdderrorcond;
+         bddvarnum = bdv;
+         return -bdderrorcond;
       }
       
       bddnodes[bddvarset[bddvarnum*2]].refcou = MAXREF;
@@ -424,18 +424,18 @@ SHORT {* set a handler for error conditions *}
 PROTO {* bddinthandler bdd_error_hook(bddinthandler handler) *}
 DESCR {* Whenever an error occurs in the bdd package a test is done to
         see if an error handler is supplied by the user and if such exists
-	then it will be called
-	with an error code in the variable {\tt errcode}. The handler may
-	then print any usefull information and return or exit afterwards.
+        then it will be called
+        with an error code in the variable {\tt errcode}. The handler may
+        then print any usefull information and return or exit afterwards.
 
-	This function sets the handler to be {\tt handler}. If a {\tt NULL}
-	argument is supplied then no calls are made when an error occurs.
-	Possible error codes are found in {\tt bdd.h}. The default handler
-	is {\tt bdd\_default\_errhandler} which will use {\tt exit()} to
-	terminate the program.
+        This function sets the handler to be {\tt handler}. If a {\tt NULL}
+        argument is supplied then no calls are made when an error occurs.
+        Possible error codes are found in {\tt bdd.h}. The default handler
+        is {\tt bdd\_default\_errhandler} which will use {\tt exit()} to
+        terminate the program.
 
-	Any handler should be defined like this:
-	\begin{verbatim}
+        Any handler should be defined like this:
+        \begin{verbatim}
 void my_error_handler(int errcode)
 {
    ...
@@ -459,12 +459,12 @@ SHORT   {* clears an error condition in the kernel *}
 PROTO   {* void bdd_clear_error(void) *}
 DESCR   {* The BuDDy kernel may at some point run out of new ROBDD nodes if
            a maximum limit is set with {\tt bdd\_setmaxnodenum}. In this case
-	   the current error handler is called and an internal error flag
-	   is set. Further calls to BuDDy will always return {\tt bddfalse}.
-	   From here BuDDy must either be restarted or {\tt bdd\_clear\_error}
-	   may be called after action is taken to let BuDDy continue. This may
-	   not be especially usefull since the default error handler exits
-	   the program - other needs may of course exist.*}
+           the current error handler is called and an internal error flag
+           is set. Further calls to BuDDy will always return {\tt bddfalse}.
+           From here BuDDy must either be restarted or {\tt bdd\_clear\_error}
+           may be called after action is taken to let BuDDy continue. This may
+           not be especially usefull since the default error handler exits
+           the program - other needs may of course exist.*}
 ALSO    {* bdd\_error\_hook, bdd\_setmaxnodenum *}
 */
 void bdd_clear_error(void)
@@ -481,20 +481,20 @@ SHORT {* set a handler for garbage collections *}
 PROTO {* bddgbchandler bdd_gbc_hook(bddgbchandler handler) *}
 DESCR {* Whenever a garbage collection is required, a test is done to
          see if a handler for this event is supplied by the user and if such
-	 exists then it is called, both before and after the garbage collection
-	 takes places. This is indicated by an integer flag {\tt pre} passed to
-	 the handler, which will be one before garbage collection and zero
-	 after garbage collection.
+         exists then it is called, both before and after the garbage collection
+         takes places. This is indicated by an integer flag {\tt pre} passed to
+         the handler, which will be one before garbage collection and zero
+         after garbage collection.
 
-	 This function sets the handler to be {\tt handler}. If a {\tt
-	 NULL} argument is supplied then no calls are made when a
-	 garbage collection takes place. The argument {\tt pre}
-	 indicates pre vs. post garbage collection and the argument
-	 {\tt stat} contains information about the garbage
-	 collection. The default handler is {\tt bdd\_default\_gbchandler}.
+         This function sets the handler to be {\tt handler}. If a {\tt
+         NULL} argument is supplied then no calls are made when a
+         garbage collection takes place. The argument {\tt pre}
+         indicates pre vs. post garbage collection and the argument
+         {\tt stat} contains information about the garbage
+         collection. The default handler is {\tt bdd\_default\_gbchandler}.
 
-	 Any handler should be defined like this:
-	 \begin{verbatim}
+         Any handler should be defined like this:
+         \begin{verbatim}
 void my_gbc_handler(int pre, bddGbcStat *stat)
 {
    ...
@@ -517,16 +517,16 @@ SHORT {* set a handler for nodetable resizes *}
 PROTO {* bdd2inthandler bdd_resize_hook(bdd2inthandler handler) *}
 DESCR {* Whenever it is impossible to get enough free nodes by a garbage
          collection then the node table is resized and a test is done to see
-	 if a handler is supllied by the user for this event. If so then
-	 it is called with {\tt oldsize} being the old nodetable size and
-	 {\tt newsize} being the new nodetable size.
+         if a handler is supllied by the user for this event. If so then
+         it is called with {\tt oldsize} being the old nodetable size and
+         {\tt newsize} being the new nodetable size.
 
-	 This function sets the handler to be {\tt handler}. If a {\tt NULL}
-	 argument is supplied then no calls are made when a table resize
-	 is done. No default handler is supplied.
+         This function sets the handler to be {\tt handler}. If a {\tt NULL}
+         argument is supplied then no calls are made when a table resize
+         is done. No default handler is supplied.
 
-	 Any handler should be defined like this:
-	 \begin{verbatim}
+         Any handler should be defined like this:
+         \begin{verbatim}
 void my_resize_handler(int oldsize, int newsize)
 {
    ...
@@ -550,8 +550,8 @@ SHORT   {* set max. number of nodes used to increase node table *}
 PROTO   {* int bdd_setmaxincrease(int size) *}
 DESCR   {* The node table is expanded by doubling the size of the table
            when no more free nodes can be found, but a maximum for the
-	   number of new nodes added can be set with {\tt bdd\_maxincrease}
-	   to {\tt size} nodes. The default is 50000 nodes (1 Mb). *}
+           number of new nodes added can be set with {\tt bdd\_maxincrease}
+           to {\tt size} nodes. The default is 50000 nodes (1 Mb). *}
 RETURN  {* The old threshold on succes, otherwise a negative error code. *}
 ALSO    {* bdd\_setmaxnodenum, bdd\_setminfreenodes *}
 */
@@ -573,13 +573,13 @@ SHORT {* set the maximum available number of bdd nodes *}
 PROTO {* int bdd_setmaxnodenum(int size) *}
 DESCR {* This function sets the maximal number of bdd nodes the package may
          allocate before it gives up a bdd operation. The
-	 argument {\tt size} is the absolute maximal number of nodes there
-	 may be allocated for the nodetable. Any attempt to allocate more
-	 nodes results in the constant false being returned and the error
-	 handler being called until some nodes are deallocated.
-	 A value of 0 is interpreted as an unlimited amount.
-	 It is {\em not} possible to specify
-	 fewer nodes than there has already been allocated. *}
+         argument {\tt size} is the absolute maximal number of nodes there
+         may be allocated for the nodetable. Any attempt to allocate more
+         nodes results in the constant false being returned and the error
+         handler being called until some nodes are deallocated.
+         A value of 0 is interpreted as an unlimited amount.
+         It is {\em not} possible to specify
+         fewer nodes than there has already been allocated. *}
 RETURN {* The old threshold on succes, otherwise a negative error code. *}
 ALSO   {* bdd\_setmaxincrease, bdd\_setminfreenodes *}
 */
@@ -603,14 +603,14 @@ SHORT   {* set min. no. of nodes to be reclaimed after GBC. *}
 PROTO   {* int bdd_setminfreenodes(int n) *}
 DESCR   {* Whenever a garbage collection is executed the number of free
            nodes left are checked to see if a resize of the node table is
-	   required. If $X = (\mathit{bddfreenum}*100)/\mathit{maxnum}$
-	   is less than or
-	   equal to {\tt n} then a resize is initiated. The range of
-	   {\tt X} is of course $0\ldots 100$ and has some influence
-	   on how fast the package is. A low number means harder attempts
-	   to avoid resizing and saves space, and a high number reduces
-	   the time used in garbage collections. The default value is
-	   20. *}
+           required. If $X = (\mathit{bddfreenum}*100)/\mathit{maxnum}$
+           is less than or
+           equal to {\tt n} then a resize is initiated. The range of
+           {\tt X} is of course $0\ldots 100$ and has some influence
+           on how fast the package is. A low number means harder attempts
+           to avoid resizing and saves space, and a high number reduces
+           the time used in garbage collections. The default value is
+           20. *}
 RETURN  {* The old threshold on succes, otherwise a negative error code. *}
 ALSO    {* bdd\_setmaxnodenum, bdd\_setmaxincrease *}
 */
@@ -633,8 +633,8 @@ SHORT   {* get the number of active nodes in use *}
 PROTO   {* int bdd_getnodenum(void) *}
 DESCR   {* Returns the number of nodes in the nodetable that are
            currently in use. Note that dead nodes that have not been
-	   reclaimed yet
-	   by a garbage collection are counted as active. *}
+           reclaimed yet
+           by a garbage collection are counted as active. *}
 RETURN  {* The number of nodes. *}
 ALSO    {* bdd\_getallocnum, bdd\_setmaxnodenum *}
 */
@@ -714,7 +714,7 @@ SHORT   {* returns some status information about the bdd package *}
 PROTO   {* void bdd_stats(bddStat* stat) *}
 DESCR   {* This function acquires information about the internal state of
            the bdd package. The status information is written into the
-	   {\tt stat} argument. *}
+           {\tt stat} argument. *}
 ALSO    {* bddStat *}
 */
 void bdd_stats(bddStat *s)
@@ -738,9 +738,9 @@ SHORT   {* Fetch cache access usage *}
 PROTO   {* void bdd_cachestats(bddCacheStat *s) *}
 DESCR   {* Fetches cache usage information and stores it in {\tt s}. The
            fields of {\tt s} can be found in the documentaion for
-	   {\tt bddCacheStat}. This function may or may not be compiled
-	   into the BuDDy package - depending on the setup at compile
-	   time of BuDDy. *}
+           {\tt bddCacheStat}. This function may or may not be compiled
+           into the BuDDy package - depending on the setup at compile
+           time of BuDDy. *}
 ALSO    {* bddCacheStat, bdd\_printstat *}
 */
 void bdd_cachestats(bddCacheStat *s)
@@ -758,10 +758,10 @@ PROTO   {* void bdd_printstat(void)
 void bdd_fprintstat(FILE *ofile) *}
 DESCR   {* Prints information about the cache performance on standard output
            (or the supplied file). The information contains the number of
-	   accesses to the unique node table, the number of times a node
-	   was (not) found there and how many times a hash chain had to
-	   traversed. Hit and miss count is also given for the operator
-	   caches. *}
+           accesses to the unique node table, the number of times a node
+           was (not) found there and how many times a hash chain had to
+           traversed. Hit and miss count is also given for the operator
+           caches. *}
 ALSO    {* bddCacheStat, bdd\_cachestats *}
 */
 void bdd_fprintstat(FILE *ofile)
@@ -777,13 +777,13 @@ void bdd_fprintstat(FILE *ofile)
    fprintf(ofile, "Unique Hit:     %ld\n", s.uniqueHit);
    fprintf(ofile, "Unique Miss:    %ld\n", s.uniqueMiss);
    fprintf(ofile, "=> Hit rate =   %.2f\n",
-	   (s.uniqueHit+s.uniqueMiss > 0) ? 
-	   ((float)s.uniqueHit)/((float)s.uniqueHit+s.uniqueMiss) : 0);
+           (s.uniqueHit+s.uniqueMiss > 0) ? 
+           ((float)s.uniqueHit)/((float)s.uniqueHit+s.uniqueMiss) : 0);
    fprintf(ofile, "Operator Hits:  %ld\n", s.opHit);
    fprintf(ofile, "Operator Miss:  %ld\n", s.opMiss);
    fprintf(ofile, "=> Hit rate =   %.2f\n",
-	   (s.opHit+s.opMiss > 0) ? 
-	   ((float)s.opHit)/((float)s.opHit+s.opMiss) : 0);
+           (s.opHit+s.opMiss > 0) ? 
+           ((float)s.opHit)/((float)s.opHit+s.opMiss) : 0);
    fprintf(ofile, "Swap count =    %ld\n", s.swapCount);
 }
 
@@ -844,7 +844,7 @@ SHORT   {* returns the constant true bdd *}
 PROTO   {* BDD bdd_true(void) *}
 DESCR   {* This function returns the constant true bdd and can freely be
            used together with the {\tt bddtrue} and {\tt bddfalse}
-	   constants. *}
+           constants. *}
 RETURN  {* The constant true bdd *}
 ALSO    {* bdd\_false, bddtrue, bddfalse *}
 */
@@ -861,7 +861,7 @@ SHORT   {* returns the constant false bdd *}
 PROTO   {* BDD bdd_false(void) *}
 DESCR   {* This function returns the constant false bdd and can freely be
            used together with the {\tt bddtrue} and {\tt bddfalse}
-	   constants. *}
+           constants. *}
 RETURN  {* The constant false bdd *}
 ALSO    {* bdd\_true, bddtrue, bddfalse *}
 */
@@ -878,14 +878,14 @@ SHORT   {* returns a bdd representing the I'th variable *}
 PROTO   {* BDD bdd_ithvar(int var) *}
 DESCR   {* This function is used to get a bdd representing the I'th
            variable (one node with the childs true and false). The requested
-	   variable must be in the range define by {\tt
-	   bdd\_setvarnum} starting with 0 being the first. For ease
-	   of use then the bdd returned from {\tt bdd\_ithvar} does
-	   not have to be referenced counted with a call to {\tt
-	   bdd\_addref}. The initial variable order is defined by the
-	   the index {\tt var} that also defines the position in the
-	   variable order -- variables with lower indecies are before
-	   those with higher indecies. *}
+           variable must be in the range define by {\tt
+           bdd\_setvarnum} starting with 0 being the first. For ease
+           of use then the bdd returned from {\tt bdd\_ithvar} does
+           not have to be referenced counted with a call to {\tt
+           bdd\_addref}. The initial variable order is defined by the
+           the index {\tt var} that also defines the position in the
+           variable order -- variables with lower indecies are before
+           those with higher indecies. *}
 RETURN  {* The I'th variable on succes, otherwise the constant false bdd *}
 ALSO {* bdd\_setvarnum, bdd\_nithvar, bddtrue, bddfalse *} */
 BDD bdd_ithvar(int var)
@@ -907,11 +907,11 @@ SHORT   {* returns a bdd representing the negation of the I'th variable *}
 PROTO   {* BDD bdd_nithvar(int var) *}
 DESCR   {* This function is used to get a bdd representing the negation of
            the I'th variable (one node with the childs false and true).
-	   The requested variable must be in the range define by
-	   {\tt bdd\_setvarnum} starting with 0 being the first. For ease of
-	   use then the bdd returned from {\tt bdd\_nithvar} does not have
-	   to be referenced counted with a call to {\tt bdd\_addref}. *}
-RETURN  {* The negated I'th variable on succes, otherwise the constant false bdd *}	   
+           The requested variable must be in the range define by
+           {\tt bdd\_setvarnum} starting with 0 being the first. For ease of
+           use then the bdd returned from {\tt bdd\_nithvar} does not have
+           to be referenced counted with a call to {\tt bdd\_addref}. *}
+RETURN  {* The negated I'th variable on succes, otherwise the constant false bdd *}           
 ALSO    {* bdd\_setvarnum, bdd\_ithvar, bddtrue, bddfalse *}
 */
 BDD bdd_nithvar(int var)
@@ -1008,10 +1008,10 @@ void bdd_default_gbchandler(int pre, bddGbcStat *s)
 /*    if (!pre) */
 /*    { */
 /*       printf("Garbage collection #%d: %d nodes / %d free", */
-/* 	     s->num, s->nodes, s->freenodes); */
+/*              s->num, s->nodes, s->freenodes); */
 /*       printf(" / %.1fs / %.1fs total\n", */
-/* 	     (float)s->time/(float)(CLOCKS_PER_SEC), */
-/* 	     (float)s->sumtime/(float)CLOCKS_PER_SEC); */
+/*              (float)s->time/(float)(CLOCKS_PER_SEC), */
+/*              (float)s->sumtime/(float)CLOCKS_PER_SEC); */
 /*    } */
 }
 
@@ -1029,17 +1029,17 @@ static void bdd_gbc_rehash(void)
 
       if (LOWp(node) != -1)
       {
-	 register unsigned int hash;
+         register unsigned int hash;
 
-	 hash = NODEHASH(LEVELp(node), LOWp(node), HIGHp(node));
-	 node->next = bddnodes[hash].hash;
-	 bddnodes[hash].hash = n;
+         hash = NODEHASH(LEVELp(node), LOWp(node), HIGHp(node));
+         node->next = bddnodes[hash].hash;
+         bddnodes[hash].hash = n;
       }
       else
       {
-	 node->next = bddfreepos;
-	 bddfreepos = n;
-	 bddfreenum++;
+         node->next = bddfreepos;
+         bddfreepos = n;
+         bddfreenum++;
       }
    }
 }
@@ -1068,7 +1068,7 @@ void bdd_gbc(void)
    for (n=0 ; n<bddnodesize ; n++)
    {
       if (bddnodes[n].refcou > 0)
-	 bdd_mark(n);
+         bdd_mark(n);
       bddnodes[n].hash = 0;
    }
    
@@ -1081,19 +1081,19 @@ void bdd_gbc(void)
 
       if ((LEVELp(node) & MARKON)  &&  LOWp(node) != -1)
       {
-	 register unsigned int hash;
+         register unsigned int hash;
 
-	 LEVELp(node) &= MARKOFF;
-	 hash = NODEHASH(LEVELp(node), LOWp(node), HIGHp(node));
-	 node->next = bddnodes[hash].hash;
-	 bddnodes[hash].hash = n;
+         LEVELp(node) &= MARKOFF;
+         hash = NODEHASH(LEVELp(node), LOWp(node), HIGHp(node));
+         node->next = bddnodes[hash].hash;
+         bddnodes[hash].hash = n;
       }
       else
       {
-	 LOWp(node) = -1;
-	 node->next = bddfreepos;
-	 bddfreepos = n;
-	 bddfreenum++;
+         LOWp(node) = -1;
+         node->next = bddfreepos;
+         bddfreepos = n;
+         bddfreenum++;
       }
    }
 
@@ -1123,8 +1123,8 @@ SHORT   {* increases the reference count on a node *}
 PROTO   {* BDD bdd_addref(BDD r) *}
 DESCR   {* Reference counting is done on externaly referenced nodes only
            and the count for a specific node {\tt r} can and must be
-	   increased using this function to avoid loosing the node in the next
-	   garbage collection. *}
+           increased using this function to avoid loosing the node in the next
+           garbage collection. *}
 ALSO    {* bdd\_delref *}
 RETURN  {* The BDD node {\tt r}. *}
 */
@@ -1149,8 +1149,8 @@ SHORT   {* decreases the reference count on a node *}
 PROTO   {* BDD bdd_delref(BDD r) *}
 DESCR   {* Reference counting is done on externaly referenced nodes only
            and the count for a specific node {\tt r} can and must be
-	   decreased using this function to make it possible to reclaim the
-	   node in the next garbage collection. *}
+           decreased using this function to make it possible to reclaim the
+           node in the next garbage collection. *}
 ALSO    {* bdd\_addref *}
 RETURN  {* The BDD node {\tt r}. *}
 */
@@ -1335,9 +1335,9 @@ int bdd_makenode(unsigned int level, int low, int high)
       if (LEVEL(res) == level  &&  LOW(res) == low  &&  HIGH(res) == high)
       {
 #ifdef CACHESTATS
-	 bddcachestats.uniqueHit++;
+         bddcachestats.uniqueHit++;
 #endif
-	 return res;
+         return res;
       }
 
       res = bddnodes[res].next;
@@ -1355,32 +1355,32 @@ int bdd_makenode(unsigned int level, int low, int high)
    if (bddfreepos == 0)
    {
       if (bdderrorcond)
-	 return 0;
+         return 0;
       
          /* Try to allocate more nodes */
       bdd_gbc();
 
       if ((bddnodesize-bddfreenum) >= usednodes_nextreorder  &&
-	   bdd_reorder_ready())
+           bdd_reorder_ready())
       {
-	 longjmp(bddexception,1);
+         longjmp(bddexception,1);
       }
 
       // printf("bddfreenum=%d bddnodesize=%d, minfreenodes=%d\n", bddfreenum, bddnodesize, minfreenodes);
       // bddnodesize could be 0 !!!!
       if ((bddfreenum*100) / bddnodesize <= minfreenodes)
-	{
-	  bdd_noderesize(1);
-	  hash = NODEHASH(level, low, high);
-	}
+        {
+          bdd_noderesize(1);
+          hash = NODEHASH(level, low, high);
+        }
       
       /* Panic if that is not possible */
       if (bddfreepos == 0)
-	{
-	  bdd_error(BDD_NODENUM);
-	  bdderrorcond = abs(BDD_NODENUM);
-	  return 0;
-	}      
+        {
+          bdd_error(BDD_NODENUM);
+          bdderrorcond = abs(BDD_NODENUM);
+          return 0;
+        }      
    }
 
       /* Build new node */
@@ -1431,7 +1431,7 @@ int bdd_noderesize(int doRehash)
 
    if (doRehash)
       for (n=0 ; n<oldsize ; n++)
-	 bddnodes[n].hash = 0;
+         bddnodes[n].hash = 0;
    
    for (n=oldsize ; n<bddnodesize ; n++)
    {
@@ -1465,7 +1465,7 @@ void bdd_checkreorder(void)
        * even more nodes (upto twice as many again) have been used */
    if (bdd_reorder_gain() < 20)
       usednodes_nextreorder +=
-	 (usednodes_nextreorder * (20-bdd_reorder_gain())) / 20;
+         (usednodes_nextreorder * (20-bdd_reorder_gain())) / 20;
 }
 
 
@@ -1480,11 +1480,11 @@ SHORT   {* returns an integer representation of a variable set *}
 PROTO   {* int bdd_scanset(BDD r, int **v, int *n) *}
 DESCR   {* Scans a variable set {\tt r} and copies the stored variables into
            an integer array of variable numbers. The argument {\tt v} is
-	   the address of an integer pointer where the array is stored and
-	   {\tt n} is a pointer to an integer where the number of elements
-	   are stored. It is the users responsibility to make sure the
-	   array is deallocated by a call to {\tt free(v)}. The numbers
-	   returned are guaranteed to be in ascending order. *}
+           the address of an integer pointer where the array is stored and
+           {\tt n} is a pointer to an integer where the number of elements
+           are stored. It is the users responsibility to make sure the
+           array is deallocated by a call to {\tt free(v)}. The numbers
+           returned are guaranteed to be in ascending order. *}
 ALSO    {* bdd\_makeset *}
 RETURN  {* Zero on success, otherwise a negative error code. *}
 */
@@ -1522,13 +1522,13 @@ SHORT   {* builds a BDD variable set from an integer array *}
 PROTO   {* BDD bdd_makeset(int *v, int n) *}
 DESCR   {* Reads a set of variable numbers from the integer array {\tt v}
            which must hold exactly {\tt n} integers and then builds a BDD
-	   representing the variable set.
+           representing the variable set.
 
-	   The BDD variable set is represented as the conjunction of
-	   all the variables in their positive form and may just as
-	   well be made that way by the user. The user should keep a
-	   reference to the returned BDD instead of building it every
-	   time the set is needed. *}
+           The BDD variable set is represented as the conjunction of
+           all the variables in their positive form and may just as
+           well be made that way by the user. The user should keep a
+           reference to the returned BDD instead of building it every
+           time the set is needed. *}
 ALSO    {* bdd\_scanset *}
 RETURN {* A BDD variable set. *} */
 BDD bdd_makeset(int *varset, int varnum)

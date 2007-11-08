@@ -59,9 +59,9 @@ static bvec bvec_build(int bitnum, int isTrue)
 
    for (n=0 ; n<bitnum ; n++)
       if (isTrue)
-	 vec.bitvec[n] = BDDONE;
+         vec.bitvec[n] = BDDONE;
       else
-	 vec.bitvec[n] = BDDZERO;
+         vec.bitvec[n] = BDDZERO;
 
    return vec;
 }
@@ -150,7 +150,7 @@ SHORT   {* Build a boolean vector representing an integer value *}
 PROTO   {* bvec bvec_con(int bitnum, int val) *}
 DESCR   {* Builds a boolean vector that represents the value {\tt val}
            using {\tt bitnum} bits. The value will be represented with the
-	   LSB at the position 0 and the MSB at position {\tt bitnum}-1.*}
+           LSB at the position 0 and the MSB at position {\tt bitnum}-1.*}
 RETURN  {* The boolean vector (which is already reference counted) *}
 ALSO    {* bvec\_true, bvec\_false, bvec\_var *}
 */
@@ -162,9 +162,9 @@ bvec bvec_con(int bitnum, int val)
    for (n=0 ; n<v.bitnum ; n++)
    {
       if (val & 0x1)
-	 v.bitvec[n] = bddtrue;
+         v.bitvec[n] = bddtrue;
       else
-	 v.bitvec[n] = bddfalse;
+         v.bitvec[n] = bddfalse;
 
       val = val >> 1;
    }
@@ -180,8 +180,8 @@ SHORT   {* build a boolean vector with BDD variables *}
 PROTO   {* bvec bvec_var(int bitnum, int offset, int step) *}
 DESCR   {* Builds a boolean vector with the BDD variables $v_1, \ldots,
            v_n$ as the elements. Each variable will be the the variabled
-	   numbered {\tt offset + N*step} where {\tt N} ranges from 0 to
-	   {\tt bitnum}-1.*}
+           numbered {\tt offset + N*step} where {\tt N} ranges from 0 to
+           {\tt bitnum}-1.*}
 RETURN  {* The boolean vector (which is already reference counted) *}
 ALSO    {* bvec\_true, bvec\_false, bvec\_con *}
 */
@@ -206,7 +206,7 @@ SHORT   {* build a boolean vector from a FDD variable block *}
 PROTO   {* bvec bvec_varfdd(int var) *}
 DESCR   {* Builds a boolean vector which will include exactly the
            variables used to define the FDD variable block {\tt var}. The
-	   vector will have the LSB at position zero. *}
+           vector will have the LSB at position zero. *}
 RETURN  {* The boolean vector (which is already reference counted) *}
 ALSO    {* bvec\_var *}
 */
@@ -263,9 +263,9 @@ SHORT   {* adjust the size of a boolean vector *}
 PROTO   {* bvec bvec_coerce(int bitnum, bvec v) *}
 DESCR   {* Build a boolean vector with {\tt bitnum} elements copied from
            {\tt v}. If the number of elements in {\tt v} is greater than
-	   {\tt bitnum} then the most significant bits are removed, otherwise
-	   if number is smaller then the vector is padded with constant
-	   false BDDs (zeros). *}
+           {\tt bitnum} then the most significant bits are removed, otherwise
+           if number is smaller then the vector is padded with constant
+           false BDDs (zeros). *}
 RETURN  {* The new boolean vector (which is already reference counted) *}
 */
 bvec bvec_coerce(int bitnum, bvec v)
@@ -288,7 +288,7 @@ SHORT   {* test a vector for constant true/false BDDs *}
 PROTO   {* int bvec_isconst(bvec v) *}
 DESCR   {* Returns non-zero if the vector {\tt v} consists of only constant
            true or false BDDs. Otherwise zero is returned. This test should
-	   prelude any call to {\tt bvec\_val}. *}
+           prelude any call to {\tt bvec\_val}. *}
 ALSO    {* bvec\_val, bvec\_con *}
 */
 int bvec_isconst(bvec e)
@@ -297,7 +297,7 @@ int bvec_isconst(bvec e)
 
    for (n=0 ; n<e.bitnum ; n++)
       if (!ISCONST(e.bitvec[n]))
-	 return 0;
+         return 0;
 
    return 1;
 }
@@ -320,11 +320,11 @@ int bvec_val(bvec e)
 
    for (n=e.bitnum-1 ; n>=0 ; n--)
       if (ISONE(e.bitvec[n]))
-	 val = (val << 1) | 1;
+         val = (val << 1) | 1;
       else if (ISZERO(e.bitvec[n]))
-	 val = val << 1;
+         val = val << 1;
       else
-	 return 0;
+         return 0;
 
    return val;
 }
@@ -339,7 +339,7 @@ SHORT   {* frees all memory used by a boolean vector *}
 PROTO   {* void bvec_free(bvec v) *}
 DESCR   {* Use this function to release any unused boolean vectors. The
            decrease of the reference counts on the BDDs in {\tt v} is done
-	   by {\tt bvec\_free}. *}
+           by {\tt bvec\_free}. *}
 */
 void bvec_free(bvec v)
 {
@@ -355,7 +355,7 @@ SHORT   {* increase reference count of a boolean vector *}
 PROTO   {* bvec bvec_addref(bvec v) *}
 DESCR   {* Use this function to increase the reference count of all BDDs
            in a {\tt v}. Please note that all boolean vectors returned
-	   from BuDDy are reference counted from the beginning. *}
+           from BuDDy are reference counted from the beginning. *}
 RETURN  {* The boolean vector {\tt v} *}
 ALSO    {* bvec\_delref *}
 */
@@ -400,12 +400,12 @@ SHORT   {* map a function onto a boolean vector *}
 PROTO   {* bvec bvec_map1(bvec a, bdd (*fun)(bdd)) *}
 DESCR   {* Maps the function {\tt fun} onto all the elements in {\tt a}. The
            value returned from {\tt fun} is stored in a new vector which
-	   is then returned. An example of a mapping function is
-	   {\tt bdd\_not} which can be used like this\\
+           is then returned. An example of a mapping function is
+           {\tt bdd\_not} which can be used like this\\
 
-	   \indent {\tt bvec res = bvec\_map1(a, bdd\_not)}\\
+           \indent {\tt bvec res = bvec\_map1(a, bdd\_not)}\\
 
-	   \noindent to negate all the BDDs in {\tt a}.*}
+           \noindent to negate all the BDDs in {\tt a}.*}
 RETURN  {* The new vector (which is already reference counted) *}
 ALSO    {* bvec\_map2, bvec\_map3 *}
 */
@@ -429,13 +429,13 @@ SHORT   {* map a function onto a boolean vector *}
 PROTO   {* bvec bvec_map2(bvec a, bvec b, bdd (*fun)(bdd,bdd)) *}
 DESCR   {* Maps the function {\tt fun} onto all the elements in {\tt a} and
            {\tt b}. The value returned from {\tt fun} is stored in a new
-	   vector which is then returned. An example of a mapping function
-	   is {\tt bdd\_and} which can be used like this\\
+           vector which is then returned. An example of a mapping function
+           is {\tt bdd\_and} which can be used like this\\
 
-	   \indent {\tt bvec res = bvec\_map2(a, b, bdd\_and)}\\
+           \indent {\tt bvec res = bvec\_map2(a, b, bdd\_and)}\\
 
-	   \noindent to calculate the logical 'and' of all the BDDs in
-	   {\tt a} and {\tt b}. *}
+           \noindent to calculate the logical 'and' of all the BDDs in
+           {\tt a} and {\tt b}. *}
 RETURN  {* The new vector (which is already reference counted) *}
 ALSO    {* bvec\_map1, bvec\_map3 *}
 */
@@ -466,13 +466,13 @@ SHORT   {* map a function onto a boolean vector *}
 PROTO   {* bvec bvec_map3(bvec a, bvec b, bvec c, bdd (*fun)(bdd,bdd,bdd)) *}
 DESCR   {* Maps the function {\tt fun} onto all the elements in {\tt a},
            {\tt b} and {\tt c}. The value returned from {\tt fun} is stored
-	   in a new vector which is then returned. An example of a mapping
-	   function is {\tt bdd\_ite} which can be used like this\\
+           in a new vector which is then returned. An example of a mapping
+           function is {\tt bdd\_ite} which can be used like this\\
 
-	   \indent {\tt bvec res = bvec\_map3(a, b, c, bdd\_ite) }\\
+           \indent {\tt bvec res = bvec\_map3(a, b, c, bdd\_ite) }\\
 
-	   \noindent to calculate the if-then-else function for each element
-	   in {\tt a}, {\tt b} and {\tt c}. *}
+           \noindent to calculate the if-then-else function for each element
+           in {\tt a}, {\tt b} and {\tt c}. *}
 RETURN  {* The new vector (which is already reference counted) *}
 ALSO    {* bvec\_map1, bvec\_map2 *}
 */
@@ -505,13 +505,13 @@ SHORT   {* builds a boolean vector for addition *}
 PROTO   {* bvec bvec_add(bvec l, bvec r) *}
 DESCR   {* Builds a new boolean vector that represents the addition of two
            other vectors. Each element $x_i$ in the result will represent
-	   the function
-	   \[ x_i = l_i\ \mbox{xor}\ r_i\ \mbox{xor}\ c_{i-1} \]
-	   where the carry in $c_i$ is
-	   \[ c_i = (l_i\ \mbox{and}\ r_i)\ \mbox{or}\ (c_{i-1}\ \mbox{and}
-	            \ (l_i\ \mbox{or}\ r_i)). \]
-	   It is important for efficency that the BDD
-	   variables used in {\tt l} and {\tt r} are interleaved. *}
+           the function
+           \[ x_i = l_i\ \mbox{xor}\ r_i\ \mbox{xor}\ c_{i-1} \]
+           where the carry in $c_i$ is
+           \[ c_i = (l_i\ \mbox{and}\ r_i)\ \mbox{or}\ (c_{i-1}\ \mbox{and}
+                    \ (l_i\ \mbox{or}\ r_i)). \]
+           It is important for efficency that the BDD
+           variables used in {\tt l} and {\tt r} are interleaved. *}
 RETURN  {* The result of the addition (which is already reference counted) *}
 ALSO    {* bvec\_sub, bvec\_mul, bvec\_shl *}
 */
@@ -574,14 +574,14 @@ SHORT   {* builds a boolean vector for subtraction *}
 PROTO   {* bvec bvec_sub(bvec l, bvec r) *}
 DESCR   {* Builds a new boolean vector that represents the subtraction of two
            other vectors. Each element $x_i$ in the result will represent
-	   the function
-	   \[ x_i = l_i\ \mbox{xor}\ r_i\ \mbox{xor}\ c_{i-1} \]
-	   where the carry in $c_i$ is
-	   \[ c_i = (l_i\ \mbox{and}\ r_i\ \mbox{and}\ c_{i-1})\
-	            \mbox{or}\ (\mbox{not}\ l_i\ \mbox{and}
-	            \ (r_i\ \mbox{or}\ c_{i-1})). \]
-	   It is important for efficency that the BDD
-	   variables used in {\tt l} and {\tt r} are interleaved. *}
+           the function
+           \[ x_i = l_i\ \mbox{xor}\ r_i\ \mbox{xor}\ c_{i-1} \]
+           where the carry in $c_i$ is
+           \[ c_i = (l_i\ \mbox{and}\ r_i\ \mbox{and}\ c_{i-1})\
+                    \mbox{or}\ (\mbox{not}\ l_i\ \mbox{and}
+                    \ (r_i\ \mbox{or}\ c_{i-1})). \]
+           It is important for efficency that the BDD
+           variables used in {\tt l} and {\tt r} are interleaved. *}
 RETURN  {* The result of the subtraction (which is already reference counted) *}
 ALSO    {* bvec\_add, bvec\_mul, bvec\_shl *}
 */
@@ -722,16 +722,16 @@ bvec bvec_mul(bvec left, bvec right)
 
       for (m=0 ; m<bitnum ; m++)
       {
-	 bdd tmpres = bdd_addref( bdd_ite(right.bitvec[n],
-					  added.bitvec[m], res.bitvec[m]) );
-	 bdd_delref(res.bitvec[m]);
-	 res.bitvec[m] = tmpres;
+         bdd tmpres = bdd_addref( bdd_ite(right.bitvec[n],
+                                          added.bitvec[m], res.bitvec[m]) );
+         bdd_delref(res.bitvec[m]);
+         res.bitvec[m] = tmpres;
       }
 
          /* Shift 'leftshift' one bit left */
       bdd_delref(leftshift.bitvec[leftshift.bitnum-1]);
       for (m=bitnum-1 ; m>=1 ; m--)
-	 leftshift.bitvec[m] = leftshift.bitvec[m-1];
+         leftshift.bitvec[m] = leftshift.bitvec[m-1];
       leftshift.bitvec[0] = bddfalse;
       
       /*bvec_delref(added);*/
@@ -780,10 +780,10 @@ SHORT   {* builds a boolean vector for division by a constant *}
 PROTO   {* int bvec_div(bvec e, int c, bvec *res, bvec *rem) *}
 DESCR   {* Builds a new boolean vector representing the integer division
            of {\tt e} with {\tt c}. The result of the division will be stored
-	   in {\tt res} and the remainder of the division will be stored in
-	   {\tt rem}. Both vectors should be initialized as the function
-	   will try to release the nodes used by them. If an error occurs then
-	   the nodes will {\em not} be freed. *}
+           in {\tt res} and the remainder of the division will be stored in
+           {\tt rem}. Both vectors should be initialized as the function
+           will try to release the nodes used by them. If an error occurs then
+           the nodes will {\em not} be freed. *}
 RETURN  {* Zero on success or a negative error code on error. *}
 ALSO    {* bvec\_div, bvec\_mul, bvec\_add, bvec\_shl *}
 */
@@ -833,10 +833,10 @@ SHORT   {* builds a boolean vector for division *}
 PROTO   {* int bvec_div(bvec l, bvec r, bvec *res, bvec *rem) *}
 DESCR   {* Builds a new boolean vector representing the integer division
            of {\tt l} with {\tt r}. The result of the division will be stored
-	   in {\tt res} and the remainder of the division will be stored in
-	   {\tt rem}. Both vectors should be initialized as the function
-	   will try to release the nodes used by them. If an error occurs then
-	   the nodes will {\em not} be freed.*}
+           in {\tt res} and the remainder of the division will be stored in
+           {\tt rem}. Both vectors should be initialized as the function
+           will try to release the nodes used by them. If an error occurs then
+           the nodes will {\em not} be freed.*}
 RETURN  {* Zero on success or a negative error code on error. *}
 ALSO    {* bvec\_mul, bvec\_divfixed, bvec\_add, bvec\_shl *}
 */
@@ -870,19 +870,19 @@ int bvec_div(bvec left, bvec right, bvec *result, bvec *remainder)
 
       for (m=0 ; m<bitnum ; m++)
       {
-	 bdd remtmp = bdd_addref( bdd_ite(divLteRem,
-					  remSubDiv.bitvec[m],rem.bitvec[m]) );
-	 bdd_delref( rem.bitvec[m] );
-	 rem.bitvec[m] = remtmp;
+         bdd remtmp = bdd_addref( bdd_ite(divLteRem,
+                                          remSubDiv.bitvec[m],rem.bitvec[m]) );
+         bdd_delref( rem.bitvec[m] );
+         rem.bitvec[m] = remtmp;
       }
 
       if (n > 0)
-	 res.bitvec[right.bitnum-n] = divLteRem;
+         res.bitvec[right.bitnum-n] = divLteRem;
 
          /* Shift 'div' one bit right */
       bdd_delref(div.bitvec[0]);
       for (m=0 ; m<bitnum-1 ; m++)
-	 div.bitvec[m] = div.bitvec[m+1];
+         div.bitvec[m] = div.bitvec[m+1];
       div.bitvec[bitnum-1] = bddfalse;
 
       /*bvec_delref(remSubDiv);*/
@@ -911,10 +911,10 @@ SHORT   {* calculates the if-then-else operator for a boolean vector *}
 PROTO   {* bvec bvec_ite(bdd a, bvec b, bvec c) *}
 DESCR   {* Builds a vector where the bdd {\tt a} has been applied bitwise to
            {\tt b} and {\tt c} in an if-then-else operation, such that
-	   the result $r$ is:
-	   \[
-	     r_i = ite(a,b_i,c_i);
-	   \] *}
+           the result $r$ is:
+           \[
+             r_i = ite(a,b_i,c_i);
+           \] *}
 RETURN  {* The if-then-else result. *}
 ALSO    {* bdd\_ite *}
 */
@@ -989,8 +989,8 @@ SHORT   {* shift left operation (symbolic) *}
 PROTO   {* bvec bvec_shl(bvec l, bvec r, BDD c) *}
 DESCR   {* Builds a boolean vector that represents {\tt l} shifted {\tt r}
            times to the left. The new empty elements will be set to {\tt c}.
-	   The shift operation is fully symbolic and the number of bits
-	   shifted depends on the current value encoded by {\tt r}. *}
+           The shift operation is fully symbolic and the number of bits
+           shifted depends on the current value encoded by {\tt r}. *}
 RETURN  {* The result of the operation (which is already reference counted) *}
 ALSO    {* bvec\_add, bvec\_mul, bvec\_shlfixed, bvec\_shr *}
 */
@@ -1015,16 +1015,16 @@ BVEC bvec_shl(BVEC l, BVEC r, BDD c)
       
       for (m=0 ; m<l.bitnum ; m++)
       {
-   	    /* Set the m'th new location to be the (m+n)'th old location */
-	 if (m-n >= 0)
-	    tmp1 = bdd_addref( bdd_and(rEquN, l.bitvec[m-n]) );
-	 else
-	    tmp1 = bdd_addref( bdd_and(rEquN, c) );
-	 tmp2 = bdd_addref( bdd_or(res.bitvec[m], tmp1) );
-	 bdd_delref(tmp1);
+               /* Set the m'th new location to be the (m+n)'th old location */
+         if (m-n >= 0)
+            tmp1 = bdd_addref( bdd_and(rEquN, l.bitvec[m-n]) );
+         else
+            tmp1 = bdd_addref( bdd_and(rEquN, c) );
+         tmp2 = bdd_addref( bdd_or(res.bitvec[m], tmp1) );
+         bdd_delref(tmp1);
 
-	 bdd_delref(res.bitvec[m]);
-	 res.bitvec[m] = tmp2;
+         bdd_delref(res.bitvec[m]);
+         res.bitvec[m] = tmp2;
       }
 
       bdd_delref(rEquN);
@@ -1101,8 +1101,8 @@ SHORT   {* shift right operation (symbolic) *}
 PROTO   {* bvec bvec_shr(bvec l, bvec r, BDD c) *}
 DESCR   {* Builds a boolean vector that represents {\tt l} shifted {\tt r}
            times to the right. The new empty elements will be set to {\tt c}.
-	   The shift operation is fully symbolic and the number of bits
-	   shifted depends on the current value encoded by {\tt r}. *}
+           The shift operation is fully symbolic and the number of bits
+           shifted depends on the current value encoded by {\tt r}. *}
 RETURN  {* The result of the operation (which is already reference counted) *}
 ALSO    {* bvec\_add, bvec\_mul, bvec\_shl, bvec\_shrfixed *}
 */
@@ -1127,16 +1127,16 @@ BVEC bvec_shr(BVEC l, BVEC r, BDD c)
       
       for (m=0 ; m<l.bitnum ; m++)
       {
-   	    /* Set the m'th new location to be the (m+n)'th old location */
-	 if (m+n <= 2)
-	    tmp1 = bdd_addref( bdd_and(rEquN, l.bitvec[m+n]) );
-	 else
-	    tmp1 = bdd_addref( bdd_and(rEquN, c) );
-	 tmp2 = bdd_addref( bdd_or(res.bitvec[m], tmp1) );
-	 bdd_delref(tmp1);
+               /* Set the m'th new location to be the (m+n)'th old location */
+         if (m+n <= 2)
+            tmp1 = bdd_addref( bdd_and(rEquN, l.bitvec[m+n]) );
+         else
+            tmp1 = bdd_addref( bdd_and(rEquN, c) );
+         tmp2 = bdd_addref( bdd_or(res.bitvec[m], tmp1) );
+         bdd_delref(tmp1);
 
-	 bdd_delref(res.bitvec[m]);
-	 res.bitvec[m] = tmp2;
+         bdd_delref(res.bitvec[m]);
+         res.bitvec[m] = tmp2;
       }
 
       bdd_delref(rEquN);
@@ -1173,7 +1173,7 @@ SHORT   {* calculates the truth value of $x < y$ *}
 PROTO   {* bdd bvec_lth(bvec l, bvec r) *}
 DESCR   {* Returns the BDD representing {\tt l < r}
            ({\em not} reference counted). Both vectors must have the
-	   same number of bits. *}
+           same number of bits. *}
 ALSO    {* bvec\_lte, bvec\_gth, bvec\_gte, bvec\_equ, bvec\_neq *}
 */
 bdd bvec_lth(bvec l, bvec r)
@@ -1217,7 +1217,7 @@ SHORT   {* calculates the truth value of $x \leq y$ *}
 PROTO   {* bdd bvec_lte(bvec l, bvec r) *}
 DESCR   {* Returns the BDD representing {\tt l}$\leq${\tt r}
            ({\em not} reference counted). Both vectors must have the
-	   same number of bits. *}
+           same number of bits. *}
 ALSO    {* bvec\_lth, bvec\_gth, bvec\_gte, bvec\_equ, bvec\_neq *}
 */
 bdd bvec_lte(bvec l, bvec r)
@@ -1261,7 +1261,7 @@ SHORT   {* calculates the truth value of $x > y$ *}
 PROTO   {* bdd bvec_gth(bvec l, bvec r) *}
 DESCR   {* Returns the BDD representing {\tt l > r}
            ({\em not} reference counted). Both vectors must have the
-	   same number of bits. *}
+           same number of bits. *}
 ALSO    {* bvec\_lth, bvec\_lte, bvec\_gte, bvec\_equ, bvec\_neq *}
 */
 bdd bvec_gth(bvec l, bvec r)
@@ -1280,7 +1280,7 @@ SHORT   {* calculates the truth value of $x \geq y$ *}
 PROTO   {* bdd bvec_gte(bvec l, bvec r) *}
 DESCR   {* Returns the BDD representing {\tt l}$\geq${\tt r}
            ({\em not} reference counted). Both vectors must have the
-	   same number of bits. *}
+           same number of bits. *}
 ALSO    {* bvec\_lth, bvec\_gth, bvec\_gth, bvec\_equ, bvec\_neq *}
 */
 bdd bvec_gte(bvec l, bvec r)
@@ -1299,7 +1299,7 @@ SHORT   {* calculates the truth value of $x = y$ *}
 PROTO   {* bdd bvec_equ(bvec l, bvec r) *}
 DESCR   {* Returns the BDD representing {\tt l = r}
            ({\em not} reference counted). Both vectors must have the
-	   same number of bits. *}
+           same number of bits. *}
 ALSO    {* bvec\_lth, bvec\_lte, bvec\_gth, bvec\_gte, bvec\_neq *}
 */
 bdd bvec_equ(bvec l, bvec r)
@@ -1337,7 +1337,7 @@ SHORT   {* calculates the truth value of $x \neq y$ *}
 PROTO   {* bdd bvec_neq(bvec l, bvec r) *}
 DESCR   {* Returns the BDD representing {\tt l}$\neq${\tt r}
            ({\em not} reference counted). Both vectors must have the
-	   same number of bits. *}
+           same number of bits. *}
 ALSO    {* bvec\_lte, bvec\_lth, bvec\_gth, bvec\_gth, bvec\_equ *}
 */
 bdd bvec_neq(bvec l, bvec r)
