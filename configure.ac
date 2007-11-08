@@ -208,6 +208,7 @@ dnl @SUBDIRS@
 AC_SUBST(PKG_CONFIG_CXXFLAGS, ${ac_gecode_pkg_cxxflags})
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
+AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 
 AC_CONFIG_FILES([Makefile doxygen.conf doxygen.hh
 	misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc misc/gecode-minimodel.pc])
