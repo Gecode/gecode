@@ -95,7 +95,6 @@ namespace Gecode { namespace Set {
 
   forceinline void*
   RangeList::operator new(size_t, Space* home) {
-    assert(s == sizeof(RangeList));
     return home->fl_alloc<sizeof(RangeList)>();
   }
 
