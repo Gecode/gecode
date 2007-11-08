@@ -78,7 +78,7 @@ AC_DEFUN([AC_GECODE_GET_OS],
 
 dnl Macros:
 dnl   AC_GECODE_ADD_TO_CXXFLAGS ([FLAG...])
-dnl   AC_GECODE_ADD_TO_LDFLAGS ([FLAG...])
+dnl   AC_GECODE_ADD_TO_GLDFLAGS ([FLAG...])
 dnl
 dnl Description:
 dnl   Add the flags to the corresponding variables
@@ -93,8 +93,8 @@ AC_DEFUN([AC_GECODE_ADD_TO_COMPILERFLAGS],
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_CFLAGS],
    [CFLAGS="${CFLAGS}${CFLAGS:+ }$1"])
-AC_DEFUN([AC_GECODE_ADD_TO_LDFLAGS],
-   [LDFLAGS="${LDFLAGS}${LDFLAGS:+ }$1"])
+AC_DEFUN([AC_GECODE_ADD_TO_GLDFLAGS],
+   [GLDFLAGS="${GLDFLAGS}${GLDFLAGS:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_PKG_CXXFLAGS],
   [ac_gecode_pkg_cxxflags="${ac_gecode_pkg_cxxflags}${ac_gecode_pkg_cxxflags:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_DLLFLAGS],
@@ -155,30 +155,30 @@ AC_DEFUN([AC_GECODE_CHECK_COMPILERFLAG],
    AC_LANG_POP])dnl
 
 dnl Macro:
-dnl   AC_GECODE_CHECK_LDFLAG (FLAG, [ACTION-IF-TRUE,
-dnl                                 [ACTION-IF-FALSE]])
+dnl   AC_GECODE_CHECK_GLDFLAG (FLAG, [ACTION-IF-TRUE,
+dnl                                  [ACTION-IF-FALSE]])
 dnl
 dnl Description:
 dnl   Check whether FLAG is supported by the linker.  Run the
 dnl   shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
 dnl   otherwise.  If ACTION-IF-TRUE is not given, append FLAG to
-dnl   the contents of $LDFLAGS.
+dnl   the contents of $GLDFLAGS.
 dnl
 dnl Authors:
 dnl   Leif Kornstaedt <kornstae@ps.uni-sb.de>
 dnl   Marco Kuhlmann <kuhlmann@ps.uni-sb.de>
 dnl
-AC_DEFUN([AC_GECODE_CHECK_LDFLAG],
+AC_DEFUN([AC_GECODE_CHECK_GLDFLAG],
   [AC_REQUIRE([AC_PROG_CXX])
    AC_MSG_CHECKING(whether the linker accepts [$1])
-   ac_gecode_save_LDFLAGS="${LDFLAGS}"
-   LDFLAGS="${LDFLAGS}${LDFLAGS:+ }$1"
+   ac_gecode_save_GLDFLAGS="${GLDFLAGS}"
+   GLDFLAGS="${GLDFLAGS}${GLDFLAGS:+ }$1"
    AC_LINK_IFELSE(AC_LANG_PROGRAM(),
      [AC_MSG_RESULT(yes)
-      LDFLAGS="$ac_gecode_save_LDFLAGS"
-      ifelse([$2], , [LDFLAGS="${LDFLAGS}${LDFLAGS:+ }$1"], [$2])],
+      GLDFLAGS="$ac_gecode_save_GLDFLAGS"
+      ifelse([$2], , [GLDFLAGS="${GLDFLAGS}${GLDFLAGS:+ }$1"], [$2])],
      [AC_MSG_RESULT(no)
-      LDFLAGS="$ac_gecode_save_LDFLAGS"
+      GLDFLAGS="$ac_gecode_save_GLDFLAGS"
       ifelse([$3], , :, [$3])])])dnl
 
 dnl @synopsis _AC_C_IFDEF(MACRO-NAME, ACTION-IF-DEF, ACTION-IF-NOT-DEF)
@@ -619,7 +619,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     dnl flags for creating optimized dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD -MD])
     dnl linker flags
-    AC_GECODE_ADD_TO_LDFLAGS([-link -DEBUG -OPT:REF -OPT:ICF])
+    AC_GECODE_ADD_TO_GLDFLAGS([-link -DEBUG -OPT:REF -OPT:ICF])
   else
     dnl compiler flags for a debug build
     AC_GECODE_ADD_TO_COMPILERFLAGS([-Zi -wd4355])  
