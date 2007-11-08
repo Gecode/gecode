@@ -1005,6 +1005,8 @@ BDD bdd_high(BDD root)
 
 void bdd_default_gbchandler(int pre, bddGbcStat *s)
 {
+  (void)pre;
+  (void)s;
 /*    if (!pre) */
 /*    { */
 /*       printf("Garbage collection #%d: %d nodes / %d free", */
