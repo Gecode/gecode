@@ -118,7 +118,7 @@ namespace Test { namespace CpltSet {
     public:
       /// Create and register test
       CpltSetSelectNonEmptySub(const char* t)
-      : CpltSetTest(t, 4, ds_1012,false, 0, 800, 1000), xsize(4) {
+      : CpltSetTest(t, 4, ds_1012,false, 0, 8000, 15000), xsize(4) {
         /// using 1012 leads to 5min testtime for ONE iteration !
         union_pos = xsize - 1;
         selector_pos = xsize - 2;   
@@ -203,8 +203,11 @@ namespace Test { namespace CpltSet {
         Gecode::selectNonEmptySub(home, xs, x[selector_pos], x[union_pos]);
       }
     };
-    CpltSetSelectNonEmptySub 
-      _cpltsetselectNonEmptySub("Select::SelectNonEmptySub");
+
+    // Disabled due to time restrictions
+    // We need randomized tests to test large set domains
+    // CpltSetSelectNonEmptySub 
+    //   _cpltsetselectNonEmptySub("Select::SelectNonEmptySub");
 
     //@}
 

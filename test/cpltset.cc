@@ -416,10 +416,7 @@ namespace Test { namespace CpltSet {
     Test::Set::SetAssignment* ap =
       new Test::Set::SetAssignment(arity,lub,withInt);
     Test::Set::SetAssignment& a = *ap;
-  
-    Gecode::CpltSet::manager.dispose();
-    Gecode::CpltSet::manager.init(10000,10000);
-  
+
     int an = 0;
   
     while (a()) {
@@ -431,6 +428,8 @@ namespace Test { namespace CpltSet {
     
       START_TEST("Assignment (after posting)");
       {
+        Gecode::CpltSet::manager.dispose();
+        Gecode::CpltSet::manager.init(10000,10000);
         CpltSetTestSpace* s =
           new CpltSetTestSpace(arity,lub,withInt,false,this,opt);
         s->post();
@@ -446,6 +445,8 @@ namespace Test { namespace CpltSet {
     
       START_TEST("Assignment (before posting)");
       {
+        Gecode::CpltSet::manager.dispose();
+        Gecode::CpltSet::manager.init(10000,10000);
         CpltSetTestSpace* s =
           new CpltSetTestSpace(arity,lub,withInt,false,this,opt);
         s->assign(a);
@@ -461,6 +462,8 @@ namespace Test { namespace CpltSet {
     
       if (reified) {
         START_TEST("Assignment reified (before posting)");
+        Gecode::CpltSet::manager.dispose();
+        Gecode::CpltSet::manager.init(10000,10000);
         CpltSetTestSpace* s =
           new CpltSetTestSpace(arity,lub,withInt,true,this,opt);
         s->assign(a);
@@ -478,6 +481,8 @@ namespace Test { namespace CpltSet {
     
       if (reified) {
         START_TEST("Assignment reified (after posting)");
+        Gecode::CpltSet::manager.dispose();
+        Gecode::CpltSet::manager.init(10000,10000);
         CpltSetTestSpace* s =
           new CpltSetTestSpace(arity,lub,withInt,true,this,opt);
         s->post();
@@ -495,6 +500,8 @@ namespace Test { namespace CpltSet {
     
       START_TEST("Prune");
       {
+        Gecode::CpltSet::manager.dispose();
+        Gecode::CpltSet::manager.init(10000,10000);
         CpltSetTestSpace* s =
           new CpltSetTestSpace(arity,lub,withInt,false,this,opt);
         s->post();
@@ -516,6 +523,8 @@ namespace Test { namespace CpltSet {
     
       if (reified) {
         START_TEST("Prune reified");
+        Gecode::CpltSet::manager.dispose();
+        Gecode::CpltSet::manager.init(10000,10000);
         CpltSetTestSpace* s =
           new CpltSetTestSpace(arity,lub,withInt,true,this,opt);
         s->post();
@@ -535,7 +544,7 @@ namespace Test { namespace CpltSet {
         }
         delete s;
       }
-    
+
       ++an;
       ++a;
     }

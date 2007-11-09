@@ -51,10 +51,10 @@ namespace Test { namespace CpltSet {
       */
     //@{
 
-    static const int d1r[4][2] = {
-      {-4,-3},{-1,-1},{1,1},{3,5}
+    static const int d1r[2][2] = {
+      {-4,-4},{3,5}
     };
-    static IntSet d1(d1r,4);
+    static IntSet d1(d1r,2);
 
     static IntSet ds_33(-3,3);
     static IntSet ds_4(4,4);
@@ -160,12 +160,12 @@ namespace Test { namespace CpltSet {
     };
     CpltSetPartitionNaryOne _cpltsetpartitionnaryone("Partition::NaryOne");
 
-    /// Test for smaller instance of partition constraint
-    class CpltSetPartitionNaryOneSmaller : public CpltSetTest {
+    /// Test for bigger instance of partition constraint
+    class CpltSetPartitionNaryOneBigger : public CpltSetTest {
     public:
       /// Create and register test
-      CpltSetPartitionNaryOneSmaller(const char* t)
-      : CpltSetTest(t,3,d1,false, 200, 80) {}
+      CpltSetPartitionNaryOneBigger(const char* t)
+      : CpltSetTest(t,3,d1,false, 0, 200, 80) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr1(x.lub, x[0]);
@@ -200,8 +200,8 @@ namespace Test { namespace CpltSet {
         dom(home, y, SRT_EQ, 3, 5);
       }
     };
-    CpltSetPartitionNaryOneSmaller 
-      _cpltsetpartitionnaryonesmaller("Partition::NaryOne::Smaller");
+    CpltSetPartitionNaryOneBigger 
+      _cpltsetpartitionnaryonebigger("Partition::NaryOne::Bigger");
 
     //@}
 
