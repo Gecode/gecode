@@ -416,7 +416,11 @@ if (!(T)) {                                                     \
             break;
           case 2:
             olog << "Reflection copy" << std::endl;
-            sc = s->cloneWithReflection();
+            if (s->status() != SS_FAILED) {
+              sc = s->cloneWithReflection();
+            } else {
+              sc = s; s = NULL;
+            }
             CHECK_TEST(sc != NULL, "Reflection error");
             break;
           default: assert(false);
