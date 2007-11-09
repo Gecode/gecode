@@ -39,7 +39,7 @@
 
 namespace Gecode {
 
-  namespace Int { namespace Regular {
+  namespace MiniModel {
 
     class PosSet;
     /**
@@ -50,7 +50,7 @@ namespace Gecode {
     class NodeInfo;
     class PosInfo;
 
-  }}
+  }
 
   /// Implementation of the actual expression tree
   class REG::Exp {
@@ -72,9 +72,9 @@ namespace Gecode {
       Exp* kids[2];
     } data;
 
-    void followpos(Int::Regular::PosSetAllocator&,
-                   Int::Regular::NodeInfo&,
-                   Int::Regular::PosInfo*,
+    void followpos(MiniModel::PosSetAllocator&,
+                   MiniModel::NodeInfo&,
+                   MiniModel::PosInfo*,
                    int&);
     void inc(void);
     void dec(void);
@@ -383,7 +383,7 @@ namespace Gecode {
   }
 
 
-  namespace Int { namespace Regular {
+  namespace MiniModel {
 
     /*
      * Sets of positions
@@ -497,14 +497,14 @@ namespace Gecode {
       PosSet* followpos;
     };
 
-  }}
+  }
 
   void
-  REG::Exp::followpos(Int::Regular::PosSetAllocator& psm,
-                      Int::Regular::NodeInfo& ni,
-                      Int::Regular::PosInfo* pi, int& p) {
-    using Int::Regular::PosSet;
-    using Int::Regular::NodeInfo;
+  REG::Exp::followpos(MiniModel::PosSetAllocator& psm,
+                      MiniModel::NodeInfo& ni,
+                      MiniModel::PosInfo* pi, int& p) {
+    using MiniModel::PosSet;
+    using MiniModel::NodeInfo;
     if (this == NULL) {
       ni.nullable = true;
       ni.firstpos = NULL;
@@ -561,7 +561,7 @@ namespace Gecode {
   }
 
 
-  namespace Int { namespace Regular {
+  namespace MiniModel {
 
     class StateNode;
 
@@ -737,22 +737,22 @@ namespace Gecode {
       return &f[0];
     }
 
-  }}
+  }
 
   REG::operator DFA(void) {
-    using Int::Regular::PosSetAllocator;
-    using Int::Regular::StatePoolAllocator;
-    using Int::Regular::PosInfo;
-    using Int::Regular::PosSet;
-    using Int::Regular::NodeInfo;
+    using MiniModel::PosSetAllocator;
+    using MiniModel::StatePoolAllocator;
+    using MiniModel::PosInfo;
+    using MiniModel::PosSet;
+    using MiniModel::NodeInfo;
 
-    using Int::Regular::StatePool;
-    using Int::Regular::StateNode;
+    using MiniModel::StatePool;
+    using MiniModel::StateNode;
 
-    using Int::Regular::TransitionBag;
-    using Int::Regular::FinalBag;
+    using MiniModel::TransitionBag;
+    using MiniModel::FinalBag;
 
-    using Int::Regular::SymbolsInc;
+    using MiniModel::SymbolsInc;
 
     PosSetAllocator    psm;
     StatePoolAllocator spm;
