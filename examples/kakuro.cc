@@ -11,8 +11,8 @@
  *     Mikael Lagerkivst, 2007
  *
  *  Last modified:
- *     $Date: 2007-09-14 14:50:52 +0200 (Fri, 14 Sep 2007) $ by $Author: schulte $
- *     $Revision: 5033 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
