@@ -413,7 +413,7 @@
  * \ingroup Example
  *
  * These scripts are for small problems that exemplify how to model
- * with Gecode.
+ * with %Gecode.
  *
  */
 
@@ -445,7 +445,8 @@
  * getting started, common programming tasks, and  
  * available functionality.
  *
- * This document corresponds to %Gecode version @VERSION@.
+ * This document corresponds to %Gecode version @VERSION@, please consult
+ * the changelog for \ref SectionChangeList "recent changes".
  *
  * \section SecStart Getting started
  *
@@ -693,10 +694,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * Deciding which header files must be included when using %Gecode is
  * quite straightforward. There are the following header files for inclusion:
+ *  - gecode/support.hh must always included (support.hh header is 
+ *    included from kernel.hh)
  *  - gecode/kernel.hh must always be included (the header files below
  *    also always include kernel.hh).
- *  - gecode/support.hh must be included in order to use the funcionality in 
- *    \ref FuncSupport (the support.hh header is included from kernel.hh)
  *  - gecode/search.hh must be included, if search engines are used 
  *    (see for example \ref TaskModelSearch).
  *  - gecode/int.hh must be included, if any integer functionality is used
@@ -751,6 +752,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * \subsection SULA Windows with Visual Studio
  *
+ *  - Support library and DLL: GecodeSupport.lib and GecodeSupport.dll
  *  - Kernel library and DLL: GecodeKernel.lib and GecodeKernel.dll
  *  - Search library and DLL: GecodeSearch.lib and GecodeSearch.dll
  *  - Integer library and DLL: GecodeInt.lib and GecodeInt.dll
@@ -766,6 +768,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * library, different filename suffixes are used on different Unix platforms.
  * All library names follow the following scheme:
  *
+ *  - Support library: libgecodesupport.&lt;EXT&gt;
  *  - Kernel library: libgecodekernel.&lt;EXT&gt;
  *  - Search library: libgecodesearch.&lt;EXT&gt;
  *  - Integer library: libgecodeint.&lt;EXT&gt;
@@ -966,8 +969,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * \section UnsupPlatfrms Compiling for unsupported platforms
  *
- * If you want to try compiling Gecode on a platform that we do not support
- * officially, you can override the platform tests during
+ * If you want to try compiling Gecode on a platform that we do not
+ * mention, you can override the platform tests during
  * <code>configure</code>. There are two options to specify the type of
  * platform:
  *
@@ -999,7 +1002,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  +                           generated during <code>make</code>
  *  - <code>distclean</code> removes object files, libraries, and all
  *                           generated files
- *  - <code>depend</code> computes dependencies between source files
+ *  - <code>depend</code> generates dependencies between source files
  *  - <code>test</code> compiles the test suite
  *  - <code>doc</code> generates this reference documentation using doxygen
  *  - <code>installdoc</code> installs the documentation
@@ -1026,7 +1029,7 @@ modifications are straightforward, though.
 This short summary is how to adapt your models, for changes to
 propagator implementations, etc, please consult the changelog.
 
-IntVar and BoolVar
+\section SecChange2IntBool IntVar and BoolVar
 
 Boolean variables (BoolVar) are not any longer integer variables
 (IntVar). The same holds for variable arrays (BoolVarArray,
@@ -1038,7 +1041,7 @@ value of an IntVar you have to use a \ref TaskModelIntChannel
 all constraints offer two overloaded versions (one for IntVar,
 one for BoolVar).
 
-regular
+\section SecChange2Regular regular
 
 The regular constraint has been renamed to extensional (after
 all, it is an extensionally specified constraint). The old name
@@ -1047,7 +1050,7 @@ regular expressions, you have to add
    \code #include "gecode/int/minimodel.hh" \endcode
 to your file as they moved to the MiniModel module.
 
-Boolean constraints
+\section SecChange2Bool Boolean constraints
 
 In order to make the interface to Boolean constraints more
 regular and similar to set constraints, Boolean constraints are
@@ -1061,22 +1064,19 @@ instead of
    \code bool_and(home, x, y); \endcode
 More information is available \ref TaskModelIntRelBool "here".
 
-Branching
+\section SecChange2Branching Branching
 
 Values and types for selecting how to branch have been made uniform. 
 Replace BVAL_* by INT_VAL_*, BVAR_* by INT_VAR_*, and so on.
 
-Global cardinality constraint
+\section SecChange2GCC Global cardinality constraint
 
 The interface for the global cardinality constraint has been
 simplified.  The constraint is now called count. Please check the
 documentation for \ref TaskModelIntCard "details".
 
- 
-Sortedness constraint
+\section SecChange2Sorted Sortedness constraint
 
 The sortedness constraint has been renamed to sorted.
-
-
 
 */
