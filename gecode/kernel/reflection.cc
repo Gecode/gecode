@@ -661,4 +661,4 @@ namespace Gecode { namespace Reflection {
 
 }}
 
-// STATISTICS: kernel-core
+// STATISTICS: kernel-other
