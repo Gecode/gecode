@@ -3,7 +3,7 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contribution authors:
+ *  Contributing authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org> 
  *
  *  Copyright:
@@ -175,7 +175,8 @@ namespace {
      3, 8, 4,11,     8, 8, 2,10,    11, 8, 5,35,    17, 8, 2,10,    
      0, 9, 3, 6,     4, 9, 4,30,     9, 9, 2, 3,    12, 9, 3,19,    
     16, 9, 3, 7,     1,10, 5,34,     7,10, 5,34,    13,10, 5,17,    
-     2,11, 3,23,     7,11, 2,17,    10,11, 2,10,    14,11, 3, 6,    -1
+     2,11, 3,23,     7,11, 2,17,    10,11, 2,10,    14,11, 3, 6,    
+    -1
   };
 
   // Medium, Author: crimson
@@ -241,7 +242,8 @@ namespace {
      0, 8, 4,29,     5, 8, 2,13,     9, 8, 2, 8,    12, 8, 3,23,    
     16, 8, 3,22,     0, 9, 3,10,     4, 9, 5,32,    10, 9, 4,29,    
     15, 9, 2,10,     1,10, 4,14,     6,10, 6,39,    13,10, 6,22,    
-     2,11, 3,21,     8,11, 3,23,    14,11, 2, 6,    17,11, 2,11,    -1
+     2,11, 3,21,     8,11, 3,23,    14,11, 2, 6,    17,11, 2,11,    
+    -1
   };
 
   // Hard, Author: mimic
@@ -300,7 +302,8 @@ namespace {
     12, 8, 5,34,    17, 8, 5,34,    20, 8, 5,34,    21, 8, 2, 3,    
      5, 9, 2,16,    14, 9, 4,12,    18, 9, 2, 7,     1,10, 3,23,    
      2,10, 3,21,     6,10, 2, 9,    15,10, 3,20,     3,11, 2,17,    
-     9,11, 2, 4,    11,11, 2, 4,    16,11, 2,10,    21,11, 2,16,    -1,
+     9,11, 2, 4,    11,11, 2, 4,    16,11, 2,10,    21,11, 2,16,    
+    -1,
     // Horizontal constraints
      0, 1, 2, 6,     4, 1, 4,30,     9, 1, 2, 6,    12, 1, 3,10,    
     17, 1, 4,12,     0, 2, 3, 8,     4, 2, 4,11,     9, 2, 2, 4,    
@@ -387,16 +390,15 @@ namespace {
       return new DistinctLinear(share,*this);
     }
   };
-  /** \brief Generate a specification for \a n distinct variables with
-   * sum \a c.
+  /** \brief Generate specification for \a n distinct variables withm sum \a c
    *
-   * This function should be specialised for any specific type of specification. 
+   * This function should be specialised for any type of specification. 
    *
    * \relates Kakuro
    */
   template <class C> C generate(int n, int c);
 
-  /** \brief Generate a DFA for \a n distinct variables with sum \a c.
+  /** \brief Generate DFA for \a n distinct variables with sum \a c
    * \relates Kakuro
    */
   template <>
@@ -436,7 +438,7 @@ namespace {
     DFA dfa(0,&ts_all[0],final);
     return dfa;
   }
-  /** \brief Generate a Tuple Set for \a n distinct variables with sum \a c.
+  /** \brief Generate tuple set for \a n distinct variables with sum \a c
    * \relates Kakuro
    */
   template <>
@@ -456,8 +458,7 @@ namespace {
     return ts;
   }
   
-  /** \brief Class to remember already computed specifications of type
-   * Data.
+  /** \brief Class to remember already computed specifications of type Data
    * \relates Kakuro
    */
   template <class Data>
@@ -467,14 +468,14 @@ namespace {
     public:
       int n;       ///< Number of variables
       int c;       ///< Sum of variables
-      Data d;       ///< The previously computed DFA
+      Data d;      ///< The previously computed DFA
       Entry* next; ///< The next cache entry
     };
     Entry* cache; ///< Where all entries start
   public:
     /// Initialize cache as empty
     Cache(void) : cache(NULL) {}
-    /// Return possibly cached DFA for \a n distinct variables with sum \a c
+    /// Return possibly cached Data for \a n distinct variables with sum \a c
     Data get(int n, int c) {
       for (Entry* e = cache; e != NULL; e = e->next)
         if ((e->n == n) && (e->c == c))
@@ -517,7 +518,7 @@ public:
   /// Propagation variants
   enum {
     PROP_DFA,       ///< Use DFAs for extensional constraints
-    PROP_TUPLE_SET  ///< Use Tuple Sets for extensional constraints
+    PROP_TUPLE_SET  ///< Use tuple sets for extensional constraints
   };
   /// Model variants
   enum {
@@ -663,7 +664,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Kakuro::PROP_DFA,
                   "dfa","Use DFAs for storing combinations");
   opt.propagation(Kakuro::PROP_TUPLE_SET,
-                  "tuple-set","Use Tuple sets for storing combinations");
+                  "tuple-set","Use tuple sets for storing combinations");
 
   opt.model(Kakuro::MODEL_COMBINE);
   opt.model(Kakuro::MODEL_DECOMPOSE,
