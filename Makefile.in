@@ -1329,7 +1329,7 @@ disttodir:
 	libdir=$(BINPKG)/lib sharedlibdir=$(BINPKG)/lib \
 	includedir=$(BINPKG)/include && \
 	$(MAKE) ChangeLog && \
-	cp LICENSE ChangeLog $(BINPKG)/
+	cp $(top_srcdir)/LICENSE ChangeLog $(BINPKG)/
 
 distzip: disttodir
 	zip -q -9 -r $(BINPKG).zip $(BINPKG) && \
