@@ -277,7 +277,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Base<View, false>::last_next;
     using Base<View, false>::init_last;
     using Base<View, false>::init_dom;
-    struct SupportEntry : public FreeList {
+    /// Entry for storing support
+    class SupportEntry : public FreeList {
     public:
       /// Supporting Tuple
       Tuple t;
@@ -311,11 +312,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       static void  operator delete(void*, Space*);
       //@}
     };
+    /// What is to be done
     enum WorkType {
       WT_FIND_SUPPORT,
       WT_REMOVE_VALUE
     };
-    struct Work {
+    /// Description of work to be done
+    class Work {
+    public:
       WorkType work;
       int var;
       int val;
