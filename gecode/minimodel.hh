@@ -1012,8 +1012,6 @@ namespace Gecode {
    * \param initial is the amount available at the start
    * \param icl Supports value consistency only (\c cl = ICL_VAL, default)
    *
-   * \todo Make amounts variable, requires changes to cumulatives.
-   *
    * \exception Int::ArgumentSizeMismatch Raised if the sizes of the arguments
    *            representing producer events or the sizes of the arguments
    *            representing consumer events does not match.

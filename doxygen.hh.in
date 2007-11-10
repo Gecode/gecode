@@ -1041,12 +1041,13 @@ value of an IntVar you have to use a \ref TaskModelIntChannel
 all constraints offer two overloaded versions (one for IntVar,
 one for BoolVar).
 
-\section SecChange2Regular regular
+\section SecChange2Regular Regular constraint
 
 The regular constraint has been renamed to extensional (after
 all, it is an extensionally specified constraint). The old name
-is still available in the MiniModel module. If you want to use
-regular expressions, you have to add
+is still available in the MiniModel module. 
+
+If you want to use regular expressions, you have to add
    \code #include "gecode/int/minimodel.hh" \endcode
 to your file as they moved to the MiniModel module.
 

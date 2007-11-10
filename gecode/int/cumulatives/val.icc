@@ -300,12 +300,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       }
 
       // Remove tasks that are no longer relevant.
-      /* @todo check condition more thouroughly - is
-       *        \f$max(end_r)\geq up+1\f$  CORRECT?
-       */
       if ((!machine[t].in(r)) ||
           end[t].max() <= up+1) {
-        // @todo more than one *it (probably not) ? ==> remove(*it)
         std::list<int>::iterator old = it++;
         prune_tasks.erase(old);
       } else {

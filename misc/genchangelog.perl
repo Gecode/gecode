@@ -129,8 +129,7 @@ while ($l = <>) {
       }
     }
     while (($l = <>) && !($l =~ /\[ENTRY\]/)) {
-      chop $l;
-      $info = $info . " " . $l;
+      $info = $info . $l;
     }
     goto LINE;
   }
