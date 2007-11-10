@@ -66,12 +66,42 @@
 Version: 2.0.0
 Date:    2007-11-11
 [DESCRIPTION]
-The best Gecode ever... Done with supernatural powers!
+As witnessed by the version number change, this is a major
+release with too many changes, fixes, and additions to mention
+them all: please consult the changelog.
 
+The highlights are:
+ - New propagators: channeling between Integer variable and array
+   of Boolean variables, circuit, table constraint (extensional),
+   incremental regular constraint (extensional), incremental
+   Boolean linear constraints, ...
+ - Boolean variables have a dedicated implementation: twice as
+   fast, half the memory
+ - Advisors for incremental propagation (see: Lagerkvist,
+   Schulte, Advisors for Incremental Propagation, CP 2007)
+ - Many crucial performance and scalability improvements: memory
+   management, memory footprint of propagators, ...
+ - Many cleanups and more documentation, many new examples, etc
+ - New set variables with complete domain representation
+   (CpltSetVar) [experimental]
+ - A reflection API to query spaces about their propagators,
+   etc. [experimental]
+ - An interface to MiniZinc (see: Nethercote, Stuckey, Becket,
+   Brand, Duck, Tack, MiniZinc: Towards a Standard CP Modeling
+   Language, CP 2007) [experimental]
+
+The features marked as experimental are all functional, but might
+be revised in the next releases.
+ 
 As Gecode 2.0.0 is a major release, you might have to adapt your
 programs:  \ref PageHowToChange_2 "How to Change to Gecode 2.0.0".
 
-
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added table-based extensional constraint.
 
 [ENTRY]
 Module: other
