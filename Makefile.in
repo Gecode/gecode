@@ -1361,12 +1361,12 @@ veryclean: clean
 	$(RMF) $(EXAMPLEEXE) $(EXAMPLEEXE:%.exe=%.pdb) \
 		$(EXAMPLEEXE:%.exe=%.ilk)
 	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk)
-	$(RMF) doc GecodeReference.chm ChangeLog
+	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
 
 distclean: veryclean
 	$(RMF) $(ALLVARIMP:%=$(top_srcdir)/%)
 	$(RMF) misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc
-	$(RMF) gecode/vti.icc doxygen.conf doxygen.hh Makefile
+	$(RMF) gecode/vti.icc Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 
