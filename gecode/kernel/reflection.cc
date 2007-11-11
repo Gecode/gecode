@@ -41,6 +41,7 @@ namespace Gecode { namespace Reflection {
 
   // Registry
 
+  /// The actual registry, holding SymbolMap objects
   class Registry::RegistryObject {
   public:
     /// The registry of constraint posting functions
@@ -400,6 +401,7 @@ namespace Gecode { namespace Reflection {
   // VarSpec
   //
 
+  /// Implementation of a VarSpec, holding all information about a variable
   class VarSpec::Domain {
   public:
     /// The variable type identifier for this variable
@@ -482,6 +484,7 @@ namespace Gecode { namespace Reflection {
   // ActorSpec
   //
 
+  /// Implementation of an ActorSpec, holding all information about an actor
   class ActorSpec::Arguments {
   public:
     /// The name of this actor

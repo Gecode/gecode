@@ -210,6 +210,7 @@ namespace Gecode {
     return static_cast<SAO*>(object())->size();
   }
 
+  /// Serialization helper for SharedArray objects
   template <class T>
   class SharedArraySerialization {
   public:
@@ -217,6 +218,7 @@ namespace Gecode {
     static T t(Reflection::Arg* arg) { T tt; return tt; }
   };
 
+  /// Serialization helper for SharedArray<int> objects
   template <>
   class SharedArraySerialization<int> {
   public:

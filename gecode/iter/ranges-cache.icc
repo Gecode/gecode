@@ -149,7 +149,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     return r[c].max-r[c].min+1;
   }
 
-  /// VALUECACHE
+  // VALUECACHE
   /**
    * \brief %Range iterator cache
    *

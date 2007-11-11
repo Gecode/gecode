@@ -44,6 +44,7 @@ namespace Gecode { namespace Reflection {
    *
    */
 
+  /// Implementation of a VarMap
   class VarMap::VarMapObj {
   public:
     /// Map variable names to variable implementations
