@@ -663,47 +663,38 @@ endif
 # Testing
 #
 
-INTTESTSRC0 = \
+INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
 	rel linear scheduling minimodel gcc sorted circuit
-ifeq "@enable_set_vars@" "yes"
-SETTESTSRC0 = \
+INTTESTSRC0 = test/int.cc $(INTTESTSRC00:%=test/int/%.cc)
+SETTESTSRC00 = \
 	dom rel rel-op convex sequence int select distinct projection 
+SETTESTSRC0 = test/set.cc $(SETTESTSRC00:%=test/set/%.cc)
+CPLTSETTESTSRC00 = \
+	dom rel atmost partition cardinality select
+CPLTSETTESTSRC0 = test/cpltset.cc $(CPLTSETTESTSRC00:%=test/cpltset/%.cc)
+
+ifeq "@enable_set_vars@" "yes"
+SETTESTSRC=$(SETTESTSRC0)
 else
-SETTESTSRC0 =
+SETTESTSRC=
+endif
+ifeq "@enable_cpltset_vars@" "yes"
+CPLTSETTESTSRC = $(CPLTSETTESTSRC0)
+else
+CPLTSETTESTSRC =
 endif
 
 BRANCHTESTSRC0 = \
-	distinct 
+	test/branch.cc test/branch/distinct.cc 
 
+TESTSRC0 = test/test.cc
 
-ifeq "@enable_cpltset_vars@" "yes"
-CPLTSETTESTSRC0 = \
-	dom rel atmost partition cardinality select
-CPLTSETTEST  = cpltset 
-ALLCPLTSETTESTSRC0 = $(CPLTSETTESTSRC0:%=cpltset/%)
+TESTSRC = \
+	$(TESTSRC0) $(INTTESTSRC0) \
+	$(SETTESTSRC) $(CPLTSETTESTSRC) \
+	$(BRANCHTESTSRC0)
 
-else
-CPLTSETTESTSRC0 =
-CPLTSETTESTDIR  =
-ALLCPLTSETTESTSRC0 = 
-endif
-
-
-ifeq "@enable_set_vars@" "yes"
-TESTSRC0 = \
-	test int set branch $(CPLTSETTEST) \
-	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLCPLTSETTESTSRC0) \
-	$(BRANCHTESTSRC0:%=branch/%)
-else
-TESTSRC0 = \
-	test int branch $(CPLTSETTEST) \
-	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLCPLTSETTESTSRC0) \
-	$(BRANCHTESTSRC0:%=branch/%)
-endif
-
-
-TESTSRC	= $(TESTSRC0:%=test/%.cc)
 TESTHDR0 = \
 	test.hh test.icc int.hh int.icc set.hh cpltset.hh branch.hh
 TESTHDR = $(TESTHDR0:%=test/%)
@@ -1070,14 +1061,19 @@ doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
 
 DIST_FILES= \
 	configure.ac configure Makefile.in gecode.m4 \
-	doxygen.conf.in doxygen.hh.in install-sh misc/gecode.pc.in \
 	changelog.in LICENSE \
-	misc/gecode-search.pc.in \
-	misc/gecode-minimodel.pc.in gecode/config.hh.in \
+	doxygen.conf.in doxygen.hh.in install-sh misc/gecode.pc.in \
+	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
+	misc/gecode-serialization.pc.in \
+	gecode/config.hh.in \
 	gecode/int/var-imp-int.vis \
 	gecode/int/var-imp-bool.vis \
 	gecode/set/var-imp.vis \
 	gecode/cpltset/var-imp.vis \
+	gecode/support/buddy/AUTHORS \
+	gecode/support/buddy/ChangeLog \
+	gecode/support/buddy/NEWS \
+	gecode/support/buddy/README \
 	examples/support.hh \
 	examples/support/example.icc \
 	examples/support/options.icc \
@@ -1094,7 +1090,8 @@ distdir:
 	mkdir -p gecode-$(VERSION) && \
 	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLSRC)) | \
 	  (cd gecode-$(VERSION) && tar xf -) && \
-	(cd $(top_srcdir) && tar cf - $(TESTSRC) $(TESTHDR) $(DIST_FILES)) | \
+	(cd $(top_srcdir) && tar cf - $(TESTSRC0) $(INTTESTSRC0) \
+	  $(SETTESTSRC0) $(CPLTSETTESTSRC0) $(BRANCHTESTSRC0) $(TESTHDR) $(DIST_FILES)) | \
 	  (cd gecode-$(VERSION) && tar xf -)
 
 dist: distdir
@@ -1207,7 +1204,7 @@ doc-apple: doc
 #
 
 ifeq "@HAVE_PKGCONFIG@" "yes"
-PKGCONFIGFILES = gecode.pc gecode-search.pc gecode-minimodel.pc
+PKGCONFIGFILES = gecode.pc gecode-search.pc gecode-minimodel.pc gecode-serialization.pc
 else
 PKGCONFIGFILES =
 endif
@@ -1365,7 +1362,8 @@ veryclean: clean
 
 distclean: veryclean
 	$(RMF) $(ALLVARIMP:%=$(top_srcdir)/%)
-	$(RMF) misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc
+	$(RMF) misc/gecode.pc misc/gecode-search.pc \
+		misc/gecode-minimodel.pc misc/gecode-serialization.pc
 	$(RMF) gecode/vti.icc Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
