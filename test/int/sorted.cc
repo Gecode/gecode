@@ -113,7 +113,6 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++) {
            x[i]=xyz[i]; y[i]=xyz[n+i]; z[i]=xyz[2*n+i];
          }
-   
          // check for permutation
          for (int i=0; i<n; i++)
            for (int j=i+1; j<n; j++)
@@ -121,7 +120,7 @@ namespace Test { namespace Int {
                return false;
    
          // y must to be sorted
-         for (int i=0; i<n; i++)
+         for (int i=0; i<n-1; i++)
            if (y[i]>y[i+1])
              return false;
    
