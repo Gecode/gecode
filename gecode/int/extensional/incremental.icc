@@ -161,17 +161,33 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
-  const char*
-  Incremental<View>::name(void) const {
-    return "Int::Extensional::Incremental";
-  }
-
-  template <class View>
   Actor*
   Incremental<View>::copy(Space* home, bool share) {
     return new (home) Incremental<View>(home,share,*this);
   }
 
+  template <class View>
+  Gecode::Support::Symbol
+  Incremental<View>::name(void) {
+    return Reflection::mangle<View>("Int::Extensional::Incremental");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  Incremental<View>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    return s << x.spec(home, m)
+             << tupleSet.spec(m);
+  }
+
+  template <class View>
+  void
+  Incremental<View>::post(Space* home, Reflection::VarMap& vars,
+                    const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    TupleSet tupleSet(vars, spec[1]);
+    (void) new (home) Incremental<View>(home,x,tupleSet);    
+  }
 
   template <class View>
   ExecStatus

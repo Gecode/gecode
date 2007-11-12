@@ -1182,6 +1182,11 @@ namespace Gecode {
     int min(void) const;
     /// Maximum domain size
     int max(void) const;
+
+    /// Initialize TupleSet from reflection specification
+    GECODE_INT_EXPORT TupleSet(Reflection::VarMap& vm, Reflection::Arg* arg);
+    /// Create reflection specification for the TupleSet
+    GECODE_INT_EXPORT Reflection::Arg* spec(Reflection::VarMap& vm) const;
   };
 
   /** \brief Post propagator for \f$x\in T\f$.

@@ -179,7 +179,7 @@ namespace Gecode {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     assert(imp->finalized());
-    return imp->size;
+    return imp->size-1;
   }
   inline TupleSet::Tuple
   TupleSet::operator[](int i) const {

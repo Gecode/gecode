@@ -68,15 +68,32 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
-  const char*
-  Basic<View>::name(void) const {
-    return "Int::Extensional::Basic";
-  }
-
-  template <class View>
   Actor*
   Basic<View>::copy(Space* home, bool share) {
     return new (home) Basic<View>(home,share,*this);
+  }
+
+  template <class View>
+  Gecode::Support::Symbol
+  Basic<View>::name(void) {
+    return Reflection::mangle<View>("Int::Extensional::Basic");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  Basic<View>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    return s << x.spec(home, m)
+             << tupleSet.spec(m);
+  }
+
+  template <class View>
+  void
+  Basic<View>::post(Space* home, Reflection::VarMap& vars,
+                    const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    TupleSet tupleSet(vars, spec[1]);
+    (void) new (home) Basic<View>(home,x,tupleSet);    
   }
 
 

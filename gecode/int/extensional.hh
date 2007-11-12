@@ -247,10 +247,16 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
     /// Post propagator for views \a x
     static ExecStatus post(Space* home, ViewArray<View>& x, const TupleSet& t);
+
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled name of this propagator
+    static Gecode::Support::Symbol name(void);
   };
 }}}
 
@@ -356,12 +362,19 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
     /// Post propagator for views \a x
     static ExecStatus post(Space* home, ViewArray<View>& x, const TupleSet& t);
     // Dispose propagator
     size_t dispose(Space* home);
+
+
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled name of this propagator
+    static Gecode::Support::Symbol name(void);
 
 
     //

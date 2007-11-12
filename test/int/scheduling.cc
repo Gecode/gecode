@@ -56,7 +56,7 @@ namespace Test { namespace Int {
       */
      //@{
      /**
-      * \brief Script for generating assignments
+      * \brief Script for generating assignments.
       *
       * We are only interested in assignments that represent tasks (s_i,
       * d_i, e_i, h_i) such that the following hold:
@@ -165,8 +165,8 @@ namespace Test { namespace Int {
        }
      };
    
-     template <class C>
      /// Check whether event \a e is valid
+     template <class C>
      bool valid(std::vector<Event> e, C comp) {
        std::sort(e.begin(), e.end());
        unsigned int i = 0;

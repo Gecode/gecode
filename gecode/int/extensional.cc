@@ -140,6 +140,11 @@ namespace Gecode {
   GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::IntView>);
   GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::BoolView>);
 
+  GECODE_REGISTER1(Int::Extensional::Basic<Int::IntView>);
+  GECODE_REGISTER1(Int::Extensional::Basic<Int::OffsetView>);
+  GECODE_REGISTER1(Int::Extensional::Incremental<Int::IntView>);
+  GECODE_REGISTER1(Int::Extensional::Incremental<Int::OffsetView>);
+
 }
 
 // STATISTICS: int-post
