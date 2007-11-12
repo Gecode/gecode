@@ -269,8 +269,12 @@ namespace Gecode {
       maxVar = std::max(maxVar, *i);
     }
 
+    bool bddWasRunning = true;
     // Initialize buddy
-    bdd_init(1000, 1000);
+    if (!bdd_isrunning()) {
+      bddWasRunning = false;
+      bdd_init(1000, 1000);
+    }
     bdd_setvarnum(maxVar+1);
 
     // First, transform the formula into a bdd
@@ -296,8 +300,8 @@ namespace Gecode {
       p.add(proj);
     }
 
-
-    bdd_done();
+    if (!bddWasRunning)
+      bdd_done();
 
     return p;
   }
