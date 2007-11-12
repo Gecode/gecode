@@ -93,7 +93,7 @@ The highlights are:
 The features marked as experimental are all functional, but might
 be revised in the next releases.
  
-As Gecode 2.0.0 is a major release, you might have to adapt your
+As %Gecode 2.0.0 is a major release, you might have to adapt your
 programs:  \ref PageHowToChange_2 "How to Change to Gecode 2.0.0".
 
 [ENTRY]
@@ -141,7 +141,7 @@ Rank:   minor
 Thanks: Filip Konvicka
 [DESCRIPTION]
 On windows with MSVC, always build program database files to ease
-debugging of applications using Gecode (files are also included in
+debugging of applications using %Gecode (files are also included in
 packages).
 
 [ENTRY]
@@ -260,7 +260,7 @@ Module: other
 What:   change
 Rank:   minor
 [DESCRIPTION]
-All of Gecode has been put under the MIT license (which the
+All of %Gecode has been put under the MIT license (which the
 previous license was a simple rewording of).
 
 [ENTRY]
@@ -959,7 +959,7 @@ Rank:	minor
 [DESCRIPTION]
 New configure switches: --enable-audit to include audit code, which may
 contain expensive checks of internal invariants or alternative, checked
-implementations of critical parts of Gecode. --enable-universal and 
+implementations of critical parts of %Gecode. --enable-universal and 
 --with-sdk, to support building universal binaries on Mac OS X.
 
 [ENTRY]
@@ -1056,7 +1056,7 @@ Module: search
 What: 	bug
 Rank: 	major
 [DESCRIPTION]
-With the changes to search in Gecode 1.2.1 recomputation was
+With the changes to search in %Gecode 1.2.1 recomputation was
 actually almost switched off...
 
 [ENTRY]
@@ -1245,7 +1245,7 @@ What:   change
 Rank:   minor
 Bug:	41
 [DESCRIPTION]
-Change exceptions thrown by Gecode to be compliant with C++
+Change exceptions thrown by %Gecode to be compliant with C++
 exceptions.
 
 [ENTRY]
@@ -1274,7 +1274,7 @@ Rank:   major
 Branchings now must return branching descriptions and commit
 operations also insist on being provided with branching
 descriptions.  This change reflects that batch recomputation is
-of vital importance for efficiency in Gecode.
+of vital importance for efficiency in %Gecode.
 
 [ENTRY]
 Module: int
@@ -1435,7 +1435,7 @@ Rank:   major
 Thanks:	Martin Mann
 [DESCRIPTION]
 Moved library source code into gecode subdirectory. Facilitates cleaner
-installation. Programs compiling against Gecode now need to include
+installation. Programs compiling against %Gecode now need to include
 e.g. "gecode/int.hh".
 	
 [ENTRY]
@@ -1453,7 +1453,7 @@ This minor release adds some new constraints (see below), adds support
 for stopping search engines based on definable criteria, and some other
 small fixes. Most notably, the test infrastructure has been extended to
 also check whether propagators correctly claim that they have computed
-a fixpoint (now all invariants a propagator must obey in Gecode are covered
+a fixpoint (now all invariants a propagator must obey in %Gecode are covered
 by the test infrastructure). This has lead to many small fixes.
 	
 [ENTRY]
@@ -1505,7 +1505,7 @@ Rank:   minor
 Bug:	36
 Thanks: Javier Mena
 [DESCRIPTION]
-A non-debug version of Gecode could not be linked to a program compiled with
+A non-debug version of %Gecode could not be linked to a program compiled with
 assertions switched on, as BndSet::isConsistent was missing from the library.
 
 [ENTRY]
@@ -1721,7 +1721,7 @@ Bug:    31
 [DESCRIPTION]
 The preprocessor macro NDEBUG for disabling assertions is no longer
 put into config.icc. Without this fix, user programs could not use
-assert if Gecode was compiled with NDEBUG.
+assert if %Gecode was compiled with NDEBUG.
 
 [ENTRY]
 Module: minimodel

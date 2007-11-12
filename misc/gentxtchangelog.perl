@@ -39,7 +39,7 @@
 
 print <<EOF
 Changelog for Gecode
-================================================================================
+==============================================================================
 
 EOF
 ;
@@ -89,6 +89,7 @@ foreach $mod (@modorder) {
 while ($l = <>) {
  LINE:
   next if ($l =~ /^\#/);
+  $l =~ s/%Gecode/Gecode/g;
   if ($l =~ /^\[RELEASE\]/) {
     # Print previous
     if (!$first) {
@@ -110,13 +111,14 @@ while ($l = <>) {
 
 	}
       }
-      print "\n--------------------------------------------------------------------------------\n\n";
+      print "\n------------------------------------------------------------------------------\n\n";
     }
     $first   = 0;
     $version = "";
     $info    = "";
     $date    = "";
     while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
+      $l =~ s/%Gecode/Gecode/g;
       if ($l =~ /Version:[\t ]*(.*)$/) {
 	$version = $1;
       } elsif ($l =~ /Date:[\t ]*(.*)$/) {
@@ -124,6 +126,7 @@ while ($l = <>) {
       }
     }
     while (($l = <>) && !($l =~ /\[ENTRY\]/)) {
+      $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
       $info = $info . " " . $l;
     }
@@ -138,6 +141,7 @@ while ($l = <>) {
     $mod = "";
     $thanks = "";
     while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
+      $l =~ s/%Gecode/Gecode/g;
       if ($l =~ /Module:[\t ]*(.*)$/) {
 	$mod  = $1;
       } elsif ($l =~ /What:[\t ]*(.*)$/) {
@@ -153,6 +157,7 @@ while ($l = <>) {
     
     while (($l = <>) && 
 	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
+       $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
 	if ($desc eq "") {
 	    $desc = $l;
