@@ -74,18 +74,18 @@ The highlights are:
  - New propagators: channeling between Integer variable and array
    of Boolean variables, circuit, table constraint (extensional),
    incremental regular constraint (extensional), incremental
-   Boolean linear constraints, ...
+   Boolean linear constraints
  - Boolean variables have a dedicated implementation: twice as
    fast, half the memory
  - Advisors for incremental propagation (see: Lagerkvist,
    Schulte, Advisors for Incremental Propagation, CP 2007)
  - Many crucial performance and scalability improvements: memory
-   management, memory footprint of propagators, ...
- - Many cleanups and more documentation, many new examples, etc
+   management, memory footprint of propagators
+ - Many cleanups and more documentation, many new examples
  - New set variables with complete domain representation
    (CpltSetVar) [experimental]
- - A reflection API to query spaces about their propagators,
-   etc. [experimental]
+ - A reflection API to query spaces about their propagators
+   [experimental]
  - An interface to MiniZinc (see: Nethercote, Stuckey, Becket,
    Brand, Duck, Tack, MiniZinc: Towards a Standard CP Modeling
    Language, CP 2007) [experimental]
