@@ -41,8 +41,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace Gecode {
 
   ProjectorCompiler::Indent::Indent(void) : i(0) {}
@@ -60,12 +58,12 @@ namespace Gecode {
   }
   
   bool
-  ProjectorCompiler::nary() {
+  ProjectorCompiler::nary(void) {
     return spec._arity <= 0 || spec._arity >= 4;
   }
 
-  string
-  ProjectorCompiler::propcost() {
+  std::string
+  ProjectorCompiler::propcost(void) {
     switch (spec._arity) {
     case 1:  return "PC_UNARY_HI";
     case 2:  return "PC_BINARY_HI";
@@ -75,28 +73,28 @@ namespace Gecode {
   }
 
   void
-  ProjectorCompiler::header(ostream& os) {
+  ProjectorCompiler::header(std::ostream& os) {
     os
-      << "// This file was generated from projector specifications." << endl
-      << endl;
+      << "// This file was generated from projector specifications." 
+      << std::endl << std::endl;
 
     if (spec._namespace != "") {
-      os << indent << spec._namespace << endl;
+      os << indent << spec._namespace << std::endl;
       ++indent;
     }
   }
 
   void
-  ProjectorCompiler::footer(ostream& os) {
+  ProjectorCompiler::footer(std::ostream& os) {
     if (spec._namespace != "") {
       --indent;
       os << indent << "}";
     }
-    os << endl;
+    os << std::endl;
   }
 
   void
-  ProjectorCompiler::viewsarglist(ostream& os) {
+  ProjectorCompiler::viewsarglist(std::ostream& os) {
     if (nary()) {
       os << "ViewArray<View>& x";
     } else {
@@ -115,7 +113,7 @@ namespace Gecode {
   }
 
   void
-  ProjectorCompiler::initarglist(ostream& os) {
+  ProjectorCompiler::initarglist(std::ostream& os) {
     if (nary()) {
       os << "_x(x)";
     } else {
@@ -143,9 +141,9 @@ namespace Gecode {
     iccos << ">";
   }
 
-  void ProjectorCompiler::templatehead(ostream& os) {
+  void ProjectorCompiler::templatehead(std::ostream& os) {
     if (nary() || views==SINGLE_VIEW)
-      os << indent << "template <class View>" << endl;
+      os << indent << "template <class View>" << std::endl;
     else {
       os << indent << "template <";
       for (int i=0; i<spec._arity; i++) {
@@ -153,12 +151,13 @@ namespace Gecode {
         if (i!=spec._arity-1)
           os << ", ";
       }
-      os << ">" << endl;
+      os << ">" << std::endl;
     }
   }
 
   void
-  ProjectorCompiler::classdef() {
+  ProjectorCompiler::classdef(void) {
+    using namespace std;
     templatehead(hhos);
     hhos << indent
          << "class " << spec._name << " : public Propagator { " << endl
@@ -237,7 +236,7 @@ namespace Gecode {
 
   }
 
-  string
+  std::string
   ProjectorCompiler::propcond(PropCond pc) {
     if (spec._reified || spec._negated) {
       switch (pc) {
@@ -258,14 +257,14 @@ namespace Gecode {
     case Gecode::Set::PC_SET_ANY : return "Gecode::Set::PC_SET_ANY";
     default:
       /// TODO: Proper error handling
-      cerr << "Unknown PropCond" << endl;
+      std::cerr << "Unknown PropCond" << std::endl;
       exit(2);
     }
   }
 
   void
-  ProjectorCompiler::standardMemberFunctions() {
-
+  ProjectorCompiler::standardMemberFunctions(void) {
+    using namespace std;
     ///////////////////////////////////////////////////
     // Constructor
     templatehead(iccos);
@@ -432,6 +431,7 @@ namespace Gecode {
   int
   ProjectorCompiler::iterator(const SetExprCode& instrs,
                               bool countSize, bool invert) {
+    using namespace std;
     vector<string> typestack;
     vector<int> argstack;
 
@@ -537,7 +537,8 @@ namespace Gecode {
   }
 
   void
-  ProjectorCompiler::allAssigned(ostream& os) {
+  ProjectorCompiler::allAssigned(std::ostream& os) {
+    using namespace std;
     os << indent << "bool assigned=true;" << endl;
     if (nary()) {
       os << indent << "for (int i=_x.size(); i--;)" << endl;
@@ -551,6 +552,7 @@ namespace Gecode {
 
   void
   ProjectorCompiler::propagation(void) {
+    using namespace std;
     if (!spec._negated || spec._reified) {
       templatehead(iccos);
       iccos << indent << "ExecStatus" << endl << indent << spec._name;
@@ -819,8 +821,8 @@ namespace Gecode {
 
   }
 
-  ProjectorCompiler::ProjectorCompiler(ostream& _hhos,
-                                       ostream& _iccos,
+  ProjectorCompiler::ProjectorCompiler(std::ostream& _hhos,
+                                       std::ostream& _iccos,
                                        const ProjectorPropagatorSpec& _spec)
     : hhos(_hhos), iccos(_iccos), spec(_spec),
       compiletest(false),
@@ -830,10 +832,10 @@ namespace Gecode {
 
   void 
   ProjectorCompiler::compile(void) {
-
+    using namespace std;
     if (spec._arity < spec._ps.arity()) {
       /// TODO: Add proper error handling
-      cerr << "Arity mismatch\n";
+      std::cerr << "Arity mismatch\n";
       exit(2);
     }
 
