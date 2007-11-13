@@ -395,9 +395,11 @@ namespace Gecode { namespace Int { namespace Element {
   Reflection::ActorSpec&
   Int<ViewA,ViewB>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::IntArrayArg* ia = Reflection::Arg::newIntArray(c.size());
+    for (int i=c.size(); i--;) (*ia)[i] = c[i];
     return s << x0.spec(home, m)
              << x1.spec(home, m)
-             << Reflection::Arg::newIntArray(c);
+             << ia;
   }
 
   template <class ViewA, class ViewB>
