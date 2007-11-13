@@ -400,13 +400,16 @@ if (!(T)) {                                                     \
         TestSpace* s = new TestSpace(arity,dom,false,this);
         TestSpace* sc = NULL;
         s->post();
-        switch (Base::rand(3)) {
+        int choices = 3 + opt.reflection;
+        switch (Base::rand(choices)) {
           case 0:
-            olog << ind(3) << "No copy" << std::endl;
+            if (opt.log)
+              olog << ind(3) << "No copy" << std::endl;
             sc = s;
             s = NULL;
             break;
           case 1:
+            if (opt.log)
             olog << ind(3) << "Unshared copy" << std::endl;
             if (s->status() != SS_FAILED) {
               sc = static_cast<TestSpace*>(s->clone(false));
@@ -415,7 +418,17 @@ if (!(T)) {                                                     \
             }
             break;
           case 2:
-            olog << ind(3) << "Reflection copy" << std::endl;
+            if (opt.log)
+              olog << ind(3) << "Shared copy" << std::endl;
+            if (s->status() != SS_FAILED) {
+              sc = static_cast<TestSpace*>(s->clone(true));
+            } else {
+              sc = s; s = NULL;
+            }
+            break;
+          case 3:
+            if (opt.log)
+              olog << ind(3) << "Reflection copy" << std::endl;
             if (s->status() != SS_FAILED) {
               sc = s->cloneWithReflection();
             } else {
@@ -610,10 +623,11 @@ if (!(T)) {                                                     \
     return true;
 
   failed:
-    olog << "FAILURE" << std::endl
-         << ind(1) << "Test:       " << test << std::endl
-         << ind(1) << "Problem:    " << problem << std::endl;
-    if (a())
+    if (opt.log)
+      olog << "FAILURE" << std::endl
+           << ind(1) << "Test:       " << test << std::endl
+           << ind(1) << "Problem:    " << problem << std::endl;
+    if (a() && opt.log)
       olog << ind(1) << "Assignment: " << a << std::endl;
     delete ap;
 

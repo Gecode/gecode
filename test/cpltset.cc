@@ -552,14 +552,15 @@ namespace Test { namespace CpltSet {
     delete ap;
     return true;
    failed:
-     olog << "FAILURE" << std::endl
-          << ind(1) << "Test:       " << test << std::endl
-          << ind(1) << "Problem:    " << problem << std::endl;
-     if (a())
-       olog << ind(1) << "Assignment: " << a << std::endl;
-     delete ap;
+    if (opt.log)
+      olog << "FAILURE" << std::endl
+	   << ind(1) << "Test:       " << test << std::endl
+	   << ind(1) << "Problem:    " << problem << std::endl;
+    if (a() && opt.log)
+      olog << ind(1) << "Assignment: " << a << std::endl;
+    delete ap;
 
-     return false;
+    return false;
   }
 
 }}

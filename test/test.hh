@@ -107,6 +107,8 @@ namespace Test {
     unsigned int fixprob;
     /// Default fixpoint probaibility
     static const unsigned int deffixprob = 10;
+    /// Whether to use reflection copies
+    bool reflection;
     /// Whether to stop on an error
     bool stop;
     /// Whether to log the tests

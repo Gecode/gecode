@@ -559,22 +559,35 @@ if (!(T)) {                                                     \
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
         SetTestSpace* sc = NULL;
         s->post();
-        switch (Base::rand(3)) {
+        int choices = 3 + opt.reflection;
+        switch (Base::rand(choices)) {
           case 0:
-            olog << ind(3) << "No copy" << std::endl;
+            if (opt.log)
+              olog << ind(3) << "No copy" << std::endl;
             sc = s;
             s = NULL;
             break;
           case 1:
-            olog << ind(3) << "Unshared copy" << std::endl;
+            if (opt.log)
+              olog << ind(3) << "Unshared copy" << std::endl;
+            if (s->status() != Gecode::SS_FAILED) {
+              sc = static_cast<SetTestSpace*>(s->clone(true));
+            } else {
+              sc = s; s = NULL;
+            }
+            break;
+          case 2:
+            if (opt.log)
+              olog << ind(3) << "Unshared copy" << std::endl;
             if (s->status() != Gecode::SS_FAILED) {
               sc = static_cast<SetTestSpace*>(s->clone(false));
             } else {
               sc = s; s = NULL;
             }
             break;
-          case 2:
-            olog << ind(3) << "Reflection copy" << std::endl;
+          case 3:
+            if (opt.log)
+              olog << ind(3) << "Reflection copy" << std::endl;
             sc = s->cloneWithReflection();
             CHECK_TEST(sc != NULL, "Reflection error");
             break;
@@ -676,11 +689,12 @@ if (!(T)) {                                                     \
     delete ap;
     return true;
    failed:
-     olog << "FAILURE" << std::endl
-          << ind(1) << "Test:       " << test << std::endl
-          << ind(1) << "Problem:    " << problem << std::endl;
-     if (a())
-       olog << ind(1) << "Assignment: " << a << std::endl;
+        if (opt.log)
+          olog << "FAILURE" << std::endl
+               << ind(1) << "Test:       " << test << std::endl
+               << ind(1) << "Problem:    " << problem << std::endl;
+        if (a() && opt.log)
+          olog << ind(1) << "Assignment: " << a << std::endl;
      delete ap;
 
      return false;
