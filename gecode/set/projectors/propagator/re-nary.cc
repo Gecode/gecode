@@ -77,10 +77,11 @@ namespace Gecode { namespace Set { namespace Projection {
 
   ExecStatus
   ReNaryProjection::propagate(Space* home) {
+    ProjectorSet newps(ps);
     if (b.one())
-      GECODE_REWRITE(this,(NaryProjection<false>::post(home,x,ps)));
+      GECODE_REWRITE(this,(NaryProjection<false>::post(home,x,newps)));
     if (b.zero())
-      GECODE_REWRITE(this,(NaryProjection<true>::post(home,x,ps)));
+      GECODE_REWRITE(this,(NaryProjection<true>::post(home,x,newps)));
 
     switch (ps.check(home, x)) {
     case __ES_SUBSUMED:

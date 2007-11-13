@@ -228,6 +228,7 @@ namespace Gecode {
     SharedArray<Projector> _ps; ///< The projectors
     int _count; ///< The number of projectors in the set
     int _arity; ///< The maximum arity of the projectors in the set
+    
   public:
     
     /// Construct projector set for \a n projectors
