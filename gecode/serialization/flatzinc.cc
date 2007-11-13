@@ -37,13 +37,12 @@
 
 #include "gecode/serialization.hh"
 
-using namespace std;
-
 namespace Gecode {
   
   namespace {
     
-    void emitIntVar(ostream& os, int varNo, Reflection::VarSpec& vs) {
+    void emitIntVar(std::ostream& os, int varNo, Reflection::VarSpec& vs) {
+      using namespace std;
       os << "var ";
       Reflection::Arg* dom = vs.dom();
       if (!dom->isIntArray())
@@ -66,7 +65,8 @@ namespace Gecode {
       else
         os << ": _v" << varNo << ";" << endl;      
     }
-    void emitBoolVar(ostream& os, int varNo, Reflection::VarSpec& vs) {
+    void emitBoolVar(std::ostream& os, int varNo, Reflection::VarSpec& vs) {
+      using namespace std;
       os << "var ";
       Reflection::Arg* dom = vs.dom();
       if (!dom->isInt())
@@ -87,7 +87,8 @@ namespace Gecode {
         os << ": _v" << varNo << ";" << endl;
     }
 #ifdef GECODE_HAVE_SET_VARS
-    void emitSetVar(ostream& os, int varNo, Reflection::VarSpec& vs) {
+    void emitSetVar(std::ostream& os, int varNo, Reflection::VarSpec& vs) {
+      using namespace std;
       os << "var set of ";
       Reflection::Arg* dom = vs.dom();
       if (! (dom->isPair() && 
@@ -160,7 +161,8 @@ namespace Gecode {
     }
 #endif
     
-    void emitVar(ostream& os, int v, Reflection::VarMap& vm) {
+    void emitVar(std::ostream& os, int v, Reflection::VarMap& vm) {
+      using namespace std;
       Reflection::VarSpec& vs = vm.spec(v);
       if (vs.name().empty())
         os << "_v" << v;
@@ -168,14 +170,16 @@ namespace Gecode {
         os << vs.name();
     }
     
-    void emitVarArray(ostream& os, Reflection::ArrayArg* a, 
+    void emitVarArray(std::ostream& os, Reflection::ArrayArg* a, 
                       Reflection::VarMap& vm) {
+      using namespace std;
       for (int i=0; i<a->size(); i++)
         emitVar(os, (*a)[i]->toVar(), vm);
     }
     
-    void emitArray(ostream& os, Reflection::ArrayArg* a,
+    void emitArray(std::ostream& os, Reflection::ArrayArg* a,
                    Reflection::VarMap& vm) {
+      using namespace std;
       if ((*a)[0]->isInt()) {
         os << "[";
         for (int i=0; i<a->size(); i++) {
@@ -221,7 +225,9 @@ namespace Gecode {
       throw Exception("Serialization", "Specification not understood");
     }
     
-    void emitArg(ostream& os, Reflection::Arg* arg, Reflection::VarMap& vm) {
+    void emitArg(std::ostream& os, Reflection::Arg* arg, 
+                 Reflection::VarMap& vm) {
+      using namespace std;
       if (arg->isInt()) {
         os << arg->toInt();
         return;
@@ -268,8 +274,9 @@ namespace Gecode {
     
   }
 
-  void emitSharedObject(ostream& os, int soCount, Reflection::VarMap& vm,
+  void emitSharedObject(std::ostream& os, int soCount, Reflection::VarMap& vm,
                         Reflection::Arg* arg0) {
+    using namespace std;
     Reflection::Arg* arg = arg0->toSharedObject();
     if (arg->isIntArray()) {
       Reflection::IntArrayArg* a = arg->toIntArray();
@@ -297,7 +304,8 @@ namespace Gecode {
     return;    
   }
   
-  void emitFlatzinc(Space* home, Reflection::VarMap& vm, ostream& os) {
+  void emitFlatzinc(Space* home, Reflection::VarMap& vm, std::ostream& os) {
+    using namespace std;
     Reflection::VarMapIter vmi(vm);
     int varCount = 0;
     int soCount = 0;
