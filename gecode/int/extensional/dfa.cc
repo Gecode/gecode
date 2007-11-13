@@ -37,7 +37,7 @@
 
 #include "gecode/int.hh"
 
-namespace Gecode { namespace Int { namespace Regular {
+namespace Gecode { namespace Int { namespace Extensional {
 
   /**
    * \brief Sort transition array by input state
@@ -154,7 +154,7 @@ namespace Gecode {
 
   DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
     using namespace Int;
-    using namespace Regular;
+    using namespace Extensional;
     // Compute number of states and transitions
     int n_states = start;
     int n_trans  = 0;
