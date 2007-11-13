@@ -402,12 +402,12 @@ if (!(T)) {                                                     \
         s->post();
         switch (Base::rand(3)) {
           case 0:
-            olog << "No copy" << std::endl;
+            olog << ind(3) << "No copy" << std::endl;
             sc = s;
             s = NULL;
             break;
           case 1:
-            olog << "Unshared copy" << std::endl;
+            olog << ind(3) << "Unshared copy" << std::endl;
             if (s->status() != SS_FAILED) {
               sc = static_cast<TestSpace*>(s->clone(false));
             } else {
@@ -415,7 +415,7 @@ if (!(T)) {                                                     \
             }
             break;
           case 2:
-            olog << "Reflection copy" << std::endl;
+            olog << ind(3) << "Reflection copy" << std::endl;
             if (s->status() != SS_FAILED) {
               sc = s->cloneWithReflection();
             } else {
