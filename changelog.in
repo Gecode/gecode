@@ -293,7 +293,7 @@ Module: kernel
 What:   new
 Rank:   major
 [DESCRIPTION]
-A reflection API has been added, which allows to query spaces 
+A reflection API has been added, which allows querying spaces 
 about the variables and propagators they contain.
 
 [ENTRY]
@@ -950,7 +950,7 @@ Rank:	major
 [DESCRIPTION]
 Subscription to variables now features an additional and optional
 Boolean argument whether the propagator is to be processed. This
-allows to dynamically create subscriptions during propagation.
+allows dynamically creation of subscriptions during propagation.
 
 [ENTRY]
 Module: other
@@ -1324,7 +1324,7 @@ Date:		2006-06-20
 [DESCRIPTION]
 This release makes quite some drastic changes to how propagators
 and branchings are deleted: instead of using destructors they use
-a dispose method that allows to pass a home space during deletion
+a dispose method that allows passing a home space during deletion
 (we will use this infrastructure measure to speed up cloning
 considerably a little later). Moreover the directory structure
 has changed on popular request so that all include files are to
