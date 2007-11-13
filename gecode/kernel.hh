@@ -161,7 +161,7 @@
  *
  */
 
-#include "gecode/kernel/sharedarray.icc"
+#include "gecode/kernel/shared-array.icc"
 
 /*
  * Common propagator and branching patterns

@@ -181,7 +181,7 @@ SUPPORTBUILDDIRS = support support/buddy
 KERNELSRC0 = \
 	core reflection varmap memory-manager
 KERNELHDR0 = \
-	array sharedarray branching core exception \
+	array shared-array branching core exception \
 	macros memory-manager modevent \
 	propagator advisor view var varmap reflection
 
@@ -344,15 +344,15 @@ SETVARIMP = \
 SETHDR0 =								     \
 	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
 	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
-	int/channel-bool.icc select/idxarray.hh						     \
-	select/idxarray.icc select/inter.icc select/union.icc \
-	select/unionConst.icc \
+	int/channel-bool.icc select/idxarray.hh			             \
+	select/idxarray.icc select/inter.icc select/union.icc                \
+	select/unionConst.icc                                                \
 	select/disjoint.icc array.icc var/imp.icc var/integerset.icc	     \
 	var/delta.icc var/iter.icc var/set.icc				     \
 	view/complement.icc view/const.icc view/set.icc view/singleton.icc   \
-	view/offset.icc \
+	view/offset.icc                                                      \
 	rel/subset.icc rel/re-subset.icc rel/eq.icc rel/nq.icc rel/re-eq.icc \
-	rel/common.icc rel/nosubset.icc sequence.hh	 \
+	rel/common.icc rel/nosubset.icc sequence.hh	                     \
 	rel-op/union.icc rel-op/partition.icc rel-op/subofunion.icc	     \
 	rel-op/inter.icc rel-op/superofinter.icc			     \
 	rel-op/post.icc rel-op/common.icc rel.hh			     \
