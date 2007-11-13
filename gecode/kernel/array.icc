@@ -1234,10 +1234,6 @@ operator<<(std::ostream& os, const Gecode::VarArray<Var>& x) {
   return os << '}';
 }
 
-/**
- * \brief Print array elements enclosed in curly brackets
- * \relates ViewArray
- */
 template<class View>
 std::ostream& 
 operator<<(std::ostream& os, const Gecode::ViewArray<View>& x) {
@@ -1250,10 +1246,6 @@ operator<<(std::ostream& os, const Gecode::ViewArray<View>& x) {
   return os << '}';
 }
 
-/**
- * \brief Print array elements enclosed in curly brackets
- * \relates VarArray
- */
 template<class T>
 std::ostream& 
 operator<<(std::ostream& os, const Gecode::ArgArrayBase<T>& x) {
