@@ -153,15 +153,12 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   Val<ViewM,ViewD,ViewH,View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
 
-    Reflection::IntArrayArg* ia = Reflection::Arg::newIntArray(limit.size());
-    for (int i=limit.size(); i--;) (*ia)[i] = limit[i];
-
     return s << machine.spec(home, m)
              << start.spec(home, m)
              << duration.spec(home, m)
              << end.spec(home, m)
              << height.spec(home, m)
-             << ia
+             << Reflection::Arg::newIntArray(limit)
              << at_most;
   }
 

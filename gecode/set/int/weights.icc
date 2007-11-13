@@ -341,15 +341,8 @@ namespace Gecode { namespace Set { namespace Int {
   Reflection::ActorSpec&
   Weights<View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
-
-    Reflection::IntArrayArg* elementsI =
-      Reflection::Arg::newIntArray(elements.size());
-    for (int i=elements.size(); i--;) (*elementsI)[i] = elements[i];
-    Reflection::IntArrayArg* weightsI =
-      Reflection::Arg::newIntArray(weights.size());
-    for (int i=weights.size(); i--;) (*weightsI)[i] = weights[i];
-
-    return s << elementsI << weightsI
+    return s << Reflection::Arg::newIntArray(elements)
+             << Reflection::Arg::newIntArray(weights)
              << x.spec(home, m)
              << y.spec(home, m);
   }

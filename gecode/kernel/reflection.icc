@@ -128,6 +128,9 @@ namespace Gecode { namespace Reflection {
     const IntArrayArg*  toIntArray(void) const;
     /// Create new integer array argument with size \a n
     static IntArrayArg* newIntArray(int n);
+    /// Create new integer array argument from array \a a
+    template <class A>
+    static IntArrayArg* newIntArray(const A& a);
     /// Initialize this as an int array argument with size \a n
     void         initIntArray(int n);
 
@@ -438,6 +441,15 @@ namespace Gecode { namespace Reflection {
   /**************************************
    * Implementations
    **************************************/
+
+  template <class A>
+  IntArrayArg*
+  Arg::newIntArray(const A& a) {
+    IntArrayArg* ret = Arg::newIntArray(a.size());
+    for (int i=a.size(); i--;)
+      (*ret)[i] = a[i];
+    return ret;
+  }
   
   /** \addtogroup TaskReflection
    *  @{
