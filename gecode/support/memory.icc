@@ -159,7 +159,7 @@ namespace Gecode {
 char GECODE_FRESH(X) [(N)*sizeof(T)];              \
 T* X = ::Gecode::Support::ptr_cast<T*>(GECODE_FRESH(X));
 
-#elif defined(_MSC_VER) || (defined(__GNUC__) && defined(_WIN32))
+#elif defined(_MSC_VER)
 
 #include <cstdlib>
 #include <malloc.h>
