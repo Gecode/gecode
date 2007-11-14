@@ -350,7 +350,12 @@ AC_DEFUN([AC_GECODE_ENABLE_CONTRIB],
 
 
 AC_DEFUN([AC_GECODE_STATICLIBS],
-	 [AC_ARG_ENABLE([static],
+	 [if test "${host_os}" = "windows" -a \
+                  "${ac_gecode_compiler_vendor}" = "gnu"; then
+            enable_static="yes"
+	    enable_shared="no"
+          fi
+          AC_ARG_ENABLE([static],
 	   AC_HELP_STRING([--enable-static],
 	     [build static libraries @<:@default=no@:>@]))
 	  AC_MSG_CHECKING(whether to build static libraries)

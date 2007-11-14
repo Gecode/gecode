@@ -876,6 +876,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * of the Cygwin libraries, use
  *
  * <code>./configure CC="gcc -mno-cygwin" CXX="g++ -mno-cygwin"</code>
+ * Note that we only support building static libraries on Cygwin.
  *
  * To compile on a system using a different than the default compiler,
  * and a <code>/bin/sh</code> that is not bash compatible (e.g. a
