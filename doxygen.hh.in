@@ -748,6 +748,13 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * corresponding DLL must be available for execution (such as in the
  * PATH environment variable).
  *
+ * The libraries contain code that is executed at link time (for registering
+ * part of the reflection functionality).  If you create static libraries,
+ * this code will not be linked into your executable as it is not directly
+ * referenced. You will have to tell your linker to include all symbols from 
+ * the library (e.g. using -Wl,--whole-archive on Linux). Please refer to your
+ * linker documentation.
+ *
  * \section SecUsageLibraries Library names
  *
  * \subsection SULA Windows with Visual Studio
