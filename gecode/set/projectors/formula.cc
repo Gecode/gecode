@@ -275,7 +275,8 @@ namespace Gecode {
       bddWasRunning = false;
       bdd_init(1000, 1000);
     }
-    bdd_setvarnum(maxVar+1);
+    if (bdd_varnum() < maxVar+1)
+      bdd_setvarnum(maxVar+1);
 
     // First, transform the formula into a bdd
     bdd f = ax->toBdd();
