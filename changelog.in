@@ -86,9 +86,6 @@ The highlights are:
    (CpltSetVar) [experimental]
  - A reflection API to query spaces about their propagators
    [experimental]
- - An interface to MiniZinc (see: Nethercote, Stuckey, Becket,
-   Brand, Duck, Tack, MiniZinc: Towards a Standard CP Modeling
-   Language, CP 2007) [experimental]
 
 The features marked as experimental are all functional, but might
 be revised in the next releases.
