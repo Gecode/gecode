@@ -199,20 +199,20 @@ namespace Test { namespace Set {
           for (; vmi(); ++vmi) {
             try {
               d.var(vmi.var());
-            } catch (Gecode::Reflection::ReflectionException e) {
+            } catch (Gecode::Exception e) {
               return NULL;
             }            
           }
           try {
             d.post(s);
-          } catch (Gecode::Reflection::ReflectionException e) {
+          } catch (Gecode::Exception e) {
             return NULL;
           }
         }
         for (; vmi(); ++vmi) {
           try {
             d.var(vmi.var());
-          } catch (Gecode::Reflection::ReflectionException e) {
+          } catch (Gecode::Exception e) {
             return NULL;
           }
         }
@@ -220,10 +220,14 @@ namespace Test { namespace Set {
         if (failed())
           c->fail();
         return c;
-      } catch (Gecode::Reflection::ReflectionException e) {
+      } catch (Gecode::Exception e) {
+        if (status() == Gecode::SS_FAILED)
+          return this;
         return static_cast<SetTestSpace*>(clone());
       }
 #else
+      if (status() == Gecode::SS_FAILED)
+        return this;
       return static_cast<SetTestSpace*>(clone());
 #endif
     }
@@ -589,6 +593,8 @@ if (!(T)) {                                                     \
             if (opt.log)
               olog << ind(3) << "Reflection copy" << std::endl;
             sc = s->cloneWithReflection();
+            if (sc == s)
+              s = NULL;
             CHECK_TEST(sc != NULL, "Reflection error");
             break;
           default: assert(false);          
