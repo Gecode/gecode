@@ -63,6 +63,20 @@
 #
 
 [RELEASE]
+Version: 2.0.1
+Date:    Later
+[DESCRIPTION]
+Fixes or what?
+
+[ENTRY]
+Module: int
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Fixed bug in documentation of table-based extensional constraint.
+
+
+[RELEASE]
 Version: 2.0.0
 Date:    2007-11-14
 [DESCRIPTION]
