@@ -76,6 +76,14 @@ Rank:   minor
 Fixed bug in documentation of table-based extensional constraint.
 
 
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed a bug in the hash function for pointers, which could return
+negative array indices.
+
 [RELEASE]
 Version: 2.0.0
 Date:    2007-11-14
