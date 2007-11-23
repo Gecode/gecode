@@ -220,6 +220,16 @@ Example::run(const Options& o) {
              << endl;
       }
       break;
+#ifdef GECODE_HAVE_GIST
+    case EM_GIST:
+      {
+        Gist::PrintingInspector<Script> pi;
+        Script* s = new Script(o);
+        (void) explore(s, &pi);
+        delete s;
+      }
+      break;
+#endif
     }
   } catch (Exception e) {
     cout << "Exception: " << e.what() << "." << endl

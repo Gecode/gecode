@@ -534,7 +534,15 @@ ITERHDR0 =							\
 ITERHDR = gecode/iter.hh \
 	$(ITERHDR0:%=gecode/iter/%.icc)
 
+#
+# GIST
+#
 
+ifeq "@enable_gist@" "yes"
+export LINKGIST = @GECODE_LINK_GIST@
+else
+export LINKGIST =
+endif
 
 #
 # EXAMPLES
@@ -615,7 +623,8 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
 export LINKALL = \
 	$(LINKSEARCH) $(LINKCPLTSET) $(LINKSET) $(LINKINT) \
-	$(LINKMM) $(LINKSER) $(LINKKERNEL) $(LINKSUPPORT) 
+	$(LINKMM) $(LINKSER) $(LINKKERNEL) $(LINKSUPPORT) \
+	$(LINKGIST)
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
@@ -728,6 +737,7 @@ compilelib: mkcompiledirs
 
 compileexamples: $(EXAMPLEEXE)
 
+.PHONY: gist
 ifeq "@enable_gist@" "yes"
 gist:
 	$(MAKE) -C gecode/gist
@@ -1355,6 +1365,7 @@ clean:
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(TESTOBJ) $(TESTSBJ) $(TESTOBJ:%$(OBJSUFFIX)=%.pdb)
+	$(MAKE) -C gecode/gist clean
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
@@ -1376,6 +1387,7 @@ distclean: veryclean
 	$(RMF) gecode/vti.icc Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
+	$(MAKE) -C gecode/gist distclean
 
 depend: $(ALLVARIMP:%=$(top_srcdir)/%) 	
 	perl $(top_srcdir)/misc/makedepend.perl \

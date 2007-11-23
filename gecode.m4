@@ -851,6 +851,15 @@ AC_DEFUN([AC_GECODE_GIST],
   if test "${enable_gist:-no}" = "yes"; then
     AC_MSG_RESULT(yes)
     AC_SUBST(GECODE_BUILD_GIST, "yes")
+	AC_DEFINE(GECODE_HAVE_GIST)
+	case ${ac_gecode_compiler_vendor} in
+	microsoft)
+		AC_SUBST(GECODE_LINK_GIST, "gecode/gist/GecodeGist.lib")
+	;;
+	*)
+		AC_SUBST(GECODE_LINK_GIST, "-Lgecode/gist -lgecodegist")
+	;;
+	esac 
     AC_CONFIG_COMMANDS(gecode/gist/Makefile, [(cd gecode/gist && qmake)])
   else
     AC_MSG_RESULT(no)

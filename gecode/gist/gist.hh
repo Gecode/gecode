@@ -74,7 +74,15 @@ namespace Gecode { namespace Gist {
     virtual void inspect(Space* node) = 0;
     virtual ~Inspector(void);
   };
-        
+  
+  template <class S>
+  class PrintingInspector : public Inspector {
+  public:
+    virtual void inspect(Space* node) {
+      static_cast<S*>(node)->print();
+    }
+  };
+  
   int explore(Space* root, Better* b, Inspector* gi);
   QWidget* exploreWidget(QWidget* parent, 
                          Space* root, Better* b, Inspector* gi);

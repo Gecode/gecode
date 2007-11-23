@@ -36,6 +36,13 @@
 
 
 TEMPLATE = lib
+win32 {
+TARGET = GecodeGist
+}
+!win32 {
+TARGET = gecodegist
+}
+VERSION = @GECODE_SOVERSION@
 DEPENDPATH += . postscript
 INCLUDEPATH += . postscript ../..
 LIBS += -L../.. $(LINKKERNEL) $(LINKSUPPORT)

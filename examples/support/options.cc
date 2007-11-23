@@ -169,6 +169,9 @@ Options::Options(const char* n)
   _mode.add(EM_SOLUTION, "solution"); 
   _mode.add(EM_TIME, "time");
   _mode.add(EM_STAT, "stat");
+#ifdef GECODE_HAVE_GIST
+  _mode.add(EM_GIST, "gist");
+#endif
 
   add(_model); add(_propagation); add(_pk); add(_icl); add(_branching); 
   add(_search); add(_solutions); add(_c_d); add(_a_d); add(_fail); add(_time);
