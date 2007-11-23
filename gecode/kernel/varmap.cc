@@ -157,6 +157,10 @@ namespace Gecode { namespace Reflection {
 
   void
   VarMap::name(VarBase* x, const Support::Symbol& n) {
+    VarBase* y;
+    if (vo->nameToVar.get(n, y) && x != y)
+      throw new
+        ReflectionException("Variable with the same name already in VarMap");
     vo->nameToVar.put(n, x);
     vo->varToName.put(x, n);
   }
