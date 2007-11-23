@@ -66,7 +66,7 @@
 
 class QWidget;
 
-#include "better.hh"
+#include "gecode/gist/better.hh"
 
 namespace Gecode { namespace Gist {
   class Inspector {
@@ -91,6 +91,6 @@ namespace Gecode { namespace Gist {
 
 }
 
-#include "qtgist/gist.icc"
+#include "gecode/gist/gist.icc"
 
 #endif

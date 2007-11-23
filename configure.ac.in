@@ -201,6 +201,8 @@ AC_GECODE_VTI(int, finite domain library, yes,
 dnl End of definition of variable types
 dnl ------------------------------------------------------------------
 
+AC_GECODE_GIST
+
 AC_GECODE_ENABLE_MODULE(examples, yes,
 	[build examples for the enabled variable types],
 	[enable_search="yes";
@@ -229,5 +231,6 @@ AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 
 AC_CONFIG_FILES([Makefile doxygen.conf doxygen.hh
-	misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc misc/gecode-minimodel.pc])
+	misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc 
+	misc/gecode-minimodel.pc gecode/gist/Gist.pro])
 AC_OUTPUT

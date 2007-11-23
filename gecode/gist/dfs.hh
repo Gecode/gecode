@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_DFS_HH
 #define GECODE_GIST_DFS_HH
 
-#include "spacenode.hh"
+#include "gecode/gist/spacenode.hh"
 #include <stack>
 
 namespace Gecode { namespace Gist {
@@ -50,6 +50,6 @@ namespace Gecode { namespace Gist {
   
 }}
 
-#include "dfs.icc"
+#include "gecode/gist/dfs.icc"
 
 #endif

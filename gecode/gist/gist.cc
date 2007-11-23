@@ -34,8 +34,8 @@
  *
  */
 
-#include "qtgist/gist.hh"
-#include "qtgist/treecanvas.hh"
+#include "gecode/gist/gist.hh"
+#include "gecode/gist/treecanvas.hh"
 #include <QtGui>
 #include "gecode/kernel.hh"
 

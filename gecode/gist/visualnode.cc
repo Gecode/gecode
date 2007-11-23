@@ -34,10 +34,10 @@
  *
  */
 
-#include "visualnode.hh"
+#include "gecode/gist/visualnode.hh"
 
-#include "nodecursor.hh"
-#include "nodevisitor.hh"
+#include "gecode/gist/nodecursor.hh"
+#include "gecode/gist/nodevisitor.hh"
 
 namespace Gecode { namespace Gist {
 

@@ -38,18 +38,18 @@
 TEMPLATE = lib
 DEPENDPATH += . postscript
 INCLUDEPATH += . postscript ../..
-LIBS += $(LINKKERNEL) $(LINKSUPPORT)
+LIBS += -L../.. $(LINKKERNEL) $(LINKSUPPORT)
 DEFINES += GECODE_BUILD_GIST
 
-INSTALLS += qtgist target 
+INSTALLS += target headers postscript
 
 target.path = @sharedlibdir@
 
 headers.files += *.hh *.icc
 headers.path = @includedir@/gecode/gist
 
-#postscript.path = @HEADERINSTALLPATH@/postscript
-#postscript.files += postscript/*.hh
+postscript.path = @includedir@/gecode/gist/postscript
+postscript.files += postscript/*.hh
 
 # Input
 HEADERS += better.hh \

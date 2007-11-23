@@ -34,8 +34,8 @@
  *
  */
 
-#include "nodecursor.hh"
-#include "shapelist.hh"
+#include "gecode/gist/nodecursor.hh"
+#include "gecode/gist/shapelist.hh"
 
 namespace Gecode { namespace Gist {
     

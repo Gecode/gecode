@@ -37,8 +37,8 @@
 #ifndef GECODE_GIST_SPACENODE_HH
 #define GECODE_GIST_SPACENODE_HH
 
-#include "node.hh"
-#include "better.hh"
+#include "gecode/gist/node.hh"
+#include "gecode/gist/better.hh"
 #include "gecode/kernel.hh"
 
 namespace Gecode { namespace Gist {

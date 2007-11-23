@@ -713,10 +713,12 @@ BUILDDIRS = \
 
 ifeq "@enable_examples@" "yes"
 all: compilelib
+	@$(MAKE) gist
 	@$(MAKE) compileexamples
 	@$(MAKE) makecompletedmessage
 else
 all: compilelib
+	@$(MAKE) gist
 	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs
@@ -725,6 +727,13 @@ compilelib: mkcompiledirs
 	@$(MAKE) framework
 
 compileexamples: $(EXAMPLEEXE)
+
+ifeq "@enable_gist@" "yes"
+gist:
+	$(MAKE) -C gecode/gist
+else
+gist:
+endif
 
 test: mkcompiledirs
 	@$(MAKE) $(ALLVARIMP:%=$(top_srcdir)/%) $(TESTEXE)

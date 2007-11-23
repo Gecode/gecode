@@ -34,7 +34,7 @@
  *
  */
 
-#include "shapelist.hh"
+#include "gecode/gist/shapelist.hh"
 #include <iostream>
 #include <cassert>
 

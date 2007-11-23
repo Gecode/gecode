@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_DOTNODE_HH
 #define GECODE_GIST_DOTNODE_HH
 
-#include "spacenode.hh"
+#include "gecode/gist/spacenode.hh"
 
 namespace Gecode { namespace Gist {
 

@@ -841,3 +841,20 @@ AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
       AC_DEFINE(GECODE_HAVE_BOOST_SERIALIZATION)
   fi
 ])
+
+AC_DEFUN([AC_GECODE_GIST],
+  [
+  AC_ARG_ENABLE([gist],
+    AC_HELP_STRING([--enable-gist],
+      [build Gecode Interactive Search Tool @<:@default=no@:>@]))
+  AC_MSG_CHECKING(whether to build Gist)
+  if test "${enable_gist:-no}" = "yes"; then
+    AC_MSG_RESULT(yes)
+    AC_SUBST(GECODE_BUILD_GIST, "yes")
+    AC_CONFIG_COMMANDS(gecode/gist/Makefile, [(cd gecode/gist && qmake)])
+  else
+    AC_MSG_RESULT(no)
+    AC_SUBST(GECODE_BUILD_GIST, "no")
+  fi
+  AC_SUBST(enable_gist, ${enable_gist})
+])

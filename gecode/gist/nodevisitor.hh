@@ -71,6 +71,6 @@ namespace Gecode { namespace Gist {
   
 }}
 
-#include "nodevisitor.icc"
+#include "gecode/gist/nodevisitor.icc"
 
 #endif

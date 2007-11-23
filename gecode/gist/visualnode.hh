@@ -37,8 +37,8 @@
 #ifndef GECODE_GIST_VISUALNODE_HH
 #define GECODE_GIST_VISUALNODE_HH
 
-#include "spacenode.hh"
-#include "shapelist.hh"
+#include "gecode/gist/spacenode.hh"
+#include "gecode/gist/shapelist.hh"
 #include "gecode/kernel.hh"
 #include <vector>
 

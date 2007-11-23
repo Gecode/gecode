@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_QT_TREECANVAS_HH
 #define GECODE_GIST_QT_TREECANVAS_HH
 
-#include "gist.hh"
+#include "gecode/gist/gist.hh"
 #include <QtGui>
 
 namespace Gecode {

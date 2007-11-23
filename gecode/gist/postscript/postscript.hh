@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_POSTSCRIPT_HH
 #define GECODE_GIST_POSTSCRIPT_HH
 
-#include "visualnode.hh"
+#include "gecode/gist/visualnode.hh"
 #include <iostream>
 
 namespace Gecode { namespace Gist {

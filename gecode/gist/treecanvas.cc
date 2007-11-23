@@ -34,16 +34,16 @@
  *
  */
 
-#include "qtgist/treecanvas.hh"
+#include "gecode/gist/treecanvas.hh"
 
-#include "nodevisitor.hh"
-#include "shapelist.hh"
-#include "visualnode.hh"
-#include "dfs.hh"
+#include "gecode/gist/nodevisitor.hh"
+#include "gecode/gist/shapelist.hh"
+#include "gecode/gist/visualnode.hh"
+#include "gecode/gist/dfs.hh"
 
-#include "postscript/postscript.hh"
+#include "gecode/gist/postscript/postscript.hh"
 
-#include "qtgist/drawingcursor.hh"
+#include "gecode/gist/drawingcursor.hh"
 
 #include <QPainter>
 

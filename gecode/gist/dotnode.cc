@@ -34,7 +34,7 @@
  *
  */
 
-#include "dotnode.hh"
+#include "gecode/gist/dotnode.hh"
 
 using namespace std;
 
