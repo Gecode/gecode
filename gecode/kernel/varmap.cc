@@ -72,6 +72,16 @@ namespace Gecode { namespace Reflection {
     delete vo;
   }
 
+  void
+  VarMap::clear(void) {
+    for (int i=n; i--;)
+      delete vo->specs[i];
+    delete vo;
+    vo = new VarMapObj();
+    n = 0;
+    so = 0;
+  }
+
   int
   VarMap::index(VarBase* x) const {
     int i;
