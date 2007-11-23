@@ -69,12 +69,18 @@ Date:    Later
 Fixes or what?
 
 [ENTRY]
+Module: kernel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Be less aggressive in increasing size of heap chunks.
+
+[ENTRY]
 Module: int
 What:   documentation
 Rank:   minor
 [DESCRIPTION]
 Fixed bug in documentation of table-based extensional constraint.
-
 
 [ENTRY]
 Module: kernel
