@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+INCLUDEDIR="`pkg-config gecode --variable=includedir`/gecode/gist"
+LIBDIR="`pkg-config gecode --variable=libdir`"
+
+GECODEINCLUDE="`pkg-config --cflags gecode gecode-minimodel | sed 's/\w*-I//g'`"
+GECODELIBS="`pkg-config --libs gecode gecode-minimodel`"
+
+
+
+sed  \
+	-e "s|@GECODEINCLUDE@|$GECODEINCLUDE|" -e "s|@GECODELIBS@|$GECODELIBS|" -e "s|@TARGETINSTALLPATH@|$LIBDIR|" -e "s|@HEADERINSTALLPATH@|$INCLUDEDIR|" \
+	Gist.pro.in \
+	> Gist.pro
+
+qmake $@
