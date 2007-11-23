@@ -37,19 +37,16 @@
 
 TEMPLATE = lib
 DEPENDPATH += . postscript
-INCLUDEPATH += . postscript @GECODEINCLUDE@
-LIBS += @GECODELIBS@
+INCLUDEPATH += . postscript ../..
+LIBS += $(LINKKERNEL) $(LINKSUPPORT)
 DEFINES += GECODE_BUILD_GIST
 
 INSTALLS += qtgist target 
 
-target.path = @TARGETINSTALLPATH@
+target.path = @sharedlibdir@
 
-#headers.files += *.hh
-#headers.path = @HEADERINSTALLPATH@
-
-qtgist.path = @HEADERINSTALLPATH@/qtgist
-qtgist.files += better.hh qtgist/gist.hh qtgist/gist.icc
+headers.files += *.hh *.icc
+headers.path = @includedir@/gecode/gist
 
 #postscript.path = @HEADERINSTALLPATH@/postscript
 #postscript.files += postscript/*.hh
@@ -68,10 +65,10 @@ HEADERS += better.hh \
            visualnode.hh \
            postscript/postscript.hh \
            nodevisitor.icc \
-	   qtgist/treecanvas.hh \
-	   qtgist/drawingcursor.hh \
-	   qtgist/gist.hh \
-	   qtgist/gist.icc
+	   treecanvas.hh \
+	   drawingcursor.hh \
+	   gist.hh \
+	   gist.icc
 
 SOURCES += dotnode.cc \
            node.cc \
@@ -80,6 +77,6 @@ SOURCES += dotnode.cc \
            spacenode.cc \
            visualnode.cc \
            postscript/postscript.cc \
-	   qtgist/treecanvas.cc \
-	   qtgist/drawingcursor.cc \
-	   qtgist/gist.cc
+	   treecanvas.cc \
+	   drawingcursor.cc \
+	   gist.cc
