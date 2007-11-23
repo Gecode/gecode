@@ -69,6 +69,14 @@ Date:    Later
 Fixes or what?
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Revived boost serialization.  The serialization functions will be compiled if 
+Gecode is configured with --with-boost.
+
+[ENTRY]
 Module: kernel
 What:   performance
 Rank:   minor

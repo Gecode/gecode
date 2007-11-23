@@ -175,6 +175,12 @@ namespace Gecode { namespace Reflection {
       throw ReflectionException("not an ArrayArg");
     return static_cast<ArrayArg*>(this);
   }
+  const ArrayArg*
+  Arg::toArray(void) const {
+    if (!isArray())
+      throw ReflectionException("not an ArrayArg");
+    return static_cast<const ArrayArg*>(this);
+  }
   ArrayArg*
   Arg::newArray(int n) {
     Arg* ret = new Arg(ARRAY_ARG);
@@ -198,6 +204,12 @@ namespace Gecode { namespace Reflection {
     if (!isIntArray())
       throw ReflectionException("not an IntArrayArg");
     return static_cast<IntArrayArg*>(this);
+  }
+  const IntArrayArg*
+  Arg::toIntArray(void) const {
+    if (!isIntArray())
+      throw ReflectionException("not an IntArrayArg");
+    return static_cast<const IntArrayArg*>(this);
   }
   IntArrayArg*
   Arg::newIntArray(int n) {
@@ -249,12 +261,24 @@ namespace Gecode { namespace Reflection {
     return (t == PAIR_ARG);
   }
   Arg*
+  Arg::first(void) {
+    if (!isPair())
+      throw ReflectionException("not a PairArg");
+    return arg1.first;
+  }
+  const Arg*
   Arg::first(void) const {
     if (!isPair())
       throw ReflectionException("not a PairArg");
     return arg1.first;
   }
   Arg*
+  Arg::second(void) {
+    if (!isPair())
+      throw ReflectionException("not a PairArg");
+    return arg2.second;
+  }
+  const Arg*
   Arg::second(void) const {
     if (!isPair())
       throw ReflectionException("not a PairArg");
@@ -279,6 +303,12 @@ namespace Gecode { namespace Reflection {
     return (t == SHARED_OBJECT_ARG);
   }
   Arg*
+  Arg::toSharedObject(void) {
+    if (!isSharedObject())
+      throw ReflectionException("not a SharedObjectArg");
+    return arg1.first;
+  }
+  const Arg*
   Arg::toSharedObject(void) const {
     if (!isSharedObject())
       throw ReflectionException("not a SharedObjectArg");

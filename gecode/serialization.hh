@@ -137,14 +137,18 @@ namespace Gecode {
    * \brief Serialize \a actors to \a os
    * \ingroup TaskSerialization
    */ 
+  GECODE_SERIALIZATION_EXPORT
   void boostTextSerialization(std::ostream& os,
-    const std::vector<Reflection::ActorSpec*>& actors);
+    const std::vector<Reflection::VarSpec>& vars,
+    const std::vector<Reflection::ActorSpec>& actors);
   /**
    * \brief Deserialize \a is into \a actors
    * \ingroup TaskSerialization
    */
+  GECODE_SERIALIZATION_EXPORT
   void boostTextSerialization(std::istream& is,
-    std::vector<Reflection::ActorSpec*>& actors);
+    std::vector<Reflection::VarSpec>& vars,
+    std::vector<Reflection::ActorSpec>& actors);
 }
 
 #include "gecode/serialization/boost.icc"

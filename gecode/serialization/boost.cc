@@ -40,21 +40,34 @@
 
 #include <fstream>
 
+#ifdef GCC_HASCLASSVISIBILITY
+#pragma GCC visibility push(default)
+#endif
+
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+
+#ifdef GCC_HASCLASSVISIBILITY
+#pragma GCC visibility pop
+#endif
+
 #include "gecode/serialization.hh"
 
 namespace Gecode {
 
   void boostTextSerialization(std::ostream& out,
-    const std::vector<Reflection::ActorSpec*>& actors) {
+    const std::vector<Reflection::VarSpec>& vars,
+    const std::vector<Reflection::ActorSpec>& actors) {
     boost::archive::text_oarchive oa(out);
+    oa << vars;
     oa << actors;
   }
 
   void boostTextSerialization(std::istream& in,
-    std::vector<Reflection::ActorSpec*>& actors) {
+    std::vector<Reflection::VarSpec>& vars,
+    std::vector<Reflection::ActorSpec>& actors) {
     boost::archive::text_iarchive ia(in);
+    ia >> vars;
     ia >> actors;
   }
 

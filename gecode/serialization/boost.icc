@@ -35,46 +35,53 @@
  *
  */
 
+#ifdef GCC_HASCLASSVISIBILITY
+#pragma GCC visibility push(default)
+#endif
+
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/base_object.hpp>
+
+#ifdef GCC_HASCLASSVISIBILITY
+#pragma GCC visibility pop
+#endif
+
 #include "gecode/support.hh"
 #include <sstream>
 
 namespace boost { namespace serialization {
 
-  /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::Arg
-
   template<class Archive>
   inline void save_construct_data(
       Archive & ar, const Gecode::Reflection::Arg* t,
-      const unsigned int file_version
+      const unsigned int /*file_version*/
   ){
       // save data required to construct instance
       ar << t->t;
   }
-
+  
   template<class Archive>
   inline void load_construct_data(
       Archive & ar, Gecode::Reflection::Arg* t,
-      const unsigned int file_version
+      const unsigned int /*file_version*/
   ){
       // retrieve data from archive required to construct new instance
       int m;
       ar >> m;
       // invoke inplace constructor to initialize instance of my_class
       ::new(t)
-        Gecode::Reflection::Arg(static_cast<Gecode::Reflection::Arg::argtype>(m));
-      // t->initInt(m);
+        Gecode::Reflection::Arg(
+          static_cast<Gecode::Reflection::Arg::argtype>(m));
   }
 
+  
   template<class Archive>
   inline void load(
     Archive& ar, Gecode::Reflection::Arg& arg,
-    unsigned int file_version
+    unsigned int /*file_version*/
   ){
     using namespace Gecode::Reflection;
     switch (arg.t) {
@@ -142,12 +149,13 @@ namespace boost { namespace serialization {
       break;
     }
   }
+  
 
   template<class Archive>
   void save(
     Archive& ar,
     const Gecode::Reflection::Arg& arg,
-    const unsigned int file_version
+    const unsigned int /*file_version*/
   ) {
     using namespace Gecode::Reflection;
     switch (arg.t) {
@@ -170,7 +178,7 @@ namespace boost { namespace serialization {
         ar << s;
         for (int i=0; i<s; i++) {
           const Arg* a = (*array)[i];
-          ar << a;
+          ar << *a;
         }        
       }
       break;
@@ -195,16 +203,16 @@ namespace boost { namespace serialization {
       break;
       case Arg::PAIR_ARG:
       {
-        Arg* a = arg.first();
-        ar << a;
-        a = arg.second();
-        ar << a;
+        const Arg* a = arg.first();
+        ar << *a;
+        const Arg* b = arg.second();
+        ar << *b;
       }
       break;
       case Arg::SHARED_OBJECT_ARG:
       {
-        Arg* a = arg.toSharedObject();
-        ar << a;
+        const Arg* a = arg.toSharedObject();
+        ar << *a;
       }
       break;
       case Arg::SHARED_REF_ARG:
@@ -215,7 +223,7 @@ namespace boost { namespace serialization {
       break;
     }
   }
-
+  
   template<class Archive>
   void serialize(
     Archive& ar,
@@ -224,7 +232,68 @@ namespace boost { namespace serialization {
   ) {
     split_free(ar, arg, file_version);
   }
+
+  template<class Archive>
+  inline void save_construct_data(
+      Archive & ar, const Gecode::Reflection::VarSpec* t,
+      const unsigned int /*file_version*/
+  ){
+    // save data required to construct instance
+    const Gecode::Reflection::Arg* a = t->dom();
+    ar << *a;
+    std::stringstream oss;
+    oss << t->vti();
+    std::string s = oss.str();
+    ar << s;
+  }
   
+  template<class Archive>
+  inline void load_construct_data(
+      Archive & ar, Gecode::Reflection::VarSpec* t,
+      const unsigned int /*file_version*/
+  ){
+    // retrieve data from archive required to construct new instance
+    Gecode::Reflection::Arg* dom;
+    ar >> dom;
+    std::string vti;
+    ar >> vti;
+    ::new(t)
+      Gecode::Reflection::VarSpec(Gecode::Support::Symbol(vti.c_str()),
+        dom);
+  }
+
+  template<class Archive>
+  inline void load(
+    Archive& ar, Gecode::Reflection::VarSpec& var,
+    unsigned int /*file_version*/
+  ){
+    std::string name;
+    ar >> name;
+    var.name(Gecode::Support::Symbol(name.c_str()));
+  }
+
+  template<class Archive>
+  void save(
+    Archive& ar,
+    const Gecode::Reflection::VarSpec& var,
+    const unsigned int /*file_version*/
+  ) {
+    std::stringstream oss;
+    oss << var.name();
+    std::string s = oss.str();
+    ar << s;
+  }
+  
+  template<class Archive>
+  void serialize(
+    Archive& ar,
+    Gecode::Reflection::VarSpec& var,
+    const unsigned int file_version
+  ) {
+    split_free(ar, var, file_version);
+  }
+   
+   
   /////////////////////////////////////////////////////////////////////////
   // Gecode::Reflection::ActorSpec
 
@@ -232,7 +301,7 @@ namespace boost { namespace serialization {
   inline void save_construct_data(
       Archive & ar,
       const Gecode::Reflection::ActorSpec* t,
-      const unsigned int file_version
+      const unsigned int /*file_version*/
   ){
     // save data required to construct instance
     std::stringstream oss;
@@ -243,7 +312,7 @@ namespace boost { namespace serialization {
   template<class Archive>
   inline void load_construct_data(
       Archive & ar, Gecode::Reflection::ActorSpec* t,
-      const unsigned int file_version
+      const unsigned int /*file_version*/
   ){
     // retrieve data from archive required to construct new instance
     std::string n;
@@ -255,7 +324,7 @@ namespace boost { namespace serialization {
   template<class Archive>
   void save(
     Archive& ar, const Gecode::Reflection::ActorSpec& spec,
-    unsigned int file_version
+    unsigned int /*file_version*/
   ) {
     int noa = spec.noOfArgs();
     ar << noa;
@@ -267,7 +336,7 @@ namespace boost { namespace serialization {
   template<class Archive>
   void load(
     Archive& ar, Gecode::Reflection::ActorSpec& spec,
-    unsigned int file_version
+    unsigned int /*file_version*/
   ) {
     int noOfArgs;
     ar >> noOfArgs;
@@ -289,6 +358,7 @@ namespace boost { namespace serialization {
 }}
 
 BOOST_CLASS_EXPORT(Gecode::Reflection::Arg)
+BOOST_CLASS_EXPORT(Gecode::Reflection::VarSpec)
 BOOST_CLASS_EXPORT(Gecode::Reflection::ActorSpec)
 
 // STATISTICS: serialization-any
