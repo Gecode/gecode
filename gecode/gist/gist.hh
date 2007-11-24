@@ -79,7 +79,7 @@ namespace Gecode { namespace Gist {
   class PrintingInspector : public Inspector {
   public:
     virtual void inspect(Space* node) {
-      static_cast<S*>(node)->print();
+      dynamic_cast<S*>(node)->print();
     }
   };
   
