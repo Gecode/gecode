@@ -1235,11 +1235,18 @@ install: installframework
 else
 
 ifeq "@enable_examples@" "yes"
-install: installlib installexamples
+install: installlib installgist installexamples
 else
-install: installlib
+install: installlib installgist
 endif
 
+endif
+
+ifeq "@enable_gist@" "yes"
+installgist:
+	$(MAKE) -C gecode/gist install
+else
+installgist:
 endif
 
 doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)

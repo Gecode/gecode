@@ -50,12 +50,12 @@ DEFINES += GECODE_BUILD_GIST
 
 INSTALLS += target headers postscript
 
-target.path = @sharedlibdir@
+target.path = /@sharedlibdir@
 
 headers.files += *.hh *.icc
-headers.path = @includedir@/gecode/gist
+headers.path = /@includedir@/gecode/gist
 
-postscript.path = @includedir@/gecode/gist/postscript
+postscript.path = /@includedir@/gecode/gist/postscript
 postscript.files += postscript/*.hh
 
 # Input
