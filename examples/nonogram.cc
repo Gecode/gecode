@@ -128,14 +128,14 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     for (int h = 0; h < height(); ++h) {
-      std::cout << '\t';
+      os << '\t';
       for (int w = 0; w < width(); ++w)
-        std::cout << ((pos(h,w).val() == 1) ? '#' : ' ');
-      std::cout << std::endl;
+        os << ((pos(h,w).val() == 1) ? '#' : ' ');
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 };
 

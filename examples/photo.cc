@@ -134,9 +134,9 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tpos[] = " << pos << std::endl
-              << "\tsat: " << sat << std::endl;
+  print(std::ostream& os) {
+    os << "\tpos[] = " << pos << std::endl
+       << "\tsat: " << sat << std::endl;
   }
 
   /// Add constraint for next better solution

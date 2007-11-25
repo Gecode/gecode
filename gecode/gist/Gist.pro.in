@@ -74,6 +74,7 @@ HEADERS += better.hh \
            nodevisitor.icc \
 	   treecanvas.hh \
 	   drawingcursor.hh \
+	   textoutput.hh \
 	   gist.hh \
 	   gist.icc
 
@@ -86,4 +87,5 @@ SOURCES += dotnode.cc \
            postscript/postscript.cc \
 	   treecanvas.cc \
 	   drawingcursor.cc \
+	   textoutput.cc \
 	   gist.cc

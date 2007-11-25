@@ -368,15 +368,15 @@ public:
   }
   /// Print the solution
   virtual void
-  print(void) {
-    std::cout << "\tm = " << m << std::endl
-              << "\tv[] = {";
+  print(std::ostream& os) {
+    os << "\tm = " << m << std::endl
+       << "\tv[] = {";
     for (int i = 0; i < v.size(); i++) {
-      std::cout << v[i] << ", ";
+      os << v[i] << ", ";
       if ((i+1) % 15 == 0)
-        std::cout << std::endl << "\t       ";
+        os << std::endl << "\t       ";
     }
-    std::cout << "};" << std::endl;
+    os << "};" << std::endl;
   }
 };
 

@@ -74,3 +74,5 @@ namespace Gecode { namespace Gist {
 #include "gecode/gist/nodevisitor.icc"
 
 #endif
+
+// STATISTICS: gist-any

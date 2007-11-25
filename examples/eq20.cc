@@ -100,8 +100,8 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tx[] = " << x << std::endl;
+  print(std::ostream& os) {
+    os << "\tx[] = " << x << std::endl;
   }
 
 };

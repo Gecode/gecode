@@ -131,25 +131,25 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     for (int i = 0; i<n; i++) {
-      std::cout << "\t";
+      os << "\t";
       for (int j = 0; j<n; j++) {
-        std::cout.width(2);
-        std::cout << y1(i,j) << "  ";
+        os.width(2);
+        os << y1(i,j) << "  ";
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
     for (int i = 0; i<n; i++) {
-      std::cout << "\t";
+      os << "\t";
       for (int j = 0; j<n; j++) {
-        std::cout.width(2);
-        std::cout << y2(i,j) << "  ";
+        os.width(2);
+        os << y2(i,j) << "  ";
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 
 };

@@ -111,21 +111,21 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     for (int h = 0; h < size; ++h) {
-      std::cout << '\t';
+      os << '\t';
       for (int w = 0; w < size; ++w) {
         int v = mineField(spec, size, h, w);
         if ( v != -1)
-          std::cout << v << " ";
+          os << v << " ";
         else if (pos(h,w).val() == 1)
-          std::cout << "* ";
+          os << "* ";
         else
-          std::cout << ". ";
+          os << ". ";
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 
   /// Constructor for cloning \a s

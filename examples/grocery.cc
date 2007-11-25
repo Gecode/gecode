@@ -99,8 +99,8 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\t" << x << std::endl;
+  print(std::ostream& os) {
+    os << "\t" << x << std::endl;
   }
 };
 

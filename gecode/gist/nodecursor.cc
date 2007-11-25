@@ -138,3 +138,5 @@ namespace Gecode { namespace Gist {
   }
   
 }}
+
+// STATISTICS: gist-any

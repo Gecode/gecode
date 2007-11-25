@@ -334,3 +334,5 @@ namespace Gecode { namespace Gist {
   ShapeList::getOffsetOfChild(int i) { return offsets[i]; }
   
 }}
+
+// STATISTICS: gist-any

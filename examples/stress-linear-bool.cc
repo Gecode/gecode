@@ -77,8 +77,8 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tx[" << x.size() << "] = " << x << std::endl;
+  print(std::ostream& os) {
+    os << "\tx[" << x.size() << "] = " << x << std::endl;
   }
 };
 

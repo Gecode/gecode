@@ -112,9 +112,9 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tk = " << k << std::endl
-              << "\tv[] = " << v << std::endl;
+  print(std::ostream& os) {
+    os << "\tk = " << k << std::endl
+       << "\tv[] = " << v << std::endl;
   }
 
   /// Add constraint for next better solution

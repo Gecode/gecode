@@ -640,15 +640,15 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     for (int y=0; y<h; y++) {
-      std::cout << '\t';
+      os << '\t';
       for (int x=0; x<w; x++)
         if (b(x,y).min() == 0)
-          std::cout << ". ";
+          os << ". ";
         else
-          std::cout << b(x,y) << ' ';
-      std::cout << std::endl;
+          os << b(x,y) << ' ';
+      os << std::endl;
     }
   }
 };

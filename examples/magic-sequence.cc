@@ -112,14 +112,14 @@ public:
   }
   /// Print sequence
   virtual
-  void print(void) {
-    std::cout << "\t";
+  void print(std::ostream& os) {
+    os << "\t";
     for (int i = 0; i<n; i++) {
-      std::cout << s[i] << ", ";
+      os << s[i] << ", ";
       if ((i+1) % 20 == 0)
-        std::cout << std::endl << "\t";
+        os << std::endl << "\t";
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 
 };

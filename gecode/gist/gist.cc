@@ -38,50 +38,85 @@
 #include "gecode/gist/treecanvas.hh"
 #include <QtGui>
 #include "gecode/kernel.hh"
+#include "gecode/gist/textoutput.hh"
 
 namespace Gecode {
 
   namespace Gist {
 
-  	QWidget*
-  	exploreWidget(QWidget* parent, Space* root, Better* b,
-  	              Gist::Inspector* gi) {
+    class TextInspector::TextInspectorImpl {
+    public:
+      TextOutput* to;
+      TextInspectorImpl(const std::string& name) {
+        to = new TextOutput(name);
+        to->show();
+      }
+      ~TextInspectorImpl(void) {
+        delete to;
+      }
+    };
+    
+    TextInspector::TextInspector(const std::string& name)
+    : t(NULL), n(name) {}
+
+    TextInspector::~TextInspector(void) {
+      delete t;
+    }
+
+    void
+    TextInspector::init(void) {
+      if (t == NULL) {
+        t = new TextInspectorImpl(n);
+      }
+      t->to->setVisible(true);
+    }
+
+    std::ostream&
+    TextInspector::getStream(void) {
+      return t->to->getStream();
+    }
+
+    QWidget*
+    exploreWidget(QWidget* parent, Space* root, Better* b,
+                  Gist::Inspector* gi) {
       if (root->status() == SS_FAILED)
         root = NULL;
       else
         root = root->clone();
       Gist::TreeCanvas *c = new Gist::TreeCanvas(root, b, parent);
-  		if (gi)
-  		  c->setInspector(gi);
-  		c->show();
+      if (gi)
+        c->setInspector(gi);
+      c->show();
       return c;
-  	}
+    }
 
-  	int
-  	explore(Space* root, Better* b, Gist::Inspector* gi) {
-  		char* argv = ""; int argc=0;
-  		QApplication app(argc, &argv);
+    int
+    explore(Space* root, Better* b, Gist::Inspector* gi) {
+      char* argv = ""; int argc=0;
+      QApplication app(argc, &argv);
       if (root->status() == SS_FAILED)
         root = NULL;
       else
         root = root->clone();
       Gist::TreeCanvas c(root, b);
-  		if (gi)
-  		  c.setInspector(gi);
-  		c.show();
-  		return app.exec();
-  	}
+      if (gi)
+        c.setInspector(gi);
+      c.show();
+      return app.exec();
+    }
     
   }
-	
-	void
-	exploreWidget(QWidget* parent, Space* root, Gist::Inspector* gi) {
+  
+  void
+  exploreWidget(QWidget* parent, Space* root, Gist::Inspector* gi) {
     (void) Gist::exploreWidget(parent, root, NULL, gi);
-	}
+  }
 
-	int
-	explore(Space* root, Gist::Inspector* gi) {
+  int
+  explore(Space* root, Gist::Inspector* gi) {
     return Gist::explore(root, NULL, gi);
-	}
-	
+  }
+  
 }
+
+// STATISTICS: gist-any

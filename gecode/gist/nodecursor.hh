@@ -96,3 +96,5 @@ namespace Gecode { namespace Gist {
 #include "gecode/gist/nodecursor.icc"
 
 #endif
+
+// STATISTICS: gist-any

@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-11-24 17:43:12 +0100 (Sa, 24 Nov 2007) $ by $Author: tack $
+ *     $Revision: 5417 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,34 +34,23 @@
  *
  */
 
-#ifndef GECODE_GIST_QT_DRAWINGCURSOR_HH
-#define GECODE_GIST_QT_DRAWINGCURSOR_HH
+#ifndef GECODE_GIST_TEXTOUTPUT_HH
+#define GECODE_GIST_TEXTOUTPUT_HH
 
-#include "gecode/gist/nodecursor.hh"
-#include <QtGui>
+#include <QMainWindow>
+#include <QTextEdit>
 
 namespace Gecode { namespace Gist {
-
-  class DrawingCursor : public Gist::NodeCursor<VisualNode> {
+  class TextOutput : public QMainWindow {
   private:
-    QPainter& painter;
-    QRect clippingRect;
-    int x, y;
-    
-    static const QColor red;
-    static const QColor green;
-    static const QColor blue;
-    
-    bool isClipped(void);
-  public:
-    DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
-                   const QRect& clippingRect0);
+    QTextEdit *editor;
+    std::ostream *os;
 
-    void moveUpwards(void);
-    bool mayMoveDownwards(void);
-    void moveDownwards(void);
-    void moveSidewards(void);
-    void processCurrentNode(void);
+  public:
+    TextOutput(const std::string& name, QWidget *parent = 0);
+    ~TextOutput(void);
+    
+    std::ostream& getStream(void);
   };
 
 }}

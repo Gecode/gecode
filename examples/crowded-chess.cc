@@ -357,7 +357,7 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     MiniModel::Matrix<IntVarArray> m(s, n);
     char *names = static_cast<char*>(Memory::malloc(PMAX));
     const char *sep   = n < 8 ? "\t\t" : "\t";
@@ -366,24 +366,24 @@ public:
 
     for (int r = 0; r < n; ++r){
       // Print main board
-      std::cout << '\t';
+      os << '\t';
       for (int c = 0; c < n; ++c) {
-        std::cout << names[m(r, c).val()];
+        os << names[m(r, c).val()];
       }
       // Print each piece on its own
       for (int p = 0; p < PMAX; ++p) {
         if (p == E) continue;
-        std::cout << sep;
+        os << sep;
         for (int c = 0; c < n; ++c) {
           if (m(r, c).val() == p) 
-            std::cout << names[p];
+            os << names[p];
           else                   
-            std::cout << names[E];
+            os << names[E];
         }
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 };
 

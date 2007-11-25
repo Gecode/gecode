@@ -50,3 +50,5 @@ namespace Gecode { namespace Gist {
 }}
 
 #endif
+
+// STATISTICS: gist-any

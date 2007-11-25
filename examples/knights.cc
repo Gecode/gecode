@@ -81,7 +81,7 @@ public:
   }
   /// Print board
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     int* jump = new int[n*n];
     {
       int j=0;
@@ -89,15 +89,15 @@ public:
         jump[j]=i; j=succ[j].min();
       }
     }
-    std::cout << "\t";
+    os << "\t";
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
-        std::cout.width(3);
-        std::cout << jump[field(i,j)] << " ";
+        os.width(3);
+        os << jump[field(i,j)] << " ";
         }
-        std::cout << std::endl << "\t";
+        os << std::endl << "\t";
     }
-    std::cout << std::endl;
+    os << std::endl;
     delete [] jump;
   }
 };

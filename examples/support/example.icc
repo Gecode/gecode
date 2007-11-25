@@ -112,10 +112,10 @@ void
 Example::run(const Options& o) {
   using namespace std;
   try {
-    cout << o.name() << endl;
     switch (o.mode()) {
     case EM_SOLUTION:
       {
+        cout << o.name() << endl;
         Timer t;
         int i = o.solutions();
         t.start();
@@ -134,7 +134,7 @@ Example::run(const Options& o) {
           Example* ex = e.next();
           if (ex == NULL)
             break;
-          ex->print();
+          ex->print(std::cout);
           delete ex;
         } while (--i != 0);
         Search::Statistics stat = e.statistics();
@@ -158,6 +158,7 @@ Example::run(const Options& o) {
       break;
     case EM_STAT:
       {
+        cout << o.name() << endl;
         int i = o.solutions();
         Script* s = new Script(o);
         unsigned int n_p = 0;
@@ -192,6 +193,7 @@ Example::run(const Options& o) {
       break;
     case EM_TIME:
       {
+        cout << o.name() << endl;
         Timer t;
         GECODE_AUTOARRAY(double,ts,o.samples());
         for (unsigned int s = o.samples(); s--; ) {
@@ -223,7 +225,7 @@ Example::run(const Options& o) {
 #ifdef GECODE_HAVE_GIST
     case EM_GIST:
       {
-        Gist::PrintingInspector<Script> pi;
+        Gist::PrintingInspector<Script> pi(o.name());
         Script* s = new Script(o);
         (void) explore(s, &pi);
         delete s;

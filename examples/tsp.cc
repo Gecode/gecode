@@ -280,15 +280,15 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tTour: ";
+  print(std::ostream& os) {
+    os << "\tTour: ";
     int i=0;
     do {
-      std::cout << i << " -> ";
+      os << i << " -> ";
       i=succ[i].val();
     } while (i != 0);
-    std::cout << 0 << std::endl;
-    std::cout << "\tCost: " << cost << std::endl;
+    os << 0 << std::endl;
+    os << "\tCost: " << cost << std::endl;
   }
 };
 

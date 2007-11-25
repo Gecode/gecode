@@ -102,23 +102,23 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\t";
+  print(std::ostream& os) {
+    os << "\t";
     int a, b;
     a = b = 0;
     for (int i = 0; i < x.size(); i++) {
       a += x[i].val();
       b += x[i].val()*x[i].val();
-      std::cout << x[i] << ", ";
+      os << x[i] << ", ";
     }
-    std::cout << " = " << a << ", " << b << std::endl << "\t";
+    os << " = " << a << ", " << b << std::endl << "\t";
     a = b = 0;
     for (int i = 0; i < y.size(); i++) {
       a += y[i].val();
       b += y[i].val()*y[i].val();
-      std::cout << y[i] << ", ";
+      os << y[i] << ", ";
     }
-    std::cout << " = " << a << ", " << b << std::endl;
+    os << " = " << a << ", " << b << std::endl;
   }
 };
 

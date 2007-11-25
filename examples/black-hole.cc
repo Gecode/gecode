@@ -327,26 +327,26 @@ public:
 
   /// Print instance and solution
   virtual void
-  print(void) {
-    std::cout << "Layout:" << std::endl;
+  print(std::ostream& os) {
+    os << "Layout:" << std::endl;
     for (int i = 0; i < 17; i++) {
       for (int j = 0; j < 3; j++)
-        std::cout << card(layout[i][j]) << " ";
+        os << card(layout[i][j]) << " ";
       if ((i+1) % 3 == 0) 
-        std::cout << std::endl;
+        os << std::endl;
       else
-        std::cout << "\t";
+        os << "\t";
     }
-    std::cout << std::endl << std::endl;
+    os << std::endl << std::endl;
     
-    std::cout << "Solution:" << std::endl;
+    os << "Solution:" << std::endl;
     for (int i = 0; i < 52; ++i) {
-      std::cout << card(x[i].min()) << " ";
+      os << card(x[i].min()) << " ";
       if ((i + 1) % 13 == 0)
-        std::cout << std::endl;
+        os << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << std::endl;
+    os << std::endl;
+    os << std::endl;
   }
 
   /// Constructor for cloning \a s

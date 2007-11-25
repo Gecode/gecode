@@ -101,12 +101,12 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     const int n = x.size();
-    std::cout << "\tx[" << n << "] = {";
+    os << "\tx[" << n << "] = {";
     for (int i = 0; i < n-1; i++)
-      std::cout << x[i] << "(" << abs(x[i+1].val()-x[i].val()) << "),";
-    std::cout << x[n-1] << "}" << std::endl;
+      os << x[i] << "(" << abs(x[i+1].val()-x[i].val()) << "),";
+    os << x[n-1] << "}" << std::endl;
   }
 };
 

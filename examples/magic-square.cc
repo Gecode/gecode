@@ -106,16 +106,16 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     // Matrix-wrapper for the square
     MiniModel::Matrix<IntVarArray> m(x, n, n);
     for (int i = 0; i<n; i++) {
-      std::cout << "\t";
+      os << "\t";
       for (int j = 0; j<n; j++) {
-        std::cout.width(2);
-        std::cout << m(i,j) << "  ";
+        os.width(2);
+        os << m(i,j) << "  ";
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
   }
 

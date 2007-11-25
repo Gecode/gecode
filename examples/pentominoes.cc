@@ -424,17 +424,17 @@ public:
   
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     for (int h = 0; h < height; ++h) {
-      std::cout << "\t";
+      os << "\t";
       for (int w = 0; w < width-1; ++w) {
-	int val =  board[h*width + w].val();
-	char c = val < 10 ? '0'+val : 'A' + (val-10);
-	std::cout << c;
+        int val =  board[h*width + w].val();
+        char c = val < 10 ? '0'+val : 'A' + (val-10);
+        os << c;
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 };
 

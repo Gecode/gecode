@@ -145,8 +145,8 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tm[" << n << "] = " << m << std::endl;
+  print(std::ostream& os) {
+    os << "\tm[" << n << "] = " << m << std::endl;
   }
 
   /// Constructor for cloning \a s

@@ -106,14 +106,14 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\t";
+  print(std::ostream& os) {
+    os << "\t";
     for (int i = 0; i < q.size(); i++) {
-      std::cout << q[i] << ", ";
+      os << q[i] << ", ";
       if ((i+1) % 10 == 0)
-        std::cout << std::endl << "\t";
+        os << std::endl << "\t";
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 };
 

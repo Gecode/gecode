@@ -53,3 +53,5 @@ namespace Gecode { namespace Gist {
 #include "gecode/gist/dfs.icc"
 
 #endif
+
+// STATISTICS: gist-any

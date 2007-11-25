@@ -292,28 +292,27 @@ public:
     return new SportsLeague(share, *this);
   }
   /// Print solution
-  virtual void print(void) {
-    using namespace std;
+  virtual void print(std::ostream& os) {
     // print period index
-    cout << "\t       ";
+    os << "\t       ";
     for (int p=0; p<periods(); p++) {
-      cout << "P[";
-      cout.width(2);
-      cout << p << "] ";
+      os << "P[";
+      os.width(2);
+      os << p << "] ";
       }
-    cout << endl;
+    os << std::endl;
     // print entries
     for (int w=0; w<weeks(); w++) {
-      cout << "\tW[";
-      cout.width(2);
-      cout << w+1 << "]: ";
+      os << "\tW[";
+      os.width(2);
+      os << w+1 << "]: ";
       for (int p=0; p<periods(); p++) {
-        cout.width(2); 
-        cout << h(p,w).val() << '-';
-        cout.width(2);
-        cout << a(p,w).val() << " ";
+        os.width(2); 
+        os << h(p,w).val() << '-';
+        os.width(2);
+        os << a(p,w).val() << " ";
       }
-      cout << endl;
+      os << std::endl;
     }
   }
 };

@@ -73,8 +73,8 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\t" << le << std::endl;
+  print(std::ostream& os) {
+    os << "\t" << le << std::endl;
   }
 
   /// Constructor for cloning \a s

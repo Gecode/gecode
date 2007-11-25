@@ -140,15 +140,15 @@ public:
 
 
   virtual void
-  print(void) {
-    std::cout << '\t';
+  print(std::ostream& os) {
+    os << '\t';
     for (int i = 0; i < n*n; ++i) {
-      if (w[i].val()) std::cout << "W";
-      else if (b[i].val()) std::cout << "B";
-      else std::cout << ".";
-      if ((i+1)%n == 0) std::cout << std::endl << (i!=(n*n-1)?"\t":"");
+      if (w[i].val()) os << "W";
+      else if (b[i].val()) os << "B";
+      else os << ".";
+      if ((i+1)%n == 0) os << std::endl << (i!=(n*n-1)?"\t":"");
     }
-    std::cout << "Number of white queens: " << q << std::endl << std::endl;
+    os << "Number of white queens: " << q << std::endl << std::endl;
   }
 
   /** \brief Custom branching for Peacaeble queens.

@@ -155,17 +155,17 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tBIBD("
-              << opt.v << "," << opt.k << ","
-              << opt.lambda << ")" << std::endl;
+  print(std::ostream& os) {
+    os << "\tBIBD("
+       << opt.v << "," << opt.k << ","
+       << opt.lambda << ")" << std::endl;
     for (int i = 0; i < opt.v; i++) {
-      std::cout << "\t\t";
+      os << "\t\t";
       for (int j = 0; j< opt.b; j++)
-        std::cout << p(i,j) << " ";
-      std::cout << std::endl;
+        os << p(i,j) << " ";
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 
   /// Constructor for cloning \a s

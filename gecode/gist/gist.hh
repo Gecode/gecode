@@ -67,6 +67,8 @@
 class QWidget;
 
 #include "gecode/gist/better.hh"
+#include <string>
+#include <sstream>
 
 namespace Gecode { namespace Gist {
   class Inspector {
@@ -75,11 +77,29 @@ namespace Gecode { namespace Gist {
     virtual ~Inspector(void);
   };
   
-  template <class S>
-  class PrintingInspector : public Inspector {
+  class TextInspector : public Inspector {
+  private:
+    class TextInspectorImpl;
+    TextInspectorImpl *t;
+    std::string n;
+  protected:
+    void init(void);
+    std::ostream& getStream(void);
   public:
+    TextInspector(const std::string&);
+    
+    virtual void inspect(Space* node) = 0;
+    virtual ~TextInspector(void);
+  };
+  
+  template <class S>
+  class PrintingInspector : public TextInspector {
+  public:
+    PrintingInspector(const std::string& name)
+    : TextInspector(name) {}
     virtual void inspect(Space* node) {
-      dynamic_cast<S*>(node)->print();
+      init();
+      dynamic_cast<S*>(node)->print(getStream());
     }
   };
   
@@ -102,3 +122,5 @@ namespace Gecode { namespace Gist {
 #include "gecode/gist/gist.icc"
 
 #endif
+
+// STATISTICS: gist-any

@@ -67,7 +67,7 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {}
+  print(std::ostream&) {}
 };
 
 /** \brief Main-function

@@ -204,24 +204,24 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "Tournament plan" << std::endl;
+  print(std::ostream& os) {
+    os << "Tournament plan" << std::endl;
 
     for (int w=0; w<weeks; w++) {
-      std::cout << "Week " << w << ": " << std::endl << "    ";
+      os << "Week " << w << ": " << std::endl << "    ";
       for (int g=0; g<groups; g++) {
         SetVarGlbValues glb(group(w,g));
-        std::cout << "(" << glb.val();
+        os << "(" << glb.val();
         ++glb;
         while(glb()) {
-          std::cout << " " << glb.val();
+          os << " " << glb.val();
           ++glb;
         }
-        std::cout << ")";
-        if (g < groups-1) std::cout << " ";
-        if (g > 0 && g % 4 == 0) std::cout << std::endl << "    ";
+        os << ")";
+        if (g < groups-1) os << " ";
+        if (g > 0 && g % 4 == 0) os << std::endl << "    ";
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
   }
 

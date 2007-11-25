@@ -94,9 +94,9 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     for (int i=0; i<xs.size(); i++) {
-      std::cout << "\t[" << i << "] = " << xs[i] << std::endl;
+      os << "\t[" << i << "] = " << xs[i] << std::endl;
     }
   }
 

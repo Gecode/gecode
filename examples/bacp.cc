@@ -168,21 +168,21 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
+  print(std::ostream& os) {
     std::vector<std::list<int> > period(curr.p);
     for (int i=x.size(); i--;)
       period[x[i].val()].push_back(i);
     
-    std::cout << "Solution with load " << u.val() << ":" << std::endl;
+    os << "Solution with load " << u.val() << ":" << std::endl;
     for (int i=0; i<curr.p; i++) {
-      std::cout << "\tPeriod "<<i+1<<": ";
+      os << "\tPeriod "<<i+1<<": ";
       for (std::list<int>::iterator v=period[i].begin();
            v != period[i].end(); ++v) {
-        std::cout << curr.courses[*v].name << " ";
+        os << curr.courses[*v].name << " ";
       }
-      std::cout << std::endl;
+      os << std::endl;
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 };
 

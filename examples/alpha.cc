@@ -106,14 +106,14 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\t";
+  print(std::ostream& os) {
+    os << "\t";
     for (int i = 0; i < n; i++) {
-      std::cout << ((char) (i+'a')) << '=' << le[i] << ((i<n-1)?", ":"\n");
+      os << ((char) (i+'a')) << '=' << le[i] << ((i<n-1)?", ":"\n");
       if ((i+1) % 8 == 0)
-        std::cout << std::endl << "\t";
+        os << std::endl << "\t";
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 };
 

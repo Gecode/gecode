@@ -317,8 +317,8 @@ public:
   Example(void) {}
   /// Constructor used for cloning
   Example(bool share, Example& e) : Space(share,e) {}
-  /// Print a solution
-  virtual void print(void) {}
+  /// Print a solution to \a os
+  virtual void print(std::ostream& os) { (void)os; }
   /// Run example with search engine \a Engine and options \a opt
   template <class Script, template<class> class Engine, class Options>
   static void run(const Options& opt);

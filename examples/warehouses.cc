@@ -166,11 +166,11 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\tSupplier: " << supplier << std::endl
-              << "\tCost: " << cost << std::endl
-              << "\tTotal cost: " << total << std::endl
-              << std::endl;
+  print(std::ostream& os) {
+    os << "\tSupplier: " << supplier << std::endl
+       << "\tCost: " << cost << std::endl
+       << "\tTotal cost: " << total << std::endl
+       << std::endl;
   }
 };
 

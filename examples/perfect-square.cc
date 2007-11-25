@@ -200,11 +200,11 @@ public:
   }
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << "\t";
+  print(std::ostream& os) {
+    os << "\t";
     for (int i=0; i<s.n; i++)
-      std::cout << "(" << x[i] << "," << y[i] << ") ";
-    std::cout << std::endl;
+      os << "(" << x[i] << "," << y[i] << ") ";
+    os << std::endl;
   }
 };
 

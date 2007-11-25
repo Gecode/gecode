@@ -411,3 +411,5 @@ namespace Gecode { namespace Gist {
   TreeCanvas::~TreeCanvas(void) { delete canvas; }
   
 }}
+
+// STATISTICS: gist-any

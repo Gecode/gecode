@@ -176,8 +176,8 @@ public:
   }
 
   /// Print solution
-  virtual void print(void){
-    std::cout << "\t" << y << std::endl;
+  virtual void print(std::ostream& os){
+    os << "\t" << y << std::endl;
   }
 
   /// Constructor for cloning \a l
