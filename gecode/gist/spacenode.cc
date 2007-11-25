@@ -240,8 +240,10 @@ namespace Gecode { namespace Gist {
           delete workingSpace;
           workingSpace = NULL;
           // we may have got a copy from LAO!
-          delete copy;
-          copy = NULL;
+          if (getParent() != NULL) {
+            delete copy;
+            copy = NULL;
+          }
           kids = 0;
           _hasSolvedChildren = false;
           _hasFailedChildren = true;
@@ -257,9 +259,11 @@ namespace Gecode { namespace Gist {
         {
           kids = 0;
           status = SOLVED;
-          // we may have got a copy from LAO!
-          delete copy;
-          copy = NULL;
+          // we may have got a copy from LAO
+          if (getParent() != NULL) {
+            delete copy;
+            copy = NULL;
+          }
           _hasSolvedChildren = true;
           _hasFailedChildren = false;
           // stats.newFailure();
@@ -337,3 +341,5 @@ namespace Gecode { namespace Gist {
   SpaceNode::changedStatus() {}
   
 }}
+
+// STATISTICS: gist-any
