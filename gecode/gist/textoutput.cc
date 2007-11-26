@@ -77,17 +77,21 @@ namespace Gecode { namespace Gist {
     QFont font;
     font.setFamily("Courier");
     font.setFixedPitch(true);
-    font.setPointSize(14);
+    font.setPointSize(12);
 
     editor = new QTextEdit;
     editor->setFont(font);
     editor->setReadOnly(true);
+    editor->setLineWrapMode(QTextEdit::FixedColumnWidth);
+    editor->setLineWrapColumnOrWidth(80);
+    editor->setTabStopWidth(2);
     os = new GistOutputStream(editor);
 
     setCentralWidget(editor);
     setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
     
     setAttribute(Qt::WA_DeleteOnClose, false);
+    resize(600,300);
   }
 
   TextOutput::~TextOutput(void) {
