@@ -517,7 +517,8 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(SET,     "set")
   AC_SUBST(CPLTSET, "cpltset")
   AC_SUBST(MM,      "minimodel")
-  AC_SUBST(SER,     "serialization")])
+  AC_SUBST(SER,     "serialization")
+  AC_SUBST(GIST,    "gist")])
 
 
 AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
@@ -551,7 +552,8 @@ AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_SET_FLAG, "")
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "")
-   AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "")])
+   AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "")
+   AC_SUBST(GECODE_BUILD_GIST_FLAG, "")])
 
 AC_DEFUN([AC_GECODE_BUILDFLAGS],
   [AC_SUBST(GECODE_BUILD_SUPPORT_FLAG, "-DGECODE_BUILD_SUPPORT")
@@ -561,7 +563,8 @@ AC_DEFUN([AC_GECODE_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_SET_FLAG, "-DGECODE_BUILD_SET")
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "-DGECODE_BUILD_CPLTSET")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "-DGECODE_BUILD_MINIMODEL")
-   AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "-DGECODE_BUILD_SERIALIZATION")])
+   AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "-DGECODE_BUILD_SERIALIZATION")
+   AC_SUBST(GECODE_BUILD_GIST_FLAG, "-DGECODE_BUILD_GIST")])
 
 
 AC_DEFUN([AC_GECODE_UNIX_PATHS],
@@ -684,7 +687,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(SET,     "Set")
   AC_SUBST(CPLTSET, "CpltSet")
   AC_SUBST(MM,      "Minimodel")
-  AC_SUBST(SER,     "Serialization")])
+  AC_SUBST(SER,     "Serialization")
+  AC_SUBST(GIST,    "Gist")])
 
 dnl Macro:
 dnl   AC_GECODE_DOC_SWITCHES
@@ -830,6 +834,17 @@ AC_DEFUN([AC_GECODE_FRAMEWORK],
   fi
 ])
 
+dnl Macro:
+dnl   AC_GECODE_BOOST_SERIALIZATION
+dnl
+dnl Description:
+dnl   Produces the configure switch --with-boost
+dnl   for supplying the path to the boost serialization library.
+dnl   If present, support for boost serialization will be built
+dnl   into Gecode.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
   [dnl build with support for the boost serialization library
   AC_ARG_WITH([boost],
@@ -842,25 +857,50 @@ AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
   fi
 ])
 
+dnl Macro:
+dnl   AC_GECODE_GIST
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-gist
+dnl   for compiling the Gecode Interactive Search Tool.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_GIST],
   [
+  AC_ARG_WITH([qt],
+    AC_HELP_STRING([--with-qt],
+      [path to the Qt library (only needed if --enable-gist is given)]))
+  if test "${with_qt:-no}" != "no"; then
+    qt_prefix=${with_qt}
+  else
+    qt_prefix=
+  fi
   AC_ARG_ENABLE([gist],
     AC_HELP_STRING([--enable-gist],
       [build Gecode Interactive Search Tool @<:@default=no@:>@]))
   AC_MSG_CHECKING(whether to build Gist)
   if test "${enable_gist:-no}" = "yes"; then
     AC_MSG_RESULT(yes)
-    AC_SUBST(GECODE_BUILD_GIST, "yes")
-	AC_DEFINE(GECODE_HAVE_GIST)
-	case ${ac_gecode_compiler_vendor} in
-	microsoft)
-		AC_SUBST(GECODE_LINK_GIST, "gecode/gist/GecodeGist.lib")
-	;;
-	*)
-		AC_SUBST(GECODE_LINK_GIST, "-Lgecode/gist -lgecodegist")
-	;;
-	esac 
-    AC_CONFIG_COMMANDS(gecode/gist/Makefile, [(cd gecode/gist && qmake)])
+    AC_DEFINE(GECODE_HAVE_GIST)
+    
+    AC_SUBST(MOC, "moc")
+    AC_SUBST(GIST_CPPFLAGS, "-DQT_SHARED -I${qt_prefix}/include -I${qt_prefix}/include/QtCore -I${qt_prefix}/include/QtGui")
+    case ${ac_gecode_compiler_vendor} in
+    microsoft*)
+      AC_SUBST(LINKQT, "${qt_prefix}/lib/QtCore4.lib ${qt_prefix}/lib/QtGui4.lib")
+    ;;
+    *)
+      case ${host_os} in
+      darwin*)
+        AC_SUBST(LINKQT, "-F${qt_prefix}/lib -framework Carbon -framework AppKit -framework QtCore -framework ApplicationServices -framework QtGui -lz -lm")
+      ;;
+      *)
+        AC_SUBST(LINKQT, "-L${qt_prefix}/lib -lQtCore -lQtGui")
+      ;;
+      esac
+    ;;
+    esac 
   else
     AC_MSG_RESULT(no)
     AC_SUBST(GECODE_BUILD_GIST, "no")

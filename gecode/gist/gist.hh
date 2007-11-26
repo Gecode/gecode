@@ -42,6 +42,8 @@
  *
  */
 
+#include "gecode/config.hh"
+
 #if !defined(GIST_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
@@ -71,13 +73,13 @@ class QWidget;
 #include <sstream>
 
 namespace Gecode { namespace Gist {
-  class Inspector {
+  class GECODE_GIST_EXPORT Inspector {
   public:
     virtual void inspect(Space* node) = 0;
     virtual ~Inspector(void);
   };
   
-  class TextInspector : public Inspector {
+  class GECODE_GIST_EXPORT TextInspector : public Inspector {
   private:
     class TextInspectorImpl;
     TextInspectorImpl *t;
@@ -103,12 +105,17 @@ namespace Gecode { namespace Gist {
     }
   };
   
+  GECODE_GIST_EXPORT
   int explore(Space* root, Better* b, Inspector* gi);
+  
+  GECODE_GIST_EXPORT
   QWidget* exploreWidget(QWidget* parent, 
                          Space* root, Better* b, Inspector* gi);
   }	
 
+  GECODE_GIST_EXPORT
   int explore(Space* root, Gist::Inspector* gi = 0);
+  GECODE_GIST_EXPORT
   void exploreWidget(QWidget* parent, Space* root, Gist::Inspector* gi = 0);
 
   template <class S>

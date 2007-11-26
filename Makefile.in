@@ -63,6 +63,7 @@ export VERSION		= @VERSION@
 
 export CXX = @CXX@
 export CC = @CC@
+export MOC = @MOC@
 ifeq "$(top_srcdir)" "$(top_builddir)"
 CPPFLAGS=-I$(top_srcdir)
 else
@@ -72,6 +73,11 @@ export CPPFLAGS
 export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
 export CFLAGS = $(CPPFLAGS) @CFLAGS@ $(CUSR)
 export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
+
+#export GIST_CPPFLAGS = -DQT_SHARED -I/Users/tack/Programming/qt-mac/qt-install/include -I/Users/tack/Programming/qt-mac/qt-install/include/QtGui -I/Users/tack/Programming/qt-mac/qt-install/include/QtCore
+
+export GIST_CPPFLAGS = @GIST_CPPFLAGS@
+export LINKQT = @LINKQT@
 
 export BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 export BOOST_LINK = @BOOST_LINK@
@@ -538,10 +544,42 @@ ITERHDR = gecode/iter.hh \
 # GIST
 #
 
+GISTHDR0 = \
+	better.hh dfs.hh dfs.icc dotnote.hh drawingcursor.hh gist.hh \
+	gist.icc node.hh nodecursor.hh nodecursor.icc nodevisitor.hh \
+	nodevisitor.icc postscript/postscript.hh shapelist.hh \
+	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh
+
+GISTSRC0 = \
+	dotnode.cc drawingcursor.cc gist.cc node.cc nodecursor.cc \
+	postscript/postscript.cc shapelist.cc spacenode.cc \
+	textoutput.cc treecanvas.cc visualnode.cc \
+	moc_treecanvas.cc
+
+GISTSRC = $(GISTSRC0:%=gecode/gist/%)
+GISTHDR = $(GISTHDR0:%=gecode/gist/%)
+
+GISTOBJ	= $(GISTSRC:%.cc=%$(OBJSUFFIX))
+GISTSBJ	= $(GISTSRC:%.cc=%$(SBJSUFFIX))
+
 ifeq "@enable_gist@" "yes"
-export LINKGIST = @GECODE_LINK_GIST@
+export GISTDLL		= $(LIBPREFIX)@GIST@$(DLLSUFFIX)
+export GISTSTATICLIB	= $(LIBPREFIX)@GIST@$(STATICLIBSUFFIX)
+export GISTLIB		= $(LIBPREFIX)@GIST@$(LIBSUFFIX)
+export LINKGIST      	= $(LINKPREFIX)@GIST@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export GISTSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@GIST@$(SOSUFFIX)
 else
-export LINKGIST =
+export GISTSONAME     = 
+endif
+
+else
+export GISTDLL		=
+export GISTSTATICLIB	=
+export GISTLIB		=
+export LINKGIST      	=
+export GISTSONAME	= 
 endif
 
 #
@@ -607,15 +645,15 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cc=%$(SBJSUFFIX))
 #
 
 ALLSRC = \
-	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC) \
-	$(CPLTSETSRC) $(MMSRC) $(SERSRC) \
+	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) $(INTSRC) \
+	$(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
-	$(EXSUPPORTSRC)
+	$(EXSUPPORTSRC) $(GISTSRC)
 ALLVARIMP = $(INTVARIMP) $(SETVARIMP) $(CPLTSETVARIMP)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) $(INTHDR) $(SETHDR) \
 	$(CPLTSETHDR) $(MMHDR) $(SERHDR) \
-	$(ITERHDR) $(ALLVARIMP)
+	$(ITERHDR) $(ALLVARIMP) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
 ALLSBJ0 = $(ALLSRC:%.cc=%$(SBJSUFFIX))
@@ -645,7 +683,7 @@ ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB)
+	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -900,6 +938,15 @@ test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
 		@COMPILESBJ@$@ @CXXIN@$<
 
+gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
+	$(CXX) $(CXXFLAGS) $(GIST_CPPFLAGS) \
+	@GECODE_BUILD_GIST_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+
+gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
+	$(CXX) $(CXXFLAGS) $(GIST_CPPFLAGS) \
+	@GECODE_BUILD_GIST_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
 
 #
 # DLL Targets
@@ -955,6 +1002,14 @@ $(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL
 		@LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKQT) \
+		@LINKOUTPUT@$(GISTDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+gecode/gist/moc_treecanvas.cc: gecode/gist/treecanvas.hh
+	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 else
 $(SUPPORTDLL) $(SUPPORTLIB): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) \
@@ -987,6 +1042,10 @@ $(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(
 	$(CXX) $(DLLFLAGS) $(SEROBJ) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKCPLTSET) \
 		$(BOOST_LINK) @LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
+$(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKQT) \
+		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
 endif
 
 #

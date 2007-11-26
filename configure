@@ -696,6 +696,7 @@ GECODE_BUILD_SET_FLAG
 GECODE_BUILD_CPLTSET_FLAG
 GECODE_BUILD_MINIMODEL_FLAG
 GECODE_BUILD_SERIALIZATION_FLAG
+GECODE_BUILD_GIST_FLAG
 SBJEXT
 LIBEXT
 LIBPREFIX
@@ -730,8 +731,10 @@ ENABLEDOCCHM
 enable_set_vars
 enable_cpltset_vars
 enable_int_vars
+MOC
+GIST_CPPFLAGS
+LINKQT
 GECODE_BUILD_GIST
-GECODE_LINK_GIST
 enable_gist
 enable_examples
 enable_minimodel
@@ -1366,6 +1369,8 @@ Optional Packages:
                           and microsoft.
   --with-sdk              SDK to use on Mac OS X
   --with-boost            path to the boost library (used for serialization)
+  --with-qt               path to the Qt library (only needed if --enable-gist
+                          is given)
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -5937,6 +5942,8 @@ gnu)
 
    GECODE_BUILD_SERIALIZATION_FLAG=""
 
+   GECODE_BUILD_GIST_FLAG=""
+
        ;;
      windows*)
        need_soname="no"
@@ -5979,6 +5986,8 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
 
    GECODE_BUILD_SERIALIZATION_FLAG="-DGECODE_BUILD_SERIALIZATION"
 
+   GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
+
        ;;
      *)
        need_soname="yes"
@@ -6009,6 +6018,8 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
    GECODE_BUILD_MINIMODEL_FLAG=""
 
    GECODE_BUILD_SERIALIZATION_FLAG=""
+
+   GECODE_BUILD_GIST_FLAG=""
 
        ;;
   esac
@@ -7737,6 +7748,8 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
    GECODE_BUILD_SERIALIZATION_FLAG="-DGECODE_BUILD_SERIALIZATION"
 
+   GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
+
 
     COMPILEOBJ="-c -Fo"
 
@@ -7811,6 +7824,8 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
    GECODE_BUILD_SERIALIZATION_FLAG=""
 
+   GECODE_BUILD_GIST_FLAG=""
+
        ;;
      windows*)
        need_soname="no"
@@ -7853,6 +7868,8 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
 
    GECODE_BUILD_SERIALIZATION_FLAG="-DGECODE_BUILD_SERIALIZATION"
 
+   GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
+
        ;;
      *)
        need_soname="yes"
@@ -7883,6 +7900,8 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
    GECODE_BUILD_MINIMODEL_FLAG=""
 
    GECODE_BUILD_SERIALIZATION_FLAG=""
+
+   GECODE_BUILD_GIST_FLAG=""
 
        ;;
   esac
@@ -9234,6 +9253,8 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
    GECODE_BUILD_SERIALIZATION_FLAG="-DGECODE_BUILD_SERIALIZATION"
 
+   GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
+
 
     COMPILEOBJ="-c -Fo"
 
@@ -9511,6 +9532,17 @@ echo "${ECHO_T}no" >&6; }
 
 
 
+
+# Check whether --with-qt was given.
+if test "${with_qt+set}" = set; then
+  withval=$with_qt;
+fi
+
+  if test "${with_qt:-no}" != "no"; then
+    qt_prefix=${with_qt}
+  else
+    qt_prefix=
+  fi
   # Check whether --enable-gist was given.
 if test "${enable_gist+set}" = set; then
   enableval=$enable_gist;
@@ -9521,24 +9553,33 @@ echo $ECHO_N "checking whether to build Gist... $ECHO_C" >&6; }
   if test "${enable_gist:-no}" = "yes"; then
     { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-    GECODE_BUILD_GIST="yes"
-
-	cat >>confdefs.h <<\_ACEOF
+    cat >>confdefs.h <<\_ACEOF
 #define GECODE_HAVE_GIST 1
 _ACEOF
 
-	case ${ac_gecode_compiler_vendor} in
-	microsoft)
-		GECODE_LINK_GIST="gecode/gist/GecodeGist.lib"
 
-	;;
-	*)
-		GECODE_LINK_GIST="-Lgecode/gist -lgecodegist"
+    MOC="moc"
 
-	;;
-	esac
-    ac_config_commands="$ac_config_commands gecode/gist/Makefile"
+    GIST_CPPFLAGS="-DQT_SHARED -I${qt_prefix}/include -I${qt_prefix}/include/QtCore -I${qt_prefix}/include/QtGui"
 
+    case ${ac_gecode_compiler_vendor} in
+    microsoft*)
+      LINKQT="${qt_prefix}/lib/QtCore4.lib ${qt_prefix}/lib/QtGui4.lib"
+
+    ;;
+    *)
+      case ${host_os} in
+      darwin*)
+        LINKQT="-F${qt_prefix}/lib -framework Carbon -framework AppKit -framework QtCore -framework ApplicationServices -framework QtGui -lz -lm"
+
+      ;;
+      *)
+        LINKQT="-L${qt_prefix}/lib -lQtCore -lQtGui"
+
+      ;;
+      esac
+    ;;
+    esac
   else
     { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
@@ -10248,7 +10289,6 @@ do
   case $ac_config_target in
     "gecode/config.hh") CONFIG_HEADERS="$CONFIG_HEADERS gecode/config.hh" ;;
     "vti.icc") CONFIG_COMMANDS="$CONFIG_COMMANDS vti.icc" ;;
-    "gecode/gist/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS gecode/gist/Makefile" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "doxygen.conf") CONFIG_FILES="$CONFIG_FILES doxygen.conf" ;;
     "doxygen.hh") CONFIG_FILES="$CONFIG_FILES doxygen.hh" ;;
@@ -10399,6 +10439,7 @@ GECODE_BUILD_SET_FLAG!$GECODE_BUILD_SET_FLAG$ac_delim
 GECODE_BUILD_CPLTSET_FLAG!$GECODE_BUILD_CPLTSET_FLAG$ac_delim
 GECODE_BUILD_MINIMODEL_FLAG!$GECODE_BUILD_MINIMODEL_FLAG$ac_delim
 GECODE_BUILD_SERIALIZATION_FLAG!$GECODE_BUILD_SERIALIZATION_FLAG$ac_delim
+GECODE_BUILD_GIST_FLAG!$GECODE_BUILD_GIST_FLAG$ac_delim
 SBJEXT!$SBJEXT$ac_delim
 LIBEXT!$LIBEXT$ac_delim
 LIBPREFIX!$LIBPREFIX$ac_delim
@@ -10415,7 +10456,6 @@ INSTALLLIBS!$INSTALLLIBS$ac_delim
 LINKPREFIX!$LINKPREFIX$ac_delim
 LINKSUFFIX!$LINKSUFFIX$ac_delim
 LINKOUTPUT!$LINKOUTPUT$ac_delim
-EXEOUTPUT!$EXEOUTPUT$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -10457,6 +10497,7 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+EXEOUTPUT!$EXEOUTPUT$ac_delim
 SUPPORT!$SUPPORT$ac_delim
 KERNEL!$KERNEL$ac_delim
 SEARCH!$SEARCH$ac_delim
@@ -10474,8 +10515,10 @@ ENABLEDOCCHM!$ENABLEDOCCHM$ac_delim
 enable_set_vars!$enable_set_vars$ac_delim
 enable_cpltset_vars!$enable_cpltset_vars$ac_delim
 enable_int_vars!$enable_int_vars$ac_delim
+MOC!$MOC$ac_delim
+GIST_CPPFLAGS!$GIST_CPPFLAGS$ac_delim
+LINKQT!$LINKQT$ac_delim
 GECODE_BUILD_GIST!$GECODE_BUILD_GIST$ac_delim
-GECODE_LINK_GIST!$GECODE_LINK_GIST$ac_delim
 enable_gist!$enable_gist$ac_delim
 enable_examples!$enable_examples$ac_delim
 enable_minimodel!$enable_minimodel$ac_delim
@@ -10490,7 +10533,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 31; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 34; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
@@ -10906,7 +10949,6 @@ echo "$as_me: executing $ac_file commands" >&6;}
 	     rm -f gecode/vti.icc;
 	     mv gecode/vti.icc.new gecode/vti.icc;
 	   fi ;;
-    "gecode/gist/Makefile":C) (cd gecode/gist && qmake) ;;
 
   esac
 done # for ac_tag
