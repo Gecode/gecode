@@ -9724,7 +9724,7 @@ DLLFLAGS=${DLLFLAGS}
 GLDFLAGS=${GLDFLAGS}
 
 
-ac_config_files="$ac_config_files Makefile doxygen.conf doxygen.hh misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc misc/gecode-minimodel.pc gecode/gist/Gist.pro"
+ac_config_files="$ac_config_files Makefile doxygen.conf doxygen.hh misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc misc/gecode-minimodel.pc"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -10296,7 +10296,6 @@ do
     "misc/gecode-search.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-search.pc" ;;
     "misc/gecode-serialization.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-serialization.pc" ;;
     "misc/gecode-minimodel.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-minimodel.pc" ;;
-    "gecode/gist/Gist.pro") CONFIG_FILES="$CONFIG_FILES gecode/gist/Gist.pro" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

@@ -236,5 +236,5 @@ AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 
 AC_CONFIG_FILES([Makefile doxygen.conf doxygen.hh
 	misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc 
-	misc/gecode-minimodel.pc gecode/gist/Gist.pro])
+	misc/gecode-minimodel.pc])
 AC_OUTPUT
