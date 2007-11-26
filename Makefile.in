@@ -1426,7 +1426,6 @@ clean:
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(TESTOBJ) $(TESTSBJ) $(TESTOBJ:%$(OBJSUFFIX)=%.pdb)
-	$(MAKE) -C gecode/gist clean
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
@@ -1448,7 +1447,6 @@ distclean: veryclean
 	$(RMF) gecode/vti.icc Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
-	$(MAKE) -C gecode/gist distclean
 
 depend: $(ALLVARIMP:%=$(top_srcdir)/%) 	
 	perl $(top_srcdir)/misc/makedepend.perl \
