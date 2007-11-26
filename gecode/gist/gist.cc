@@ -44,13 +44,17 @@ namespace Gecode {
 
   namespace Gist {
 
+    /// Implementation of the TextInspector
     class TextInspector::TextInspectorImpl {
     public:
+      /// The window where the text is output
       TextOutput* to;
+      /// Constructor
       TextInspectorImpl(const std::string& name) {
         to = new TextOutput(name);
         to->show();
       }
+      /// Destructor
       ~TextInspectorImpl(void) {
         delete to;
       }

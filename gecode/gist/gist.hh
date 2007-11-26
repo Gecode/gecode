@@ -72,55 +72,84 @@ class QWidget;
 #include <string>
 #include <sstream>
 
-namespace Gecode { namespace Gist {
+namespace Gecode { 
+  
+  /** 
+   * \namespace Gecode::Gist
+   * \brief The Gecode Interactive Search Tool
+   * 
+   * The Gecode::Gist namespace contains the %Gecode Interactive Search Tool,
+   * a Qt-based graphical search engine.
+   *
+   */
+  
+  namespace Gist {
+  /** \brief Abstract base class for Inspectors
+    *
+    * An inspector provides a virtual method that is called
+    * when a node in the search tree is inspected (e.g. by
+    * double-clicking)
+    */
   class GECODE_GIST_EXPORT Inspector {
   public:
+    /// Call-back function
     virtual void inspect(Space* node) = 0;
+    /// Destructor
     virtual ~Inspector(void);
   };
   
+  /// \brief An inspector base class for simple text output
   class GECODE_GIST_EXPORT TextInspector : public Inspector {
   private:
     class TextInspectorImpl;
+    /// The implementation object
     TextInspectorImpl *t;
+    /// The name of the inspector
     std::string n;
   protected:
+    /// Initialize the implementation object
     void init(void);
+    /// Get the stream that is used to output text
     std::ostream& getStream(void);
   public:
-    TextInspector(const std::string&);
-    
-    virtual void inspect(Space* node) = 0;
+    /// Constructor
+    TextInspector(const std::string& name);
+    /// Destructor
     virtual ~TextInspector(void);
   };
   
+  /// \brief An inspector for printing simple text output
   template <class S>
   class PrintingInspector : public TextInspector {
   public:
-    PrintingInspector(const std::string& name)
-    : TextInspector(name) {}
-    virtual void inspect(Space* node) {
-      init();
-      dynamic_cast<S*>(node)->print(getStream());
-    }
+    /// Constructor
+    PrintingInspector(const std::string& name);
+    /// Use the print method of the template class S to print a space
+    virtual void inspect(Space* node);
   };
   
+  /// Create a new stand-alone Gist for \a root using \a b and \a gi
   GECODE_GIST_EXPORT
   int explore(Space* root, Better* b, Inspector* gi);
   
+  /// Create a new Gist widget with parent \a parent for \a root using \a b and \a gi
   GECODE_GIST_EXPORT
   QWidget* exploreWidget(QWidget* parent, 
                          Space* root, Better* b, Inspector* gi);
   }	
 
+  /// Create a new stand-alone Gist for \a root using \a gi
   GECODE_GIST_EXPORT
   int explore(Space* root, Gist::Inspector* gi = 0);
+  /// Create a new Gist widget with parent \a parent for \a root and \a gi
   GECODE_GIST_EXPORT
   void exploreWidget(QWidget* parent, Space* root, Gist::Inspector* gi = 0);
 
+  /// Create a new stand-alone Gist for branch-and-bound search of \a root, using \a gi
   template <class S>
   int exploreBest(S* root, Gist::Inspector* gi = 0);
 
+  /// Create a new Gist widget with parent \a parent for branch-and-bound search of \a root, using \a gi
   template <class S>
   void exploreBestWidget(QWidget* parent, S* root, Gist::Inspector* gi = 0);
 

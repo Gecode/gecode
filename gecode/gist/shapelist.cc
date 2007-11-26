@@ -149,13 +149,6 @@ namespace Gecode { namespace Gist {
     return BoundingBox(left, right, depth);    
   }
   
-  void
-  Shape::print(void) {
-    for (unsigned int i=0; i<shape.size(); i++) {
-      std::cout << shape[i].l << "|" << shape[i].r << std::endl;
-    }
-  }
-  
   
   int
   ShapeList::getAlpha(Shape* shape1, Shape* shape2) {

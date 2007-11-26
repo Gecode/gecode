@@ -42,26 +42,43 @@
 
 namespace Gecode { namespace Gist {
 
+  /// \brief A cursor that draws a tree on a QWidget
   class DrawingCursor : public Gist::NodeCursor<VisualNode> {
   private:
+    /// The painter where the tree is drawn
     QPainter& painter;
+    /// The clipping area
     QRect clippingRect;
+    /// The current coordinates
     int x, y;
     
+    /// The color for failed nodes
     static const QColor red;
+    /// The color for solved nodes
     static const QColor green;
+    /// The color for choice nodes
     static const QColor blue;
     
+    /// Test if current node is clipped
     bool isClipped(void);
   public:
+    /// Constructor
     DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                    const QRect& clippingRect0);
 
+    ///\name Cursor interface
+    //@{
+    /// Move cursor to parent
     void moveUpwards(void);
+    /// Test if cursor may move to child
     bool mayMoveDownwards(void);
+    /// Move cursor to child
     void moveDownwards(void);
+    /// Move cursor to sibling
     void moveSidewards(void);
+    /// Draw the node
     void processCurrentNode(void);
+    //@}
   };
 
 }}

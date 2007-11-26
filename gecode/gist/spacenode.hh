@@ -43,61 +43,104 @@
 
 namespace Gecode { namespace Gist {
 
+  /// \brief Status of nodes in the search tree
   enum NodeStatus {
-    SOLVED, FAILED, BRANCH, UNDETERMINED
+    SOLVED,       ///< Node representing a solution
+    FAILED,       ///< Node representing failure
+    BRANCH,       ///< Node representing a branch
+    UNDETERMINED  ///< Node that has not been explored yet
   };
 
+  /// \brief Static reference to the currently best space
   class BestSpace {
   public:
+    /// The currently best space found, or NULL
     Space* s;
+    /// The object used for constraining spaces to be better
     Better* b;
+    /// Constructor
     BestSpace(Space* s0, Better* b);
   };
 
+  /// \brief A node of a search tree of Gecode spaces
   class SpaceNode : public Node {
   private:
+    /// A copy used for recomputation, or NULL
     Space* copy;
+    /// Working space used for computing the status
     Space* workingSpace;
     
+    /// Branching description
     const BranchingDesc* desc;
-    
+    /// Current status of the node
     NodeStatus status;
     
   protected:
+    /// Reference to currently best space (for branch-and-bound)
     BestSpace* curBest;
   private:
+    /// Reference to best space when the node was created
     Space*     ownBest;
     
+    /// Number of children that are not fully explored
     int noOfOpenChildren;
+    /// Whether the subtree of this node is known to contain failure
     bool _hasFailedChildren;
+    /// Whether the subtree of this node is known to contain solutions
     bool _hasSolvedChildren;
     
+    /// Recompute workingSpace from a copy higher up, return distance to copy
     int recompute(void);
+    /// Try to get workingSpace from parent
     Space* donateSpace(int alt, Space* ownBest);
+    /// Try to get copy from parent if this node is the last alternative
     Space* checkLAO(int alt, Space* ownBest);
+    /// Acquire working space, either through donateSpace or recompute
     void acquireSpace(void);
-    
+
+    /// Mark all ancestors as having solved children
     void solveUp(void);
+    /// Book-keeping of open children
     void closeChild(bool hadFailures, bool hadSolutions);
   public:
+    /// Construct node for alternative \a alt
     SpaceNode(int alt, BestSpace* cb = NULL);
+    /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root, Better* b);
+    /// Destructor
     virtual ~SpaceNode(void);
-    
+
+    /// Return working space.  Receiver must delete the space.
     Space* getSpace(void);
     
+    /** \brief Compute and return the number of children
+      *
+      * On a node whose status is already determined, this function
+      * just returns the number of children.  On an undetermined node,
+      * it first acquires a Space (possibly through recomputation), and
+      * then asks for its status.  If the space is solved or failed, the
+      * node's status will be set accordingly, and 0 will be returned.
+      * Otherwise, the status is SS_BRANCH, and as many new children will
+      * be created as the branch has alternatives, and the number returned.
+      */
     int getNumberOfChildNodes(void);
+    
+    /// Return current status of the node
     NodeStatus getStatus(void);
-    void setStatus(NodeStatus s);
-    
+    /// Return alternative number of this node
     int getAlternative(void);
-    
+    /// Return whether this node still has open children
     bool isOpen(void);
+    /// Return whether the subtree of this node has any failed children
     bool hasFailedChildren(void);
+    /// Return whether the subtree of this node has any solved children
     bool hasSolvedChildren(void);
+    /// Return number of open children
     int getNoOfOpenChildren(void);
     
+    /// Pseudo-constructor to allow creation of nodes of sub-classes from getNoOfChildNodes
     virtual SpaceNode* createChild(int alternative);
+    /// Called when the status has changed
     virtual void changedStatus(void);
   };
 

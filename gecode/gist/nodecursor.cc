@@ -82,29 +82,6 @@ namespace Gecode { namespace Gist {
     }
   }
   
-  PrintCursor::PrintCursor(VisualNode* root) : NodeCursor<VisualNode>(root) {}
-  
-  void
-  PrintCursor::processCurrentNode(void) {
-    VisualNode* currentNode = node();
-    switch (currentNode->getStatus()) {
-    case UNDETERMINED:
-      std::cout << "U@" << currentNode->getOffset();
-      break;
-    case FAILED:
-      std::cout << "F@" << currentNode->getOffset();
-      break;
-    case SOLVED:
-      std::cout << "S@" << currentNode->getOffset();
-        break;
-    case BRANCH:
-      std::cout << "B@" << currentNode->getOffset();
-      break;
-    default: std::cout << "?";
-    }    
-    
-  }
-
   HideFailedCursor::HideFailedCursor(VisualNode* root) : NodeCursor<VisualNode>(root) {}
   
   bool

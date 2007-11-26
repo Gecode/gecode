@@ -44,51 +44,80 @@
 
 namespace Gecode { namespace Gist {
 
+  /// \brief Node class that supports visual layout
   class VisualNode : public SpaceNode {
   protected:
+    /// Relative offset from the parent node
     int offset;
-    
+    /// Whether the node needs re-layout
     bool dirty;
+    /// Whether the node is hidden
     bool hidden;
+    /// Whether the node is marked
     bool marked;
     
+    /// Shape of this node
     Shape* shape;
+    /// Bounding box of this node
     BoundingBox box;
-    
+    /// Check if the \a x at depth \a depth lies in this subtree
     bool containsCoordinateAtDepth(int x, int depth);
   public:
+    /// Constructor
     VisualNode(int alternative, BestSpace* b);
+    /// Constructor for root node from \a root and \a b
     VisualNode(Space* root, Better* b);
+    /// Destructor
     virtual ~VisualNode(void);
     
+    /// Shape of a single node
     static const Shape singletonShape;
+    /// Unit shape
     static const Shape unitShape;
 
+    /// Return if node is hidden
     bool isHidden(void);
+    /// Set hidden state to \a h
     void setHidden(bool h);
+    /// Mark all nodes up the path to the parent as dirty
     void dirtyUp(void);
+    /// Compute layout for the subtree of this node
     void layout(void);
+    /// Return offset off this node from its parent
     int getOffset(void);
+    /// Set offset of this node, relative to its parent
     void setOffset(int n);
+    /// Return whether node is marked as dirty
     bool isDirty(void);
+    /// Mark node as dirty
     void setDirty(bool d);
+    /// Return whether node is marked
     bool isMarked(void);
+    /// Set mark of this node
     void setMarked(bool m);
     
+    /// Toggle whether this node is hidden
     void toggleHidden(void);
+    /// Hide all failed subtrees of this node
     void hideFailed(void);
+    /// Unhide all nodes in the subtree of this node
     void unhideAll(void);
     
+    /// Return the shape of this node
     Shape* getShape(void);
+    /// Set the shape of this node
     void setShape(Shape* s);
+    /// Set the bounding box
     void setBoundingBox(BoundingBox b);
+    /// Return the bounding box
     BoundingBox getBoundingBox(void);
-    
+    /// Create a child for alternative \a alternative
     virtual SpaceNode* createChild(int alternative);
+    /// Signal that the status has changed
     virtual void changedStatus();
-    
+    /// Return child \a i
     VisualNode* getChild(int i);
-    
+    /// Find a node in this subtree at coordinates \a x, \a y
     VisualNode* findNode(int x, int y);    
   };
 

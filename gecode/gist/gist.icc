@@ -37,6 +37,7 @@
 namespace Gecode { 
 
   namespace Gist {
+    /// Implement branch-and-bound constraining function
     template <class S>
     class GistBetter : public Better {
     public:
@@ -44,6 +45,18 @@ namespace Gecode {
         static_cast<S*>(s)->constrain(best);
       }
     };
+
+    template <class S>
+    PrintingInspector<S>::PrintingInspector(const std::string& name)
+    : TextInspector(name) {}
+    
+    template <class S>
+    void
+    PrintingInspector<S>::inspect(Space* node) {
+      init();
+      dynamic_cast<S*>(node)->print(getStream());
+    }
+    
   }
 
   template <class S>

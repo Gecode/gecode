@@ -43,9 +43,12 @@ namespace Gecode {
   
   namespace Gist {
   
+  /// \brief Abstract class used to implement branch-and-bound search
   class Better {
   public:
+    /// Constrain \a s to be better than \a best
     virtual void constrain(Space* s, Space* best) = 0;
+    /// Destructor
     virtual ~Better(void) {}
   };
   

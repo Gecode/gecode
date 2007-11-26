@@ -545,22 +545,25 @@ ITERHDR = gecode/iter.hh \
 #
 
 GISTHDR0 = \
-	better.hh dfs.hh dfs.icc dotnote.hh drawingcursor.hh gist.hh \
+	better.hh dfs.hh dfs.icc drawingcursor.hh gist.hh \
 	gist.icc node.hh nodecursor.hh nodecursor.icc nodevisitor.hh \
 	nodevisitor.icc postscript.hh shapelist.hh \
 	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh
 
 GISTSRC0 = \
-	dotnode.cc drawingcursor.cc gist.cc node.cc nodecursor.cc \
+	drawingcursor.cc gist.cc node.cc nodecursor.cc \
 	postscript.cc shapelist.cc spacenode.cc \
-	textoutput.cc treecanvas.cc visualnode.cc \
+	textoutput.cc treecanvas.cc visualnode.cc
+
+GISTMOCSRC0 = \
 	moc_treecanvas.cc
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
+GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
 GISTHDR = $(GISTHDR0:%=gecode/gist/%)
 
-GISTOBJ	= $(GISTSRC:%.cc=%$(OBJSUFFIX))
-GISTSBJ	= $(GISTSRC:%.cc=%$(SBJSUFFIX))
+GISTOBJ	= $(GISTSRC:%.cc=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(OBJSUFFIX))
+GISTSBJ	= $(GISTSRC:%.cc=%$(SBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(SBJSUFFIX))
 
 ifeq "@enable_gist@" "yes"
 export GISTDLL		= $(LIBPREFIX)@GIST@$(DLLSUFFIX)

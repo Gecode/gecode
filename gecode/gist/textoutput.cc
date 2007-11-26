@@ -41,9 +41,10 @@
 
 namespace Gecode { namespace Gist {
   
+  /// \brief An outputstream that prints on a QTextEdit
   class GistOutputStream
   : public std::basic_ostream<char, std::char_traits<char> > {
-    
+    /// \brief Buffer for printing on a QTextEdit
     class Buf
     : public std::basic_streambuf<char, std::char_traits<char> > {
       QString buffer;

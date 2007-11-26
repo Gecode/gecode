@@ -41,21 +41,40 @@
 
 namespace Gecode { namespace Gist {
   
+  /// \brief A postscript color
   class PSColor {
   public:
-    double r,g,b;
+    /// Red
+    double r;
+    /// Green
+    double g;
+    /// Blue
+    double b;
+    /// Constructor
     PSColor(double r0, double g0, double b0);
+    /// Default constructor
     PSColor(void);
   };
   
   PSColor::PSColor(double r0, double g0, double b0) : r(r0), g(g0), b(b0) {}
   PSColor::PSColor(void) : r(0.0), g(0.0), b(0.0) {}
 
+  /// \brief A postscript bounding box
   class PSBoundingBox {
   public:
-    int minx, maxx, miny, maxy;
+    /// The minimal x coordinate
+    int minx;
+    /// The maximal x coordinate
+    int maxx;
+    /// The minimal y coordinate
+    int miny;
+    /// The maximal y coordinate
+    int maxy;
+    /// Constructor
     PSBoundingBox(int minx0, int maxx0, int miny0, int maxy0);
+    /// Merge with \a b
     void merge(const PSBoundingBox& b);
+    /// Translate by \a scale, \a translatex and \a translatey
     void translate(double scale, double translatex, double translatey);
   };
   
@@ -82,15 +101,20 @@ namespace Gecode { namespace Gist {
     maxy = (int) (((double)maxy)*scale+translatey);    
   }
   
+  /// \brief Base class for a postscript path
   class Path {
   public:
+    /// Emit command for drawing the path to \a out
     virtual void emit(std::ostream& out) = 0;
+    /// Compute bounding box of the path
     virtual PSBoundingBox bb(void) = 0;
+    /// Destructor
     virtual ~Path(void);
   };
   
   Path::~Path(void) {}
   
+  /// \brief A postscript path for drawing a triangle
   class Triangle : public Path {
   private:
     int c1x, c1y, c2x, c2y, c3x, c3y;
@@ -134,6 +158,7 @@ namespace Gecode { namespace Gist {
                          std::max(std::max(c1y,c2y),c3y));
    }
   
+  /// \brief A postscript path for drawing a circle
   class Circle : public Path {
   private:
     int cx, cy, r;
@@ -175,6 +200,7 @@ namespace Gecode { namespace Gist {
     return PSBoundingBox(cx-r,cx+r,cy-r,cy+r);    
   }
   
+  /// \brief A postscript path for drawing a diamond
   class Diamond : public Path {
   private:
     int cx, cy, r;
@@ -224,6 +250,7 @@ namespace Gecode { namespace Gist {
     return PSBoundingBox(cx-r,cx+r,cy-r,cy+r);
   }
 
+  /// \brief A postscript path for drawing a rectangle
   class Rectangle : public Path {
     int c1x, c1y, c2x, c2y;
     PSColor outline;
@@ -267,6 +294,7 @@ namespace Gecode { namespace Gist {
                           std::min(c1y,c2y), std::max(c1y,c2y));    
   }
 
+  /// \brief A postscript path for drawing a line
   class Line : public Path {
   private:
     int ax, ay, bx, by;
@@ -301,6 +329,7 @@ namespace Gecode { namespace Gist {
                           std::min(ay,by), std::max(ay,by));    
   }
 
+  /// \brief Cursor that emits postscript for drawing a tree
   class PostscriptCursor : public NodeCursor<VisualNode> {
   protected:
     static const int verticalOffset = 38;

@@ -39,18 +39,26 @@
 
 namespace Gecode { namespace Gist {
   
+  /// \brief Representation of a branch in the search tree
   class Branch {
   public:
+    /// Alternative number
     int alternative;
+    /// Branching description
     const BranchingDesc* desc;
+    /// The best space known when the branch was created
     Space* ownBest;
+    /// Constructor
     Branch(int a, const BranchingDesc* d, Space* best = NULL)
       : alternative(a), desc(d), ownBest(best) {}
   };
 
+  /// \brief Initial configuration settings for search
   class Config {
   public:
+    /// Distance for adaptive recomputation
     static const int a_d = 100000;
+    /// Distance for fixed recomputation
     static const int mrd = 1;
   };
   
@@ -181,18 +189,18 @@ namespace Gecode { namespace Gist {
     }
   }
 
-	SpaceNode::SpaceNode(int alt, BestSpace* cb)
-		: copy(NULL), workingSpace(NULL), desc(NULL),
-		  curBest(cb), ownBest(NULL) {
-		alternative = alt;
-		status = UNDETERMINED;
-		_hasSolvedChildren = false;
-		_hasFailedChildren = false;
-	}
-	
-	SpaceNode::SpaceNode(Space* root, Better* b)
-		: workingSpace(root), desc(NULL),
-		  curBest(NULL), ownBest(NULL) {
+  SpaceNode::SpaceNode(int alt, BestSpace* cb)
+    : copy(NULL), workingSpace(NULL), desc(NULL),
+      curBest(cb), ownBest(NULL) {
+    alternative = alt;
+    status = UNDETERMINED;
+    _hasSolvedChildren = false;
+    _hasFailedChildren = false;
+  }
+  
+  SpaceNode::SpaceNode(Space* root, Better* b)
+    : workingSpace(root), desc(NULL),
+      curBest(NULL), ownBest(NULL) {
     if (root == NULL) {
       status = FAILED;
       _hasSolvedChildren = false;
@@ -201,16 +209,16 @@ namespace Gecode { namespace Gist {
       copy = root;
       return;
     }
-		if (!root->failed())
-			copy = root->clone();
-		else
-		  copy = root;
-		status = UNDETERMINED;
-		_hasSolvedChildren = false;
-		_hasFailedChildren = false;
-		if (b != NULL)
+    if (!root->failed())
+      copy = root->clone();
+    else
+      copy = root;
+    status = UNDETERMINED;
+    _hasSolvedChildren = false;
+    _hasFailedChildren = false;
+    if (b != NULL)
       curBest = new BestSpace(NULL, b);
-	}
+  }
 
   SpaceNode::~SpaceNode(void) {
     delete desc;
@@ -302,11 +310,6 @@ namespace Gecode { namespace Gist {
     return status;
   }
   
-  void
-  SpaceNode::setStatus(NodeStatus s) {
-    status = s;
-  }
-    
   int
   SpaceNode::getAlternative(void) {
     return alternative;

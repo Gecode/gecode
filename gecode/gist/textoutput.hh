@@ -41,15 +41,20 @@
 #include <QTextEdit>
 
 namespace Gecode { namespace Gist {
+  /// \brief Window with associated ostream, used for inspecting Gist nodes
   class TextOutput : public QMainWindow {
   private:
+    /// The QTextEditor used for text display
     QTextEdit *editor;
+    /// The ostream that prints to the editor
     std::ostream *os;
 
   public:
+    /// Constructor
     TextOutput(const std::string& name, QWidget *parent = 0);
+    /// Destructor
     ~TextOutput(void);
-    
+    /// Return stream that prints to the text display
     std::ostream& getStream(void);
   };
 

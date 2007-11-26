@@ -38,8 +38,11 @@
 
 namespace Gecode { namespace Gist {
   
+  /// Red color for failed nodes
   const QColor DrawingCursor::red(218, 37, 29);
+  /// Green color for solved nodes
   const QColor DrawingCursor::green(11, 118, 70);
+  /// Blue color for choice nodes
   const QColor DrawingCursor::blue(0, 92, 161);
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,

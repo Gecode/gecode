@@ -42,8 +42,10 @@
 
 namespace Gecode { namespace Gist {
   
+  /// \brief Postscript output of search trees
   class Postscript {
   public:
+    /// Print postscript for \a tree to \a out
     static void output(std::ostream& out, VisualNode* tree);
   };
   
