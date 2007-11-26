@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/postscript/postscript.hh"
+#include "gecode/gist/postscript.hh"
 #include "gecode/gist/nodecursor.hh"
 #include "gecode/gist/nodevisitor.hh"
 #include <list>

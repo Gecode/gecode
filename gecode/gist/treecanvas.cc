@@ -41,7 +41,7 @@
 #include "gecode/gist/visualnode.hh"
 #include "gecode/gist/dfs.hh"
 
-#include "gecode/gist/postscript/postscript.hh"
+#include "gecode/gist/postscript.hh"
 
 #include "gecode/gist/drawingcursor.hh"
 

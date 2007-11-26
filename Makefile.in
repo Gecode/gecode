@@ -547,12 +547,12 @@ ITERHDR = gecode/iter.hh \
 GISTHDR0 = \
 	better.hh dfs.hh dfs.icc dotnote.hh drawingcursor.hh gist.hh \
 	gist.icc node.hh nodecursor.hh nodecursor.icc nodevisitor.hh \
-	nodevisitor.icc postscript/postscript.hh shapelist.hh \
+	nodevisitor.icc postscript.hh shapelist.hh \
 	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh
 
 GISTSRC0 = \
 	dotnode.cc drawingcursor.cc gist.cc node.cc nodecursor.cc \
-	postscript/postscript.cc shapelist.cc spacenode.cc \
+	postscript.cc shapelist.cc spacenode.cc \
 	textoutput.cc treecanvas.cc visualnode.cc \
 	moc_treecanvas.cc
 
@@ -667,16 +667,16 @@ export LINKALL = \
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(CPLTSETDLL) $(MMDLL) $(SERDLL)
+	$(CPLTSETDLL) $(MMDLL) $(SERDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(CPLTSETLIB) $(MMLIB) $(SERLIB)
+	$(CPLTSETLIB) $(MMLIB) $(SERLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB)
+	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
@@ -760,12 +760,10 @@ BUILDDIRS = \
 
 ifeq "@enable_examples@" "yes"
 all: compilelib
-	@$(MAKE) gist
 	@$(MAKE) compileexamples
 	@$(MAKE) makecompletedmessage
 else
 all: compilelib
-	@$(MAKE) gist
 	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs
@@ -774,14 +772,6 @@ compilelib: mkcompiledirs
 	@$(MAKE) framework
 
 compileexamples: $(EXAMPLEEXE)
-
-.PHONY: gist
-ifeq "@enable_gist@" "yes"
-gist:
-	$(MAKE) -C gecode/gist
-else
-gist:
-endif
 
 test: mkcompiledirs
 	@$(MAKE) $(ALLVARIMP:%=$(top_srcdir)/%) $(TESTEXE)

@@ -5072,10 +5072,10 @@ gecode/gist/nodecursor$(OBJSUFFIX) gecode/gist/nodecursor$(SBJSUFFIX): \
 	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
 	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
-gecode/gist/postscript/postscript$(OBJSUFFIX) gecode/gist/postscript/postscript$(SBJSUFFIX): \
+gecode/gist/postscript$(OBJSUFFIX) gecode/gist/postscript$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/gist/better.hh ./gecode/gist/node.hh \
 	./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.icc ./gecode/gist/nodevisitor.hh \
-	./gecode/gist/nodevisitor.icc ./gecode/gist/postscript/postscript.hh ./gecode/gist/shapelist.hh \
+	./gecode/gist/nodevisitor.icc ./gecode/gist/postscript.hh ./gecode/gist/shapelist.hh \
 	./gecode/gist/spacenode.hh ./gecode/gist/visualnode.hh ./gecode/kernel.hh \
 	./gecode/kernel/advisor.icc ./gecode/kernel/array.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
@@ -5109,7 +5109,7 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 	./gecode/gist/dfs.icc ./gecode/gist/drawingcursor.hh ./gecode/gist/gist.hh \
 	./gecode/gist/gist.icc ./gecode/gist/node.hh ./gecode/gist/nodecursor.hh \
 	./gecode/gist/nodecursor.icc ./gecode/gist/nodevisitor.hh ./gecode/gist/nodevisitor.icc \
-	./gecode/gist/postscript/postscript.hh ./gecode/gist/shapelist.hh ./gecode/gist/spacenode.hh \
+	./gecode/gist/postscript.hh ./gecode/gist/shapelist.hh ./gecode/gist/spacenode.hh \
 	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/kernel.hh \
 	./gecode/kernel/advisor.icc ./gecode/kernel/array.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
