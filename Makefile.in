@@ -948,6 +948,9 @@ gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
+gecode/gist/moc_treecanvas.cc: gecode/gist/treecanvas.hh
+	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
+
 #
 # DLL Targets
 #
@@ -1008,8 +1011,6 @@ $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL)
 		@LINKOUTPUT@$(GISTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-gecode/gist/moc_treecanvas.cc: gecode/gist/treecanvas.hh
-	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 else
 $(SUPPORTDLL) $(SUPPORTLIB): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) \
