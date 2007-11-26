@@ -565,6 +565,8 @@ GISTHDR = $(GISTHDR0:%=gecode/gist/%)
 GISTOBJ	= $(GISTSRC:%.cc=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(OBJSUFFIX))
 GISTSBJ	= $(GISTSRC:%.cc=%$(SBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(SBJSUFFIX))
 
+GISTBUILDDIRS = gist
+
 ifeq "@enable_gist@" "yes"
 export GISTDLL		= $(LIBPREFIX)@GIST@$(DLLSUFFIX)
 export GISTSTATICLIB	= $(LIBPREFIX)@GIST@$(STATICLIBSUFFIX)
@@ -759,7 +761,8 @@ BUILDDIRS = \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(CPLTSETBUILDDIRS:%=gecode/%) \
 	$(SERBUILDDIRS:%=gecode/%) \
-	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
+	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS) \
+	$(GISTBUILDDIRS:%=gecode/%)
 
 ifeq "@enable_examples@" "yes"
 all: compilelib
