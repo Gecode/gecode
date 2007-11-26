@@ -430,22 +430,22 @@ public:
 
   /// Print solution
   virtual void
-  print(void) {
-    std::cout << '\t';
+  print(std::ostream& os) {
+    os << '\t';
     for (int i = 0; i<n*n*n*n; i++) {
       for (int j=0; j<n*n; j++) {
         if (y[j].contains(i+1)) {
           if (j+1<10)
-            std::cout << j+1 << " ";
+            os << j+1 << " ";
           else
-            std::cout << (char)(j+1+'A'-10) << " ";        
+            os << (char)(j+1+'A'-10) << " ";        
           break;
         }
       }
       if((i+1)%(n*n) == 0)
-        std::cout << std::endl << '\t';
+        os << std::endl << '\t';
     }
-    std::cout << std::endl;
+    os << std::endl;
   }
 };
 
@@ -495,7 +495,7 @@ public:
   }
   
   /// Print solution
-  virtual void print(void) { SudokuInt::print(); }
+  virtual void print(std::ostream& os) { SudokuInt::print(os); }
   
 };
 
