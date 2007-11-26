@@ -377,7 +377,7 @@ namespace Gecode {
                    bool assigned, ModEvent me, bool process);
     /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *
-     * If the variables is assigned, \a assigned must be true.
+     * If the variable is assigned, \a assigned must be true.
      *
      */
     void cancel(Space* home, Propagator* p, PropCond pc,

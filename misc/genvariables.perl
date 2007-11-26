@@ -7,8 +7,8 @@
 #     Christian Schulte, 2006
 #
 #  Last modified:
-#     $Date$ by $Author$
-#     $Revision$
+#     $Date: 2007-10-31 11:22:48 +0100 (Wed, 31 Oct 2007) $ by $Author: zayenz $
+#     $Revision: 5170 $
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:
@@ -44,207 +44,36 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   }
 }
 
-$file = $ARGV[$i];
 
-open FILE, $file;
+$varfile = $ARGV[$i];
 
-## General values
-$name   = "";
-$VTI    = "";
-$export = "";
-$forceinline = "inline";
-$forcedispose = 0;
+open VARFILE, $varfile;
 
-##
-## Headers and footers
-##
-$hdr    = ""; # Header text
-$ftr    = ""; # Footer text
-
-$mehdr  = ""; # Header text for modification events
-$meftr  = ""; # Footer text for modification events
-
-$pchdr  = ""; # Header text for propagation conditions
-$pcftr  = ""; # Footer text for propagation conditions
-
-##
-## Real stuff
-##
-
-# $mec : combination table
-# $men : name table
-# $meh : header table
-$me_n = 0; # running number of modification events
-$me_subscribe = "";
-
-# $pcn : name table
-# $pch : header table
-$pc_n = 0; # running number of propagation conditions
-
-
-while ($l = <FILE>) {
- LINE:
-  next if ($l =~ /^\#/);
-  last if ($l =~ /^\[End\]/io);
-
-  if ($l =~ /^\[General\]/io) {
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      if ($l =~ /^Name:\s*(\w+)/io) {
-	$name = $1;
-      } elsif ($l =~ /^VTI:\s*(\w+)/io) {
-	$VTI = $1;
-      } elsif ($l =~ /^Export:\s*(\w+)/io) {
-	$export = $1;
-      } elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
-	$forceinline = $1;
-      }	elsif ($l =~ /^Forcedispose:\s*true/io) {
-	$forcedispose = 1;
-      }
-    }
-    goto LINE;
-  } elsif ($l =~ /^\[ModEventHeader\]/io) {
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      $mehdr = $mehdr . $l;
-    }
-    goto LINE;
-  } elsif ($l =~ /^\[ModEvent\]/io) {
-    $n = "";
-    $h = "";
-
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      if ($l =~ /^Name:\s*(\w+)\s*=\s*(\w+)/io) {
-	# Found a special modification event
-	$lhs = $1; $rhs = $2;
-	if (!($rhs eq "FAILED") && !($rhs eq "NONE") &&
-	    !($rhs eq "ASSIGNED") && !($rhs eq "SUBSCRIBE")) {
-	  die "Unknown special modification event: $rhs\n";
-	}
-        if ($rhs eq "SUBSCRIBE") {
-	  $me_subscribe = "ME_${VTI}_$lhs";
-        } else {
-	  $mespecial{$lhs} = $rhs;
-	  if ($rhs eq "ASSIGNED") {
-	    $me_assigned = "ME_${VTI}_$lhs";
-	  }
-        }
-	$n = $lhs;
-      } elsif ($l =~ /^Name:\s*(\w+)/io) {
-	# Found a normal modification event
-	$n = $1;
-      } elsif ($l =~ /^Combine:\s*(.+)/io) {
-	# Found combination information
-	$combines = $1;
-	while ($combines =~ /(\w+)\s*=(\w+)/g) {
-	  $mec{$n}{$1} = $2;
-	  $mec{$1}{$n} = $2;
-	}
-      } else {
-	$h = $h . $l;
-      }
-    }
-    $men[$me_n] = $n;
-    $meh[$me_n] = $h;
-    $me_n++;
-    goto LINE;
-  } elsif ($l =~ /^\[ModEventFooter\]/io) {
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      $meftr = $meftr . $l;
-    }
-    goto LINE;
-  } elsif ($l =~ /^\[PropCondHeader\]/io) {
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      $pchdr = $pchdr . $l;
-    }
-    goto LINE;
-  } elsif ($l =~ /^\[PropCond\]/io) {
-    $n = "";
-    $h = "";
-
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      if ($l =~ /^Name:\s*(\w+)\s*=\s*(\w+)/io) {
-	# Found a special propagation condition
-	$lhs = $1; $rhs = $2;
-	if (!($rhs eq "ASSIGNED")) {
-	  die "Unknown special propagation condition: $rhs\n";
-	}
-	$pcspecial{$lhs} = $rhs;
-	$n = $lhs;
-      } elsif ($l =~ /^Name:\s*(\w+)/io) {
-	# Found a normal modification event
-	$n = $1;
-      } elsif ($l =~ /^ModEvents:\s*(.+)/io) {
-	# Found relation to modification events
-	$events = $1;
-	while ($events =~ /(\w+)/g) {
-	  $mepc{$1}{$n} = 1;
-	}
-      } else {
-	$h = $h . $l;
-      }
-    }
-    $pcn[$pc_n] = $n;
-    $pch[$pc_n] = $h;
-    $pc_n++;
-    goto LINE;
-  } elsif ($l =~ /^\[PropCondFooter\]/io) {
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      $pcftr = $pcftr . $l;
-    }
-    goto LINE;
-  } elsif ($l =~ /^\[Header\]/io) {
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      $hdr = $hdr . "$l";
-    }
-    goto LINE;
-  } elsif ($l =~ /^\[Footer\]/io) {
-    while (($l = <FILE>) && !($l =~ /^\[/)) {
-      next if ($l =~ /^\#/);
-      $ftr = $ftr . "$l";
-    }
-    goto LINE;
+$n_files = 0;
+while ($l = <VARFILE>) {
+  if ($l =~ /^VTI:\s*(\w+)/io) {
+    $vtis[$n_files] = $1;
+  } elsif ($l =~ /^File:\s*([^ \t\r\n]+)/io) {
+    $files[$n_files] = $1;
+    $n_files++;
   }
-
 }
+close VARFILE;
 
-close FILE;
-
-##
-## Generate the output
-##
-
-$maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
-$class = "${name}VarImpBase";
-$diffc = "${name}MeDiff";
-$base  = "Gecode::Variable<VTI_$VTI,$maxpc,$diffc>";
-$file  =~ s|^../||g;
-
-## Check whether there is only one real event
-if ($me_n == 3) {
-  $me_subscribe = $me_assigned;
-}
-
-print <<EOF
+  print <<EOF
 /*
  *  CAUTION:
  *    This file has been automatically generated.
- *    Do not edit, edit the file "$file" instead.
+ *    Do not edit, edit the specification file instead.
  *
- *  This file contains generated code fragments which are 
+ *  This file contains generated code fragments which are
  *  copyrighted as follows:
  *
  *  Main author:
  *     Christian Schulte <schulte\@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     Christian Schulte, 2007
  *
  *  The generated code fragments are part of Gecode, the generic
  *  constraint development environment:
@@ -273,75 +102,268 @@ print <<EOF
 
 EOF
 ;
-print "$hdr";
 
-$o = 2;
-for ($i=0; $i<$me_n; $i++) {
-  $n = $men[$i];
-  if ($mespecial{$n} eq "NONE") {
-    $val2me[0] = $n;
-  } elsif ($mespecial{$n} eq "ASSIGNED") {
-    $val2me[1] = $n;
-  } elsif (!$mespecial{$n}) {
-    $val2me[$o] = $n; $o++;
-  }
+if (!$gen_header) {
+  print <<EOF
+
+#include "gecode/kernel.hh"
+
+EOF
+;
 }
-$me_max   = "ME_${VTI}_" . $val2me[$o-1] . "+1";
-$me_max_n = $o;
 
-if ($gen_header) {
+for ($i_file=0; $i_file<$n_files; $i_file++) {
+  $file = $files[$i_file];
 
-  print "$mehdr";
+  open FILE, $file;
 
-  $o = 1;
+  ## General values
+  $name   = "";
+  $VTI    = "";
+  $forceinline = "inline";
+  $forcedispose = 0;
+
+  ##
+  ## Headers and footers
+  ##
+  $hdr    = ""; # Header text
+  $ftr    = ""; # Footer text
+
+  $mehdr  = ""; # Header text for modification events
+  $meftr  = ""; # Footer text for modification events
+
+  $pchdr  = ""; # Header text for propagation conditions
+  $pcftr  = ""; # Footer text for propagation conditions
+
+  ##
+  ## Real stuff
+  ##
+
+  # $mec : combination table
+  # $men : name table
+  # $meh : header table
+  $me_n = 0; # running number of modification events
+  $me_subscribe = "";
+
+  # $pcn : name table
+  # $pch : header table
+  $pc_n = 0; # running number of propagation conditions
+
+
+  while ($l = <FILE>) {
+  LINE:
+    next if ($l =~ /^\#/);
+    last if ($l =~ /^\[End\]/io);
+
+    if ($l =~ /^\[General\]/io) {
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	if ($l =~ /^Name:\s*(\w+)/io) {
+	  $name = $1;
+	} elsif ($l =~ /^VTI:\s*(\w+)/io) {
+	  $VTI = $1;
+	} elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
+	  $forceinline = $1;
+	} elsif ($l =~ /^Forcedispose:\s*true/io) {
+	  $forcedispose = 1;
+	}
+      }
+      goto LINE;
+    } elsif ($l =~ /^\[ModEventHeader\]/io) {
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	$mehdr = $mehdr . $l;
+      }
+      goto LINE;
+    } elsif ($l =~ /^\[ModEvent\]/io) {
+      $n = "";
+      $h = "";
+
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	if ($l =~ /^Name:\s*(\w+)\s*=\s*(\w+)/io) {
+	  # Found a special modification event
+	  $lhs = $1; $rhs = $2;
+	  if (!($rhs eq "FAILED") && !($rhs eq "NONE") &&
+	      !($rhs eq "ASSIGNED") && !($rhs eq "SUBSCRIBE")) {
+	    die "Unknown special modification event: $rhs\n";
+	  }
+	  if ($rhs eq "SUBSCRIBE") {
+	    $me_subscribe = "ME_${VTI}_$lhs";
+	  } else {
+	    $mespecial{$lhs} = $rhs;
+	    if ($rhs eq "ASSIGNED") {
+	      $me_assigned = "ME_${VTI}_$lhs";
+	    }
+	  }
+	  $n = $lhs;
+	} elsif ($l =~ /^Name:\s*(\w+)/io) {
+	  # Found a normal modification event
+	  $n = $1;
+	} elsif ($l =~ /^Combine:\s*(.+)/io) {
+	  # Found combination information
+	  $combines = $1;
+	  while ($combines =~ /(\w+)\s*=(\w+)/g) {
+	    $mec{$n}{$1} = $2;
+	    $mec{$1}{$n} = $2;
+	  }
+	} else {
+	  $h = $h . $l;
+	}
+      }
+      $men[$me_n] = $n;
+      $meh[$me_n] = $h;
+      $me_n++;
+      goto LINE;
+    } elsif ($l =~ /^\[ModEventFooter\]/io) {
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	$meftr = $meftr . $l;
+      }
+      goto LINE;
+    } elsif ($l =~ /^\[PropCondHeader\]/io) {
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	$pchdr = $pchdr . $l;
+      }
+      goto LINE;
+    } elsif ($l =~ /^\[PropCond\]/io) {
+      $n = "";
+      $h = "";
+
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	if ($l =~ /^Name:\s*(\w+)\s*=\s*(\w+)/io) {
+	  # Found a special propagation condition
+	  $lhs = $1; $rhs = $2;
+	  if (!($rhs eq "ASSIGNED")) {
+	    die "Unknown special propagation condition: $rhs\n";
+	  }
+	  $pcspecial{$lhs} = $rhs;
+	  $n = $lhs;
+	} elsif ($l =~ /^Name:\s*(\w+)/io) {
+	  # Found a normal modification event
+	  $n = $1;
+	} elsif ($l =~ /^ModEvents:\s*(.+)/io) {
+	  # Found relation to modification events
+	  $events = $1;
+	  while ($events =~ /(\w+)/g) {
+	    $mepc{$1}{$n} = 1;
+	  }
+	} else {
+	  $h = $h . $l;
+	}
+      }
+      $pcn[$pc_n] = $n;
+      $pch[$pc_n] = $h;
+      $pc_n++;
+      goto LINE;
+    } elsif ($l =~ /^\[PropCondFooter\]/io) {
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	$pcftr = $pcftr . $l;
+      }
+      goto LINE;
+    } elsif ($l =~ /^\[Header\]/io) {
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	$hdr = $hdr . "$l";
+      }
+      goto LINE;
+    } elsif ($l =~ /^\[Footer\]/io) {
+      while (($l = <FILE>) && !($l =~ /^\[/)) {
+	next if ($l =~ /^\#/);
+	$ftr = $ftr . "$l";
+      }
+      goto LINE;
+    }
+
+  }
+  close FILE;
+
+  ##
+  ## Generate the output
+  ##
+  $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
+  $class = "${name}VarImpBase";
+  $diffc = "${name}MeDiff";
+  $base  = "Gecode::Variable<VTI_$VTI,$maxpc,$diffc>";
+  $file  =~ s|^../||g;
+
+  ## Check whether there is only one real event
+  if ($me_n == 3) {
+    $me_subscribe = $me_assigned;
+  }
+
+  print "$hdr";
+
+  $o = 2;
   for ($i=0; $i<$me_n; $i++) {
     $n = $men[$i];
-    print $meh[$i];
-    print "  const Gecode::ModEvent ME_${VTI}_${n} = ";
-    if ($mespecial{$n}) {
-      print "Gecode::ME_GEN_" . $mespecial{$n};
-    } else {
-      print "Gecode::ME_GEN_ASSIGNED + " . $o;
-      $o++;
+    if ($mespecial{$n} eq "NONE") {
+      $val2me[0] = $n;
+    } elsif ($mespecial{$n} eq "ASSIGNED") {
+      $val2me[1] = $n;
+    } elsif (!$mespecial{$n}) {
+      $val2me[$o] = $n; $o++;
     }
-    print ";\n\n";
   }
+  $me_max   = "ME_${VTI}_" . $val2me[$o-1] . "+1";
+  $me_max_n = $o;
 
-  print "$meftr";
-  print "$pchdr";
+  if ($gen_header) {
 
-  print "  const Gecode::PropCond PC_${VTI}_NONE = Gecode::PC_GEN_NONE;\n";
-  $o = 1;
-  for ($i=0; $i<$pc_n; $i++) {
-    $n = $pcn[$i];
-    print $pch[$i];
-    print "  const Gecode::PropCond PC_${VTI}_${n} = ";
-    if ($pcspecial{$n}) {
-      $pc_assigned = "PC_${VTI}_${n}";
-      print "Gecode::PC_GEN_" . $pcspecial{$n};
-    } else {
-      print "Gecode::PC_GEN_ASSIGNED + " . $o;
-      $o++;
+    print "$mehdr";
+
+    $o = 1;
+    for ($i=0; $i<$me_n; $i++) {
+      $n = $men[$i];
+      print $meh[$i];
+      print "  const Gecode::ModEvent ME_${VTI}_${n} = ";
+      if ($mespecial{$n}) {
+	print "Gecode::ME_GEN_" . $mespecial{$n};
+      } else {
+	print "Gecode::ME_GEN_ASSIGNED + " . $o;
+	$o++;
+      }
+      print ";\n\n";
     }
-    print ";\n\n";
-  }
 
-  print "$pcftr";
+    print "$meftr";
+    print "$pchdr";
 
-  print <<EOF
+    print "  const Gecode::PropCond PC_${VTI}_NONE = Gecode::PC_GEN_NONE;\n";
+    $o = 1;
+    for ($i=0; $i<$pc_n; $i++) {
+      $n = $pcn[$i];
+      print $pch[$i];
+      print "  const Gecode::PropCond PC_${VTI}_${n} = ";
+      if ($pcspecial{$n}) {
+	$pc_assigned = "PC_${VTI}_${n}";
+	print "Gecode::PC_GEN_" . $pcspecial{$n};
+      } else {
+	print "Gecode::PC_GEN_ASSIGNED + " . $o;
+	$o++;
+      }
+      print ";\n\n";
+    }
+
+    print "$pcftr";
+
+    print <<EOF
 
   /// Modification event difference for $name-variable implementations
   class $diffc {
 EOF
 ;
 
-if ($me_max_n > 4) {
-  print <<EOF
+  if ($me_max_n > 4) {
+    print <<EOF
   private:
-    $export static const Gecode::ModEvent med[$me_max][$me_max];
+    GECODE_KERNEL_EXPORT static const Gecode::ModEvent med[$me_max][$me_max];
 EOF
 ;
-}
+  }
   print <<EOF
   public:
     /// Return difference when changing modification event \\a me2 to \\a me1
@@ -355,31 +377,31 @@ EOF
     class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc,$diffc> {
     public:
       /// Process modified variables linked from \\a x
-      $export virtual void process(Space* home, VarBase* x);
+      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
 EOF
 ;
-if ($forcedispose) {
-  print <<EOF
+  if ($forcedispose) {
+    print <<EOF
       /// Dispose registered variables
-      $export virtual void dispose(Space* home, VarBase* x);
+      GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarBase* x);
 EOF
 ;
-}
+  }
   print <<EOF
     };
     /// The processor used
-    $export static Processor p;
+    GECODE_KERNEL_EXPORT static Processor p;
 EOF
 ;
-if ($forcedispose) {
-  print <<EOF
+  if ($forcedispose) {
+    print <<EOF
     /// Link to next variable, used for disposal
     VarBase* _nextDispose;
 EOF
 ;
-}
+  }
 
-print <<EOF
+  print <<EOF
     /// Constructor for cloning \\a x
     $class(Space* home, bool share, $class\& x);
   public:
@@ -409,15 +431,15 @@ print <<EOF
     //\@}
 EOF
 ;
-if ($me_max_n == 2) {
+  if ($me_max_n == 2) {
 print <<EOF
     /// Return the current modification event
     ModEvent modevent(void) const;
 EOF
 ;
-}
+  }
 
-if ($forcedispose) {
+  if ($forcedispose) {
   print <<EOF
     /// Return link to next variable, used for dispose
     ${class}* nextDispose(void);
@@ -425,9 +447,9 @@ if ($forcedispose) {
     void nextDispose(${class}* next);
 EOF
 ;
-}
+  }
 
-print <<EOF
+  print <<EOF
 
   };
 
@@ -729,3 +751,4 @@ EOF
 
 print "$ftr";
 
+}

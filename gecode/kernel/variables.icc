@@ -1,0 +1,724 @@
+/*
+ *  CAUTION:
+ *    This file has been automatically generated.
+ *    Do not edit, edit the specification file instead.
+ *
+ *  This file contains generated code fragments which are
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+
+namespace Gecode { namespace Int {
+
+  /**
+   * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
+   * \ingroup TaskActorInt
+   */
+  
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_INT_FAILED = Gecode::ME_GEN_FAILED;
+
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_INT_NONE = Gecode::ME_GEN_NONE;
+
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_INT_VAL = Gecode::ME_GEN_ASSIGNED;
+
+  /** 
+   * \brief Domain operation has changed the minimum or maximum of the domain
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   *
+   * If a propagator subscribes to this variable, it will be processed
+   * assuming a ME_INT_BND modification event.
+   */
+  const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
+
+  /** 
+   * \brief Domain operation has changed the domain
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the minimum and maximum of the domain have not changed.
+   */
+
+
+  const Gecode::ModEvent ME_INT_DOM = Gecode::ME_GEN_ASSIGNED + 2;
+
+  const Gecode::PropCond PC_INT_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_INT_VAL.
+   */
+  const Gecode::PropCond PC_INT_VAL = Gecode::PC_GEN_ASSIGNED;
+
+  /**
+   * \brief Propagate when minimum or maximum of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_BND, then \a p is propagated when a domain
+   * update operation on \a x returns the modification events ME_INT_VAL
+   * or ME_INT_BND.
+   */
+  const Gecode::PropCond PC_INT_BND = Gecode::PC_GEN_ASSIGNED + 1;
+
+  /**
+   * \brief Propagate when domain changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_INT_VAL,
+   * ME_INT_BND, or ME_INT_DOM.
+   */
+  const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
+
+  //@}
+
+  /// Modification event difference for Int-variable implementations
+  class IntMeDiff {
+  public:
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+
+  /// Base-class for Int-variable implementations
+  class IntVarImpBase : public Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff> {
+  protected:
+    /// Variable procesor for variables of this type
+    class Processor : public Gecode::VarTypeProcessor<VTI_INT,PC_INT_DOM,IntMeDiff> {
+    public:
+      /// Process modified variables linked from \a x
+      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
+    };
+    /// The processor used
+    GECODE_KERNEL_EXPORT static Processor p;
+    /// Constructor for cloning \a x
+    IntVarImpBase(Space* home, bool share, IntVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    IntVarImpBase(void);
+    /// Constructor for creating variable
+    IntVarImpBase(Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \a a
+    void subscribe(Space* home, Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    bool notify(Space* home, ModEvent me, Delta* d);
+    //@}
+
+  };
+
+
+  forceinline ModEvent
+  IntMeDiff::operator()(ModEvent me1, ModEvent me2) const {
+    const int med = (
+      (
+        ((ME_INT_NONE ^ ME_INT_NONE) << 0) |  // [ME_INT_NONE][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 2) |  // [ME_INT_NONE][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 4) |  // [ME_INT_NONE][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_DOM) << 6)    // [ME_INT_NONE][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_VAL) << 8) |  // [ME_INT_VAL][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 10) |  // [ME_INT_VAL][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_VAL) << 12) |  // [ME_INT_VAL][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_VAL) << 14)    // [ME_INT_VAL][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_BND) << 16) |  // [ME_INT_BND][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 18) |  // [ME_INT_BND][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 20) |  // [ME_INT_BND][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_BND) << 22)    // [ME_INT_BND][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_DOM) << 24) |  // [ME_INT_DOM][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 26) |  // [ME_INT_DOM][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 28) |  // [ME_INT_DOM][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_DOM) << 30)    // [ME_INT_DOM][ME_INT_DOM]
+      )
+    );
+    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);
+  }
+
+  forceinline
+  IntVarImpBase::IntVarImpBase(void) {}
+
+  forceinline
+  IntVarImpBase::IntVarImpBase(Space* home)
+    : Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>(home) {}
+
+  forceinline
+  IntVarImpBase::IntVarImpBase(Space* home, bool share, IntVarImpBase& x)
+    : Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>(home,share,x) {}
+
+  forceinline void
+  IntVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>::subscribe(home,p,pc,assigned,ME_INT_BND,process);
+  }
+  forceinline void
+  IntVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>::subscribe(home,a,assigned);
+  }
+
+  forceinline bool
+  IntVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
+    return Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>::notify(home,me,d);
+  }
+
+}}
+
+// STATISTICS: int-var
+
+namespace Gecode { namespace Int {
+
+  /**
+   * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
+   * \ingroup TaskActorInt
+   */
+  
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_BOOL_FAILED = Gecode::ME_GEN_FAILED;
+
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_BOOL_NONE = Gecode::ME_GEN_NONE;
+
+  /// Domain operation has resulted in a value (assigned variable)
+
+
+  const Gecode::ModEvent ME_BOOL_VAL = Gecode::ME_GEN_ASSIGNED;
+
+  const Gecode::PropCond PC_BOOL_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_BOOL_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_BOOL_VAL.
+   */
+  const Gecode::PropCond PC_BOOL_VAL = Gecode::PC_GEN_ASSIGNED;
+
+  //@}
+
+  /// Modification event difference for Bool-variable implementations
+  class BoolMeDiff {
+  public:
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+
+  /// Base-class for Bool-variable implementations
+  class BoolVarImpBase : public Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff> {
+  protected:
+    /// Variable procesor for variables of this type
+    class Processor : public Gecode::VarTypeProcessor<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff> {
+    public:
+      /// Process modified variables linked from \a x
+      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
+    };
+    /// The processor used
+    GECODE_KERNEL_EXPORT static Processor p;
+    /// Constructor for cloning \a x
+    BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    BoolVarImpBase(void);
+    /// Constructor for creating variable
+    BoolVarImpBase(Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \a a
+    void subscribe(Space* home, Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    bool notify(Space* home, ModEvent me, Delta* d);
+    //@}
+    /// Return the current modification event
+    ModEvent modevent(void) const;
+
+  };
+
+
+  forceinline ModEvent
+  BoolMeDiff::operator()(ModEvent me1, ModEvent me2) const {
+    return me2^me1;
+  }
+
+  forceinline ModEvent
+  BoolVarImpBase::modevent(void) const {
+    return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
+  }
+
+
+  forceinline
+  BoolVarImpBase::BoolVarImpBase(void) {}
+
+  forceinline
+  BoolVarImpBase::BoolVarImpBase(Space* home)
+    : Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>(home) {}
+
+  forceinline
+  BoolVarImpBase::BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x)
+    : Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>(home,share,x) {}
+
+  forceinline void
+  BoolVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,process);
+  }
+  forceinline void
+  BoolVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::subscribe(home,a,assigned);
+  }
+
+  forceinline bool
+  BoolVarImpBase::notify(Space* home, ModEvent, Delta* d) {
+    return Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::notify(home,d);
+  }
+
+}}
+
+// STATISTICS: int-var
+
+namespace Gecode { namespace Set {
+
+  /**
+   * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
+   * \ingroup TaskActorSet
+   */
+
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_SET_FAILED = Gecode::ME_GEN_FAILED;
+
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_SET_NONE = Gecode::ME_GEN_NONE;
+
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_SET_VAL = Gecode::ME_GEN_ASSIGNED;
+
+  /**
+   * \brief Domain operation has changed the variable cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   */
+  const Gecode::ModEvent ME_SET_CARD = Gecode::ME_GEN_ASSIGNED + 1;
+
+  /**
+   * \brief Domain operation has changed the least upper bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also neither cardinality nor the greatest lower bound
+   * have changed.
+   */
+  const Gecode::ModEvent ME_SET_LUB = Gecode::ME_GEN_ASSIGNED + 2;
+
+  /**
+   * \brief Domain operation has changed the greatest lower bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also neither cardinality nor the least upper bound
+   * have changed.
+   */
+  const Gecode::ModEvent ME_SET_GLB = Gecode::ME_GEN_ASSIGNED + 3;
+
+  /**
+   * \brief Domain operation has changed both greatest lower and least
+   * upper bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the cardinality has not changed.
+   */
+  const Gecode::ModEvent ME_SET_BB = Gecode::ME_GEN_ASSIGNED + 4;
+
+  /**
+   * \brief Domain operation has changed the least upper bound and the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the greatest lower bound has not changed.
+   */
+  const Gecode::ModEvent ME_SET_CLUB = Gecode::ME_GEN_ASSIGNED + 5;
+
+  /**
+   * \brief Domain operation has changed the greatest lower bound and the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the least upper bound has not changed.
+   */
+  const Gecode::ModEvent ME_SET_CGLB = Gecode::ME_GEN_ASSIGNED + 6;
+
+  /**
+   * \brief Domain operation has changed both the greatest lower bound and
+   * the least upper bound, as well as the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   *
+   * If a propagator subscribes to this variable, it will be processed
+   * assuming a ME_SET_CBB modification event.
+   *
+   */
+
+  const Gecode::ModEvent ME_SET_CBB = Gecode::ME_GEN_ASSIGNED + 7;
+
+  const Gecode::PropCond PC_SET_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL.
+   */
+  const Gecode::PropCond PC_SET_VAL = Gecode::PC_GEN_ASSIGNED;
+
+  /**
+   * \brief Propagate when the cardinality of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CARD, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB, or ME_SET_CBB.
+   */
+  const Gecode::PropCond PC_SET_CARD = Gecode::PC_GEN_ASSIGNED + 1;
+
+  /**
+   * \brief Propagate when the cardinality or the least upper bound
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CLUB, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_LUB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
+   * or ME_SET_CBB.
+   */
+  const Gecode::PropCond PC_SET_CLUB = Gecode::PC_GEN_ASSIGNED + 2;
+
+  /**
+   * \brief Propagate when the cardinality or the greatest lower bound
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CGLB, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_GLB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
+   * or ME_SET_CBB.
+   */
+  const Gecode::PropCond PC_SET_CGLB = Gecode::PC_GEN_ASSIGNED + 3;
+
+  /**
+   * \brief Propagate when any bound or the cardinality
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_ANY, then \a p is propagated when a domain
+   * update operation on \a x returns any modification event but ME_SET_FAILED
+   * and ME_SET_NONE.
+   */
+  const Gecode::PropCond PC_SET_ANY = Gecode::PC_GEN_ASSIGNED + 4;
+
+  //@}
+
+  /// Modification event difference for Set-variable implementations
+  class SetMeDiff {
+  private:
+    GECODE_KERNEL_EXPORT static const Gecode::ModEvent med[ME_SET_CBB+1][ME_SET_CBB+1];
+  public:
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+
+  /// Base-class for Set-variable implementations
+  class SetVarImpBase : public Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff> {
+  protected:
+    /// Variable procesor for variables of this type
+    class Processor : public Gecode::VarTypeProcessor<VTI_SET,PC_SET_ANY,SetMeDiff> {
+    public:
+      /// Process modified variables linked from \a x
+      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
+    };
+    /// The processor used
+    GECODE_KERNEL_EXPORT static Processor p;
+    /// Constructor for cloning \a x
+    SetVarImpBase(Space* home, bool share, SetVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    SetVarImpBase(void);
+    /// Constructor for creating variable
+    SetVarImpBase(Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \a a
+    void subscribe(Space* home, Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    bool notify(Space* home, ModEvent me, Delta* d);
+    //@}
+
+  };
+
+
+  forceinline ModEvent
+  SetMeDiff::operator()(ModEvent me1, ModEvent me2) const {
+    return med[me1][me2];
+  }
+
+  forceinline
+  SetVarImpBase::SetVarImpBase(void) {}
+
+  forceinline
+  SetVarImpBase::SetVarImpBase(Space* home)
+    : Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>(home) {}
+
+  forceinline
+  SetVarImpBase::SetVarImpBase(Space* home, bool share, SetVarImpBase& x)
+    : Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>(home,share,x) {}
+
+  forceinline void
+  SetVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::subscribe(home,p,pc,assigned,ME_SET_CBB,process);
+  }
+  forceinline void
+  SetVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+    Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::subscribe(home,a,assigned);
+  }
+
+  forceinline bool
+  SetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
+    return Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::notify(home,me,d);
+  }
+
+}}
+
+// STATISTICS: set-var
+
+namespace Gecode { namespace CpltSet {
+
+  /**
+   * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
+   * \ingroup TaskActorCpltSet
+   */
+
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_CPLTSET_FAILED = Gecode::ME_GEN_FAILED;
+
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_CPLTSET_NONE = Gecode::ME_GEN_NONE;
+
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_CPLTSET_VAL = Gecode::ME_GEN_ASSIGNED;
+
+  /**
+   * \brief \brief Domain operation has modified the represented set
+   */
+
+  const Gecode::ModEvent ME_CPLTSET_DOM = Gecode::ME_GEN_ASSIGNED + 1;
+
+  const Gecode::PropCond PC_CPLTSET_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_CPLTSET_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_CPLTSET_VAL.
+   */
+  const Gecode::PropCond PC_CPLTSET_VAL = Gecode::PC_GEN_ASSIGNED;
+
+ /**
+   * \brief Propagate when the domain of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_CPLTSET_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_CPLTSET_VAL or 
+   * ME_CPLTSET_DOM.
+   */
+  const Gecode::PropCond PC_CPLTSET_DOM = Gecode::PC_GEN_ASSIGNED + 1;
+
+  //@}
+
+  /// Modification event difference for CpltSet-variable implementations
+  class CpltSetMeDiff {
+  public:
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+
+  /// Base-class for CpltSet-variable implementations
+  class CpltSetVarImpBase : public Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff> {
+  protected:
+    /// Variable procesor for variables of this type
+    class Processor : public Gecode::VarTypeProcessor<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff> {
+    public:
+      /// Process modified variables linked from \a x
+      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
+      /// Dispose registered variables
+      GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarBase* x);
+    };
+    /// The processor used
+    GECODE_KERNEL_EXPORT static Processor p;
+    /// Link to next variable, used for disposal
+    VarBase* _nextDispose;
+    /// Constructor for cloning \a x
+    CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    CpltSetVarImpBase(void);
+    /// Constructor for creating variable
+    CpltSetVarImpBase(Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \a a
+    void subscribe(Space* home, Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    bool notify(Space* home, ModEvent me, Delta* d);
+    //@}
+    /// Return link to next variable, used for dispose
+    CpltSetVarImpBase* nextDispose(void);
+    /// Set link to next variable, used for dispose
+    void nextDispose(CpltSetVarImpBase* next);
+
+  };
+
+
+  forceinline ModEvent
+  CpltSetMeDiff::operator()(ModEvent me1, ModEvent me2) const {
+    const int med = (
+      (
+        ((ME_CPLTSET_NONE ^ ME_CPLTSET_NONE) << 0) |  // [ME_CPLTSET_NONE][ME_CPLTSET_NONE]
+        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 2) |  // [ME_CPLTSET_NONE][ME_CPLTSET_VAL]
+        ((ME_CPLTSET_DOM ^ ME_CPLTSET_DOM) << 4)    // [ME_CPLTSET_NONE][ME_CPLTSET_DOM]
+      ) |
+      (
+        ((ME_CPLTSET_NONE ^ ME_CPLTSET_VAL) << 8) |  // [ME_CPLTSET_VAL][ME_CPLTSET_NONE]
+        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 10) |  // [ME_CPLTSET_VAL][ME_CPLTSET_VAL]
+        ((ME_CPLTSET_DOM ^ ME_CPLTSET_VAL) << 12)    // [ME_CPLTSET_VAL][ME_CPLTSET_DOM]
+      ) |
+      (
+        ((ME_CPLTSET_NONE ^ ME_CPLTSET_DOM) << 16) |  // [ME_CPLTSET_DOM][ME_CPLTSET_NONE]
+        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 18) |  // [ME_CPLTSET_DOM][ME_CPLTSET_VAL]
+        ((ME_CPLTSET_DOM ^ ME_CPLTSET_DOM) << 20)    // [ME_CPLTSET_DOM][ME_CPLTSET_DOM]
+      )
+    );
+    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);
+  }
+
+  forceinline
+  CpltSetVarImpBase::CpltSetVarImpBase(void) {}
+
+  forceinline
+  CpltSetVarImpBase::CpltSetVarImpBase(Space* home)
+    : Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>(home), _nextDispose(home->varsDisposeList<VTI_CPLTSET>()) {
+    home->varsDisposeList<VTI_CPLTSET>(this);
+  }
+
+  forceinline
+  CpltSetVarImpBase::CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x)
+    : Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>(home,share,x), _nextDispose(home->varsDisposeList<VTI_CPLTSET>()) {
+    home->varsDisposeList<VTI_CPLTSET>(this);
+  }
+
+  forceinline CpltSetVarImpBase*
+  CpltSetVarImpBase::nextDispose(void) {
+    return static_cast<CpltSetVarImpBase*>(_nextDispose);
+  }
+
+
+  forceinline void
+  CpltSetVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>::subscribe(home,p,pc,assigned,ME_CPLTSET_DOM,process);
+  }
+  forceinline void
+  CpltSetVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+    Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>::subscribe(home,a,assigned);
+  }
+
+  forceinline bool
+  CpltSetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
+    return Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>::notify(home,me,d);
+  }
+
+}}
+
+// STATISTICS: cpltset-var

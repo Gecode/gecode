@@ -184,6 +184,7 @@ SUPPORTBUILDDIRS = support support/buddy
 
 KERNELSRC0 = \
 	core reflection varmap memory-manager
+
 KERNELHDR0 = \
 	array shared-array branching core exception \
 	macros memory-manager modevent \
@@ -823,6 +824,11 @@ compilesubdirs:
 #
 # Generated variable implementations
 #
+
+#$(top_srcdir)/gecode/kernel/variables.icc: $(top_srcdir)/variables.vsl
+#	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
+#$(top_srcdir)/gecode/kernel/variables.cc: $(top_srcdir)/variables.vsl
+#	perl $(top_srcdir)/misc/genvariables.perl -body $< > $@
 
 $(top_srcdir)/gecode/int/var/imp-int-hdr.icc: \
 	$(top_srcdir)/gecode/int/var-imp-int.vis
