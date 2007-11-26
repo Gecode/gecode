@@ -134,6 +134,8 @@ namespace Gecode { namespace Reflection {
 
   VarBase*
   VarMap::var(int i) const {
+    if (i<0 || i>=n)
+      throw ReflectionException("Variable not in VarMap");
     return vo->vars[i];
   }
 
@@ -141,12 +143,14 @@ namespace Gecode { namespace Reflection {
   VarMap::spec(VarBase* x) const {
     int i;
     if (!vo->m.get(x,i))
-      throw new ReflectionException("Variable not in VarMap");
+      throw ReflectionException("Variable not in VarMap");
     return *vo->specs[i];
   }
 
   VarSpec&
   VarMap::spec(int i) const {
+    if (i<0 || i>=n)
+      throw ReflectionException("Variable not in VarMap");
     return *vo->specs[i];
   }
 
@@ -159,7 +163,7 @@ namespace Gecode { namespace Reflection {
   VarMap::name(VarBase* x, const Support::Symbol& n) {
     VarBase* y;
     if (vo->nameToVar.get(n, y) && x != y)
-      throw new
+      throw
         ReflectionException("Variable with the same name already in VarMap");
     vo->nameToVar.put(n, x);
     vo->varToName.put(x, n);
