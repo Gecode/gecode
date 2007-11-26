@@ -63,7 +63,7 @@ export VERSION		= @VERSION@
 
 export CXX = @CXX@
 export CC = @CC@
-export MOC = @MOC@
+export MOC = moc
 ifeq "$(top_srcdir)" "$(top_builddir)"
 CPPFLAGS=-I$(top_srcdir)
 else
@@ -74,10 +74,8 @@ export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
 export CFLAGS = $(CPPFLAGS) @CFLAGS@ $(CUSR)
 export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 
-#export GIST_CPPFLAGS = -DQT_SHARED -I/Users/tack/Programming/qt-mac/qt-install/include -I/Users/tack/Programming/qt-mac/qt-install/include/QtGui -I/Users/tack/Programming/qt-mac/qt-install/include/QtCore
-
-export GIST_CPPFLAGS = @GIST_CPPFLAGS@
-export LINKQT = @LINKQT@
+export GIST_CPPFLAGS = @QTDEFINES@ @QTINCLUDES@
+export LINKQT = @QTLIBS@
 
 export BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 export BOOST_LINK = @BOOST_LINK@

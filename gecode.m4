@@ -868,14 +868,6 @@ dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_GIST],
   [
-  AC_ARG_WITH([qt],
-    AC_HELP_STRING([--with-qt],
-      [path to the Qt library (only needed if --enable-gist is given)]))
-  if test "${with_qt:-no}" != "no"; then
-    qt_prefix=${with_qt}
-  else
-    qt_prefix=
-  fi
   AC_ARG_ENABLE([gist],
     AC_HELP_STRING([--enable-gist],
       [build Gecode Interactive Search Tool @<:@default=no@:>@]))
@@ -883,24 +875,20 @@ AC_DEFUN([AC_GECODE_GIST],
   if test "${enable_gist:-no}" = "yes"; then
     AC_MSG_RESULT(yes)
     AC_DEFINE(GECODE_HAVE_GIST)
-    
-    AC_SUBST(MOC, "moc")
-    AC_SUBST(GIST_CPPFLAGS, "-DQT_SHARED -I${qt_prefix}/include -I${qt_prefix}/include/QtCore -I${qt_prefix}/include/QtGui")
-    case ${ac_gecode_compiler_vendor} in
-    microsoft*)
-      AC_SUBST(LINKQT, "${qt_prefix}/lib/QtCore4.lib ${qt_prefix}/lib/QtGui4.lib")
-    ;;
-    *)
-      case ${host_os} in
-      darwin*)
-        AC_SUBST(LINKQT, "-F${qt_prefix}/lib -framework Carbon -framework AppKit -framework QtCore -framework ApplicationServices -framework QtGui -lz -lm")
-      ;;
-      *)
-        AC_SUBST(LINKQT, "-L${qt_prefix}/lib -lQtCore -lQtGui")
-      ;;
-      esac
-    ;;
-    esac 
+
+    dnl use qmake to find the Qt installation
+    ac_gecode_gist_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
+    cd ${ac_gecode_gist_tmpdir}
+    touch a.pro
+    qmake
+    ac_gecode_gist_qt_defines=`grep Makefile -e 'DEFINES.*=' | sed -e 's/.*=//'`
+    ac_gecode_gist_qt_inc=`grep Makefile -e 'INCPATH.*=' | sed -e 's/.*=//'`
+    ac_gecode_gist_qt_libs=`grep Makefile -e 'LIBS.*=' | sed -e 's/.*=//'`
+    cd ..
+    rm -r ${ac_gecode_gist_tmpdir}
+    AC_SUBST(QTINCLUDES, ${ac_gecode_gist_qt_inc})
+    AC_SUBST(QTDEFINES, ${ac_gecode_gist_qt_defines})
+    AC_SUBST(QTLIBS, ${ac_gecode_gist_qt_libs})
   else
     AC_MSG_RESULT(no)
     AC_SUBST(GECODE_BUILD_GIST, "no")
