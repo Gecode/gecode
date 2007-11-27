@@ -62,6 +62,8 @@ namespace Gecode { namespace Reflection {
     /// Destructor
     MSCVIRTUAL ~VarMap(void);
     
+    /// Return number of entries
+    int size(void) const;
     /// Remove all entries
     void clear(void);
     

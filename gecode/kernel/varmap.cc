@@ -72,6 +72,11 @@ namespace Gecode { namespace Reflection {
     delete vo;
   }
 
+  int
+  VarMap::size(void) const {
+    return n;
+  }
+  
   void
   VarMap::clear(void) {
     for (int i=n; i--;)
