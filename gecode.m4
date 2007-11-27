@@ -876,6 +876,24 @@ AC_DEFUN([AC_GECODE_GIST],
     AC_MSG_RESULT(yes)
     AC_DEFINE(GECODE_HAVE_GIST)
 
+    AC_CHECK_PROG(QMAKE, qmake, [found])
+    if test "${QMAKE}x" = "x"; then
+      AC_MSG_ERROR([The qmake tool was not found.])
+    else
+      ac_gecode_qt_version=`qmake -query QT_VERSION`
+      ac_gecode_qt_major=`echo ${ac_gecode_qt_version} | grep -o '^[[0-9]]*'`
+      ac_gecode_qt_minor=`echo ${ac_gecode_qt_version} | sed -e 's/^[[0-9]]*\\.//g' -e 's/\\.[[0-9]]*$//g'`
+      ac_gecode_qt_ok="yes"
+      if test ${ac_gecode_qt_major} -lt 4; then ac_gecode_qt_ok="no";
+      else if test ${ac_gecode_qt_major} -eq 4 \
+                -a ${ac_gecode_qt_minor} -lt 2; then ac_gecode_qt_ok="no";
+           fi
+      fi
+      if test "${ac_gecode_qt_ok}" != "yes"; then
+        AC_MSG_ERROR([Your version of Qt is too old. Minimum required: 4.2. Your version: ${ac_gecode_qt_version}.])
+      fi
+    fi
+
     dnl use qmake to find the Qt installation
     ac_gecode_gist_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
     cd ${ac_gecode_gist_tmpdir}
