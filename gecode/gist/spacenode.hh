@@ -53,7 +53,7 @@ namespace Gecode { namespace Gist {
     SPECIAL       ///< Node representing user controlled exploration
   };
 
-  // TODO nikopp: put this somewhere else (e.g. to the same file as BranchingDes is)
+  // TODO nikopp: put this somewhere else (e.g. to the same file as BranchingDesc)
   class SpecialDesc {
   public:
     const std::string vn;
