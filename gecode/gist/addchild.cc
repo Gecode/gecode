@@ -1,13 +1,13 @@
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Niko Paltzer <nikopp@ps.uni-sb.de>
  *
  *  Copyright:
- *     Guido Tack, 2006
+ *     Niko Paltzer, 2007
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-11-26 17:01:39 +0100 (Mon, 26 Nov 2007) $ by $Author: nikopp $
+ *     $Revision: 5439 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,45 +34,52 @@
  *
  */
 
+#include "gecode/gist/addchild.hh"
+
 namespace Gecode { namespace Gist {
 
-  template <class Node>
-  void dfsAll(Node* root) {
-    std::stack<Node*> stck;
-    stck.push(root);
-    
-    while (!stck.empty()) {
-      Node* n = stck.top(); stck.pop();
-      if (n->isOpen()) {
-        int kids = n->getNumberOfChildNodes();
-        for (int i=kids; i--;) {
-          stck.push(static_cast<Node*>(n->getChild(i)));
-        }
-      }
+  AddChild::AddChild(Gecode::Reflection::VarMap& vm, QWidget *parent)
+  : QDialog(parent)
+  {
+    ui.setupUi(this);
+
+    ui.relList->insertItem(0, "==");
+    ui.relList->insertItem(1, "!=");
+    ui.relList->insertItem(2, "<=");
+    ui.relList->insertItem(3, "<");
+    ui.relList->insertItem(4, ">=");
+    ui.relList->insertItem(5, ">");
+
+    Gecode::Reflection::VarMapIter vmi(vm);
+
+    for(int i = 0; vmi(); ++vmi, ++i) {
+      ui.varList->insertItem(i, vmi.spec().name().toString().c_str());
     }
   }
 
-  template <class Node>
-  void dfsOne(Node* root, Node** solution) {
-    std::stack<Node*> stck;
-    stck.push(root);
-    
-    while (!stck.empty()) {
-      Node* n = stck.top(); stck.pop();
-      if (n->isOpen()) {
-        int kids = n->getNumberOfChildNodes();
-        if (n->getStatus() == SOLVED) {
-          if(solution != NULL)
-            *solution = n;
-          return;
-        }
-        for (int i=kids; i--;) {
-          stck.push(static_cast<Node*>(n->getChild(i)));
-        }
-      }
-    }
+  int
+  AddChild::value(void) {
+    return ui.valueSpinBox->value();
   }
-  
+
+  QString
+  AddChild::var(void) {
+    return ui.varList->currentItem()->text();
+  }
+
+  int
+  AddChild::rel(void) {
+    return ui.relList->currentRow();
+  }
+
+  void
+  AddChild::on_varList_itemSelectionChanged(void) {
+    if(ui.varList->selectedItems().isEmpty())
+      ui.okPushButton->setEnabled(false);
+    else
+      ui.okPushButton->setEnabled(true);
+  }
+
 }}
 
 // STATISTICS: gist-any

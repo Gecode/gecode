@@ -187,7 +187,7 @@ dnl Check for the definition of macro MACRO-NAME using the current
 dnl language's compiler.
 dnl
 dnl @category Misc
-dnl @author Ludovic Courtès <ludo@chbouib.org>
+dnl @author Ludovic Courtï¿½s <ludo@chbouib.org>
 dnl @version 2004-09-07
 dnl @license AllPermissive
 AC_DEFUN([_AC_C_IFDEF],
@@ -205,7 +205,7 @@ dnl Set VENDOR-NAME to the lower-case name of the compiler vendor or `unknown'
 dnl if the compiler's vendor is unknown.
 dnl
 dnl @version 20040907
-dnl @author  Ludovic Courtès <ludo@chbouib.org>
+dnl @author  Ludovic Courtï¿½s <ludo@chbouib.org>
 dnl Modified by G. Tack to recognize only those compilers we need.
 AC_DEFUN([AC_CXX_COMPILER_VENDOR],
   [AC_ARG_WITH([compiler-vendor],
@@ -332,7 +332,7 @@ dnl   Makes an enable check for a contrib
 dnl   The third argument can be used for dependency checking 
 dnl
 dnl Authors:
-dnl   Grégoire Dooms <dooms@info.ucl.ac.be>
+dnl   Grï¿½goire Dooms <dooms@info.ucl.ac.be>
 AC_DEFUN([AC_GECODE_ENABLE_CONTRIB],
 [
    AC_ARG_ENABLE([$1],
@@ -919,6 +919,16 @@ AC_DEFUN([AC_GECODE_GIST],
   else
     AC_MSG_RESULT(no)
     AC_SUBST(GECODE_BUILD_GIST, "no")
+  fi
+  AC_ARG_ENABLE([gist-experimental],
+    AC_HELP_STRING([--enable-gist-experimental],
+      [enable Gecode Interactive Search Tool experimental features@<:@default=no@:>@]))
+  AC_MSG_CHECKING(whether to enable Gist experimental features)
+  if test "${enable_gist_experimental:-no}" = "yes"; then
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(GECODE_GIST_EXPERIMENTAL)
+  else
+    AC_MSG_RESULT(no)
   fi
   AC_SUBST(enable_gist, ${enable_gist})
 ])

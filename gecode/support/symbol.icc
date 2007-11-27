@@ -111,6 +111,8 @@ namespace Gecode { namespace Support {
     int hash(int m) const;
     /// Print this Symbol to \a os
     std::ostream& print(std::ostream& os) const;    
+    /// Return the Symbol as string
+    std::string toString(void) const;
     /// Destructor
     MSCVIRTUAL ~Symbol(void);
   };

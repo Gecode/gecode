@@ -42,10 +42,11 @@
 #include "gecode/gist/dfs.hh"
 
 #include "gecode/gist/postscript.hh"
-
 #include "gecode/gist/drawingcursor.hh"
 
-#include <QPainter>
+#include <QtGui/QPainter>
+
+#include "gecode/gist/addchild.hh"
 
 namespace Gecode { namespace Gist {
 
@@ -56,6 +57,7 @@ namespace Gecode { namespace Gist {
       root = new VisualNode(rootSpace, b);
       root->setMarked(true);
       currentNode = root;
+      pathHead = root;
       scale = 1.0;
       
       QAction* inspectCN = new QAction("inspect", this);
@@ -113,7 +115,28 @@ namespace Gecode { namespace Gist {
       connect(centerCN, SIGNAL(triggered()), this, SLOT(centerCurrentNode()));
 
       QAction* exportPostscript = new QAction("export postscript", this);
+      exportPostscript->setShortcut(QKeySequence("Ctrl+P"));
       connect(exportPostscript, SIGNAL(triggered()), this, SLOT(exportPostscript()));
+      
+      QAction* setPath = new QAction("set Path", this);
+      setPath->setShortcut(QKeySequence("Shift+P"));
+      connect(setPath, SIGNAL(triggered()), this, SLOT(setPath()));
+
+      QAction* inspectPath = new QAction("inspect Path", this);
+      inspectPath->setShortcut(QKeySequence("Shift+I"));
+      connect(inspectPath, SIGNAL(triggered()), this, SLOT(inspectPath()));
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+      QAction* addChild = new QAction("add child node", this);
+      addChild->setShortcut(QKeySequence("Shift+C"));
+      connect(addChild, SIGNAL(triggered()), this, SLOT(addChild()));
+      
+      QAction* addFixpoint = new QAction("add fixpoint node", this);
+      addFixpoint->setShortcut(QKeySequence("Shift+F"));
+      connect(addFixpoint, SIGNAL(triggered()), this, SLOT(addFixpoint()));
+
+#endif
 
       addAction(inspectCN);
       addAction(navUp);
@@ -130,8 +153,21 @@ namespace Gecode { namespace Gist {
       addAction(centerCN);
       addAction(exportPostscript);
       
+      addAction(setPath);
+      addAction(inspectPath);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+      addAction(addChild);
+      addAction(addFixpoint);
+
+#endif
+
       contextMenu = new QMenu(this);
       contextMenu->addAction(inspectCN);
+
+      contextMenu->addSeparator();
+      
       contextMenu->addAction(navUp);
       contextMenu->addAction(navDown);
       contextMenu->addAction(navLeft);
@@ -139,13 +175,35 @@ namespace Gecode { namespace Gist {
       
       contextMenu->addAction(searchNext);
       contextMenu->addAction(searchAll);      
+
+      contextMenu->addSeparator();
+      
       contextMenu->addAction(toggleHidden);
       contextMenu->addAction(hideFailed);
       contextMenu->addAction(unhideAll);
+
+      contextMenu->addSeparator();
+      
       contextMenu->addAction(zoomToFit);
       contextMenu->addAction(centerCN);
+
+      contextMenu->addSeparator();
+      
       contextMenu->addAction(exportPostscript);
-    }
+      
+      contextMenu->addSeparator();
+      
+      contextMenu->addAction(setPath);
+      contextMenu->addAction(inspectPath);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+      contextMenu->addAction(addChild);
+      contextMenu->addAction(addFixpoint);
+
+#endif
+
+  }
   
   TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; }
 
@@ -184,7 +242,10 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::searchOne(void) {
-    dfsOne<VisualNode>(currentNode);
+    VisualNode* sol = NULL;
+    dfsOne<VisualNode>(currentNode, &sol);
+    if(sol != NULL)
+      setCurrentNode(sol);
     currentNode->dirtyUp();
     update();
     centerCurrentNode();
@@ -252,6 +313,77 @@ namespace Gecode { namespace Gist {
     
   }
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  void
+  TreeCanvasImpl::addChild(void) {
+    //	  special child nodes may only be added to other special nodes
+    switch (currentNode->getStatus()) {
+    case FAILED:
+    case SOLVED:
+    case UNDETERMINED:
+      break;
+    case BRANCH:
+    case SPECIAL:
+        {
+          Reflection::VarMap vm;
+          Space* space = currentNode->getSpace();
+          space->getVars(vm);
+          delete space;
+
+          AddChild dialog(vm, this);
+
+          if(dialog.exec()) {
+
+            std::string var = dialog.var().toStdString();
+            int value = dialog.value();
+            IntRelType rel = static_cast<IntRelType> (dialog.rel());
+
+            VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
+
+            newChild->setStatus(SPECIAL);
+            newChild->setSpecialDesc(new SpecialDesc(var, rel, value));
+            newChild->setNumberOfChildren(0);
+            newChild->setNoOfOpenChildren(0);
+
+            currentNode->addChild(newChild);
+
+            newChild->setDirty(false);
+            newChild->dirtyUp();
+            setCurrentNode(newChild);
+            update();
+          }
+        }
+    }
+  }
+
+  void
+  TreeCanvasImpl::addFixpoint(void) {
+    //	  new fixpoints may only be added to special nodes
+    switch (currentNode->getStatus()) {
+    case FAILED:
+    case SOLVED:
+    case UNDETERMINED:
+    case BRANCH:
+      break;
+    case SPECIAL:
+        {
+          VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
+
+          newChild->setStatus(UNDETERMINED);
+
+          currentNode->addChild(newChild);
+          currentNode->openUp();
+
+          newChild->setDirty(false);
+          newChild->dirtyUp();
+          update();
+        }
+    }
+  }
+
+#endif
+
   void
   TreeCanvasImpl::inspectCurrentNode(void) {
     if (currentNode->isHidden()) {
@@ -259,21 +391,52 @@ namespace Gecode { namespace Gist {
       return;
     }
     switch (currentNode->getStatus()) {
-    case FAILED: break;
     case UNDETERMINED:
       {
         (void) currentNode->getNumberOfChildNodes();
-        currentNode->dirtyUp();
-        update();
       }
-      break;
+    case FAILED:
+    case SPECIAL:
+    case BRANCH:
+    case SOLVED:
     default:
       if (inspect != NULL) {
         inspect->inspect(currentNode->getSpace());
       }
       break;
     }
+    saveCurrentNode();
     centerCurrentNode();
+    currentNode->dirtyUp();
+    update();
+  }
+
+  void
+  TreeCanvasImpl::setPath(void) {
+    if(currentNode == pathHead)
+      return;
+    
+    pathHead->unPathUp();
+    pathHead = currentNode;
+
+    currentNode->setPathInfos(true, -1, true);
+    currentNode->pathUp();
+    currentNode->dirtyUp();
+    update();
+  }
+
+  void
+  TreeCanvasImpl::inspectPath(void) {
+    setPath();
+    setCurrentNode(root);
+    if(inspect != NULL)
+      while(true) {
+        inspectCurrentNode();
+        if(!currentNode->isLastOnPath())
+          setCurrentNode(currentNode->getChild(currentNode->getPathAlternative()));
+        else
+          break;
+      }
   }
 
   void
@@ -287,10 +450,18 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::navDown(void) {
-    if (currentNode->getStatus() == BRANCH &&
-        !currentNode->isHidden()) {
-      setCurrentNode(currentNode->getChild(0));
-      centerCurrentNode();
+    if (!currentNode->isHidden()) {
+    	switch (currentNode->getStatus()) {
+			case SPECIAL:
+				if (currentNode->getNumberOfChildren() < 1)
+					break;
+			case BRANCH:
+				setCurrentNode(currentNode->getChild(0));
+				centerCurrentNode();
+				break;
+			default:
+				break;
+		}
     }
   }
 
@@ -317,6 +488,34 @@ namespace Gecode { namespace Gist {
       }
     }
   }
+  
+  void
+  TreeCanvasImpl::markCurrentNode(int i) {
+    if(nodeMap.size() > i && nodeMap[i] != NULL) {
+      setCurrentNode(nodeMap[i]);
+      centerCurrentNode();
+    }
+  }
+
+  void
+  TreeCanvasImpl::saveCurrentNode(void) {
+    nodeMap << currentNode;
+    emit newPointInTime(nodeMap.size() - 1);
+  }
+  
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  void
+  TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm, int& nextPointInTime) {
+    if(root != NULL) {
+      Space* space = root->getSpace();
+      space->getVars(vm);
+      delete space;
+      nextPointInTime = nodeMap.size();
+    }
+  }
+
+#endif
 
   void
   TreeCanvasImpl::paintEvent(QPaintEvent* event) {
@@ -376,26 +575,50 @@ namespace Gecode { namespace Gist {
   
   TreeCanvas::TreeCanvas(Space* root, Better* b,
                          QWidget* parent) : QWidget(parent) {
-    QGridLayout* layout = new QGridLayout;    
+    QGridLayout* layout = new QGridLayout(this);    
 
-    QScrollArea* scrollArea = new QScrollArea;
+    QScrollArea* scrollArea = new QScrollArea(this);
     canvas = new TreeCanvasImpl(root, b, this);
-
+    canvas->setObjectName("canvas");
+    
     scrollArea->setBackgroundRole(QPalette::Window);
     scrollArea->setWidget(canvas);
 
-    QSlider* scaleBar = new QSlider(Qt::Vertical);
+    QSlider* scaleBar = new QSlider(Qt::Vertical, this);
+    scaleBar->setObjectName("scaleBar");
     scaleBar->setMinimum(1);
     scaleBar->setMaximum(400);
     scaleBar->setValue(100);
+    
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+    timeBar = new QSlider(Qt::Horizontal, this);
+    timeBar->setObjectName("timeBar");
+    timeBar->setMinimum(0);
+    timeBar->setMaximum(0);
+    timeBar->setValue(0);
+    
+#endif
     
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
     connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
     
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+    connect(timeBar, SIGNAL(valueChanged(int)), canvas, SLOT(markCurrentNode(int)));
+    
+#endif
+    
     layout->addWidget(scrollArea, 0,0);
     layout->addWidget(scaleBar, 0,1);
+    
+#ifdef GECODE_GIST_EXPERIMENTAL
 
+    layout->addWidget(timeBar, 1,0);
+
+#endif
+    
     setLayout(layout);
 
     canvas->searchOne();
@@ -403,6 +626,8 @@ namespace Gecode { namespace Gist {
 
     resize(500, 400);
 
+    // enables on_<sender>_<signal>() mechanism
+    QMetaObject::connectSlotsByName(this);
   }
 
   void
@@ -410,6 +635,18 @@ namespace Gecode { namespace Gist {
   
   TreeCanvas::~TreeCanvas(void) { delete canvas; }
   
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  void
+  TreeCanvas::on_canvas_newPointInTime(int i) {
+
+    timeBar->setMaximum(i);
+    timeBar->setValue(i);
+
+  }
+
+#endif
+    
 }}
 
 // STATISTICS: gist-any

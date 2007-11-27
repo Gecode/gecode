@@ -547,15 +547,17 @@ GISTHDR0 = \
 	better.hh dfs.hh dfs.icc drawingcursor.hh gist.hh \
 	gist.icc node.hh nodecursor.hh nodecursor.icc nodevisitor.hh \
 	nodevisitor.icc postscript.hh shapelist.hh \
-	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh
+	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh \
+	addchild.hh ui_addchild.hh
 
 GISTSRC0 = \
 	drawingcursor.cc gist.cc node.cc nodecursor.cc \
 	postscript.cc shapelist.cc spacenode.cc \
-	textoutput.cc treecanvas.cc visualnode.cc
+	textoutput.cc treecanvas.cc visualnode.cc \
+	addchild.cc
 
 GISTMOCSRC0 = \
-	moc_treecanvas.cc
+	moc_treecanvas.cc moc_addchild.cc
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
@@ -798,7 +800,7 @@ makecompletedmessage:
 	@echo make install
 	@echo
 
-# ugly hack by Grégoire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
+# ugly hack by Grï¿½goire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
 # used as make contribs:cpgraph:doc or make contribs:cpgraph:Makefile.in
 .PHONY: contribs\:%
 contribs\:%:
@@ -949,6 +951,8 @@ gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/gist/moc_treecanvas.cc: gecode/gist/treecanvas.hh
+	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
+gecode/gist/moc_addchild.cc: gecode/gist/addchild.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
 #
@@ -1295,18 +1299,11 @@ install: installframework
 else
 
 ifeq "@enable_examples@" "yes"
-install: installlib installgist installexamples
+install: installlib installexamples
 else
-install: installlib installgist
+install: installlib
 endif
 
-endif
-
-ifeq "@enable_gist@" "yes"
-installgist:
-	$(MAKE) -C gecode/gist install
-else
-installgist:
 endif
 
 doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)

@@ -195,6 +195,12 @@ namespace Gecode { namespace Support {
     return os;
   }
 
+  std::string
+  Symbol::toString(void) const {
+    if (so) return so->s;
+    return "";
+  }
+  
   Symbol::~Symbol(void) {
     if ((so != NULL) && so->cancel()) {
       if (so->own)

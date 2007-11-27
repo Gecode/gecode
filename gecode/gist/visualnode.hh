@@ -56,6 +56,13 @@ namespace Gecode { namespace Gist {
     /// Whether the node is marked
     bool marked;
     
+    /// Whether the node is on the selected path
+    bool onPath;
+    /// Whether the node is the head of the selected path
+    bool lastOnPath;
+    /// The alternative that is next on the path
+    int pathAlternative;
+
     /// Shape of this node
     Shape* shape;
     /// Bounding box of this node
@@ -95,6 +102,18 @@ namespace Gecode { namespace Gist {
     bool isMarked(void);
     /// Set mark of this node
     void setMarked(bool m);
+    /// Set all nodes from the node to the root to be on the path
+    void pathUp(void);
+    /// Set all nodes from the node to the root not to be on the path
+    void unPathUp(void);
+    /// Return whether node is on the path
+    bool isOnPath(void);
+    /// Return whether node is the head of the path
+    bool isLastOnPath(void);
+    /// Return the alternative of the child that is on the path (-1 if none)
+    int getPathAlternative(void);
+    /// Set the path attributes of the node
+    void setPathInfos(bool onPath0, int pathAlternative0 = -1, bool lastOnPath0 = false);
     
     /// Toggle whether this node is hidden
     void toggleHidden(void);

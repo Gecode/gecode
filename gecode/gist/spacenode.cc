@@ -39,19 +39,34 @@
 
 namespace Gecode { namespace Gist {
   
+  enum BranchKind {
+    NORMAL, SPECIAL_IN, SPECIAL_OUT
+  };
+
   /// \brief Representation of a branch in the search tree
   class Branch {
   public:
     /// Alternative number
     int alternative;
-    /// Branching description
-    const BranchingDesc* desc;
     /// The best space known when the branch was created
     Space* ownBest;
+    const BranchKind branchKind;
+    union {
+      const SpecialDesc* special;
+    /// Branching description
+      const BranchingDesc* branch;
+    } desc;
+    
     /// Constructor
-    Branch(int a, const BranchingDesc* d, Space* best = NULL)
-      : alternative(a), desc(d), ownBest(best) {}
-  };
+    Branch(int a, const BranchingDesc* d, Space* best = NULL, BranchKind bk = NORMAL)
+      : alternative(a), ownBest(best), branchKind(bk) {
+        desc.branch = d;
+      }
+    Branch(int a, const SpecialDesc* d, BranchKind bk, Space* best = NULL)
+      : alternative(a), ownBest(best), branchKind(bk) {
+        desc.special = d;
+      }
+ };
 
   /// \brief Initial configuration settings for search
   class Config {
@@ -62,6 +77,9 @@ namespace Gecode { namespace Gist {
     static const int mrd = 1;
   };
   
+  SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
+    : vn(varName), r(r0), v(v0) {}
+  
   BestSpace::BestSpace(Space* s0, Better* b0) : s(s0), b(b0) {}
   
   int
@@ -70,13 +88,36 @@ namespace Gecode { namespace Gist {
     
     if (workingSpace == NULL) {
       SpaceNode* curNode = this;
+      SpaceNode* firstFixpoint = NULL;
+
+      if(curNode->getStatus() != SPECIAL) {
+        firstFixpoint = curNode;
+      }
+      
       std::stack<Branch> stck;
+      bool specialNodeOnPath = false;
       
       while (curNode->copy == NULL) {
         SpaceNode* parent = static_cast<SpaceNode*>(curNode->getParent());
-        Branch b(curNode->alternative, parent->desc,
-                 curBest == NULL ? NULL : curNode->ownBest);
-        stck.push(b);
+
+        if(curNode->getStatus() == SPECIAL) {
+          Branch b(curNode->alternative, curNode->desc.special, SPECIAL_IN);
+          stck.push(b);
+          if(firstFixpoint == NULL && parent->getStatus() == BRANCH) {
+            firstFixpoint = parent;
+          }
+          specialNodeOnPath = true;
+        }
+        else if(parent->getStatus() == SPECIAL) {
+           Branch b(curNode->alternative, NULL, SPECIAL_OUT);
+          stck.push(b);
+        }
+        else {
+          Branch b(curNode->alternative, parent->desc.branch,
+                   curBest == NULL ? NULL : curNode->ownBest);
+          stck.push(b);
+        }
+        
         curNode = parent;
         rdist++;
       }
@@ -85,16 +126,59 @@ namespace Gecode { namespace Gist {
       Space* lastBest = NULL;
       SpaceNode* middleNode = curNode;
       int curDist = 0;
-      
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+      // TODO nikopp: as long as the SpecialDesc is evaluated in the switch below,
+      //              we need this varMap here
+      Reflection::VarMap vm;
+      if(specialNodeOnPath)
+        curSpace->getVars(vm);
+
+#endif      
+
       while (!stck.empty()) {
         if (Config::a_d >= 0 &&
             curDist > Config::a_d &&
+            middleNode->getStatus() != SPECIAL &&
             curDist == rdist / 2) {
           middleNode->copy = curSpace->clone();
         }
         Branch b = stck.top(); stck.pop();
-        curSpace->commit(b.desc, b.alternative);
         
+        if(middleNode == firstFixpoint) {
+          curSpace->status();
+        }
+        
+        switch (b.branchKind) {
+        case NORMAL:
+            {
+              curSpace->commit(b.desc.branch, b.alternative);
+            }
+            break;
+        case SPECIAL_IN:
+            {
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+              if(b.desc.special != NULL) {
+
+                const char* vName = b.desc.special->vn.c_str();
+
+                IntVar iv = IntVar(Int::IntView(static_cast<Int::IntVarImp*> (vm.var(vName))));
+
+                rel(curSpace, iv, b.desc.special->r, b.desc.special->v);
+              }
+
+#endif
+
+            }
+            break;
+        case SPECIAL_OUT:
+         // really do nothing
+          break;
+        }
+
         if (b.ownBest != NULL && b.ownBest != lastBest) {
           curBest->b->constrain(curSpace, b.ownBest);
           lastBest = b.ownBest;
@@ -114,7 +198,8 @@ namespace Gecode { namespace Gist {
     Space* ret = workingSpace;
     if (ret != NULL) {
       workingSpace = NULL;
-      ret->commit(desc, alt);
+      if (desc.branch != NULL)
+        ret->commit(desc.branch, alt);
       
       if (ownBest != NULL) {
         curBest->b->constrain(ret, ownBest);
@@ -130,7 +215,9 @@ namespace Gecode { namespace Gist {
       // last alternative optimization
       ret = copy;
       copy = NULL;
-      ret->commit(desc, alt);
+      
+      if(desc.branch != NULL)
+        ret->commit(desc.branch, alt);
       
       if (ownBest != NULL) {
         curBest->b->constrain(ret, ownBest);
@@ -151,12 +238,14 @@ namespace Gecode { namespace Gist {
     }
     if (workingSpace == NULL) {
       if (recompute() > Config::mrd && Config::mrd >= 0 &&
+          status != SPECIAL &&
           workingSpace->status() == SS_BRANCH) {
         copy = workingSpace->clone();  
       }
     }
-    // always return a fixpoint
-    workingSpace->status();
+    if (status != SPECIAL)
+      // always return a fixpoint
+      workingSpace->status();
     if (copy == NULL && p != NULL && isOpen()) {
       copy = p->checkLAO(alternative, ownBest);
     }
@@ -190,17 +279,17 @@ namespace Gecode { namespace Gist {
   }
 
   SpaceNode::SpaceNode(int alt, BestSpace* cb)
-    : copy(NULL), workingSpace(NULL), desc(NULL),
-      curBest(cb), ownBest(NULL) {
+  : copy(NULL), workingSpace(NULL), curBest(cb), ownBest(NULL) {
+    desc.branch = NULL;
     alternative = alt;
     status = UNDETERMINED;
     _hasSolvedChildren = false;
     _hasFailedChildren = false;
   }
-  
+
   SpaceNode::SpaceNode(Space* root, Better* b)
-    : workingSpace(root), desc(NULL),
-      curBest(NULL), ownBest(NULL) {
+  : workingSpace(root), curBest(NULL), ownBest(NULL) {
+    desc.branch = NULL;
     if (root == NULL) {
       status = FAILED;
       _hasSolvedChildren = false;
@@ -221,7 +310,10 @@ namespace Gecode { namespace Gist {
   }
 
   SpaceNode::~SpaceNode(void) {
-    delete desc;
+    if(status == SPECIAL)
+      delete desc.special;
+    else
+      delete desc.branch;
     delete copy;
     delete workingSpace;
     if (getParent() == NULL)
@@ -285,8 +377,8 @@ namespace Gecode { namespace Gist {
         }
         break;
       case SS_BRANCH:
-        desc = workingSpace->description();
-        kids = desc->alternatives();
+        desc.branch = workingSpace->description();
+        kids = desc.branch->alternatives();
         status = BRANCH;
         // stats.newChoice();
         // stats.newOpen();
@@ -310,6 +402,16 @@ namespace Gecode { namespace Gist {
     return status;
   }
   
+  void
+  SpaceNode::setStatus(NodeStatus s) {
+    status = s;
+  }
+    
+  void
+  SpaceNode::setSpecialDesc(const SpecialDesc* d) {
+    desc.special = d;
+  }
+    
   int
   SpaceNode::getAlternative(void) {
     return alternative;
@@ -318,6 +420,13 @@ namespace Gecode { namespace Gist {
   bool
   SpaceNode::isOpen(void) {
     return status == UNDETERMINED || noOfOpenChildren > 0;
+  }
+  
+  void
+  SpaceNode::openUp(void) {
+    if(!isOpen() && parent != NULL)
+      static_cast<SpaceNode*>(parent)->openUp();
+    noOfOpenChildren++;
   }
   
   bool
@@ -335,6 +444,22 @@ namespace Gecode { namespace Gist {
     return noOfOpenChildren;
   }
         
+  void
+  SpaceNode::setNoOfOpenChildren(int n) {
+    assert(status == SPECIAL);
+    noOfOpenChildren = n;
+  }
+        
+  bool
+  SpaceNode::hasCopy(void) {
+    return copy != NULL;
+  }
+
+  bool
+  SpaceNode::hasWorkingSpace(void) {
+    return workingSpace != NULL;
+  }
+
   SpaceNode*
   SpaceNode::createChild(int alternative) {
     return new SpaceNode(alternative, curBest);

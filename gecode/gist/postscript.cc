@@ -336,6 +336,7 @@ namespace Gecode { namespace Gist {
     static const PSColor black;
     static const PSColor blue;
     static const PSColor white;
+    static const PSColor yellow;
     static const PSColor red;
     static const PSColor green;
     static const PSColor lightgray;
@@ -349,7 +350,8 @@ namespace Gecode { namespace Gist {
     void drawSolved(int x, int y);
     void drawChoice(int x, int y);
     void drawUndetermined(int x, int y);
-  public:
+    void drawSpecial(int x, int y);
+ public:
     PostscriptCursor(VisualNode* tree, std::list<Path*>& ps0);
     void moveUpwards(void);
     bool mayMoveDownwards(void);
@@ -365,6 +367,8 @@ namespace Gecode { namespace Gist {
   PostscriptCursor::blue(0.0,0.36,0.63);
   const PSColor
   PostscriptCursor::white(1.0,1.0,1.0);
+  const PSColor
+  PostscriptCursor::yellow(1.0,1.0,0.0);
   const PSColor
   PostscriptCursor::red(0.85,0.14,0.11);
   const PSColor
@@ -418,14 +422,19 @@ namespace Gecode { namespace Gist {
     ps.push_back(new Diamond(x, -y-10, 10, black, green));
   }
 
-   void
+  void
   PostscriptCursor::drawChoice(int x, int y) {
     ps.push_back(new Circle(x, -y, 10, black, blue));
   }
 
-   void
+  void
   PostscriptCursor::drawUndetermined(int x, int y) {
     ps.push_back(new Circle(x, -y, 10, black, white));
+  }
+
+  void
+  PostscriptCursor::drawSpecial(int x, int y) {
+    ps.push_back(new Circle(x, -y, 10, black, yellow));
   }
 
   void
@@ -442,6 +451,7 @@ namespace Gecode { namespace Gist {
         case SOLVED:
         case UNDETERMINED:
         case BRANCH:
+        case SPECIAL:
           ps.push_back(new Line(myx, -y+10, parentX, -y+28, black));
           break;
         case FAILED:
@@ -456,6 +466,9 @@ namespace Gecode { namespace Gist {
                   currentNode->isOpen());
     } else {
       switch(currentNode->getStatus()) {
+      case SPECIAL:
+    	drawSpecial(myx,y);
+    	break;
       case UNDETERMINED:
         drawUndetermined(myx,y);
         break;
@@ -498,7 +511,7 @@ namespace Gecode { namespace Gist {
     out << "%%For: Who knows?\n";
     out << "%%Title: figure\n";
     out << "%%CreationDate: Fri Jul 16 13:58:16 2004\n";
-    out << "%%BoundingBox: " << b.minx << " " << b.miny << " " << 
+    out << "%%BoundingBox: " << b.minx << " " << b.miny-10 << " " << 
         b.maxx+10 << " " << b.maxy << "\n";
     out << "%%Pages: 1\n";
     out << "%%DocumentData: Clean7Bit\n";

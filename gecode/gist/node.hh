@@ -72,6 +72,10 @@ namespace Gecode { namespace Gist {
     void setNumberOfChildren(int n);
     /// Set child number \a n to be \a child
     void setChild(int n, Node* child);
+
+    /// Add new child node
+    void addChild(Node* child);
+
     /// Return the number of children
     int getNumberOfChildren(void);
     /// Return which alternative this node represents

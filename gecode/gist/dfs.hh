@@ -46,9 +46,9 @@ namespace Gecode { namespace Gist {
   template <class Node>
   void dfsAll(Node* root);
   
-  /// \brief Search for the next solution under \a root using a depth-first strategy
+  /// \brief Search for the next \a solution under \a root using a depth-first strategy
   template <class Node>
-  void dfsOne(Node* root);
+  void dfsOne(Node* root, Node** solution = NULL);
   
 }}
 

@@ -467,6 +467,13 @@ namespace Gecode {
     return i;
   }
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  void
+  Space::getVars(Reflection::VarMap&) {}
+
+#endif
+
   /*
    * Propagator
    *

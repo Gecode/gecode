@@ -491,6 +491,21 @@ namespace Gecode {
     __ES_NOFIX_PARTIAL  =  3  ///< Internal: propagator has computed no partial fixpoint, do not use
   };
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  enum StepStatus {
+    __STS_SUBSUMED       = __ES_SUBSUMED,
+    STS_FAILED           = ES_FAILED,
+    STS_NOFIX            = ES_NOFIX,
+    STS_OK               = ES_OK,
+    STS_FIX              = ES_FIX,
+    __STS_FIX_PARTIAL    = __ES_FIX_PARTIAL,
+    __STS_NOFIX_PARTIAL  = __ES_NOFIX_PARTIAL,
+    STS_NOSTEP          =  4
+  };
+
+#endif
+
   /**
    * \brief Classification of propagation cost
    * \ingroup TaskActor
@@ -1109,13 +1124,26 @@ namespace Gecode {
 
 
     /**
-      * \name Reflection
-      */
+     * \name Reflection
+     */
     //@{
     /// Return iterator over specifications of the propagators in this space
     GECODE_KERNEL_EXPORT
     Reflection::SpecIter actorSpecs(Reflection::VarMap& m);
     //@}
+    
+    
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+    /**
+     * \name Debug tools
+     */
+    //@{
+    /// Enter those variables into \a m that should be available during a debug session
+    virtual void getVars(Reflection::VarMap& m); 
+    //@}
+
+#endif
 
   public:
     /**
@@ -1159,6 +1187,18 @@ namespace Gecode {
 
 
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+    /**
+     * \brief Execute one propagation step
+     *
+     * Executes one propagagator and returns its ExecStatus.
+     * If the propagator queue is empty it returns STS_EMPTY.
+     * 
+     */
+    StepStatus step(void);
+
+#endif
 
     /*
      * Member functions for search engines
@@ -1568,6 +1608,91 @@ namespace Gecode {
   Space::failed(void) const {
     return b_status == NULL;
   }
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  /*
+   * new step-by-step propagation
+   * 
+   */
+  forceinline StepStatus
+  Space::step() {
+
+      Propagator* p;
+      if(!pool_get(p))
+      {
+    	  return STS_NOSTEP;
+      }
+      
+      const PropModEvent PME_NONE = 0;
+      const PropModEvent PME_ASSIGNED  =
+    	  ((ME_GEN_ASSIGNED <<  0) | (ME_GEN_ASSIGNED <<  4) |
+    	   (ME_GEN_ASSIGNED <<  8) | (ME_GEN_ASSIGNED << 12) |
+    	   (ME_GEN_ASSIGNED << 16) | (ME_GEN_ASSIGNED << 20) |
+    	   (ME_GEN_ASSIGNED << 24) | (ME_GEN_ASSIGNED << 28));
+
+      ExecStatus es = p->propagate(this);
+
+      switch (es) {
+      case ES_FAILED:
+        fail();
+        break;
+      case ES_FIX:
+        {
+          // Prevent that propagator gets rescheduled (turn on all events)
+          p->u.pme = PME_ASSIGNED;
+          process();
+          p->u.pme = PME_NONE;
+          // Put propagator in idle queue
+          p->unlink(); a_actors.head(p);
+        }
+        break;
+      case ES_NOFIX:
+        {
+          // Propagator is currently in no queue, put into idle
+          p->unlink(); a_actors.head(p);
+          p->u.pme = PME_NONE;
+          process();
+        }
+        break;
+      case __ES_SUBSUMED:
+        {
+          // Remember size
+          size_t s = p->u.size;
+          // Prevent that propagator gets rescheduled (turn on all events)
+          p->u.pme = PME_ASSIGNED;
+          process();
+          p->unlink();
+          reuse(p,s);
+        }
+        break;
+      case __ES_FIX_PARTIAL:
+        {
+          // Remember the event set to be kept after processing
+          PropModEvent keep = p->u.pme;
+          // Prevent that propagator gets rescheduled (turn on all events)
+          p->u.pme = PME_ASSIGNED;
+          process();
+          p->u.pme = keep;
+          assert(p->u.pme != 0);
+          pool_put(p);
+        }
+        break;
+      case __ES_NOFIX_PARTIAL:
+        {
+          // Start from the specified propagator events
+          pool_put(p);
+          process();
+        }
+        break;
+      default:
+        GECODE_NEVER;
+      }
+
+       return static_cast<StepStatus> (es);
+  }
+
+#endif
 
   /*
    * Main control for propagation and branching

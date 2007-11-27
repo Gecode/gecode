@@ -1,13 +1,13 @@
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Niko Paltzer <nikopp@ps.uni-sb.de>
  *
  *  Copyright:
- *     Guido Tack, 2006
+ *     Niko Paltzer, 2007
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-11-26 17:01:39 +0100 (Mon, 26 Nov 2007) $ by $Author: nikopp $
+ *     $Revision: 5439 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,45 +34,36 @@
  *
  */
 
+#ifndef GECODE_GIST_ADDCHILD_HH
+#define GECODE_GIST_ADDCHILD_HH
+
+#include <QtGui/QDialog>
+#include "gecode/gist/ui_addchild.hh"
+
+#include "gecode/kernel.hh"
+
 namespace Gecode { namespace Gist {
 
-  template <class Node>
-  void dfsAll(Node* root) {
-    std::stack<Node*> stck;
-    stck.push(root);
-    
-    while (!stck.empty()) {
-      Node* n = stck.top(); stck.pop();
-      if (n->isOpen()) {
-        int kids = n->getNumberOfChildNodes();
-        for (int i=kids; i--;) {
-          stck.push(static_cast<Node*>(n->getChild(i)));
-        }
-      }
-    }
-  }
+  class AddChild : public QDialog
+  {
+    Q_OBJECT
 
-  template <class Node>
-  void dfsOne(Node* root, Node** solution) {
-    std::stack<Node*> stck;
-    stck.push(root);
-    
-    while (!stck.empty()) {
-      Node* n = stck.top(); stck.pop();
-      if (n->isOpen()) {
-        int kids = n->getNumberOfChildNodes();
-        if (n->getStatus() == SOLVED) {
-          if(solution != NULL)
-            *solution = n;
-          return;
-        }
-        for (int i=kids; i--;) {
-          stck.push(static_cast<Node*>(n->getChild(i)));
-        }
-      }
-    }
-  }
-  
+  public:
+    AddChild(Gecode::Reflection::VarMap& vm, QWidget *parent = 0);
+
+    int value(void);
+    QString var(void);
+    int rel(void);
+
+  private Q_SLOTS:
+    void on_varList_itemSelectionChanged(void);
+
+  private:
+    Ui::AddChildClass ui;
+  };
+
 }}
+
+#endif
 
 // STATISTICS: gist-any

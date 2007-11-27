@@ -34,11 +34,13 @@
  *
  */
 
-#ifndef GECODE_GIST_QT_TREECANVAS_HH
-#define GECODE_GIST_QT_TREECANVAS_HH
+#ifndef GECODE_GIST_TREECANVAS_HH
+#define GECODE_GIST_TREECANVAS_HH
 
 #include "gecode/gist/gist.hh"
 #include <QtGui>
+
+#include <gecode/kernel.hh>
 
 namespace Gecode {
   
@@ -47,11 +49,11 @@ namespace Gecode {
   namespace Gist {
   
   class VisualNode;
-  
+
   /// \brief Implementation of the TreeCanvas
   class TreeCanvasImpl : public QWidget {
     Q_OBJECT
-    
+
   public:
     /// Constructor
     TreeCanvasImpl(Space* rootSpace, Better* b, QWidget* parent = NULL);
@@ -60,7 +62,8 @@ namespace Gecode {
 
     /// Set Inspector to \a i0
     void setInspector(Inspector* i);
-  public slots:
+
+  public Q_SLOTS:
     /// Set scale factor to \a scale0
     void scaleTree(int scale0);
     
@@ -91,16 +94,40 @@ namespace Gecode {
     void navLeft(void);
     /// Move selection to the right sibling of the selected node
     void navRight(void);
+    /// Recall selection of point in time \a i
+    void markCurrentNode(int i);
     
-  signals:
+    /// Set the current node to be the head of the path
+    void setPath(void);
+    /// Call the inspector for all nodes on the path from root to head of the path
+    void inspectPath(void);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+    
+   /// Add a new special node as child to the current node
+    void addChild(void);
+    /// Add a new fixpoint node as child to the current node if it is a special node
+    void addFixpoint(void);
+    /// Calls getVars(\a vm) on the space of the root node and \i is set to the most recent point in time
+    void getRootVars(Gecode::Reflection::VarMap& vm, int& i);
+    
+#endif
+    
+  Q_SIGNALS:
     /// The scale factor has changed
     void scaleChanged(int);
+    /// A new point in time was logged
+    void newPointInTime(int);
     
   protected:
     /// The root node of the tree
     VisualNode* root;
     /// The currently selected node
     VisualNode* currentNode;
+    /// The head of the currently selected path
+    VisualNode* pathHead;
+    /// The history of inspected nodes
+    QVector<VisualNode*> nodeMap;
     /// The active inspector
     Inspector* inspect;
 
@@ -124,20 +151,33 @@ namespace Gecode {
     void contextMenuEvent(QContextMenuEvent* event);
     /// Set the selected node to \a n
     void setCurrentNode(VisualNode* n);
+    /// Log the current node as new point in time
+    void saveCurrentNode(void);
   };
   
   /// Tree canvas widget
   class TreeCanvas : public QWidget {
+    Q_OBJECT
   private:
     /// The canvas implementation
     TreeCanvasImpl* canvas;
+    QSlider* timeBar;
   public:
     /// Constructor
     TreeCanvas(Space* root, Better* b = NULL, QWidget* parent = NULL);
     /// Destructor
     ~TreeCanvas(void);
+
     /// Set Inspector to \a i0
     void setInspector(Inspector* i0);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+    
+  private Q_SLOTS:
+    void on_canvas_newPointInTime(int);
+
+#endif
+    
   };
   
 }}

@@ -45,12 +45,14 @@ namespace Gecode { namespace Gist {
   const Shape VisualNode::unitShape(Extent(20), &singletonShape);
 
   VisualNode::VisualNode(int alternative, BestSpace* b)
-    : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false),
-       shape(NULL), box(0,0,0) {}
+    : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
+    , onPath(false), lastOnPath(false), pathAlternative(-1)
+    , shape(NULL), box(0,0,0) {}
   
   VisualNode::VisualNode(Space* root, Better* b)
-    : SpaceNode(root, b), offset(0), dirty(true), hidden(false), 
-      marked(false), shape(NULL), box(0,0,0) {}
+    : SpaceNode(root, b), offset(0), dirty(true), hidden(false), marked(false)
+    , onPath(false), lastOnPath(false), pathAlternative(-1)
+    , shape(NULL), box(0,0,0) {}
 
   VisualNode::~VisualNode(void) {
     delete shape;
@@ -97,6 +99,44 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::setMarked(bool m) { marked = m; }
   
+  bool
+  VisualNode::isOnPath(void) { return onPath; }
+  
+  bool
+  VisualNode::isLastOnPath(void) { return lastOnPath; }
+  
+  int
+  VisualNode::getPathAlternative(void) { return pathAlternative; }
+  
+  void
+  VisualNode::setPathInfos(bool onPath0, int pathAlternative0, bool lastOnPath0) {
+    assert(pathAlternative0 <= noOfChildren);
+    assert(!lastOnPath0 || pathAlternative0 == -1);
+
+    onPath = onPath0;
+    pathAlternative = pathAlternative0;
+    lastOnPath = lastOnPath0;
+  }
+  
+  void VisualNode::pathUp(void) {
+    if(isRoot())
+      return;
+    
+    VisualNode* p = static_cast<VisualNode*> (parent);
+    p->setPathInfos(true, alternative);
+    p->pathUp();
+  }
+
+  void VisualNode::unPathUp(void) {
+    if(isRoot())
+      return;
+    
+    setPathInfos(false);
+
+    VisualNode* p = static_cast<VisualNode*> (parent);
+    p->unPathUp();
+  }
+
   void
   VisualNode::toggleHidden(void) {
     hidden = !hidden;
@@ -173,12 +213,12 @@ namespace Gecode { namespace Gist {
       cur = NULL;
       for (int i=0; i<oldCur->noOfChildren; i++) {
         VisualNode* nextChild = static_cast<VisualNode*>(oldCur->children[i]);
-         int newX = x - nextChild->getOffset();
-         if (nextChild->containsCoordinateAtDepth(newX, depth - 1)) {
-            cur = nextChild;
-           x = newX;
-           break;
-         }
+        int newX = x - nextChild->getOffset();
+        if (nextChild->containsCoordinateAtDepth(newX, depth - 1)) {
+          cur = nextChild;
+          x = newX;
+          break;
+        }
       }
       depth--;
       y -= 38;

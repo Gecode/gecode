@@ -74,7 +74,18 @@ namespace Gecode { namespace Gist {
     child->parent = this;
     child->alternative = n;
   }
-  
+
+  void
+  Node::addChild(Node* child) {
+	if(noOfChildren == -1)
+		setNumberOfChildren(0);
+	
+    child->parent = this;
+    child->alternative = noOfChildren;
+	children.resize(++noOfChildren);
+    children[noOfChildren-1] = child;
+  }
+
   int
   Node::getNumberOfChildren(void) {
     return noOfChildren;

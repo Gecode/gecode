@@ -96,10 +96,64 @@ namespace Gecode { namespace Gist {
     int myy = 38 + y;
 
     if (! n->isRoot()) {
-      painter.setBrush(Qt::black);
+      if(n->isOnPath()) {
+        QPen pen;
+        pen.setWidth(2);
+        pen.setColor(Qt::red);
+        painter.setPen(pen);
+      }
+      else
+        painter.setPen(Qt::black);
       painter.drawLine(myx,myy,parentX,parentY);
     }
 
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+    
+    // the more visible 'shadow'
+    int shadowOffset = 4;
+    if (n->isMarked()) {
+      painter.setBrush(Qt::black);
+      painter.setPen(Qt::NoPen);
+      if (n->isHidden()) {
+        QPoint points[3] = {QPoint(myx,myy-2*shadowOffset),
+                            QPoint(myx+20+shadowOffset,myy+60+shadowOffset),
+                            QPoint(myx-20-shadowOffset,myy+60+shadowOffset),
+                           };
+        painter.drawConvexPolygon(points, 3);
+        
+      } else {
+        switch (n->getStatus()) {
+        case Gist::SPECIAL:
+                painter.drawEllipse(myx-5-shadowOffset, myy-shadowOffset, 10+2*shadowOffset, 20+2*shadowOffset);
+                break;
+        case Gist::SOLVED:
+          {
+            QPoint points[4] = {QPoint(myx,(int)(myy-1.4*shadowOffset)),
+                                QPoint((int)(myx+10+1.4*shadowOffset),myy+10),
+                                QPoint(myx,(int)(myy+20+1.4*shadowOffset)),
+                                QPoint((int)(myx-10-1.4*shadowOffset),myy+10)
+                               };
+            painter.drawConvexPolygon(points, 4);
+          }
+          break;
+        case Gist::FAILED:
+          painter.drawRect(myx-7-shadowOffset, myy-shadowOffset, 14+2*shadowOffset, 14+2*shadowOffset);
+          break;
+        case Gist::BRANCH:
+          painter.drawEllipse(myx-10-shadowOffset, myy-shadowOffset, 20+2*shadowOffset, 20+2*shadowOffset);
+          break;
+        case Gist::UNDETERMINED:
+          painter.drawEllipse(myx-10-shadowOffset, myy-shadowOffset, 20+2*shadowOffset, 20+2*shadowOffset);
+          break;
+          break;
+        default: assert(false);
+        }
+      }        
+    }
+
+#else
+    // original shadow
     int shadowOffset = 3;
     if (n->isMarked()) {
       painter.setBrush(Qt::gray);
@@ -113,6 +167,9 @@ namespace Gecode { namespace Gist {
         
       } else {
         switch (n->getStatus()) {
+        case Gist::SPECIAL:
+                painter.drawEllipse(myx-5+shadowOffset, myy+shadowOffset, 10, 20);
+                break;
         case Gist::SOLVED:
           {
             QPoint points[4] = {QPoint(myx+shadowOffset,myy+shadowOffset),
@@ -137,6 +194,7 @@ namespace Gecode { namespace Gist {
         }
       }        
     }
+#endif
 
     painter.setPen(Qt::SolidLine);
     if (n->isHidden()) {
@@ -148,6 +206,10 @@ namespace Gecode { namespace Gist {
       painter.drawConvexPolygon(points, 3);
     } else {
       switch (n->getStatus()) {
+      case Gist::SPECIAL:
+    	painter.setBrush(Qt::yellow);
+    	painter.drawEllipse(myx-5, myy, 10, 20);
+    	break;
       case Gist::SOLVED:
         {
           painter.setBrush(QBrush(green));
@@ -174,7 +236,23 @@ namespace Gecode { namespace Gist {
         break;
       default: assert(false);
       }
+    	
     }
+    
+#ifdef GECODE_GIST_EXPERIMENTAL
+    
+    if (n->hasCopy()) {
+    	painter.setBrush(Qt::darkRed);
+    	painter.drawEllipse(myx, myy, 10, 10);
+    }
+    
+    if (n->hasWorkingSpace()) {
+    	painter.setBrush(Qt::darkYellow);
+    	painter.drawEllipse(myx, myy + 10, 10, 10);
+    }
+    
+#endif
+    
   }
   
 }}

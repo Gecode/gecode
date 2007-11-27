@@ -40,6 +40,7 @@
 #include "gecode/gist/node.hh"
 #include "gecode/gist/better.hh"
 #include "gecode/kernel.hh"
+#include "gecode/int.hh"
 
 namespace Gecode { namespace Gist {
 
@@ -48,9 +49,19 @@ namespace Gecode { namespace Gist {
     SOLVED,       ///< Node representing a solution
     FAILED,       ///< Node representing failure
     BRANCH,       ///< Node representing a branch
-    UNDETERMINED  ///< Node that has not been explored yet
+    UNDETERMINED, ///< Node that has not been explored yet
+    SPECIAL       ///< Node representing user controlled exploration
   };
 
+  // TODO nikopp: put this somewhere else (e.g. to the same file as BranchingDes is)
+  class SpecialDesc {
+  public:
+    const std::string vn;
+    const IntRelType r;
+    const int v;
+    SpecialDesc(std::string varName, IntRelType r0, int v0);
+  };
+  
   /// \brief Static reference to the currently best space
   class BestSpace {
   public:
@@ -70,8 +81,13 @@ namespace Gecode { namespace Gist {
     /// Working space used for computing the status
     Space* workingSpace;
     
-    /// Branching description
-    const BranchingDesc* desc;
+    union {
+      /// Branching description
+      const BranchingDesc* branch;
+      /// Special branching description
+      const SpecialDesc* special;
+    } desc;
+    
     /// Current status of the node
     NodeStatus status;
     
@@ -127,17 +143,30 @@ namespace Gecode { namespace Gist {
     
     /// Return current status of the node
     NodeStatus getStatus(void);
+    /// Changes the NodeStatus to \a s
+    void setStatus(NodeStatus s);
+    /// Changes the SpecialDesc to \a d
+    void setSpecialDesc(const SpecialDesc* d);
+    
     /// Return alternative number of this node
     int getAlternative(void);
     /// Return whether this node still has open children
     bool isOpen(void);
+    /// Opens all nodes on the path up to the root
+    void openUp(void);
     /// Return whether the subtree of this node has any failed children
     bool hasFailedChildren(void);
     /// Return whether the subtree of this node has any solved children
     bool hasSolvedChildren(void);
     /// Return number of open children
     int getNoOfOpenChildren(void);
-    
+    /// Set number of open children to \a n
+    void setNoOfOpenChildren(int n);
+    /// Return whether the node has a copy
+    bool hasCopy(void);
+    /// Return whether the node has a working space
+    bool hasWorkingSpace(void);
+       
     /// Pseudo-constructor to allow creation of nodes of sub-classes from getNoOfChildNodes
     virtual SpaceNode* createChild(int alternative);
     /// Called when the status has changed
