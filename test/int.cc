@@ -143,7 +143,7 @@ namespace Test { namespace Int {
           Gecode::Reflection::ActorSpec& s = si.actor();
           for (; vmi(); ++vmi) {
             try {
-              d.var(vmi.var());
+              d.var(vmi.spec());
             } catch (Gecode::Exception e) {
               return NULL;
             }
@@ -156,7 +156,7 @@ namespace Test { namespace Int {
         }
         for (; vmi(); ++vmi) {
           try {
-            d.var(vmi.var());
+            d.var(vmi.spec());
           } catch (Gecode::Exception e) {
             return NULL;
           }

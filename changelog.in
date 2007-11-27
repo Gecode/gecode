@@ -69,6 +69,14 @@ Date:    Later
 Fixes or what?
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The VarMapIter can now return both a specification and the actual VarBase* of 
+the currently iterated variable.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor

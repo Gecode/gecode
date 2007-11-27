@@ -217,7 +217,10 @@ namespace Gecode { namespace Reflection {
   VarMapIter::operator()(void) const { return i<m->n; }
 
   VarSpec&
-  VarMapIter::var(void) const { return *m->vo->specs[i]; }
+  VarMapIter::spec(void) const { return *m->vo->specs[i]; }
+
+  VarBase*
+  VarMapIter::var(void) const { return m->vo->vars[i]; }
 
   void
   VarMapIter::operator++(void) { i++; }  
