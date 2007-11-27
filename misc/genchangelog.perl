@@ -60,6 +60,7 @@ $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "\%Example scripts";
 $modclear{"test"} = "Systematic tests";
+$modclear{"gist"} = "Gist";
 $modclear{"other"} = "General";
 
 $whatclear{"bug"} = "Bug fixes";
@@ -73,7 +74,7 @@ $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
 @modorder = ("kernel","search","int","set","cpltset","minimodel",
-	     "iter","support","example","test","other");
+	     "iter","support","example","test","gist","other");
 
 @whatorder = ("new","removed","change","bug","performance","documentation");
 

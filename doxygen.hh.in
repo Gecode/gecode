@@ -995,7 +995,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * Please let us know of any successfull attempt at
  * compiling Gecode on other platforms.
  *
- * \section Useful Makefile targets
+ * \section MakeTargets Useful Makefile targets
  *
  * The main %Gecode Makefile supports the following useful targets:
  *
@@ -1022,7 +1022,29 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - <code>distzip</code> creates a binary distribution as a zip archive
  *  - <code>disttgz</code> creates a binary distribution as a tgz archive
  *
+ * \section CompileGist Compilation with Gist
  *
+ * The %Gecode Interactive Search Tool (Gist) is a graphical search engine for 
+ * %Gecode, built on top of the
+ * <a href="http://trolltech.com/products/qt">Qt GUI toolkit</a>.
+ *
+ * In order to compile %Gecode with Gist, you need an installation of the Qt 
+ * library including the development header files.  The source code for Qt is 
+ * <a href="http://trolltech.com/downloads/opensource">available from 
+ * Trolltech under the GPL license.</a>
+ *
+ * <b>
+ * Please note that if you want to develop closed-source software with %Gecode
+ * and Gist, you will need to get a commercial license for Qt from Trolltech!
+ * </b>
+ *
+ * If you are developing on Windows using the Microsoft Visual C++ compiler, 
+ * make sure to compile the Qt library with the same compiler (this is 
+ * possible with Qt version 4.3.2, even if the download page does not say so).
+ *
+ * If the <code>qmake</code> tool is in your shell path, all you need to do to 
+ * enable Gist is to configure %Gecode with the switch 
+ * <code>--enable-gist</code>.
  */
 
 
