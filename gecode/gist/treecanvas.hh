@@ -50,9 +50,26 @@ namespace Gecode {
   
   class VisualNode;
 
+  class TreeCanvasImpl;
+  
+  class Searcher : public QThread {
+    Q_OBJECT
+  private:
+    VisualNode* node;
+    bool a;
+    QMutex* mutex;
+    TreeCanvasImpl* t;
+  public:
+    void search(VisualNode* n, bool all, QMutex* m, TreeCanvasImpl* ti);
+  protected:
+    void run();
+  };
+
   /// \brief Implementation of the TreeCanvas
   class TreeCanvasImpl : public QWidget {
     Q_OBJECT
+
+    friend class Searcher;
 
   public:
     /// Constructor
@@ -85,6 +102,9 @@ namespace Gecode {
     void centerCurrentNode(void);
     /// Call the inspector for the currently selected node
     void inspectCurrentNode(void);
+    
+    /// Stop current search
+    void stopSearch(void);
     
     /// Move selection to the parent of the selected node
     void navUp(void);
@@ -120,6 +140,12 @@ namespace Gecode {
     void newPointInTime(int);
     
   protected:
+    /// Mutex for synchronizing acccess to the tree
+    QMutex mutex;
+    /// Search engine thread
+    Searcher searcher;
+    /// Flag signalling the search to stop
+    bool stopSearchFlag;
     /// The root node of the tree
     VisualNode* root;
     /// The currently selected node
@@ -138,6 +164,11 @@ namespace Gecode {
     double scale;
     /// Offset on the x axis so that the tree is centered
     int xtrans;
+
+    /// Call the inspector for the currently selected node
+    void _inspectCurrentNode(void);
+    /// Set the current node to be the head of the path
+    void _setPath(void);
 
     /// Update display
     void update(void);

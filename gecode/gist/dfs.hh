@@ -44,11 +44,11 @@ namespace Gecode { namespace Gist {
 
   /// \brief Search for all solutions under \a root using a depth-first strategy
   template <class Node>
-  void dfsAll(Node* root);
+  void dfsAll(Node* root, bool* brk);
   
   /// \brief Search for the next \a solution under \a root using a depth-first strategy
   template <class Node>
-  void dfsOne(Node* root, Node** solution = NULL);
+  Node* dfsOne(Node* root, bool* brk);
   
 }}
 

@@ -37,11 +37,11 @@
 namespace Gecode { namespace Gist {
 
   template <class Node>
-  void dfsAll(Node* root) {
+  void dfsAll(Node* root, bool* brk) {
     std::stack<Node*> stck;
     stck.push(root);
     
-    while (!stck.empty()) {
+    while (!stck.empty() && !(*brk)) {
       Node* n = stck.top(); stck.pop();
       if (n->isOpen()) {
         int kids = n->getNumberOfChildNodes();
@@ -53,24 +53,23 @@ namespace Gecode { namespace Gist {
   }
 
   template <class Node>
-  void dfsOne(Node* root, Node** solution) {
+  Node* dfsOne(Node* root, bool* brk) {
     std::stack<Node*> stck;
     stck.push(root);
     
-    while (!stck.empty()) {
+    while (!stck.empty() && !(*brk)) {
       Node* n = stck.top(); stck.pop();
       if (n->isOpen()) {
         int kids = n->getNumberOfChildNodes();
         if (n->getStatus() == SOLVED) {
-          if(solution != NULL)
-            *solution = n;
-          return;
+          return n;
         }
         for (int i=kids; i--;) {
           stck.push(static_cast<Node*>(n->getChild(i)));
         }
       }
     }
+    return NULL;
   }
   
 }}

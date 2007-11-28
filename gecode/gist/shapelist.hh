@@ -53,6 +53,8 @@ namespace Gecode { namespace Gist {
     int depth;
     /// Constructor
     BoundingBox(int l, int r, int d);
+    /// Default constructor
+    BoundingBox(void) {}
   };
 
   /// \brief Extent, representing shape of a tree at one depth level

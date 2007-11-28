@@ -54,6 +54,7 @@ namespace Gecode { namespace Gist {
     
   TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, Better* b, QWidget* parent)
     : QWidget(parent), inspect(NULL) {
+      QMutexLocker locker(&mutex);
       root = new VisualNode(rootSpace, b);
       root->setMarked(true);
       currentNode = root;
@@ -64,6 +65,11 @@ namespace Gecode { namespace Gist {
       inspectCN->setShortcut(QKeySequence("Return"));
       connect(inspectCN, SIGNAL(triggered()), this, 
                          SLOT(inspectCurrentNode()));
+
+      QAction* stopCN = new QAction("stop", this);
+      stopCN->setShortcut(QKeySequence("Esc"));
+      connect(stopCN, SIGNAL(triggered()), this, 
+                      SLOT(stopSearch()));
 
       QAction* navUp = new QAction("Up", this);
       navUp->setShortcut(QKeySequence("Up"));
@@ -139,6 +145,7 @@ namespace Gecode { namespace Gist {
 #endif
 
       addAction(inspectCN);
+      addAction(stopCN);
       addAction(navUp);
       addAction(navDown);
       addAction(navLeft);
@@ -212,12 +219,16 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::scaleTree(int scale0) {
-    if (scale0<1)
-      scale0 = 1;
-    if (scale0>400)
-      scale0 = 400;
-    scale = ((double)scale0) / 100.0;
-    BoundingBox bb = root->getBoundingBox();
+    BoundingBox bb;
+    {
+      QMutexLocker locker(&mutex);
+      if (scale0<1)
+        scale0 = 1;
+      if (scale0>400)
+        scale0 = 400;
+      scale = ((double)scale0) / 100.0;
+      bb = root->getBoundingBox();
+    }
     resize((int)((bb.right-bb.left+20)*scale), (int)((bb.depth+1)*38*scale));
     emit scaleChanged(scale0);
     QWidget::update();
@@ -225,62 +236,102 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::update(void) {
-    root->layout();
-    BoundingBox bb = root->getBoundingBox();
+    BoundingBox bb;
+    {
+      QMutexLocker locker(&mutex);
+      root->layout();
+      bb = root->getBoundingBox();
+    }
     resize((int)((bb.right-bb.left+20)*scale), (int)((bb.depth+1)*38*scale));
     xtrans = -bb.left;
     QWidget::update();
   }
 
   void
+  Searcher::search(VisualNode* n, bool all, QMutex* m, TreeCanvasImpl* ti) {
+    node = n;
+    a = all;
+    mutex = m;
+    t = ti;
+    start();
+  }
+    
+  void
+  Searcher::run() {
+    {
+      VisualNode* sol = NULL;
+      QMutexLocker lock(mutex);
+      t->stopSearchFlag = false;
+      if (a) {
+        dfsAll<VisualNode>(node, &t->stopSearchFlag);
+      } else {
+        sol = dfsOne<VisualNode>(node, &t->stopSearchFlag);
+      }
+      node->dirtyUp();
+      if (sol != NULL) {
+        t->setCurrentNode(sol);
+      }
+    }
+    t->update();
+    t->centerCurrentNode();
+  }
+
+  void
   TreeCanvasImpl::searchAll(void) {
-    dfsAll<VisualNode>(currentNode);
-    currentNode->dirtyUp();
-    update();
-    centerCurrentNode();
+    QMutexLocker locker(&mutex);
+    searcher.search(currentNode, true, &mutex, this);
   }
 
   void
   TreeCanvasImpl::searchOne(void) {
-    VisualNode* sol = NULL;
-    dfsOne<VisualNode>(currentNode, &sol);
-    if(sol != NULL)
-      setCurrentNode(sol);
-    currentNode->dirtyUp();
-    update();
-    centerCurrentNode();
+    QMutexLocker locker(&mutex);
+    searcher.search(currentNode, false, &mutex, this);
   }
 
   void
   TreeCanvasImpl::toggleHidden(void) {
-    currentNode->toggleHidden();
+    {
+      QMutexLocker locker(&mutex);
+      currentNode->toggleHidden();
+    }
     update();
     centerCurrentNode();
   }
   
   void
   TreeCanvasImpl::hideFailed(void) {
-    currentNode->hideFailed();
+    {
+      QMutexLocker locker(&mutex);
+      currentNode->hideFailed();
+    }
     update();
     centerCurrentNode();
   }
   
   void
   TreeCanvasImpl::unhideAll(void) {
-    currentNode->unhideAll();
+    {
+      QMutexLocker locker(&mutex);
+      currentNode->unhideAll();
+    }
     update();
     centerCurrentNode();
   }
   
   void
   TreeCanvasImpl::exportPostscript(void) {
+    QMutexLocker locker(&mutex);
     Postscript::output(std::cout, root);
   }
 
   void
   TreeCanvasImpl::zoomToFit(void) {
+    BoundingBox bb;
+    {
+      QMutexLocker locker(&mutex);
+      bb = root->getBoundingBox();      
+    }
     if (root != NULL) {
-      BoundingBox bb = root->getBoundingBox();
       QWidget* p = parentWidget();
       if (p) {
         double newXScale =
@@ -297,12 +348,15 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::centerCurrentNode(void) {
     int x=0;
     int y=0;
-    
-    VisualNode* c = currentNode;
-    while (c != NULL) {
-      x += c->getOffset();
-      y += 38;
-      c = static_cast<VisualNode*>(c->getParent());
+
+    {
+      QMutexLocker locker(&mutex);
+      VisualNode* c = currentNode;
+      while (c != NULL) {
+        x += c->getOffset();
+        y += 38;
+        c = static_cast<VisualNode*>(c->getParent());
+      }
     }
     
     x = (int)((xtrans+x)*scale); y = (int)(y*scale);
@@ -317,6 +371,7 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::addChild(void) {
+    mutex.lock();
     //	  special child nodes may only be added to other special nodes
     switch (currentNode->getStatus()) {
     case FAILED:
@@ -351,14 +406,18 @@ namespace Gecode { namespace Gist {
             newChild->setDirty(false);
             newChild->dirtyUp();
             setCurrentNode(newChild);
+            mutex.unlock();
             update();
+            return;
           }
         }
     }
+    mutex.unlock();
   }
 
   void
   TreeCanvasImpl::addFixpoint(void) {
+    mutex.lock();
     //	  new fixpoints may only be added to special nodes
     switch (currentNode->getStatus()) {
     case FAILED:
@@ -377,7 +436,9 @@ namespace Gecode { namespace Gist {
 
           newChild->setDirty(false);
           newChild->dirtyUp();
+          mutex.unlock();
           update();
+          return;
         }
     }
   }
@@ -385,7 +446,7 @@ namespace Gecode { namespace Gist {
 #endif
 
   void
-  TreeCanvasImpl::inspectCurrentNode(void) {
+  TreeCanvasImpl::_inspectCurrentNode(void) {
     if (currentNode->isHidden()) {
       toggleHidden();
       return;
@@ -405,96 +466,146 @@ namespace Gecode { namespace Gist {
       }
       break;
     }
-    saveCurrentNode();
-    centerCurrentNode();
     currentNode->dirtyUp();
+    saveCurrentNode();
+  }
+
+  void
+  TreeCanvasImpl::inspectCurrentNode(void) {
+    {
+      QMutexLocker locker(&mutex);
+      _inspectCurrentNode();
+    }
+    centerCurrentNode();
     update();
   }
 
   void
-  TreeCanvasImpl::setPath(void) {
+  TreeCanvasImpl::stopSearch(void) {
+    stopSearchFlag = true;
+  }
+
+  void
+  TreeCanvasImpl::_setPath(void) {
     if(currentNode == pathHead)
       return;
-    
+
     pathHead->unPathUp();
     pathHead = currentNode;
 
     currentNode->setPathInfos(true, -1, true);
     currentNode->pathUp();
     currentNode->dirtyUp();
+  }
+
+  void
+  TreeCanvasImpl::setPath(void) {
+    {
+      QMutexLocker locker(&mutex);
+      _setPath();
+    }
     update();
   }
 
   void
   TreeCanvasImpl::inspectPath(void) {
-    setPath();
-    setCurrentNode(root);
-    if(inspect != NULL)
-      while(true) {
-        inspectCurrentNode();
-        if(!currentNode->isLastOnPath())
-          setCurrentNode(currentNode->getChild(currentNode->getPathAlternative()));
-        else
-          break;
-      }
+    {
+      QMutexLocker locker(&mutex);
+      _setPath();
+      setCurrentNode(root);
+      if(inspect != NULL)
+        while(true) {
+          _inspectCurrentNode();
+          if(!currentNode->isLastOnPath())
+            setCurrentNode(
+              currentNode->getChild(currentNode->getPathAlternative()));
+          else
+            break;
+        }
+    }
+    update();
   }
 
   void
   TreeCanvasImpl::navUp(void) {
-    VisualNode* p = static_cast<VisualNode*>(currentNode->getParent());
-    if (p != NULL) {
+    VisualNode* p;
+    {
+      QMutexLocker locker(&mutex);
+      p = static_cast<VisualNode*>(currentNode->getParent());
       setCurrentNode(p);
+    }
+    if (p != NULL) {
       centerCurrentNode();
     }
   }
 
   void
   TreeCanvasImpl::navDown(void) {
+    mutex.lock();
     if (!currentNode->isHidden()) {
-    	switch (currentNode->getStatus()) {
-			case SPECIAL:
-				if (currentNode->getNumberOfChildren() < 1)
-					break;
-			case BRANCH:
-				setCurrentNode(currentNode->getChild(0));
-				centerCurrentNode();
-				break;
-			default:
-				break;
-		}
+      switch (currentNode->getStatus()) {
+      case SPECIAL:
+        if (currentNode->getNumberOfChildren() < 1)
+          break;
+      case BRANCH:
+        VisualNode* n = currentNode->getChild(0);
+        setCurrentNode(n);
+        mutex.unlock();
+        centerCurrentNode();
+        break;
+      default:
+        mutex.unlock();
+        break;
+      }
+    } else {
+      mutex.unlock();
     }
   }
 
   void
   TreeCanvasImpl::navLeft(void) {
+    mutex.lock();
     VisualNode* p = static_cast<VisualNode*>(currentNode->getParent());
     if (p != NULL) {
       int alt = currentNode->getAlternative();
       if (alt > 0) {
-        setCurrentNode(p->getChild(alt-1));
+        VisualNode* n = p->getChild(alt-1);
+        setCurrentNode(n);
+        mutex.unlock();
         centerCurrentNode();
+        return;
       }
     }
+    mutex.unlock();
   }
 
   void
   TreeCanvasImpl::navRight(void) {
+    mutex.lock();
     VisualNode* p = static_cast<VisualNode*>(currentNode->getParent());
     if (p != NULL) {
       int alt = currentNode->getAlternative();
       if (alt + 1 < p->getNumberOfChildNodes()) {
-        setCurrentNode(p->getChild(alt+1));
+        VisualNode* n = p->getChild(alt+1);
+        setCurrentNode(n);
+        mutex.unlock();
         centerCurrentNode();
+        return;
       }
     }
+    mutex.unlock();
   }
   
   void
   TreeCanvasImpl::markCurrentNode(int i) {
+    mutex.lock();
     if(nodeMap.size() > i && nodeMap[i] != NULL) {
       setCurrentNode(nodeMap[i]);
+      mutex.unlock();
       centerCurrentNode();
+      return;
     }
+    mutex.unlock();
   }
 
   void
@@ -506,7 +617,9 @@ namespace Gecode { namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
 
   void
-  TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm, int& nextPointInTime) {
+  TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm,
+                              int& nextPointInTime) {
+    QMutexLocker locker(&mutex);
     if(root != NULL) {
       Space* space = root->getSpace();
       space->getVars(vm);
@@ -519,6 +632,7 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::paintEvent(QPaintEvent* event) {
+    QMutexLocker locker(&mutex);
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     BoundingBox bb = root->getBoundingBox();
@@ -540,9 +654,14 @@ namespace Gecode { namespace Gist {
   
   void
   TreeCanvasImpl::contextMenuEvent(QContextMenuEvent* event) {
-    VisualNode* n = root->findNode((int)(event->x()/scale-xtrans), (int)(event->y()/scale-38));
-    if (n != NULL) {
+    VisualNode* n;
+    {
+      QMutexLocker locker(&mutex);
+      n = root->findNode((int)(event->x()/scale-xtrans), 
+                         (int)(event->y()/scale-38));
       setCurrentNode(n);
+    }
+    if (n != NULL) {
       contextMenu->popup(event->globalPos());
       event->accept();
       return;
@@ -552,20 +671,25 @@ namespace Gecode { namespace Gist {
   
   void
   TreeCanvasImpl::setCurrentNode(VisualNode* n) {
-    if (n != currentNode) {
+    if (n != NULL && n != currentNode) {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
-      QWidget::update();          
-    }    
+      QWidget::update();
+    }
   }
   
   void
   TreeCanvasImpl::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {
-      VisualNode* n = root->findNode((int)(event->x()/scale-xtrans), (int)(event->y()/scale-38));
-      if (n != NULL) {
+      VisualNode* n;
+      {
+        QMutexLocker locker(&mutex);
+        n = root->findNode((int)(event->x()/scale-xtrans), 
+                           (int)(event->y()/scale-38));
         setCurrentNode(n);
+      }
+      if (n != NULL) {
         event->accept();
         return;
       }
