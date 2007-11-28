@@ -60,8 +60,12 @@ namespace Gecode {
     TreeCanvasImpl* t;
   public:
     void search(VisualNode* n, bool all, TreeCanvasImpl* ti);
+    
+  Q_SIGNALS:
+    void update(void);
+    
   protected:
-    void run();
+    void run(void);
   };
 
   /// \brief Implementation of the TreeCanvas
@@ -164,13 +168,6 @@ namespace Gecode {
     /// Offset on the x axis so that the tree is centered
     int xtrans;
 
-    /// Call the inspector for the currently selected node
-    void _inspectCurrentNode(void);
-    /// Set the current node to be the head of the path
-    void _setPath(void);
-
-    /// Update display
-    void update(void);
     /// Paint the tree
     void paintEvent(QPaintEvent* event);
     /// Handle mouse press event
@@ -183,6 +180,10 @@ namespace Gecode {
     void setCurrentNode(VisualNode* n);
     /// Log the current node as new point in time
     void saveCurrentNode(void);
+
+  protected Q_SLOTS:
+    /// Update display
+    void update(void);
   };
   
   /// Tree canvas widget
