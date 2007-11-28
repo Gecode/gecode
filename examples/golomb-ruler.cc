@@ -55,13 +55,12 @@
  *
  */
 class GolombRuler : public Example {
-public:
+protected:
   /// Number of marks
   const int n;
   /// Array for ruler marks
   IntVarArray m;
-  /// Length of smaller rulers
-  static int length[128];
+public:
   /// Model variants
   enum {
     MODEL_NONE, ///< No lower bound
@@ -110,10 +109,17 @@ public:
           rel(this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
       break;
     case MODEL_RULER:
-      // Marks from i to j must be ruler of length j-1+i
-      for (int i=0; i<n; i++)
-        for (int j=i+1; j<n; j++)
-          rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
+      {
+        static const int length[] = {
+          // Length 0-9
+          0,0,1,3,6,11,17,25,34,44,
+          // Length 10-
+          55,72,85,106,127};
+        // Marks from i to j must be ruler of length j-1+i
+        for (int i=0; i<n; i++)
+          for (int j=i+1; j<n; j++)
+            rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
+      }
       break;
     }
 
@@ -156,8 +162,6 @@ public:
 
 };
 
-int GolombRuler::length[128];
-
 /** \brief Main-function
  *  \relates GolombRuler
  */
@@ -179,18 +183,15 @@ main(int argc, char* argv[]) {
   opt.search(GolombRuler::SEARCH_BAB, "bab");
   opt.search(GolombRuler::SEARCH_RESTART, "restart");
   opt.parse(argc,argv);
-
-  GolombRuler::length[0] = 0;
-  unsigned int size = opt.size();
-  for (unsigned int i=1; i<=size; i++) {
-    opt.size(i);
-    GolombRuler* g = new GolombRuler(opt);
-    GolombRuler* s = bab(g);
-    GolombRuler::length[i] = s->m[i-1].val();
-    std::cout << "Length[" << i << "] = " << s->m[i-1].val() << std::endl;
-    delete g;
-    delete s;
-  }
+  if (opt.size() > 0)
+    switch (opt.search()) {
+    case GolombRuler::SEARCH_DFS:
+      Example::run<GolombRuler,DFS,SizeOptions>(opt); break;
+    case GolombRuler::SEARCH_BAB:
+      Example::run<GolombRuler,BAB,SizeOptions>(opt); break;
+    case GolombRuler::SEARCH_RESTART:
+      Example::run<GolombRuler,Restart,SizeOptions>(opt); break;
+    }
   return 0;
 }
 
