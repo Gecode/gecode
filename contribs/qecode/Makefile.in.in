@@ -31,7 +31,7 @@ endif
 # QECODE COMPONENTS
 #
 
-QECODESRC0 = implicative.cc warner.cc extensiveComparator.cc NaiveValueHeuristics.cc qecore.cc qsolver.cc scoreSDF.cc FirstFailValueHeuristic.cc myspace.cc
+QECODESRC0 = implicative.cc warner.cc extensivecomparator.cc NaiveValueHeuristics.cc qecore.cc qsolver.cc scoreSDF.cc FirstFailValueHeuristic.cc myspace.cc
 QECODEHDR0 = 
 
 

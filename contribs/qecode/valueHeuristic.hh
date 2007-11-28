@@ -25,7 +25,7 @@ THE SOFTWARE.
 #ifndef VALUEHEUR
 #define VALUEHEUR
 #include "qecode.hh"
-#include "implicative.hh";
+#include "implicative.hh"
 using namespace Gecode;
 using namespace Gecode::Int;
 using namespace std;
