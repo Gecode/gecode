@@ -63,30 +63,20 @@ dev(double t[], int n) {
 
 void
 Example::sac_collect_vars() {
-#ifdef GECODE_HAVE_SERIALIZATION
-  // Collect variables in var-map
-  Reflection::VarMap *vmp = new Reflection::VarMap();
-  Reflection::SpecIter si = actorSpecs(*vmp);
-  while (si())
-    ++si;
-  
-  // Add all collected variables
+  // Collect variables in VarMap
+  Reflection::VarMap vm;
+  for (Reflection::SpecIter si = actorSpecs(vm); si(); ++si) {}
   Support::Symbol vti_bool("VTI_BOOL");
   Support::Symbol vti_int("VTI_INT");
-  for (int i = 0; i < vmp->size(); ++i) {
-    Support::Symbol s = vmp->spec(i).vti();
-    if (s == vti_bool) {
-      BoolVar bv(Int::BoolView(static_cast<Int::BoolVarImp*>(vmp->var(i))));
+  for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
+    if (vmi.spec().vti() == vti_bool) {
+      BoolVar bv(Int::BoolView(static_cast<Int::BoolVarImp*>(vmi.var())));
       _sac_bva.add(this, bv);
-    } 
-    if (s == vti_int) {
-      IntVar iv(Int::IntView(static_cast<Int::IntVarImp*>(vmp->var(i))));
+    } else if (vmi.spec().vti() == vti_int) {
+      IntVar iv(Int::IntView(static_cast<Int::IntVarImp*>(vmi.var())));
       _sac_iva.add(this, iv);
     }
   }
-  
-  delete vmp;
-#endif
 }
 
 void
