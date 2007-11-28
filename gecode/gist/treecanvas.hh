@@ -57,10 +57,9 @@ namespace Gecode {
   private:
     VisualNode* node;
     bool a;
-    QMutex* mutex;
     TreeCanvasImpl* t;
   public:
-    void search(VisualNode* n, bool all, QMutex* m, TreeCanvasImpl* ti);
+    void search(VisualNode* n, bool all, TreeCanvasImpl* ti);
   protected:
     void run();
   };

@@ -39,12 +39,12 @@
 #include "gecode/gist/nodevisitor.hh"
 #include "gecode/gist/shapelist.hh"
 #include "gecode/gist/visualnode.hh"
-#include "gecode/gist/dfs.hh"
 
 #include "gecode/gist/postscript.hh"
 #include "gecode/gist/drawingcursor.hh"
 
 #include <QtGui/QPainter>
+#include <stack>
 
 #include "gecode/gist/addchild.hh"
 
@@ -248,10 +248,9 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  Searcher::search(VisualNode* n, bool all, QMutex* m, TreeCanvasImpl* ti) {
+  Searcher::search(VisualNode* n, bool all, TreeCanvasImpl* ti) {
     node = n;
     a = all;
-    mutex = m;
     t = ti;
     start();
   }
@@ -259,18 +258,37 @@ namespace Gecode { namespace Gist {
   void
   Searcher::run() {
     {
+      t->mutex.lock();
+      std::stack<VisualNode*> stck;
+      stck.push(node);
+
       VisualNode* sol = NULL;
-      QMutexLocker lock(mutex);
-      t->stopSearchFlag = false;
-      if (a) {
-        dfsAll<VisualNode>(node, &t->stopSearchFlag);
-      } else {
-        sol = dfsOne<VisualNode>(node, &t->stopSearchFlag);
+      int nodeCount = 0;
+      while (!stck.empty() && !t->stopSearchFlag) {
+        if (++nodeCount > 500) {
+          node->dirtyUp();
+          t->mutex.unlock();
+          t->update();
+          t->mutex.lock();
+          nodeCount = 0;
+        }
+        VisualNode* n = stck.top(); stck.pop();
+        if (n->isOpen()) {
+          int kids = n->getNumberOfChildNodes();
+          if (!a && n->getStatus() == SOLVED) {
+            sol = n;
+            break;
+          }
+          for (int i=kids; i--;) {
+            stck.push(static_cast<VisualNode*>(n->getChild(i)));
+          }
+        }
       }
       node->dirtyUp();
       if (sol != NULL) {
         t->setCurrentNode(sol);
       }
+      t->mutex.unlock();
     }
     t->update();
     t->centerCurrentNode();
@@ -279,13 +297,13 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::searchAll(void) {
     QMutexLocker locker(&mutex);
-    searcher.search(currentNode, true, &mutex, this);
+    searcher.search(currentNode, true, this);
   }
 
   void
   TreeCanvasImpl::searchOne(void) {
     QMutexLocker locker(&mutex);
-    searcher.search(currentNode, false, &mutex, this);
+    searcher.search(currentNode, false, this);
   }
 
   void
