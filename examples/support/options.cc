@@ -147,6 +147,7 @@ Options::Options(const char* n)
     _pk("-pk","propagation kind",PK_DEF),
     _icl("-icl","integer consistency level",ICL_DEF),
     _branching("-branching","branching variants"),
+    _sac("-sac", "run singleton arc consistency at root node", SAC_NONE),
     
     _search("-search","search engine variants"),
     _solutions("-solutions","number of solutions (0 = all)",1),
@@ -166,6 +167,9 @@ Options::Options(const char* n)
   _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
   _icl.add(ICL_BND, "bnd"); _icl.add(ICL_DOM, "dom");
 
+  _sac.add(SAC_NONE, "none"); _sac.add(SAC_ONE, "one"); 
+  _sac.add(SAC_FULL, "full");
+
   _mode.add(EM_SOLUTION, "solution"); 
   _mode.add(EM_TIME, "time");
   _mode.add(EM_STAT, "stat");
@@ -173,7 +177,7 @@ Options::Options(const char* n)
   _mode.add(EM_GIST, "gist");
 #endif
 
-  add(_model); add(_propagation); add(_pk); add(_icl); add(_branching); 
+  add(_model); add(_propagation); add(_pk); add(_icl); add(_branching);  add(_sac);
   add(_search); add(_solutions); add(_c_d); add(_a_d); add(_fail); add(_time);
   add(_mode); add(_iterations); add(_samples);
 }

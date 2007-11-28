@@ -162,6 +162,19 @@ Options::branching(void) const {
   return _branching.value();
 }
 
+inline void
+Options::sac(int v) {
+  _sac.value(v);
+}
+inline void
+Options::sac(int v, const char* o, const char* h) {
+  _sac.add(v,o,h);
+}
+inline int
+Options::sac(void) const {
+  return _sac.value();
+}
+
 
 /*
  * Search options

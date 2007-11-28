@@ -139,6 +139,12 @@ public:
 };
 
 
+enum SAC {
+  SAC_NONE,
+  SAC_ONE,
+  SAC_FULL
+};
+
 /**
  * \brief Options for examples
  *
@@ -156,6 +162,7 @@ protected:
   StringOption _pk;          ///< Propagation kind
   StringOption _icl;         ///< Integer consistency level
   StringOption _branching;   ///< Branching options
+  StringOption _sac;         ///< Run SAC on root node
   //@}
 
   /// \name Search options
@@ -220,6 +227,10 @@ public:
   void branching(int v, const char* o, const char* h = NULL);
   /// Return branching value
   int branching(void) const;
+
+  void sac(int v);
+  void sac(int v, const char* p, const char* h = NULL);
+  int sac(void) const;
   //@}
 
   /// \name Search options
@@ -316,13 +327,23 @@ public:
   /// Default constructor
   Example(void) {}
   /// Constructor used for cloning
-  Example(bool share, Example& e) : Space(share,e) {}
+  Example(bool share, Example& e) : Space(share,e) {
+    _sac_bva.update(this, share, e._sac_bva);
+    _sac_iva.update(this, share, e._sac_iva);
+  }
   /// Print a solution to \a os
   virtual void print(std::ostream& os) { (void)os; }
   /// Run example with search engine \a Engine and options \a opt
   template <class Script, template<class> class Engine, class Options>
   static void run(const Options& opt);
-private:
+ private:
+  BoolVarArray _sac_bva;
+  IntVarArray _sac_iva;
+ protected:
+  void sac_collect_vars();
+  void sac_remove_vars();
+  bool sac(unsigned long int& p);
+ private:
   /// Catch wrong definitions of copy constructor
   explicit Example(Example& e);
 };

@@ -127,6 +127,11 @@ Example::run(const Options& o) {
           n_p = s->propagators();
           n_b = s->branchings();
         }
+        if (o.sac() != SAC_NONE) {
+          s->sac_collect_vars();
+          while (s->sac(p) && o.sac() == SAC_FULL);
+          s->sac_remove_vars();
+        }
         Search::Stop* stop = FailTimeStop::create(o.fail(), o.time());
         Engine<Script> e(s,o.c_d(),o.a_d(),stop);
         delete s;
@@ -168,6 +173,11 @@ Example::run(const Options& o) {
           n_p = s->propagators();
           n_b = s->branchings();
         }
+        if (o.sac() != SAC_NONE) {
+          s->sac_collect_vars();
+          while (s->sac(p) && o.sac() == SAC_FULL);
+          s->sac_remove_vars();
+        }
         Engine<Script> e(s,o.c_d(),o.a_d());
         delete s;
         do {
@@ -201,6 +211,12 @@ Example::run(const Options& o) {
           for (unsigned int k = o.iterations(); k--; ) {
             unsigned int i = o.solutions();
             Script* s = new Script(o);
+            if (o.sac() != SAC_NONE) {
+              unsigned long int p;
+              s->sac_collect_vars();
+              while (s->sac(p) && o.sac() == SAC_FULL);
+              s->sac_remove_vars();
+            }
             Engine<Script> e(s,o.c_d(),o.a_d());
             delete s;
             do {

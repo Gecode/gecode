@@ -61,4 +61,82 @@ dev(double t[], int n) {
   return sqrt(s / (n-1)) / m;
 }
 
+void
+Example::sac_collect_vars() {
+#ifdef GECODE_HAVE_SERIALIZATION
+  // Collect variables in var-map
+  Reflection::VarMap *vmp = new Reflection::VarMap();
+  Reflection::SpecIter si = actorSpecs(*vmp);
+  while (si())
+    ++si;
+  
+  // Add all collected variables
+  Support::Symbol vti_bool("VTI_BOOL");
+  Support::Symbol vti_int("VTI_INT");
+  for (int i = 0; i < vmp->size(); ++i) {
+    Support::Symbol s = vmp->spec(i).vti();
+    if (s == vti_bool) {
+      BoolVar bv(Int::BoolView(static_cast<Int::BoolVarImp*>(vmp->var(i))));
+      _sac_bva.add(this, bv);
+    } 
+    if (s == vti_int) {
+      IntVar iv(Int::IntView(static_cast<Int::IntVarImp*>(vmp->var(i))));
+      _sac_iva.add(this, iv);
+    }
+  }
+  
+  delete vmp;
+#endif
+}
+
+void
+Example::sac_remove_vars() {
+  // ToDo: Empty _sac_iva and _sac_bva since they are no longer needed.
+}
+
+bool
+Example::sac(unsigned long int& p) {
+  if (status(p) == SS_FAILED) return false;
+
+  bool modified = false;
+  for (int i = _sac_bva.size(); i--; ) {
+    for (int val = 0; val <= 1; ++val) {
+      if (_sac_bva[i].assigned()) break;
+      Example* e = static_cast<Example*>(this->clone());
+      rel(e, e->_sac_bva[i], IRT_EQ, val);
+      if (e->status(p) == SS_FAILED) {
+        modified = true;
+        rel(this, this->_sac_bva[i], IRT_NQ, val);
+        if (status(p) == SS_FAILED)
+          return false;
+      }
+      delete e;
+    }
+  }
+
+  for (int i = _sac_iva.size(); i--; ) {
+    if (_sac_iva[i].assigned()) continue;
+    IntArgs nq(_sac_iva[i].size());
+    int nnq = 0;
+    IntVarValues vv(_sac_iva[i]);
+    while (vv()) {
+      Example* e = static_cast<Example*>(this->clone());
+      rel(e, e->_sac_iva[i], IRT_EQ, vv.val());
+      if (e->status() == SS_FAILED) {
+        nq[nnq++] = vv.val();
+      }
+      delete e;
+      ++vv;
+    }
+    if (nnq > 0) modified = true;
+    for (; nnq--; ) {
+      rel(this, _sac_iva[i], IRT_NQ, nq[nnq]);
+    }
+    if (status(p) == SS_FAILED)
+      return false;
+  }
+
+  return modified;
+}
+
 // STATISTICS: example-any
