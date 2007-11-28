@@ -535,13 +535,14 @@ namespace Gecode { namespace Gist {
       case SPECIAL:
         if (currentNode->getNumberOfChildren() < 1)
           break;
-      case BRANCH:
+      case BRANCH: {
           {
             VisualNode* n = currentNode->getChild(0);
             setCurrentNode(n);
             centerCurrentNode();
           }
           break;
+      } 
       default:
         break;
       }
