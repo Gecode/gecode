@@ -39,6 +39,8 @@
 
 #include "gecode/gist/gist.hh"
 #include <QtGui>
+// TODO nikopp: this include is just to get proper syntax highlighting in Eclipse
+#include <qobject.h>
 
 #include <gecode/kernel.hh>
 
