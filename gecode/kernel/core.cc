@@ -260,6 +260,102 @@ namespace Gecode {
     return pn;
   }
 
+  bool
+  Space::stable(void) {
+    process();
+    int pn = pool_next;
+    while (true) {
+      // Head of the queue
+      ActorLink* lnk = &pool[pn];
+      // First propagator or link back to queue
+      ActorLink* fst = lnk->next();
+      if (lnk != fst)
+        return true;
+      if (pn == 0)
+        return false;
+      pn--;
+    }
+    return false;    
+  }
+
+  /*
+   * Step-by-step propagation
+   * 
+   */
+  ExecStatus
+  Space::step(void) {
+
+    Propagator* p;
+    pool_get(p);
+    
+    const PropModEvent PME_NONE = 0;
+    const PropModEvent PME_ASSIGNED  =
+      ((ME_GEN_ASSIGNED <<  0) | (ME_GEN_ASSIGNED <<  4) |
+       (ME_GEN_ASSIGNED <<  8) | (ME_GEN_ASSIGNED << 12) |
+       (ME_GEN_ASSIGNED << 16) | (ME_GEN_ASSIGNED << 20) |
+       (ME_GEN_ASSIGNED << 24) | (ME_GEN_ASSIGNED << 28));
+
+    ExecStatus es = p->propagate(this);
+
+    switch (es) {
+    case ES_FAILED:
+      fail();
+      break;
+    case ES_FIX:
+      {
+        // Prevent that propagator gets rescheduled (turn on all events)
+        p->u.pme = PME_ASSIGNED;
+        process();
+        p->u.pme = PME_NONE;
+        // Put propagator in idle queue
+        p->unlink(); a_actors.head(p);
+      }
+      break;
+    case ES_NOFIX:
+      {
+        // Propagator is currently in no queue, put into idle
+        p->unlink(); a_actors.head(p);
+        p->u.pme = PME_NONE;
+        process();
+      }
+      break;
+    case __ES_SUBSUMED:
+      {
+        // Remember size
+        size_t s = p->u.size;
+        // Prevent that propagator gets rescheduled (turn on all events)
+        p->u.pme = PME_ASSIGNED;
+        process();
+        p->unlink();
+        reuse(p,s);
+      }
+      break;
+    case __ES_FIX_PARTIAL:
+      {
+        // Remember the event set to be kept after processing
+        PropModEvent keep = p->u.pme;
+        // Prevent that propagator gets rescheduled (turn on all events)
+        p->u.pme = PME_ASSIGNED;
+        process();
+        p->u.pme = keep;
+        assert(p->u.pme != 0);
+        pool_put(p);
+      }
+      break;
+    case __ES_NOFIX_PARTIAL:
+      {
+        // Start from the specified propagator events
+        pool_put(p);
+        process();
+      }
+      break;
+    default:
+      GECODE_NEVER;
+    }
+
+    return es;
+  }
+
   void
   Space::commit(const BranchingDesc* d, unsigned int a) {
     if (failed())
@@ -467,12 +563,8 @@ namespace Gecode {
     return i;
   }
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-
   void
   Space::getVars(Reflection::VarMap&) {}
-
-#endif
 
   /*
    * Propagator
