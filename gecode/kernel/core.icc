@@ -1118,6 +1118,7 @@ namespace Gecode {
     Reflection::SpecIter actorSpecs(Reflection::VarMap& m);
 
     /// Enter variables into \a m
+    GECODE_KERNEL_EXPORT
     virtual void getVars(Reflection::VarMap& m); 
     //@}
 
