@@ -218,7 +218,7 @@ namespace Gecode { namespace Gist {
       
       if(desc.branch != NULL)
         ret->commit(desc.branch, alt);
-      
+
       if (ownBest != NULL) {
         curBest->b->constrain(ret, ownBest);
       }
@@ -243,11 +243,12 @@ namespace Gecode { namespace Gist {
         copy = workingSpace->clone();  
       }
     }
-    if (status != SPECIAL)
+    if (status != SPECIAL) {
       // always return a fixpoint
       workingSpace->status();
-    if (copy == NULL && p != NULL && isOpen()) {
-      copy = p->checkLAO(alternative, ownBest);
+      if (copy == NULL && p != NULL && isOpen()) {
+        copy = p->checkLAO(alternative, ownBest);
+      }
     }
   }
     
