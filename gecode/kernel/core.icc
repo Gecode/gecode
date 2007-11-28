@@ -488,7 +488,8 @@ namespace Gecode {
     ES_OK               =  0, ///< Execution is okay
     ES_FIX              =  1, ///< Propagation has computed fixpoint
     __ES_FIX_PARTIAL    =  2, ///< Internal: propagator has computed partial fixpoint, do not use
-    __ES_NOFIX_PARTIAL  =  3  ///< Internal: propagator has computed no partial fixpoint, do not use
+    __ES_NOFIX_PARTIAL  =  3, ///< Internal: propagator has computed no partial fixpoint, do not use
+    ES_STABLE           =  4  ///< Used for step(): space is already stable
   };
 
   /**
@@ -1121,16 +1122,11 @@ namespace Gecode {
     //@}
 
 
-    /** 
-      * \brief Perform one propagation step and returns its ExecStatus
-      *
-      * Must not be called if the space is stable.  Always check using
-      * Space::stable(void) first!
-      */
+    /// Perform one propagation step and return ExecStatus
     GECODE_KERNEL_EXPORT ExecStatus step(void);
 
     /// Return if space is stable (at fixpoint)
-    GECODE_KERNEL_EXPORT bool stable(void);
+    GECODE_KERNEL_EXPORT bool stable(void) const;
 
   public:
     /**

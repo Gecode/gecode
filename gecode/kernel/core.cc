@@ -261,14 +261,14 @@ namespace Gecode {
   }
 
   bool
-  Space::stable(void) {
-    process();
+  Space::stable(void) const {
+    const_cast<Space*>(this)->process();
     int pn = pool_next;
     while (true) {
       // Head of the queue
-      ActorLink* lnk = &pool[pn];
+      const ActorLink* lnk = &pool[pn];
       // First propagator or link back to queue
-      ActorLink* fst = lnk->next();
+      const ActorLink* fst = lnk->next();
       if (lnk != fst)
         return true;
       if (pn == 0)
@@ -284,10 +284,15 @@ namespace Gecode {
    */
   ExecStatus
   Space::step(void) {
+    if (failed())
+      return ES_FAILED;
+
+    process();
 
     Propagator* p;
-    pool_get(p);
-    
+    if (!pool_get(p))
+      return ES_STABLE;
+
     const PropModEvent PME_NONE = 0;
     const PropModEvent PME_ASSIGNED  =
       ((ME_GEN_ASSIGNED <<  0) | (ME_GEN_ASSIGNED <<  4) |
