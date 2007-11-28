@@ -74,6 +74,8 @@ namespace Gecode { namespace Support {
       void append(SO* s0);
       /// Compare with \a other for equality
       bool eq(const SO* other) const;
+      /// Compare with \a other for equality
+      bool eq(const char* other) const;
       /// Return size of the Symbol
       unsigned int size(void) const;
       /// Hash value according to modulo \a M
@@ -101,6 +103,8 @@ namespace Gecode { namespace Support {
     void dispose(void);
     /// Test if this Symbol is equal to \a s0
     bool operator==(const Symbol& s0) const;
+    /// Test if this Symbol is equal to \a s0
+    bool operator==(const char* s0) const;
     /// Return if Symbol is empty
     bool empty(void) const;
     /// Return a copy

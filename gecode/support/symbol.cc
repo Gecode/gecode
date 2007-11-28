@@ -111,6 +111,11 @@ namespace Gecode { namespace Support {
       return false;
     return (!strcmp(s, other->s));
   }
+
+  forceinline bool
+  Symbol::SO::eq(const char* other) const {
+    return (!strcmp(s, other));
+  }
   
   std::ostream&
   Symbol::SO::print(std::ostream& os) const {
@@ -187,6 +192,13 @@ namespace Gecode { namespace Support {
     if (so == NULL)
       return (s0.so == NULL);
     return so->eq(s0.so);
+  }
+
+  bool
+  Symbol::operator==(const char* s0) const {
+    if (so==NULL)
+      return s0[0] == 0;
+    return so->eq(s0);
   }
   
   std::ostream&
