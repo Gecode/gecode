@@ -34,6 +34,8 @@
  *
  */
 
+// TODO nikopp: doxygen comments
+
 #ifndef GECODE_GIST_ADDCHILD_HH
 #define GECODE_GIST_ADDCHILD_HH
 
@@ -49,7 +51,7 @@ namespace Gecode { namespace Gist {
     Q_OBJECT
 
   public:
-    AddChild(Gecode::Reflection::VarMap& vm, QWidget *parent = 0);
+    AddChild(Reflection::VarMap& vm, QWidget *parent = 0);
 
     int value(void);
     QString var(void);
@@ -57,8 +59,12 @@ namespace Gecode { namespace Gist {
 
   private Q_SLOTS:
     void on_varList_itemSelectionChanged(void);
+    void on_relList_itemSelectionChanged(void);
 
   private:
+    void refresh(void);
+    void updateValue(void);
+    
     Ui::AddChildClass ui;
   };
 

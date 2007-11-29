@@ -36,9 +36,11 @@
 
 #include "gecode/gist/addchild.hh"
 
+#include "reflectionhelpers.hh"
+
 namespace Gecode { namespace Gist {
 
-  AddChild::AddChild(Gecode::Reflection::VarMap& vm, QWidget *parent)
+  AddChild::AddChild(Reflection::VarMap& vm, QWidget *parent)
   : QDialog(parent)
   {
     ui.setupUi(this);
@@ -50,10 +52,14 @@ namespace Gecode { namespace Gist {
     ui.relList->insertItem(4, ">=");
     ui.relList->insertItem(5, ">");
 
-    Gecode::Reflection::VarMapIter vmi(vm);
+    Reflection::VarMapIter vmi(vm);
 
     for(int i = 0; vmi(); ++vmi, ++i) {
       ui.varList->insertItem(i, vmi.spec().name().toString().c_str());
+      QList<QVariant> data;
+      IntVar iv = ReflectionHelpers::toIntVar(vm, vmi.spec().name());
+      data << QVariant(iv.min()) << QVariant(iv.max());
+      ui.varList->item(i)->setData(Qt::UserRole, data);
     }
   }
 
@@ -74,10 +80,53 @@ namespace Gecode { namespace Gist {
 
   void
   AddChild::on_varList_itemSelectionChanged(void) {
-    if(ui.varList->selectedItems().isEmpty())
+    refresh();
+  }
+
+  void
+  AddChild::on_relList_itemSelectionChanged(void) {
+    refresh();
+  }
+
+  void
+  AddChild::refresh(void) {
+    if(ui.varList->selectedItems().isEmpty() ||
+        ui.relList->selectedItems().isEmpty())
       ui.okPushButton->setEnabled(false);
-    else
+    else {
       ui.okPushButton->setEnabled(true);
+      updateValue();
+    }
+  }
+  
+  void
+  AddChild::updateValue(void) {
+    QVariant data = ui.varList->selectedItems().first()->data(Qt::UserRole);
+    QList<QVariant> dataList = data.toList();
+
+    int min = dataList.takeFirst().toInt();
+    int max = dataList.takeFirst().toInt();
+    
+    switch (ui.relList->currentRow()) {
+    case 0:
+    case 1:
+      break;
+    case 2:
+    case 5:
+      max--;
+      break;
+    case 3:
+    case 4:
+      min++;
+      break;
+    }
+    
+    if(min <= max) {
+      ui.valueSpinBox->setMinimum(min);
+      ui.valueSpinBox->setMaximum(max);
+    }
+    else
+      ui.okPushButton->setEnabled(false);
   }
 
 }}
