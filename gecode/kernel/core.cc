@@ -276,12 +276,12 @@ namespace Gecode {
       // First propagator or link back to queue
       const ActorLink* fst = lnk->next();
       if (lnk != fst)
-        return true;
-      if (pn == 0)
         return false;
+      if (pn == 0)
+        return true;
       pn--;
     }
-    return false;    
+    return true;
   }
 
   /*
