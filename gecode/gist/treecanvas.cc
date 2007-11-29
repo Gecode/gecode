@@ -346,9 +346,9 @@ namespace Gecode { namespace Gist {
       QWidget* p = parentWidget();
       if (p) {
         double newXScale =
-          static_cast<double>(p->width()) / (bb.right - bb.left);
+          static_cast<double>(p->width()) / (bb.right - bb.left + 20);
         double newYScale =
-          static_cast<double>(p->height()) / (bb.depth * 38);
+          static_cast<double>(p->height()) / (bb.depth * 38 + 40);
 
         scaleTree((int)(std::min(newXScale, newYScale)*100));
       }
