@@ -92,7 +92,6 @@ namespace Gecode { namespace CpltSet {
 #include "gecode/cpltset/bddmanager.icc"
 
 #include "gecode/cpltset/support.icc"
-#include "gecode/set/var.icc"
 #include "gecode/cpltset/var.icc"
 #include "gecode/cpltset/view.icc"
 #include "gecode/cpltset/array.icc"

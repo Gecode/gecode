@@ -41,9 +41,6 @@
  *
  */
 
-#ifndef __GECODE_SET_VAR_ICC__
-#define __GECODE_SET_VAR_ICC__
-
 #include <iostream>
 
 namespace Gecode { namespace Set {
@@ -1149,6 +1146,5 @@ namespace Gecode {
 GECODE_SET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::SetVar& x);
 
-#endif
 // STATISTICS: set-var
 
