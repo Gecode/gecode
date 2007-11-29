@@ -281,6 +281,20 @@ for ($f=0; $f<$n_files; $f++) {
     $me_subscribe[$f] = $me_assigned[$f];
   }
 
+  $o = 2;
+  for ($i=0; $i<$me_n[$f]; $i++) {
+    $n = $men[$f][$i];
+    if ($mespecial{$f}{$n} eq "NONE") {
+      $val2me[$f][0] = $n;
+    } elsif ($mespecial{$f}{$n} eq "ASSIGNED") {
+      $val2me[$f][1] = $n;
+    } elsif (!$mespecial{$f}{$n}) {
+      $val2me[$f][$o] = $n; $o++;
+    }
+  }
+  $me_max[$f]   = "ME_${VTI}_" . $val2me[$f][$o-1] . "+1";
+  $me_max_n[$f] = $o;
+
 }
 
 if ($gen_type) {
@@ -313,49 +327,21 @@ print <<EOF
 EOF
 ;
 
-} else {
-
-for ($f = 0; $f<$n_files; $f++) {
-  $VTI   = $vti[$f];
-  $NAME  = $name[$f];
-  $BASE  = $base[$f];
-  $CLASS = $class[$f];
-  $DIFFC = $diffc[$f];
-  $IFDEF = $ifdef[$f];
-
-  ##
-  ## Generate the output
-  ##
-
-  if ($gen_body) {
-    print <<EOF
-
-#include "gecode/kernel.hh"
-
-EOF
-;
 }
 
-  if (!($ifdef[$f] eq "")) {
-    print "#ifdef " . $ifdef[$f] . "\n";
-  }
-  print $hdr[$f];
+if ($gen_header) {
 
-  $o = 2;
-  for ($i=0; $i<$me_n[$f]; $i++) {
-    $n = $men[$f][$i];
-    if ($mespecial{$f}{$n} eq "NONE") {
-      $val2me[$f][0] = $n;
-    } elsif ($mespecial{$f}{$n} eq "ASSIGNED") {
-      $val2me[$f][1] = $n;
-    } elsif (!$mespecial{$f}{$n}) {
-      $val2me[$f][$o] = $n; $o++;
+  for ($f = 0; $f<$n_files; $f++) {
+    $VTI   = $vti[$f];
+    $NAME  = $name[$f];
+    $BASE  = $base[$f];
+    $CLASS = $class[$f];
+    $DIFFC = $diffc[$f];
+
+    if (!($ifdef[$f] eq "")) {
+      print "#ifdef " . $ifdef[$f] . "\n";
     }
-  }
-  $me_max[$f]   = "ME_${VTI}_" . $val2me[$f][$o-1] . "+1";
-  $me_max_n[$f] = $o;
-
-  if ($gen_header) {
+    print $hdr[$f];
 
     print $mehdr[$f];
 
@@ -615,11 +601,38 @@ EOF
 EOF
 ;
 }
+print $ftr[$f];
 
-} elsif ($gen_body) {
+if (!($ifdef[$f] eq "")) {
+  print "#endif\n";
+}
 
-  if ($me_max_n[$f] > 4) {
+}
+}
+
+if ($gen_body) {
   print <<EOF
+
+#include "gecode/kernel.hh"
+
+EOF
+;
+
+  for ($f = 0; $f<$n_files; $f++) {
+    $VTI   = $vti[$f];
+    $NAME  = $name[$f];
+    $BASE  = $base[$f];
+    $CLASS = $class[$f];
+    $DIFFC = $diffc[$f];
+    $IFDEF = $ifdef[$f];
+
+    if ($me_max_n[$f] > 4) {
+
+      if (!($ifdef[$f] eq "")) {
+	print "#ifdef " . $ifdef[$f] . "\n";
+      }
+      print $hdr[$f];
+      print <<EOF
 
   /*
    * Modification event difference for ${NAME}-variable implementations
@@ -629,36 +642,55 @@ EOF
 EOF
 ;
 
-  for ($i=0; $i<$me_max_n[$f];$i++) {
-    $n1 = $val2me[$f][$i];
-    print "    {\n";
-    for ($j=0; $j<$me_max_n[$f];$j++) {
-      $n2 = $val2me[$f][$j];
-      if ($n1 eq "NONE") {
-        $n3 = $n2;
-      } elsif ($n2 eq "NONE") {
-        $n3 = $n1;
-      } else {
-        $n3 = $mec{$f}{$n1}{$n2};
+      for ($i=0; $i<$me_max_n[$f];$i++) {
+	$n1 = $val2me[$f][$i];
+	print "    {\n";
+	for ($j=0; $j<$me_max_n[$f];$j++) {
+	  $n2 = $val2me[$f][$j];
+	  if ($n1 eq "NONE") {
+	    $n3 = $n2;
+	  } elsif ($n2 eq "NONE") {
+	    $n3 = $n1;
+	  } else {
+	    $n3 = $mec{$f}{$n1}{$n2};
+	  }
+	  print "      ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
+	  if ($j+1 == $me_max_n[$f]) {
+	    print " ";
+	  } else {
+	    print ",";
+	  }
+	  print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
+	}
+	print "    }";
+	if ($i+1 == $me_max_n[$f]) {
+	  print "\n";
+	} else {
+	  print ",\n";
+	}
       }
-      print "      ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
-      if ($j+1 == $me_max_n[$f]) {
-        print " ";
-      } else {
-        print ",";
-      }
-      print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
-    }
-    if ($i+1 == $me_max_n[$f]) {
-      print "    }\n";
-    } else {
-      print "    },\n";
+      print "  };\n";
+    print $ftr[$f];
+
+  if (!($ifdef[$f] eq "")) {
+    print "#endif\n";
+  }
     }
   }
-  print "  };\n";
-}
 
-if ($me_max_n[$f] == 2) {
+  for ($f = 0; $f<$n_files; $f++) {
+    $VTI   = $vti[$f];
+    $NAME  = $name[$f];
+    $BASE  = $base[$f];
+    $CLASS = $class[$f];
+    $DIFFC = $diffc[$f];
+
+    if (!($ifdef[$f] eq "")) {
+      print "#ifdef " . $ifdef[$f] . "\n";
+    }
+    print $hdr[$f];
+
+    if ($me_max_n[$f] == 2) {
 
   print <<EOF
 
@@ -764,8 +796,6 @@ EOF
 EOF
 ;
 
-}
-
 print $ftr[$f];
 
 if (!($ifdef[$f] eq "")) {
@@ -773,6 +803,7 @@ if (!($ifdef[$f] eq "")) {
 }
 
 }
+
 }
 
 print "// STATISTICS: kernel-var\n";

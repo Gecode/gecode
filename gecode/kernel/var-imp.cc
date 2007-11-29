@@ -40,80 +40,6 @@
 
 #include "gecode/kernel.hh"
 
-#ifdef GECODE_HAVE_INT_VARS
-
-namespace Gecode { namespace Int {
-
-
-
-  /*
-   * The variable processor for IntVarImpBase
-   *
-   */
-
-  void
-  IntVarImpBase::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>*>(_x);
-    do {
-      switch (x->modevent()) {
-      case ME_INT_VAL:
-        x->process(home);
-        break;
-      case ME_INT_BND:
-        // Conditions: BND DOM 
-        x->process(home,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
-        break;
-      case ME_INT_DOM:
-        // Conditions: DOM 
-        x->process(home,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
-        break;
-      default: GECODE_NEVER;
-      }
-      x = x->next();
-    } while (x != NULL);
-  }
-
-
-  IntVarImpBase::Processor IntVarImpBase::p;
-
-
-}}
-#endif
-
-#include "gecode/kernel.hh"
-
-#ifdef GECODE_HAVE_INT_VARS
-
-namespace Gecode { namespace Int {
-
-
-
-  /*
-   * The variable processor for BoolVarImpBase
-   *
-   */
-
-  void
-  BoolVarImpBase::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>*>(_x);
-    do {
-      x->process(home); x = x->next();
-    } while (x != NULL);
-  }
-
-
-  BoolVarImpBase::Processor BoolVarImpBase::p;
-
-
-}}
-#endif
-
-#include "gecode/kernel.hh"
-
 #ifdef GECODE_HAVE_SET_VARS
 
 namespace Gecode { namespace Set {
@@ -225,6 +151,81 @@ namespace Gecode { namespace Set {
     }
   };
 
+}}
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+
+namespace Gecode { namespace Int {
+
+
+
+  /*
+   * The variable processor for IntVarImpBase
+   *
+   */
+
+  void
+  IntVarImpBase::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>*>(_x);
+    do {
+      switch (x->modevent()) {
+      case ME_INT_VAL:
+        x->process(home);
+        break;
+      case ME_INT_BND:
+        // Conditions: BND DOM 
+        x->process(home,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
+        break;
+      case ME_INT_DOM:
+        // Conditions: DOM 
+        x->process(home,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
+        break;
+      default: GECODE_NEVER;
+      }
+      x = x->next();
+    } while (x != NULL);
+  }
+
+
+  IntVarImpBase::Processor IntVarImpBase::p;
+
+
+}}
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+
+namespace Gecode { namespace Int {
+
+
+
+  /*
+   * The variable processor for BoolVarImpBase
+   *
+   */
+
+  void
+  BoolVarImpBase::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>*>(_x);
+    do {
+      x->process(home); x = x->next();
+    } while (x != NULL);
+  }
+
+
+  BoolVarImpBase::Processor BoolVarImpBase::p;
+
+
+}}
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+
+namespace Gecode { namespace Set {
+
+
 
   /*
    * The variable processor for SetVarImpBase
@@ -282,9 +283,6 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
-
-#include "gecode/kernel.hh"
-
 #ifdef GECODE_HAVE_CPLTSET_VARS
 
 namespace Gecode { namespace CpltSet {
