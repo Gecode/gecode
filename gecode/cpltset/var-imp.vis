@@ -51,6 +51,7 @@ namespace Gecode { namespace CpltSet {
 Name:		CpltSet
 VTI:		CPLTSET
 Ifdef:		GECODE_HAVE_CPLTSET_VARS
+Namespace:	Gecode::CpltSet
 Dispose:        true
 
 #

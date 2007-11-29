@@ -51,6 +51,7 @@ namespace Gecode { namespace Set {
 Name:		Set
 VTI:		SET
 Ifdef:		GECODE_HAVE_SET_VARS
+Namespace:	Gecode::Set
 
 #
 # Definition of modification events
