@@ -1048,8 +1048,10 @@ namespace Gecode {
     VarInfo vars[VTI_LAST];
     /// To keep variables during copying without index structure
     VarBase* vars_noidx;
-    /// Process all modified variables by delegating to registered processors
-    void process(void);
+    /// Process all modified variables
+    GECODE_KERNEL_EXPORT void process(void);
+    /// Update all cloned variables
+    GECODE_KERNEL_EXPORT void update(ActorLink** sub);
     //@}
 
     /**

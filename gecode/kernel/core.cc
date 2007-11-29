@@ -154,7 +154,7 @@ namespace Gecode {
    *
    */
 
-  forceinline void
+  void
   Space::process(void) {
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = vars[vti].entry;
@@ -483,6 +483,16 @@ namespace Gecode {
     }
   };
 
+  void
+  Space::update(ActorLink** s) {
+    for (int vti=VTI_LAST; vti--; ) {
+      VarBase* vs = vars[vti].entry;
+      if (vs != NULL) {
+        vars[vti].entry = NULL; vtp[vti]->update(vs,s);
+      }
+    }
+  }
+
   Space*
   Space::clone(bool share, unsigned long int& pn) {
     pn += propagate();
@@ -514,12 +524,7 @@ namespace Gecode {
     {
       ActorLink** s = static_cast<ActorLink**>(c->mm.subscriptions());
       c->n_sub = n_sub;
-      for (int vti=VTI_LAST; vti--; ) {
-        VarBase* vs = c->vars[vti].entry;
-        if (vs != NULL) {
-          c->vars[vti].entry = NULL; vtp[vti]->update(vs,s);
-        }
-      }
+      c->update(s);
     }
     // Re-establish prev links (reset forwarding information)
     ActorLink* p_a = &a_actors;
