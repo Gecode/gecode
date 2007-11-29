@@ -46,7 +46,7 @@ for ext in ${KEYWORDEXTS}; do
 done
 
 # List of normal directories to set ignore properties on
-NORMALDIRS="cpltset int iter kernel minimodel search set serialization support"
+NORMALDIRS="cpltset int iter kernel minimodel search set serialization support gist"
 
 for dir in ${NORMALDIRS}; do
     find . -type d -wholename "./gecode/$dir*" \

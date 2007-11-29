@@ -12,3 +12,4 @@
 *.suo
 *.sln
 *.exe
+moc_*.cc
