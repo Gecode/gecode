@@ -1,0 +1,65 @@
+/*
+ *  CAUTION:
+ *    This file has been automatically generated. Do not edit,
+ *    edit the specification file "variable.vsl" instead.
+ *
+ *  This file contains generated code fragments which are
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+
+  /**
+   * \brief %Variable type identifiers
+   *
+   * Each variable type must have a unique variable type identifier. The
+   * kernel supports at most eight different variable type identifiers.
+   *
+   * \ingroup TaskVar
+   */
+  enum VarTypeId {
+#ifdef GECODE_HAVE_INT_VARS
+    VTI_INT, ///< Identifier for Int variable implementations
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+    VTI_BOOL, ///< Identifier for Bool variable implementations
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    VTI_SET, ///< Identifier for Set variable implementations
+#endif
+#ifdef GECODE_HAVE_CPLTSET_VARS
+    VTI_CPLTSET, ///< Identifier for CpltSet variable implementations
+#endif
+    VTI_LAST,     ///< Maximal variable type identifier plus one
+    VTI_NOIDX = 0 ///< Used for variables without indexing structure
+  };
+

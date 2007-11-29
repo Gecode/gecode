@@ -185,6 +185,7 @@ SUPPORTBUILDDIRS = support support/buddy
 VARIMPSRC = \
 	gecode/kernel/var-imp.cc
 VARIMPHDR = \
+	gecode/kernel/var-type.icc \
 	gecode/kernel/var-imp.icc
 ALLVARIMP = $(VARIMPSRC) $(VARIMPHDR)
 
@@ -836,6 +837,8 @@ ALLVIS = \
 	$(ALLVIS0:%=$(top_srcdir)/%.vis) \
 	$(top_srcdir)/misc/genvariables.perl
 
+$(top_srcdir)/gecode/kernel/var-type.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
+	perl $(top_srcdir)/misc/genvariables.perl -type $< > $@
 $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
 $(top_srcdir)/gecode/kernel/var-imp.cc: $(top_srcdir)/variables.vsl $(ALLVIS)

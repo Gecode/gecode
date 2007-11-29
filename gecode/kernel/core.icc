@@ -160,24 +160,11 @@ namespace Gecode {
   //@}
 
 
-  /**
-   * \brief %Variable type identifiers
-   *
-   * Each variable type must have a unique variable type identifier. The
-   * kernel supports at most eight different variable type identifiers.
-   *
-   * If you want to add your own variable type, you have to make sure that
-   * file is created in the subdirectory vti. The names of the file defines
-   * the name of the variable type identifier (for example, if the name of
-   * the file is INT, it defines the identifier VTI_INT).
-   * \ingroup TaskVar
-   */
-  enum VarTypeId {
-#include "gecode/vti.icc"
-    VTI_LAST,     ///< Maximal variable type identifier plus one
-    VTI_NOIDX = 0 ///< Used for variables without indexing structure
-  };
+}
 
+#include "gecode/kernel/var-type.icc"
+
+namespace Gecode {
 
   /*
    * These are the classes of interest

@@ -41,6 +41,8 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
     $gen_header = 1;
   } elsif ($arg eq "-body") {
     $gen_body   = 1;
+  } elsif ($arg eq "-type") {
+    $gen_type   = 1;
   }
 }
 
@@ -279,6 +281,38 @@ for ($f=0; $f<$n_files; $f++) {
     $me_subscribe[$f] = $me_assigned[$f];
   }
 
+}
+
+if ($gen_type) {
+
+print <<EOF
+
+  /**
+   * \\brief %Variable type identifiers
+   *
+   * Each variable type must have a unique variable type identifier. The
+   * kernel supports at most eight different variable type identifiers.
+   *
+   * \\ingroup TaskVar
+   */
+  enum VarTypeId {
+EOF
+;
+
+  for ($f = 0; $f<$n_files; $f++) {
+    print "#ifdef $ifdef[$f]\n";
+    print "    VTI_$vti[$f], ///< Identifier for $name[$f] variable implementations\n";
+    print "#endif\n";
+  }
+
+print <<EOF
+    VTI_LAST,     ///< Maximal variable type identifier plus one
+    VTI_NOIDX = 0 ///< Used for variables without indexing structure
+  };
+
+EOF
+;
+  exit 0;
 }
 
 for ($f = 0; $f<$n_files; $f++) {
