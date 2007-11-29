@@ -98,7 +98,6 @@ namespace Gecode { namespace Gist {
     if (! n->isRoot()) {
       if(n->isOnPath()) {
         QPen pen;
-        pen.setWidth(2);
         pen.setColor(Qt::red);
         painter.setPen(pen);
       }
