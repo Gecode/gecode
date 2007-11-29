@@ -53,7 +53,7 @@ namespace Gecode { namespace Gist {
     SPECIAL       ///< Node representing user controlled exploration
   };
 
-  // TODO nikopp: put this somewhere else (e.g. to the same file as BranchingDesc)
+  // TODO nikopp: put this somewhere else? (e.g. to the same file as BranchingDesc)
   class SpecialDesc {
   public:
     const std::string vn;
@@ -128,7 +128,17 @@ namespace Gecode { namespace Gist {
 
     /// Return working space.  Receiver must delete the space.
     Space* getSpace(void);
-    
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+    /** Return initial working space (before any propagation is performed).
+     * Receiver must delete the space.
+     * Note that this does not not work for the root node.
+     */
+    Space* getInputSpace(void);
+
+#endif
+
     /** \brief Compute and return the number of children
       *
       * On a node whose status is already determined, this function

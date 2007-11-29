@@ -58,6 +58,13 @@ namespace Gecode { namespace Gist {
       ui.varList->insertItem(i, vmi.spec().name().toString().c_str());
       QList<QVariant> data;
       IntVar iv = ReflectionHelpers::toIntVar(vm, vmi.spec().name());
+      
+      // TODO nikopp: use spec instead of vars
+      // vmi.spec().dom().toIntArray(); // array of ranges e.g. [2, 4, 7, 8] = {2,3,4,7,8}
+      
+      // TODO nikopp: debug
+      std::cout << iv.min() << ":" << iv.max() << std::endl;
+      
       data << QVariant(iv.min()) << QVariant(iv.max());
       ui.varList->item(i)->setData(Qt::UserRole, data);
     }
@@ -121,12 +128,18 @@ namespace Gecode { namespace Gist {
       break;
     }
     
+    // TODO nikopp: debug
+    std::cout << min << ":" << max << std::endl;
+
     if(min <= max) {
       ui.valueSpinBox->setMinimum(min);
       ui.valueSpinBox->setMaximum(max);
+      ui.valueSpinBox->setEnabled(true);
     }
-    else
+    else {
+      ui.valueSpinBox->setEnabled(false);
       ui.okPushButton->setEnabled(false);
+    }
   }
 
 }}

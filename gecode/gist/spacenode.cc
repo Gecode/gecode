@@ -329,6 +329,18 @@ namespace Gecode { namespace Gist {
     return ret;
   }
     
+  Space*
+  SpaceNode::getInputSpace(void) {
+    SpaceNode* p = static_cast<SpaceNode*>(getParent());
+    
+    Space* ret = p->getSpace();
+    
+    // TODO nikopp: do different things for special nodes
+    ret->commit(p->desc.branch, alternative);
+    
+    return ret;
+  }
+    
   int
   SpaceNode::getNumberOfChildNodes(void) {
     int kids = getNumberOfChildren();

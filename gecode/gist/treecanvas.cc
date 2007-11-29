@@ -143,6 +143,10 @@ namespace Gecode { namespace Gist {
       QAction* addFixpoint = new QAction("add fixpoint node", this);
       addFixpoint->setShortcut(QKeySequence("Shift+F"));
       connect(addFixpoint, SIGNAL(triggered()), this, SLOT(addFixpoint()));
+      
+      QAction* investigateCurrentNode = new QAction("investigate", this);
+      investigateCurrentNode->setShortcut(QKeySequence("Shift+N"));
+      connect(investigateCurrentNode, SIGNAL(triggered()), this, SLOT(investigateCurrentNode()));
 
 #endif
 
@@ -169,6 +173,7 @@ namespace Gecode { namespace Gist {
 
       addAction(addChild);
       addAction(addFixpoint);
+      addAction(investigateCurrentNode);
 
 #endif
 
@@ -209,6 +214,7 @@ namespace Gecode { namespace Gist {
 
       contextMenu->addAction(addChild);
       contextMenu->addAction(addFixpoint);
+      contextMenu->addAction(investigateCurrentNode);
 
 #endif
 
@@ -341,7 +347,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::zoomToFit(void) {
     QMutexLocker locker(&mutex);
     BoundingBox bb;
-    bb = root->getBoundingBox();      
+    bb = root->getBoundingBox();
     if (root != NULL) {
       QWidget* p = parentWidget();
       if (p) {
@@ -375,81 +381,6 @@ namespace Gecode { namespace Gist {
     sa->ensureVisible(x, y);
     
   }
-
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-  void
-  TreeCanvasImpl::addChild(void) {
-    QMutexLocker locker(&mutex);
-    //	  special child nodes may only be added to other special nodes
-    switch (currentNode->getStatus()) {
-    case FAILED:
-    case SOLVED:
-    case UNDETERMINED:
-      break;
-    case BRANCH:
-    case SPECIAL:
-        {
-          Reflection::VarMap vm;
-          Space* space = currentNode->getSpace();
-          space->getVars(vm);
-          delete space;
-
-          AddChild dialog(vm, this);
-
-          if(dialog.exec()) {
-
-            std::string var = dialog.var().toStdString();
-            int value = dialog.value();
-            IntRelType rel = static_cast<IntRelType> (dialog.rel());
-
-            VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
-
-            newChild->setStatus(SPECIAL);
-            newChild->setSpecialDesc(new SpecialDesc(var, rel, value));
-            newChild->setNumberOfChildren(0);
-            newChild->setNoOfOpenChildren(0);
-
-            currentNode->addChild(newChild);
-
-            newChild->setDirty(false);
-            newChild->dirtyUp();
-            setCurrentNode(newChild);
-            update();
-            return;
-          }
-        }
-    }
-  }
-
-  void
-  TreeCanvasImpl::addFixpoint(void) {
-    QMutexLocker locker(&mutex);
-    //	  new fixpoints may only be added to special nodes
-    switch (currentNode->getStatus()) {
-    case FAILED:
-    case SOLVED:
-    case UNDETERMINED:
-    case BRANCH:
-      break;
-    case SPECIAL:
-        {
-          VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
-
-          newChild->setStatus(UNDETERMINED);
-
-          currentNode->addChild(newChild);
-          currentNode->openUp();
-
-          newChild->setDirty(false);
-          newChild->dirtyUp();
-          update();
-          return;
-        }
-    }
-  }
-
-#endif
 
   void
   TreeCanvasImpl::inspectCurrentNode(void) {
@@ -594,22 +525,6 @@ namespace Gecode { namespace Gist {
     emit newPointInTime(nodeMap.size() - 1);
   }
   
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-  void
-  TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm,
-                              int& nextPointInTime) {
-    QMutexLocker locker(&mutex);
-    if(root != NULL) {
-      Space* space = root->getSpace();
-      space->getVars(vm);
-      delete space;
-      nextPointInTime = nodeMap.size();
-    }
-  }
-
-#endif
-
   void
   TreeCanvasImpl::paintEvent(QPaintEvent* event) {
     QMutexLocker locker(&mutex);
@@ -673,6 +588,155 @@ namespace Gecode { namespace Gist {
     event->ignore();
   }
   
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  void
+  TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm,
+                              int& nextPointInTime) {
+    QMutexLocker locker(&mutex);
+    if(root != NULL) {
+      Space* space = root->getSpace();
+      space->getVars(vm);
+      delete space;
+      nextPointInTime = nodeMap.size();
+    }
+  }
+
+  void
+  TreeCanvasImpl::addChild(void) {
+    QMutexLocker locker(&mutex);
+    //	  special child nodes may only be added to other special nodes
+    switch (currentNode->getStatus()) {
+    case FAILED:
+    case SOLVED:
+    case UNDETERMINED:
+      break;
+    case BRANCH:
+    case SPECIAL:
+        {
+          Reflection::VarMap vm;
+          Space* space = currentNode->getSpace();
+          space->getVars(vm);
+
+          AddChild dialog(vm, this);
+
+          if(dialog.exec()) {
+
+            std::string var = dialog.var().toStdString();
+            int value = dialog.value();
+            IntRelType rel = static_cast<IntRelType> (dialog.rel());
+
+            VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
+
+            newChild->setStatus(SPECIAL);
+            newChild->setSpecialDesc(new SpecialDesc(var, rel, value));
+            newChild->setNumberOfChildren(0);
+            newChild->setNoOfOpenChildren(0);
+
+            currentNode->addChild(newChild);
+
+            newChild->setDirty(false);
+            newChild->dirtyUp();
+            setCurrentNode(newChild);
+            update();
+          }
+          
+          delete space;
+        }
+    }
+  }
+
+  void
+  TreeCanvasImpl::addFixpoint(void) {
+    QMutexLocker locker(&mutex);
+    //	  new fixpoints may only be added to special nodes
+    switch (currentNode->getStatus()) {
+    case FAILED:
+    case SOLVED:
+    case UNDETERMINED:
+    case BRANCH:
+      break;
+    case SPECIAL:
+        {
+          VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
+
+          newChild->setStatus(UNDETERMINED);
+
+          currentNode->addChild(newChild);
+          currentNode->openUp();
+
+          newChild->setDirty(false);
+          newChild->dirtyUp();
+          update();
+          return;
+        }
+    }
+  }
+
+  void
+  TreeCanvasImpl::investigateCurrentNode(void) {
+    QMutexLocker locker(&mutex);
+
+    switch (currentNode->getStatus()) {
+    case UNDETERMINED:
+      // TODO nikopp: take the parent workingSpace,
+      //              compute fixpoint (if parent is not a special node),
+      //              commit branching desc (if parent is not a special node),
+      //              do not compute fixpoint
+      break;
+    case FAILED:
+      // TODO nikopp: take the parent workingSpace,
+      //              compute fixpoint,
+      //              commit branching desc,
+      //              do not compute fixpoint
+      break;
+    case SPECIAL:
+      break;
+    case BRANCH:
+      break;
+    case SOLVED:
+    default:
+      if(currentNode != root) {
+        Space* inputSpace = currentNode->getInputSpace();
+        
+        VisualNode* curNode = static_cast<VisualNode*>(currentNode->getParent());
+        
+        while(inputSpace->step() != ES_STABLE) {
+          // TODO nikopp: debug
+          std::cout <<  "step" << std::endl;
+          VisualNode* newChild = static_cast<VisualNode*>(curNode->createChild(curNode->getNumberOfChildren()));
+
+          newChild->setStatus(SPECIAL);
+          newChild->setNumberOfChildren(0);
+          newChild->setNoOfOpenChildren(0);
+
+          curNode->addChild(curNode);
+          
+          newChild->setDirty(false);
+          newChild->dirtyUp();
+          curNode = newChild;
+          update();
+        }
+        // TODO nikopp: debug
+        std::cout <<  "while done" << std::endl;
+      }
+      break;
+    }
+    // TODO nikopp: debug
+    std::cout <<  "switch done" << std::endl;
+    currentNode->dirtyUp();
+    // TODO nikopp: debug
+    std::cout <<  "dirtyUp done" << std::endl;
+    centerCurrentNode();
+    // TODO nikopp: debug
+    std::cout <<  "center done" << std::endl;
+    update();
+    // TODO nikopp: debug
+    std::cout <<  "update done" << std::endl;
+  }
+
+#endif
+
   TreeCanvas::TreeCanvas(Space* root, Better* b,
                          QWidget* parent) : QWidget(parent) {
     QGridLayout* layout = new QGridLayout(this);    
@@ -750,3 +814,4 @@ namespace Gecode { namespace Gist {
 }}
 
 // STATISTICS: gist-any
+
