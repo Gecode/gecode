@@ -67,15 +67,7 @@ namespace Gecode { namespace CpltSet {
     } while (x != NULL);
   }
 
-  void
-  CpltSetVarImpBase::Processor::dispose(Space* home, VarBase* x) {
-    CpltSetVarImp* _x = static_cast<CpltSetVarImp*>(x);
-    while (_x != NULL) {
-      _x->dispose(home);
-      _x = static_cast<CpltSetVarImp*>(_x->nextDispose());
-    }
-  }
-  
+
   CpltSetVarImpBase::Processor CpltSetVarImpBase::p;
 
 

@@ -450,7 +450,11 @@ namespace Gecode { namespace CpltSet {
     cache_unmark();
     assert(markref == 0);
   } // end increment op
-  
+
+  // Create disposer
+  GECODE_CPLTSET_EXPORT
+  VarTypeDisposer<VTI_CPLTSET,CpltSetVarImp> vtd;
+
 }}
 
 // STATISTICS: cpltset-var

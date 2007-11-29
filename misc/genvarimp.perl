@@ -356,16 +356,6 @@ EOF
     public:
       /// Process modified variables linked from \\a x
       $export virtual void process(Space* home, VarBase* x);
-EOF
-;
-if ($forcedispose) {
-  print <<EOF
-      /// Dispose registered variables
-      $export virtual void dispose(Space* home, VarBase* x);
-EOF
-;
-}
-  print <<EOF
     };
     /// The processor used
     $export static Processor p;
@@ -420,7 +410,7 @@ EOF
 if ($forcedispose) {
   print <<EOF
     /// Return link to next variable, used for dispose
-    ${class}* nextDispose(void);
+    ${class}* nextDispose(void) const;
     /// Set link to next variable, used for dispose
     void nextDispose(${class}* next);
 EOF
@@ -509,7 +499,7 @@ if ($forcedispose) {
   }
 
   forceinline ${class}*
-  ${class}::nextDispose(void) {
+  ${class}::nextDispose(void) const {
     return static_cast<${class}*>(_nextDispose);
   }
 
@@ -704,22 +694,9 @@ EOF
 
 }
 
-  if ($forcedispose) {
-    print <<EOF
-  void
-  ${class}::Processor::dispose(Space* home, VarBase* x) {
-    ${name}VarImp* _x = static_cast<${name}VarImp*>(x);
-    while (_x != NULL) {
-      _x->dispose(home);
-      _x = static_cast<${name}VarImp*>(_x->nextDispose());
-    }
-  }
-EOF
-;	
-  }
 
-  print <<EOF
-  
+print <<EOF
+
   ${class}::Processor ${class}::p;
 
 EOF

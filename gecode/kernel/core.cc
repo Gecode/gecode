@@ -47,8 +47,14 @@ namespace Gecode {
    */
 
   GECODE_KERNEL_EXPORT VarTypeProcessorBase* Space::vtp[VTI_LAST];
+  GECODE_KERNEL_EXPORT VarTypeDisposerBase* Space::vtd[VTI_LAST];
 
   VarTypeProcessorBase::~VarTypeProcessorBase(void) {}
+
+  void VarTypeDisposerBase::dispose(Space*,VarBase*) {}
+  VarTypeDisposerBase::~VarTypeDisposerBase(void) {}
+
+
 
   Space::Space(void) {
     // Initialize array for forced deletion to be empty
@@ -139,7 +145,7 @@ namespace Gecode {
     // Delete variables that were registered for deletion
     for (int vti=VTI_LAST; vti--;)
       if (vars[vti].dispose != NULL)
-        vtp[vti]->dispose(this, vars[vti].dispose);
+        vtd[vti]->dispose(this, vars[vti].dispose);
   }
 
 

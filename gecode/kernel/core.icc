@@ -224,14 +224,6 @@ namespace Gecode {
      * to be stored.
      */
     virtual void update(VarBase* x, ActorLink**& sub) = 0;
-    /**
-      * \brief Dispose variables
-      *
-      * If needed for the variable type, dispose a list of
-      * variables, with \a x being the first variable on the
-      * list.
-      */
-    virtual void dispose(Space* home, VarBase* x) = 0;
     /// Destructor (not really used)
     GECODE_KERNEL_EXPORT virtual ~VarTypeProcessorBase(void);
   };
@@ -255,11 +247,43 @@ namespace Gecode {
      * to be stored.
      */
     virtual void update(VarBase* x, ActorLink**& sub);
+  };
+
+  /**
+   * \brief Base class for %Variable type disposer
+   *
+   * Controls disposal of variables.
+   * \ingroup TaskVar
+   */
+  class GECODE_VTABLE_EXPORT VarTypeDisposerBase {
+  public:
     /**
       * \brief Dispose variables
       *
       * If needed for the variable type, dispose a list of
-      * variables, with \a x being the first variable on the list.
+      * variables, with \a x being the first variable in the list.
+      */
+    GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarBase* x);
+    /// Destructor (not really used)
+    GECODE_KERNEL_EXPORT virtual ~VarTypeDisposerBase(void);
+  };
+
+  /**
+   * \brief %Variable type disposer
+   *
+   * Controls disposal of variables.
+   * \ingroup TaskVar
+   */
+  template <VarTypeId VTI, class VarType>
+  class VarTypeDisposer : public VarTypeDisposerBase {
+  public:
+    /// Constructor (registers disposer with kernel)
+    VarTypeDisposer(void);
+    /**
+      * \brief Dispose variables
+      *
+      * If needed for the variable type, dispose a list of
+      * variables, with \a x being the first variable in the list.
       */
     virtual void dispose(Space* home, VarBase* x);
   };
@@ -1001,6 +1025,7 @@ namespace Gecode {
     friend class Reflection::SpecIter;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
+    template <VarTypeId VTI, class VarType> friend class VarTypeDisposer;
     friend class SharedHandle;
   private:
     MemoryManager   mm; ///< Performs memory management for space
@@ -1021,6 +1046,9 @@ namespace Gecode {
     /// Registered variable type processors
     GECODE_KERNEL_EXPORT
     static VarTypeProcessorBase* vtp[VTI_LAST];
+    /// Registered variable type disposers
+    GECODE_KERNEL_EXPORT
+    static VarTypeDisposerBase* vtd[VTI_LAST];
     /// Information for handling variables
     class VarInfo {
     public:
@@ -2326,9 +2354,21 @@ namespace Gecode {
     } while (x != NULL);
   }
 
-  template <VarTypeId VTI, PropCond PC, class MED>
+  template <VarTypeId VTI, class VarType>
+  VarTypeDisposer<VTI,VarType>::VarTypeDisposer(void) {
+    Space::vtd[VTI] = this;
+  }
+
+  template <VarTypeId VTI, class VarType>
   void
-  VarTypeProcessor<VTI,PC,MED>::dispose(Space*, VarBase*) {}
+  VarTypeDisposer<VTI,VarType>::dispose(Space* home, VarBase* vb) {
+    VarType* x = static_cast<VarType*>(vb);
+    do {
+      x->dispose(home);
+      x = static_cast<VarType*>(x->nextDispose());
+    } while (x != NULL);
+  }
+
 
   /*
    * Processing a single modified variable
