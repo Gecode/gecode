@@ -1,16 +1,16 @@
 /*
  *  CAUTION:
  *    This file has been automatically generated.
- *    Do not edit, edit the file "gecode/set/var-imp.vis" instead.
+ *    Do not edit, edit the specification file instead.
  *
- *  This file contains generated code fragments which are 
+ *  This file contains generated code fragments which are
  *  copyrighted as follows:
  *
  *  Main author:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     Christian Schulte, 2007
  *
  *  The generated code fragments are part of Gecode, the generic
  *  constraint development environment:
@@ -37,6 +37,77 @@
  *
  */
 
+
+#include "gecode/kernel.hh"
+
+
+namespace Gecode { namespace Int {
+
+
+
+  /*
+   * The variable processor for IntVarImpBase
+   *
+   */
+
+  void
+  IntVarImpBase::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>*>(_x);
+    do {
+      switch (x->modevent()) {
+      case ME_INT_VAL:
+        x->process(home);
+        break;
+      case ME_INT_BND:
+        // Conditions: BND DOM 
+        x->process(home,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
+        break;
+      case ME_INT_DOM:
+        // Conditions: DOM 
+        x->process(home,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
+        break;
+      default: GECODE_NEVER;
+      }
+      x = x->next();
+    } while (x != NULL);
+  }
+
+
+  IntVarImpBase::Processor IntVarImpBase::p;
+
+
+}}
+
+// STATISTICS: int-var
+
+namespace Gecode { namespace Int {
+
+
+
+  /*
+   * The variable processor for BoolVarImpBase
+   *
+   */
+
+  void
+  BoolVarImpBase::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>*>(_x);
+    do {
+      x->process(home); x = x->next();
+    } while (x != NULL);
+  }
+
+
+  BoolVarImpBase::Processor BoolVarImpBase::p;
+
+
+}}
+
+// STATISTICS: int-var
 
 namespace Gecode { namespace Set {
 
@@ -205,3 +276,40 @@ namespace Gecode { namespace Set {
 }}
 
 // STATISTICS: set-var
+
+namespace Gecode { namespace CpltSet {
+
+
+
+  /*
+   * The variable processor for CpltSetVarImpBase
+   *
+   */
+
+  void
+  CpltSetVarImpBase::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>*>(_x);
+    do {
+      switch (x->modevent()) {
+      case ME_CPLTSET_VAL:
+        x->process(home);
+        break;
+      case ME_CPLTSET_DOM:
+        // Conditions: DOM 
+        x->process(home,PC_CPLTSET_DOM,PC_CPLTSET_DOM,ME_CPLTSET_DOM);
+        break;
+      default: GECODE_NEVER;
+      }
+      x = x->next();
+    } while (x != NULL);
+  }
+
+
+  CpltSetVarImpBase::Processor CpltSetVarImpBase::p;
+
+
+}}
+
+// STATISTICS: cpltset-var

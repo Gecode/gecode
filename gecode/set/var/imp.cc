@@ -39,7 +39,6 @@
 
 #include "gecode/set.hh"
 
-#include "gecode/set/var/imp-body.icc"
 
 namespace Gecode { namespace Set {
 

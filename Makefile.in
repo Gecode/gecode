@@ -182,15 +182,22 @@ SUPPORTBUILDDIRS = support support/buddy
 # KERNEL COMPONENTS
 #
 
+VARIMPSRC = \
+	gecode/kernel/var-imp.cc
+VARIMPHDR = \
+	gecode/kernel/var-imp.icc
+ALLVARIMP = $(VARIMPSRC) $(VARIMPHDR)
+
 KERNELSRC0 = \
-	core reflection varmap memory-manager
+	core reflection varmap memory-manager var-imp
 
 KERNELHDR0 = \
 	array shared-array branching core exception \
 	macros memory-manager modevent \
-	propagator advisor view var varmap reflection
+	propagator advisor view var varmap reflection \
+	var-imp
 
-KERNELSRC	= $(KERNELSRC0:%=gecode/kernel/%.cc)
+KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
 	gecode/limits.hh gecode/kernel.hh \
 	$(KERNELHDR0:%=gecode/kernel/%.icc)
@@ -260,9 +267,6 @@ INTSRC0 = \
 	sorted.cc gcc.cc \
 	channel.cc channel/link-single.cc channel/link-multi.cc \
 	circuit.cc unshare.cc
-INTVARIMP = \
-        gecode/int/var/imp-int-hdr.icc gecode/int/var/imp-int-body.icc \
-        gecode/int/var/imp-bool-hdr.icc gecode/int/var/imp-bool-body.icc
 INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
@@ -344,8 +348,6 @@ SETSRC0 =								 \
 	projectors/propagator/re-nary.cc				 \
 	projectors/compiler.cc						 \
 	projectors/formula.cc
-SETVARIMP = \
-        gecode/set/var/imp-hdr.icc gecode/set/var/imp-body.icc
 SETHDR0 =								     \
 	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
 	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
@@ -411,9 +413,6 @@ CPLTSETSRC0 =	\
 	constraints/dom.cc constraints/rel.cc constraints/cardinality.cc  \
 	constraints/atmost.cc constraints/partition.cc \
 	constraints/select.cc constraints/distinct.cc constraints/rangeroots.cc
-
-CPLTSETVARIMP = \
-	gecode/cpltset/var/imp-hdr.icc gecode/cpltset/var/imp-body.icc
 
 CPLTSETHDR0 =		                \
 	view.icc bddmanager.icc exception.icc array.icc \
@@ -651,15 +650,14 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cc=%$(SBJSUFFIX))
 #
 
 ALLSRC = \
-	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) $(INTSRC) \
-	$(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) \
+	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
+        $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
 	$(EXSUPPORTSRC) $(GISTSRC)
-ALLVARIMP = $(INTVARIMP) $(SETVARIMP) $(CPLTSETVARIMP)
 ALLHDR = \
-	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) $(INTHDR) $(SETHDR) \
-	$(CPLTSETHDR) $(MMHDR) $(SERHDR) \
-	$(ITERHDR) $(ALLVARIMP) $(GISTHDR)
+	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
+        $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SERHDR) \
+	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
 ALLSBJ0 = $(ALLSRC:%.cc=%$(SBJSUFFIX))
@@ -827,35 +825,11 @@ compilesubdirs:
 # Generated variable implementations
 #
 
-#$(top_srcdir)/gecode/kernel/variables.icc: $(top_srcdir)/variables.vsl
-#	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
-#$(top_srcdir)/gecode/kernel/variables.cc: $(top_srcdir)/variables.vsl
-#	perl $(top_srcdir)/misc/genvariables.perl -body $< > $@
+$(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl
+	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
+$(top_srcdir)/gecode/kernel/var-imp.cc: $(top_srcdir)/variables.vsl
+	perl $(top_srcdir)/misc/genvariables.perl -body $< > $@
 
-$(top_srcdir)/gecode/int/var/imp-int-hdr.icc: \
-	$(top_srcdir)/gecode/int/var-imp-int.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $< > $@
-$(top_srcdir)/gecode/int/var/imp-int-body.icc: \
-	$(top_srcdir)/gecode/int/var-imp-int.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $< > $@
-$(top_srcdir)/gecode/int/var/imp-bool-hdr.icc: \
-	$(top_srcdir)/gecode/int/var-imp-bool.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $< > $@
-$(top_srcdir)/gecode/int/var/imp-bool-body.icc: \
-	$(top_srcdir)/gecode/int/var-imp-bool.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $< > $@
-$(top_srcdir)/gecode/set/var/imp-hdr.icc: \
-	$(top_srcdir)/gecode/set/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $< > $@
-$(top_srcdir)/gecode/set/var/imp-body.icc: \
-	$(top_srcdir)/gecode/set/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $< > $@
-$(top_srcdir)/gecode/cpltset/var/imp-hdr.icc: \
-	$(top_srcdir)/gecode/cpltset/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $< > $@
-$(top_srcdir)/gecode/cpltset/var/imp-body.icc: \
-	$(top_srcdir)/gecode/cpltset/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $< > $@
 
 #
 # Object targets

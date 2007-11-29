@@ -36,7 +36,6 @@
  */
 
 #include "gecode/int.hh"
-#include "gecode/int/var/imp-bool-body.icc"
 
 namespace Gecode { namespace Int {
 

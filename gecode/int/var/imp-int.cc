@@ -39,8 +39,6 @@
 
 #include "gecode/limits.hh"
 
-#include "gecode/int/var/imp-int-body.icc"
-
 namespace Gecode { namespace Int {
 
   forceinline bool

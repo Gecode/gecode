@@ -620,8 +620,6 @@ namespace Gecode { namespace CpltSet {
     public:
       /// Process modified variables linked from \a x
       GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
-      /// Dispose registered variables
-      GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarBase* x);
     };
     /// The processor used
     GECODE_KERNEL_EXPORT static Processor p;
@@ -655,7 +653,7 @@ namespace Gecode { namespace CpltSet {
     bool notify(Space* home, ModEvent me, Delta* d);
     //@}
     /// Return link to next variable, used for dispose
-    CpltSetVarImpBase* nextDispose(void);
+    CpltSetVarImpBase* nextDispose(void) const;
     /// Set link to next variable, used for dispose
     void nextDispose(CpltSetVarImpBase* next);
 
@@ -700,7 +698,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   forceinline CpltSetVarImpBase*
-  CpltSetVarImpBase::nextDispose(void) {
+  CpltSetVarImpBase::nextDispose(void) const {
     return static_cast<CpltSetVarImpBase*>(_nextDispose);
   }
 

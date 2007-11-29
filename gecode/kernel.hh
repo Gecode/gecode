@@ -172,6 +172,13 @@
 #include "gecode/kernel/advisor.icc"
 #include "gecode/kernel/branching.icc"
 
+/*
+ * Automatically generated variable implementations
+ *
+ */
+
+#include "gecode/kernel/var-imp.icc"
+
 #endif
 
 // STATISTICS: kernel-other

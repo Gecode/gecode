@@ -36,7 +36,6 @@
  */
 
 #include "gecode/cpltset.hh"
-#include "gecode/cpltset/var/imp-body.icc"
 
 namespace Gecode { namespace CpltSet {
 

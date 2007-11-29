@@ -46,8 +46,6 @@
 
 #include <iostream>
 
-#include "gecode/set/var/imp-hdr.icc"
-
 namespace Gecode { namespace Set {
 
   /**
