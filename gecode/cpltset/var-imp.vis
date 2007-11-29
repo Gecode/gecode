@@ -50,7 +50,6 @@ namespace Gecode { namespace CpltSet {
 [General]
 Name:		CpltSet
 VTI:		CPLTSET
-Export:		GECODE_CPLTSET_EXPORT
 Forceinline:	forceinline
 Dispose:        true
 Ifdef:		GECODE_HAVE_CPLTSET_VARS
@@ -116,6 +115,4 @@ ModEvents:	VAL,DOM
 [Footer]
 
 }}
-
-// STATISTICS: cpltset-var
 [End]

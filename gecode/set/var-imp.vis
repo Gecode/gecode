@@ -50,7 +50,6 @@ namespace Gecode { namespace Set {
 [General]
 Name:		Set
 VTI:		SET
-Export:		GECODE_SET_EXPORT
 Forceinline:	forceinline
 Ifdef:		GECODE_HAVE_SET_VARS
 
@@ -216,6 +215,4 @@ ModEvents:	VAL,CARD,LUB,GLB,BB,CLUB,CGLB,CBB
 [Footer]
 
 }}
-
-// STATISTICS: set-var
 [End]

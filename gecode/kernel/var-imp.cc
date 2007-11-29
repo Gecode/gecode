@@ -81,8 +81,6 @@ namespace Gecode { namespace Int {
 
 
 }}
-
-// STATISTICS: int-var
 #endif
 
 #ifdef GECODE_HAVE_INT_VARS
@@ -112,8 +110,6 @@ namespace Gecode { namespace Int {
 
 
 }}
-
-// STATISTICS: int-var
 #endif
 
 #ifdef GECODE_HAVE_SET_VARS
@@ -284,8 +280,6 @@ namespace Gecode { namespace Set {
 
 
 }}
-
-// STATISTICS: set-var
 #endif
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
@@ -325,7 +319,5 @@ namespace Gecode { namespace CpltSet {
 
 
 }}
-
-// STATISTICS: cpltset-var
 #endif
 

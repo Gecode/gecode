@@ -58,7 +58,6 @@ namespace Gecode { namespace Int {
 [General]
 Name:		Int
 VTI:		INT
-Export:		GECODE_INT_EXPORT
 Forceinline:	forceinline
 Ifdef:		GECODE_HAVE_INT_VARS
 
@@ -206,8 +205,6 @@ ModEvents:	VAL, BND, DOM
 [Footer]
 
 }}
-
-// STATISTICS: int-var
 ##
 ## At the end of the file there must be an [End] section.
 ##
