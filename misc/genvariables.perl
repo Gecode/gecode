@@ -121,6 +121,7 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
   $name   = "";
   $VTI    = "";
   $forceinline = "inline";
+  $ifdef  = "";
   $dispose = 0;
 
   ##
@@ -164,6 +165,8 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
 	  $VTI = $1;
 	} elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
 	  $forceinline = $1;
+	} elsif ($l =~ /^Ifdef:\s*(\w+)/io) {
+	  $ifdef = $1;
 	} elsif ($l =~ /^Dispose:\s*true/io) {
 	  $dispose = 1;
 	}
@@ -295,6 +298,9 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
     $me_subscribe = $me_assigned;
   }
 
+  if (!($ifdef eq "")) {
+    print "#ifdef $ifdef\n\n";
+  }
   print "$hdr";
 
   $o = 2;
@@ -726,5 +732,9 @@ EOF
 }
 
 print "$ftr";
+
+if (!($ifdef eq "")) {
+  print "#endif\n\n";
+}
 
 }
