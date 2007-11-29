@@ -40,7 +40,7 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   if ($arg eq "-header") {
     $gen_header = 1;
   } elsif ($arg eq "-body") {
-    $gen_header = 0;
+    $gen_body   = 1;
   }
 }
 
@@ -101,42 +101,40 @@ print <<EOF
 EOF
 ;
 
-for ($i_file=0; $i_file<$n_files; $i_file++) {
-  $file = $files[$i_file];
-
-  open FILE, $file;
+for ($f=0; $f<$n_files; $f++) {
+  open FILE, $files[$f];
 
   ## General values
-  $name   = "";
-  $VTI    = "";
-  $ifdef  = "";
-  $dispose = 0;
+  $name[$f]    = "";
+  $vti[$f]     = "";
+  $ifdef[$f]   = "";
+  $dispose[$f] = 0;
 
   ##
   ## Headers and footers
   ##
-  $hdr    = ""; # Header text
-  $ftr    = ""; # Footer text
+  $hdr[$f]    = ""; # Header text
+  $ftr[$f]    = ""; # Footer text
 
-  $mehdr  = ""; # Header text for modification events
-  $meftr  = ""; # Footer text for modification events
+  $mehdr[$f]  = ""; # Header text for modification events
+  $meftr[$f]  = ""; # Footer text for modification events
 
-  $pchdr  = ""; # Header text for propagation conditions
-  $pcftr  = ""; # Footer text for propagation conditions
+  $pchdr[$f]  = ""; # Header text for propagation conditions
+  $pcftr[$f]  = ""; # Footer text for propagation conditions
 
   ##
   ## Real stuff
   ##
 
-  # $mec : combination table
-  # $men : name table
-  # $meh : header table
-  $me_n = 0; # running number of modification events
-  $me_subscribe = "";
+  # $mec[$f] : combination table
+  # $men[$f] : name table
+  # $meh[$f] : header table
+  $me_n[$f] = 0; # running number of modification events
+  $me_subscribe[$f] = "";
 
-  # $pcn : name table
-  # $pch : header table
-  $pc_n = 0; # running number of propagation conditions
+  # $pcn[$f] : name table
+  # $pch[$f] : header table
+  $pc_n[$f] = 0; # running number of propagation conditions
 
 
   while ($l = <FILE>) {
@@ -148,20 +146,20 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
 	if ($l =~ /^Name:\s*(\w+)/io) {
-	  $name = $1;
+	  $NAME = $1; $name[$f] = $NAME;
 	} elsif ($l =~ /^VTI:\s*(\w+)/io) {
-	  $VTI = $1;
+	  $VTI = $1; $vti[$f] = $VTI;
 	} elsif ($l =~ /^Ifdef:\s*(\w+)/io) {
-	  $ifdef = $1;
+	  $IFDEF = $1; $ifdef[$f] = $IFDEF;
 	} elsif ($l =~ /^Dispose:\s*true/io) {
-	  $dispose = 1;
+	  $DISPOSE = 1; $dispose[$f] = 1;
 	}
       }
       goto LINE;
     } elsif ($l =~ /^\[ModEventHeader\]/io) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
-	$mehdr = $mehdr . $l;
+	$mehdr[$f] = $mehdr[$f] . $l;
       }
       goto LINE;
     } elsif ($l =~ /^\[ModEvent\]/io) {
@@ -178,11 +176,11 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
 	    die "Unknown special modification event: $rhs\n";
 	  }
 	  if ($rhs eq "SUBSCRIBE") {
-	    $me_subscribe = "ME_${VTI}_$lhs";
+	    $me_subscribe[$f] = "ME_${VTI}_$lhs";
 	  } else {
-	    $mespecial{$lhs} = $rhs;
+	    $mespecial{$f}{$lhs} = $rhs;
 	    if ($rhs eq "ASSIGNED") {
-	      $me_assigned = "ME_${VTI}_$lhs";
+	      $me_assigned[$f] = "ME_${VTI}_$lhs";
 	    }
 	  }
 	  $n = $lhs;
@@ -193,27 +191,27 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
 	  # Found combination information
 	  $combines = $1;
 	  while ($combines =~ /(\w+)\s*=(\w+)/g) {
-	    $mec{$n}{$1} = $2;
-	    $mec{$1}{$n} = $2;
+	    $mec{$f}{$n}{$1} = $2;
+	    $mec{$f}{$1}{$n} = $2;
 	  }
 	} else {
 	  $h = $h . $l;
 	}
       }
-      $men[$me_n] = $n;
-      $meh[$me_n] = $h;
-      $me_n++;
+      $men[$f][$me_n[$f]] = $n;
+      $meh[$f][$me_n[$f]] = $h;
+      $me_n[$f]++;
       goto LINE;
     } elsif ($l =~ /^\[ModEventFooter\]/io) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
-	$meftr = $meftr . $l;
+	$meftr[$f] = $meftr[$f] . $l;
       }
       goto LINE;
     } elsif ($l =~ /^\[PropCondHeader\]/io) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
-	$pchdr = $pchdr . $l;
+	$pchdr[$f] = $pchdr[$f] . $l;
       }
       goto LINE;
     } elsif ($l =~ /^\[PropCond\]/io) {
@@ -228,7 +226,7 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
 	  if (!($rhs eq "ASSIGNED")) {
 	    die "Unknown special propagation condition: $rhs\n";
 	  }
-	  $pcspecial{$lhs} = $rhs;
+	  $pcspecial{$f}{$lhs} = $rhs;
 	  $n = $lhs;
 	} elsif ($l =~ /^Name:\s*(\w+)/io) {
 	  # Found a normal modification event
@@ -237,32 +235,32 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
 	  # Found relation to modification events
 	  $events = $1;
 	  while ($events =~ /(\w+)/g) {
-	    $mepc{$1}{$n} = 1;
+	    $mepc{$f}{$1}{$n} = 1;
 	  }
 	} else {
 	  $h = $h . $l;
 	}
       }
-      $pcn[$pc_n] = $n;
-      $pch[$pc_n] = $h;
-      $pc_n++;
+      $pcn[$f][$pc_n[$f]] = $n;
+      $pch[$f][$pc_n[$f]] = $h;
+      $pc_n[$f]++;
       goto LINE;
     } elsif ($l =~ /^\[PropCondFooter\]/io) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
-	$pcftr = $pcftr . $l;
+	$pcftr[$f] = $pcftr[$f] . $l;
       }
       goto LINE;
     } elsif ($l =~ /^\[Header\]/io) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
-	$hdr = $hdr . "$l";
+	$hdr[$f] = $hdr[$f] . "$l";
       }
       goto LINE;
     } elsif ($l =~ /^\[Footer\]/io) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
-	$ftr = $ftr . "$l";
+	$ftr[$f] = $ftr[$f] . "$l";
       }
       goto LINE;
     }
@@ -270,11 +268,32 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
   }
   close FILE;
 
+  $maxpc[$f] = "PC_${VTI}_" . $pcn[$f][$pc_n[$f]-1];
+  $class[$f] = "${NAME}VarImpBase";
+  $diffc[$f] = "${NAME}MeDiff";
+  $base[$f]  = ("Gecode::Variable<VTI_${VTI}," .
+		$maxpc[$f] . "," . $diffc[$f] . ">");
+
+  ## Check whether there is only one real event
+  if ($me_n[$f] == 3) {
+    $me_subscribe[$f] = $me_assigned[$f];
+  }
+
+}
+
+for ($f = 0; $f<$n_files; $f++) {
+  $VTI   = $vti[$f];
+  $NAME  = $name[$f];
+  $BASE  = $base[$f];
+  $CLASS = $class[$f];
+  $DIFFC = $diffc[$f];
+  $IFDEF = $ifdef[$f];
+
   ##
   ## Generate the output
   ##
 
-  if (!$gen_header) {
+  if ($gen_body) {
     print <<EOF
 
 #include "gecode/kernel.hh"
@@ -283,47 +302,36 @@ EOF
 ;
 }
 
-  $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
-  $class = "${name}VarImpBase";
-  $diffc = "${name}MeDiff";
-  $base  = "Gecode::Variable<VTI_$VTI,$maxpc,$diffc>";
-  $file  =~ s|^../||g;
-
-  ## Check whether there is only one real event
-  if ($me_n == 3) {
-    $me_subscribe = $me_assigned;
+  if (!($ifdef[$f] eq "")) {
+    print "#ifdef " . $ifdef[$f] . "\n";
   }
-
-  if (!($ifdef eq "")) {
-    print "#ifdef $ifdef\n";
-  }
-  print "$hdr";
+  print $hdr[$f];
 
   $o = 2;
-  for ($i=0; $i<$me_n; $i++) {
-    $n = $men[$i];
-    if ($mespecial{$n} eq "NONE") {
-      $val2me[0] = $n;
-    } elsif ($mespecial{$n} eq "ASSIGNED") {
-      $val2me[1] = $n;
-    } elsif (!$mespecial{$n}) {
-      $val2me[$o] = $n; $o++;
+  for ($i=0; $i<$me_n[$f]; $i++) {
+    $n = $men[$f][$i];
+    if ($mespecial{$f}{$n} eq "NONE") {
+      $val2me[$f][0] = $n;
+    } elsif ($mespecial{$f}{$n} eq "ASSIGNED") {
+      $val2me[$f][1] = $n;
+    } elsif (!$mespecial{$f}{$n}) {
+      $val2me[$f][$o] = $n; $o++;
     }
   }
-  $me_max   = "ME_${VTI}_" . $val2me[$o-1] . "+1";
-  $me_max_n = $o;
+  $me_max[$f]   = "ME_${VTI}_" . $val2me[$f][$o-1] . "+1";
+  $me_max_n[$f] = $o;
 
   if ($gen_header) {
 
-    print "$mehdr";
+    print $mehdr[$f];
 
     $o = 1;
-    for ($i=0; $i<$me_n; $i++) {
-      $n = $men[$i];
-      print $meh[$i];
-      print "  const Gecode::ModEvent ME_${VTI}_${n} = ";
-      if ($mespecial{$n}) {
-	print "Gecode::ME_GEN_" . $mespecial{$n};
+    for ($i=0; $i<$me_n[$f]; $i++) {
+      $n = $men[$f][$i];
+      print $meh[$f][$i];
+      print "  const Gecode::ModEvent ME_" . ${VTI} . "_${n} = ";
+      if ($mespecial{$f}{$n}) {
+	print "Gecode::ME_GEN_" . $mespecial{$f}{$n};
       } else {
 	print "Gecode::ME_GEN_ASSIGNED + " . $o;
 	$o++;
@@ -331,18 +339,18 @@ EOF
       print ";\n\n";
     }
 
-    print "$meftr";
-    print "$pchdr";
+    print $meftr[$f];
+    print $pchdr[$f];
 
     print "  const Gecode::PropCond PC_${VTI}_NONE = Gecode::PC_GEN_NONE;\n";
     $o = 1;
-    for ($i=0; $i<$pc_n; $i++) {
-      $n = $pcn[$i];
-      print $pch[$i];
+    for ($i=0; $i<$pc_n[$f]; $i++) {
+      $n = $pcn[$f][$i];
+      print $pch[$f][$i];
       print "  const Gecode::PropCond PC_${VTI}_${n} = ";
-      if ($pcspecial{$n}) {
-	$pc_assigned = "PC_${VTI}_${n}";
-	print "Gecode::PC_GEN_" . $pcspecial{$n};
+      if ($pcspecial{$f}{$n}) {
+	$pc_assigned[$f] = "PC_${VTI}_${n}";
+	print "Gecode::PC_GEN_" . $pcspecial{$f}{$n};
       } else {
 	print "Gecode::PC_GEN_ASSIGNED + " . $o;
 	$o++;
@@ -350,19 +358,16 @@ EOF
       print ";\n\n";
     }
 
-    print "$pcftr";
+    print $pcftr[$f];
 
-    print <<EOF
+    print "\n";
+    print "  /// Modification event difference for ${NAME}-variable implementations\n";
+    print "  class ${DIFFC} {\n";
 
-  /// Modification event difference for $name-variable implementations
-  class $diffc {
-EOF
-;
-
-  if ($me_max_n > 4) {
+  if ($me_max_n[$f] > 4) {
     print <<EOF
   private:
-    GECODE_KERNEL_EXPORT static const Gecode::ModEvent med[$me_max][$me_max];
+    GECODE_KERNEL_EXPORT static const Gecode::ModEvent med[$me_max[$f]][$me_max[$f]];
 EOF
 ;
   }
@@ -372,11 +377,11 @@ EOF
     ModEvent operator()(ModEvent me1, ModEvent me2) const;
   };
 
-  /// Base-class for $name-variable implementations
-  class $class : public $base {
+  /// Base-class for ${NAME}-variable implementations
+  class ${CLASS} : public ${BASE} {
   protected:
     /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc,$diffc> {
+    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc[$f],${DIFFC}> {
     public:
       /// Process modified variables linked from \\a x
       GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
@@ -385,7 +390,7 @@ EOF
     GECODE_KERNEL_EXPORT static Processor p;
 EOF
 ;
-  if ($dispose) {
+  if ($dispose[$f]) {
     print <<EOF
     /// Link to next variable, used for disposal
     VarBase* _nextDispose;
@@ -395,12 +400,12 @@ EOF
 
   print <<EOF
     /// Constructor for cloning \\a x
-    $class(Space* home, bool share, $class\& x);
+    ${CLASS}(Space* home, bool share, ${CLASS}\& x);
   public:
     /// Constructor for creating static instance of variable
-    $class(void);
+    ${CLASS}(void);
     /// Constructor for creating variable
-    $class(Space* home);
+    ${CLASS}(Space* home);
     /// \\name Dependencies
     //\@{
     /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
@@ -423,7 +428,7 @@ EOF
     //\@}
 EOF
 ;
-  if ($me_max_n == 2) {
+  if ($me_max_n[$f] == 2) {
 print <<EOF
     /// Return the current modification event
     ModEvent modevent(void) const;
@@ -431,12 +436,12 @@ EOF
 ;
   }
 
-  if ($dispose) {
+  if ($dispose[$f]) {
   print <<EOF
     /// Return link to next variable, used for dispose
-    ${class}* nextDispose(void) const;
+    ${CLASS}* nextDispose(void) const;
     /// Set link to next variable, used for dispose
-    void nextDispose(${class}* next);
+    void nextDispose(${CLASS}* next);
 EOF
 ;
   }
@@ -447,37 +452,37 @@ EOF
 
 
   forceinline ModEvent
-  ${diffc}::operator()(ModEvent me1, ModEvent me2) const {
+  ${DIFFC}::operator()(ModEvent me1, ModEvent me2) const {
 EOF
 ;
 
-if ($me_max_n == 2) {
+if ($me_max_n[$f] == 2) {
   print "    return me2^me1;\n";
-} elsif ($me_max_n <= 4) {
+} elsif ($me_max_n[$f] <= 4) {
   print "    const int med = (\n";
 
-  for ($i=0; $i<$me_max_n;$i++) {
-    $n1 = $val2me[$i];
+  for ($i=0; $i<$me_max_n[$f];$i++) {
+    $n1 = $val2me[$f][$i];
     print "      (\n";
-    for ($j=0; $j<$me_max_n;$j++) {
-      $n2 = $val2me[$j];
+    for ($j=0; $j<$me_max_n[$f];$j++) {
+      $n2 = $val2me[$f][$j];
       if ($n1 eq "NONE") {
         $n3 = $n2;
       } elsif ($n2 eq "NONE") {
         $n3 = $n1;
       } else {
-        $n3 = $mec{$n1}{$n2};
+        $n3 = $mec{$f}{$n1}{$n2};
       }
       print "        ((ME_${VTI}_$n2 ^ ME_${VTI}_$n3) << ";
       print (($i << 3) + ($j << 1));
-      if ($j+1 == $me_max_n) {
+      if ($j+1 == $me_max_n[$f]) {
         print ")   ";
       } else {
         print ") | ";
       }
       print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
     }
-    if ($i+1 == $me_max_n) {
+    if ($i+1 == $me_max_n[$f]) {
       print "      )\n";
     } else {
       print "      ) |\n";
@@ -492,11 +497,11 @@ if ($me_max_n == 2) {
 }
 print "  }\n";
 
-if ($me_max_n == 2) {
+if ($me_max_n[$f] == 2) {
 print <<EOF
 
   forceinline ModEvent
-  ${class}::modevent(void) const {
+  ${CLASS}::modevent(void) const {
     return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
   }
 
@@ -504,27 +509,27 @@ EOF
 ;
 }
 
-if ($dispose) {
+if ($dispose[$f]) {
   print <<EOF
 
   forceinline
-  ${class}::${class}(void) {}
+  ${CLASS}::${CLASS}(void) {}
 
   forceinline
-  ${class}::${class}(Space* home)
-    : $base(home), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
+  ${CLASS}::${CLASS}(Space* home)
+    : ${BASE}(home), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
     home->varsDisposeList<VTI_${VTI}>(this);
   }
 
   forceinline
-  ${class}::${class}(Space* home, bool share, $class\& x)
-    : $base(home,share,x), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
+  ${CLASS}::${CLASS}(Space* home, bool share, ${CLASS}\& x)
+    : ${BASE}(home,share,x), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
     home->varsDisposeList<VTI_${VTI}>(this);
   }
 
-  forceinline ${class}*
-  ${class}::nextDispose(void) const {
-    return static_cast<${class}*>(_nextDispose);
+  forceinline ${CLASS}*
+  ${CLASS}::nextDispose(void) const {
+    return static_cast<${CLASS}*>(_nextDispose);
   }
 
 EOF
@@ -533,84 +538,84 @@ EOF
   print <<EOF
 
   forceinline
-  ${class}::${class}(void) {}
+  ${CLASS}::${CLASS}(void) {}
 
   forceinline
-  ${class}::${class}(Space* home)
-    : $base(home) {}
+  ${CLASS}::${CLASS}(Space* home)
+    : ${BASE}(home) {}
 
   forceinline
-  ${class}::${class}(Space* home, bool share, $class\& x)
-    : $base(home,share,x) {}
+  ${CLASS}::${CLASS}(Space* home, bool share, ${CLASS}\& x)
+    : ${BASE}(home,share,x) {}
 EOF
 ;
 }
   print <<EOF
 
   forceinline void
-  ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
-    ${base}::subscribe(home,p,pc,assigned,$me_subscribe,process);
+  ${CLASS}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    ${BASE}::subscribe(home,p,pc,assigned,$me_subscribe[$f],process);
   }
   forceinline void
-  ${class}::subscribe(Space* home, Advisor* a, bool assigned) {
-    ${base}::subscribe(home,a,assigned);
+  ${CLASS}::subscribe(Space* home, Advisor* a, bool assigned) {
+    ${BASE}::subscribe(home,a,assigned);
   }
 
 EOF
 ;
 
-if ($me_max_n == 2) {
+if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline bool
-  ${class}::notify(Space* home, ModEvent, Delta* d) {
-    return ${base}::notify(home,d);
+  ${CLASS}::notify(Space* home, ModEvent, Delta* d) {
+    return ${BASE}::notify(home,d);
   }
 EOF
 ;
 } else {
   print <<EOF
   forceinline bool
-  ${class}::notify(Space* home, ModEvent me, Delta* d) {
-    return ${base}::notify(home,me,d);
+  ${CLASS}::notify(Space* home, ModEvent me, Delta* d) {
+    return ${BASE}::notify(home,me,d);
   }
 EOF
 ;
 }
 
-} else {
+} elsif ($gen_body) {
 
-  if ($me_max_n > 4) {
+  if ($me_max_n[$f] > 4) {
   print <<EOF
 
   /*
-   * Modification event difference for $name-variable implementations
+   * Modification event difference for ${NAME}-variable implementations
    *
    */
-  const Gecode::ModEvent ${diffc}::med[$me_max][$me_max] = {
+  const Gecode::ModEvent ${DIFFC}::med[$me_max[$f]][$me_max[$f]] = {
 EOF
 ;
 
-  for ($i=0; $i<$me_max_n;$i++) {
-    $n1 = $val2me[$i];
+  for ($i=0; $i<$me_max_n[$f];$i++) {
+    $n1 = $val2me[$f][$i];
     print "    {\n";
-    for ($j=0; $j<$me_max_n;$j++) {
-      $n2 = $val2me[$j];
+    for ($j=0; $j<$me_max_n[$f];$j++) {
+      $n2 = $val2me[$f][$j];
       if ($n1 eq "NONE") {
         $n3 = $n2;
       } elsif ($n2 eq "NONE") {
         $n3 = $n1;
       } else {
-        $n3 = $mec{$n1}{$n2};
+        $n3 = $mec{$f}{$n1}{$n2};
       }
       print "      ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
-      if ($j+1 == $me_max_n) {
+      if ($j+1 == $me_max_n[$f]) {
         print " ";
       } else {
         print ",";
       }
       print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
     }
-    if ($i+1 == $me_max_n) {
+    if ($i+1 == $me_max_n[$f]) {
       print "    }\n";
     } else {
       print "    },\n";
@@ -619,21 +624,21 @@ EOF
   print "  };\n";
 }
 
-if ($me_max_n == 2) {
+if ($me_max_n[$f] == 2) {
 
   print <<EOF
 
 
   /*
-   * The variable processor for $class
+   * The variable processor for ${CLASS}
    *
    */
 
   void
-  ${class}::Processor::process(Space* home, VarBase* _x) {
+  ${CLASS}::Processor::process(Space* home, VarBase* _x) {
     // Process modified variables
-    ${base}* x = 
-      static_cast<${base}*>(_x);
+    ${BASE}* x = 
+      static_cast<${BASE}*>(_x);
     do {
       x->process(home); x = x->next();
     } while (x != NULL);
@@ -648,57 +653,57 @@ EOF
 
 
   /*
-   * The variable processor for $class
+   * The variable processor for ${CLASS}
    *
    */
 
   void
-  ${class}::Processor::process(Space* home, VarBase* _x) {
+  ${CLASS}::Processor::process(Space* home, VarBase* _x) {
     // Process modified variables
-    ${base}* x = 
-      static_cast<${base}*>(_x);
+    ${BASE}* x = 
+      static_cast<${BASE}*>(_x);
     do {
       switch (x->modevent()) {
 EOF
 ;
 
-  for ($i=0; $i<$pc_n; $i++) {
-     if ($pcspecial{$pcn[$i]} eq "ASSIGNED") {
-       $val2pc[0] = $pcn[$i];
+  for ($i=0; $i<$pc_n[$f]; $i++) {
+     if ($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED") {
+       $val2pc[$f][0] = $pcn[$f][$i];
      }
   }
   $o = 1;
-  for ($i=0; $i<$pc_n; $i++) {
-     if (!($pcspecial{$pcn[$i]} eq "ASSIGNED")) {
-       $val2pc[$o] = $pcn[$i]; $o++;
+  for ($i=0; $i<$pc_n[$f]; $i++) {
+     if (!($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED")) {
+       $val2pc[$f][$o] = $pcn[$f][$i]; $o++;
      }
   }
 
-  for ($i=0; $i<$me_n; $i++) {
-    $n = $men[$i];
-    if ($mespecial{$n} eq "ASSIGNED") {
+  for ($i=0; $i<$me_n[$f]; $i++) {
+    $n = $men[$f][$i];
+    if ($mespecial{$f}{$n} eq "ASSIGNED") {
       print "      case ME_${VTI}_$n:\n";
       print "        x->process(home);\n";
       print "        break;\n";
-    } elsif (!($mespecial{$n} eq "NONE") && !($mespecial{$n} eq "FAILED")) {
+    } elsif (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
       print "      case ME_${VTI}_$n:\n";
       print "        // Conditions: ";
-      for ($j=0; $j<$pc_n; $j++) {
-        if ($mepc{$men[$i]}{$pcn[$j]}) {
-          print $pcn[$j] . " ";
+      for ($j=0; $j<$pc_n[$f]; $j++) {
+        if ($mepc{$f}{$men[$f][$i]}{$pcn[$f][$j]}) {
+          print $pcn[$f][$j] . " ";
         }
       }
       print "\n";
-      for ($j=0; $j<$pc_n; $j++) {
-	if ($mepc{$men[$i]}{$val2pc[$j]}) {
+      for ($j=0; $j<$pc_n[$f]; $j++) {
+	if ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j]}) {
 	  # Found initial entry (plus one for stopping)
-	  print "        x->process(home,PC_${VTI}_" . $val2pc[$j] . ",";
+	  print "        x->process(home,PC_${VTI}_" . $val2pc[$f][$j] . ",";
 	  # Look for all connected entries
-	  while ($mepc{$men[$i]}{$val2pc[$j+1]}) {
+	  while ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j+1]}) {
 	    $j++;
           }
 	  # Found last entry
-	  print "PC_${VTI}_" . $val2pc[$j] . ",ME_${VTI}_$n);\n";
+	  print "PC_${VTI}_" . $val2pc[$f][$j] . ",ME_${VTI}_$n);\n";
 	}
       }
       print "        break;\n";
@@ -720,16 +725,16 @@ EOF
 
   print <<EOF
 
-  ${class}::Processor ${class}::p;
+  ${CLASS}::Processor ${CLASS}::p;
 
 EOF
 ;
 
 }
 
-print "$ftr";
+print $ftr[$f];
 
-if (!($ifdef eq "")) {
+if (!($ifdef[$f] eq "")) {
   print "#endif\n";
 }
 
