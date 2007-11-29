@@ -46,9 +46,6 @@ namespace Gecode { namespace Int {
 ## Defines the name (Name) and the variable type identifier (VTI) of the
 ## variable implementation to be generated.
 ##
-## Forceinline defines whether a special macro for inlining should
-## be used. If it is omitted, inline will be used instead.
-##
 ## Ifdef defines a macro that is define if the variable type
 ## is enabled.
 ##
@@ -58,7 +55,6 @@ namespace Gecode { namespace Int {
 [General]
 Name:		Int
 VTI:		INT
-Forceinline:	forceinline
 Ifdef:		GECODE_HAVE_INT_VARS
 
 ##

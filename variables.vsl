@@ -34,21 +34,17 @@
 #
 
 ##
-## This file contains a list of all variable implementations
+## This file contains a list of all variable implementation specifications
 ##
 
 # Integer variables
-VTI:	INT
 File:	gecode/int/var-imp-int.vis
 
 # Boolean variables
-VTI:	BOOL
 File:	gecode/int/var-imp-bool.vis
 
 # Set variables
-VTI:	SET
 File:	gecode/set/var-imp.vis
 
 # Complete set variables
-VTI:	CPLTSET
 File:	gecode/cpltset/var-imp.vis

@@ -50,7 +50,6 @@ namespace Gecode { namespace Set {
 [General]
 Name:		Set
 VTI:		SET
-Forceinline:	forceinline
 Ifdef:		GECODE_HAVE_SET_VARS
 
 #

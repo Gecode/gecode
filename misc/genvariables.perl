@@ -51,20 +51,18 @@ open VARFILE, $varfile;
 
 $n_files = 0;
 while ($l = <VARFILE>) {
-  if ($l =~ /^VTI:\s*(\w+)/io) {
-    $vtis[$n_files] = $1;
-  } elsif ($l =~ /^File:\s*([^ \t\r\n]+)/io) {
+  if ($l =~ /^File:\s*([^ \t\r\n]+)/io) {
     $files[$n_files] = $1;
     $n_files++;
   }
 }
 close VARFILE;
 
-  print <<EOF
+print <<EOF
 /*
  *  CAUTION:
- *    This file has been automatically generated.
- *    Do not edit, edit the specification file instead.
+ *    This file has been automatically generated. Do not edit,
+ *    edit the specification file "variable.vsl" instead.
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -103,15 +101,6 @@ close VARFILE;
 EOF
 ;
 
-if (!$gen_header) {
-  print <<EOF
-
-#include "gecode/kernel.hh"
-
-EOF
-;
-}
-
 for ($i_file=0; $i_file<$n_files; $i_file++) {
   $file = $files[$i_file];
 
@@ -120,7 +109,6 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
   ## General values
   $name   = "";
   $VTI    = "";
-  $forceinline = "inline";
   $ifdef  = "";
   $dispose = 0;
 
@@ -163,8 +151,6 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
 	  $name = $1;
 	} elsif ($l =~ /^VTI:\s*(\w+)/io) {
 	  $VTI = $1;
-	} elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
-	  $forceinline = $1;
 	} elsif ($l =~ /^Ifdef:\s*(\w+)/io) {
 	  $ifdef = $1;
 	} elsif ($l =~ /^Dispose:\s*true/io) {
@@ -287,6 +273,16 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
   ##
   ## Generate the output
   ##
+
+  if (!$gen_header) {
+    print <<EOF
+
+#include "gecode/kernel.hh"
+
+EOF
+;
+}
+
   $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
   $class = "${name}VarImpBase";
   $diffc = "${name}MeDiff";
@@ -299,7 +295,7 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
   }
 
   if (!($ifdef eq "")) {
-    print "#ifdef $ifdef\n\n";
+    print "#ifdef $ifdef\n";
   }
   print "$hdr";
 
@@ -450,7 +446,7 @@ EOF
   };
 
 
-  $forceinline ModEvent
+  forceinline ModEvent
   ${diffc}::operator()(ModEvent me1, ModEvent me2) const {
 EOF
 ;
@@ -499,7 +495,7 @@ print "  }\n";
 if ($me_max_n == 2) {
 print <<EOF
 
-  $forceinline ModEvent
+  forceinline ModEvent
   ${class}::modevent(void) const {
     return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
   }
@@ -511,16 +507,16 @@ EOF
 if ($dispose) {
   print <<EOF
 
-  $forceinline
+  forceinline
   ${class}::${class}(void) {}
 
-  $forceinline
+  forceinline
   ${class}::${class}(Space* home)
     : $base(home), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
     home->varsDisposeList<VTI_${VTI}>(this);
   }
 
-  $forceinline
+  forceinline
   ${class}::${class}(Space* home, bool share, $class\& x)
     : $base(home,share,x), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
     home->varsDisposeList<VTI_${VTI}>(this);
@@ -536,14 +532,14 @@ EOF
 } else {
   print <<EOF
 
-  $forceinline
+  forceinline
   ${class}::${class}(void) {}
 
-  $forceinline
+  forceinline
   ${class}::${class}(Space* home)
     : $base(home) {}
 
-  $forceinline
+  forceinline
   ${class}::${class}(Space* home, bool share, $class\& x)
     : $base(home,share,x) {}
 EOF
@@ -551,11 +547,11 @@ EOF
 }
   print <<EOF
 
-  $forceinline void
+  forceinline void
   ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
     ${base}::subscribe(home,p,pc,assigned,$me_subscribe,process);
   }
-  $forceinline void
+  forceinline void
   ${class}::subscribe(Space* home, Advisor* a, bool assigned) {
     ${base}::subscribe(home,a,assigned);
   }
@@ -565,7 +561,7 @@ EOF
 
 if ($me_max_n == 2) {
   print <<EOF
-  $forceinline bool
+  forceinline bool
   ${class}::notify(Space* home, ModEvent, Delta* d) {
     return ${base}::notify(home,d);
   }
@@ -573,7 +569,7 @@ EOF
 ;
 } else {
   print <<EOF
-  $forceinline bool
+  forceinline bool
   ${class}::notify(Space* home, ModEvent me, Delta* d) {
     return ${base}::notify(home,me,d);
   }
@@ -734,7 +730,7 @@ EOF
 print "$ftr";
 
 if (!($ifdef eq "")) {
-  print "#endif\n\n";
+  print "#endif\n";
 }
 
 }

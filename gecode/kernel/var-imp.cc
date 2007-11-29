@@ -1,7 +1,7 @@
 /*
  *  CAUTION:
- *    This file has been automatically generated.
- *    Do not edit, edit the specification file instead.
+ *    This file has been automatically generated. Do not edit,
+ *    edit the specification file "variable.vsl" instead.
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -41,7 +41,6 @@
 #include "gecode/kernel.hh"
 
 #ifdef GECODE_HAVE_INT_VARS
-
 
 namespace Gecode { namespace Int {
 
@@ -83,8 +82,9 @@ namespace Gecode { namespace Int {
 }}
 #endif
 
-#ifdef GECODE_HAVE_INT_VARS
+#include "gecode/kernel.hh"
 
+#ifdef GECODE_HAVE_INT_VARS
 
 namespace Gecode { namespace Int {
 
@@ -112,8 +112,9 @@ namespace Gecode { namespace Int {
 }}
 #endif
 
-#ifdef GECODE_HAVE_SET_VARS
+#include "gecode/kernel.hh"
 
+#ifdef GECODE_HAVE_SET_VARS
 
 namespace Gecode { namespace Set {
 
@@ -282,8 +283,9 @@ namespace Gecode { namespace Set {
 }}
 #endif
 
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#include "gecode/kernel.hh"
 
+#ifdef GECODE_HAVE_CPLTSET_VARS
 
 namespace Gecode { namespace CpltSet {
 
@@ -320,4 +322,3 @@ namespace Gecode { namespace CpltSet {
 
 }}
 #endif
-

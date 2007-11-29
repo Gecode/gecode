@@ -50,9 +50,8 @@ namespace Gecode { namespace CpltSet {
 [General]
 Name:		CpltSet
 VTI:		CPLTSET
-Forceinline:	forceinline
-Dispose:        true
 Ifdef:		GECODE_HAVE_CPLTSET_VARS
+Dispose:        true
 
 #
 # Definition of modification events
@@ -78,7 +77,7 @@ Combine:	VAL=VAL,DOM=VAL
 Name:		DOM=SUBSCRIBE
 Combine:	VAL=VAL,DOM=DOM
   /**
-   * \brief \brief Domain operation has modified the represented set
+   * \brief Domain operation has modified set
    */
 # [ModEventFooter]: Nothing
 
