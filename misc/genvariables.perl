@@ -312,8 +312,8 @@ print <<EOF
 
 EOF
 ;
-  exit 0;
-}
+
+} else {
 
 for ($f = 0; $f<$n_files; $f++) {
   $VTI   = $vti[$f];
@@ -773,3 +773,6 @@ if (!($ifdef[$f] eq "")) {
 }
 
 }
+}
+
+print "// STATISTICS: kernel-var\n";

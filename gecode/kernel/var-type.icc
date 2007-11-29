@@ -63,3 +63,4 @@
     VTI_NOIDX = 0 ///< Used for variables without indexing structure
   };
 
+// STATISTICS: kernel-var

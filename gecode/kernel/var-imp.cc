@@ -322,3 +322,4 @@ namespace Gecode { namespace CpltSet {
 
 }}
 #endif
+// STATISTICS: kernel-var
