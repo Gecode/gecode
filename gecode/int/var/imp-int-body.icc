@@ -71,7 +71,7 @@ namespace Gecode { namespace Int {
     } while (x != NULL);
   }
 
-  
+
   IntVarImpBase::Processor IntVarImpBase::p;
 
 

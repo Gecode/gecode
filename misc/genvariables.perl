@@ -121,7 +121,7 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
   $name   = "";
   $VTI    = "";
   $forceinline = "inline";
-  $forcedispose = 0;
+  $dispose = 0;
 
   ##
   ## Headers and footers
@@ -164,8 +164,8 @@ for ($i_file=0; $i_file<$n_files; $i_file++) {
 	  $VTI = $1;
 	} elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
 	  $forceinline = $1;
-	} elsif ($l =~ /^Forcedispose:\s*true/io) {
-	  $forcedispose = 1;
+	} elsif ($l =~ /^Dispose:\s*true/io) {
+	  $dispose = 1;
 	}
       }
       goto LINE;
@@ -378,22 +378,12 @@ EOF
     public:
       /// Process modified variables linked from \\a x
       GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
-EOF
-;
-  if ($forcedispose) {
-    print <<EOF
-      /// Dispose registered variables
-      GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarBase* x);
-EOF
-;
-  }
-  print <<EOF
     };
     /// The processor used
     GECODE_KERNEL_EXPORT static Processor p;
 EOF
 ;
-  if ($forcedispose) {
+  if ($dispose) {
     print <<EOF
     /// Link to next variable, used for disposal
     VarBase* _nextDispose;
@@ -439,10 +429,10 @@ EOF
 ;
   }
 
-  if ($forcedispose) {
+  if ($dispose) {
   print <<EOF
     /// Return link to next variable, used for dispose
-    ${class}* nextDispose(void);
+    ${class}* nextDispose(void) const;
     /// Set link to next variable, used for dispose
     void nextDispose(${class}* next);
 EOF
@@ -512,7 +502,7 @@ EOF
 ;
 }
 
-if ($forcedispose) {
+if ($dispose) {
   print <<EOF
 
   $forceinline
@@ -531,7 +521,7 @@ if ($forcedispose) {
   }
 
   forceinline ${class}*
-  ${class}::nextDispose(void) {
+  ${class}::nextDispose(void) const {
     return static_cast<${class}*>(_nextDispose);
   }
 
@@ -726,22 +716,8 @@ EOF
 
 }
 
-  if ($forcedispose) {
-    print <<EOF
-  void
-  ${class}::Processor::dispose(Space* home, VarBase* x) {
-    ${name}VarImp* _x = static_cast<${name}VarImp*>(x);
-    while (_x != NULL) {
-      _x->dispose(home);
-      _x = static_cast<${name}VarImp*>(_x->nextDispose());
-    }
-  }
-EOF
-;	
-  }
-
   print <<EOF
-  
+
   ${class}::Processor ${class}::p;
 
 EOF

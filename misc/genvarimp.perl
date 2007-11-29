@@ -53,7 +53,7 @@ $name   = "";
 $VTI    = "";
 $export = "";
 $forceinline = "inline";
-$forcedispose = 0;
+$dispose = 0;
 
 ##
 ## Headers and footers
@@ -98,8 +98,8 @@ while ($l = <FILE>) {
 	$export = $1;
       } elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
 	$forceinline = $1;
-      }	elsif ($l =~ /^Forcedispose:\s*true/io) {
-	$forcedispose = 1;
+      }	elsif ($l =~ /^Dispose:\s*true/io) {
+	$dispose = 1;
       }
     }
     goto LINE;
@@ -361,7 +361,7 @@ EOF
     $export static Processor p;
 EOF
 ;
-if ($forcedispose) {
+if ($dispose) {
   print <<EOF
     /// Link to next variable, used for disposal
     VarBase* _nextDispose;
@@ -407,7 +407,7 @@ EOF
 ;
 }
 
-if ($forcedispose) {
+if ($dispose) {
   print <<EOF
     /// Return link to next variable, used for dispose
     ${class}* nextDispose(void) const;
@@ -480,7 +480,7 @@ EOF
 ;
 }
 
-if ($forcedispose) {
+if ($dispose) {
   print <<EOF
 
   $forceinline

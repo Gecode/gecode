@@ -52,7 +52,8 @@ Name:		CpltSet
 VTI:		CPLTSET
 Export:		GECODE_CPLTSET_EXPORT
 Forceinline:	forceinline
-Forcedispose:   true
+Dispose:        true
+Ifdef:		GECODE_HAVE_CPLTSET_VARS
 
 #
 # Definition of modification events

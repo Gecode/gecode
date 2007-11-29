@@ -46,13 +46,13 @@ namespace Gecode { namespace Int {
 ## Defines the name (Name) and the variable type identifier (VTI) of the
 ## variable implementation to be generated.
 ##
-## Export defines whether a special macro to be added in front
-## of a definition that needs external linkage (can be omitted)
+## Ifdef defines a macro that is define if the variable type
+## is enabled.
 ##
 ## Forceinline defines whether a special macro for inlining should
 ## be used. If it is omitted, inline will be used instead.
 ##
-## Forcedispose defines whether this variable type provides a dispose
+## Dispose defines whether this variable type provides a dispose
 ## function that must be called for all variables in a space when the
 ## space is destroyed. If it is omitted, false is assumed.
 [General]
@@ -60,6 +60,7 @@ Name:		Bool
 VTI:		BOOL
 Export:		GECODE_INT_EXPORT
 Forceinline:	forceinline
+Ifdef:		GECODE_HAVE_INT_VARS
 
 ##
 ## Definition of modification events

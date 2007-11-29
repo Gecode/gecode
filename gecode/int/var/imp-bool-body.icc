@@ -57,7 +57,7 @@ namespace Gecode { namespace Int {
     } while (x != NULL);
   }
 
-  
+
   BoolVarImpBase::Processor BoolVarImpBase::p;
 
 
