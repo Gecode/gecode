@@ -145,6 +145,8 @@ namespace Gecode {
     void scaleChanged(int);
     /// A new point in time was logged
     void newPointInTime(int);
+    /// Context menu triggered
+    void contextMenu(QContextMenuEvent*);
     
   protected:
     /// Mutex for synchronizing acccess to the tree
@@ -163,9 +165,6 @@ namespace Gecode {
     QVector<VisualNode*> nodeMap;
     /// The active inspector
     Inspector* inspect;
-
-    /// Context menu
-    QMenu* contextMenu;
     
     /// Current scale factor
     double scale;
@@ -197,6 +196,35 @@ namespace Gecode {
     /// The canvas implementation
     TreeCanvasImpl* canvas;
     QSlider* timeBar;
+    /// Context menu
+    QMenu* contextMenu;
+
+  public:
+    QAction* inspectCN;
+    QAction* stopCN;
+    QAction* navUp;
+    QAction* navDown;
+    QAction* navLeft;
+    QAction* navRight;
+
+    QAction* searchNext;
+    QAction* searchAll;
+    QAction* toggleHidden;
+    QAction* hideFailed;
+    QAction* unhideAll;
+    QAction* zoomToFit;
+    QAction* centerCN;
+    QAction* exportPostscript;
+
+    QAction* setPath;
+    QAction* inspectPath;
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+    QAction* addChild;
+    QAction* addFixpoint;
+    QAction* investigateCurrentNode;
+#endif
+
   public:
     /// Constructor
     TreeCanvas(Space* root, Better* b = NULL, QWidget* parent = NULL);
@@ -210,8 +238,10 @@ namespace Gecode {
     
   private Q_SLOTS:
     void on_canvas_newPointInTime(int);
-
 #endif
+
+  private Q_SLOTS:
+    void on_canvas_contextMenu(QContextMenuEvent*);
     
   };
   

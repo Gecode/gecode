@@ -39,6 +39,7 @@
 #include <QtGui>
 #include "gecode/kernel.hh"
 #include "gecode/gist/textoutput.hh"
+#include "gecode/gist/mainwindow.hh"
 
 namespace Gecode {
 
@@ -102,10 +103,7 @@ namespace Gecode {
         root = NULL;
       else
         root = root->clone();
-      Gist::TreeCanvas c(root, b);
-      if (gi)
-        c.setInspector(gi);
-      c.show();
+      Gist::GistMainWindow mw(root, b, gi);
       return app.exec();
     }
     

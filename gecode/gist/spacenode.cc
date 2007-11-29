@@ -329,6 +329,7 @@ namespace Gecode { namespace Gist {
     return ret;
   }
     
+#ifdef GECODE_GIST_EXPERIMENTAL
   Space*
   SpaceNode::getInputSpace(void) {
     SpaceNode* p = static_cast<SpaceNode*>(getParent());
@@ -340,7 +341,8 @@ namespace Gecode { namespace Gist {
     
     return ret;
   }
-    
+#endif
+
   int
   SpaceNode::getNumberOfChildNodes(void) {
     int kids = getNumberOfChildren();
