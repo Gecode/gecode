@@ -1152,7 +1152,7 @@ DIST_FILES= \
 	misc/doxygen/stylesheet.css misc/doxygen/footer.html \
 	misc/doxygen/header.html misc/genlicense.perl \
 	misc/genstatistics.perl misc/getrevision.perl \
-	misc/genchangelog.perl misc/genvarimp.perl \
+	misc/genchangelog.perl misc/genvariables.perl \
 	misc/gentxtchangelog.perl misc/makedepend.perl \
 	misc/AppleHelpbookInfo.plist
 
