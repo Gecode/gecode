@@ -83,6 +83,12 @@ namespace Gecode { namespace Gist {
     delete menuBar;
   }
 
+  void
+  GistMainWindow::closeEvent(QCloseEvent* event) {
+    c.finish();
+    event->accept();
+  }
+
 }}
 
 // STATISTICS: gist-any

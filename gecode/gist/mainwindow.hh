@@ -53,6 +53,8 @@ namespace Gecode { namespace Gist {
     GistMainWindow(Space* root, Better* b, Gist::Inspector* gi);
     /// Destructor
     ~GistMainWindow(void);
+  protected:
+    void closeEvent(QCloseEvent* event);
   };
   
 }}

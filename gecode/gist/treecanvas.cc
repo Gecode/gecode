@@ -110,6 +110,7 @@ namespace Gecode { namespace Gist {
   Searcher::run() {
     {
       t->mutex.lock();
+      t->setCursor(Qt::BusyCursor);
       std::stack<VisualNode*> stck;
       stck.push(node);
 
@@ -145,6 +146,7 @@ namespace Gecode { namespace Gist {
     }
     emit update();
     t->centerCurrentNode();
+    t->setCursor(Qt::ArrowCursor);
   }
 
   void
@@ -234,6 +236,7 @@ namespace Gecode { namespace Gist {
         {
           (void) currentNode->getNumberOfChildNodes();
         }
+        break;
     case FAILED:
     case SPECIAL:
     case BRANCH:
@@ -441,6 +444,12 @@ namespace Gecode { namespace Gist {
       return;
     }
     event->ignore();
+  }
+
+  void
+  TreeCanvasImpl::finish(void) {
+    stopSearchFlag = true;
+    searcher.wait();    
   }
   
   void
@@ -845,6 +854,17 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::on_canvas_contextMenu(QContextMenuEvent* event) {
     contextMenu->popup(event->globalPos());    
+  }
+
+  void
+  TreeCanvas::finish(void) {
+    canvas->finish();
+  }
+
+  void
+  TreeCanvas::closeEvent(QCloseEvent* event) {
+    canvas->finish();
+    event->accept();
   }
   
 #ifdef GECODE_GIST_EXPERIMENTAL

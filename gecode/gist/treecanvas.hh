@@ -142,6 +142,9 @@ namespace Gecode {
     
 #endif
     
+    /// Stop search and wait for it to finish
+    void finish(void);
+    
   Q_SIGNALS:
     /// The scale factor has changed
     void scaleChanged(int);
@@ -237,6 +240,9 @@ namespace Gecode {
     /// Set Inspector to \a i0
     void setInspector(Inspector* i0);
 
+    /// Stop search and wait until finished
+    void finish(void);
+
 #ifdef GECODE_GIST_EXPERIMENTAL
     
   private Q_SLOTS:
@@ -245,7 +251,9 @@ namespace Gecode {
 
   private Q_SLOTS:
     void on_canvas_contextMenu(QContextMenuEvent*);
-    
+  protected:
+    /// Close the widget
+    void closeEvent(QCloseEvent* event);
   };
   
 }}

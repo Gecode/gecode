@@ -90,6 +90,7 @@ namespace Gecode { namespace Gist {
     setCentralWidget(editor);
     setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
     
+    setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_DeleteOnClose, false);
     resize(600,300);
   }
