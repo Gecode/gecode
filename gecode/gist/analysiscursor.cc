@@ -39,7 +39,7 @@
 namespace Gecode { namespace Gist {
 
   void
-  AnalysisCursor::processCurrentNode(void) {
+  AnalysisCursor::processTopDown(void) {
     VisualNode* n = node();
     if (n->getStatus() == UNDETERMINED)
       return;
@@ -54,22 +54,41 @@ namespace Gecode { namespace Gist {
         h += Iter::Ranges::size(ia);
       }
     }
+    n->setHeat(h);
+    delete s;    
+  }
+
+  void
+  AnalysisCursor::moveDownwards(void) {
+    NodeCursor<VisualNode>::moveDownwards();
+    processTopDown();
+  }
+
+  void
+  AnalysisCursor::moveSidewards(void) {
+    NodeCursor<VisualNode>::moveSidewards();
+    processTopDown();
+  }
+
+  void
+  AnalysisCursor::processCurrentNode(void) {
+    VisualNode* n = node();
     VisualNode* p = static_cast<VisualNode*>(n->getParent());
     if (p == NULL) {
-      n->setHeat(h);
+      n->setHeat(0);
     } else {
-      h = p->getHeat() - h;
+      int h = p->getHeat() - n->getHeat();
       n->setHeat(h);
       maxHeat = std::max(maxHeat, h);
       minHeat = std::min(minHeat, h);
     }
-    delete s;
   }
 
   AnalysisCursor::AnalysisCursor(VisualNode* root, int& min, int& max)
   : NodeCursor<VisualNode>(root), minHeat(min), maxHeat(max) {
     minHeat = Limits::Int::int_max;
     maxHeat = 0;
+    processTopDown();
   }
 
   DistributeCursor::DistributeCursor(VisualNode* root, int min, int max)
@@ -79,8 +98,8 @@ namespace Gecode { namespace Gist {
   DistributeCursor::processCurrentNode(void) {
     VisualNode* n = node();
     if (n->getParent() != NULL) {
-      int h = (((double)n->getHeat() - (double)minHeat) / ((double)maxHeat-(double)minHeat))
-              * 179;
+      int h = (((double)n->getHeat() - (double)minHeat) / 
+               ((double)maxHeat-(double)minHeat)) * 179;
       n->setHeat(h);
     } else {
       n->setHeat(0);

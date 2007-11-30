@@ -47,12 +47,15 @@ namespace Gecode { namespace Gist {
     int& minHeat;
     int& maxHeat;
     
+    void processTopDown(void);
   public:
     /// Constructor
     AnalysisCursor(VisualNode* root, int& min, int& max);
 
     ///\name Cursor interface
     //@{
+    void moveDownwards(void);
+    void moveSidewards(void);
     void processCurrentNode(void);
     //@}
   };

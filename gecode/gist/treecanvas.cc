@@ -237,7 +237,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     int min, max;
     AnalysisCursor ac(root, min, max);
-    PreorderNodeVisitor<AnalysisCursor> va(ac);
+    PostorderNodeVisitor<AnalysisCursor> va(ac);
     while (va.next());
     DistributeCursor dc(root, min, max);
     PreorderNodeVisitor<DistributeCursor> vd(dc);
