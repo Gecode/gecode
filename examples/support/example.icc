@@ -118,7 +118,7 @@ template <typename S>
 class GistEngine<DFS<S> > {
 public:
   static void explore(S* root, Gist::Inspector* i) {
-    (void) explore(root, i);
+    (void) Gecode::explore(root, i);
   }
 };
 
@@ -127,7 +127,7 @@ template <typename S>
 class GistEngine<LDS<S> > {
 public:
   static void explore(S* root, Gist::Inspector* i) {
-    (void) explore(root, i);
+    (void) Gecode::explore(root, i);
   }
 };
 
