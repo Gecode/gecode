@@ -46,10 +46,7 @@ namespace Gecode {
    *
    */
 
-  GECODE_KERNEL_EXPORT VarTypeProcessorBase* Space::vtp[VTI_LAST];
   GECODE_KERNEL_EXPORT VarTypeDisposerBase* Space::vtd[VTI_LAST];
-
-  VarTypeProcessorBase::~VarTypeProcessorBase(void) {}
 
   void VarTypeDisposerBase::dispose(Space*,VarBase*) {}
   VarTypeDisposerBase::~VarTypeDisposerBase(void) {}

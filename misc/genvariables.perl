@@ -401,19 +401,11 @@ EOF
 
   /// Base-class for ${NAME}-variable implementations
   class ${CLASS} : public ${BASE} {
-  protected:
-    /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc[$f],${DIFFC}> {
-    public:
-      /// Process modified variables linked from \\a x
-      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
-    };
-    /// The processor used
-    GECODE_KERNEL_EXPORT static Processor p;
 EOF
 ;
   if ($dispose[$f]) {
     print <<EOF
+  private:
     /// Link to next variable, used for disposal
     VarBase* _nextDispose;
 EOF
@@ -421,6 +413,7 @@ EOF
   }
 
   print <<EOF
+  protected:
     /// Constructor for cloning \\a x
     ${CLASS}(Space* home, bool share, ${CLASS}\& x);
   public:

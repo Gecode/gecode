@@ -118,14 +118,6 @@ namespace Gecode { namespace Int {
   /// Base-class for Int-variable implementations
   class IntVarImpBase : public Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff> {
   protected:
-    /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_INT,PC_INT_DOM,IntMeDiff> {
-    public:
-      /// Process modified variables linked from \a x
-      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
-    };
-    /// The processor used
-    GECODE_KERNEL_EXPORT static Processor p;
     /// Constructor for cloning \a x
     IntVarImpBase(Space* home, bool share, IntVarImpBase& x);
   public:
@@ -258,14 +250,6 @@ namespace Gecode { namespace Int {
   /// Base-class for Bool-variable implementations
   class BoolVarImpBase : public Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff> {
   protected:
-    /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff> {
-    public:
-      /// Process modified variables linked from \a x
-      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
-    };
-    /// The processor used
-    GECODE_KERNEL_EXPORT static Processor p;
     /// Constructor for cloning \a x
     BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x);
   public:
@@ -488,14 +472,6 @@ namespace Gecode { namespace Set {
   /// Base-class for Set-variable implementations
   class SetVarImpBase : public Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff> {
   protected:
-    /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_SET,PC_SET_ANY,SetMeDiff> {
-    public:
-      /// Process modified variables linked from \a x
-      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
-    };
-    /// The processor used
-    GECODE_KERNEL_EXPORT static Processor p;
     /// Constructor for cloning \a x
     SetVarImpBase(Space* home, bool share, SetVarImpBase& x);
   public:
@@ -615,17 +591,10 @@ namespace Gecode { namespace CpltSet {
 
   /// Base-class for CpltSet-variable implementations
   class CpltSetVarImpBase : public Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff> {
-  protected:
-    /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff> {
-    public:
-      /// Process modified variables linked from \a x
-      GECODE_KERNEL_EXPORT virtual void process(Space* home, VarBase* x);
-    };
-    /// The processor used
-    GECODE_KERNEL_EXPORT static Processor p;
+  private:
     /// Link to next variable, used for disposal
     VarBase* _nextDispose;
+  protected:
     /// Constructor for cloning \a x
     CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x);
   public:

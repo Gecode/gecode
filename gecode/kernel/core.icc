@@ -194,49 +194,6 @@ namespace Gecode {
   class VarBase {};
 
   /**
-   * \brief Base-class for variable type processor
-   *
-   * Serves as base-class that can be used without having to know any
-   * template arguments.
-   * \ingroup TaskVar
-   */
-  class GECODE_VTABLE_EXPORT VarTypeProcessorBase {
-  public:
-    /// Process modified variables linked from \a x
-    virtual void process(Space* home, VarBase* x) = 0;
-    /**
-     * \brief Update copied variables linked from \a x
-     *
-     * The argument \a sub gives the memory area where subscriptions are
-     * to be stored.
-     */
-    virtual void update(VarBase* x, ActorLink**& sub) = 0;
-    /// Destructor (not really used)
-    GECODE_KERNEL_EXPORT virtual ~VarTypeProcessorBase(void);
-  };
-
-  /**
-   * \brief %Variable type processor
-   *
-   * Base class for variable type processor for variable type index \a VTI
-   * and maximum propagation condition \a PC.
-   * \ingroup TaskVar
-   */
-  template <VarTypeId VTI, PropCond PC, class MED>
-  class VarTypeProcessor : public VarTypeProcessorBase {
-  public:
-    /// Constructor (registers processor with kernel)
-    VarTypeProcessor(void);
-    /**
-     * \brief Update copied variables linked from \a x
-     *
-     * The argument \a sub gives the memory area where subscriptions are
-     * to be stored.
-     */
-    virtual void update(VarBase* x, ActorLink**& sub);
-  };
-
-  /**
    * \brief Base class for %Variable type disposer
    *
    * Controls disposal of variables.
@@ -317,7 +274,6 @@ namespace Gecode {
   class Variable : public VarBase {
     friend class Space;
     friend class Propagator;
-    friend class VarTypeProcessor<VTI,PC,MED>;
   private:
     /// Either next modified or next copied variable
     Variable* _next; 
@@ -1011,7 +967,6 @@ namespace Gecode {
     friend class Advisor;
     friend class Reflection::SpecIter;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
-    template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
     template <VarTypeId VTI, class VarType> friend class VarTypeDisposer;
     friend class SharedHandle;
   private:
@@ -1030,9 +985,6 @@ namespace Gecode {
      * \name Processing variables
      */
     //@{
-    /// Registered variable type processors
-    GECODE_KERNEL_EXPORT
-    static VarTypeProcessorBase* vtp[VTI_LAST];
     /// Registered variable type disposers
     GECODE_KERNEL_EXPORT
     static VarTypeDisposerBase* vtd[VTI_LAST];
@@ -2327,20 +2279,6 @@ namespace Gecode {
     if (n > 0) {
       t[0]=f[0]->prev();
     }
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  VarTypeProcessor<VTI,PC,MED>::VarTypeProcessor(void) {
-    Space::vtp[VTI] = this;
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  void
-  VarTypeProcessor<VTI,PC,MED>::update(VarBase* vb, ActorLink**& sub) {
-    Variable<VTI,PC,MED>* x = static_cast<Variable<VTI,PC,MED>*>(vb);
-    do {
-      x->forward()->update(x,sub); x = x->next();
-    } while (x != NULL);
   }
 
   template <VarTypeId VTI, class VarType>
