@@ -63,6 +63,10 @@ namespace Gecode { namespace Gist {
     /// The alternative that is next on the path
     int pathAlternative;
 
+
+    /// Heat value 
+    int heat;
+
     /// Shape of this node
     Shape* shape;
     /// Bounding box of this node
@@ -114,6 +118,11 @@ namespace Gecode { namespace Gist {
     int getPathAlternative(void);
     /// Set the path attributes of the node
     void setPathInfos(bool onPath0, int pathAlternative0 = -1, bool lastOnPath0 = false);
+    
+    /// Return heat value
+    int getHeat(void) const;
+    /// Set heat value to \a h
+    void setHeat(int h);
     
     /// Toggle whether this node is hidden
     void toggleHidden(void);

@@ -110,6 +110,12 @@ namespace Gecode {
     /// Call the inspector for the currently selected node
     void inspectCurrentNode(void);
     
+    /// Toggle the heat view display
+    void toggleHeatView(void);
+    
+    /// Run the analysis that produces the heat view
+    void analyzeTree(void);
+    
     /// Stop current search
     void stopSearch(void);
     
@@ -175,6 +181,8 @@ namespace Gecode {
     double scale;
     /// Offset on the x axis so that the tree is centered
     int xtrans;
+    /// Whether to display the heat view
+    bool heatView;
 
     /// Paint the tree
     void paintEvent(QPaintEvent* event);
@@ -189,7 +197,7 @@ namespace Gecode {
     /// Log the current node as new point in time
     void saveCurrentNode(void);
 
-  protected Q_SLOTS:
+  public Q_SLOTS:
     /// Update display
     void update(void);
   };
@@ -225,6 +233,9 @@ namespace Gecode {
     QAction* setPath;
     QAction* inspectPath;
 
+    QAction* toggleHeatView;
+    QAction* analyzeTree;
+
 #ifdef GECODE_GIST_EXPERIMENTAL
     QAction* addChild;
     QAction* addFixpoint;
@@ -254,6 +265,8 @@ namespace Gecode {
   protected:
     /// Close the widget
     void closeEvent(QCloseEvent* event);
+    /// Resize the widget
+    void resizeEvent(QResizeEvent* event);
   };
   
 }}

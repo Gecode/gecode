@@ -42,6 +42,7 @@
 
 #include "gecode/gist/postscript.hh"
 #include "gecode/gist/drawingcursor.hh"
+#include "gecode/gist/analysiscursor.hh"
 
 #include <QtGui/QPainter>
 #include <stack>
@@ -55,7 +56,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, Better* b, QWidget* parent)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
-    , inspect(NULL) {
+    , inspect(NULL), heatView(false) {
       QMutexLocker locker(&mutex);
       root = new VisualNode(rootSpace, b);
       root->setMarked(true);
@@ -63,7 +64,7 @@ namespace Gecode { namespace Gist {
       pathHead = root;
       scale = 1.0;
 
-
+      setBackgroundRole(QPalette::Base);
       connect(&searcher, SIGNAL(update()), this, SLOT(update()));
   }
   
@@ -82,7 +83,10 @@ namespace Gecode { namespace Gist {
       scale0 = 400;
     scale = ((double)scale0) / 100.0;
     bb = root->getBoundingBox();
-    resize((int)((bb.right-bb.left+20)*scale), (int)((bb.depth+1)*38*scale));
+    QWidget* p = parentWidget();
+    int w = std::max(p->width(), (int)((bb.right-bb.left+20)*scale));
+    int h = std::max(p->height(), (int)((bb.depth+1)*38*scale));
+    resize(w,h);
     emit scaleChanged(scale0);
     QWidget::update();
   }
@@ -93,8 +97,12 @@ namespace Gecode { namespace Gist {
     BoundingBox bb;
     root->layout();
     bb = root->getBoundingBox();
-    resize((int)((bb.right-bb.left+20)*scale), (int)((bb.depth+1)*38*scale));
-    xtrans = -bb.left;
+    
+    QWidget* p = parentWidget();
+    int w = std::max(p->width(), (int)((bb.right-bb.left+20)*scale));
+    int h = std::max(p->height(), (int)((bb.depth+1)*38*scale));
+    resize(w,h);
+    xtrans = -bb.left+10;
     QWidget::update();
   }
 
@@ -222,6 +230,26 @@ namespace Gecode { namespace Gist {
       static_cast<QScrollArea*>(parentWidget()->parentWidget());
     sa->ensureVisible(x, y);
     
+  }
+
+  void
+  TreeCanvasImpl::analyzeTree(void) {
+    QMutexLocker locker(&mutex);
+    int min, max;
+    AnalysisCursor ac(root, min, max);
+    PreorderNodeVisitor<AnalysisCursor> va(ac);
+    while (va.next());
+    DistributeCursor dc(root, min, max);
+    PreorderNodeVisitor<DistributeCursor> vd(dc);
+    while (vd.next());
+    heatView = true;
+    QWidget::update();    
+  }
+
+  void
+  TreeCanvasImpl::toggleHeatView(void) {
+    heatView = !heatView;
+    QWidget::update();
   }
 
   void
@@ -403,7 +431,7 @@ namespace Gecode { namespace Gist {
       painter.scale(printScale,printScale);
       painter.translate(xtrans, 0);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(root, painter, clip);
+      DrawingCursor dc(root, painter, heatView, clip);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next());      
     }
@@ -416,12 +444,17 @@ namespace Gecode { namespace Gist {
     painter.setRenderHint(QPainter::Antialiasing);
     BoundingBox bb = root->getBoundingBox();
     
+    QRect origClip = event->rect();
+    if (heatView) {
+      painter.setBrush(Qt::black);
+      painter.drawRect(origClip.x(),origClip.y(),
+                       origClip.width(), origClip.height());
+    }
     painter.scale(scale,scale);
     painter.translate(xtrans, 0);
-    QRect origClip = event->rect();
     QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
                (int)(origClip.width()/scale), (int)(origClip.height()/scale));
-    DrawingCursor dc(root, painter, clip);
+    DrawingCursor dc(root, painter, heatView, clip);
     PreorderNodeVisitor<DrawingCursor> v(dc);
     while (v.next());    
   }
@@ -635,7 +668,8 @@ namespace Gecode { namespace Gist {
     canvas = new TreeCanvasImpl(root, b, this);
     canvas->setObjectName("canvas");
     
-    scrollArea->setBackgroundRole(QPalette::Window);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setWidget(canvas);
 
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
@@ -731,6 +765,16 @@ namespace Gecode { namespace Gist {
     inspectPath->setShortcut(QKeySequence("Shift+I"));
     connect(inspectPath, SIGNAL(triggered()), canvas, SLOT(inspectPath()));
 
+    toggleHeatView = new QAction("Toggle heat view", this);
+    toggleHeatView->setShortcut(QKeySequence("Y"));
+    connect(toggleHeatView, SIGNAL(triggered()), canvas, 
+            SLOT(toggleHeatView()));
+
+    analyzeTree = new QAction("Analyze tree", this);
+    analyzeTree->setShortcut(QKeySequence("Shift+Y"));
+    connect(analyzeTree, SIGNAL(triggered()), canvas, 
+            SLOT(analyzeTree()));
+
 #ifdef GECODE_GIST_EXPERIMENTAL
 
     addChild = new QAction("Add child node", this);
@@ -764,6 +808,9 @@ namespace Gecode { namespace Gist {
     addAction(exportPostscript);
     addAction(print);
 
+    addAction(toggleHeatView);
+    addAction(analyzeTree);
+    
     addAction(setPath);
     addAction(inspectPath);
 
@@ -865,6 +912,11 @@ namespace Gecode { namespace Gist {
   TreeCanvas::closeEvent(QCloseEvent* event) {
     canvas->finish();
     event->accept();
+  }
+
+  void
+  TreeCanvas::resizeEvent(QResizeEvent*) {
+    canvas->update();
   }
   
 #ifdef GECODE_GIST_EXPERIMENTAL

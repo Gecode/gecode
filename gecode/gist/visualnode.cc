@@ -47,6 +47,7 @@ namespace Gecode { namespace Gist {
   VisualNode::VisualNode(int alternative, BestSpace* b)
     : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
     , onPath(false), lastOnPath(false), pathAlternative(-1)
+    , heat(0)
     , shape(NULL), box(0,0,0) {}
   
   VisualNode::VisualNode(Space* root, Better* b)
@@ -98,6 +99,12 @@ namespace Gecode { namespace Gist {
 
   void
   VisualNode::setMarked(bool m) { marked = m; }
+  
+  int
+  VisualNode::getHeat(void) const { return heat; }
+
+  void
+  VisualNode::setHeat(int h) { heat = h; }
   
   bool
   VisualNode::isOnPath(void) { return onPath; }

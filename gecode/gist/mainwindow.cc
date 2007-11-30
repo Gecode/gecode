@@ -69,12 +69,16 @@ namespace Gecode { namespace Gist {
     nodeMenu->addSeparator();
     nodeMenu->addAction(c.zoomToFit);
     nodeMenu->addAction(c.centerCN);
-
     
     QMenu* searchMenu = menuBar->addMenu(tr("&Search"));
     searchMenu->addAction(c.searchNext);
     searchMenu->addAction(c.searchAll);
     searchMenu->addAction(c.stopCN);
+
+    QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
+    toolsMenu->addAction(c.analyzeTree);
+    toolsMenu->addSeparator();
+    toolsMenu->addAction(c.toggleHeatView);
     
     show();
   }

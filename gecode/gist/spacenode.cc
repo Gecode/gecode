@@ -248,6 +248,10 @@ namespace Gecode { namespace Gist {
       workingSpace->status();
       if (copy == NULL && p != NULL && isOpen()) {
         copy = p->checkLAO(alternative, ownBest);
+        if (copy != NULL && copy->status() == SS_FAILED) {
+          delete copy;
+          copy = NULL;
+        }
       }
     }
   }

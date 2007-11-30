@@ -46,9 +46,10 @@ namespace Gecode { namespace Gist {
   const QColor DrawingCursor::blue(0, 92, 161);
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
+                               bool heat,
                                const QRect& clippingRect0)
     : NodeCursor<VisualNode>(root), painter(painter0), 
-      clippingRect(clippingRect0), x(0), y(0) {}
+      clippingRect(clippingRect0), x(0), y(0), heatView(heat) {}
 
   void
   DrawingCursor::moveUpwards(void) { 
@@ -100,13 +101,17 @@ namespace Gecode { namespace Gist {
     int myy = 38 + y;
 
     if (! n->isRoot()) {
-      if(n->isOnPath()) {
-        QPen pen;
-        pen.setColor(Qt::red);
-        painter.setPen(pen);
+      if (heatView) {
+        painter.setPen(Qt::gray);        
+      } else {
+        if (n->isOnPath()) {
+          QPen pen;
+          pen.setColor(Qt::red);
+          painter.setPen(pen);
+        }
+        else
+          painter.setPen(Qt::black);
       }
-      else
-        painter.setPen(Qt::black);
       painter.drawLine(myx,myy,parentX,parentY);
     }
 
@@ -199,6 +204,9 @@ namespace Gecode { namespace Gist {
     }
 #endif
 
+    // Calculate HSV hue level from heat
+    int heat = (240 + (std::abs(n->getHeat()) % 180)) % 360;
+
     painter.setPen(Qt::SolidLine);
     if (n->isHidden()) {
       painter.setBrush(QBrush(red));
@@ -215,7 +223,10 @@ namespace Gecode { namespace Gist {
     	break;
       case Gist::SOLVED:
         {
-          painter.setBrush(QBrush(green));
+          if (heatView)
+            painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
+          else
+            painter.setBrush(QBrush(green));
           QPoint points[4] = {QPoint(myx,myy),
                               QPoint(myx+10,myy+10),
                               QPoint(myx,myy+20),
@@ -225,11 +236,17 @@ namespace Gecode { namespace Gist {
         }
         break;
       case Gist::FAILED:
-        painter.setBrush(QBrush(red));
+        if (heatView)
+          painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
+        else
+          painter.setBrush(QBrush(red));
         painter.drawRect(myx-7, myy, 14, 14);
         break;
       case Gist::BRANCH:
-        painter.setBrush(QBrush(blue));
+        if (heatView)
+          painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
+        else
+          painter.setBrush(QBrush(blue));
         painter.drawEllipse(myx-10, myy, 20, 20);
         break;
       case Gist::UNDETERMINED:

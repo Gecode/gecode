@@ -549,14 +549,16 @@ GISTHDR0 = \
 	nodevisitor.icc postscript.hh shapelist.hh \
 	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh \
 	mainwindow.hh \
-	addchild.hh ui_addchild.hh reflectionhelpers.hh
+	addchild.hh ui_addchild.hh reflectionhelpers.hh \
+	analysiscursor.hh
 
 GISTSRC0 = \
 	drawingcursor.cc gist.cc node.cc nodecursor.cc \
 	postscript.cc shapelist.cc spacenode.cc \
 	textoutput.cc treecanvas.cc visualnode.cc \
 	mainwindow.cc \
-	addchild.cc reflectionhelpers.cc
+	addchild.cc reflectionhelpers.cc \
+	analysiscursor.cc
 
 GISTMOCSRC0 = \
 	moc_treecanvas.cc moc_addchild.cc

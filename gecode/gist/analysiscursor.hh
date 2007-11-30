@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-11-30 10:46:49 +0100 (Fr, 30 Nov 2007) $ by $Author: tack $
+ *     $Revision: 5518 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,55 +34,37 @@
  *
  */
 
-#ifndef GECODE_GIST_QT_DRAWINGCURSOR_HH
-#define GECODE_GIST_QT_DRAWINGCURSOR_HH
+#ifndef GECODE_GIST_ANALYSISCURSOR_HH
+#define GECODE_GIST_ANALYSISCURSOR_HH
 
 #include "gecode/gist/nodecursor.hh"
-#include <QtGui>
 
 namespace Gecode { namespace Gist {
 
-  /// \brief A cursor that draws a tree on a QWidget
-  class DrawingCursor : public Gist::NodeCursor<VisualNode> {
+  /// \brief A cursor that analyses the tree
+  class AnalysisCursor : public NodeCursor<VisualNode> {
   private:
-    /// The painter where the tree is drawn
-    QPainter& painter;
-    /// The clipping area
-    QRect clippingRect;
-    /// The current coordinates
-    int x, y;
+    int& minHeat;
+    int& maxHeat;
     
-    /// Whether to draw heat view
-    bool heatView;
-    
-    /// The color for failed nodes
-    static const QColor red;
-    /// The color for solved nodes
-    static const QColor green;
-    /// The color for choice nodes
-    static const QColor blue;
-    
-    /// Test if current node is clipped
-    bool isClipped(void);
   public:
     /// Constructor
-    DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
-                  bool heat,
-                  const QRect& clippingRect0);
+    AnalysisCursor(VisualNode* root, int& min, int& max);
 
     ///\name Cursor interface
     //@{
-    /// Move cursor to parent
-    void moveUpwards(void);
-    /// Test if cursor may move to child
-    bool mayMoveDownwards(void);
-    /// Move cursor to child
-    void moveDownwards(void);
-    /// Move cursor to sibling
-    void moveSidewards(void);
-    /// Draw the node
     void processCurrentNode(void);
     //@}
+  };
+
+  class DistributeCursor : public NodeCursor<VisualNode> {
+  private:
+    int minHeat;
+    int maxHeat;
+  public:
+    /// Constructor
+    DistributeCursor(VisualNode* root, int min, int max);
+    void processCurrentNode(void);
   };
 
 }}
