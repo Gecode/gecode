@@ -216,7 +216,7 @@ export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
 export LINKKERNEL      = $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
 KERNELBUILDDIRS = kernel
 
-EXTRA_HEADERS   = gecode/vti.icc gecode/config.hh
+EXTRA_HEADERS   = gecode/config.hh
 
 #
 # SEARCH COMPONENTS
@@ -1435,7 +1435,7 @@ distclean: veryclean
 	$(RMF) $(ALLVARIMP:%=$(top_srcdir)/%)
 	$(RMF) misc/gecode.pc misc/gecode-search.pc \
 		misc/gecode-minimodel.pc misc/gecode-serialization.pc
-	$(RMF) gecode/vti.icc Makefile
+	$(RMF) Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 
