@@ -182,15 +182,12 @@ SUPPORTBUILDDIRS = support support/buddy
 # KERNEL COMPONENTS
 #
 
-VARIMPSRC = \
-	gecode/kernel/var-imp.cc
-VARIMPHDR = \
+VARIMP = \
 	gecode/kernel/var-type.icc \
 	gecode/kernel/var-imp.icc
-ALLVARIMP = $(VARIMPSRC) $(VARIMPHDR)
 
 KERNELSRC0 = \
-	core reflection varmap memory-manager var-imp
+	core reflection varmap memory-manager
 
 KERNELHDR0 = \
 	array shared-array branching core exception \
@@ -777,14 +774,14 @@ all: compilelib
 	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs
-	@$(MAKE) $(ALLVARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
+	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
 	@$(MAKE) compilesubdirs
 	@$(MAKE) framework
 
 compileexamples: $(EXAMPLEEXE)
 
 test: mkcompiledirs
-	@$(MAKE) $(ALLVARIMP:%=$(top_srcdir)/%) $(TESTEXE)
+	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(TESTEXE)
 
 ifeq "@top_srcdir@" "."
 mkcompiledirs:
@@ -843,8 +840,6 @@ $(top_srcdir)/gecode/kernel/var-type.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -type $< > $@
 $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
-$(top_srcdir)/gecode/kernel/var-imp.cc: $(top_srcdir)/variables.vsl $(ALLVIS)
-	perl $(top_srcdir)/misc/genvariables.perl -body $< > $@
 
 
 #
@@ -1434,14 +1429,14 @@ veryclean: clean
 	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
 
 distclean: veryclean
-	$(RMF) $(ALLVARIMP:%=$(top_srcdir)/%)
+	$(RMF) $(VARIMP:%=$(top_srcdir)/%)
 	$(RMF) misc/gecode.pc misc/gecode-search.pc \
 		misc/gecode-minimodel.pc misc/gecode-serialization.pc
 	$(RMF) Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 
-depend: $(ALLVARIMP:%=$(top_srcdir)/%) 	
+depend: $(VARIMP:%=$(top_srcdir)/%) 	
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \

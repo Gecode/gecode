@@ -39,8 +39,6 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   $i++;
   if ($arg eq "-header") {
     $gen_header = 1;
-  } elsif ($arg eq "-body") {
-    $gen_body   = 1;
   } elsif ($arg eq "-type") {
     $gen_type   = 1;
   }
@@ -386,13 +384,6 @@ if ($gen_header) {
     print "  /// Modification event difference for ${NAME}-variable implementations\n";
     print "  class ${DIFFC} {\n";
 
-  if ($me_max_n[$f] > 4) {
-    print <<EOF
-  private:
-    GECODE_KERNEL_EXPORT static const Gecode::ModEvent med[$me_max[$f]][$me_max[$f]];
-EOF
-;
-  }
   print <<EOF
   public:
     /// Return difference when changing modification event \\a me2 to \\a me1
@@ -508,6 +499,38 @@ if ($me_max_n[$f] == 2) {
   print "    );\n";
   print "    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);\n";
 } else {
+  print <<EOF
+    static const unsigned char med[$me_max[$f]][$me_max[$f]] = {
+EOF
+;
+  for ($i=0; $i<$me_max_n[$f];$i++) {
+    $n1 = $val2me[$f][$i];
+    print "      {\n";
+    for ($j=0; $j<$me_max_n[$f];$j++) {
+      $n2 = $val2me[$f][$j];
+      if ($n1 eq "NONE") {
+	$n3 = $n2;
+      } elsif ($n2 eq "NONE") {
+	$n3 = $n1;
+      } else {
+	$n3 = $mec{$f}{$n1}{$n2};
+      }
+      print "        ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
+      if ($j+1 == $me_max_n[$f]) {
+	print " ";
+      } else {
+	print ",";
+      }
+      print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
+    }
+    print "      }";
+    if ($i+1 == $me_max_n[$f]) {
+      print "\n";
+    } else {
+      print ",\n";
+    }
+  }
+  print "    };\n";
   print "    return med[me1][me2];\n";
 }
 print "  }\n";
@@ -603,80 +626,11 @@ if (!($ifdef[$f] eq "")) {
 }
 
 }
-}
-
-if ($gen_body) {
-  print <<EOF
-
-#include "gecode/kernel.hh"
-
-EOF
-;
-
-  for ($f = 0; $f<$n_files; $f++) {
-    $VTI   = $vti[$f];
-    $NAME  = $name[$f];
-    $BASE  = $base[$f];
-    $CLASS = $class[$f];
-    $DIFFC = $diffc[$f];
-    $IFDEF = $ifdef[$f];
-
-    if ($me_max_n[$f] > 4) {
-
-      if (!($ifdef[$f] eq "")) {
-	print "#ifdef " . $ifdef[$f] . "\n";
-      }
-      print $hdr[$f];
-      print <<EOF
-
-  /*
-   * Modification event difference for ${NAME}-variable implementations
-   *
-   */
-  const Gecode::ModEvent ${DIFFC}::med[$me_max[$f]][$me_max[$f]] = {
-EOF
-;
-
-      for ($i=0; $i<$me_max_n[$f];$i++) {
-	$n1 = $val2me[$f][$i];
-	print "    {\n";
-	for ($j=0; $j<$me_max_n[$f];$j++) {
-	  $n2 = $val2me[$f][$j];
-	  if ($n1 eq "NONE") {
-	    $n3 = $n2;
-	  } elsif ($n2 eq "NONE") {
-	    $n3 = $n1;
-	  } else {
-	    $n3 = $mec{$f}{$n1}{$n2};
-	  }
-	  print "      ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
-	  if ($j+1 == $me_max_n[$f]) {
-	    print " ";
-	  } else {
-	    print ",";
-	  }
-	  print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
-	}
-	print "    }";
-	if ($i+1 == $me_max_n[$f]) {
-	  print "\n";
-	} else {
-	  print ",\n";
-	}
-      }
-      print "  };\n";
-    print $ftr[$f];
-
-  if (!($ifdef[$f] eq "")) {
-    print "#endif\n";
-  }
-    }
-  }
-
     print <<EOF
+
 namespace Gecode {
 
-  void
+  forceinline void
   Space::process(void) {
 EOF
 ;
@@ -801,7 +755,7 @@ EOF
     print <<EOF
 namespace Gecode {
 
-  void
+  forceinline void
   Space::update(ActorLink** s) {
 EOF
 ;
