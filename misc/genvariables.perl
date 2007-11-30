@@ -155,6 +155,8 @@ for ($f=0; $f<$n_files; $f++) {
 	  $IFDEF = $1; $ifdef[$f] = $IFDEF;
 	} elsif ($l =~ /^Dispose:\s*true/io) {
 	  $DISPOSE = 1; $dispose[$f] = 1;
+	} elsif ($l =~ /^Namespace:\s*([^ \t\r\n]+)/io) {
+	  $NAMESPACE = $1; $namespace[$f] = $NAMESPACE;
 	}
       }
       goto LINE;
@@ -678,6 +680,14 @@ EOF
     }
   }
 
+    print <<EOF
+namespace Gecode {
+
+  void
+  Space::process(void) {
+EOF
+;
+
   for ($f = 0; $f<$n_files; $f++) {
     $VTI   = $vti[$f];
     $NAME  = $name[$f];
@@ -685,51 +695,42 @@ EOF
     $CLASS = $class[$f];
     $DIFFC = $diffc[$f];
 
+
     if (!($ifdef[$f] eq "")) {
       print "#ifdef " . $ifdef[$f] . "\n";
     }
-    print $hdr[$f];
 
-    if ($me_max_n[$f] == 2) {
-
-  print <<EOF
-
-
-  /*
-   * The variable processor for ${CLASS}
-   *
-   */
-
-  void
-  ${CLASS}::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    ${BASE}* x = 
-      static_cast<${BASE}*>(_x);
-    do {
-      x->process(home); x = x->next();
-    } while (x != NULL);
-  }
-
+    print <<EOF
+    {
+EOF
+;
+    if (!($namespace[$f] eq "")) {
+    print <<EOF
+      using namespace $namespace[$f];
 EOF
 ;
 
+    }
+    print <<EOF
+      ${BASE}* x = 
+        static_cast<${BASE}*>(vars[VTI_${VTI}].entry);
+      if (x != NULL) {
+        vars[VTI_${VTI}].entry = NULL;
+EOF
+;
 
-} else {
-  print <<EOF
+    if ($me_max_n[$f] == 2) {
+      print <<EOF
+        do {
+          x->process(this); x = x->next();
+        } while (x != NULL);
+EOF
+;
 
-
-  /*
-   * The variable processor for ${CLASS}
-   *
-   */
-
-  void
-  ${CLASS}::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    ${BASE}* x = 
-      static_cast<${BASE}*>(_x);
-    do {
-      switch (x->modevent()) {
+    } else {
+      print <<EOF
+        do {
+          switch (x->modevent()) {
 EOF
 ;
 
@@ -748,12 +749,12 @@ EOF
   for ($i=0; $i<$me_n[$f]; $i++) {
     $n = $men[$f][$i];
     if ($mespecial{$f}{$n} eq "ASSIGNED") {
-      print "      case ME_${VTI}_$n:\n";
-      print "        x->process(home);\n";
-      print "        break;\n";
+      print "          case ME_${VTI}_$n:\n";
+      print "            x->process(this);\n";
+      print "            break;\n";
     } elsif (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
-      print "      case ME_${VTI}_$n:\n";
-      print "        // Conditions: ";
+      print "          case ME_${VTI}_$n:\n";
+      print "            // Conditions: ";
       for ($j=0; $j<$pc_n[$f]; $j++) {
         if ($mepc{$f}{$men[$f][$i]}{$pcn[$f][$j]}) {
           print $pcn[$f][$j] . " ";
@@ -763,7 +764,7 @@ EOF
       for ($j=0; $j<$pc_n[$f]; $j++) {
 	if ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j]}) {
 	  # Found initial entry (plus one for stopping)
-	  print "        x->process(home,PC_${VTI}_" . $val2pc[$f][$j] . ",";
+	  print "            x->process(this,PC_${VTI}_" . $val2pc[$f][$j] . ",";
 	  # Look for all connected entries
 	  while ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j+1]}) {
 	    $j++;
@@ -772,37 +773,93 @@ EOF
 	  print "PC_${VTI}_" . $val2pc[$f][$j] . ",ME_${VTI}_$n);\n";
 	}
       }
-      print "        break;\n";
+      print "            break;\n";
     }
   }
 
 
   print <<EOF
-      default: GECODE_NEVER;
-      }
-      x = x->next();
-    } while (x != NULL);
-  }
-
+          default: GECODE_NEVER;
+          }
+          x = x->next();
+        } while (x != NULL);
 EOF
 ;
 
 }
 
   print <<EOF
-
-  ${CLASS}::Processor ${CLASS}::p;
-
+      }
+    }
 EOF
 ;
-
-print $ftr[$f];
-
 if (!($ifdef[$f] eq "")) {
   print "#endif\n";
 }
 
 }
+  print <<EOF
+  }
+}
+EOF
+;
+
+
+    print <<EOF
+namespace Gecode {
+
+  void
+  Space::update(ActorLink** s) {
+EOF
+;
+
+  for ($f = 0; $f<$n_files; $f++) {
+    $VTI   = $vti[$f];
+    $NAME  = $name[$f];
+    $BASE  = $base[$f];
+    $CLASS = $class[$f];
+    $DIFFC = $diffc[$f];
+
+
+    if (!($ifdef[$f] eq "")) {
+      print "#ifdef " . $ifdef[$f] . "\n";
+    }
+
+    print <<EOF
+    {
+EOF
+;
+    if (!($namespace[$f] eq "")) {
+    print <<EOF
+      using namespace $namespace[$f];
+EOF
+;
+
+    }
+    print <<EOF
+      ${BASE}* x = 
+        static_cast<${BASE}*>(vars[VTI_${VTI}].entry);
+      if (x != NULL) {
+        vars[VTI_${VTI}].entry = NULL;
+        do {
+          x->forward()->update(x,s); x = x->next();
+        } while (x != NULL);
+      }
+    }
+EOF
+;
+if (!($ifdef[$f] eq "")) {
+  print "#endif\n";
+}
+
+}
+  print <<EOF
+  }
+}
+EOF
+;
+
+
 
 }
 

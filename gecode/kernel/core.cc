@@ -154,16 +154,6 @@ namespace Gecode {
    *
    */
 
-  void
-  Space::process(void) {
-    for (int vti=VTI_LAST; vti--; ) {
-      VarBase* vs = vars[vti].entry;
-      if (vs != NULL) {
-        vars[vti].entry = NULL; vtp[vti]->process(this,vs);
-      }
-    }
-  }
-
   forceinline bool
   Space::pool_get(Propagator*& p) {
     while (true) {
@@ -482,16 +472,6 @@ namespace Gecode {
       return ME_GEN_ASSIGNED;
     }
   };
-
-  void
-  Space::update(ActorLink** s) {
-    for (int vti=VTI_LAST; vti--; ) {
-      VarBase* vs = vars[vti].entry;
-      if (vs != NULL) {
-        vars[vti].entry = NULL; vtp[vti]->update(vs,s);
-      }
-    }
-  }
 
   Space*
   Space::clone(bool share, unsigned long int& pn) {

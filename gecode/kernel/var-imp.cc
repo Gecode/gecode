@@ -153,171 +153,179 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
-
-namespace Gecode { namespace Int {
-
-
-
-  /*
-   * The variable processor for IntVarImpBase
-   *
-   */
+namespace Gecode {
 
   void
-  IntVarImpBase::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>*>(_x);
-    do {
-      switch (x->modevent()) {
-      case ME_INT_VAL:
-        x->process(home);
-        break;
-      case ME_INT_BND:
-        // Conditions: BND DOM 
-        x->process(home,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
-        break;
-      case ME_INT_DOM:
-        // Conditions: DOM 
-        x->process(home,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
-        break;
-      default: GECODE_NEVER;
+  Space::process(void) {
+#ifdef GECODE_HAVE_INT_VARS
+    {
+      using namespace Gecode::Int;
+      Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>*>(vars[VTI_INT].entry);
+      if (x != NULL) {
+        vars[VTI_INT].entry = NULL;
+        do {
+          switch (x->modevent()) {
+          case ME_INT_VAL:
+            x->process(this);
+            break;
+          case ME_INT_BND:
+            // Conditions: BND DOM 
+            x->process(this,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
+            break;
+          case ME_INT_DOM:
+            // Conditions: DOM 
+            x->process(this,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
+            break;
+          default: GECODE_NEVER;
+          }
+          x = x->next();
+        } while (x != NULL);
       }
-      x = x->next();
-    } while (x != NULL);
-  }
-
-
-  IntVarImpBase::Processor IntVarImpBase::p;
-
-
-}}
+    }
 #endif
 #ifdef GECODE_HAVE_INT_VARS
-
-namespace Gecode { namespace Int {
-
-
-
-  /*
-   * The variable processor for BoolVarImpBase
-   *
-   */
-
-  void
-  BoolVarImpBase::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>*>(_x);
-    do {
-      x->process(home); x = x->next();
-    } while (x != NULL);
-  }
-
-
-  BoolVarImpBase::Processor BoolVarImpBase::p;
-
-
-}}
+    {
+      using namespace Gecode::Int;
+      Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>*>(vars[VTI_BOOL].entry);
+      if (x != NULL) {
+        vars[VTI_BOOL].entry = NULL;
+        do {
+          x->process(this); x = x->next();
+        } while (x != NULL);
+      }
+    }
 #endif
 #ifdef GECODE_HAVE_SET_VARS
-
-namespace Gecode { namespace Set {
-
-
-
-  /*
-   * The variable processor for SetVarImpBase
-   *
-   */
-
-  void
-  SetVarImpBase::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>*>(_x);
-    do {
-      switch (x->modevent()) {
-      case ME_SET_VAL:
-        x->process(home);
-        break;
-      case ME_SET_CARD:
-        // Conditions: CARD CLUB CGLB ANY 
-        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CARD);
-        break;
-      case ME_SET_LUB:
-        // Conditions: CLUB ANY 
-        x->process(home,PC_SET_CLUB,PC_SET_CLUB,ME_SET_LUB);
-        x->process(home,PC_SET_ANY,PC_SET_ANY,ME_SET_LUB);
-        break;
-      case ME_SET_GLB:
-        // Conditions: CGLB ANY 
-        x->process(home,PC_SET_CGLB,PC_SET_ANY,ME_SET_GLB);
-        break;
-      case ME_SET_BB:
-        // Conditions: CLUB CGLB ANY 
-        x->process(home,PC_SET_CLUB,PC_SET_ANY,ME_SET_BB);
-        break;
-      case ME_SET_CLUB:
-        // Conditions: CARD CLUB CGLB ANY 
-        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CLUB);
-        break;
-      case ME_SET_CGLB:
-        // Conditions: CARD CLUB CGLB ANY 
-        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CGLB);
-        break;
-      case ME_SET_CBB:
-        // Conditions: CARD CLUB CGLB ANY 
-        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CBB);
-        break;
-      default: GECODE_NEVER;
+    {
+      using namespace Gecode::Set;
+      Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>*>(vars[VTI_SET].entry);
+      if (x != NULL) {
+        vars[VTI_SET].entry = NULL;
+        do {
+          switch (x->modevent()) {
+          case ME_SET_VAL:
+            x->process(this);
+            break;
+          case ME_SET_CARD:
+            // Conditions: CARD CLUB CGLB ANY 
+            x->process(this,PC_SET_CARD,PC_SET_ANY,ME_SET_CARD);
+            break;
+          case ME_SET_LUB:
+            // Conditions: CLUB ANY 
+            x->process(this,PC_SET_CLUB,PC_SET_CLUB,ME_SET_LUB);
+            x->process(this,PC_SET_ANY,PC_SET_ANY,ME_SET_LUB);
+            break;
+          case ME_SET_GLB:
+            // Conditions: CGLB ANY 
+            x->process(this,PC_SET_CGLB,PC_SET_ANY,ME_SET_GLB);
+            break;
+          case ME_SET_BB:
+            // Conditions: CLUB CGLB ANY 
+            x->process(this,PC_SET_CLUB,PC_SET_ANY,ME_SET_BB);
+            break;
+          case ME_SET_CLUB:
+            // Conditions: CARD CLUB CGLB ANY 
+            x->process(this,PC_SET_CARD,PC_SET_ANY,ME_SET_CLUB);
+            break;
+          case ME_SET_CGLB:
+            // Conditions: CARD CLUB CGLB ANY 
+            x->process(this,PC_SET_CARD,PC_SET_ANY,ME_SET_CGLB);
+            break;
+          case ME_SET_CBB:
+            // Conditions: CARD CLUB CGLB ANY 
+            x->process(this,PC_SET_CARD,PC_SET_ANY,ME_SET_CBB);
+            break;
+          default: GECODE_NEVER;
+          }
+          x = x->next();
+        } while (x != NULL);
       }
-      x = x->next();
-    } while (x != NULL);
-  }
-
-
-  SetVarImpBase::Processor SetVarImpBase::p;
-
-
-}}
+    }
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
-
-namespace Gecode { namespace CpltSet {
-
-
-
-  /*
-   * The variable processor for CpltSetVarImpBase
-   *
-   */
+    {
+      using namespace Gecode::CpltSet;
+      Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>*>(vars[VTI_CPLTSET].entry);
+      if (x != NULL) {
+        vars[VTI_CPLTSET].entry = NULL;
+        do {
+          switch (x->modevent()) {
+          case ME_CPLTSET_VAL:
+            x->process(this);
+            break;
+          case ME_CPLTSET_DOM:
+            // Conditions: DOM 
+            x->process(this,PC_CPLTSET_DOM,PC_CPLTSET_DOM,ME_CPLTSET_DOM);
+            break;
+          default: GECODE_NEVER;
+          }
+          x = x->next();
+        } while (x != NULL);
+      }
+    }
+#endif
+  }
+}
+namespace Gecode {
 
   void
-  CpltSetVarImpBase::Processor::process(Space* home, VarBase* _x) {
-    // Process modified variables
-    Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>*>(_x);
-    do {
-      switch (x->modevent()) {
-      case ME_CPLTSET_VAL:
-        x->process(home);
-        break;
-      case ME_CPLTSET_DOM:
-        // Conditions: DOM 
-        x->process(home,PC_CPLTSET_DOM,PC_CPLTSET_DOM,ME_CPLTSET_DOM);
-        break;
-      default: GECODE_NEVER;
+  Space::update(ActorLink** s) {
+#ifdef GECODE_HAVE_INT_VARS
+    {
+      using namespace Gecode::Int;
+      Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>*>(vars[VTI_INT].entry);
+      if (x != NULL) {
+        vars[VTI_INT].entry = NULL;
+        do {
+          x->forward()->update(x,s); x = x->next();
+        } while (x != NULL);
       }
-      x = x->next();
-    } while (x != NULL);
-  }
-
-
-  CpltSetVarImpBase::Processor CpltSetVarImpBase::p;
-
-
-}}
+    }
 #endif
+#ifdef GECODE_HAVE_INT_VARS
+    {
+      using namespace Gecode::Int;
+      Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>*>(vars[VTI_BOOL].entry);
+      if (x != NULL) {
+        vars[VTI_BOOL].entry = NULL;
+        do {
+          x->forward()->update(x,s); x = x->next();
+        } while (x != NULL);
+      }
+    }
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    {
+      using namespace Gecode::Set;
+      Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>*>(vars[VTI_SET].entry);
+      if (x != NULL) {
+        vars[VTI_SET].entry = NULL;
+        do {
+          x->forward()->update(x,s); x = x->next();
+        } while (x != NULL);
+      }
+    }
+#endif
+#ifdef GECODE_HAVE_CPLTSET_VARS
+    {
+      using namespace Gecode::CpltSet;
+      Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>* x = 
+        static_cast<Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>*>(vars[VTI_CPLTSET].entry);
+      if (x != NULL) {
+        vars[VTI_CPLTSET].entry = NULL;
+        do {
+          x->forward()->update(x,s); x = x->next();
+        } while (x != NULL);
+      }
+    }
+#endif
+  }
+}
 // STATISTICS: kernel-var
