@@ -681,7 +681,7 @@ namespace Gecode {
 EOF
 ;
 
-  for ($f = 0; $f<$n_files; $f++) {
+  for ($f = $n_files-1; $f>=0; $f--) {
     $VTI   = $vti[$f];
     $NAME  = $name[$f];
     $BASE  = $base[$f];
