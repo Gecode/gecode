@@ -90,7 +90,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressLinearBool");
   opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressLinearBool,DFS,SizeOptions>(opt);
+  Example::run<StressLinearBool,DFSE,SizeOptions>(opt);
   return 0;
 }
 

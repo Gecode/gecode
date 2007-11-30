@@ -335,7 +335,7 @@ main(int argc, char* argv[]) {
     std::cerr << "Number of teams has to be even!" << std::endl;
     return 1;
   }
-  Example::run<SportsLeague, DFS,SizeOptions>(opt);
+  Example::run<SportsLeague, DFSE,SizeOptions>(opt);
   return 0;
 }
 

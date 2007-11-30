@@ -129,7 +129,7 @@ main(int argc, char* argv[]) {
   opt.branching(Alpha::BRANCH_NONE, "none");
   opt.branching(Alpha::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
-  Example::run<Alpha,DFS,Options>(opt);
+  Example::run<Alpha,DFSE,Options>(opt);
   return 0;
 }
 

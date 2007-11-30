@@ -133,7 +133,7 @@ Example::run(const Options& o) {
           s->sac_remove_vars();
         }
         Search::Stop* stop = FailTimeStop::create(o.fail(), o.time());
-        Engine<Script> e(s,o.c_d(),o.a_d(),stop);
+        typename Engine<Script>::E e(s,o.c_d(),o.a_d(),stop);
         delete s;
         do {
           Example* ex = e.next();
@@ -178,7 +178,7 @@ Example::run(const Options& o) {
           while (s->sac(p) && o.sac() == SAC_FULL);
           s->sac_remove_vars();
         }
-        Engine<Script> e(s,o.c_d(),o.a_d());
+        typename Engine<Script>::E e(s,o.c_d(),o.a_d());
         delete s;
         do {
           Example* ex = e.next();
@@ -217,7 +217,7 @@ Example::run(const Options& o) {
               while (s->sac(p) && o.sac() == SAC_FULL);
               s->sac_remove_vars();
             }
-            Engine<Script> e(s,o.c_d(),o.a_d());
+            typename Engine<Script>::E e(s,o.c_d(),o.a_d());
             delete s;
             do {
               Example* ex = e.next();
@@ -243,7 +243,7 @@ Example::run(const Options& o) {
       {
         Gist::PrintingInspector<Script> pi(o.name());
         Script* s = new Script(o);
-        (void) explore(s, &pi);
+        Engine<Script>::explore(s, &pi);
         delete s;
       }
       break;

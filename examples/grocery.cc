@@ -112,7 +112,7 @@ main(int argc, char* argv[]) {
   Options opt("Grocery");
   opt.iterations(20);
   opt.parse(argc,argv);
-  Example::run<Grocery,DFS,Options>(opt);
+  Example::run<Grocery,DFSE,Options>(opt);
   return 0;
 }
 

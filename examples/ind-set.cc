@@ -135,7 +135,7 @@ main(int argc, char* argv[]) {
   opt.size(1);
   opt.iterations(2000);
   opt.parse(argc,argv);
-  Example::run<IndSet,BAB,SizeOptions>(opt);
+  Example::run<IndSet,BABE,SizeOptions>(opt);
   return 0;
 }
 

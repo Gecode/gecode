@@ -91,7 +91,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressMin");
   opt.parse(argc,argv);
   opt.size(200);
-  Example::run<StressMin,DFS,SizeOptions>(opt);
+  Example::run<StressMin,DFSE,SizeOptions>(opt);
   return 0;
 }
 

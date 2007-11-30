@@ -217,7 +217,7 @@ main(int argc, char* argv[]) {
     std::cerr << "n must be at least k!" << std::endl;
     return 1;
   }
-  Example::run<LangfordNumber,DFS,LangfordNumberOptions>(opt);
+  Example::run<LangfordNumber,DFSE,LangfordNumberOptions>(opt);
   return 0;
 }
 

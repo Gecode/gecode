@@ -236,7 +236,7 @@ main(int argc, char* argv[]) {
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Domino,DFS,SizeOptions>(opt);
+  Example::run<Domino,DFSE,SizeOptions>(opt);
   return 0;
 }
 

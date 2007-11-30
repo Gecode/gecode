@@ -255,7 +255,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<Golf,DFS,SizeOptions>(opt);
+  Example::run<Golf,DFSE,SizeOptions>(opt);
   return 0;
 }
 

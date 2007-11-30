@@ -80,7 +80,7 @@ main(int argc, char* argv[]) {
   opt.size(6);
   opt.solutions(0);
   opt.parse(argc,argv);
-  Example::run<StressSearch,DFS,SizeOptions>(opt);
+  Example::run<StressSearch,DFSE,SizeOptions>(opt);
   return 0;
 }
 

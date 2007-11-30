@@ -125,7 +125,7 @@ main(int argc, char* argv[]){
     std::cerr << "size must be at least 2!" << std::endl;
     return -1;
   }
-  Example::run<AllInterval,DFS,SizeOptions>(opt);
+  Example::run<AllInterval,DFSE,SizeOptions>(opt);
   return 0;
 }
 

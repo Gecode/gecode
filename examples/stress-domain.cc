@@ -91,7 +91,7 @@ main(int argc, char* argv[]) {
   opt.iterations(200);
   opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressDomain,DFS,SizeOptions>(opt);
+  Example::run<StressDomain,DFSE,SizeOptions>(opt);
   return 0;
 }
 

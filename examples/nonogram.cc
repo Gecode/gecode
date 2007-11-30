@@ -153,7 +153,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Nonogram,DFS,SizeOptions>(opt);
+  Example::run<Nonogram,DFSE,SizeOptions>(opt);
   return 0;
 }
 

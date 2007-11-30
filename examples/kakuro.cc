@@ -678,7 +678,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Kakuro,DFS,SizeOptions>(opt);
+  Example::run<Kakuro,DFSE,SizeOptions>(opt);
   return 0;
 }
 

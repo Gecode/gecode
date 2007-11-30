@@ -115,7 +115,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(1000);
   opt.parse(argc,argv);
-  Example::run<Eq20,DFS,Options>(opt);
+  Example::run<Eq20,DFSE,Options>(opt);
   return 0;
 }
 

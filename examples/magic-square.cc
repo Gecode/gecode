@@ -130,7 +130,7 @@ main(int argc, char* argv[]) {
   opt.iterations(1);
   opt.size(7);
   opt.parse(argc,argv);
-  Example::run<MagicSquare,DFS,SizeOptions>(opt);
+  Example::run<MagicSquare,DFSE,SizeOptions>(opt);
   return 0;
 }
 

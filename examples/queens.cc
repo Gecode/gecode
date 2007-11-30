@@ -133,7 +133,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Queens::PROP_DISTINCT, "distinct",
                       "three distinct constraints");
   opt.parse(argc,argv);
-  Example::run<Queens,DFS,SizeOptions>(opt);
+  Example::run<Queens,DFSE,SizeOptions>(opt);
   return 0;
 }
 

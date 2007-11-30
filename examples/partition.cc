@@ -132,7 +132,7 @@ main(int argc, char* argv[]) {
   opt.size(32);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
-  Example::run<Partition,DFS,SizeOptions>(opt);
+  Example::run<Partition,DFSE,SizeOptions>(opt);
   return 0;
 }
 

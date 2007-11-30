@@ -42,6 +42,10 @@
 #include "gecode/int.hh"
 #include "gecode/search.hh"
 
+#ifdef GECODE_HAVE_GIST
+#include "gecode/gist/gist.hh"
+#endif
+
 using namespace Gecode;
 
 /*
@@ -313,6 +317,50 @@ public:
 
 #include "examples/support/options.icc"
 
+/// \name Search engine abstractions for %Gecode examples
+//@{
+
+/// Abstraction for DFS
+template <class S>
+class DFSE {
+public:
+  typedef Gecode::DFS<S> E;
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) Gecode::explore(root, i);
+  }
+};
+
+/// Abstraction for LDS
+template <class S>
+class LDSE {
+public:
+  typedef Gecode::LDS<S> E;
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) Gecode::explore(root, i);
+  }
+};
+
+/// Abstraction for BAB
+template <class S>
+class BABE {
+public:
+  typedef Gecode::BAB<S> E;
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) Gecode::exploreBest(root, i);
+  }
+};
+
+/// Abstraction for Restart
+template <class S>
+class RestartE {
+public:
+  typedef Gecode::Restart<S> E;
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) Gecode::exploreBest(root, i);
+  }
+};
+
+//@}
 
 /**
  * \brief Base-class for %Gecode examples
@@ -347,10 +395,6 @@ public:
   /// Catch wrong definitions of copy constructor
   explicit Example(Example& e);
 };
-
-#ifdef GECODE_HAVE_GIST
-#include "gecode/gist/gist.hh"
-#endif
 
 #include "examples/support/example.icc"
 

@@ -161,7 +161,7 @@ main(int argc, char* argv[]) {
   opt.size(9);
   opt.iterations(20);
   opt.parse(argc,argv);
-  Example::run<Steiner,DFS,SizeOptions>(opt);
+  Example::run<Steiner,DFSE,SizeOptions>(opt);
   return 0;
 }
 

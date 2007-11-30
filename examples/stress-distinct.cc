@@ -83,7 +83,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressDistinct");
   opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressDistinct,DFS,SizeOptions>(opt);
+  Example::run<StressDistinct,DFSE,SizeOptions>(opt);
   return 0;
 }
 

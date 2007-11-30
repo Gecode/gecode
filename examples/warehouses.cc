@@ -183,7 +183,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(10);
   opt.parse(argc,argv);
-  Example::run<Warehouses,BAB,Options>(opt);
+  Example::run<Warehouses,BABE,Options>(opt);
   return 0;
 }
 

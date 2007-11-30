@@ -79,7 +79,7 @@ main(int argc, char* argv[]) {
   opt.iterations(2000);
   opt.solutions(0);
   opt.parse(argc,argv);
-  Example::run<Baseline,DFS,Options>(opt);
+  Example::run<Baseline,DFSE,Options>(opt);
   return 0;
 }
 
