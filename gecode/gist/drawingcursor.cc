@@ -47,7 +47,8 @@ namespace Gecode { namespace Gist {
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                                const QRect& clippingRect0)
-    : NodeCursor<VisualNode>(root), painter(painter0), clippingRect(clippingRect0), x(0), y(0) {}
+    : NodeCursor<VisualNode>(root), painter(painter0), 
+      clippingRect(clippingRect0), x(0), y(0) {}
 
   void
   DrawingCursor::moveUpwards(void) { 
@@ -79,6 +80,9 @@ namespace Gecode { namespace Gist {
 
   bool
   DrawingCursor::isClipped(void) {
+    if (clippingRect.width() == 0 && clippingRect.x() == 0
+        && clippingRect.height() == 0 && clippingRect.y() == 0)
+      return false;
     BoundingBox b = node()->getBoundingBox();
     return (x + b.left > clippingRect.x() + clippingRect.width() ||
             x + b.right < clippingRect.x() || 

@@ -47,10 +47,13 @@ namespace Gecode { namespace Gist {
     setWindowTitle(tr("Gist"));
     resize(500,500);
 
-    QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+    menuBar = new QMenuBar(0);
+
+    QMenu* fileMenu = menuBar->addMenu(tr("&File"));
+    fileMenu->addAction(c.print);
     fileMenu->addAction(c.exportPostscript);
     
-    QMenu* nodeMenu = menuBar()->addMenu(tr("&Node"));
+    QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
     nodeMenu->addAction(c.inspectCN);
     nodeMenu->addAction(c.setPath);
     nodeMenu->addAction(c.inspectPath);
@@ -68,12 +71,16 @@ namespace Gecode { namespace Gist {
     nodeMenu->addAction(c.centerCN);
 
     
-    QMenu* searchMenu = menuBar()->addMenu(tr("&Search"));
+    QMenu* searchMenu = menuBar->addMenu(tr("&Search"));
     searchMenu->addAction(c.searchNext);
     searchMenu->addAction(c.searchAll);
     searchMenu->addAction(c.stopCN);
     
     show();
+  }
+
+  GistMainWindow::~GistMainWindow(void) {
+    delete menuBar;
   }
 
 }}

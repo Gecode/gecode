@@ -184,17 +184,6 @@ namespace Gecode { namespace Gist {
   }
   
   void
-  TreeCanvasImpl::exportPostscript(void) {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save tree as postscript"), "", tr("Postscript (*.ps *.eps)"));
-    if (filename != "") {
-      std::ofstream outfile(filename.toStdString().c_str());
-      QMutexLocker locker(&mutex);
-      Postscript::output(outfile, root);      
-      outfile.close();
-    }
-  }
-
-  void
   TreeCanvasImpl::zoomToFit(void) {
     QMutexLocker locker(&mutex);
     BoundingBox bb;
@@ -374,6 +363,47 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     nodeMap << currentNode;
     emit newPointInTime(nodeMap.size() - 1);
+  }
+
+  void
+  TreeCanvasImpl::exportPostscript(void) {
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save tree as postscript"), "", tr("Postscript (*.ps *.eps)"));
+    if (filename != "") {
+      std::ofstream outfile(filename.toStdString().c_str());
+      QMutexLocker locker(&mutex);
+      Postscript::output(outfile, root);      
+      outfile.close();
+    }
+  }
+
+  void
+  TreeCanvasImpl::print(void) {
+    QPrinter printer;
+    if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+      QMutexLocker locker(&mutex);
+
+      BoundingBox bb = root->getBoundingBox();
+      QRect pageRect = printer.pageRect();
+      double newXScale =
+        static_cast<double>(pageRect.width()) / (bb.right - bb.left + 20);
+      double newYScale =
+        static_cast<double>(pageRect.height()) / (bb.depth * 38 + 40);
+      double printScale = std::min(newXScale, newYScale)*100;
+      if (printScale<1.0)
+        printScale = 1.0;
+      if (printScale > 400.0)
+        printScale = 400.0;
+      printScale = printScale / 100.0;
+
+      QPainter painter(&printer);
+      painter.setRenderHint(QPainter::Antialiasing);
+      painter.scale(printScale,printScale);
+      painter.translate(xtrans, 0);
+      QRect clip(0,0,0,0);
+      DrawingCursor dc(root, painter, clip);
+      PreorderNodeVisitor<DrawingCursor> v(dc);
+      while (v.next());      
+    }
   }
   
   void
@@ -615,12 +645,12 @@ namespace Gecode { namespace Gist {
     
 #endif
 
-    inspectCN = new QAction("inspect", this);
+    inspectCN = new QAction("Inspect", this);
     inspectCN->setShortcut(QKeySequence("Return"));
     connect(inspectCN, SIGNAL(triggered()), canvas, 
                        SLOT(inspectCurrentNode()));
 
-    stopCN = new QAction("stop", this);
+    stopCN = new QAction("Stop search", this);
     stopCN->setShortcut(QKeySequence("Esc"));
     connect(stopCN, SIGNAL(triggered()), canvas, 
                     SLOT(stopSearch()));
@@ -640,63 +670,69 @@ namespace Gecode { namespace Gist {
     connect(navLeft, SIGNAL(triggered()), canvas, 
                      SLOT(navLeft()));
 
-    navRight = new QAction("Left", this);
+    navRight = new QAction("Right", this);
     navRight->setShortcut(QKeySequence("Right"));
     connect(navRight, SIGNAL(triggered()), canvas, 
                       SLOT(navRight()));
 
 
-    searchNext = new QAction("search next", this);
+    searchNext = new QAction("Next solution", this);
     searchNext->setShortcut(QKeySequence("N"));
     connect(searchNext, SIGNAL(triggered()), canvas, SLOT(searchOne()));
 
-    searchAll = new QAction("search all", this);
+    searchAll = new QAction("All solutions", this);
     searchAll->setShortcut(QKeySequence("A"));
     connect(searchAll, SIGNAL(triggered()), canvas, SLOT(searchAll()));
 
-    toggleHidden = new QAction("(un)hide", this);
+    toggleHidden = new QAction("Hide/unhide", this);
     toggleHidden->setShortcut(QKeySequence("H"));
     connect(toggleHidden, SIGNAL(triggered()), canvas, SLOT(toggleHidden()));
 
-    hideFailed = new QAction("hide failed", this);
+    hideFailed = new QAction("Hide failed subtrees", this);
     hideFailed->setShortcut(QKeySequence("F"));
     connect(hideFailed, SIGNAL(triggered()), canvas, SLOT(hideFailed()));
 
-    unhideAll = new QAction("unhide all", this);
+    unhideAll = new QAction("Unhide all", this);
     unhideAll->setShortcut(QKeySequence("U"));
     connect(unhideAll, SIGNAL(triggered()), canvas, SLOT(unhideAll()));
 
-    zoomToFit = new QAction("zoom to fit", this);
+    zoomToFit = new QAction("Zoom to fit", this);
     zoomToFit->setShortcut(QKeySequence("Z"));
     connect(zoomToFit, SIGNAL(triggered()), canvas, SLOT(zoomToFit()));
 
-    centerCN = new QAction("center current node", this);
+    centerCN = new QAction("Center current node", this);
     centerCN->setShortcut(QKeySequence("C"));
     connect(centerCN, SIGNAL(triggered()), canvas, SLOT(centerCurrentNode()));
 
-    exportPostscript = new QAction("export postscript", this);
-    exportPostscript->setShortcut(QKeySequence("Ctrl+P"));
-    connect(exportPostscript, SIGNAL(triggered()), canvas, SLOT(exportPostscript()));
+    exportPostscript = new QAction("Export postscript...", this);
+    exportPostscript->setShortcut(QKeySequence("Ctrl+Shift+P"));
+    connect(exportPostscript, SIGNAL(triggered()), canvas, 
+            SLOT(exportPostscript()));
 
-    setPath = new QAction("set Path", this);
+    print = new QAction("Print...", this);
+    print->setShortcut(QKeySequence("Ctrl+P"));
+    connect(print, SIGNAL(triggered()), canvas, 
+            SLOT(print()));
+
+    setPath = new QAction("Set path", this);
     setPath->setShortcut(QKeySequence("Shift+P"));
     connect(setPath, SIGNAL(triggered()), canvas, SLOT(setPath()));
 
-    inspectPath = new QAction("inspect Path", this);
+    inspectPath = new QAction("Inspect path", this);
     inspectPath->setShortcut(QKeySequence("Shift+I"));
     connect(inspectPath, SIGNAL(triggered()), canvas, SLOT(inspectPath()));
 
 #ifdef GECODE_GIST_EXPERIMENTAL
 
-    addChild = new QAction("add child node", this);
+    addChild = new QAction("Add child node", this);
     addChild->setShortcut(QKeySequence("Shift+C"));
     connect(addChild, SIGNAL(triggered()), canvas, SLOT(addChild()));
 
-    addFixpoint = new QAction("add fixpoint node", this);
+    addFixpoint = new QAction("Add fixpoint node", this);
     addFixpoint->setShortcut(QKeySequence("Shift+F"));
     connect(addFixpoint, SIGNAL(triggered()), canvas, SLOT(addFixpoint()));
 
-    investigateCurrentNode = new QAction("investigate", this);
+    investigateCurrentNode = new QAction("Investigate", this);
     investigateCurrentNode->setShortcut(QKeySequence("Shift+N"));
     connect(investigateCurrentNode, SIGNAL(triggered()), canvas, SLOT(investigateCurrentNode()));
 
@@ -717,6 +753,7 @@ namespace Gecode { namespace Gist {
     addAction(zoomToFit);
     addAction(centerCN);
     addAction(exportPostscript);
+    addAction(print);
 
     addAction(setPath);
     addAction(inspectPath);

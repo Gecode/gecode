@@ -64,7 +64,7 @@ namespace Gecode { namespace Gist {
   public:
     /// Constructor
     DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
-                   const QRect& clippingRect0);
+                  const QRect& clippingRect0);
 
     ///\name Cursor interface
     //@{

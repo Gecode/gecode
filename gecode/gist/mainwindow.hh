@@ -46,9 +46,13 @@ namespace Gecode { namespace Gist {
   protected:
     /// The contained tree canvas
     TreeCanvas c;
+    /// A menu bar
+    QMenuBar* menuBar;
   public:
     /// Constructor
     GistMainWindow(Space* root, Better* b, Gist::Inspector* gi);
+    /// Destructor
+    ~GistMainWindow(void);
   };
   
 }}

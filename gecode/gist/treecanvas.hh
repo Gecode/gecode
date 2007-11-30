@@ -99,8 +99,10 @@ namespace Gecode {
     void hideFailed(void);
     /// Unhide all nodes below selected node
     void unhideAll(void);
-    /// Export postscript for selected node
+    /// Export postscript of the tree
     void exportPostscript(void);
+    /// Print the tree
+    void print(void);
     /// Zoom the canvas so that the whole tree fits
     void zoomToFit(void);
     /// Center the view on the currently selected node
@@ -215,6 +217,7 @@ namespace Gecode {
     QAction* zoomToFit;
     QAction* centerCN;
     QAction* exportPostscript;
+    QAction* print;
 
     QAction* setPath;
     QAction* inspectPath;
