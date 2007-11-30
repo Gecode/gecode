@@ -106,6 +106,8 @@ am(double t[], int n);
 double
 dev(double t[], int n);
 
+#ifdef GECODE_HAVE_GIST
+
 /**
  * \brief Traits class for search engines
  */
@@ -148,6 +150,8 @@ public:
     (void) exploreBest(root, i);
   }
 };
+
+#endif
 
 template <class Script, template<class> class Engine, class Options>
 void
