@@ -464,7 +464,7 @@ main(int argc, char* argv[]) {
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Pentominoes,DFSE,SizeOptions>(opt);
+  Example::run<Pentominoes,DFS,SizeOptions>(opt);
   return 0;
 }
 

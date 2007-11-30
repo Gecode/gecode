@@ -161,7 +161,7 @@ main(int argc, char* argv[]) {
   opt.branching(Photo::BRANCH_NONE, "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
-  Example::run<Photo,BABE,SizeOptions>(opt);
+  Example::run<Photo,BAB,SizeOptions>(opt);
   return 0;
 }
 

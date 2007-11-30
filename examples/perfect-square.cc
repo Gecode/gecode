@@ -224,7 +224,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<PerfectSquare,DFSE,SizeOptions>(opt);
+  Example::run<PerfectSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 

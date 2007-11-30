@@ -195,7 +195,7 @@ main(int argc, char* argv[]) {
    * BIBD(7,3,1), BIBD(6,3,2), BIBD(7,3,20), ...
    */
 
-  Example::run<BIBD,DFSE,BIBDOptions>(opt);
+  Example::run<BIBD,DFS,BIBDOptions>(opt);
   return 0;
 }
 

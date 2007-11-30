@@ -382,7 +382,7 @@ main(int argc, char* argv[]) {
   opt.parse(argc,argv);
   // Generates the new board
   generate(opt.size());
-  Example::run<BlackHole,DFSE,SizeOptions>(opt);
+  Example::run<BlackHole,DFS,SizeOptions>(opt);
   return 0;
 }
 

@@ -535,22 +535,22 @@ main(int argc, char* argv[]) {
 #ifdef GECODE_HAVE_SET_VARS
   switch (opt.model()) {
   case Sudoku::MODEL_INT:
-    Example::run<SudokuInt,DFSE,SizeOptions>(opt);
+    Example::run<SudokuInt,DFS,SizeOptions>(opt);
     break;
   case Sudoku::MODEL_SET:
-    Example::run<SudokuSet,DFSE,SizeOptions>(opt);
+    Example::run<SudokuSet,DFS,SizeOptions>(opt);
     break;
   case Sudoku::MODEL_MIXED:
-    Example::run<SudokuMixed,DFSE,SizeOptions>(opt);
+    Example::run<SudokuMixed,DFS,SizeOptions>(opt);
     break;
 #ifdef GECODE_HAVE_CPLTSET_VARS
   case Sudoku::MODEL_CPLT:
-    Example::run<SudokuCpltSet,DFSE,SizeOptions>(opt);
+    Example::run<SudokuCpltSet,DFS,SizeOptions>(opt);
     break;
 #endif
   }
 #else
-  Example::run<SudokuInt,DFSE,SizeOptions>(opt);
+  Example::run<SudokuInt,DFS,SizeOptions>(opt);
 #endif
   return 0;
 }

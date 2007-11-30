@@ -106,6 +106,48 @@ am(double t[], int n);
 double
 dev(double t[], int n);
 
+/**
+ * \brief Traits class for search engines
+ */
+template <class Engine>
+class GistEngine {
+};
+
+/// Specialization for DFS
+template <typename S>
+class GistEngine<DFS<S> > {
+public:
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) explore(root, i);
+  }
+};
+
+/// Specialization for LDS
+template <typename S>
+class GistEngine<LDS<S> > {
+public:
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) explore(root, i);
+  }
+};
+
+/// Specialization for BAB
+template <typename S>
+class GistEngine<BAB<S> > {
+public:
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) exploreBest(root, i);
+  }
+};
+
+/// Specialization for Restart
+template <typename S>
+class GistEngine<Restart<S> > {
+public:
+  static void explore(S* root, Gist::Inspector* i) {
+    (void) exploreBest(root, i);
+  }
+};
 
 template <class Script, template<class> class Engine, class Options>
 void
@@ -133,7 +175,7 @@ Example::run(const Options& o) {
           s->sac_remove_vars();
         }
         Search::Stop* stop = FailTimeStop::create(o.fail(), o.time());
-        typename Engine<Script>::E e(s,o.c_d(),o.a_d(),stop);
+        Engine<Script> e(s,o.c_d(),o.a_d(),stop);
         delete s;
         do {
           Example* ex = e.next();
@@ -178,7 +220,7 @@ Example::run(const Options& o) {
           while (s->sac(p) && o.sac() == SAC_FULL);
           s->sac_remove_vars();
         }
-        typename Engine<Script>::E e(s,o.c_d(),o.a_d());
+        Engine<Script> e(s,o.c_d(),o.a_d());
         delete s;
         do {
           Example* ex = e.next();
@@ -217,7 +259,7 @@ Example::run(const Options& o) {
               while (s->sac(p) && o.sac() == SAC_FULL);
               s->sac_remove_vars();
             }
-            typename Engine<Script>::E e(s,o.c_d(),o.a_d());
+            Engine<Script> e(s,o.c_d(),o.a_d());
             delete s;
             do {
               Example* ex = e.next();
@@ -243,7 +285,7 @@ Example::run(const Options& o) {
       {
         Gist::PrintingInspector<Script> pi(o.name());
         Script* s = new Script(o);
-        Engine<Script>::explore(s, &pi);
+        (void) GistEngine<Engine<Script> >::explore(s, &pi);
         delete s;
       }
       break;

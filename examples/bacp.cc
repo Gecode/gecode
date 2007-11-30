@@ -201,7 +201,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<BACP,BABE,SizeOptions>(opt);
+  Example::run<BACP,BAB,SizeOptions>(opt);
   return 0;
 }
 

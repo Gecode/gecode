@@ -408,7 +408,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
   init_bishops(opt.size());
-  Example::run<CrowdedChess,DFSE,SizeOptions>(opt);
+  Example::run<CrowdedChess,DFS,SizeOptions>(opt);
   return 0;
 }
 

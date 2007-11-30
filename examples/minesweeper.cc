@@ -155,7 +155,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<MineSweeper,DFSE,SizeOptions>(opt);
+  Example::run<MineSweeper,DFS,SizeOptions>(opt);
   return 0;
 }
 

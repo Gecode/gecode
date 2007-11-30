@@ -120,7 +120,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("Hamming");
   opt.size(32);
   opt.parse(argc,argv);
-  Example::run<Hamming,DFSE,SizeOptions>(opt);
+  Example::run<Hamming,DFS,SizeOptions>(opt);
   return 0;
 }
 

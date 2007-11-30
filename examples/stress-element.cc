@@ -104,7 +104,7 @@ int
 main(int argc, char* argv[]) {
   Options opt("StressElement");
   opt.parse(argc,argv);
-  Example::run<StressElement,DFSE,Options>(opt);
+  Example::run<StressElement,DFS,Options>(opt);
   return 0;
 }
 

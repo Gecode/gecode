@@ -127,7 +127,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressExtensional");
   opt.size(7);
   opt.parse(argc,argv);
-  Example::run<StressExtensional,DFSE,SizeOptions>(opt);
+  Example::run<StressExtensional,DFS,SizeOptions>(opt);
   return 0;
 }
 

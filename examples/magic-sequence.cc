@@ -138,7 +138,7 @@ main(int argc, char* argv[]) {
   opt.propagation(MagicSequence::PROP_COUNT,   "count");
   opt.propagation(MagicSequence::PROP_GCC,     "gcc");
   opt.parse(argc,argv);
-  Example::run<MagicSequence,DFSE,SizeOptions>(opt);
+  Example::run<MagicSequence,DFS,SizeOptions>(opt);
   return 0;
 }
 

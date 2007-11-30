@@ -186,11 +186,11 @@ main(int argc, char* argv[]) {
   if (opt.size() > 0)
     switch (opt.search()) {
     case GolombRuler::SEARCH_DFS:
-      Example::run<GolombRuler,DFSE,SizeOptions>(opt); break;
+      Example::run<GolombRuler,DFS,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_BAB:
-      Example::run<GolombRuler,BABE,SizeOptions>(opt); break;
+      Example::run<GolombRuler,BAB,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_RESTART:
-      Example::run<GolombRuler,RestartE,SizeOptions>(opt); break;
+      Example::run<GolombRuler,Restart,SizeOptions>(opt); break;
     }
   return 0;
 }

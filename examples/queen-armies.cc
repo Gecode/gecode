@@ -276,7 +276,7 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  Example::run<QueenArmies,BABE,SizeOptions>(opt);
+  Example::run<QueenArmies,BAB,SizeOptions>(opt);
   return 0;
 }
 
