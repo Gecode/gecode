@@ -191,7 +191,26 @@ namespace Gecode {
    * template arguments.
    * \ingroup TaskVar
    */
-  class VarBase {};
+  class VarBase {
+    friend class Space;
+  protected:
+    /// Either next modified or next copied variable
+    VarBase* _next; 
+    union {
+      /**
+       * \brief Combines the number of free entries with modification events
+       *
+       * The least four bits are reserved for the modification events, the
+       * remaining 28 bits are for the number of free entries.
+       *
+       */
+      unsigned int free_me;
+      /// Store the forwarding pointer during copying
+      VarBase* fwd;
+    } u;
+    /// Return next modified variable and reset (during processing)
+    VarBase* next(void);
+  };
 
   /**
    * \brief Base class for %Variable type disposer
@@ -275,20 +294,6 @@ namespace Gecode {
     friend class Space;
     friend class Propagator;
   private:
-    /// Either next modified or next copied variable
-    Variable* _next; 
-    union {
-      /**
-       * \brief Combines the number of free entries with modification events
-       *
-       * The least four bits are reserved for the modification events, the
-       * remaining 28 bits are for the number of free entries.
-       *
-       */
-      unsigned int free_me;
-      /// Store the forwarding pointer during copying
-      Variable* fwd;
-    } u;
     /// Number of slots for index struxture
     static const PropCond PC_SIZE = PC + 3;
     /// Stores where entries start (idx[pc]}
@@ -1746,8 +1751,8 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline
-  Variable<VTI,PC,MED>::Variable(Space*) :
-    _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
+  Variable<VTI,PC,MED>::Variable(Space*) {
+    _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
     for (int i=PC_SIZE; i--; )
       idx[i] = NULL;
@@ -1755,8 +1760,8 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline
-  Variable<VTI,PC,MED>::Variable(void) :
-    _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
+  Variable<VTI,PC,MED>::Variable(void) {
+    _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
     for (int i=PC_SIZE; i--; )
       idx[i] = NULL;
@@ -1804,29 +1809,34 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline bool
   Variable<VTI,PC,MED>::modified(void) const {
-    return _next != reinterpret_cast<Variable<VTI,PC,MED>*>(1);
+    return _next != reinterpret_cast<VarBase*>(1);
   }
 
 
 
+  forceinline VarBase*
+  VarBase::next(void) {
+    VarBase* n = _next;
+    _next = reinterpret_cast<VarBase*>(1);
+    return n;
+  }
+
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline Variable<VTI,PC,MED>*
   Variable<VTI,PC,MED>::next(void) {
-    Variable<VTI,PC,MED>* n = _next;
-    _next = reinterpret_cast<Variable<VTI,PC,MED>*>(1);
-    return n;
+    return static_cast<Variable<VTI,PC,MED>*>(VarBase::next());
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline bool
   Variable<VTI,PC,MED>::copied(void) const {
-    return _next != reinterpret_cast<Variable<VTI,PC,MED>*>(1);
+    return _next != reinterpret_cast<VarBase*>(1);
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline
-  Variable<VTI,PC,MED>::Variable(Space* home, bool, Variable<VTI,PC,MED>& x)
-    : _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
+  Variable<VTI,PC,MED>::Variable(Space* home, bool, Variable<VTI,PC,MED>& x) {
+    _next = reinterpret_cast<VarBase*>(1);
     VarBase** reg;
     if (x.idx[0] == NULL) {
       // Variable needs no index structure
@@ -1842,13 +1852,13 @@ namespace Gecode {
     // Set forwarding pointer
     x.u.fwd = this;
     // Register original
-    x._next = static_cast<Variable<VTI,PC,MED>*>(*reg); *reg = &x;
+    x._next = *reg; *reg = &x;
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline Variable<VTI,PC,MED>*
   Variable<VTI,PC,MED>::forward(void) const {
-    return u.fwd;
+    return static_cast<Variable<VTI,PC,MED>*>(u.fwd);
   }
 
   /*

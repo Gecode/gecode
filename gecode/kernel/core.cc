@@ -461,15 +461,6 @@ namespace Gecode {
    *
    */
 
-  /// A fake combination class
-  class __Combine {
-  public:
-    ModEvent operator()(ModEvent,ModEvent) {
-      GECODE_NEVER;
-      return ME_GEN_ASSIGNED;
-    }
-  };
-
   Space*
   Space::clone(bool share, unsigned long int& pn) {
     pn += propagate();
@@ -492,9 +483,7 @@ namespace Gecode {
      *
      */
     // Update variables without indexing structure
-    for (Variable<VTI_NOIDX,0,__Combine>* x
-           = static_cast<Variable<VTI_NOIDX,0,__Combine>*>(c->vars_noidx);
-         x != NULL; x = x->next())
+    for (VarBase* x = c->vars_noidx; x != NULL; x = x->next())
       x->u.free_me = 0;
     c->vars_noidx = NULL;
     // Update variables with indexing structure
