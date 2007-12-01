@@ -37,30 +37,28 @@
  *
  */
 
-
-  /**
-   * \brief %Variable type identifiers
-   *
-   * Each variable type must have a unique variable type identifier. The
-   * kernel supports at most eight different variable type identifiers.
-   *
-   * \ingroup TaskVar
-   */
-  enum VarTypeId {
+/**
+ * \brief %Variable type identifiers
+ *
+ * Each variable type must have a unique variable type identifier. The
+ * kernel supports at most eight different variable type identifiers.
+ *
+ * \ingroup TaskVar
+ */
+enum VarTypeId {
 #ifdef GECODE_HAVE_INT_VARS
-    VTI_INT, ///< Identifier for Int variable implementations
+  VTI_INT, ///< Identifier for Int variable implementations
 #endif
 #ifdef GECODE_HAVE_INT_VARS
-    VTI_BOOL, ///< Identifier for Bool variable implementations
+  VTI_BOOL, ///< Identifier for Bool variable implementations
 #endif
 #ifdef GECODE_HAVE_SET_VARS
-    VTI_SET, ///< Identifier for Set variable implementations
+  VTI_SET, ///< Identifier for Set variable implementations
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
-    VTI_CPLTSET, ///< Identifier for CpltSet variable implementations
+  VTI_CPLTSET, ///< Identifier for CpltSet variable implementations
 #endif
-    VTI_LAST,     ///< Maximal variable type identifier plus one
-    VTI_NOIDX = 0 ///< Used for variables without indexing structure
-  };
+  VTI_LAST ///< Maximal variable type identifier plus one
+};
 
 // STATISTICS: kernel-var

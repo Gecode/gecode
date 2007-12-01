@@ -2,12 +2,8 @@
 #  Main authors:
 #     Guido Tack <tack@gecode.org>
 #
-#  Contributing authors:
-#     Christian Schulte <schulte@gecode.org>
-#
 #  Copyright:
-#     Guido Tack, 2004
-#     Christian Schulte, 2006
+#     Guido Tack, 2007
 #
 #  Last modified:
 #     $Date: 2006-07-28 16:27:48 +0200 (Fri, 28 Jul 2006) $ by $Author: tack $
@@ -41,9 +37,7 @@
 # Header of file to be generated
 #
 [Header]
-
 namespace Gecode { namespace CpltSet {
-
 #
 # General settings
 #
@@ -53,7 +47,6 @@ VTI:		CPLTSET
 Ifdef:		GECODE_HAVE_CPLTSET_VARS
 Namespace:	Gecode::CpltSet
 Dispose:        true
-
 #
 # Definition of modification events
 #
@@ -62,7 +55,6 @@ Dispose:        true
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
    * \ingroup TaskActorCpltSet
    */
-
   //@{
 [ModEvent]
 Name:		FAILED=FAILED
@@ -80,12 +72,9 @@ Combine:	VAL=VAL,DOM=DOM
   /**
    * \brief Domain operation has modified set
    */
-# [ModEventFooter]: Nothing
-
 ##
 ## Definition of propagation conditions
 ##
-# [PropCondHeader]: Nothing
 [PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL
@@ -109,10 +98,6 @@ ModEvents:	VAL,DOM
    */
 [PropCondFooter]
   //@}
-##
-## Footer of file to be generated
-##
 [Footer]
-
 }}
 [End]

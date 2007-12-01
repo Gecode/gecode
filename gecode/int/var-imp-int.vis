@@ -37,9 +37,7 @@
 ## Header of file to be generated
 ##
 [Header]
-
 namespace Gecode { namespace Int {
-
 ##
 ## General settings
 ##
@@ -57,7 +55,6 @@ Name:		Int
 VTI:		INT
 Ifdef:		GECODE_HAVE_INT_VARS
 Namespace:	Gecode::Int
-
 ##
 ## Definition of modification events
 ##
@@ -98,7 +95,6 @@ Namespace:	Gecode::Int
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
    */
-  
   //@{
 [ModEvent]
 Name:		FAILED=FAILED
@@ -131,8 +127,6 @@ Combine:	VAL=VAL, BND=BND, DOM=DOM
    * and that also the minimum and maximum of the domain have not changed.
    */
 # [ModEventFooter]: Nothing
-
-
 ##
 ## Definition of propagation conditions
 ##
@@ -200,7 +194,6 @@ ModEvents:	VAL, BND, DOM
 ## Footer of file to be generated
 ##
 [Footer]
-
 }}
 ##
 ## At the end of the file there must be an [End] section.

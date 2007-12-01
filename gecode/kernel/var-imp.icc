@@ -40,22 +40,17 @@
 #ifdef GECODE_HAVE_INT_VARS
 
 namespace Gecode { namespace Int {
-
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
    */
-  
   //@{
   /// Domain operation has resulted in failure
   const Gecode::ModEvent ME_INT_FAILED = Gecode::ME_GEN_FAILED;
-
   /// Domain operation has not changed domain
   const Gecode::ModEvent ME_INT_NONE = Gecode::ME_GEN_NONE;
-
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_INT_VAL = Gecode::ME_GEN_ASSIGNED;
-
   /** 
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
@@ -65,17 +60,14 @@ namespace Gecode { namespace Int {
    * assuming a ME_INT_BND modification event.
    */
   const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
-
   /** 
    * \brief Domain operation has changed the domain
    *
    * Note that this implies that the domain has not resulted in a value
    * and that also the minimum and maximum of the domain have not changed.
    */
-
-
   const Gecode::ModEvent ME_INT_DOM = Gecode::ME_GEN_ASSIGNED + 2;
-
+  /// Propagation condition to be ignored (convenience)
   const Gecode::PropCond PC_INT_NONE = Gecode::PC_GEN_NONE;
   /**
    * \brief Propagate when a view becomes assigned (single value)
@@ -85,7 +77,6 @@ namespace Gecode { namespace Int {
    * update operation on \a x returns the modification event ME_INT_VAL.
    */
   const Gecode::PropCond PC_INT_VAL = Gecode::PC_GEN_ASSIGNED;
-
   /**
    * \brief Propagate when minimum or maximum of a view changes
    *
@@ -95,7 +86,6 @@ namespace Gecode { namespace Int {
    * or ME_INT_BND.
    */
   const Gecode::PropCond PC_INT_BND = Gecode::PC_GEN_ASSIGNED + 1;
-
   /**
    * \brief Propagate when domain changes
    *
@@ -105,7 +95,6 @@ namespace Gecode { namespace Int {
    * ME_INT_BND, or ME_INT_DOM.
    */
   const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
-
   //@}
 
   /// Modification event difference for Int-variable implementations
@@ -206,28 +195,24 @@ namespace Gecode { namespace Int {
   }
 
 }}
+
 #endif
+
 #ifdef GECODE_HAVE_INT_VARS
 
 namespace Gecode { namespace Int {
-
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
    */
-  
   //@{
   /// Domain operation has resulted in failure
   const Gecode::ModEvent ME_BOOL_FAILED = Gecode::ME_GEN_FAILED;
-
   /// Domain operation has not changed domain
   const Gecode::ModEvent ME_BOOL_NONE = Gecode::ME_GEN_NONE;
-
   /// Domain operation has resulted in a value (assigned variable)
-
-
   const Gecode::ModEvent ME_BOOL_VAL = Gecode::ME_GEN_ASSIGNED;
-
+  /// Propagation condition to be ignored (convenience)
   const Gecode::PropCond PC_BOOL_NONE = Gecode::PC_GEN_NONE;
   /**
    * \brief Propagate when a view becomes assigned (single value)
@@ -237,7 +222,6 @@ namespace Gecode { namespace Int {
    * update operation on \a x returns the modification event ME_BOOL_VAL.
    */
   const Gecode::PropCond PC_BOOL_VAL = Gecode::PC_GEN_ASSIGNED;
-
   //@}
 
   /// Modification event difference for Bool-variable implementations
@@ -320,33 +304,29 @@ namespace Gecode { namespace Int {
   }
 
 }}
+
 #endif
+
 #ifdef GECODE_HAVE_SET_VARS
 
 namespace Gecode { namespace Set {
-
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
    * \ingroup TaskActorSet
    */
-
   //@{
   /// Domain operation has resulted in failure
   const Gecode::ModEvent ME_SET_FAILED = Gecode::ME_GEN_FAILED;
-
   /// Domain operation has not changed domain
   const Gecode::ModEvent ME_SET_NONE = Gecode::ME_GEN_NONE;
-
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_SET_VAL = Gecode::ME_GEN_ASSIGNED;
-
   /**
    * \brief Domain operation has changed the variable cardinality
    *
    * Note that this implies that the domain has not resulted in a value.
    */
   const Gecode::ModEvent ME_SET_CARD = Gecode::ME_GEN_ASSIGNED + 1;
-
   /**
    * \brief Domain operation has changed the least upper bound
    *
@@ -355,7 +335,6 @@ namespace Gecode { namespace Set {
    * have changed.
    */
   const Gecode::ModEvent ME_SET_LUB = Gecode::ME_GEN_ASSIGNED + 2;
-
   /**
    * \brief Domain operation has changed the greatest lower bound
    *
@@ -364,7 +343,6 @@ namespace Gecode { namespace Set {
    * have changed.
    */
   const Gecode::ModEvent ME_SET_GLB = Gecode::ME_GEN_ASSIGNED + 3;
-
   /**
    * \brief Domain operation has changed both greatest lower and least
    * upper bound
@@ -373,7 +351,6 @@ namespace Gecode { namespace Set {
    * and that also the cardinality has not changed.
    */
   const Gecode::ModEvent ME_SET_BB = Gecode::ME_GEN_ASSIGNED + 4;
-
   /**
    * \brief Domain operation has changed the least upper bound and the cardinality
    *
@@ -381,7 +358,6 @@ namespace Gecode { namespace Set {
    * and that also the greatest lower bound has not changed.
    */
   const Gecode::ModEvent ME_SET_CLUB = Gecode::ME_GEN_ASSIGNED + 5;
-
   /**
    * \brief Domain operation has changed the greatest lower bound and the cardinality
    *
@@ -389,7 +365,6 @@ namespace Gecode { namespace Set {
    * and that also the least upper bound has not changed.
    */
   const Gecode::ModEvent ME_SET_CGLB = Gecode::ME_GEN_ASSIGNED + 6;
-
   /**
    * \brief Domain operation has changed both the greatest lower bound and
    * the least upper bound, as well as the cardinality
@@ -400,9 +375,8 @@ namespace Gecode { namespace Set {
    * assuming a ME_SET_CBB modification event.
    *
    */
-
   const Gecode::ModEvent ME_SET_CBB = Gecode::ME_GEN_ASSIGNED + 7;
-
+  /// Propagation condition to be ignored (convenience)
   const Gecode::PropCond PC_SET_NONE = Gecode::PC_GEN_NONE;
   /**
    * \brief Propagate when a view becomes assigned (single value)
@@ -412,7 +386,6 @@ namespace Gecode { namespace Set {
    * update operation on \a x returns the modification event ME_SET_VAL.
    */
   const Gecode::PropCond PC_SET_VAL = Gecode::PC_GEN_ASSIGNED;
-
   /**
    * \brief Propagate when the cardinality of a view changes
    *
@@ -422,7 +395,6 @@ namespace Gecode { namespace Set {
    * ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB, or ME_SET_CBB.
    */
   const Gecode::PropCond PC_SET_CARD = Gecode::PC_GEN_ASSIGNED + 1;
-
   /**
    * \brief Propagate when the cardinality or the least upper bound
    * of a view changes
@@ -434,7 +406,6 @@ namespace Gecode { namespace Set {
    * or ME_SET_CBB.
    */
   const Gecode::PropCond PC_SET_CLUB = Gecode::PC_GEN_ASSIGNED + 2;
-
   /**
    * \brief Propagate when the cardinality or the greatest lower bound
    * of a view changes
@@ -446,7 +417,6 @@ namespace Gecode { namespace Set {
    * or ME_SET_CBB.
    */
   const Gecode::PropCond PC_SET_CGLB = Gecode::PC_GEN_ASSIGNED + 3;
-
   /**
    * \brief Propagate when any bound or the cardinality
    * of a view changes
@@ -457,7 +427,6 @@ namespace Gecode { namespace Set {
    * and ME_SET_NONE.
    */
   const Gecode::PropCond PC_SET_ANY = Gecode::PC_GEN_ASSIGNED + 4;
-
   //@}
 
   /// Modification event difference for Set-variable implementations
@@ -633,32 +602,28 @@ namespace Gecode { namespace Set {
   }
 
 }}
+
 #endif
+
 #ifdef GECODE_HAVE_CPLTSET_VARS
 
 namespace Gecode { namespace CpltSet {
-
   /**
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
    * \ingroup TaskActorCpltSet
    */
-
   //@{
   /// Domain operation has resulted in failure
   const Gecode::ModEvent ME_CPLTSET_FAILED = Gecode::ME_GEN_FAILED;
-
   /// Domain operation has not changed domain
   const Gecode::ModEvent ME_CPLTSET_NONE = Gecode::ME_GEN_NONE;
-
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_CPLTSET_VAL = Gecode::ME_GEN_ASSIGNED;
-
   /**
    * \brief Domain operation has modified set
    */
-
   const Gecode::ModEvent ME_CPLTSET_DOM = Gecode::ME_GEN_ASSIGNED + 1;
-
+  /// Propagation condition to be ignored (convenience)
   const Gecode::PropCond PC_CPLTSET_NONE = Gecode::PC_GEN_NONE;
   /**
    * \brief Propagate when a view becomes assigned (single value)
@@ -668,7 +633,6 @@ namespace Gecode { namespace CpltSet {
    * update operation on \a x returns the modification event ME_CPLTSET_VAL.
    */
   const Gecode::PropCond PC_CPLTSET_VAL = Gecode::PC_GEN_ASSIGNED;
-
  /**
    * \brief Propagate when the domain of a view changes
    *
@@ -678,7 +642,6 @@ namespace Gecode { namespace CpltSet {
    * ME_CPLTSET_DOM.
    */
   const Gecode::PropCond PC_CPLTSET_DOM = Gecode::PC_GEN_ASSIGNED + 1;
-
   //@}
 
   /// Modification event difference for CpltSet-variable implementations
@@ -787,7 +750,9 @@ namespace Gecode { namespace CpltSet {
   }
 
 }}
+
 #endif
+
 
 namespace Gecode {
 

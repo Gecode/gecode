@@ -196,6 +196,7 @@ namespace Gecode {
   protected:
     /// Either next modified or next copied variable
     VarBase* _next; 
+    /// Combine processing and update information
     union {
       /**
        * \brief Combines the number of free entries with modification events

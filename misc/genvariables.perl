@@ -300,29 +300,27 @@ for ($f=0; $f<$n_files; $f++) {
 if ($gen_type) {
 
 print <<EOF
-
-  /**
-   * \\brief %Variable type identifiers
-   *
-   * Each variable type must have a unique variable type identifier. The
-   * kernel supports at most eight different variable type identifiers.
-   *
-   * \\ingroup TaskVar
-   */
-  enum VarTypeId {
+/**
+ * \\brief %Variable type identifiers
+ *
+ * Each variable type must have a unique variable type identifier. The
+ * kernel supports at most eight different variable type identifiers.
+ *
+ * \\ingroup TaskVar
+ */
+enum VarTypeId {
 EOF
 ;
 
   for ($f = 0; $f<$n_files; $f++) {
     print "#ifdef $ifdef[$f]\n";
-    print "    VTI_$vti[$f], ///< Identifier for $name[$f] variable implementations\n";
+    print "  VTI_$vti[$f], ///< Identifier for $name[$f] variable implementations\n";
     print "#endif\n";
   }
 
 print <<EOF
-    VTI_LAST,     ///< Maximal variable type identifier plus one
-    VTI_NOIDX = 0 ///< Used for variables without indexing structure
-  };
+  VTI_LAST ///< Maximal variable type identifier plus one
+};
 
 EOF
 ;
@@ -339,7 +337,7 @@ if ($gen_header) {
     $DIFFC = $diffc[$f];
 
     if (!($ifdef[$f] eq "")) {
-      print "#ifdef " . $ifdef[$f] . "\n";
+      print "#ifdef $ifdef[$f]\n\n";
     }
     print $hdr[$f];
 
@@ -356,12 +354,13 @@ if ($gen_header) {
 	print "Gecode::ME_GEN_ASSIGNED + " . $o;
 	$o++;
       }
-      print ";\n\n";
+      print ";\n";
     }
 
     print $meftr[$f];
     print $pchdr[$f];
 
+    print "  /// Propagation condition to be ignored (convenience)\n";
     print "  const Gecode::PropCond PC_${VTI}_NONE = Gecode::PC_GEN_NONE;\n";
     $o = 1;
     for ($i=0; $i<$pc_n[$f]; $i++) {
@@ -375,16 +374,15 @@ if ($gen_header) {
 	print "Gecode::PC_GEN_ASSIGNED + " . $o;
 	$o++;
       }
-      print ";\n\n";
+      print ";\n";
     }
 
     print $pcftr[$f];
 
-    print "\n";
-    print "  /// Modification event difference for ${NAME}-variable implementations\n";
-    print "  class ${DIFFC} {\n";
-
   print <<EOF
+
+  /// Modification event difference for ${NAME}-variable implementations
+  class ${DIFFC} {
   public:
     /// Return difference when changing modification event \\a me2 to \\a me1
     ModEvent operator()(ModEvent me1, ModEvent me2) const;
@@ -608,6 +606,7 @@ if ($me_max_n[$f] == 2) {
   ${CLASS}::notify(Space* home, ModEvent, Delta* d) {
     return ${BASE}::notify(home,d);
   }
+
 EOF
 ;
 } else {
@@ -616,13 +615,14 @@ EOF
   ${CLASS}::notify(Space* home, ModEvent me, Delta* d) {
     return ${BASE}::notify(home,me,d);
   }
+
 EOF
 ;
 }
 print $ftr[$f];
 
 if (!($ifdef[$f] eq "")) {
-  print "#endif\n";
+  print "\n#endif\n\n";
 }
 
 }

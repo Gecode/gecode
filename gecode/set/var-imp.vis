@@ -41,9 +41,7 @@
 # Header of file to be generated
 #
 [Header]
-
 namespace Gecode { namespace Set {
-
 #
 # General settings
 #
@@ -52,7 +50,6 @@ Name:		Set
 VTI:		SET
 Ifdef:		GECODE_HAVE_SET_VARS
 Namespace:	Gecode::Set
-
 #
 # Definition of modification events
 #
@@ -61,7 +58,6 @@ Namespace:	Gecode::Set
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
    * \ingroup TaskActorSet
    */
-
   //@{
 [ModEvent]
 Name:		FAILED=FAILED
@@ -142,12 +138,6 @@ Combine:	VAL=VAL,CARD=CBB,LUB=CBB,GLB=CBB,BB=CBB,CLUB=CBB,CGLB=CBB,CBB=CBB
    * assuming a ME_SET_CBB modification event.
    *
    */
-
-# [ModEventFooter]: Nothing
-##
-## Definition of propagation conditions
-##
-# [PropCondHeader]: Nothing
 [PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL
@@ -209,10 +199,6 @@ ModEvents:	VAL,CARD,LUB,GLB,BB,CLUB,CGLB,CBB
    */
 [PropCondFooter]
   //@}
-##
-## Footer of file to be generated
-##
 [Footer]
-
 }}
 [End]
