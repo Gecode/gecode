@@ -631,7 +631,7 @@ if (!($ifdef[$f] eq "")) {
 namespace Gecode {
 
   forceinline void
-  Space::process(void) {
+  Space::process_i(void) {
 EOF
 ;
 

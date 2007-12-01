@@ -190,7 +190,7 @@ namespace Gecode {
      * either from initializing the space or from a commit operation
      *
      */
-    process();
+    process_o();
     Propagator* p;
     while (pool_get(p)) {
       pn++;
@@ -202,7 +202,7 @@ namespace Gecode {
         {
           // Prevent that propagator gets rescheduled (turn on all events)
           p->u.pme = PME_ASSIGNED;
-          process();
+          process_i();
           p->u.pme = PME_NONE;
           // Put propagator in idle queue
           p->unlink(); a_actors.head(p);
@@ -213,7 +213,7 @@ namespace Gecode {
           // Propagator is currently in no queue, put into idle
           p->unlink(); a_actors.head(p);
           p->u.pme = PME_NONE;
-          process();
+          process_i();
         }
         break;
       case __ES_SUBSUMED:
@@ -222,7 +222,7 @@ namespace Gecode {
           size_t s = p->u.size;
           // Prevent that propagator gets rescheduled (turn on all events)
           p->u.pme = PME_ASSIGNED;
-          process();
+          process_o();
           p->unlink();
           reuse(p,s);
         }
@@ -233,7 +233,7 @@ namespace Gecode {
           PropModEvent keep = p->u.pme;
           // Prevent that propagator gets rescheduled (turn on all events)
           p->u.pme = PME_ASSIGNED;
-          process();
+          process_o();
           p->u.pme = keep;
           assert(p->u.pme != 0);
           pool_put(p);
@@ -243,7 +243,7 @@ namespace Gecode {
         {
           // Start from the specified propagator events
           pool_put(p);
-          process();
+          process_o();
         }
         break;
       default:
@@ -255,7 +255,7 @@ namespace Gecode {
 
   bool
   Space::stable(void) const {
-    const_cast<Space*>(this)->process();
+    const_cast<Space*>(this)->process_o();
     int pn = pool_next;
     while (true) {
       // Head of the queue
@@ -280,7 +280,7 @@ namespace Gecode {
     if (failed())
       return ES_FAILED;
 
-    process();
+    process_o();
 
     Propagator* p;
     if (!pool_get(p))
@@ -303,7 +303,7 @@ namespace Gecode {
       {
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = PME_ASSIGNED;
-        process();
+        process_o();
         p->u.pme = PME_NONE;
         // Put propagator in idle queue
         p->unlink(); a_actors.head(p);
@@ -314,7 +314,7 @@ namespace Gecode {
         // Propagator is currently in no queue, put into idle
         p->unlink(); a_actors.head(p);
         p->u.pme = PME_NONE;
-        process();
+        process_o();
       }
       break;
     case __ES_SUBSUMED:
@@ -323,7 +323,7 @@ namespace Gecode {
         size_t s = p->u.size;
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = PME_ASSIGNED;
-        process();
+        process_o();
         p->unlink();
         reuse(p,s);
       }
@@ -334,7 +334,7 @@ namespace Gecode {
         PropModEvent keep = p->u.pme;
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = PME_ASSIGNED;
-        process();
+        process_o();
         p->u.pme = keep;
         assert(p->u.pme != 0);
         pool_put(p);
@@ -344,7 +344,7 @@ namespace Gecode {
       {
         // Start from the specified propagator events
         pool_put(p);
-        process();
+        process_o();
       }
       break;
     default:
@@ -352,6 +352,12 @@ namespace Gecode {
     }
 
     return es;
+  }
+
+  // Outlined processing version
+  void
+  Space::process_o(void) {
+    process_i();
   }
 
   void

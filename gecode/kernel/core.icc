@@ -991,8 +991,7 @@ namespace Gecode {
      */
     //@{
     /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT
-    static VarTypeDisposerBase* vtd[VTI_LAST];
+    GECODE_KERNEL_EXPORT static VarTypeDisposerBase* vtd[VTI_LAST];
     /// Information for handling variables
     class VarInfo {
     public:
@@ -1005,8 +1004,10 @@ namespace Gecode {
     VarInfo vars[VTI_LAST];
     /// To keep variables during copying without index structure
     VarBase* vars_noidx;
-    /// Process all modified variables
-    void process(void);
+    /// Process all modified variables (inlined version)
+    void process_i(void);
+    /// Process all modified variables (outlined version)
+    GECODE_KERNEL_EXPORT void process_o(void);
     /// Update all cloned variables
     void update(ActorLink** sub);
     //@}
