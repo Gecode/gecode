@@ -990,7 +990,7 @@ namespace Gecode {
      */
     //@{
     /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT static VarTypeDisposerBase* vtd[VTI_LAST];
+    GECODE_KERNEL_EXPORT static VarTypeDisposerBase* vtd[IDX_PU_ALL];
     /// Information for handling variables
     class VarInfo {
     public:
@@ -1000,7 +1000,7 @@ namespace Gecode {
       VarBase* dispose;
     };
     /// Information for handling variables
-    VarInfo vars[VTI_LAST];
+    VarInfo vars[IDX_PU_ALL];
     /// To keep variables during copying without index structure
     VarBase* vars_noidx;
     /// Process all modified variables (inlined version)
@@ -1299,9 +1299,9 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT 
     size_t allocated(void) const;
     /// Return list of variables that need deletion
-    template <VarTypeId VTI> VarBase* varsDisposeList(void);
+    template <class VIC> VarBase* varsDisposeList(void);
     /// Set list of variables that need deletion
-    template <VarTypeId VTI> void varsDisposeList(VarBase* v);
+    template <class VIC> void varsDisposeList(VarBase* v);
     //@}
   };
 
@@ -1361,16 +1361,16 @@ namespace Gecode {
     mm.template fl_dispose<s>(f,l);
   }
 
-  template <VarTypeId VTI>
+  template <class VIC>
   forceinline VarBase*
   Space::varsDisposeList(void) {
-    return vars[VTI].dispose;
+    return vars[VIC::idx_pu].dispose;
   }
 
-  template <VarTypeId VTI>
+  template <class VIC>
   forceinline void
   Space::varsDisposeList(VarBase* v) {
-    vars[VTI].dispose=v;
+    vars[VIC::idx_pu].dispose=v;
   }
 
   /*

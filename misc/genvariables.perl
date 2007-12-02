@@ -273,7 +273,6 @@ for ($f=0; $f<$n_files; $f++) {
   $maxpc[$f] = "PC_${VTI}_" . $pcn[$f][$pc_n[$f]-1];
   $class[$f] = "${NAME}VarImpBase";
   $conf[$f]  = "${NAME}VarImpConf";
-  $diffc[$f] = "${NAME}MeDiff";
   $base[$f]  = ("Gecode::Variable<" .
 		$namespace[$f] . "::" . $conf[$f] . ">");
 
@@ -302,30 +301,11 @@ for ($f=0; $f<$n_files; $f++) {
 }
 
 if ($gen_type) {
-  print "/**\n";
-  print " * \\brief %Variable type identifiers\n";
-  print " *\n";
-  print " * Each variable type must have a unique variable type identifier.\n";
-  print " *\n";
-  print " * \\ingroup TaskVar\n";
-  print " */\n";
-  print "enum VarTypeId {\n";
-
-  for ($f = 0; $f<$n_files; $f++) {
-    print "#ifdef $ifdef[$f]\n";
-    print "  VTI_$vti[$f], ///< Identifier for $name[$f] variable implementations\n";
-    print "#endif\n";
-  }
-
-  print "  VTI_LAST ///< Maximal variable type identifier plus one\n";
-  print "};\n\n";
-
   for ($f = 0; $f<$n_files; $f++) {
     $VTI   = $vti[$f];
     $NAME  = $name[$f];
     $BASE  = $base[$f];
     $CLASS = $class[$f];
-    $DIFFC = $diffc[$f];
 
     if (!($ifdef[$f] eq "")) {
       print "#ifdef $ifdef[$f]\n\n";
@@ -379,7 +359,6 @@ if ($gen_type) {
     $BASE  = $base[$f];
     $CLASS = $class[$f];
     $CONF  = $conf[$f];
-    $DIFFC = $diffc[$f];
 
     if (!($ifdef[$f] eq "")) {
       print "#ifdef $ifdef[$f]\n\n";
@@ -488,7 +467,6 @@ if ($gen_header) {
     $NAME  = $name[$f];
     $BASE  = $base[$f];
     $CLASS = $class[$f];
-    $DIFFC = $diffc[$f];
     $CONF  = $conf[$f];
 
     if (!($ifdef[$f] eq "")) {
@@ -666,14 +644,14 @@ if ($dispose[$f]) {
 
   forceinline
   ${CLASS}::${CLASS}(Space* home)
-    : ${BASE}(home), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
-    home->varsDisposeList<VTI_${VTI}>(this);
+    : ${BASE}(home), _nextDispose(home->varsDisposeList<${CONF}>()) {
+    home->varsDisposeList<${CONF}>(this);
   }
 
   forceinline
   ${CLASS}::${CLASS}(Space* home, bool share, ${CLASS}\& x)
-    : ${BASE}(home,share,x), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
-    home->varsDisposeList<VTI_${VTI}>(this);
+    : ${BASE}(home,share,x), _nextDispose(home->varsDisposeList<${CONF}>()) {
+    home->varsDisposeList<${CONF}>(this);
   }
 
   forceinline ${CLASS}*
@@ -753,7 +731,7 @@ EOF
     $NAME  = $name[$f];
     $BASE  = $base[$f];
     $CLASS = $class[$f];
-    $DIFFC = $diffc[$f];
+    $CONF  = $conf[$f];
 
 
     if (!($ifdef[$f] eq "")) {
@@ -773,9 +751,9 @@ EOF
     }
     print <<EOF
       ${BASE}* x = 
-        static_cast<${BASE}*>(vars[VTI_${VTI}].entry);
+        static_cast<${BASE}*>(vars[${CONF}::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_${VTI}].entry = NULL;
+        vars[${CONF}::idx_pu].entry = NULL;
 EOF
 ;
 
@@ -878,7 +856,7 @@ EOF
     $NAME  = $name[$f];
     $BASE  = $base[$f];
     $CLASS = $class[$f];
-    $DIFFC = $diffc[$f];
+    $CONF  = $conf[$f];
 
 
     if (!($ifdef[$f] eq "")) {
@@ -898,9 +876,9 @@ EOF
     }
     print <<EOF
       ${BASE}* x = 
-        static_cast<${BASE}*>(vars[VTI_${VTI}].entry);
+        static_cast<${BASE}*>(vars[${CONF}::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_${VTI}].entry = NULL;
+        vars[${CONF}::idx_pu].entry = NULL;
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);

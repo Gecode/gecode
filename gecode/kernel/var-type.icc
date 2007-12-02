@@ -37,29 +37,6 @@
  *
  */
 
-/**
- * \brief %Variable type identifiers
- *
- * Each variable type must have a unique variable type identifier.
- *
- * \ingroup TaskVar
- */
-enum VarTypeId {
-#ifdef GECODE_HAVE_INT_VARS
-  VTI_INT, ///< Identifier for Int variable implementations
-#endif
-#ifdef GECODE_HAVE_INT_VARS
-  VTI_BOOL, ///< Identifier for Bool variable implementations
-#endif
-#ifdef GECODE_HAVE_SET_VARS
-  VTI_SET, ///< Identifier for Set variable implementations
-#endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
-  VTI_CPLTSET, ///< Identifier for CpltSet variable implementations
-#endif
-  VTI_LAST ///< Maximal variable type identifier plus one
-};
-
 #ifdef GECODE_HAVE_INT_VARS
 
 namespace Gecode { namespace Int {

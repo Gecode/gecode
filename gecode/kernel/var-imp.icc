@@ -456,14 +456,14 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetVarImpBase::CpltSetVarImpBase(Space* home)
-    : Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>(home), _nextDispose(home->varsDisposeList<VTI_CPLTSET>()) {
-    home->varsDisposeList<VTI_CPLTSET>(this);
+    : Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>(home), _nextDispose(home->varsDisposeList<CpltSetVarImpConf>()) {
+    home->varsDisposeList<CpltSetVarImpConf>(this);
   }
 
   forceinline
   CpltSetVarImpBase::CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x)
-    : Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>(home,share,x), _nextDispose(home->varsDisposeList<VTI_CPLTSET>()) {
-    home->varsDisposeList<VTI_CPLTSET>(this);
+    : Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>(home,share,x), _nextDispose(home->varsDisposeList<CpltSetVarImpConf>()) {
+    home->varsDisposeList<CpltSetVarImpConf>(this);
   }
 
   forceinline CpltSetVarImpBase*
@@ -499,9 +499,9 @@ namespace Gecode {
     {
       using namespace Gecode::CpltSet;
       Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>*>(vars[VTI_CPLTSET].entry);
+        static_cast<Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>*>(vars[CpltSetVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_CPLTSET].entry = NULL;
+        vars[CpltSetVarImpConf::idx_pu].entry = NULL;
         do {
           switch (x->modevent()) {
           case ME_CPLTSET_VAL:
@@ -522,9 +522,9 @@ namespace Gecode {
     {
       using namespace Gecode::Set;
       Gecode::Variable<Gecode::Set::SetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Set::SetVarImpConf>*>(vars[VTI_SET].entry);
+        static_cast<Gecode::Variable<Gecode::Set::SetVarImpConf>*>(vars[SetVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_SET].entry = NULL;
+        vars[SetVarImpConf::idx_pu].entry = NULL;
         do {
           switch (x->modevent()) {
           case ME_SET_VAL:
@@ -570,9 +570,9 @@ namespace Gecode {
     {
       using namespace Gecode::Int;
       Gecode::Variable<Gecode::Int::BoolVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::BoolVarImpConf>*>(vars[VTI_BOOL].entry);
+        static_cast<Gecode::Variable<Gecode::Int::BoolVarImpConf>*>(vars[BoolVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_BOOL].entry = NULL;
+        vars[BoolVarImpConf::idx_pu].entry = NULL;
         do {
           x->process(this); x = x->next();
         } while (x != NULL);
@@ -583,9 +583,9 @@ namespace Gecode {
     {
       using namespace Gecode::Int;
       Gecode::Variable<Gecode::Int::IntVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::IntVarImpConf>*>(vars[VTI_INT].entry);
+        static_cast<Gecode::Variable<Gecode::Int::IntVarImpConf>*>(vars[IntVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_INT].entry = NULL;
+        vars[IntVarImpConf::idx_pu].entry = NULL;
         do {
           switch (x->modevent()) {
           case ME_INT_VAL:
@@ -616,9 +616,9 @@ namespace Gecode {
     {
       using namespace Gecode::Int;
       Gecode::Variable<Gecode::Int::IntVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::IntVarImpConf>*>(vars[VTI_INT].entry);
+        static_cast<Gecode::Variable<Gecode::Int::IntVarImpConf>*>(vars[IntVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_INT].entry = NULL;
+        vars[IntVarImpConf::idx_pu].entry = NULL;
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);
@@ -629,9 +629,9 @@ namespace Gecode {
     {
       using namespace Gecode::Int;
       Gecode::Variable<Gecode::Int::BoolVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::BoolVarImpConf>*>(vars[VTI_BOOL].entry);
+        static_cast<Gecode::Variable<Gecode::Int::BoolVarImpConf>*>(vars[BoolVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_BOOL].entry = NULL;
+        vars[BoolVarImpConf::idx_pu].entry = NULL;
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);
@@ -642,9 +642,9 @@ namespace Gecode {
     {
       using namespace Gecode::Set;
       Gecode::Variable<Gecode::Set::SetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Set::SetVarImpConf>*>(vars[VTI_SET].entry);
+        static_cast<Gecode::Variable<Gecode::Set::SetVarImpConf>*>(vars[SetVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_SET].entry = NULL;
+        vars[SetVarImpConf::idx_pu].entry = NULL;
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);
@@ -655,9 +655,9 @@ namespace Gecode {
     {
       using namespace Gecode::CpltSet;
       Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>*>(vars[VTI_CPLTSET].entry);
+        static_cast<Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>*>(vars[CpltSetVarImpConf::idx_pu].entry);
       if (x != NULL) {
-        vars[VTI_CPLTSET].entry = NULL;
+        vars[CpltSetVarImpConf::idx_pu].entry = NULL;
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);

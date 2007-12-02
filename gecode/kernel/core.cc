@@ -46,7 +46,7 @@ namespace Gecode {
    *
    */
 
-  GECODE_KERNEL_EXPORT VarTypeDisposerBase* Space::vtd[VTI_LAST];
+  GECODE_KERNEL_EXPORT VarTypeDisposerBase* Space::vtd[IDX_PU_ALL];
 
   void VarTypeDisposerBase::dispose(Space*,VarBase*) {}
   VarTypeDisposerBase::~VarTypeDisposerBase(void) {}
@@ -59,7 +59,7 @@ namespace Gecode {
     d_cur = NULL;
     d_lst = NULL;
     // Initialize variable entry points
-    for (int i=0; i<VTI_LAST; i++) {
+    for (int i=0; i<IDX_PU_ALL; i++) {
       vars[i].entry  =NULL;
       vars[i].dispose=NULL;
     }
@@ -140,7 +140,7 @@ namespace Gecode {
       }
     }
     // Delete variables that were registered for deletion
-    for (int vti=VTI_LAST; vti--;)
+    for (int vti=IDX_PU_ALL; vti--;)
       if (vars[vti].dispose != NULL)
         vtd[vti]->dispose(this, vars[vti].dispose);
   }
@@ -403,7 +403,7 @@ namespace Gecode {
   Space::Space(bool share, Space& s) 
     : mm(s.mm,s.n_sub*sizeof(Propagator**)), branch_id(s.branch_id) {
     // Initialize variable entry points
-    for (int i=0; i<VTI_LAST; i++) {
+    for (int i=0; i<IDX_PU_ALL; i++) {
       vars[i].entry   = NULL;
       vars[i].dispose = NULL;
     }
