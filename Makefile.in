@@ -660,7 +660,7 @@ ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SERHDR) \
 	$(ITERHDR) $(GISTHDR)
-ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX))
+ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
 ALLSBJ0 = $(ALLSRC:%.cc=%$(SBJSUFFIX))
 ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
@@ -1416,6 +1416,7 @@ clean:
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(TESTOBJ) $(TESTSBJ) $(TESTOBJ:%$(OBJSUFFIX)=%.pdb)
+	$(RMF) $(GISTMOCSRC)
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
