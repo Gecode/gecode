@@ -399,9 +399,9 @@ if ($gen_type) {
       print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
     }
     print "    /// Number of bits for propagator modification event\n";
-    print "    static const int pme_bits_num = $bits[$f];\n";
+    print "    static const int me_bits_num = $bits[$f];\n";
     print "    /// End of bits for propagator modification event\n";
-    print "    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;\n";
+    print "    static const int pme_bits_lst = pme_bits_fst + me_bits_num;\n";
     print "    /// Bit pattern for assigned propagator modification event\n";
     print "    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);\n";
     print "    /// Return difference when changing modification event \\a me2 to \\a me1\n";

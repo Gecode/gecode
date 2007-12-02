@@ -1777,31 +1777,33 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   Variable<VIC>::modevent(void) const {
-    return static_cast<ModEvent>(u.free_me & 15);
+    return static_cast<ModEvent>(u.free_me & 
+                                 ((1 << VIC::me_bits_num)-1));
   }
 
   template <class VIC>
   forceinline unsigned int
   Variable<VIC>::free(void) const {
-    return u.free_me >> 4;
+    return u.free_me >> VIC::me_bits_num;
   }
 
   template <class VIC>
   forceinline void
   Variable<VIC>::free(unsigned int n) {
-    u.free_me = (u.free_me & 15) | (n << 4);
+    u.free_me = (u.free_me & ((1 << VIC::me_bits_num)-1)) | 
+      (n << VIC::me_bits_num);
   }
 
   template <class VIC>
   forceinline void
   Variable<VIC>::free_inc(void) {
-    u.free_me += (1 << 4);
+    u.free_me += (1 << VIC::me_bits_num);
   }
 
   template <class VIC>
   forceinline void
   Variable<VIC>::free_dec(void) {
-    u.free_me -= (1 << 4);
+    u.free_me -= (1 << VIC::me_bits_num);
   }
 
   template <class VIC>
@@ -1870,7 +1872,7 @@ namespace Gecode {
   Variable<VIC>::pme(const Propagator* p) {
     return
       static_cast<ModEvent>((p->u.pme >> VIC::pme_bits_fst) & 
-                            ((1 << VIC::pme_bits_num)-1));
+                            ((1 << VIC::me_bits_num)-1));
   }
 
   template <class VIC>
@@ -2006,7 +2008,7 @@ namespace Gecode {
   Space::process(Propagator* p) {
     // The new event is ME_GEN_ASSIGNED
     PropModEvent old_pme = p->u.pme;
-    PropModEvent mask_pme = ((1 << VIC::pme_bits_num) - 1)<< VIC::pme_bits_fst;
+    PropModEvent mask_pme = ((1 << VIC::me_bits_num) - 1)<< VIC::pme_bits_fst;
     PropModEvent assigned_pme = 1 << VIC::pme_bits_fst;
     // Compute old modification event
     ModEvent old_me = old_pme & mask_pme;
@@ -2026,7 +2028,7 @@ namespace Gecode {
     PropModEvent old_pme = p->u.pme;
     // Compute the old modification event
     ModEvent old_me = ((old_pme >> VIC::pme_bits_fst) &
-                       ((1 << VIC::pme_bits_num) - 1));
+                       ((1 << VIC::me_bits_num) - 1));
     // Get the new modification event (xor-ed with the old one)
     ModEvent com_me = vic(new_me,old_me);
     // Event has not changed, do not nothing
@@ -2229,11 +2231,12 @@ namespace Gecode {
   Variable<VIC>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
       VIC vic;
-      u.free_me ^= vic(new_me,static_cast<ModEvent>(u.free_me & 15));
+      u.free_me ^= vic(new_me,static_cast<ModEvent>
+                       (u.free_me & ((1 << VIC::me_bits_num)-1)));
     } else {
       _next = static_cast<Variable<VIC>*>(home->vars[VIC::idx_pu].entry);
       home->vars[VIC::idx_pu].entry = this;
-      u.free_me = (u.free_me & ~15) | new_me;
+      u.free_me = (u.free_me & ~((1 << VIC::me_bits_num)-1)) | new_me;
     }
     if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
       d->me = new_me;

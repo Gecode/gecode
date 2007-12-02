@@ -311,9 +311,9 @@ namespace Gecode { namespace Int {
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = 0;
     /// Number of bits for propagator modification event
-    static const int pme_bits_num = 2;
+    static const int me_bits_num = 2;
     /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
@@ -355,9 +355,9 @@ namespace Gecode { namespace Int {
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = Gecode::Int::IntVarImpConf::pme_bits_lst;
     /// Number of bits for propagator modification event
-    static const int pme_bits_num = 1;
+    static const int me_bits_num = 1;
     /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
@@ -399,9 +399,9 @@ namespace Gecode { namespace Set {
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
     /// Number of bits for propagator modification event
-    static const int pme_bits_num = 4;
+    static const int me_bits_num = 4;
     /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
@@ -443,9 +443,9 @@ namespace Gecode { namespace CpltSet {
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = Gecode::Set::SetVarImpConf::pme_bits_lst;
     /// Number of bits for propagator modification event
-    static const int pme_bits_num = 2;
+    static const int me_bits_num = 2;
     /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
