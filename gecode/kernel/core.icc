@@ -146,8 +146,6 @@ namespace Gecode {
   const ModEvent ME_GEN_NONE     =  0;
   /// Generic modification event: variable is assigned a value
   const ModEvent ME_GEN_ASSIGNED =  1;
-  /// Generic modification event: maximal modification event
-  const ModEvent ME_GEN_MAX      = 15;
 
   /// Type for propagation conditions
   typedef int PropCond;
@@ -1752,6 +1750,7 @@ namespace Gecode {
   Variable<VIC>::Variable(Space*) {
     _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
+    u.fwd     = NULL;
     for (int i=PC_SIZE; i--; )
       idx[i] = NULL;
   }
@@ -1761,6 +1760,7 @@ namespace Gecode {
   Variable<VIC>::Variable(void) {
     _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
+    u.fwd     = NULL;
     for (int i=PC_SIZE; i--; )
       idx[i] = NULL;
   }
@@ -1839,6 +1839,7 @@ namespace Gecode {
     if (x.idx[0] == NULL) {
       // Variable needs no index structure
       u.free_me = 0;
+      u.fwd     = NULL;
       for (int i=PC_SIZE; i--; )
         idx[i] = NULL;
       reg = &home->vars_noidx;
@@ -1867,13 +1868,15 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   Variable<VIC>::pme(const Propagator* p) {
-    return static_cast<ModEvent>((p->u.pme >> (VIC::idx_pu << 2)) & 15);
+    return
+      static_cast<ModEvent>((p->u.pme >> VIC::pme_bits_fst) & 
+                            ((1 << VIC::pme_bits_num)-1));
   }
 
   template <class VIC>
   forceinline PropModEvent
   Variable<VIC>::pme(ModEvent me) {
-    return static_cast<PropModEvent>(me << (VIC::idx_pu << 2));
+    return static_cast<PropModEvent>(me << VIC::pme_bits_fst);
   }
 
   template <class VIC>
@@ -2003,13 +2006,15 @@ namespace Gecode {
   Space::process(Propagator* p) {
     // The new event is ME_GEN_ASSIGNED
     PropModEvent old_pme = p->u.pme;
+    PropModEvent mask_pme = ((1 << VIC::pme_bits_num) - 1)<< VIC::pme_bits_fst;
+    PropModEvent assigned_pme = 1 << VIC::pme_bits_fst;
     // Compute old modification event
-    ModEvent old_me = old_pme & (ME_GEN_MAX << (VIC::idx_pu << 2));
+    ModEvent old_me = old_pme & mask_pme;
     // Check whether old event is already ME_GEN_ASSIGNED
-    if (old_me == (ME_GEN_ASSIGNED << (VIC::idx_pu << 2)))
+    if (old_me == assigned_pme)
       return;
     // Update event
-    p->u.pme ^= old_me ^ (ME_GEN_ASSIGNED << (VIC::idx_pu << 2));
+    p->u.pme ^= old_me ^ assigned_pme;
     // Put propagator into right queue
     pool_put(p);
   }
@@ -2020,14 +2025,15 @@ namespace Gecode {
     VIC vic;
     PropModEvent old_pme = p->u.pme;
     // Compute the old modification event
-    ModEvent old_me = ((old_pme >> (VIC::idx_pu << 2)) & ME_GEN_MAX);
+    ModEvent old_me = ((old_pme >> VIC::pme_bits_fst) &
+                       ((1 << VIC::pme_bits_num) - 1));
     // Get the new modification event (xor-ed with the old one)
     ModEvent com_me = vic(new_me,old_me);
     // Event has not changed, do not nothing
     if (com_me == 0)
       return;
     // Update modification event for propagator (use xor)
-    p->u.pme ^= (com_me << (VIC::idx_pu << 2));
+    p->u.pme ^= com_me << VIC::pme_bits_fst;
     // Put propagator into right queue
     pool_put(p);
   }
@@ -2267,6 +2273,7 @@ namespace Gecode {
     ActorLink** f = x->idx[0];
     int n = static_cast<int>(x->idx[PC_SIZE-1] - f);
     u.free_me = 0;
+    u.fwd     = NULL;
     ActorLink** t = sub;
     sub += n;
     idx[0] = t;

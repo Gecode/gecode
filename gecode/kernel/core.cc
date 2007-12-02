@@ -175,11 +175,6 @@ namespace Gecode {
       return 0;
 
     const PropModEvent PME_NONE = 0;
-    const PropModEvent PME_ASSIGNED  =
-      ((ME_GEN_ASSIGNED <<  0) | (ME_GEN_ASSIGNED <<  4) |
-       (ME_GEN_ASSIGNED <<  8) | (ME_GEN_ASSIGNED << 12) |
-       (ME_GEN_ASSIGNED << 16) | (ME_GEN_ASSIGNED << 20) |
-       (ME_GEN_ASSIGNED << 24) | (ME_GEN_ASSIGNED << 28));
     /*
      * Count the number of propagation steps performed
      *
@@ -201,7 +196,7 @@ namespace Gecode {
       case ES_FIX:
         {
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = PME_ASSIGNED;
+          p->u.pme = PME_ASSIGNED_ALL;
           process_i();
           p->u.pme = PME_NONE;
           // Put propagator in idle queue
@@ -221,7 +216,7 @@ namespace Gecode {
           // Remember size
           size_t s = p->u.size;
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = PME_ASSIGNED;
+          p->u.pme = PME_ASSIGNED_ALL;
           process_o();
           p->unlink();
           reuse(p,s);
@@ -232,7 +227,7 @@ namespace Gecode {
           // Remember the event set to be kept after processing
           PropModEvent keep = p->u.pme;
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = PME_ASSIGNED;
+          p->u.pme = PME_ASSIGNED_ALL;
           process_o();
           p->u.pme = keep;
           assert(p->u.pme != 0);
@@ -287,11 +282,6 @@ namespace Gecode {
       return ES_STABLE;
 
     const PropModEvent PME_NONE = 0;
-    const PropModEvent PME_ASSIGNED  =
-      ((ME_GEN_ASSIGNED <<  0) | (ME_GEN_ASSIGNED <<  4) |
-       (ME_GEN_ASSIGNED <<  8) | (ME_GEN_ASSIGNED << 12) |
-       (ME_GEN_ASSIGNED << 16) | (ME_GEN_ASSIGNED << 20) |
-       (ME_GEN_ASSIGNED << 24) | (ME_GEN_ASSIGNED << 28));
 
     ExecStatus es = p->propagate(this);
 
@@ -302,7 +292,7 @@ namespace Gecode {
     case ES_FIX:
       {
         // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = PME_ASSIGNED;
+        p->u.pme = PME_ASSIGNED_ALL;
         process_o();
         p->u.pme = PME_NONE;
         // Put propagator in idle queue
@@ -322,7 +312,7 @@ namespace Gecode {
         // Remember size
         size_t s = p->u.size;
         // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = PME_ASSIGNED;
+        p->u.pme = PME_ASSIGNED_ALL;
         process_o();
         p->unlink();
         reuse(p,s);
@@ -333,7 +323,7 @@ namespace Gecode {
         // Remember the event set to be kept after processing
         PropModEvent keep = p->u.pme;
         // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = PME_ASSIGNED;
+        p->u.pme = PME_ASSIGNED_ALL;
         process_o();
         p->u.pme = keep;
         assert(p->u.pme != 0);
@@ -489,8 +479,10 @@ namespace Gecode {
      *
      */
     // Update variables without indexing structure
-    for (VarBase* x = c->vars_noidx; x != NULL; x = x->next())
+    for (VarBase* x = c->vars_noidx; x != NULL; x = x->next()) {
       x->u.free_me = 0;
+      x->u.fwd     = NULL;
+    }
     c->vars_noidx = NULL;
     // Update variables with indexing structure
     {

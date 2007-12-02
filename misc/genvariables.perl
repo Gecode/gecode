@@ -4,7 +4,7 @@
 #     Christian Schulte <schulte@gecode.org>
 #
 #  Copyright:
-#     Christian Schulte, 2006
+#     Christian Schulte, 2007
 #
 #  Last modified:
 #     $Date$ by $Author$
@@ -448,7 +448,7 @@ if ($gen_type) {
   print "namespace Gecode {\n\n";
   print "  const int IDX_PU_ALL = $namespace[$n_files-1]::$conf[$n_files-1]::idx_pu+1;\n";
   print "  const int IDX_D_ALL = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
-  print "  const int PME_ASSIGNED_ALL =\n";
+  print "  const PropModEvent PME_ASSIGNED_ALL =\n";
   for ($f=0; $f<$n_files; $f++) {
     print "    $namespace[$f]::$conf[$f]::pme_assigned";
     if ($f+1 == $n_files) {

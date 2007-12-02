@@ -477,7 +477,7 @@ namespace Gecode {
 
   const int IDX_PU_ALL = Gecode::CpltSet::CpltSetVarImpConf::idx_pu+1;
   const int IDX_D_ALL = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
-  const int PME_ASSIGNED_ALL =
+  const PropModEvent PME_ASSIGNED_ALL =
     Gecode::Int::IntVarImpConf::pme_assigned |
     Gecode::Int::BoolVarImpConf::pme_assigned |
     Gecode::Set::SetVarImpConf::pme_assigned |
