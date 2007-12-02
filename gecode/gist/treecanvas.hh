@@ -38,20 +38,15 @@
 #define GECODE_GIST_TREECANVAS_HH
 
 #include "gecode/gist/gist.hh"
+#include "gecode/gist/visualnode.hh"
 #include <QtGui>
 // TODO nikopp: this include is just to get proper syntax highlighting in Eclipse
 #include <qobject.h>
 
 #include <gecode/kernel.hh>
 
-namespace Gecode {
+namespace Gecode {  namespace Gist {
   
-  class Space;
-  
-  namespace Gist {
-  
-  class VisualNode;
-
   class TreeCanvasImpl;
   
   class Searcher : public QThread {
@@ -65,6 +60,7 @@ namespace Gecode {
     
   Q_SIGNALS:
     void update(void);
+    void statusChanged(bool);
     
   protected:
     void run(void);
@@ -119,6 +115,9 @@ namespace Gecode {
     /// Stop current search
     void stopSearch(void);
     
+    /// Reset
+    void reset(void);
+    
     /// Move selection to the parent of the selected node
     void navUp(void);
     /// Move selection to the first child of the selected node
@@ -127,6 +126,8 @@ namespace Gecode {
     void navLeft(void);
     /// Move selection to the right sibling of the selected node
     void navRight(void);
+    /// Move selection to the root node
+    void navRoot(void);
     /// Recall selection of point in time \a i
     void markCurrentNode(int i);
     
@@ -158,7 +159,8 @@ namespace Gecode {
     void newPointInTime(int);
     /// Context menu triggered
     void contextMenu(QContextMenuEvent*);
-    
+    /// Status bar update
+    void statusChanged(const Statistics&, bool);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
@@ -176,6 +178,9 @@ namespace Gecode {
     QVector<VisualNode*> nodeMap;
     /// The active inspector
     Inspector* inspect;
+    
+    /// Statistics about the search tree
+    Statistics stats;
     
     /// Current scale factor
     double scale;
@@ -200,6 +205,9 @@ namespace Gecode {
   public Q_SLOTS:
     /// Update display
     void update(void);
+  private Q_SLOTS:
+    /// Search has finished
+    void statusChanged(bool);
   };
   
   /// Tree canvas widget
@@ -215,10 +223,12 @@ namespace Gecode {
   public:
     QAction* inspectCN;
     QAction* stopCN;
+    QAction* reset;
     QAction* navUp;
     QAction* navDown;
     QAction* navLeft;
     QAction* navRight;
+    QAction* navRoot;
 
     QAction* searchNext;
     QAction* searchAll;
@@ -254,6 +264,9 @@ namespace Gecode {
     /// Stop search and wait until finished
     void finish(void);
 
+  Q_SIGNALS:
+    void statusChanged(const Statistics&, bool);
+
 #ifdef GECODE_GIST_EXPERIMENTAL
     
   private Q_SLOTS:
@@ -262,6 +275,7 @@ namespace Gecode {
 
   private Q_SLOTS:
     void on_canvas_contextMenu(QContextMenuEvent*);
+    void on_canvas_statusChanged(const Statistics&, bool);
   protected:
     /// Close the widget
     void closeEvent(QCloseEvent* event);

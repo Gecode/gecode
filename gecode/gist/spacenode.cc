@@ -68,6 +68,8 @@ namespace Gecode { namespace Gist {
       }
  };
 
+ Statistics Statistics::dummy;
+
   /// \brief Initial configuration settings for search
   class Config {
   public:
@@ -255,7 +257,12 @@ namespace Gecode { namespace Gist {
       }
     }
   }
-    
+  
+  Better*
+  SpaceNode::getBetterWrapper(void) const {
+    return curBest == NULL ? NULL : curBest->b;
+  }
+  
   void
   SpaceNode::solveUp(void) {
     SpaceNode* p = static_cast<SpaceNode*>(getParent());
@@ -348,10 +355,10 @@ namespace Gecode { namespace Gist {
 #endif
 
   int
-  SpaceNode::getNumberOfChildNodes(void) {
+  SpaceNode::getNumberOfChildNodes(Statistics& stats) {
     int kids = getNumberOfChildren();
     if (kids == -1) {
-      // stats.newDetermined();
+      stats.undetermined--;
       acquireSpace();
       switch (workingSpace->status()) {
       case SS_FAILED:
@@ -367,7 +374,7 @@ namespace Gecode { namespace Gist {
           _hasSolvedChildren = false;
           _hasFailedChildren = true;
           status = FAILED;
-          // stats.newFailure();
+          stats.failures++;
           // stats.newDepth(getDepth());
           SpaceNode* p = static_cast<SpaceNode*>(getParent());
           if (p != NULL)
@@ -385,7 +392,7 @@ namespace Gecode { namespace Gist {
           }
           _hasSolvedChildren = true;
           _hasFailedChildren = false;
-          // stats.newFailure();
+          stats.solutions++;
           // stats.newDepth(getDepth());
           if (curBest != NULL) {
             curBest->s = workingSpace->clone();
@@ -399,9 +406,9 @@ namespace Gecode { namespace Gist {
         desc.branch = workingSpace->description();
         kids = desc.branch->alternatives();
         status = BRANCH;
-        // stats.newChoice();
+        stats.choices++;
+        stats.undetermined += kids;
         // stats.newOpen();
-        // stats.newUndetermined(kids);
         // stats.newDepth(getDepth() + 1);
         break;
       }

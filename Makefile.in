@@ -558,7 +558,7 @@ GISTSRC0 = \
 	analysiscursor.cc
 
 GISTMOCSRC0 = \
-	moc_treecanvas.cc moc_addchild.cc
+	moc_treecanvas.cc moc_addchild.cc moc_mainwindow.cc
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
@@ -938,6 +938,8 @@ gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
 gecode/gist/moc_treecanvas.cc: gecode/gist/treecanvas.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 gecode/gist/moc_addchild.cc: gecode/gist/addchild.hh
+	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
+gecode/gist/moc_mainwindow.cc: gecode/gist/mainwindow.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
 #

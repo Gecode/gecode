@@ -62,6 +62,7 @@ namespace Gecode { namespace Gist {
     nodeMenu->addAction(c.navDown);
     nodeMenu->addAction(c.navLeft);
     nodeMenu->addAction(c.navRight);
+    nodeMenu->addAction(c.navRoot);
     nodeMenu->addSeparator();
     nodeMenu->addAction(c.toggleHidden);
     nodeMenu->addAction(c.hideFailed);
@@ -73,12 +74,24 @@ namespace Gecode { namespace Gist {
     QMenu* searchMenu = menuBar->addMenu(tr("&Search"));
     searchMenu->addAction(c.searchNext);
     searchMenu->addAction(c.searchAll);
+    searchMenu->addSeparator();
     searchMenu->addAction(c.stopCN);
+    searchMenu->addSeparator();
+    searchMenu->addAction(c.reset);
 
     QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
     toolsMenu->addAction(c.analyzeTree);
     toolsMenu->addSeparator();
     toolsMenu->addAction(c.toggleHeatView);
+    
+    // Set up status bar
+    statisticsLabel = new QLabel("S: 0 F: 0 C: 0 U: 0");
+    statusBar()->addPermanentWidget(statisticsLabel);
+    
+    isSearching = false;
+    
+    connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
+            this,SLOT(statusChanged(const Statistics&,bool)));
     
     show();
   }
@@ -91,6 +104,22 @@ namespace Gecode { namespace Gist {
   GistMainWindow::closeEvent(QCloseEvent* event) {
     c.finish();
     event->accept();
+  }
+
+  void
+  GistMainWindow::statusChanged(const Statistics& stats, bool finished) {
+    if (isSearching && finished) {
+      statusBar()->showMessage("Ready");
+      isSearching = false;
+    } else if (!isSearching && !finished) {
+      statusBar()->showMessage("Searching");
+      isSearching = true;
+    }
+    statisticsLabel->setText(QString("S: %1 F: %2 C: %3 U: %4")
+      .arg(stats.solutions, 4)
+      .arg(stats.failures, 4)
+      .arg(stats.choices, 4)
+      .arg(stats.undetermined, 4));
   }
 
 }}

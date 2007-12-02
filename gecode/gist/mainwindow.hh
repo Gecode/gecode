@@ -43,11 +43,19 @@ namespace Gecode { namespace Gist {
   
   /// \brief Main window for stand-alone %Gist
   class GistMainWindow : public QMainWindow {
+    Q_OBJECT
   protected:
     /// The contained tree canvas
     TreeCanvas c;
     /// A menu bar
     QMenuBar* menuBar;
+    
+    /// Whether search is currently running
+    bool isSearching;
+    /// Status bar label for number of solutions
+    QLabel* statisticsLabel;
+  protected Q_SLOTS:
+    void statusChanged(const Statistics& stats, bool finished);
   public:
     /// Constructor
     GistMainWindow(Space* root, Better* b, Gist::Inspector* gi);

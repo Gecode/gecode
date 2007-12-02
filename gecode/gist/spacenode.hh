@@ -62,6 +62,21 @@ namespace Gecode { namespace Gist {
     SpecialDesc(std::string varName, IntRelType r0, int v0);
   };
   
+  /// Statistics about the search tree
+  class Statistics {
+  public:
+    int solutions;
+    int failures;
+    int choices;
+    int undetermined;
+    int maxDepth;
+    
+    Statistics(void)
+    : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0) {}
+    
+    static Statistics dummy;
+  };
+
   /// \brief Static reference to the currently best space
   class BestSpace {
   public:
@@ -126,6 +141,9 @@ namespace Gecode { namespace Gist {
     /// Destructor
     virtual ~SpaceNode(void);
 
+    /// Return the branch-and-bound wrapper
+    Better* getBetterWrapper(void) const;
+
     /// Return working space.  Receiver must delete the space.
     Space* getSpace(void);
 
@@ -149,7 +167,7 @@ namespace Gecode { namespace Gist {
       * Otherwise, the status is SS_BRANCH, and as many new children will
       * be created as the branch has alternatives, and the number returned.
       */
-    int getNumberOfChildNodes(void);
+    int getNumberOfChildNodes(Statistics& stats = Statistics::dummy);
     
     /// Return current status of the node
     NodeStatus getStatus(void);

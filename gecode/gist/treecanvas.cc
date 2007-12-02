@@ -66,6 +66,8 @@ namespace Gecode { namespace Gist {
 
       setBackgroundRole(QPalette::Base);
       connect(&searcher, SIGNAL(update()), this, SLOT(update()));
+      connect(&searcher, SIGNAL(statusChanged(bool)), this, 
+              SLOT(statusChanged(bool)));
   }
   
   TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; }
@@ -107,6 +109,13 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvasImpl::statusChanged(bool finished) {
+    if (finished)
+      centerCurrentNode();
+    emit statusChanged(stats, finished);
+  }
+
+  void
   Searcher::search(VisualNode* n, bool all, TreeCanvasImpl* ti) {
     node = n;
     a = all;
@@ -118,7 +127,7 @@ namespace Gecode { namespace Gist {
   Searcher::run() {
     {
       t->mutex.lock();
-      t->setCursor(Qt::BusyCursor);
+      emit statusChanged(false);
       std::stack<VisualNode*> stck;
       stck.push(node);
 
@@ -129,13 +138,14 @@ namespace Gecode { namespace Gist {
         if (++nodeCount > 500) {
           node->dirtyUp();
           t->mutex.unlock();
+          emit statusChanged(false);
           emit update();
           t->mutex.lock();
           nodeCount = 0;
         }
         VisualNode* n = stck.top(); stck.pop();
         if (n->isOpen()) {
-          int kids = n->getNumberOfChildNodes();
+          int kids = n->getNumberOfChildNodes(t->stats);
           if (!a && n->getStatus() == SOLVED) {
             sol = n;
             break;
@@ -153,8 +163,8 @@ namespace Gecode { namespace Gist {
       t->mutex.unlock();
     }
     emit update();
+    emit statusChanged(true);
     t->centerCurrentNode();
-    t->setCursor(Qt::ArrowCursor);
   }
 
   void
@@ -287,6 +297,22 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvasImpl::reset(void) {
+    QMutexLocker locker(&mutex);
+    Space* rootSpace = root->getSpace();
+    Better* b = root->getBetterWrapper();
+    delete root;
+    root = new VisualNode(rootSpace, b);
+    root->setMarked(true);
+    currentNode = root;
+    pathHead = root;
+    scale = 1.0;
+    stats = Statistics();
+    root->layout();
+    update();
+  }
+
+  void
   TreeCanvasImpl::setPath(void) {
     QMutexLocker locker(&mutex);
     if(currentNode == pathHead)
@@ -360,7 +386,6 @@ namespace Gecode { namespace Gist {
         VisualNode* n = p->getChild(alt-1);
         setCurrentNode(n);
         centerCurrentNode();
-        return;
       }
     }
   }
@@ -375,9 +400,15 @@ namespace Gecode { namespace Gist {
         VisualNode* n = p->getChild(alt+1);
         setCurrentNode(n);
         centerCurrentNode();
-        return;
       }
     }
+  }
+  
+  void
+  TreeCanvasImpl::navRoot(void) {
+    QMutexLocker locker(&mutex);
+    setCurrentNode(root);
+    centerCurrentNode();
   }
   
   void
@@ -698,6 +729,11 @@ namespace Gecode { namespace Gist {
     connect(stopCN, SIGNAL(triggered()), canvas, 
                     SLOT(stopSearch()));
 
+    reset = new QAction("Reset", this);
+    reset->setShortcut(QKeySequence("Ctrl+R"));
+    connect(reset, SIGNAL(triggered()), canvas, 
+            SLOT(reset()));
+
     navUp = new QAction("Up", this);
     navUp->setShortcut(QKeySequence("Up"));
     connect(navUp, SIGNAL(triggered()), canvas, 
@@ -718,6 +754,10 @@ namespace Gecode { namespace Gist {
     connect(navRight, SIGNAL(triggered()), canvas, 
                       SLOT(navRight()));
 
+    navRoot = new QAction("Root", this);
+    navRoot->setShortcut(QKeySequence("R"));
+    connect(navRoot, SIGNAL(triggered()), canvas, 
+                      SLOT(navRoot()));
 
     searchNext = new QAction("Next solution", this);
     searchNext->setShortcut(QKeySequence("N"));
@@ -793,10 +833,12 @@ namespace Gecode { namespace Gist {
 
     addAction(inspectCN);
     addAction(stopCN);
+    addAction(reset);
     addAction(navUp);
     addAction(navDown);
     addAction(navLeft);
     addAction(navRight);
+    addAction(navRoot);
 
     addAction(searchNext);
     addAction(searchAll);
@@ -901,6 +943,12 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::on_canvas_contextMenu(QContextMenuEvent* event) {
     contextMenu->popup(event->globalPos());    
+  }
+
+  void
+  TreeCanvas::on_canvas_statusChanged(const Statistics& stats,
+                                      bool finished) {
+    emit statusChanged(stats,finished);
   }
 
   void
