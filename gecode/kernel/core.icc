@@ -185,7 +185,7 @@ namespace Gecode {
   class Advisor;
   template <class A> class Council;
   template <class A> class Advisors;
-  template <VarTypeId VTI, class MED> class Variable;
+  template <VarTypeId VTI, class VIC> class Variable;
 
 
   /*
@@ -270,7 +270,7 @@ namespace Gecode {
    *
    */
   class Delta {
-    template <VarTypeId VTI, class MED> friend class Variable;
+    template <VarTypeId VTI, class VIC> friend class Variable;
   private:
     ModEvent me; ///< Store modification event
   public:
@@ -286,13 +286,13 @@ namespace Gecode {
    * \a VTI and largest possible propagation condition \a PC.
    * \ingroup TaskVar
    */
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   class Variable : public VarBase {
     friend class Space;
     friend class Propagator;
   private:
     /// Number of slots for index struxture
-    static const PropCond PC_SIZE = MED::pc_max + 3;
+    static const PropCond PC_SIZE = VIC::pc_max + 3;
     /// Stores where entries start (idx[pc]}
     ActorLink** idx[PC_SIZE];
 
@@ -496,7 +496,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Branching;
     friend class Space;
-    template <VarTypeId VTI, class MED> friend class Variable;
+    template <VarTypeId VTI, class VIC> friend class Variable;
   private:
     ActorLink* _next; ActorLink* _prev;
   public:
@@ -528,7 +528,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Branching;
     friend class Reflection::SpecIter;
-    template <VarTypeId VTI, class MED> friend class Variable;
+    template <VarTypeId VTI, class VIC> friend class Variable;
     template <class A> friend class Council;
   public:
     /// Create copy
@@ -638,7 +638,7 @@ namespace Gecode {
    */
   class GECODE_VTABLE_EXPORT Propagator : public Actor {
     friend class Space;
-    template <VarTypeId VTI, class MED> friend class Variable;
+    template <VarTypeId VTI, class VIC> friend class Variable;
     friend ExecStatus ES_SUBSUMED(Propagator*, size_t);
     friend ExecStatus ES_SUBSUMED(Propagator*, Space*);
     friend ExecStatus ES_FIX_PARTIAL(Propagator*, PropModEvent);
@@ -789,7 +789,7 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class Advisor : private ActorLink {
-    template <VarTypeId VTI, class MED> 
+    template <VarTypeId VTI, class VIC> 
     friend class Variable;
     template <class A> 
     friend class Council;
@@ -968,7 +968,7 @@ namespace Gecode {
     friend class Branching;
     friend class Advisor;
     friend class Reflection::SpecIter;
-    template <VarTypeId VTI, class MED> friend class Variable;
+    template <VarTypeId VTI, class VIC> friend class Variable;
     template <VarTypeId VTI, class VarType> friend class VarTypeDisposer;
     friend class SharedHandle;
   private:
@@ -1073,10 +1073,10 @@ namespace Gecode {
      */
     //@{
     /// Process propagator \a p with modification event \a me
-    template <VarTypeId VTI, class MED>
+    template <VarTypeId VTI, class VIC>
     void process(Propagator* p, ModEvent me);
     /// Process propagator \a p with modification event ME_GEN_ASSIGNED
-    template <VarTypeId VTI, class MED>
+    template <VarTypeId VTI, class VIC>
     void process(Propagator* p);
     //@}
 
@@ -1385,15 +1385,15 @@ namespace Gecode {
     return home->alloc(s);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::operator delete(void*) {}
-  template <VarTypeId VTI, class MED>
+  Variable<VTI,VIC>::operator delete(void*) {}
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::operator delete(void*, Space*) {}
-  template <VarTypeId VTI, class MED>
+  Variable<VTI,VIC>::operator delete(void*, Space*) {}
+  template <VarTypeId VTI, class VIC>
   forceinline void*
-  Variable<VTI,MED>::operator new(size_t s, Space* home) {
+  Variable<VTI,VIC>::operator new(size_t s, Space* home) {
     return home->alloc(s);
   }
 
@@ -1747,18 +1747,18 @@ namespace Gecode {
    *
    */
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline
-  Variable<VTI,MED>::Variable(Space*) {
+  Variable<VTI,VIC>::Variable(Space*) {
     _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
     for (int i=PC_SIZE; i--; )
       idx[i] = NULL;
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline
-  Variable<VTI,MED>::Variable(void) {
+  Variable<VTI,VIC>::Variable(void) {
     _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
     for (int i=PC_SIZE; i--; )
@@ -1766,47 +1766,47 @@ namespace Gecode {
   }
 
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline unsigned int
-  Variable<VTI,MED>::degree(void) const {
+  Variable<VTI,VIC>::degree(void) const {
     return static_cast<unsigned int>(idx[PC_SIZE-1] - idx[0]);
   }
 
 
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline ModEvent
-  Variable<VTI,MED>::modevent(void) const {
+  Variable<VTI,VIC>::modevent(void) const {
     return static_cast<ModEvent>(u.free_me & 15);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline unsigned int
-  Variable<VTI,MED>::free(void) const {
+  Variable<VTI,VIC>::free(void) const {
     return u.free_me >> 4;
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::free(unsigned int n) {
+  Variable<VTI,VIC>::free(unsigned int n) {
     u.free_me = (u.free_me & 15) | (n << 4);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::free_inc(void) {
+  Variable<VTI,VIC>::free_inc(void) {
     u.free_me += (1 << 4);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::free_dec(void) {
+  Variable<VTI,VIC>::free_dec(void) {
     u.free_me -= (1 << 4);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline bool
-  Variable<VTI,MED>::modified(void) const {
+  Variable<VTI,VIC>::modified(void) const {
     return _next != reinterpret_cast<VarBase*>(1);
   }
 
@@ -1819,21 +1819,21 @@ namespace Gecode {
     return n;
   }
 
-  template <VarTypeId VTI, class MED>
-  forceinline Variable<VTI,MED>*
-  Variable<VTI,MED>::next(void) {
-    return static_cast<Variable<VTI,MED>*>(VarBase::next());
+  template <VarTypeId VTI, class VIC>
+  forceinline Variable<VTI,VIC>*
+  Variable<VTI,VIC>::next(void) {
+    return static_cast<Variable<VTI,VIC>*>(VarBase::next());
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline bool
-  Variable<VTI,MED>::copied(void) const {
+  Variable<VTI,VIC>::copied(void) const {
     return _next != reinterpret_cast<VarBase*>(1);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline
-  Variable<VTI,MED>::Variable(Space* home, bool, Variable<VTI,MED>& x) {
+  Variable<VTI,VIC>::Variable(Space* home, bool, Variable<VTI,VIC>& x) {
     _next = reinterpret_cast<VarBase*>(1);
     VarBase** reg;
     if (x.idx[0] == NULL) {
@@ -1853,10 +1853,10 @@ namespace Gecode {
     x._next = *reg; *reg = &x;
   }
 
-  template <VarTypeId VTI, class MED>
-  forceinline Variable<VTI,MED>*
-  Variable<VTI,MED>::forward(void) const {
-    return static_cast<Variable<VTI,MED>*>(u.fwd);
+  template <VarTypeId VTI, class VIC>
+  forceinline Variable<VTI,VIC>*
+  Variable<VTI,VIC>::forward(void) const {
+    return static_cast<Variable<VTI,VIC>*>(u.fwd);
   }
 
   /*
@@ -1864,23 +1864,23 @@ namespace Gecode {
    *
    */
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline ModEvent
-  Variable<VTI,MED>::pme(const Propagator* p) {
+  Variable<VTI,VIC>::pme(const Propagator* p) {
     return static_cast<ModEvent>((p->u.pme >> (VTI << 2)) & 15);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline PropModEvent
-  Variable<VTI,MED>::pme(ModEvent me) {
+  Variable<VTI,VIC>::pme(ModEvent me) {
     return static_cast<PropModEvent>(me << (VTI << 2));
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline ModEvent
-  Variable<VTI,MED>::combine(ModEvent me1, ModEvent me2) {
-    MED med;
-    return me2^med(me1,me2);
+  Variable<VTI,VIC>::combine(ModEvent me1, ModEvent me2) {
+    VIC vic;
+    return me2^vic(me1,me2);
   }
 
   /*
@@ -1998,7 +1998,7 @@ namespace Gecode {
     b_status = NULL;
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
   Space::process(Propagator* p) {
     // The new event is ME_GEN_ASSIGNED
@@ -2014,15 +2014,15 @@ namespace Gecode {
     pool_put(p);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
   Space::process(Propagator* p, ModEvent new_me) {
-    MED med;
+    VIC vic;
     PropModEvent old_pme = p->u.pme;
     // Compute the old modification event
     ModEvent old_me = ((old_pme >> (VTI << 2)) & ME_GEN_MAX);
     // Get the new modification event (xor-ed with the old one)
-    ModEvent com_me = med(new_me,old_me);
+    ModEvent com_me = vic(new_me,old_me);
     // Event has not changed, do not nothing
     if (com_me == 0)
       return;
@@ -2032,10 +2032,10 @@ namespace Gecode {
     pool_put(p);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::schedule(Space* home, Propagator* p, ModEvent me) {
-    home->process<VTI,MED>(p,me);
+  Variable<VTI,VIC>::schedule(Space* home, Propagator* p, ModEvent me) {
+    home->process<VTI,VIC>(p,me);
   }
 
   forceinline ExecStatus
@@ -2063,9 +2063,9 @@ namespace Gecode {
    *
    */
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::enter(Space* home, ActorLink* a, PropCond pc) {
+  Variable<VTI,VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
     // Count one new subscription
     home->n_sub += 1;
     if (free() == 0)
@@ -2078,9 +2078,9 @@ namespace Gecode {
     *idx[pc]=a;
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   void
-  Variable<VTI,MED>::resize(Space* home) {
+  Variable<VTI,VIC>::resize(Space* home) {
     assert(free() == 0);
     if (idx[0] == NULL) {
       // Create fresh dependency array
@@ -2114,25 +2114,25 @@ namespace Gecode {
     }
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
+  Variable<VTI,VIC>::subscribe(Space* home, Propagator* p, PropCond pc,
                                   bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
       if (process)
-        home->process<VTI,MED>(p);
+        home->process<VTI,VIC>(p);
     } else {
       enter(home,p,pc);
       // Process propagator
       if (process && (pc != PC_GEN_ASSIGNED))
-        home->process<VTI,MED>(p,me);
+        home->process<VTI,VIC>(p,me);
     }
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::subscribe(Space* home, Advisor* a, bool assigned) {
+  Variable<VTI,VIC>::subscribe(Space* home, Advisor* a, bool assigned) {
     if (!assigned)
       enter(home,a,PC_SIZE-2);
   }
@@ -2143,9 +2143,9 @@ namespace Gecode {
    *
    */
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::remove(Space* home, ActorLink* a, PropCond pc) {
+  Variable<VTI,VIC>::remove(Space* home, ActorLink* a, PropCond pc) {
     /*
      * The entries are removed from front to back, so when iterating
      * over dependencies wile removing them it must be done in
@@ -2171,24 +2171,24 @@ namespace Gecode {
     home->n_sub -= 1;
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::cancel(Space* home, Propagator* p, PropCond pc,
+  Variable<VTI,VIC>::cancel(Space* home, Propagator* p, PropCond pc,
                                bool assigned) {
     if (!assigned)
       remove(home,p,pc);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::cancel(Space* home, Advisor* a, bool assigned) {
+  Variable<VTI,VIC>::cancel(Space* home, Advisor* a, bool assigned) {
     if (!assigned)
       remove(home,a,PC_SIZE-2);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   bool
-  Variable<VTI,MED>::advise(Space* home, const Delta* d) {
+  Variable<VTI,VIC>::advise(Space* home, const Delta* d) {
     /*
      * An advisor that is executed might remove itself due to subsumtion.
      * As entries are removed from front to back, the advisors must
@@ -2218,14 +2218,14 @@ namespace Gecode {
     return true;
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline bool
-  Variable<VTI,MED>::notify(Space* home, ModEvent new_me, Delta* d) {
+  Variable<VTI,VIC>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
-      MED med;
-      u.free_me ^= med(new_me,static_cast<ModEvent>(u.free_me & 15));
+      VIC vic;
+      u.free_me ^= vic(new_me,static_cast<ModEvent>(u.free_me & 15));
     } else {
-      _next = static_cast<Variable<VTI,MED>*>(home->vars[VTI].entry);
+      _next = static_cast<Variable<VTI,VIC>*>(home->vars[VTI].entry);
       home->vars[VTI].entry = this;
       u.free_me = (u.free_me & ~15) | new_me;
     }
@@ -2236,11 +2236,11 @@ namespace Gecode {
     return true;
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline bool
-  Variable<VTI,MED>::notify(Space* home, Delta* d) {
+  Variable<VTI,VIC>::notify(Space* home, Delta* d) {
     assert(!modified());
-    _next = static_cast<Variable<VTI,MED>*>(home->vars[VTI].entry);
+    _next = static_cast<Variable<VTI,VIC>*>(home->vars[VTI].entry);
     home->vars[VTI].entry = this;
     if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
       d->me = ME_GEN_ASSIGNED;
@@ -2257,9 +2257,9 @@ namespace Gecode {
    *
    */
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::update(Variable<VTI,MED>* x, ActorLink**& sub) {
+  Variable<VTI,VIC>::update(Variable<VTI,VIC>* x, ActorLink**& sub) {
     // this refers to the variable to be updated (clone)
     // x refers to the original
     // Recover from copy (also overwrites forwarding pointer)
@@ -2309,24 +2309,24 @@ namespace Gecode {
    * Processing a single modified variable
    *
    */
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::process(Space* home,
+  Variable<VTI,VIC>::process(Space* home,
                              PropCond pc1, PropCond pc2, ModEvent me) {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
-      home->process<VTI,MED>(static_cast<Propagator*>(*p),me);
+      home->process<VTI,VIC>(static_cast<Propagator*>(*p),me);
   }
 
-  template <VarTypeId VTI, class MED>
+  template <VarTypeId VTI, class VIC>
   forceinline void
-  Variable<VTI,MED>::process(Space* home) {
+  Variable<VTI,VIC>::process(Space* home) {
     {
       ActorLink** b = idx[0];
       ActorLink** p = idx[PC_SIZE-2];
       while (p-- > b)
-        home->process<VTI,MED>(static_cast<Propagator*>(*p));
+        home->process<VTI,VIC>(static_cast<Propagator*>(*p));
     }
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+2])
