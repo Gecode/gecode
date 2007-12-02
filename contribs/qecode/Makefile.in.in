@@ -46,23 +46,6 @@ LINKQECODE	= $(LINKPREFIX)@QECODE@$(LINKSUFFIX)
 
 LINKALL := $(LINKALL) $(LINKQECODE)
 
-#
-# MAP EXAMPLES
-#
-
-#MAPEXAMPLESRC0 = map approximateMatching isomorphism subgraphmonomorphism 
-#MAPEXAMPLESRC  = $(MAPEXAMPLESRC0:%=examples/%.cc)
-#MAPEXAMPLEOBJ  = $(MAPEXAMPLESRC:%.cc=%$(OBJSUFFIX))
-#MAPEXAMPLESBJ  = $(MAPEXAMPLESRC:%.cc=%$(SBJSUFFIX))
-#MAPEXAMPLEEXE  = $(MAPEXAMPLESRC:%.cc=%$(EXESUFFIX))
-#MAPEXAMPLEBUILDDIRS = examples/
-
-#MAPEXAMPLEHDR0 = $(gecode_top_srcdir)/support.hh $(gecode_top_srcdir)/support.icc $(gecode_top_srcdir)/timer.hh
-#MAPEXAMPLEHDR  = $(MAPEXAMPLEHDR0:%=../../examples/%) $(MAPHDR)
-
-
-
-
 ALLLIB :=  $(ALLLIB) $(QECODELIB) 
 
 DLLTARGETS = $(QECODEDLL)

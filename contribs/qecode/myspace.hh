@@ -61,7 +61,7 @@ public:
     
     QECODE_EXPORT MySpace(bool share,MySpace& ms);
     QECODE_EXPORT virtual MySpace* copy(bool share);
-    QECODE_EXPORT ~MySpace();
+    QECODE_EXPORT virtual ~MySpace();
 };
 
 

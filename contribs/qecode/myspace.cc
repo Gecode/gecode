@@ -34,6 +34,9 @@ MySpace::MySpace(unsigned int nv) {
 
 
 MySpace::~MySpace() {
+    for (int i=0;i<n;i++)
+        delete v[i];
+    
     delete[] v;
     delete[] type_of_v;
 }
