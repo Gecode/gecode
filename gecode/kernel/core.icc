@@ -986,13 +986,13 @@ namespace Gecode {
      */
     //@{
     /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[IDX_PU_ALL];
+    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[IDX_D_ALL];
     /// Keep variables during copying without index structure
     VarBase* vars_noidx;
     /// Entries for processing and updating variables
     VarBase* vars_pu[IDX_PU_ALL];
     /// Entries for disposing variables
-    VarBase* vars_d[IDX_PU_ALL];
+    VarBase* vars_d[IDX_D_ALL];
     /// Process all modified variables (inlined version)
     void process_i(void);
     /// Process all modified variables (outlined version)
@@ -1354,13 +1354,13 @@ namespace Gecode {
   template <class VIC>
   forceinline VarBase*
   Space::varsDisposeList(void) {
-    return vars_d[VIC::idx_pu];
+    return vars_d[VIC::idx_d];
   }
 
   template <class VIC>
   forceinline void
   Space::varsDisposeList(VarBase* v) {
-    vars_d[VIC::idx_pu]=v;
+    vars_d[VIC::idx_d] = v;
   }
 
   /*
@@ -2295,7 +2295,7 @@ namespace Gecode {
 
   template <class VIC, class VarType>
   VarDisposer<VIC,VarType>::VarDisposer(void) {
-    Space::vd[VIC::idx_pu] = this;
+    Space::vd[VIC::idx_d] = this;
   }
 
   template <class VIC, class VarType>

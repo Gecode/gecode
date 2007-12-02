@@ -46,7 +46,7 @@ namespace Gecode {
    *
    */
 
-  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[IDX_PU_ALL];
+  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[IDX_D_ALL];
 
   void VarDisposerBase::dispose(Space*,VarBase*) {}
   VarDisposerBase::~VarDisposerBase(void) {}
@@ -62,7 +62,7 @@ namespace Gecode {
     vars_noidx = NULL;
     for (int i=0; i<IDX_PU_ALL; i++)
       vars_pu[i] = NULL;
-    for (int i=0; i<IDX_PU_ALL; i++)
+    for (int i=0; i<IDX_D_ALL; i++)
       vars_d[i] = NULL;
     // Initialize propagator pool
     pool_next = 0;
@@ -140,7 +140,7 @@ namespace Gecode {
       }
     }
     // Delete variables that were registered for deletion
-    for (int i=IDX_PU_ALL; i--;)
+    for (int i=IDX_D_ALL; i--;)
       if (vars_d[i] != NULL)
         vd[i]->dispose(this, vars_d[i]);
   }
@@ -385,7 +385,7 @@ namespace Gecode {
     vars_noidx = NULL;
     for (int i=0; i<IDX_PU_ALL; i++)
       vars_pu[i] = NULL;
-    for (int i=0; i<IDX_PU_ALL; i++)
+    for (int i=0; i<IDX_D_ALL; i++)
       vars_d[i] = NULL;
     // Initialize propagator pool
     pool_next = 0;
