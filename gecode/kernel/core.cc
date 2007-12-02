@@ -46,10 +46,10 @@ namespace Gecode {
    *
    */
 
-  GECODE_KERNEL_EXPORT VarTypeDisposerBase* Space::vtd[IDX_PU_ALL];
+  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vtd[IDX_PU_ALL];
 
-  void VarTypeDisposerBase::dispose(Space*,VarBase*) {}
-  VarTypeDisposerBase::~VarTypeDisposerBase(void) {}
+  void VarDisposerBase::dispose(Space*,VarBase*) {}
+  VarDisposerBase::~VarDisposerBase(void) {}
 
 
 

@@ -226,7 +226,7 @@ namespace Gecode {
    * Controls disposal of variables.
    * \ingroup TaskVar
    */
-  class GECODE_VTABLE_EXPORT VarTypeDisposerBase {
+  class GECODE_VTABLE_EXPORT VarDisposerBase {
   public:
     /**
       * \brief Dispose variables
@@ -236,7 +236,7 @@ namespace Gecode {
       */
     GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarBase* x);
     /// Destructor (not really used)
-    GECODE_KERNEL_EXPORT virtual ~VarTypeDisposerBase(void);
+    GECODE_KERNEL_EXPORT virtual ~VarDisposerBase(void);
   };
 
   /**
@@ -246,10 +246,10 @@ namespace Gecode {
    * \ingroup TaskVar
    */
   template <class VIC, class VarType>
-  class VarTypeDisposer : public VarTypeDisposerBase {
+  class VarDisposer : public VarDisposerBase {
   public:
     /// Constructor (registers disposer with kernel)
-    VarTypeDisposer(void);
+    VarDisposer(void);
     /**
       * \brief Dispose variables
       *
@@ -967,7 +967,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Reflection::SpecIter;
     template <class VIC> friend class Variable;
-    template <class VIC, class VarType> friend class VarTypeDisposer;
+    template <class VIC, class VarType> friend class VarDisposer;
     friend class SharedHandle;
   private:
     MemoryManager   mm; ///< Performs memory management for space
@@ -986,7 +986,7 @@ namespace Gecode {
      */
     //@{
     /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT static VarTypeDisposerBase* vtd[IDX_PU_ALL];
+    GECODE_KERNEL_EXPORT static VarDisposerBase* vtd[IDX_PU_ALL];
     /// Information for handling variables
     class VarInfo {
     public:
@@ -2300,13 +2300,13 @@ namespace Gecode {
   }
 
   template <class VIC, class VarType>
-  VarTypeDisposer<VIC,VarType>::VarTypeDisposer(void) {
+  VarDisposer<VIC,VarType>::VarDisposer(void) {
     Space::vtd[VIC::idx_pu] = this;
   }
 
   template <class VIC, class VarType>
   void
-  VarTypeDisposer<VIC,VarType>::dispose(Space* home, VarBase* vb) {
+  VarDisposer<VIC,VarType>::dispose(Space* home, VarBase* vb) {
     VarType* x = static_cast<VarType*>(vb);
     do {
       x->dispose(home);
