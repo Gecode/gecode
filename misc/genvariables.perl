@@ -272,9 +272,10 @@ for ($f=0; $f<$n_files; $f++) {
 
   $maxpc[$f] = "PC_${VTI}_" . $pcn[$f][$pc_n[$f]-1];
   $class[$f] = "${NAME}VarImpBase";
+  $conf[$f]  = "${NAME}VarImpConf";
   $diffc[$f] = "${NAME}MeDiff";
   $base[$f]  = ("Gecode::Variable<VTI_${VTI}," .
-		$maxpc[$f] . "," . $diffc[$f] . ">");
+		$maxpc[$f] . "," . $namespace[$f] . "::" . $conf[$f] . ">");
 
   ## Check whether there is only one real event
   if ($me_n[$f] == 3) {
@@ -295,22 +296,20 @@ for ($f=0; $f<$n_files; $f++) {
   $me_max[$f]   = "ME_${VTI}_" . $val2me[$f][$o-1] . "+1";
   $me_max_n[$f] = $o;
 
+  for ($b=1; (1 << $b) < $me_max_n[$f]; $b++) {}
+  $bits[$f] = $b;
+
 }
 
 if ($gen_type) {
-
-print <<EOF
-/**
- * \\brief %Variable type identifiers
- *
- * Each variable type must have a unique variable type identifier. The
- * kernel supports at most eight different variable type identifiers.
- *
- * \\ingroup TaskVar
- */
-enum VarTypeId {
-EOF
-;
+  print "/**\n";
+  print " * \\brief %Variable type identifiers\n";
+  print " *\n";
+  print " * Each variable type must have a unique variable type identifier.\n";
+  print " *\n";
+  print " * \\ingroup TaskVar\n";
+  print " */\n";
+  print "enum VarTypeId {\n";
 
   for ($f = 0; $f<$n_files; $f++) {
     print "#ifdef $ifdef[$f]\n";
@@ -318,16 +317,8 @@ EOF
     print "#endif\n";
   }
 
-print <<EOF
-  VTI_LAST ///< Maximal variable type identifier plus one
-};
-
-EOF
-;
-
-}
-
-if ($gen_header) {
+  print "  VTI_LAST ///< Maximal variable type identifier plus one\n";
+  print "};\n\n";
 
   for ($f = 0; $f<$n_files; $f++) {
     $VTI   = $vti[$f];
@@ -340,9 +331,7 @@ if ($gen_header) {
       print "#ifdef $ifdef[$f]\n\n";
     }
     print $hdr[$f];
-
     print $mehdr[$f];
-
     $o = 1;
     for ($i=0; $i<$me_n[$f]; $i++) {
       $n = $men[$f][$i];
@@ -376,87 +365,140 @@ if ($gen_header) {
       }
       print ";\n";
     }
-
     print $pcftr[$f];
-
-  print <<EOF
-
-  /// Modification event difference for ${NAME}-variable implementations
-  class ${DIFFC} {
-  public:
-    /// Return difference when changing modification event \\a me2 to \\a me1
-    ModEvent operator()(ModEvent me1, ModEvent me2) const;
-  };
-
-  /// Base-class for ${NAME}-variable implementations
-  class ${CLASS} : public ${BASE} {
-EOF
-;
-  if ($dispose[$f]) {
-    print <<EOF
-  private:
-    /// Link to next variable, used for disposal
-    VarBase* _nextDispose;
-EOF
-;
+    print $ftr[$f];
+    if (!($ifdef[$f] eq "")) {
+      print "\n#endif\n\n";
+    }
   }
 
-  print <<EOF
-  protected:
-    /// Constructor for cloning \\a x
-    ${CLASS}(Space* home, bool share, ${CLASS}\& x);
-  public:
-    /// Constructor for creating static instance of variable
-    ${CLASS}(void);
-    /// Constructor for creating variable
-    ${CLASS}(Space* home);
-    /// \\name Dependencies
-    //\@{
-    /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
-     *
-     * In case \\a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \\a assigned is 
-     * true), the subscribing propagator is processed for execution.
-     * Otherwise, the propagator subscribes and is processed for execution
-     * with modification event \\a me provided that \\a pc is different
-     * from \\a PC_GEN_ASSIGNED.
-     */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
-    /// Subscribe advisor \\a a
-    void subscribe(Space* home, Advisor* a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
-    bool notify(Space* home, ModEvent me, Delta* d);
-    //\@}
-EOF
-;
-  if ($me_max_n[$f] == 2) {
+
+  for ($f = 0; $f<$n_files; $f++) {
+    $VTI   = $vti[$f];
+    $NAME  = $name[$f];
+    $BASE  = $base[$f];
+    $CLASS = $class[$f];
+    $CONF  = $conf[$f];
+    $DIFFC = $diffc[$f];
+
+    if (!($ifdef[$f] eq "")) {
+      print "#ifdef $ifdef[$f]\n\n";
+    }
+    print $hdr[$f];
+    print "  /// Configuration class for ${NAME}-variable implementations\n";
+    print "  class ${CONF} {\n";
+    print "  public:\n";
+    print "    /// Index for processing and update\n";
+    print "    static const int idx_pu = ";
+    if ($f == 0) {
+      print "0;\n";
+    } else {
+      print "$namespace[$f-1]::$conf[$f-1]::idx_pu+1;\n";
+    }
+    print "    /// Index for disposal\n";
+    print "    static const int idx_d  = ";
+    if ($dispose[$f]) {
+      if ($f == 0) {
+	print "0;\n";
+      } else {
+	print "$namespace[$f-1]::$conf[$f-1]::idx_d+1;\n";
+      }
+    } else {
+      if ($f == 0) {
+	print "-1;\n";
+      } else {
+	print "$namespace[$f-1]::$conf[$f-1]::idx_d;\n";
+      }
+    }
+    print "    /// Maximal propagation condition\n";
+    print "    static const Gecode::PropCond pc_max = $maxpc[$f];\n";
+    print "    /// Start of bits for propagator modification event\n";
+    print "    static const int pme_bits_fst = ";
+    if ($f == 0) {
+      print "0;\n";
+    } else {
+      print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
+    }
+    print "    /// Number of bits for propagator modification event\n";
+    print "    static const int pme_bits_num = $bits[$f];\n";
+    print "    /// End of bits for propagator modification event\n";
+    print "    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;\n";
+    print "    /// Bit pattern for assigned propagator modification event\n";
+    print "    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);\n";
+    print "    /// Return difference when changing modification event \\a me2 to \\a me1\n";
+    print "    ModEvent operator()(ModEvent me1, ModEvent me2) const;\n";
+    print "  };\n";
+    print $ftr[$f];
+    if (!($ifdef[$f] eq "")) {
+      print "\n#else\n\n";
+    }
+    print $hdr[$f];
+    print "  /// Configuration class for ${NAME}-variable implementations\n";
+    print "  class ${CONF} {\n";
+    print "  public:\n";
+    print "    /// Index for processing and update\n";
+    print "    static const int idx_pu = ";
+    if ($f == 0) {
+      print "-1;\n";
+    } else {
+      print "$namespace[$f-1]::$conf[$f-1]::idx_pu;\n";
+    }
+    print "    /// Index for disposal\n";
+    print "    static const int idx_d  = ";
+    if ($f == 0) {
+      print "-1;\n";
+    } else {
+      print "$namespace[$f-1]::$conf[$f-1]::idx_d;\n";
+    }
+    print "    /// End of bits for propagator modification event\n";
+    print "    static const int pme_bits_lst = ";
+    if ($f == 0) {
+      print "0;\n";
+    } else {
+      print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
+    }
+    print "    /// Bit pattern for assigned propagator modification event\n";
+    print "    static const Gecode::PropModEvent pme_assigned = 0;\n";
+    print "  };\n";
+    print $ftr[$f];
+    if (!($ifdef[$f] eq "")) {
+      print "\n#endif\n\n";
+    }
+  }
+  print "\n";
+  print "namespace Gecode {\n\n";
+  print "  const int IDX_PU_ALL = $namespace[$n_files-1]::$conf[$n_files-1]::idx_pu+1;\n";
+  print "  const int IDX_D_ALL = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
+  print "  const int PME_ASSIGNED_ALL =\n";
+  for ($f=0; $f<$n_files; $f++) {
+    print "    $namespace[$f]::$conf[$f]::pme_assigned";
+    if ($f+1 == $n_files) {
+      print ";\n";
+    } else {
+      print " |\n";
+    }
+  }
+  print "\n}\n\n";
+}
+
+if ($gen_header) {
+
+  for ($f = 0; $f<$n_files; $f++) {
+    $VTI   = $vti[$f];
+    $NAME  = $name[$f];
+    $BASE  = $base[$f];
+    $CLASS = $class[$f];
+    $DIFFC = $diffc[$f];
+    $CONF  = $conf[$f];
+
+    if (!($ifdef[$f] eq "")) {
+      print "#ifdef $ifdef[$f]\n\n";
+    }
+    print $hdr[$f];
+
 print <<EOF
-    /// Return the current modification event
-    ModEvent modevent(void) const;
-EOF
-;
-  }
-
-  if ($dispose[$f]) {
-  print <<EOF
-    /// Return link to next variable, used for dispose
-    ${CLASS}* nextDispose(void) const;
-    /// Set link to next variable, used for dispose
-    void nextDispose(${CLASS}* next);
-EOF
-;
-  }
-
-  print <<EOF
-
-  };
-
-
   forceinline ModEvent
-  ${DIFFC}::operator()(ModEvent me1, ModEvent me2) const {
+  ${CONF}::operator()(ModEvent me1, ModEvent me2) const {
 EOF
 ;
 
@@ -532,6 +574,77 @@ EOF
   print "    return med[me1][me2];\n";
 }
 print "  }\n";
+
+  print <<EOF
+
+  /// Base-class for ${NAME}-variable implementations
+  class ${CLASS} : public ${BASE} {
+EOF
+;
+  if ($dispose[$f]) {
+    print <<EOF
+  private:
+    /// Link to next variable, used for disposal
+    VarBase* _nextDispose;
+EOF
+;
+  }
+
+  print <<EOF
+  protected:
+    /// Constructor for cloning \\a x
+    ${CLASS}(Space* home, bool share, ${CLASS}\& x);
+  public:
+    /// Constructor for creating static instance of variable
+    ${CLASS}(void);
+    /// Constructor for creating variable
+    ${CLASS}(Space* home);
+    /// \\name Dependencies
+    //\@{
+    /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
+     *
+     * In case \\a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \\a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \\a me provided that \\a pc is different
+     * from \\a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \\a a
+    void subscribe(Space* home, Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
+    bool notify(Space* home, ModEvent me, Delta* d);
+    //\@}
+EOF
+;
+  if ($me_max_n[$f] == 2) {
+print <<EOF
+    /// Return the current modification event
+    ModEvent modevent(void) const;
+EOF
+;
+  }
+
+  if ($dispose[$f]) {
+  print <<EOF
+    /// Return link to next variable, used for dispose
+    ${CLASS}* nextDispose(void) const;
+    /// Set link to next variable, used for dispose
+    void nextDispose(${CLASS}* next);
+EOF
+;
+  }
+
+  print <<EOF
+
+  };
+
+EOF
+;
 
 if ($me_max_n[$f] == 2) {
 print <<EOF

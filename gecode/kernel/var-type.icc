@@ -40,8 +40,7 @@
 /**
  * \brief %Variable type identifiers
  *
- * Each variable type must have a unique variable type identifier. The
- * kernel supports at most eight different variable type identifiers.
+ * Each variable type must have a unique variable type identifier.
  *
  * \ingroup TaskVar
  */
@@ -60,5 +59,453 @@ enum VarTypeId {
 #endif
   VTI_LAST ///< Maximal variable type identifier plus one
 };
+
+#ifdef GECODE_HAVE_INT_VARS
+
+namespace Gecode { namespace Int {
+  /**
+   * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
+   * \ingroup TaskActorInt
+   */
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_INT_FAILED = Gecode::ME_GEN_FAILED;
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_INT_NONE = Gecode::ME_GEN_NONE;
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_INT_VAL = Gecode::ME_GEN_ASSIGNED;
+  /** 
+   * \brief Domain operation has changed the minimum or maximum of the domain
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   *
+   * If a propagator subscribes to this variable, it will be processed
+   * assuming a ME_INT_BND modification event.
+   */
+  const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
+  /** 
+   * \brief Domain operation has changed the domain
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the minimum and maximum of the domain have not changed.
+   */
+  const Gecode::ModEvent ME_INT_DOM = Gecode::ME_GEN_ASSIGNED + 2;
+  /// Propagation condition to be ignored (convenience)
+  const Gecode::PropCond PC_INT_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_INT_VAL.
+   */
+  const Gecode::PropCond PC_INT_VAL = Gecode::PC_GEN_ASSIGNED;
+  /**
+   * \brief Propagate when minimum or maximum of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_BND, then \a p is propagated when a domain
+   * update operation on \a x returns the modification events ME_INT_VAL
+   * or ME_INT_BND.
+   */
+  const Gecode::PropCond PC_INT_BND = Gecode::PC_GEN_ASSIGNED + 1;
+  /**
+   * \brief Propagate when domain changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_INT_VAL,
+   * ME_INT_BND, or ME_INT_DOM.
+   */
+  const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
+  //@}
+}}
+
+#endif
+
+#ifdef GECODE_HAVE_INT_VARS
+
+namespace Gecode { namespace Int {
+  /**
+   * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
+   * \ingroup TaskActorInt
+   */
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_BOOL_FAILED = Gecode::ME_GEN_FAILED;
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_BOOL_NONE = Gecode::ME_GEN_NONE;
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_BOOL_VAL = Gecode::ME_GEN_ASSIGNED;
+  /// Propagation condition to be ignored (convenience)
+  const Gecode::PropCond PC_BOOL_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_BOOL_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_BOOL_VAL.
+   */
+  const Gecode::PropCond PC_BOOL_VAL = Gecode::PC_GEN_ASSIGNED;
+  //@}
+}}
+
+#endif
+
+#ifdef GECODE_HAVE_SET_VARS
+
+namespace Gecode { namespace Set {
+  /**
+   * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
+   * \ingroup TaskActorSet
+   */
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_SET_FAILED = Gecode::ME_GEN_FAILED;
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_SET_NONE = Gecode::ME_GEN_NONE;
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_SET_VAL = Gecode::ME_GEN_ASSIGNED;
+  /**
+   * \brief Domain operation has changed the variable cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   */
+  const Gecode::ModEvent ME_SET_CARD = Gecode::ME_GEN_ASSIGNED + 1;
+  /**
+   * \brief Domain operation has changed the least upper bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also neither cardinality nor the greatest lower bound
+   * have changed.
+   */
+  const Gecode::ModEvent ME_SET_LUB = Gecode::ME_GEN_ASSIGNED + 2;
+  /**
+   * \brief Domain operation has changed the greatest lower bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also neither cardinality nor the least upper bound
+   * have changed.
+   */
+  const Gecode::ModEvent ME_SET_GLB = Gecode::ME_GEN_ASSIGNED + 3;
+  /**
+   * \brief Domain operation has changed both greatest lower and least
+   * upper bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the cardinality has not changed.
+   */
+  const Gecode::ModEvent ME_SET_BB = Gecode::ME_GEN_ASSIGNED + 4;
+  /**
+   * \brief Domain operation has changed the least upper bound and the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the greatest lower bound has not changed.
+   */
+  const Gecode::ModEvent ME_SET_CLUB = Gecode::ME_GEN_ASSIGNED + 5;
+  /**
+   * \brief Domain operation has changed the greatest lower bound and the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the least upper bound has not changed.
+   */
+  const Gecode::ModEvent ME_SET_CGLB = Gecode::ME_GEN_ASSIGNED + 6;
+  /**
+   * \brief Domain operation has changed both the greatest lower bound and
+   * the least upper bound, as well as the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   *
+   * If a propagator subscribes to this variable, it will be processed
+   * assuming a ME_SET_CBB modification event.
+   *
+   */
+  const Gecode::ModEvent ME_SET_CBB = Gecode::ME_GEN_ASSIGNED + 7;
+  /// Propagation condition to be ignored (convenience)
+  const Gecode::PropCond PC_SET_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL.
+   */
+  const Gecode::PropCond PC_SET_VAL = Gecode::PC_GEN_ASSIGNED;
+  /**
+   * \brief Propagate when the cardinality of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CARD, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB, or ME_SET_CBB.
+   */
+  const Gecode::PropCond PC_SET_CARD = Gecode::PC_GEN_ASSIGNED + 1;
+  /**
+   * \brief Propagate when the cardinality or the least upper bound
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CLUB, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_LUB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
+   * or ME_SET_CBB.
+   */
+  const Gecode::PropCond PC_SET_CLUB = Gecode::PC_GEN_ASSIGNED + 2;
+  /**
+   * \brief Propagate when the cardinality or the greatest lower bound
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CGLB, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_GLB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
+   * or ME_SET_CBB.
+   */
+  const Gecode::PropCond PC_SET_CGLB = Gecode::PC_GEN_ASSIGNED + 3;
+  /**
+   * \brief Propagate when any bound or the cardinality
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_ANY, then \a p is propagated when a domain
+   * update operation on \a x returns any modification event but ME_SET_FAILED
+   * and ME_SET_NONE.
+   */
+  const Gecode::PropCond PC_SET_ANY = Gecode::PC_GEN_ASSIGNED + 4;
+  //@}
+}}
+
+#endif
+
+#ifdef GECODE_HAVE_CPLTSET_VARS
+
+namespace Gecode { namespace CpltSet {
+  /**
+   * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
+   * \ingroup TaskActorCpltSet
+   */
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_CPLTSET_FAILED = Gecode::ME_GEN_FAILED;
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_CPLTSET_NONE = Gecode::ME_GEN_NONE;
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_CPLTSET_VAL = Gecode::ME_GEN_ASSIGNED;
+  /**
+   * \brief Domain operation has modified set
+   */
+  const Gecode::ModEvent ME_CPLTSET_DOM = Gecode::ME_GEN_ASSIGNED + 1;
+  /// Propagation condition to be ignored (convenience)
+  const Gecode::PropCond PC_CPLTSET_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_CPLTSET_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_CPLTSET_VAL.
+   */
+  const Gecode::PropCond PC_CPLTSET_VAL = Gecode::PC_GEN_ASSIGNED;
+ /**
+   * \brief Propagate when the domain of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_CPLTSET_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_CPLTSET_VAL or 
+   * ME_CPLTSET_DOM.
+   */
+  const Gecode::PropCond PC_CPLTSET_DOM = Gecode::PC_GEN_ASSIGNED + 1;
+  //@}
+}}
+
+#endif
+
+#ifdef GECODE_HAVE_INT_VARS
+
+namespace Gecode { namespace Int {
+  /// Configuration class for Int-variable implementations
+  class IntVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = 0;
+    /// Index for disposal
+    static const int idx_d  = -1;
+    /// Maximal propagation condition
+    static const Gecode::PropCond pc_max = PC_INT_DOM;
+    /// Start of bits for propagator modification event
+    static const int pme_bits_fst = 0;
+    /// Number of bits for propagator modification event
+    static const int pme_bits_num = 2;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+}}
+
+#else
+
+namespace Gecode { namespace Int {
+  /// Configuration class for Int-variable implementations
+  class IntVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = -1;
+    /// Index for disposal
+    static const int idx_d  = -1;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = 0;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = 0;
+  };
+}}
+
+#endif
+
+#ifdef GECODE_HAVE_INT_VARS
+
+namespace Gecode { namespace Int {
+  /// Configuration class for Bool-variable implementations
+  class BoolVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = Gecode::Int::IntVarImpConf::idx_pu+1;
+    /// Index for disposal
+    static const int idx_d  = Gecode::Int::IntVarImpConf::idx_d;
+    /// Maximal propagation condition
+    static const Gecode::PropCond pc_max = PC_BOOL_VAL;
+    /// Start of bits for propagator modification event
+    static const int pme_bits_fst = Gecode::Int::IntVarImpConf::pme_bits_lst;
+    /// Number of bits for propagator modification event
+    static const int pme_bits_num = 1;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+}}
+
+#else
+
+namespace Gecode { namespace Int {
+  /// Configuration class for Bool-variable implementations
+  class BoolVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = Gecode::Int::IntVarImpConf::idx_pu;
+    /// Index for disposal
+    static const int idx_d  = Gecode::Int::IntVarImpConf::idx_d;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = Gecode::Int::IntVarImpConf::pme_bits_lst;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = 0;
+  };
+}}
+
+#endif
+
+#ifdef GECODE_HAVE_SET_VARS
+
+namespace Gecode { namespace Set {
+  /// Configuration class for Set-variable implementations
+  class SetVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = Gecode::Int::BoolVarImpConf::idx_pu+1;
+    /// Index for disposal
+    static const int idx_d  = Gecode::Int::BoolVarImpConf::idx_d;
+    /// Maximal propagation condition
+    static const Gecode::PropCond pc_max = PC_SET_ANY;
+    /// Start of bits for propagator modification event
+    static const int pme_bits_fst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
+    /// Number of bits for propagator modification event
+    static const int pme_bits_num = 4;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+}}
+
+#else
+
+namespace Gecode { namespace Set {
+  /// Configuration class for Set-variable implementations
+  class SetVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = Gecode::Int::BoolVarImpConf::idx_pu;
+    /// Index for disposal
+    static const int idx_d  = Gecode::Int::BoolVarImpConf::idx_d;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = 0;
+  };
+}}
+
+#endif
+
+#ifdef GECODE_HAVE_CPLTSET_VARS
+
+namespace Gecode { namespace CpltSet {
+  /// Configuration class for CpltSet-variable implementations
+  class CpltSetVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = Gecode::Set::SetVarImpConf::idx_pu+1;
+    /// Index for disposal
+    static const int idx_d  = Gecode::Set::SetVarImpConf::idx_d+1;
+    /// Maximal propagation condition
+    static const Gecode::PropCond pc_max = PC_CPLTSET_DOM;
+    /// Start of bits for propagator modification event
+    static const int pme_bits_fst = Gecode::Set::SetVarImpConf::pme_bits_lst;
+    /// Number of bits for propagator modification event
+    static const int pme_bits_num = 2;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = pme_bits_fst + pme_bits_num;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+}}
+
+#else
+
+namespace Gecode { namespace CpltSet {
+  /// Configuration class for CpltSet-variable implementations
+  class CpltSetVarImpConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = Gecode::Set::SetVarImpConf::idx_pu;
+    /// Index for disposal
+    static const int idx_d  = Gecode::Set::SetVarImpConf::idx_d;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = Gecode::Set::SetVarImpConf::pme_bits_lst;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned = 0;
+  };
+}}
+
+#endif
+
+
+namespace Gecode {
+
+  const int IDX_PU_ALL = Gecode::CpltSet::CpltSetVarImpConf::idx_pu+1;
+  const int IDX_D_ALL = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
+  const int PME_ASSIGNED_ALL =
+    Gecode::Int::IntVarImpConf::pme_assigned |
+    Gecode::Int::BoolVarImpConf::pme_assigned |
+    Gecode::Set::SetVarImpConf::pme_assigned |
+    Gecode::CpltSet::CpltSetVarImpConf::pme_assigned;
+
+}
 
 // STATISTICS: kernel-var

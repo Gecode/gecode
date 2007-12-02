@@ -159,6 +159,17 @@ namespace Gecode {
   const PropCond PC_GEN_MAX      = 15;
   //@}
 
+  /**
+   * \brief Propagator modification events
+   *
+   * Propagator modification events are used by propagators. A
+   * propagator stores a modification event for each variable type.
+   * They can be accessed through a variable or a view from a given
+   * propagator. They can be constructed from a given modevent by
+   * a variable or view.
+   * \ingroup TaskActor
+   */
+  typedef int PropModEvent;
 
 }
 
@@ -251,19 +262,6 @@ namespace Gecode {
       */
     virtual void dispose(Space* home, VarBase* x);
   };
-
-  /**
-   * \brief Propagator modification events
-   *
-   * Propagator modification events are used by propagators. A
-   * propagator stores a modification event for each variable type.
-   * They can be accessed through a variable or a view from a given
-   * propagator. They can be constructed from a given modevent by
-   * a variable or view.
-   * \ingroup TaskActor
-   */
-  typedef int PropModEvent;
-
 
   /**
    * \brief Domain change information to be supplied to advisors
