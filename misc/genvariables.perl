@@ -275,7 +275,7 @@ for ($f=0; $f<$n_files; $f++) {
   $conf[$f]  = "${NAME}VarImpConf";
   $diffc[$f] = "${NAME}MeDiff";
   $base[$f]  = ("Gecode::Variable<VTI_${VTI}," .
-		$maxpc[$f] . "," . $namespace[$f] . "::" . $conf[$f] . ">");
+		$namespace[$f] . "::" . $conf[$f] . ">");
 
   ## Check whether there is only one real event
   if ($me_n[$f] == 3) {
