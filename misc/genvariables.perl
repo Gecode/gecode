@@ -274,7 +274,7 @@ for ($f=0; $f<$n_files; $f++) {
   $class[$f] = "${NAME}VarImpBase";
   $conf[$f]  = "${NAME}VarImpConf";
   $diffc[$f] = "${NAME}MeDiff";
-  $base[$f]  = ("Gecode::Variable<VTI_${VTI}," .
+  $base[$f]  = ("Gecode::Variable<" .
 		$namespace[$f] . "::" . $conf[$f] . ">");
 
   ## Check whether there is only one real event

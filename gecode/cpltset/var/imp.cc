@@ -452,7 +452,7 @@ namespace Gecode { namespace CpltSet {
 
   // Create disposer
   GECODE_CPLTSET_EXPORT
-  VarTypeDisposer<VTI_CPLTSET,CpltSetVarImp> vtd;
+  VarTypeDisposer<CpltSetVarImpConf,CpltSetVarImp> vtd;
 
 }}
 
