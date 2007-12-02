@@ -282,8 +282,8 @@ namespace Gecode {
   /**
    * \brief Base-class for variable implementations
    *
-   * Implements variable implementation for variable type identifier
-   * \a VTI and largest possible propagation condition \a PC.
+   * Implements variable implementation for variable implementation
+   * configuration of type \a VIC.
    * \ingroup TaskVar
    */
   template <class VIC>
@@ -293,8 +293,6 @@ namespace Gecode {
   private:
     /// Number of slots for index struxture
     static const PropCond PC_SIZE = VIC::pc_max + 3;
-    /// FIXME
-    static const int VTI = VIC::idx_pu;
     /// Stores where entries start (idx[pc]}
     ActorLink** idx[PC_SIZE];
 
@@ -1847,7 +1845,7 @@ namespace Gecode {
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
-      reg = &home->vars[VTI].entry;
+      reg = &home->vars[VIC::idx_pu].entry;
     }
     // Set forwarding pointer
     x.u.fwd = this;
@@ -1869,13 +1867,13 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   Variable<VIC>::pme(const Propagator* p) {
-    return static_cast<ModEvent>((p->u.pme >> (VTI << 2)) & 15);
+    return static_cast<ModEvent>((p->u.pme >> (VIC::idx_pu << 2)) & 15);
   }
 
   template <class VIC>
   forceinline PropModEvent
   Variable<VIC>::pme(ModEvent me) {
-    return static_cast<PropModEvent>(me << (VTI << 2));
+    return static_cast<PropModEvent>(me << (VIC::idx_pu << 2));
   }
 
   template <class VIC>
@@ -2227,8 +2225,8 @@ namespace Gecode {
       VIC vic;
       u.free_me ^= vic(new_me,static_cast<ModEvent>(u.free_me & 15));
     } else {
-      _next = static_cast<Variable<VIC>*>(home->vars[VTI].entry);
-      home->vars[VTI].entry = this;
+      _next = static_cast<Variable<VIC>*>(home->vars[VIC::idx_pu].entry);
+      home->vars[VIC::idx_pu].entry = this;
       u.free_me = (u.free_me & ~15) | new_me;
     }
     if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
@@ -2242,8 +2240,8 @@ namespace Gecode {
   forceinline bool
   Variable<VIC>::notify(Space* home, Delta* d) {
     assert(!modified());
-    _next = static_cast<Variable<VIC>*>(home->vars[VTI].entry);
-    home->vars[VTI].entry = this;
+    _next = static_cast<Variable<VIC>*>(home->vars[VIC::idx_pu].entry);
+    home->vars[VIC::idx_pu].entry = this;
     if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
       d->me = ME_GEN_ASSIGNED;
       return advise(home,d);
