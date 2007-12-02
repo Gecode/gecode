@@ -986,19 +986,13 @@ namespace Gecode {
      */
     //@{
     /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT static VarDisposerBase* vtd[IDX_PU_ALL];
-    /// Information for handling variables
-    class VarInfo {
-    public:
-      /// Modified or copied variables (entry points)
-      VarBase* entry;
-      /// Variables that require disposal
-      VarBase* dispose;
-    };
-    /// Information for handling variables
-    VarInfo vars[IDX_PU_ALL];
-    /// To keep variables during copying without index structure
+    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[IDX_PU_ALL];
+    /// Keep variables during copying without index structure
     VarBase* vars_noidx;
+    /// Entries for processing and updating variables
+    VarBase* vars_pu[IDX_PU_ALL];
+    /// Entries for disposing variables
+    VarBase* vars_d[IDX_PU_ALL];
     /// Process all modified variables (inlined version)
     void process_i(void);
     /// Process all modified variables (outlined version)
@@ -1360,13 +1354,13 @@ namespace Gecode {
   template <class VIC>
   forceinline VarBase*
   Space::varsDisposeList(void) {
-    return vars[VIC::idx_pu].dispose;
+    return vars_d[VIC::idx_pu];
   }
 
   template <class VIC>
   forceinline void
   Space::varsDisposeList(VarBase* v) {
-    vars[VIC::idx_pu].dispose=v;
+    vars_d[VIC::idx_pu]=v;
   }
 
   /*
@@ -1848,7 +1842,7 @@ namespace Gecode {
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
-      reg = &home->vars[VIC::idx_pu].entry;
+      reg = &home->vars_pu[VIC::idx_pu];
     }
     // Set forwarding pointer
     x.u.fwd = this;
@@ -2234,8 +2228,8 @@ namespace Gecode {
       u.free_me ^= vic(new_me,static_cast<ModEvent>
                        (u.free_me & ((1 << VIC::me_bits_num)-1)));
     } else {
-      _next = static_cast<Variable<VIC>*>(home->vars[VIC::idx_pu].entry);
-      home->vars[VIC::idx_pu].entry = this;
+      _next = static_cast<Variable<VIC>*>(home->vars_pu[VIC::idx_pu]);
+      home->vars_pu[VIC::idx_pu] = this;
       u.free_me = (u.free_me & ~((1 << VIC::me_bits_num)-1)) | new_me;
     }
     if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
@@ -2249,8 +2243,8 @@ namespace Gecode {
   forceinline bool
   Variable<VIC>::notify(Space* home, Delta* d) {
     assert(!modified());
-    _next = static_cast<Variable<VIC>*>(home->vars[VIC::idx_pu].entry);
-    home->vars[VIC::idx_pu].entry = this;
+    _next = static_cast<Variable<VIC>*>(home->vars_pu[VIC::idx_pu]);
+    home->vars_pu[VIC::idx_pu] = this;
     if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
       d->me = ME_GEN_ASSIGNED;
       return advise(home,d);
@@ -2301,7 +2295,7 @@ namespace Gecode {
 
   template <class VIC, class VarType>
   VarDisposer<VIC,VarType>::VarDisposer(void) {
-    Space::vtd[VIC::idx_pu] = this;
+    Space::vd[VIC::idx_pu] = this;
   }
 
   template <class VIC, class VarType>

@@ -46,7 +46,7 @@ namespace Gecode {
    *
    */
 
-  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vtd[IDX_PU_ALL];
+  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[IDX_PU_ALL];
 
   void VarDisposerBase::dispose(Space*,VarBase*) {}
   VarDisposerBase::~VarDisposerBase(void) {}
@@ -59,11 +59,11 @@ namespace Gecode {
     d_cur = NULL;
     d_lst = NULL;
     // Initialize variable entry points
-    for (int i=0; i<IDX_PU_ALL; i++) {
-      vars[i].entry  =NULL;
-      vars[i].dispose=NULL;
-    }
     vars_noidx = NULL;
+    for (int i=0; i<IDX_PU_ALL; i++)
+      vars_pu[i] = NULL;
+    for (int i=0; i<IDX_PU_ALL; i++)
+      vars_d[i] = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
@@ -140,9 +140,9 @@ namespace Gecode {
       }
     }
     // Delete variables that were registered for deletion
-    for (int vti=IDX_PU_ALL; vti--;)
-      if (vars[vti].dispose != NULL)
-        vtd[vti]->dispose(this, vars[vti].dispose);
+    for (int i=IDX_PU_ALL; i--;)
+      if (vars_d[i] != NULL)
+        vd[i]->dispose(this, vars_d[i]);
   }
 
 
@@ -173,18 +173,9 @@ namespace Gecode {
   Space::propagate(void) {
     if (failed())
       return 0;
-
-    const PropModEvent PME_NONE = 0;
-    /*
-     * Count the number of propagation steps performed
-     *
-     */
+    // Count number of propagation steps
     unsigned long int pn = 0;
-    /*
-     * Process modified variables, there might be modified variables
-     * either from initializing the space or from a commit operation
-     *
-     */
+    // Process modified variables (from initializing or from commit)
     process_o();
     Propagator* p;
     while (pool_get(p)) {
@@ -198,7 +189,7 @@ namespace Gecode {
           // Prevent that propagator gets rescheduled (turn on all events)
           p->u.pme = PME_ASSIGNED_ALL;
           process_i();
-          p->u.pme = PME_NONE;
+          p->u.pme = 0;
           // Put propagator in idle queue
           p->unlink(); a_actors.head(p);
         }
@@ -207,7 +198,7 @@ namespace Gecode {
         {
           // Propagator is currently in no queue, put into idle
           p->unlink(); a_actors.head(p);
-          p->u.pme = PME_NONE;
+          p->u.pme = 0;
           process_i();
         }
         break;
@@ -281,8 +272,6 @@ namespace Gecode {
     if (!pool_get(p))
       return ES_STABLE;
 
-    const PropModEvent PME_NONE = 0;
-
     ExecStatus es = p->propagate(this);
 
     switch (es) {
@@ -294,7 +283,7 @@ namespace Gecode {
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = PME_ASSIGNED_ALL;
         process_o();
-        p->u.pme = PME_NONE;
+        p->u.pme = 0;
         // Put propagator in idle queue
         p->unlink(); a_actors.head(p);
       }
@@ -303,7 +292,7 @@ namespace Gecode {
       {
         // Propagator is currently in no queue, put into idle
         p->unlink(); a_actors.head(p);
-        p->u.pme = PME_NONE;
+        p->u.pme = 0;
         process_o();
       }
       break;
@@ -393,11 +382,11 @@ namespace Gecode {
   Space::Space(bool share, Space& s) 
     : mm(s.mm,s.n_sub*sizeof(Propagator**)), branch_id(s.branch_id) {
     // Initialize variable entry points
-    for (int i=0; i<IDX_PU_ALL; i++) {
-      vars[i].entry   = NULL;
-      vars[i].dispose = NULL;
-    }
     vars_noidx = NULL;
+    for (int i=0; i<IDX_PU_ALL; i++)
+      vars_pu[i] = NULL;
+    for (int i=0; i<IDX_PU_ALL; i++)
+      vars_d[i] = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)

@@ -751,9 +751,9 @@ EOF
     }
     print <<EOF
       ${BASE}* x = 
-        static_cast<${BASE}*>(vars[${CONF}::idx_pu].entry);
+        static_cast<${BASE}*>(vars_pu[${CONF}::idx_pu]);
       if (x != NULL) {
-        vars[${CONF}::idx_pu].entry = NULL;
+        vars_pu[${CONF}::idx_pu] = NULL;
 EOF
 ;
 
@@ -876,9 +876,9 @@ EOF
     }
     print <<EOF
       ${BASE}* x = 
-        static_cast<${BASE}*>(vars[${CONF}::idx_pu].entry);
+        static_cast<${BASE}*>(vars_pu[${CONF}::idx_pu]);
       if (x != NULL) {
-        vars[${CONF}::idx_pu].entry = NULL;
+        vars_pu[${CONF}::idx_pu] = NULL;
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);
