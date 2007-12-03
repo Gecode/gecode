@@ -87,6 +87,11 @@ namespace Gecode { namespace Gist {
     toolsMenu->addAction(c.analyzeTree);
     toolsMenu->addSeparator();
     toolsMenu->addAction(c.toggleHeatView);
+    
+    QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
+    QAction* aboutAction = helpMenu->addAction(tr("About"));
+    connect(aboutAction, SIGNAL(triggered()),
+            this, SLOT(about()));
 
     setMenuBar(menuBar);
     
@@ -122,6 +127,14 @@ namespace Gecode { namespace Gist {
       .arg(stats.failures, 4)
       .arg(stats.choices, 4)
       .arg(stats.undetermined, 4));
+  }
+
+  void
+  GistMainWindow::about(void) {
+    QMessageBox::about(this, tr("About Gist"),
+                 tr("Gist is the Gecode Interactive Search Tool. "
+                    "You can find more information about Gecode and Gist at "
+                    "<a href='http://www.gecode.org'>www.gecode.org</a>"));
   }
 
 }}

@@ -56,6 +56,7 @@ namespace Gecode { namespace Gist {
     QLabel* statisticsLabel;
   protected Q_SLOTS:
     void statusChanged(const Statistics& stats, bool finished);
+    void about(void);
   public:
     /// Constructor
     GistMainWindow(Space* root, Better* b, Gist::Inspector* gi);
