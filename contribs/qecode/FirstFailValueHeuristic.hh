@@ -31,6 +31,7 @@ THE SOFTWARE.
 class QECODE_VTABLE_EXPORT FirstFailValue : public valueHeuristic {
 public:
     QECODE_EXPORT virtual int** subSet(Implicative* home,int var,int* nbRanges);
+    QECODE_EXPORT virtual ~FirstFailValue() {}
 };
 
 #endif

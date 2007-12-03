@@ -81,6 +81,7 @@ protected :
 
 public :
     virtual int** subSet(Implicative* home,int var,int* nbRanges)=0;
+    virtual ~valueHeuristic() {}
 };
 
 

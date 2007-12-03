@@ -31,27 +31,32 @@ THE SOFTWARE.
 class QECODE_VTABLE_EXPORT SmallestValueFirst : public valueHeuristic {
 public:
     QECODE_EXPORT virtual int** subSet(Implicative* home,int var,int* nbRanges);
+    QECODE_EXPORT virtual ~SmallestValueFirst() {}
 };
 
 
 class QECODE_VTABLE_EXPORT LargestValueFirst : public valueHeuristic {
 public:
     QECODE_EXPORT virtual int** subSet(Implicative* home,int var,int* nbRanges);
+    QECODE_EXPORT virtual ~LargestValueFirst() {}
 };
 
 class QECODE_VTABLE_EXPORT MedianValueFirst : public valueHeuristic {
 public:
     QECODE_EXPORT virtual int** subSet(Implicative* home,int var,int* nbRanges);
+    QECODE_EXPORT virtual ~MedianValueFirst() {}
 };
 
 class QECODE_VTABLE_EXPORT SmallestHalfFirst : public valueHeuristic {
 public:
     QECODE_EXPORT virtual int** subSet(Implicative* home,int var,int* nbRanges);
+    QECODE_EXPORT virtual ~SmallestHalfFirst() {}
 };
 
 class QECODE_VTABLE_EXPORT LargestHalfFirst : public valueHeuristic {
 public:
     QECODE_EXPORT virtual int** subSet(Implicative* home,int var,int* nbRanges);
+    QECODE_EXPORT virtual ~LargestHalfFirst() {}
 };
 
 
