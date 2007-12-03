@@ -110,8 +110,11 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::statusChanged(bool finished) {
-    if (autoHideFailed)
+    QMutexLocker locker(&mutex);
+    if (autoHideFailed) {
       root->hideFailed();
+      update();
+    }
     if (autoZoom)
       zoomToFit();
     
@@ -731,7 +734,7 @@ namespace Gecode { namespace Gist {
     
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setAlignment(Qt::AlignCenter);
+    scrollArea->setAlignment(Qt::AlignHCenter);
     scrollArea->setBackgroundRole(QPalette::Base);
     scrollArea->setWidget(canvas);
 
