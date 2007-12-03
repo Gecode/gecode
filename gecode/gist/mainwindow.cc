@@ -93,8 +93,11 @@ namespace Gecode { namespace Gist {
     connect(aboutAction, SIGNAL(triggered()),
             this, SLOT(about()));
 
+    // Don't add the menu bar on Mac OS X
+#ifndef Q_WS_MAC
     setMenuBar(menuBar);
-    
+#endif
+
     // Set up status bar
     statisticsLabel = new QLabel("S: 0 F: 0 C: 0 U: 0");
     statusBar()->addPermanentWidget(statisticsLabel);

@@ -85,9 +85,8 @@ namespace Gecode { namespace Gist {
       scale0 = 400;
     scale = ((double)scale0) / 100.0;
     bb = root->getBoundingBox();
-    QWidget* p = parentWidget();
-    int w = std::max(p->width(), (int)((bb.right-bb.left+20)*scale));
-    int h = std::max(p->height(), (int)((bb.depth+1)*38*scale));
+    int w = (int)((bb.right-bb.left+20)*scale);
+    int h = (int)((bb.depth+1)*38*scale);
     resize(w,h);
     emit scaleChanged(scale0);
     QWidget::update();
@@ -100,9 +99,8 @@ namespace Gecode { namespace Gist {
     root->layout();
     bb = root->getBoundingBox();
     
-    QWidget* p = parentWidget();
-    int w = std::max(p->width(), (int)((bb.right-bb.left+20)*scale));
-    int h = std::max(p->height(), (int)((bb.depth+1)*38*scale));
+    int w = (int)((bb.right-bb.left+20)*scale);
+    int h = (int)((bb.depth+1)*38*scale);
     resize(w,h);
     xtrans = -bb.left+10;
     QWidget::update();
@@ -701,6 +699,8 @@ namespace Gecode { namespace Gist {
     
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scrollArea->setAlignment(Qt::AlignCenter);
+    scrollArea->setBackgroundRole(QPalette::Base);
     scrollArea->setWidget(canvas);
 
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
@@ -960,11 +960,6 @@ namespace Gecode { namespace Gist {
   TreeCanvas::closeEvent(QCloseEvent* event) {
     canvas->finish();
     event->accept();
-  }
-
-  void
-  TreeCanvas::resizeEvent(QResizeEvent*) {
-    canvas->update();
   }
   
 #ifdef GECODE_GIST_EXPERIMENTAL

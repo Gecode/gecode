@@ -73,6 +73,8 @@ namespace Gecode { namespace Gist {
   void
   AnalysisCursor::processCurrentNode(void) {
     VisualNode* n = node();
+    if (n->getStatus() == UNDETERMINED)
+      return;
     VisualNode* p = static_cast<VisualNode*>(n->getParent());
     if (p == NULL) {
       n->setHeat(0);

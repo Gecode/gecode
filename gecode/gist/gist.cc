@@ -81,6 +81,11 @@ namespace Gecode {
       return t->to->getStream();
     }
 
+    void
+    TextInspector::addHtml(const char* s) {
+      t->to->insertHtml(s);
+    }
+
     QWidget*
     exploreWidget(QWidget* parent, Space* root, Better* b,
                   Gist::Inspector* gi) {

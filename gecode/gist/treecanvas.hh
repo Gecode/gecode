@@ -279,8 +279,6 @@ namespace Gecode {  namespace Gist {
   protected:
     /// Close the widget
     void closeEvent(QCloseEvent* event);
-    /// Resize the widget
-    void resizeEvent(QResizeEvent* event);
   };
   
 }}

@@ -104,6 +104,11 @@ namespace Gecode { namespace Gist {
     return *os;
   }
 
+  void
+  TextOutput::insertHtml(const QString& s) {
+    editor->insertHtml(s);
+  }
+
 }}
 
 // STATISTICS: gist-any

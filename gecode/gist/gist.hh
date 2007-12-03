@@ -111,6 +111,8 @@ namespace Gecode {
     void init(void);
     /// Get the stream that is used to output text
     std::ostream& getStream(void);
+    /// Add html text \a s to the output
+    void addHtml(const char* s);
   public:
     /// Constructor
     TextInspector(const std::string& name);

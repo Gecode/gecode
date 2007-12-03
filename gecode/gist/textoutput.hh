@@ -56,6 +56,8 @@ namespace Gecode { namespace Gist {
     ~TextOutput(void);
     /// Return stream that prints to the text display
     std::ostream& getStream(void);
+    /// Add html string \a s to the output
+    void insertHtml(const QString& s);
   };
 
 }}

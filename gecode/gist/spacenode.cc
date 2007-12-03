@@ -76,7 +76,7 @@ namespace Gecode { namespace Gist {
     /// Distance for adaptive recomputation
     static const int a_d = 100000;
     /// Distance for fixed recomputation
-    static const int mrd = 1;
+    static const int mrd = 4;
   };
   
   SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
