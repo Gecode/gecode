@@ -56,7 +56,8 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, Better* b, QWidget* parent)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
-    , inspect(NULL), heatView(false) {
+    , inspect(NULL), heatView(false), autoHideFailed(true), autoZoom(false)
+    , refresh(500) {
       QMutexLocker locker(&mutex);
       root = new VisualNode(rootSpace, b);
       root->setMarked(true);
@@ -95,6 +96,9 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::update(void) {
     QMutexLocker locker(&mutex);
+    if (autoHideFailed)
+      root->hideFailed();
+    
     BoundingBox bb;
     root->layout();
     bb = root->getBoundingBox();
@@ -103,6 +107,8 @@ namespace Gecode { namespace Gist {
     int h = (int)((bb.depth+1)*38*scale);
     resize(w,h);
     xtrans = -bb.left+10;
+    if (autoZoom)
+      zoomToFit();
     QWidget::update();
   }
 
@@ -133,7 +139,7 @@ namespace Gecode { namespace Gist {
       int nodeCount = 0;
       t->stopSearchFlag = false;
       while (!stck.empty() && !t->stopSearchFlag) {
-        if (++nodeCount > 500) {
+        if (t->refresh > 0 && ++nodeCount > t->refresh) {
           node->dirtyUp();
           t->mutex.unlock();
           emit statusChanged(false);
@@ -538,6 +544,31 @@ namespace Gecode { namespace Gist {
       }
     }
     event->ignore();
+  }
+  
+  void
+  TreeCanvasImpl::setAutoHideFailed(bool b) {
+    autoHideFailed = b;
+  }
+  
+  void
+  TreeCanvasImpl::setAutoZoom(bool b) {
+    autoZoom = b;
+  }
+
+  bool
+  TreeCanvasImpl::getAutoHideFailed(void) {
+    return autoHideFailed;
+  }
+  
+  bool
+  TreeCanvasImpl::getAutoZoom(void) {
+    return autoZoom;
+  }
+
+  void
+  TreeCanvasImpl::setRefresh(int i) {
+    refresh = i;
   }
   
 #ifdef GECODE_GIST_EXPERIMENTAL
@@ -961,6 +992,17 @@ namespace Gecode { namespace Gist {
     canvas->finish();
     event->accept();
   }
+
+  void
+  TreeCanvas::setAutoHideFailed(bool b) { canvas->setAutoHideFailed(b); }
+  void
+  TreeCanvas::setAutoZoom(bool b) { canvas->setAutoZoom(b); }
+  bool
+  TreeCanvas::getAutoHideFailed(void) { return canvas->getAutoHideFailed(); }
+  bool
+  TreeCanvas::getAutoZoom(void) { return canvas->getAutoZoom(); }
+  void
+  TreeCanvas::setRefresh(int i) { canvas->setRefresh(i); }
   
 #ifdef GECODE_GIST_EXPERIMENTAL
 

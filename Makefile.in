@@ -553,12 +553,12 @@ GISTSRC0 = \
 	drawingcursor.cc gist.cc node.cc nodecursor.cc \
 	postscript.cc shapelist.cc spacenode.cc \
 	textoutput.cc treecanvas.cc visualnode.cc \
-	mainwindow.cc \
+	mainwindow.cc preferences.cc \
 	addchild.cc reflectionhelpers.cc \
 	analysiscursor.cc
 
 GISTMOCSRC0 = \
-	moc_treecanvas.cc moc_addchild.cc moc_mainwindow.cc
+	moc_treecanvas.cc moc_addchild.cc moc_mainwindow.cc moc_preferences.cc
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
@@ -935,11 +935,7 @@ gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/gist/moc_treecanvas.cc: gecode/gist/treecanvas.hh
-	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
-gecode/gist/moc_addchild.cc: gecode/gist/addchild.hh
-	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
-gecode/gist/moc_mainwindow.cc: gecode/gist/mainwindow.hh
+gecode/gist/moc_%.cc: gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
 #

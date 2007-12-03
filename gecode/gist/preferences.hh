@@ -3,11 +3,11 @@
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2006
+ *     Guido Tack, 2007
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-12-03 13:33:28 +0100 (Mo, 03 Dez 2007) $ by $Author: tack $
+ *     $Revision: 5559 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,40 +34,41 @@
  *
  */
 
-#ifndef GECODE_GIST_MAINWINDOW_HH
-#define GECODE_GIST_MAINWINDOW_HH
+#ifndef GECODE_GIST_PREFERENCES_HH
+#define GECODE_GIST_PREFERENCES_HH
 
-#include "gecode/gist/treecanvas.hh"
+#include <QtGui>
 
 namespace Gecode { namespace Gist {
   
-  /// \brief Main window for stand-alone %Gist
-  class GistMainWindow : public QMainWindow {
+  /**
+   * \brief Preferences dialog for %Gist
+   */
+  class PreferencesDialog : public QDialog {
     Q_OBJECT
-  protected:
-    /// The contained tree canvas
-    TreeCanvas c;
-    /// A menu bar
-    QMenuBar* menuBar;
     
-    /// Whether search is currently running
-    bool isSearching;
-    /// Status bar label for number of solutions
-    QLabel* statisticsLabel;
+  protected:
+    QCheckBox* hideCheck;
+    QCheckBox* zoomCheck;
+    QSpinBox*  refreshBox;
   protected Q_SLOTS:
-    void statusChanged(const Statistics& stats, bool finished);
-    void about(void);
-    void preferences(void);
+    /// Write settings
+    void writeBack(void);
+    /// Reset to defaults
+    void defaults(void);
   public:
     /// Constructor
-    GistMainWindow(Space* root, Better* b, Gist::Inspector* gi);
-  protected:
-    void closeEvent(QCloseEvent* event);
+    PreferencesDialog(QWidget* parent = 0);
+    
+    /// Whether to automatically hide failed subtrees during search
+    bool hideFailed;
+    /// Whether to automatically zoom during search
+    bool zoom;
+    /// How often to refresh the display during search
+    int refresh;
+    
   };
   
 }}
 
 #endif
-
-
-// STATISTICS: gist-any

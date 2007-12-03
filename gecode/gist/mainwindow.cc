@@ -35,6 +35,7 @@
  */
 
 #include "gecode/gist/mainwindow.hh"
+#include "gecode/gist/preferences.hh"
 
 namespace Gecode { namespace Gist {
   
@@ -56,6 +57,8 @@ namespace Gecode { namespace Gist {
     quitAction->setShortcut(QKeySequence("Ctrl+Q"));
     connect(quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
+    QAction* prefAction = fileMenu->addAction(tr("Preferences"));
+    connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
     
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
     nodeMenu->addAction(c.inspectCN);
@@ -107,6 +110,10 @@ namespace Gecode { namespace Gist {
     connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
     
+    PreferencesDialog pd(this);
+    c.setAutoHideFailed(pd.hideFailed);
+    c.setAutoZoom(pd.zoom);
+    
     show();
   }
 
@@ -138,6 +145,16 @@ namespace Gecode { namespace Gist {
                  tr("Gist is the Gecode Interactive Search Tool. "
                     "You can find more information about Gecode and Gist at "
                     "<a href='http://www.gecode.org'>www.gecode.org</a>"));
+  }
+
+  void
+  GistMainWindow::preferences(void) {
+    PreferencesDialog pd(this);
+    if (pd.exec() == QDialog::Accepted) {
+      c.setAutoHideFailed(pd.hideFailed);
+      c.setAutoZoom(pd.zoom);
+      c.setRefresh(pd.refresh);
+    }
   }
 
 }}

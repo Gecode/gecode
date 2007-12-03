@@ -136,6 +136,17 @@ namespace Gecode {  namespace Gist {
     /// Call the inspector for all nodes on the path from root to head of the path
     void inspectPath(void);
 
+    /// Set preference whether to automatically hide failed subtrees
+    void setAutoHideFailed(bool b);
+    /// Set preference whether to automatically zoom to fit
+    void setAutoZoom(bool b);
+    /// Return preference whether to automatically hide failed subtrees
+    bool getAutoHideFailed(void);
+    /// Return preference whether to automatically zoom to fit
+    bool getAutoZoom(void);
+    /// Set refresh rate
+    void setRefresh(int i);
+
 #ifdef GECODE_GIST_EXPERIMENTAL
     
    /// Add a new special node as child to the current node
@@ -188,6 +199,13 @@ namespace Gecode {  namespace Gist {
     int xtrans;
     /// Whether to display the heat view
     bool heatView;
+
+    /// Whether to hide failed subtrees automatically
+    bool autoHideFailed;
+    /// Whether to zoom automatically
+    bool autoZoom;
+    /// Refresh rate
+    int refresh;
 
     /// Paint the tree
     void paintEvent(QPaintEvent* event);
@@ -260,6 +278,17 @@ namespace Gecode {  namespace Gist {
 
     /// Set Inspector to \a i0
     void setInspector(Inspector* i0);
+
+    /// Set preference whether to automatically hide failed subtrees
+    void setAutoHideFailed(bool b);
+    /// Set preference whether to automatically zoom to fit
+    void setAutoZoom(bool b);
+    /// Return preference whether to automatically hide failed subtrees
+    bool getAutoHideFailed(void);
+    /// Return preference whether to automatically zoom to fit
+    bool getAutoZoom(void);
+    /// Set refresh rate
+    void setRefresh(int i);
 
     /// Stop search and wait until finished
     void finish(void);
