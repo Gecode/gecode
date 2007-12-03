@@ -192,13 +192,13 @@ KERNELSRC0 = \
 KERNELHDR0 = \
 	array shared-array branching core exception \
 	macros memory-manager modevent \
-	propagator advisor view var varmap reflection \
-	var-imp
+	propagator advisor view var varmap reflection
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
 	gecode/limits.hh gecode/kernel.hh \
-	$(KERNELHDR0:%=gecode/kernel/%.icc)
+	$(KERNELHDR0:%=gecode/kernel/%.icc) \
+	$(VARIMP)
 KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
 
 export KERNELDLL	= $(LIBPREFIX)@KERNEL@$(DLLSUFFIX)
@@ -1439,7 +1439,7 @@ distclean: veryclean
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 
-depend: $(VARIMP:%=$(top_srcdir)/%) 	
+depend: $(VARIMP:%=$(top_srcdir)/%)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
