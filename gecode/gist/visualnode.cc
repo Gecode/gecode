@@ -44,7 +44,7 @@ namespace Gecode { namespace Gist {
   const Shape VisualNode::singletonShape(Extent(20));
   const Shape VisualNode::unitShape(Extent(20), &singletonShape);
 
-  VisualNode::VisualNode(int alternative, BestSpace* b)
+  VisualNode::VisualNode(int alternative, BestNode* b)
     : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
     , onPath(false), lastOnPath(false), pathAlternative(-1)
     , heat(0)

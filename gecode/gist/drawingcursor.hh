@@ -61,6 +61,8 @@ namespace Gecode { namespace Gist {
     static const QColor green;
     /// The color for choice nodes
     static const QColor blue;
+    /// The color for the best solution
+    static const QColor orange;
     
     /// Test if current node is clipped
     bool isClipped(void);

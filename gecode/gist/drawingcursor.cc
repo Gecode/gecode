@@ -44,6 +44,8 @@ namespace Gecode { namespace Gist {
   const QColor DrawingCursor::green(11, 118, 70);
   /// Blue color for choice nodes
   const QColor DrawingCursor::blue(0, 92, 161);
+  /// Orange color for best solutions
+  const QColor DrawingCursor::orange(235, 137, 27);
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                                bool heat,
@@ -223,10 +225,13 @@ namespace Gecode { namespace Gist {
     	break;
       case Gist::SOLVED:
         {
-          if (heatView)
+          if (heatView) {
             painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-          else
+          } else if (n->isCurrentBest()) {
+            painter.setBrush(QBrush(orange));
+          } else {
             painter.setBrush(QBrush(green));
+          }
           QPoint points[4] = {QPoint(myx,myy),
                               QPoint(myx+10,myy+10),
                               QPoint(myx,myy+20),

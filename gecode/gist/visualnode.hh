@@ -75,7 +75,7 @@ namespace Gecode { namespace Gist {
     bool containsCoordinateAtDepth(int x, int depth);
   public:
     /// Constructor
-    VisualNode(int alternative, BestSpace* b);
+    VisualNode(int alternative, BestNode* b);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root, Better* b);
     /// Destructor

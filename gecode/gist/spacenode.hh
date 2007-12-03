@@ -77,15 +77,17 @@ namespace Gecode { namespace Gist {
     static Statistics dummy;
   };
 
+  class SpaceNode;
+
   /// \brief Static reference to the currently best space
-  class BestSpace {
+  class BestNode {
   public:
-    /// The currently best space found, or NULL
-    Space* s;
+    /// The currently best node found, or NULL
+    SpaceNode* s;
     /// The object used for constraining spaces to be better
     Better* b;
     /// Constructor
-    BestSpace(Space* s0, Better* b);
+    BestNode(SpaceNode* s0, Better* b);
   };
 
   /// \brief A node of a search tree of Gecode spaces
@@ -107,11 +109,11 @@ namespace Gecode { namespace Gist {
     NodeStatus status;
     
   protected:
-    /// Reference to currently best space (for branch-and-bound)
-    BestSpace* curBest;
+    /// Reference to currently best node (for branch-and-bound)
+    BestNode* curBest;
   private:
     /// Reference to best space when the node was created
-    Space*     ownBest;
+    SpaceNode* ownBest;
     
     /// Number of children that are not fully explored
     int noOfOpenChildren;
@@ -123,9 +125,9 @@ namespace Gecode { namespace Gist {
     /// Recompute workingSpace from a copy higher up, return distance to copy
     int recompute(void);
     /// Try to get workingSpace from parent
-    Space* donateSpace(int alt, Space* ownBest);
+    Space* donateSpace(int alt, SpaceNode* ownBest);
     /// Try to get copy from parent if this node is the last alternative
-    Space* checkLAO(int alt, Space* ownBest);
+    Space* checkLAO(int alt, SpaceNode* ownBest);
     /// Acquire working space, either through donateSpace or recompute
     void acquireSpace(void);
 
@@ -135,7 +137,7 @@ namespace Gecode { namespace Gist {
     void closeChild(bool hadFailures, bool hadSolutions);
   public:
     /// Construct node for alternative \a alt
-    SpaceNode(int alt, BestSpace* cb = NULL);
+    SpaceNode(int alt, BestNode* cb = NULL);
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root, Better* b);
     /// Destructor
@@ -146,6 +148,9 @@ namespace Gecode { namespace Gist {
 
     /// Return working space.  Receiver must delete the space.
     Space* getSpace(void);
+
+    /// Return whether this node is the currently best solution
+    bool isCurrentBest(void);
 
 #ifdef GECODE_GIST_EXPERIMENTAL
 

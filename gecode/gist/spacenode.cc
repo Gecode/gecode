@@ -49,7 +49,7 @@ namespace Gecode { namespace Gist {
     /// Alternative number
     int alternative;
     /// The best space known when the branch was created
-    Space* ownBest;
+    SpaceNode* ownBest;
     const BranchKind branchKind;
     union {
       const SpecialDesc* special;
@@ -58,11 +58,11 @@ namespace Gecode { namespace Gist {
     } desc;
     
     /// Constructor
-    Branch(int a, const BranchingDesc* d, Space* best = NULL, BranchKind bk = NORMAL)
+    Branch(int a, const BranchingDesc* d, SpaceNode* best = NULL, BranchKind bk = NORMAL)
       : alternative(a), ownBest(best), branchKind(bk) {
         desc.branch = d;
       }
-    Branch(int a, const SpecialDesc* d, BranchKind bk, Space* best = NULL)
+    Branch(int a, const SpecialDesc* d, BranchKind bk, SpaceNode* best = NULL)
       : alternative(a), ownBest(best), branchKind(bk) {
         desc.special = d;
       }
@@ -82,7 +82,7 @@ namespace Gecode { namespace Gist {
   SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
     : vn(varName), r(r0), v(v0) {}
   
-  BestSpace::BestSpace(Space* s0, Better* b0) : s(s0), b(b0) {}
+  BestNode::BestNode(SpaceNode* s0, Better* b0) : s(s0), b(b0) {}
   
   int
   SpaceNode::recompute(void) {
@@ -125,7 +125,7 @@ namespace Gecode { namespace Gist {
       }
       Space* curSpace = curNode->copy->clone();
       
-      Space* lastBest = NULL;
+      SpaceNode* lastBest = NULL;
       SpaceNode* middleNode = curNode;
       int curDist = 0;
 
@@ -182,7 +182,8 @@ namespace Gecode { namespace Gist {
         }
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
-          curBest->b->constrain(curSpace, b.ownBest);
+          b.ownBest->acquireSpace();
+          curBest->b->constrain(curSpace, b.ownBest->workingSpace);
           lastBest = b.ownBest;
         }
         curDist++;
@@ -196,7 +197,7 @@ namespace Gecode { namespace Gist {
   }
   
   Space*
-  SpaceNode::donateSpace(int alt, Space* ownBest) {
+  SpaceNode::donateSpace(int alt, SpaceNode* ownBest) {
     Space* ret = workingSpace;
     if (ret != NULL) {
       workingSpace = NULL;
@@ -204,14 +205,15 @@ namespace Gecode { namespace Gist {
         ret->commit(desc.branch, alt);
       
       if (ownBest != NULL) {
-        curBest->b->constrain(ret, ownBest);
+        ownBest->acquireSpace();
+        curBest->b->constrain(ret, ownBest->workingSpace);
       }
     }
     return ret;
   }
   
   Space*
-  SpaceNode::checkLAO(int alt, Space* ownBest) {
+  SpaceNode::checkLAO(int alt, SpaceNode* ownBest) {
     Space* ret = NULL;
     if (copy != NULL && noOfOpenChildren == 1 && getParent() != NULL) {
       // last alternative optimization
@@ -222,7 +224,8 @@ namespace Gecode { namespace Gist {
         ret->commit(desc.branch, alt);
 
       if (ownBest != NULL) {
-        curBest->b->constrain(ret, ownBest);
+        ownBest->acquireSpace();
+        curBest->b->constrain(ret, ownBest->workingSpace);
       }
     }
     return ret;
@@ -290,7 +293,7 @@ namespace Gecode { namespace Gist {
     }
   }
 
-  SpaceNode::SpaceNode(int alt, BestSpace* cb)
+  SpaceNode::SpaceNode(int alt, BestNode* cb)
   : copy(NULL), workingSpace(NULL), curBest(cb), ownBest(NULL) {
     desc.branch = NULL;
     alternative = alt;
@@ -318,7 +321,7 @@ namespace Gecode { namespace Gist {
     _hasSolvedChildren = false;
     _hasFailedChildren = false;
     if (b != NULL)
-      curBest = new BestSpace(NULL, b);
+      curBest = new BestNode(NULL, b);
   }
 
   SpaceNode::~SpaceNode(void) {
@@ -328,7 +331,6 @@ namespace Gecode { namespace Gist {
       delete desc.branch;
     delete copy;
     delete workingSpace;
-    delete ownBest;
     if (getParent() == NULL)
       delete curBest;
   }
@@ -339,6 +341,11 @@ namespace Gecode { namespace Gist {
     Space* ret = workingSpace;
     workingSpace = NULL;
     return ret;
+  }
+
+  bool
+  SpaceNode::isCurrentBest(void) {
+    return curBest != NULL && curBest->s == this;
   }
     
 #ifdef GECODE_GIST_EXPERIMENTAL
@@ -396,7 +403,7 @@ namespace Gecode { namespace Gist {
           stats.solutions++;
           // stats.newDepth(getDepth());
           if (curBest != NULL) {
-            curBest->s = workingSpace->clone();
+            curBest->s = this;
           }
           SpaceNode* p = static_cast<SpaceNode*>(getParent());
           if (p != NULL)
