@@ -52,6 +52,10 @@ namespace Gecode { namespace Gist {
     QMenu* fileMenu = menuBar->addMenu(tr("&File"));
     fileMenu->addAction(c.print);
     fileMenu->addAction(c.exportPostscript);
+    QAction* quitAction = fileMenu->addAction(tr("Quit"));
+    quitAction->setShortcut(QKeySequence("Ctrl+Q"));
+    connect(quitAction, SIGNAL(triggered()),
+            this, SLOT(close()));
     
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
     nodeMenu->addAction(c.inspectCN);
@@ -83,6 +87,8 @@ namespace Gecode { namespace Gist {
     toolsMenu->addAction(c.analyzeTree);
     toolsMenu->addSeparator();
     toolsMenu->addAction(c.toggleHeatView);
+
+    setMenuBar(menuBar);
     
     // Set up status bar
     statisticsLabel = new QLabel("S: 0 F: 0 C: 0 U: 0");
@@ -94,10 +100,6 @@ namespace Gecode { namespace Gist {
             this,SLOT(statusChanged(const Statistics&,bool)));
     
     show();
-  }
-
-  GistMainWindow::~GistMainWindow(void) {
-    delete menuBar;
   }
 
   void

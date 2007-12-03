@@ -328,6 +328,7 @@ namespace Gecode { namespace Gist {
       delete desc.branch;
     delete copy;
     delete workingSpace;
+    delete ownBest;
     if (getParent() == NULL)
       delete curBest;
   }
