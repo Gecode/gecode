@@ -335,6 +335,8 @@ namespace Gecode { namespace Gist {
     scale = 1.0;
     stats = Statistics();
     root->layout();
+    
+    emit statusChanged(stats, true);
     update();
   }
 
@@ -496,24 +498,26 @@ namespace Gecode { namespace Gist {
   
   void
   TreeCanvasImpl::paintEvent(QPaintEvent* event) {
-    QMutexLocker locker(&mutex);
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    BoundingBox bb = root->getBoundingBox();
-    
-    QRect origClip = event->rect();
-    if (heatView) {
-      painter.setBrush(Qt::black);
-      painter.drawRect(origClip.x(),origClip.y(),
-                       origClip.width(), origClip.height());
+    if (mutex.tryLock(50)) {
+      QPainter painter(this);
+      painter.setRenderHint(QPainter::Antialiasing);
+      BoundingBox bb = root->getBoundingBox();
+
+      QRect origClip = event->rect();
+      if (heatView) {
+        painter.setBrush(Qt::black);
+        painter.drawRect(origClip.x(),origClip.y(),
+                         origClip.width(), origClip.height());
+      }
+      painter.scale(scale,scale);
+      painter.translate(xtrans, 0);
+      QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
+                 (int)(origClip.width()/scale), (int)(origClip.height()/scale));
+      DrawingCursor dc(root, painter, heatView, clip);
+      PreorderNodeVisitor<DrawingCursor> v(dc);
+      while (v.next());    
+      mutex.unlock();
     }
-    painter.scale(scale,scale);
-    painter.translate(xtrans, 0);
-    QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
-               (int)(origClip.width()/scale), (int)(origClip.height()/scale));
-    DrawingCursor dc(root, painter, heatView, clip);
-    PreorderNodeVisitor<DrawingCursor> v(dc);
-    while (v.next());    
   }
 
   void
