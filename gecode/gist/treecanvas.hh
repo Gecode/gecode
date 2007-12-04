@@ -156,7 +156,7 @@ namespace Gecode {  namespace Gist {
     /// Calls getVars(\a vm) on the space of the root node and \i is set to the most recent point in time
     void getRootVars(Gecode::Reflection::VarMap& vm, int& i);
     /// Investigate the current node
-    void investigateCurrentNode(void);
+    void expandCurrentNode(void);
     
 #endif
     
@@ -267,7 +267,7 @@ namespace Gecode {  namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
     QAction* addChild;
     QAction* addFixpoint;
-    QAction* investigateCurrentNode;
+    QAction* expandCurrentNode;
 #endif
 
   public:

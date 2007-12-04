@@ -59,7 +59,10 @@ namespace Gecode { namespace Gist {
     const std::string vn;
     const IntRelType r;
     const int v;
+    const bool step;
+    const int alt;
     SpecialDesc(std::string varName, IntRelType r0, int v0);
+    SpecialDesc(int alt0 = -1);
   };
   
   /// Statistics about the search tree
@@ -107,6 +110,18 @@ namespace Gecode { namespace Gist {
     
     /// Current status of the node
     NodeStatus status;
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+    
+    /// Current meta-status of the special node
+    NodeStatus metaStatus;
+
+    /// Whether the node is the first step node
+    bool firstStep;
+    /// Whether the node is the last step node
+    bool lastStep;
+    
+#endif
     
   protected:
     /// Reference to currently best node (for branch-and-bound)
@@ -159,6 +174,17 @@ namespace Gecode { namespace Gist {
      * Note that this does not not work for the root node.
      */
     Space* getInputSpace(void);
+    
+    /// Return whether this node represents a propagation step
+    bool isStepNode(void);
+    /// Return whether this node represents the first step node
+    bool isFirstStepNode(void);
+    /// Return whether this node represents the last step node
+    bool isLastStepNode(void);
+    /// Set the node to represent the first step
+    void setFirstStepNode(bool firstStep);
+    /// Set the node to represent the last step
+    void setLastStepNode(bool lastStep);
 
 #endif
 
@@ -176,9 +202,15 @@ namespace Gecode { namespace Gist {
     
     /// Return current status of the node
     NodeStatus getStatus(void);
-    /// Changes the NodeStatus to \a s
+    /// Change the status of the to \a s
     void setStatus(NodeStatus s);
-    /// Changes the SpecialDesc to \a d
+#ifdef GECODE_GIST_EXPERIMENTAL
+    /// Return current meta-status of the node
+    NodeStatus getMetaStatus(void);
+    /// Change the meta-status of the node to \a s
+    void setMetaStatus(NodeStatus s);
+#endif
+    /// Change the SpecialDesc to \a d
     void setSpecialDesc(const SpecialDesc* d);
     
     /// Return alternative number of this node

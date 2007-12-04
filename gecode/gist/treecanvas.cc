@@ -295,8 +295,8 @@ namespace Gecode { namespace Gist {
     }
     currentNode->dirtyUp();
     saveCurrentNode();
-    centerCurrentNode();
     update();
+    centerCurrentNode();
   }
 
   void
@@ -661,65 +661,69 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvasImpl::investigateCurrentNode(void) {
+  TreeCanvasImpl::expandCurrentNode(void) {
     QMutexLocker locker(&mutex);
 
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
-      // TODO nikopp: take the parent workingSpace,
-      //              compute fixpoint (if parent is not a special node),
-      //              commit branching desc (if parent is not a special node),
-      //              do not compute fixpoint
-      break;
     case FAILED:
-      // TODO nikopp: take the parent workingSpace,
-      //              compute fixpoint,
-      //              commit branching desc,
-      //              do not compute fixpoint
-      break;
     case SPECIAL:
       break;
     case BRANCH:
-      break;
     case SOLVED:
     default:
       if(currentNode != root) {
         Space* inputSpace = currentNode->getInputSpace();
+        int alt = currentNode->getAlternative();
+        NodeStatus status = currentNode->getStatus();
         
-        VisualNode* curNode = static_cast<VisualNode*>(currentNode->getParent());
+        VisualNode* curNode = currentNode;
+        VisualNode* parent = static_cast<VisualNode*>(currentNode->getParent());
         
+        setCurrentNode(parent);
+        
+        VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
+
+        newChild->setStatus(SPECIAL);
+        newChild->setSpecialDesc(new SpecialDesc(alt));
+        newChild->setMetaStatus(status);
+        newChild->setFirstStepNode(true);
+        newChild->setNumberOfChildren(0);
+        newChild->setNoOfOpenChildren(0);
+
+        currentNode->setChild(alt, newChild);
+
+        newChild->setDirty(false);
+        newChild->dirtyUp();
+        setCurrentNode(newChild);
+
         while(inputSpace->step() != ES_STABLE) {
-          // TODO nikopp: debug
-          std::cout <<  "step" << std::endl;
-          VisualNode* newChild = static_cast<VisualNode*>(curNode->createChild(curNode->getNumberOfChildren()));
+
+          VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
 
           newChild->setStatus(SPECIAL);
+          newChild->setSpecialDesc(new SpecialDesc());
+          newChild->setMetaStatus(status);
           newChild->setNumberOfChildren(0);
           newChild->setNoOfOpenChildren(0);
 
-          curNode->addChild(curNode);
-          
+          currentNode->addChild(newChild);
+
           newChild->setDirty(false);
           newChild->dirtyUp();
-          curNode = newChild;
-          update();
+          setCurrentNode(newChild);
         }
-        // TODO nikopp: debug
-        std::cout <<  "while done" << std::endl;
+        
+        currentNode->setLastStepNode(true);
+        currentNode->addChild(curNode);
+        if(curNode->isOpen())
+          currentNode->openUp();
+        setCurrentNode(curNode);
       }
       break;
     }
-    // TODO nikopp: debug
-    std::cout <<  "switch done" << std::endl;
-    currentNode->dirtyUp();
-    // TODO nikopp: debug
-    std::cout <<  "dirtyUp done" << std::endl;
-    centerCurrentNode();
-    // TODO nikopp: debug
-    std::cout <<  "center done" << std::endl;
     update();
-    // TODO nikopp: debug
-    std::cout <<  "update done" << std::endl;
+    centerCurrentNode();
   }
 
 #endif
@@ -860,9 +864,9 @@ namespace Gecode { namespace Gist {
     addFixpoint->setShortcut(QKeySequence("Shift+F"));
     connect(addFixpoint, SIGNAL(triggered()), canvas, SLOT(addFixpoint()));
 
-    investigateCurrentNode = new QAction("Investigate", this);
-    investigateCurrentNode->setShortcut(QKeySequence("Shift+N"));
-    connect(investigateCurrentNode, SIGNAL(triggered()), canvas, SLOT(investigateCurrentNode()));
+    expandCurrentNode = new QAction("Expand/Collapse", this);
+    expandCurrentNode->setShortcut(QKeySequence("Shift+E"));
+    connect(expandCurrentNode, SIGNAL(triggered()), canvas, SLOT(expandCurrentNode()));
 
 #endif
 
@@ -895,7 +899,7 @@ namespace Gecode { namespace Gist {
 
     addAction(addChild);
     addAction(addFixpoint);
-    addAction(investigateCurrentNode);
+    addAction(expandCurrentNode);
 
 #endif
 
@@ -936,7 +940,7 @@ namespace Gecode { namespace Gist {
 
     contextMenu->addAction(addChild);
     contextMenu->addAction(addFixpoint);
-    contextMenu->addAction(investigateCurrentNode);
+    contextMenu->addAction(expandCurrentNode);
 
 #endif
     

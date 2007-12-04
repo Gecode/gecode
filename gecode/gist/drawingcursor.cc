@@ -102,6 +102,77 @@ namespace Gecode { namespace Gist {
     int myx = x;
     int myy = 38 + y;
 
+    // Calculate HSV hue level from heat
+    int heat = (240 + (std::abs(n->getHeat()) % 180)) % 360;
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+    if(n->isStepNode()) {
+      switch (n->getMetaStatus()) {
+        case Gist::FAILED:
+          painter.setBrush(QBrush(red.lighter(140)));
+          break;
+        case Gist::SOLVED:
+          painter.setBrush(QBrush(green.lighter(140)));
+          break;
+        case Gist::BRANCH:
+          painter.setBrush(QBrush(blue.lighter(140)));
+          break;
+        case Gist::SPECIAL:
+        case Gist::UNDETERMINED:
+          break;
+      }
+      if (heatView)
+        painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
+
+      painter.setPen(Qt::NoPen);
+      
+      if(n->isFirstStepNode()) {
+        painter.setPen(Qt::SolidLine);
+        switch (n->getMetaStatus()) {
+        case Gist::SOLVED: {
+          QPoint points[4] = {QPoint(myx,myy),
+                              QPoint(myx+10,myy+10),
+                              QPoint(myx,myy+20),
+                              QPoint(myx-10,myy+10)
+          };
+          painter.drawConvexPolygon(points, 4);
+          break;
+        }
+        case Gist::BRANCH:
+          painter.drawEllipse(myx-10, myy, 20, 20);
+          break;
+        case Gist::FAILED:
+        case Gist::SPECIAL:
+        case Gist::UNDETERMINED:
+          break;
+        }
+
+        painter.setPen(Qt::NoPen);
+        painter.drawRect(myx-10, myy+10, 20, 20);
+       
+        painter.setPen(Qt::SolidLine);
+        painter.drawLine(myx-10, myy+10, myx-10, myy+28);
+        painter.drawLine(myx+10, myy+10, myx+10, myy+28);
+        
+      } else if(n->isLastStepNode()) {
+        painter.drawRect(myx-10, myy-10, 20, 58);
+       
+        painter.setPen(Qt::SolidLine);
+        painter.drawLine(myx-10, myy-10, myx-10, myy+48);
+        painter.drawLine(myx+10, myy-10, myx+10, myy+48);
+        
+      } else {
+        painter.drawRect(myx-10, myy-10, 20, 39);
+
+        painter.setPen(Qt::SolidLine);
+        painter.drawLine(myx-10, myy-10, myx-10, myy+28);
+        painter.drawLine(myx+10, myy-10, myx+10, myy+28);
+      }
+    }
+
+#endif
+
     if (! n->isRoot()) {
       if (heatView) {
         painter.setPen(Qt::gray);        
@@ -117,13 +188,16 @@ namespace Gecode { namespace Gist {
       painter.drawLine(myx,myy,parentX,parentY);
     }
 
-
 #ifdef GECODE_GIST_EXPERIMENTAL
     
     // the more visible 'shadow'
     int shadowOffset = 4;
     if (n->isMarked()) {
-      painter.setBrush(Qt::black);
+      if (heatView) {
+        painter.setBrush(Qt::white);
+      } else {
+        painter.setBrush(Qt::black);
+      }
       painter.setPen(Qt::NoPen);
       if (n->isHidden()) {
         QPoint points[3] = {QPoint(myx,myy-2*shadowOffset),
@@ -135,7 +209,7 @@ namespace Gecode { namespace Gist {
       } else {
         switch (n->getStatus()) {
         case Gist::SPECIAL:
-                painter.drawEllipse(myx-5-shadowOffset, myy-shadowOffset, 10+2*shadowOffset, 20+2*shadowOffset);
+                painter.drawEllipse(myx-5-shadowOffset, myy+10-shadowOffset, 10+2*shadowOffset, 10+2*shadowOffset);
                 break;
         case Gist::SOLVED:
           {
@@ -206,9 +280,6 @@ namespace Gecode { namespace Gist {
     }
 #endif
 
-    // Calculate HSV hue level from heat
-    int heat = (240 + (std::abs(n->getHeat()) % 180)) % 360;
-
     painter.setPen(Qt::SolidLine);
     if (n->isHidden()) {
       painter.setBrush(QBrush(red));
@@ -220,9 +291,27 @@ namespace Gecode { namespace Gist {
     } else {
       switch (n->getStatus()) {
       case Gist::SPECIAL:
-    	painter.setBrush(Qt::yellow);
-    	painter.drawEllipse(myx-5, myy, 10, 20);
-    	break;
+        painter.setBrush(Qt::yellow);
+        painter.drawEllipse(myx-5, myy+10, 10, 10);
+#ifdef GECODE_GIST_EXPERIMENTAL
+        if(!n->isFirstStepNode()) {
+#endif
+          if (heatView) {
+            painter.setPen(Qt::gray);        
+          } else {
+            if (n->isOnPath()) {
+              QPen pen;
+              pen.setColor(Qt::red);
+              painter.setPen(pen);
+            }
+            else
+              painter.setPen(Qt::black);
+          }
+          painter.drawLine(myx, myy, myx, myy+10);
+#ifdef GECODE_GIST_EXPERIMENTAL
+        }
+#endif
+        break;
       case Gist::SOLVED:
         {
           if (heatView) {
@@ -263,7 +352,7 @@ namespace Gecode { namespace Gist {
       }
     	
     }
-    
+
 #ifdef GECODE_GIST_EXPERIMENTAL
     
     if (n->hasCopy()) {
