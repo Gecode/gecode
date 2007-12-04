@@ -49,7 +49,7 @@ namespace Gecode {  namespace Gist {
   
   class TreeCanvasImpl;
   
-  class Searcher : public QThread {
+  class SearcherThread : public QThread {
     Q_OBJECT
   private:
     VisualNode* node;
@@ -66,11 +66,21 @@ namespace Gecode {  namespace Gist {
     void run(void);
   };
 
+  class LayoutThread : public QThread {
+  private:
+    TreeCanvasImpl* t;
+  public:
+    void layout(TreeCanvasImpl* ti);    
+  protected:
+    void run(void);
+  };
+
   /// \brief Implementation of the TreeCanvas
   class TreeCanvasImpl : public QWidget {
     Q_OBJECT
 
-    friend class Searcher;
+    friend class SearcherThread;
+    friend class LayoutThread;
 
   public:
     /// Constructor
@@ -176,7 +186,9 @@ namespace Gecode {  namespace Gist {
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
     /// Search engine thread
-    Searcher searcher;
+    SearcherThread searcher;
+    /// Layout thread
+    LayoutThread layouter;
     /// Flag signalling the search to stop
     bool stopSearchFlag;
     /// The root node of the tree

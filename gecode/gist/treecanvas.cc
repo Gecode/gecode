@@ -96,16 +96,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::update(void) {
     QMutexLocker locker(&mutex);
-    
-    BoundingBox bb;
-    root->layout();
-    bb = root->getBoundingBox();
-    
-    int w = (int)((bb.right-bb.left+20)*scale);
-    int h = (int)((bb.depth+1)*38*scale);
-    resize(w,h);
-    xtrans = -bb.left+10;
-    QWidget::update();
+    layouter.layout(this);
   }
 
   void
@@ -124,7 +115,7 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  Searcher::search(VisualNode* n, bool all, TreeCanvasImpl* ti) {
+  SearcherThread::search(VisualNode* n, bool all, TreeCanvasImpl* ti) {
     node = n;
     a = all;
     t = ti;
@@ -132,7 +123,7 @@ namespace Gecode { namespace Gist {
   }
     
   void
-  Searcher::run() {
+  SearcherThread::run() {
     {
       t->mutex.lock();
       emit statusChanged(false);
@@ -173,6 +164,25 @@ namespace Gecode { namespace Gist {
     emit update();
     emit statusChanged(true);
     t->centerCurrentNode();
+  }
+
+  void
+  LayoutThread::layout(TreeCanvasImpl* ti) {
+    t = ti;
+    start();
+  }
+
+  void
+  LayoutThread::run(void) {
+    QMutexLocker locker(&t->mutex);
+    t->root->layout();
+    BoundingBox bb = t->root->getBoundingBox();
+    
+    int w = (int)((bb.right-bb.left+20)*t->scale);
+    int h = (int)((bb.depth+1)*38*t->scale);
+    t->resize(w,h);
+    t->xtrans = -bb.left+10;
+    static_cast<QWidget*>(t)->update();
   }
 
   void
@@ -314,6 +324,7 @@ namespace Gecode { namespace Gist {
     root->setMarked(true);
     currentNode = root;
     pathHead = root;
+    nodeMap.clear();
     scale = 1.0;
     stats = Statistics();
     root->layout();
@@ -418,7 +429,7 @@ namespace Gecode { namespace Gist {
     setCurrentNode(root);
     centerCurrentNode();
   }
-  
+    
   void
   TreeCanvasImpl::markCurrentNode(int i) {
     QMutexLocker locker(&mutex);
