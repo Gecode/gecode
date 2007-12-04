@@ -291,14 +291,18 @@ namespace Gecode { namespace Int {
   public:
     /// Index for processing and update
     static const int idx_pu = 0;
+    /// Whether variables must be disposed
+    static const bool dispose = false;
     /// Index for disposal
-    static const int idx_d  = -1;
+    static const int idx_d = -1;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_INT_DOM;
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = 0;
     /// Number of bits for propagator modification event
     static const int me_bits_num = 2;
+    /// Bitmask for propagator modification event
+    static const int me_bits_mask = (1 << 2) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
@@ -315,7 +319,7 @@ namespace Gecode { namespace Int {
     /// Index for processing and update
     static const int idx_pu = -1;
     /// Index for disposal
-    static const int idx_d  = -1;
+    static const int idx_d = -1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = 0;
     /// Bit pattern for assigned propagator modification event
@@ -330,14 +334,18 @@ namespace Gecode { namespace Int {
   public:
     /// Index for processing and update
     static const int idx_pu = Gecode::Int::IntVarImpConf::idx_pu+1;
+    /// Whether variables must be disposed
+    static const bool dispose = false;
     /// Index for disposal
-    static const int idx_d  = Gecode::Int::IntVarImpConf::idx_d;
+    static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_BOOL_VAL;
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = Gecode::Int::IntVarImpConf::pme_bits_lst;
     /// Number of bits for propagator modification event
     static const int me_bits_num = 1;
+    /// Bitmask for propagator modification event
+    static const int me_bits_mask = (1 << 1) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
@@ -354,7 +362,7 @@ namespace Gecode { namespace Int {
     /// Index for processing and update
     static const int idx_pu = Gecode::Int::IntVarImpConf::idx_pu;
     /// Index for disposal
-    static const int idx_d  = Gecode::Int::IntVarImpConf::idx_d;
+    static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = Gecode::Int::IntVarImpConf::pme_bits_lst;
     /// Bit pattern for assigned propagator modification event
@@ -369,14 +377,18 @@ namespace Gecode { namespace Set {
   public:
     /// Index for processing and update
     static const int idx_pu = Gecode::Int::BoolVarImpConf::idx_pu+1;
+    /// Whether variables must be disposed
+    static const bool dispose = false;
     /// Index for disposal
-    static const int idx_d  = Gecode::Int::BoolVarImpConf::idx_d;
+    static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_SET_ANY;
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
     /// Number of bits for propagator modification event
     static const int me_bits_num = 4;
+    /// Bitmask for propagator modification event
+    static const int me_bits_mask = (1 << 4) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
@@ -393,7 +405,7 @@ namespace Gecode { namespace Set {
     /// Index for processing and update
     static const int idx_pu = Gecode::Int::BoolVarImpConf::idx_pu;
     /// Index for disposal
-    static const int idx_d  = Gecode::Int::BoolVarImpConf::idx_d;
+    static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
     /// Bit pattern for assigned propagator modification event
@@ -408,14 +420,18 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Index for processing and update
     static const int idx_pu = Gecode::Set::SetVarImpConf::idx_pu+1;
+    /// Whether variables must be disposed
+    static const bool dispose = true;
     /// Index for disposal
-    static const int idx_d  = Gecode::Set::SetVarImpConf::idx_d+1;
+    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_CPLTSET_DOM;
     /// Start of bits for propagator modification event
     static const int pme_bits_fst = Gecode::Set::SetVarImpConf::pme_bits_lst;
     /// Number of bits for propagator modification event
     static const int me_bits_num = 2;
+    /// Bitmask for propagator modification event
+    static const int me_bits_mask = (1 << 2) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
     /// Bit pattern for assigned propagator modification event
@@ -432,7 +448,7 @@ namespace Gecode { namespace CpltSet {
     /// Index for processing and update
     static const int idx_pu = Gecode::Set::SetVarImpConf::idx_pu;
     /// Index for disposal
-    static const int idx_d  = Gecode::Set::SetVarImpConf::idx_d;
+    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = Gecode::Set::SetVarImpConf::pme_bits_lst;
     /// Bit pattern for assigned propagator modification event

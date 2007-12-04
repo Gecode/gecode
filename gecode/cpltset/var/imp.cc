@@ -451,8 +451,7 @@ namespace Gecode { namespace CpltSet {
   } // end increment op
 
   // Create disposer
-  GECODE_CPLTSET_EXPORT
-  VarDisposer<CpltSetVarImpConf,CpltSetVarImp> vtd;
+  GECODE_CPLTSET_EXPORT VarDisposer<CpltSetVarImp> vtd;
 
 }}
 

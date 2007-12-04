@@ -245,7 +245,7 @@ namespace Gecode {
    * Controls disposal of variables.
    * \ingroup TaskVar
    */
-  template <class VIC, class VarType>
+  template <class VarType>
   class VarDisposer : public VarDisposerBase {
   public:
     /// Constructor (registers disposer with kernel)
@@ -288,11 +288,25 @@ namespace Gecode {
   class Variable : public VarBase {
     friend class Space;
     friend class Propagator;
+    template <class VarType> friend class VarDisposer;
   private:
-    /// Number of slots for index struxture
-    static const PropCond PC_SIZE = VIC::pc_max + 3;
+    /// Index for processing and update
+    static const int idx_pu = VIC::idx_pu;
+    /// Whether variables must be disposed
+    static const bool dispose = VIC::dispose;
+    /// Index for disposal
+    static const int idx_d = VIC::idx_d;
+    /// Maximal propagation condition
+    static const Gecode::PropCond pc_max = VIC::pc_max;
+    /// Start of bits for propagator modification event
+    static const int pme_bits_fst = VIC::pme_bits_fst;
+    /// Number of bits for propagator modification event
+    static const int me_bits_num = VIC::me_bits_num;
+    /// Bitmask for propagator modification event
+    static const int me_bits_mask = VIC::me_bits_mask;
+    
     /// Stores where entries start (idx[pc]}
-    ActorLink** idx[PC_SIZE];
+    ActorLink** idx[pc_max+3];
 
     /// Manage number of free entries internally
     unsigned int free(void) const;
@@ -967,7 +981,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Reflection::SpecIter;
     template <class VIC> friend class Variable;
-    template <class VIC, class VarType> friend class VarDisposer;
+    template <class VarType> friend class VarDisposer;
     friend class SharedHandle;
   private:
     MemoryManager   mm; ///< Performs memory management for space
@@ -1745,7 +1759,7 @@ namespace Gecode {
     _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
     u.fwd     = NULL;
-    for (int i=PC_SIZE; i--; )
+    for (int i=pc_max+3; i--; )
       idx[i] = NULL;
   }
 
@@ -1755,7 +1769,7 @@ namespace Gecode {
     _next = reinterpret_cast<VarBase*>(1);
     u.free_me = 0;
     u.fwd     = NULL;
-    for (int i=PC_SIZE; i--; )
+    for (int i=pc_max+3; i--; )
       idx[i] = NULL;
   }
 
@@ -1763,7 +1777,7 @@ namespace Gecode {
   template <class VIC>
   forceinline unsigned int
   Variable<VIC>::degree(void) const {
-    return static_cast<unsigned int>(idx[PC_SIZE-1] - idx[0]);
+    return static_cast<unsigned int>(idx[pc_max+2] - idx[0]);
   }
 
 
@@ -1771,33 +1785,31 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   Variable<VIC>::modevent(void) const {
-    return static_cast<ModEvent>(u.free_me & 
-                                 ((1 << VIC::me_bits_num)-1));
+    return static_cast<ModEvent>(u.free_me & me_bits_mask);
   }
 
   template <class VIC>
   forceinline unsigned int
   Variable<VIC>::free(void) const {
-    return u.free_me >> VIC::me_bits_num;
+    return u.free_me >> me_bits_num;
   }
 
   template <class VIC>
   forceinline void
   Variable<VIC>::free(unsigned int n) {
-    u.free_me = (u.free_me & ((1 << VIC::me_bits_num)-1)) | 
-      (n << VIC::me_bits_num);
+    u.free_me = (u.free_me & me_bits_mask) | (n << me_bits_num);
   }
 
   template <class VIC>
   forceinline void
   Variable<VIC>::free_inc(void) {
-    u.free_me += (1 << VIC::me_bits_num);
+    u.free_me += 1 << me_bits_num;
   }
 
   template <class VIC>
   forceinline void
   Variable<VIC>::free_dec(void) {
-    u.free_me -= (1 << VIC::me_bits_num);
+    u.free_me -= 1 << me_bits_num;
   }
 
   template <class VIC>
@@ -1836,13 +1848,13 @@ namespace Gecode {
       // Variable needs no index structure
       u.free_me = 0;
       u.fwd     = NULL;
-      for (int i=PC_SIZE; i--; )
+      for (int i=pc_max+3; i--; )
         idx[i] = NULL;
       reg = &home->vars_noidx;
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
-      reg = &home->vars_pu[VIC::idx_pu];
+      reg = &home->vars_pu[idx_pu];
     }
     // Set forwarding pointer
     x.u.fwd = this;
@@ -1864,15 +1876,13 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   Variable<VIC>::pme(const Propagator* p) {
-    return
-      static_cast<ModEvent>((p->u.pme >> VIC::pme_bits_fst) & 
-                            ((1 << VIC::me_bits_num)-1));
+    return static_cast<ModEvent>((p->u.pme >> pme_bits_fst) & me_bits_mask);
   }
 
   template <class VIC>
   forceinline PropModEvent
   Variable<VIC>::pme(ModEvent me) {
-    return static_cast<PropModEvent>(me << VIC::pme_bits_fst);
+    return static_cast<PropModEvent>(me << pme_bits_fst);
   }
 
   template <class VIC>
@@ -2000,34 +2010,32 @@ namespace Gecode {
   forceinline void
   Space::process(Propagator* p) {
     // The new event is ME_GEN_ASSIGNED
-    PropModEvent old_pme = p->u.pme;
-    PropModEvent mask_pme = ((1 << VIC::me_bits_num) - 1)<< VIC::pme_bits_fst;
-    PropModEvent assigned_pme = 1 << VIC::pme_bits_fst;
+    PropModEvent pme_old = p->u.pme;
+    PropModEvent pme_mask = VIC::me_bits_mask << VIC::pme_bits_fst;
     // Compute old modification event
-    ModEvent old_me = old_pme & mask_pme;
+    ModEvent me_old = pme_old & pme_mask;
     // Check whether old event is already ME_GEN_ASSIGNED
-    if (old_me == assigned_pme)
+    if (me_old == VIC::pme_assigned)
       return;
     // Update event
-    p->u.pme ^= old_me ^ assigned_pme;
+    p->u.pme ^= me_old ^ VIC::pme_assigned;
     // Put propagator into right queue
     pool_put(p);
   }
 
   template <class VIC>
   forceinline void
-  Space::process(Propagator* p, ModEvent new_me) {
-    PropModEvent old_pme = p->u.pme;
+  Space::process(Propagator* p, ModEvent me) {
+    PropModEvent pme_old = p->u.pme;
     // Compute the old modification event
-    ModEvent old_me = ((old_pme >> VIC::pme_bits_fst) &
-                       ((1 << VIC::me_bits_num) - 1));
+    ModEvent me_old = (pme_old >> VIC::pme_bits_fst) & VIC::me_bits_mask;
     // Get the new modification event (xor-ed with the old one)
-    ModEvent com_me = VIC::mec(new_me,old_me);
+    ModEvent me_com = VIC::mec(me,me_old);
     // Event has not changed, do not nothing
-    if (com_me == 0)
+    if (me_com == 0)
       return;
     // Update modification event for propagator (use xor)
-    p->u.pme ^= com_me << VIC::pme_bits_fst;
+    p->u.pme ^= me_com << VIC::pme_bits_fst;
     // Put propagator into right queue
     pool_put(p);
   }
@@ -2087,11 +2095,11 @@ namespace Gecode {
       free(4);
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(4*sizeof(ActorLink*))) + 4;
-      for (PropCond i = PC_SIZE; i--; )
+      for (PropCond i = pc_max+3; i--; )
         idx[i] = prop;
     } else {
       // Resize dependency array
-      unsigned int n = static_cast<unsigned int>(idx[PC_SIZE-1] - idx[0]);
+      unsigned int n = static_cast<unsigned int>(idx[pc_max+2] - idx[0]);
       // Find out whether the area is most likely in the special area
       // reserved for subscriptions. If yes, just resize mildly otherwise
       // more agressively
@@ -2109,7 +2117,7 @@ namespace Gecode {
       // Update index pointers
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
-      for (PropCond i = PC_SIZE-1; i > 0; i--)
+      for (PropCond i = pc_max+2; i > 0; i--)
         idx[i] += o;
     }
   }
@@ -2117,7 +2125,7 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Variable<VIC>::subscribe(Space* home, Propagator* p, PropCond pc,
-                                  bool assigned, ModEvent me, bool process) {
+                           bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
       if (process)
@@ -2134,7 +2142,7 @@ namespace Gecode {
   forceinline void
   Variable<VIC>::subscribe(Space* home, Advisor* a, bool assigned) {
     if (!assigned)
-      enter(home,a,PC_SIZE-2);
+      enter(home,a,pc_max+1);
   }
 
 
@@ -2174,7 +2182,7 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Variable<VIC>::cancel(Space* home, Propagator* p, PropCond pc,
-                               bool assigned) {
+                        bool assigned) {
     if (!assigned)
       remove(home,p,pc);
   }
@@ -2183,7 +2191,7 @@ namespace Gecode {
   forceinline void
   Variable<VIC>::cancel(Space* home, Advisor* a, bool assigned) {
     if (!assigned)
-      remove(home,a,PC_SIZE-2);
+      remove(home,a,pc_max+1);
   }
 
   template <class VIC>
@@ -2194,8 +2202,8 @@ namespace Gecode {
      * As entries are removed from front to back, the advisors must
      * be iterated in forward direction.
      */
-    ActorLink** la = idx[PC_SIZE-2];
-    ActorLink** le = idx[PC_SIZE-1];
+    ActorLink** la = idx[pc_max+1];
+    ActorLink** le = idx[pc_max+2];
     assert (la != le);
     // An advisor that is run, might be removed during execution.
     // As removal is done from the back the advisors have to be executed
@@ -2223,13 +2231,13 @@ namespace Gecode {
   Variable<VIC>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
       u.free_me ^= VIC::mec(new_me,static_cast<ModEvent>
-                            (u.free_me & ((1 << VIC::me_bits_num)-1)));
+                            (u.free_me & me_bits_mask));
     } else {
-      _next = static_cast<Variable<VIC>*>(home->vars_pu[VIC::idx_pu]);
-      home->vars_pu[VIC::idx_pu] = this;
-      u.free_me = (u.free_me & ~((1 << VIC::me_bits_num)-1)) | new_me;
+      _next = static_cast<Variable<VIC>*>(home->vars_pu[idx_pu]);
+      home->vars_pu[idx_pu] = this;
+      u.free_me = (u.free_me & ~me_bits_mask) | new_me;
     }
-    if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
+    if (idx[pc_max+1] != idx[pc_max+2]) {
       d->me = new_me;
       return advise(home,d);
     }
@@ -2240,9 +2248,9 @@ namespace Gecode {
   forceinline bool
   Variable<VIC>::notify(Space* home, Delta* d) {
     assert(!modified());
-    _next = static_cast<Variable<VIC>*>(home->vars_pu[VIC::idx_pu]);
-    home->vars_pu[VIC::idx_pu] = this;
-    if (idx[PC_SIZE-2] != idx[PC_SIZE-1]) {
+    _next = static_cast<Variable<VIC>*>(home->vars_pu[idx_pu]);
+    home->vars_pu[idx_pu] = this;
+    if (idx[pc_max+1] != idx[pc_max+2]) {
       d->me = ME_GEN_ASSIGNED;
       return advise(home,d);
     }
@@ -2265,14 +2273,14 @@ namespace Gecode {
     // Recover from copy (also overwrites forwarding pointer)
     x->u.free_me = u.free_me;
     ActorLink** f = x->idx[0];
-    int n = static_cast<int>(x->idx[PC_SIZE-1] - f);
+    int n = static_cast<int>(x->idx[pc_max+2] - f);
     u.free_me = 0;
     u.fwd     = NULL;
     ActorLink** t = sub;
     sub += n;
     idx[0] = t;
     ptrdiff_t o = t - f;
-    for (PropCond i = PC_SIZE-1; i>0; i--)
+    for (PropCond i = pc_max+2; i>0; i--)
       idx[i] = x->idx[i]+o;
     while ((n-4) >= 0) {
       n -= 4;
@@ -2290,14 +2298,14 @@ namespace Gecode {
     }
   }
 
-  template <class VIC, class VarType>
-  VarDisposer<VIC,VarType>::VarDisposer(void) {
-    Space::vd[VIC::idx_d] = this;
+  template <class VarType>
+  VarDisposer<VarType>::VarDisposer(void) {
+    Space::vd[VarType::idx_d] = this;
   }
 
-  template <class VIC, class VarType>
+  template <class VarType>
   void
-  VarDisposer<VIC,VarType>::dispose(Space* home, VarBase* vb) {
+  VarDisposer<VarType>::dispose(Space* home, VarBase* vb) {
     VarType* x = static_cast<VarType*>(vb);
     do {
       x->dispose(home);
@@ -2313,7 +2321,7 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Variable<VIC>::process(Space* home,
-                             PropCond pc1, PropCond pc2, ModEvent me) {
+                         PropCond pc1, PropCond pc2, ModEvent me) {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
@@ -2325,7 +2333,7 @@ namespace Gecode {
   Variable<VIC>::process(Space* home) {
     {
       ActorLink** b = idx[0];
-      ActorLink** p = idx[PC_SIZE-2];
+      ActorLink** p = idx[pc_max+1];
       while (p-- > b)
         home->process<VIC>(static_cast<Propagator*>(*p));
     }
@@ -2333,12 +2341,12 @@ namespace Gecode {
     // must still work for cloning (idx[0]) and degree (idx[PC+2])
     {
       ActorLink** b = idx[0];
-      ActorLink** p = idx[PC_SIZE-1];
+      ActorLink** p = idx[pc_max+2];
       home->n_sub -= (p-b);
       // Information needed to release the dependency array
       unsigned int n = free() + (p-b);
       home->reuse(p-n,n*sizeof(ActorLink*));
-      for (int i=PC_SIZE; i--; )
+      for (int i=pc_max+3; i--; )
         idx[i] = NULL;
     }
   }
