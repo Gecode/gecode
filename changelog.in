@@ -70,6 +70,14 @@ Date:    Later
 Fixes or what?
 
 [ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks:	Helmut Simonis
+[DESCRIPTION]
+Fixed a bug and quirk in %Kakuro puzzles.
+
+[ENTRY]
 Module: gist
 What:   new
 Rank:   major

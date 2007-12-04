@@ -552,7 +552,7 @@ public:
         return;
       case 8:
         // Prune the single missing digit
-        rel(this, x, IRT_NQ, n*(n+1)/2 - c);
+        rel(this, x, IRT_NQ, 9*(9+1)/2 - c);
         break;
       case 9:
         break;
@@ -672,6 +672,7 @@ main(int argc, char* argv[]) {
   opt.model(Kakuro::MODEL_COMBINE,
                   "combine","combine distinct and linear constraints");
 
+  opt.icl(ICL_DOM);
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
