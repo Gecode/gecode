@@ -33,23 +33,11 @@
 #  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-#
-# Header of file to be generated
-#
-[Header]
-namespace Gecode { namespace CpltSet {
-#
-# General settings
-#
 [General]
 Name:		CpltSet
-VTI:		CPLTSET
 Ifdef:		GECODE_HAVE_CPLTSET_VARS
 Namespace:	Gecode::CpltSet
 Dispose:        true
-#
-# Definition of modification events
-#
 [ModEventHeader]
   /**
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
@@ -72,9 +60,6 @@ Combine:	VAL=VAL,DOM=DOM
   /**
    * \brief Domain operation has modified set
    */
-##
-## Definition of propagation conditions
-##
 [PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL
@@ -98,6 +83,4 @@ ModEvents:	VAL,DOM
    */
 [PropCondFooter]
   //@}
-[Footer]
-}}
 [End]

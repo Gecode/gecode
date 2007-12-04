@@ -108,6 +108,7 @@ for ($f=0; $f<$n_files; $f++) {
   $name[$f]    = "";
   $vti[$f]     = "";
   $ifdef[$f]   = "";
+  $endif[$f]   = "";
   $dispose[$f] = 0;
 
   ##
@@ -143,14 +144,15 @@ for ($f=0; $f<$n_files; $f++) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
 	next if ($l =~ /^\#/);
 	if ($l =~ /^Name:\s*(\w+)/io) {
-	  $NAME = $1; $name[$f] = $NAME;
-	  $vti[$f]   = uc($NAME);
+	  $name[$f] = $1;
+	  $vti[$f]  = uc($name[$f]);
 	} elsif ($l =~ /^Ifdef:\s*(\w+)/io) {
-	  $IFDEF = $1; $ifdef[$f] = $IFDEF;
+	  $ifdef[$f] = "#ifdef $1\n";
+	  $endif[$f] = "#endif\n";
 	} elsif ($l =~ /^Dispose:\s*true/io) {
-	  $DISPOSE = 1; $dispose[$f] = 1;
+	  $dispose[$f] = 1;
 	} elsif ($l =~ /^Namespace:\s*([^ \t\r\n]+)/io) {
-	  $NAMESPACE = $1; $namespace[$f] = $NAMESPACE;
+	  $namespace[$f] = $1;
 	}
       }
       goto LINE;
@@ -254,11 +256,11 @@ for ($f=0; $f<$n_files; $f++) {
   }
   close FILE;
 
+
   $maxpc[$f] = "PC_$vti[$f]_" . $pcn[$f][$pc_n[$f]-1];
-  $class[$f] = "${NAME}VarImpBase";
-  $conf[$f]  = "${NAME}VarImpConf";
-  $base[$f]  = ("Gecode::Variable<" .
-		$namespace[$f] . "::" . $conf[$f] . ">");
+  $class[$f] = "$name[$f]VarImpBase";
+  $conf[$f]  = "$name[$f]VarImpConf";
+  $base[$f]  = "Gecode::Variable<$namespace[$f]::$conf[$f]>";
   # Generate namespace header and footer
   foreach $ns (split('::',$namespace[$f])) {
     $hdr[$f] = "$hdr[$f]namespace $ns { ";
@@ -293,14 +295,7 @@ for ($f=0; $f<$n_files; $f++) {
 
 if ($gen_type) {
   for ($f = 0; $f<$n_files; $f++) {
-    $VTI   = $vti[$f];
-    $NAME  = $name[$f];
-    $BASE  = $base[$f];
-    $CLASS = $class[$f];
-
-    if (!($ifdef[$f] eq "")) {
-      print "#ifdef $ifdef[$f]\n\n";
-    }
+    print $ifdef[$f];
     print $hdr[$f];
     print $mehdr[$f];
     $o = 1;
@@ -338,25 +333,15 @@ if ($gen_type) {
     }
     print $pcftr[$f];
     print $ftr[$f];
-    if (!($ifdef[$f] eq "")) {
-      print "\n#endif\n\n";
-    }
+    print $endif[$f];
   }
 
 
   for ($f = 0; $f<$n_files; $f++) {
-    $VTI   = $vti[$f];
-    $NAME  = $name[$f];
-    $BASE  = $base[$f];
-    $CLASS = $class[$f];
-    $CONF  = $conf[$f];
-
-    if (!($ifdef[$f] eq "")) {
-      print "#ifdef $ifdef[$f]\n\n";
-    }
+    print $ifdef[$f];
     print $hdr[$f];
-    print "  /// Configuration class for ${NAME}-variable implementations\n";
-    print "  class ${CONF} {\n";
+    print "  /// Configuration class for $name[$f]-variable implementations\n";
+    print "  class $conf[$f] {\n";
     print "  public:\n";
     print "    /// Index for processing and update\n";
     print "    static const int idx_pu = ";
@@ -400,40 +385,38 @@ if ($gen_type) {
     print "  };\n";
     print $ftr[$f];
     if (!($ifdef[$f] eq "")) {
-      print "\n#else\n\n";
+      print "#else\n";
+      print $hdr[$f];
+      print "  /// Configuration class for $name[$f]-variable implementations\n";
+      print "  class $conf[$f] {\n";
+      print "  public:\n";
+      print "    /// Index for processing and update\n";
+      print "    static const int idx_pu = ";
+      if ($f == 0) {
+	print "-1;\n";
+      } else {
+	print "$namespace[$f-1]::$conf[$f-1]::idx_pu;\n";
+      }
+      print "    /// Index for disposal\n";
+      print "    static const int idx_d  = ";
+      if ($f == 0) {
+	print "-1;\n";
+      } else {
+	print "$namespace[$f-1]::$conf[$f-1]::idx_d;\n";
+      }
+      print "    /// End of bits for propagator modification event\n";
+      print "    static const int pme_bits_lst = ";
+      if ($f == 0) {
+	print "0;\n";
+      } else {
+	print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
+      }
+      print "    /// Bit pattern for assigned propagator modification event\n";
+      print "    static const Gecode::PropModEvent pme_assigned = 0;\n";
+      print "  };\n";
+      print $ftr[$f];
     }
-    print $hdr[$f];
-    print "  /// Configuration class for ${NAME}-variable implementations\n";
-    print "  class ${CONF} {\n";
-    print "  public:\n";
-    print "    /// Index for processing and update\n";
-    print "    static const int idx_pu = ";
-    if ($f == 0) {
-      print "-1;\n";
-    } else {
-      print "$namespace[$f-1]::$conf[$f-1]::idx_pu;\n";
-    }
-    print "    /// Index for disposal\n";
-    print "    static const int idx_d  = ";
-    if ($f == 0) {
-      print "-1;\n";
-    } else {
-      print "$namespace[$f-1]::$conf[$f-1]::idx_d;\n";
-    }
-    print "    /// End of bits for propagator modification event\n";
-    print "    static const int pme_bits_lst = ";
-    if ($f == 0) {
-      print "0;\n";
-    } else {
-      print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
-    }
-    print "    /// Bit pattern for assigned propagator modification event\n";
-    print "    static const Gecode::PropModEvent pme_assigned = 0;\n";
-    print "  };\n";
-    print $ftr[$f];
-    if (!($ifdef[$f] eq "")) {
-      print "\n#endif\n\n";
-    }
+    print $endif[$f];
   }
   print "\n";
   print "namespace Gecode {\n\n";
@@ -454,103 +437,81 @@ if ($gen_type) {
 if ($gen_header) {
 
   for ($f = 0; $f<$n_files; $f++) {
-    $VTI   = $vti[$f];
-    $NAME  = $name[$f];
-    $BASE  = $base[$f];
-    $CLASS = $class[$f];
-    $CONF  = $conf[$f];
-
-    if (!($ifdef[$f] eq "")) {
-      print "#ifdef $ifdef[$f]\n\n";
-    }
+    print $ifdef[$f];
     print $hdr[$f];
+    print "  forceinline ModEvent\n";
+    print "  $conf[$f]::mec(ModEvent me1, ModEvent me2) {\n";
 
-print <<EOF
-  forceinline ModEvent
-  ${CONF}::mec(ModEvent me1, ModEvent me2) {
-EOF
-;
+    if ($me_max_n[$f] == 2) {
+      print "    return me2^me1;\n";
+    } elsif ($me_max_n[$f] <= 4) {
+      print "    const int med = (\n";
 
-if ($me_max_n[$f] == 2) {
-  print "    return me2^me1;\n";
-} elsif ($me_max_n[$f] <= 4) {
-  print "    const int med = (\n";
-
-  for ($i=0; $i<$me_max_n[$f];$i++) {
-    $n1 = $val2me[$f][$i];
-    print "      (\n";
-    for ($j=0; $j<$me_max_n[$f];$j++) {
-      $n2 = $val2me[$f][$j];
-      if ($n1 eq "NONE") {
-        $n3 = $n2;
-      } elsif ($n2 eq "NONE") {
-        $n3 = $n1;
-      } else {
-        $n3 = $mec{$f}{$n1}{$n2};
+      for ($i=0; $i<$me_max_n[$f];$i++) {
+	$n1 = $val2me[$f][$i];
+	print "      (\n";
+	for ($j=0; $j<$me_max_n[$f];$j++) {
+	  $n2 = $val2me[$f][$j];
+	  if ($n1 eq "NONE") {
+	    $n3 = $n2;
+	  } elsif ($n2 eq "NONE") {
+	    $n3 = $n1;
+	  } else {
+	    $n3 = $mec{$f}{$n1}{$n2};
+	  }
+	  print "        ((ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3) << ";
+	  print (($i << 3) + ($j << 1));
+	  if ($j+1 == $me_max_n[$f]) {
+	    print ")   ";
+	  } else {
+	    print ") | ";
+	  }
+	  print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
+	}
+	if ($i+1 == $me_max_n[$f]) {
+	  print "      )\n";
+	} else {
+	  print "      ) |\n";
+	}
       }
-      print "        ((ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3) << ";
-      print (($i << 3) + ($j << 1));
-      if ($j+1 == $me_max_n[$f]) {
-        print ")   ";
-      } else {
-        print ") | ";
-      }
-      print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
-    }
-    if ($i+1 == $me_max_n[$f]) {
-      print "      )\n";
+      print "    );\n";
+      print "    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);\n";
     } else {
-      print "      ) |\n";
-    }
-  }
-
-
-  print "    );\n";
-  print "    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);\n";
-} else {
-  print <<EOF
-    static const unsigned char med[$me_max[$f]][$me_max[$f]] = {
-EOF
-;
-  for ($i=0; $i<$me_max_n[$f];$i++) {
-    $n1 = $val2me[$f][$i];
-    print "      {\n";
-    for ($j=0; $j<$me_max_n[$f];$j++) {
-      $n2 = $val2me[$f][$j];
-      if ($n1 eq "NONE") {
-	$n3 = $n2;
-      } elsif ($n2 eq "NONE") {
-	$n3 = $n1;
-      } else {
-	$n3 = $mec{$f}{$n1}{$n2};
+      print "    static const unsigned char med[$me_max[$f]][$me_max[$f]] = {\n";
+      for ($i=0; $i<$me_max_n[$f];$i++) {
+	$n1 = $val2me[$f][$i];
+	print "      {\n";
+	for ($j=0; $j<$me_max_n[$f];$j++) {
+	  $n2 = $val2me[$f][$j];
+	  if ($n1 eq "NONE") {
+	    $n3 = $n2;
+	  } elsif ($n2 eq "NONE") {
+	    $n3 = $n1;
+	  } else {
+	    $n3 = $mec{$f}{$n1}{$n2};
+	  }
+	  print "        ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3";
+	  if ($j+1 == $me_max_n[$f]) {
+	    print " ";
+	  } else {
+	    print ",";
+	  }
+	  print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
+	}
+	print "      }";
+	if ($i+1 == $me_max_n[$f]) {
+	  print "\n";
+	} else {
+	  print ",\n";
+	}
       }
-      print "        ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3";
-      if ($j+1 == $me_max_n[$f]) {
-	print " ";
-      } else {
-	print ",";
-      }
-      print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
+      print "    };\n";
+      print "    return med[me1][me2];\n";
     }
-    print "      }";
-    if ($i+1 == $me_max_n[$f]) {
-      print "\n";
-    } else {
-      print ",\n";
-    }
-  }
-  print "    };\n";
-  print "    return med[me1][me2];\n";
-}
-print "  }\n";
-
-  print <<EOF
-
-  /// Base-class for ${NAME}-variable implementations
-  class ${CLASS} : public ${BASE} {
-EOF
-;
-  if ($dispose[$f]) {
+    print "  }\n\n";
+    print "  /// Base-class for $name[$f]-variable implementations\n";
+    print "  class $class[$f] : public $base[$f] {\n";
+    if ($dispose[$f]) {
     print <<EOF
   private:
     /// Link to next variable, used for disposal
@@ -562,12 +523,12 @@ EOF
   print <<EOF
   protected:
     /// Constructor for cloning \\a x
-    ${CLASS}(Space* home, bool share, ${CLASS}\& x);
+    $class[$f](Space* home, bool share, $class[$f]\& x);
   public:
     /// Constructor for creating static instance of variable
-    ${CLASS}(void);
+    $class[$f](void);
     /// Constructor for creating variable
-    ${CLASS}(Space* home);
+    $class[$f](Space* home);
     /// \\name Dependencies
     //\@{
     /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
@@ -601,9 +562,9 @@ EOF
   if ($dispose[$f]) {
   print <<EOF
     /// Return link to next variable, used for dispose
-    ${CLASS}* nextDispose(void) const;
+    $class[$f]* nextDispose(void) const;
     /// Set link to next variable, used for dispose
-    void nextDispose(${CLASS}* next);
+    void nextDispose($class[$f]* next);
 EOF
 ;
   }
@@ -619,7 +580,7 @@ if ($me_max_n[$f] == 2) {
 print <<EOF
 
   forceinline ModEvent
-  ${CLASS}::modevent(void) const {
+  $class[$f]::modevent(void) const {
     return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
   }
 
@@ -631,23 +592,23 @@ if ($dispose[$f]) {
   print <<EOF
 
   forceinline
-  ${CLASS}::${CLASS}(void) {}
+  $class[$f]::$class[$f](void) {}
 
   forceinline
-  ${CLASS}::${CLASS}(Space* home)
-    : ${BASE}(home), _nextDispose(home->varsDisposeList<${CONF}>()) {
-    home->varsDisposeList<${CONF}>(this);
+  $class[$f]::$class[$f](Space* home)
+    : $base[$f](home), _nextDispose(home->varsDisposeList<$conf[$f]>()) {
+    home->varsDisposeList<$conf[$f]>(this);
   }
 
   forceinline
-  ${CLASS}::${CLASS}(Space* home, bool share, ${CLASS}\& x)
-    : ${BASE}(home,share,x), _nextDispose(home->varsDisposeList<${CONF}>()) {
-    home->varsDisposeList<${CONF}>(this);
+  $class[$f]::$class[$f](Space* home, bool share, $class[$f]\& x)
+    : $base[$f](home,share,x), _nextDispose(home->varsDisposeList<$conf[$f]>()) {
+    home->varsDisposeList<$conf[$f]>(this);
   }
 
-  forceinline ${CLASS}*
-  ${CLASS}::nextDispose(void) const {
-    return static_cast<${CLASS}*>(_nextDispose);
+  forceinline $class[$f]*
+  $class[$f]::nextDispose(void) const {
+    return static_cast<$class[$f]*>(_nextDispose);
   }
 
 EOF
@@ -656,27 +617,27 @@ EOF
   print <<EOF
 
   forceinline
-  ${CLASS}::${CLASS}(void) {}
+  $class[$f]::$class[$f](void) {}
 
   forceinline
-  ${CLASS}::${CLASS}(Space* home)
-    : ${BASE}(home) {}
+  $class[$f]::$class[$f](Space* home)
+    : $base[$f](home) {}
 
   forceinline
-  ${CLASS}::${CLASS}(Space* home, bool share, ${CLASS}\& x)
-    : ${BASE}(home,share,x) {}
+  $class[$f]::$class[$f](Space* home, bool share, $class[$f]\& x)
+    : $base[$f](home,share,x) {}
 EOF
 ;
 }
   print <<EOF
 
   forceinline void
-  ${CLASS}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
-    ${BASE}::subscribe(home,p,pc,assigned,$me_subscribe[$f],process);
+  $class[$f]::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    $base[$f]::subscribe(home,p,pc,assigned,$me_subscribe[$f],process);
   }
   forceinline void
-  ${CLASS}::subscribe(Space* home, Advisor* a, bool assigned) {
-    ${BASE}::subscribe(home,a,assigned);
+  $class[$f]::subscribe(Space* home, Advisor* a, bool assigned) {
+    $base[$f]::subscribe(home,a,assigned);
   }
 
 EOF
@@ -685,8 +646,8 @@ EOF
 if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline bool
-  ${CLASS}::notify(Space* home, ModEvent, Delta* d) {
-    return ${BASE}::notify(home,d);
+  $class[$f]::notify(Space* home, ModEvent, Delta* d) {
+    return $base[$f]::notify(home,d);
   }
 
 EOF
@@ -694,8 +655,8 @@ EOF
 } else {
   print <<EOF
   forceinline bool
-  ${CLASS}::notify(Space* home, ModEvent me, Delta* d) {
-    return ${BASE}::notify(home,me,d);
+  $class[$f]::notify(Space* home, ModEvent me, Delta* d) {
+    return $base[$f]::notify(home,me,d);
   }
 
 EOF
@@ -703,9 +664,7 @@ EOF
 }
 print $ftr[$f];
 
-if (!($ifdef[$f] eq "")) {
-  print "\n#endif\n\n";
-}
+print $endif[$f];
 
 }
     print <<EOF
@@ -718,33 +677,16 @@ EOF
 ;
 
   for ($f = $n_files-1; $f>=0; $f--) {
-    $VTI   = $vti[$f];
-    $NAME  = $name[$f];
-    $BASE  = $base[$f];
-    $CLASS = $class[$f];
-    $CONF  = $conf[$f];
-
-
-    if (!($ifdef[$f] eq "")) {
-      print "#ifdef " . $ifdef[$f] . "\n";
-    }
-
-    print <<EOF
-    {
-EOF
-;
+    print $ifdef[$f];
+    print "    {\n";
     if (!($namespace[$f] eq "")) {
-    print <<EOF
-      using namespace $namespace[$f];
-EOF
-;
-
+      print "      using namespace $namespace[$f];\n";
     }
     print <<EOF
-      ${BASE}* x = 
-        static_cast<${BASE}*>(vars_pu[${CONF}::idx_pu]);
+      $base[$f]* x = 
+        static_cast<$base[$f]*>(vars_pu[$conf[$f]::idx_pu]);
       if (x != NULL) {
-        vars_pu[${CONF}::idx_pu] = NULL;
+        vars_pu[$conf[$f]::idx_pu] = NULL;
 EOF
 ;
 
@@ -822,9 +764,7 @@ EOF
     }
 EOF
 ;
-if (!($ifdef[$f] eq "")) {
-  print "#endif\n";
-}
+  print $endif[$f];
 
 }
   print <<EOF
@@ -843,33 +783,16 @@ EOF
 ;
 
   for ($f = 0; $f<$n_files; $f++) {
-    $VTI   = $vti[$f];
-    $NAME  = $name[$f];
-    $BASE  = $base[$f];
-    $CLASS = $class[$f];
-    $CONF  = $conf[$f];
-
-
-    if (!($ifdef[$f] eq "")) {
-      print "#ifdef " . $ifdef[$f] . "\n";
-    }
-
-    print <<EOF
-    {
-EOF
-;
+    print $ifdef[$f];
+    print "    {\n";
     if (!($namespace[$f] eq "")) {
-    print <<EOF
-      using namespace $namespace[$f];
-EOF
-;
-
+      print "      using namespace $namespace[$f];\n";
     }
     print <<EOF
-      ${BASE}* x = 
-        static_cast<${BASE}*>(vars_pu[${CONF}::idx_pu]);
+      $base[$f]* x = 
+        static_cast<$base[$f]*>(vars_pu[$conf[$f]::idx_pu]);
       if (x != NULL) {
-        vars_pu[${CONF}::idx_pu] = NULL;
+        vars_pu[$conf[$f]::idx_pu] = NULL;
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);
@@ -877,9 +800,7 @@ EOF
     }
 EOF
 ;
-if (!($ifdef[$f] eq "")) {
-  print "#endif\n";
-}
+  print $endif[$f];
 
 }
   print <<EOF

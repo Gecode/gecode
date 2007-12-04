@@ -38,7 +38,6 @@
  */
 
 #ifdef GECODE_HAVE_INT_VARS
-
 namespace Gecode { namespace Int { 
   forceinline ModEvent
   IntVarImpConf::mec(ModEvent me1, ModEvent me2) {
@@ -131,11 +130,8 @@ namespace Gecode { namespace Int {
   }
 
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_INT_VARS
-
 namespace Gecode { namespace Int { 
   forceinline ModEvent
   BoolVarImpConf::mec(ModEvent me1, ModEvent me2) {
@@ -210,11 +206,8 @@ namespace Gecode { namespace Int {
   }
 
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_SET_VARS
-
 namespace Gecode { namespace Set { 
   forceinline ModEvent
   SetVarImpConf::mec(ModEvent me1, ModEvent me2) {
@@ -382,11 +375,8 @@ namespace Gecode { namespace Set {
   }
 
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_CPLTSET_VARS
-
 namespace Gecode { namespace CpltSet { 
   forceinline ModEvent
   CpltSetVarImpConf::mec(ModEvent me1, ModEvent me2) {
@@ -487,9 +477,7 @@ namespace Gecode { namespace CpltSet {
   }
 
 }}
-
 #endif
-
 
 namespace Gecode {
 

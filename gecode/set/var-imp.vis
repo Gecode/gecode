@@ -37,22 +37,10 @@
 #  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-#
-# Header of file to be generated
-#
-[Header]
-namespace Gecode { namespace Set {
-#
-# General settings
-#
 [General]
 Name:		Set
-VTI:		SET
 Ifdef:		GECODE_HAVE_SET_VARS
 Namespace:	Gecode::Set
-#
-# Definition of modification events
-#
 [ModEventHeader]
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
@@ -199,6 +187,4 @@ ModEvents:	VAL,CARD,LUB,GLB,BB,CLUB,CGLB,CBB
    */
 [PropCondFooter]
   //@}
-[Footer]
-}}
 [End]

@@ -38,7 +38,6 @@
  */
 
 #ifdef GECODE_HAVE_INT_VARS
-
 namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -97,11 +96,8 @@ namespace Gecode { namespace Int {
   const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
   //@}
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_INT_VARS
-
 namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -126,11 +122,8 @@ namespace Gecode { namespace Int {
   const Gecode::PropCond PC_BOOL_VAL = Gecode::PC_GEN_ASSIGNED;
   //@}
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_SET_VARS
-
 namespace Gecode { namespace Set { 
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
@@ -251,11 +244,8 @@ namespace Gecode { namespace Set {
   const Gecode::PropCond PC_SET_ANY = Gecode::PC_GEN_ASSIGNED + 4;
   //@}
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_CPLTSET_VARS
-
 namespace Gecode { namespace CpltSet { 
   /**
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
@@ -293,11 +283,8 @@ namespace Gecode { namespace CpltSet {
   const Gecode::PropCond PC_CPLTSET_DOM = Gecode::PC_GEN_ASSIGNED + 1;
   //@}
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_INT_VARS
-
 namespace Gecode { namespace Int { 
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
@@ -320,9 +307,7 @@ namespace Gecode { namespace Int {
     static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
-
 #else
-
 namespace Gecode { namespace Int { 
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
@@ -337,11 +322,8 @@ namespace Gecode { namespace Int {
     static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_INT_VARS
-
 namespace Gecode { namespace Int { 
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
@@ -364,9 +346,7 @@ namespace Gecode { namespace Int {
     static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
-
 #else
-
 namespace Gecode { namespace Int { 
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
@@ -381,11 +361,8 @@ namespace Gecode { namespace Int {
     static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_SET_VARS
-
 namespace Gecode { namespace Set { 
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
@@ -408,9 +385,7 @@ namespace Gecode { namespace Set {
     static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
-
 #else
-
 namespace Gecode { namespace Set { 
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
@@ -425,11 +400,8 @@ namespace Gecode { namespace Set {
     static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
-
 #endif
-
 #ifdef GECODE_HAVE_CPLTSET_VARS
-
 namespace Gecode { namespace CpltSet { 
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
@@ -452,9 +424,7 @@ namespace Gecode { namespace CpltSet {
     static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
-
 #else
-
 namespace Gecode { namespace CpltSet { 
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
@@ -469,9 +439,7 @@ namespace Gecode { namespace CpltSet {
     static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
-
 #endif
-
 
 namespace Gecode {
 
