@@ -69,6 +69,8 @@ namespace Gecode { namespace Gist {
       connect(&searcher, SIGNAL(update()), this, SLOT(update()));
       connect(&searcher, SIGNAL(statusChanged(bool)), this, 
               SLOT(statusChanged(bool)));
+      connect(&layouter, SIGNAL(done(int,int)),
+              this, SLOT(layoutDone(int,int)));
   }
   
   TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; }
@@ -97,6 +99,12 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::update(void) {
     QMutexLocker locker(&mutex);
     layouter.layout(this);
+  }
+
+  void
+  TreeCanvasImpl::layoutDone(int w, int h) {
+    resize(w,h);
+    QWidget::update();
   }
 
   void
@@ -180,9 +188,8 @@ namespace Gecode { namespace Gist {
     
     int w = (int)((bb.right-bb.left+20)*t->scale);
     int h = (int)((bb.depth+1)*38*t->scale);
-    t->resize(w,h);
     t->xtrans = -bb.left+10;
-    static_cast<QWidget*>(t)->update();
+    emit done(w,h);
   }
 
   void

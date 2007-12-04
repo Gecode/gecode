@@ -67,10 +67,13 @@ namespace Gecode {  namespace Gist {
   };
 
   class LayoutThread : public QThread {
+    Q_OBJECT
   private:
     TreeCanvasImpl* t;
   public:
-    void layout(TreeCanvasImpl* ti);    
+    void layout(TreeCanvasImpl* ti);
+  Q_SIGNALS:
+    void done(int,int);
   protected:
     void run(void);
   };
@@ -235,6 +238,8 @@ namespace Gecode {  namespace Gist {
   public Q_SLOTS:
     /// Update display
     void update(void);
+    /// Layout done
+    void layoutDone(int w, int h);
   private Q_SLOTS:
     /// Search has finished
     void statusChanged(bool);
