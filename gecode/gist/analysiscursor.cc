@@ -100,8 +100,8 @@ namespace Gecode { namespace Gist {
   DistributeCursor::processCurrentNode(void) {
     VisualNode* n = node();
     if (n->getParent() != NULL) {
-      int h = (((double)n->getHeat() - (double)minHeat) / 
-               ((double)maxHeat-(double)minHeat)) * 179;
+      int h = (int)((((double)n->getHeat() - (double)minHeat) / 
+               ((double)maxHeat-(double)minHeat)) * 179);
       n->setHeat(h);
     } else {
       n->setHeat(0);
