@@ -350,12 +350,6 @@ if ($gen_type) {
     } else {
       print "$namespace[$f-1]::$conf[$f-1]::idx_pu+1;\n";
     }
-    print "    /// Whether variables must be disposed\n";
-    if ($dispose[$f]) {
-      print "    static const bool dispose = true;\n";
-    } else {
-      print "    static const bool dispose = false;\n";
-    }
     print "    /// Index for disposal\n";
     print "    static const int idx_d = ";
     if ($dispose[$f]) {

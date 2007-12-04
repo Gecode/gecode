@@ -291,8 +291,6 @@ namespace Gecode { namespace Int {
   public:
     /// Index for processing and update
     static const int idx_pu = 0;
-    /// Whether variables must be disposed
-    static const bool dispose = false;
     /// Index for disposal
     static const int idx_d = -1;
     /// Maximal propagation condition
@@ -334,8 +332,6 @@ namespace Gecode { namespace Int {
   public:
     /// Index for processing and update
     static const int idx_pu = Gecode::Int::IntVarImpConf::idx_pu+1;
-    /// Whether variables must be disposed
-    static const bool dispose = false;
     /// Index for disposal
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// Maximal propagation condition
@@ -377,8 +373,6 @@ namespace Gecode { namespace Set {
   public:
     /// Index for processing and update
     static const int idx_pu = Gecode::Int::BoolVarImpConf::idx_pu+1;
-    /// Whether variables must be disposed
-    static const bool dispose = false;
     /// Index for disposal
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// Maximal propagation condition
@@ -420,8 +414,6 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Index for processing and update
     static const int idx_pu = Gecode::Set::SetVarImpConf::idx_pu+1;
-    /// Whether variables must be disposed
-    static const bool dispose = true;
     /// Index for disposal
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
     /// Maximal propagation condition

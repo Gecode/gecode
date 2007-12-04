@@ -292,8 +292,6 @@ namespace Gecode {
   private:
     /// Index for processing and update
     static const int idx_pu = VIC::idx_pu;
-    /// Whether variables must be disposed
-    static const bool dispose = VIC::dispose;
     /// Index for disposal
     static const int idx_d = VIC::idx_d;
     /// Maximal propagation condition
@@ -305,7 +303,7 @@ namespace Gecode {
     /// Bitmask for propagator modification event
     static const int me_bits_mask = VIC::me_bits_mask;
     
-    /// Stores where entries start (idx[pc]}
+    /// Stores where entries start (idx[pc])
     ActorLink** idx[pc_max+3];
 
     /// Manage number of free entries internally
@@ -2305,8 +2303,8 @@ namespace Gecode {
 
   template <class VarType>
   void
-  VarDisposer<VarType>::dispose(Space* home, VarBase* vb) {
-    VarType* x = static_cast<VarType*>(vb);
+  VarDisposer<VarType>::dispose(Space* home, VarBase* _x) {
+    VarType* x = static_cast<VarType*>(_x);
     do {
       x->dispose(home);
       x = static_cast<VarType*>(x->nextDispose());
