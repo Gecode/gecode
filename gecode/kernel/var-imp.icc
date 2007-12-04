@@ -41,7 +41,7 @@
 
 namespace Gecode { namespace Int {
   forceinline ModEvent
-  IntVarImpConf::operator()(ModEvent me1, ModEvent me2) const {
+  IntVarImpConf::mec(ModEvent me1, ModEvent me2) {
     const int med = (
       (
         ((ME_INT_NONE ^ ME_INT_NONE) << 0) |  // [ME_INT_NONE][ME_INT_NONE]
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int {
 
 namespace Gecode { namespace Int {
   forceinline ModEvent
-  BoolVarImpConf::operator()(ModEvent me1, ModEvent me2) const {
+  BoolVarImpConf::mec(ModEvent me1, ModEvent me2) {
     return me2^me1;
   }
 
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int {
 
 namespace Gecode { namespace Set {
   forceinline ModEvent
-  SetVarImpConf::operator()(ModEvent me1, ModEvent me2) const {
+  SetVarImpConf::mec(ModEvent me1, ModEvent me2) {
     static const unsigned char med[ME_SET_CBB+1][ME_SET_CBB+1] = {
       {
         ME_SET_NONE ^ ME_SET_NONE, // [ME_SET_NONE][ME_SET_NONE]
@@ -389,7 +389,7 @@ namespace Gecode { namespace Set {
 
 namespace Gecode { namespace CpltSet {
   forceinline ModEvent
-  CpltSetVarImpConf::operator()(ModEvent me1, ModEvent me2) const {
+  CpltSetVarImpConf::mec(ModEvent me1, ModEvent me2) {
     const int med = (
       (
         ((ME_CPLTSET_NONE ^ ME_CPLTSET_NONE) << 0) |  // [ME_CPLTSET_NONE][ME_CPLTSET_NONE]

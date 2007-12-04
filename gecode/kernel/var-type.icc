@@ -317,7 +317,7 @@ namespace Gecode { namespace Int {
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
-    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+    static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
 
@@ -361,7 +361,7 @@ namespace Gecode { namespace Int {
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
-    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+    static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
 
@@ -405,7 +405,7 @@ namespace Gecode { namespace Set {
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
-    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+    static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
 
@@ -449,7 +449,7 @@ namespace Gecode { namespace CpltSet {
     /// Bit pattern for assigned propagator modification event
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
-    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+    static ModEvent mec(ModEvent me1, ModEvent me2);
   };
 }}
 

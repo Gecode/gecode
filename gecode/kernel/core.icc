@@ -1878,8 +1878,7 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   Variable<VIC>::combine(ModEvent me1, ModEvent me2) {
-    VIC vic;
-    return me2^vic(me1,me2);
+    return me2^VIC::mec(me1,me2);
   }
 
   /*
@@ -2018,13 +2017,12 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Space::process(Propagator* p, ModEvent new_me) {
-    VIC vic;
     PropModEvent old_pme = p->u.pme;
     // Compute the old modification event
     ModEvent old_me = ((old_pme >> VIC::pme_bits_fst) &
                        ((1 << VIC::me_bits_num) - 1));
     // Get the new modification event (xor-ed with the old one)
-    ModEvent com_me = vic(new_me,old_me);
+    ModEvent com_me = VIC::mec(new_me,old_me);
     // Event has not changed, do not nothing
     if (com_me == 0)
       return;
@@ -2224,9 +2222,8 @@ namespace Gecode {
   forceinline bool
   Variable<VIC>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
-      VIC vic;
-      u.free_me ^= vic(new_me,static_cast<ModEvent>
-                       (u.free_me & ((1 << VIC::me_bits_num)-1)));
+      u.free_me ^= VIC::mec(new_me,static_cast<ModEvent>
+                            (u.free_me & ((1 << VIC::me_bits_num)-1)));
     } else {
       _next = static_cast<Variable<VIC>*>(home->vars_pu[VIC::idx_pu]);
       home->vars_pu[VIC::idx_pu] = this;

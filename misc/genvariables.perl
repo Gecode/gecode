@@ -405,7 +405,7 @@ if ($gen_type) {
     print "    /// Bit pattern for assigned propagator modification event\n";
     print "    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);\n";
     print "    /// Return difference when changing modification event \\a me2 to \\a me1\n";
-    print "    ModEvent operator()(ModEvent me1, ModEvent me2) const;\n";
+    print "    static ModEvent mec(ModEvent me1, ModEvent me2);\n";
     print "  };\n";
     print $ftr[$f];
     if (!($ifdef[$f] eq "")) {
@@ -476,7 +476,7 @@ if ($gen_header) {
 
 print <<EOF
   forceinline ModEvent
-  ${CONF}::operator()(ModEvent me1, ModEvent me2) const {
+  ${CONF}::mec(ModEvent me1, ModEvent me2) {
 EOF
 ;
 
