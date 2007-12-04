@@ -934,8 +934,12 @@ gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
 	$(CXX) $(CXXFLAGS) $(GIST_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
+gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cc
+	$(CXX) $(CXXFLAGS) $(GIST_CPPFLAGS) \
+	@GECODE_BUILD_GIST_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
 
-gecode/gist/moc_%.cc: gecode/gist/%.hh
+gecode/gist/moc_%.cc: $(top_srcdir)/gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
 #
