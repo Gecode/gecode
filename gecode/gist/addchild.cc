@@ -62,9 +62,6 @@ namespace Gecode { namespace Gist {
       // TODO nikopp: use spec instead of vars
       // vmi.spec().dom().toIntArray(); // array of ranges e.g. [2, 4, 7, 8] = {2,3,4,7,8}
       
-      // TODO nikopp: debug
-      std::cout << iv.min() << ":" << iv.max() << std::endl;
-      
       data << QVariant(iv.min()) << QVariant(iv.max());
       ui.varList->item(i)->setData(Qt::UserRole, data);
     }
@@ -128,9 +125,6 @@ namespace Gecode { namespace Gist {
       break;
     }
     
-    // TODO nikopp: debug
-    std::cout << min << ":" << max << std::endl;
-
     if(min <= max) {
       ui.valueSpinBox->setMinimum(min);
       ui.valueSpinBox->setMaximum(max);
