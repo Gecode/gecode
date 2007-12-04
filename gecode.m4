@@ -879,9 +879,9 @@ AC_DEFUN([AC_GECODE_GIST],
     else
       ac_gecode_gist_qt_makefile=Makefile
     fi
-    ac_gecode_gist_qt_defines=`grep ${ac_gecode_gist_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1${top_srcdir}/..|g'`
-    ac_gecode_gist_qt_inc=`grep ${ac_gecode_gist_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1${top_srcdir}/..|g'`
-    ac_gecode_gist_qt_libs=`grep ${ac_gecode_gist_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1${top_srcdir}/..|g'`
+    ac_gecode_gist_qt_defines=`grep ${ac_gecode_gist_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+    ac_gecode_gist_qt_inc=`grep ${ac_gecode_gist_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+    ac_gecode_gist_qt_libs=`grep ${ac_gecode_gist_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
     cd ..
     rm -r ${ac_gecode_gist_tmpdir}
     AC_SUBST(QTINCLUDES, ${ac_gecode_gist_qt_inc})
