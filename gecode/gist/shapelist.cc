@@ -239,7 +239,7 @@ namespace Gecode { namespace Gist {
   }
   
   Shape*
-  ShapeList::getMergedShape(void) {
+  ShapeList::getMergedShape(bool left) {
     int numberOfShapes = shapes.size();
     if (numberOfShapes == 1) {
       offsets[0] = 0;
@@ -297,7 +297,7 @@ namespace Gecode { namespace Gist {
       // leftmost shape in the list.  What we want is to move the axis
       // such that it is the center of the axis of the leftmost shape in
       // the list and the axis of the rightmost shape.
-      int halfWidth = width / 2;
+      int halfWidth = left ? 0 : width / 2;
       mergedShape->move(- halfWidth);
         
       // Finally, for the offset lists.  Now that the axis of the merged

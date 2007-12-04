@@ -126,7 +126,7 @@ namespace Gecode { namespace Gist {
     /// Constructor
     ShapeList(int length, int minSeparation);
     /// Return the merged shape
-    Shape* getMergedShape(void);
+    Shape* getMergedShape(bool left = false);
     /// Return offset computed for child \a i
     int getOffsetOfChild(int i);
     /// Return shape no \a i

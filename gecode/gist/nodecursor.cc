@@ -68,7 +68,8 @@ namespace Gecode { namespace Gist {
           childShapes[i]=currentNode->getChild(i)->getShape();
         }
 
-        Shape* subtreeShape = childShapes.getMergedShape();
+        Shape* subtreeShape = 
+          childShapes.getMergedShape(currentNode->getStatus() == SOLVED);
         subtreeShape->extend(- extent.l, - extent.r);
         shape = new Shape(extent, subtreeShape);
         delete subtreeShape;
