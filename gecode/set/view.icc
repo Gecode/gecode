@@ -410,7 +410,7 @@ namespace Gecode {
   class ViewVarTraits<Set::ConstantView> {
   public:
     /// The variable type of a ConstantView
-    typedef VarBase Var;
+    typedef VarImpBase Var;
   };
 
   namespace Set {
@@ -594,7 +594,7 @@ namespace Gecode {
   class ViewVarTraits<Set::EmptyView> {
   public:
     /// The variable type of an EmptyView
-    typedef VarBase Var;
+    typedef VarImpBase Var;
   };
 
   namespace Set {
@@ -779,7 +779,7 @@ namespace Gecode {
   class ViewVarTraits<Set::UniverseView> {
   public:
     /// The variable type of a UniverseView
-    typedef VarBase Var;
+    typedef VarImpBase Var;
   };
 
   namespace Set {

@@ -54,7 +54,7 @@ namespace Gecode {
     /// Return whether this view is derived from a VariableViewBase
     static bool varderived(void);
     /// Return dummy variable implementation of view
-    VarBase* variable(void) const;
+    VarImpBase* variable(void) const;
     //@}
   private:
     static void* operator new(size_t);
@@ -356,7 +356,7 @@ namespace Gecode {
   ConstantViewBase::varderived(void) {
     return false;
   }
-  forceinline VarBase*
+  forceinline VarImpBase*
   ConstantViewBase::variable(void) const {
     return NULL;
   }
@@ -528,32 +528,32 @@ namespace Gecode {
   forceinline bool
   shared(const VariableViewBase<VarA>& x,
          const VariableViewBase<VarB>& y) {
-    return (static_cast<VarBase*>(x.variable()) ==
-            static_cast<VarBase*>(y.variable()));
+    return (static_cast<VarImpBase*>(x.variable()) ==
+            static_cast<VarImpBase*>(y.variable()));
   }
   template <class VarA, class ViewB>
   forceinline bool
   shared(const VariableViewBase<VarA>& x,
          const DerivedViewBase<ViewB>& y) {
     return (ViewB::varderived() &&
-            static_cast<VarBase*>(x.variable()) ==
-            static_cast<VarBase*>(y.variable()));
+            static_cast<VarImpBase*>(x.variable()) ==
+            static_cast<VarImpBase*>(y.variable()));
   }
   template <class ViewA, class VarB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x,
          const VariableViewBase<VarB>& y) {
     return (ViewA::varderived() &&
-            static_cast<VarBase*>(x.variable()) ==
-            static_cast<VarBase*>(y.variable()));
+            static_cast<VarImpBase*>(x.variable()) ==
+            static_cast<VarImpBase*>(y.variable()));
   }
   template <class ViewA, class ViewB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x,
          const DerivedViewBase<ViewB>& y) {
     return (ViewA::varderived() && ViewB::varderived() &&
-            static_cast<VarBase*>(x.variable()) ==
-            static_cast<VarBase*>(y.variable()));
+            static_cast<VarImpBase*>(x.variable()) ==
+            static_cast<VarImpBase*>(y.variable()));
   }
 
 

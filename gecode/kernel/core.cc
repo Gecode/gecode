@@ -48,7 +48,7 @@ namespace Gecode {
 
   GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[IDX_D_ALL];
 
-  void VarDisposerBase::dispose(Space*,VarBase*) {}
+  void VarDisposerBase::dispose(Space*,VarImpBase*) {}
   VarDisposerBase::~VarDisposerBase(void) {}
 
 
@@ -468,7 +468,7 @@ namespace Gecode {
      *
      */
     // Update variables without indexing structure
-    for (VarBase* x = c->vars_noidx; x != NULL; x = x->next()) {
+    for (VarImpBase* x = c->vars_noidx; x != NULL; x = x->next()) {
       x->u.free_me = 0;
       x->u.fwd     = NULL;
     }

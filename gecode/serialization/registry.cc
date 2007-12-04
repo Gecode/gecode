@@ -48,17 +48,17 @@ namespace Gecode { namespace Serialization {
 
   namespace {
     
-    VarBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
+    VarImpBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
       Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
-      VarBase* ret = Int::IntView(IntVar(home, IntSet(ai))).variable();
+      VarImpBase* ret = Int::IntView(IntVar(home, IntSet(ai))).variable();
       return ret;
     }
-    void constrainIntVar(Space* home, VarBase* v, Reflection::VarSpec& spec) {
+    void constrainIntVar(Space* home, VarImpBase* v, Reflection::VarSpec& spec) {
       Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
       dom(home, IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v))), 
           IntSet(ai));
     }
-    VarBase* createBoolVar(Space* home, Reflection::VarSpec& spec) {
+    VarImpBase* createBoolVar(Space* home, Reflection::VarSpec& spec) {
       int dom = spec.dom()->toInt();
       int min = 0;
       int max = 1;
@@ -66,10 +66,10 @@ namespace Gecode { namespace Serialization {
         max = 0;
       else if (dom == Int::BoolVarImp::ONE)
         min = 1;
-      VarBase* ret = Int::BoolView(BoolVar(home, min, max)).variable();
+      VarImpBase* ret = Int::BoolView(BoolVar(home, min, max)).variable();
       return ret;
     }
-    void constrainBoolVar(Space* home, VarBase* v,
+    void constrainBoolVar(Space* home, VarImpBase* v,
                           Reflection::VarSpec& spec) {
       int d = spec.dom()->toInt();
       if (d == Int::BoolVarImp::ZERO)
@@ -80,18 +80,18 @@ namespace Gecode { namespace Serialization {
             IRT_EQ, 1);
     }
 #ifdef GECODE_HAVE_SET_VARS
-    VarBase* createSetVar(Space* home, Reflection::VarSpec& spec) {
+    VarImpBase* createSetVar(Space* home, Reflection::VarSpec& spec) {
       int cardMin = spec.dom()->first()->second()->toInt();
       int cardMax = spec.dom()->second()->second()->toInt();
       Reflection::IntArrayArgRanges 
         glb(spec.dom()->first()->first()->toIntArray());
       Reflection::IntArrayArgRanges 
         lub(spec.dom()->second()->first()->toIntArray());
-      VarBase* ret = Set::SetView(SetVar(home, IntSet(glb), IntSet(lub), 
+      VarImpBase* ret = Set::SetView(SetVar(home, IntSet(glb), IntSet(lub), 
                                   cardMin, cardMax)).variable();
       return ret;
     }
-    void constrainSetVar(Space* home, VarBase* v,
+    void constrainSetVar(Space* home, VarImpBase* v,
                          Reflection::VarSpec& spec) {
       int cardMin = spec.dom()->first()->second()->toInt();
       int cardMax = spec.dom()->second()->second()->toInt();

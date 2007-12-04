@@ -361,9 +361,9 @@ namespace Gecode { namespace Reflection {
     /// The type of constraint posting functions
     typedef void (*poster) (Space*, VarMap&, const ActorSpec&);
     /// The type of variable creation functions
-    typedef VarBase* (*varCreator) (Space*, VarSpec&);
+    typedef VarImpBase* (*varCreator) (Space*, VarSpec&);
     /// The type of variable domain constraint functions
-    typedef void (*varConstrainer) (Space*, VarBase*, VarSpec&);
+    typedef void (*varConstrainer) (Space*, VarImpBase*, VarSpec&);
 
     /// Constructor
     GECODE_KERNEL_EXPORT Registry(void);
@@ -371,11 +371,11 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT MSCVIRTUAL ~Registry(void);
 
     /// Create a new variable in \a home from \a spec and return it
-    GECODE_KERNEL_EXPORT VarBase* createVar(Space* home, VarSpec& spec);
+    GECODE_KERNEL_EXPORT VarImpBase* createVar(Space* home, VarSpec& spec);
 
     /// Constrain \a v to \a spec
     GECODE_KERNEL_EXPORT void
-    constrainVar(Space* home, VarBase* v, VarSpec& spec);
+    constrainVar(Space* home, VarImpBase* v, VarSpec& spec);
 
     /// Post constraint in \a home for \a spec using variables \a vars
     GECODE_KERNEL_EXPORT void

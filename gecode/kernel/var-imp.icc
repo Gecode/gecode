@@ -71,7 +71,7 @@ namespace Gecode { namespace Int {
   }
 
   /// Base-class for Int-variable implementations
-  class IntVarImpBase : public Gecode::Variable<Gecode::Int::IntVarImpConf> {
+  class IntVarImpBase : public Gecode::VarImp<Gecode::Int::IntVarImpConf> {
   protected:
     /// Constructor for cloning \a x
     IntVarImpBase(Space* home, bool share, IntVarImpBase& x);
@@ -109,24 +109,24 @@ namespace Gecode { namespace Int {
 
   forceinline
   IntVarImpBase::IntVarImpBase(Space* home)
-    : Gecode::Variable<Gecode::Int::IntVarImpConf>(home) {}
+    : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home) {}
 
   forceinline
   IntVarImpBase::IntVarImpBase(Space* home, bool share, IntVarImpBase& x)
-    : Gecode::Variable<Gecode::Int::IntVarImpConf>(home,share,x) {}
+    : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home,share,x) {}
 
   forceinline void
   IntVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
-    Gecode::Variable<Gecode::Int::IntVarImpConf>::subscribe(home,p,pc,assigned,ME_INT_BND,process);
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,p,pc,assigned,ME_INT_BND,process);
   }
   forceinline void
   IntVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
-    Gecode::Variable<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned);
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline bool
   IntVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
-    return Gecode::Variable<Gecode::Int::IntVarImpConf>::notify(home,me,d);
+    return Gecode::VarImp<Gecode::Int::IntVarImpConf>::notify(home,me,d);
   }
 
 }}
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int {
   }
 
   /// Base-class for Bool-variable implementations
-  class BoolVarImpBase : public Gecode::Variable<Gecode::Int::BoolVarImpConf> {
+  class BoolVarImpBase : public Gecode::VarImp<Gecode::Int::BoolVarImpConf> {
   protected:
     /// Constructor for cloning \a x
     BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x);
@@ -185,24 +185,24 @@ namespace Gecode { namespace Int {
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(Space* home)
-    : Gecode::Variable<Gecode::Int::BoolVarImpConf>(home) {}
+    : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home) {}
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x)
-    : Gecode::Variable<Gecode::Int::BoolVarImpConf>(home,share,x) {}
+    : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home,share,x) {}
 
   forceinline void
   BoolVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
-    Gecode::Variable<Gecode::Int::BoolVarImpConf>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,process);
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,process);
   }
   forceinline void
   BoolVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
-    Gecode::Variable<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned);
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline bool
   BoolVarImpBase::notify(Space* home, ModEvent, Delta* d) {
-    return Gecode::Variable<Gecode::Int::BoolVarImpConf>::notify(home,d);
+    return Gecode::VarImp<Gecode::Int::BoolVarImpConf>::notify(home,d);
   }
 
 }}
@@ -316,7 +316,7 @@ namespace Gecode { namespace Set {
   }
 
   /// Base-class for Set-variable implementations
-  class SetVarImpBase : public Gecode::Variable<Gecode::Set::SetVarImpConf> {
+  class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
   protected:
     /// Constructor for cloning \a x
     SetVarImpBase(Space* home, bool share, SetVarImpBase& x);
@@ -354,24 +354,24 @@ namespace Gecode { namespace Set {
 
   forceinline
   SetVarImpBase::SetVarImpBase(Space* home)
-    : Gecode::Variable<Gecode::Set::SetVarImpConf>(home) {}
+    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home) {}
 
   forceinline
   SetVarImpBase::SetVarImpBase(Space* home, bool share, SetVarImpBase& x)
-    : Gecode::Variable<Gecode::Set::SetVarImpConf>(home,share,x) {}
+    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home,share,x) {}
 
   forceinline void
   SetVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
-    Gecode::Variable<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,process);
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,process);
   }
   forceinline void
   SetVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
-    Gecode::Variable<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned);
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline bool
   SetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
-    return Gecode::Variable<Gecode::Set::SetVarImpConf>::notify(home,me,d);
+    return Gecode::VarImp<Gecode::Set::SetVarImpConf>::notify(home,me,d);
   }
 
 }}
@@ -401,10 +401,10 @@ namespace Gecode { namespace CpltSet {
   }
 
   /// Base-class for CpltSet-variable implementations
-  class CpltSetVarImpBase : public Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf> {
+  class CpltSetVarImpBase : public Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf> {
   private:
     /// Link to next variable, used for disposal
-    VarBase* _nextDispose;
+    VarImpBase* _nextDispose;
   protected:
     /// Constructor for cloning \a x
     CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x);
@@ -446,13 +446,13 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetVarImpBase::CpltSetVarImpBase(Space* home)
-    : Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>(home), _nextDispose(home->varsDisposeList<CpltSetVarImpConf>()) {
+    : Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>(home), _nextDispose(home->varsDisposeList<CpltSetVarImpConf>()) {
     home->varsDisposeList<CpltSetVarImpConf>(this);
   }
 
   forceinline
   CpltSetVarImpBase::CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x)
-    : Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>(home,share,x), _nextDispose(home->varsDisposeList<CpltSetVarImpConf>()) {
+    : Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>(home,share,x), _nextDispose(home->varsDisposeList<CpltSetVarImpConf>()) {
     home->varsDisposeList<CpltSetVarImpConf>(this);
   }
 
@@ -464,16 +464,16 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void
   CpltSetVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
-    Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,p,pc,assigned,ME_CPLTSET_DOM,process);
+    Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,p,pc,assigned,ME_CPLTSET_DOM,process);
   }
   forceinline void
   CpltSetVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
-    Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,a,assigned);
+    Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline bool
   CpltSetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
-    return Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>::notify(home,me,d);
+    return Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::notify(home,me,d);
   }
 
 }}
@@ -486,8 +486,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_CPLTSET_VARS
     {
       using namespace Gecode::CpltSet;
-      Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>*>(vars_pu[CpltSetVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>*>(vars_pu[CpltSetVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[CpltSetVarImpConf::idx_pu] = NULL;
         do {
@@ -509,8 +509,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_SET_VARS
     {
       using namespace Gecode::Set;
-      Gecode::Variable<Gecode::Set::SetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Set::SetVarImpConf>*>(vars_pu[SetVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::Set::SetVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::Set::SetVarImpConf>*>(vars_pu[SetVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[SetVarImpConf::idx_pu] = NULL;
         do {
@@ -557,8 +557,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_INT_VARS
     {
       using namespace Gecode::Int;
-      Gecode::Variable<Gecode::Int::BoolVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::BoolVarImpConf>*>(vars_pu[BoolVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::Int::BoolVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::Int::BoolVarImpConf>*>(vars_pu[BoolVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[BoolVarImpConf::idx_pu] = NULL;
         do {
@@ -570,8 +570,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_INT_VARS
     {
       using namespace Gecode::Int;
-      Gecode::Variable<Gecode::Int::IntVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::IntVarImpConf>*>(vars_pu[IntVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::Int::IntVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::Int::IntVarImpConf>*>(vars_pu[IntVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[IntVarImpConf::idx_pu] = NULL;
         do {
@@ -603,8 +603,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_INT_VARS
     {
       using namespace Gecode::Int;
-      Gecode::Variable<Gecode::Int::IntVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::IntVarImpConf>*>(vars_pu[IntVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::Int::IntVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::Int::IntVarImpConf>*>(vars_pu[IntVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[IntVarImpConf::idx_pu] = NULL;
         do {
@@ -616,8 +616,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_INT_VARS
     {
       using namespace Gecode::Int;
-      Gecode::Variable<Gecode::Int::BoolVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Int::BoolVarImpConf>*>(vars_pu[BoolVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::Int::BoolVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::Int::BoolVarImpConf>*>(vars_pu[BoolVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[BoolVarImpConf::idx_pu] = NULL;
         do {
@@ -629,8 +629,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_SET_VARS
     {
       using namespace Gecode::Set;
-      Gecode::Variable<Gecode::Set::SetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::Set::SetVarImpConf>*>(vars_pu[SetVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::Set::SetVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::Set::SetVarImpConf>*>(vars_pu[SetVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[SetVarImpConf::idx_pu] = NULL;
         do {
@@ -642,8 +642,8 @@ namespace Gecode {
 #ifdef GECODE_HAVE_CPLTSET_VARS
     {
       using namespace Gecode::CpltSet;
-      Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>* x = 
-        static_cast<Gecode::Variable<Gecode::CpltSet::CpltSetVarImpConf>*>(vars_pu[CpltSetVarImpConf::idx_pu]);
+      Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>* x = 
+        static_cast<Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>*>(vars_pu[CpltSetVarImpConf::idx_pu]);
       if (x != NULL) {
         vars_pu[CpltSetVarImpConf::idx_pu] = NULL;
         do {

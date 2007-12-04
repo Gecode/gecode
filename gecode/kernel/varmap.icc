@@ -68,7 +68,7 @@ namespace Gecode { namespace Reflection {
     void clear(void);
     
     /// Return index for variable \a x
-    int index(VarBase* x) const;
+    int index(VarImpBase* x) const;
     /// Return index for variable with name \a n
     int index(const Support::Symbol& n) const;
 
@@ -76,32 +76,32 @@ namespace Gecode { namespace Reflection {
     bool nameIsKnown(const Support::Symbol& n) const;
 
     /// Return if variable \a x has a name
-    bool hasName(VarBase* x) const;
+    bool hasName(VarImpBase* x) const;
     /// Return if variable at index \a i has a name
     bool hasName(int i) const;
 
     /// Return name for variable \a x
-    Support::Symbol name(VarBase* x) const;
+    Support::Symbol name(VarImpBase* x) const;
     /// Return name for variable at index \a i
     Support::Symbol name(int i) const;
 
     /// Return variable with name \a n
-    VarBase* var(const Support::Symbol& n) const;
+    VarImpBase* var(const Support::Symbol& n) const;
     /// Return variable at index \a i
-    VarBase* var(int i) const;
+    VarImpBase* var(int i) const;
 
     /// Return specification for variable \a x
-    VarSpec& spec(VarBase* x) const;
+    VarSpec& spec(VarImpBase* x) const;
     /// Return specification for variable at index \a i
     VarSpec& spec(int i) const;
     /// Return specification for variable with name \a n
     VarSpec& spec(const Support::Symbol& n) const;
 
     /// Register name \a n for variable \a x
-    void name(VarBase* x, const Support::Symbol& n);
+    void name(VarImpBase* x, const Support::Symbol& n);
 
     /// Insert specification \a vs for variable \a x, return index
-    int put(VarBase* x, VarSpec* vs);
+    int put(VarImpBase* x, VarSpec* vs);
 
     /// Insert a shared object into the table
     void putMasterObject(void* obj);
@@ -167,7 +167,7 @@ namespace Gecode { namespace Reflection {
     /// Return variable specification for current iterator position
     VarSpec& spec(void) const;
     /// Return variable implementation for current iterator position
-    VarBase* var(void) const;
+    VarImpBase* var(void) const;
     /// Move iterator to next variable
     void operator++(void);
   };

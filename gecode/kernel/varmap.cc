@@ -48,16 +48,16 @@ namespace Gecode { namespace Reflection {
   class VarMap::VarMapObj {
   public:
     /// Map variable names to variable implementations
-    Support::SymbolMap<VarBase*> nameToVar;
+    Support::SymbolMap<VarImpBase*> nameToVar;
     /// Map variable implementations to variable names
-    Support::PtrMap<VarBase,Support::Symbol> varToName;
+    Support::PtrMap<VarImpBase,Support::Symbol> varToName;
     /// Map variable implementations to indices
-    Support::PtrMap<VarBase,int> m;
+    Support::PtrMap<VarImpBase,int> m;
     /// Map shared objects to indices
     Support::PtrMap<void,int>    sharedObjectMap;
 
     /// Map indices to variable implementations
-    Support::DynamicArray<VarBase*>  vars;
+    Support::DynamicArray<VarImpBase*>  vars;
     /// Map indices to variable specifications
     Support::DynamicArray<VarSpec*>  specs;
     /// Map indices to shared objects
@@ -88,25 +88,25 @@ namespace Gecode { namespace Reflection {
   }
 
   int
-  VarMap::index(VarBase* x) const {
+  VarMap::index(VarImpBase* x) const {
     int i;
     return vo->m.get(x,i) ? i : -1;
   }
 
   int
   VarMap::index(const Support::Symbol& n) const {
-    VarBase* v;      
+    VarImpBase* v;      
     return vo->nameToVar.get(n, v) ? index(v) : -1;
   }
 
   bool
   VarMap::nameIsKnown(const Support::Symbol& n) const {
-    VarBase* v;
+    VarImpBase* v;
     return vo->nameToVar.get(n,v);
   }
 
   bool
-  VarMap::hasName(VarBase* x) const {
+  VarMap::hasName(VarImpBase* x) const {
     Support::Symbol s;
     return vo->varToName.get(x,s);
   }
@@ -118,7 +118,7 @@ namespace Gecode { namespace Reflection {
   }
 
   Support::Symbol
-  VarMap::name(VarBase* x) const {
+  VarMap::name(VarImpBase* x) const {
     Support::Symbol s;
     vo->varToName.get(x,s);
     return s;
@@ -131,13 +131,13 @@ namespace Gecode { namespace Reflection {
     return s;
   }
 
-  VarBase*
+  VarImpBase*
   VarMap::var(const Support::Symbol& n) const {
-    VarBase* v;
+    VarImpBase* v;
     return vo->nameToVar.get(n,v) ? v : NULL;
   }
 
-  VarBase*
+  VarImpBase*
   VarMap::var(int i) const {
     if (i<0 || i>=n)
       throw ReflectionException("Variable not in VarMap");
@@ -145,7 +145,7 @@ namespace Gecode { namespace Reflection {
   }
 
   VarSpec&
-  VarMap::spec(VarBase* x) const {
+  VarMap::spec(VarImpBase* x) const {
     int i;
     if (!vo->m.get(x,i))
       throw ReflectionException("Variable not in VarMap");
@@ -165,8 +165,8 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  VarMap::name(VarBase* x, const Support::Symbol& n) {
-    VarBase* y;
+  VarMap::name(VarImpBase* x, const Support::Symbol& n) {
+    VarImpBase* y;
     if (vo->nameToVar.get(n, y) && x != y)
       throw
         ReflectionException("Variable with the same name already in VarMap");
@@ -175,7 +175,7 @@ namespace Gecode { namespace Reflection {
   }
 
   int
-  VarMap::put(VarBase* x, VarSpec* spec) {
+  VarMap::put(VarImpBase* x, VarSpec* spec) {
     int newIndex = n++;
     vo->m.put(x, newIndex);
     vo->specs[newIndex] = spec;
@@ -219,7 +219,7 @@ namespace Gecode { namespace Reflection {
   VarSpec&
   VarMapIter::spec(void) const { return *m->vo->specs[i]; }
 
-  VarBase*
+  VarImpBase*
   VarMapIter::var(void) const { return m->vo->vars[i]; }
 
   void

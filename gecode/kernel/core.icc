@@ -183,11 +183,11 @@ namespace Gecode {
   class Advisor;
   template <class A> class Council;
   template <class A> class Advisors;
-  template <class VIC> class Variable;
+  template <class VIC> class VarImp;
 
 
   /*
-   * Variables
+   * Variable implementations
    *
    */
 
@@ -198,11 +198,11 @@ namespace Gecode {
    * template arguments.
    * \ingroup TaskVar
    */
-  class VarBase {
+  class VarImpBase {
     friend class Space;
   protected:
     /// Either next modified or next copied variable
-    VarBase* _next; 
+    VarImpBase* _next; 
     /// Combine processing and update information
     union {
       /**
@@ -214,16 +214,16 @@ namespace Gecode {
        */
       unsigned int free_me;
       /// Store the forwarding pointer during copying
-      VarBase* fwd;
+      VarImpBase* fwd;
     } u;
     /// Return next modified variable and reset (during processing)
-    VarBase* next(void);
+    VarImpBase* next(void);
   };
 
   /**
    * \brief Base class for %Variable type disposer
    *
-   * Controls disposal of variables.
+   * Controls disposal of variable implementations.
    * \ingroup TaskVar
    */
   class GECODE_VTABLE_EXPORT VarDisposerBase {
@@ -234,7 +234,7 @@ namespace Gecode {
       * If needed for the variable type, dispose a list of
       * variables, with \a x being the first variable in the list.
       */
-    GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarBase* x);
+    GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarImpBase* x);
     /// Destructor (not really used)
     GECODE_KERNEL_EXPORT virtual ~VarDisposerBase(void);
   };
@@ -256,7 +256,7 @@ namespace Gecode {
       * If needed for the variable type, dispose a list of
       * variables, with \a x being the first variable in the list.
       */
-    virtual void dispose(Space* home, VarBase* x);
+    virtual void dispose(Space* home, VarImpBase* x);
   };
 
   /**
@@ -268,7 +268,7 @@ namespace Gecode {
    *
    */
   class Delta {
-    template <class VIC> friend class Variable;
+    template <class VIC> friend class VarImp;
   private:
     ModEvent me; ///< Store modification event
   public:
@@ -285,7 +285,7 @@ namespace Gecode {
    * \ingroup TaskVar
    */
   template <class VIC>
-  class Variable : public VarBase {
+  class VarImp : public VarImpBase {
     friend class Space;
     friend class Propagator;
     template <class VarType> friend class VarDisposer;
@@ -321,7 +321,7 @@ namespace Gecode {
      * The argument \a sub gives the memory area where subscriptions are
      * to be stored.
      */
-    void update(Variable* x, ActorLink**& sub);
+    void update(VarImp* x, ActorLink**& sub);
 
     /// Enter propagator or advisor to subscription array
     void enter(Space* home, ActorLink* a, PropCond pc);
@@ -334,9 +334,9 @@ namespace Gecode {
 
   public:
     /// Creation
-    Variable(Space* home);
+    VarImp(Space* home);
     /// Creation of static instances
-    Variable(void);
+    VarImp(void);
 
     /// \name Dependencies
     //@{
@@ -401,14 +401,14 @@ namespace Gecode {
     /// \name Cloning variables
     //@{
     /// Constructor for cloning
-    Variable(Space* home, bool share, Variable& x);
+    VarImp(Space* home, bool share, VarImp& x);
     /// Is variable already copied
     bool copied(void) const;
     /// Use forward pointer if variable already copied
-    Variable* forward(void) const;
+    VarImp* forward(void) const;
     //@}
 
-    /// \name Variable-dependent propagator support
+    /// \name Variable implementation-dependent propagator support
     //@{
     /// Schedule propagator \a p with modification event \a me
     static void schedule(Space* home, Propagator* p, ModEvent me);
@@ -423,7 +423,7 @@ namespace Gecode {
     /// \name Processing modified variables
     //@{
     /// Return next modified variable and reset (during processing)
-    Variable* next(void);
+    VarImp* next(void);
     /// Return current modification event of variable
     ModEvent modevent(void) const;
     /// Process subscribed propagators
@@ -506,7 +506,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Branching;
     friend class Space;
-    template <class VIC> friend class Variable;
+    template <class VIC> friend class VarImp;
   private:
     ActorLink* _next; ActorLink* _prev;
   public:
@@ -538,7 +538,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Branching;
     friend class Reflection::SpecIter;
-    template <class VIC> friend class Variable;
+    template <class VIC> friend class VarImp;
     template <class A> friend class Council;
   public:
     /// Create copy
@@ -648,7 +648,7 @@ namespace Gecode {
    */
   class GECODE_VTABLE_EXPORT Propagator : public Actor {
     friend class Space;
-    template <class VIC> friend class Variable;
+    template <class VIC> friend class VarImp;
     friend ExecStatus ES_SUBSUMED(Propagator*, size_t);
     friend ExecStatus ES_SUBSUMED(Propagator*, Space*);
     friend ExecStatus ES_FIX_PARTIAL(Propagator*, PropModEvent);
@@ -799,12 +799,9 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class Advisor : private ActorLink {
-    template <class VIC> 
-    friend class Variable;
-    template <class A> 
-    friend class Council;
-    template <class A> 
-    friend class Advisors;
+    template <class VIC> friend class VarImp;
+    template <class A> friend class Council;
+    template <class A>  friend class Advisors;
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
@@ -978,7 +975,7 @@ namespace Gecode {
     friend class Branching;
     friend class Advisor;
     friend class Reflection::SpecIter;
-    template <class VIC> friend class Variable;
+    template <class VIC> friend class VarImp;
     template <class VarType> friend class VarDisposer;
     friend class SharedHandle;
   private:
@@ -1000,11 +997,11 @@ namespace Gecode {
     /// Registered variable type disposers
     GECODE_KERNEL_EXPORT static VarDisposerBase* vd[IDX_D_ALL];
     /// Keep variables during copying without index structure
-    VarBase* vars_noidx;
+    VarImpBase* vars_noidx;
     /// Entries for processing and updating variables
-    VarBase* vars_pu[IDX_PU_ALL];
+    VarImpBase* vars_pu[IDX_PU_ALL];
     /// Entries for disposing variables
-    VarBase* vars_d[IDX_D_ALL];
+    VarImpBase* vars_d[IDX_D_ALL];
     /// Process all modified variables (inlined version)
     void process_i(void);
     /// Process all modified variables (outlined version)
@@ -1301,9 +1298,9 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT 
     size_t allocated(void) const;
     /// Return list of variables that need deletion
-    template <class VIC> VarBase* varsDisposeList(void);
+    template <class VIC> VarImpBase* varsDisposeList(void);
     /// Set list of variables that need deletion
-    template <class VIC> void varsDisposeList(VarBase* v);
+    template <class VIC> void varsDisposeList(VarImpBase* v);
     //@}
   };
 
@@ -1364,19 +1361,19 @@ namespace Gecode {
   }
 
   template <class VIC>
-  forceinline VarBase*
+  forceinline VarImpBase*
   Space::varsDisposeList(void) {
     return vars_d[VIC::idx_d];
   }
 
   template <class VIC>
   forceinline void
-  Space::varsDisposeList(VarBase* v) {
+  Space::varsDisposeList(VarImpBase* v) {
     vars_d[VIC::idx_d] = v;
   }
 
   /*
-   * Space allocated entities: Actors, Variables, and Advisors
+   * Space allocated entities: Actors, variable implementations, and advisors
    *
    */
 
@@ -1391,13 +1388,13 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::operator delete(void*) {}
+  VarImp<VIC>::operator delete(void*) {}
   template <class VIC>
   forceinline void
-  Variable<VIC>::operator delete(void*, Space*) {}
+  VarImp<VIC>::operator delete(void*, Space*) {}
   template <class VIC>
   forceinline void*
-  Variable<VIC>::operator new(size_t s, Space* home) {
+  VarImp<VIC>::operator new(size_t s, Space* home) {
     return home->alloc(s);
   }
 
@@ -1747,14 +1744,14 @@ namespace Gecode {
 
 
   /*
-   * Variables
+   * Variable implementations
    *
    */
 
   template <class VIC>
   forceinline
-  Variable<VIC>::Variable(Space*) {
-    _next = reinterpret_cast<VarBase*>(1);
+  VarImp<VIC>::VarImp(Space*) {
+    _next = reinterpret_cast<VarImpBase*>(1);
     u.free_me = 0;
     u.fwd     = NULL;
     for (int i=pc_max+3; i--; )
@@ -1763,8 +1760,8 @@ namespace Gecode {
 
   template <class VIC>
   forceinline
-  Variable<VIC>::Variable(void) {
-    _next = reinterpret_cast<VarBase*>(1);
+  VarImp<VIC>::VarImp(void) {
+    _next = reinterpret_cast<VarImpBase*>(1);
     u.free_me = 0;
     u.fwd     = NULL;
     for (int i=pc_max+3; i--; )
@@ -1774,7 +1771,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline unsigned int
-  Variable<VIC>::degree(void) const {
+  VarImp<VIC>::degree(void) const {
     return static_cast<unsigned int>(idx[pc_max+2] - idx[0]);
   }
 
@@ -1782,68 +1779,68 @@ namespace Gecode {
 
   template <class VIC>
   forceinline ModEvent
-  Variable<VIC>::modevent(void) const {
+  VarImp<VIC>::modevent(void) const {
     return static_cast<ModEvent>(u.free_me & me_bits_mask);
   }
 
   template <class VIC>
   forceinline unsigned int
-  Variable<VIC>::free(void) const {
+  VarImp<VIC>::free(void) const {
     return u.free_me >> me_bits_num;
   }
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::free(unsigned int n) {
+  VarImp<VIC>::free(unsigned int n) {
     u.free_me = (u.free_me & me_bits_mask) | (n << me_bits_num);
   }
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::free_inc(void) {
+  VarImp<VIC>::free_inc(void) {
     u.free_me += 1 << me_bits_num;
   }
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::free_dec(void) {
+  VarImp<VIC>::free_dec(void) {
     u.free_me -= 1 << me_bits_num;
   }
 
   template <class VIC>
   forceinline bool
-  Variable<VIC>::modified(void) const {
-    return _next != reinterpret_cast<VarBase*>(1);
+  VarImp<VIC>::modified(void) const {
+    return _next != reinterpret_cast<VarImpBase*>(1);
   }
 
 
 
-  forceinline VarBase*
-  VarBase::next(void) {
-    VarBase* n = _next;
-    _next = reinterpret_cast<VarBase*>(1);
+  forceinline VarImpBase*
+  VarImpBase::next(void) {
+    VarImpBase* n = _next;
+    _next = reinterpret_cast<VarImpBase*>(1);
     return n;
   }
 
   template <class VIC>
-  forceinline Variable<VIC>*
-  Variable<VIC>::next(void) {
-    return static_cast<Variable<VIC>*>(VarBase::next());
+  forceinline VarImp<VIC>*
+  VarImp<VIC>::next(void) {
+    return static_cast<VarImp<VIC>*>(VarImpBase::next());
   }
 
   template <class VIC>
   forceinline bool
-  Variable<VIC>::copied(void) const {
-    return _next != reinterpret_cast<VarBase*>(1);
+  VarImp<VIC>::copied(void) const {
+    return _next != reinterpret_cast<VarImpBase*>(1);
   }
 
   template <class VIC>
   forceinline
-  Variable<VIC>::Variable(Space* home, bool, Variable<VIC>& x) {
-    _next = reinterpret_cast<VarBase*>(1);
-    VarBase** reg;
+  VarImp<VIC>::VarImp(Space* home, bool, VarImp<VIC>& x) {
+    _next = reinterpret_cast<VarImpBase*>(1);
+    VarImpBase** reg;
     if (x.idx[0] == NULL) {
-      // Variable needs no index structure
+      // Variable implementation needs no index structure
       u.free_me = 0;
       u.fwd     = NULL;
       for (int i=pc_max+3; i--; )
@@ -1861,9 +1858,9 @@ namespace Gecode {
   }
 
   template <class VIC>
-  forceinline Variable<VIC>*
-  Variable<VIC>::forward(void) const {
-    return static_cast<Variable<VIC>*>(u.fwd);
+  forceinline VarImp<VIC>*
+  VarImp<VIC>::forward(void) const {
+    return static_cast<VarImp<VIC>*>(u.fwd);
   }
 
   /*
@@ -1873,19 +1870,19 @@ namespace Gecode {
 
   template <class VIC>
   forceinline ModEvent
-  Variable<VIC>::pme(const Propagator* p) {
+  VarImp<VIC>::pme(const Propagator* p) {
     return static_cast<ModEvent>((p->u.pme >> pme_bits_fst) & me_bits_mask);
   }
 
   template <class VIC>
   forceinline PropModEvent
-  Variable<VIC>::pme(ModEvent me) {
+  VarImp<VIC>::pme(ModEvent me) {
     return static_cast<PropModEvent>(me << pme_bits_fst);
   }
 
   template <class VIC>
   forceinline ModEvent
-  Variable<VIC>::combine(ModEvent me1, ModEvent me2) {
+  VarImp<VIC>::combine(ModEvent me1, ModEvent me2) {
     return me2^VIC::mec(me1,me2);
   }
 
@@ -2040,7 +2037,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::schedule(Space* home, Propagator* p, ModEvent me) {
+  VarImp<VIC>::schedule(Space* home, Propagator* p, ModEvent me) {
     home->process<VIC>(p,me);
   }
 
@@ -2071,7 +2068,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
+  VarImp<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
     // Count one new subscription
     home->n_sub += 1;
     if (free() == 0)
@@ -2086,7 +2083,7 @@ namespace Gecode {
 
   template <class VIC>
   void
-  Variable<VIC>::resize(Space* home) {
+  VarImp<VIC>::resize(Space* home) {
     assert(free() == 0);
     if (idx[0] == NULL) {
       // Create fresh dependency array
@@ -2122,7 +2119,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::subscribe(Space* home, Propagator* p, PropCond pc,
+  VarImp<VIC>::subscribe(Space* home, Propagator* p, PropCond pc,
                            bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
@@ -2138,7 +2135,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::subscribe(Space* home, Advisor* a, bool assigned) {
+  VarImp<VIC>::subscribe(Space* home, Advisor* a, bool assigned) {
     if (!assigned)
       enter(home,a,pc_max+1);
   }
@@ -2151,7 +2148,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::remove(Space* home, ActorLink* a, PropCond pc) {
+  VarImp<VIC>::remove(Space* home, ActorLink* a, PropCond pc) {
     /*
      * The entries are removed from front to back, so when iterating
      * over dependencies wile removing them it must be done in
@@ -2179,7 +2176,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::cancel(Space* home, Propagator* p, PropCond pc,
+  VarImp<VIC>::cancel(Space* home, Propagator* p, PropCond pc,
                         bool assigned) {
     if (!assigned)
       remove(home,p,pc);
@@ -2187,14 +2184,14 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::cancel(Space* home, Advisor* a, bool assigned) {
+  VarImp<VIC>::cancel(Space* home, Advisor* a, bool assigned) {
     if (!assigned)
       remove(home,a,pc_max+1);
   }
 
   template <class VIC>
   bool
-  Variable<VIC>::advise(Space* home, const Delta* d) {
+  VarImp<VIC>::advise(Space* home, const Delta* d) {
     /*
      * An advisor that is executed might remove itself due to subsumtion.
      * As entries are removed from front to back, the advisors must
@@ -2226,12 +2223,12 @@ namespace Gecode {
 
   template <class VIC>
   forceinline bool
-  Variable<VIC>::notify(Space* home, ModEvent new_me, Delta* d) {
+  VarImp<VIC>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
       u.free_me ^= VIC::mec(new_me,static_cast<ModEvent>
                             (u.free_me & me_bits_mask));
     } else {
-      _next = static_cast<Variable<VIC>*>(home->vars_pu[idx_pu]);
+      _next = static_cast<VarImp<VIC>*>(home->vars_pu[idx_pu]);
       home->vars_pu[idx_pu] = this;
       u.free_me = (u.free_me & ~me_bits_mask) | new_me;
     }
@@ -2244,9 +2241,9 @@ namespace Gecode {
 
   template <class VIC>
   forceinline bool
-  Variable<VIC>::notify(Space* home, Delta* d) {
+  VarImp<VIC>::notify(Space* home, Delta* d) {
     assert(!modified());
-    _next = static_cast<Variable<VIC>*>(home->vars_pu[idx_pu]);
+    _next = static_cast<VarImp<VIC>*>(home->vars_pu[idx_pu]);
     home->vars_pu[idx_pu] = this;
     if (idx[pc_max+1] != idx[pc_max+2]) {
       d->me = ME_GEN_ASSIGNED;
@@ -2265,7 +2262,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::update(Variable<VIC>* x, ActorLink**& sub) {
+  VarImp<VIC>::update(VarImp<VIC>* x, ActorLink**& sub) {
     // this refers to the variable to be updated (clone)
     // x refers to the original
     // Recover from copy (also overwrites forwarding pointer)
@@ -2303,7 +2300,7 @@ namespace Gecode {
 
   template <class VarType>
   void
-  VarDisposer<VarType>::dispose(Space* home, VarBase* _x) {
+  VarDisposer<VarType>::dispose(Space* home, VarImpBase* _x) {
     VarType* x = static_cast<VarType*>(_x);
     do {
       x->dispose(home);
@@ -2318,7 +2315,7 @@ namespace Gecode {
    */
   template <class VIC>
   forceinline void
-  Variable<VIC>::process(Space* home,
+  VarImp<VIC>::process(Space* home,
                          PropCond pc1, PropCond pc2, ModEvent me) {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
@@ -2328,7 +2325,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Variable<VIC>::process(Space* home) {
+  VarImp<VIC>::process(Space* home) {
     {
       ActorLink** b = idx[0];
       ActorLink** p = idx[pc_max+1];

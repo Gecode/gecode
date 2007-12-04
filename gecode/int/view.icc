@@ -1133,7 +1133,7 @@ namespace Gecode {
   class ViewVarTraits<Int::ConstIntView> {
   public:
     /// The variable type of a ConstIntView
-    typedef VarBase Var;
+    typedef VarImpBase Var;
   };
 
   namespace Int {
@@ -1332,7 +1332,7 @@ namespace Gecode {
   class ViewVarTraits<Int::ZeroIntView> {
   public:
     /// The variable type of a ZeroIntView
-    typedef VarBase Var;
+    typedef VarImpBase Var;
   };
 
   namespace Int {

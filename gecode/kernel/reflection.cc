@@ -58,7 +58,7 @@ namespace Gecode { namespace Reflection {
 
   Registry registry;
   
-  VarBase*
+  VarImpBase*
   Registry::createVar(Space* home, VarSpec& spec) {
     varCreator vc = NULL;
     if (!ro->varCreators.get(spec.vti(),vc)) {
@@ -68,7 +68,7 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  Registry::constrainVar(Space* home, VarBase* v, VarSpec& spec) {
+  Registry::constrainVar(Space* home, VarImpBase* v, VarSpec& spec) {
     varConstrainer vc = NULL;
     if (!ro->varConstrainers.get(spec.vti(),vc)) {
       throw Reflection::ReflectionException("VTI not found");
