@@ -113,9 +113,6 @@ for ($f=0; $f<$n_files; $f++) {
   ##
   ## Headers and footers
   ##
-  $hdr[$f]    = ""; # Header text
-  $ftr[$f]    = ""; # Footer text
-
   $mehdr[$f]  = ""; # Header text for modification events
   $meftr[$f]  = ""; # Footer text for modification events
 
@@ -147,8 +144,7 @@ for ($f=0; $f<$n_files; $f++) {
 	next if ($l =~ /^\#/);
 	if ($l =~ /^Name:\s*(\w+)/io) {
 	  $NAME = $1; $name[$f] = $NAME;
-	} elsif ($l =~ /^VTI:\s*(\w+)/io) {
-	  $VTI = $1; $vti[$f] = $VTI;
+	  $vti[$f]   = uc($NAME);
 	} elsif ($l =~ /^Ifdef:\s*(\w+)/io) {
 	  $IFDEF = $1; $ifdef[$f] = $IFDEF;
 	} elsif ($l =~ /^Dispose:\s*true/io) {
@@ -178,11 +174,11 @@ for ($f=0; $f<$n_files; $f++) {
 	    die "Unknown special modification event: $rhs\n";
 	  }
 	  if ($rhs eq "SUBSCRIBE") {
-	    $me_subscribe[$f] = "ME_${VTI}_$lhs";
+	    $me_subscribe[$f] = "ME_$vti[$f]_$lhs";
 	  } else {
 	    $mespecial{$f}{$lhs} = $rhs;
 	    if ($rhs eq "ASSIGNED") {
-	      $me_assigned[$f] = "ME_${VTI}_$lhs";
+	      $me_assigned[$f] = "ME_$vti[$f]_$lhs";
 	    }
 	  }
 	  $n = $lhs;
@@ -253,28 +249,23 @@ for ($f=0; $f<$n_files; $f++) {
 	$pcftr[$f] = $pcftr[$f] . $l;
       }
       goto LINE;
-    } elsif ($l =~ /^\[Header\]/io) {
-      while (($l = <FILE>) && !($l =~ /^\[/)) {
-	next if ($l =~ /^\#/);
-	$hdr[$f] = $hdr[$f] . "$l";
-      }
-      goto LINE;
-    } elsif ($l =~ /^\[Footer\]/io) {
-      while (($l = <FILE>) && !($l =~ /^\[/)) {
-	next if ($l =~ /^\#/);
-	$ftr[$f] = $ftr[$f] . "$l";
-      }
-      goto LINE;
     }
 
   }
   close FILE;
 
-  $maxpc[$f] = "PC_${VTI}_" . $pcn[$f][$pc_n[$f]-1];
+  $maxpc[$f] = "PC_$vti[$f]_" . $pcn[$f][$pc_n[$f]-1];
   $class[$f] = "${NAME}VarImpBase";
   $conf[$f]  = "${NAME}VarImpConf";
   $base[$f]  = ("Gecode::Variable<" .
 		$namespace[$f] . "::" . $conf[$f] . ">");
+  # Generate namespace header and footer
+  foreach $ns (split('::',$namespace[$f])) {
+    $hdr[$f] = "$hdr[$f]namespace $ns { ";
+    $ftr[$f] = "$ftr[$f]}";
+  }
+  $hdr[$f] = "$hdr[$f]\n";
+  $ftr[$f] = "$ftr[$f]\n";
 
   ## Check whether there is only one real event
   if ($me_n[$f] == 3) {
@@ -292,7 +283,7 @@ for ($f=0; $f<$n_files; $f++) {
       $val2me[$f][$o] = $n; $o++;
     }
   }
-  $me_max[$f]   = "ME_${VTI}_" . $val2me[$f][$o-1] . "+1";
+  $me_max[$f]   = "ME_$vti[$f]_" . $val2me[$f][$o-1] . "+1";
   $me_max_n[$f] = $o;
 
   for ($b=1; (1 << $b) < $me_max_n[$f]; $b++) {}
@@ -316,7 +307,7 @@ if ($gen_type) {
     for ($i=0; $i<$me_n[$f]; $i++) {
       $n = $men[$f][$i];
       print $meh[$f][$i];
-      print "  const Gecode::ModEvent ME_" . ${VTI} . "_${n} = ";
+      print "  const Gecode::ModEvent ME_" . $vti[$f] . "_${n} = ";
       if ($mespecial{$f}{$n}) {
 	print "Gecode::ME_GEN_" . $mespecial{$f}{$n};
       } else {
@@ -330,14 +321,14 @@ if ($gen_type) {
     print $pchdr[$f];
 
     print "  /// Propagation condition to be ignored (convenience)\n";
-    print "  const Gecode::PropCond PC_${VTI}_NONE = Gecode::PC_GEN_NONE;\n";
+    print "  const Gecode::PropCond PC_$vti[$f]_NONE = Gecode::PC_GEN_NONE;\n";
     $o = 1;
     for ($i=0; $i<$pc_n[$f]; $i++) {
       $n = $pcn[$f][$i];
       print $pch[$f][$i];
-      print "  const Gecode::PropCond PC_${VTI}_${n} = ";
+      print "  const Gecode::PropCond PC_$vti[$f]_${n} = ";
       if ($pcspecial{$f}{$n}) {
-	$pc_assigned[$f] = "PC_${VTI}_${n}";
+	$pc_assigned[$f] = "PC_$vti[$f]_${n}";
 	print "Gecode::PC_GEN_" . $pcspecial{$f}{$n};
       } else {
 	print "Gecode::PC_GEN_ASSIGNED + " . $o;
@@ -497,14 +488,14 @@ if ($me_max_n[$f] == 2) {
       } else {
         $n3 = $mec{$f}{$n1}{$n2};
       }
-      print "        ((ME_${VTI}_$n2 ^ ME_${VTI}_$n3) << ";
+      print "        ((ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3) << ";
       print (($i << 3) + ($j << 1));
       if ($j+1 == $me_max_n[$f]) {
         print ")   ";
       } else {
         print ") | ";
       }
-      print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
+      print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
     }
     if ($i+1 == $me_max_n[$f]) {
       print "      )\n";
@@ -533,13 +524,13 @@ EOF
       } else {
 	$n3 = $mec{$f}{$n1}{$n2};
       }
-      print "        ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
+      print "        ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3";
       if ($j+1 == $me_max_n[$f]) {
 	print " ";
       } else {
 	print ",";
       }
-      print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
+      print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
     }
     print "      }";
     if ($i+1 == $me_max_n[$f]) {
@@ -787,11 +778,11 @@ EOF
   for ($i=0; $i<$me_n[$f]; $i++) {
     $n = $men[$f][$i];
     if ($mespecial{$f}{$n} eq "ASSIGNED") {
-      print "          case ME_${VTI}_$n:\n";
+      print "          case ME_$vti[$f]_$n:\n";
       print "            x->process(this);\n";
       print "            break;\n";
     } elsif (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
-      print "          case ME_${VTI}_$n:\n";
+      print "          case ME_$vti[$f]_$n:\n";
       print "            // Conditions: ";
       for ($j=0; $j<$pc_n[$f]; $j++) {
         if ($mepc{$f}{$men[$f][$i]}{$pcn[$f][$j]}) {
@@ -802,13 +793,13 @@ EOF
       for ($j=0; $j<$pc_n[$f]; $j++) {
 	if ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j]}) {
 	  # Found initial entry (plus one for stopping)
-	  print "            x->process(this,PC_${VTI}_" . $val2pc[$f][$j] . ",";
+	  print "            x->process(this,PC_$vti[$f]_" . $val2pc[$f][$j] . ",";
 	  # Look for all connected entries
 	  while ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j+1]}) {
 	    $j++;
           }
 	  # Found last entry
-	  print "PC_${VTI}_" . $val2pc[$f][$j] . ",ME_${VTI}_$n);\n";
+	  print "PC_$vti[$f]_" . $val2pc[$f][$j] . ",ME_$vti[$f]_$n);\n";
 	}
       }
       print "            break;\n";

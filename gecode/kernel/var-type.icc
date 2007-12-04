@@ -39,7 +39,7 @@
 
 #ifdef GECODE_HAVE_INT_VARS
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int {
 
 #ifdef GECODE_HAVE_INT_VARS
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -131,7 +131,7 @@ namespace Gecode { namespace Int {
 
 #ifdef GECODE_HAVE_SET_VARS
 
-namespace Gecode { namespace Set {
+namespace Gecode { namespace Set { 
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
    * \ingroup TaskActorSet
@@ -256,7 +256,7 @@ namespace Gecode { namespace Set {
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
 
-namespace Gecode { namespace CpltSet {
+namespace Gecode { namespace CpltSet { 
   /**
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
    * \ingroup TaskActorCpltSet
@@ -298,7 +298,7 @@ namespace Gecode { namespace CpltSet {
 
 #ifdef GECODE_HAVE_INT_VARS
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int {
 
 #else
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -342,7 +342,7 @@ namespace Gecode { namespace Int {
 
 #ifdef GECODE_HAVE_INT_VARS
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -367,7 +367,7 @@ namespace Gecode { namespace Int {
 
 #else
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -386,7 +386,7 @@ namespace Gecode { namespace Int {
 
 #ifdef GECODE_HAVE_SET_VARS
 
-namespace Gecode { namespace Set {
+namespace Gecode { namespace Set { 
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -411,7 +411,7 @@ namespace Gecode { namespace Set {
 
 #else
 
-namespace Gecode { namespace Set {
+namespace Gecode { namespace Set { 
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -430,7 +430,7 @@ namespace Gecode { namespace Set {
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
 
-namespace Gecode { namespace CpltSet {
+namespace Gecode { namespace CpltSet { 
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
@@ -455,7 +455,7 @@ namespace Gecode { namespace CpltSet {
 
 #else
 
-namespace Gecode { namespace CpltSet {
+namespace Gecode { namespace CpltSet { 
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
