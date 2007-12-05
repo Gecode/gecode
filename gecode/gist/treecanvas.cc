@@ -514,8 +514,17 @@ namespace Gecode { namespace Gist {
     if (mutex.tryLock(50)) {
       QPainter painter(this);
       painter.setRenderHint(QPainter::Antialiasing);
-      BoundingBox bb = root->getBoundingBox();
 
+      if (heatView) {
+        // Draw legend
+        for (int i=0; i<180; i+=20) {
+          int heat = (240 + i) % 360;
+          painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
+          painter.drawRect(20+i, 20, 20, 20);
+        }
+      }
+
+      BoundingBox bb = root->getBoundingBox();
       QRect origClip = event->rect();
       painter.scale(scale,scale);
       painter.translate(xtrans, 0);
