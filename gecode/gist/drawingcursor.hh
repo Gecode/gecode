@@ -55,6 +55,9 @@ namespace Gecode { namespace Gist {
     /// Whether to draw heat view
     bool heatView;
     
+    /// Test if current node is clipped
+    bool isClipped(void);
+  public:
     /// The color for failed nodes
     static const QColor red;
     /// The color for solved nodes
@@ -63,10 +66,6 @@ namespace Gecode { namespace Gist {
     static const QColor blue;
     /// The color for the best solution
     static const QColor orange;
-    
-    /// Test if current node is clipped
-    bool isClipped(void);
-  public:
     /// Constructor
     DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                   bool heat,

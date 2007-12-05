@@ -53,7 +53,13 @@ namespace Gecode { namespace Gist {
     /// Whether search is currently running
     bool isSearching;
     /// Status bar label for number of solutions
-    QLabel* statisticsLabel;
+    QLabel* solvedLabel;
+    /// Status bar label for number of failures
+    QLabel* failedLabel;
+    /// Status bar label for number of choices
+    QLabel* choicesLabel;
+    /// Status bar label for number of open nodes
+    QLabel* openLabel;
   protected Q_SLOTS:
     void statusChanged(const Statistics& stats, bool finished);
     void about(void);

@@ -36,8 +36,59 @@
 
 #include "gecode/gist/mainwindow.hh"
 #include "gecode/gist/preferences.hh"
+#include "gecode/gist/drawingcursor.hh"
 
 namespace Gecode { namespace Gist {
+  
+  class StatusBarNode : public QWidget {
+  public:
+    StatusBarNode(NodeStatus s) : status(s) {
+      setMinimumSize(22,22);
+      setMaximumSize(22,22);
+    }
+  protected:
+    NodeStatus status;
+    void paintEvent(QPaintEvent*) {
+      QPainter painter(this);
+      painter.setRenderHint(QPainter::Antialiasing);
+      int hw= width()/2;
+      int myx = hw+2; int myy = 2;
+      switch (status) {
+        case SOLVED:
+          {
+            QPoint points[4] = {QPoint(myx,myy),
+                                QPoint(myx+8,myy+8),
+                                QPoint(myx,myy+16),
+                                QPoint(myx-8,myy+8)
+                               };
+            painter.setBrush(QBrush(DrawingCursor::green));
+            painter.drawConvexPolygon(points, 4);            
+          }
+          break;
+        case FAILED:
+          {
+            painter.setBrush(QBrush(DrawingCursor::red));
+            painter.drawRect(myx-6, myy+2, 12, 12);
+          }
+          break;
+        case BRANCH:
+          {
+            painter.setBrush(QBrush(DrawingCursor::blue));
+            painter.drawEllipse(myx-8, myy, 16, 16);            
+          }
+          break;
+        case UNDETERMINED:
+          {
+            painter.setBrush(QBrush(Qt::white));
+            painter.drawEllipse(myx-8, myy, 16, 16);            
+          }
+          break;
+        default:
+          break;
+      }
+      
+    }
+  };
   
   GistMainWindow::GistMainWindow(Space* root, Better* b,
                                  Gist::Inspector* gi)
@@ -102,8 +153,23 @@ namespace Gecode { namespace Gist {
 #endif
 
     // Set up status bar
-    statisticsLabel = new QLabel("S: 0 F: 0 C: 0 U: 0");
-    statusBar()->addPermanentWidget(statisticsLabel);
+    QWidget* stw = new QWidget();
+    QHBoxLayout* hbl = new QHBoxLayout();
+    hbl->setContentsMargins(0,0,0,0);
+    hbl->addWidget(new StatusBarNode(SOLVED));
+    solvedLabel = new QLabel("0");
+    hbl->addWidget(solvedLabel);
+    hbl->addWidget(new StatusBarNode(FAILED));
+    failedLabel = new QLabel("0");
+    hbl->addWidget(failedLabel);
+    hbl->addWidget(new StatusBarNode(BRANCH));
+    choicesLabel = new QLabel("0");
+    hbl->addWidget(choicesLabel);
+    hbl->addWidget(new StatusBarNode(UNDETERMINED));
+    openLabel = new QLabel("     0");
+    hbl->addWidget(openLabel);
+    stw->setLayout(hbl);
+    statusBar()->addPermanentWidget(stw);
     
     isSearching = false;
     
@@ -132,11 +198,10 @@ namespace Gecode { namespace Gist {
       statusBar()->showMessage("Searching");
       isSearching = true;
     }
-    statisticsLabel->setText(QString("S: %1 F: %2 C: %3 U: %4")
-      .arg(stats.solutions, 4)
-      .arg(stats.failures, 4)
-      .arg(stats.choices, 4)
-      .arg(stats.undetermined, 4));
+    solvedLabel->setText(QString::number(stats.solutions));
+    failedLabel->setText(QString::number(stats.failures));
+    choicesLabel->setText(QString::number(stats.choices));
+    openLabel->setText(QString::number(stats.undetermined));
   }
 
   void
