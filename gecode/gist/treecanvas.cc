@@ -93,6 +93,8 @@ namespace Gecode { namespace Gist {
     bb = root->getBoundingBox();
     int w = (int)((bb.right-bb.left+20)*scale);
     int h = (int)((bb.depth+1)*38*scale);
+    if (heatView)
+      w = std::max(w, 300);
     resize(w,h);
     emit scaleChanged(scale0);
     QWidget::update();
@@ -106,6 +108,8 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::layoutDone(int w, int h) {
+    if (heatView)
+      w = std::max(w, 300);
     resize(w,h);
     QWidget::update();
   }
@@ -280,7 +284,8 @@ namespace Gecode { namespace Gist {
     DistributeCursor dc(root, min, max);
     PreorderNodeVisitor<DistributeCursor> vd(dc);
     while (vd.next());
-    heatView = true;
+    if (!heatView)
+      toggleHeatView();
     QWidget::update();    
   }
 
@@ -293,6 +298,9 @@ namespace Gecode { namespace Gist {
     pal.setColor(QPalette::Window, heatView ? Qt::black : Qt::white);
     setPalette(pal);
     sa->setPalette(pal);
+    if (heatView) {
+      setMinimumWidth(300);
+    }
     QWidget::update();
   }
 
@@ -516,16 +524,24 @@ namespace Gecode { namespace Gist {
       painter.setRenderHint(QPainter::Antialiasing);
 
       if (heatView) {
+        painter.setPen(Qt::white);
+        painter.drawText(QRect(0,5,40,15), Qt::AlignRight, tr("cold"));
+        painter.setPen(Qt::black);
         // Draw legend
-        for (int i=0; i<180; i+=20) {
+        for (int i=0; i<180; i+=10) {
           int heat = (240 + i) % 360;
           painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-          painter.drawRect(20+i, 20, 20, 20);
+          painter.drawRect(45+i, 5, 10, 15);
         }
+        painter.setPen(Qt::white);
+        painter.drawText(QRect(230,5,40,15), Qt::AlignLeft, tr("hot"));
+        painter.setPen(Qt::black);
+        painter.translate(0, 10);
       }
 
       BoundingBox bb = root->getBoundingBox();
       QRect origClip = event->rect();
+      painter.translate(0, 20);
       painter.scale(scale,scale);
       painter.translate(xtrans, 0);
       QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),

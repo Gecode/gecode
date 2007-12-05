@@ -104,10 +104,10 @@ namespace Gecode { namespace Gist {
   DrawingCursor::processCurrentNode(void) {
     Gist::VisualNode* n = node();
     int parentX = x - (n->getOffset());
-    int parentY = 38 + y - 38 + 20;
+    int parentY = y - 38 + 20;
   
     int myx = x;
-    int myy = 38 + y;
+    int myy = y;
 
     // Calculate HSV hue level from heat
     int heat = (240 + (std::abs(n->getHeat()) % 180)) % 360;
