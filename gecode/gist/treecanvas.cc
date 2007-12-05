@@ -53,10 +53,12 @@ namespace Gecode { namespace Gist {
 
   Inspector::~Inspector(void) {}
     
-  TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, Better* b, QWidget* parent)
+  TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, Better* b,
+                                 QWidget* parent)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
-    , inspect(NULL), heatView(false), autoHideFailed(true), autoZoom(false)
+    , inspect(NULL), heatView(false)
+    , autoHideFailed(true), autoZoom(false)
     , refresh(500) {
       QMutexLocker locker(&mutex);
       root = new VisualNode(rootSpace, b);
@@ -65,7 +67,8 @@ namespace Gecode { namespace Gist {
       pathHead = root;
       scale = 1.0;
 
-      setBackgroundRole(QPalette::Base);
+      setAutoFillBackground(true);
+
       connect(&searcher, SIGNAL(update()), this, SLOT(update()));
       connect(&searcher, SIGNAL(statusChanged(bool)), this, 
               SLOT(statusChanged(bool)));
@@ -284,6 +287,12 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::toggleHeatView(void) {
     heatView = !heatView;
+    QPalette pal(palette());
+    QScrollArea* sa = 
+      static_cast<QScrollArea*>(parentWidget()->parentWidget());
+    pal.setColor(QPalette::Window, heatView ? Qt::black : Qt::white);
+    setPalette(pal);
+    sa->setPalette(pal);
     QWidget::update();
   }
 
@@ -508,11 +517,6 @@ namespace Gecode { namespace Gist {
       BoundingBox bb = root->getBoundingBox();
 
       QRect origClip = event->rect();
-      if (heatView) {
-        painter.setBrush(Qt::black);
-        painter.drawRect(origClip.x(),origClip.y(),
-                         origClip.width(), origClip.height());
-      }
       painter.scale(scale,scale);
       painter.translate(xtrans, 0);
       QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
@@ -773,13 +777,18 @@ namespace Gecode { namespace Gist {
     QGridLayout* layout = new QGridLayout(this);    
 
     QScrollArea* scrollArea = new QScrollArea(this);
-    canvas = new TreeCanvasImpl(root, b, this);
-    canvas->setObjectName("canvas");
     
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setAlignment(Qt::AlignHCenter);
-    scrollArea->setBackgroundRole(QPalette::Base);
+    scrollArea->setAutoFillBackground(true);
+    QPalette myPalette(scrollArea->palette());
+    myPalette.setColor(QPalette::Window, Qt::white);
+    scrollArea->setPalette(myPalette);
+    canvas = new TreeCanvasImpl(root, b, this);
+    canvas->setPalette(myPalette);
+    canvas->setObjectName("canvas");
+
     scrollArea->setWidget(canvas);
 
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
