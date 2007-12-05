@@ -517,7 +517,7 @@ if ($gen_header) {
     print <<EOF
   private:
     /// Link to next variable, used for disposal
-    VarImpBase* _nextDispose;
+    $class[$f]* _next_d;
 EOF
 ;
   }
@@ -563,10 +563,8 @@ EOF
 
   if ($dispose[$f]) {
   print <<EOF
-    /// Return link to next variable, used for dispose
-    $class[$f]* nextDispose(void) const;
-    /// Set link to next variable, used for dispose
-    void nextDispose($class[$f]* next);
+    /// Return link to next variable to be disposed
+    $class[$f]* next_d(void) const;
 EOF
 ;
   }
@@ -598,19 +596,19 @@ if ($dispose[$f]) {
 
   forceinline
   $class[$f]::$class[$f](Space* home)
-    : $base[$f](home), _nextDispose(home->varsDisposeList<$conf[$f]>()) {
-    home->varsDisposeList<$conf[$f]>(this);
+    : $base[$f](home) {
+     _next_d = static_cast<$class[$f]*>(vars_d(home)); vars_d(home,this);
   }
 
   forceinline
   $class[$f]::$class[$f](Space* home, bool share, $class[$f]\& x)
-    : $base[$f](home,share,x), _nextDispose(home->varsDisposeList<$conf[$f]>()) {
-    home->varsDisposeList<$conf[$f]>(this);
+    : $base[$f](home,share,x) {
+     _next_d = static_cast<$class[$f]*>(vars_d(home)); vars_d(home,this);
   }
 
   forceinline $class[$f]*
-  $class[$f]::nextDispose(void) const {
-    return static_cast<$class[$f]*>(_nextDispose);
+  $class[$f]::next_d(void) const {
+    return _next_d;
   }
 
 EOF
@@ -685,10 +683,9 @@ EOF
       print "      using namespace $namespace[$f];\n";
     }
     print <<EOF
-      $base[$f]* x = 
-        static_cast<$base[$f]*>(vars_pu[$conf[$f]::idx_pu]);
+      $base[$f]* x = $base[$f]::vars_pu(this);
       if (x != NULL) {
-        vars_pu[$conf[$f]::idx_pu] = NULL;
+        $base[$f]::vars_pu(this,NULL);
 EOF
 ;
 
@@ -791,10 +788,9 @@ EOF
       print "      using namespace $namespace[$f];\n";
     }
     print <<EOF
-      $base[$f]* x = 
-        static_cast<$base[$f]*>(vars_pu[$conf[$f]::idx_pu]);
+      $base[$f]* x = $base[$f]::vars_pu(this);
       if (x != NULL) {
-        vars_pu[$conf[$f]::idx_pu] = NULL;
+        $base[$f]::vars_pu(this,NULL);
         do {
           x->forward()->update(x,s); x = x->next();
         } while (x != NULL);

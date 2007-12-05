@@ -332,6 +332,16 @@ namespace Gecode {
     /// Execute advisors during notification
     bool advise(Space* home, const Delta* d);
 
+  protected:
+    /// Return reference to variables (process and update)
+    static VarImp<VIC>* vars_pu(Space* home);
+    /// Set reference to variables (process and update)
+    static void vars_pu(Space* home, VarImp<VIC>* x);
+    /// Return reference to variables (dispose)
+    static VarImp<VIC>* vars_d(Space* home);
+    /// Set reference to variables (dispose)
+    static void vars_d(Space* home, VarImp<VIC>* x);
+
   public:
     /// Creation
     VarImp(Space* home);
@@ -999,9 +1009,17 @@ namespace Gecode {
     /// Keep variables during copying without index structure
     VarImpBase* vars_noidx;
     /// Entries for processing and updating variables
-    VarImpBase* vars_pu[IDX_PU_ALL];
+    VarImpBase* _vars_pu[IDX_PU_ALL];
     /// Entries for disposing variables
-    VarImpBase* vars_d[IDX_D_ALL];
+    VarImpBase* _vars_d[IDX_D_ALL];
+    /// Return reference to variables (process and update)
+    template <class VIC> VarImpBase* vars_pu(void) const;
+    /// Set reference to variables (process and update)
+    template <class VIC> void vars_pu(VarImpBase* x);
+    /// Return reference to variables (dispose)
+    template <class VIC> VarImpBase* vars_d(void) const;
+    /// Set reference to variables (dispose)
+    template <class VIC> void vars_d(VarImpBase* x);
     /// Process all modified variables (inlined version)
     void process_i(void);
     /// Process all modified variables (outlined version)
@@ -1297,10 +1315,6 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT 
     size_t allocated(void) const;
-    /// Return list of variables that need deletion
-    template <class VIC> VarImpBase* varsDisposeList(void);
-    /// Set list of variables that need deletion
-    template <class VIC> void varsDisposeList(VarImpBase* v);
     //@}
   };
 
@@ -1362,15 +1376,26 @@ namespace Gecode {
 
   template <class VIC>
   forceinline VarImpBase*
-  Space::varsDisposeList(void) {
-    return vars_d[VIC::idx_d];
+  Space::vars_pu(void) const {
+    return _vars_pu[VIC::idx_pu];
+  }
+  template <class VIC>
+  forceinline void
+  Space::vars_pu(VarImpBase* x) {
+    _vars_pu[VIC::idx_pu] = x;
   }
 
   template <class VIC>
-  forceinline void
-  Space::varsDisposeList(VarImpBase* v) {
-    vars_d[VIC::idx_d] = v;
+  forceinline VarImpBase*
+  Space::vars_d(void) const {
+    return _vars_d[VIC::idx_d];
   }
+  template <class VIC>
+  forceinline void
+  Space::vars_d(VarImpBase* x) {
+    _vars_d[VIC::idx_pu] = x;
+  }
+
 
   /*
    * Space allocated entities: Actors, variable implementations, and advisors
@@ -1824,6 +1849,30 @@ namespace Gecode {
 
   template <class VIC>
   forceinline VarImp<VIC>*
+  VarImp<VIC>::vars_pu(Space* home) {
+    return static_cast<VarImp<VIC>*>(home->vars_pu<VIC>());
+  }
+
+  template <class VIC>
+  forceinline void
+  VarImp<VIC>::vars_pu(Space* home, VarImp<VIC>* x) {
+    home->vars_pu<VIC>(x);
+  }
+
+  template <class VIC>
+  forceinline VarImp<VIC>*
+  VarImp<VIC>::vars_d(Space* home) {
+    return static_cast<VarImp<VIC>*>(home->vars_d<VIC>());
+  }
+
+  template <class VIC>
+  forceinline void
+  VarImp<VIC>::vars_d(Space* home, VarImp<VIC>* x) {
+    home->vars_d<VIC>(x);
+  }
+
+  template <class VIC>
+  forceinline VarImp<VIC>*
   VarImp<VIC>::next(void) {
     return static_cast<VarImp<VIC>*>(VarImpBase::next());
   }
@@ -1849,7 +1898,7 @@ namespace Gecode {
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
-      reg = &home->vars_pu[idx_pu];
+      reg = &home->_vars_pu[VIC::idx_pu];
     }
     // Set forwarding pointer
     x.u.fwd = this;
@@ -2228,8 +2277,7 @@ namespace Gecode {
       u.free_me ^= VIC::mec(new_me,static_cast<ModEvent>
                             (u.free_me & me_bits_mask));
     } else {
-      _next = static_cast<VarImp<VIC>*>(home->vars_pu[idx_pu]);
-      home->vars_pu[idx_pu] = this;
+      _next = vars_pu(home); vars_pu(home,this);
       u.free_me = (u.free_me & ~me_bits_mask) | new_me;
     }
     if (idx[pc_max+1] != idx[pc_max+2]) {
@@ -2243,8 +2291,7 @@ namespace Gecode {
   forceinline bool
   VarImp<VIC>::notify(Space* home, Delta* d) {
     assert(!modified());
-    _next = static_cast<VarImp<VIC>*>(home->vars_pu[idx_pu]);
-    home->vars_pu[idx_pu] = this;
+    _next = vars_pu(home); vars_pu(home,this);
     if (idx[pc_max+1] != idx[pc_max+2]) {
       d->me = ME_GEN_ASSIGNED;
       return advise(home,d);
@@ -2304,7 +2351,7 @@ namespace Gecode {
     VarType* x = static_cast<VarType*>(_x);
     do {
       x->dispose(home);
-      x = static_cast<VarType*>(x->nextDispose());
+      x = static_cast<VarType*>(x->next_d());
     } while (x != NULL);
   }
 

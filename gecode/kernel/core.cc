@@ -61,9 +61,9 @@ namespace Gecode {
     // Initialize variable entry points
     vars_noidx = NULL;
     for (int i=0; i<IDX_PU_ALL; i++)
-      vars_pu[i] = NULL;
+      _vars_pu[i] = NULL;
     for (int i=0; i<IDX_D_ALL; i++)
-      vars_d[i] = NULL;
+      _vars_d[i] = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
@@ -141,8 +141,8 @@ namespace Gecode {
     }
     // Delete variables that were registered for deletion
     for (int i=IDX_D_ALL; i--;)
-      if (vars_d[i] != NULL)
-        vd[i]->dispose(this, vars_d[i]);
+      if (_vars_d[i] != NULL)
+        vd[i]->dispose(this, _vars_d[i]);
   }
 
 
@@ -384,9 +384,9 @@ namespace Gecode {
     // Initialize variable entry points
     vars_noidx = NULL;
     for (int i=0; i<IDX_PU_ALL; i++)
-      vars_pu[i] = NULL;
+      _vars_pu[i] = NULL;
     for (int i=0; i<IDX_D_ALL; i++)
-      vars_d[i] = NULL;
+      _vars_d[i] = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
