@@ -90,12 +90,8 @@ namespace Gecode { namespace Gist {
   StepDesc::StepDesc(int steps) : noOfSteps(steps) { }
   
   SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
-  : vn(varName), r(r0), v(v0), step(false), alt(-1) { }
+  : vn(varName), r(r0), v(v0) { }
 
-  // TODO nikopp: ugly
-  SpecialDesc::SpecialDesc(int alt0)
-  : vn(""), r(IRT_EQ), v(-1), step(true), alt(alt0) { }
-  
   BestNode::BestNode(SpaceNode* s0, Better* b0) : s(s0), b(b0) {}
   
   int
@@ -176,33 +172,30 @@ namespace Gecode { namespace Gist {
             break;
         case BK_STEP:
             {
-              curSpace->step();
+#ifdef GECODE_GIST_EXPERIMENTAL
+              if(b.desc.step->noOfSteps >0) {
+                for (int i = 0; i < b.desc.step->noOfSteps; ++i) {
+                  curSpace->step();
+                }
+              }
+              else {
+                curSpace->commit(middleNode->desc.branch, b.alternative);
+              }
+#endif
             }
             break;
         case BK_SPECIAL_IN:
             {
-
 #ifdef GECODE_GIST_EXPERIMENTAL
+              if(b.desc.special != NULL) {
 
-              if(b.desc.special->step) {
-                if(b.desc.special->alt == -1)
-                  curSpace->step();
-                else {
-                  curSpace->commit(middleNode->desc.branch, b.desc.special->alt);
-                }
-              }
-              else {
-                if(b.desc.special != NULL) {
+                const char* vName = b.desc.special->vn.c_str();
 
-                  const char* vName = b.desc.special->vn.c_str();
+                IntVar iv = IntVar(Int::IntView(static_cast<Int::IntVarImp*> (vm.var(vName))));
 
-                  IntVar iv = IntVar(Int::IntView(static_cast<Int::IntVarImp*> (vm.var(vName))));
-
-                  rel(curSpace, iv, b.desc.special->r, b.desc.special->v);
-                }
+                rel(curSpace, iv, b.desc.special->r, b.desc.special->v);
               }
 #endif
-
             }
             break;
         case BK_SPECIAL_OUT:
@@ -413,8 +406,6 @@ namespace Gecode { namespace Gist {
 
   bool
   SpaceNode::isStepNode(void) {
-    if(getStatus() == SPECIAL)
-      return desc.special->step;
     return getStatus() == STEP;
   }
 

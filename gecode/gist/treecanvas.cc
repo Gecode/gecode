@@ -716,21 +716,15 @@ namespace Gecode { namespace Gist {
       if(currentNode != root) {
         Space* inputSpace = currentNode->getInputSpace();
         int alt = currentNode->getAlternative();
-        NodeStatus status = currentNode->getStatus();
         
         VisualNode* curNode = currentNode;
         VisualNode* parent = static_cast<VisualNode*>(currentNode->getParent());
         
         setCurrentNode(parent);
-        
-        VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
 
-        newChild->setStatus(SPECIAL);
-        newChild->setSpecialDesc(new SpecialDesc(alt));
-        newChild->setMetaStatus(status);
-        newChild->setFirstStepNode(true);
-        newChild->setNumberOfChildren(0);
-        newChild->setNoOfOpenChildren(0);
+        VisualNode* newChild =
+          curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(0),
+                                   true,false);
 
         currentNode->setChild(alt, newChild);
 

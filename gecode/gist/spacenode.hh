@@ -65,10 +65,7 @@ namespace Gecode { namespace Gist {
     const std::string vn;
     const IntRelType r;
     const int v;
-    const bool step;
-    const int alt;
     SpecialDesc(std::string varName, IntRelType r0, int v0);
-    SpecialDesc(int alt0 = -1);
   };
   
   /// Statistics about the search tree
