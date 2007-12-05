@@ -47,21 +47,21 @@ namespace Gecode { namespace Gist {
   VisualNode::VisualNode(int alternative, BestNode* b)
   : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
+#ifdef GECODE_GIST_EXPERIMENTAL
+  , expanded(false), realParent(NULL)
+#endif
   , heat(0)
   , shape(NULL), box(0,0,0)
-#ifdef GECODE_GIST_EXPERIMENTAL
-  , expanded(false)
-#endif
   {}
 
   VisualNode::VisualNode(Space* root, Better* b)
   : SpaceNode(root, b), offset(0), dirty(true), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
+#ifdef GECODE_GIST_EXPERIMENTAL
+  , expanded(false), realParent(NULL)
+#endif
   , heat(0)
   , shape(NULL), box(0,0,0)
-#ifdef GECODE_GIST_EXPERIMENTAL
-  , expanded(false)
-#endif
   {}
 
   VisualNode::~VisualNode(void) {
@@ -163,6 +163,36 @@ namespace Gecode { namespace Gist {
     VisualNode::setExpanded(bool exp) {
       expanded = exp;
     }
+
+    void
+    VisualNode::setRealParent(VisualNode* parent) {
+      realParent = parent;
+    }
+    
+    VisualNode*
+    VisualNode::getRealParent(void) {
+      return realParent;
+    }
+
+    void
+    VisualNode::setRealAlternative(int alternative) {
+      realAlternative = alternative;
+    }
+
+    int
+    VisualNode::getRealAlternative(void) {
+      return realAlternative;
+    }
+
+    void
+    VisualNode::addPit(int pit) {
+      pits << pit;
+    }
+    
+    QList<int>
+    VisualNode::getPits(void) {
+      return pits;
+    }
 #endif
 
   void
@@ -224,6 +254,17 @@ namespace Gecode { namespace Gist {
       return ret;
     }
 
+
+  VisualNode*
+  VisualNode::stealChild(int i) {
+    VisualNode* ret = static_cast<VisualNode*>(getChild(i));
+    // replace with dummy child
+    VisualNode* dummy = new VisualNode(i,curBest);
+    children[i] = dummy;
+    dummy->parent = this;
+    dummy->dirtyUp();
+    return ret;
+  }
 #endif
 
   void

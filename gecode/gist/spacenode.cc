@@ -442,7 +442,6 @@ namespace Gecode { namespace Gist {
       return lastStep;
     return false;
   }
-
 #endif
 
   int

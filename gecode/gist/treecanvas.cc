@@ -473,7 +473,11 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::saveCurrentNode(void) {
     QMutexLocker locker(&mutex);
     nodeMap << currentNode;
-    emit newPointInTime(nodeMap.size() - 1);
+    int newPit = nodeMap.size() - 1;
+#ifdef GECODE_GIST_EXPERIMENTAL
+    currentNode->addPit(newPit);
+#endif
+    emit newPointInTime(newPit);
   }
 
   void
@@ -738,6 +742,8 @@ namespace Gecode { namespace Gist {
         
         VisualNode* curNode = currentNode;
         VisualNode* parent = static_cast<VisualNode*>(currentNode->getParent());
+        curNode->setRealParent(parent);
+        curNode->setRealAlternative(alt);
         
         setCurrentNode(parent);
 
@@ -792,8 +798,29 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::collapseCurrentNode(void) {
     QMutexLocker locker(&mutex);
-    
-    
+    VisualNode* parent = static_cast<VisualNode*>(currentNode->getParent());
+    (void) parent->stealChild(0);
+    VisualNode* realParent = currentNode->getRealParent();
+    VisualNode* oldChild = realParent->getChild(currentNode->getRealAlternative());
+    QList<int> pits = oldChild->getPits();
+    QList<VisualNode*> nodeStack;
+    nodeStack.push_front(oldChild);
+    VisualNode* curNode;
+    while(!nodeStack.isEmpty()) {
+      curNode = nodeStack.takeFirst();
+      for (int i = 0; i < curNode->getNumberOfChildren(); ++i) {
+        nodeStack.push_front(curNode->getChild(i));
+      }
+      pits += curNode->getPits();
+    }
+    delete oldChild;
+    while(!pits.isEmpty()) {
+      nodeMap[pits.takeFirst()] = NULL;
+    }
+    realParent->setChild(currentNode->getRealAlternative(), currentNode);
+    currentNode->setExpanded(false);
+    currentNode->dirtyUp();
+    update();
   }
 #endif
 

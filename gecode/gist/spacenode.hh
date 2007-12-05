@@ -195,7 +195,6 @@ namespace Gecode { namespace Gist {
     void setHasFailedChildren(bool b);
     /// Whether the subtree of this node is known to contain solutions
     void setHasSolvedChildren(bool b);
-    
 #endif
 
     /** \brief Compute and return the number of children

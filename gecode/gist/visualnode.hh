@@ -41,6 +41,9 @@
 #include "gecode/gist/shapelist.hh"
 #include "gecode/kernel.hh"
 #include <vector>
+#ifdef GECODE_GIST_EXPERIMENTAL
+#include <QList>
+#endif
 
 namespace Gecode { namespace Gist {
 
@@ -66,6 +69,12 @@ namespace Gecode { namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
     /// Whether the node is expanded
     bool expanded;
+    /// The parent of the node before expansion
+    VisualNode* realParent;
+    /// The alternative of the node before expansion
+    int realAlternative;
+    /// The points in time at which the node was inspected
+    QList<int> pits;
 #endif
 
     /// Heat value 
@@ -128,6 +137,18 @@ namespace Gecode { namespace Gist {
     bool isExpanded(void);
     /// Set the node to be \a expanded
     void setExpanded(bool expanded);
+    /// Set the node's real parent
+    void setRealParent(VisualNode* parent);
+    /// Get the node's real parent
+    VisualNode* getRealParent(void);
+    /// Set the node's real alternative
+    void setRealAlternative(int alternative);
+    /// Get the node's real alternative
+    int getRealAlternative(void);
+    /// Add a new point in time
+    void addPit(int pit);
+    /// Get the list of points in time
+    QList<int> getPits(void);
 #endif
 
     /// Return heat value
@@ -155,6 +176,8 @@ namespace Gecode { namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
     /// Create a child step node
     VisualNode* createStepChild(int alt, StepDesc* d, bool fstStep, bool lstStep);
+    /// Steal child node no \a n
+    VisualNode* stealChild(int n);
 #endif
     /// Signal that the status has changed
     virtual void changedStatus();

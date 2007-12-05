@@ -77,12 +77,12 @@ namespace Gecode { namespace Gist {
 
   void
   Node::addChild(Node* child) {
-	if(noOfChildren == -1)
-		setNumberOfChildren(0);
-	
+    if(noOfChildren == -1)
+      setNumberOfChildren(0);
+
     child->parent = this;
     child->alternative = noOfChildren;
-	children.resize(++noOfChildren);
+    children.resize(++noOfChildren);
     children[noOfChildren-1] = child;
   }
 
