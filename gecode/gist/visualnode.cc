@@ -200,6 +200,7 @@ namespace Gecode { namespace Gist {
       ret->setHasSolvedChildren(hasSolvedChildren());
       ret->setNumberOfChildren(0);
       ret->setNoOfOpenChildren(0);
+      ret->setPathInfos(isOnPath(),0,false);
       return ret;
     }
 

@@ -630,7 +630,6 @@ namespace Gecode { namespace Gist {
   }
   
 #ifdef GECODE_GIST_EXPERIMENTAL
-
   void
   TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm,
                               int& nextPointInTime) {
@@ -783,7 +782,6 @@ namespace Gecode { namespace Gist {
     update();
     centerCurrentNode();
   }
-
 #endif
 
   TreeCanvas::TreeCanvas(Space* root, Better* b,
@@ -812,13 +810,11 @@ namespace Gecode { namespace Gist {
     scaleBar->setValue(100);
     
 #ifdef GECODE_GIST_EXPERIMENTAL
-
     timeBar = new QSlider(Qt::Horizontal, this);
     timeBar->setObjectName("timeBar");
     timeBar->setMinimum(0);
     timeBar->setMaximum(0);
     timeBar->setValue(0);
-    
 #endif
 
     inspectCN = new QAction("Inspect", this);
@@ -918,7 +914,6 @@ namespace Gecode { namespace Gist {
             SLOT(analyzeTree()));
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-
     addChild = new QAction("Add child node", this);
     addChild->setShortcut(QKeySequence("Shift+C"));
     connect(addChild, SIGNAL(triggered()), canvas, SLOT(addChild()));
@@ -930,7 +925,6 @@ namespace Gecode { namespace Gist {
     expandCurrentNode = new QAction("Expand/Collapse", this);
     expandCurrentNode->setShortcut(QKeySequence("Shift+E"));
     connect(expandCurrentNode, SIGNAL(triggered()), canvas, SLOT(expandCurrentNode()));
-
 #endif
 
     addAction(inspectCN);
@@ -959,11 +953,9 @@ namespace Gecode { namespace Gist {
     addAction(inspectPath);
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-
     addAction(addChild);
     addAction(addFixpoint);
     addAction(expandCurrentNode);
-
 #endif
 
     contextMenu = new QMenu(this);
@@ -1000,11 +992,9 @@ namespace Gecode { namespace Gist {
     contextMenu->addAction(inspectPath);
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-
     contextMenu->addAction(addChild);
     contextMenu->addAction(addFixpoint);
     contextMenu->addAction(expandCurrentNode);
-
 #endif
     
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
@@ -1012,18 +1002,14 @@ namespace Gecode { namespace Gist {
     connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
     
 #ifdef GECODE_GIST_EXPERIMENTAL
-
     connect(timeBar, SIGNAL(valueChanged(int)), canvas, SLOT(markCurrentNode(int)));
-    
 #endif
     
     layout->addWidget(scrollArea, 0,0);
     layout->addWidget(scaleBar, 0,1);
     
 #ifdef GECODE_GIST_EXPERIMENTAL
-
     layout->addWidget(timeBar, 1,0);
-
 #endif
     
     setLayout(layout);

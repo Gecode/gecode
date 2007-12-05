@@ -208,13 +208,13 @@ namespace Gecode { namespace Gist {
 
     if (! n->isRoot()) {
       if (heatView) {
-        painter.setPen(Qt::gray);        
+        if (n->isOnPath())
+          painter.setPen(Qt::green);
+        else
+          painter.setPen(Qt::gray);        
       } else {
-        if (n->isOnPath()) {
-          QPen pen;
-          pen.setColor(Qt::red);
-          painter.setPen(pen);
-        }
+        if (n->isOnPath())
+          painter.setPen(Qt::red);
         else
           painter.setPen(Qt::black);
       }
@@ -329,13 +329,13 @@ namespace Gecode { namespace Gist {
         if(!n->isFirstStepNode()) {
 #endif
           if (heatView) {
-            painter.setPen(Qt::gray);        
+            if (n->isOnPath())
+              painter.setPen(Qt::green);
+            else
+              painter.setPen(Qt::gray);        
           } else {
-            if (n->isOnPath()) {
-              QPen pen;
-              pen.setColor(Qt::red);
-              painter.setPen(pen);
-            }
+            if (n->isOnPath())
+              painter.setPen(Qt::red);
             else
               painter.setPen(Qt::black);
           }
