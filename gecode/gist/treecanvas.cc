@@ -297,7 +297,8 @@ namespace Gecode { namespace Gist {
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
         {
-          (void) currentNode->getNumberOfChildNodes();
+          (void) currentNode->getNumberOfChildNodes(stats);
+          emit statusChanged(stats,true);
         }
         break;
     case FAILED:
