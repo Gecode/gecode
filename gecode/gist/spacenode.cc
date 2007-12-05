@@ -389,6 +389,8 @@ namespace Gecode { namespace Gist {
   SpaceNode::~SpaceNode(void) {
     if(status == SPECIAL)
       delete desc.special;
+    else if (status == STEP)
+      delete desc.step;
     else
       delete desc.branch;
     delete copy;
