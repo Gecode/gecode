@@ -92,7 +92,7 @@ namespace Gecode { namespace Gist {
     scale = ((double)scale0) / 100.0;
     bb = root->getBoundingBox();
     int w = (int)((bb.right-bb.left+20)*scale);
-    int h = (int)((bb.depth+1)*38*scale);
+    int h = (int)(40+bb.depth*38*scale);
     if (heatView)
       w = std::max(w, 300);
     resize(w,h);
@@ -194,7 +194,7 @@ namespace Gecode { namespace Gist {
     BoundingBox bb = t->root->getBoundingBox();
     
     int w = (int)((bb.right-bb.left+20)*t->scale);
-    int h = (int)((bb.depth+1)*38*t->scale);
+    int h = (int)(40+bb.depth*38*t->scale);
     t->xtrans = -bb.left+10;
     emit done(w,h);
   }
@@ -545,6 +545,7 @@ namespace Gecode { namespace Gist {
       painter.translate(xtrans, 0);
       QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
                  (int)(origClip.width()/scale), (int)(origClip.height()/scale));
+      painter.drawRect(0,0,10,10);
       DrawingCursor dc(root, painter, heatView, clip);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next());    
@@ -594,7 +595,7 @@ namespace Gecode { namespace Gist {
     if (event->button() == Qt::LeftButton) {
       VisualNode* n;
         n = root->findNode((int)(event->x()/scale-xtrans), 
-                           (int)((event->y()+30)/scale-38));
+                           (int)((event->y()-30)/scale));
         setCurrentNode(n);
       if (n != NULL) {
         event->accept();
