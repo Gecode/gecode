@@ -536,12 +536,11 @@ namespace Gecode { namespace Gist {
         painter.setPen(Qt::white);
         painter.drawText(QRect(230,5,40,15), Qt::AlignLeft, tr("hot"));
         painter.setPen(Qt::black);
-        painter.translate(0, 10);
       }
 
       BoundingBox bb = root->getBoundingBox();
       QRect origClip = event->rect();
-      painter.translate(0, 20);
+      painter.translate(0, 30);
       painter.scale(scale,scale);
       painter.translate(xtrans, 0);
       QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
@@ -563,7 +562,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     VisualNode* n;
       n = root->findNode((int)(event->x()/scale-xtrans), 
-                         (int)(event->y()/scale-38));
+                         (int)((event->y()+30)/scale-38));
       setCurrentNode(n);
     if (n != NULL) {
       emit contextMenu(event);
@@ -595,7 +594,7 @@ namespace Gecode { namespace Gist {
     if (event->button() == Qt::LeftButton) {
       VisualNode* n;
         n = root->findNode((int)(event->x()/scale-xtrans), 
-                           (int)(event->y()/scale-38));
+                           (int)((event->y()+30)/scale-38));
         setCurrentNode(n);
       if (n != NULL) {
         event->accept();
