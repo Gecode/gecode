@@ -545,7 +545,6 @@ namespace Gecode { namespace Gist {
       painter.translate(xtrans, 0);
       QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
                  (int)(origClip.width()/scale), (int)(origClip.height()/scale));
-      painter.drawRect(0,0,10,10);
       DrawingCursor dc(root, painter, heatView, clip);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next());    
@@ -720,6 +719,11 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::expandCurrentNode(void) {
     QMutexLocker locker(&mutex);
 
+    if(currentNode->isExpanded()) {
+      collapseCurrentNode();
+      return;
+    }
+    
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
     case STEP:
@@ -777,11 +781,19 @@ namespace Gecode { namespace Gist {
         if(curNode->isOpen())
           currentNode->openUp();
         setCurrentNode(curNode);
+        currentNode->setExpanded(true);
       }
       break;
     }
     update();
     centerCurrentNode();
+  }
+
+  void
+  TreeCanvasImpl::collapseCurrentNode(void) {
+    QMutexLocker locker(&mutex);
+    
+    
   }
 #endif
 

@@ -161,16 +161,16 @@ namespace Gecode {  namespace Gist {
     void setRefresh(int i);
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-    
    /// Add a new special node as child to the current node
     void addChild(void);
     /// Add a new fixpoint node as child to the current node if it is a special node
     void addFixpoint(void);
     /// Calls getVars(\a vm) on the space of the root node and \i is set to the most recent point in time
     void getRootVars(Gecode::Reflection::VarMap& vm, int& i);
-    /// Investigate the current node
+    /// Expand or collapse the current node
     void expandCurrentNode(void);
-    
+    /// Collapse the current node
+    void collapseCurrentNode(void);
 #endif
     
     /// Stop search and wait for it to finish

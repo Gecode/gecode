@@ -63,6 +63,10 @@ namespace Gecode { namespace Gist {
     /// The alternative that is next on the path
     int pathAlternative;
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+    /// Whether the node is expanded
+    bool expanded;
+#endif
 
     /// Heat value 
     int heat;
@@ -119,6 +123,13 @@ namespace Gecode { namespace Gist {
     /// Set the path attributes of the node
     void setPathInfos(bool onPath0, int pathAlternative0 = -1, bool lastOnPath0 = false);
     
+#ifdef GECODE_GIST_EXPERIMENTAL
+    /// Return whether node is expanded
+    bool isExpanded(void);
+    /// Set the node to be \a expanded
+    void setExpanded(bool expanded);
+#endif
+
     /// Return heat value
     int getHeat(void) const;
     /// Set heat value to \a h

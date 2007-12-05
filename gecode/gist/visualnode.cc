@@ -48,13 +48,21 @@ namespace Gecode { namespace Gist {
   : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
   , heat(0)
-  , shape(NULL), box(0,0,0) {}
+  , shape(NULL), box(0,0,0)
+#ifdef GECODE_GIST_EXPERIMENTAL
+  , expanded(false)
+#endif
+  {}
 
   VisualNode::VisualNode(Space* root, Better* b)
   : SpaceNode(root, b), offset(0), dirty(true), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
   , heat(0)
-  , shape(NULL), box(0,0,0) {}
+  , shape(NULL), box(0,0,0)
+#ifdef GECODE_GIST_EXPERIMENTAL
+  , expanded(false)
+#endif
+  {}
 
   VisualNode::~VisualNode(void) {
     delete shape;
@@ -144,6 +152,18 @@ namespace Gecode { namespace Gist {
     VisualNode* p = static_cast<VisualNode*> (parent);
     p->unPathUp();
   }
+  
+#ifdef GECODE_GIST_EXPERIMENTAL
+    bool
+    VisualNode::isExpanded(void) {
+      return expanded;
+    }
+
+    void
+    VisualNode::setExpanded(bool exp) {
+      expanded = exp;
+    }
+#endif
 
   void
   VisualNode::toggleHidden(void) {
