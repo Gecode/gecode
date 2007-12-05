@@ -989,59 +989,8 @@ namespace Gecode {
     template <class VarType> friend class VarDisposer;
     friend class SharedHandle;
   private:
-    MemoryManager   mm; ///< Performs memory management for space
-
-    /// First actor for forced disposal
-    Actor** d_fst;
-    /// Current actor for forced disposal
-    Actor** d_cur;
-    /// Last actor for forced disposal
-    Actor** d_lst;
-    /// Resize disposal array
-    GECODE_KERNEL_EXPORT void d_resize(void);
-
-    /**
-     * \name Processing variables
-     */
-    //@{
-    /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[IDX_D_ALL];
-    /// Keep variables during copying without index structure
-    VarImpBase* vars_noidx;
-    /// Entries for processing and updating variables
-    VarImpBase* _vars_pu[IDX_PU_ALL];
-    /// Entries for disposing variables
-    VarImpBase* _vars_d[IDX_D_ALL];
-    /// Return reference to variables (process and update)
-    template <class VIC> VarImpBase* vars_pu(void) const;
-    /// Set reference to variables (process and update)
-    template <class VIC> void vars_pu(VarImpBase* x);
-    /// Return reference to variables (dispose)
-    template <class VIC> VarImpBase* vars_d(void) const;
-    /// Set reference to variables (dispose)
-    template <class VIC> void vars_d(VarImpBase* x);
-    /// Process all modified variables (inlined version)
-    void process_i(void);
-    /// Process all modified variables (outlined version)
-    GECODE_KERNEL_EXPORT void process_o(void);
-    /// Update all cloned variables
-    void update(ActorLink** sub);
-    //@}
-
-    /**
-     * \name Pool of waiting propagators
-     */
-    //@{
-    /// Waiting propagators according to cost
-    ActorLink pool[PC_MAX+1];
-    /// Next cost level to check
-    int pool_next;
-    /// Put propagator \a p to pool
-    void pool_put(Propagator* p);
-    /// Get propagator \a p from pool
-    bool pool_get(Propagator*& p);
-    //@}
-
+    /// Performs memory management for space
+    MemoryManager mm; 
     /**
      * \brief Doubly linked list of all actors
      *
@@ -1073,9 +1022,60 @@ namespace Gecode {
     Branching* b_commit;
     /// Id of next branching to be created
     unsigned int branch_id;
+    /**
+     * \name Pool of waiting propagators
+     */
+    //@{
+    /// Next cost level to check
+    int pool_next;
+    /// Waiting propagators according to cost
+    ActorLink pool[PC_MAX+1];
+    /// Put propagator \a p to pool
+    void pool_put(Propagator* p);
+    /// Get propagator \a p from pool
+    bool pool_get(Propagator*& p);
+    //@}
+    /**
+     * \name Process, update, and dispose variables
+     */
+    //@{
+    /// Registered variable type disposers
+    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[IDX_D_ALL];
+    /// Entries for processing and updating variables
+    VarImpBase* _vars_pu[IDX_PU_ALL];
+    /// Entries for disposing variables
+    VarImpBase* _vars_d[IDX_D_ALL];
+    /// Return reference to variables (process and update)
+    template <class VIC> VarImpBase* vars_pu(void) const;
+    /// Set reference to variables (process and update)
+    template <class VIC> void vars_pu(VarImpBase* x);
+    /// Return reference to variables (dispose)
+    template <class VIC> VarImpBase* vars_d(void) const;
+    /// Set reference to variables (dispose)
+    template <class VIC> void vars_d(VarImpBase* x);
+    /// Process all modified variables (inlined version)
+    void process_i(void);
+    /// Process all modified variables (outlined version)
+    GECODE_KERNEL_EXPORT void process_o(void);
+    /// Update all cloned variables
+    void update(ActorLink** sub);
+    //@}
 
-    /// Number of subscriptions
-    unsigned int n_sub;
+    union {
+      /// Number of subscriptions (not during copying)
+      unsigned int n_sub;
+      /// Keep variables during copying without index structure
+      VarImpBase* vars_noidx;
+    } pu;
+
+    /// First actor for forced disposal
+    Actor** d_fst;
+    /// Current actor for forced disposal
+    Actor** d_cur;
+    /// Last actor for forced disposal
+    Actor** d_lst;
+    /// Resize disposal array
+    GECODE_KERNEL_EXPORT void d_resize(void);
 
     /// Linked list of shared objects
     SharedHandle::Object* shared;
@@ -1086,39 +1086,15 @@ namespace Gecode {
     /// Perform propagation, return number of propagation steps
     GECODE_KERNEL_EXPORT unsigned long int propagate(void);
 
-  public:
     /**
      * \name Processing propagators
      */
     //@{
     /// Process propagator \a p with modification event \a me
-    template <class VIC>
-    void process(Propagator* p, ModEvent me);
+    template <class VIC> void process(Propagator* p, ModEvent me);
     /// Process propagator \a p with modification event ME_GEN_ASSIGNED
-    template <class VIC>
-    void process(Propagator* p);
+    template <class VIC> void process(Propagator* p);
     //@}
-
-
-    /**
-     * \name Reflection
-     */
-    //@{
-    /// Return iterator over specifications of the propagators in this space
-    GECODE_KERNEL_EXPORT
-    Reflection::SpecIter actorSpecs(Reflection::VarMap& m);
-
-    /// Enter variables into \a m
-    GECODE_KERNEL_EXPORT
-    virtual void getVars(Reflection::VarMap& m); 
-    //@}
-
-
-    /// Perform one propagation step and return ExecStatus
-    GECODE_KERNEL_EXPORT ExecStatus step(void);
-
-    /// Return if space is stable (at fixpoint)
-    GECODE_KERNEL_EXPORT bool stable(void) const;
 
   public:
     /**
@@ -1247,11 +1223,6 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void commit(const BranchingDesc* d, unsigned int a);
 
-    /*
-     * Status checking and failing outside actors
-     *
-     */
-
     /**
      * \brief Fail space
      *
@@ -1270,6 +1241,16 @@ namespace Gecode {
      */
     bool failed(void) const;
     /**
+     * \brief Return if space is stable (at fixpoint or failed)
+     * \ingroup TaskActor
+     */
+    GECODE_KERNEL_EXPORT bool stable(void) const;
+    /**
+     * \brief Perform single propagation step
+     * \ingroup TaskActor
+     */
+    GECODE_KERNEL_EXPORT ExecStatus step(void);
+    /**
      * \brief Return number of propagators
      *
      * Note that this function takes linear time in the number of
@@ -1278,8 +1259,7 @@ namespace Gecode {
      *
      * Throws an exception of type SpaceFailed, if the space is failed.
      */
-    GECODE_KERNEL_EXPORT
-    unsigned int propagators(void) const;
+    GECODE_KERNEL_EXPORT unsigned int propagators(void) const;
     /**
      * \brief Return number of branchings
      *
@@ -1287,8 +1267,19 @@ namespace Gecode {
      *
      * Throws an exception of type SpaceFailed, if the space is failed.
      */
+    GECODE_KERNEL_EXPORT unsigned int branchings(void) const;
+
+    /**
+     * \name Reflection
+     */
+    //@{
+    /// Return iterator over specifications of the propagators in this space
     GECODE_KERNEL_EXPORT
-    unsigned int branchings(void) const;
+    Reflection::SpecIter actorSpecs(Reflection::VarMap& m);
+    /// Enter variables into \a m
+    GECODE_KERNEL_EXPORT
+    virtual void getVars(Reflection::VarMap& m); 
+    //@}
 
     /**
      * \defgroup FuncMemSpace Space-memory management
@@ -1894,7 +1885,7 @@ namespace Gecode {
       u.fwd     = NULL;
       for (int i=pc_max+3; i--; )
         idx[i] = NULL;
-      reg = &home->vars_noidx;
+      reg = &home->pu.vars_noidx;
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
@@ -2119,7 +2110,7 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
     // Count one new subscription
-    home->n_sub += 1;
+    home->pu.n_sub += 1;
     if (free() == 0)
       resize(home);
     free_dec();
@@ -2150,7 +2141,7 @@ namespace Gecode {
       ActorLink** s = static_cast<ActorLink**>
         (home->mm.subscriptions());
       unsigned int m = 
-        ((s <= idx[0]) && (idx[0] < s+home->n_sub)) ?
+        ((s <= idx[0]) && (idx[0] < s+home->pu.n_sub)) ?
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(m*sizeof(ActorLink*))) + m-n;
@@ -2220,13 +2211,12 @@ namespace Gecode {
       *(idx[i]++)=*(idx[i-1]);
     idx[0]++;
     free_inc();
-    home->n_sub -= 1;
+    home->pu.n_sub -= 1;
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space* home, Propagator* p, PropCond pc,
-                        bool assigned) {
+  VarImp<VIC>::cancel(Space* home, Propagator* p, PropCond pc, bool assigned) {
     if (!assigned)
       remove(home,p,pc);
   }
@@ -2384,7 +2374,7 @@ namespace Gecode {
     {
       ActorLink** b = idx[0];
       ActorLink** p = idx[pc_max+2];
-      home->n_sub -= (p-b);
+      home->pu.n_sub -= (p-b);
       // Information needed to release the dependency array
       unsigned int n = free() + (p-b);
       home->reuse(p-n,n*sizeof(ActorLink*));

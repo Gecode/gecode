@@ -59,7 +59,6 @@ namespace Gecode {
     d_cur = NULL;
     d_lst = NULL;
     // Initialize variable entry points
-    vars_noidx = NULL;
     for (int i=0; i<IDX_PU_ALL; i++)
       _vars_pu[i] = NULL;
     for (int i=0; i<IDX_D_ALL; i++)
@@ -73,7 +72,7 @@ namespace Gecode {
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
     branch_id = 0;
-    n_sub = 0;
+    pu.n_sub = 0;
     shared = NULL;
   }
 
@@ -380,17 +379,13 @@ namespace Gecode {
    */
 
   Space::Space(bool share, Space& s) 
-    : mm(s.mm,s.n_sub*sizeof(Propagator**)), branch_id(s.branch_id) {
+    : mm(s.mm,s.pu.n_sub*sizeof(Propagator**)), branch_id(s.branch_id) {
     // Initialize variable entry points
-    vars_noidx = NULL;
+    pu.vars_noidx = NULL;
     for (int i=0; i<IDX_PU_ALL; i++)
       _vars_pu[i] = NULL;
     for (int i=0; i<IDX_D_ALL; i++)
       _vars_d[i] = NULL;
-    // Initialize propagator pool
-    pool_next = 0;
-    for (int i=0; i<=PC_MAX; i++)
-      pool[i].init();
     shared = NULL;
     // Copy all actors
     {
@@ -468,15 +463,13 @@ namespace Gecode {
      *
      */
     // Update variables without indexing structure
-    for (VarImpBase* x = c->vars_noidx; x != NULL; x = x->next()) {
+    for (VarImpBase* x = c->pu.vars_noidx; x != NULL; x = x->next()) {
       x->u.free_me = 0;
       x->u.fwd     = NULL;
     }
-    c->vars_noidx = NULL;
     // Update variables with indexing structure
     {
       ActorLink** s = static_cast<ActorLink**>(c->mm.subscriptions());
-      c->n_sub = n_sub;
       c->update(s);
     }
     // Re-establish prev links (reset forwarding information)
@@ -503,6 +496,12 @@ namespace Gecode {
     for (SharedHandle::Object* s = c->shared; s != NULL; s = s->next)
       s->fwd = NULL;
     c->shared = NULL;
+    // Initialize propagator pool
+    c->pool_next = 0;
+    for (int i=0; i<=PC_MAX; i++)
+      c->pool[i].init();
+    // Copy number of subscriptions
+    c->pu.n_sub = pu.n_sub;
     return c;
   }
 
