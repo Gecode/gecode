@@ -50,10 +50,16 @@ namespace Gecode { namespace Gist {
     FAILED,       ///< Node representing failure
     BRANCH,       ///< Node representing a branch
     UNDETERMINED, ///< Node that has not been explored yet
-    SPECIAL       ///< Node representing user controlled exploration
+    SPECIAL,      ///< Node representing user controlled exploration
+    STEP          ///< Node representing one propagation step
   };
 
-  // TODO nikopp: put this somewhere else? (e.g. to the same file as BranchingDesc)
+  class StepDesc {
+  public:
+    const int noOfSteps;
+    StepDesc(int steps);
+  };
+  
   class SpecialDesc {
   public:
     const std::string vn;
@@ -106,6 +112,8 @@ namespace Gecode { namespace Gist {
       const BranchingDesc* branch;
       /// Special branching description
       const SpecialDesc* special;
+      /// Step description
+      const StepDesc* step;
     } desc;
     
     /// Current status of the node
@@ -155,6 +163,16 @@ namespace Gecode { namespace Gist {
     SpaceNode(int alt, BestNode* cb = NULL);
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root, Better* b);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+    
+    /// Construct step node
+    SpaceNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
+              bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
+              BestNode* cb);
+    
+#endif
+    
     /// Destructor
     virtual ~SpaceNode(void);
 
@@ -212,6 +230,8 @@ namespace Gecode { namespace Gist {
 #endif
     /// Change the SpecialDesc to \a d
     void setSpecialDesc(const SpecialDesc* d);
+    /// Change the StepDesc to \a d
+    void setStepDesc(const StepDesc* d);
     
     /// Return alternative number of this node
     int getAlternative(void);

@@ -69,7 +69,7 @@ namespace Gecode { namespace Gist {
         }
 
         Shape* subtreeShape = 
-          childShapes.getMergedShape(currentNode->getStatus() == SOLVED);
+          childShapes.getMergedShape(currentNode->getStatus() == STEP);
         subtreeShape->extend(- extent.l, - extent.r);
         shape = new Shape(extent, subtreeShape);
         delete subtreeShape;
@@ -97,7 +97,7 @@ namespace Gecode { namespace Gist {
   HideFailedCursor::processCurrentNode(void) {
     VisualNode* n = node();
     if ((n->getStatus() == BRANCH ||
-         (n->getStatus() == SPECIAL && n->hasFailedChildren())) &&
+         ((n->getStatus() == SPECIAL || n->getStatus() == STEP) && n->hasFailedChildren())) &&
         !n->hasSolvedChildren() &&
         n->getNoOfOpenChildren() == 0) {
       n->setHidden(true);

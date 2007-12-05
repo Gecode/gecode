@@ -66,6 +66,14 @@ namespace Gecode { namespace Gist {
     static const QColor blue;
     /// The color for the best solution
     static const QColor orange;
+
+    /// The color for expanded failed nodes
+    static const QColor lightRed;
+    /// The color for expanded solved nodes
+    static const QColor lightGreen;
+    /// The color for expanded choice nodes
+    static const QColor lightBlue;
+    
     /// Constructor
     DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                   bool heat,

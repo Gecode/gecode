@@ -39,8 +39,9 @@
 
 namespace Gecode { namespace Gist {
   
+  // TODO nikopp: doxygen comment
   enum BranchKind {
-    NORMAL, SPECIAL_IN, SPECIAL_OUT
+    BK_NORMAL, BK_SPECIAL_IN, BK_SPECIAL_OUT, BK_STEP
   };
 
   /// \brief Representation of a branch in the search tree
@@ -52,19 +53,26 @@ namespace Gecode { namespace Gist {
     SpaceNode* ownBest;
     const BranchKind branchKind;
     union {
+      /// Special branching description
       const SpecialDesc* special;
-    /// Branching description
+      /// Branching description
       const BranchingDesc* branch;
+      /// Step description
+      const StepDesc* step;
     } desc;
     
     /// Constructor
-    Branch(int a, const BranchingDesc* d, SpaceNode* best = NULL, BranchKind bk = NORMAL)
+    Branch(int a, const BranchingDesc* d, SpaceNode* best = NULL, BranchKind bk = BK_NORMAL)
       : alternative(a), ownBest(best), branchKind(bk) {
         desc.branch = d;
       }
     Branch(int a, const SpecialDesc* d, BranchKind bk, SpaceNode* best = NULL)
       : alternative(a), ownBest(best), branchKind(bk) {
         desc.special = d;
+      }
+    Branch(int a, const StepDesc* d, BranchKind bk, SpaceNode* best = NULL)
+      : alternative(a), ownBest(best), branchKind(bk) {
+        desc.step = d;
       }
  };
 
@@ -78,6 +86,8 @@ namespace Gecode { namespace Gist {
     /// Distance for fixed recomputation
     static const int mrd = 4;
   };
+  
+  StepDesc::StepDesc(int steps) : noOfSteps(steps) { }
   
   SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
   : vn(varName), r(r0), v(v0), step(false), alt(-1) { }
@@ -96,7 +106,7 @@ namespace Gecode { namespace Gist {
       SpaceNode* curNode = this;
       SpaceNode* lastFixpoint = NULL;
 
-      if(curNode->getStatus() != SPECIAL) {
+      if(curNode->getStatus() != SPECIAL && curNode->getStatus() != STEP) {
         lastFixpoint = curNode;
       }
       
@@ -106,19 +116,20 @@ namespace Gecode { namespace Gist {
       while (curNode->copy == NULL) {
         SpaceNode* parent = static_cast<SpaceNode*>(curNode->getParent());
 
-        if(curNode->getStatus() == SPECIAL) {
-          Branch b(curNode->alternative, curNode->desc.special, SPECIAL_IN);
+        if(curNode->getStatus() == STEP) {
+          Branch b(curNode->alternative, curNode->desc.step, BK_STEP);
+          stck.push(b);
+        } else if(curNode->getStatus() == SPECIAL) {
+          Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_IN);
           stck.push(b);
           if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
             lastFixpoint = parent;
           }
           specialNodeOnPath = true;
-        }
-        else if(parent->getStatus() == SPECIAL) {
-           Branch b(curNode->alternative, NULL, SPECIAL_OUT);
+        } else if(parent->getStatus() == SPECIAL || parent->getStatus() == STEP) {
+           Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_OUT);
           stck.push(b);
-        }
-        else {
+        } else {
           Branch b(curNode->alternative, parent->desc.branch,
                    curBest == NULL ? NULL : curNode->ownBest);
           stck.push(b);
@@ -147,8 +158,9 @@ namespace Gecode { namespace Gist {
         if (Config::a_d >= 0 &&
             curDist > Config::a_d &&
             middleNode->getStatus() != SPECIAL &&
+            middleNode->getStatus() != STEP &&
             curDist == rdist / 2) {
-          middleNode->copy = curSpace->clone();
+              middleNode->copy = curSpace->clone();
         }
         Branch b = stck.top(); stck.pop();
         
@@ -157,12 +169,17 @@ namespace Gecode { namespace Gist {
         }
         
         switch (b.branchKind) {
-        case NORMAL:
+        case BK_NORMAL:
             {
               curSpace->commit(b.desc.branch, b.alternative);
             }
             break;
-        case SPECIAL_IN:
+        case BK_STEP:
+            {
+              curSpace->step();
+            }
+            break;
+        case BK_SPECIAL_IN:
             {
 
 #ifdef GECODE_GIST_EXPERIMENTAL
@@ -188,7 +205,7 @@ namespace Gecode { namespace Gist {
 
             }
             break;
-        case SPECIAL_OUT:
+        case BK_SPECIAL_OUT:
          // really do nothing
           break;
         }
@@ -255,12 +272,12 @@ namespace Gecode { namespace Gist {
     }
     if (workingSpace == NULL) {
       if (recompute() > Config::mrd && Config::mrd >= 0 &&
-          status != SPECIAL &&
+          status != SPECIAL && status != STEP &&
           workingSpace->status() == SS_BRANCH) {
         copy = workingSpace->clone();  
       }
     }
-    if (status != SPECIAL) {
+    if (status != SPECIAL && status != STEP) {
       // always return a fixpoint
       workingSpace->status();
       if (copy == NULL && p != NULL && isOpen()) {
@@ -318,6 +335,24 @@ namespace Gecode { namespace Gist {
     _hasSolvedChildren = false;
     _hasFailedChildren = false;
   }
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  SpaceNode::SpaceNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
+                       bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
+                       BestNode* cb)
+  : copy(NULL), workingSpace(NULL), curBest(cb), ownBest(NULL) {
+    desc.step = d;
+    alternative = alt;
+    status = stat;
+    metaStatus = metaStat;
+    firstStep = fstStep;
+    lastStep = lstStep;
+    _hasSolvedChildren = hasSolvedChildren;
+    _hasFailedChildren = hasFailedChildren;
+  }
+
+#endif
 
   SpaceNode::SpaceNode(Space* root, Better* b)
   : workingSpace(root), curBest(NULL), ownBest(NULL) {
@@ -396,7 +431,7 @@ namespace Gecode { namespace Gist {
   SpaceNode::isStepNode(void) {
     if(getStatus() == SPECIAL)
       return desc.special->step;
-    return false;
+    return getStatus() == STEP;
   }
 
   bool
@@ -523,6 +558,11 @@ namespace Gecode { namespace Gist {
     desc.special = d;
   }
     
+  void
+  SpaceNode::setStepDesc(const StepDesc* d) {
+    desc.step = d;
+  }
+    
   int
   SpaceNode::getAlternative(void) {
     return alternative;
@@ -557,7 +597,6 @@ namespace Gecode { namespace Gist {
         
   void
   SpaceNode::setNoOfOpenChildren(int n) {
-    assert(status == SPECIAL);
     noOfOpenChildren = n;
   }
         

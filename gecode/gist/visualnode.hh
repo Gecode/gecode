@@ -78,6 +78,16 @@ namespace Gecode { namespace Gist {
     VisualNode(int alternative, BestNode* b);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root, Better* b);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+    /// Constructor for step node
+    VisualNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
+               bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
+               BestNode* cb);
+
+#endif
+
     /// Destructor
     virtual ~VisualNode(void);
     

@@ -301,10 +301,10 @@ namespace Gecode { namespace Gist {
         }
         break;
     case FAILED:
+    case STEP:
     case SPECIAL:
     case BRANCH:
     case SOLVED:
-    default:
       if (inspect != NULL) {
         inspect->inspect(currentNode->getSpace());
       }
@@ -358,16 +358,16 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::inspectPath(void) {
     QMutexLocker locker(&mutex);
-    setPath();
-    setCurrentNode(root);
-    if(inspect != NULL)
-      while(true) {
+    if(inspect != NULL) {
+      setCurrentNode(root);
+      while(currentNode->isOnPath()) {
         inspectCurrentNode();
         if(!currentNode->isLastOnPath())
           setCurrentNode(currentNode->getChild(currentNode->getPathAlternative()));
         else
           break;
       }
+    }
     update();
   }
 
@@ -388,6 +388,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     if (!currentNode->isHidden()) {
       switch (currentNode->getStatus()) {
+      case STEP:
       case SPECIAL:
         if (currentNode->getNumberOfChildren() < 1)
           break;
@@ -398,7 +399,9 @@ namespace Gecode { namespace Gist {
             centerCurrentNode();
             break;
           }
-      default:
+      case SOLVED:
+      case FAILED:
+      case UNDETERMINED:
         break;
       }
     }
@@ -438,7 +441,7 @@ namespace Gecode { namespace Gist {
     setCurrentNode(root);
     centerCurrentNode();
   }
-    
+  
   void
   TreeCanvasImpl::markCurrentNode(int i) {
     QMutexLocker locker(&mutex);
@@ -620,6 +623,7 @@ namespace Gecode { namespace Gist {
     case SOLVED:
     case UNDETERMINED:
       break;
+    case STEP:
     case BRANCH:
     case SPECIAL:
         {
@@ -665,6 +669,7 @@ namespace Gecode { namespace Gist {
     case UNDETERMINED:
     case BRANCH:
       break;
+    case STEP:
     case SPECIAL:
         {
           VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
@@ -688,12 +693,12 @@ namespace Gecode { namespace Gist {
 
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
-    case FAILED:
+    case STEP:
     case SPECIAL:
       break;
+    case FAILED:
     case BRANCH:
     case SOLVED:
-    default:
       if(currentNode != root) {
         Space* inputSpace = currentNode->getInputSpace();
         int alt = currentNode->getAlternative();
@@ -719,12 +724,24 @@ namespace Gecode { namespace Gist {
         newChild->dirtyUp();
         setCurrentNode(newChild);
 
-        while(inputSpace->step() != ES_STABLE) {
+        while(true) {
+          switch (inputSpace->step()) {
+                case ES_STABLE:
+                case ES_FAILED:
+                  goto while_done;
+                  break;
+                case ES_FIX:
+                case ES_OK:
+                case __ES_FIX_PARTIAL:
+                case __ES_NOFIX_PARTIAL:
+                case __ES_SUBSUMED:
+                  break;
+          }
 
           VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
 
-          newChild->setStatus(SPECIAL);
-          newChild->setSpecialDesc(new SpecialDesc());
+          newChild->setStatus(STEP);
+          newChild->setStepDesc(new StepDesc(1));
           newChild->setMetaStatus(status);
           newChild->setNumberOfChildren(0);
           newChild->setNoOfOpenChildren(0);
@@ -734,7 +751,7 @@ namespace Gecode { namespace Gist {
           newChild->setDirty(false);
           newChild->dirtyUp();
           setCurrentNode(newChild);
-        }
+        } while_done:
         
         currentNode->setLastStepNode(true);
         currentNode->addChild(curNode);

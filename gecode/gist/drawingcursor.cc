@@ -46,6 +46,13 @@ namespace Gecode { namespace Gist {
   const QColor DrawingCursor::blue(0, 92, 161);
   /// Orange color for best solutions
   const QColor DrawingCursor::orange(235, 137, 27);
+
+  /// Red color for expanded failed nodes
+  const QColor DrawingCursor::lightRed(218, 37, 29, 120);
+  /// Green color for expanded solved nodes
+  const QColor DrawingCursor::lightGreen(11, 118, 70, 120);
+  /// Blue color for expanded choice nodes
+  const QColor DrawingCursor::lightBlue(0, 92, 161, 120);
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                                bool heat,
@@ -110,65 +117,91 @@ namespace Gecode { namespace Gist {
     if(n->isStepNode()) {
       switch (n->getMetaStatus()) {
         case Gist::FAILED:
-          painter.setBrush(QBrush(red.lighter(140)));
+          painter.setBrush(QBrush(lightRed));
           break;
         case Gist::SOLVED:
-          painter.setBrush(QBrush(green.lighter(140)));
+          painter.setBrush(QBrush(lightGreen));
           break;
         case Gist::BRANCH:
-          painter.setBrush(QBrush(blue.lighter(140)));
+          painter.setBrush(QBrush(lightBlue));
           break;
+        case Gist::STEP:
         case Gist::SPECIAL:
         case Gist::UNDETERMINED:
           break;
       }
+
       if (heatView)
         painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-
-      painter.setPen(Qt::NoPen);
       
+      int leftX = myx-10;
+      int rightX = myx+10;
+      int topY = myy;
+      int bottomY = myy+20;
+      int height = bottomY - topY;
+      int width = rightX - leftX;
+      
+      if (n->getMetaStatus() == Gist::FAILED) {
+        leftX = myx-7;
+        rightX = myx+7;
+        width = 14;
+        height = 20;
+      }
+
       if(n->isFirstStepNode()) {
-        painter.setPen(Qt::SolidLine);
         switch (n->getMetaStatus()) {
         case Gist::SOLVED: {
-          QPoint points[4] = {QPoint(myx,myy),
+          QPoint points[4] = {QPoint(myx,topY),
                               QPoint(myx+10,myy+10),
                               QPoint(myx,myy+20),
                               QPoint(myx-10,myy+10)
           };
+          painter.setPen(Qt::SolidLine);
           painter.drawConvexPolygon(points, 4);
           break;
         }
         case Gist::BRANCH:
-          painter.drawEllipse(myx-10, myy, 20, 20);
+          painter.setPen(Qt::SolidLine);
+          painter.drawEllipse(leftX, topY, width, height);
           break;
         case Gist::FAILED:
+          painter.setPen(Qt::SolidLine);
+          painter.drawRect(leftX, topY, width, height);
+          break;
+        case Gist::STEP:
         case Gist::SPECIAL:
         case Gist::UNDETERMINED:
           break;
         }
-
+        height = 18;
+        topY = myy+10;
+        bottomY = myy+28;
+        painter.save();
         painter.setPen(Qt::NoPen);
-        painter.drawRect(myx-10, myy+10, 20, 20);
-       
-        painter.setPen(Qt::SolidLine);
-        painter.drawLine(myx-10, myy+10, myx-10, myy+28);
-        painter.drawLine(myx+10, myy+10, myx+10, myy+28);
+        painter.setBrush(Qt::white);
+        painter.drawRect(leftX, topY, width, height);
+        painter.restore();
         
+        if(n->isLastStepNode()) {
+          height += 20;
+          bottomY += 20;
+        }
       } else if(n->isLastStepNode()) {
-        painter.drawRect(myx-10, myy-10, 20, 58);
-       
-        painter.setPen(Qt::SolidLine);
-        painter.drawLine(myx-10, myy-10, myx-10, myy+48);
-        painter.drawLine(myx+10, myy-10, myx+10, myy+48);
-        
+        height = 58;
+        topY = myy-10;
+        bottomY = myy+48;
       } else {
-        painter.drawRect(myx-10, myy-10, 20, 39);
-
-        painter.setPen(Qt::SolidLine);
-        painter.drawLine(myx-10, myy-10, myx-10, myy+28);
-        painter.drawLine(myx+10, myy-10, myx+10, myy+28);
+        height = 38;
+        topY = myy-10;
+        bottomY = myy+28;
       }
+
+      painter.setPen(Qt::NoPen);
+      painter.drawRect(leftX, topY, width, height);
+
+      painter.setPen(Qt::SolidLine);
+      painter.drawLine(leftX, topY, leftX, bottomY);
+      painter.drawLine(rightX, topY, rightX, bottomY);
     }
 
 #endif
@@ -208,6 +241,7 @@ namespace Gecode { namespace Gist {
         
       } else {
         switch (n->getStatus()) {
+        case Gist::STEP:
         case Gist::SPECIAL:
                 painter.drawEllipse(myx-5-shadowOffset, myy+10-shadowOffset, 10+2*shadowOffset, 10+2*shadowOffset);
                 break;
@@ -230,8 +264,6 @@ namespace Gecode { namespace Gist {
         case Gist::UNDETERMINED:
           painter.drawEllipse(myx-10-shadowOffset, myy-shadowOffset, 20+2*shadowOffset, 20+2*shadowOffset);
           break;
-          break;
-        default: assert(false);
         }
       }        
     }
@@ -251,6 +283,7 @@ namespace Gecode { namespace Gist {
         
       } else {
         switch (n->getStatus()) {
+        case Gist::STEP:
         case Gist::SPECIAL:
                 painter.drawEllipse(myx-5+shadowOffset, myy+shadowOffset, 10, 20);
                 break;
@@ -273,8 +306,6 @@ namespace Gecode { namespace Gist {
         case Gist::UNDETERMINED:
           painter.drawEllipse(myx-10+shadowOffset, myy+shadowOffset, 20, 20);
           break;
-          break;
-        default: assert(false);
         }
       }        
     }
@@ -290,6 +321,7 @@ namespace Gecode { namespace Gist {
       painter.drawConvexPolygon(points, 3);
     } else {
       switch (n->getStatus()) {
+      case Gist::STEP:
       case Gist::SPECIAL:
         painter.setBrush(Qt::yellow);
         painter.drawEllipse(myx-5, myy+10, 10, 10);
@@ -347,8 +379,6 @@ namespace Gecode { namespace Gist {
         painter.setBrush(Qt::white);
         painter.drawEllipse(myx-10, myy, 20, 20);
         break;
-        break;
-      default: assert(false);
       }
     	
     }

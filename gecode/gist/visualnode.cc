@@ -45,15 +45,28 @@ namespace Gecode { namespace Gist {
   const Shape VisualNode::unitShape(Extent(20), &singletonShape);
 
   VisualNode::VisualNode(int alternative, BestNode* b)
-    : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
-    , onPath(false), lastOnPath(false), pathAlternative(-1)
-    , heat(0)
-    , shape(NULL), box(0,0,0) {}
-  
+  : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
+  , onPath(false), lastOnPath(false), pathAlternative(-1)
+  , heat(0)
+  , shape(NULL), box(0,0,0) {}
+
   VisualNode::VisualNode(Space* root, Better* b)
-    : SpaceNode(root, b), offset(0), dirty(true), hidden(false), marked(false)
-    , onPath(false), lastOnPath(false), pathAlternative(-1)
-    , shape(NULL), box(0,0,0) {}
+  : SpaceNode(root, b), offset(0), dirty(true), hidden(false), marked(false)
+  , onPath(false), lastOnPath(false), pathAlternative(-1)
+  , heat(0)
+  , shape(NULL), box(0,0,0) {}
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  VisualNode::VisualNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
+                         bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
+                         BestNode* cb)
+  : SpaceNode(alt, d, stat, metaStat, fstStep, lstStep, hasSolvedChildren, hasFailedChildren, cb)
+  , onPath(false), lastOnPath(false), pathAlternative(-1)
+  , heat(0)
+  , shape(NULL), box(0,0,0) {}
+
+#endif
 
   VisualNode::~VisualNode(void) {
     delete shape;

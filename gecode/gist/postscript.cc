@@ -451,6 +451,7 @@ namespace Gecode { namespace Gist {
         case SOLVED:
         case UNDETERMINED:
         case BRANCH:
+        case STEP:
         case SPECIAL:
           ps.push_back(new Line(myx, -y+10, parentX, -y+28, black));
           break;
@@ -466,6 +467,8 @@ namespace Gecode { namespace Gist {
                   currentNode->isOpen());
     } else {
       switch(currentNode->getStatus()) {
+      case STEP:
+        // TODO nikopp: may draw sth. different
       case SPECIAL:
     	drawSpecial(myx,y);
     	break;
