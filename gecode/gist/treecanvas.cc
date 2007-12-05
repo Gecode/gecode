@@ -752,13 +752,9 @@ namespace Gecode { namespace Gist {
                   break;
           }
 
-          VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
-
-          newChild->setStatus(STEP);
-          newChild->setStepDesc(new StepDesc(1));
-          newChild->setMetaStatus(status);
-          newChild->setNumberOfChildren(0);
-          newChild->setNoOfOpenChildren(0);
+          VisualNode* newChild =
+            curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(1),
+                                     false,false);
 
           currentNode->addChild(newChild);
 

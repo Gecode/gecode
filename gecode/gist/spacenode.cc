@@ -336,24 +336,6 @@ namespace Gecode { namespace Gist {
     _hasFailedChildren = false;
   }
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-  SpaceNode::SpaceNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
-                       bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
-                       BestNode* cb)
-  : copy(NULL), workingSpace(NULL), curBest(cb), ownBest(NULL) {
-    desc.step = d;
-    alternative = alt;
-    status = stat;
-    metaStatus = metaStat;
-    firstStep = fstStep;
-    lastStep = lstStep;
-    _hasSolvedChildren = hasSolvedChildren;
-    _hasFailedChildren = hasFailedChildren;
-  }
-
-#endif
-
   SpaceNode::SpaceNode(Space* root, Better* b)
   : workingSpace(root), curBest(NULL), ownBest(NULL) {
     desc.branch = NULL;
@@ -453,6 +435,16 @@ namespace Gecode { namespace Gist {
     lastStep = ls;
   }
 
+  void
+  SpaceNode::setHasFailedChildren(bool b) {
+    _hasFailedChildren = b;
+  }
+  
+  void
+  SpaceNode::setHasSolvedChildren(bool b) {
+    _hasSolvedChildren = b;
+  }
+  
   bool
   SpaceNode::isLastStepNode(void) {
     if(isStepNode())

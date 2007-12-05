@@ -5175,38 +5175,38 @@ gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/support/symbol.icc 
 gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/gist/better.hh ./gecode/gist/drawingcursor.hh \
-	./gecode/gist/gist.hh ./gecode/gist/gist.icc ./gecode/gist/mainwindow.hh \
-	./gecode/gist/node.hh ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.icc \
-	./gecode/gist/preferences.hh ./gecode/gist/shapelist.hh ./gecode/gist/spacenode.hh \
-	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/int.hh \
-	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
-	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
-	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
-	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc \
-	./gecode/int/view.icc ./gecode/int/view/bool.icc ./gecode/int/view/constint.icc \
-	./gecode/int/view/int.icc ./gecode/int/view/iter.icc ./gecode/int/view/minus.icc \
-	./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc ./gecode/int/view/scale.icc \
-	./gecode/int/view/zero.icc ./gecode/iter.hh ./gecode/iter/ranges-add.icc \
-	./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc ./gecode/iter/ranges-cache.icc \
-	./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc ./gecode/iter/ranges-empty.icc \
-	./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc ./gecode/iter/ranges-minus.icc \
-	./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc ./gecode/iter/ranges-scale.icc \
-	./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc ./gecode/iter/ranges-size.icc \
-	./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc ./gecode/iter/values-array.icc \
-	./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc ./gecode/iter/values-ranges.icc \
-	./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc ./gecode/iter/virtual-ranges-compl.icc \
-	./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc ./gecode/iter/virtual-ranges.icc \
-	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
-	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
-	./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/shared-array.icc \
-	./gecode/kernel/var-imp.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/varmap.icc ./gecode/kernel/view.icc ./gecode/limits.hh \
-	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
+	./gecode/gist/gecodelogo.icc ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist/mainwindow.hh ./gecode/gist/node.hh ./gecode/gist/nodecursor.hh \
+	./gecode/gist/nodecursor.icc ./gecode/gist/preferences.hh ./gecode/gist/shapelist.hh \
+	./gecode/gist/spacenode.hh ./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh \
+	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
+	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
+	./gecode/int/propagator.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
+	./gecode/int/var/delta.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int.icc \
+	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
+	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
+	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
+	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
+	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
+	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
+	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
+	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
+	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
+	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
+	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
+	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
+	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
+	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
+	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
+	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
+	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
+	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-type.icc \
+	./gecode/kernel/var.icc ./gecode/kernel/varmap.icc ./gecode/kernel/view.icc \
+	./gecode/limits.hh ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/support/cast.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
+	./gecode/support/exception.icc ./gecode/support/map.icc ./gecode/support/memory.icc \
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/gist/preferences.hh 
 gecode/gist/addchild$(OBJSUFFIX) gecode/gist/addchild$(SBJSUFFIX): \

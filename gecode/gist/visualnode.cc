@@ -56,18 +56,6 @@ namespace Gecode { namespace Gist {
   , heat(0)
   , shape(NULL), box(0,0,0) {}
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-  VisualNode::VisualNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
-                         bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
-                         BestNode* cb)
-  : SpaceNode(alt, d, stat, metaStat, fstStep, lstStep, hasSolvedChildren, hasFailedChildren, cb)
-  , onPath(false), lastOnPath(false), pathAlternative(-1)
-  , heat(0)
-  , shape(NULL), box(0,0,0) {}
-
-#endif
-
   VisualNode::~VisualNode(void) {
     delete shape;
   }
@@ -196,6 +184,26 @@ namespace Gecode { namespace Gist {
   VisualNode::createChild(int alternative) {
     return new VisualNode(alternative, curBest);
   }
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+
+  VisualNode*
+  VisualNode::createStepChild(int alt, StepDesc* d, bool fstStep, bool lstStep)
+    {
+      VisualNode* ret = new VisualNode(alt, curBest);
+      ret->setStepDesc(d);
+      ret->setStatus(STEP);
+      ret->setMetaStatus(getStatus());
+      ret->setFirstStepNode(fstStep);
+      ret->setLastStepNode(lstStep);
+      ret->setHasFailedChildren(hasFailedChildren());
+      ret->setHasSolvedChildren(hasSolvedChildren());
+      ret->setNumberOfChildren(0);
+      ret->setNoOfOpenChildren(0);
+      return ret;
+    }
+
+#endif
 
   void
   VisualNode::changedStatus() { dirtyUp(); }

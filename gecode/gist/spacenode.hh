@@ -163,16 +163,6 @@ namespace Gecode { namespace Gist {
     SpaceNode(int alt, BestNode* cb = NULL);
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root, Better* b);
-
-#ifdef GECODE_GIST_EXPERIMENTAL
-    
-    /// Construct step node
-    SpaceNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
-              bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
-              BestNode* cb);
-    
-#endif
-    
     /// Destructor
     virtual ~SpaceNode(void);
 
@@ -204,6 +194,11 @@ namespace Gecode { namespace Gist {
     /// Set the node to represent the last step
     void setLastStepNode(bool lastStep);
 
+    /// Whether the subtree of this node is known to contain failure
+    void setHasFailedChildren(bool b);
+    /// Whether the subtree of this node is known to contain solutions
+    void setHasSolvedChildren(bool b);
+    
 #endif
 
     /** \brief Compute and return the number of children

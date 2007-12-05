@@ -78,16 +78,6 @@ namespace Gecode { namespace Gist {
     VisualNode(int alternative, BestNode* b);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root, Better* b);
-
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-    /// Constructor for step node
-    VisualNode(int alt, StepDesc* d, NodeStatus stat, NodeStatus metaStat,
-               bool fstStep, bool lstStep, bool hasSolvedChildren, bool hasFailedChildren,
-               BestNode* cb);
-
-#endif
-
     /// Destructor
     virtual ~VisualNode(void);
     
@@ -151,6 +141,10 @@ namespace Gecode { namespace Gist {
     BoundingBox getBoundingBox(void);
     /// Create a child for alternative \a alternative
     virtual SpaceNode* createChild(int alternative);
+#ifdef GECODE_GIST_EXPERIMENTAL
+    /// Create a child step node
+    VisualNode* createStepChild(int alt, StepDesc* d, bool fstStep, bool lstStep);
+#endif
     /// Signal that the status has changed
     virtual void changedStatus();
     /// Return child \a i
