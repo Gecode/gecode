@@ -41,6 +41,11 @@
 
 namespace Gecode { namespace Gist {
   
+  class AboutGist : public QDialog {
+  public:
+    AboutGist(QWidget* parent = 0);
+  };
+  
   /// \brief Main window for stand-alone %Gist
   class GistMainWindow : public QMainWindow {
     Q_OBJECT
@@ -49,6 +54,8 @@ namespace Gecode { namespace Gist {
     TreeCanvas c;
     /// A menu bar
     QMenuBar* menuBar;
+    /// About dialog
+    AboutGist aboutGist;
     
     /// Whether search is currently running
     bool isSearching;

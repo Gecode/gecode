@@ -38,6 +38,8 @@
 #include "gecode/gist/preferences.hh"
 #include "gecode/gist/drawingcursor.hh"
 
+#include "gecode/gist/gecodelogo.icc"
+
 namespace Gecode { namespace Gist {
   
   class StatusBarNode : public QWidget {
@@ -90,9 +92,37 @@ namespace Gecode { namespace Gist {
     }
   };
   
+  AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
+
+    QPixmap myPic;
+    myPic.loadFromData(logo, sizeof(logo));
+
+    setMinimumWidth(300);
+    setMaximumWidth(300);
+    QVBoxLayout* layout = new QVBoxLayout();
+    QLabel* logo = new QLabel();
+    logo->setPixmap(myPic);
+    layout->addWidget(logo, 0, Qt::AlignCenter);
+    QLabel* aboutLabel =
+      new QLabel(tr("<h2>Gist</h2>"
+                     "<p><b>The Gecode Interactive Search Tool</b</p> "
+                    "<p>You can find more information about Gecode and Gist "
+                    "at</p>"
+                    "<p><a href='http://www.gecode.org'>www.gecode.org</a>"
+                    "</p"));
+    aboutLabel->setOpenExternalLinks(true);
+    aboutLabel->setWordWrap(true);
+    aboutLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(aboutLabel);
+    setLayout(layout);
+    setWindowTitle(tr("About Gist"));
+    setAttribute(Qt::WA_QuitOnClose, false);
+    setAttribute(Qt::WA_DeleteOnClose, false);
+  }
+  
   GistMainWindow::GistMainWindow(Space* root, Better* b,
                                  Gist::Inspector* gi)
-  : c(root,b,this) {
+  : c(root,b,this), aboutGist(this) {
     if (gi != NULL)
       c.setInspector(gi);
     setCentralWidget(&c);
@@ -198,18 +228,15 @@ namespace Gecode { namespace Gist {
       statusBar()->showMessage("Searching");
       isSearching = true;
     }
-    solvedLabel->setText(QString::number(stats.solutions));
-    failedLabel->setText(QString::number(stats.failures));
-    choicesLabel->setText(QString::number(stats.choices));
-    openLabel->setText(QString::number(stats.undetermined));
+    solvedLabel->setNum(stats.solutions);
+    failedLabel->setNum(stats.failures);
+    choicesLabel->setNum(stats.choices);
+    openLabel->setNum(stats.undetermined);
   }
 
   void
   GistMainWindow::about(void) {
-    QMessageBox::about(this, tr("About Gist"),
-                 tr("Gist is the Gecode Interactive Search Tool. "
-                    "You can find more information about Gecode and Gist at "
-                    "<a href='http://www.gecode.org'>www.gecode.org</a>"));
+    aboutGist.show();
   }
 
   void
