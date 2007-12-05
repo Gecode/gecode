@@ -451,13 +451,19 @@ namespace Gecode { namespace CpltSet {
 
 namespace Gecode {
 
-  const int IDX_PU_ALL = Gecode::CpltSet::CpltSetVarImpConf::idx_pu+1;
-  const int IDX_D_ALL = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
-  const PropModEvent PME_ASSIGNED_ALL =
-    Gecode::Int::IntVarImpConf::pme_assigned |
-    Gecode::Int::BoolVarImpConf::pme_assigned |
-    Gecode::Set::SetVarImpConf::pme_assigned |
-    Gecode::CpltSet::CpltSetVarImpConf::pme_assigned;
+  class AllVarConf {
+  public:
+    /// Index for processing and update
+    static const int idx_pu = Gecode::CpltSet::CpltSetVarImpConf::idx_pu+1;
+    /// Index for dispose
+    static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
+    /// Bit pattern for assigned propagator modification event
+    static const Gecode::PropModEvent pme_assigned =
+        Gecode::Int::IntVarImpConf::pme_assigned |
+        Gecode::Int::BoolVarImpConf::pme_assigned |
+        Gecode::Set::SetVarImpConf::pme_assigned |
+        Gecode::CpltSet::CpltSetVarImpConf::pme_assigned;
+  };
 
 }
 

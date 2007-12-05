@@ -422,18 +422,23 @@ if ($gen_type) {
   }
   print "\n";
   print "namespace Gecode {\n\n";
-  print "  const int IDX_PU_ALL = $namespace[$n_files-1]::$conf[$n_files-1]::idx_pu+1;\n";
-  print "  const int IDX_D_ALL = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
-  print "  const PropModEvent PME_ASSIGNED_ALL =\n";
+  print "  class AllVarConf {\n";
+  print "  public:\n";
+  print "    /// Index for processing and update\n";
+  print "    static const int idx_pu = $namespace[$n_files-1]::$conf[$n_files-1]::idx_pu+1;\n";
+  print "    /// Index for dispose\n";
+  print "    static const int idx_d = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
+  print "    /// Bit pattern for assigned propagator modification event\n";
+  print "    static const Gecode::PropModEvent pme_assigned =\n";
   for ($f=0; $f<$n_files; $f++) {
-    print "    $namespace[$f]::$conf[$f]::pme_assigned";
+    print "        $namespace[$f]::$conf[$f]::pme_assigned";
     if ($f+1 == $n_files) {
       print ";\n";
     } else {
       print " |\n";
     }
   }
-  print "\n}\n\n";
+  print "  };\n\n}\n\n";
 }
 
 if ($gen_header) {

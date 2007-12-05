@@ -46,7 +46,7 @@ namespace Gecode {
    *
    */
 
-  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[IDX_D_ALL];
+  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[AllVarConf::idx_d];
 
   void VarDisposerBase::dispose(Space*,VarImpBase*) {}
   VarDisposerBase::~VarDisposerBase(void) {}
@@ -59,9 +59,9 @@ namespace Gecode {
     d_cur = NULL;
     d_lst = NULL;
     // Initialize variable entry points
-    for (int i=0; i<IDX_PU_ALL; i++)
+    for (int i=0; i<AllVarConf::idx_pu; i++)
       _vars_pu[i] = NULL;
-    for (int i=0; i<IDX_D_ALL; i++)
+    for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
     // Initialize propagator pool
     pool_next = 0;
@@ -139,7 +139,7 @@ namespace Gecode {
       }
     }
     // Delete variables that were registered for deletion
-    for (int i=IDX_D_ALL; i--;)
+    for (int i=AllVarConf::idx_d; i--;)
       if (_vars_d[i] != NULL)
         vd[i]->dispose(this, _vars_d[i]);
   }
@@ -187,7 +187,7 @@ namespace Gecode {
       case ES_FIX:
         {
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = PME_ASSIGNED_ALL;
+          p->u.pme = AllVarConf::pme_assigned;
           process_i();
           p->u.pme = 0;
           // Put propagator in idle queue
@@ -207,7 +207,7 @@ namespace Gecode {
           // Remember size
           size_t s = p->u.size;
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = PME_ASSIGNED_ALL;
+          p->u.pme = AllVarConf::pme_assigned;
           process_o();
           p->unlink();
           reuse(p,s);
@@ -218,7 +218,7 @@ namespace Gecode {
           // Remember the event set to be kept after processing
           PropModEvent keep = p->u.pme;
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = PME_ASSIGNED_ALL;
+          p->u.pme = AllVarConf::pme_assigned;
           process_o();
           p->u.pme = keep;
           assert(p->u.pme != 0);
@@ -282,7 +282,7 @@ namespace Gecode {
     case ES_FIX:
       {
         // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = PME_ASSIGNED_ALL;
+        p->u.pme = AllVarConf::pme_assigned;
         process_o();
         p->u.pme = 0;
         // Put propagator in idle queue
@@ -302,7 +302,7 @@ namespace Gecode {
         // Remember size
         size_t s = p->u.size;
         // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = PME_ASSIGNED_ALL;
+        p->u.pme = AllVarConf::pme_assigned;
         process_o();
         p->unlink();
         reuse(p,s);
@@ -313,7 +313,7 @@ namespace Gecode {
         // Remember the event set to be kept after processing
         PropModEvent keep = p->u.pme;
         // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = PME_ASSIGNED_ALL;
+        p->u.pme = AllVarConf::pme_assigned;
         process_o();
         p->u.pme = keep;
         assert(p->u.pme != 0);
@@ -384,9 +384,9 @@ namespace Gecode {
     : mm(s.mm,s.pu.n_sub*sizeof(Propagator**)), branch_id(s.branch_id) {
     // Initialize variable entry points
     pu.vars_noidx = NULL;
-    for (int i=0; i<IDX_PU_ALL; i++)
+    for (int i=0; i<AllVarConf::idx_pu; i++)
       _vars_pu[i] = NULL;
-    for (int i=0; i<IDX_D_ALL; i++)
+    for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
     shared = NULL;
     // Copy all actors

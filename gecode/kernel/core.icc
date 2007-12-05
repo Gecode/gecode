@@ -1040,11 +1040,11 @@ namespace Gecode {
      */
     //@{
     /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[IDX_D_ALL];
+    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[AllVarConf::idx_d];
     /// Entries for processing and updating variables
-    VarImpBase* _vars_pu[IDX_PU_ALL];
+    VarImpBase* _vars_pu[AllVarConf::idx_pu];
     /// Entries for disposing variables
-    VarImpBase* _vars_d[IDX_D_ALL];
+    VarImpBase* _vars_d[AllVarConf::idx_d];
     /// Return reference to variables (process and update)
     template <class VIC> VarImpBase* vars_pu(void) const;
     /// Set reference to variables (process and update)
