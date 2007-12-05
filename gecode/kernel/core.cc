@@ -165,6 +165,7 @@ namespace Gecode {
         return false;
       pool_next--;
     }
+    GECODE_NEVER;
     return false;
   }
 
@@ -253,6 +254,7 @@ namespace Gecode {
         return true;
       pn--;
     }
+    GECODE_NEVER;
     return true;
   }
 
