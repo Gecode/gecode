@@ -677,7 +677,7 @@ print $endif[$f];
 namespace Gecode {
 
   forceinline void
-  Space::process_i(void) {
+  Space::process(void) {
 EOF
 ;
 

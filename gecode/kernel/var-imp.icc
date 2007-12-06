@@ -480,7 +480,7 @@ namespace Gecode { namespace CpltSet {
 namespace Gecode {
 
   forceinline void
-  Space::process_i(void) {
+  Space::process(void) {
 #ifdef GECODE_HAVE_CPLTSET_VARS
     {
       using namespace Gecode::CpltSet;

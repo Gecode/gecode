@@ -176,7 +176,7 @@ namespace Gecode {
     // Count number of propagation steps
     unsigned long int pn = 0;
     // Process modified variables (from initializing or from commit)
-    process_o();
+    process();
     Propagator* p;
     PropModEvent pme_mask = 0;
     while (pool_get(p)) {
@@ -238,7 +238,7 @@ namespace Gecode {
       default:
         GECODE_NEVER;
       }
-      process_i();
+      process();
       p->u.pme ^= pme_mask;
     }
     return pn;
@@ -246,7 +246,7 @@ namespace Gecode {
 
   bool
   Space::stable(void) const {
-    const_cast<Space*>(this)->process_o();
+    const_cast<Space*>(this)->process();
     int pn = pool_next;
     while (true) {
       // Head of the queue
@@ -272,7 +272,7 @@ namespace Gecode {
     if (failed())
       return ES_FAILED;
 
-    process_o();
+    process();
 
     Propagator* p;
     if (!pool_get(p))
@@ -288,7 +288,7 @@ namespace Gecode {
       {
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = AllVarConf::pme_assigned;
-        process_o();
+        process();
         p->u.pme = 0;
         // Put propagator in idle queue
         p->unlink(); a_actors.head(p);
@@ -299,7 +299,7 @@ namespace Gecode {
         // Propagator is currently in no queue, put into idle
         p->unlink(); a_actors.head(p);
         p->u.pme = 0;
-        process_o();
+        process();
       }
       break;
     case __ES_SUBSUMED:
@@ -308,7 +308,7 @@ namespace Gecode {
         size_t s = p->u.size;
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = AllVarConf::pme_assigned;
-        process_o();
+        process();
         p->unlink();
         reuse(p,s);
       }
@@ -319,7 +319,7 @@ namespace Gecode {
         PropModEvent keep = p->u.pme;
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = AllVarConf::pme_assigned;
-        process_o();
+        process();
         p->u.pme = keep;
         assert(p->u.pme != 0);
         pool_put(p);
@@ -329,7 +329,7 @@ namespace Gecode {
       {
         // Start from the specified propagator events
         pool_put(p);
-        process_o();
+        process();
       }
       break;
     default:
@@ -337,12 +337,6 @@ namespace Gecode {
     }
 
     return es;
-  }
-
-  // Outlined processing version
-  void
-  Space::process_o(void) {
-    process_i();
   }
 
   void

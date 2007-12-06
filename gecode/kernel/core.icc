@@ -1053,10 +1053,8 @@ namespace Gecode {
     template <class VIC> VarImpBase* vars_d(void) const;
     /// Set reference to variables (dispose)
     template <class VIC> void vars_d(VarImpBase* x);
-    /// Process all modified variables (inlined version)
-    void process_i(void);
-    /// Process all modified variables (outlined version)
-    GECODE_KERNEL_EXPORT void process_o(void);
+    /// Process all modified variables
+    void process(void);
     /// Update all cloned variables
     void update(ActorLink** sub);
     //@}
