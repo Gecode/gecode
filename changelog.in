@@ -63,6 +63,74 @@
 #
 
 [RELEASE]
+Version: 2.0.1
+Date:    Later
+[DESCRIPTION]
+Fixes or what?
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Initializing an IntVar with an empty IntSet did not throw the appropriate 
+exception but crashed.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Exceptions did not have rtti information when compiled with gcc and 
+visibility, which meant that they could not be caught.
+
+[ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks:	Helmut Simonis
+[DESCRIPTION]
+Fixed a bug and quirk in %Kakuro puzzles.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The VarMapIter can now return both a specification and the actual VarBase* of 
+the currently iterated variable.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Revived boost serialization.  The serialization functions will be compiled if 
+Gecode is configured with --with-boost.
+
+[ENTRY]
+Module: kernel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Be less aggressive in increasing size of heap chunks.
+
+[ENTRY]
+Module: int
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Fixed bug in documentation of table-based extensional constraint.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed a bug in the hash function for pointers, which could return
+negative array indices.
+
+[RELEASE]
 Version: 2.0.0
 Date:    2007-11-14
 [DESCRIPTION]

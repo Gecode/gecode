@@ -95,7 +95,7 @@ namespace Gecode { namespace Support {
     }
     /// Hash function
     int hash(int m) const {
-      return reinterpret_cast<ptrdiff_t>(p) % m;
+      return static_cast<unsigned int>(reinterpret_cast<ptrdiff_t>(p)) % m;
     }
   };
   

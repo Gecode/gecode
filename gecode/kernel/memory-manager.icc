@@ -65,7 +65,7 @@ namespace Gecode {
        * If a space has requested \a hcsz_inc_ratio chunks of heap memory,
        * the chunk size is doubled.
        */
-      const int hcsz_inc_ratio = 4;
+      const int hcsz_inc_ratio = 8;
       /**
        * \brief Decrement ratio for chunk size
        *

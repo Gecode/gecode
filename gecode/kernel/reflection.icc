@@ -50,14 +50,15 @@ namespace Gecode { namespace Reflection {
     */
   
   /// Exception for errors during reflection
-  class ReflectionException : public Exception {
+  class GECODE_VTABLE_EXPORT ReflectionException : public Exception {
   public:
     /// Constructor
     ReflectionException(const char* what) : Exception("Reflection", what) {}
   };
 
   /// Exception: no reflection defined
-  class NoReflectionDefinedException : public ReflectionException {
+  class GECODE_VTABLE_EXPORT NoReflectionDefinedException
+  : public ReflectionException {
   public:
     NoReflectionDefinedException(void)
     : ReflectionException("No reflection defined") {}
@@ -146,9 +147,13 @@ namespace Gecode { namespace Reflection {
     /// Test if this represents a pair
     bool         isPair(void) const;
     /// Return the first component of the pair that this argument represents
-    Arg*         first(void) const;
+    Arg*         first(void);
+    /// Return the first component of the pair that this argument represents
+    const Arg*   first(void) const;
     /// Return the second component of the pair that this argument represents
-    Arg*         second(void) const;
+    Arg*         second(void);
+    /// Return the second component of the pair that this argument represents
+    const Arg*   second(void) const;
     /// Create new pair argument from \a a and \a b
     static Arg*  newPair(Arg* a, Arg* b);
     /// Initialize this as a pair argument from \a a and \a b
@@ -157,7 +162,9 @@ namespace Gecode { namespace Reflection {
     /// Test if this represents a shared object
     bool         isSharedObject(void) const;
     /// Return the shared object that this argument represents
-    Arg*         toSharedObject(void) const;
+    Arg*         toSharedObject(void);
+    /// Return the shared object that this argument represents
+    const Arg*   toSharedObject(void) const;
     /// Create new shared object
     static Arg*  newSharedObject(Arg* a);
     /// Initialize this as a shared object

@@ -45,14 +45,14 @@ namespace Gecode { namespace Int {
   //@{
 
   /// %Exception: %Variable created with empty domain
-  class VariableEmptyDomain : public Exception {
+  class GECODE_VTABLE_EXPORT VariableEmptyDomain : public Exception {
   public:
     /// Initialize with location \a l
     VariableEmptyDomain(const char* l);
   };
 
   /// %Exception: %Variable created with values too large for domain
-  class VariableOutOfRangeDomain : public Exception {
+  class GECODE_VTABLE_EXPORT VariableOutOfRangeDomain : public Exception {
   public:
     /// Initialize with location \a l
     VariableOutOfRangeDomain(const char* l);
@@ -60,14 +60,14 @@ namespace Gecode { namespace Int {
 
 
   /// %Exception: Numerical overflow
-  class NumericalOverflow : public Exception {
+  class GECODE_VTABLE_EXPORT NumericalOverflow : public Exception {
   public:
     /// Initialize with location \a l
     NumericalOverflow(const char* l);
   };
 
   /// %Exception: Not 0/1 integer
-  class NotZeroOne : public Exception {
+  class GECODE_VTABLE_EXPORT NotZeroOne : public Exception {
   public:
     /// Initialize with location \a l
     NotZeroOne(const char* l);
@@ -75,42 +75,42 @@ namespace Gecode { namespace Int {
 
 
   /// %Exception: Too few arguments available in argument array
-  class TooFewArguments : public Exception  {
+  class GECODE_VTABLE_EXPORT TooFewArguments : public Exception  {
   public:
     /// Initialize with location \a l
     TooFewArguments(const char* l);
   };
 
   /// %Exception: Arguments are of different size
-  class ArgumentSizeMismatch : public Exception  {
+  class GECODE_VTABLE_EXPORT ArgumentSizeMismatch : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSizeMismatch(const char* l);
   };
 
   /// %Exception: Arguments contain same variable multiply
-  class ArgumentSame : public Exception  {
+  class GECODE_VTABLE_EXPORT ArgumentSame : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSame(const char* l);
   };
 
   /// %Exception: Unknown relation passed as argument
-  class UnknownRelation : public Exception  {
+  class GECODE_VTABLE_EXPORT UnknownRelation : public Exception  {
   public:
     /// Initialize with location \a l
     UnknownRelation(const char* l);
   };
 
   /// %Exception: Unknown Boolean operation passed as argument
-  class UnknownBoolOp : public Exception  {
+  class GECODE_VTABLE_EXPORT UnknownBoolOp : public Exception  {
   public:
     /// Initialize with location \a l
     UnknownBoolOp(const char* l);
   };
 
   /// %Exception: Unknown value or variable selection passed as argument
-  class UnknownBranching : public Exception {
+  class GECODE_VTABLE_EXPORT UnknownBranching : public Exception {
   public:
     /// Initialize with location \a l
     UnknownBranching(const char* l);

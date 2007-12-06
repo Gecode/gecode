@@ -198,21 +198,21 @@ namespace Test { namespace Set {
           Gecode::Reflection::ActorSpec& s = si.actor();
           for (; vmi(); ++vmi) {
             try {
-              d.var(vmi.var());
-            } catch (Gecode::Exception e) {
+              d.var(vmi.spec());
+            } catch (Gecode::Reflection::ReflectionException e) {
               return NULL;
             }            
           }
           try {
             d.post(s);
-          } catch (Gecode::Exception e) {
+          } catch (Gecode::Reflection::ReflectionException e) {
             return NULL;
           }
         }
         for (; vmi(); ++vmi) {
           try {
-            d.var(vmi.var());
-          } catch (Gecode::Exception e) {
+            d.var(vmi.spec());
+          } catch (Gecode::Reflection::ReflectionException e) {
             return NULL;
           }
         }
@@ -220,7 +220,7 @@ namespace Test { namespace Set {
         if (failed())
           c->fail();
         return c;
-      } catch (Gecode::Exception e) {
+      } catch (Gecode::Reflection::ReflectionException e) {
         if (status() == Gecode::SS_FAILED)
           return this;
         return static_cast<SetTestSpace*>(clone());

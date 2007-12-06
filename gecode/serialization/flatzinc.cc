@@ -312,7 +312,7 @@ namespace Gecode {
     for (Reflection::SpecIter si = home->actorSpecs(vm); si(); ++si) {
       Reflection::ActorSpec& s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
-        Reflection::VarSpec& vs = vmi.var();
+        Reflection::VarSpec& vs = vmi.spec();
         if (vs.vti() == "VTI_INT")
           emitIntVar(os, varCount, vs);
         else if (vs.vti() == "VTI_BOOL")

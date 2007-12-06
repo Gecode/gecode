@@ -45,21 +45,21 @@ namespace Gecode {
   //@{
 
   /// %Exception: Operation on failed space invoked
-  class SpaceFailed : public Exception {
+  class GECODE_VTABLE_EXPORT SpaceFailed : public Exception {
   public:
     /// Initialize with location \a l
     SpaceFailed(const char* l);
   };
 
   /// %Exception: Commit when no branching present
-  class SpaceNoBranching : public Exception {
+  class GECODE_VTABLE_EXPORT SpaceNoBranching : public Exception {
   public:
     /// Initialize
     SpaceNoBranching(void);
   };
 
   /// %Exception: Commit with illegal alternative
-  class SpaceIllegalAlternative : public Exception {
+  class GECODE_VTABLE_EXPORT SpaceIllegalAlternative : public Exception {
   public:
     /// Initialize
     SpaceIllegalAlternative(void);

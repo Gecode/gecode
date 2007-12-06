@@ -109,12 +109,12 @@ namespace Gecode {
 
   forceinline int
   IntSet::min(void) const {
-    return sar[0].min;
+    return sar.size() == 0 ? 1 : sar[0].min;
   }
 
   forceinline int
   IntSet::max(void) const {
-    return sar[sar.size()-1].max;
+    return sar.size() == 0 ? 0 : sar[sar.size()-1].max;
   }
 
 

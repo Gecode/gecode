@@ -1207,7 +1207,7 @@ namespace Gecode {
   extensional(Space* home, const IntVarArgs& x, const TupleSet& t, 
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   
-  /** \brief Post propagator for \f$\langle x_0+O_0, x_1+O_1, \cdots, x_{n-1}+O_{n-1}\rangle\in T\f$.
+  /** \brief Post propagator for \f$\langle x_0+c_0, x_1+c_1, \cdots, x_{n-1}+c_{n-1}\rangle\in T\f$.
    *
    * \li Supports implementations optimized for memory (\a pk = \a
    * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).

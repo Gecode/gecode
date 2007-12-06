@@ -39,7 +39,7 @@
 namespace Gecode {
   
   /// %Exception: Error in the Buddy ROBDD manager
-  class BddMgrException : public Exception {
+  class GECODE_VTABLE_EXPORT BddMgrException : public Exception {
   public:
     /// Initialize with location \a l
     BddMgrException(const char* l);

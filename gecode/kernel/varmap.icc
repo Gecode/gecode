@@ -62,6 +62,11 @@ namespace Gecode { namespace Reflection {
     /// Destructor
     MSCVIRTUAL ~VarMap(void);
     
+    /// Return number of entries
+    int size(void) const;
+    /// Remove all entries
+    void clear(void);
+    
     /// Return index for variable \a x
     int index(VarBase* x) const;
     /// Return index for variable with name \a n
@@ -160,7 +165,9 @@ namespace Gecode { namespace Reflection {
     /// Test whether iterator still has variables or is done
     bool operator()(void) const;
     /// Return variable specification for current iterator position
-    VarSpec& var(void) const;
+    VarSpec& spec(void) const;
+    /// Return variable implementation for current iterator position
+    VarBase* var(void) const;
     /// Move iterator to next variable
     void operator++(void);
   };

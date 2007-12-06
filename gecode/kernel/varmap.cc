@@ -73,6 +73,21 @@ namespace Gecode { namespace Reflection {
   }
 
   int
+  VarMap::size(void) const {
+    return n;
+  }
+  
+  void
+  VarMap::clear(void) {
+    for (int i=n; i--;)
+      delete vo->specs[i];
+    delete vo;
+    vo = new VarMapObj();
+    n = 0;
+    so = 0;
+  }
+
+  int
   VarMap::index(VarBase* x) const {
     int i;
     return vo->m.get(x,i) ? i : -1;
@@ -124,6 +139,8 @@ namespace Gecode { namespace Reflection {
 
   VarBase*
   VarMap::var(int i) const {
+    if (i<0 || i>=n)
+      throw ReflectionException("Variable not in VarMap");
     return vo->vars[i];
   }
 
@@ -131,12 +148,14 @@ namespace Gecode { namespace Reflection {
   VarMap::spec(VarBase* x) const {
     int i;
     if (!vo->m.get(x,i))
-      throw new ReflectionException("Variable not in VarMap");
+      throw ReflectionException("Variable not in VarMap");
     return *vo->specs[i];
   }
 
   VarSpec&
   VarMap::spec(int i) const {
+    if (i<0 || i>=n)
+      throw ReflectionException("Variable not in VarMap");
     return *vo->specs[i];
   }
 
@@ -147,6 +166,10 @@ namespace Gecode { namespace Reflection {
 
   void
   VarMap::name(VarBase* x, const Support::Symbol& n) {
+    VarBase* y;
+    if (vo->nameToVar.get(n, y) && x != y)
+      throw
+        ReflectionException("Variable with the same name already in VarMap");
     vo->nameToVar.put(n, x);
     vo->varToName.put(x, n);
   }
@@ -194,7 +217,10 @@ namespace Gecode { namespace Reflection {
   VarMapIter::operator()(void) const { return i<m->n; }
 
   VarSpec&
-  VarMapIter::var(void) const { return *m->vo->specs[i]; }
+  VarMapIter::spec(void) const { return *m->vo->specs[i]; }
+
+  VarBase*
+  VarMapIter::var(void) const { return m->vo->vars[i]; }
 
   void
   VarMapIter::operator++(void) { i++; }  
