@@ -47,28 +47,28 @@ namespace Gecode { namespace MiniModel {
   //@{
 
   /// %Exception: Reification not supported
-  class ReificationNotSupported : public Exception  {
+  class GECODE_VTABLE_EXPORT ReificationNotSupported : public Exception  {
   public:
     /// Initialize with location \a l
     ReificationNotSupported(const char* l);
   };
 
   /// %Exception: Too few arguments available in argument array
-  class TooFewArguments : public Exception  {
+  class GECODE_VTABLE_EXPORT TooFewArguments : public Exception  {
   public:
     /// Initialize with location \a l
     TooFewArguments(const char* l);
   };
 
   /// %Exception: Sizes of arguments does not match
-  class ArgumentSizeMismatch : public Exception  {
+  class GECODE_VTABLE_EXPORT ArgumentSizeMismatch : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSizeMismatch(const char* l);
   };
 
   /// %Exception: Argument out of range
-  class ArgumentOutOfRange : public Exception  {
+  class GECODE_VTABLE_EXPORT ArgumentOutOfRange : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentOutOfRange(const char* l);

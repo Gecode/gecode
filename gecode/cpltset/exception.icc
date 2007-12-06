@@ -48,70 +48,71 @@ namespace Gecode { namespace CpltSet {
   //@{
 
   /// %Exception: %Variable created with values too large for domain
-  class VariableOutOfRangeDomain : public Exception {
+  class GECODE_VTABLE_EXPORT VariableOutOfRangeDomain : public Exception {
   public:
     /// Initialize with location \a l
     VariableOutOfRangeDomain(const char* l);
   };
 
   /// %Exception: %Variable created with glb not a subset of lub
-  class GlbLubSpecNoSubset : public Exception {
+  class GECODE_VTABLE_EXPORT GlbLubSpecNoSubset : public Exception {
   public:
     /// Initialize with location \a l
     GlbLubSpecNoSubset(const char* l);
   };
 
   /// %Exception: %Variable created with wrong cardinality
-  class VariableOutOfRangeCardinality : public Exception {
+  class GECODE_VTABLE_EXPORT VariableOutOfRangeCardinality
+  : public Exception {
   public:
     /// Initialize with location \a l
     VariableOutOfRangeCardinality(const char* l);
   };
 
   /// %Exception: %Variable created with failed domain
-  class VariableFailedDomain : public Exception {
+  class GECODE_VTABLE_EXPORT VariableFailedDomain : public Exception {
   public:
     /// Initialize with location \a l
     VariableFailedDomain(const char* l);
   };
 
   /// %Exception: %Variable created with invalid domain specification
-  class VariableInvalidDomainSpec : public Exception {
+  class GECODE_VTABLE_EXPORT VariableInvalidDomainSpec : public Exception {
   public:
     /// Initialize with location \a l
     VariableInvalidDomainSpec(const char* l);
   };
 
   /// %Exception: No arguments available in argument array
-  class ArgumentEmpty : public Exception {
+  class GECODE_VTABLE_EXPORT ArgumentEmpty : public Exception {
   public:
     /// Initialize with location \a l
     ArgumentEmpty(const char* l);
   };
   
   /// %Exception: Arguments are of different size
-  class ArgumentSizeMismatch : public Exception  {
+  class GECODE_VTABLE_EXPORT ArgumentSizeMismatch : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSizeMismatch(const char* l);
   };
 
   /// %Exception: Invalid relation passed as argument
-  class InvalidRelation : public Exception  {
+  class GECODE_VTABLE_EXPORT InvalidRelation : public Exception  {
   public:
     /// Initialize with location \a l
     InvalidRelation(const char* l);
   };
 
   /// %Exception: Invalid projector passed as argument
-  class InvalidProjector : public Exception  {
+  class GECODE_VTABLE_EXPORT InvalidProjector : public Exception  {
   public:
     /// Initialize with location \a l
     InvalidProjector(const char* l);
   };
 
   /// %Exception: Unknown value or variable selection passed as argument
-  class UnknownBranching : public Exception {
+  class GECODE_VTABLE_EXPORT UnknownBranching : public Exception {
   public:
     /// Initialize with location \a l
     UnknownBranching(const char* l);

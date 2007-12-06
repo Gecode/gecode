@@ -62,7 +62,7 @@ namespace Gecode {
 
   //@{
   /// %Exception: %Memory exhausted
-  class MemoryExhausted : public Exception {
+  class GECODE_VTABLE_EXPORT MemoryExhausted : public Exception {
   public:
     /// Initialize
     MemoryExhausted(void);

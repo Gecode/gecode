@@ -50,14 +50,15 @@ namespace Gecode { namespace Reflection {
     */
   
   /// Exception for errors during reflection
-  class ReflectionException : public Exception {
+  class GECODE_VTABLE_EXPORT ReflectionException : public Exception {
   public:
     /// Constructor
     ReflectionException(const char* what) : Exception("Reflection", what) {}
   };
 
   /// Exception: no reflection defined
-  class NoReflectionDefinedException : public ReflectionException {
+  class GECODE_VTABLE_EXPORT NoReflectionDefinedException
+  : public ReflectionException {
   public:
     NoReflectionDefinedException(void)
     : ReflectionException("No reflection defined") {}
