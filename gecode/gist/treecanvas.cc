@@ -412,7 +412,11 @@ namespace Gecode { namespace Gist {
           break;
       case BRANCH: 
           {
-            VisualNode* n = currentNode->getChild(0);
+            int alt = 0;
+            if(currentNode->isOnPath() && !currentNode->isLastOnPath()) {
+              alt = currentNode->getPathAlternative();
+            }
+            VisualNode* n = currentNode->getChild(alt);
             setCurrentNode(n);
             centerCurrentNode();
             break;
