@@ -2026,8 +2026,9 @@ namespace Gecode {
 
   forceinline void
   Space::pool_put(Propagator* p) {
+    p->unlink(); 
     int c = p->cost();
-    p->unlink(); pool[c].tail(p);
+    pool[c].tail(p);
     if (c > pool_next)
       pool_next = c;
   }
