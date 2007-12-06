@@ -75,7 +75,7 @@ namespace Gecode { namespace Gist {
     VisualNode* n = node();
     if (n->getStatus() == UNDETERMINED)
       return;
-    VisualNode* p = static_cast<VisualNode*>(n->getParent());
+    VisualNode* p = n->getParent();
     if (p == NULL) {
       n->setHeat(0);
     } else {
