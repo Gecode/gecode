@@ -125,7 +125,7 @@ Fixed bug in documentation of table-based extensional constraint.
 [ENTRY]
 Module: kernel
 What:   bug
-Rank:   major
+Rank:   minor
 [DESCRIPTION]
 Fixed a bug in the hash function for pointers, which could return
 negative array indices.
