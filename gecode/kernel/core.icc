@@ -1081,8 +1081,8 @@ namespace Gecode {
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
 
-    /// Perform propagation, return number of propagation steps
-    GECODE_KERNEL_EXPORT unsigned long int propagate(void);
+    /// Perform propagation, return false if failed
+    GECODE_KERNEL_EXPORT bool propagate(unsigned long int& pn);
 
     /**
      * \name Processing propagators
@@ -1579,10 +1579,8 @@ namespace Gecode {
   forceinline SpaceStatus
   Space::status(unsigned long int& pn) {
     // Perform propagation and do not continue when failed
-    pn += propagate();
-    if (failed()) {
+    if (failed() || !propagate(pn))
       return SS_FAILED;
-    }
     /*
      * Find the next branching that has still alternatives left
      *

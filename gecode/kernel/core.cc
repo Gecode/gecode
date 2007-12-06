@@ -169,12 +169,9 @@ namespace Gecode {
     return false;
   }
 
-  unsigned long int
-  Space::propagate(void) {
-    if (failed())
-      return 0;
-    // Count number of propagation steps
-    unsigned long int pn = 0;
+  bool
+  Space::propagate(unsigned long int& pn) {
+    assert(!failed());
     // Process modified variables (from initializing or from commit)
     process();
     Propagator* p;
@@ -183,8 +180,7 @@ namespace Gecode {
       pn++;
       switch (p->propagate(this)) {
       case ES_FAILED:
-        fail();
-        return pn;
+        fail(); return false;
       case ES_FIX:
         // Put propagator in idle queue
         p->unlink(); a_actors.head(p);
@@ -241,7 +237,7 @@ namespace Gecode {
       process();
       p->u.pme ^= pme_mask;
     }
-    return pn;
+    return true;
   }
 
   bool
@@ -444,10 +440,8 @@ namespace Gecode {
 
   Space*
   Space::clone(bool share, unsigned long int& pn) {
-    pn += propagate();
-    if (failed()) {
+    if (failed() || !propagate(pn))
       throw SpaceFailed("Space::clone");
-    }
 
     /*
      * Stage one
