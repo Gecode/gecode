@@ -178,6 +178,7 @@ namespace Gecode {
     // Process modified variables (from initializing or from commit)
     process_o();
     Propagator* p;
+    PropModEvent pme_mask = 0;
     while (pool_get(p)) {
       pn++;
       switch (p->propagate(this)) {
@@ -185,56 +186,60 @@ namespace Gecode {
         fail();
         return pn;
       case ES_FIX:
-        {
-          // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = AllVarConf::pme_assigned;
-          process_i();
-          p->u.pme = 0;
-          // Put propagator in idle queue
-          p->unlink(); a_actors.head(p);
-        }
+        // Put propagator in idle queue
+        p->unlink(); a_actors.head(p);
+        // Prevent that propagator gets rescheduled (turn on all events)
+        p->u.pme = AllVarConf::pme_assigned;
+        // The mask resets all events after processing (idle)
+        pme_mask = AllVarConf::pme_assigned;
         break;
       case ES_NOFIX:
-        {
-          // Propagator is currently in no queue, put into idle
-          p->unlink(); a_actors.head(p);
-          p->u.pme = 0;
-          process_i();
-        }
+        // Propagator is currently in no queue, put into idle
+        p->unlink(); a_actors.head(p);
+        // Mark propagator as idle
+        p->u.pme = 0;
+        // The mask leaves the pme unchanged
+        pme_mask = 0;
         break;
       case __ES_SUBSUMED:
-        {
-          // Remember size
-          size_t s = p->u.size;
-          // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = AllVarConf::pme_assigned;
-          process_o();
-          p->unlink();
-          reuse(p,s);
-        }
+        /*
+         * Even though the propagator is already subsumed, it might
+         * still be contained in the dependency arrays of assigned
+         * variables. This is due to the fact that propagators
+         * are not unsubscribed from assigned variable implementations.
+         */
+        // Unlink propagator from queue
+        p->unlink();
+        /*
+         * This is quite dirty: the propagator is already reused,
+         * even though its pme might be used in processing. However,
+         * this is safe: only the pme is used, and the pme will not be
+         * overwritten by reusing the memory.
+         */
+        reuse(p,p->u.size);
+        // Prevent that propagator gets rescheduled (turn on all events)
+        p->u.pme = AllVarConf::pme_assigned;
+        // The mask does not matter
         break;
       case __ES_FIX_PARTIAL:
-        {
-          // Remember the event set to be kept after processing
-          PropModEvent keep = p->u.pme;
-          // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = AllVarConf::pme_assigned;
-          process_o();
-          p->u.pme = keep;
-          assert(p->u.pme != 0);
-          pool_put(p);
-        }
+        // Schedule propagator with specified propagator events
+        pool_put(p);
+        // Remember the event set to be kept after processing
+        pme_mask = AllVarConf::pme_assigned ^ p->u.pme;
+        // Prevent that propagator gets rescheduled (turn on all events)
+        p->u.pme = AllVarConf::pme_assigned;
         break;
       case __ES_NOFIX_PARTIAL:
-        {
-          // Start from the specified propagator events
-          pool_put(p);
-          process_o();
-        }
+        // Start from the specified propagator events
+        pool_put(p);
+        // The mask leaves the pme unchanged
+        pme_mask = 0;
         break;
       default:
         GECODE_NEVER;
       }
+      process_i();
+      p->u.pme ^= pme_mask;
     }
     return pn;
   }
