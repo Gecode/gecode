@@ -243,6 +243,10 @@ namespace Gecode { namespace Gist {
     /// Return whether the node has a working space
     bool hasWorkingSpace(void);
        
+    /// Return the parent
+    SpaceNode* getParent(void);
+    /// Return child \a i
+    SpaceNode* getChild(int i);
     /// Pseudo-constructor to allow creation of nodes of sub-classes from getNoOfChildNodes
     virtual SpaceNode* createChild(int alternative);
     /// Called when the status has changed

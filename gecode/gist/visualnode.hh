@@ -181,6 +181,8 @@ namespace Gecode { namespace Gist {
 #endif
     /// Signal that the status has changed
     virtual void changedStatus();
+    /// Return the parent
+    VisualNode* getParent(void);
     /// Return child \a i
     VisualNode* getChild(int i);
     /// Find a node in this subtree at coordinates \a x, \a y

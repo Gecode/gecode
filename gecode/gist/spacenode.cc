@@ -94,6 +94,16 @@ namespace Gecode { namespace Gist {
 
   BestNode::BestNode(SpaceNode* s0, Better* b0) : s(s0), b(b0) {}
   
+  SpaceNode*
+  SpaceNode::getParent() {
+    return static_cast<SpaceNode*>(Node::getParent());
+  }
+
+  SpaceNode*
+  SpaceNode::getChild(int i) {
+    return static_cast<SpaceNode*>(Node::getChild(i));
+  }
+
   int
   SpaceNode::recompute(void) {
     int rdist = 0;

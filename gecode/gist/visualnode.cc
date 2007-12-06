@@ -271,6 +271,11 @@ namespace Gecode { namespace Gist {
   VisualNode::changedStatus() { dirtyUp(); }
   
   VisualNode*
+  VisualNode::getParent() {
+    return static_cast<VisualNode*>(SpaceNode::getParent());
+  }
+
+  VisualNode*
   VisualNode::getChild(int i) {
     return static_cast<VisualNode*>(SpaceNode::getChild(i));
   }
