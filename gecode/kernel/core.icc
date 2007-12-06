@@ -2026,7 +2026,6 @@ namespace Gecode {
 
   forceinline void
   Space::pool_put(Propagator* p) {
-    p->unlink(); 
     int c = p->cost();
     pool[c].tail(p);
     if (c > pool_next)
@@ -2052,7 +2051,7 @@ namespace Gecode {
     // Update event
     p->u.pme ^= me_old ^ VIC::pme_assigned;
     // Put propagator into right queue
-    pool_put(p);
+    p->unlink(); pool_put(p);
   }
 
   template <class VIC>
@@ -2069,7 +2068,7 @@ namespace Gecode {
     // Update modification event for propagator (use xor)
     p->u.pme ^= me_com << VIC::pme_bits_fst;
     // Put propagator into right queue
-    pool_put(p);
+    p->unlink(); pool_put(p);
   }
 
   template <class VIC>

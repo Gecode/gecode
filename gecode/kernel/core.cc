@@ -187,13 +187,15 @@ namespace Gecode {
       if (!pool_get(p))
         return true;
       pn++; pme_prop = &p->u.pme;
-      switch (p->propagate(this)) {
+      ExecStatus es = p->propagate(this);
+      p->unlink(); 
+      switch (es) {
       case ES_FAILED:
         fail(); 
         return false;
       case ES_FIX:
-        // Put propagator in idle queue
-        p->unlink(); a_actors.head(p);
+        // Propagator is currently in no queue, put into idle
+        a_actors.head(p);
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = AllVarConf::pme_assigned;
         // The mask resets all events after processing (idle)
@@ -201,7 +203,7 @@ namespace Gecode {
         break;
       case ES_NOFIX:
         // Propagator is currently in no queue, put into idle
-        p->unlink(); a_actors.head(p);
+        a_actors.head(p);
         // Mark propagator as idle
         p->u.pme = 0;
         // The mask leaves the pme unchanged
@@ -213,10 +215,7 @@ namespace Gecode {
          * still be contained in the dependency arrays of assigned
          * variables. This is due to the fact that propagators
          * are not unsubscribed from assigned variable implementations.
-         */
-        // Unlink propagator from queue
-        p->unlink();
-        /*
+         *
          * This is quite dirty: the propagator is already reused,
          * even though its pme might be used in processing. However,
          * this is safe: only the pme is used, and the pme will not be
@@ -295,13 +294,14 @@ namespace Gecode {
       if (!pool_get(p))
         return ES_STABLE;
       es = p->propagate(this);
+      p->unlink(); 
       switch (es) {
       case ES_FAILED:
         fail(); 
         return ES_FAILED;
       case ES_FIX:
         // Put propagator in idle queue
-        p->unlink(); a_actors.head(p);
+        a_actors.head(p);
         // Prevent that propagator gets rescheduled (turn on all events)
         p->u.pme = AllVarConf::pme_assigned;
         // The mask resets all events after processing (idle)
@@ -309,7 +309,7 @@ namespace Gecode {
         break;
       case ES_NOFIX:
         // Propagator is currently in no queue, put into idle
-        p->unlink(); a_actors.head(p);
+        a_actors.head(p);
         // Mark propagator as idle
         p->u.pme = 0;
         // The mask leaves the pme unchanged
@@ -321,10 +321,7 @@ namespace Gecode {
          * still be contained in the dependency arrays of assigned
          * variables. This is due to the fact that propagators
          * are not unsubscribed from assigned variable implementations.
-         */
-        // Unlink propagator from queue
-        p->unlink();
-        /*
+         *
          * This is quite dirty: the propagator is already reused,
          * even though its pme might be used in processing. However,
          * this is safe: only the pme is used, and the pme will not be
