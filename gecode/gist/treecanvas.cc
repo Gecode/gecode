@@ -165,7 +165,7 @@ namespace Gecode { namespace Gist {
             break;
           }
           for (int i=kids; i--;) {
-            stck.push(static_cast<VisualNode*>(n->getChild(i)));
+            stck.push(n->getChild(i));
           }
         }
       }
@@ -214,6 +214,23 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::toggleHidden(void) {
     QMutexLocker locker(&mutex);
+#ifdef GECODE_GIST_EXPERIMENTAL
+    if(currentNode->isStepNode()) {
+      VisualNode* curNode = currentNode;
+      while(curNode->getParent()->isStepNode()) {
+        curNode = curNode->getParent();
+      }
+      do {
+        curNode->toggleHidden();
+        curNode = curNode->getChild(0);
+      } while(curNode->isStepNode());
+      curNode->setCollapsed(!curNode->isCollapsed());
+      setCurrentNode(curNode);
+      update();
+      centerCurrentNode();
+      return;
+    }
+#endif
     currentNode->toggleHidden();
     update();
     centerCurrentNode();
@@ -222,6 +239,11 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::hideFailed(void) {
     QMutexLocker locker(&mutex);
+#ifdef GECODE_GIST_EXPERIMENTAL
+    if(currentNode->isStepNode()) {
+      return;
+    }
+#endif
     currentNode->hideFailed();
     update();
     centerCurrentNode();
@@ -263,7 +285,12 @@ namespace Gecode { namespace Gist {
     while (c != NULL) {
       x += c->getOffset();
       y += 38;
-      c = static_cast<VisualNode*>(c->getParent());
+#ifdef GECODE_GIST_EXPERIMENTAL
+      if(c->isStepNode() && c->isHidden()) {
+        y -= 38;
+      }
+#endif
+      c = c->getParent();
     }
     
     x = (int)((xtrans+x)*scale); y = (int)(y*scale);
@@ -393,7 +420,14 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::navUp(void) {
     QMutexLocker locker(&mutex);
     
-    VisualNode* p = static_cast<VisualNode*>(currentNode->getParent());
+    VisualNode* p = currentNode->getParent();
+    
+#ifdef GECODE_GIST_EXPERIMENTAL
+    while (p != NULL && p->isStepNode() && p->isHidden()) {
+      p = p->getParent();
+    }
+#endif
+    
     setCurrentNode(p);
 
     if (p != NULL) {
@@ -417,6 +451,11 @@ namespace Gecode { namespace Gist {
               alt = currentNode->getPathAlternative();
             }
             VisualNode* n = currentNode->getChild(alt);
+#ifdef GECODE_GIST_EXPERIMENTAL
+            while (n->isStepNode() && n->isHidden()) {
+              n = n->getChild(0);
+            }
+#endif
             setCurrentNode(n);
             centerCurrentNode();
             break;
@@ -432,7 +471,28 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::navLeft(void) {
     QMutexLocker locker(&mutex);
-    VisualNode* p = static_cast<VisualNode*>(currentNode->getParent());
+#ifdef GECODE_GIST_EXPERIMENTAL
+    VisualNode* p = currentNode;
+    while(p->getParent() != NULL && p->getParent()->isStepNode()
+        && p->getParent()->isHidden()) {
+      p = p->getParent();
+    }
+    if (p != NULL) {
+      int alt = p->getAlternative();
+      p = p->getParent();
+      if (p != NULL) {
+        if (alt > 0) {
+          VisualNode* n = p->getChild(alt-1);
+          while(n->isStepNode() && n->isHidden()) {
+            n = n->getChild(0);
+          }
+          setCurrentNode(n);
+          centerCurrentNode();
+        }
+      }
+    }
+#else
+    VisualNode* p = currentNode->getParent();
     if (p != NULL) {
       int alt = currentNode->getAlternative();
       if (alt > 0) {
@@ -441,12 +501,34 @@ namespace Gecode { namespace Gist {
         centerCurrentNode();
       }
     }
+#endif
   }
 
   void
   TreeCanvasImpl::navRight(void) {
     QMutexLocker locker(&mutex);
-    VisualNode* p = static_cast<VisualNode*>(currentNode->getParent());
+#ifdef GECODE_GIST_EXPERIMENTAL
+    VisualNode* p = currentNode;
+    while(p->getParent() != NULL && p->getParent()->isStepNode()
+        && p->getParent()->isHidden()) {
+      p = p->getParent();
+    }
+    if (p != NULL) {
+      int alt = p->getAlternative();
+      p = p->getParent();
+      if (p != NULL) {
+        if (alt + 1 < p->getNumberOfChildNodes()) {
+          VisualNode* n = p->getChild(alt+1);
+          while(n->isStepNode() && n->isHidden()) {
+            n = n->getChild(0);
+          }
+          setCurrentNode(n);
+          centerCurrentNode();
+        }
+      }
+    }
+#else
+    VisualNode* p = currentNode->getParent();
     if (p != NULL) {
       int alt = currentNode->getAlternative();
       if (alt + 1 < p->getNumberOfChildNodes()) {
@@ -455,6 +537,7 @@ namespace Gecode { namespace Gist {
         centerCurrentNode();
       }
     }
+#endif
   }
   
   void
@@ -601,7 +684,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     if (event->button() == Qt::LeftButton) {
       VisualNode* n;
-        n = root->findNode((int)(event->x()/scale-xtrans), 
+        n = root->findNode((int)(event->x()/scale-xtrans),
                            (int)((event->y()-30)/scale));
         setCurrentNode(n);
       if (n != NULL) {
@@ -675,7 +758,7 @@ namespace Gecode { namespace Gist {
             int value = dialog.value();
             IntRelType rel = static_cast<IntRelType> (dialog.rel());
 
-            VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
+            VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
 
             newChild->setStatus(SPECIAL);
             newChild->setSpecialDesc(new SpecialDesc(var, rel, value));
@@ -708,7 +791,7 @@ namespace Gecode { namespace Gist {
     case STEP:
     case SPECIAL:
         {
-          VisualNode* newChild = static_cast<VisualNode*>(currentNode->createChild(currentNode->getNumberOfChildren()));
+          VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
 
           newChild->setStatus(UNDETERMINED);
 
@@ -728,7 +811,8 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
 
     if(currentNode->isExpanded()) {
-      collapseCurrentNode();
+      setCurrentNode(currentNode->getParent());
+      toggleHidden();
       return;
     }
     
@@ -745,15 +829,16 @@ namespace Gecode { namespace Gist {
         int alt = currentNode->getAlternative();
         
         VisualNode* curNode = currentNode;
-        VisualNode* parent = static_cast<VisualNode*>(currentNode->getParent());
+        VisualNode* parent = currentNode->getParent();
         curNode->setRealParent(parent);
         curNode->setRealAlternative(alt);
         
         setCurrentNode(parent);
 
         VisualNode* newChild =
-          curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(0),
-                                   true,false);
+          curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(0));
+        
+        newChild->setFirstStepNode(true);
 
         currentNode->setChild(alt, newChild);
 
@@ -776,8 +861,7 @@ namespace Gecode { namespace Gist {
           }
 
           VisualNode* newChild =
-            curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(1),
-                                     false,false);
+            curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(1));
 
           currentNode->addChild(newChild);
 
@@ -788,8 +872,9 @@ namespace Gecode { namespace Gist {
         
         currentNode->setLastStepNode(true);
         currentNode->addChild(curNode);
-        if(curNode->isOpen())
+        if(curNode->isOpen()) {
           currentNode->openUp();
+        }
         setCurrentNode(curNode);
         currentNode->setExpanded(true);
       }
@@ -797,34 +882,6 @@ namespace Gecode { namespace Gist {
     }
     update();
     centerCurrentNode();
-  }
-
-  void
-  TreeCanvasImpl::collapseCurrentNode(void) {
-    QMutexLocker locker(&mutex);
-    VisualNode* parent = static_cast<VisualNode*>(currentNode->getParent());
-    (void) parent->stealChild(0);
-    VisualNode* realParent = currentNode->getRealParent();
-    VisualNode* oldChild = realParent->getChild(currentNode->getRealAlternative());
-    QList<int> pits = oldChild->getPits();
-    QList<VisualNode*> nodeStack;
-    nodeStack.push_front(oldChild);
-    VisualNode* curNode;
-    while(!nodeStack.isEmpty()) {
-      curNode = nodeStack.takeFirst();
-      for (int i = 0; i < curNode->getNumberOfChildren(); ++i) {
-        nodeStack.push_front(curNode->getChild(i));
-      }
-      pits += curNode->getPits();
-    }
-    delete oldChild;
-    while(!pits.isEmpty()) {
-      nodeMap[pits.takeFirst()] = NULL;
-    }
-    realParent->setChild(currentNode->getRealAlternative(), currentNode);
-    currentNode->setExpanded(false);
-    currentNode->dirtyUp();
-    update();
   }
 #endif
 

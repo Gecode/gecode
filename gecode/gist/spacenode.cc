@@ -120,12 +120,15 @@ namespace Gecode { namespace Gist {
       bool specialNodeOnPath = false;
       
       while (curNode->copy == NULL) {
-        SpaceNode* parent = static_cast<SpaceNode*>(curNode->getParent());
+        SpaceNode* parent = curNode->getParent();
 
         if(curNode->getStatus() == STEP) {
           Branch b(curNode->alternative, curNode->desc.step, BK_STEP);
           stck.push(b);
-        } else if(curNode->getStatus() == SPECIAL) {
+          if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
+             lastFixpoint = parent;
+          }
+      } else if(curNode->getStatus() == SPECIAL) {
           Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_IN);
           stck.push(b);
           if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
@@ -219,8 +222,7 @@ namespace Gecode { namespace Gist {
           lastBest = b.ownBest;
         }
         curDist++;
-        middleNode =
-          static_cast<SpaceNode*>(middleNode->getChild(b.alternative));
+        middleNode = middleNode->getChild(b.alternative);
       }
       workingSpace = curSpace;
       
@@ -265,7 +267,7 @@ namespace Gecode { namespace Gist {
   
   void
   SpaceNode::acquireSpace(void) {
-    SpaceNode* p = static_cast<SpaceNode*>(getParent());
+    SpaceNode* p = getParent();
     if (status == UNDETERMINED && curBest != NULL && ownBest == NULL &&
         p != NULL && curBest->s != p->ownBest) {
       ownBest = curBest->s;
@@ -300,7 +302,7 @@ namespace Gecode { namespace Gist {
   
   void
   SpaceNode::solveUp(void) {
-    SpaceNode* p = static_cast<SpaceNode*>(getParent());
+    SpaceNode* p = getParent();
     _hasSolvedChildren = true;
     if (p != NULL && !p->_hasSolvedChildren) {
         p->solveUp();
@@ -312,7 +314,7 @@ namespace Gecode { namespace Gist {
     noOfOpenChildren--;
     _hasFailedChildren = _hasFailedChildren || hadFailures;
     _hasSolvedChildren = _hasSolvedChildren || hadSolutions;
-    SpaceNode* p = static_cast<SpaceNode*>(getParent());
+    SpaceNode* p = getParent();
     if (noOfOpenChildren == 0) {
       // stats.close();
       if (p != NULL) {
@@ -404,7 +406,7 @@ namespace Gecode { namespace Gist {
     if(status == SPECIAL)
       return (getSpace());
     
-    SpaceNode* p = static_cast<SpaceNode*>(getParent());
+    SpaceNode* p = getParent();
     
     Space* ret = p->getSpace();
     
@@ -476,7 +478,7 @@ namespace Gecode { namespace Gist {
           status = FAILED;
           stats.failures++;
           // stats.newDepth(getDepth());
-          SpaceNode* p = static_cast<SpaceNode*>(getParent());
+          SpaceNode* p = getParent();
           if (p != NULL)
             p->closeChild(true, false);
         }
@@ -497,7 +499,7 @@ namespace Gecode { namespace Gist {
           if (curBest != NULL) {
             curBest->s = this;
           }
-          SpaceNode* p = static_cast<SpaceNode*>(getParent());
+          SpaceNode* p = getParent();
           if (p != NULL)
             p->closeChild(false, true);
         }
@@ -569,8 +571,9 @@ namespace Gecode { namespace Gist {
   
   void
   SpaceNode::openUp(void) {
-    if(!isOpen() && parent != NULL)
-      static_cast<SpaceNode*>(parent)->openUp();
+    if(!isOpen() && parent != NULL) {
+      getParent()->openUp();
+    }
     noOfOpenChildren++;
   }
   

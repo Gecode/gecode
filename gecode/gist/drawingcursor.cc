@@ -65,6 +65,12 @@ namespace Gecode { namespace Gist {
     x -= node()->getOffset();
     y -= 38;
     NodeCursor<VisualNode>::moveUpwards();
+#ifdef GECODE_GIST_EXPERIMENTAL
+    while (node()->isStepNode() && node()->isHidden()) {
+      x -= node()->getOffset();
+      NodeCursor<VisualNode>::moveUpwards();
+    }
+#endif
   }
 
   bool
@@ -74,18 +80,54 @@ namespace Gecode { namespace Gist {
            !isClipped();
   }
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+  bool
+  DrawingCursor::mayMoveSidewards(void) {
+    if(node() != NULL && !node()->isStepNode() && node()->getParent() != NULL
+        && node()->getParent()->isStepNode() && node()->getParent()->isHidden()) {
+          return (node()->getRealParent()->getNumberOfChildren() > node()->getRealAlternative() + 1);
+    } else {
+      return NodeCursor<VisualNode>::mayMoveSidewards();
+    }
+  }
+#endif
+
   void
   DrawingCursor::moveDownwards(void) {
     NodeCursor<VisualNode>::moveDownwards();
     x += node()->getOffset();
     y += 38;
+#ifdef GECODE_GIST_EXPERIMENTAL
+    while (node()->isStepNode() && node()->isHidden()) {
+      NodeCursor<VisualNode>::moveDownwards();
+      x += node()->getOffset();
+    }
+#endif
   }
 
   void
   DrawingCursor::moveSidewards(void) {
+#ifdef GECODE_GIST_EXPERIMENTAL
+    if(node()->getParent() != NULL && node()->getParent()->isStepNode()
+        && node()->getParent()->isHidden()) {
+      NodeCursor<VisualNode>::moveUpwards();
+      while (node()->isStepNode() && !node()->isFirstStepNode() && node()->isHidden()) {
+        x -= node()->getOffset();
+        NodeCursor<VisualNode>::moveUpwards();
+      }
+    }
     x -= node()->getOffset();
     NodeCursor<VisualNode>::moveSidewards();
     x += node()->getOffset();
+    while (node()->isStepNode() && node()->isHidden()) {
+      NodeCursor<VisualNode>::moveDownwards();
+      x += node()->getOffset();
+    }
+#else
+    x -= node()->getOffset();
+    NodeCursor<VisualNode>::moveSidewards();
+    x += node()->getOffset();
+#endif
   }
 
   bool
@@ -105,6 +147,14 @@ namespace Gecode { namespace Gist {
     Gist::VisualNode* n = node();
     int parentX = x - (n->getOffset());
     int parentY = y - 38 + 20;
+    
+#ifdef GECODE_GIST_EXPERIMENTAL
+    VisualNode* p = n->getParent();
+    while(p != NULL && p->isStepNode() && p->isHidden()) {
+      parentX -= p->getOffset();
+      p = p->getParent();
+    }
+#endif
   
     int myx = x;
     int myy = y;
@@ -393,6 +443,11 @@ namespace Gecode { namespace Gist {
     if (n->hasWorkingSpace()) {
     	painter.setBrush(Qt::darkYellow);
     	painter.drawEllipse(myx, myy + 10, 10, 10);
+    }
+    
+    if (n->isCollapsed()) {
+        painter.setBrush(Qt::yellow);
+        painter.drawEllipse(myx-10, myy, 10, 10);
     }
     
 #endif

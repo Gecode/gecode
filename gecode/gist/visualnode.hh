@@ -69,6 +69,8 @@ namespace Gecode { namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
     /// Whether the node is expanded
     bool expanded;
+    /// Whether the node is collapsed (after it was expanded)
+    bool collapsed;
     /// The parent of the node before expansion
     VisualNode* realParent;
     /// The alternative of the node before expansion
@@ -137,6 +139,10 @@ namespace Gecode { namespace Gist {
     bool isExpanded(void);
     /// Set the node to be \a expanded
     void setExpanded(bool expanded);
+    /// Return whether node is collapsed
+    bool isCollapsed(void);
+    /// Set the node to be \a collapsed
+    void setCollapsed(bool collapsed);
     /// Set the node's real parent
     void setRealParent(VisualNode* parent);
     /// Get the node's real parent
@@ -172,12 +178,10 @@ namespace Gecode { namespace Gist {
     /// Return the bounding box
     BoundingBox getBoundingBox(void);
     /// Create a child for alternative \a alternative
-    virtual SpaceNode* createChild(int alternative);
+    virtual VisualNode* createChild(int alternative);
 #ifdef GECODE_GIST_EXPERIMENTAL
     /// Create a child step node
-    VisualNode* createStepChild(int alt, StepDesc* d, bool fstStep, bool lstStep);
-    /// Steal child node no \a n
-    VisualNode* stealChild(int n);
+    VisualNode* createStepChild(int alt, StepDesc* d);
 #endif
     /// Signal that the status has changed
     virtual void changedStatus();

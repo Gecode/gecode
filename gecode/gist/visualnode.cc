@@ -48,7 +48,7 @@ namespace Gecode { namespace Gist {
   : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
 #ifdef GECODE_GIST_EXPERIMENTAL
-  , expanded(false), realParent(NULL)
+  , expanded(false), collapsed(false), realParent(NULL)
 #endif
   , heat(0)
   , shape(NULL), box(0,0,0)
@@ -58,7 +58,7 @@ namespace Gecode { namespace Gist {
   : SpaceNode(root, b), offset(0), dirty(true), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
 #ifdef GECODE_GIST_EXPERIMENTAL
-  , expanded(false), realParent(NULL)
+  , expanded(false), collapsed(false), realParent(NULL)
 #endif
   , heat(0)
   , shape(NULL), box(0,0,0)
@@ -79,8 +79,9 @@ namespace Gecode { namespace Gist {
     VisualNode* cur = this;
     while (!cur->dirty) {
       cur->dirty = true;
-      if (! cur->isRoot())
-        cur = static_cast<VisualNode*>(cur->getParent());
+      if (! cur->isRoot()) {
+        cur = cur->getParent();
+      }
     }
   }
   
@@ -138,7 +139,7 @@ namespace Gecode { namespace Gist {
     if(isRoot())
       return;
     
-    VisualNode* p = static_cast<VisualNode*> (parent);
+    VisualNode* p = getParent();
     p->setPathInfos(true, alternative);
     p->pathUp();
   }
@@ -149,7 +150,7 @@ namespace Gecode { namespace Gist {
     
     setPathInfos(false);
 
-    VisualNode* p = static_cast<VisualNode*> (parent);
+    VisualNode* p = getParent();
     p->unPathUp();
   }
   
@@ -159,9 +160,19 @@ namespace Gecode { namespace Gist {
       return expanded;
     }
 
+    bool
+    VisualNode::isCollapsed(void) {
+      return collapsed;
+    }
+
     void
     VisualNode::setExpanded(bool exp) {
       expanded = exp;
+    }
+
+    void
+    VisualNode::setCollapsed(bool col) {
+      collapsed = col;
     }
 
     void
@@ -230,7 +241,7 @@ namespace Gecode { namespace Gist {
   BoundingBox
   VisualNode::getBoundingBox(void) { return box; }
   
-  SpaceNode*
+  VisualNode*
   VisualNode::createChild(int alternative) {
     return new VisualNode(alternative, curBest);
   }
@@ -238,14 +249,14 @@ namespace Gecode { namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
 
   VisualNode*
-  VisualNode::createStepChild(int alt, StepDesc* d, bool fstStep, bool lstStep)
+  VisualNode::createStepChild(int alt, StepDesc* d)
     {
       VisualNode* ret = new VisualNode(alt, curBest);
       ret->setStepDesc(d);
       ret->setStatus(STEP);
       ret->setMetaStatus(getStatus());
-      ret->setFirstStepNode(fstStep);
-      ret->setLastStepNode(lstStep);
+      ret->setFirstStepNode(false);
+      ret->setLastStepNode(false);
       ret->setHasFailedChildren(hasFailedChildren());
       ret->setHasSolvedChildren(hasSolvedChildren());
       ret->setNumberOfChildren(0);
@@ -253,18 +264,6 @@ namespace Gecode { namespace Gist {
       ret->setPathInfos(isOnPath(),0,false);
       return ret;
     }
-
-
-  VisualNode*
-  VisualNode::stealChild(int i) {
-    VisualNode* ret = static_cast<VisualNode*>(getChild(i));
-    // replace with dummy child
-    VisualNode* dummy = new VisualNode(i,curBest);
-    children[i] = dummy;
-    dummy->parent = this;
-    dummy->dirtyUp();
-    return ret;
-  }
 #endif
 
   void
@@ -301,13 +300,19 @@ namespace Gecode { namespace Gist {
     int depth = y / 38;
 
     while (depth > 0 && cur != NULL) {
-      if (cur->isHidden()) {
+#ifdef GECODE_GIST_EXPERIMENTAL
+      if (cur->isHidden() && !cur->isStepNode()) {
         break;
       }
+#else
+     if (cur->isHidden()) {
+        break;
+      }
+#endif
       VisualNode* oldCur = cur;
       cur = NULL;
       for (int i=0; i<oldCur->noOfChildren; i++) {
-        VisualNode* nextChild = static_cast<VisualNode*>(oldCur->children[i]);
+        VisualNode* nextChild = oldCur->getChild(i);
         int newX = x - nextChild->getOffset();
         if (nextChild->containsCoordinateAtDepth(newX, depth - 1)) {
           cur = nextChild;
@@ -315,9 +320,20 @@ namespace Gecode { namespace Gist {
           break;
         }
       }
+#ifdef GECODE_GIST_EXPERIMENTAL
+      if(cur == NULL || (!cur->isStepNode() || !cur->isHidden())) {
+        depth--;
+      }
+#else
       depth--;
+#endif
       y -= 38;
     }
+#ifdef GECODE_GIST_EXPERIMENTAL
+    while(cur != NULL && cur->isStepNode() && cur->isHidden()) {
+      cur = cur->getChild(0);
+    }
+#endif
     return cur;
   }
   

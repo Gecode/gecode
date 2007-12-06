@@ -169,8 +169,6 @@ namespace Gecode {  namespace Gist {
     void getRootVars(Gecode::Reflection::VarMap& vm, int& i);
     /// Expand or collapse the current node
     void expandCurrentNode(void);
-    /// Collapse the current node
-    void collapseCurrentNode(void);
 #endif
     
     /// Stop search and wait for it to finish
