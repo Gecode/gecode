@@ -49,6 +49,8 @@
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
+#define GECODE_VTABLE_EXPORT
+
 /**
   * \brief Workaround for a bug in the Microsoft C++ compiler
   *
@@ -75,9 +77,13 @@
 
 #ifdef GCC_HASCLASSVISIBILITY
 
+#define GECODE_VTABLE_EXPORT __attribute__ ((visibility("default")))
+
 #define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
 
 #else
+
+#define GECODE_VTABLE_EXPORT
 
 #define GECODE_SUPPORT_EXPORT
 
