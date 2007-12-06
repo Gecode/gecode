@@ -208,8 +208,8 @@ namespace Gecode {
       /**
        * \brief Combines the number of free entries with modification events
        *
-       * The least four bits are reserved for the modification events, the
-       * remaining 28 bits are for the number of free entries.
+       * The least bits are reserved for the modification events, the
+       * remaining bits are for the number of free entries.
        *
        */
       unsigned int free_me;
@@ -669,10 +669,10 @@ namespace Gecode {
     union {
       /// A set of modification events (used during propagation)
       PropModEvent pme;
-      /// The size of the propagator (used during subsumtion)
-      size_t       size;
+      /// The size of the propagator (used during subsumption)
+      size_t size;
       /// A list of advisors (used during cloning)
-      Gecode::ActorLink*   advisors;
+      Gecode::ActorLink* advisors;
     } u;
   protected:
     /// Constructor for creation
