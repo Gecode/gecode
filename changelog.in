@@ -64,18 +64,10 @@
 #
 
 [RELEASE]
-Version: 2.0.1
-Date:    Later
+Version: 2.1.0
+Date:    Even later
 [DESCRIPTION]
-Fixes or what?
-
-[ENTRY]
-Module: example
-What:   bug
-Rank:   minor
-Thanks:	Helmut Simonis
-[DESCRIPTION]
-Fixed a bug and quirk in %Kakuro puzzles.
+Lots of nice gimmicks for Christmas!
 
 [ENTRY]
 Module: gist
@@ -84,6 +76,36 @@ Rank:   major
 [DESCRIPTION]
 The %Gecode Interactive Search Tool (Gist), a Qt-based graphical search 
 engine, is now part of the main %Gecode distribution.
+
+[RELEASE]
+Version: 2.0.1
+Date:    Soon
+[DESCRIPTION]
+Fixes or what?
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Initializing an IntVar with an empty IntSet did not throw the appropriate 
+exception but crashed.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Exceptions did not have rtti information when compiled with gcc and 
+visibility, which meant that they could not be caught.
+
+[ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks:	Helmut Simonis
+[DESCRIPTION]
+Fixed a bug and quirk in %Kakuro puzzles.
 
 [ENTRY]
 Module: kernel
