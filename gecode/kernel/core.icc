@@ -1384,7 +1384,7 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Space::vars_d(VarImpBase* x) {
-    _vars_d[VIC::idx_pu] = x;
+    _vars_d[VIC::idx_d] = x;
   }
 
 
