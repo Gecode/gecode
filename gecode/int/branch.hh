@@ -68,6 +68,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                    View x, int n);
   };
 
   /**
@@ -86,6 +90,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                    View x, int n);
   };
 
   /**
@@ -104,6 +112,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                    View x, int n);
   };
 
   /**
@@ -122,6 +134,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                    View x, int n);
   };
 
   /**
@@ -140,6 +156,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                    View x, int n);
   };
 
   /// Create branchings for a given view selection strategy \a SelView
@@ -170,6 +190,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space* home, unsigned int a, View x, NoValue n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                    View x, NoValue n);
   };
 
   /**
@@ -188,6 +212,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space* home, unsigned int a, View x, NoValue n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                    View x, NoValue n);
   };
 
 

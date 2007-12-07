@@ -58,6 +58,24 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     return Support::Symbol("CpltSet::Branch::ValMinUnknown");
   }
 
+  template<bool exclude>
+  forceinline void
+  ValMinUnknown<exclude>::branchSpec(Space* home,
+                                     Reflection::VarMap& m,
+                                     Reflection::BranchSpec& bs,
+                                     CpltSetView x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(exclude ? SRT_DISJ : SRT_SUP);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(exclude ? SRT_SUP : SRT_DISJ);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
+  }
+
   template <bool exclude>
   forceinline int
   ValMaxUnknown<exclude>::val(const Space*, CpltSetView x) const {
@@ -81,6 +99,24 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   forceinline Support::Symbol
   ValMaxUnknown<exclude>::type(void) {
     return Support::Symbol("CpltSet::Branch::ValMaxUnknown");
+  }
+
+  template<bool exclude>
+  forceinline void
+  ValMaxUnknown<exclude>::branchSpec(Space* home,
+                                     Reflection::VarMap& m,
+                                     Reflection::BranchSpec& bs,
+                                     CpltSetView x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(exclude ? SRT_DISJ : SRT_SUP);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(exclude ? SRT_SUP : SRT_DISJ);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
   }
 
   template <class SelView>

@@ -663,6 +663,92 @@ namespace Gecode { namespace Reflection {
   }
 
   /*
+   * Branch specification
+   *
+   */
+   
+  /// Implementation of a BranchSpec
+  class BranchSpec::Arguments {
+  public:
+    /// The number of alternatives of this branch
+    int   n;
+    /// The arguments of this branch
+    Arg** a;
+    /// The id of the corresponding branching
+    unsigned int id;
+    /// Reference counter
+    int r;
+    /// Construct arguments for \a id with \a a alternatives
+    Arguments(unsigned int id, unsigned int a);
+    /// Destructor
+    ~Arguments(void);
+  };
+
+  inline
+  BranchSpec::Arguments::Arguments(unsigned int id0, unsigned int n0)
+   : n(n0), id(id0), r(1) {
+     a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
+     for (int i=n; i--;)
+       a[i] = NULL;
+  }
+
+  inline
+  BranchSpec::Arguments::~Arguments(void) {
+    for (int i=n; i--;)
+      delete a[i];
+    Memory::free(a);
+  }
+  
+  BranchSpec::BranchSpec(unsigned int id, unsigned int a) {
+    _args = new Arguments(id, a);
+  }
+
+  BranchSpec::BranchSpec(const BranchSpec& s) : _args(s._args) {
+    _args->r++;
+  }
+  
+  const BranchSpec&
+  BranchSpec::operator=(const BranchSpec& s) {
+    if (this != &s) {
+      if (--_args->r == 0)
+        delete _args;
+      _args = s._args;
+      _args->r++;
+    }
+    return *this;
+  }
+
+  Arg*
+  BranchSpec::operator[](int i) const {
+    if (i >= _args->n)
+      throw ReflectionException("Array index out of range");
+    return _args->a[i];
+  }
+
+  Arg*&
+  BranchSpec::operator[](int i) {
+    if (i >= _args->n)
+      throw ReflectionException("Array index out of range");
+    return _args->a[i];
+  }
+
+  BranchSpec::~BranchSpec(void) {
+    if (--_args->r == 0)
+      delete _args;
+  }
+  
+  unsigned int
+  BranchSpec::id(void) const {
+    return _args->id;
+  }
+
+  unsigned int
+  BranchSpec::alternatives(void) const {
+    return _args->n;
+  }
+  
+
+  /*
    * Specification iterator
    *
    */

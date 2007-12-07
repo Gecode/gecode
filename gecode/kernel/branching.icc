@@ -99,6 +99,10 @@ namespace Gecode {
                               unsigned int a);
     /// Return specification for this branching given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Return specification for a branch
+    virtual Reflection::BranchSpec branchSpec(Space* home, 
+                                              Reflection::VarMap& m,
+                                              const BranchingDesc* d);
     /// Name of this branching
     static Support::Symbol name(void);
     /// Post branching according to specification
@@ -144,6 +148,10 @@ namespace Gecode {
                               unsigned int a);
     /// Return specification for this assignment given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Return specification for a branch
+    virtual Reflection::BranchSpec branchSpec(Space* home, 
+                                              Reflection::VarMap& m,
+                                              const BranchingDesc* d);
     /// Name of this assignment
     static Support::Symbol name(void);
     /// Post assignment according to specification
@@ -319,6 +327,16 @@ namespace Gecode {
     return s << x.spec(home, m);
   }
 
+  template <class View, class Val, class ViewSel, class ValSel>
+  Reflection::BranchSpec
+  ViewValBranching<View,Val,ViewSel,ValSel>::branchSpec(Space* home, 
+    Reflection::VarMap& m, const BranchingDesc* d) {
+    Reflection::BranchSpec bs(d->id(), d->alternatives());
+    const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
+    ValSel vs;
+    vs.branchSpec(home, m, bs, x[pvd->start()+pvd->pos()], pvd->val());
+    return bs;
+  }
 
   /*
    * Generic assignment based on value selection
@@ -401,6 +419,19 @@ namespace Gecode {
     Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Branching::spec(home, m, name());
     return s << x.spec(home, m);
+  }
+
+  template <class View, class Val, class ValSel>
+  Reflection::BranchSpec
+  ViewValAssignment<View,Val,ValSel>::branchSpec(Space* home, 
+    Reflection::VarMap& m, const BranchingDesc* d) {
+    Reflection::BranchSpec bs(d->id(), 2);
+    const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
+    ValSel vs;
+    vs.branchSpec(home, m, bs, x[pvd->start()+pvd->pos()], pvd->val());
+    Reflection::BranchSpec realBs(d->id(), 1);
+    realBs[0] = bs[0];
+    return realBs;
   }
 
 }

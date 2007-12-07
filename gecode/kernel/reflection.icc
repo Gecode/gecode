@@ -323,7 +323,36 @@ namespace Gecode { namespace Reflection {
     /// Add \a d to specification \a spec, where \a d is cast into an integer
     ActorSpec& operator<<(double d);
   };
+  
+  /**
+    * \brief %Branch specification
+    * \ingroup TaskReflection
+    */  
+  class GECODE_KERNEL_EXPORT BranchSpec {
+  private:
+    class Arguments;
+    Arguments* _args;
+  public:
+    /// Construct spec for branching with \a id and \a a alternatives
+    BranchSpec(unsigned int id, unsigned int a);
+    /// Copy constructor
+    BranchSpec(const BranchSpec& s);
+    /// Assignment operator
+    const BranchSpec& operator=(const BranchSpec& s);
+    /// Destructor
+    MSCVIRTUAL ~BranchSpec(void);
     
+    /// Return id of the branching
+    unsigned int id(void) const;
+    /// Return number of alternatives
+    unsigned int alternatives(void) const;
+    /// Return alternative \a i
+    Arg* operator[](int i) const;
+    
+    /// Return alternative \a i
+    Arg*& operator[](int i);
+  };
+  
   class VarMap;
 
   /**

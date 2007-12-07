@@ -458,6 +458,7 @@ namespace Gecode {
 
   namespace Reflection {
     class ActorSpec;
+    class BranchSpec;
     class VarMap;
     class SpecIter;
   }
@@ -892,14 +893,16 @@ namespace Gecode {
   class BranchingDesc {
     friend class Space;
   private:
-    unsigned int id;  ///< Identity to match creating branching
-    unsigned int alt; ///< Number of alternatives
+    unsigned int _id;  ///< Identity to match creating branching
+    unsigned int _alt; ///< Number of alternatives
   protected:
     /// Initialize for particular branching \a b and alternatives \a a
     BranchingDesc(const Branching* b, const unsigned int a);
   public:
     /// Return number of alternatives
     unsigned int alternatives(void) const;
+    /// Return id of the creating branching
+    unsigned int id(void) const;
     /// Report size occupied by branching description
     virtual size_t size(void) const = 0;
     /// Destructor
@@ -919,7 +922,7 @@ namespace Gecode {
    *
    * \ingroup TaskActor
    */
-  class Branching : public Actor {
+  class GECODE_VTABLE_EXPORT Branching : public Actor {
     friend class Space;
     friend class BranchingDesc;
     friend class Reflection::SpecIter;
@@ -962,6 +965,12 @@ namespace Gecode {
      */
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a) = 0;
+    //@}
+    
+    /// \name Reflection
+    //@{
+    virtual GECODE_KERNEL_EXPORT Reflection::BranchSpec
+    branchSpec(Space* home, Reflection::VarMap& m, const BranchingDesc* d);
     //@}
   };
 
@@ -1277,7 +1286,11 @@ namespace Gecode {
     Reflection::SpecIter actorSpecs(Reflection::VarMap& m);
     /// Enter variables into \a m
     GECODE_KERNEL_EXPORT
-    virtual void getVars(Reflection::VarMap& m); 
+    virtual void getVars(Reflection::VarMap& m);
+    /// Get reflection for BranchingDesc \a d
+    GECODE_KERNEL_EXPORT
+    Reflection::BranchSpec branchSpec(Reflection::VarMap& m,
+                                      const BranchingDesc* d);
     //@}
 
     /**
@@ -2006,11 +2019,16 @@ namespace Gecode {
 
   forceinline
   BranchingDesc::BranchingDesc(const Branching* b, const unsigned int a)
-    : id(b->id), alt(a) {}
+    : _id(b->id), _alt(a) {}
 
   forceinline unsigned int
   BranchingDesc::alternatives(void) const {
-    return alt;
+    return _alt;
+  }
+
+  forceinline unsigned int
+  BranchingDesc::id(void) const {
+    return _id;
   }
 
   forceinline

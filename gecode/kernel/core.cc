@@ -367,7 +367,7 @@ namespace Gecode {
      * as all of its descriptions must have been used already.
      *
      */
-    while ((b_commit != &a_actors) && (d->id != b_commit->id)) {
+    while ((b_commit != &a_actors) && (d->_id != b_commit->id)) {
       Branching* b = b_commit;
       b_commit = static_cast<Branching*>(b_commit->next());
       if (b == b_status)
@@ -549,6 +549,17 @@ namespace Gecode {
   void
   Space::getVars(Reflection::VarMap&) {}
 
+  Reflection::BranchSpec
+  Space::branchSpec(Reflection::VarMap& m, const BranchingDesc* d) {
+    Branching* bra = b_commit;
+    while ((bra != &a_actors) && (d->_id != bra->id)) {
+      bra = static_cast<Branching*>(bra->next());
+    }
+    if (bra == &a_actors)
+      throw SpaceNoBranching();
+    return bra->branchSpec(this, m, d);
+  }
+
   /*
    * Propagator
    *
@@ -557,6 +568,15 @@ namespace Gecode {
   Propagator::advise(Space*, Advisor*, const Delta*) {
     assert(false);
     return ES_FAILED;
+  }
+
+  /*
+   * Branching
+   *
+   */
+  Reflection::BranchSpec
+  Branching::branchSpec(Space*, Reflection::VarMap&, const BranchingDesc*) {
+    throw Reflection::NoReflectionDefinedException();
   }
 
   /*

@@ -52,7 +52,22 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ValMin");
   }
-
+  template <class View>
+  forceinline void
+  ValMin<View>::branchSpec(Space* home,
+                           Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                           View x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(IRT_GR);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
+  }
 
   template<class View>
   forceinline int
@@ -68,6 +83,22 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline Support::Symbol
   ValMed<View>::type(void) {
     return Support::Symbol("Int::Branch::ValMed");
+  }
+  template <class View>
+  forceinline void
+  ValMed<View>::branchSpec(Space* home,
+                           Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                           View x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(IRT_NQ);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
   }
 
 
@@ -86,6 +117,22 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ValMax");
   }
+  template <class View>
+  forceinline void
+  ValMax<View>::branchSpec(Space* home,
+                           Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                           View x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(IRT_LE);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
+  }
 
 
   template<class View>
@@ -103,6 +150,23 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSplitMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ValSplitMin");
   }
+  template <class View>
+  forceinline void
+  ValSplitMin<View>::branchSpec(Space* home,
+                                Reflection::VarMap& m,
+                                Reflection::BranchSpec& bs,
+                                View x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(IRT_LQ);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(IRT_GR);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
+  }
 
 
   template<class View>
@@ -119,6 +183,23 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline Support::Symbol
   ValSplitMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ValSplitMax");
+  }
+  template <class View>
+  forceinline void
+  ValSplitMax<View>::branchSpec(Space* home,
+                                Reflection::VarMap& m,
+                                Reflection::BranchSpec& bs,
+                                View x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(IRT_GR);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(IRT_LQ);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
   }
 
 
@@ -171,6 +252,24 @@ namespace Gecode { namespace Int { namespace Branch {
   ValZeroOne<View>::type(void) {
     return Support::Symbol("Int::Branch::ValZeroOne");
   }
+  template <class View>
+  forceinline void
+  ValZeroOne<View>::branchSpec(Space* home,
+                               Reflection::VarMap& m,
+                               Reflection::BranchSpec& bs,
+                               View x, NoValue) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
+    (*a0)[2] = Reflection::Arg::newInt(0);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(IRT_EQ);
+    (*a1)[2] = Reflection::Arg::newInt(1);
+    bs[1] = a1;
+  }
+
 
 
   template<class View>
@@ -187,6 +286,23 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline Support::Symbol
   ValOneZero<View>::type(void) {
     return Support::Symbol("Int::Branch::ValOneZero");
+  }
+  template <class View>
+  forceinline void
+  ValOneZero<View>::branchSpec(Space* home,
+                               Reflection::VarMap& m,
+                               Reflection::BranchSpec& bs,
+                               View x, NoValue) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
+    (*a0)[2] = Reflection::Arg::newInt(1);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(IRT_EQ);
+    (*a1)[2] = Reflection::Arg::newInt(0);
+    bs[1] = a1;
   }
 
 

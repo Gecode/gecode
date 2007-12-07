@@ -56,6 +56,21 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMin::type(void) {
     return Support::Symbol("Set::Branch::ValMin");
   }
+  forceinline void
+  ValMin::branchSpec(Space* home,
+                     Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                     SetView x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(SRT_SUP);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(SRT_DISJ);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
+  }
 
   forceinline int
   ValMax::val(const Space*, SetView x) const {
@@ -74,6 +89,21 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline Support::Symbol
   ValMax::type(void) {
     return Support::Symbol("Set::Branch::ValMax");
+  }
+  forceinline void
+  ValMax::branchSpec(Space* home,
+                     Reflection::VarMap& m, Reflection::BranchSpec& bs,
+                     SetView x, int n) {
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    (*a0)[0] = x.spec(home, m);
+    (*a0)[1] = Reflection::Arg::newInt(SRT_SUP);
+    (*a0)[2] = Reflection::Arg::newInt(n);
+    bs[0] = a0;
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    (*a1)[0] = x.spec(home, m);
+    (*a1)[1] = Reflection::Arg::newInt(SRT_DISJ);
+    (*a1)[2] = Reflection::Arg::newInt(n);
+    bs[1] = a1;
   }
 
   template <class SelView>
