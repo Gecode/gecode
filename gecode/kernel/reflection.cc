@@ -57,8 +57,8 @@ namespace Gecode { namespace Reflection {
   Registry::~Registry(void) { delete ro; }
 
   Registry& registry(void) {
-    static Registry* r = new Registry();
-    return *r;
+    static Registry r;
+    return r;
   };
   
   VarImpBase*
