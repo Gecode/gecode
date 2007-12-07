@@ -192,7 +192,9 @@ namespace Gecode { namespace Gist {
                 }
               }
               else {
-                curSpace->commit(middleNode->desc.branch, b.alternative);
+                if(middleNode->getStatus() == BRANCH) {
+                  curSpace->commit(middleNode->desc.branch, b.alternative);
+                }
               }
 #endif
             }
