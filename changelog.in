@@ -84,6 +84,14 @@ Date:    Soon
 Fixes or what?
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Static initialization order was undefined, making reflection work unreliably. 
+In particular, linking Gecode statically did not work.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

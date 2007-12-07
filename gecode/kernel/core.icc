@@ -922,6 +922,7 @@ namespace Gecode {
   class Branching : public Actor {
     friend class Space;
     friend class BranchingDesc;
+    friend class Reflection::SpecIter;
   private:
     unsigned int id; ///< Unique identity (to match to branching descriptions)
   protected:

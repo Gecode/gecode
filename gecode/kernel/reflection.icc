@@ -303,8 +303,16 @@ namespace Gecode { namespace Reflection {
     Support::Symbol name(void) const;
     /// Return if name is not empty
     bool hasName(void) const;
-    /// Return queue where the actor is currently schedules
+    /// Return whether the actor is a branching
+    bool isBranching(void) const;
+    /** \brief Return queue where the actor is currently scheduled
+     *  Only valid if isBranching returns false
+     */
     int queue(void) const;
+    /** \brief Return identifier of the branching
+     *  Only valid if isBranching returns true
+     */
+    int branchingId(void) const;
 
     /// Add \a a to specification \a spec
     ActorSpec& operator<<(Arg* a);
@@ -337,8 +345,10 @@ namespace Gecode { namespace Reflection {
     int        queue;
     /// The current actor
     ActorLink *cur;
+    /// Whether the current actor is a branching
+    bool       isBranching;
     /// The current ActorSpec
-    ActorSpec* curSpec;
+    mutable ActorSpec* curSpec;
   public:
     /// Constructor
     SpecIter(Space*, VarMap&);
@@ -398,7 +408,7 @@ namespace Gecode { namespace Reflection {
   };
   
   /// The registry object \ingroup TaskReflection
-  GECODE_KERNEL_EXPORT extern Registry registry;
+  GECODE_KERNEL_EXPORT Registry& registry(void);
 
   /** \brief Class used for registering propagators
     *
@@ -417,7 +427,7 @@ namespace Gecode { namespace Reflection {
 
   template <class P>
   Registrar<P>::Registrar(void) {
-    registry.add(P::name(), &P::post);
+    registry().add(P::name(), &P::post);
   }
 
   /** \addtogroup TaskReflection

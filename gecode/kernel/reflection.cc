@@ -56,7 +56,10 @@ namespace Gecode { namespace Reflection {
 
   Registry::~Registry(void) { delete ro; }
 
-  Registry registry;
+  Registry& registry(void) {
+    static Registry* r = new Registry();
+    return *r;
+  };
   
   VarImpBase*
   Registry::createVar(Space* home, VarSpec& spec) {
@@ -605,9 +608,19 @@ namespace Gecode { namespace Reflection {
     return !_args->_name.empty();
   }
 
+  bool
+  ActorSpec::isBranching(void) const {
+    return _args->queue < 0;
+  }
+
   int
   ActorSpec::queue(void) const {
-    return _args->queue;
+    return _args->queue-1;
+  }
+
+  int
+  ActorSpec::branchingId(void) const {
+    return -_args->queue-1;
   }
 
   ActorSpec::~ActorSpec(void) {
@@ -662,7 +675,10 @@ namespace Gecode { namespace Reflection {
   void
   SpecIter::operator++(void) {
     delete curSpec;
+    curSpec = NULL;
     cur = cur->next();
+    if (cur == s->b_commit)
+      isBranching = true;
     while (queue > 0 && cur == &s->pool[queue]) {
       queue--;
       cur = &s->pool[queue];
@@ -672,14 +688,10 @@ namespace Gecode { namespace Reflection {
       queue--;
       cur = s->a_actors.next();
     }
-    if ((*this)()) {
-      curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
-      curSpec->queue(queue);
-    }
   }
 
   SpecIter::SpecIter(Space* s0, VarMap& m0)
-  : m(&m0), s(s0), queue(s0->pool_next), curSpec(NULL) {
+  : m(&m0), s(s0), queue(s0->pool_next), isBranching(false), curSpec(NULL) {
     if (queue >= 0)
       cur = &s->pool[queue];
     else
@@ -689,6 +701,13 @@ namespace Gecode { namespace Reflection {
 
   ActorSpec&
   SpecIter::actor(void) const {
+    if (!curSpec) {
+      curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
+      if (isBranching)
+        curSpec->queue(-1-static_cast<Branching*>(cur)->id);
+      else
+        curSpec->queue(queue+1);        
+    }
     return *curSpec;
   }
 
