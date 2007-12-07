@@ -183,6 +183,8 @@ namespace Gecode {  namespace Gist {
     void contextMenu(QContextMenuEvent*);
     /// Status bar update
     void statusChanged(const Statistics&, bool);
+    /// The current node has been changed to \a n
+    void currentNodeChanged(Gecode::Space*);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
@@ -283,6 +285,8 @@ namespace Gecode {  namespace Gist {
     QAction* addChild;
     QAction* addFixpoint;
     QAction* expandCurrentNode;
+    QAction* forwardTimeStep;
+    QAction* backwardTimeStep;
 #endif
 
   public:
@@ -315,6 +319,8 @@ namespace Gecode {  namespace Gist {
     
   private Q_SLOTS:
     void on_canvas_newPointInTime(int);
+    void on_forwardTimeStep_triggered(void);
+    void on_backwardTimeStep_triggered(void);
 #endif
 
   private Q_SLOTS:

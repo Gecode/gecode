@@ -675,6 +675,7 @@ namespace Gecode { namespace Gist {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
+      emit currentNodeChanged(n->getSpace());
       QWidget::update();
     }
   }
@@ -1026,6 +1027,15 @@ namespace Gecode { namespace Gist {
     expandCurrentNode = new QAction("Expand/Collapse", this);
     expandCurrentNode->setShortcut(QKeySequence("Shift+E"));
     connect(expandCurrentNode, SIGNAL(triggered()), canvas, SLOT(expandCurrentNode()));
+    
+    forwardTimeStep = new QAction("Step forward", this);
+    forwardTimeStep->setShortcut(QKeySequence("+"));
+    forwardTimeStep->setObjectName("forwardTimeStep");
+    
+    backwardTimeStep = new QAction("Step backward", this);
+    backwardTimeStep->setShortcut(QKeySequence("-"));
+    backwardTimeStep->setObjectName("backwardTimeStep");
+  
 #endif
 
     addAction(inspectCN);
@@ -1057,6 +1067,8 @@ namespace Gecode { namespace Gist {
     addAction(addChild);
     addAction(addFixpoint);
     addAction(expandCurrentNode);
+    addAction(forwardTimeStep);
+    addAction(backwardTimeStep);
 #endif
 
     contextMenu = new QMenu(this);
@@ -1163,7 +1175,6 @@ namespace Gecode { namespace Gist {
   TreeCanvas::setRefresh(int i) { canvas->setRefresh(i); }
   
 #ifdef GECODE_GIST_EXPERIMENTAL
-
   void
   TreeCanvas::on_canvas_newPointInTime(int i) {
 
@@ -1172,6 +1183,15 @@ namespace Gecode { namespace Gist {
 
   }
 
+  void
+  TreeCanvas::on_forwardTimeStep_triggered(void) {
+    timeBar->setValue(timeBar->value() + 1);
+  }
+
+  void
+  TreeCanvas::on_backwardTimeStep_triggered(void) {
+    timeBar->setValue(timeBar->value() - 1);
+  }
 #endif
     
 }}
