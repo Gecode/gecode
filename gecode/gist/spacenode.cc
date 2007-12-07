@@ -195,6 +195,8 @@ namespace Gecode { namespace Gist {
                 if(middleNode->getStatus() == BRANCH) {
                   curSpace->commit(middleNode->desc.branch, b.alternative);
                 }
+                // make sure that the propagators enter the queue
+                curSpace->stable();
               }
 #endif
             }
