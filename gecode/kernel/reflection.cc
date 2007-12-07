@@ -56,7 +56,10 @@ namespace Gecode { namespace Reflection {
 
   Registry::~Registry(void) { delete ro; }
 
-  Registry registry;
+  Registry& registry(void) {
+    static Registry* r = new Registry();
+    return *r;
+  };
   
   VarBase*
   Registry::createVar(Space* home, VarSpec& spec) {

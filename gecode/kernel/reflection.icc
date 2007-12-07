@@ -398,7 +398,7 @@ namespace Gecode { namespace Reflection {
   };
   
   /// The registry object \ingroup TaskReflection
-  GECODE_KERNEL_EXPORT extern Registry registry;
+  GECODE_KERNEL_EXPORT Registry& registry(void);
 
   /** \brief Class used for registering propagators
     *
@@ -417,7 +417,7 @@ namespace Gecode { namespace Reflection {
 
   template <class P>
   Registrar<P>::Registrar(void) {
-    registry.add(P::name(), &P::post);
+    registry().add(P::name(), &P::post);
   }
 
   /** \addtogroup TaskReflection
