@@ -86,7 +86,8 @@ The kernel has undergone some cleanups and improvements:
  - The addition of new variable types for users has been simplified.
  - The main propagation loop has been entirely rewritten (much simpler).
  - Spaces have lost some weight as memory for datastructures only used
-   during cloning or propagation are shared.
+   during cloning or propagation are shared (saves some 12% of memory
+   per space).
 
 [ENTRY]
 Module: kernel
