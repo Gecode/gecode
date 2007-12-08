@@ -54,7 +54,7 @@ namespace Gecode {
      */
     class CpltSetView : public VarViewBase<CpltSetVarImp> {
     protected:
-      using VarViewBase<CpltSetVarImp>::var;
+      using VarViewBase<CpltSetVarImp>::varimp;
     public:
       /// \name Constructors and initialization
       //@{

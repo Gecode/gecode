@@ -56,7 +56,7 @@ namespace Gecode {
   SetVar::SetVar(const SetVar& x0) : x(x0.x) {}
 
   forceinline
-  SetVar::SetVar(const Set::SetView& x0) : x(x0.variable()) {}
+  SetVar::SetVar(const Set::SetView& x0) : x(x0.var()) {}
 
   forceinline void
   SetVar::init(Space* home) {
@@ -89,7 +89,7 @@ namespace Gecode {
   }
 
   forceinline Set::SetVarImp*
-  SetVar::variable(void) const {
+  SetVar::var(void) const {
     return x;
   }
 
@@ -157,7 +157,7 @@ namespace Gecode {
 
   forceinline
   SetVarGlbRanges::SetVarGlbRanges(const SetVar& s)
-    : iter(s.variable()) {}
+    : iter(s.var()) {}
 
   forceinline
   bool
@@ -184,7 +184,7 @@ namespace Gecode {
 
   forceinline
   SetVarLubRanges::SetVarLubRanges(const SetVar& s)
-    : iter(s.variable()) {}
+    : iter(s.var()) {}
 
   forceinline
   bool
@@ -211,8 +211,7 @@ namespace Gecode {
 
   forceinline
   SetVarUnknownRanges::SetVarUnknownRanges(const SetVar& s) {
-    Set::SetVarImp *si = s.variable();
-    iter.init(si);
+    iter.init(s.var());
   }
 
   forceinline

@@ -1131,7 +1131,7 @@ namespace Gecode {
   template <class Var>
   forceinline bool
   VarArgArray<Var>::VarLess::operator()(const Var& a, const Var& b) {
-    return a.variable() < b.variable();
+    return a.var() < b.var();
   }
 
   template <class Var>
@@ -1146,11 +1146,11 @@ namespace Gecode {
     Support::quicksort<Var,VarLess>(y,n,vl);
     if (strict) {
       for (int i = n-1; i--; )
-        if (y[i+1].variable() == y[i].variable())
+        if (y[i+1].var() == y[i].var())
           return true;
     } else {
       for (int i = n-1; i--; )
-        if (!y[i].assigned() && (y[i+1].variable() == y[i].variable()))
+        if (!y[i].assigned() && (y[i+1].var() == y[i].var()))
           return true;
     }
     return false;
@@ -1171,11 +1171,11 @@ namespace Gecode {
     Support::quicksort<Var,VarLess>(z,m,vl);
     if (strict) {
       for (int i = m-1; i--; )
-        if (z[i+1].variable() == z[i].variable())
+        if (z[i+1].var() == z[i].var())
           return true;
     } else {
       for (int i = m-1; i--; )
-        if (!z[i].assigned() && (z[i+1].variable() == z[i].variable()))
+        if (!z[i].assigned() && (z[i+1].var() == z[i].var()))
           return true;
     }
     return false;
@@ -1187,7 +1187,7 @@ namespace Gecode {
     if (!strict && y.assigned())
       return false;
     for (int i = n; i--; )
-      if (a[i].variable() == y.variable())
+      if (a[i].var() == y.var())
         return true;
     return false;
   }

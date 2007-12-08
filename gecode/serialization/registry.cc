@@ -50,7 +50,7 @@ namespace Gecode { namespace Serialization {
     
     VarImpBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
       Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
-      VarImpBase* ret = Int::IntView(IntVar(home, IntSet(ai))).variable();
+      VarImpBase* ret = Int::IntView(IntVar(home, IntSet(ai))).var();
       return ret;
     }
     void constrainIntVar(Space* home, VarImpBase* v, Reflection::VarSpec& spec) {
@@ -66,7 +66,7 @@ namespace Gecode { namespace Serialization {
         max = 0;
       else if (dom == Int::BoolVarImp::ONE)
         min = 1;
-      VarImpBase* ret = Int::BoolView(BoolVar(home, min, max)).variable();
+      VarImpBase* ret = Int::BoolView(BoolVar(home, min, max)).var();
       return ret;
     }
     void constrainBoolVar(Space* home, VarImpBase* v,
@@ -88,7 +88,7 @@ namespace Gecode { namespace Serialization {
       Reflection::IntArrayArgRanges 
         lub(spec.dom()->second()->first()->toIntArray());
       VarImpBase* ret = Set::SetView(SetVar(home, IntSet(glb), IntSet(lub), 
-                                  cardMin, cardMax)).variable();
+                                  cardMin, cardMax)).var();
       return ret;
     }
     void constrainSetVar(Space* home, VarImpBase* v,

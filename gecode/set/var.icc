@@ -909,7 +909,7 @@ namespace Gecode {
     /// \name Variable implementation access
     //@{
     /// Return set variable implementation
-    Set::SetVarImp* variable(void) const;
+    Set::SetVarImp* var(void) const;
     ///@}
     
     /// \name Value access

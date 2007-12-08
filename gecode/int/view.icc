@@ -97,8 +97,7 @@ namespace Gecode { namespace Int {
    * \ingroup TaskActorInt
    */
   template <class View>
-  class ViewValues
-    : public Iter::Ranges::ToValues<ViewRanges<View> > {
+  class ViewValues : public Iter::Ranges::ToValues<ViewRanges<View> > {
   public:
     /// \name Constructors and initialization
     //@{
@@ -137,7 +136,7 @@ namespace Gecode {
      */
     class IntView : public VarViewBase<IntVarImp> {
     protected:
-      using VarViewBase<IntVarImp>::var;
+      using VarViewBase<IntVarImp>::varimp;
     public:
       /// \name Constructors and initialization
       //@{
@@ -1345,7 +1344,7 @@ namespace Gecode {
      */
     class BoolView : public VarViewBase<BoolVarImp> {
     protected:
-      using VarViewBase<BoolVarImp>::var;
+      using VarViewBase<BoolVarImp>::varimp;
     public:
       /// \name Constructors and initialization
       //@{

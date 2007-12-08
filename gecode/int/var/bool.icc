@@ -41,11 +41,11 @@ namespace Gecode {
   BoolVar::_init(Space* home, int min, int max) {
     assert((min >= 0) && (max <= 1) && (min <= max));
     if (min > 0)
-      var = &Int::BoolVarImp::s_one;
+      varimp = &Int::BoolVarImp::s_one;
     else if (max == 0)
-      var = &Int::BoolVarImp::s_zero;
+      varimp = &Int::BoolVarImp::s_zero;
     else
-      var = new (home) Int::BoolVarImp(home,0,1);
+      varimp = new (home) Int::BoolVarImp(home,0,1);
   }
 
   forceinline
@@ -54,80 +54,80 @@ namespace Gecode {
 
   forceinline
   BoolVar::BoolVar(const BoolVar& x)
-    : var(x.var) {}
+    : varimp(x.varimp) {}
   forceinline
   BoolVar::BoolVar(const Int::BoolView& x)
-    : var(x.variable()) {}
+    : varimp(x.var()) {}
 
   forceinline Int::BoolVarImp*
-  BoolVar::variable(void) const {
-    return var;
+  BoolVar::var(void) const {
+    return varimp;
   }
 
 
   forceinline int
   BoolVar::val(void) const {
-    return var->val();
+    return varimp->val();
   }
   forceinline int
   BoolVar::min(void) const {
-    return var->min();
+    return varimp->min();
   }
   forceinline int
   BoolVar::med(void) const {
-    return var->med();
+    return varimp->med();
   }
   forceinline int
   BoolVar::max(void) const {
-    return var->max();
+    return varimp->max();
   }
 
 
   forceinline unsigned int
   BoolVar::degree(void) const {
-    return var->degree();
+    return varimp->degree();
   }
   forceinline unsigned int
   BoolVar::width(void) const {
-    return var->width();
+    return varimp->width();
   }
   forceinline unsigned int
   BoolVar::size(void) const {
-    return var->size();
+    return varimp->size();
   }
 
 
 
   forceinline bool
   BoolVar::assigned(void) const {
-    return var->assigned();
+    return varimp->assigned();
   }
   forceinline bool
   BoolVar::range(void) const {
-    return var->range();
+    return varimp->range();
   }
   forceinline bool
   BoolVar::in(int n) const {
-    return var->in(n);
+    return varimp->in(n);
   }
 
 
   forceinline void
   BoolVar::update(Space* home, bool share, BoolVar& x) {
-    var = x.var->copy(home,share);
+    varimp = x.varimp->copy(home,share);
   }
 
   forceinline bool
   BoolVar::zero(void) const {
-    return var->zero();
+    return varimp->zero();
   }
   forceinline bool
   BoolVar::one(void) const {
-    return var->one();
+    return varimp->one();
   }
   forceinline bool
   BoolVar::none(void) const {
-    return var->none();
+    return varimp->none();
   }
 
 }

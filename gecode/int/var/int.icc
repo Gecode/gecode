@@ -39,12 +39,12 @@ namespace Gecode {
 
   forceinline void
   IntVar::_init(Space* home, int min, int max) {
-    var = new (home) Int::IntVarImp(home,min,max);
+    varimp = new (home) Int::IntVarImp(home,min,max);
   }
 
   forceinline void
   IntVar::_init(Space* home, const IntSet& ds) {
-    var = new (home) Int::IntVarImp(home,ds);
+    varimp = new (home) Int::IntVarImp(home,ds);
   }
 
   forceinline
@@ -53,69 +53,69 @@ namespace Gecode {
 
   forceinline
   IntVar::IntVar(const IntVar& x)
-    : var(x.var) {}
+    : varimp(x.varimp) {}
   forceinline
   IntVar::IntVar(const Int::IntView& x)
-    : var(x.variable()) {}
+    : varimp(x.var()) {}
 
 
 
   forceinline Int::IntVarImp*
-  IntVar::variable(void) const {
-    return var;
+  IntVar::var(void) const {
+    return varimp;
   }
 
 
   forceinline int
   IntVar::val(void) const {
-    return var->val();
+    return varimp->val();
   }
   forceinline int
   IntVar::min(void) const {
-    return var->min();
+    return varimp->min();
   }
   forceinline int
   IntVar::med(void) const {
-    return var->med();
+    return varimp->med();
   }
   forceinline int
   IntVar::max(void) const {
-    return var->max();
+    return varimp->max();
   }
 
 
   forceinline unsigned int
   IntVar::degree(void) const {
-    return var->degree();
+    return varimp->degree();
   }
   forceinline unsigned int
   IntVar::width(void) const {
-    return var->width();
+    return varimp->width();
   }
   forceinline unsigned int
   IntVar::size(void) const {
-    return var->size();
+    return varimp->size();
   }
 
 
 
   forceinline bool
   IntVar::assigned(void) const {
-    return var->assigned();
+    return varimp->assigned();
   }
   forceinline bool
   IntVar::range(void) const {
-    return var->range();
+    return varimp->range();
   }
   forceinline bool
   IntVar::in(int n) const {
-    return var->in(n);
+    return varimp->in(n);
   }
 
 
   forceinline void
   IntVar::update(Space* home, bool share, IntVar& x) {
-    var = x.var->copy(home,share);
+    varimp = x.varimp->copy(home,share);
   }
 
   /*
@@ -127,11 +127,11 @@ namespace Gecode {
 
   forceinline
   IntVarRanges::IntVarRanges(const IntVar& x)
-    : Int::IntVarImpFwd(x.variable()) {}
+    : Int::IntVarImpFwd(x.var()) {}
 
   forceinline void
   IntVarRanges::init(const IntVar& x) {
-    Int::IntVarImpFwd::init(x.variable());
+    Int::IntVarImpFwd::init(x.var());
   }
 
 

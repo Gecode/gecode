@@ -52,7 +52,7 @@ namespace Gecode { namespace Set {
   SetView::SetView(void) {}
   forceinline
   SetView::SetView(const SetVar& y)
-    : VarViewBase<SetVarImp>(y.variable()) {}
+    : VarViewBase<SetVarImp>(y.var()) {}
   forceinline
   SetView::SetView(SetVarImp* y)
     : VarViewBase<SetVarImp>(y) {}
@@ -69,43 +69,45 @@ namespace Gecode { namespace Set {
    */
 
   forceinline bool
-  SetView::assigned(void)  const { return var->assigned(); }
+  SetView::assigned(void)  const { 
+    return varimp->assigned(); 
+  }
 
   forceinline unsigned int
-  SetView::glbSize(void) const { return var->glbSize(); }
+  SetView::glbSize(void) const { return varimp->glbSize(); }
 
   forceinline unsigned int
-  SetView::lubSize(void) const { return var->lubSize(); }
+  SetView::lubSize(void) const { return varimp->lubSize(); }
 
   forceinline unsigned int
-  SetView::unknownSize(void) const { return var->lubSize() - var->glbSize(); }
+  SetView::unknownSize(void) const { return varimp->lubSize() - varimp->glbSize(); }
 
   forceinline bool
-  SetView::contains(int i) const { return (var->knownIn(i)); }
+  SetView::contains(int i) const { return (varimp->knownIn(i)); }
 
   forceinline bool
-  SetView::notContains(int i) const { return (var->knownOut(i)); }
+  SetView::notContains(int i) const { return (varimp->knownOut(i)); }
 
   forceinline unsigned int
-  SetView::cardMin(void) const { return var->cardMin(); }
+  SetView::cardMin(void) const { return varimp->cardMin(); }
 
   forceinline unsigned int
-  SetView::cardMax(void) const { return var->cardMax(); }
+  SetView::cardMax(void) const { return varimp->cardMax(); }
 
   forceinline int
-  SetView::lubMin(void) const { return var->lubMin(); }
+  SetView::lubMin(void) const { return varimp->lubMin(); }
 
   forceinline int
-  SetView::lubMax(void) const { return var->lubMax(); }
+  SetView::lubMax(void) const { return varimp->lubMax(); }
 
   forceinline int
-  SetView::lubMinN(int n) const { return var->lubMinN(n); }
+  SetView::lubMinN(int n) const { return varimp->lubMinN(n); }
 
   forceinline int
-  SetView::glbMin(void) const { return var->glbMin(); }
+  SetView::glbMin(void) const { return varimp->glbMin(); }
 
   forceinline int
-  SetView::glbMax(void) const { return var->glbMax(); }
+  SetView::glbMax(void) const { return varimp->glbMax(); }
 
   /*
    * Tells
@@ -114,50 +116,50 @@ namespace Gecode { namespace Set {
 
   forceinline ModEvent
   SetView::cardMin(Space* home, unsigned int m) {
-    return var-> cardMin(home, m);
+    return varimp-> cardMin(home, m);
   }
 
   forceinline ModEvent
   SetView::cardMax(Space* home, unsigned int m) {
-    return var-> cardMax(home, m);
+    return varimp-> cardMax(home, m);
   }
 
   forceinline ModEvent
   SetView::include (Space* home,int from, int to)
-  { return (var->include(home,from,to)); }
+  { return (varimp->include(home,from,to)); }
 
   forceinline ModEvent
   SetView::include (Space* home,int n)
-  { return (var->include(home,n)); }
+  { return (varimp->include(home,n)); }
 
   forceinline ModEvent
   SetView::exclude (Space* home,int n)
-  { return (var->exclude(home, n)); }
+  { return (varimp->exclude(home, n)); }
 
   forceinline ModEvent
   SetView::intersect (Space* home,int from, int to)
-  { return (var->intersect(home,from,to)); }
+  { return (varimp->intersect(home,from,to)); }
 
   forceinline ModEvent
   SetView::intersect (Space* home,int n)
-  { return (var->intersect(home,n)); }
+  { return (varimp->intersect(home,n)); }
 
   template <class I> ModEvent
   SetView::includeI (Space* home, I& iter)
-  { return (var->includeI(home, iter)); }
+  { return (varimp->includeI(home, iter)); }
 
   forceinline ModEvent
   SetView::exclude (Space* home,int from, int to)
-  { return (var->exclude(home,from,to)); }
+  { return (varimp->exclude(home,from,to)); }
 
   template <class I> ModEvent
   SetView::excludeI(Space* home, I& iter) {
-    return var->excludeI(home, iter);
+    return varimp->excludeI(home, iter);
   }
 
   template <class I> ModEvent
   SetView::intersectI(Space* home, I& iter) {
-    return var->intersectI(home, iter);
+    return varimp->intersectI(home, iter);
   }
 
 
@@ -169,12 +171,12 @@ namespace Gecode { namespace Set {
 
   forceinline void
   SetView::update(Space* home, bool share, SetView& y) {
-    var = y.var->copy(home,share);
+    varimp = y.varimp->copy(home,share);
   }
 
   forceinline Reflection::Arg*
   SetView::spec(Space* home, Reflection::VarMap& m) {
-    return var->spec(home, m);
+    return varimp->spec(home, m);
   }
 
   forceinline Support::Symbol
@@ -191,22 +193,22 @@ namespace Gecode { namespace Set {
   SetView::modevent(const Delta* d) { return SetVarImp::modevent(d); }
   
   forceinline int
-  SetView::glbMin(const Delta* d) const { return var->glbMin(d); }
+  SetView::glbMin(const Delta* d) const { return varimp->glbMin(d); }
 
   forceinline int
-  SetView::glbMax(const Delta* d) const { return var->glbMax(d); }
+  SetView::glbMax(const Delta* d) const { return varimp->glbMax(d); }
 
   forceinline bool
-  SetView::glbAny(const Delta* d) const { return var->glbAny(d); }
+  SetView::glbAny(const Delta* d) const { return varimp->glbAny(d); }
 
   forceinline int
-  SetView::lubMin(const Delta* d) const { return var->lubMin(d); }
+  SetView::lubMin(const Delta* d) const { return varimp->lubMin(d); }
 
   forceinline int
-  SetView::lubMax(const Delta* d) const { return var->lubMax(d); }
+  SetView::lubMax(const Delta* d) const { return varimp->lubMax(d); }
 
   forceinline bool
-  SetView::lubAny(const Delta* d) const { return var->lubAny(d); }
+  SetView::lubAny(const Delta* d) const { return varimp->lubAny(d); }
 
 
   /**
@@ -232,11 +234,11 @@ namespace Gecode { namespace Set {
 
   forceinline
   LubRanges<SetView>::LubRanges(const SetView& x)
-    : LubRanges<SetVarImp*>(x.variable()) {}
+    : LubRanges<SetVarImp*>(x.var()) {}
 
   forceinline void
   LubRanges<SetView>::init(const SetView& x) {
-    LubRanges<SetVarImp*>::init(x.variable());
+    LubRanges<SetVarImp*>::init(x.var());
   }
 
 
@@ -262,11 +264,11 @@ namespace Gecode { namespace Set {
 
   forceinline
   GlbRanges<SetView>::GlbRanges(const SetView& x)
-    : GlbRanges<SetVarImp*>(x.variable()) {}
+    : GlbRanges<SetVarImp*>(x.var()) {}
 
   forceinline void
   GlbRanges<SetView>::init(const SetView& x) {
-    GlbRanges<SetVarImp*>::init(x.variable());
+    GlbRanges<SetVarImp*>::init(x.var());
   }
 
 }}

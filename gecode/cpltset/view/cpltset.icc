@@ -48,7 +48,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetView::CpltSetView(const CpltSetVar& y)
-    : VarViewBase<CpltSetVarImp>(y.variable()) { }
+    : VarViewBase<CpltSetVarImp>(y.var()) { }
 
   /*
    * Set information
@@ -57,37 +57,37 @@ namespace Gecode { namespace CpltSet {
 
 
   forceinline unsigned int
-  CpltSetView::glbSize(void) const { return var->glbSize(); }
+  CpltSetView::glbSize(void) const { return varimp->glbSize(); }
 
   forceinline unsigned int
-  CpltSetView::lubSize(void) const { return var->lubSize(); }
+  CpltSetView::lubSize(void) const { return varimp->lubSize(); }
 
   forceinline unsigned int
-  CpltSetView::unknownSize(void) const { return var->unknownSize(); }
+  CpltSetView::unknownSize(void) const { return varimp->unknownSize(); }
   
   forceinline unsigned int
-  CpltSetView::cardMin(void) const { return var->cardMin(); }
+  CpltSetView::cardMin(void) const { return varimp->cardMin(); }
 
   forceinline unsigned int
-  CpltSetView::cardMax(void) const { return var->cardMax(); }
+  CpltSetView::cardMax(void) const { return varimp->cardMax(); }
 
   forceinline int
-  CpltSetView::lubMin(void) const { return var->lubMin(); }
+  CpltSetView::lubMin(void) const { return varimp->lubMin(); }
 
   forceinline int
-  CpltSetView::lubMax(void) const { return var->lubMax(); }
+  CpltSetView::lubMax(void) const { return varimp->lubMax(); }
 
   forceinline int
-  CpltSetView::lubMinN(int n) const { return var->lubMinN(n); }
+  CpltSetView::lubMinN(int n) const { return varimp->lubMinN(n); }
 
   forceinline int
-  CpltSetView::lubMaxN(int n) const { return var->lubMaxN(n); }
+  CpltSetView::lubMaxN(int n) const { return varimp->lubMaxN(n); }
 
   forceinline int
-  CpltSetView::glbMin(void) const { return var->glbMin(); }
+  CpltSetView::glbMin(void) const { return varimp->glbMin(); }
 
   forceinline int
-  CpltSetView::glbMax(void) const { return var->glbMax(); }
+  CpltSetView::glbMax(void) const { return varimp->glbMax(); }
 
 
 
@@ -98,25 +98,25 @@ namespace Gecode { namespace CpltSet {
 
 
   forceinline unsigned int
-  CpltSetView::offset(void)  const { return var->offset(); }
+  CpltSetView::offset(void)  const { return varimp->offset(); }
 
   forceinline unsigned int
-  CpltSetView::tableWidth(void)  const { return var->tableWidth(); }
+  CpltSetView::tableWidth(void)  const { return varimp->tableWidth(); }
 
   forceinline bdd
-  CpltSetView::element(int i)  const { return var->element(i); }
+  CpltSetView::element(int i)  const { return varimp->element(i); }
 
   forceinline bdd
-  CpltSetView::elementNeg(int i)  const { return var->elementNeg(i); }
+  CpltSetView::elementNeg(int i)  const { return varimp->elementNeg(i); }
 
   forceinline int
-  CpltSetView::initialLubMin(void)  const { return var->initialLubMin(); }
+  CpltSetView::initialLubMin(void)  const { return varimp->initialLubMin(); }
 
   forceinline int
-  CpltSetView::initialLubMax(void)  const { return var->initialLubMax(); }
+  CpltSetView::initialLubMax(void)  const { return varimp->initialLubMax(); }
   
   forceinline bdd 
-  CpltSetView::dom(void) const {  return var->dom(); };
+  CpltSetView::dom(void) const {  return varimp->dom(); };
 
 
   /*
@@ -125,13 +125,13 @@ namespace Gecode { namespace CpltSet {
    */
 
   forceinline bool
-  CpltSetView::assigned(void)  const { return var->assigned(); }
+  CpltSetView::assigned(void)  const { return varimp->assigned(); }
 
   forceinline bool
-  CpltSetView::contains(int i) const { return (var->knownIn(i)); }
+  CpltSetView::contains(int i) const { return (varimp->knownIn(i)); }
   
   forceinline bool
-  CpltSetView::notContains(int i) const { return (var->knownOut(i)); }
+  CpltSetView::notContains(int i) const { return (varimp->knownOut(i)); }
 
   /*
    * Tells
@@ -140,77 +140,77 @@ namespace Gecode { namespace CpltSet {
 
   forceinline ModEvent 
   CpltSetView::cardinality(Space* home, int l, int u) {
-    return var->cardinality(home, l, u);
+    return varimp->cardinality(home, l, u);
   }
 
   forceinline ModEvent
   CpltSetView::cardMin(Space* home, unsigned int m) {
-    return var->cardMin(home, m);
+    return varimp->cardMin(home, m);
   }
 
   forceinline ModEvent
   CpltSetView::cardMax(Space* home, unsigned int m) {
-    return var->cardMax(home, m);
+    return varimp->cardMax(home, m);
   }
 
   forceinline ModEvent
   CpltSetView::include(Space* home, int from, int to) { 
-    return var->include(home, from, to);
+    return varimp->include(home, from, to);
   }
 
   forceinline ModEvent
-  CpltSetView::include(Space* home, int n) { return var->include(home, n); }
+  CpltSetView::include(Space* home, int n) { return varimp->include(home, n); }
 
   template <class I> ModEvent
-  CpltSetView::includeI(Space* home, I& iter) { return var->includeI(home, iter); }
+  CpltSetView::includeI(Space* home, I& iter) { return varimp->includeI(home, iter); }
 
   forceinline ModEvent
   CpltSetView::exclude(Space* home, int from, int to) { 
-    return var->exclude(home, from, to);
+    return varimp->exclude(home, from, to);
   }
 
   forceinline ModEvent
-  CpltSetView::exclude(Space* home, int n) { return var->exclude(home, n); }
+  CpltSetView::exclude(Space* home, int n) { return varimp->exclude(home, n); }
 
   template <class I> ModEvent
-  CpltSetView::excludeI(Space* home, I& iter) { return var->excludeI(home, iter); }
+  CpltSetView::excludeI(Space* home, I& iter) { return varimp->excludeI(home, iter); }
 
   forceinline ModEvent
   CpltSetView::intersect(Space* home,int from, int to) {
-    return var->intersect(home,from,to);
+    return varimp->intersect(home,from,to);
   }
 
   forceinline ModEvent
-  CpltSetView::intersect(Space* home,int n) { return var->intersect(home,n); }
+  CpltSetView::intersect(Space* home,int n) { return varimp->intersect(home,n); }
 
   template <class I> ModEvent
   CpltSetView::intersectI(Space* home, I& iter) { 
-    return var->intersectI(home, iter);
+    return varimp->intersectI(home, iter);
   }
 
   forceinline ModEvent
-  CpltSetView::nq(Space* home, int v) { return var->nq(home, v); }
+  CpltSetView::nq(Space* home, int v) { return varimp->nq(home, v); }
 
   forceinline ModEvent
-  CpltSetView::nq(Space* home, int a, int b) { return var->nq(home, a, b); }
+  CpltSetView::nq(Space* home, int a, int b) { return varimp->nq(home, a, b); }
 
   template <class I>
   forceinline ModEvent
-  CpltSetView::nqI(Space* home, I& i) { return var->nqI(home, i); }
+  CpltSetView::nqI(Space* home, I& i) { return varimp->nqI(home, i); }
 
   forceinline ModEvent
-  CpltSetView::eq(Space* home, int v) { return var->eq(home, v); }
+  CpltSetView::eq(Space* home, int v) { return varimp->eq(home, v); }
 
   forceinline ModEvent
-  CpltSetView::eq(Space* home, int a, int b) { return var->eq(home, a, b); }
+  CpltSetView::eq(Space* home, int a, int b) { return varimp->eq(home, a, b); }
   
   template <class I>
   forceinline ModEvent
-  CpltSetView::eqI(Space* home, I& i) { return var->eqI(home, i); }
+  CpltSetView::eqI(Space* home, I& i) { return varimp->eqI(home, i); }
 
   forceinline ModEvent 
   CpltSetView::intersect(Space* home, bdd& d) {
-    return var->intersect(home, d);
+    return varimp->intersect(home, d);
   }
 
   /*
@@ -220,7 +220,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void
   CpltSetView::update(Space* home, bool share, CpltSetView& y) {
-    var = y.var->copy(home,share);
+    varimp = y.varimp->copy(home,share);
   }
 
   /*
@@ -229,7 +229,7 @@ namespace Gecode { namespace CpltSet {
    */
   forceinline Reflection::Arg*
   CpltSetView::spec(Space* home, Reflection::VarMap& m) {
-    return var->spec(home, m);
+    return varimp->spec(home, m);
   }
   forceinline Support::Symbol
   CpltSetView::type(void) {
@@ -256,11 +256,11 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   GlbValues<CpltSetView>::GlbValues(const CpltSetView& x) 
-    : GlbValues<CpltSetVarImp*>(x.variable()) {}
+    : GlbValues<CpltSetVarImp*>(x.var()) {}
 
   forceinline void
   GlbValues<CpltSetView>::init(const CpltSetView& x) {
-    GlbValues<CpltSetVarImp*>::init(x.variable());
+    GlbValues<CpltSetVarImp*>::init(x.var());
   }
 }
   namespace Set {
@@ -284,11 +284,11 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   GlbRanges<CpltSet::CpltSetView>::GlbRanges(const CpltSet::CpltSetView& x) 
-    : GlbRanges<CpltSet::CpltSetVarImp*>(x.variable()) {}
+    : GlbRanges<CpltSet::CpltSetVarImp*>(x.var()) {}
 
   forceinline void
   GlbRanges<CpltSet::CpltSetView>::init(const CpltSet::CpltSetView& x) {
-    GlbRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
+    GlbRanges<CpltSet::CpltSetVarImp*>::init(x.var());
   }
 
   /// Range iterator for least upper bound of CpltSet view
@@ -311,11 +311,11 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   LubRanges<CpltSet::CpltSetView>::LubRanges(const CpltSet::CpltSetView& x) 
-    : Set::LubRanges<CpltSet::CpltSetVarImp*>(x.variable()) {}
+    : Set::LubRanges<CpltSet::CpltSetVarImp*>(x.var()) {}
 
   forceinline void
   LubRanges<CpltSet::CpltSetView>::init(const CpltSet::CpltSetView& x) {
-    Set::LubRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
+    Set::LubRanges<CpltSet::CpltSetVarImp*>::init(x.var());
   }
   }
   namespace CpltSet {
@@ -342,11 +342,11 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   LubValues<CpltSetView>::LubValues(const CpltSetView& x) 
-  : LubValues<CpltSetVarImp*>(x.variable()) {}
+  : LubValues<CpltSetVarImp*>(x.var()) {}
 
   forceinline void
   LubValues<CpltSetView>::init(const CpltSetView& x) {
-    LubValues<CpltSetVarImp*>::init(x.variable());
+    LubValues<CpltSetVarImp*>::init(x.var());
   }
 
 
@@ -370,11 +370,11 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   UnknownValues<CpltSetView>::UnknownValues(const CpltSetView& x) 
-    : UnknownValues<CpltSetVarImp*>(x.variable()) {}
+    : UnknownValues<CpltSetVarImp*>(x.var()) {}
 
   forceinline void
   UnknownValues<CpltSetView>::init(const CpltSetView& x) {
-    UnknownValues<CpltSetVarImp*>::init(x.variable());
+    UnknownValues<CpltSetVarImp*>::init(x.var());
   }
   }
   namespace Set {
@@ -398,11 +398,11 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   UnknownRanges<CpltSet::CpltSetView>::UnknownRanges(const CpltSet::CpltSetView& x) 
-    : Set::UnknownRanges<CpltSet::CpltSetVarImp*>(x.variable()) {}
+    : Set::UnknownRanges<CpltSet::CpltSetVarImp*>(x.var()) {}
 
   forceinline void
   UnknownRanges<CpltSet::CpltSetView>::init(const CpltSet::CpltSetView& x) {
-    Set::UnknownRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
+    Set::UnknownRanges<CpltSet::CpltSetVarImp*>::init(x.var());
   }
   }
 

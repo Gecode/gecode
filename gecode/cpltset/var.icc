@@ -473,7 +473,7 @@ namespace Gecode {
   class CpltSetVar {
   private:
     /// Bdd variable implementation using 
-    CpltSet::CpltSetVarImp* var;  
+    CpltSet::CpltSetVarImp* varimp;  
   public:
     /// Default constructor
     CpltSetVar(void);
@@ -660,7 +660,7 @@ namespace Gecode {
     /// \name Variable implementation access
     //@{
     /// Return bdd variable implementation
-    CpltSet::CpltSetVarImp* variable(void) const;
+    CpltSet::CpltSetVarImp* var(void) const;
     //@}
 
     /// \name Value access

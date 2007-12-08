@@ -39,15 +39,15 @@
 namespace Gecode {
 
   forceinline
-  CpltSetVar::CpltSetVar(void) : var(NULL) {}
+  CpltSetVar::CpltSetVar(void) : varimp(NULL) {}
 
   forceinline void
   CpltSetVar::init(Space* home, int glbMin, int glbMax, 
                int lubMin, int lubMax,
                unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home,
-                                            glbMin, glbMax, 
-                                            lubMin, lubMax, cardMin, cardMax);
+    varimp = new (home) CpltSet::CpltSetVarImp(home,
+                                               glbMin, glbMax, 
+                                               lubMin, lubMax, cardMin, cardMax);
   }
 
 
@@ -55,84 +55,84 @@ namespace Gecode {
   CpltSetVar::init(Space* home,
                    int glbMin, int glbMax, const IntSet& lubD,
                    unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home,
-                                            glbMin, glbMax,
-                                            lubD, cardMin, cardMax);
+    varimp = new (home) CpltSet::CpltSetVarImp(home,
+                                               glbMin, glbMax,
+                                               lubD, cardMin, cardMax);
   }
 
   forceinline void
   CpltSetVar::init(Space* home, const IntSet& glbD,
                    int lubMin, int lubMax,
                    unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home,
-                                            glbD, lubMin, lubMax,
-                                            cardMin, cardMax);
+    varimp = new (home) CpltSet::CpltSetVarImp(home,
+                                               glbD, lubMin, lubMax,
+                                               cardMin, cardMax);
   }
 
   forceinline void
   CpltSetVar::init(Space* home, 
                    const IntSet& glbD, const IntSet& lubD,
                    unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home,
-                                            glbD, lubD, cardMin, cardMax);
+    varimp = new (home) CpltSet::CpltSetVarImp(home,
+                                               glbD, lubD, cardMin, cardMax);
   }
 
   forceinline void
   CpltSetVar::dispose(Space* home) {
-    var->dispose(home);
-    var = NULL;
+    varimp->dispose(home);
+    varimp = NULL;
   }
 
   forceinline CpltSet::CpltSetVarImp*
-  CpltSetVar::variable(void) const { return var; }
+  CpltSetVar::var(void) const { return varimp; }
 
   forceinline bool
-  CpltSetVar::contains(int i) const { return var->knownIn(i); }
+  CpltSetVar::contains(int i) const { return varimp->knownIn(i); }
 
   forceinline bool
-  CpltSetVar::notContains(int i) const { return var->knownOut(i); }
+  CpltSetVar::notContains(int i) const { return varimp->knownOut(i); }
 
   forceinline bool
-  CpltSetVar::assigned(void) const { return var->assigned(); }
+  CpltSetVar::assigned(void) const { return varimp->assigned(); }
 
   forceinline void
   CpltSetVar::update(Space* home, bool share, CpltSetVar& x) { 
-    var = x.var->copy(home,share); 
+    varimp = x.varimp->copy(home,share); 
   }
 
   forceinline unsigned int
-  CpltSetVar::cardMin(void) const { return var->cardMin(); };
+  CpltSetVar::cardMin(void) const { return varimp->cardMin(); };
 
   forceinline unsigned int 
-  CpltSetVar::cardMax(void) const { return var->cardMax(); };
+  CpltSetVar::cardMax(void) const { return varimp->cardMax(); };
 
   forceinline int 
-  CpltSetVar::lubMin(void) const { return var->lubMin(); };
+  CpltSetVar::lubMin(void) const { return varimp->lubMin(); };
 
   forceinline int 
-  CpltSetVar::lubMax(void) const{ return var->lubMax(); };
+  CpltSetVar::lubMax(void) const{ return varimp->lubMax(); };
 
   forceinline int 
-  CpltSetVar::glbMin(void) const { return var->glbMin(); };
+  CpltSetVar::glbMin(void) const { return varimp->glbMin(); };
 
   forceinline int 
-  CpltSetVar::glbMax(void) const { return var->glbMax(); };
+  CpltSetVar::glbMax(void) const { return varimp->glbMax(); };
 
   forceinline unsigned int 
-  CpltSetVar::glbSize(void) const { return var->glbSize(); };
+  CpltSetVar::glbSize(void) const { return varimp->glbSize(); };
 
   forceinline unsigned int 
-  CpltSetVar::lubSize(void) const { return var->lubSize(); };
+  CpltSetVar::lubSize(void) const { return varimp->lubSize(); };
 
   forceinline unsigned int 
-  CpltSetVar::unknownSize(void) const { return var->unknownSize(); };
+  CpltSetVar::unknownSize(void) const { return varimp->unknownSize(); };
 
   forceinline
   CpltSetVarGlbRanges::CpltSetVarGlbRanges(void) {}
 
   forceinline
   CpltSetVarGlbRanges::CpltSetVarGlbRanges(const CpltSetVar& x)
-  : iter(x.variable()) {}
+  : iter(x.var()) {}
   
   forceinline bool
   CpltSetVarGlbRanges::operator()(void) const { return iter(); }
@@ -151,7 +151,7 @@ namespace Gecode {
 
   forceinline
   CpltSetVarGlbValues::CpltSetVarGlbValues(const CpltSetVar& x)
-  : iter(x.variable()) {}
+  : iter(x.var()) {}
   
   forceinline bool
   CpltSetVarGlbValues::operator()(void) const { return iter(); }
@@ -167,7 +167,7 @@ namespace Gecode {
 
   forceinline
   CpltSetVarLubRanges::CpltSetVarLubRanges(const CpltSetVar& x)
-  : iter(x.variable()) {}
+  : iter(x.var()) {}
   
   forceinline bool
   CpltSetVarLubRanges::operator()(void) const { return iter(); }
@@ -186,7 +186,7 @@ namespace Gecode {
 
   forceinline
   CpltSetVarLubValues::CpltSetVarLubValues(const CpltSetVar& x)
-  : iter(x.variable()) {}
+  : iter(x.var()) {}
   
   forceinline bool
   CpltSetVarLubValues::operator()(void) const { return iter(); }
@@ -202,7 +202,7 @@ namespace Gecode {
 
   forceinline
   CpltSetVarUnknownRanges::CpltSetVarUnknownRanges(const CpltSetVar& x) 
-  : iter(x.variable()) {}
+  : iter(x.var()) {}
   
   forceinline bool
   CpltSetVarUnknownRanges::operator()(void) const { return iter(); }

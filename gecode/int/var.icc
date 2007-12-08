@@ -702,7 +702,7 @@ namespace Gecode {
     friend class IntVarArray;
   private:
     /// Integer variable implementation used
-    Int::IntVarImp* var;
+    Int::IntVarImp* varimp;
     /**
      * \brief Initialize variable with range domain
      *
@@ -779,7 +779,7 @@ namespace Gecode {
     /// \name Variable implementation access
     //@{
     /// Return integer variable implementation
-    Int::IntVarImp* variable(void) const;
+    Int::IntVarImp* var(void) const;
     //@}
 
     /// \name Value access
@@ -864,7 +864,7 @@ namespace Gecode {
     friend class BoolVarArray;
   private:
     /// Integer variable implementation used
-    Int::BoolVarImp* var;
+    Int::BoolVarImp* varimp;
     /**
      * \brief Initialize Boolean variable with range domain
      *
@@ -910,7 +910,7 @@ namespace Gecode {
     /// \name Variable implementation access
     //@{
     /// Return integer variable implementation
-    Int::BoolVarImp* variable(void) const;
+    Int::BoolVarImp* var(void) const;
     //@}
 
     /// \name Value access

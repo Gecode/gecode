@@ -61,7 +61,7 @@ namespace Gecode {
 
     class SetView : public VarViewBase<SetVarImp> {
     protected:
-      using VarViewBase<SetVarImp>::var;
+      using VarViewBase<SetVarImp>::varimp;
     public:
       /// \name Constructors and initialization
       //@{
@@ -1251,8 +1251,7 @@ namespace Gecode {
      */
 
     template <class View>
-    class OffsetSetView
-      : public DerivedViewBase<View> {
+    class OffsetSetView : public DerivedViewBase<View> {
     protected:
       using DerivedViewBase<View>::view;
       int k;
