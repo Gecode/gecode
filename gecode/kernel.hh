@@ -151,7 +151,7 @@
  *
  */
 
-#include "gecode/kernel/varmap.icc"
+#include "gecode/kernel/var-map.icc"
 
 /*
  * Shared arrays

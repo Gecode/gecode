@@ -187,12 +187,12 @@ VARIMP = \
 	gecode/kernel/var-imp.icc
 
 KERNELSRC0 = \
-	core reflection varmap memory-manager
+	core reflection var-map memory-manager
 
 KERNELHDR0 = \
 	array shared-array branching core exception \
 	macros memory-manager modevent \
-	propagator advisor view var varmap reflection
+	propagator advisor view var var-map reflection
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
