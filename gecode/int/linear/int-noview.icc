@@ -43,7 +43,7 @@ namespace Gecode {
      * \brief No view serves as filler for empty view arrays
      *
      */
-    class NoView : public ConstantViewBase {
+    class NoView : public ConstViewBase {
     public:
       /// \name Constructors and initialization
       //@{

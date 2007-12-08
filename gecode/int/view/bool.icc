@@ -47,14 +47,14 @@ namespace Gecode {
     BoolView::BoolView(void) {}
     forceinline
     BoolView::BoolView(const BoolVar& x)
-      : VariableViewBase<BoolVarImp>(x.variable()) {}
+      : VarViewBase<BoolVarImp>(x.variable()) {}
     forceinline
     BoolView::BoolView(BoolVarImp* x)
-      : VariableViewBase<BoolVarImp>(x) {}
+      : VarViewBase<BoolVarImp>(x) {}
     forceinline
     BoolView::BoolView(Space* /*home*/, const Reflection::VarMap& vars,
                        Reflection::Arg* arg)
-    : VariableViewBase<BoolVarImp>(
+    : VarViewBase<BoolVarImp>(
         static_cast<BoolVarImp*>(vars.var(arg->toVar()))) {}
     
 

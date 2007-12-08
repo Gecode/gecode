@@ -52,14 +52,14 @@ namespace Gecode { namespace Set {
   SetView::SetView(void) {}
   forceinline
   SetView::SetView(const SetVar& y)
-    : VariableViewBase<SetVarImp>(y.variable()) {}
+    : VarViewBase<SetVarImp>(y.variable()) {}
   forceinline
   SetView::SetView(SetVarImp* y)
-    : VariableViewBase<SetVarImp>(y) {}
+    : VarViewBase<SetVarImp>(y) {}
   forceinline
   SetView::SetView(Space* /*home*/, const Reflection::VarMap& vars,
                    Reflection::Arg* arg)
-  : VariableViewBase<SetVarImp>(
+  : VarViewBase<SetVarImp>(
       static_cast<SetVarImp*>(vars.var(arg->toVar()))) {}
 
 

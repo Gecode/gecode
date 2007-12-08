@@ -52,9 +52,9 @@ namespace Gecode {
      * \brief %CpltSet view for %CpltSet variables
      * \ingroup TaskActorCpltSetView
      */
-    class CpltSetView : public VariableViewBase<CpltSetVarImp> {
+    class CpltSetView : public VarViewBase<CpltSetVarImp> {
     protected:
-      using VariableViewBase<CpltSetVarImp>::var;
+      using VarViewBase<CpltSetVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
@@ -199,14 +199,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for CpltSetView.
+   * This class specializes the ViewVarImpTraits for CpltSetView.
    * \ingroup TaskActorCpltSetView
    */
   template<>
-  class ViewVarTraits<CpltSet::CpltSetView> {
+  class ViewVarImpTraits<CpltSet::CpltSetView> {
   public:
     /// The variable type of a CpltSetView
-    typedef CpltSet::CpltSetVarImp Var;
+    typedef CpltSet::CpltSetVarImp VarImp;
   };
 
 }

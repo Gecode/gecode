@@ -59,9 +59,9 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    class SetView : public VariableViewBase<SetVarImp> {
+    class SetView : public VarViewBase<SetVarImp> {
     protected:
-      using VariableViewBase<SetVarImp>::var;
+      using VarViewBase<SetVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
@@ -191,14 +191,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for SetView.
+   * This class specializes the ViewVarImpTraits for SetView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarTraits<Set::SetView> {
+  class ViewVarImpTraits<Set::SetView> {
   public:
     /// The variable type of a SetView
-    typedef Set::SetVarImp Var;
+    typedef Set::SetVarImp VarImp;
   };
 
 
@@ -228,7 +228,7 @@ namespace Gecode {
      * that \f$x\f$ behaves like \f$s\f$.
      * \ingroup TaskActorSetView
      */
-    class ConstantView : public ConstantViewBase {
+    class ConstantView : public ConstViewBase {
       friend class LubRanges<ConstantView>;
       friend class GlbRanges<ConstantView>;
       friend bool Gecode::same(const Gecode::Set::ConstantView&, 
@@ -403,14 +403,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for ConstantView.
+   * This class specializes the ViewVarImpTraits for ConstantView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarTraits<Set::ConstantView> {
+  class ViewVarImpTraits<Set::ConstantView> {
   public:
     /// The variable type of a ConstantView
-    typedef VarImpBase Var;
+    typedef VarImpBase VarImp;
   };
 
   namespace Set {
@@ -423,7 +423,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    class EmptyView : public ConstantViewBase {
+    class EmptyView : public ConstViewBase {
     public:
       /// \name Constructors and initialization
       //@{
@@ -587,14 +587,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for EmptyView.
+   * This class specializes the ViewVarImpTraits for EmptyView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarTraits<Set::EmptyView> {
+  class ViewVarImpTraits<Set::EmptyView> {
   public:
     /// The variable type of an EmptyView
-    typedef VarImpBase Var;
+    typedef VarImpBase VarImp;
   };
 
   namespace Set {
@@ -608,7 +608,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    class UniverseView : public ConstantViewBase {
+    class UniverseView : public ConstViewBase {
     public:
       /// \name Constructors and initialization
       //@{
@@ -772,14 +772,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for UniverseView.
+   * This class specializes the ViewVarImpTraits for UniverseView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarTraits<Set::UniverseView> {
+  class ViewVarImpTraits<Set::UniverseView> {
   public:
     /// The variable type of a UniverseView
-    typedef VarImpBase Var;
+    typedef VarImpBase VarImp;
   };
 
   namespace Set {
@@ -972,14 +972,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for SingletonView.
+   * This class specializes the ViewVarImpTraits for SingletonView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarTraits<Set::SingletonView> {
+  class ViewVarImpTraits<Set::SingletonView> {
   public:
     /// The variable type of a SingletonView
-    typedef Int::IntVarImp Var;
+    typedef Int::IntVarImp VarImp;
   };
 
   namespace Set {
@@ -1176,14 +1176,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for ComplementView.
+   * This class specializes the ViewVarImpTraits for ComplementView.
    * \ingroup TaskActorSetView
    */
   template <class View>
-  class ViewVarTraits<Set::ComplementView<View> > {
+  class ViewVarImpTraits<Set::ComplementView<View> > {
   public:
     /// The variable type of a ComplementView
-    typedef typename ViewVarTraits<View>::Var Var;
+    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
   };
 
   namespace Set {
@@ -1228,15 +1228,15 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for double-negated
+   * This class specializes the ViewVarImpTraits for double-negated
    * ComplementView.
    * \ingroup TaskActorSetView
    */
   template <class View>
-  class ViewVarTraits<Set::ComplementView<Set::ComplementView<View> > > {
+  class ViewVarImpTraits<Set::ComplementView<Set::ComplementView<View> > > {
   public:
     /// The variable type of a ComplementView
-    typedef typename ViewVarTraits<View>::Var Var;
+    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
   };
 
   namespace Set {
@@ -1429,14 +1429,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for ComplementView.
+   * This class specializes the ViewVarImpTraits for ComplementView.
    * \ingroup TaskActorSetView
    */
   template <class View>
-  class ViewVarTraits<Set::OffsetSetView<View> > {
+  class ViewVarImpTraits<Set::OffsetSetView<View> > {
   public:
     /// The variable type of a ComplementView
-    typedef typename ViewVarTraits<View>::Var Var;
+    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
   };
 
 

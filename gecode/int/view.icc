@@ -135,9 +135,9 @@ namespace Gecode {
      * \brief Integer view for integer variables
      * \ingroup TaskActorIntView
      */
-    class IntView : public VariableViewBase<IntVarImp> {
+    class IntView : public VarViewBase<IntVarImp> {
     protected:
-      using VariableViewBase<IntVarImp>::var;
+      using VarViewBase<IntVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
@@ -285,14 +285,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for IntView
+   * This class specializes the ViewVarImpTraits for IntView
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarTraits<Int::IntView> {
+  class ViewVarImpTraits<Int::IntView> {
   public:
     /// The variable type of an IntView
-    typedef Int::IntVarImp Var;
+    typedef Int::IntVarImp VarImp;
   };
 
   /**
@@ -499,14 +499,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for MinusView.
+   * This class specializes the ViewVarImpTraits for MinusView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarTraits<Int::MinusView> {
+  class ViewVarImpTraits<Int::MinusView> {
   public:
     /// The variable type of a MinusView
-    typedef Int::IntVarImp Var;
+    typedef Int::IntVarImp VarImp;
   };
 
 
@@ -707,14 +707,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for OffsetView.
+   * This class specializes the ViewVarImpTraits for OffsetView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarTraits<Int::OffsetView> {
+  class ViewVarImpTraits<Int::OffsetView> {
   public:
     /// The variable type of an OffsetView
-    typedef Int::IntVarImp Var;
+    typedef Int::IntVarImp VarImp;
   };
 
 
@@ -921,14 +921,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for ScaleView.
+   * This class specializes the ViewVarImpTraits for ScaleView.
    * \ingroup TaskActorIntView
    */
   template <class Val, class UnsVal>
-  class ViewVarTraits<Int::ScaleView<Val,UnsVal> > {
+  class ViewVarImpTraits<Int::ScaleView<Val,UnsVal> > {
   public:
     /// The variable type of a ScaleView
-    typedef Int::IntVarImp Var;
+    typedef Int::IntVarImp VarImp;
   };
 
 
@@ -942,7 +942,7 @@ namespace Gecode {
      * operations such that \f$x\f$ behaves as a view assigned to \f$c\f$.
      * \ingroup TaskActorIntView
      */
-    class ConstIntView : public ConstantViewBase {
+    class ConstIntView : public ConstViewBase {
     protected:
       int x;
     public:
@@ -1126,14 +1126,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for ConstIntView.
+   * This class specializes the ViewVarImpTraits for ConstIntView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarTraits<Int::ConstIntView> {
+  class ViewVarImpTraits<Int::ConstIntView> {
   public:
     /// The variable type of a ConstIntView
-    typedef VarImpBase Var;
+    typedef VarImpBase VarImp;
   };
 
   namespace Int {
@@ -1145,7 +1145,7 @@ namespace Gecode {
      * operations such that \f$x\f$ behaves as a view assigned to \f$0\f$.
      * \ingroup TaskActorIntView
      */
-    class ZeroIntView : public ConstantViewBase {
+    class ZeroIntView : public ConstViewBase {
     public:
       /// \name Constructors and initialization
       //@{
@@ -1325,14 +1325,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for ZeroIntView.
+   * This class specializes the ViewVarImpTraits for ZeroIntView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarTraits<Int::ZeroIntView> {
+  class ViewVarImpTraits<Int::ZeroIntView> {
   public:
     /// The variable type of a ZeroIntView
-    typedef VarImpBase Var;
+    typedef VarImpBase VarImp;
   };
 
   namespace Int {
@@ -1343,9 +1343,9 @@ namespace Gecode {
      * Provides convenient and efficient operations for Boolean views.
      * \ingroup TaskActorIntView
      */
-    class BoolView : public VariableViewBase<BoolVarImp> {
+    class BoolView : public VarViewBase<BoolVarImp> {
     protected:
-      using VariableViewBase<BoolVarImp>::var;
+      using VarViewBase<BoolVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
@@ -1529,14 +1529,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for BoolView
+   * This class specializes the ViewVarImpTraits for BoolView
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarTraits<Int::BoolView> {
+  class ViewVarImpTraits<Int::BoolView> {
   public:
     /// The variable type of a BoolView
-    typedef Int::BoolVarImp Var;
+    typedef Int::BoolVarImp VarImp;
   };
 
   /**
@@ -1724,14 +1724,14 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for NegBoolView.
+   * This class specializes the ViewVarImpTraits for NegBoolView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarTraits<Int::NegBoolView> {
+  class ViewVarImpTraits<Int::NegBoolView> {
   public:
     /// The variable type of a NegBoolView
-    typedef Int::BoolVarImp Var;
+    typedef Int::BoolVarImp VarImp;
   };
 
 }
