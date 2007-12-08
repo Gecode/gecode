@@ -422,6 +422,7 @@ if ($gen_type) {
   }
   print "\n";
   print "namespace Gecode {\n\n";
+  print "  /// Configuration class for all variable implementations\n";
   print "  class AllVarConf {\n";
   print "  public:\n";
   print "    /// Index for processing and update\n";

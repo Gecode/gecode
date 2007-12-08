@@ -54,26 +54,25 @@ namespace Gecode {
 
 
   Space::Space(void) {
-    // Initialize array for forced deletion to be empty
-    d_fst = NULL;
-    d_cur = NULL;
-    d_lst = NULL;
     // Initialize variable entry points
     for (int i=0; i<AllVarConf::idx_pu; i++)
       _vars_pu[i] = NULL;
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
-    // Initialize propagator pool
-    pool_next = 0;
-    for (int i=0; i<=PC_MAX; i++)
-      pool[i].init();
     // Initialize actor and branching links
     a_actors.init();
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
-    branch_id = 0;
-    pu.n_sub = 0;
-    shared = NULL;
+    // Initialize array for forced deletion to be empty
+    d_fst = NULL;
+    d_cur = NULL;
+    d_lst = NULL;
+    // Initialize propagator pool
+    pu.p.pool_next = 0;
+    for (int i=0; i<=PC_MAX; i++)
+      pu.p.pool[i].init();
+    pu.p.branch_id = 0;
+    pu.p.n_sub = 0;
   }
 
 
@@ -154,16 +153,16 @@ namespace Gecode {
   Space::pool_get(Propagator*& p) {
     while (true) {
       // Head of the queue
-      ActorLink* lnk = &pool[pool_next];
+      ActorLink* lnk = &pu.p.pool[pu.p.pool_next];
       // First propagator or link back to queue
       ActorLink* fst = lnk->next();
       if (lnk != fst) {
         p = static_cast<Propagator*>(fst);
         return true;
       }
-      if (pool_next == 0)
+      if (pu.p.pool_next == 0)
         return false;
-      pool_next--;
+      pu.p.pool_next--;
     }
     GECODE_NEVER;
     return false;
@@ -252,10 +251,10 @@ namespace Gecode {
   bool
   Space::stable(void) const {
     const_cast<Space*>(this)->process();
-    int pn = pool_next;
+    int pn = pu.p.pool_next;
     while (true) {
       // Head of the queue
-      const ActorLink* lnk = &pool[pn];
+      const ActorLink* lnk = &pu.p.pool[pn];
       // First propagator or link back to queue
       const ActorLink* fst = lnk->next();
       if (lnk != fst)
@@ -396,14 +395,14 @@ namespace Gecode {
    */
 
   Space::Space(bool share, Space& s) 
-    : mm(s.mm,s.pu.n_sub*sizeof(Propagator**)), branch_id(s.branch_id) {
+    : mm(s.mm,s.pu.p.n_sub*sizeof(Propagator**)) {
     // Initialize variable entry points
-    pu.vars_noidx = NULL;
     for (int i=0; i<AllVarConf::idx_pu; i++)
       _vars_pu[i] = NULL;
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
-    shared = NULL;
+    pu.u.vars_noidx = NULL;
+    pu.u.shared = NULL;
     // Copy all actors
     {
       ActorLink* p  = &a_actors;
@@ -478,7 +477,7 @@ namespace Gecode {
      *
      */
     // Update variables without indexing structure
-    for (VarImpBase* x = c->pu.vars_noidx; x != NULL; x = x->next()) {
+    for (VarImpBase* x = c->pu.u.vars_noidx; x != NULL; x = x->next()) {
       x->u.free_me = 0;
       x->u.fwd     = NULL;
     }
@@ -508,15 +507,15 @@ namespace Gecode {
     }
     assert(c_a->prev() == p_a);
     // Reset links for shared objects
-    for (SharedHandle::Object* s = c->shared; s != NULL; s = s->next)
+    for (SharedHandle::Object* s = c->pu.u.shared; s != NULL; s = s->next)
       s->fwd = NULL;
-    c->shared = NULL;
     // Initialize propagator pool
-    c->pool_next = 0;
+    c->pu.p.pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
-      c->pool[i].init();
-    // Copy number of subscriptions
-    c->pu.n_sub = pu.n_sub;
+      c->pu.p.pool[i].init();
+    // Copy processing only data
+    c->pu.p.n_sub = pu.p.n_sub;
+    c->pu.p.branch_id = pu.p.branch_id;
     return c;
   }
 

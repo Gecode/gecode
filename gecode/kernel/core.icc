@@ -42,8 +42,6 @@
  *
  */
 
-#include <algorithm>
-
 namespace Gecode {
 
   class Space;
@@ -747,14 +745,8 @@ namespace Gecode {
   /** 
    * \brief Council of advisors
    * 
-   * This is a utility class that maintains a council (that is, a 
-   * collection) of advisors. The class should be used as a member 
-   * of the propagator that wants to use advisors.
-   *
-   * Lifetime of an advisor is controlled by its council.
-   *
-   * \warning A propagator can only have at most one council!
-   *
+   * If a propagator uses advisors, it must maintain its advisors
+   * through a council.
    * \ingroup TaskActor
    */
   template <class A>
@@ -780,7 +772,7 @@ namespace Gecode {
 
   /**
    * \brief Class to iterate over advisors of a council
-   *
+   * \ingroup TaskActor
    */
   template <class A>
   class Advisors {
@@ -1030,16 +1022,30 @@ namespace Gecode {
      *
      */
     Branching* b_commit;
-    /// Id of next branching to be created
-    unsigned int branch_id;
+    union {
+      /// Data only available during processing
+      struct {
+        /// Next cost level to check
+        int pool_next;
+        /// Waiting propagators according to cost
+        ActorLink pool[PC_MAX+1];
+        /// Id of next branching to be created
+        unsigned int branch_id;
+        /// Number of subscriptions (not during copying)
+        unsigned int n_sub;
+      } p;
+      /// Data available only during update
+      struct {
+        /// Keep variables during copying without index structure
+        VarImpBase* vars_noidx;
+        /// Linked list of shared objects
+        SharedHandle::Object* shared;
+      } u;
+    } pu;
     /**
      * \name Pool of waiting propagators
      */
     //@{
-    /// Next cost level to check
-    int pool_next;
-    /// Waiting propagators according to cost
-    ActorLink pool[PC_MAX+1];
     /// Put propagator \a p to pool
     void pool_put(Propagator* p);
     /// Get propagator \a p from pool
@@ -1069,13 +1075,6 @@ namespace Gecode {
     void update(ActorLink** sub);
     //@}
 
-    union {
-      /// Number of subscriptions (not during copying)
-      unsigned int n_sub;
-      /// Keep variables during copying without index structure
-      VarImpBase* vars_noidx;
-    } pu;
-
     /// First actor for forced disposal
     Actor** d_fst;
     /// Current actor for forced disposal
@@ -1084,9 +1083,6 @@ namespace Gecode {
     Actor** d_lst;
     /// Resize disposal array
     GECODE_KERNEL_EXPORT void d_resize(void);
-
-    /// Linked list of shared objects
-    SharedHandle::Object* shared;
 
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
@@ -1187,9 +1183,9 @@ namespace Gecode {
      * number of propagator executions. If propagation results in
      * a failed space, an exception of type SpaceFailed is thrown.
      *
-     * Otherwise, a clone of the space is returned. If \a shared is true,
+     * Otherwise, a clone of the space is returned. If \a share is true,
      * sharable datastructures are shared among the clone and the original
-     * space. If \a shared is false, independent copies of the shared
+     * space. If \a share is false, independent copies of the shared
      * datastructures must be created. This means that a clone with no
      * sharing can be used in a different thread without any interaction
      * with the original space.
@@ -1497,8 +1493,8 @@ namespace Gecode {
     } else {
       o = sh.o->copy(); 
       sh.o->fwd = o;
-      sh.o->next = home->shared; 
-      home->shared = sh.o;
+      sh.o->next = home->pu.u.shared; 
+      home->pu.u.shared = sh.o;
       subscribe();
     }
   }
@@ -1895,7 +1891,7 @@ namespace Gecode {
       u.fwd     = NULL;
       for (int i=pc_max+3; i--; )
         idx[i] = NULL;
-      reg = &home->pu.vars_noidx;
+      reg = &home->pu.u.vars_noidx;
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
@@ -1993,7 +1989,7 @@ namespace Gecode {
   forceinline
   Branching::Branching(Space* home) {
     // Propagators are put at the tail of the link of actors
-    id = home->branch_id++;
+    id = home->pu.p.branch_id++;
     // If no branching available, make it the first one
     if (home->b_status == &(home->a_actors)) {
       home->b_status = this;
@@ -2046,9 +2042,9 @@ namespace Gecode {
   forceinline void
   Space::pool_put(Propagator* p) {
     int c = p->cost();
-    pool[c].tail(p);
-    if (c > pool_next)
-      pool_next = c;
+    pu.p.pool[c].tail(p);
+    if (c > pu.p.pool_next)
+      pu.p.pool_next = c;
   }
 
   forceinline void
@@ -2125,7 +2121,7 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
     // Count one new subscription
-    home->pu.n_sub += 1;
+    home->pu.p.n_sub += 1;
     if (free() == 0)
       resize(home);
     free_dec();
@@ -2156,7 +2152,7 @@ namespace Gecode {
       ActorLink** s = static_cast<ActorLink**>
         (home->mm.subscriptions());
       unsigned int m = 
-        ((s <= idx[0]) && (idx[0] < s+home->pu.n_sub)) ?
+        ((s <= idx[0]) && (idx[0] < s+home->pu.p.n_sub)) ?
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(m*sizeof(ActorLink*))) + m-n;
@@ -2226,7 +2222,7 @@ namespace Gecode {
       *(idx[i]++)=*(idx[i-1]);
     idx[0]++;
     free_inc();
-    home->pu.n_sub -= 1;
+    home->pu.p.n_sub -= 1;
   }
 
   template <class VIC>
@@ -2389,7 +2385,7 @@ namespace Gecode {
     {
       ActorLink** b = idx[0];
       ActorLink** p = idx[pc_max+2];
-      home->pu.n_sub -= (p-b);
+      home->pu.p.n_sub -= (p-b);
       // Information needed to release the dependency array
       unsigned int n = free() + (p-b);
       home->reuse(p-n,n*sizeof(ActorLink*));

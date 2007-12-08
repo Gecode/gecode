@@ -451,6 +451,7 @@ namespace Gecode { namespace CpltSet {
 
 namespace Gecode {
 
+  /// Configuration class for all variable implementations
   class AllVarConf {
   public:
     /// Index for processing and update

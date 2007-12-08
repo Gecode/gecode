@@ -70,6 +70,33 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The kernel has undergone some cleanups and improvements:
+ - Automatically generated stubs for variable implementations are directly
+   inlined into the kernel. This improves performance, but more
+   importantly, lifts some limits on the number of variables. Now, the
+   only limit is that the sum of the logarithms of the number of 
+   modification events of all variables does not exceed 32 
+   (as an estimate, the kernel now can handle around 10 to 16 variables 
+   types). Moreover, if the need for more variable types arises this is 
+   straightforward to do.
+ - The addition of new variable types for users has been simplified.
+ - The main propagation loop has been entirely rewritten (much simpler).
+ - Spaces have lost some weight as memory for datastructures only used
+   during cloning or propagation are shared.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+To not confuse variable implementations with variables, variable
+implementations are now always called VarImp, and not variable.
+
+[ENTRY]
 Module: gist
 What:   new
 Rank:   major

@@ -765,21 +765,22 @@ namespace Gecode { namespace Reflection {
     cur = cur->next();
     if (cur == s->b_commit)
       isBranching = true;
-    while (queue > 0 && cur == &s->pool[queue]) {
+    while ((queue > 0) && (cur == &s->pu.p.pool[queue])) {
       queue--;
-      cur = &s->pool[queue];
+      cur = &s->pu.p.pool[queue];
       cur = cur->next();
     }
-    if (queue == 0 && cur == &s->pool[0]) {
+    if ((queue == 0) && (cur == &s->pu.p.pool[0])) {
       queue--;
       cur = s->a_actors.next();
     }
   }
 
   SpecIter::SpecIter(Space* s0, VarMap& m0)
-  : m(&m0), s(s0), queue(s0->pool_next), isBranching(false), curSpec(NULL) {
+  : m(&m0), s(s0), queue(s0->pu.p.pool_next), isBranching(false), 
+    curSpec(NULL) {
     if (queue >= 0)
-      cur = &s->pool[queue];
+      cur = &s->pu.p.pool[queue];
     else
       cur = &s->a_actors;
     ++(*this);
