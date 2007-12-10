@@ -175,7 +175,7 @@ namespace Gecode { namespace Reflection {
   template <class Var> void
   VarMap::put(Space* home, const Var& x, const Support::Symbol& n) {
     typename VarViewTraits<Var>::View v(x);
-    name(v.variable(), n);
+    name(v.var(), n);
     Reflection::Arg* a = v.spec(home, *this);
     delete a;
   }
