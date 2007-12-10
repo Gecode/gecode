@@ -114,11 +114,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     int domsize = ts()->domsize;
     for (int i = x.size(); i--; ) {
       dom[i].init(home, domsize);
-      ViewValues<View> vv(x[i]);
-      while (vv()) {
+      for (ViewValues<View> vv(x[i]); vv(); ++vv)
         dom[i].set(vv.val()-ts()->min);
-        ++vv;
-      }
     }
   }
 

@@ -47,8 +47,9 @@ namespace {
   class FullTupleCompare {
     int arity;
   public:
+    forceinline
     FullTupleCompare(int a) : arity(a) {}
-    bool
+    forceinline bool
     operator()(const Tuple& a, const Tuple& b) {
       for (int i = 0; i < arity; ++i) {
         if (a[i] < b[i]) {
@@ -71,9 +72,10 @@ namespace {
   class TuplePosCompare {
     int pos;
   public:
+    forceinline
     TuplePosCompare(int p) : pos(p) {}
 
-    bool
+    forceinline bool
     operator()(const Tuple& a, const Tuple& b) {
       if (a[pos] == b[pos]) return a < b;
       return a[pos] < b[pos];
@@ -87,9 +89,10 @@ namespace {
   class TupleKeyCompare {
     int pos;
   public:
+    forceinline
     TupleKeyCompare(int p) : pos(p) {}
 
-    bool
+    forceinline bool
     operator()(const Tuple& a, const Tuple& b) {
       return a[pos] < b[pos];
     }

@@ -121,10 +121,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     //// Run algorithm
     /// Check consistency for each variable-value pair
-    for (int var = 0; var < x.size(); ++var) {
-      ViewRanges<View> vr(x[var]);
-      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
-      while (vv()) {
+    for (int var = x.size(); var--; ) {
+      for (ViewValues<View> vv(x[var]); vv(); ++vv) {
         // Value offset for indexing
         int val = vv.val() - ts()->min;
         if (!has_support[var].get(val)) {
@@ -138,17 +136,16 @@ namespace Gecode { namespace Int { namespace Extensional {
             // Mark values as supported 
             // Only forward direction marking is needed since all
             // previous values have been checked
-            for (int i = x.size(); i-- >var; ) {
+            for (int i = var; i--; ) {
               has_support[i].set(l[i]- ts()->min);
               assert(has_support[i].get(l[i]- ts()->min));
             }
 #ifndef NDEBUG
-            for (int i = var; i-->1; )
+            for (int i = var; i<x.size(); i++)
               assert(has_support[i].get(l[i]- ts()->min));
 #endif
           }
         }
-        ++vv;
       }
 
       // Prune values for var which do not have support anymore

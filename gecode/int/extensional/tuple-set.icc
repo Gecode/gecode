@@ -41,8 +41,8 @@ namespace Gecode {
    * \brief Data stored for a Table
    *
    */
-    class GECODE_VTABLE_EXPORT TupleSet::TupleSetI
-   : public SharedHandle::Object {
+  class GECODE_VTABLE_EXPORT TupleSet::TupleSetI
+    : public SharedHandle::Object {
   public:
     /// Arity
     int arity;
@@ -73,12 +73,7 @@ namespace Gecode {
     /// Resize data cache
     GECODE_INT_EXPORT void resize(void);
     /// Is datastructure finalized
-    bool finalized(void) const { 
-      assert((excess == -1 && domsize >= 0) ||
-             (excess != -1 && domsize == -1)); 
-      return excess == -1; 
-    }
-
+    bool finalized(void) const;
     /// Initialize as empty tuple set
     TupleSetI(void);
     /// Delete  implementation
@@ -86,6 +81,13 @@ namespace Gecode {
     /// Create a copy
     GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
   };
+
+  forceinline bool
+  TupleSet::TupleSetI::finalized(void) const { 
+    assert((excess == -1 && domsize >= 0) ||
+           (excess != -1 && domsize == -1)); 
+    return excess == -1; 
+  }
 
   forceinline
   TupleSet::TupleSetI::TupleSetI(void) 
@@ -128,7 +130,7 @@ namespace Gecode {
   TupleSet::TupleSet(const TupleSet& ts) 
     : SharedHandle(ts) {}
 
-  inline TupleSet::TupleSetI*
+  forceinline TupleSet::TupleSetI*
   TupleSet::implementation(void) {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
@@ -148,7 +150,7 @@ namespace Gecode {
     imp->add(tuple);
   }
 
-  inline void
+  forceinline void
   TupleSet::finalize(void) {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
@@ -157,42 +159,42 @@ namespace Gecode {
     }
   }
 
-  inline bool
+  forceinline bool
   TupleSet::finalized(void) const {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     return imp->finalized();
   }
 
-  inline int
+  forceinline int
   TupleSet::arity(void) const {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     assert(imp->arity != -1);
     return imp->arity;
   }
-  inline int
+  forceinline int
   TupleSet::tuples(void) const {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     assert(imp->finalized());
     return imp->size-1;
   }
-  inline TupleSet::Tuple
+  forceinline TupleSet::Tuple
   TupleSet::operator[](int i) const {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     assert(imp->finalized());
     return imp->data + i*imp->arity;
   }
-  inline int
+  forceinline int
   TupleSet::min(void) const {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     assert(imp->finalized());
     return imp->min;
   }
-  inline int
+  forceinline int
   TupleSet::max(void) const {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
