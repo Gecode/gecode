@@ -102,9 +102,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
     assert(pos < size);
     if (value)
-      data[pos] |= ((Base)1 << bit);
+      data[pos] |= 1 << bit;
     else
-      data[pos] &= ~((Base)1 << bit);
+      data[pos] &= ~(1 << bit);
   }
 
 }}}

@@ -60,10 +60,14 @@ namespace Gecode { namespace Support {
     /// Stack entries (terminated by NULL entry)
     Type*  stack[2*maxsize+1];
   public:
+    /// Initialize stack as empty
     QuickSortStack(void);
+    /// Test whether stack is empty
     bool empty(void) const;
-    void push(Type*, Type*);
-    void pop(Type*&, Type*&);
+    /// Push two positions \a l and \a r
+    void push(Type* l, Type* r);
+    /// Pop two positions \a l and \a r
+    void pop(Type*& l, Type*& r);
   };
 
   template <class Type>
@@ -154,11 +158,6 @@ namespace Gecode { namespace Support {
       s.pop(l,r);
     }
   }
-
-  /*
-   * These are the routines to be used
-   *
-   */
 
   /**
    * \brief Insertion sort

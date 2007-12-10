@@ -37,9 +37,8 @@
 
 #include "gecode/int.hh"
 
-#include "gecode/int/extensional/tuple-set.icc"
-
 namespace {
+
   typedef ::Gecode::TupleSet::Tuple Tuple;
 
   /**

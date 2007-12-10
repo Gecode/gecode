@@ -35,16 +35,13 @@
  *
  */
 
-#ifndef __GECODE_TABLE_ICC__
-#define __GECODE_TABLE_ICC__
-
 namespace Gecode {
+
   /**
    * \brief Data stored for a Table
    *
    */
-  
-  class GECODE_VTABLE_EXPORT TupleSet::TupleSetI
+    class GECODE_VTABLE_EXPORT TupleSet::TupleSetI
    : public SharedHandle::Object {
   public:
     /// Arity
@@ -203,8 +200,6 @@ namespace Gecode {
     return imp->max;
   }
 }
-
-#endif
 
 // STATISTICS: int-prop
 
