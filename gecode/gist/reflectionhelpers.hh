@@ -36,8 +36,8 @@
 
 // TODO nikopp: doxygen comments
 
-#ifndef WRAPPER_H_
-#define WRAPPER_H_
+#ifndef GECODE_GIST_REFLECTIONHELPERS_HH
+#define GECODE_GIST_REFLECTIONHELPERS_HH
 
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
@@ -53,6 +53,6 @@ public:
 
 }}
 
-#endif /*WRAPPER_H_*/
+#endif
 
 // STATISTICS: gist-any
