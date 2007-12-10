@@ -60,7 +60,7 @@ namespace Gecode { namespace Reflection {
     /// Default constructor
     VarMap(void);
     /// Destructor
-    MSCVIRTUAL ~VarMap(void);
+    GECODE_MSC_VIRTUAL ~VarMap(void);
     
     /// Return number of entries
     int size(void) const;

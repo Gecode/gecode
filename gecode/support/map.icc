@@ -70,7 +70,7 @@ namespace Gecode { namespace Support {
     /// Check if entry with key \a k exists and return it in \a v
     bool get(const Key& k, Value& v) const;
     /// Destructor
-    MSCVIRTUAL ~Map(void);
+    GECODE_MSC_VIRTUAL ~Map(void);
   };
   
   /// Hash table for strings

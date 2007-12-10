@@ -118,7 +118,7 @@ namespace Gecode { namespace Support {
     /// Return the Symbol as string
     std::string toString(void) const;
     /// Destructor
-    MSCVIRTUAL ~Symbol(void);
+    GECODE_MSC_VIRTUAL ~Symbol(void);
   };
   
 }}

@@ -182,7 +182,7 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     Arg(argtype t);
     /// Destructor
-    MSCVIRTUAL ~Arg(void);
+    GECODE_MSC_VIRTUAL ~Arg(void);
   };
   
 
@@ -258,7 +258,7 @@ namespace Gecode { namespace Reflection {
     /// Assignment operator
     const VarSpec& operator=(const VarSpec& s);
     /// Destructor
-    MSCVIRTUAL ~VarSpec(void);
+    GECODE_MSC_VIRTUAL ~VarSpec(void);
     /// Set the name for this variable
     void name(const Support::Symbol& n0);
     /// Get the name of this variable
@@ -291,7 +291,7 @@ namespace Gecode { namespace Reflection {
     /// Assignment operator
     const ActorSpec& operator=(const ActorSpec& s);
     /// Destructor
-    MSCVIRTUAL ~ActorSpec(void);
+    GECODE_MSC_VIRTUAL ~ActorSpec(void);
     
     /// Return argument \a i
     Arg* operator[](int i) const;
@@ -340,7 +340,7 @@ namespace Gecode { namespace Reflection {
     /// Assignment operator
     const BranchSpec& operator=(const BranchSpec& s);
     /// Destructor
-    MSCVIRTUAL ~BranchSpec(void);
+    GECODE_MSC_VIRTUAL ~BranchSpec(void);
     
     /// Return id of the branching
     unsigned int id(void) const;
@@ -408,7 +408,7 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     GECODE_KERNEL_EXPORT Registry(void);
     /// Destructor
-    GECODE_KERNEL_EXPORT MSCVIRTUAL ~Registry(void);
+    GECODE_KERNEL_EXPORT GECODE_MSC_VIRTUAL ~Registry(void);
 
     /// Create a new variable in \a home from \a spec and return it
     GECODE_KERNEL_EXPORT VarImpBase* createVar(Space* home, VarSpec& spec);

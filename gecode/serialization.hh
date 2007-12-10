@@ -113,7 +113,7 @@ namespace Gecode {
       Deserializer(Space* home0, Reflection::VarMap& m0);
 
       /// Destructor
-      MSCVIRTUAL ~Deserializer(void);
+      GECODE_MSC_VIRTUAL ~Deserializer(void);
       
       /// Return the VarMap
       Reflection::VarMap& varMap(void) const;

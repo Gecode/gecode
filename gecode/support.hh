@@ -57,7 +57,7 @@
   * Details for the bug can be found in
   * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
   */
-#define MSCVIRTUAL virtual
+#define GECODE_MSC_VIRTUAL virtual
 
 #ifdef GECODE_BUILD_SUPPORT
 #define GECODE_SUPPORT_EXPORT __declspec( dllexport )
@@ -73,7 +73,7 @@
   * Details for the bug can be found in
   * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
   */
-#define MSCVIRTUAL
+#define GECODE_MSC_VIRTUAL
 
 #ifdef GCC_HASCLASSVISIBILITY
 
