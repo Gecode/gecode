@@ -723,14 +723,12 @@ namespace Gecode { namespace Gist {
   
 #ifdef GECODE_GIST_EXPERIMENTAL
   void
-  TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm,
-                              int& nextPointInTime) {
+  TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm) {
     QMutexLocker locker(&mutex);
     if(root != NULL) {
       Space* space = root->getSpace();
       space->getVars(vm);
       delete space;
-      nextPointInTime = nodeMap.size();
     }
   }
 
