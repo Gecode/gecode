@@ -339,6 +339,11 @@ if ($gen_type) {
 
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
+    if ($dispose[$f]) {
+      print "\n#ifndef GECODE_HAVE_VAR_DISPOSE\n";
+      print "#define GECODE_HAVE_VAR_DISPOSE 1\n";
+      print "#endif\n\n";
+    }
     print $hdr[$f];
     print "  /// Configuration class for $name[$f]-variable implementations\n";
     print "  class $conf[$f] {\n";

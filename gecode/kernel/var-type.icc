@@ -408,6 +408,11 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
+
+#ifndef GECODE_HAVE_VAR_DISPOSE
+#define GECODE_HAVE_VAR_DISPOSE 1
+#endif
+
 namespace Gecode { namespace CpltSet { 
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {

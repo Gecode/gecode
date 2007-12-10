@@ -46,7 +46,9 @@ namespace Gecode {
    *
    */
 
+#ifdef GECODE_HAVE_VAR_DISPOSE
   GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[AllVarConf::idx_d];
+#endif
 
   void VarDisposerBase::dispose(Space*,VarImpBase*) {}
   VarDisposerBase::~VarDisposerBase(void) {}
@@ -57,8 +59,10 @@ namespace Gecode {
     // Initialize variable entry points
     for (int i=0; i<AllVarConf::idx_pu; i++)
       _vars_pu[i] = NULL;
+#ifdef GECODE_HAVE_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
+#endif
     // Initialize actor and branching links
     a_actors.init();
     b_status = static_cast<Branching*>(&a_actors);
@@ -137,10 +141,12 @@ namespace Gecode {
         a++;
       }
     }
-    // Delete variables that were registered for deletion
+#ifdef GECODE_HAVE_VAR_DISPOSE
+    // Delete variables that were registered for disposal
     for (int i=AllVarConf::idx_d; i--;)
       if (_vars_d[i] != NULL)
         vd[i]->dispose(this, _vars_d[i]);
+#endif
   }
 
 
@@ -399,8 +405,10 @@ namespace Gecode {
     // Initialize variable entry points
     for (int i=0; i<AllVarConf::idx_pu; i++)
       _vars_pu[i] = NULL;
+#ifdef GECODE_HAVE_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
+#endif
     pu.u.vars_noidx = NULL;
     pu.u.shared = NULL;
     // Copy all actors
