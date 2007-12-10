@@ -1146,7 +1146,11 @@ namespace Gecode {
   extensional(Space* home, const BoolVarArgs& x, DFA d,
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
-  /** \brief Class represeting a set of tuples
+  /** \brief Class represeting a set of tuples.
+   *
+   * A TupleSet is used for storing an extensional representation of a
+   * constraint. After a TupleSet is finalized, no more tuples may be
+   * added to it.
    */
   class TupleSet : public SharedHandle {
   public:

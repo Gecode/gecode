@@ -66,6 +66,7 @@ Example::sac_collect_vars() {
   // Collect variables in VarMap
   Reflection::VarMap vm;
   for (Reflection::SpecIter si = actorSpecs(vm); si(); ++si) {}
+  // Enter collected variables into variable arrays
   for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
     if (vmi.spec().vti() == "VTI_BOOL") {
       BoolVar bv(Int::BoolView(static_cast<Int::BoolVarImp*>(vmi.var())));
@@ -87,6 +88,8 @@ Example::sac(unsigned long int& p) {
   if (status(p) == SS_FAILED) return false;
 
   bool modified = false;
+
+  // Process all Boolean variables
   for (int i = _sac_bva.size(); i--; ) {
     for (int val = 0; val <= 1; ++val) {
       if (_sac_bva[i].assigned()) break;
@@ -102,6 +105,7 @@ Example::sac(unsigned long int& p) {
     }
   }
 
+  // Process all integer variables
   for (int i = _sac_iva.size(); i--; ) {
     if (_sac_iva[i].assigned()) continue;
     IntArgs nq(_sac_iva[i].size());

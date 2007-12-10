@@ -70,6 +70,14 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Simple Singleton Arc Consistency pre-processing has been added as an
+optional step for examples.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
