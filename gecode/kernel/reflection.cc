@@ -763,8 +763,6 @@ namespace Gecode { namespace Reflection {
     delete curSpec;
     curSpec = NULL;
     cur = cur->next();
-    if (cur == s->b_commit)
-      isBranching = true;
     while ((queue > 0) && (cur == &s->pu.p.pool[queue])) {
       queue--;
       cur = &s->pu.p.pool[queue];
@@ -774,6 +772,8 @@ namespace Gecode { namespace Reflection {
       queue--;
       cur = s->a_actors.next();
     }
+    if (cur == s->b_commit)
+      isBranching = true;
   }
 
   SpecIter::SpecIter(Space* s0, VarMap& m0)
