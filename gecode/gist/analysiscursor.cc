@@ -47,7 +47,7 @@ namespace Gecode { namespace Gist {
     Reflection::VarMap vm;
     s->getVars(vm);
     int h = 0;
-    for (Reflection::SpecIter si = s->actorSpecs(vm); si(); ++si) {}
+    for (Reflection::SpecIter si(s, vm); si(); ++si) {}
     for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
       if (vmi.spec().vti() == "VTI_INT") {
         Reflection::IntArrayArgRanges ia(vmi.spec().dom()->toIntArray());
