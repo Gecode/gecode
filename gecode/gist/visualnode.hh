@@ -80,7 +80,7 @@ namespace Gecode { namespace Gist {
 #endif
 
     /// Heat value 
-    int heat;
+    unsigned char heat;
 
     /// Shape of this node
     Shape* shape;
@@ -158,9 +158,9 @@ namespace Gecode { namespace Gist {
 #endif
 
     /// Return heat value
-    int getHeat(void) const;
+    unsigned char getHeat(void) const;
     /// Set heat value to \a h
-    void setHeat(int h);
+    void setHeat(unsigned char h);
     
     /// Toggle whether this node is hidden
     void toggleHidden(void);

@@ -110,11 +110,11 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::setMarked(bool m) { marked = m; }
   
-  int
+  unsigned char
   VisualNode::getHeat(void) const { return heat; }
 
   void
-  VisualNode::setHeat(int h) { heat = h; }
+  VisualNode::setHeat(unsigned char h) { heat = h; }
   
   bool
   VisualNode::isOnPath(void) { return onPath; }

@@ -160,8 +160,8 @@ namespace Gecode { namespace Gist {
     int myy = y;
 
     // Calculate HSV hue level from heat
-    int heat = (240 + (std::abs(n->getHeat()) % 180)) % 360;
-
+    int heat = (240 + static_cast<int>(((n->getHeat() / 256.0) * 180.0))) % 360;
+    
 #ifdef GECODE_GIST_EXPERIMENTAL
 
     if(n->isStepNode()) {

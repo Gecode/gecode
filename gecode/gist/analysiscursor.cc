@@ -101,7 +101,7 @@ namespace Gecode { namespace Gist {
     VisualNode* n = node();
     if (n->getParent() != NULL) {
       int h = (int)((((double)n->getHeat() - (double)minHeat) / 
-               ((double)maxHeat-(double)minHeat)) * 179);
+               ((double)maxHeat-(double)minHeat)) * 255);
       n->setHeat(h);
     } else {
       n->setHeat(0);
