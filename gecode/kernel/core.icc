@@ -2354,7 +2354,9 @@ namespace Gecode {
 
   template <class VarType>
   VarDisposer<VarType>::VarDisposer(void) {
+#ifdef GECODE_HAVE_VAR_DISPOSE
     Space::vd[VarType::idx_d] = this;
+#endif
   }
 
   template <class VarType>
