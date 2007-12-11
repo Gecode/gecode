@@ -343,6 +343,7 @@ namespace Gecode { namespace Gist {
         {
           (void) currentNode->getNumberOfChildNodes(stats);
           emit statusChanged(stats,true);
+          emit currentNodeChanged(currentNode->getSpace(), currentNode->getStatus());
         }
         break;
     case FAILED:
@@ -675,7 +676,7 @@ namespace Gecode { namespace Gist {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
-      emit currentNodeChanged(n->getSpace());
+      emit currentNodeChanged(n->getSpace(), n->getStatus());
       QWidget::update();
     }
   }

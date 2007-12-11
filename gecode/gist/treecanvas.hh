@@ -184,7 +184,7 @@ namespace Gecode {  namespace Gist {
     /// Status bar update
     void statusChanged(const Statistics&, bool);
     /// The current node has been changed to \a n
-    void currentNodeChanged(Gecode::Space*);
+    void currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
