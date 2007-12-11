@@ -139,7 +139,7 @@ namespace Test { namespace Int {
       Gecode::Serialization::Deserializer d(c, cvm);
       Gecode::Reflection::VarMapIter vmi(vm);
       try {
-        for (Gecode::Reflection::SpecIter si = actorSpecs(vm); si(); ++si) {
+        for (Gecode::Reflection::SpecIter si(this, vm); si(); ++si) {
           Gecode::Reflection::ActorSpec& s = si.actor();
           for (; vmi(); ++vmi) {
             try {

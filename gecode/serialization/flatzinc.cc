@@ -309,7 +309,7 @@ namespace Gecode {
     Reflection::VarMapIter vmi(vm);
     int varCount = 0;
     int soCount = 0;
-    for (Reflection::SpecIter si = home->actorSpecs(vm); si(); ++si) {
+    for (Reflection::SpecIter si(home, vm); si(); ++si) {
       Reflection::ActorSpec& s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
         Reflection::VarSpec& vs = vmi.spec();

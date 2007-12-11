@@ -457,10 +457,10 @@ namespace Gecode {
 
 
   namespace Reflection {
+    class SpecIter;
     class ActorSpec;
     class BranchSpec;
     class VarMap;
-    class SpecIter;
   }
 
   /**
@@ -1285,9 +1285,6 @@ namespace Gecode {
      * \name Reflection
      */
     //@{
-    /// Return iterator over specifications of the propagators in this space
-    GECODE_KERNEL_EXPORT
-    Reflection::SpecIter actorSpecs(Reflection::VarMap& m);
     /// Enter variables into \a m
     GECODE_KERNEL_EXPORT
     virtual void getVars(Reflection::VarMap& m);

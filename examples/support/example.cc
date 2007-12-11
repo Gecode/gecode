@@ -65,7 +65,7 @@ void
 Example::sac_collect_vars() {
   // Collect variables in VarMap
   Reflection::VarMap vm;
-  for (Reflection::SpecIter si = actorSpecs(vm); si(); ++si) {}
+  for (Reflection::SpecIter si(this, vm); si(); ++si) {}
   // Enter collected variables into variable arrays
   for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
     if (vmi.spec().vti() == "VTI_BOOL") {

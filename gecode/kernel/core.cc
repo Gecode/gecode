@@ -547,12 +547,6 @@ namespace Gecode {
     return n;
   }
 
-  Reflection::SpecIter
-  Space::actorSpecs(Reflection::VarMap& m) {
-    Reflection::SpecIter i(this, m);
-    return i;
-  }
-
   void
   Space::getVars(Reflection::VarMap&) {}
 
