@@ -297,10 +297,10 @@ namespace Gecode { namespace Gist {
                 break;
         case Gist::SOLVED:
           {
-            QPoint points[4] = {QPoint(myx,(int)(myy-1.4*shadowOffset)),
-                                QPoint((int)(myx+10+1.4*shadowOffset),myy+10),
-                                QPoint(myx,(int)(myy+20+1.4*shadowOffset)),
-                                QPoint((int)(myx-10-1.4*shadowOffset),myy+10)
+            QPoint points[4] = {QPoint(myx,static_cast<int>(myy-1.4*shadowOffset)),
+                                QPoint(static_cast<int>(myx+10+1.4*shadowOffset),myy+10),
+                                QPoint(myx,static_cast<int>(myy+20+1.4*shadowOffset)),
+                                QPoint(static_cast<int>(myx-10-1.4*shadowOffset),myy+10)
                                };
             painter.drawConvexPolygon(points, 4);
           }

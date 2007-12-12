@@ -89,10 +89,10 @@ namespace Gecode { namespace Gist {
       scale0 = 1;
     if (scale0>400)
       scale0 = 400;
-    scale = ((double)scale0) / 100.0;
+    scale = (static_cast<double>(scale0)) / 100.0;
     bb = root->getBoundingBox();
-    int w = (int)((bb.right-bb.left+20)*scale);
-    int h = (int)(40+bb.depth*38*scale);
+    int w = static_cast<int>((bb.right-bb.left+20)*scale);
+    int h = static_cast<int>(40+bb.depth*38*scale);
     if (heatView)
       w = std::max(w, 300);
     resize(w,h);
@@ -193,8 +193,8 @@ namespace Gecode { namespace Gist {
     t->root->layout();
     BoundingBox bb = t->root->getBoundingBox();
     
-    int w = (int)((bb.right-bb.left+20)*t->scale);
-    int h = (int)(40+bb.depth*38*t->scale);
+    int w = static_cast<int>((bb.right-bb.left+20)*t->scale);
+    int h = static_cast<int>(40+bb.depth*38*t->scale);
     t->xtrans = -bb.left+10;
     emit done(w,h);
   }
@@ -270,7 +270,7 @@ namespace Gecode { namespace Gist {
         double newYScale =
           static_cast<double>(p->height()) / (bb.depth * 38 + 40);
 
-        scaleTree((int)(std::min(newXScale, newYScale)*100));
+        scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
       }
     }
   }
@@ -293,7 +293,7 @@ namespace Gecode { namespace Gist {
       c = c->getParent();
     }
     
-    x = (int)((xtrans+x)*scale); y = (int)(y*scale);
+    x = static_cast<int>((xtrans+x)*scale); y = static_cast<int>(y*scale);
     
     QScrollArea* sa = 
       static_cast<QScrollArea*>(parentWidget()->parentWidget());
@@ -635,8 +635,8 @@ namespace Gecode { namespace Gist {
       painter.translate(0, 30);
       painter.scale(scale,scale);
       painter.translate(xtrans, 0);
-      QRect clip((int)(origClip.x()/scale-xtrans), (int)(origClip.y()/scale),
-                 (int)(origClip.width()/scale), (int)(origClip.height()/scale));
+      QRect clip(static_cast<int>(origClip.x()/scale-xtrans), static_cast<int>(origClip.y()/scale),
+                 static_cast<int>(origClip.width()/scale), static_cast<int>(origClip.height()/scale));
       DrawingCursor dc(root, painter, heatView, clip);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next());    
@@ -653,8 +653,8 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::contextMenuEvent(QContextMenuEvent* event) {
     QMutexLocker locker(&mutex);
     VisualNode* n;
-      n = root->findNode((int)(event->x()/scale-xtrans), 
-                         (int)((event->y()+30)/scale-38));
+      n = root->findNode(static_cast<int>(event->x()/scale-xtrans), 
+                         static_cast<int>((event->y()+30)/scale-38));
       setCurrentNode(n);
     if (n != NULL) {
       emit contextMenu(event);
@@ -686,8 +686,8 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     if (event->button() == Qt::LeftButton) {
       VisualNode* n;
-        n = root->findNode((int)(event->x()/scale-xtrans),
-                           (int)((event->y()-30)/scale));
+        n = root->findNode(static_cast<int>(event->x()/scale-xtrans),
+                           static_cast<int>((event->y()-30)/scale));
         setCurrentNode(n);
       if (n != NULL) {
         event->accept();

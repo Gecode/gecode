@@ -95,10 +95,10 @@ namespace Gecode { namespace Gist {
   
   void
   PSBoundingBox::translate(double scale, double translatex, double translatey) {
-    minx = (int) (((double)minx)*scale+translatex);
-    maxx = (int) (((double)maxx)*scale+translatex);
-    miny = (int) (((double)miny)*scale+translatey);
-    maxy = (int) (((double)maxy)*scale+translatey);    
+    minx = static_cast<int> ((static_cast<double>(minx))*scale+translatex);
+    maxx = static_cast<int> ((static_cast<double>(maxx))*scale+translatex);
+    miny = static_cast<int> ((static_cast<double>(miny))*scale+translatey);
+    maxy = static_cast<int> ((static_cast<double>(maxy))*scale+translatey);    
   }
   
   /// \brief Base class for a postscript path
@@ -219,13 +219,13 @@ namespace Gecode { namespace Gist {
 
   void
   Diamond::emit(std::ostream& out) {
-    double c1x = (double) cx;
-    double c1y = (double) cy;
-    double c2x = c1x + (double) r;
-    double c2y = c1y + (double) r;
+    double c1x = static_cast<double> (cx);
+    double c1y = static_cast<double> (cy);
+    double c2x = c1x + static_cast<double> (r);
+    double c2y = c1y + static_cast<double> (r);
     double c3x = c1x;
-    double c3y = c1y + (double) (2*r);
-    double c4x = c1x - (double) r;
+    double c3y = c1y + static_cast<double> (2*r);
+    double c4x = c1x - static_cast<double> (r);
     double c4y = c2y;
 
     out << "gsave\n";
