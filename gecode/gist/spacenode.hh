@@ -54,12 +54,16 @@ namespace Gecode { namespace Gist {
     STEP          ///< Node representing one propagation step
   };
 
+  // TODO nikopp: doxygen comments
   class StepDesc {
   public:
-    const int noOfSteps;
+    int noOfSteps;
+    bool debug;
     StepDesc(int steps);
+    void toggleDebug(void);
   };
   
+  // TODO nikopp: doxygen comments
   class SpecialDesc {
   public:
     const std::string vn;
@@ -110,7 +114,7 @@ namespace Gecode { namespace Gist {
       /// Special branching description
       const SpecialDesc* special;
       /// Step description
-      const StepDesc* step;
+      StepDesc* step;
     } desc;
     
     /// Current status of the node
@@ -126,6 +130,9 @@ namespace Gecode { namespace Gist {
     /// Whether the node is the last step node
     bool lastStep;
     
+  public:
+    /// Debug variable to trigger watchpoint
+    static bool watch;
 #endif
     
   protected:
@@ -180,8 +187,6 @@ namespace Gecode { namespace Gist {
      */
     Space* getInputSpace(void);
     
-    /// Return whether this node represents a propagation step
-    bool isStepNode(void);
     /// Return whether this node represents the first step node
     bool isFirstStepNode(void);
     /// Return whether this node represents the last step node
@@ -219,10 +224,14 @@ namespace Gecode { namespace Gist {
     /// Change the meta-status of the node to \a s
     void setMetaStatus(NodeStatus s);
 #endif
+    /// Return whether this node represents a propagation step
+    bool isStepNode(void);
     /// Change the SpecialDesc to \a d
     void setSpecialDesc(const SpecialDesc* d);
     /// Change the StepDesc to \a d
-    void setStepDesc(const StepDesc* d);
+    void setStepDesc(StepDesc* d);
+    /// Return the StepDesc
+    StepDesc* getStepDesc(void);
     
     /// Return alternative number of this node
     int getAlternative(void);

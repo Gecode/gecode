@@ -734,6 +734,15 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvasImpl::toggleDebug(void) {
+    if(currentNode->isStepNode()) {
+      currentNode->getStepDesc()->toggleDebug();
+      update();
+      centerCurrentNode();
+    }
+  }
+
+  void
   TreeCanvasImpl::addChild(void) {
     QMutexLocker locker(&mutex);
     //	  special child nodes may only be added to other special nodes
@@ -1034,7 +1043,10 @@ namespace Gecode { namespace Gist {
     backwardTimeStep = new QAction("Step backward", this);
     backwardTimeStep->setShortcut(QKeySequence("-"));
     backwardTimeStep->setObjectName("backwardTimeStep");
-  
+    
+    toggleDebug = new QAction("Toggle debug", this);
+    toggleDebug->setShortcut(QKeySequence("Shift+D"));
+    connect(toggleDebug, SIGNAL(triggered()), canvas, SLOT(toggleDebug()));
 #endif
 
     addAction(inspectCN);
@@ -1068,6 +1080,7 @@ namespace Gecode { namespace Gist {
     addAction(expandCurrentNode);
     addAction(forwardTimeStep);
     addAction(backwardTimeStep);
+    addAction(toggleDebug);
 #endif
 
     contextMenu = new QMenu(this);
@@ -1107,6 +1120,7 @@ namespace Gecode { namespace Gist {
     contextMenu->addAction(addChild);
     contextMenu->addAction(addFixpoint);
     contextMenu->addAction(expandCurrentNode);
+    contextMenu->addAction(toggleDebug);
 #endif
     
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));

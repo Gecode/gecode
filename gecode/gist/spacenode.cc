@@ -87,7 +87,12 @@ namespace Gecode { namespace Gist {
     static const int mrd = 4;
   };
   
-  StepDesc::StepDesc(int steps) : noOfSteps(steps) { }
+  StepDesc::StepDesc(int steps) : noOfSteps(steps), debug(false) { }
+  
+  void
+  StepDesc::toggleDebug(void) {
+   debug = !debug;
+  }
   
   SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
   : vn(varName), r(r0), v(v0) { }
@@ -187,6 +192,9 @@ namespace Gecode { namespace Gist {
             {
 #ifdef GECODE_GIST_EXPERIMENTAL
               if(b.desc.step->noOfSteps >0) {
+                if(b.desc.step->debug) {
+                  watch = !watch;
+                }
                 for (int i = 0; i < b.desc.step->noOfSteps; ++i) {
                   curSpace->step();
                 }
@@ -405,6 +413,8 @@ namespace Gecode { namespace Gist {
     
 #ifdef GECODE_GIST_EXPERIMENTAL
   
+  bool SpaceNode::watch = false;
+  
   Space*
   SpaceNode::getInputSpace(void) {
     if(status == SPECIAL)
@@ -418,11 +428,6 @@ namespace Gecode { namespace Gist {
       ret->commit(p->desc.branch, alternative);
     
     return ret;
-  }
-
-  bool
-  SpaceNode::isStepNode(void) {
-    return getStatus() == STEP;
   }
 
   bool
@@ -559,11 +564,25 @@ namespace Gecode { namespace Gist {
   }
     
   void
-  SpaceNode::setStepDesc(const StepDesc* d) {
+  SpaceNode::setStepDesc(StepDesc* d) {
     desc.step = d;
   }
     
-  int
+  StepDesc*
+  SpaceNode::getStepDesc(void) {
+    StepDesc* ret = NULL;
+    if(isStepNode()) {
+      ret = desc.step;
+    }
+    return ret;
+  }
+    
+  bool
+  SpaceNode::isStepNode(void) {
+    return getStatus() == STEP;
+  }
+
+ int
   SpaceNode::getAlternative(void) {
     return alternative;
   }

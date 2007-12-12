@@ -434,22 +434,25 @@ namespace Gecode { namespace Gist {
     }
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-    
-    if (n->hasCopy()) {
-    	painter.setBrush(Qt::darkRed);
-    	painter.drawEllipse(myx, myy, 10, 10);
+    if(n->hasCopy()) {
+      painter.setBrush(Qt::darkRed);
+      painter.drawEllipse(myx, myy, 10, 10);
     }
-    
-    if (n->hasWorkingSpace()) {
-    	painter.setBrush(Qt::darkYellow);
-    	painter.drawEllipse(myx, myy + 10, 10, 10);
+
+    if(n->hasWorkingSpace()) {
+      painter.setBrush(Qt::darkYellow);
+      painter.drawEllipse(myx, myy + 10, 10, 10);
     }
-    
-    if (n->isCollapsed()) {
-        painter.setBrush(Qt::yellow);
-        painter.drawEllipse(myx-10, myy, 10, 10);
+
+    if(n->isCollapsed()) {
+      painter.setBrush(Qt::yellow);
+      painter.drawEllipse(myx-10, myy, 10, 10);
     }
-    
+
+    if(n->isStepNode() && n->getStepDesc()->debug) {
+      painter.setBrush(Qt::red);
+      painter.drawRect(myx-2, myy+13, 4, 4);
+    }
 #endif
     
   }

@@ -161,7 +161,7 @@ namespace Gecode {  namespace Gist {
     void setRefresh(int i);
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-   /// Add a new special node as child to the current node
+    /// Add a new special node as child to the current node
     void addChild(void);
     /// Add a new fixpoint node as child to the current node if it is a special node
     void addFixpoint(void);
@@ -169,6 +169,8 @@ namespace Gecode {  namespace Gist {
     void getRootVars(Gecode::Reflection::VarMap& vm);
     /// Expand or collapse the current node
     void expandCurrentNode(void);
+    /// Enable gdb debugging if the current node is a step node
+    void toggleDebug(void);
 #endif
     
     /// Stop search and wait for it to finish
@@ -287,6 +289,7 @@ namespace Gecode {  namespace Gist {
     QAction* expandCurrentNode;
     QAction* forwardTimeStep;
     QAction* backwardTimeStep;
+    QAction* toggleDebug;
 #endif
 
   public:
