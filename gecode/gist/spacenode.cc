@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace Gist {
   
-  // TODO nikopp: doxygen comment
+  // TODO nikopp: doxygen comments
   enum BranchKind {
     BK_NORMAL, BK_SPECIAL_IN, BK_SPECIAL_OUT, BK_STEP
   };
@@ -140,6 +140,7 @@ namespace Gecode { namespace Gist {
             lastFixpoint = parent;
           }
           specialNodeOnPath = true;
+          // TODO nikopp: if the root node is failed, it neither has a copy nor a parent and we are not allowed to do the following
         } else if(parent->getStatus() == SPECIAL || parent->getStatus() == STEP) {
            Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_OUT);
           stck.push(b);
@@ -160,11 +161,11 @@ namespace Gecode { namespace Gist {
 
 #ifdef GECODE_GIST_EXPERIMENTAL
 
-      // TODO nikopp: as long as the SpecialDesc is evaluated in the switch below,
-      //              we need this varMap here
+      // TODO nikopp: as long as the SpecialDesc is evaluated in the switch below, we need this varMap here
       Reflection::VarMap vm;
-      if(specialNodeOnPath)
+      if(specialNodeOnPath) {
         curSpace->getVars(vm);
+      }
 
 #endif      
 
@@ -280,20 +281,26 @@ namespace Gecode { namespace Gist {
   void
   SpaceNode::acquireSpace(void) {
     SpaceNode* p = getParent();
+
     if (status == UNDETERMINED && curBest != NULL && ownBest == NULL &&
         p != NULL && curBest->s != p->ownBest) {
-      ownBest = curBest->s;
+          ownBest = curBest->s;
     }
-    if (workingSpace == NULL && p != NULL) {
-      workingSpace = p->donateSpace(alternative, ownBest);
+
+    if (status != SPECIAL && status != STEP) {
+      if (workingSpace == NULL && p != NULL) {
+        workingSpace = p->donateSpace(alternative, ownBest);
+      }
     }
+
     if (workingSpace == NULL) {
       if (recompute() > Config::mrd && Config::mrd >= 0 &&
           status != SPECIAL && status != STEP &&
           workingSpace->status() == SS_BRANCH) {
-        copy = workingSpace->clone();  
+            copy = workingSpace->clone();
       }
     }
+
     if (status != SPECIAL && status != STEP) {
       // always return a fixpoint
       workingSpace->status();

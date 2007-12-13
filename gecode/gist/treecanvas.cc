@@ -74,6 +74,8 @@ namespace Gecode { namespace Gist {
               SLOT(statusChanged(bool)));
       connect(&layouter, SIGNAL(done(int,int)),
               this, SLOT(layoutDone(int,int)));
+      
+      qRegisterMetaType<Gecode::Gist::NodeStatus>("Gecode::Gist::NodeStatus");
   }
   
   TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; }
@@ -672,6 +674,7 @@ namespace Gecode { namespace Gist {
   
   void
   TreeCanvasImpl::setCurrentNode(VisualNode* n) {
+    QMutexLocker locker(&mutex);
     if (n != NULL && n != currentNode) {
       currentNode->setMarked(false);
       currentNode = n;
@@ -741,50 +744,68 @@ namespace Gecode { namespace Gist {
       centerCurrentNode();
     }
   }
-
+  
   void
-  TreeCanvasImpl::addChild(void) {
+  TreeCanvasImpl::addChild(const QString& var, Gecode::IntRelType rel, int value) {
     QMutexLocker locker(&mutex);
-    //	  special child nodes may only be added to other special nodes
     switch (currentNode->getStatus()) {
+    case UNDETERMINED:
     case FAILED:
     case SOLVED:
-    case UNDETERMINED:
+      return;
       break;
     case STEP:
     case BRANCH:
     case SPECIAL:
-        {
-          Reflection::VarMap vm;
-          Space* space = currentNode->getSpace();
-          space->getVars(vm);
-
-          AddChild dialog(vm, this);
-
-          if(dialog.exec()) {
-
-            std::string var = dialog.var().toStdString();
-            int value = dialog.value();
-            IntRelType rel = static_cast<IntRelType> (dialog.rel());
-
-            VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
-
-            newChild->setStatus(SPECIAL);
-            newChild->setSpecialDesc(new SpecialDesc(var, rel, value));
-            newChild->setNumberOfChildren(0);
-            newChild->setNoOfOpenChildren(0);
-
-            currentNode->addChild(newChild);
-
-            newChild->setDirty(false);
-            newChild->dirtyUp();
-            setCurrentNode(newChild);
-            update();
-          }
-          
-          delete space;
-        }
+      break;
     }
+
+    VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
+
+    newChild->setStatus(SPECIAL);
+    newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
+    newChild->setNumberOfChildren(0);
+    newChild->setNoOfOpenChildren(0);
+
+    currentNode->addChild(newChild);
+
+    newChild->setDirty(false);
+    newChild->dirtyUp();
+    setCurrentNode(newChild);
+    update();
+  }
+  
+  void
+  TreeCanvasImpl::addChild(void) {
+    QMutexLocker locker(&mutex);
+    switch (currentNode->getStatus()) {
+    case UNDETERMINED:
+    case FAILED:
+    case SOLVED:
+      return;
+      break;
+    case STEP:
+    case BRANCH:
+    case SPECIAL:
+      break;
+    }
+
+    Reflection::VarMap vm;
+    Space* space = currentNode->getSpace();
+    space->getVars(vm);
+
+    AddChild dialog(vm, this);
+
+    if(dialog.exec()) {
+
+      QString var = dialog.var();
+      int value = dialog.value();
+      IntRelType rel = static_cast<IntRelType> (dialog.rel());
+
+      addChild(var, rel, value);
+    }
+
+    delete space;
   }
 
   void

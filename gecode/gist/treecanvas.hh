@@ -79,7 +79,7 @@ namespace Gecode {  namespace Gist {
   };
 
   /// \brief Implementation of the TreeCanvas
-  class TreeCanvasImpl : public QWidget {
+  class GECODE_GIST_EXPORT TreeCanvasImpl : public QWidget {
     Q_OBJECT
 
     friend class SearcherThread;
@@ -161,8 +161,10 @@ namespace Gecode {  namespace Gist {
     void setRefresh(int i);
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-    /// Add a new special node as child to the current node
+    /// Add a new special node as child to the current node via dialog
     void addChild(void);
+    /// Add a new special node as child to the current node immediately
+    void addChild(const QString&, Gecode::IntRelType, int);
     /// Add a new fixpoint node as child to the current node if it is a special node
     void addFixpoint(void);
     /// Calls getVars(\a vm) on the space of the root node and \i is set to the most recent point in time
