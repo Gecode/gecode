@@ -164,7 +164,7 @@ namespace Gecode {  namespace Gist {
     /// Add a new special node as child to the current node via dialog
     void addChild(void);
     /// Add a new special node as child to the current node immediately
-    void addChild(const QString&, Gecode::IntRelType, int);
+    void addChild(const QString&, int, int);
     /// Add a new fixpoint node as child to the current node if it is a special node
     void addFixpoint(void);
     /// Calls getVars(\a vm) on the space of the root node and \i is set to the most recent point in time

@@ -95,7 +95,14 @@ namespace Gecode { namespace Gist {
   }
   
   SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
-  : vn(varName), r(r0), v(v0) { }
+  : vn(varName), v(v0) {
+    rel.i = r0;
+  }
+
+  SpecialDesc::SpecialDesc(std::string varName, SetRelType s0, int v0)
+  : vn(varName), v(v0) {
+    rel.s = s0;
+  }
 
   BestNode::BestNode(SpaceNode* s0, Better* b0) : s(s0), b(b0) {}
   
@@ -216,10 +223,19 @@ namespace Gecode { namespace Gist {
               if(b.desc.special != NULL) {
 
                 const char* vName = b.desc.special->vn.c_str();
+                VarImpBase* var = vm.var(vName);
 
-                IntVar iv = IntVar(Int::IntView(static_cast<Int::IntVarImp*> (vm.var(vName))));
+                if(vm.spec(vName).vti() == "VTI_INT") {
+                  IntVar iv = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(var)));
 
-                rel(curSpace, iv, b.desc.special->r, b.desc.special->v);
+                  rel(curSpace, iv, b.desc.special->rel.i, b.desc.special->v);
+                } else if(vm.spec(vName).vti() == "VTI_SET") {
+                  SetVar sv = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(var)));
+
+                  dom(curSpace, sv, b.desc.special->rel.s, b.desc.special->v);
+                } else {
+                  // TODO nikopp: implement other possibilities
+                }
               }
 #endif
             }

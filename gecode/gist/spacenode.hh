@@ -41,6 +41,7 @@
 #include "gecode/gist/better.hh"
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
+#include "gecode/set.hh"
 
 namespace Gecode { namespace Gist {
 
@@ -67,9 +68,13 @@ namespace Gecode { namespace Gist {
   class SpecialDesc {
   public:
     const std::string vn;
-    const IntRelType r;
     const int v;
+    union {
+    IntRelType i;
+    SetRelType s;
+    } rel;
     SpecialDesc(std::string varName, IntRelType r0, int v0);
+    SpecialDesc(std::string varName, SetRelType s0, int v0);
   };
   
   /// Statistics about the search tree

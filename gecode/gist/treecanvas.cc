@@ -746,7 +746,7 @@ namespace Gecode { namespace Gist {
   }
   
   void
-  TreeCanvasImpl::addChild(const QString& var, Gecode::IntRelType rel, int value) {
+  TreeCanvasImpl::addChild(const QString& var, int rel0, int value) {
     QMutexLocker locker(&mutex);
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
@@ -760,10 +760,24 @@ namespace Gecode { namespace Gist {
       break;
     }
 
+    Reflection::VarMap vm;
+    Space* space = currentNode->getSpace();
+    space->getVars(vm);
+
     VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
 
     newChild->setStatus(SPECIAL);
-    newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
+    
+    if(vm.spec(var.toStdString().c_str()).vti() == "VTI_INT") {
+      IntRelType rel = static_cast<IntRelType>(rel0);
+      newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
+    } else if(vm.spec(var.toStdString().c_str()).vti() == "VTI_SET") {
+      SetRelType rel = static_cast<SetRelType>(rel0);
+      newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
+    } else {
+      // TODO nikopp: implement other options
+    }
+    
     newChild->setNumberOfChildren(0);
     newChild->setNoOfOpenChildren(0);
 
@@ -800,7 +814,7 @@ namespace Gecode { namespace Gist {
 
       QString var = dialog.var();
       int value = dialog.value();
-      IntRelType rel = static_cast<IntRelType> (dialog.rel());
+      int rel = dialog.rel();
 
       addChild(var, rel, value);
     }
