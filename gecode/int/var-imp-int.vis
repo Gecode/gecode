@@ -48,7 +48,6 @@
 ## space is destroyed. If it is omitted, false is assumed.
 [General]
 Name:		Int
-VTI:		INT
 Ifdef:		GECODE_HAVE_INT_VARS
 Namespace:	Gecode::Int
 ##
