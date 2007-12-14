@@ -57,9 +57,9 @@ namespace Gecode { namespace Gist {
                                  QWidget* parent)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
-    , inspect(NULL), heatView(false)
+    , inspector(NULL), heatView(false)
     , autoHideFailed(true), autoZoom(false)
-    , refresh(500) {
+    , refresh(500), nextPit(0) {
       QMutexLocker locker(&mutex);
       root = new VisualNode(rootSpace, b);
       root->setMarked(true);
@@ -81,7 +81,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; }
 
   void
-  TreeCanvasImpl::setInspector(Inspector* i) { inspect = i; }
+  TreeCanvasImpl::setInspector(Inspector* i) { inspector = i; }
 
   void
   TreeCanvasImpl::scaleTree(int scale0) {
@@ -336,10 +336,12 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::inspectCurrentNode(void) {
     QMutexLocker locker(&mutex);
+    
     if (currentNode->isHidden()) {
       toggleHidden();
       return;
     }
+    
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
         {
@@ -353,13 +355,18 @@ namespace Gecode { namespace Gist {
     case SPECIAL:
     case BRANCH:
     case SOLVED:
-      if (inspect != NULL) {
-        inspect->inspect(currentNode->getSpace());
+      Space* curSpace = currentNode->getSpace();
+      Reflection::VarMap vm;
+      curSpace->getVars(vm);
+      emit inspect(vm, nextPit);
+      saveCurrentNode();
+      if (inspector != NULL) {
+        inspector->inspect(curSpace);
       }
       break;
     }
+    
     currentNode->dirtyUp();
-    saveCurrentNode();
     update();
     centerCurrentNode();
   }
@@ -406,15 +413,13 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::inspectPath(void) {
     QMutexLocker locker(&mutex);
-    if(inspect != NULL) {
-      setCurrentNode(root);
-      while(currentNode->isOnPath()) {
-        inspectCurrentNode();
-        if(!currentNode->isLastOnPath())
-          setCurrentNode(currentNode->getChild(currentNode->getPathAlternative()));
-        else
-          break;
-      }
+    setCurrentNode(root);
+    while(currentNode->isOnPath()) {
+      inspectCurrentNode();
+      if(!currentNode->isLastOnPath())
+        setCurrentNode(currentNode->getChild(currentNode->getPathAlternative()));
+      else
+        break;
     }
     update();
   }
@@ -562,12 +567,12 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::saveCurrentNode(void) {
     QMutexLocker locker(&mutex);
+    assert(nextPit == nodeMap.size());
     nodeMap << currentNode;
-    int newPit = nodeMap.size() - 1;
 #ifdef GECODE_GIST_EXPERIMENTAL
-    currentNode->addPit(newPit);
+    currentNode->addPit(nextPit);
 #endif
-    emit newPointInTime(newPit);
+    nextPit++;
   }
 
   void
@@ -1224,11 +1229,9 @@ namespace Gecode { namespace Gist {
   
 #ifdef GECODE_GIST_EXPERIMENTAL
   void
-  TreeCanvas::on_canvas_newPointInTime(int i) {
-
-    timeBar->setMaximum(i);
-    timeBar->setValue(i);
-
+  TreeCanvas::on_canvas_inspect(Gecode::Reflection::VarMap&, int pit) {
+    timeBar->setMaximum(pit);
+    timeBar->setValue(pit);
   }
 
   void

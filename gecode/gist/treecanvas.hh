@@ -141,8 +141,8 @@ namespace Gecode {  namespace Gist {
     void navRight(void);
     /// Move selection to the root node
     void navRoot(void);
-    /// Recall selection of point in time \a i
-    void markCurrentNode(int i);
+    /// Recall selection of point in time \a pit
+    void markCurrentNode(int pit);
     
     /// Set the current node to be the head of the path
     void setPath(void);
@@ -167,7 +167,7 @@ namespace Gecode {  namespace Gist {
     void addChild(const QString&, int, int);
     /// Add a new fixpoint node as child to the current node if it is a special node
     void addFixpoint(void);
-    /// Calls getVars(\a vm) on the space of the root node and \i is set to the most recent point in time
+    /// Calls getVars(\a vm) on the space of the root node
     void getRootVars(Gecode::Reflection::VarMap& vm);
     /// Expand or collapse the current node
     void expandCurrentNode(void);
@@ -181,14 +181,14 @@ namespace Gecode {  namespace Gist {
   Q_SIGNALS:
     /// The scale factor has changed
     void scaleChanged(int);
-    /// A new point in time was logged
-    void newPointInTime(int);
     /// Context menu triggered
     void contextMenu(QContextMenuEvent*);
     /// Status bar update
     void statusChanged(const Statistics&, bool);
     /// The current node has been changed to \a n
     void currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus);
+    /// The node with space \a s is inspected at point in time \a pit
+    void inspect(Gecode::Reflection::VarMap& vm, int pit);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
@@ -207,7 +207,7 @@ namespace Gecode {  namespace Gist {
     /// The history of inspected nodes
     QVector<VisualNode*> nodeMap;
     /// The active inspector
-    Inspector* inspect;
+    Inspector* inspector;
     
     /// Statistics about the search tree
     Statistics stats;
@@ -225,6 +225,9 @@ namespace Gecode {  namespace Gist {
     bool autoZoom;
     /// Refresh rate
     int refresh;
+
+    /// The next point in time
+    int nextPit;
 
     /// Paint the tree
     void paintEvent(QPaintEvent* event);
@@ -255,6 +258,7 @@ namespace Gecode {  namespace Gist {
   private:
     /// The canvas implementation
     TreeCanvasImpl* canvas;
+    /// The time slider
     QSlider* timeBar;
     /// Context menu
     QMenu* contextMenu;
@@ -323,7 +327,7 @@ namespace Gecode {  namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
     
   private Q_SLOTS:
-    void on_canvas_newPointInTime(int);
+    void on_canvas_inspect(Gecode::Reflection::VarMap&, int);
     void on_forwardTimeStep_triggered(void);
     void on_backwardTimeStep_triggered(void);
 #endif
