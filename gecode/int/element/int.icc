@@ -298,7 +298,7 @@ namespace Gecode { namespace Int { namespace Element {
     IterIdx i(iv[0]);
     GECODE_ME_CHECK(x0.narrow_v(home,i,false));
     IterVal v(iv[0]);
-    if (x1.modified()) {
+    if (shared(x0,x1)) {
       GECODE_ME_CHECK(x1.inter_v(home,v,false));
       return ES_NOFIX;
     } else {

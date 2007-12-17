@@ -117,27 +117,23 @@ namespace Gecode { namespace Int { namespace GCC {
       int reachable = (int) (x.size() - rv[i].le - rv[i].gr);
       if (!k[i].assigned()) {
         ModEvent me = k[i].lq(home, reachable);
-        if (me_failed(me)) {
+        if (me_failed(me))
           return ES_FAILED;
-        }
-        mod |= (k[i].modified() && (k[i].max() != reachable));
-        mod |= shared && k[i].modified();
+        mod |= (me_modified(me) && (k[i].max() != reachable));
+        mod |= shared && me_modified(me);
         
         if (rv[i].eq > 0) {
           ModEvent me = k[i].gq(home, (int) rv[i].eq);
-          if (me_failed(me)) {
+          if (me_failed(me))
             return ES_FAILED;
-          }
-          mod |= (k[i].modified() && (k[i].min() != (int) rv[i].eq));
-          mod |= shared && k[i].modified();
+          mod |= (me_modified(me) && (k[i].min() != (int) rv[i].eq));
+          mod |= shared && me_modified(me);
         }
       } else {
         // check validity of the cardinality value
-
         int v = k[i].max();
-        if ( !( (int) rv[i].eq <= v && v <= reachable) ) {
+        if ( !( (int) rv[i].eq <= v && v <= reachable) )
           return ES_FAILED;
-        }
       }
     }
 

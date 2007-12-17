@@ -571,8 +571,9 @@ namespace Gecode { namespace Int { namespace Element {
     for (int i = n; i--; )
       i_view[i].init(iv[i].view);
     Iter::Ranges::NaryUnion<ViewRanges<VA> > i_val(i_view, n);
-    GECODE_ME_CHECK(x1.inter_r(home,i_val));
-    return x1.modified() ? ES_NOFIX : ES_FIX;
+    ModEvent me = x1.inter_r(home,i_val);
+    GECODE_ME_CHECK(me);
+    return me_modified(me) ? ES_NOFIX : ES_FIX;
   }
 
 }}}

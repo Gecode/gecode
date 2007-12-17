@@ -206,17 +206,15 @@ namespace Gecode { namespace Int { namespace GCC {
         if (isView) {
           if (!k[i].assigned()) {
             ModEvent me = k[i].eq(home, ci);
-            if (me_failed(me)) {
+            if (me_failed(me))
               return ES_FAILED;
-            }
+            card_mod |= me_modified(me);
           }
           all_assigned &= k[i].assigned();
-          card_mod |= k[i].modified();
         }
       }
-      if (all_assigned) {
+      if (all_assigned)
         return ES_SUBSUMED(this,home);
-      }
     }
 
     // before propagation performs inferences on cardinality variables:
@@ -230,16 +228,14 @@ namespace Gecode { namespace Int { namespace GCC {
             int ub = n - (noa - count[i]);
             int lb = count[i];
             ModEvent melq = k[i].lq(home, ub);
-            if (me_failed(melq)) {
+            if (me_failed(melq))
               return ES_FAILED;
-            }
-            card_mod |= k[i].modified();
+            card_mod |= me_modified(melq);
 
             ModEvent megq = k[i].gq(home, lb);
-            if (me_failed(megq)) {
+            if (me_failed(megq))
               return ES_FAILED;
-            }
-            card_mod |= k[i].modified();
+            card_mod |= me_modified(megq);
           }
         }
       }
@@ -271,15 +267,12 @@ namespace Gecode { namespace Int { namespace GCC {
               return ES_FAILED;
             }
             ModEvent me = k[idx].inc();
-            if (me_failed(me)) {
+            if (me_failed(me))
               return ES_FAILED;
-            }
-            card_mod |= k[idx].modified();
-            for (int j = k.size(); j--; ) {
-              if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
+            card_mod |= me_modified(me);
+            for (int j = k.size(); j--; )
+              if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter())
                 return ES_FAILED;
-              }
-            }
             return ES_SUBSUMED(this,home);
           }
         }
@@ -408,7 +401,7 @@ namespace Gecode { namespace Int { namespace GCC {
               if (me_failed(me)) {
                 return ES_FAILED;
               }
-              card_mod |= k[idx].modified();
+              card_mod |= me_modified(me);
 
               for (int j = k.size(); j--; ) {
                 if (k[j].min() > k[j].counter() ||
@@ -462,12 +455,11 @@ namespace Gecode { namespace Int { namespace GCC {
         if (isView) {
           if (!k[i].assigned()) {
             ModEvent me = k[i].eq(home, ci);
-            if (me_failed(me)) {
+            if (me_failed(me))
               return ES_FAILED;
-            }
+            card_mod |= me_modified(me);
           }
           all_assigned &= k[i].assigned();
-          card_mod |= k[i].modified();
         }
       }
       if (all_assigned) {
@@ -490,18 +482,17 @@ namespace Gecode { namespace Int { namespace GCC {
         int lb = ysmax + k[i].max();
         int ub = ysmin + k[i].min();
         ModEvent me = k[i].gq(home, lb);
-        if (me_failed(me)) {
+        if (me_failed(me))
           return ES_FAILED;
-        }
 
-        card_mod |= k[i].modified() && k[i].min() != lb;
+        card_mod |= me_modified(me) && k[i].min() != lb;
         smax += k[i].max();
 
         me = k[i].lq(home, ub);
-        if (me_failed(me)) {
+        if (me_failed(me))
           return ES_FAILED;
-        }
-        card_mod |= k[i].modified();        
+
+        card_mod |= me_modified(me);        
         card_ass &= k[i].assigned();
       }
       if (card_ass) {
