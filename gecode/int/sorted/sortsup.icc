@@ -527,73 +527,63 @@ namespace Gecode { namespace Int { namespace Sorted {
     int n = xz.size();
     for (int i = n; i--; ) {
       if (xz[i][1].assigned()) {
-
         // if the permutation variable is determined
-        
         int v = xz[i][1].val();
         if (xz[i][0].assigned()) {
           // channel equality from x to y
           ModEvent me = y[v].eq(home, xz[i][0].val());
-          if (me_failed(me)) {
+          if (me_failed(me))
             return false;
-          }
+          nofix |= me_modified(me);
         } else {
           if (y[v].assigned()) {
             // channel equality from y to x
             ModEvent me = xz[i][0].eq(home, y[v].val());
-            if (me_failed(me)) {
+            if (me_failed(me))
               return false;
-            }
+            nofix |= me_modified(me);
           } else {
             // constrain upper bound
             ModEvent me = xz[i][0].lq(home, y[v].max());
-            if (me_failed(me)) {
+            if (me_failed(me))
               return false;
-            }
-            nofix |= (me_modified(me) && xz[i][0].max() != y[v].max());
+            nofix |= me_modified(me);
 
             // constrain lower bound
             me = xz[i][0].gq(home, y[v].min());
-            if (me_failed(me)) {
+            if (me_failed(me))
               return false;
-            }
-            nofix |= (me_modified(me) && xz[i][0].min() != y[v].min());
+            nofix |= me_modified(me);
 
             // constrain the sorted variable
             // constrain upper bound
             me = y[v].lq(home, xz[i][0].max());
-            if (me_failed(me)) {
+            if (me_failed(me))
               return false;
-            }
-            nofix |= (me_modified(me) && y[v].max() != xz[i][0].max());
+            nofix |= me_modified(me);
 
             // constrain lower bound
             me = y[v].gq(home, xz[i][0].min());
-            if (me_failed(me)) {
+            if (me_failed(me))
               return false;
-            }
-            nofix |= (me_modified(me) && y[v].min() != xz[i][0].min());
+            nofix |= me_modified(me);
           }
         }
       } else {
-        
         // if the permutation variable is undetermined
         int l = xz[i][1].min();
         int r = xz[i][1].max();
-        
         // upper bound
         ModEvent me = xz[i][0].lq(home, y[r].max());
-        if (me_failed(me)) {
+        if (me_failed(me))
           return false;
-        }
-        nofix |= (me_modified(me) && xz[i][0].max() != y[r].max());
+        nofix |= me_modified(me);
 
         // lower bound
         me = xz[i][0].gq(home, y[l].min());
-        if (me_failed(me)) {
+        if (me_failed(me))
           return false;
-        }
-        nofix |= (me_modified(me) && xz[i][0].min() != y[l].min());
+        nofix |= me_modified(me);
       }
     }
     return true;
