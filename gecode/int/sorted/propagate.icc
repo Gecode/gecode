@@ -340,13 +340,13 @@ namespace Gecode { namespace Int { namespace Sorted {
             ModEvent me = y[xz[tau[i]][1].min()].lq(home, xz[tau[i]][0].max());
             if (me_failed(me)) 
               return ES_FAILED;
-            nofix |= (y[xz[tau[i]][1].min()].modified() &&
+            nofix |= (me_modified(me) &&
                       y[xz[tau[i]][1].min()].max() != xz[tau[i]][0].max());
         
             me = y[xz[tau[i+1]][1].max()].lq(home, xz[tau[i+1]][0].max());
             if (me_failed(me))
               return ES_FAILED;
-            nofix |= (y[xz[tau[i+1]][1].max()].modified() &&
+            nofix |= (me_modified(me) &&
                       y[xz[tau[i+1]][1].max()].max() != xz[tau[i+1]][0].max());
           }
         }
@@ -571,12 +571,12 @@ namespace Gecode { namespace Int { namespace Sorted {
           if (xz[i][0].min() < xz[i+1][0].min()) {
             ModEvent me = y[xz[i][1].min()].gq(home, xz[i][0].min());
             GECODE_ME_CHECK(me);
-            nofix |= (y[xz[i][1].min()].modified() &&
+            nofix |= (me_modified(me) &&
                       y[xz[i][1].min()].min() != xz[i][0].min());
 
             me = y[xz[i+1][1].max()].gq(home, xz[i+1][0].min());
             GECODE_ME_CHECK(me);
-            nofix |= (y[xz[i+1][1].max()].modified() &&
+            nofix |= (me_modified(me) &&
                       y[xz[i+1][1].max()].min() != xz[i+1][0].min());
           }
         }
@@ -602,19 +602,19 @@ namespace Gecode { namespace Int { namespace Sorted {
     for (int i = xz.size(); i--; ) {
       ModEvent me = y[i].lq(home, tub);
       GECODE_ME_CHECK(me);
-      nofix |= y[i].modified() && (y[i].max() != tub);
+      nofix |= me_modified(me) && (y[i].max() != tub);
 
       me = y[i].gq(home, tlb);
       GECODE_ME_CHECK(me);
-      nofix |= y[i].modified() && (y[i].min() != tlb);
+      nofix |= me_modified(me) && (y[i].min() != tlb);
 
       me = xz[i][0].lq(home, tub);
       GECODE_ME_CHECK(me);
-      nofix |= xz[i][0].modified() && (xz[i][0].max() != tub);
+      nofix |= me_modified(me) && (xz[i][0].max() != tub);
 
       me = xz[i][0].gq(home, tlb);
       GECODE_ME_CHECK(me);
-      nofix |= xz[i][0].modified() && (xz[i][0].min() != tlb);
+      nofix |= me_modified(me) && (xz[i][0].min() != tlb);
     }
 
     if (!array_assigned<View, Tuple, Perm>
