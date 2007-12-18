@@ -70,6 +70,15 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Views and variables do not any longer reveal whether they have
+been modified: this feature committed the kernel to a particular
+implementation which might not be available in the future.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

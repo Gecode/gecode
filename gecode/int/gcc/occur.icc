@@ -62,7 +62,6 @@ namespace Gecode { namespace Int { namespace GCC {
     ModEvent gq(Space* home, int n);
     ModEvent eq(Space* home, int n);
     bool assigned(void) const;
-    bool modified(void) const;
     bool range(void) const;
     ModEvent inc(void);
 
@@ -144,11 +143,6 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline bool
   OccurBndsView::assigned(void) const {
     return _min==_max;
-  }
-
-  forceinline bool
-  OccurBndsView::modified(void) const {
-    return false;
   }
 
   forceinline bool

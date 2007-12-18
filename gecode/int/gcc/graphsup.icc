@@ -1416,16 +1416,18 @@ namespace Gecode { namespace Int { namespace GCC {
               }
             }
             assert(vrn->noe == 1);
-            modified |= x[vi].modified();
 
-            if (me_failed(x[vi].eq(home, vln->val)))
+            ModEvent me = x[vi].eq(home, vln->val);
+            if (me_failed(me))
               failed(true);
+            if (me_modified(me))
+              modified = true;
+
             vars[vi] = vars[--n_var];
             vars[vi]->set_info(vi);
 
             int n = x.size();
             x[vi] = x[--n];
-            //            x[vi].index(vi);
             x.size(n);
 
             node_size--;
@@ -1434,12 +1436,15 @@ namespace Gecode { namespace Int { namespace GCC {
         
 
           int vidx = vln->kindex();
-          if (isView)
-            if (me_failed(k[vidx].eq(home, k[vidx].min())))
+          if (isView) {
+            ModEvent me = k[vidx].eq(home, k[vidx].min());
+            if (me_failed(me))
               failed(true);
+            if (me_modified(me))
+              modified = true;
+          }
 
           k[vidx].counter(k[vidx].min());
-          modified |= k[vidx].modified();
         
           vln->template set_cap<UBC>(0);
           vln->template set_cap<LBC>(0);
@@ -1465,16 +1470,18 @@ namespace Gecode { namespace Int { namespace GCC {
       }
 
       if (isView) {
-        if (k[i].counter() == 0)
-          if (me_failed(k[i].lq(home, vals[i]->noe)))
+        if (k[i].counter() == 0) {
+          ModEvent me = k[i].lq(home, vals[i]->noe);
+          if (me_failed(me))
             failed(true);
-        modified |= k[i].modified() && k[i].max() != vals[i]->noe;
+          if (me_modified(me) && k[i].max() != vals[i]->noe)
+            modified = true;
+        }
       }
     }
 
-    for (int i = n_val; i--; ) {
+    for (int i = n_val; i--; )
       vals[i]->set_info(n_var + i);
-    }
 
     return modified;
   }
@@ -1702,19 +1709,21 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template <BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::narrow(Space* home){
-    bool shared  = false;
+  VarValGraph<View, Card, isView>::narrow(Space* home) {
+    bool modified  = false;
     for (int i = n_var; i--; ) {
       VarNode* vrn = vars[i];
       if (vrn->noe == 1) {
         Edge* e = vrn->first();
-        shared |= x[i].modified();
         ValNode* v = e->getVal();
         e->template free<direction>();        
-        if (me_failed(x[i].eq(home, v->val))) {
+        ModEvent me = x[i].eq(home, v->val);
+        if (me_failed(me)) {
           failed(true);
           return false;
         }
+        if (me_modified(me))
+          modified = true;
         v->inc();
       }
     }
@@ -1742,7 +1751,7 @@ namespace Gecode { namespace Int { namespace GCC {
           int vidx = v->kindex();
 
           k[i].counter(v->kcount());
-                    // std::cout << "eq on : " << v->val<<"\n";
+
           if (isView) {
             if (!k[i].assigned()) {
               ModEvent me = k[i].eq(home, k[i].counter());
@@ -1832,16 +1841,18 @@ namespace Gecode { namespace Int { namespace GCC {
                        e->template used<direction>());
           if (!keepedge) {
             ValNode* v = e->getVal();
-            shared |= x[i].modified();
-            if (me_failed(x[i].nq(home, v->val))) {
+            ModEvent me = x[i].nq(home, v->val);
+            if (me_failed(me)) {
               failed(true);
               return false;
             }
+            if (me_modified(me))
+              modified = true;
           } else {
             e->template free<direction>();        
           }
         }
-    return shared;
+    return modified;
   }
 
   template <class View, class Card, bool isView>  template <BC direction>

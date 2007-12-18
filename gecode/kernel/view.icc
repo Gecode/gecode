@@ -47,8 +47,6 @@ namespace Gecode {
   public:
     /// \name Generic view information
     //@{
-    /// Test whether view has been modified during propagation
-    bool modified(void) const;
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return whether this view is derived from a VarViewBase
@@ -83,8 +81,6 @@ namespace Gecode {
     static bool varderived(void);
     /// Return variable implementation of view
     VarImp* var(void) const;
-    /// Test whether view has been modified during propagation
-    bool modified(void) const;
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     //@}
@@ -175,8 +171,6 @@ namespace Gecode {
     VarImp* var(void) const;
     /// Return view from which this view is derived
     View base(void) const;
-    /// Test whether view been modified during propagation
-    bool modified(void) const;
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
     //@}
@@ -339,10 +333,6 @@ namespace Gecode {
    * Constant view: has no variable implementation
    *
    */
-  forceinline bool
-  ConstViewBase::modified(void) const {
-    return true;
-  }
   forceinline unsigned int
   ConstViewBase::degree(void) const {
     return 0;
@@ -376,11 +366,6 @@ namespace Gecode {
   forceinline VarImp*
   VarViewBase<VarImp>::var(void) const {
     return varimp;
-  }
-  template <class VarImp>
-  forceinline bool
-  VarViewBase<VarImp>::modified(void) const {
-    return varimp->modified();
   }
   template <class VarImp>
   forceinline unsigned int
@@ -470,12 +455,6 @@ namespace Gecode {
   forceinline View
   DerivedViewBase<View>::base(void) const {
     return view;
-  }
-
-  template <class View>
-  forceinline bool
-  DerivedViewBase<View>::modified(void) const {
-    return view.modified();
   }
 
   template <class View>

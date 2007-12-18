@@ -564,13 +564,6 @@ EOF
     //\@}
 EOF
 ;
-  if ($me_max_n[$f] == 2) {
-print <<EOF
-    /// Return the current modification event
-    ModEvent modevent(void) const;
-EOF
-;
-  }
 
   if ($dispose[$f]) {
   print <<EOF
@@ -586,18 +579,6 @@ EOF
 
 EOF
 ;
-
-if ($me_max_n[$f] == 2) {
-print <<EOF
-
-  forceinline ModEvent
-  $class[$f]::modevent(void) const {
-    return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
-  }
-
-EOF
-;
-}
 
 if ($dispose[$f]) {
   print <<EOF

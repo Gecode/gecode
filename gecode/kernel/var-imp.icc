@@ -168,16 +168,8 @@ namespace Gecode { namespace Int {
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
     bool notify(Space* home, ModEvent me, Delta* d);
     //@}
-    /// Return the current modification event
-    ModEvent modevent(void) const;
 
   };
-
-
-  forceinline ModEvent
-  BoolVarImpBase::modevent(void) const {
-    return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
-  }
 
 
   forceinline
