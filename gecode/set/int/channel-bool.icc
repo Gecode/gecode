@@ -122,7 +122,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   PropCost
-  ChannelBool<View>::cost(void) const { return PC_QUADRATIC_LO; }
+  ChannelBool<View>::cost(PropModEvent) const { return PC_QUADRATIC_LO; }
 
   template <class View>
   size_t
@@ -141,7 +141,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  ChannelBool<View>::propagate(Space* home) {
+  ChannelBool<View>::propagate(Space* home, PropModEvent) {
     running = true;
     if (zeros.size() > 0) {
       BndSetRanges zi(zeros);

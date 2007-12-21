@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   PropCost
-  SelectIntersection<SView,RView>::cost(void) const {
+  SelectIntersection<SView,RView>::cost(PropModEvent) const {
     return PC_LINEAR_HI;
   }
 
@@ -146,7 +146,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   ExecStatus
-  SelectIntersection<SView,RView>::propagate(Space* home) {
+  SelectIntersection<SView,RView>::propagate(Space* home, PropModEvent) {
     int n = iv.size();
 
     bool loopVar;

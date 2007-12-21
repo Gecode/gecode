@@ -225,8 +225,8 @@ namespace Gecode {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
-    MinusView::pme(const Propagator* p) {
-      return IntView::pme(p);
+    MinusView::me(PropModEvent pme) {
+      return IntView::me(pme);
     }
     forceinline PropModEvent
     MinusView::pme(ModEvent me) {

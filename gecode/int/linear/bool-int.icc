@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   PropCost
-  MemoryLinBoolInt<VX>::cost(void) const {
+  MemoryLinBoolInt<VX>::cost(PropModEvent) const {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Linear {
   
   template <class VX>
   PropCost
-  SpeedLinBoolInt<VX>::cost(void) const {
+  SpeedLinBoolInt<VX>::cost(PropModEvent) const {
     return PC_UNARY_HI;
   }
 
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::Memory::propagate(Space* home) {
+  GqBoolInt<VX>::Memory::propagate(Space* home, PropModEvent) {
     // Eliminate assigned views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -338,7 +338,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::Speed::propagate(Space* home) {
+  GqBoolInt<VX>::Speed::propagate(Space* home, PropModEvent) {
     if (c > 0) {
       assert((n_s == c) && (x.size() == 0));
       // Signal to advisors that propagator runs
@@ -430,7 +430,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::Memory::propagate(Space* home) {
+  EqBoolInt<VX>::Memory::propagate(Space* home, PropModEvent) {
     // Eliminate assigned views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -556,7 +556,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::Speed::propagate(Space* home) {
+  EqBoolInt<VX>::Speed::propagate(Space* home, PropModEvent) {
     // Signal to advisors that propagator runs
     assert(x.size() == 0);
     n_s = 0;
@@ -677,7 +677,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   PropCost
-  NqBoolInt<VX>::cost(void) const {
+  NqBoolInt<VX>::cost(PropModEvent) const {
     return PC_LINEAR_LO;
   }
 
@@ -745,7 +745,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   ExecStatus
-  NqBoolInt<VX>::propagate(Space* home) {
+  NqBoolInt<VX>::propagate(Space* home, PropModEvent) {
     bool s0 = true; 
     if (x0.zero() || x0.one())
       s0 = resubscribe(home,x0);

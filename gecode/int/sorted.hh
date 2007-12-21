@@ -94,9 +94,9 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function returning PC_LINEAR_HI
-    virtual PropCost cost (void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for the views \a xz and \a y
     static  ExecStatus post(Space*, ViewArray<Tuple>&, ViewArray<View>&);
   };

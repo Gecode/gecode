@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View0, class View1>
   ExecStatus
-  EqBnd<View0,View1>::propagate(Space* home) {
+  EqBnd<View0,View1>::propagate(Space* home, PropModEvent) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
     } else if (x1.assigned()) {
@@ -186,17 +186,17 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View0, class View1>
   PropCost
-  EqDom<View0,View1>::cost(void) const {
-    if (View0::pme(this) == ME_INT_VAL || View1::pme(this) == ME_INT_VAL)
+  EqDom<View0,View1>::cost(PropModEvent pme) const {
+    if ((View0::me(pme) == ME_INT_VAL) || (View1::me(pme) == ME_INT_VAL))
       return PC_UNARY_LO;
-    if (View0::pme(this) == ME_INT_DOM || View1::pme(this) == ME_INT_DOM)
+    if ((View0::me(pme) == ME_INT_DOM) || (View1::me(pme) == ME_INT_DOM))
       return PC_BINARY_HI;
     return PC_BINARY_LO;
   }
 
   template <class View0, class View1>
   ExecStatus
-  EqDom<View0,View1>::propagate(Space* home) {
+  EqDom<View0,View1>::propagate(Space* home, PropModEvent pme) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
       return ES_SUBSUMED(this,sizeof(*this));
@@ -205,8 +205,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
       return ES_SUBSUMED(this,sizeof(*this));
     }
-    if ((View0::pme(this) != ME_INT_DOM) && 
-        (View1::pme(this) != ME_INT_DOM)) {
+    if ((View0::me(pme) != ME_INT_DOM) && (View1::me(pme) != ME_INT_DOM)) {
       do {
         GECODE_ME_CHECK(x0.gq(home,x1.min()));
         GECODE_ME_CHECK(x1.gq(home,x0.min()));
@@ -287,20 +286,20 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   PropCost
-  NaryEqDom<View>::cost(void) const {
-    if (View::pme(this) == ME_INT_VAL)
+  NaryEqDom<View>::cost(PropModEvent pme) const {
+    if (View::me(pme) == ME_INT_VAL)
       return PC_UNARY_LO;
-    if (View::pme(this) == ME_INT_DOM)
+    if (View::me(pme) == ME_INT_DOM)
       return cost_hi(x.size(),PC_LINEAR_HI);
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
   template <class View>
   ExecStatus
-  NaryEqDom<View>::propagate(Space* home) {
+  NaryEqDom<View>::propagate(Space* home, PropModEvent pme) {
     assert(x.size() > 2);
 
-    ModEvent me = View::pme(this);
+    ModEvent me = View::me(pme);
     if (me == ME_INT_VAL) {
       // One of the variables is assigned
       for (int i = 0; ; i++)
@@ -408,8 +407,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   PropCost
-  NaryEqBnd<View>::cost(void) const {
-    if (View::pme(this) == ME_INT_VAL)
+  NaryEqBnd<View>::cost(PropModEvent pme) const {
+    if (View::me(pme) == ME_INT_VAL)
       return PC_UNARY_LO;
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
@@ -437,10 +436,9 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  NaryEqBnd<View>::propagate(Space* home) {
+  NaryEqBnd<View>::propagate(Space* home, PropModEvent pme) {
     assert(x.size() > 2);
-
-    if (View::pme(this) == ME_INT_VAL) {
+    if (View::me(pme) == ME_INT_VAL) {
       // One of the variables is assigned
       for (int i = 0; ; i++)
         if (x[i].assigned()) {
@@ -539,7 +537,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   ExecStatus
-  ReEqDom<View,CtrlView>::propagate(Space* home) {
+  ReEqDom<View,CtrlView>::propagate(Space* home, PropModEvent) {
     if (b.one())
       GECODE_REWRITE(this,(EqDom<View,View>::post(home,x0,x1)));
     if (b.zero())
@@ -620,7 +618,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   ExecStatus
-  ReEqBnd<View,CtrlView>::propagate(Space* home) {
+  ReEqBnd<View,CtrlView>::propagate(Space* home, PropModEvent) {
     if (b.one())
       GECODE_REWRITE(this,(EqBnd<View,View>::post(home,x0,x1)));
     if (b.zero())
@@ -708,7 +706,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   ExecStatus
-  ReEqDomInt<View,CtrlView>::propagate(Space* home) {
+  ReEqDomInt<View,CtrlView>::propagate(Space* home, PropModEvent) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.eq(home,c)); 
       assert(x0.assigned());
@@ -808,7 +806,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   ExecStatus
-  ReEqBndInt<View,CtrlView>::propagate(Space* home) {
+  ReEqBndInt<View,CtrlView>::propagate(Space* home, PropModEvent) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.eq(home,c)); 
       assert(x0.assigned());

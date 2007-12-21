@@ -103,7 +103,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   ExecStatus
-  Distinct<View0,View1>::propagate(Space* home) {
+  Distinct<View0,View1>::propagate(Space* home, PropModEvent) {
     assert(x0.assigned()||x1.assigned());
     if (x0.assigned()) {
       GlbRanges<View0> xr(x0);
@@ -156,7 +156,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0>
   ExecStatus
-  DistinctDoit<View0>::propagate(Space* home) {
+  DistinctDoit<View0>::propagate(Space* home, PropModEvent) {
     if (x0.assigned()) {
       GlbRanges<View0> xi(x0);
       GlbRanges<ConstantView> yi(y);

@@ -410,8 +410,8 @@ namespace Gecode {
       return BoolView::schedule(home,p,me);
     }
     forceinline ModEvent
-    NegBoolView::pme(const Propagator* p) {
-      return BoolView::pme(p);
+    NegBoolView::me(PropModEvent pme) {
+      return BoolView::me(pme);
     }
     forceinline PropModEvent
     NegBoolView::pme(ModEvent me) {

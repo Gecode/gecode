@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Bool {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Bool {
     BoolTernary(Space* home, bool share, Propagator& p,
                 BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as PC_BINARY_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ b_0 = b_1\f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
     /// Specification for this propagator
@@ -154,9 +154,9 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
     static  ExecStatus post(Space* home, ViewArray<BV>& x);
     /// Post propagator for specification
@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ b_0 \leq b_1\f$
     static  ExecStatus post(Space* home, BV b0, BV b1);
     /// Specification for this propagator
@@ -237,7 +237,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
     /// Specification for this propagator
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 = 1 \f$
     static  ExecStatus post(Space* home, BV b0, BV b1, BV b2);
     /// Delete propagator and return its size
@@ -313,7 +313,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 \lor b_3 = 1 \f$
     static  ExecStatus post(Space* home, BV b0, BV b1, BV b2, BV b3);
     /// Specification for this propagator
@@ -349,7 +349,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ b_0 \lor b_1 = b_2 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
     /// Specification for this propagator
@@ -380,7 +380,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
     static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
     /// Specification for this propagator
@@ -416,9 +416,9 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
     static  ExecStatus post(Space* home, ViewArray<BV>& b);
     /// Specification for this propagator
@@ -451,7 +451,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
     /// Specification for this propagator

@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C, PropCond pc>
   PropCost
-  LinTer<Val,A,B,C,pc>::cost(void) const {
+  LinTer<Val,A,B,C,pc>::cost(PropModEvent) const {
     return PC_TERNARY_LO;
   }
 
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   ExecStatus
-  EqTer<Val,A,B,C>::propagate(Space* home) {
+  EqTer<Val,A,B,C>::propagate(Space* home, PropModEvent) {
     int bm = TM_ALL;
     do {
       GECODE_INT_PV(TM_X0_MIN, x0.gq(home,c-x1.max()-x2.max()),
@@ -261,7 +261,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   ExecStatus
-  NqTer<Val,A,B,C>::propagate(Space* home) {
+  NqTer<Val,A,B,C>::propagate(Space* home, PropModEvent) {
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.nq(home,c-x0.val()-x1.val()));
       return ES_SUBSUMED(this,home);
@@ -340,7 +340,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   ExecStatus
-  LqTer<Val,A,B,C>::propagate(Space* home) {
+  LqTer<Val,A,B,C>::propagate(Space* home, PropModEvent) {
     GECODE_ME_CHECK(x0.lq(home,c-x1.min()-x2.min()));
     GECODE_ME_CHECK(x1.lq(home,c-x0.min()-x2.min()));
     GECODE_ME_CHECK(x2.lq(home,c-x0.min()-x1.min()));

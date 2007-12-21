@@ -232,7 +232,7 @@ namespace Gecode {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
-    ConstIntView::pme(const Propagator*) {
+    ConstIntView::me(PropModEvent) {
       return ME_INT_NONE;
     }
     forceinline PropModEvent

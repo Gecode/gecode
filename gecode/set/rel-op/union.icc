@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  Union<View0,View1,View2>::propagate(Space* home) {
+  Union<View0,View1,View2>::propagate(Space* home, PropModEvent pme) {
     // This propagator implements the constraint
     // x2 = x0 u x1
 
@@ -108,9 +108,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     bool x1ass = x1.assigned();
     bool x2ass = x2.assigned();
 
-    ModEvent me0 = View0::pme(this);
-    ModEvent me1 = View1::pme(this);
-    ModEvent me2 = View2::pme(this);
+    ModEvent me0 = View0::me(pme);
+    ModEvent me1 = View1::me(pme);
+    ModEvent me2 = View2::me(pme);
 
     bool x0ubmod = false;
     bool x1ubmod = false;
@@ -287,7 +287,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   PropCost
-  UnionN<View0,View1>::cost(void) const {
+  UnionN<View0,View1>::cost(PropModEvent) const {
     return PC_QUADRATIC_LO;
   }
 
@@ -329,9 +329,9 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  UnionN<View0,View1>::propagate(Space* home) {
-    ModEvent me0 = View0::pme(this);
-    ModEvent me1 = View1::pme(this);
+  UnionN<View0,View1>::propagate(Space* home, PropModEvent pme) {
+    ModEvent me0 = View0::me(pme);
+    ModEvent me1 = View1::me(pme);
     bool ubevent = Rel::testSetEventUB(me0, me1);
     bool lbevent = Rel::testSetEventLB(me0, me1);
     bool anybevent = Rel::testSetEventAnyB(me0, me1);

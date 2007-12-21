@@ -232,7 +232,7 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  ConstantView::pme(const Propagator*) {
+  ConstantView::me(PropModEvent) {
     return ME_SET_NONE;
   }
   forceinline PropModEvent
@@ -434,7 +434,7 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  EmptyView::pme(const Propagator*) {
+  EmptyView::me(PropModEvent) {
     return ME_SET_NONE;
   }
   forceinline PropModEvent
@@ -615,7 +615,7 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  UniverseView::pme(const Propagator*) {
+  UniverseView::me(PropModEvent) {
     return ME_SET_NONE;
   }
   forceinline PropModEvent

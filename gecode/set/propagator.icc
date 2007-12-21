@@ -65,7 +65,7 @@ namespace Gecode {
     IntSetPropagator(Space* home,View,Gecode::Int::IntView);
   public:
     /// Cost function (defined as PC_BINARY_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
@@ -94,7 +94,7 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   PropCost
-  IntSetPropagator<View,pcs,pci>::cost(void) const {
+  IntSetPropagator<View,pcs,pci>::cost(PropModEvent) const {
     return PC_BINARY_LO;
   }
 

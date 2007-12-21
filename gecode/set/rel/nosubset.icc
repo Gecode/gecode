@@ -98,7 +98,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   ExecStatus
-  NoSubSet<View0,View1>::propagate(Space* home) {
+  NoSubSet<View0,View1>::propagate(Space* home, PropModEvent) {
     GlbRanges<View0> x0lb(x0);
     LubRanges<View1> x1ub(x1);
     if (!Iter::Ranges::subset(x0lb, x1ub))

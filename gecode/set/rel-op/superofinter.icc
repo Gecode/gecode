@@ -97,13 +97,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  SuperOfInter<View0,View1,View2>::propagate(Space* home) {
+  SuperOfInter<View0,View1,View2>::propagate(Space* home, PropModEvent pme) {
 
     bool allassigned = x0.assigned() && x1.assigned() && x2.assigned();
 
-    ModEvent me0 = View0::pme(this);
-    ModEvent me1 = View1::pme(this);
-    ModEvent me2 = View2::pme(this);
+    ModEvent me0 = View0::me(pme);
+    ModEvent me1 = View1::me(pme);
+    ModEvent me2 = View2::me(pme);
 
     bool modified = false;
 

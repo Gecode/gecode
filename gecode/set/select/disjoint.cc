@@ -44,7 +44,7 @@
 namespace Gecode { namespace Set { namespace Select {
 
   PropCost
-  SelectDisjoint::cost(void) const {
+  SelectDisjoint::cost(PropModEvent) const {
     return PC_QUADRATIC_LO;
   }
 
@@ -82,7 +82,7 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   ExecStatus
-  SelectDisjoint::propagate(Space* home) {
+  SelectDisjoint::propagate(Space* home, PropModEvent) {
     int n = iv.size();
 
     bool fix_flag;

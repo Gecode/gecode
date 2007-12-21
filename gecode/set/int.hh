@@ -69,7 +69,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for \a x is the minimal element of \a s 
     static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
@@ -102,7 +102,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for \a x is the largest element of \a s 
     static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
@@ -135,7 +135,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for \f$ |s|=x \f$ 
     static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
@@ -171,11 +171,11 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
-    GECODE_SET_EXPORT virtual PropCost cost(void) const;
+    GECODE_SET_EXPORT virtual PropCost cost(PropModEvent pme) const;
     /// Delete Propagator
     GECODE_SET_EXPORT virtual size_t dispose(Space* home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
     static ExecStatus post(Space* home, View s,
                            ViewArray<Gecode::Int::IntView>& x);
@@ -223,11 +223,11 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     virtual Actor*   copy(Space* home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space* home,ViewArray<Gecode::Int::IntView>& x,
                            ViewArray<View>& y);
@@ -303,11 +303,11 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     virtual Actor*   copy(Space* home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Give advice to propagator
     virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
@@ -351,11 +351,11 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
-    GECODE_SET_EXPORT virtual PropCost cost(void) const;
+    GECODE_SET_EXPORT virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator and return its size
     GECODE_SET_EXPORT virtual size_t dispose(Space* home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
     static ExecStatus post(Space* home,
                            const IntArgs& elements, const IntArgs& weights,

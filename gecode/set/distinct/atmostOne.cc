@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   ExecStatus
-  AtmostOne::propagate(Space* home) {
+  AtmostOne::propagate(Space* home, PropModEvent) {
 
     GECODE_AUTOARRAY(LubRanges<SetView>, lubs, x.size());
     for (int i = x.size(); i--; ) {

@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  Card<View>::propagate(Space* home) {
+  Card<View>::propagate(Space* home, PropModEvent) {
    int x1min, x1max;
    do {
      x1min = x1.min();

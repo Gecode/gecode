@@ -405,8 +405,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   PropCost
-  DomEq<Val,View>::cost(void) const {
-    return (View::pme(this) != ME_INT_DOM)
+  DomEq<Val,View>::cost(PropModEvent pme) const {
+    return (View::me(pme) != ME_INT_DOM)
       ? cost_hi(x.size()+y.size(),PC_LINEAR_LO)
       : cost_hi(x.size()+y.size(),PC_CRAZY_HI);
   }
@@ -435,9 +435,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   ExecStatus
-  DomEq<Val,View>::propagate(Space* home) {
-    if (View::pme(this) != ME_INT_DOM) {
-      ExecStatus es = prop_bnd<Val,View,View>(home,this,x,y,c);
+  DomEq<Val,View>::propagate(Space* home, PropModEvent pme) {
+    if (View::me(pme) != ME_INT_DOM) {
+      ExecStatus es = prop_bnd<Val,View,View>(home,pme,this,x,y,c);
       GECODE_ES_CHECK(es);
       return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
     }

@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Copy propagator during cloning
     virtual Actor*     copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
@@ -149,14 +149,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /**
      * \brief Cost function
      *
      * If in stage for naive value propagation, the cost is dynamic
      * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
      */
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Destructor
@@ -270,14 +270,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     Dom(Space* home, ViewArray<View>& x);
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /**
      * \brief Cost function
      *
      * If in stage for naive value propagation, the cost is dynamic
      * PC_LINEAR_LO. Otherwise it is dynamic PC_CUBIC_LO.
      */
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Specification for this propagator
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     TerDom(Space* home, View x0, View x1, View x2);
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Specification for this propagator

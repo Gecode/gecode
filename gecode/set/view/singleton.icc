@@ -257,8 +257,8 @@ namespace Gecode {
       return Gecode::Int::IntView::schedule(home,p,me_settoint(me));
     }
     forceinline ModEvent
-    SingletonView::pme(const Propagator* p) {
-      return me_inttoset(Int::IntView::pme(p));
+    SingletonView::me(PropModEvent pme) {
+      return me_inttoset(Int::IntView::me(pme));
     }
     forceinline PropModEvent
     SingletonView::pme(ModEvent me) {

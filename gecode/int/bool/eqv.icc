@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB, class BVC>
   ExecStatus
-  Eqv<BVA,BVB,BVC>::propagate(Space* home) {
+  Eqv<BVA,BVB,BVC>::propagate(Space* home, PropModEvent) {
 #define GECODE_INT_STATUS(S0,S1,S2) \
   ((BVA::S0<<(2*BVA::BITS))|(BVB::S1<<(1*BVB::BITS))|(BVC::S2<<(0*BVC::BITS)))
     switch ((x0.status() << (2*BVA::BITS)) | (x1.status() << (1*BVB::BITS)) |

@@ -134,11 +134,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as dynamic PC_LINEAR_HI)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Give advice to propagator
     virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -196,7 +196,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     Tuple find_support(Domain dom, int var, int val);
 
   public:
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
 
     // Dispose propagator
     virtual size_t dispose(Space* home);
@@ -237,14 +237,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /**
      * \brief Cost function
      *
      * If in stage for naive value propagation, the cost is
      * PC_QUADRATIC_HI. Otherwise it is dynamic PC_CUBIC_HI.
      */
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Post propagator for views \a x
@@ -352,14 +352,14 @@ namespace Gecode { namespace Int { namespace Extensional {
     SupportEntry* support(int var, int val);
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /**
      * \brief Cost function
      *
      * If in stage for naive value propagation, the cost is
      * PC_QUADRATIC_HI. Otherwise it is dynamic PC_CUBIC_HI.
      */
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Post propagator for views \a x

@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   PropCost
-  Nq<View>::cost(void) const {
+  Nq<View>::cost(PropModEvent) const {
     return PC_UNARY_LO;
   }
 
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  Nq<View>::propagate(Space* home) {
+  Nq<View>::propagate(Space* home, PropModEvent) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.nq(home,x0.val()));
       x1.cancel(home,this,PC_INT_VAL);
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   ExecStatus
-  NaryNq<View>::propagate(Space* home) {
+  NaryNq<View>::propagate(Space* home, PropModEvent) {
     // Eliminate equal pairs
     int n = x.size();
     for (int i=n; i--; )

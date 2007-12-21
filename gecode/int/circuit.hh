@@ -102,9 +102,9 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (returns PC_LINEAR_HI)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
     /// Specification for this propagator
@@ -148,9 +148,9 @@ namespace Gecode { namespace Int { namespace Circuit {
      * If in stage for naive value propagation, the cost is dynamic
      * PC_LINEAR_HI. Otherwise it is dynamic PC_QUADRATIC_LO.
      */
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator

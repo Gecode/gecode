@@ -488,7 +488,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  LayeredGraph<View>::propagate(Space* home) {
+  LayeredGraph<View>::propagate(Space* home, PropModEvent) {
     ExecStatus es = constructed() ? prune(home) : construct(home);
     return es;
   }
@@ -552,7 +552,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   PropCost
-  LayeredGraph<View>::cost(void) const {
+  LayeredGraph<View>::cost(PropModEvent) const {
     return cost_hi(x.size(), PC_LINEAR_HI);
   }
 

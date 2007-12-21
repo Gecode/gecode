@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Channel {
                                 const Support::Symbol& name);
   public:
     /// Propagation cost
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Specification for this propagator
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for channeling
     static  ExecStatus post(Space* home, int n, ValInfo<View>* xy);
     /// Specification for this propagator
@@ -152,9 +152,9 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Propagation cost
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for channeling on \a xy
     static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
     /// Specification for this propagator
@@ -186,9 +186,9 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for \f$ x_0 = x_1\f$
     static  ExecStatus post(Space* home, BoolView x0, IntView x1);
     /// Specification for this propagator
@@ -223,9 +223,9 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (PC_UNARY_LO if \a y is assigned, PC_LINEAR_LO otherwise)
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
     GECODE_INT_EXPORT
     static  ExecStatus post(Space* home, 

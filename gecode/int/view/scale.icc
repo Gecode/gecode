@@ -264,8 +264,8 @@ namespace Gecode {
     }
     template <class Val, class UnsVal>
     forceinline ModEvent
-    ScaleView<Val,UnsVal>::pme(const Propagator* p) {
-      return IntView::pme(p);
+    ScaleView<Val,UnsVal>::me(PropModEvent pme) {
+      return IntView::me(pme);
     }
 
     template <class Val, class UnsVal>

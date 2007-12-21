@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  Lex<View>::propagate(Space* home) {
+  Lex<View>::propagate(Space* home, PropModEvent) {
     /*
      * State 1
      *

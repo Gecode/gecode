@@ -416,8 +416,8 @@ namespace Gecode {
     //@{
     /// Schedule propagator \a p with modification event \a me
     static void schedule(Space* home, Propagator* p, ModEvent me);
-    /// Return modification event for variable from propagator \a p
-    static ModEvent pme(const Propagator* p);
+    /// Project modification event for this variable type from \a pme
+    static ModEvent me(PropModEvent pme);
     /// Translate modification event \a me into propagator modification event
     static PropModEvent pme(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
@@ -628,8 +628,7 @@ namespace Gecode {
    *
    * %Set propagator modification events after processing of
    * variables to \a pme.
-   * \warning Has a side-effect on the propagator. Overwrites
-   *          the propagator modification events of a propagator.
+   * \warning Has a side-effect on the propagator. 
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
@@ -639,8 +638,7 @@ namespace Gecode {
    *
    * %Set propagator modification events before processing of
    * variables to \a pme.
-   * \warning Has a side-effect on the propagator. Overwrites
-   *          the propagator modification events of a propagator.
+   * \warning Has a side-effect on the propagator.
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
@@ -702,9 +700,9 @@ namespace Gecode {
      * For more details, see the individual functions.
      *
      */
-    virtual ExecStatus propagate(Space* home) = 0;
+    virtual ExecStatus propagate(Space* home, PropModEvent pme) = 0;
     /// Cost function
-    virtual PropCost cost(void) const  = 0;
+    virtual PropCost cost(PropModEvent pme) const  = 0;
     /**
      * \brief Advise function
      *
@@ -1911,8 +1909,8 @@ namespace Gecode {
 
   template <class VIC>
   forceinline ModEvent
-  VarImp<VIC>::pme(const Propagator* p) {
-    return static_cast<ModEvent>((p->u.pme >> pme_bits_fst) & me_bits_mask);
+  VarImp<VIC>::me(PropModEvent pme) {
+    return static_cast<ModEvent>((pme >> pme_bits_fst) & me_bits_mask);
   }
 
   template <class VIC>
@@ -2036,7 +2034,7 @@ namespace Gecode {
 
   forceinline void
   Space::pool_put(Propagator* p) {
-    int c = p->cost();
+    int c = p->cost(p->u.pme);
     pu.p.pool[c].tail(p);
     if (c > pu.p.pool_next)
       pu.p.pool_next = c;

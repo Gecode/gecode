@@ -190,8 +190,8 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   PropCost
-  Dom<View,shared>::cost(void) const {
-    return (View::pme(this) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
+  Dom<View,shared>::cost(PropModEvent pme) const {
+    return (View::me(pme) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
   }
 
   template <class View, bool shared>
@@ -221,14 +221,14 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   ExecStatus
-  Dom<View,shared>::propagate(Space* home) {
+  Dom<View,shared>::propagate(Space* home, PropModEvent pme) {
     GECODE_AUTOSTACK(int,-1, xa, n);
     GECODE_AUTOSTACK(int,-1, ya, n);
 
     DomInfo<View>* x = xy;
     DomInfo<View>* y = xy+n;
 
-    if (View::pme(this) == ME_INT_VAL) {
+    if (View::me(pme) == ME_INT_VAL) {
       // Scan x and y for assigned but not yet propagated views
       for (int i = n; i--; ) {
         if (x[i].doval()) xa.push(i);

@@ -90,10 +90,10 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   ExecStatus
-  Eq<View0,View1>::propagate(Space* home) {
+  Eq<View0,View1>::propagate(Space* home, PropModEvent pme) {
 
-    ModEvent me0 = View0::pme(this);
-    ModEvent me1 = View1::pme(this);
+    ModEvent me0 = View0::me(pme);
+    ModEvent me1 = View1::me(pme);
 
     if ( testSetEventLB(me0,me1) ) {
       GlbRanges<View0> x0lb(x0);

@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac>
   PropCost
-  View<VA,VB,VC,pc_ac>::cost(void) const {
+  View<VA,VB,VC,pc_ac>::cost(PropModEvent) const {
     // This is required for subscribing to variables in the
     // above constructor, but this is then the only time this
     // virtual function is ever used!
@@ -410,7 +410,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewBnd<VA,VB,VC>::propagate(Space* home) {
+  ViewBnd<VA,VB,VC>::propagate(Space* home, PropModEvent) {
     assert(n > 1);
     RelTestBnd<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
@@ -493,8 +493,8 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   PropCost
-  ViewDom<VA,VB,VC>::cost(void) const {
-    if (VA::pme(this) != ME_INT_DOM)
+  ViewDom<VA,VB,VC>::cost(PropModEvent pme) const {
+    if (VA::me(pme) != ME_INT_DOM)
       return PC_LINEAR_LO;
     else
       return PC_LINEAR_HI;
@@ -534,9 +534,9 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewDom<VA,VB,VC>::propagate(Space* home) {
+  ViewDom<VA,VB,VC>::propagate(Space* home, PropModEvent pme) {
     assert(n > 1);
-    if (VA::pme(this) != ME_INT_DOM) {
+    if (VA::me(pme) != ME_INT_DOM) {
       RelTestBnd<VA,VC> rt;
       GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
                        (home,iv,n,x0,x1,this,rt)));

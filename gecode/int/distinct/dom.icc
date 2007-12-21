@@ -681,9 +681,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   PropCost
-  Dom<View>::cost(void) const {
+  Dom<View>::cost(PropModEvent pme) const {
     return cost_lo(x.size(),
-                   (View::pme(this) == ME_INT_VAL)
+                   (View::me(pme) == ME_INT_VAL)
                    ? PC_LINEAR_LO : PC_CUBIC_LO);
   }
 
@@ -707,8 +707,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  Dom<View>::propagate(Space* home) {
-    if (View::pme(this) == ME_INT_VAL) {
+  Dom<View>::propagate(Space* home, PropModEvent pme) {
+    if (View::me(pme) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,x);
       GECODE_ES_CHECK(es);
       if (x.size() < 2)

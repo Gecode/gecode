@@ -56,7 +56,7 @@ namespace Gecode { namespace CpltSet {
   
   template <class View1, class View2>
   forceinline PropCost
-  Singleton<View1, View2>::cost(void) const {
+  Singleton<View1, View2>::cost(PropModEvent) const {
     return PC_BINARY_LO;
   }
 
@@ -99,7 +99,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View1, class View2>
   forceinline ExecStatus 
-  Singleton<View1, View2>::propagate(Space* home) {
+  Singleton<View1, View2>::propagate(Space* home, PropModEvent) {
     if (x.assigned()) {
       GECODE_ME_CHECK(s.eq(home, x.val()));
       return ES_SUBSUMED(this, home);

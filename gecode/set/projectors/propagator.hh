@@ -65,13 +65,13 @@ namespace Gecode { namespace Set { namespace Projection {
     NaryProjection(Space* home, ViewArray<SetView>& x, ProjectorSet& ps);
   public:
     /// Cost function
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
@@ -100,13 +100,13 @@ namespace Gecode { namespace Set { namespace Projection {
                      ProjectorSet& ps);
   public:
     /// Cost function
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator
     GECODE_SET_EXPORT virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor* copy(Space* home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
@@ -138,13 +138,13 @@ namespace Gecode { namespace Set { namespace Projection {
                    Gecode::Int::IntView i, Projector& ps);
   public:
     /// Cost function
-    virtual PropCost cost(void) const;
+    virtual PropCost cost(PropModEvent pme) const;
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home, PropModEvent pme);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);

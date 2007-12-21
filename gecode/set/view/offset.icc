@@ -243,8 +243,8 @@ namespace Gecode { namespace Set {
   }
   template <class View>
   forceinline ModEvent
-  OffsetSetView<View>::pme(const Propagator* p) {
-    return View::pme(p);
+  OffsetSetView<View>::me(PropModEvent pme) {
+    return View::me(pme);
   }
 
   template <class View>

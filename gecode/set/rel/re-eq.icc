@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   PropCost
-  ReEq<View0,View1>::cost(void) const {
+  ReEq<View0,View1>::cost(PropModEvent) const {
     return PC_TERNARY_LO;
   }
 
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   ExecStatus
-  ReEq<View0,View1>::propagate(Space* home) {
+  ReEq<View0,View1>::propagate(Space* home, PropModEvent) {
     if (b.one())
       GECODE_REWRITE(this,(Eq<View0,View1>::post(home,x0,x1)));
     if (b.zero())

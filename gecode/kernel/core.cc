@@ -192,7 +192,7 @@ namespace Gecode {
       if (!pool_get(p))
         return true;
       pn++; pme_prop = &p->u.pme;
-      ExecStatus es = p->propagate(this);
+      ExecStatus es = p->propagate(this,p->u.pme);
       p->unlink(); 
       switch (es) {
       case ES_FAILED:
@@ -298,7 +298,7 @@ namespace Gecode {
       }
       if (!pool_get(p))
         return ES_STABLE;
-      es = p->propagate(this);
+      es = p->propagate(this,p->u.pme);
       p->unlink(); 
       switch (es) {
       case ES_FAILED:

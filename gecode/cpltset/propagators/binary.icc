@@ -60,7 +60,7 @@ namespace Gecode { namespace CpltSet {
   
   template <class View0, class View1>
   forceinline PropCost
-  BinaryCpltSetPropagator<View0,View1>::cost(void) const {
+  BinaryCpltSetPropagator<View0,View1>::cost(PropModEvent) const {
     if (manager.ctrue(x.dom()) || manager.ctrue(d)) {
       return PC_LINEAR_LO;
     } else {
@@ -111,7 +111,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline ExecStatus 
-  BinaryCpltSetPropagator<View0,View1>::propagate(Space* home) {
+  BinaryCpltSetPropagator<View0,View1>::propagate(Space* home, PropModEvent) {
     bool assigned = true;
     {
       bdd dom = y.dom();
@@ -176,7 +176,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline ExecStatus 
-  BinRelDisj<View0,View1>::propagate(Space* home) {
+  BinRelDisj<View0,View1>::propagate(Space* home, PropModEvent) {
     bool assigned = true;
 
     if (x.assigned()) {

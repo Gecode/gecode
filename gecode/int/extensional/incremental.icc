@@ -155,8 +155,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   PropCost
-  Incremental<View>::cost(void) const {
-    return (View::pme(this) == ME_INT_VAL)
+  Incremental<View>::cost(PropModEvent pme) const {
+    return (View::me(pme) == ME_INT_VAL)
       ? PC_QUADRATIC_HI : PC_CUBIC_HI;
   }
 
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  Incremental<View>::propagate(Space* home) {
+  Incremental<View>::propagate(Space* home, PropModEvent) {
     assert(!work.empty() || unassigned==0);
     /// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains

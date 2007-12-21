@@ -72,6 +72,19 @@ Lots of nice gimmicks for Christmas!
 [ENTRY]
 Module: other
 What:   change
+Rank:   major
+[DESCRIPTION]
+Both the cost and propagate function of a propagator take the
+current propagator modification event as input. Likewise,
+retrieving the modification event for a particular View must use
+the static function View::me with the passed propagator
+modification event. Again, this feature committed the kernel to a
+particular implementation which might not be available in the
+future.
+
+[ENTRY]
+Module: other
+What:   change
 Rank:   minor
 [DESCRIPTION]
 Views and variables do not any longer reveal whether they have

@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   PropCost
-  Base<View,subscribe>::cost(void) const {
+  Base<View,subscribe>::cost(PropModEvent) const {
     return PC_QUADRATIC_HI;
   }
 

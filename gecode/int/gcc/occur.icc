@@ -400,9 +400,9 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name View-dependent propagator support
     ///@{
     /// Schedule propagator \a p with modification event \a me
-    static void         schedule(Space* home, Propagator* p, ModEvent me);
-    /// Return modification event of propagator \a p for view
-    static ModEvent     pme(const Propagator* p);
+    static void schedule(Space* home, Propagator* p, ModEvent me);
+    /// Return modification event for view type in \a pme
+    static ModEvent me(PropModEvent pme);
     /// Translate modification event \a me to propagator modification event for view
     static PropModEvent pme(ModEvent me);
     ///@}
@@ -692,8 +692,8 @@ namespace Gecode { namespace Int { namespace GCC {
     return IntView::schedule(home,p,me);
   }
   forceinline ModEvent
-  CardView::pme(const Propagator* p) {
-    return IntView::pme(p);
+  CardView::me(PropModEvent pme) {
+    return IntView::me(pme);
   }
   forceinline PropModEvent
   CardView::pme(ModEvent me) {

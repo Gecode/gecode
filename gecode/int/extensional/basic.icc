@@ -62,8 +62,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   PropCost
-  Basic<View>::cost(void) const {
-    return (View::pme(this) == ME_INT_VAL)
+  Basic<View>::cost(PropModEvent pme) const {
+    return (View::me(pme) == ME_INT_VAL)
       ? PC_QUADRATIC_HI : PC_CUBIC_HI;
   }
 
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  Basic<View>::propagate(Space* home) {
+  Basic<View>::propagate(Space* home, PropModEvent) {
     ///// Domain consistent propagation
     //// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
