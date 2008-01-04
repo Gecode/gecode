@@ -243,6 +243,12 @@ namespace Gecode { namespace Reflection {
   template <class Var>
   Var
   VarMap::var(const Support::Symbol& n) const {
+    typedef typename ViewVarImpTraits<
+      typename VarViewTraits<Var>::View >::VarImp Vi;
+    const Support::Symbol& vti = Vi::vti;
+    if (! (spec(n).vti() == vti)) {
+        throw ReflectionException("Variable type mismatch");
+    }
     VarImpBase* x = varImpBase(n);
     typename ViewVarImpTraits<
       typename VarViewTraits<Var>::View >::VarImp* xv =
@@ -256,6 +262,12 @@ namespace Gecode { namespace Reflection {
   template <class Var>
   Var
   VarMap::var(int i) const {
+    typedef typename ViewVarImpTraits<
+      typename VarViewTraits<Var>::View >::VarImp Vi;
+    const Support::Symbol& vti = Vi::vti;
+    if (! (spec(i).vti() == vti)) {
+        throw ReflectionException("Variable type mismatch");
+    }
     VarImpBase* x = varImpBase(i);
     typename ViewVarImpTraits<
       typename VarViewTraits<Var>::View >::VarImp* xv =
@@ -269,6 +281,12 @@ namespace Gecode { namespace Reflection {
   template <class Var>
   Var
   VarMapIter::var(void) const {
+    typedef typename ViewVarImpTraits<
+      typename VarViewTraits<Var>::View >::VarImp Vi;
+    const Support::Symbol& vti = Vi::vti;
+    if (! (spec().vti() == vti)) {
+      throw ReflectionException("Variable type mismatch");
+    }
     VarImpBase* x = varImpBase();
     typename ViewVarImpTraits<
       typename VarViewTraits<Var>::View >::VarImp* xv =
