@@ -53,7 +53,7 @@ namespace Gecode { namespace Int {
   IntView::IntView(Space* /*home*/, const Reflection::VarMap& vars,
                    Reflection::Arg* arg)
   : VarViewBase<IntVarImp>(
-      static_cast<IntVarImp*>(vars.var(arg->toVar()))) {}
+      static_cast<IntVarImp*>(vars.varImpBase(arg->toVar()))) {}
 
   /*
    * Value access

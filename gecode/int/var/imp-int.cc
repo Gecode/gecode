@@ -387,8 +387,7 @@ namespace Gecode { namespace Int {
     }
     Reflection::IntArrayArg* args = Reflection::Arg::newIntArray(count*2);
 
-    Reflection::VarSpec* spec = new 
-      Reflection::VarSpec(Support::Symbol("VTI_INT"), args);
+    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, args);
 
     count = 0;
     p=NULL;

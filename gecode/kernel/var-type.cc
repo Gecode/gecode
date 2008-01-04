@@ -1,17 +1,19 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
- *  Main authors:
+ *  CAUTION:
+ *    This file has been automatically generated. Do not edit,
+ *    edit the specification file "variable.vsl" instead.
+ *
+ *  This file contains generated code fragments which are
+ *  copyrighted as follows:
+ *
+ *  Main author:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     Christian Schulte, 2007
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
- *  This file is part of Gecode, the generic constraint
- *  development environment:
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
  *     http://www.gecode.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
@@ -35,23 +37,27 @@
  *
  */
 
-#include "gecode/int.hh"
+#include "gecode/kernel.hh"
 
-namespace Gecode { namespace Int {
-
-  BoolVarImp BoolVarImp::s_one(1);
-  BoolVarImp BoolVarImp::s_zero(0);
-
-  Reflection::Arg*
-  BoolVarImp::spec(Space*, Reflection::VarMap& m) {
-    int specIndex = m.index(this);
-    if (specIndex != -1)
-      return Reflection::Arg::newVar(specIndex);
-    Reflection::VarSpec* spec =
-      new Reflection::VarSpec(vti, Reflection::Arg::newInt(dom));
-    return (Reflection::Arg::newVar(m.put(this, spec)));
-  }
-
+#ifdef GECODE_HAVE_INT_VARS
+namespace Gecode { namespace Int { 
+  const Support::Symbol IntVarImpConf::vti = "Int";
 }}
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+namespace Gecode { namespace Int { 
+  const Support::Symbol BoolVarImpConf::vti = "Bool";
+}}
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+namespace Gecode { namespace Set { 
+  const Support::Symbol SetVarImpConf::vti = "Set";
+}}
+#endif
+#ifdef GECODE_HAVE_CPLTSET_VARS
+namespace Gecode { namespace CpltSet { 
+  const Support::Symbol CpltSetVarImpConf::vti = "CpltSet";
+}}
+#endif
 
-// STATISTICS: int-var
+// STATISTICS: kernel-var

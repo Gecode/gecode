@@ -307,6 +307,8 @@ namespace Gecode { namespace Int {
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
     static ModEvent mec(ModEvent me1, ModEvent me2);
+    /// Variable type identifier for reflection
+    static GECODE_KERNEL_EXPORT const Support::Symbol vti;
   };
 }}
 #else
@@ -348,6 +350,8 @@ namespace Gecode { namespace Int {
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
     static ModEvent mec(ModEvent me1, ModEvent me2);
+    /// Variable type identifier for reflection
+    static GECODE_KERNEL_EXPORT const Support::Symbol vti;
   };
 }}
 #else
@@ -389,6 +393,8 @@ namespace Gecode { namespace Set {
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
     static ModEvent mec(ModEvent me1, ModEvent me2);
+    /// Variable type identifier for reflection
+    static GECODE_KERNEL_EXPORT const Support::Symbol vti;
   };
 }}
 #else
@@ -435,6 +441,8 @@ namespace Gecode { namespace CpltSet {
     static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me2 to \a me1
     static ModEvent mec(ModEvent me1, ModEvent me2);
+    /// Variable type identifier for reflection
+    static GECODE_KERNEL_EXPORT const Support::Symbol vti;
   };
 }}
 #else

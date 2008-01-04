@@ -448,8 +448,17 @@ namespace Gecode {
     static void  operator delete(void*);
     //@}
     
+    /// \name Reflection
+    //@{
+    /// Variable type identifier
+    static const Support::Symbol vti;
+    //@}
+    
   };
 
+  template <class VIC>
+  const Support::Symbol
+  VarImp<VIC>::vti = VIC::vti;
 
   namespace Reflection {
     class SpecIter;

@@ -182,12 +182,14 @@ SUPPORTBUILDDIRS = support support/buddy
 # KERNEL COMPONENTS
 #
 
-VARIMP = \
+VARIMPHDR = \
 	gecode/kernel/var-type.icc \
 	gecode/kernel/var-imp.icc
 
+VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cc
+
 KERNELSRC0 = \
-	core reflection var-map memory-manager
+	core reflection var-map var-type memory-manager
 
 KERNELHDR0 = \
 	array shared-array branching core exception \
@@ -198,7 +200,7 @@ KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
 	gecode/limits.hh gecode/kernel.hh \
 	$(KERNELHDR0:%=gecode/kernel/%.icc) \
-	$(VARIMP)
+	$(VARIMPHDR)
 KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
 
 export KERNELDLL	= $(LIBPREFIX)@KERNEL@$(DLLSUFFIX)
@@ -837,7 +839,9 @@ ALLVIS = \
 	$(top_srcdir)/misc/genvariables.perl
 
 $(top_srcdir)/gecode/kernel/var-type.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
-	perl $(top_srcdir)/misc/genvariables.perl -type $< > $@
+	perl $(top_srcdir)/misc/genvariables.perl -typeicc $< > $@
+$(top_srcdir)/gecode/kernel/var-type.cc: $(top_srcdir)/variables.vsl $(ALLVIS)
+	perl $(top_srcdir)/misc/genvariables.perl -typecc $< > $@
 $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
 

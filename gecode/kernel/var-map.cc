@@ -132,13 +132,13 @@ namespace Gecode { namespace Reflection {
   }
 
   VarImpBase*
-  VarMap::var(const Support::Symbol& n) const {
+  VarMap::varImpBase(const Support::Symbol& n) const {
     VarImpBase* v;
     return vo->nameToVar.get(n,v) ? v : NULL;
   }
 
   VarImpBase*
-  VarMap::var(int i) const {
+  VarMap::varImpBase(int i) const {
     if (i<0 || i>=n)
       throw ReflectionException("Variable not in VarMap");
     return vo->vars[i];
@@ -161,7 +161,7 @@ namespace Gecode { namespace Reflection {
 
   VarSpec&
   VarMap::spec(const Support::Symbol& n) const {
-    return spec(var(n));
+    return spec(varImpBase(n));
   }
 
   void
@@ -220,7 +220,7 @@ namespace Gecode { namespace Reflection {
   VarMapIter::spec(void) const { return *m->vo->specs[i]; }
 
   VarImpBase*
-  VarMapIter::var(void) const { return m->vo->vars[i]; }
+  VarMapIter::varImpBase(void) const { return m->vo->vars[i]; }
 
   void
   VarMapIter::operator++(void) { i++; }  

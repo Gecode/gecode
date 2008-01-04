@@ -817,6 +817,7 @@ namespace Gecode {
     /// Update this variable to be a clone of variable \a x
     void update(Space* home, bool share, IntVar& x);
     //@}
+    
   };
 
 
@@ -958,6 +959,7 @@ namespace Gecode {
     /// Update this variable to be a clone of variable \a x
     void update(Space* home, bool share, BoolVar& x);
     //@}
+    
   };
 
 }

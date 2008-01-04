@@ -176,8 +176,7 @@ namespace Gecode { namespace Set {
         Reflection::Arg::newPair(glbdom, Reflection::Arg::newInt(_cardMin)),
         Reflection::Arg::newPair(lubdom, Reflection::Arg::newInt(_cardMax)));
 
-    Reflection::VarSpec* spec =
-      new Reflection::VarSpec(Support::Symbol("VTI_SET"), pair);
+    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, pair);
     return (Reflection::Arg::newVar(m.put(this, spec)));
   }
 

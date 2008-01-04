@@ -86,9 +86,15 @@ namespace Gecode { namespace Reflection {
     Support::Symbol name(int i) const;
 
     /// Return variable with name \a n
-    VarImpBase* var(const Support::Symbol& n) const;
+    VarImpBase* varImpBase(const Support::Symbol& n) const;
     /// Return variable at index \a i
-    VarImpBase* var(int i) const;
+    VarImpBase* varImpBase(int i) const;
+    /// Return variable with name \a n
+    template <class Var>
+    Var var(const Support::Symbol& n) const;
+    /// Return variable at index \a i
+    template <class Var>
+    Var var(int i) const;
 
     /// Return specification for variable \a x
     VarSpec& spec(VarImpBase* x) const;
@@ -167,7 +173,9 @@ namespace Gecode { namespace Reflection {
     /// Return variable specification for current iterator position
     VarSpec& spec(void) const;
     /// Return variable implementation for current iterator position
-    VarImpBase* var(void) const;
+    VarImpBase* varImpBase(void) const;
+    template <class Var>
+    Var var(void) const;
     /// Move iterator to next variable
     void operator++(void);
   };
@@ -230,6 +238,45 @@ namespace Gecode { namespace Reflection {
       nn += Support::Symbol(s.str().c_str(), true);
       registerVar(home, x[i], nn);
     }
+  }
+
+  template <class Var>
+  Var
+  VarMap::var(const Support::Symbol& n) const {
+    VarImpBase* x = varImpBase(n);
+    typename ViewVarImpTraits<
+      typename VarViewTraits<Var>::View >::VarImp* xv =
+      static_cast<
+        typename ViewVarImpTraits<
+          typename VarViewTraits<Var>::View >::VarImp*>(x);
+    typename VarViewTraits<Var>::View view(xv);
+    return Var(view);
+  }
+
+  template <class Var>
+  Var
+  VarMap::var(int i) const {
+    VarImpBase* x = varImpBase(i);
+    typename ViewVarImpTraits<
+      typename VarViewTraits<Var>::View >::VarImp* xv =
+      static_cast<
+        typename ViewVarImpTraits<
+          typename VarViewTraits<Var>::View >::VarImp*>(x);
+    typename VarViewTraits<Var>::View view(xv);
+    return Var(view);
+  }
+
+  template <class Var>
+  Var
+  VarMapIter::var(void) const {
+    VarImpBase* x = varImpBase();
+    typename ViewVarImpTraits<
+      typename VarViewTraits<Var>::View >::VarImp* xv =
+      static_cast<
+        typename ViewVarImpTraits<
+          typename VarViewTraits<Var>::View >::VarImp*>(x);
+    typename VarViewTraits<Var>::View view(xv);
+    return Var(view);
   }
 
 }}

@@ -39,8 +39,10 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   $i++;
   if ($arg eq "-header") {
     $gen_header = 1;
-  } elsif ($arg eq "-type") {
-    $gen_type   = 1;
+  } elsif ($arg eq "-typeicc") {
+    $gen_typeicc   = 1;
+  } elsif ($arg eq "-typecc") {
+    $gen_typecc   = 1;
   }
 }
 
@@ -293,7 +295,7 @@ for ($f=0; $f<$n_files; $f++) {
 
 }
 
-if ($gen_type) {
+if ($gen_typeicc) {
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
     print $hdr[$f];
@@ -389,6 +391,8 @@ if ($gen_type) {
     print "    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);\n";
     print "    /// Return difference when changing modification event \\a me2 to \\a me1\n";
     print "    static ModEvent mec(ModEvent me1, ModEvent me2);\n";
+    print "    /// Variable type identifier for reflection\n";
+    print "    static GECODE_KERNEL_EXPORT const Support::Symbol vti;\n";
     print "  };\n";
     print $ftr[$f];
     if (!($ifdef[$f] eq "")) {
@@ -445,6 +449,19 @@ if ($gen_type) {
     }
   }
   print "  };\n\n}\n\n";
+}
+
+if ($gen_typecc) {
+  print "#include \"gecode/kernel.hh\"\n";
+  print "\n";
+  for ($f = 0; $f<$n_files; $f++) {
+    print $ifdef[$f];
+    print $hdr[$f];
+    print "  const Support::Symbol $conf[$f]::vti = \"$name[$f]\";\n";
+    print $ftr[$f];
+    print $endif[$f];
+  }
+  print "\n";
 }
 
 if ($gen_header) {

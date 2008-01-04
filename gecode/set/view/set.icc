@@ -60,7 +60,7 @@ namespace Gecode { namespace Set {
   SetView::SetView(Space* /*home*/, const Reflection::VarMap& vars,
                    Reflection::Arg* arg)
   : VarViewBase<SetVarImp>(
-      static_cast<SetVarImp*>(vars.var(arg->toVar()))) {}
+      static_cast<SetVarImp*>(vars.varImpBase(arg->toVar()))) {}
 
 
   /*

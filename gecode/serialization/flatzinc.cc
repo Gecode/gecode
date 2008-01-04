@@ -37,6 +37,11 @@
 
 #include "gecode/serialization.hh"
 
+#include "gecode/int.hh"
+#ifdef GECODE_HAVE_SET_VARS
+#include "gecode/set.hh"
+#endif
+
 namespace Gecode {
   
   namespace {
@@ -271,37 +276,38 @@ namespace Gecode {
       assert(!arg->isSharedObject());
       throw Exception("Serialization", "Specification not understood");
     }
-    
-  }
 
-  void emitSharedObject(std::ostream& os, int soCount, Reflection::VarMap& vm,
-                        Reflection::Arg* arg0) {
-    using namespace std;
-    Reflection::Arg* arg = arg0->toSharedObject();
-    if (arg->isIntArray()) {
-      Reflection::IntArrayArg* a = arg->toIntArray();
-      os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
-      os << "[";
-      for (int i=0; i<a->size(); i++) {
-        os << (*a)[i];
-        if (i<a->size()-1)
-          os << ", ";
-      }
-      os << "];" << std::endl;
-      return;
-    }
-    if (arg->isArray()) {
-      Reflection::ArrayArg* a = arg->toArray();
-      os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
-      if (a->size() == 0) {
-        os << "[];" << std::endl;
+    void emitSharedObject(std::ostream& os, int soCount,
+                          Reflection::VarMap& vm,
+                          Reflection::Arg* arg0) {
+      using namespace std;
+      Reflection::Arg* arg = arg0->toSharedObject();
+      if (arg->isIntArray()) {
+        Reflection::IntArrayArg* a = arg->toIntArray();
+        os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
+        os << "[";
+        for (int i=0; i<a->size(); i++) {
+          os << (*a)[i];
+          if (i<a->size()-1)
+            os << ", ";
+        }
+        os << "];" << std::endl;
         return;
       }
-      emitArray(os, a, vm);
-      os << ";" << std::endl;
-      return;
+      if (arg->isArray()) {
+        Reflection::ArrayArg* a = arg->toArray();
+        os << "array[0.."<<a->size()-1<<"] of int: _array" << soCount << " = ";
+        if (a->size() == 0) {
+          os << "[];" << std::endl;
+          return;
+        }
+        emitArray(os, a, vm);
+        os << ";" << std::endl;
+        return;
+      }
+      return;    
     }
-    return;    
+    
   }
   
   void emitFlatzinc(Space* home, Reflection::VarMap& vm, std::ostream& os) {
@@ -313,12 +319,12 @@ namespace Gecode {
       Reflection::ActorSpec& s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
         Reflection::VarSpec& vs = vmi.spec();
-        if (vs.vti() == "VTI_INT")
+        if (vs.vti() == Int::IntVarImp::vti)
           emitIntVar(os, varCount, vs);
-        else if (vs.vti() == "VTI_BOOL")
+        else if (vs.vti() == Int::BoolVarImp::vti)
           emitBoolVar(os, varCount, vs);
 #ifdef GECODE_HAVE_SET_VARS
-        else if (vs.vti() == "VTI_SET")
+        else if (vs.vti() == Set::SetVarImp::vti)
           emitSetVar(os, varCount, vs);
 #endif        
       }

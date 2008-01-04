@@ -109,13 +109,13 @@ namespace Gecode { namespace Serialization {
     class VariableCreators {
     public:
         VariableCreators() {
-        Reflection::registry().add("VTI_INT", createIntVar);
-        Reflection::registry().add("VTI_INT", constrainIntVar);
-        Reflection::registry().add("VTI_BOOL", createBoolVar);
-        Reflection::registry().add("VTI_BOOL", constrainBoolVar);
+        Reflection::registry().add(Int::IntVarImp::vti, createIntVar);
+        Reflection::registry().add(Int::IntVarImp::vti, constrainIntVar);
+        Reflection::registry().add(Int::BoolVarImp::vti, createBoolVar);
+        Reflection::registry().add(Int::BoolVarImp::vti, constrainBoolVar);
 #ifdef GECODE_HAVE_SET_VARS
-        Reflection::registry().add("VTI_SET", createSetVar);
-        Reflection::registry().add("VTI_SET", constrainSetVar);
+        Reflection::registry().add(Set::SetVarImp::vti, createSetVar);
+        Reflection::registry().add(Set::SetVarImp::vti, constrainSetVar);
 #endif
       }
     };

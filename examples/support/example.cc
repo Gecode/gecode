@@ -68,11 +68,11 @@ Example::sac_collect_vars() {
   for (Reflection::SpecIter si(this, vm); si(); ++si) {}
   // Enter collected variables into variable arrays
   for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
-    if (vmi.spec().vti() == "VTI_BOOL") {
-      BoolVar bv(Int::BoolView(static_cast<Int::BoolVarImp*>(vmi.var())));
+    if (vmi.spec().vti() == Int::BoolVarImp::vti) {
+      BoolVar bv = vmi.var<BoolVar>();
       _sac_bva.add(this, bv);
-    } else if (vmi.spec().vti() == "VTI_INT") {
-      IntVar iv(Int::IntView(static_cast<Int::IntVarImp*>(vmi.var())));
+    } else if (vmi.spec().vti() == Int::IntVarImp::vti) {
+      IntVar iv = vmi.var<IntVar>();
       _sac_iva.add(this, iv);
     }
   }

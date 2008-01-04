@@ -225,13 +225,11 @@ namespace Gecode { namespace Gist {
                 const char* vName = b.desc.special->vn.c_str();
                 VarImpBase* var = vm.var(vName);
 
-                if(vm.spec(vName).vti() == "VTI_INT") {
-                  IntVar iv = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(var)));
-
+                if(vm.spec(vName).vti() == Int::IntVarImp::vti) {
+                  IntVar iv = vm.var(vName);
                   rel(curSpace, iv, b.desc.special->rel.i, b.desc.special->v);
-                } else if(vm.spec(vName).vti() == "VTI_SET") {
-                  SetVar sv = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(var)));
-
+                } else if(vm.spec(vName).vti() == Set::SetVarImp::vti) {
+                  SetVar sv = vm.var(vName);
                   dom(curSpace, sv, b.desc.special->rel.s, b.desc.special->v);
                 } else {
                   // TODO nikopp: implement other possibilities

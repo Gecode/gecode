@@ -82,7 +82,6 @@ namespace Gecode { namespace Reflection {
   void
   Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) {
     poster p = NULL;
-      
     if (!ro->posters.get(spec.name(),p)) {
       throw Reflection::ReflectionException("Constraint not found");
     }
@@ -106,15 +105,6 @@ namespace Gecode { namespace Reflection {
 
   void
   Registry::print(std::ostream&) {
-    // out << "Posters: " << std::endl;
-    // for (int i=0; i<posters.size(); i++) {
-    //   out << posters.key(i) << std::endl;
-    // }
-    // out << "Varcreators: " << std::endl;
-    // for (int i=0; i<varCreators.size(); i++) {
-    //   out << varCreators.key(i) << std::endl;
-    // }
-    
   }
 
   /*

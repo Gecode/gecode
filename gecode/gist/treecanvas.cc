@@ -773,10 +773,10 @@ namespace Gecode { namespace Gist {
 
     newChild->setStatus(SPECIAL);
     
-    if(vm.spec(var.toStdString().c_str()).vti() == "VTI_INT") {
+    if(vm.spec(var.toStdString().c_str()).vti() == Int::IntVarImp::vti) {
       IntRelType rel = static_cast<IntRelType>(rel0);
       newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
-    } else if(vm.spec(var.toStdString().c_str()).vti() == "VTI_SET") {
+    } else if(vm.spec(var.toStdString().c_str()).vti() == Set::SetVarImp::vti) {
       SetRelType rel = static_cast<SetRelType>(rel0);
       newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
     } else {

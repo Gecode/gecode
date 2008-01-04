@@ -72,7 +72,7 @@ namespace Gecode {
       throw Int::VariableEmptyDomain("IntVar::init");
     varimp = new (home) Int::IntVarImp(home,ds);
   }
-
+  
 }
 
 // STATISTICS: int-var
