@@ -71,6 +71,13 @@ Lots of nice gimmicks for Christmas!
 
 [ENTRY]
 Module: other
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Serialization to JavaScript added.
+
+[ENTRY]
+Module: other
 What:   change
 Rank:   major
 [DESCRIPTION]

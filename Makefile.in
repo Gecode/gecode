@@ -493,7 +493,7 @@ MMBUILDDIRS	= minimodel
 #
 
 SERSRC0 = \
-	flatzinc.cc deserializer.cc registry.cc boost.cc
+	flatzinc.cc javascript.cc deserializer.cc registry.cc boost.cc
 SERHDR0 = \
 	boost.icc
 
