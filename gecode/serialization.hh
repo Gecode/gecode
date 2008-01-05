@@ -84,7 +84,7 @@ namespace Gecode {
    *
    */
   GECODE_SERIALIZATION_EXPORT
-  void emitFlatzinc(Space* home, Reflection::VarMap& m, std::ostream& os);
+  void emitFlatzinc(Space* home, std::ostream& os);
 
   /**
    * \brief Produce JavaScript representation of \a home
@@ -95,7 +95,7 @@ namespace Gecode {
    *
    */
   GECODE_SERIALIZATION_EXPORT
-  void emitJavaScript(Space* home, Reflection::VarMap& m, std::ostream& os);
+  void emitJavaScript(Space* home, std::ostream& os);
 
   namespace Serialization {
 
