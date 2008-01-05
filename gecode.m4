@@ -829,23 +829,23 @@ AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
 ])
 
 dnl Macro:
-dnl   AC_GECODE_GIST
+dnl   AC_GECODE_QT
 dnl
 dnl Description:
-dnl   Produces the configure switch --enable-gist
-dnl   for compiling the Gecode Interactive Search Tool.
+dnl   Produces the configure switch --enable-qt
+dnl   for compiling parts of Gecode that need the Qt library.
 dnl
 dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
-AC_DEFUN([AC_GECODE_GIST],
+AC_DEFUN([AC_GECODE_QT],
   [
-  AC_ARG_ENABLE([gist],
-    AC_HELP_STRING([--enable-gist],
-      [build Gecode Interactive Search Tool @<:@default=no@:>@]))
-  AC_MSG_CHECKING(whether to build Gist)
-  if test "${enable_gist:-no}" = "yes"; then
+  AC_ARG_ENABLE([qt],
+    AC_HELP_STRING([--enable-qt],
+      [build with Qt support @<:@default=no@:>@]))
+  AC_MSG_CHECKING(whether to build with Qt support)
+  if test "${enable_qt:-no}" = "yes"; then
     AC_MSG_RESULT(yes)
-    AC_DEFINE(GECODE_HAVE_GIST)
+    AC_DEFINE(GECODE_HAVE_QT)
 
     AC_CHECK_PROG(QMAKE, qmake, [found])
     if test "${QMAKE}x" = "x"; then
@@ -866,30 +866,54 @@ AC_DEFUN([AC_GECODE_GIST],
     fi
 
     dnl use qmake to find the Qt installation
-    ac_gecode_gist_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
-    cd ${ac_gecode_gist_tmpdir}
-    touch a.pro
+    ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
+    cd ${ac_gecode_qt_tmpdir}
+    echo "QT += script" > a.pro
     qmake
     if test -f Makefile.Debug; then
       if test "${enable_debug:-no}" = "no"; then
-	ac_gecode_gist_qt_makefile=Makefile.Release
+	ac_gecode_qt_makefile=Makefile.Release
       else
-	ac_gecode_gist_qt_makefile=Makefile.Debug
+	ac_gecode_qt_makefile=Makefile.Debug
       fi
     else
-      ac_gecode_gist_qt_makefile=Makefile
+      ac_gecode_qt_makefile=Makefile
     fi
-    ac_gecode_gist_qt_defines=`grep ${ac_gecode_gist_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    ac_gecode_gist_qt_inc=`grep ${ac_gecode_gist_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    ac_gecode_gist_qt_libs=`grep ${ac_gecode_gist_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+    ac_gecode_qt_defines=`grep ${ac_gecode_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+    ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+    ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
     cd ..
-    rm -r ${ac_gecode_gist_tmpdir}
-    AC_SUBST(QTINCLUDES, ${ac_gecode_gist_qt_inc})
-    AC_SUBST(QTDEFINES, ${ac_gecode_gist_qt_defines})
-    AC_SUBST(QTLIBS, ${ac_gecode_gist_qt_libs})
+    rm -r ${ac_gecode_qt_tmpdir}
+    AC_SUBST(QTINCLUDES, ${ac_gecode_qt_inc})
+    AC_SUBST(QTDEFINES, ${ac_gecode_qt_defines})
+    AC_SUBST(QTLIBS, ${ac_gecode_qt_libs})
   else
     AC_MSG_RESULT(no)
-    AC_SUBST(GECODE_BUILD_GIST, "no")
+  fi
+  AC_SUBST(enable_qt, ${enable_qt})
+])
+
+dnl Macro:
+dnl   AC_GECODE_GIST
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-gist
+dnl   for compiling the Gecode Interactive Search Tool.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+AC_DEFUN([AC_GECODE_GIST],
+  [
+  AC_ARG_ENABLE([gist],
+    AC_HELP_STRING([--enable-gist],
+      [build Gecode Interactive Search Tool @<:@default=no@:>@]))
+  AC_MSG_CHECKING(whether to build Gist)
+  if test "${enable_gist:-no}" = "yes"; then
+    enable_qt="yes";
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(GECODE_HAVE_GIST)
+  else
+    AC_MSG_RESULT(no)
   fi
   AC_ARG_ENABLE([gist-experimental],
     AC_HELP_STRING([--enable-gist-experimental],

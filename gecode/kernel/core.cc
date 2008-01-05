@@ -548,7 +548,7 @@ namespace Gecode {
   }
 
   void
-  Space::getVars(Reflection::VarMap&) {}
+  Space::getVars(Reflection::VarMap&, bool) {}
 
   Reflection::BranchSpec
   Space::branchSpec(Reflection::VarMap& m, const BranchingDesc* d) {

@@ -74,6 +74,9 @@
 /* Whether to compile with boost serialization support */
 #undef GECODE_HAVE_BOOST_SERIALIZATION
 
+/* Whether Qt is available */
+#undef GECODE_HAVE_QT
+
 /* Whether Gist is available */
 #undef GECODE_HAVE_GIST
 

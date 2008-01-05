@@ -120,26 +120,16 @@ namespace Gecode { namespace Reflection {
     //@{
     /// Insert specification for variable \a v with name \a n
     template <class Var> void
-    put(Space* home, const Var& v, const Support::Symbol& n);
+    put(Space* home, const Var& v, const Support::Symbol& n,
+        bool registerOnly = false);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
     putArray(Space* home, const VarArgArray<Var>& v,
-             const Support::Symbol& n);
+             const Support::Symbol& n, bool registerOnly = false);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArray<Var>& v, const Support::Symbol& n);
-
-    /// Insert variable \a v with name \a n
-    template <class Var> void
-    registerVar(Space* home, const Var& v, const Support::Symbol& n);
-    /// Insert variables in \a x with name \a n
-    template <class Var> void
-    registerArray(Space* home, const VarArgArray<Var>& v,
-                  const Support::Symbol& n);
-    /// Insert variables in \a x with name \a n
-    template <class Var> void
-    registerArray(Space* home, const VarArray<Var>& v, 
-                  const Support::Symbol& n);
+    putArray(Space* home, const VarArray<Var>& v, const Support::Symbol& n,
+             bool registerOnly = false);
 
     //@}
   private:
@@ -181,62 +171,36 @@ namespace Gecode { namespace Reflection {
   };
 
   template <class Var> void
-  VarMap::put(Space* home, const Var& x, const Support::Symbol& n) {
+  VarMap::put(Space* home, const Var& x, const Support::Symbol& n,
+              bool registerOnly) {
     typename VarViewTraits<Var>::View v(x);
     name(v.var(), n);
-    Reflection::Arg* a = v.spec(home, *this);
-    delete a;
+    if (!registerOnly) {
+      Reflection::Arg* a = v.spec(home, *this);
+      delete a;
+    }
   }
 
   template <class Var> void
   VarMap::putArray(Space* home, const VarArgArray<Var>& x,
-                   const Support::Symbol& n) {
+                   const Support::Symbol& n, bool registerOnly) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
       Support::Symbol nn = n.copy();
       nn += Support::Symbol(s.str().c_str(), true);
-      put(home, x[i], nn);
+      put(home, x[i], nn, registerOnly);
     }
   }
   template <class Var> void
   VarMap::putArray(Space* home, const VarArray<Var>& x,
-                   const Support::Symbol& n) {
+                   const Support::Symbol& n, bool registerOnly) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
       Support::Symbol nn = n.copy();
       nn += Support::Symbol(s.str().c_str(), true);
-      put(home, x[i], nn);
-    }
-  }
-
-  template <class Var> void
-  VarMap::registerVar(Space*, const Var& x, const Support::Symbol& n) {
-    typename VarViewTraits<Var>::View v(x);
-    name(v.var(), n);
-  }
-
-  template <class Var> void
-  VarMap::registerArray(Space* home, const VarArgArray<Var>& x,
-                        const Support::Symbol& n) {
-    for (int i=0; i<x.size(); i++) {
-      std::stringstream s;
-      s << i;
-      Support::Symbol nn = n.copy();
-      nn += Support::Symbol(s.str().c_str(), true);
-      registerVar(home, x[i], nn);
-    }
-  }
-  template <class Var> void
-  VarMap::registerArray(Space* home, const VarArray<Var>& x,
-                        const Support::Symbol& n) {
-    for (int i=0; i<x.size(); i++) {
-      std::stringstream s;
-      s << i;
-      Support::Symbol nn = n.copy();
-      nn += Support::Symbol(s.str().c_str(), true);
-      registerVar(home, x[i], nn);
+      put(home, x[i], nn, registerOnly);
     }
   }
 

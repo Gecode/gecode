@@ -74,7 +74,7 @@ export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
 export CFLAGS = $(CPPFLAGS) @CFLAGS@ $(CUSR)
 export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 
-export GIST_CPPFLAGS = @QTDEFINES@ @QTINCLUDES@
+export QT_CPPFLAGS = @QTDEFINES@ @QTINCLUDES@
 export LINKQT = @QTLIBS@
 
 export BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
@@ -494,10 +494,17 @@ MMBUILDDIRS	= minimodel
 
 SERSRC0 = \
 	flatzinc.cc javascript.cc deserializer.cc registry.cc boost.cc
+
+ifeq "@enable_qt@" "yes"
+SERMOCSRC0 = moc_javascript.cc
+else
+SERMOCSRC0 =
+endif
+
 SERHDR0 = \
 	boost.icc
 
-SERSRC 		= $(SERSRC0:%=gecode/serialization/%)
+SERSRC 		= $(SERSRC0:%=gecode/serialization/%) $(SERMOCSRC0:%=gecode/serialization/%)
 SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)
 SEROBJ		= $(SERSRC:%.cc=%$(OBJSUFFIX))
 SERSBJ		= $(SERSRC:%.cc=%$(SBJSUFFIX))
@@ -906,13 +913,15 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/serialization/%$(OBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
-	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/serialization/%$(SBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
-	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
+gecode/serialization/moc_%.cc: $(top_srcdir)/gecode/serialization/%.hh
+	$(MOC) $(CPPFLAGS) -pgecode/serialization $< -o $@
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
@@ -930,16 +939,16 @@ test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
 		@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
-	$(CXX) $(CXXFLAGS) $(GIST_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
 gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
-	$(CXX) $(CXXFLAGS) $(GIST_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cc
-	$(CXX) $(CXXFLAGS) $(GIST_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
@@ -996,7 +1005,7 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		$(LINKSET) $(BOOST_LINK) \
+		$(LINKSET) $(BOOST_LINK) $(LINKQT) \
 		@LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1037,7 +1046,7 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKCPLTSET) \
-		$(BOOST_LINK) @LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
+		$(BOOST_LINK) $(LINKQT) @LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKQT) \

@@ -45,7 +45,7 @@ namespace Gecode { namespace Gist {
       return;
     Space* s = n->getSpace();
     Reflection::VarMap vm;
-    s->getVars(vm);
+    s->getVars(vm, false);
     int h = 0;
     for (Reflection::SpecIter si(s, vm); si(); ++si) {}
     for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {

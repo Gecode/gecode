@@ -97,6 +97,10 @@ namespace Gecode {
   GECODE_SERIALIZATION_EXPORT
   void emitJavaScript(Space* home, std::ostream& os);
 
+#ifdef GECODE_HAVE_QT
+  GECODE_SERIALIZATION_EXPORT
+  void fromJavaScript(Space* home, const std::string& model);
+#endif
   namespace Serialization {
 
     /**

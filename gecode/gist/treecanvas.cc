@@ -357,7 +357,7 @@ namespace Gecode { namespace Gist {
     case SOLVED:
       Space* curSpace = currentNode->getSpace();
       Reflection::VarMap vm;
-      curSpace->getVars(vm);
+      curSpace->getVars(vm, false);
       emit inspect(vm, nextPit);
       saveCurrentNode();
       if (inspector != NULL) {
@@ -736,7 +736,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     if(root != NULL) {
       Space* space = root->getSpace();
-      space->getVars(vm);
+      space->getVars(vm, false);
       delete space;
     }
   }
@@ -767,7 +767,7 @@ namespace Gecode { namespace Gist {
 
     Reflection::VarMap vm;
     Space* space = currentNode->getSpace();
-    space->getVars(vm);
+    space->getVars(vm, false);
 
     VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
 
@@ -811,7 +811,7 @@ namespace Gecode { namespace Gist {
 
     Reflection::VarMap vm;
     Space* space = currentNode->getSpace();
-    space->getVars(vm);
+    space->getVars(vm, false);
 
     AddChild dialog(vm, this);
 

@@ -1289,7 +1289,7 @@ namespace Gecode {
     //@{
     /// Enter variables into \a m
     GECODE_KERNEL_EXPORT
-    virtual void getVars(Reflection::VarMap& m);
+    virtual void getVars(Reflection::VarMap& m, bool registerOnly);
     /// Get reflection for BranchingDesc \a d
     GECODE_KERNEL_EXPORT
     Reflection::BranchSpec branchSpec(Reflection::VarMap& m,

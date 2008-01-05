@@ -202,6 +202,7 @@ dnl End of definition of variable types
 dnl ------------------------------------------------------------------
 
 AC_GECODE_GIST
+AC_GECODE_QT
 
 AC_GECODE_ENABLE_MODULE(examples, yes,
 	[build examples for the enabled variable types],

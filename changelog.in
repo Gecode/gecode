@@ -72,9 +72,9 @@ Lots of nice gimmicks for Christmas!
 [ENTRY]
 Module: other
 What:   new
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
-Serialization to JavaScript added.
+(De-)Serialization to and from JavaScript added.
 
 [ENTRY]
 Module: other
