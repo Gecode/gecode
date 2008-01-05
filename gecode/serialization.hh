@@ -98,9 +98,14 @@ namespace Gecode {
   void emitJavaScript(Space* home, std::ostream& os);
 
 #ifdef GECODE_HAVE_QT
+  /**
+    * \brief Parse JavaScript \a model and post constraints in \a home
+    * \ingroup TaskSerialization
+    */
   GECODE_SERIALIZATION_EXPORT
   void fromJavaScript(Space* home, const std::string& model);
 #endif
+
   namespace Serialization {
 
     /**
