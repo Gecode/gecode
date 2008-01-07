@@ -2242,7 +2242,7 @@ namespace Gecode {
   }
 
   template <class VIC>
-  bool
+  forceinline bool
   VarImp<VIC>::advise(Space* home, const Delta* d) {
     /*
      * An advisor that is executed might remove itself due to subsumtion.

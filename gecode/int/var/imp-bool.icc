@@ -175,31 +175,14 @@ namespace Gecode { namespace Int {
 
 
   /*
-   * Boolean tell operations (assume not yet assigned 0/1 variable)
+   * Boolean tell operations
    *
    */
-  forceinline ModEvent
-  BoolVarImp::zero_none(Space* home) {
-    assert(none());
-    dom = ZERO;
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_BOOL_VAL;
-  }
   forceinline ModEvent
   BoolVarImp::zero(Space* home) {
     if (one())  return ME_BOOL_FAILED;
     if (zero()) return ME_BOOL_NONE;
     return zero_none(home);
-  }
-
-  forceinline ModEvent
-  BoolVarImp::one_none(Space* home) {
-    assert(none());
-    dom = ONE;
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_BOOL_VAL;
   }
   forceinline ModEvent
   BoolVarImp::one(Space* home) {

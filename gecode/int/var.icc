@@ -636,9 +636,9 @@ namespace Gecode { namespace Int {
     /// Assign variable to one
     ModEvent one(Space* home);
     /// Assign unassigned variable to zero
-    ModEvent zero_none(Space* home);
+    GECODE_INT_EXPORT ModEvent zero_none(Space* home);
     /// Assign unassigned variable to one
-    ModEvent one_none(Space* home);
+    GECODE_INT_EXPORT ModEvent one_none(Space* home);
     //@}
 
   public:

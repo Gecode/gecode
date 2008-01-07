@@ -42,6 +42,25 @@ namespace Gecode { namespace Int {
   BoolVarImp BoolVarImp::s_one(1);
   BoolVarImp BoolVarImp::s_zero(0);
 
+  ModEvent
+  BoolVarImp::one_none(Space* home) {
+    assert(none());
+    dom = ONE;
+    if (!notify(home,ME_BOOL_VAL))
+      return ME_INT_FAILED;
+    return ME_BOOL_VAL;
+  }
+
+  ModEvent
+  BoolVarImp::zero_none(Space* home) {
+    assert(none());
+    dom = ZERO;
+    if (!notify(home,ME_BOOL_VAL))
+      return ME_INT_FAILED;
+    return ME_BOOL_VAL;
+  }
+
+
   Reflection::Arg*
   BoolVarImp::spec(Space*, Reflection::VarMap& m) {
     int specIndex = m.index(this);
