@@ -193,6 +193,12 @@ namespace Gecode {
       Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
       static Support::Symbol type(void);
       //@}
+
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      //@}
     };
 
   }

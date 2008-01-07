@@ -340,6 +340,12 @@ namespace Gecode { namespace CpltSet {
     spec(Space* home, Reflection::VarMap& m);
     //@}
 
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta* d);
+    //@}
+
   };
 
 

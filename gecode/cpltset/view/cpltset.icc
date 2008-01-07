@@ -236,6 +236,14 @@ namespace Gecode { namespace CpltSet {
     return Support::Symbol("CpltSet::CpltSetView");
   }
 
+  /*
+   * Delta information for advisors
+   *
+   */
+
+  forceinline ModEvent
+  CpltSetView::modevent(const Delta* d) { return CpltSetVarImp::modevent(d); }
+
   /// Iterator for the values in the greatest lower bound of a CpltSetView
   template <>
   class GlbValues<CpltSetView> : public GlbValues<CpltSetVarImp*> {

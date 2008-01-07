@@ -1145,6 +1145,15 @@ namespace CpltSet {
     // we should throw an exception here
     return MIN_OF_EMPTY;
   }
+
+  /*
+   * Support for delta information
+   *
+   */
+  forceinline ModEvent
+  CpltSetVarImp::modevent(const Delta* d) {
+    return d->modevent();
+  }
   
 }}
 
