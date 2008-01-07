@@ -584,7 +584,7 @@ namespace Gecode {
     Var* oldx = x;
     x = static_cast<Var*>(Memory::malloc(sizeof(Var)*newsize));
     for (int i=used; i--;)
-      x[i] = oldx[i];
+      new (&x[i]) Var(oldx[i]);
     if (used != n)
       Memory::free(oldx);
     else
@@ -610,7 +610,7 @@ namespace Gecode {
   forceinline void
   VarArray<Var>::add(Space* home, const Var& v) {
     resize(home, used+1);
-    (*this)[used-1] = v;
+    new (&(*this)[used-1]) Var(v);
   }
 
   template <class Var>
