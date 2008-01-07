@@ -368,9 +368,7 @@ namespace Gecode { namespace Int {
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
     IntDelta d;
-    if (!notify(home,ME_INT_VAL,&d))
-      return ME_INT_FAILED;
-    return ME_INT_VAL;
+    return notify(home,ME_INT_VAL,&d);
   }
   forceinline ModEvent
   IntVarImp::eq(Space* home, double m) {
@@ -380,12 +378,10 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
-    IntDelta d;
-    if (!notify(home,ME_INT_VAL,&d))
-      return ME_INT_FAILED;
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
-    return ME_INT_VAL;
+    IntDelta d;
+    return notify(home,ME_INT_VAL,&d);
   }
 
 
@@ -507,14 +503,10 @@ namespace Gecode { namespace Int {
       if ((min0 == min1) && (max0 == max1))
         return ME_INT_NONE;
       IntDelta d;
-      if (min0 == max0) {
-        if (!notify(home,ME_INT_VAL,&d))
-          return ME_INT_FAILED;
-        return ME_INT_VAL;
-      }
-      if (!notify(home,ME_INT_BND,&d))
-        return ME_INT_FAILED;
-      return ME_INT_BND;
+      if (min0 == max0)
+        return notify(home,ME_INT_VAL,&d);
+      else
+        return notify(home,ME_INT_BND,&d);
     }
 
     if (depends || range()) {
@@ -542,15 +534,10 @@ namespace Gecode { namespace Int {
       const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
       holes = width() - s;
       
-      if ((min0 == min1) && (max0 == max1)) {
-        if (!notify(home,ME_INT_DOM,&d))
-          return ME_INT_FAILED;
-        return ME_INT_DOM;
-      }
-      
-      if (!notify(home,ME_INT_BND,&d))
-        return ME_INT_FAILED;
-      return ME_INT_BND;
+      if ((min0 == min1) && (max0 == max1))
+        return notify(home,ME_INT_DOM,&d);
+      else      
+        return notify(home,ME_INT_BND,&d);
     } else {
       // Set up two sentinel elements
       RangeList f, l;
@@ -651,18 +638,13 @@ namespace Gecode { namespace Int {
         assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
         dom.min(fn->min()); dom.max(ln->max());
         holes -= b;
-        if (!notify(home,ME_INT_BND,&d))
-          return ME_INT_FAILED;
-        return ME_INT_BND;
+        return notify(home,ME_INT_BND,&d);
       }
 
       if (h > 0) {
         assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
-        if (!notify(home,ME_INT_DOM,&d))
-          return ME_INT_FAILED;
-        return ME_INT_DOM;
+        return notify(home,ME_INT_DOM,&d);
       }
-
       return ME_INT_NONE;
     }
   }
@@ -784,15 +766,10 @@ namespace Gecode { namespace Int {
       fn->dispose(home);
       fst(NULL); lst(NULL);
       holes = 0;
-      if (assigned()) {
-        if (!notify(home,ME_INT_VAL,&d))
-          return ME_INT_FAILED;
-        return ME_INT_VAL;
-      } else {
-        if (!notify(home,ME_INT_BND,&d))
-          return ME_INT_FAILED;
-        return ME_INT_BND;
-      }
+      if (assigned())
+        return notify(home,ME_INT_VAL,&d);
+      else
+        return notify(home,ME_INT_BND,&d);
     }
 
     // The number of removed values
@@ -809,16 +786,12 @@ namespace Gecode { namespace Int {
       assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
       dom.min(fn->min()); dom.max(ln->max());
       holes -= b;
-      if (!notify(home,ME_INT_BND,&d))
-        return ME_INT_FAILED;
-      return ME_INT_BND;
+      return notify(home,ME_INT_BND,&d);
     }
 
     if (h > 0) {
       assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
-      if (!notify(home,ME_INT_DOM,&d))
-        return ME_INT_FAILED;
-      return ME_INT_DOM;
+      return notify(home,ME_INT_DOM,&d);
     }
 
     return ME_INT_NONE;
@@ -944,15 +917,10 @@ namespace Gecode { namespace Int {
       fn->dispose(home);
       fst(NULL); lst(NULL);
       holes = 0;
-      if (assigned()) {
-        if (!notify(home,ME_INT_VAL,&d))
-          return ME_INT_FAILED;
-        return ME_INT_VAL;
-      } else {
-        if (!notify(home,ME_INT_BND,&d))
-          return ME_INT_FAILED;
-        return ME_INT_BND;
-      }
+      if (assigned())
+        return notify(home,ME_INT_VAL,&d);
+      else
+        return notify(home,ME_INT_BND,&d);
     }
 
     // The number of removed values
@@ -969,16 +937,12 @@ namespace Gecode { namespace Int {
       assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
       dom.min(fn->min()); dom.max(ln->max());
       holes -= b;
-      if (!notify(home,ME_INT_BND,&d))
-        return ME_INT_FAILED;
-      return ME_INT_BND;
+      return notify(home,ME_INT_BND,&d);
     }
 
     if (h > 0) {
       assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
-      if (!notify(home,ME_INT_DOM,&d))
-        return ME_INT_FAILED;
-      return ME_INT_DOM;
+      return notify(home,ME_INT_DOM,&d);
     }
 
     return ME_INT_NONE;

@@ -142,17 +142,6 @@ namespace Gecode { namespace Int {
 
   
   /*
-   * Specialized notification
-   *
-   */
-  forceinline bool
-  BoolVarImp::notify(Space* home, ModEvent me) {
-    IntDelta d(false);
-    return BoolVarImpBase::notify(home,me,&d);
-  }
-
-
-  /*
    * Support for delta information
    *
    */

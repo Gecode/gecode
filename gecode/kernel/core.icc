@@ -328,7 +328,7 @@ namespace Gecode {
     /// Remove propagator or advisor from subscription array
     void remove(Space* home, ActorLink* a, PropCond pc);
     /// Execute advisors during notification
-    bool advise(Space* home, const Delta* d);
+    ModEvent advise(Space* home, ModEvent me, Delta* d);
 
   protected:
     /// Return reference to variables (process and update)
@@ -388,18 +388,18 @@ namespace Gecode {
     /**
      * \brief Notify that variable implementation has been modified with modification event \a me and domain change \a d
      *
-     * Returns false if notification has failed.
+     * Returns ME_GEN_FAILED if notification has failed, \a me otherwise.
      */
-    bool notify(Space* home, ModEvent me, Delta* d);
+    ModEvent notify(Space* home, ModEvent me, Delta* d);
     /**
      * \brief Notify that variable implementation has been assigned with domain change \a d
      *
-     * This routine can only be used, if the variable implementation supports
+     * This function can only be used, if the variable implementation supports
      * a single modification event.
      *
-     * Returns false if notification has failed.
+     * Returns ME_GEN_FAILED if notification has failed, \a me otherwise.
      */
-    bool notify(Space* home, Delta* d);
+    ModEvent notify(Space* home, Delta* d);
     //@}
 
     /// \name Cloning variables
@@ -2242,8 +2242,8 @@ namespace Gecode {
   }
 
   template <class VIC>
-  forceinline bool
-  VarImp<VIC>::advise(Space* home, const Delta* d) {
+  forceinline ModEvent
+  VarImp<VIC>::advise(Space* home, ModEvent me, Delta* d) {
     /*
      * An advisor that is executed might remove itself due to subsumtion.
      * As entries are removed from front to back, the advisors must
@@ -2251,7 +2251,9 @@ namespace Gecode {
      */
     ActorLink** la = idx[pc_max+1];
     ActorLink** le = idx[pc_max+2];
-    assert (la != le);
+    if (la == le)
+      return me;
+    d->me = me;
     // An advisor that is run, might be removed during execution.
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
@@ -2262,44 +2264,36 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
-        return false;
+        return ME_GEN_FAILED;
       case ES_NOFIX:
-        schedule(home,p,d->me);
+        schedule(home,p,me);
         break;
       default:
         GECODE_NEVER;
       }
     } while (++la < le);
-    return true;
+    return me;
   }
 
   template <class VIC>
-  forceinline bool
-  VarImp<VIC>::notify(Space* home, ModEvent new_me, Delta* d) {
+  forceinline ModEvent
+  VarImp<VIC>::notify(Space* home, ModEvent me, Delta* d) {
     if (_next != reinterpret_cast<VarImpBase*>(1)) {
-      u.free_me ^= VIC::mec(new_me,static_cast<ModEvent>
+      u.free_me ^= VIC::mec(me,static_cast<ModEvent>
                             (u.free_me & me_bits_mask));
     } else {
       _next = vars_pu(home); vars_pu(home,this);
-      u.free_me = (u.free_me & ~me_bits_mask) | new_me;
+      u.free_me = (u.free_me & ~me_bits_mask) | me;
     }
-    if (idx[pc_max+1] != idx[pc_max+2]) {
-      d->me = new_me;
-      return advise(home,d);
-    }
-    return true;
+    return advise(home,me,d);
   }
 
   template <class VIC>
-  forceinline bool
+  forceinline ModEvent
   VarImp<VIC>::notify(Space* home, Delta* d) {
     assert(_next == reinterpret_cast<VarImpBase*>(1));
     _next = vars_pu(home); vars_pu(home,this);
-    if (idx[pc_max+1] != idx[pc_max+2]) {
-      d->me = ME_GEN_ASSIGNED;
-      return advise(home,d);
-    }
-    return true;
+    return advise(home,ME_GEN_ASSIGNED,d);
   }
 
 

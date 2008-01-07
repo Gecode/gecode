@@ -46,18 +46,16 @@ namespace Gecode { namespace Int {
   BoolVarImp::one_none(Space* home) {
     assert(none());
     dom = ONE;
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_BOOL_VAL;
+    IntDelta d(false);
+    return notify(home,ME_BOOL_VAL,&d);
   }
 
   ModEvent
   BoolVarImp::zero_none(Space* home) {
     assert(none());
     dom = ZERO;
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_BOOL_VAL;
+    IntDelta d(false);
+    return notify(home,ME_BOOL_VAL,&d);
   }
 
 

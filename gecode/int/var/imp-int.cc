@@ -116,13 +116,9 @@ namespace Gecode { namespace Int {
         c->next(n,NULL); lst(c);
       }
     }
-    if (!notify(home,ME_INT_BND,&d))
-      return ME_INT_FAILED;
-    return ME_INT_BND;
+    return notify(home,ME_INT_BND,&d);
   notify_val:
-    if (!notify(home,ME_INT_VAL,&d))
-      return ME_INT_FAILED;
-    return ME_INT_VAL;
+    return notify(home,ME_INT_VAL,&d);
   }
 
   ModEvent
@@ -154,13 +150,9 @@ namespace Gecode { namespace Int {
         c->prev(p,NULL); fst(c);
       }
     }
-    if (!notify(home,ME_INT_BND,&d))
-      return ME_INT_FAILED;
-    return ME_INT_BND;
+    return notify(home,ME_INT_BND,&d);
   notify_val:
-    if (!notify(home,ME_INT_VAL,&d))
-      return ME_INT_FAILED;
-    return ME_INT_VAL;
+    return notify(home,ME_INT_VAL,&d);
   }
 
   bool
@@ -308,19 +300,12 @@ namespace Gecode { namespace Int {
         }
       }
     }
-    if (!notify(home,ME_INT_DOM,&d))
-      return ME_INT_FAILED;
-    return ME_INT_DOM;
+    return notify(home,ME_INT_DOM,&d);
   notify_bnd_or_val:
-    if (assigned()) {
-      if (!notify(home,ME_INT_VAL,&d))
-        return ME_INT_FAILED;
-      return ME_INT_VAL;
-    }
+    if (assigned())
+      return notify(home,ME_INT_VAL,&d);
   notify_bnd:
-    if (!notify(home,ME_INT_BND,&d))
-      return ME_INT_FAILED;
-    return ME_INT_BND;
+    return notify(home,ME_INT_BND,&d);
   }
 
 

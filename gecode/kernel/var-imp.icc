@@ -98,7 +98,7 @@ namespace Gecode { namespace Int {
     /// Subscribe advisor \a a
     void subscribe(Space* home, Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    bool notify(Space* home, ModEvent me, Delta* d);
+    ModEvent notify(Space* home, ModEvent me, Delta* d);
     //@}
 
   };
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline bool
+  forceinline ModEvent
   IntVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
     return Gecode::VarImp<Gecode::Int::IntVarImpConf>::notify(home,me,d);
   }
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int {
     /// Subscribe advisor \a a
     void subscribe(Space* home, Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    bool notify(Space* home, ModEvent me, Delta* d);
+    ModEvent notify(Space* home, ModEvent me, Delta* d);
     //@}
 
   };
@@ -192,7 +192,7 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline bool
+  forceinline ModEvent
   BoolVarImpBase::notify(Space* home, ModEvent, Delta* d) {
     return Gecode::VarImp<Gecode::Int::BoolVarImpConf>::notify(home,d);
   }
@@ -335,7 +335,7 @@ namespace Gecode { namespace Set {
     /// Subscribe advisor \a a
     void subscribe(Space* home, Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    bool notify(Space* home, ModEvent me, Delta* d);
+    ModEvent notify(Space* home, ModEvent me, Delta* d);
     //@}
 
   };
@@ -361,7 +361,7 @@ namespace Gecode { namespace Set {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline bool
+  forceinline ModEvent
   SetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
     return Gecode::VarImp<Gecode::Set::SetVarImpConf>::notify(home,me,d);
   }
@@ -423,7 +423,7 @@ namespace Gecode { namespace CpltSet {
     /// Subscribe advisor \a a
     void subscribe(Space* home, Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    bool notify(Space* home, ModEvent me, Delta* d);
+    ModEvent notify(Space* home, ModEvent me, Delta* d);
     //@}
     /// Return link to next variable to be disposed
     CpltSetVarImpBase* next_d(void) const;
@@ -461,7 +461,7 @@ namespace Gecode { namespace CpltSet {
     Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline bool
+  forceinline ModEvent
   CpltSetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
     return Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::notify(home,me,d);
   }

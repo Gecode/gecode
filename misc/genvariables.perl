@@ -577,7 +577,7 @@ EOF
     /// Subscribe advisor \\a a
     void subscribe(Space* home, Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
-    bool notify(Space* home, ModEvent me, Delta* d);
+    ModEvent notify(Space* home, ModEvent me, Delta* d);
     //\@}
 EOF
 ;
@@ -654,7 +654,7 @@ EOF
 
 if ($me_max_n[$f] == 2) {
   print <<EOF
-  forceinline bool
+  forceinline ModEvent
   $class[$f]::notify(Space* home, ModEvent, Delta* d) {
     return $base[$f]::notify(home,d);
   }
@@ -663,7 +663,7 @@ EOF
 ;
 } else {
   print <<EOF
-  forceinline bool
+  forceinline ModEvent
   $class[$f]::notify(Space* home, ModEvent me, Delta* d) {
     return $base[$f]::notify(home,me,d);
   }

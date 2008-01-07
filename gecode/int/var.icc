@@ -506,8 +506,6 @@ namespace Gecode { namespace Int {
     BoolVarImp(Space* home, bool share, BoolVarImp& x);
     /// Initialize static instance assigned to \a n
     BoolVarImp(int n);
-    /// Specialized notify with delta construction
-    bool notify(Space* home, ModEvent me);
   public:
     /// Initialize with range domain
     BoolVarImp(Space* home, int min, int max);

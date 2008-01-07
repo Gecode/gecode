@@ -231,8 +231,7 @@ namespace Gecode { namespace Set {
       _cardMax = 0;
       SetDelta d(1, 0, lub.min(), lub.max());
       lub.excludeAll(home);
-      notify(home, ME_SET_VAL, &d);
-      return ME_SET_VAL;
+      return notify(home, ME_SET_VAL, &d);
     }
     int mi=iterator.min();
     int ma=iterator.max();
@@ -271,8 +270,7 @@ namespace Gecode { namespace Set {
         me = ME_SET_VAL;
       }
       SetDelta d;
-      notify(home, me, &d);
-      return me;
+      return notify(home, me, &d);
     }
     return ME_SET_NONE;
   }
@@ -343,8 +341,7 @@ namespace Gecode { namespace Set {
         me = ME_SET_VAL;
       }
       SetDelta d;
-      notify(home, me, &d);
-      return me;
+      return notify(home, me, &d);
     }
     return ME_SET_NONE;
   }
@@ -414,8 +411,7 @@ namespace Gecode { namespace Set {
         me = ME_SET_VAL;
       }
       SetDelta d;
-      notify(home, me, &d);
-      return me;
+      return notify(home, me, &d);
     }
     return ME_SET_NONE;
   }
