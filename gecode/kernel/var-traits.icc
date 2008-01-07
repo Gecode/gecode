@@ -46,6 +46,18 @@ namespace Gecode {
   template <class Var>
   class VarViewTraits {};
 
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * Each view must specialize this traits class and add a \code
+   * typedef \endcode for the variable implementation belonging to
+   * this view.
+   *
+   * \ingroup TaskVarView
+   */
+  template <class View>
+  class ViewVarImpTraits {};
+
 }
 
 // STATISTICS: kernel-other

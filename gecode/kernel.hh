@@ -123,6 +123,12 @@
 #include "gecode/kernel/core.icc"
 #include "gecode/kernel/modevent.icc"
 
+/*
+ * Traits linking variables, views, and variable implementations
+ *
+ */
+
+#include "gecode/kernel/var-traits.icc"
 
 /*
  * Access to the constraint graph
@@ -137,7 +143,6 @@
  */
 
 #include "gecode/kernel/view.icc"
-#include "gecode/kernel/var.icc"
 
 /*
  * Variable and argument arrays

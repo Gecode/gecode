@@ -132,19 +132,6 @@ namespace Gecode {
   //@}
 
 
-
-  /**
-   * \brief Traits class for views and variable implementations
-   *
-   * Each view must specialize this traits class and add a \code
-   * typedef \endcode for the variable implementation belonging to
-   * this view.
-   *
-   * \ingroup TaskVarView
-   */
-  template <class View>
-  class ViewVarImpTraits {};
-
   /**
    * \brief Base-class for derived views
    * \ingroup TaskVarView
