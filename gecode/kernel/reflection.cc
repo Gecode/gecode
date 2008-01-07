@@ -48,8 +48,12 @@ namespace Gecode { namespace Reflection {
     Support::SymbolMap<poster> posters;
     /// The registry of variable creation functions
     Support::SymbolMap<varCreator> varCreators;
-    /// The registry of variable creation functions
+    /// The registry of variable constraining functions
     Support::SymbolMap<varConstrainer> varConstrainers;
+    /// The registry of variable update functions
+    Support::SymbolMap<varUpdater> varUpdaters;
+    /// The registry of variable print functions
+    Support::SymbolMap<varPrinter> varPrinters;
   };
   
   Registry::Registry(void) : ro(new RegistryObject()) {}
@@ -79,6 +83,26 @@ namespace Gecode { namespace Reflection {
     vc(home, v, spec);
   }
 
+  VarImpBase*
+  Registry::updateVariable(Space* home, bool share, VarImpBase* v,
+                           const Support::Symbol& vti) {
+    varUpdater vu = NULL;
+    if (!ro->varUpdaters.get(vti,vu)) {
+      throw Reflection::ReflectionException("VTI not found");
+    }
+    return vu(home, share, v);
+  }
+
+  std::ostream&
+  Registry::printVariable(std::ostream& os, VarImpBase* v,
+                          const Support::Symbol& vti) {
+    varPrinter vp = NULL;
+    if (!ro->varPrinters.get(vti,vp)) {
+      throw Reflection::ReflectionException("VTI not found");
+    }
+    return vp(os, v);
+  }
+
   void
   Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) {
     poster p = NULL;
@@ -96,6 +120,16 @@ namespace Gecode { namespace Reflection {
   void
   Registry::add(Support::Symbol vti, varConstrainer vc) {
     ro->varConstrainers.put(vti, vc);
+  }
+
+  void
+  Registry::add(Support::Symbol vti, varUpdater vu) {
+    ro->varUpdaters.put(vti, vu);
+  }
+
+  void
+  Registry::add(Support::Symbol vti, varPrinter vp) {
+    ro->varPrinters.put(vti, vp);
   }
 
   void
@@ -789,5 +823,11 @@ namespace Gecode { namespace Reflection {
   }
 
 }}
+
+std::ostream&
+operator<<(std::ostream& os, const Gecode::Reflection::Var& v) {
+  return v.print(os);
+}
+
 
 // STATISTICS: kernel-other

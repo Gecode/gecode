@@ -404,6 +404,10 @@ namespace Gecode { namespace Reflection {
     typedef VarImpBase* (*varCreator) (Space*, VarSpec&);
     /// The type of variable domain constraint functions
     typedef void (*varConstrainer) (Space*, VarImpBase*, VarSpec&);
+    /// The type of variable update functions
+    typedef VarImpBase* (*varUpdater) (Space*, bool, VarImpBase*);
+    /// The type of variable printing functions
+    typedef std::ostream& (*varPrinter) (std::ostream&, VarImpBase*);
 
     /// Constructor
     GECODE_KERNEL_EXPORT Registry(void);
@@ -417,6 +421,16 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT void
     constrainVar(Space* home, VarImpBase* v, VarSpec& spec);
 
+    /// Update variable \a v with type identifier \a vti during cloning
+    GECODE_KERNEL_EXPORT VarImpBase*
+    updateVariable(Space* home, bool share, VarImpBase* v,
+                   const Support::Symbol& vti);
+
+    /// Print variable \a v with type identifier \a vti to \a os
+    GECODE_KERNEL_EXPORT std::ostream&
+    printVariable(std::ostream& os, VarImpBase* v,
+                  const Support::Symbol& vti);
+
     /// Post constraint in \a home for \a spec using variables \a vars
     GECODE_KERNEL_EXPORT void
     post(Space* home, VarMap& vm, const ActorSpec& spec);
@@ -425,6 +439,10 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varCreator vc);
     /// Register variable domain constraining function for \a vti
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varConstrainer vc);
+    /// Register variable update function for \a vti
+    GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varUpdater vu);
+    /// Register variable print function for \a vti
+    GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varPrinter vp);
     /// Register constraint posting function for constraint name \a id
     GECODE_KERNEL_EXPORT void add(const Support::Symbol& id, poster p);
     /// Print list of all registered posters to \a out
@@ -457,6 +475,79 @@ namespace Gecode { namespace Reflection {
   template <class P>
   Registrar<P>::Registrar(void) {
     registry().add(P::name(), &P::post);
+  }
+
+  /**
+   * \brief Generic variables
+   *
+   * \ingroup TaskReflection
+   *
+   * A generic variable can represent any Gecode variable. It can be
+   * used in VarArrays, and it supports generic update during cloning.
+   *
+   */
+  class Var {
+  private:
+    /// The actual variable
+    VarImpBase* var;
+    /// The variable type identifier
+    Support::Symbol vti;
+  public:
+    /// Default constructor
+    Var(void);
+    /// Construct from \a v
+    template <class V> Var(const V& v);
+    /// Construct from \a var0 with variable type identifier \a vti0
+    Var(VarImpBase* var0, const Support::Symbol& vti0);
+    /// Update during cloning
+    void update(Space* home, bool share, Var& v);
+    /// Output to \a os
+    std::ostream& print(std::ostream& os) const;
+    /// Cast to concrete variable type
+    template <class V>
+    operator V() const;
+  };
+
+  forceinline
+  Var::Var(void) {}
+    
+  template <class V>
+  Var::Var(const V& v) {
+    typedef typename VarViewTraits<V>::View View;
+    View view(v);
+    var = view.var();
+    vti = view.var()->vti;
+  }
+
+  template <>
+  forceinline
+  Var::Var(const Var& v) : var(v.var), vti(v.vti) {}
+  
+  forceinline
+  Var::Var(VarImpBase* var0, const Support::Symbol& vti0)
+    : var(var0), vti(vti0) {}
+  
+  forceinline void
+  Var::update(Space* home, bool share, Var& v) {
+    new (&vti) Support::Symbol(v.vti);
+    var = registry().updateVariable(home, share, v.var, v.vti);
+  }
+
+  forceinline std::ostream&
+  Var::print(std::ostream& os) const {
+    return registry().printVariable(os, var, vti);
+  }
+
+  template <class V>
+  Var::operator V() const {
+    typedef typename VarViewTraits<V>::View View;
+    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+    if (! (VarImp::vti == vti))
+      throw ReflectionException("VTI mismatch");
+
+    View view(static_cast<VarImp*>(var));
+    V v(view);
+    return v;
   }
 
   /** \addtogroup TaskReflection
@@ -672,5 +763,9 @@ namespace Reflection {
   //@}
 
 }}
+
+/// Print \a v to \a os
+GECODE_KERNEL_EXPORT std::ostream&
+operator<<(std::ostream& os, const Gecode::Reflection::Var& v);
 
 // STATISTICS: kernel-other

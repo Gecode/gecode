@@ -194,7 +194,7 @@ KERNELSRC0 = \
 KERNELHDR0 = \
 	array shared-array branching core exception \
 	macros memory-manager modevent \
-	propagator advisor view var var-map reflection
+	propagator advisor view var-traits var-map reflection
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
@@ -619,32 +619,47 @@ INTEXAMPLESRC0 =						\
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
 INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+ifeq "@enable_int_vars@" "yes"
 INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cc=%$(EXESUFFIX))
+else
+INTEXAMPLEEXE  =
+endif
 
 SETEXAMPLESRC0 = \
 	crew golf hamming steiner queen-armies
 SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cc)
 SETEXAMPLEOBJ  = $(SETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+ifeq "@enable_set_vars@" "yes"
 SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cc=%$(EXESUFFIX))
+else
+SETEXAMPLEEXE  = 
+endif
 
 CPLTSETEXAMPLESRC0 = \
 CPLTSETEXAMPLESRC  = $(CPLTSETEXAMPLESRC0:%=examples/%.cc)
 CPLTSETEXAMPLEOBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 CPLTSETEXAMPLESBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+ifeq "@enable_cpltset_vars@" "yes"
 CPLTSETEXAMPLEEXE  = $(CPLTSETEXAMPLESRC:%.cc=%$(EXESUFFIX))
+else
+CPLTSETEXAMPLEEXE  =
+endif
+
+JSEXAMPLESRC0 = javascript
+JSEXAMPLESRC  = $(JSEXAMPLESRC0:%=examples/%.cc)
+JSEXAMPLEOBJ  = $(JSEXAMPLESRC:%.cc=%$(OBJSUFFIX))
+JSEXAMPLESBJ  = $(JSEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+ifeq "@enable_qt@" "yes"
+JSEXAMPLEEXE  = $(JSEXAMPLESRC:%.cc=%$(EXESUFFIX))
+else
+JSEXAMPLESRC  =
+endif
 
 EXAMPLEBUILDDIRS = examples examples/support
 
-ifeq "@enable_set_vars@" "yes"
-EXAMPLEEXE = $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
-else
-ifeq "@enable_int_vars@" "yes"
-EXAMPLEEXE = $(INTEXAMPLEEXE)
-else
-EXAMPLEEXE =
-endif
-endif
+EXAMPLEEXE = \
+  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(CPLTSETEXAMPLEEXE) $(JSEXAMPLEEXE)
 
 EXSUPPORTSRC0 = \
 	support/options support/example
@@ -663,7 +678,7 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cc=%$(SBJSUFFIX))
 ALLSRC = \
 	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) \
-	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
+	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) $(JSEXAMPLESRC) \
 	$(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \

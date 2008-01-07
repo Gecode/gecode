@@ -47,6 +47,27 @@
 namespace Gecode { namespace Serialization {  
 
   namespace {
+
+    template <class Var>
+    VarImpBase* updateVar(Space* home, bool share, VarImpBase* v) {
+      typedef typename VarViewTraits<Var>::View View;
+      typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+      View view(static_cast<VarImp*>(v));
+      Var var(view);
+      Var varCopy;
+      varCopy.update(home, share, var);
+      View viewCopy(varCopy);
+      return viewCopy.var();
+    }
+
+    template <class Var>
+    std::ostream& printVar(std::ostream& os, VarImpBase* v) {
+      typedef typename VarViewTraits<Var>::View View;
+      typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+      View view(static_cast<VarImp*>(v));
+      Var var(view);
+      return os << var;
+    }
     
     VarImpBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
       Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
@@ -111,11 +132,17 @@ namespace Gecode { namespace Serialization {
         VariableCreators() {
         Reflection::registry().add(Int::IntVarImp::vti, createIntVar);
         Reflection::registry().add(Int::IntVarImp::vti, constrainIntVar);
+        Reflection::registry().add(Int::IntVarImp::vti, updateVar<IntVar>);
+        Reflection::registry().add(Int::IntVarImp::vti, printVar<IntVar>);
         Reflection::registry().add(Int::BoolVarImp::vti, createBoolVar);
         Reflection::registry().add(Int::BoolVarImp::vti, constrainBoolVar);
+        Reflection::registry().add(Int::BoolVarImp::vti, updateVar<BoolVar>);
+        Reflection::registry().add(Int::BoolVarImp::vti, printVar<BoolVar>);
 #ifdef GECODE_HAVE_SET_VARS
         Reflection::registry().add(Set::SetVarImp::vti, createSetVar);
         Reflection::registry().add(Set::SetVarImp::vti, constrainSetVar);
+        Reflection::registry().add(Set::SetVarImp::vti, updateVar<SetVar>);
+        Reflection::registry().add(Set::SetVarImp::vti, printVar<SetVar>);
 #endif
       }
     };

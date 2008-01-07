@@ -70,6 +70,26 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: examples
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added an example that interprets a JavaScript program and runs a search of the 
+model that the program encodes. This is an example of how to use the 
+JavaScript interpreter. A simple JavaScript model for n-Queens has been added, 
+too.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+A generic variable class has been added that can be used for interfacing. It 
+can store arbitrary Gecode variables (e.g. IntVar and SetVar), and cast them 
+back using a run-time type check. The update and output operations are 
+implemented through the reflection registry.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   major
