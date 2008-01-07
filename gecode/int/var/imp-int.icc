@@ -364,11 +364,7 @@ namespace Gecode { namespace Int {
       return ME_INT_FAILED;
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
-    dom.min(n); dom.max(n);
-    if (!range() && eq_full(home))
-      return ME_INT_FAILED;
-    IntDelta d;
-    return notify(home,ME_INT_VAL,&d);
+    return eq_full(home,n);
   }
   forceinline ModEvent
   IntVarImp::eq(Space* home, double m) {
@@ -377,11 +373,7 @@ namespace Gecode { namespace Int {
     int n = static_cast<int>(m);
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
-    dom.min(n); dom.max(n);
-    if (!range() && eq_full(home))
-      return ME_INT_FAILED;
-    IntDelta d;
-    return notify(home,ME_INT_VAL,&d);
+    return eq_full(home,n);
   }
 
 
