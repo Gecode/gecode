@@ -281,11 +281,13 @@ namespace Gecode { namespace CpltSet {
       } else {
         me =  ME_CPLTSET_VAL;
       }
-      notify(home, me);
+      Delta d;
+      return notify(home, me, &d);
     } else {
       if (olddom != domain) {
         me = ME_CPLTSET_DOM;
-        notify(home, me);
+        Delta d;
+        return notify(home, me, &d);
       }
     }
     return me;

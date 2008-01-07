@@ -168,15 +168,6 @@ namespace Gecode { namespace CpltSet {
     template <class I>
     bdd iterToBdd(I& i);
 
-    /*
-     * \todo FIXME: JUST A HACK FOR MISSING ADVISORS
-     */
-    forceinline
-    void notify(Space* home, ModEvent me) {
-      Delta d;
-      (void) CpltSetVarImpBase::notify(home,me,&d);
-    }
-
   public:
     CpltSetVarImp(Space* home, int glbMin, int glbMax, int lubMin, int lubMax, 
                   unsigned int cardMin, unsigned int cardMax);

@@ -54,8 +54,7 @@ namespace Gecode { namespace Set {
       me = ME_SET_VAL;
     }
     SetDelta d;
-    notify(home, me, &d);
-    return me;
+    return notify(home, me, &d);
   }
 
   ModEvent
@@ -66,8 +65,7 @@ namespace Gecode { namespace Set {
       me = ME_SET_VAL;
     }
     SetDelta d;
-    notify(home, me, &d);
-    return me;
+    return notify(home, me, &d);
   }
 
   ModEvent
@@ -89,8 +87,7 @@ namespace Gecode { namespace Set {
       assert(d.glbMin() == 1);
       assert(d.glbMax() == 0);
     }
-    notify(home, me, &d);
-    return me;
+    return notify(home, me, &d);
   }
 
   ModEvent
@@ -112,8 +109,7 @@ namespace Gecode { namespace Set {
       assert(d.lubMin() == 1);
       assert(d.lubMax() == 0);
     }
-    notify(home, me, &d);
-    return me;
+    return notify(home, me, &d);
   }
 
   /*
