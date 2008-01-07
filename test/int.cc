@@ -134,8 +134,8 @@ namespace Test { namespace Int {
       vm.putArray(this, x, "x");
       vm.put(this, b, "b");
       Gecode::Reflection::VarMap cvm;
-      cvm.registerArray(c, c->x, "x");
-      cvm.registerVar(c, c->b, "b");
+      cvm.putArray(c, c->x, "x", true);
+      cvm.put(c, c->b, "b", true);
       Gecode::Serialization::Deserializer d(c, cvm);
       Gecode::Reflection::VarMapIter vmi(vm);
       try {
