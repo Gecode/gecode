@@ -90,10 +90,8 @@ namespace Gecode { namespace Reflection {
     /// Return variable at index \a i
     VarImpBase* varImpBase(int i) const;
     /// Return variable with name \a n
-    template <class Var>
     Var var(const Support::Symbol& n) const;
     /// Return variable at index \a i
-    template <class Var>
     Var var(int i) const;
 
     /// Return specification for variable \a x
@@ -164,7 +162,7 @@ namespace Gecode { namespace Reflection {
     VarSpec& spec(void) const;
     /// Return variable implementation for current iterator position
     VarImpBase* varImpBase(void) const;
-    template <class Var>
+    /// Return variable for current iterator position
     Var var(void) const;
     /// Move iterator to next variable
     void operator++(void);
@@ -202,63 +200,6 @@ namespace Gecode { namespace Reflection {
       nn += Support::Symbol(s.str().c_str(), true);
       put(home, x[i], nn, registerOnly);
     }
-  }
-
-  template <class Var>
-  Var
-  VarMap::var(const Support::Symbol& n) const {
-    typedef typename ViewVarImpTraits<
-      typename VarViewTraits<Var>::View >::VarImp Vi;
-    const Support::Symbol& vti = Vi::vti;
-    if (! (spec(n).vti() == vti)) {
-        throw ReflectionException("Variable type mismatch");
-    }
-    VarImpBase* x = varImpBase(n);
-    typename ViewVarImpTraits<
-      typename VarViewTraits<Var>::View >::VarImp* xv =
-      static_cast<
-        typename ViewVarImpTraits<
-          typename VarViewTraits<Var>::View >::VarImp*>(x);
-    typename VarViewTraits<Var>::View view(xv);
-    return Var(view);
-  }
-
-  template <class Var>
-  Var
-  VarMap::var(int i) const {
-    typedef typename ViewVarImpTraits<
-      typename VarViewTraits<Var>::View >::VarImp Vi;
-    const Support::Symbol& vti = Vi::vti;
-    if (! (spec(i).vti() == vti)) {
-        throw ReflectionException("Variable type mismatch");
-    }
-    VarImpBase* x = varImpBase(i);
-    typename ViewVarImpTraits<
-      typename VarViewTraits<Var>::View >::VarImp* xv =
-      static_cast<
-        typename ViewVarImpTraits<
-          typename VarViewTraits<Var>::View >::VarImp*>(x);
-    typename VarViewTraits<Var>::View view(xv);
-    return Var(view);
-  }
-
-  template <class Var>
-  Var
-  VarMapIter::var(void) const {
-    typedef typename ViewVarImpTraits<
-      typename VarViewTraits<Var>::View >::VarImp Vi;
-    const Support::Symbol& vti = Vi::vti;
-    if (! (spec().vti() == vti)) {
-      throw ReflectionException("Variable type mismatch");
-    }
-    VarImpBase* x = varImpBase();
-    typename ViewVarImpTraits<
-      typename VarViewTraits<Var>::View >::VarImp* xv =
-      static_cast<
-        typename ViewVarImpTraits<
-          typename VarViewTraits<Var>::View >::VarImp*>(x);
-    typename VarViewTraits<Var>::View view(xv);
-    return Var(view);
   }
 
 }}

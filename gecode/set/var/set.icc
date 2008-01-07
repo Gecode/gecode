@@ -58,6 +58,9 @@ namespace Gecode {
   forceinline
   SetVar::SetVar(const Set::SetView& x0) : x(x0.var()) {}
 
+  forceinline
+  SetVar::SetVar(const Reflection::Var& x0)   : x(x0.var<Set::SetVarImp>()) {}
+
   forceinline void
   SetVar::init(Space* home) {
     x = new (home) Set::SetVarImp(home);

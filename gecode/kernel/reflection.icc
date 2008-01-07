@@ -489,23 +489,23 @@ namespace Gecode { namespace Reflection {
   class Var {
   private:
     /// The actual variable
-    VarImpBase* var;
+    VarImpBase* _var;
     /// The variable type identifier
-    Support::Symbol vti;
+    Support::Symbol _vti;
   public:
     /// Default constructor
     Var(void);
     /// Construct from \a v
     template <class V> Var(const V& v);
-    /// Construct from \a var0 with variable type identifier \a vti0
-    Var(VarImpBase* var0, const Support::Symbol& vti0);
+    /// Construct from \a var with variable type identifier \a vti
+    Var(VarImpBase* var, const Support::Symbol& vti);
     /// Update during cloning
     void update(Space* home, bool share, Var& v);
     /// Output to \a os
     std::ostream& print(std::ostream& os) const;
     /// Cast to concrete variable type
-    template <class V>
-    operator V() const;
+    template <class VarImp>
+    VarImp* var(void) const;
   };
 
   forceinline
@@ -515,39 +515,34 @@ namespace Gecode { namespace Reflection {
   Var::Var(const V& v) {
     typedef typename VarViewTraits<V>::View View;
     View view(v);
-    var = view.var();
-    vti = view.var()->vti;
+    _var = view.var();
+    _vti = view.var()->vti;
   }
 
   template <>
   forceinline
-  Var::Var(const Var& v) : var(v.var), vti(v.vti) {}
+  Var::Var(const Var& v) : _var(v._var), _vti(v._vti) {}
   
   forceinline
-  Var::Var(VarImpBase* var0, const Support::Symbol& vti0)
-    : var(var0), vti(vti0) {}
+  Var::Var(VarImpBase* var, const Support::Symbol& vti)
+    : _var(var), _vti(vti) {}
   
   forceinline void
   Var::update(Space* home, bool share, Var& v) {
-    new (&vti) Support::Symbol(v.vti);
-    var = registry().updateVariable(home, share, v.var, v.vti);
+    new (&_vti) Support::Symbol(v._vti);
+    _var = registry().updateVariable(home, share, v._var, v._vti);
   }
 
   forceinline std::ostream&
   Var::print(std::ostream& os) const {
-    return registry().printVariable(os, var, vti);
+    return registry().printVariable(os, _var, _vti);
   }
 
-  template <class V>
-  Var::operator V() const {
-    typedef typename VarViewTraits<V>::View View;
-    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
-    if (! (VarImp::vti == vti))
+  template <class VarImp> VarImp*
+  Var::var(void) const {
+    if (! (VarImp::vti == _vti))
       throw ReflectionException("VTI mismatch");
-
-    View view(static_cast<VarImp*>(var));
-    V v(view);
-    return v;
+    return static_cast<VarImp*>(_var);
   }
 
   /** \addtogroup TaskReflection

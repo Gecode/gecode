@@ -40,13 +40,13 @@ namespace Gecode { namespace Gist {
 
 IntVar
 ReflectionHelpers::toIntVar(Reflection::VarMap& vm, int i) {
-  IntVar v = vm.var<IntVar>(i);
+  IntVar v = vm.var(i);
   return v;
 }
 
 IntVar
 ReflectionHelpers::toIntVar(Reflection::VarMap& vm, Support::Symbol s) {
-  IntVar v = vm.var<IntVar>(s);
+  IntVar v = vm.var(s);
   return v;
 }
 

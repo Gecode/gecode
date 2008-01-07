@@ -731,6 +731,8 @@ namespace Gecode {
     SetVar(const SetVar& x0);
     /// Initialize from set view \a x0
     SetVar(const Set::SetView& x0);
+    /// Initialize from reflection variable \a x0
+    SetVar(const Reflection::Var& x0);
 
     /// Initialize variable with empty greatest lower and full least upper bound
     GECODE_SET_EXPORT SetVar(Space* home);

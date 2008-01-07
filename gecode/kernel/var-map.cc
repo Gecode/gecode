@@ -209,6 +209,16 @@ namespace Gecode { namespace Reflection {
     return vo->sharedObjects[i];
   }
 
+  Var
+  VarMap::var(const Support::Symbol& n) const {
+    return Var(varImpBase(n), spec(n).vti());
+  }
+
+  Var
+  VarMap::var(int i) const {
+    return Var(varImpBase(i), spec(i).vti());
+  }
+
   /* Variable map iterator */
 
   VarMapIter::VarMapIter(VarMap& m0) : m(&m0), i(0) {}
@@ -224,6 +234,11 @@ namespace Gecode { namespace Reflection {
 
   void
   VarMapIter::operator++(void) { i++; }  
+
+  Var
+  VarMapIter::var(void) const {
+    return Var(varImpBase(), spec().vti());
+  }
 
 }}
 

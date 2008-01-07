@@ -726,6 +726,8 @@ namespace Gecode {
     IntVar(const IntVar& x);
     /// Initialize from integer view \a x
     IntVar(const Int::IntView& x);
+    /// Initialize from reflection variable \a x
+    IntVar(const Reflection::Var& x);
     /**
      * \brief Initialize variable with range domain
      *
@@ -882,6 +884,8 @@ namespace Gecode {
     BoolVar(const BoolVar& x);
     /// Initialize from Boolean view \a x
     BoolVar(const Int::BoolView& x);
+    /// Initialize from reflection variable \a x
+    BoolVar(const Reflection::Var& x);
     /**
      * \brief Initialize Boolean variable with range domain
      *
