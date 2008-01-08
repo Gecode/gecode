@@ -35,6 +35,8 @@
 #
 #
 
+use File::Basename;
+
 while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   $i++;
   if ($arg eq "-header") {
@@ -46,8 +48,9 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   }
 }
 
-
 $varfile = $ARGV[$i];
+
+my ($filename, $directory, $suffix) = fileparse($varfile);
 
 open VARFILE, $varfile;
 
@@ -104,7 +107,7 @@ EOF
 ;
 
 for ($f=0; $f<$n_files; $f++) {
-  open FILE, $files[$f];
+  open (FILE, $directory.$files[$f]) || die "Could not open ".$files[$f];
 
   ## General values
   $name[$f]    = "";
