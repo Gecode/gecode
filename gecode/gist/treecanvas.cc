@@ -36,19 +36,20 @@
 
 #include "gecode/gist/treecanvas.hh"
 
+#include <QtGui/QPainter>
+
+#include <stack>
+#include <fstream>
+
 #include "gecode/gist/nodevisitor.hh"
 #include "gecode/gist/shapelist.hh"
 #include "gecode/gist/visualnode.hh"
-
 #include "gecode/gist/postscript.hh"
 #include "gecode/gist/drawingcursor.hh"
 #include "gecode/gist/analysiscursor.hh"
-
-#include <QtGui/QPainter>
-#include <stack>
-
 #include "gecode/gist/addchild.hh"
-#include <fstream>
+#include "gecode/gist/config.hh"
+
 namespace Gecode { namespace Gist {
 
   Inspector::~Inspector(void) {}
@@ -730,7 +731,6 @@ namespace Gecode { namespace Gist {
     refresh = i;
   }
   
-#ifdef GECODE_GIST_EXPERIMENTAL
   void
   TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm) {
     QMutexLocker locker(&mutex);
@@ -741,6 +741,53 @@ namespace Gecode { namespace Gist {
     }
   }
 
+  void
+  TreeCanvasImpl::addVisualisation(QStringList vars, QString visType, QString windowName) {
+    Config conf;
+    
+    pt2createView cv = conf.visualisationMap.value(visType);
+    
+    Reflection::VarMap vm;
+    Space* rootSpace = root->getSpace();
+    rootSpace->getVars(vm, false);
+    delete rootSpace;
+    
+    QWidget* varView = cv(vm, nextPit, vars, this);
+
+    varView->setWindowTitle(windowName);
+    
+    // TODO nikopp: this should be handled somewhere else, i.e. dockWidget
+    varView->setWindowFlags(Qt::Tool);
+    
+    varView->show();
+
+    connect(this, SIGNAL(inspect(Gecode::Reflection::VarMap&, int)),
+            varView, SLOT(display(Gecode::Reflection::VarMap&, int)));
+    connect(this, SIGNAL(pointInTimeChanged(int)),
+            varView, SLOT(displayOld(int)));
+  }
+  
+  void
+  TreeCanvasImpl::addVisualisation(void) {
+
+    Config conf;
+    
+    Reflection::VarMap rootVm;
+    getRootVars(rootVm);
+
+    AddVisualisationDialog* addVisDialog = new AddVisualisationDialog(conf, rootVm, this);
+
+    if(addVisDialog->exec()) {
+
+      QStringList itemList = addVisDialog->vars();
+      QString visualisation = addVisDialog->vis();
+      QString name = addVisDialog->name();
+
+      addVisualisation(itemList, visualisation, name);
+    }
+  }
+
+#ifdef GECODE_GIST_EXPERIMENTAL
   void
   TreeCanvasImpl::toggleDebug(void) {
     if(currentNode->isStepNode()) {
@@ -1053,6 +1100,10 @@ namespace Gecode { namespace Gist {
     inspectPath->setShortcut(QKeySequence("Shift+I"));
     connect(inspectPath, SIGNAL(triggered()), canvas, SLOT(inspectPath()));
 
+    addVisualisation = new QAction("Add visualisation", this);
+    addVisualisation->setShortcut(QKeySequence("Shift+V"));
+    connect(addVisualisation, SIGNAL(triggered()), canvas, SLOT(addVisualisation()));
+
     toggleHeatView = new QAction("Toggle heat view", this);
     toggleHeatView->setShortcut(QKeySequence("Y"));
     connect(toggleHeatView, SIGNAL(triggered()), canvas, 
@@ -1108,6 +1159,7 @@ namespace Gecode { namespace Gist {
     addAction(exportPostscript);
     addAction(print);
 
+    addAction(addVisualisation);
     addAction(toggleHeatView);
     addAction(analyzeTree);
     
@@ -1169,6 +1221,7 @@ namespace Gecode { namespace Gist {
     
 #ifdef GECODE_GIST_EXPERIMENTAL
     connect(timeBar, SIGNAL(valueChanged(int)), canvas, SLOT(markCurrentNode(int)));
+    connect(timeBar, SIGNAL(valueChanged(int)), canvas, SIGNAL(pointInTimeChanged(int)));
 #endif
     
     layout->addWidget(scrollArea, 0,0);

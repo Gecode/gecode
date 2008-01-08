@@ -35,8 +35,7 @@
  */
 
 #include "gecode/gist/addchild.hh"
-
-#include "reflectionhelpers.hh"
+#include "gecode/gist/reflectionhelpers.hh"
 
 namespace Gecode { namespace Gist {
 

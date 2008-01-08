@@ -555,7 +555,11 @@ GISTHDR0 = \
 	nodevisitor.icc postscript.hh shapelist.hh \
 	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh \
 	mainwindow.hh \
-	addchild.hh ui_addchild.hh reflectionhelpers.hh \
+	addchild.hh addvisualisationdialog.hh reflectionhelpers.hh \
+	ui_addchild.hh ui_addvisualisationdialog.hh\
+	config.hh \
+	visualisation/intvararrayitem.hh visualisation/intvararrayview.hh \
+	visualisation/intvaritem.hh \
 	analysiscursor.hh
 
 GISTSRC0 = \
@@ -563,11 +567,16 @@ GISTSRC0 = \
 	postscript.cc shapelist.cc spacenode.cc \
 	textoutput.cc treecanvas.cc visualnode.cc \
 	mainwindow.cc preferences.cc \
-	addchild.cc reflectionhelpers.cc \
+	addchild.cc addvisualisationdialog.cc reflectionhelpers.cc \
+	config.cc \
+	visualisation/intvararrayitem.cc visualisation/intvararrayview.cc \
+	visualisation/intvaritem.cc \
 	analysiscursor.cc
 
 GISTMOCSRC0 = \
-	moc_treecanvas.cc moc_addchild.cc moc_mainwindow.cc moc_preferences.cc
+	moc_treecanvas.cc moc_mainwindow.cc moc_preferences.cc \
+	moc_addchild.cc moc_addvisualisationdialog.cc \
+	visualisation/moc_intvararrayview.cc
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
@@ -576,7 +585,7 @@ GISTHDR = $(GISTHDR0:%=gecode/gist/%)
 GISTOBJ	= $(GISTSRC:%.cc=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(OBJSUFFIX))
 GISTSBJ	= $(GISTSRC:%.cc=%$(SBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(SBJSUFFIX))
 
-GISTBUILDDIRS = gist
+GISTBUILDDIRS = gist gist/visualisation
 
 ifeq "@enable_gist@" "yes"
 export GISTDLL		= $(LIBPREFIX)@GIST@$(DLLSUFFIX)
@@ -969,6 +978,23 @@ gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cc
 
 gecode/gist/moc_%.cc: $(top_srcdir)/gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
+
+gecode/gist/visualisation/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cc
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	@GECODE_BUILD_GIST_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+
+gecode/gist/visualisation/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cc
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	@GECODE_BUILD_GIST_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
+gecode/gist/visualisation/moc_%$(OBJSUFFIX): gecode/gist/visualisation/moc_%.cc
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	@GECODE_BUILD_GIST_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+
+gecode/gist/visualisation/moc_%.cc: $(top_srcdir)/gecode/gist/visualisation/%.hh
+	$(MOC) $(CPPFLAGS) -pgecode/gist/visualisation $< -o $@
 
 #
 # DLL Targets

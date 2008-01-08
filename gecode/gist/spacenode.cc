@@ -171,7 +171,7 @@ namespace Gecode { namespace Gist {
       // TODO nikopp: as long as the SpecialDesc is evaluated in the switch below, we need this varMap here
       Reflection::VarMap vm;
       if(specialNodeOnPath) {
-        curSpace->getVars(vm);
+        curSpace->getVars(vm, false);
       }
 
 #endif      
@@ -222,8 +222,8 @@ namespace Gecode { namespace Gist {
 #ifdef GECODE_GIST_EXPERIMENTAL
               if(b.desc.special != NULL) {
 
-                const char* vName = b.desc.special->vn.c_str();
-                VarImpBase* var = vm.var(vName);
+                const Support::Symbol vName = b.desc.special->vn.c_str();
+//                VarImpBase* var = vm.var(vName);
 
                 if(vm.spec(vName).vti() == Int::IntVarImp::vti) {
                   IntVar iv = vm.var(vName);

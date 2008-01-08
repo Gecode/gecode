@@ -171,6 +171,7 @@ namespace Gecode { namespace Gist {
     toolsMenu->addAction(c.analyzeTree);
     toolsMenu->addSeparator();
     toolsMenu->addAction(c.toggleHeatView);
+    toolsMenu->addAction(c.addVisualisation);
     
     QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
     QAction* aboutAction = helpMenu->addAction(tr("About"));

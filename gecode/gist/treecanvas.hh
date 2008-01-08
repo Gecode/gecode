@@ -37,13 +37,16 @@
 #ifndef GECODE_GIST_TREECANVAS_HH
 #define GECODE_GIST_TREECANVAS_HH
 
+#include <QtGui>
+
+#include "gecode/kernel.hh"
+
 #include "gecode/gist/gist.hh"
 #include "gecode/gist/visualnode.hh"
-#include <QtGui>
+#include "gecode/gist/addvisualisationdialog.hh"
+
 // TODO nikopp: this include is just to get proper syntax highlighting in Eclipse
 #include <qobject.h>
-
-#include <gecode/kernel.hh>
 
 namespace Gecode {  namespace Gist {
   
@@ -160,6 +163,13 @@ namespace Gecode {  namespace Gist {
     /// Set refresh rate
     void setRefresh(int i);
 
+    /// Calls getVars(\a vm) on the space of the root node
+    void getRootVars(Gecode::Reflection::VarMap& vm);
+    /// Add a visualisation of type \a visType for \a vars
+    void addVisualisation(QStringList vars, QString visType, QString windowName = "");
+    /// Add a visualisation via a dialog
+    void addVisualisation(void);
+
 #ifdef GECODE_GIST_EXPERIMENTAL
     /// Add a new special node as child to the current node via dialog
     void addChild(void);
@@ -167,8 +177,6 @@ namespace Gecode {  namespace Gist {
     void addChild(const QString&, int, int);
     /// Add a new fixpoint node as child to the current node if it is a special node
     void addFixpoint(void);
-    /// Calls getVars(\a vm) on the space of the root node
-    void getRootVars(Gecode::Reflection::VarMap& vm);
     /// Expand or collapse the current node
     void expandCurrentNode(void);
     /// Enable gdb debugging if the current node is a step node
@@ -189,6 +197,8 @@ namespace Gecode {  namespace Gist {
     void currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus);
     /// The node with space \a s is inspected at point in time \a pit
     void inspect(Gecode::Reflection::VarMap& vm, int pit);
+    /// The point in time changed to \a pit
+    void pointInTimeChanged(int pit);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
@@ -285,6 +295,7 @@ namespace Gecode {  namespace Gist {
 
     QAction* setPath;
     QAction* inspectPath;
+    QAction* addVisualisation;
 
     QAction* toggleHeatView;
     QAction* analyzeTree;
@@ -325,7 +336,6 @@ namespace Gecode {  namespace Gist {
     void statusChanged(const Statistics&, bool);
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-    
   private Q_SLOTS:
     void on_canvas_inspect(Gecode::Reflection::VarMap&, int);
     void on_forwardTimeStep_triggered(void);
