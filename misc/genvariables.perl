@@ -391,9 +391,9 @@ if ($gen_typeicc) {
     print "    /// End of bits for propagator modification event\n";
     print "    static const int pme_bits_lst = pme_bits_fst + me_bits_num;\n";
     print "    /// Return difference when changing modification event \\a me_o to \\a me_n\n";
-    print "    static ModEvent mec(ModEvent me_o, ModEvent me_n);\n";
+    print "    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);\n";
     print "    /// Variable type identifier for reflection\n";
-    print "    static GECODE_KERNEL_EXPORT const Support::Symbol vti;\n";
+    print "    static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;\n";
     print "  };\n";
     print $ftr[$f];
     if (!($ifdef[$f] eq "")) {
@@ -443,8 +443,8 @@ if ($gen_typeicc) {
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
     print $hdr[$f];
-    print "  forceinline ModEvent\n";
-    print "  $conf[$f]::mec(ModEvent me_o, ModEvent me_n) {\n";
+    print "  forceinline Gecode::ModEvent\n";
+    print "  $conf[$f]::mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n) {\n";
 
     if ($me_max_n[$f] == 2) {
       print "    return (me_o|me_n)^me_o;\n";
@@ -510,7 +510,7 @@ if ($gen_typeicc) {
 	}
       }
       print "    };\n";
-      print "    return med[me_n][me_o];\n";
+      print "    return static_cast<Gecode::ModEvent>(med[me_n][me_o]);\n";
     }
     print "  }\n\n";
     print $ftr[$f];
@@ -545,7 +545,7 @@ if ($gen_typecc) {
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
     print $hdr[$f];
-    print "  const Support::Symbol $conf[$f]::vti = \"$name[$f]\";\n";
+    print "  const Gecode::Support::Symbol $conf[$f]::vti = \"$name[$f]\";\n";
     print $ftr[$f];
     print $endif[$f];
   }
@@ -570,12 +570,12 @@ EOF
   print <<EOF
   protected:
     /// Constructor for cloning \\a x
-    $class[$f](Space* home, bool share, $class[$f]\& x);
+    $class[$f](Gecode::Space* home, bool share, $class[$f]\& x);
   public:
     /// Constructor for creating static instance of variable
     $class[$f](void);
     /// Constructor for creating variable
-    $class[$f](Space* home);
+    $class[$f](Gecode::Space* home);
     /// \\name Dependencies
     //\@{
     /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
@@ -590,11 +590,11 @@ EOF
      * with modification event \\a me provided that \\a pc is different
      * from \\a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process);
     /// Subscribe advisor \\a a
-    void subscribe(Space* home, Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
-    ModEvent notify(Space* home, ModEvent me, Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
     //\@}
 EOF
 ;
@@ -621,13 +621,13 @@ if ($dispose[$f]) {
   $class[$f]::$class[$f](void) {}
 
   forceinline
-  $class[$f]::$class[$f](Space* home)
+  $class[$f]::$class[$f](Gecode::Space* home)
     : $base[$f](home) {
      _next_d = static_cast<$class[$f]*>(vars_d(home)); vars_d(home,this);
   }
 
   forceinline
-  $class[$f]::$class[$f](Space* home, bool share, $class[$f]\& x)
+  $class[$f]::$class[$f](Gecode::Space* home, bool share, $class[$f]\& x)
     : $base[$f](home,share,x) {
      _next_d = static_cast<$class[$f]*>(vars_d(home)); vars_d(home,this);
   }
@@ -646,11 +646,11 @@ EOF
   $class[$f]::$class[$f](void) {}
 
   forceinline
-  $class[$f]::$class[$f](Space* home)
+  $class[$f]::$class[$f](Gecode::Space* home)
     : $base[$f](home) {}
 
   forceinline
-  $class[$f]::$class[$f](Space* home, bool share, $class[$f]\& x)
+  $class[$f]::$class[$f](Gecode::Space* home, bool share, $class[$f]\& x)
     : $base[$f](home,share,x) {}
 EOF
 ;
@@ -658,11 +658,11 @@ EOF
   print <<EOF
 
   forceinline void
-  $class[$f]::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+  $class[$f]::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process) {
     $base[$f]::subscribe(home,p,pc,assigned,$me_subscribe[$f],process);
   }
   forceinline void
-  $class[$f]::subscribe(Space* home, Advisor* a, bool assigned) {
+  $class[$f]::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
     $base[$f]::subscribe(home,a,assigned);
   }
 
@@ -671,10 +671,10 @@ EOF
 
 if ($me_max_n[$f] == 2) {
   print <<EOF
-  forceinline ModEvent
-  $class[$f]::notify(Space* home, ModEvent me, Delta* d) {
-    if (me_failed($base[$f]::notify(home,me,d)))
-      return ME_GEN_FAILED;
+  forceinline Gecode::ModEvent
+  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    if (Gecode::me_failed($base[$f]::notify(home,me,d)))
+      return Gecode::ME_GEN_FAILED;
     process(home);
     return me;
   }
@@ -683,10 +683,10 @@ EOF
 ;
 } else {
   print <<EOF
-  forceinline ModEvent
-  $class[$f]::notify(Space* home, ModEvent me, Delta* d) {
-    if (me_failed($base[$f]::notify(home,me,d)))
-      return ME_GEN_FAILED;
+  forceinline Gecode::ModEvent
+  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    if (Gecode::me_failed($base[$f]::notify(home,me,d)))
+      return Gecode::ME_GEN_FAILED;
     switch (me) {
 EOF
 ;

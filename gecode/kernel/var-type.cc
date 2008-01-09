@@ -41,23 +41,26 @@
 
 #ifdef GECODE_HAVE_INT_VARS
 namespace Gecode { namespace Int { 
-  const Support::Symbol IntVarImpConf::vti = "Int";
+  const Gecode::Support::Symbol IntVarImpConf::vti = "Int";
 }}
 #endif
 #ifdef GECODE_HAVE_INT_VARS
 namespace Gecode { namespace Int { 
-  const Support::Symbol BoolVarImpConf::vti = "Bool";
+  const Gecode::Support::Symbol BoolVarImpConf::vti = "Bool";
 }}
 #endif
 #ifdef GECODE_HAVE_SET_VARS
 namespace Gecode { namespace Set { 
-  const Support::Symbol SetVarImpConf::vti = "Set";
+  const Gecode::Support::Symbol SetVarImpConf::vti = "Set";
 }}
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
 namespace Gecode { namespace CpltSet { 
-  const Support::Symbol CpltSetVarImpConf::vti = "CpltSet";
+  const Gecode::Support::Symbol CpltSetVarImpConf::vti = "CpltSet";
 }}
 #endif
+
+  const Gecode::Support::Symbol TestVarImpConf::vti = "Test";
+
 
 // STATISTICS: kernel-var

@@ -43,12 +43,12 @@ namespace Gecode { namespace Int {
   class IntVarImpBase : public Gecode::VarImp<Gecode::Int::IntVarImpConf> {
   protected:
     /// Constructor for cloning \a x
-    IntVarImpBase(Space* home, bool share, IntVarImpBase& x);
+    IntVarImpBase(Gecode::Space* home, bool share, IntVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     IntVarImpBase(void);
     /// Constructor for creating variable
-    IntVarImpBase(Space* home);
+    IntVarImpBase(Gecode::Space* home);
     /// \name Dependencies
     //@{
     /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
@@ -63,11 +63,11 @@ namespace Gecode { namespace Int {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process);
     /// Subscribe advisor \a a
-    void subscribe(Space* home, Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    ModEvent notify(Space* home, ModEvent me, Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
     //@}
 
   };
@@ -77,26 +77,26 @@ namespace Gecode { namespace Int {
   IntVarImpBase::IntVarImpBase(void) {}
 
   forceinline
-  IntVarImpBase::IntVarImpBase(Space* home)
+  IntVarImpBase::IntVarImpBase(Gecode::Space* home)
     : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home) {}
 
   forceinline
-  IntVarImpBase::IntVarImpBase(Space* home, bool share, IntVarImpBase& x)
+  IntVarImpBase::IntVarImpBase(Gecode::Space* home, bool share, IntVarImpBase& x)
     : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home,share,x) {}
 
   forceinline void
-  IntVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+  IntVarImpBase::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process) {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,p,pc,assigned,ME_INT_BND,process);
   }
   forceinline void
-  IntVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+  IntVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline ModEvent
-  IntVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
-    if (me_failed(Gecode::VarImp<Gecode::Int::IntVarImpConf>::notify(home,me,d)))
-      return ME_GEN_FAILED;
+  forceinline Gecode::ModEvent
+  IntVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    if (Gecode::me_failed(Gecode::VarImp<Gecode::Int::IntVarImpConf>::notify(home,me,d)))
+      return Gecode::ME_GEN_FAILED;
     switch (me) {
     case ME_INT_VAL:
       process(home);
@@ -121,12 +121,12 @@ namespace Gecode { namespace Int {
   class BoolVarImpBase : public Gecode::VarImp<Gecode::Int::BoolVarImpConf> {
   protected:
     /// Constructor for cloning \a x
-    BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x);
+    BoolVarImpBase(Gecode::Space* home, bool share, BoolVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     BoolVarImpBase(void);
     /// Constructor for creating variable
-    BoolVarImpBase(Space* home);
+    BoolVarImpBase(Gecode::Space* home);
     /// \name Dependencies
     //@{
     /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
@@ -141,11 +141,11 @@ namespace Gecode { namespace Int {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process);
     /// Subscribe advisor \a a
-    void subscribe(Space* home, Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    ModEvent notify(Space* home, ModEvent me, Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
     //@}
 
   };
@@ -155,26 +155,26 @@ namespace Gecode { namespace Int {
   BoolVarImpBase::BoolVarImpBase(void) {}
 
   forceinline
-  BoolVarImpBase::BoolVarImpBase(Space* home)
+  BoolVarImpBase::BoolVarImpBase(Gecode::Space* home)
     : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home) {}
 
   forceinline
-  BoolVarImpBase::BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x)
+  BoolVarImpBase::BoolVarImpBase(Gecode::Space* home, bool share, BoolVarImpBase& x)
     : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home,share,x) {}
 
   forceinline void
-  BoolVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+  BoolVarImpBase::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process) {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,process);
   }
   forceinline void
-  BoolVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+  BoolVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline ModEvent
-  BoolVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
-    if (me_failed(Gecode::VarImp<Gecode::Int::BoolVarImpConf>::notify(home,me,d)))
-      return ME_GEN_FAILED;
+  forceinline Gecode::ModEvent
+  BoolVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    if (Gecode::me_failed(Gecode::VarImp<Gecode::Int::BoolVarImpConf>::notify(home,me,d)))
+      return Gecode::ME_GEN_FAILED;
     process(home);
     return me;
   }
@@ -187,12 +187,12 @@ namespace Gecode { namespace Set {
   class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
   protected:
     /// Constructor for cloning \a x
-    SetVarImpBase(Space* home, bool share, SetVarImpBase& x);
+    SetVarImpBase(Gecode::Space* home, bool share, SetVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     SetVarImpBase(void);
     /// Constructor for creating variable
-    SetVarImpBase(Space* home);
+    SetVarImpBase(Gecode::Space* home);
     /// \name Dependencies
     //@{
     /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
@@ -207,11 +207,11 @@ namespace Gecode { namespace Set {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process);
     /// Subscribe advisor \a a
-    void subscribe(Space* home, Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    ModEvent notify(Space* home, ModEvent me, Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
     //@}
 
   };
@@ -221,26 +221,26 @@ namespace Gecode { namespace Set {
   SetVarImpBase::SetVarImpBase(void) {}
 
   forceinline
-  SetVarImpBase::SetVarImpBase(Space* home)
+  SetVarImpBase::SetVarImpBase(Gecode::Space* home)
     : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home) {}
 
   forceinline
-  SetVarImpBase::SetVarImpBase(Space* home, bool share, SetVarImpBase& x)
+  SetVarImpBase::SetVarImpBase(Gecode::Space* home, bool share, SetVarImpBase& x)
     : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home,share,x) {}
 
   forceinline void
-  SetVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+  SetVarImpBase::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process) {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,process);
   }
   forceinline void
-  SetVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+  SetVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline ModEvent
-  SetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
-    if (me_failed(Gecode::VarImp<Gecode::Set::SetVarImpConf>::notify(home,me,d)))
-      return ME_GEN_FAILED;
+  forceinline Gecode::ModEvent
+  SetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    if (Gecode::me_failed(Gecode::VarImp<Gecode::Set::SetVarImpConf>::notify(home,me,d)))
+      return Gecode::ME_GEN_FAILED;
     switch (me) {
     case ME_SET_VAL:
       process(home);
@@ -289,12 +289,12 @@ namespace Gecode { namespace CpltSet {
     CpltSetVarImpBase* _next_d;
   protected:
     /// Constructor for cloning \a x
-    CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x);
+    CpltSetVarImpBase(Gecode::Space* home, bool share, CpltSetVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     CpltSetVarImpBase(void);
     /// Constructor for creating variable
-    CpltSetVarImpBase(Space* home);
+    CpltSetVarImpBase(Gecode::Space* home);
     /// \name Dependencies
     //@{
     /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
@@ -309,11 +309,11 @@ namespace Gecode { namespace CpltSet {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process);
     /// Subscribe advisor \a a
-    void subscribe(Space* home, Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    ModEvent notify(Space* home, ModEvent me, Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
     //@}
     /// Return link to next variable to be disposed
     CpltSetVarImpBase* next_d(void) const;
@@ -325,13 +325,13 @@ namespace Gecode { namespace CpltSet {
   CpltSetVarImpBase::CpltSetVarImpBase(void) {}
 
   forceinline
-  CpltSetVarImpBase::CpltSetVarImpBase(Space* home)
+  CpltSetVarImpBase::CpltSetVarImpBase(Gecode::Space* home)
     : Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>(home) {
      _next_d = static_cast<CpltSetVarImpBase*>(vars_d(home)); vars_d(home,this);
   }
 
   forceinline
-  CpltSetVarImpBase::CpltSetVarImpBase(Space* home, bool share, CpltSetVarImpBase& x)
+  CpltSetVarImpBase::CpltSetVarImpBase(Gecode::Space* home, bool share, CpltSetVarImpBase& x)
     : Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>(home,share,x) {
      _next_d = static_cast<CpltSetVarImpBase*>(vars_d(home)); vars_d(home,this);
   }
@@ -343,18 +343,18 @@ namespace Gecode { namespace CpltSet {
 
 
   forceinline void
-  CpltSetVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+  CpltSetVarImpBase::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process) {
     Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,p,pc,assigned,ME_CPLTSET_DOM,process);
   }
   forceinline void
-  CpltSetVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+  CpltSetVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
     Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,a,assigned);
   }
 
-  forceinline ModEvent
-  CpltSetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
-    if (me_failed(Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::notify(home,me,d)))
-      return ME_GEN_FAILED;
+  forceinline Gecode::ModEvent
+  CpltSetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    if (Gecode::me_failed(Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::notify(home,me,d)))
+      return Gecode::ME_GEN_FAILED;
     switch (me) {
     case ME_CPLTSET_VAL:
       process(home);
@@ -369,6 +369,82 @@ namespace Gecode { namespace CpltSet {
   }
 }}
 #endif
+
+  /// Base-class for Test-variable implementations
+  class TestVarImpBase : public Gecode::VarImp<::TestVarImpConf> {
+  protected:
+    /// Constructor for cloning \a x
+    TestVarImpBase(Gecode::Space* home, bool share, TestVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    TestVarImpBase(void);
+    /// Constructor for creating variable
+    TestVarImpBase(Gecode::Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \a a
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    //@}
+
+  };
+
+
+  forceinline
+  TestVarImpBase::TestVarImpBase(void) {}
+
+  forceinline
+  TestVarImpBase::TestVarImpBase(Gecode::Space* home)
+    : Gecode::VarImp<::TestVarImpConf>(home) {}
+
+  forceinline
+  TestVarImpBase::TestVarImpBase(Gecode::Space* home, bool share, TestVarImpBase& x)
+    : Gecode::VarImp<::TestVarImpConf>(home,share,x) {}
+
+  forceinline void
+  TestVarImpBase::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process) {
+    Gecode::VarImp<::TestVarImpConf>::subscribe(home,p,pc,assigned,ME_TEST_BND,process);
+  }
+  forceinline void
+  TestVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
+    Gecode::VarImp<::TestVarImpConf>::subscribe(home,a,assigned);
+  }
+
+  forceinline Gecode::ModEvent
+  TestVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    if (Gecode::me_failed(Gecode::VarImp<::TestVarImpConf>::notify(home,me,d)))
+      return Gecode::ME_GEN_FAILED;
+    switch (me) {
+    case ME_TEST_VAL:
+      process(home);
+      break;
+    case ME_TEST_BND:
+      // Conditions: BND DOM 
+      process(home,PC_TEST_BND,PC_TEST_DOM,ME_TEST_BND);
+      break;
+    case ME_TEST_DOM:
+      // Conditions: DOM 
+      process(home,PC_TEST_DOM,PC_TEST_DOM,ME_TEST_DOM);
+      break;
+    default: GECODE_NEVER;
+    }
+    return me;
+  }
+
 namespace Gecode {
 
   forceinline void
@@ -385,6 +461,7 @@ namespace Gecode {
 #ifdef GECODE_HAVE_CPLTSET_VARS
     Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::update(this,sub);
 #endif
+    Gecode::VarImp<::TestVarImpConf>::update(this,sub);
   }
 }
 // STATISTICS: kernel-var
