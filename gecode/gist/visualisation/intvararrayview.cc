@@ -74,6 +74,9 @@ namespace Gecode { namespace Gist { namespace Visualisation {
    setFixedSize(sceneRect().size().toSize() + QSize(5,5));
   }
 
+  // TODO nikopp: this ist not used yet and I am not sure if it is a good idea at all
+  //              maybe one should just create a new visualisation instead of resetting
+  //              the old one
   void IntVarArrayView::reset(void) {
 
     scene->removeItem(intVarArrayItem);

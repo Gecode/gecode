@@ -62,6 +62,8 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       QBitArray array(arraylength, false);
       updates.push(array);
 
+      setToolTip(spec->name().toString().c_str());
+      
       updateGraphic();
     }
     else {
@@ -75,7 +77,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     if(arraylength < 0) {
       return;
     }
-    
+
     store(spec);
     current = ++noOfUpdates;
     updateGraphic();
@@ -86,7 +88,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     if(arraylength < 0 || pit > noOfUpdates || pit < 0) {
       return;
     }
-    
+
     current = pit;
     updateGraphic();
   }
@@ -130,13 +132,13 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
     int domSize = dom->size();
     bool assigned = (*dom)[0] == (*dom)[domSize-1];
-    
+
     QBitArray array(arraylength, false);
 
     int i = initMin;
     int k = 0;
     int j = 0;
-    
+
     while(k < domSize) {
       while(i < (*dom)[k]) {
         array.setBit(2*j,true);
@@ -148,18 +150,18 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       j = i - initMin;
       ++k;
     }
-    
+
     if(assigned) {
       array.setBit(2*(j-1),true);
       array.setBit(2*(j-1)+1,true);
     }
-    
+
     while(i <= initMax) {
       array.setBit(2*j,true);
       ++i;
       ++j;
     }
-    
+
     updates.push(array);
   }
 
