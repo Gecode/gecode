@@ -461,7 +461,7 @@ if ($gen_typeicc) {
     print "  $conf[$f]::mec(ModEvent me_o, ModEvent me_n) {\n";
 
     if ($me_max_n[$f] == 2) {
-      print "    return me_o^me_n;\n";
+      print "    return (me_o|me_n)^me_o;\n";
     } elsif ($me_max_n[$f] <= 4) {
       print "    const int med = (\n";
 
@@ -686,8 +686,11 @@ EOF
 if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline ModEvent
-  $class[$f]::notify(Space* home, ModEvent, Delta* d) {
-    return $base[$f]::notify(home,d);
+  $class[$f]::notify(Space* home, ModEvent me, Delta* d) {
+    if (me_failed($base[$f]::notify(home,me,d)))
+      return ME_GEN_FAILED;
+    process(home);
+    return me;
   }
 
 EOF
@@ -696,12 +699,66 @@ EOF
   print <<EOF
   forceinline ModEvent
   $class[$f]::notify(Space* home, ModEvent me, Delta* d) {
-    return $base[$f]::notify(home,me,d);
+    if (me_failed($base[$f]::notify(home,me,d)))
+      return ME_GEN_FAILED;
+    switch (me) {
+EOF
+;
+
+  for ($i=0; $i<$pc_n[$f]; $i++) {
+     if ($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED") {
+       $val2pc[$f][0] = $pcn[$f][$i];
+     }
+  }
+  $o = 1;
+  for ($i=0; $i<$pc_n[$f]; $i++) {
+     if (!($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED")) {
+       $val2pc[$f][$o] = $pcn[$f][$i]; $o++;
+     }
   }
 
+  for ($i=0; $i<$me_n[$f]; $i++) {
+    $n = $men[$f][$i];
+    if ($mespecial{$f}{$n} eq "ASSIGNED") {
+      print "    case ME_$vti[$f]_$n:\n";
+      print "      process(home);\n";
+      print "      break;\n";
+    } elsif (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
+      print "    case ME_$vti[$f]_$n:\n";
+      print "      // Conditions: ";
+      for ($j=0; $j<$pc_n[$f]; $j++) {
+        if ($mepc{$f}{$men[$f][$i]}{$pcn[$f][$j]}) {
+          print $pcn[$f][$j] . " ";
+        }
+      }
+      print "\n";
+      for ($j=0; $j<$pc_n[$f]; $j++) {
+	if ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j]}) {
+	  # Found initial entry (plus one for stopping)
+	  print "      process(home,PC_$vti[$f]_" . $val2pc[$f][$j] . ",";
+	  # Look for all connected entries
+	  while ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j+1]}) {
+	    $j++;
+          }
+	  # Found last entry
+	  print "PC_$vti[$f]_" . $val2pc[$f][$j] . ",ME_$vti[$f]_$n);\n";
+	}
+      }
+      print "      break;\n";
+    }
+  }
+
+
+  print <<EOF
+    default: GECODE_NEVER;
+    }
+    return me;
+  }
 EOF
 ;
 }
+
+
 print $ftr[$f];
 
 print $endif[$f];

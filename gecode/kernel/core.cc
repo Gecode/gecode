@@ -177,80 +177,42 @@ namespace Gecode {
   bool
   Space::propagate(unsigned long int& pn) {
     assert(!failed());
-    // To initialize pointer
-    PropModEvent  pme_dummy = 0;
-    // Point to propagator modevent of last executed propagators
-    PropModEvent* pme_prop = &pme_dummy;
-    // Xor mask for last executed propagator
-    PropModEvent  pme_mask = 0;
-    while (true) {
-      // Process modified variables (in first iteration: from commit or setup)
-      process();
-      // Reset propagator modevent
-      *pme_prop ^= pme_mask;
-      Propagator* p;
-      if (!pool_get(p))
-        return true;
-      pn++; pme_prop = &p->u.pme;
-      ExecStatus es = p->propagate(this,p->u.pme);
-      p->unlink(); 
-      switch (es) {
+    Propagator* p;
+    while (pool_get(p)) {
+      pn++;
+      // Keep old propagator modification events
+      PropModEvent pme_o = p->u.pme;
+      // Clear pme but leave propagator in queue
+      p->u.pme = 0;
+      switch (p->propagate(this,pme_o)) {
       case ES_FAILED:
         fail(); 
         return false;
       case ES_FIX:
-        // Propagator is currently in no queue, put into idle
-        a_actors.head(p);
-        // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = AllVarConf::pme_assigned;
-        // The mask resets all events after processing (idle)
-        pme_mask = AllVarConf::pme_assigned;
+        // Clear pme and put into idle queue
+        p->u.pme = 0; p->unlink(); a_actors.head(p);
         break;
       case ES_NOFIX:
-        // Propagator is currently in no queue, put into idle
-        a_actors.head(p);
-        // Mark propagator as idle
-        p->u.pme = 0;
-        // The mask leaves the pme unchanged
-        pme_mask = 0;
+        // If no need to be run, clear pme and put into idle queue
+        if (p->u.pme == 0) {
+          p->unlink(); a_actors.head(p);
+        }
         break;
       case __ES_SUBSUMED:
-        /*
-         * Even though the propagator is already subsumed, it might
-         * still be contained in the dependency arrays of assigned
-         * variables. This is due to the fact that propagators
-         * are not unsubscribed from assigned variable implementations.
-         *
-         * This is quite dirty: the propagator is already reused,
-         * even though its pme might be used in processing. However,
-         * this is safe: only the pme is used, and the pme will not be
-         * overwritten by reusing the memory (unless memory is requested,
-         * which does not happen during processing).
-         */
-        reuse(p,p->u.size);
-        // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = AllVarConf::pme_assigned;
-        // The mask does not matter
+        p->unlink(); reuse(p,p->u.size);
         break;
       case __ES_FIX_PARTIAL:
         // Schedule propagator with specified propagator events
-        pool_put(p);
-        // Remember the event set to be kept after processing
-        pme_mask = AllVarConf::pme_assigned ^ p->u.pme;
-        // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = AllVarConf::pme_assigned;
+        p->unlink(); pool_put(p);
         break;
       case __ES_NOFIX_PARTIAL:
-        // Start from the specified propagator events
-        pool_put(p);
-        // The mask leaves the pme unchanged
-        pme_mask = 0;
+        // Schedule propagator with specified propagator events
+        p->unlink(); pool_put(p);
         break;
       default:
         GECODE_NEVER;
       }
     }
-    GECODE_NEVER;
     return true;
   }
 
@@ -279,85 +241,7 @@ namespace Gecode {
    */
   ExecStatus
   Space::step(void) {
-    if (failed())
-      return ES_FAILED;
-
-    // Point to propagator after one process iteration
-    Propagator* p = NULL;
-    // Xor mask for last executed propagator
-    PropModEvent pme_mask = 0;
-    // ExecStatus of last executed propagator
-    ExecStatus es = ES_STABLE;
-    while (true) {
-      // Process modified variables (in first iteration: from commit or setup)
-      process();
-      // Reset propagator modevent
-      if (p != NULL) {
-        p->u.pme ^= pme_mask;
-        return es;
-      }
-      if (!pool_get(p))
-        return ES_STABLE;
-      es = p->propagate(this,p->u.pme);
-      p->unlink(); 
-      switch (es) {
-      case ES_FAILED:
-        fail(); 
-        return ES_FAILED;
-      case ES_FIX:
-        // Put propagator in idle queue
-        a_actors.head(p);
-        // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = AllVarConf::pme_assigned;
-        // The mask resets all events after processing (idle)
-        pme_mask = AllVarConf::pme_assigned;
-        break;
-      case ES_NOFIX:
-        // Propagator is currently in no queue, put into idle
-        a_actors.head(p);
-        // Mark propagator as idle
-        p->u.pme = 0;
-        // The mask leaves the pme unchanged
-        pme_mask = 0;
-        break;
-      case __ES_SUBSUMED:
-        /*
-         * Even though the propagator is already subsumed, it might
-         * still be contained in the dependency arrays of assigned
-         * variables. This is due to the fact that propagators
-         * are not unsubscribed from assigned variable implementations.
-         *
-         * This is quite dirty: the propagator is already reused,
-         * even though its pme might be used in processing. However,
-         * this is safe: only the pme is used, and the pme will not be
-         * overwritten by reusing the memory (unless memory is requested,
-         * which does not happen during processing).
-         */
-        reuse(p,p->u.size);
-        // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = AllVarConf::pme_assigned;
-        // The mask does not matter
-        break;
-      case __ES_FIX_PARTIAL:
-        // Schedule propagator with specified propagator events
-        pool_put(p);
-        // Remember the event set to be kept after processing
-        pme_mask = AllVarConf::pme_assigned ^ p->u.pme;
-        // Prevent that propagator gets rescheduled (turn on all events)
-        p->u.pme = AllVarConf::pme_assigned;
-        break;
-      case __ES_NOFIX_PARTIAL:
-        // Start from the specified propagator events
-        pool_put(p);
-        // The mask leaves the pme unchanged
-        pme_mask = 0;
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    }
-    GECODE_NEVER;
-    return es;
+    return ES_FAILED;
   }
 
   void

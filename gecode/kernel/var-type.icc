@@ -522,7 +522,7 @@ namespace Gecode { namespace Int {
 namespace Gecode { namespace Int { 
   forceinline ModEvent
   BoolVarImpConf::mec(ModEvent me_o, ModEvent me_n) {
-    return me_o^me_n;
+    return (me_o|me_n)^me_o;
   }
 
 }}

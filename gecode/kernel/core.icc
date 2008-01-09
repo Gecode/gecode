@@ -327,8 +327,6 @@ namespace Gecode {
     void resize(Space* home);
     /// Remove propagator or advisor from subscription array
     void remove(Space* home, ActorLink* a, PropCond pc);
-    /// Execute advisors during notification
-    ModEvent advise(Space* home, ModEvent me, Delta* d);
 
   protected:
     /// Return reference to variables (process and update)
@@ -391,15 +389,6 @@ namespace Gecode {
      * Returns ME_GEN_FAILED if notification has failed, \a me otherwise.
      */
     ModEvent notify(Space* home, ModEvent me, Delta* d);
-    /**
-     * \brief Notify that variable implementation has been assigned with domain change \a d
-     *
-     * This function can only be used, if the variable implementation supports
-     * a single modification event.
-     *
-     * Returns ME_GEN_FAILED if notification has failed, \a me otherwise.
-     */
-    ModEvent notify(Space* home, Delta* d);
     //@}
 
     /// \name Cloning variables
@@ -424,7 +413,7 @@ namespace Gecode {
     static ModEvent combine(ModEvent me1, ModEvent me2);
     //@}
 
-  private:
+  protected:
     /// \name Processing modified variables
     //@{
     /// Return next modified variable and reset (during processing)
@@ -2096,21 +2085,25 @@ namespace Gecode {
 
   forceinline ExecStatus
   ES_SUBSUMED(Propagator* p, size_t s) {
-    p->u.size = s; return __ES_SUBSUMED;
+    p->u.size = s; 
+    return __ES_SUBSUMED;
   }
   forceinline ExecStatus
   ES_SUBSUMED(Propagator* p, Space* home) {
-    p->u.size = p->dispose(home); return __ES_SUBSUMED;
+    p->u.size = p->dispose(home); 
+    return __ES_SUBSUMED;
   }
 
   forceinline ExecStatus
   ES_FIX_PARTIAL(Propagator* p, PropModEvent pme) {
-    p->u.pme = pme; return __ES_FIX_PARTIAL;
+    p->u.pme = pme; 
+    return __ES_FIX_PARTIAL;
   }
 
   forceinline ExecStatus
   ES_NOFIX_PARTIAL(Propagator* p, PropModEvent pme) {
-    p->u.pme = pme; return __ES_NOFIX_PARTIAL;
+    p->u.pme ^= AllVarConf::pmec(p->u.pme,pme); 
+    return __ES_NOFIX_PARTIAL;
   }
 
 
@@ -2243,7 +2236,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline ModEvent
-  VarImp<VIC>::advise(Space* home, ModEvent me, Delta* d) {
+  VarImp<VIC>::notify(Space* home, ModEvent me, Delta* d) {
     /*
      * An advisor that is executed might remove itself due to subsumtion.
      * As entries are removed from front to back, the advisors must
@@ -2274,28 +2267,6 @@ namespace Gecode {
     } while (++la < le);
     return me;
   }
-
-  template <class VIC>
-  forceinline ModEvent
-  VarImp<VIC>::notify(Space* home, ModEvent me, Delta* d) {
-    if (_next != reinterpret_cast<VarImpBase*>(1)) {
-      u.free_me ^= VIC::mec(static_cast<ModEvent>(u.free_me & me_bits_mask),
-                            me);
-    } else {
-      _next = vars_pu(home); vars_pu(home,this);
-      u.free_me = (u.free_me & ~me_bits_mask) | me;
-    }
-    return advise(home,me,d);
-  }
-
-  template <class VIC>
-  forceinline ModEvent
-  VarImp<VIC>::notify(Space* home, Delta* d) {
-    assert(_next == reinterpret_cast<VarImpBase*>(1));
-    _next = vars_pu(home); vars_pu(home,this);
-    return advise(home,ME_GEN_ASSIGNED,d);
-  }
-
 
 
 
