@@ -418,8 +418,6 @@ namespace Gecode {
     //@{
     /// Return next modified variable and reset (during processing)
     VarImp* next(void);
-    /// Return current modification event of variable
-    ModEvent modevent(void) const;
     /// Process subscribed propagators
     void process(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
     /// Process subscribed propagators for assigned variable
@@ -1793,12 +1791,6 @@ namespace Gecode {
   }
 
 
-
-  template <class VIC>
-  forceinline ModEvent
-  VarImp<VIC>::modevent(void) const {
-    return static_cast<ModEvent>(u.free_me & me_bits_mask);
-  }
 
   template <class VIC>
   forceinline unsigned int
