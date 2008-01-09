@@ -451,24 +451,9 @@ if ($gen_typeicc) {
       print " |\n";
     }
   }
+  print "    /// Return difference when changing propagator modification event \\a pme2 to \\a pme1\n";
+  print "    static PropModEvent pmec(PropModEvent pme1, PropModEvent pme2);\n";
   print "  };\n\n}\n\n";
-}
-
-if ($gen_typecc) {
-  print "#include \"gecode/kernel.hh\"\n";
-  print "\n";
-  for ($f = 0; $f<$n_files; $f++) {
-    print $ifdef[$f];
-    print $hdr[$f];
-    print "  const Support::Symbol $conf[$f]::vti = \"$name[$f]\";\n";
-    print $ftr[$f];
-    print $endif[$f];
-  }
-  print "\n";
-}
-
-if ($gen_header) {
-
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
     print $hdr[$f];
@@ -542,10 +527,52 @@ if ($gen_header) {
       print "    return med[me1][me2];\n";
     }
     print "  }\n\n";
+    print $ftr[$f];
+    print $endif[$f];
+  }
+  print "namespace Gecode {\n";
+  print "  forceinline PropModEvent\n";
+  print "  AllVarConf::pmec(PropModEvent pme_n, PropModEvent pme_o) {\n";
+  for ($f = 0; $f<$n_files; $f++) {
+    $vic = "$namespace[$f]::$conf[$f]";
+    print $ifdef[$f];
+    print "    {\n";
+    print "      // Compute the old modification event\n";
+    print "      ModEvent me_o = (pme_o >> ${vic}::pme_bits_fst) & ${vic}::me_bits_mask;\n";
+    print "      // Compute the new modification event\n";
+    print "      ModEvent me_n = (pme_n >> ${vic}::pme_bits_fst) & ${vic}::me_bits_mask;\n";
+    print "      // Compute combined event\n";
+    print "      ModEvent me_c = ${vic}::mec(me_n,me_o);\n";
+    print "      // Set combined event\n";
+    print "      pme_o ^= me_c << ${vic}::pme_bits_fst;\n";
+    print "    }\n";
+    print $endif[$f];
+  }
+  print "    return pme_o;\n";
+  print "  }\n}\n\n";
+}
+
+if ($gen_typecc) {
+  print "#include \"gecode/kernel.hh\"\n";
+  print "\n";
+  for ($f = 0; $f<$n_files; $f++) {
+    print $ifdef[$f];
+    print $hdr[$f];
+    print "  const Support::Symbol $conf[$f]::vti = \"$name[$f]\";\n";
+    print $ftr[$f];
+    print $endif[$f];
+  }
+  print "\n";
+}
+
+if ($gen_header) {
+  for ($f = 0; $f<$n_files; $f++) {
+    print $ifdef[$f];
+    print $hdr[$f];
     print "  /// Base-class for $name[$f]-variable implementations\n";
     print "  class $class[$f] : public $base[$f] {\n";
     if ($dispose[$f]) {
-    print <<EOF
+      print <<EOF
   private:
     /// Link to next variable, used for disposal
     $class[$f]* _next_d;

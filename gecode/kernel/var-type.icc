@@ -477,8 +477,245 @@ namespace Gecode {
         Gecode::Int::BoolVarImpConf::pme_assigned |
         Gecode::Set::SetVarImpConf::pme_assigned |
         Gecode::CpltSet::CpltSetVarImpConf::pme_assigned;
+    /// Return difference when changing propagator modification event \a pme2 to \a pme1
+    static PropModEvent pmec(PropModEvent pme1, PropModEvent pme2);
   };
 
+}
+
+#ifdef GECODE_HAVE_INT_VARS
+namespace Gecode { namespace Int { 
+  forceinline ModEvent
+  IntVarImpConf::mec(ModEvent me1, ModEvent me2) {
+    const int med = (
+      (
+        ((ME_INT_NONE ^ ME_INT_NONE) << 0) |  // [ME_INT_NONE][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 2) |  // [ME_INT_NONE][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 4) |  // [ME_INT_NONE][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_DOM) << 6)    // [ME_INT_NONE][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_VAL) << 8) |  // [ME_INT_VAL][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 10) |  // [ME_INT_VAL][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_VAL) << 12) |  // [ME_INT_VAL][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_VAL) << 14)    // [ME_INT_VAL][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_BND) << 16) |  // [ME_INT_BND][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 18) |  // [ME_INT_BND][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 20) |  // [ME_INT_BND][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_BND) << 22)    // [ME_INT_BND][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_DOM) << 24) |  // [ME_INT_DOM][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 26) |  // [ME_INT_DOM][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 28) |  // [ME_INT_DOM][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_DOM) << 30)    // [ME_INT_DOM][ME_INT_DOM]
+      )
+    );
+    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);
+  }
+
+}}
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+namespace Gecode { namespace Int { 
+  forceinline ModEvent
+  BoolVarImpConf::mec(ModEvent me1, ModEvent me2) {
+    return me2^me1;
+  }
+
+}}
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+namespace Gecode { namespace Set { 
+  forceinline ModEvent
+  SetVarImpConf::mec(ModEvent me1, ModEvent me2) {
+    static const unsigned char med[ME_SET_CBB+1][ME_SET_CBB+1] = {
+      {
+        ME_SET_NONE ^ ME_SET_NONE, // [ME_SET_NONE][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_NONE][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CARD, // [ME_SET_NONE][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_LUB, // [ME_SET_NONE][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_GLB, // [ME_SET_NONE][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_BB, // [ME_SET_NONE][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_NONE][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_NONE][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_NONE][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_VAL  // [ME_SET_VAL][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_CARD, // [ME_SET_CARD][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CARD][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CARD, // [ME_SET_CARD][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_CLUB, // [ME_SET_CARD][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_CGLB, // [ME_SET_CARD][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CARD][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_CARD][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_CARD][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CARD][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_LUB, // [ME_SET_LUB][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_LUB][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CLUB, // [ME_SET_LUB][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_LUB, // [ME_SET_LUB][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_BB, // [ME_SET_LUB][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_BB, // [ME_SET_LUB][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_LUB][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_LUB][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_LUB][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_GLB, // [ME_SET_GLB][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_GLB][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CGLB, // [ME_SET_GLB][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_BB, // [ME_SET_GLB][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_GLB, // [ME_SET_GLB][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_BB, // [ME_SET_GLB][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_GLB][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_GLB][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_GLB][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_BB, // [ME_SET_BB][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_BB][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_BB][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CLUB][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CLUB][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CGLB][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CGLB][ME_SET_CBB]
+      },
+      {
+        ME_SET_NONE ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_NONE]
+        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CBB][ME_SET_VAL]
+        ME_SET_CARD ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CARD]
+        ME_SET_LUB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_LUB]
+        ME_SET_GLB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_GLB]
+        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_BB]
+        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CLUB]
+        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CGLB]
+        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CBB][ME_SET_CBB]
+      }
+    };
+    return med[me1][me2];
+  }
+
+}}
+#endif
+#ifdef GECODE_HAVE_CPLTSET_VARS
+namespace Gecode { namespace CpltSet { 
+  forceinline ModEvent
+  CpltSetVarImpConf::mec(ModEvent me1, ModEvent me2) {
+    const int med = (
+      (
+        ((ME_CPLTSET_NONE ^ ME_CPLTSET_NONE) << 0) |  // [ME_CPLTSET_NONE][ME_CPLTSET_NONE]
+        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 2) |  // [ME_CPLTSET_NONE][ME_CPLTSET_VAL]
+        ((ME_CPLTSET_DOM ^ ME_CPLTSET_DOM) << 4)    // [ME_CPLTSET_NONE][ME_CPLTSET_DOM]
+      ) |
+      (
+        ((ME_CPLTSET_NONE ^ ME_CPLTSET_VAL) << 8) |  // [ME_CPLTSET_VAL][ME_CPLTSET_NONE]
+        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 10) |  // [ME_CPLTSET_VAL][ME_CPLTSET_VAL]
+        ((ME_CPLTSET_DOM ^ ME_CPLTSET_VAL) << 12)    // [ME_CPLTSET_VAL][ME_CPLTSET_DOM]
+      ) |
+      (
+        ((ME_CPLTSET_NONE ^ ME_CPLTSET_DOM) << 16) |  // [ME_CPLTSET_DOM][ME_CPLTSET_NONE]
+        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 18) |  // [ME_CPLTSET_DOM][ME_CPLTSET_VAL]
+        ((ME_CPLTSET_DOM ^ ME_CPLTSET_DOM) << 20)    // [ME_CPLTSET_DOM][ME_CPLTSET_DOM]
+      )
+    );
+    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);
+  }
+
+}}
+#endif
+namespace Gecode {
+  forceinline PropModEvent
+  AllVarConf::pmec(PropModEvent pme_n, PropModEvent pme_o) {
+#ifdef GECODE_HAVE_INT_VARS
+    {
+      // Compute the old modification event
+      ModEvent me_o = (pme_o >> Gecode::Int::IntVarImpConf::pme_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
+      // Compute the new modification event
+      ModEvent me_n = (pme_n >> Gecode::Int::IntVarImpConf::pme_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
+      // Compute combined event
+      ModEvent me_c = Gecode::Int::IntVarImpConf::mec(me_n,me_o);
+      // Set combined event
+      pme_o ^= me_c << Gecode::Int::IntVarImpConf::pme_bits_fst;
+    }
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+    {
+      // Compute the old modification event
+      ModEvent me_o = (pme_o >> Gecode::Int::BoolVarImpConf::pme_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
+      // Compute the new modification event
+      ModEvent me_n = (pme_n >> Gecode::Int::BoolVarImpConf::pme_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
+      // Compute combined event
+      ModEvent me_c = Gecode::Int::BoolVarImpConf::mec(me_n,me_o);
+      // Set combined event
+      pme_o ^= me_c << Gecode::Int::BoolVarImpConf::pme_bits_fst;
+    }
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    {
+      // Compute the old modification event
+      ModEvent me_o = (pme_o >> Gecode::Set::SetVarImpConf::pme_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
+      // Compute the new modification event
+      ModEvent me_n = (pme_n >> Gecode::Set::SetVarImpConf::pme_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
+      // Compute combined event
+      ModEvent me_c = Gecode::Set::SetVarImpConf::mec(me_n,me_o);
+      // Set combined event
+      pme_o ^= me_c << Gecode::Set::SetVarImpConf::pme_bits_fst;
+    }
+#endif
+#ifdef GECODE_HAVE_CPLTSET_VARS
+    {
+      // Compute the old modification event
+      ModEvent me_o = (pme_o >> Gecode::CpltSet::CpltSetVarImpConf::pme_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
+      // Compute the new modification event
+      ModEvent me_n = (pme_n >> Gecode::CpltSet::CpltSetVarImpConf::pme_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
+      // Compute combined event
+      ModEvent me_c = Gecode::CpltSet::CpltSetVarImpConf::mec(me_n,me_o);
+      // Set combined event
+      pme_o ^= me_c << Gecode::CpltSet::CpltSetVarImpConf::pme_bits_fst;
+    }
+#endif
+    return pme_o;
+  }
 }
 
 // STATISTICS: kernel-var
