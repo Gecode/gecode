@@ -754,20 +754,16 @@ EOF
 namespace Gecode {
 
   forceinline void
-  Space::update(ActorLink** s) {
+  Space::update(ActorLink** sub) {
 EOF
 ;
 
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
-    print <<EOF
-    for ($base[$f]* x = $base[$f]::vars_u(this); x != NULL; x = x->next())
-      x->forward()->update(x,s);
-EOF
-;
-  print $endif[$f];
+    print "    $base[$f]::update(this,sub);\n";
+    print $endif[$f];
+  }
 
-}
   print <<EOF
   }
 }

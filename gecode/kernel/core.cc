@@ -394,9 +394,16 @@ namespace Gecode {
      *
      */
     // Update variables without indexing structure
-    for (VarImpBase* x = c->pu.u.vars_noidx; x != NULL; x = x->next()) {
-      x->u.free = 0;
-      x->u.fwd  = NULL;
+    {
+      VarImp<NoIdxVarImpConf>* x = 
+        static_cast<VarImp<NoIdxVarImpConf>*>(c->pu.u.vars_noidx);
+      while (x != NULL) {
+        VarImp<NoIdxVarImpConf>* n = x->next();
+        x->free_copied = 1+0;
+        x->idx[0]      = NULL;
+        x->idx[1]      = NULL;
+        x = n;
+      }
     }
     // Update variables with indexing structure
     {

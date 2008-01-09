@@ -372,22 +372,18 @@ namespace Gecode { namespace CpltSet {
 namespace Gecode {
 
   forceinline void
-  Space::update(ActorLink** s) {
+  Space::update(ActorLink** sub) {
 #ifdef GECODE_HAVE_INT_VARS
-    for (Gecode::VarImp<Gecode::Int::IntVarImpConf>* x = Gecode::VarImp<Gecode::Int::IntVarImpConf>::vars_u(this); x != NULL; x = x->next())
-      x->forward()->update(x,s);
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::update(this,sub);
 #endif
 #ifdef GECODE_HAVE_INT_VARS
-    for (Gecode::VarImp<Gecode::Int::BoolVarImpConf>* x = Gecode::VarImp<Gecode::Int::BoolVarImpConf>::vars_u(this); x != NULL; x = x->next())
-      x->forward()->update(x,s);
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::update(this,sub);
 #endif
 #ifdef GECODE_HAVE_SET_VARS
-    for (Gecode::VarImp<Gecode::Set::SetVarImpConf>* x = Gecode::VarImp<Gecode::Set::SetVarImpConf>::vars_u(this); x != NULL; x = x->next())
-      x->forward()->update(x,s);
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::update(this,sub);
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
-    for (Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>* x = Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::vars_u(this); x != NULL; x = x->next())
-      x->forward()->update(x,s);
+    Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::update(this,sub);
 #endif
   }
 }

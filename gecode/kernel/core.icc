@@ -171,6 +171,33 @@ namespace Gecode {
 
 namespace Gecode {
 
+  /// Configuration class for variable implementations without index structure
+  class NoIdxVarImpConf {
+  public:
+    /// Index for update
+    static const int idx_u = -1;
+    /// Index for disposal
+    static const int idx_d = -1;
+    /// Maximal propagation condition
+    static const PropCond pc_max = PC_GEN_ASSIGNED;
+    /// Start of bits for propagator modification event
+    static const int pme_bits_fst = 0;
+    /// Number of bits for propagator modification event
+    static const int me_bits_num = 0;
+    /// Bitmask for propagator modification event
+    static const int me_bits_mask = 0;
+    /// End of bits for propagator modification event
+    static const int pme_bits_lst = 0;
+    /// Return difference when changing modification event \a me_o to \a me_n
+    static ModEvent mec(ModEvent me_o, ModEvent me_n) {
+      GECODE_NEVER; return 0;
+    }
+    /// Variable type identifier for reflection
+    static GECODE_KERNEL_EXPORT const Support::Symbol vti;
+  };
+
+
+
   /*
    * These are the classes of interest
    *
@@ -196,21 +223,7 @@ namespace Gecode {
    * template arguments.
    * \ingroup TaskVar
    */
-  class VarImpBase {
-    friend class Space;
-  protected:
-    /// Either next modified or next copied variable
-    VarImpBase* _next; 
-    /// Combine processing and update information
-    union {
-      /// Number of free entries
-      unsigned int free;
-      /// Store the forwarding pointer during copying
-      VarImpBase* fwd;
-    } u;
-    /// Return next modified variable and reset (during processing)
-    VarImpBase* next(void);
-  };
+  class VarImpBase {};
 
   /**
    * \brief Base class for %Variable type disposer
@@ -288,7 +301,22 @@ namespace Gecode {
     static const int idx_d = VIC::idx_d;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = VIC::pc_max;
-    /// Stores where entries start (idx[pc])
+    /**
+     * \brief Number of free entries and whether variable has been copied
+     *
+     * If the value is zero, the variable implementation has been copied
+     * already. Otherwise, the number of free entries is the value
+     * minus one.
+     */
+    unsigned int free_copied;
+    /**
+     * \brief Stores where entries start (idx[pc])
+     *
+     * During update, the first two entries in the original are used
+     * for cloning (the original values are stored in the copy).
+     *  - idx[0] is used as forwarding pointer
+     *  - idx[1] points to the next copied variable
+     */
     ActorLink** idx[pc_max+3];
 
     /**
@@ -298,6 +326,13 @@ namespace Gecode {
      * to be stored.
      */
     void update(VarImp* x, ActorLink**& sub);
+    /**
+     * \brief Update all copied variables of this type
+     *
+     * The argument \a sub gives the memory area where subscriptions are
+     * to be stored.
+     */
+    static void update(Space* home, ActorLink**& sub);
 
     /// Enter propagator or advisor to subscription array
     void enter(Space* home, ActorLink* a, PropCond pc);
@@ -307,10 +342,6 @@ namespace Gecode {
     void remove(Space* home, ActorLink* a, PropCond pc);
 
   protected:
-    /// Return reference to variables (update)
-    static VarImp<VIC>* vars_u(Space* home);
-    /// Set reference to variables (update)
-    static void vars_u(Space* home, VarImp<VIC>* x);
 #ifdef GECODE_HAVE_VAR_DISPOSE
     /// Return reference to variables (dispose)
     static VarImp<VIC>* vars_d(Space* home);
@@ -359,7 +390,12 @@ namespace Gecode {
      *
      */
     void cancel(Space* home, Advisor* p, bool assigned);
-    /// Return degree (number of subscribed propagators and advisors)
+    /**
+     * \brief Return degree (number of subscribed propagators and advisors)
+     *
+     * Note that the degree of a variable implementation is not available
+     * during copying.
+     */
     unsigned int degree(void) const;
     /**
      * \brief Notify that variable implementation has been modified with modification event \a me and domain change \a d
@@ -377,6 +413,8 @@ namespace Gecode {
     bool copied(void) const;
     /// Use forward pointer if variable already copied
     VarImp* forward(void) const;
+    /// Return next copied variable
+    VarImp* next(void) const;
     //@}
 
     /// \name Variable implementation-dependent propagator support
@@ -392,10 +430,8 @@ namespace Gecode {
     //@}
 
   protected:
-    /// \name Processing modified variables
+    /// \name Processing subscribed propagators
     //@{
-    /// Return next modified variable and reset (during processing)
-    VarImp* next(void);
     /// Process subscribed propagators
     void process(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
     /// Process subscribed propagators for assigned variable
@@ -1035,10 +1071,6 @@ namespace Gecode {
     /// Set reference to variables (dispose)
     template <class VIC> void vars_d(VarImpBase* x);
 #endif
-    /// Return reference to variables (update)
-    template <class VIC> VarImpBase* vars_u(void) const;
-    /// Set reference to variables (update)
-    template <class VIC> void vars_u(VarImpBase* x);
     /// Update all cloned variables
     void update(ActorLink** sub);
     //@}
@@ -1336,17 +1368,6 @@ namespace Gecode {
   forceinline void
   Space::fl_dispose(FreeList* f, FreeList* l) {
     mm.template fl_dispose<s>(f,l);
-  }
-
-  template <class VIC>
-  forceinline VarImpBase*
-  Space::vars_u(void) const {
-    return pu.u.vars_u[VIC::idx_u];
-  }
-  template <class VIC>
-  forceinline void
-  Space::vars_u(VarImpBase* x) {
-    pu.u.vars_u[VIC::idx_u] = x;
   }
 
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -1739,9 +1760,7 @@ namespace Gecode {
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space*) {
-    _next = reinterpret_cast<VarImpBase*>(1);
-    u.free = 0;
-    u.fwd  = NULL;
+    free_copied = 1+0;
     for (int i=pc_max+3; i--; )
       idx[i] = NULL;
   }
@@ -1749,9 +1768,7 @@ namespace Gecode {
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(void) {
-    _next = reinterpret_cast<VarImpBase*>(1);
-    u.free = 0;
-    u.fwd  = NULL;
+    free_copied = 1+0;
     for (int i=pc_max+3; i--; )
       idx[i] = NULL;
   }
@@ -1760,26 +1777,8 @@ namespace Gecode {
   template <class VIC>
   forceinline unsigned int
   VarImp<VIC>::degree(void) const {
+    assert(!copied());
     return static_cast<unsigned int>(idx[pc_max+2] - idx[0]);
-  }
-
-  forceinline VarImpBase*
-  VarImpBase::next(void) {
-    VarImpBase* n = _next;
-    _next = reinterpret_cast<VarImpBase*>(1);
-    return n;
-  }
-
-  template <class VIC>
-  forceinline VarImp<VIC>*
-  VarImp<VIC>::vars_u(Space* home) {
-    return static_cast<VarImp<VIC>*>(home->vars_u<VIC>());
-  }
-
-  template <class VIC>
-  forceinline void
-  VarImp<VIC>::vars_u(Space* home, VarImp<VIC>* x) {
-    home->vars_u<VIC>(x);
   }
 
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -1797,45 +1796,48 @@ namespace Gecode {
 #endif
 
   template <class VIC>
-  forceinline VarImp<VIC>*
-  VarImp<VIC>::next(void) {
-    return static_cast<VarImp<VIC>*>(VarImpBase::next());
-  }
-
-  template <class VIC>
   forceinline bool
   VarImp<VIC>::copied(void) const {
-    return _next != reinterpret_cast<VarImpBase*>(1);
+    return free_copied == 0;
+  }
+  template <class VIC>
+  forceinline VarImp<VIC>*
+  VarImp<VIC>::forward(void) const {
+    assert(copied());
+    return reinterpret_cast<VarImp<VIC>*>(idx[0]);
+  }
+  template <class VIC>
+  forceinline VarImp<VIC>*
+  VarImp<VIC>::next(void) const {
+    assert(copied());
+    return reinterpret_cast<VarImp<VIC>*>(idx[1]);
   }
 
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space* home, bool, VarImp<VIC>& x) {
-    _next = reinterpret_cast<VarImpBase*>(1);
     VarImpBase** reg;
     if (x.idx[0] == NULL) {
       // Variable implementation needs no index structure
-      u.free = 0;
-      u.fwd  = NULL;
+      free_copied = 1+0;
       for (int i=pc_max+3; i--; )
         idx[i] = NULL;
       reg = &home->pu.u.vars_noidx;
     } else {
-      // Recover original value in copy
-      u.free = x.u.free;
-      reg = &home->pu.u.vars_u[VIC::idx_u];
+      // Save original values in copy
+      free_copied = x.free_copied;
+      idx[0] = x.idx[0];
+      idx[1] = x.idx[1];
+      reg = &home->pu.u.vars_u[idx_u];
     }
+    // Mark original as copied
+    x.free_copied = 0;
     // Set forwarding pointer
-    x.u.fwd = this;
+    x.idx[0] = reinterpret_cast<ActorLink**>(this);
     // Register original
-    x._next = *reg; *reg = &x;
+    x.idx[1] = reinterpret_cast<ActorLink**>(*reg); *reg = &x;
   }
 
-  template <class VIC>
-  forceinline VarImp<VIC>*
-  VarImp<VIC>::forward(void) const {
-    return static_cast<VarImp<VIC>*>(u.fwd);
-  }
 
   /*
    * Propagator modification events
@@ -2055,9 +2057,9 @@ namespace Gecode {
   VarImp<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
     // Count one new subscription
     home->pu.p.n_sub += 1;
-    if (u.free == 0)
+    if (free_copied == 1)
       resize(home);
-    u.free--;
+    free_copied--;
     // Enter subscription
     --idx[0];
     for (PropCond i = 0; i < pc; i++)
@@ -2068,10 +2070,10 @@ namespace Gecode {
   template <class VIC>
   void
   VarImp<VIC>::resize(Space* home) {
-    assert(u.free == 0);
+    assert(free_copied == 1);
     if (idx[0] == NULL) {
-      // Create fresh dependency array
-      u.free = 4;
+      // Create fresh dependency array with four entries
+      free_copied = 1+4;
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(4*sizeof(ActorLink*))) + 4;
       for (PropCond i = pc_max+3; i--; )
@@ -2089,7 +2091,7 @@ namespace Gecode {
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(m*sizeof(ActorLink*))) + m-n;
-      u.free = m-n;
+      free_copied = 1+m-n;
       // Copy entries
       memcpy(prop, idx[0], n*sizeof(ActorLink*));
       home->reuse(idx[0], n*sizeof(ActorLink*));
@@ -2154,7 +2156,7 @@ namespace Gecode {
     for (PropCond i=pc; i>0; i--)
       *(idx[i]++)=*(idx[i-1]);
     idx[0]++;
-    u.free++;
+    free_copied++;
     home->pu.p.n_sub -= 1;
   }
 
@@ -2218,12 +2220,13 @@ namespace Gecode {
   VarImp<VIC>::update(VarImp<VIC>* x, ActorLink**& sub) {
     // this refers to the variable to be updated (clone)
     // x refers to the original
-    // Recover from copy (also overwrites forwarding pointer)
-    x->u.free = u.free;
+    // Recover from copy
+    x->free_copied = free_copied;
+    x->idx[0]      = idx[0];
+    x->idx[1]      = idx[1];
     ActorLink** f = x->idx[0];
     int n = static_cast<int>(x->idx[pc_max+2] - f);
-    u.free = 0;
-    u.fwd  = NULL;
+    free_copied = 1+0;
     ActorLink** t = sub;
     sub += n;
     idx[0] = t;
@@ -2243,6 +2246,15 @@ namespace Gecode {
     }
     if (n > 0) {
       t[0]=f[0]->prev();
+    }
+  }
+
+  template <class VIC>
+  forceinline void
+  VarImp<VIC>::update(Space* home, ActorLink**& sub) {
+    VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home->pu.u.vars_u[idx_u]);
+    while (x != NULL) {
+      VarImp<VIC>* n = x->next(); x->forward()->update(x,sub); x = n;
     }
   }
 
@@ -2294,7 +2306,7 @@ namespace Gecode {
       ActorLink** p = idx[pc_max+2];
       home->pu.p.n_sub -= (p-b);
       // Information needed to release the dependency array
-      unsigned int n = u.free + (p-b);
+      unsigned int n = (free_copied-1) + (p-b);
       home->reuse(p-n,n*sizeof(ActorLink*));
       for (int i=pc_max+3; i--; )
         idx[i] = NULL;
