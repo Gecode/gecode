@@ -245,9 +245,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       Iter::Ranges::Minus<IntVarRanges> > u2(x1r1,x1m);
     GECODE_ME_CHECK(x0.inter_r(home, u2));
 
-    if (x1.assigned()) {
-      return ES_SUBSUMED(this,sizeof(*this));
-    }
+    if (x1.assigned())
+      return ES_SUBSUMED(this,home);
 
     if (x0.min() >= 0)
       GECODE_REWRITE(this,(Rel::EqDom<View,View>::post(home,x0,x1)));
