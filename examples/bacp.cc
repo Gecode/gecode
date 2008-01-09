@@ -39,6 +39,7 @@
 #include "examples/support.hh"
 
 #include <map>
+#include <string>
 #include <list>
 #include <vector>
 
@@ -107,7 +108,7 @@ public:
     int c = curr.c;
     int d = curr.d;
     
-    std::map<const char*, int> courseMap; // Map names to course numbers
+    std::map<std::string, int> courseMap; // Map names to course numbers
     int maxCredit = 0;
     int numberOfCourses = 0;
     for (const Course* c=curr.courses; c->name != 0; c++) {
