@@ -43,7 +43,7 @@ namespace Gecode {
    */
 
   forceinline
-  IntSet::IntSet(void) {}
+  IntSet::IntSet(void) : sar(0) {}
 
   template <class I>
   forceinline
