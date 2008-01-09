@@ -45,9 +45,6 @@
 #include "gecode/gist/visualnode.hh"
 #include "gecode/gist/addvisualisationdialog.hh"
 
-// TODO nikopp: this include is just to get proper syntax highlighting in Eclipse
-#include <qobject.h>
-
 namespace Gecode {  namespace Gist {
   
   class TreeCanvasImpl;
