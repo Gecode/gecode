@@ -56,9 +56,6 @@ namespace Gecode {
 
 
   Space::Space(void) {
-    // Initialize variable entry points
-    for (int i=0; i<AllVarConf::idx_pu; i++)
-      _vars_pu[i] = NULL;
 #ifdef GECODE_HAVE_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -285,13 +282,12 @@ namespace Gecode {
 
   Space::Space(bool share, Space& s) 
     : mm(s.mm,s.pu.p.n_sub*sizeof(Propagator**)) {
-    // Initialize variable entry points
-    for (int i=0; i<AllVarConf::idx_pu; i++)
-      _vars_pu[i] = NULL;
 #ifdef GECODE_HAVE_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
 #endif
+    for (int i=0; i<AllVarConf::idx_u; i++)
+      pu.u.vars_u[i] = NULL;
     pu.u.vars_noidx = NULL;
     pu.u.shared = NULL;
     // Copy all actors

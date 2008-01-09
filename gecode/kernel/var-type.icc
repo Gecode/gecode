@@ -289,8 +289,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = 0;
+    /// Index for update
+    static const int idx_u = 0;
     /// Index for disposal
     static const int idx_d = -1;
     /// Maximal propagation condition
@@ -314,8 +314,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = -1;
+    /// Index for update
+    static const int idx_u = -1;
     /// Index for disposal
     static const int idx_d = -1;
     /// End of bits for propagator modification event
@@ -328,8 +328,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = Gecode::Int::IntVarImpConf::idx_pu+1;
+    /// Index for update
+    static const int idx_u = Gecode::Int::IntVarImpConf::idx_u+1;
     /// Index for disposal
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// Maximal propagation condition
@@ -353,8 +353,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = Gecode::Int::IntVarImpConf::idx_pu;
+    /// Index for update
+    static const int idx_u = Gecode::Int::IntVarImpConf::idx_u;
     /// Index for disposal
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// End of bits for propagator modification event
@@ -367,8 +367,8 @@ namespace Gecode { namespace Set {
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = Gecode::Int::BoolVarImpConf::idx_pu+1;
+    /// Index for update
+    static const int idx_u = Gecode::Int::BoolVarImpConf::idx_u+1;
     /// Index for disposal
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// Maximal propagation condition
@@ -392,8 +392,8 @@ namespace Gecode { namespace Set {
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = Gecode::Int::BoolVarImpConf::idx_pu;
+    /// Index for update
+    static const int idx_u = Gecode::Int::BoolVarImpConf::idx_u;
     /// Index for disposal
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// End of bits for propagator modification event
@@ -411,8 +411,8 @@ namespace Gecode { namespace CpltSet {
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = Gecode::Set::SetVarImpConf::idx_pu+1;
+    /// Index for update
+    static const int idx_u = Gecode::Set::SetVarImpConf::idx_u+1;
     /// Index for disposal
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
     /// Maximal propagation condition
@@ -436,8 +436,8 @@ namespace Gecode { namespace CpltSet {
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = Gecode::Set::SetVarImpConf::idx_pu;
+    /// Index for update
+    static const int idx_u = Gecode::Set::SetVarImpConf::idx_u;
     /// Index for disposal
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
     /// End of bits for propagator modification event
@@ -451,8 +451,8 @@ namespace Gecode {
   /// Configuration class for all variable implementations
   class AllVarConf {
   public:
-    /// Index for processing and update
-    static const int idx_pu = Gecode::CpltSet::CpltSetVarImpConf::idx_pu+1;
+    /// Index for update
+    static const int idx_u = Gecode::CpltSet::CpltSetVarImpConf::idx_u+1;
     /// Index for dispose
     static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
     /// Return difference when changing propagator modification event \a pme_o to \a pme_n

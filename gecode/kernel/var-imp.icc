@@ -374,52 +374,20 @@ namespace Gecode {
   forceinline void
   Space::update(ActorLink** s) {
 #ifdef GECODE_HAVE_INT_VARS
-    {
-      using namespace Gecode::Int;
-      Gecode::VarImp<Gecode::Int::IntVarImpConf>* x = Gecode::VarImp<Gecode::Int::IntVarImpConf>::vars_pu(this);
-      if (x != NULL) {
-        Gecode::VarImp<Gecode::Int::IntVarImpConf>::vars_pu(this,NULL);
-        do {
-          x->forward()->update(x,s); x = x->next();
-        } while (x != NULL);
-      }
-    }
+    for (Gecode::VarImp<Gecode::Int::IntVarImpConf>* x = Gecode::VarImp<Gecode::Int::IntVarImpConf>::vars_u(this); x != NULL; x = x->next())
+      x->forward()->update(x,s);
 #endif
 #ifdef GECODE_HAVE_INT_VARS
-    {
-      using namespace Gecode::Int;
-      Gecode::VarImp<Gecode::Int::BoolVarImpConf>* x = Gecode::VarImp<Gecode::Int::BoolVarImpConf>::vars_pu(this);
-      if (x != NULL) {
-        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::vars_pu(this,NULL);
-        do {
-          x->forward()->update(x,s); x = x->next();
-        } while (x != NULL);
-      }
-    }
+    for (Gecode::VarImp<Gecode::Int::BoolVarImpConf>* x = Gecode::VarImp<Gecode::Int::BoolVarImpConf>::vars_u(this); x != NULL; x = x->next())
+      x->forward()->update(x,s);
 #endif
 #ifdef GECODE_HAVE_SET_VARS
-    {
-      using namespace Gecode::Set;
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>* x = Gecode::VarImp<Gecode::Set::SetVarImpConf>::vars_pu(this);
-      if (x != NULL) {
-        Gecode::VarImp<Gecode::Set::SetVarImpConf>::vars_pu(this,NULL);
-        do {
-          x->forward()->update(x,s); x = x->next();
-        } while (x != NULL);
-      }
-    }
+    for (Gecode::VarImp<Gecode::Set::SetVarImpConf>* x = Gecode::VarImp<Gecode::Set::SetVarImpConf>::vars_u(this); x != NULL; x = x->next())
+      x->forward()->update(x,s);
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
-    {
-      using namespace Gecode::CpltSet;
-      Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>* x = Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::vars_pu(this);
-      if (x != NULL) {
-        Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::vars_pu(this,NULL);
-        do {
-          x->forward()->update(x,s); x = x->next();
-        } while (x != NULL);
-      }
-    }
+    for (Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>* x = Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::vars_u(this); x != NULL; x = x->next())
+      x->forward()->update(x,s);
 #endif
   }
 }

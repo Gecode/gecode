@@ -288,8 +288,8 @@ namespace Gecode {
     friend class Propagator;
     template <class VarType> friend class VarDisposer;
   private:
-    /// Index for processing and update
-    static const int idx_pu = VIC::idx_pu;
+    /// Index for update
+    static const int idx_u = VIC::idx_u;
     /// Index for disposal
     static const int idx_d = VIC::idx_d;
     /// Maximal propagation condition
@@ -329,10 +329,10 @@ namespace Gecode {
     void remove(Space* home, ActorLink* a, PropCond pc);
 
   protected:
-    /// Return reference to variables (process and update)
-    static VarImp<VIC>* vars_pu(Space* home);
-    /// Set reference to variables (process and update)
-    static void vars_pu(Space* home, VarImp<VIC>* x);
+    /// Return reference to variables (update)
+    static VarImp<VIC>* vars_u(Space* home);
+    /// Set reference to variables (update)
+    static void vars_u(Space* home, VarImp<VIC>* x);
 #ifdef GECODE_HAVE_VAR_DISPOSE
     /// Return reference to variables (dispose)
     static VarImp<VIC>* vars_d(Space* home);
@@ -470,7 +470,7 @@ namespace Gecode {
     ES_FIX              =  1, ///< Propagation has computed fixpoint
     __ES_FIX_PARTIAL    =  2, ///< Internal: propagator has computed partial fixpoint, do not use
     __ES_NOFIX_PARTIAL  =  3, ///< Internal: propagator has computed no partial fixpoint, do not use
-    ES_STABLE           =  4  ///< Used for step(): space is already stable
+    ES_STABLE           =  4  ///< Used for step: space is already stable
   };
 
   /**
@@ -1027,6 +1027,8 @@ namespace Gecode {
       } p;
       /// Data available only during update
       struct {
+        /// Entries for updating variables
+        VarImpBase* vars_u[AllVarConf::idx_u];
         /// Keep variables during copying without index structure
         VarImpBase* vars_noidx;
         /// Linked list of shared objects
@@ -1049,23 +1051,17 @@ namespace Gecode {
 #ifdef GECODE_HAVE_VAR_DISPOSE
     /// Registered variable type disposers
     GECODE_KERNEL_EXPORT static VarDisposerBase* vd[AllVarConf::idx_d];
-#endif
-    /// Entries for processing and updating variables
-    VarImpBase* _vars_pu[AllVarConf::idx_pu];
-#ifdef GECODE_HAVE_VAR_DISPOSE
     /// Entries for disposing variables
     VarImpBase* _vars_d[AllVarConf::idx_d];
-#endif
-    /// Return reference to variables (process and update)
-    template <class VIC> VarImpBase* vars_pu(void) const;
-    /// Set reference to variables (process and update)
-    template <class VIC> void vars_pu(VarImpBase* x);
-#ifdef GECODE_HAVE_VAR_DISPOSE
     /// Return reference to variables (dispose)
     template <class VIC> VarImpBase* vars_d(void) const;
     /// Set reference to variables (dispose)
     template <class VIC> void vars_d(VarImpBase* x);
 #endif
+    /// Return reference to variables (update)
+    template <class VIC> VarImpBase* vars_u(void) const;
+    /// Set reference to variables (update)
+    template <class VIC> void vars_u(VarImpBase* x);
     /// Update all cloned variables
     void update(ActorLink** sub);
     //@}
@@ -1367,13 +1363,13 @@ namespace Gecode {
 
   template <class VIC>
   forceinline VarImpBase*
-  Space::vars_pu(void) const {
-    return _vars_pu[VIC::idx_pu];
+  Space::vars_u(void) const {
+    return pu.u.vars_u[VIC::idx_u];
   }
   template <class VIC>
   forceinline void
-  Space::vars_pu(VarImpBase* x) {
-    _vars_pu[VIC::idx_pu] = x;
+  Space::vars_u(VarImpBase* x) {
+    pu.u.vars_u[VIC::idx_u] = x;
   }
 
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -1825,14 +1821,14 @@ namespace Gecode {
 
   template <class VIC>
   forceinline VarImp<VIC>*
-  VarImp<VIC>::vars_pu(Space* home) {
-    return static_cast<VarImp<VIC>*>(home->vars_pu<VIC>());
+  VarImp<VIC>::vars_u(Space* home) {
+    return static_cast<VarImp<VIC>*>(home->vars_u<VIC>());
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::vars_pu(Space* home, VarImp<VIC>* x) {
-    home->vars_pu<VIC>(x);
+  VarImp<VIC>::vars_u(Space* home, VarImp<VIC>* x) {
+    home->vars_u<VIC>(x);
   }
 
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -1876,7 +1872,7 @@ namespace Gecode {
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
-      reg = &home->_vars_pu[VIC::idx_pu];
+      reg = &home->pu.u.vars_u[VIC::idx_u];
     }
     // Set forwarding pointer
     x.u.fwd = this;

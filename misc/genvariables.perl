@@ -353,12 +353,12 @@ if ($gen_typeicc) {
     print "  /// Configuration class for $name[$f]-variable implementations\n";
     print "  class $conf[$f] {\n";
     print "  public:\n";
-    print "    /// Index for processing and update\n";
-    print "    static const int idx_pu = ";
+    print "    /// Index for update\n";
+    print "    static const int idx_u = ";
     if ($f == 0) {
       print "0;\n";
     } else {
-      print "$namespace[$f-1]::$conf[$f-1]::idx_pu+1;\n";
+      print "$namespace[$f-1]::$conf[$f-1]::idx_u+1;\n";
     }
     print "    /// Index for disposal\n";
     print "    static const int idx_d = ";
@@ -402,12 +402,12 @@ if ($gen_typeicc) {
       print "  /// Configuration class for $name[$f]-variable implementations\n";
       print "  class $conf[$f] {\n";
       print "  public:\n";
-      print "    /// Index for processing and update\n";
-      print "    static const int idx_pu = ";
+      print "    /// Index for update\n";
+      print "    static const int idx_u = ";
       if ($f == 0) {
 	print "-1;\n";
       } else {
-	print "$namespace[$f-1]::$conf[$f-1]::idx_pu;\n";
+	print "$namespace[$f-1]::$conf[$f-1]::idx_u;\n";
       }
       print "    /// Index for disposal\n";
       print "    static const int idx_d = ";
@@ -433,8 +433,8 @@ if ($gen_typeicc) {
   print "  /// Configuration class for all variable implementations\n";
   print "  class AllVarConf {\n";
   print "  public:\n";
-  print "    /// Index for processing and update\n";
-  print "    static const int idx_pu = $namespace[$n_files-1]::$conf[$n_files-1]::idx_pu+1;\n";
+  print "    /// Index for update\n";
+  print "    static const int idx_u = $namespace[$n_files-1]::$conf[$n_files-1]::idx_u+1;\n";
   print "    /// Index for dispose\n";
   print "    static const int idx_d = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
   print "    /// Return difference when changing propagator modification event \\a pme_o to \\a pme_n\n";
@@ -760,19 +760,9 @@ EOF
 
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
-    print "    {\n";
-    if (!($namespace[$f] eq "")) {
-      print "      using namespace $namespace[$f];\n";
-    }
     print <<EOF
-      $base[$f]* x = $base[$f]::vars_pu(this);
-      if (x != NULL) {
-        $base[$f]::vars_pu(this,NULL);
-        do {
-          x->forward()->update(x,s); x = x->next();
-        } while (x != NULL);
-      }
-    }
+    for ($base[$f]* x = $base[$f]::vars_u(this); x != NULL; x = x->next())
+      x->forward()->update(x,s);
 EOF
 ;
   print $endif[$f];
