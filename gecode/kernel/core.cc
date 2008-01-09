@@ -218,7 +218,6 @@ namespace Gecode {
 
   bool
   Space::stable(void) const {
-    const_cast<Space*>(this)->process();
     int pn = pu.p.pool_next;
     while (true) {
       // Head of the queue
@@ -278,7 +277,7 @@ namespace Gecode {
    * Cloning is performed in two steps:
    *  - The space itself is copied by the copy constructor. This
    *    also copies all propagators, branchings, and variables.
-   *    The copied variables are recorded by the variable processor.
+   *    The copied variables are recorded.
    *  - In the second step the dependency information of the recorded
    *    variables is updated and their forwarding information is reset.
    *

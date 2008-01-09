@@ -1068,8 +1068,6 @@ namespace Gecode {
     /// Set reference to variables (dispose)
     template <class VIC> void vars_d(VarImpBase* x);
 #endif
-    /// Process all modified variables
-    void process(void);
     /// Update all cloned variables
     void update(ActorLink** sub);
     //@}
@@ -2046,16 +2044,16 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Space::process(Propagator* p) {
-    // The new event is ME_GEN_ASSIGNED
-    PropModEvent pme_old = p->u.pme;
-    PropModEvent pme_mask = VIC::me_bits_mask << VIC::pme_bits_fst;
-    // Compute old modification event
-    ModEvent me_old = pme_old & pme_mask;
-    // Check whether old event is already ME_GEN_ASSIGNED
-    if (me_old == VIC::pme_assigned)
+    PropModEvent pme_o = p->u.pme;
+    // Compute the old modification event
+    ModEvent me_o = (pme_o >> VIC::pme_bits_fst) & VIC::me_bits_mask;
+    // Get the new modification event (xor-ed with the old one)
+    ModEvent me_c = me_o ^ ME_GEN_ASSIGNED;
+    // Event has not changed, do not nothing
+    if (me_c == 0)
       return;
-    // Update event
-    p->u.pme ^= me_old ^ VIC::pme_assigned;
+    // Update modification event for propagator (use xor)
+    p->u.pme ^= me_c << VIC::pme_bits_fst;
     // Put propagator into right queue
     p->unlink(); pool_put(p);
   }

@@ -303,8 +303,6 @@ namespace Gecode { namespace Int {
     static const int me_bits_mask = (1 << 2) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me_o to \a me_n
     static ModEvent mec(ModEvent me_o, ModEvent me_n);
     /// Variable type identifier for reflection
@@ -322,8 +320,6 @@ namespace Gecode { namespace Int {
     static const int idx_d = -1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = 0;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
 #endif
@@ -346,8 +342,6 @@ namespace Gecode { namespace Int {
     static const int me_bits_mask = (1 << 1) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me_o to \a me_n
     static ModEvent mec(ModEvent me_o, ModEvent me_n);
     /// Variable type identifier for reflection
@@ -365,8 +359,6 @@ namespace Gecode { namespace Int {
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = Gecode::Int::IntVarImpConf::pme_bits_lst;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
 #endif
@@ -389,8 +381,6 @@ namespace Gecode { namespace Set {
     static const int me_bits_mask = (1 << 4) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me_o to \a me_n
     static ModEvent mec(ModEvent me_o, ModEvent me_n);
     /// Variable type identifier for reflection
@@ -408,8 +398,6 @@ namespace Gecode { namespace Set {
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
 #endif
@@ -437,8 +425,6 @@ namespace Gecode { namespace CpltSet {
     static const int me_bits_mask = (1 << 2) - 1;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = pme_bits_fst + me_bits_num;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);
     /// Return difference when changing modification event \a me_o to \a me_n
     static ModEvent mec(ModEvent me_o, ModEvent me_n);
     /// Variable type identifier for reflection
@@ -456,8 +442,6 @@ namespace Gecode { namespace CpltSet {
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
     /// End of bits for propagator modification event
     static const int pme_bits_lst = Gecode::Set::SetVarImpConf::pme_bits_lst;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned = 0;
   };
 }}
 #endif
@@ -471,12 +455,6 @@ namespace Gecode {
     static const int idx_pu = Gecode::CpltSet::CpltSetVarImpConf::idx_pu+1;
     /// Index for dispose
     static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
-    /// Bit pattern for assigned propagator modification event
-    static const Gecode::PropModEvent pme_assigned =
-        Gecode::Int::IntVarImpConf::pme_assigned |
-        Gecode::Int::BoolVarImpConf::pme_assigned |
-        Gecode::Set::SetVarImpConf::pme_assigned |
-        Gecode::CpltSet::CpltSetVarImpConf::pme_assigned;
     /// Return difference when changing propagator modification event \a pme_o to \a pme_n
     static PropModEvent pmec(PropModEvent pme_o, PropModEvent pme_n);
   };

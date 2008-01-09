@@ -390,8 +390,6 @@ if ($gen_typeicc) {
     print "    static const int me_bits_mask = (1 << $bits[$f]) - 1;\n";
     print "    /// End of bits for propagator modification event\n";
     print "    static const int pme_bits_lst = pme_bits_fst + me_bits_num;\n";
-    print "    /// Bit pattern for assigned propagator modification event\n";
-    print "    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);\n";
     print "    /// Return difference when changing modification event \\a me_o to \\a me_n\n";
     print "    static ModEvent mec(ModEvent me_o, ModEvent me_n);\n";
     print "    /// Variable type identifier for reflection\n";
@@ -425,8 +423,6 @@ if ($gen_typeicc) {
       } else {
 	print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
       }
-      print "    /// Bit pattern for assigned propagator modification event\n";
-      print "    static const Gecode::PropModEvent pme_assigned = 0;\n";
       print "  };\n";
       print $ftr[$f];
     }
@@ -441,16 +437,6 @@ if ($gen_typeicc) {
   print "    static const int idx_pu = $namespace[$n_files-1]::$conf[$n_files-1]::idx_pu+1;\n";
   print "    /// Index for dispose\n";
   print "    static const int idx_d = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
-  print "    /// Bit pattern for assigned propagator modification event\n";
-  print "    static const Gecode::PropModEvent pme_assigned =\n";
-  for ($f=0; $f<$n_files; $f++) {
-    print "        $namespace[$f]::$conf[$f]::pme_assigned";
-    if ($f+1 == $n_files) {
-      print ";\n";
-    } else {
-      print " |\n";
-    }
-  }
   print "    /// Return difference when changing propagator modification event \\a pme_o to \\a pme_n\n";
   print "    static PropModEvent pmec(PropModEvent pme_o, PropModEvent pme_n);\n";
   print "  };\n\n}\n\n";
@@ -759,116 +745,10 @@ EOF
 }
 
 
-print $ftr[$f];
-
-print $endif[$f];
-
-}
-    print <<EOF
-
-namespace Gecode {
-
-  forceinline void
-  Space::process(void) {
-EOF
-;
-
-  for ($f = $n_files-1; $f>=0; $f--) {
-    print $ifdef[$f];
-    print "    {\n";
-    if (!($namespace[$f] eq "")) {
-      print "      using namespace $namespace[$f];\n";
-    }
-    print <<EOF
-      $base[$f]* x = $base[$f]::vars_pu(this);
-      if (x != NULL) {
-        $base[$f]::vars_pu(this,NULL);
-EOF
-;
-
-    if ($me_max_n[$f] == 2) {
-      print <<EOF
-        do {
-          x->process(this); x = x->next();
-        } while (x != NULL);
-EOF
-;
-
-    } else {
-      print <<EOF
-        do {
-          switch (x->modevent()) {
-EOF
-;
-
-  for ($i=0; $i<$pc_n[$f]; $i++) {
-     if ($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED") {
-       $val2pc[$f][0] = $pcn[$f][$i];
-     }
-  }
-  $o = 1;
-  for ($i=0; $i<$pc_n[$f]; $i++) {
-     if (!($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED")) {
-       $val2pc[$f][$o] = $pcn[$f][$i]; $o++;
-     }
-  }
-
-  for ($i=0; $i<$me_n[$f]; $i++) {
-    $n = $men[$f][$i];
-    if ($mespecial{$f}{$n} eq "ASSIGNED") {
-      print "          case ME_$vti[$f]_$n:\n";
-      print "            x->process(this);\n";
-      print "            break;\n";
-    } elsif (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
-      print "          case ME_$vti[$f]_$n:\n";
-      print "            // Conditions: ";
-      for ($j=0; $j<$pc_n[$f]; $j++) {
-        if ($mepc{$f}{$men[$f][$i]}{$pcn[$f][$j]}) {
-          print $pcn[$f][$j] . " ";
-        }
-      }
-      print "\n";
-      for ($j=0; $j<$pc_n[$f]; $j++) {
-	if ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j]}) {
-	  # Found initial entry (plus one for stopping)
-	  print "            x->process(this,PC_$vti[$f]_" . $val2pc[$f][$j] . ",";
-	  # Look for all connected entries
-	  while ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j+1]}) {
-	    $j++;
-          }
-	  # Found last entry
-	  print "PC_$vti[$f]_" . $val2pc[$f][$j] . ",ME_$vti[$f]_$n);\n";
-	}
-      }
-      print "            break;\n";
-    }
-  }
-
-
-  print <<EOF
-          default: GECODE_NEVER;
-          }
-          x = x->next();
-        } while (x != NULL);
-EOF
-;
-
-}
-
-  print <<EOF
-      }
-    }
-EOF
-;
+  print $ftr[$f];
   print $endif[$f];
 
 }
-  print <<EOF
-  }
-}
-EOF
-;
-
 
     print <<EOF
 namespace Gecode {
