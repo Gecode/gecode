@@ -468,9 +468,8 @@ namespace Gecode {
     ES_NOFIX            =  0, ///< Propagation has not computed fixpoint
     ES_OK               =  0, ///< Execution is okay
     ES_FIX              =  1, ///< Propagation has computed fixpoint
-    __ES_FIX_PARTIAL    =  2, ///< Internal: propagator has computed partial fixpoint, do not use
-    __ES_NOFIX_PARTIAL  =  3, ///< Internal: propagator has computed no partial fixpoint, do not use
-    ES_STABLE           =  4  ///< Used for step: space is already stable
+    __ES_PARTIAL        =  2, ///< Internal: propagator has computed partial fixpoint, do not use
+    ES_STABLE           =  3  ///< Used for step: space is already stable
   };
 
   /**
@@ -2083,13 +2082,13 @@ namespace Gecode {
   forceinline ExecStatus
   ES_FIX_PARTIAL(Propagator* p, PropModEvent pme) {
     p->u.pme = pme; 
-    return __ES_FIX_PARTIAL;
+    return __ES_PARTIAL;
   }
 
   forceinline ExecStatus
   ES_NOFIX_PARTIAL(Propagator* p, PropModEvent pme) {
     p->u.pme ^= AllVarConf::pmec(p->u.pme,pme); 
-    return __ES_NOFIX_PARTIAL;
+    return __ES_PARTIAL;
   }
 
 

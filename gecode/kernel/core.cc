@@ -198,11 +198,7 @@ namespace Gecode {
       case __ES_SUBSUMED:
         p->unlink(); reuse(p,p->u.size);
         break;
-      case __ES_FIX_PARTIAL:
-        // Schedule propagator with specified propagator events
-        p->unlink(); pool_put(p);
-        break;
-      case __ES_NOFIX_PARTIAL:
+      case __ES_PARTIAL:
         // Schedule propagator with specified propagator events
         p->unlink(); pool_put(p);
         break;
@@ -237,7 +233,41 @@ namespace Gecode {
    */
   ExecStatus
   Space::step(void) {
-    return ES_FAILED;
+    if (failed())
+      return ES_FAILED;
+    Propagator* p;
+    if (!pool_get(p))
+      return ES_STABLE;
+    // Keep old propagator modification events
+    PropModEvent pme_o = p->u.pme;
+    // Clear pme but leave propagator in queue
+    p->u.pme = 0;
+    ExecStatus es = p->propagate(this,pme_o);
+    switch (es) {
+    case ES_FAILED:
+      fail(); 
+      break;
+    case ES_FIX:
+      // Clear pme and put into idle queue
+      p->u.pme = 0; p->unlink(); a_actors.head(p);
+      break;
+    case ES_NOFIX:
+      // If no need to be run, clear pme and put into idle queue
+      if (p->u.pme == 0) {
+        p->unlink(); a_actors.head(p);
+      }
+      break;
+    case __ES_SUBSUMED:
+      p->unlink(); reuse(p,p->u.size);
+      break;
+    case __ES_PARTIAL:
+      // Schedule propagator with specified propagator events
+      p->unlink(); pool_put(p);
+      break;
+    default:
+      GECODE_NEVER;
+    }
+    return es;
   }
 
   void

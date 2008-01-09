@@ -942,29 +942,21 @@ namespace Gecode { namespace Gist {
         newChild->dirtyUp();
         setCurrentNode(newChild);
 
-        while(true) {
-          switch (inputSpace->step()) {
-                case ES_STABLE:
-                case ES_FAILED:
-                  goto while_done;
-                  break;
-                case ES_FIX:
-                case ES_OK:
-                case __ES_FIX_PARTIAL:
-                case __ES_NOFIX_PARTIAL:
-                case __ES_SUBSUMED:
-                  break;
-          }
+        while (true) {
+          ExecStatus es = inputSpace->step();
+	  if ((es == ES_STABLE) || (es == ES_FAILED))
+	    break;
 
           VisualNode* newChild =
-            curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(1));
+            curNode->createStepChild(currentNode->getNumberOfChildren(),
+				     new StepDesc(1));
 
           currentNode->addChild(newChild);
 
           newChild->setDirty(false);
           newChild->dirtyUp();
           setCurrentNode(newChild);
-        } while_done:
+        } 
         
         currentNode->setLastStepNode(true);
         currentNode->addChild(curNode);
