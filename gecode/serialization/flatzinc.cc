@@ -310,8 +310,10 @@ namespace Gecode {
     
   }
   
-  void emitFlatzinc(Space* home, Reflection::VarMap& vm, std::ostream& os) {
+  void emitFlatzinc(Space* home, std::ostream& os) {
     using namespace std;
+    Reflection::VarMap vm;
+    home->getVars(vm, false);
     Reflection::VarMapIter vmi(vm);
     int varCount = 0;
     int soCount = 0;
@@ -331,7 +333,7 @@ namespace Gecode {
 
       int soBase = soCount;
       for (int i=0; i<s.noOfArgs(); i++) {
-        if (s[i]->isSharedObject())
+        if (s[i] && s[i]->isSharedObject())
           emitSharedObject(os, soBase++, vm, s[i]);
       }
 
@@ -339,7 +341,9 @@ namespace Gecode {
 
       soBase = soCount;
       for (int i=0; i<s.noOfArgs(); i++) {
-        if (s[i]->isSharedObject())
+        if (s[i] == NULL)
+          os << "[]";
+        else if (s[i]->isSharedObject())
           os << "_array" << soBase++;
         else
           emitArg(os, s[i], vm);
