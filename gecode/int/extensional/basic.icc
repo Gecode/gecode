@@ -140,10 +140,6 @@ namespace Gecode { namespace Int { namespace Extensional {
               has_support[i].set(l[i]- ts()->min);
               assert(has_support[i].get(l[i]- ts()->min));
             }
-#ifndef NDEBUG
-            for (int i = var; i<x.size(); i++)
-              assert(has_support[i].get(l[i]- ts()->min));
-#endif
           }
         }
       }
