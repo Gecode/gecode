@@ -1931,7 +1931,7 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   VarImp<VIC>::combine(ModEvent me1, ModEvent me2) {
-    return me2^VIC::mec(me1,me2);
+    return me2^VIC::mec(me2,me1);
   }
 
   /*
@@ -2074,16 +2074,16 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Space::process(Propagator* p, ModEvent me) {
-    PropModEvent pme_old = p->u.pme;
+    PropModEvent pme_o = p->u.pme;
     // Compute the old modification event
-    ModEvent me_old = (pme_old >> VIC::pme_bits_fst) & VIC::me_bits_mask;
+    ModEvent me_o = (pme_o >> VIC::pme_bits_fst) & VIC::me_bits_mask;
     // Get the new modification event (xor-ed with the old one)
-    ModEvent me_com = VIC::mec(me,me_old);
+    ModEvent me_c = VIC::mec(me_o,me);
     // Event has not changed, do not nothing
-    if (me_com == 0)
+    if (me_c == 0)
       return;
     // Update modification event for propagator (use xor)
-    p->u.pme ^= me_com << VIC::pme_bits_fst;
+    p->u.pme ^= me_c << VIC::pme_bits_fst;
     // Put propagator into right queue
     p->unlink(); pool_put(p);
   }
@@ -2279,8 +2279,8 @@ namespace Gecode {
   forceinline ModEvent
   VarImp<VIC>::notify(Space* home, ModEvent me, Delta* d) {
     if (_next != reinterpret_cast<VarImpBase*>(1)) {
-      u.free_me ^= VIC::mec(me,static_cast<ModEvent>
-                            (u.free_me & me_bits_mask));
+      u.free_me ^= VIC::mec(static_cast<ModEvent>(u.free_me & me_bits_mask),
+                            me);
     } else {
       _next = vars_pu(home); vars_pu(home,this);
       u.free_me = (u.free_me & ~me_bits_mask) | me;

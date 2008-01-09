@@ -392,8 +392,8 @@ if ($gen_typeicc) {
     print "    static const int pme_bits_lst = pme_bits_fst + me_bits_num;\n";
     print "    /// Bit pattern for assigned propagator modification event\n";
     print "    static const Gecode::PropModEvent pme_assigned = (1 << pme_bits_fst);\n";
-    print "    /// Return difference when changing modification event \\a me2 to \\a me1\n";
-    print "    static ModEvent mec(ModEvent me1, ModEvent me2);\n";
+    print "    /// Return difference when changing modification event \\a me_o to \\a me_n\n";
+    print "    static ModEvent mec(ModEvent me_o, ModEvent me_n);\n";
     print "    /// Variable type identifier for reflection\n";
     print "    static GECODE_KERNEL_EXPORT const Support::Symbol vti;\n";
     print "  };\n";
@@ -451,17 +451,17 @@ if ($gen_typeicc) {
       print " |\n";
     }
   }
-  print "    /// Return difference when changing propagator modification event \\a pme2 to \\a pme1\n";
-  print "    static PropModEvent pmec(PropModEvent pme1, PropModEvent pme2);\n";
+  print "    /// Return difference when changing propagator modification event \\a pme_o to \\a pme_n\n";
+  print "    static PropModEvent pmec(PropModEvent pme_o, PropModEvent pme_n);\n";
   print "  };\n\n}\n\n";
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
     print $hdr[$f];
     print "  forceinline ModEvent\n";
-    print "  $conf[$f]::mec(ModEvent me1, ModEvent me2) {\n";
+    print "  $conf[$f]::mec(ModEvent me_o, ModEvent me_n) {\n";
 
     if ($me_max_n[$f] == 2) {
-      print "    return me2^me1;\n";
+      print "    return me_o^me_n;\n";
     } elsif ($me_max_n[$f] <= 4) {
       print "    const int med = (\n";
 
@@ -493,7 +493,7 @@ if ($gen_typeicc) {
 	}
       }
       print "    );\n";
-      print "    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);\n";
+      print "    return (((med >> (me_n << 3)) >> (me_o << 1)) & 3);\n";
     } else {
       print "    static const unsigned char med[$me_max[$f]][$me_max[$f]] = {\n";
       for ($i=0; $i<$me_max_n[$f];$i++) {
@@ -524,7 +524,7 @@ if ($gen_typeicc) {
 	}
       }
       print "    };\n";
-      print "    return med[me1][me2];\n";
+      print "    return med[me_n][me_o];\n";
     }
     print "  }\n\n";
     print $ftr[$f];
@@ -532,7 +532,8 @@ if ($gen_typeicc) {
   }
   print "namespace Gecode {\n";
   print "  forceinline PropModEvent\n";
-  print "  AllVarConf::pmec(PropModEvent pme_n, PropModEvent pme_o) {\n";
+  print "  AllVarConf::pmec(PropModEvent pme_o, PropModEvent pme_n) {\n";
+  print "    PropModEvent pme_c = 0;\n";
   for ($f = 0; $f<$n_files; $f++) {
     $vic = "$namespace[$f]::$conf[$f]";
     print $ifdef[$f];
@@ -542,13 +543,13 @@ if ($gen_typeicc) {
     print "      // Compute the new modification event\n";
     print "      ModEvent me_n = (pme_n >> ${vic}::pme_bits_fst) & ${vic}::me_bits_mask;\n";
     print "      // Compute combined event\n";
-    print "      ModEvent me_c = ${vic}::mec(me_n,me_o);\n";
-    print "      // Set combined event\n";
-    print "      pme_o ^= me_c << ${vic}::pme_bits_fst;\n";
+    print "      ModEvent me_c = ${vic}::mec(me_o,me_n);\n";
+    print "      // Add combined event\n";
+    print "      pme_c |= me_c << ${vic}::pme_bits_fst;\n";
     print "    }\n";
     print $endif[$f];
   }
-  print "    return pme_o;\n";
+  print "    return pme_c;\n";
   print "  }\n}\n\n";
 }
 
