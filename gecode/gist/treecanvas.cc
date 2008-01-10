@@ -765,6 +765,11 @@ namespace Gecode { namespace Gist {
               varView, SLOT(display(Gecode::Reflection::VarMap&, int)));
       connect(this, SIGNAL(pointInTimeChanged(int)),
               varView, SLOT(displayOld(int)));
+      
+      connect(varView->findChild<QWidget*>("visTimeBar"), SIGNAL(valueChanged(int)),
+              this, SLOT(markCurrentNode(int)));
+      
+      
     }
   }
   

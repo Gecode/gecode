@@ -38,6 +38,8 @@
 #define GECODE_GIST_VISUALISATION_VARARRAYVIEW_HH
 
 #include <QtGui/QGraphicsView>
+#include <QtGui/QSlider>
+#include <QtGui/QGridLayout>
 #include <QtCore/QString>
 
 #include <gecode/minimodel.hh>
@@ -46,7 +48,7 @@
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-  class VarArrayView : public QGraphicsView {
+  class VarArrayView : public QWidget {
 
     Q_OBJECT
 
@@ -66,7 +68,13 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     virtual void displayT(QVector<Reflection::VarSpec*> spec) = 0;
     virtual void displayOldT(int pit) = 0;
 
-    QGraphicsScene *scene;
+    void extendTimeBar(int pit);
+    void updateTimeBar(int pit);
+    
+    QGridLayout* grid;
+    QGraphicsScene* scene;
+    QGraphicsView* view;
+    QSlider* timeBar;
     Gecode::Reflection::VarMap& vm;
     int firstPointInTime;
     QStringList vars;

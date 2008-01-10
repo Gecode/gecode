@@ -41,14 +41,29 @@
 namespace Gecode { namespace Gist { namespace Visualisation {
 
   VarArrayView::VarArrayView(Gecode::Reflection::VarMap& vm0, int pit, QStringList vars0, QWidget *parent)
-  : QGraphicsView(parent)
+  : QWidget(parent)
   , vm(vm0)
   , firstPointInTime(pit)
   , vars(vars0)
   {
     scene = new QGraphicsScene(this);
-    setScene(scene);
-    setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    
+    view = new QGraphicsView(this);
+    view->setScene(scene);
+    view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    
+    timeBar = new QSlider(Qt::Horizontal, this);
+    timeBar->setMinimum(firstPointInTime);
+    timeBar->setMaximum(firstPointInTime);
+    timeBar->setObjectName("visTimeBar");
+
+    grid = new QGridLayout(this);
+    grid->addWidget(view);
+    grid->addWidget(timeBar);
+    
+    setLayout(grid);
+    
+    connect(timeBar, SIGNAL(valueChanged(int)), this, SLOT(displayOld(int)));
   }
 
   void
@@ -61,8 +76,6 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     }
     
    initT(specs);
-   
-   setFixedSize(sceneRect().size().toSize() + QSize(5,5));
   }
   
   // TODO nikopp: this ist not used yet and I am not sure if it is a good idea at all
@@ -76,6 +89,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   void
   VarArrayView::displayOld(int pit) {
     displayOldT(pit);
+    updateTimeBar(pit);
   }
   
   void
@@ -90,6 +104,18 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     }
     
     displayT(specs);
+    extendTimeBar(pit);
+  }
+
+  void
+  VarArrayView::extendTimeBar(int pit) {
+    timeBar->setMaximum(pit);
+    timeBar->setValue(pit);
+  }
+
+  void
+  VarArrayView::updateTimeBar(int pit) {
+    timeBar->setValue(pit);
   }
 
 }}}
