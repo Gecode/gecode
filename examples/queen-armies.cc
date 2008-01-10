@@ -143,8 +143,9 @@ public:
   print(std::ostream& os) {
     os << '\t';
     for (int i = 0; i < n*n; ++i) {
-      if (w[i].val()) os << "W";
-      else if (b[i].val()) os << "B";
+      if (w[i].assigned() && w[i].val()) os << "W";
+      else if (b[i].assigned() && b[i].val()) os << "B";
+      else if (!w[i].assigned() && !b[i].assigned()) os << " ";
       else os << ".";
       if ((i+1)%n == 0) os << std::endl << (i!=(n*n-1)?"\t":"");
     }

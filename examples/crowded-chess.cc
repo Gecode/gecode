@@ -368,17 +368,25 @@ public:
       // Print main board
       os << '\t';
       for (int c = 0; c < n; ++c) {
-        os << names[m(r, c).val()];
+        if (m(r, c).assigned()) {
+          os << names[m(r, c).val()];
+        } else {
+          os << " ";
+        }
       }
       // Print each piece on its own
       for (int p = 0; p < PMAX; ++p) {
         if (p == E) continue;
         os << sep;
         for (int c = 0; c < n; ++c) {
-          if (m(r, c).val() == p) 
-            os << names[p];
-          else                   
-            os << names[E];
+          if (m(r, c).assigned()) {
+            if (m(r, c).val() == p) 
+              os << names[p];
+            else                   
+              os << names[E];
+          } else {
+            os << " ";
+          }
         }
       }
       os << std::endl;
