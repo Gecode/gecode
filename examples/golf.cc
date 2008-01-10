@@ -210,14 +210,17 @@ public:
     for (int w=0; w<weeks; w++) {
       os << "Week " << w << ": " << std::endl << "    ";
       for (int g=0; g<groups; g++) {
-        SetVarGlbValues glb(group(w,g));
-        os << "(" << glb.val();
-        ++glb;
-        while(glb()) {
-          os << " " << glb.val();
-          ++glb;
+        if (group(w,g).assigned()) {          
+          bool first = true;
+          os << "(";
+          for (SetVarGlbValues glb(group(w,g)); glb(); ++glb) {
+            if (first) first = false; else os << " ";
+            os << glb.val();
+          }
+          os << ")";          
+        } else {
+          os << "(" << group(w,g) << ")";
         }
-        os << ")";
         if (g < groups-1) os << " ";
         if (g > 0 && g % 4 == 0) os << std::endl << "    ";
       }

@@ -154,8 +154,6 @@ public:
   virtual void
   print(std::ostream& os) {
     for (int i=0; i<noOfFlights; i++) {
-      SetVarGlbValues d(flight[i]);
-
       os << "\tFlight " << i+1 << ":" << std::endl;
       os << "\t\tCrew\tStew.\tHost.\tFrench\tSpanish\tGerman"
          << std::endl << "\t";
@@ -166,8 +164,19 @@ public:
          << std::endl;
 
       os << "\t\tSchedule:" << std::endl << "\t\t";
-      for (;d();++d) {
-        os << employeeToName(static_cast<Employee>(d.val())) << " ";
+      if (flight[i].assigned()) {
+        for (SetVarGlbValues d(flight[i]);d();++d) {
+          os << employeeToName(static_cast<Employee>(d.val())) << " ";
+        }
+      } else {
+        os << "\tRequired: ";
+        for (SetVarGlbValues d(flight[i]);d();++d) {
+          os << employeeToName(static_cast<Employee>(d.val())) << " ";
+        }
+        os << std::endl << "\t\t\tPossible: ";
+        for (SetVarUnknownValues d(flight[i]);d();++d) {
+          os << employeeToName(static_cast<Employee>(d.val())) << " ";
+        }
       }
       os << std::endl << std::endl;
     }
