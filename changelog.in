@@ -70,13 +70,6 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
-Module: int
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-Domain-consistent abs could crash in certain (extremely rare) border cases.
-
-[ENTRY]
 Module: examples
 What:   new
 Rank:   minor
@@ -174,6 +167,13 @@ Version: 2.0.1
 Date:    Soon
 [DESCRIPTION]
 Fixes or what?
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Domain-consistent abs could crash in certain (extremely rare) border cases.
 
 [ENTRY]
 Module: kernel
