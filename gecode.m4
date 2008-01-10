@@ -624,7 +624,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     dnl flags for creating optimized dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD -MD])
     dnl linker flags
-    AC_GECODE_ADD_TO_GLDFLAGS([-link -DEBUG -OPT:REF -OPT:ICF])
+    GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
   else
     dnl compiler flags for a debug build
     AC_GECODE_ADD_TO_COMPILERFLAGS([-Zi -wd4355])  
