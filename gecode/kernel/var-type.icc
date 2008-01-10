@@ -284,64 +284,6 @@ namespace Gecode { namespace CpltSet {
   //@}
 }}
 #endif
-
-  /**
-   * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
-   * \ingroup TaskActorInt
-   */
-  //@{
-  /// Domain operation has resulted in failure
-  const Gecode::ModEvent ME_TEST_FAILED = Gecode::ME_GEN_FAILED;
-  /// Domain operation has not changed domain
-  const Gecode::ModEvent ME_TEST_NONE = Gecode::ME_GEN_NONE;
-  /// Domain operation has resulted in a value (assigned variable)
-  const Gecode::ModEvent ME_TEST_VAL = Gecode::ME_GEN_ASSIGNED;
-  /** 
-   * \brief Domain operation has changed the minimum or maximum of the domain
-   *
-   * Note that this implies that the domain has not resulted in a value.
-   *
-   * If a propagator subscribes to this variable, it will be processed
-   * assuming a ME_INT_BND modification event.
-   */
-  const Gecode::ModEvent ME_TEST_BND = Gecode::ME_GEN_ASSIGNED + 1;
-  /** 
-   * \brief Domain operation has changed the domain
-   *
-   * Note that this implies that the domain has not resulted in a value
-   * and that also the minimum and maximum of the domain have not changed.
-   */
-  const Gecode::ModEvent ME_TEST_DOM = Gecode::ME_GEN_ASSIGNED + 2;
-  /// Propagation condition to be ignored (convenience)
-  const Gecode::PropCond PC_TEST_NONE = Gecode::PC_GEN_NONE;
-  /**
-   * \brief Propagate when a view becomes assigned (single value)
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_INT_VAL, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_INT_VAL.
-   */
-  const Gecode::PropCond PC_TEST_VAL = Gecode::PC_GEN_ASSIGNED;
-  /**
-   * \brief Propagate when minimum or maximum of a view changes
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_INT_BND, then \a p is propagated when a domain
-   * update operation on \a x returns the modification events ME_INT_VAL
-   * or ME_INT_BND.
-   */
-  const Gecode::PropCond PC_TEST_BND = Gecode::PC_GEN_ASSIGNED + 1;
-  /**
-   * \brief Propagate when domain changes
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_INT_DOM, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_INT_VAL,
-   * ME_INT_BND, or ME_INT_DOM.
-   */
-  const Gecode::PropCond PC_TEST_DOM = Gecode::PC_GEN_ASSIGNED + 2;
-  //@}
-
 #ifdef GECODE_HAVE_INT_VARS
 namespace Gecode { namespace Int { 
   /// Configuration class for Int-variable implementations
@@ -504,39 +446,15 @@ namespace Gecode { namespace CpltSet {
 }}
 #endif
 
-  /// Configuration class for Test-variable implementations
-  class TestVarImpConf {
-  public:
-    /// Index for update
-    static const int idx_u = Gecode::CpltSet::CpltSetVarImpConf::idx_u+1;
-    /// Index for disposal
-    static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d;
-    /// Maximal propagation condition
-    static const Gecode::PropCond pc_max = PC_TEST_DOM;
-    /// Start of bits for propagator modification event
-    static const int pme_bits_fst = Gecode::CpltSet::CpltSetVarImpConf::pme_bits_lst;
-    /// Number of bits for propagator modification event
-    static const int me_bits_num = 2;
-    /// Bitmask for propagator modification event
-    static const int me_bits_mask = (1 << 2) - 1;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
-    /// Return difference when changing modification event \a me_o to \a me_n
-    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
-    /// Variable type identifier for reflection
-    static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
-  };
-
-
 namespace Gecode {
 
   /// Configuration class for all variable implementations
   class AllVarConf {
   public:
     /// Index for update
-    static const int idx_u = ::TestVarImpConf::idx_u+1;
+    static const int idx_u = Gecode::CpltSet::CpltSetVarImpConf::idx_u+1;
     /// Index for dispose
-    static const int idx_d = ::TestVarImpConf::idx_d+1;
+    static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
     /// Return difference when changing propagator modification event \a pme_o to \a pme_n
     static PropModEvent pmec(PropModEvent pme_o, PropModEvent pme_n);
   };
@@ -723,39 +641,6 @@ namespace Gecode { namespace CpltSet {
 
 }}
 #endif
-
-  forceinline Gecode::ModEvent
-  TestVarImpConf::mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n) {
-    const int med = (
-      (
-        ((ME_TEST_NONE ^ ME_TEST_NONE) << 0) |  // [ME_TEST_NONE][ME_TEST_NONE]
-        ((ME_TEST_VAL ^ ME_TEST_VAL) << 2) |  // [ME_TEST_NONE][ME_TEST_VAL]
-        ((ME_TEST_BND ^ ME_TEST_BND) << 4) |  // [ME_TEST_NONE][ME_TEST_BND]
-        ((ME_TEST_DOM ^ ME_TEST_DOM) << 6)    // [ME_TEST_NONE][ME_TEST_DOM]
-      ) |
-      (
-        ((ME_TEST_NONE ^ ME_TEST_VAL) << 8) |  // [ME_TEST_VAL][ME_TEST_NONE]
-        ((ME_TEST_VAL ^ ME_TEST_VAL) << 10) |  // [ME_TEST_VAL][ME_TEST_VAL]
-        ((ME_TEST_BND ^ ME_TEST_VAL) << 12) |  // [ME_TEST_VAL][ME_TEST_BND]
-        ((ME_TEST_DOM ^ ME_TEST_VAL) << 14)    // [ME_TEST_VAL][ME_TEST_DOM]
-      ) |
-      (
-        ((ME_TEST_NONE ^ ME_TEST_BND) << 16) |  // [ME_TEST_BND][ME_TEST_NONE]
-        ((ME_TEST_VAL ^ ME_TEST_VAL) << 18) |  // [ME_TEST_BND][ME_TEST_VAL]
-        ((ME_TEST_BND ^ ME_TEST_BND) << 20) |  // [ME_TEST_BND][ME_TEST_BND]
-        ((ME_TEST_DOM ^ ME_TEST_BND) << 22)    // [ME_TEST_BND][ME_TEST_DOM]
-      ) |
-      (
-        ((ME_TEST_NONE ^ ME_TEST_DOM) << 24) |  // [ME_TEST_DOM][ME_TEST_NONE]
-        ((ME_TEST_VAL ^ ME_TEST_VAL) << 26) |  // [ME_TEST_DOM][ME_TEST_VAL]
-        ((ME_TEST_BND ^ ME_TEST_BND) << 28) |  // [ME_TEST_DOM][ME_TEST_BND]
-        ((ME_TEST_DOM ^ ME_TEST_DOM) << 30)    // [ME_TEST_DOM][ME_TEST_DOM]
-      )
-    );
-    return (((med >> (me_n << 3)) >> (me_o << 1)) & 3);
-  }
-
-
 namespace Gecode {
   forceinline PropModEvent
   AllVarConf::pmec(PropModEvent pme_o, PropModEvent pme_n) {
@@ -808,16 +693,6 @@ namespace Gecode {
       pme_c |= me_c << Gecode::CpltSet::CpltSetVarImpConf::pme_bits_fst;
     }
 #endif
-    {
-      // Compute the old modification event
-      ModEvent me_o = (pme_o >> ::TestVarImpConf::pme_bits_fst) & ::TestVarImpConf::me_bits_mask;
-      // Compute the new modification event
-      ModEvent me_n = (pme_n >> ::TestVarImpConf::pme_bits_fst) & ::TestVarImpConf::me_bits_mask;
-      // Compute combined event
-      ModEvent me_c = ::TestVarImpConf::mec(me_o,me_n);
-      // Add combined event
-      pme_c |= me_c << ::TestVarImpConf::pme_bits_fst;
-    }
     return pme_c;
   }
 }

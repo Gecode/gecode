@@ -60,7 +60,4 @@ namespace Gecode { namespace CpltSet {
 }}
 #endif
 
-  const Gecode::Support::Symbol TestVarImpConf::vti = "Test";
-
-
 // STATISTICS: kernel-var

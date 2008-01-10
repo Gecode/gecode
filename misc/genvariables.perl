@@ -265,7 +265,7 @@ for ($f=0; $f<$n_files; $f++) {
   $maxpc[$f] = "PC_$vti[$f]_" . $pcn[$f][$pc_n[$f]-1];
   $class[$f] = "$name[$f]VarImpBase";
   $conf[$f]  = "$name[$f]VarImpConf";
-  $base[$f]  = "Gecode::VarImp<$namespace[$f]::$conf[$f]>";
+  $base[$f]  = "Gecode::VarImp< $namespace[$f]::$conf[$f]>";
   # Generate namespace header and footer
   foreach $ns (split('::',$namespace[$f])) {
     $hdr[$f] = "$hdr[$f]namespace $ns { ";
