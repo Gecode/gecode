@@ -572,7 +572,7 @@ namespace Gecode { namespace Int { namespace Element {
       i_view[i].init(iv[i].view);
     Iter::Ranges::NaryUnion<ViewRanges<VA> > i_val(i_view, n);
     GECODE_ME_CHECK(x1.inter_r(home,i_val));
-    return x1.modified() ? ES_NOFIX : ES_FIX;
+    return (shared(x0,x1) || x1.modified()) ? ES_NOFIX : ES_FIX;
   }
 
 }}}
