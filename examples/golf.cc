@@ -240,6 +240,11 @@ public:
     return new Golf(share,*this);
   }
 
+  /// Make variables available for visualisation
+  virtual void
+  getVars(Gecode::Reflection::VarMap& vm, bool registerOnly) {
+    vm.putArray(this, groupsS, "groupsS", registerOnly);
+  }
 };
 
 /** \brief Main-function
