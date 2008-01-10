@@ -747,24 +747,25 @@ namespace Gecode { namespace Gist {
     
     pt2createView cv = conf.visualisationMap.value(visType);
     
-    Reflection::VarMap vm;
-    Space* rootSpace = root->getSpace();
-    rootSpace->getVars(vm, false);
-    delete rootSpace;
-    
-    QWidget* varView = cv(vm, nextPit, vars, this);
+    if(cv != NULL) {
+      Reflection::VarMap vm;
+      Space* rootSpace = root->getSpace();
+      rootSpace->getVars(vm, false);
+      delete rootSpace;
 
-    varView->setWindowTitle(windowName);
-    
-    // TODO nikopp: this should be handled somewhere else, i.e. dockWidget
-    varView->setWindowFlags(Qt::Tool);
-    
-    varView->show();
+      QWidget* varView = cv(vm, nextPit, vars, this);
 
-    connect(this, SIGNAL(inspect(Gecode::Reflection::VarMap&, int)),
-            varView, SLOT(display(Gecode::Reflection::VarMap&, int)));
-    connect(this, SIGNAL(pointInTimeChanged(int)),
-            varView, SLOT(displayOld(int)));
+      varView->setWindowTitle(windowName);
+
+      varView->setWindowFlags(Qt::Tool);
+
+      varView->show();
+
+      connect(this, SIGNAL(inspect(Gecode::Reflection::VarMap&, int)),
+              varView, SLOT(display(Gecode::Reflection::VarMap&, int)));
+      connect(this, SIGNAL(pointInTimeChanged(int)),
+              varView, SLOT(displayOld(int)));
+    }
   }
   
   void
@@ -820,10 +821,10 @@ namespace Gecode { namespace Gist {
 
     newChild->setStatus(SPECIAL);
     
-    if(vm.spec(var.toStdString().c_str()).vti() == Int::IntVarImp::vti) {
+    if(vm.spec(var.toStdString().c_str()).vti() == Int::IntVarImpConf::vti) {
       IntRelType rel = static_cast<IntRelType>(rel0);
       newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
-    } else if(vm.spec(var.toStdString().c_str()).vti() == Set::SetVarImp::vti) {
+    } else if(vm.spec(var.toStdString().c_str()).vti() == Set::SetVarImpConf::vti) {
       SetRelType rel = static_cast<SetRelType>(rel0);
       newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
     } else {
