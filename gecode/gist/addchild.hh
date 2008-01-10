@@ -63,6 +63,7 @@ namespace Gecode { namespace Gist {
 
   private:
     void refresh(void);
+    void refresh_relList(void);
     void updateValue(void);
     
     Ui::AddChildClass ui;

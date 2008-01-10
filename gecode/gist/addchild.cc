@@ -35,7 +35,7 @@
  */
 
 #include "gecode/gist/addchild.hh"
-#include "gecode/gist/reflectionhelpers.hh"
+#include "gecode/set.hh"
 
 namespace Gecode { namespace Gist {
 
@@ -44,25 +44,27 @@ namespace Gecode { namespace Gist {
   {
     ui.setupUi(this);
 
-    ui.relList->insertItem(0, "==");
-    ui.relList->insertItem(1, "!=");
-    ui.relList->insertItem(2, "<=");
-    ui.relList->insertItem(3, "<");
-    ui.relList->insertItem(4, ">=");
-    ui.relList->insertItem(5, ">");
-
     Reflection::VarMapIter vmi(vm);
 
     for(int i = 0; vmi(); ++vmi, ++i) {
-      ui.varList->insertItem(i, vmi.spec().name().toString().c_str());
+      QString desc = (vmi.spec().name().toString() + " (" + vmi.spec().vti().toString() + ")").c_str();
+      QListWidgetItem* item = new QListWidgetItem(desc, ui.varList);
+
       QList<QVariant> data;
-      IntVar iv = ReflectionHelpers::toIntVar(vm, vmi.spec().name());
+      data << QVariant(QString(vmi.spec().name().toString().c_str()));
+      data << QVariant(QString(vmi.spec().vti().toString().c_str()));
       
-      // TODO nikopp: use spec instead of vars
-      // vmi.spec().dom().toIntArray(); // array of ranges e.g. [2, 4, 7, 8] = {2,3,4,7,8}
-      
-      data << QVariant(iv.min()) << QVariant(iv.max());
-      ui.varList->item(i)->setData(Qt::UserRole, data);
+      if(vmi.spec().vti() == Int::IntVarImpConf::vti) {
+        Reflection::IntArrayArg* dom = vmi.spec().dom()->toIntArray();
+        data << QVariant((*dom)[0]) << QVariant((*dom)[dom->size()-1]);
+      } else if(vmi.spec().vti() == Set::SetVarImpConf::vti) {
+        Reflection::IntArrayArg* ub_dom = vmi.spec().dom()->second()->first()->toIntArray();
+        data << QVariant((*ub_dom)[0]) << QVariant((*ub_dom)[ub_dom->size()-1]);
+      } else {
+        // TODO nikopp: implement other possibilities
+      }
+
+      item->setData(Qt::UserRole, data);
     }
   }
 
@@ -73,17 +75,17 @@ namespace Gecode { namespace Gist {
 
   QString
   AddChild::var(void) {
-    return ui.varList->currentItem()->text();
+    return ui.varList->currentItem()->data(Qt::UserRole).toList().takeFirst().toString();
   }
 
   int
   AddChild::rel(void) {
-    return ui.relList->currentRow();
+    return ui.relList->currentItem()->data(Qt::UserRole).toInt();
   }
 
   void
   AddChild::on_varList_itemSelectionChanged(void) {
-    refresh();
+    refresh_relList();
   }
 
   void
@@ -101,14 +103,46 @@ namespace Gecode { namespace Gist {
       updateValue();
     }
   }
+
+  void
+  AddChild::refresh_relList(void) {
+    ui.relList->clear();
+    
+    if(ui.varList->selectedItems().isEmpty()) {
+      return;
+    }
+    QVariantList data = ui.varList->currentItem()->data(Qt::UserRole).toList();
+    Support::Symbol vti = data.at(1).toString().toStdString().c_str();
+    
+    if(vti == Int::IntVarImpConf::vti) {
+      QListWidgetItem* eq = new QListWidgetItem("==", ui.relList);
+      eq->setData(Qt::UserRole, QVariant(Gecode::IRT_EQ));
+      QListWidgetItem* nq = new QListWidgetItem("!=", ui.relList);
+      nq->setData(Qt::UserRole, QVariant(Gecode::IRT_NQ));
+      QListWidgetItem* lq = new QListWidgetItem("<=", ui.relList);
+      lq->setData(Qt::UserRole, QVariant(Gecode::IRT_LQ));
+      QListWidgetItem* le = new QListWidgetItem("<", ui.relList);
+      le->setData(Qt::UserRole, QVariant(Gecode::IRT_LE));
+      QListWidgetItem* gq = new QListWidgetItem(">=", ui.relList);
+      gq->setData(Qt::UserRole, QVariant(Gecode::IRT_GQ));
+      QListWidgetItem* gr = new QListWidgetItem(">", ui.relList);
+      gr->setData(Qt::UserRole, QVariant(Gecode::IRT_GR));
+    } else if (vti == Set::SetVarImpConf::vti) {
+      QListWidgetItem* in = new QListWidgetItem("contains", ui.relList);
+      in->setData(Qt::UserRole, QVariant(Gecode::SRT_SUP));
+      QListWidgetItem* out = new QListWidgetItem("does not contain", ui.relList);
+      out->setData(Qt::UserRole, QVariant(Gecode::SRT_DISJ));
+    } else {
+      // TODO nikopp: implement other options
+    }
+  }
   
   void
   AddChild::updateValue(void) {
-    QVariant data = ui.varList->selectedItems().first()->data(Qt::UserRole);
-    QList<QVariant> dataList = data.toList();
-
-    int min = dataList.takeFirst().toInt();
-    int max = dataList.takeFirst().toInt();
+    QVariantList data = ui.varList->selectedItems().first()->data(Qt::UserRole).toList();
+    
+    int min = data.at(2).toInt();
+    int max = data.at(3).toInt();
     
     switch (ui.relList->currentRow()) {
     case 0:
