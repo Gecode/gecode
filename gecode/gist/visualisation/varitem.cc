@@ -34,38 +34,35 @@
  *
  */
 
-#ifndef GECODE_GIST_VISUALISATION_INTVARITEM_HH
-#define GECODE_GIST_VISUALISATION_INTVARITEM_HH
-
-#include <QtCore/QStack>
-#include <QtCore/QBitArray>
-
 #include "gecode/gist/visualisation/varitem.hh"
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-class IntVarItem : public VarItem {
-  
-public:
-  IntVarItem(Reflection::VarSpec* spec, QGraphicsItem *parent = 0);
+  VarItem::VarItem(Reflection::VarSpec* spec, QGraphicsItem *parent)
+  : QGraphicsRectItem(parent)
+  , current(0)
+  , noOfUpdates(0)
+  {
+    setToolTip(spec->name().toString().c_str());
+  }
 
-  void display(Reflection::VarSpec* spec);
-  void displayOld(int pit); ///< Use to show the variable at point in time \a pit
+  void
+  VarItem::display(Reflection::VarSpec* spec) {
+    store(spec);
+    current = ++noOfUpdates;
+    updateGraphic();
+  }
 
-protected:
-  virtual void initGraphic(void); 
-  virtual void updateGraphic(void);
-  virtual void store(Reflection::VarSpec* spec); ///< store the information of the variable on the stack
+  void
+  VarItem::displayOld(int pit) {
+    if(pit > noOfUpdates || pit < 0) {
+      return;
+    }
 
-  QVector<QGraphicsRectItem*> domainItems;
-  int initMin; ///< Initial domain minimum
-  int initMax; ///< Initial domain maximum
-  int arraylength;
-  QStack<QBitArray> updates; ///< Collected updates
-};
+    current = pit;
+    updateGraphic();
+  }
 
 }}}
-
-#endif
 
 // STATISTICS: gist-any

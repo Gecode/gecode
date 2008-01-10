@@ -34,41 +34,43 @@
  *
  */
 
-#ifndef GECODE_GIST_VISUALISATION_INTVARARRAYVIEW_HH
-#define GECODE_GIST_VISUALISATION_INTVARARRAYVIEW_HH
+#ifndef GECODE_GIST_VISUALISATION_VARARRAYVIEW_HH
+#define GECODE_GIST_VISUALISATION_VARARRAYVIEW_HH
 
 #include <QtGui/QGraphicsView>
 #include <QtCore/QString>
 
 #include <gecode/minimodel.hh>
 
-#include "intvararrayitem.hh"
+#include "vararrayitem.hh"
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-class IntVarArrayView : public QGraphicsView {
+  class VarArrayView : public QGraphicsView {
 
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  IntVarArrayView(Gecode::Reflection::VarMap& vm, int pit, QStringList vars, QWidget *parent = 0);
-  
-  static QWidget* create(Gecode::Reflection::VarMap& vm, int pit, QStringList vars, QWidget *parent = 0);
+  public:
+    VarArrayView(Gecode::Reflection::VarMap& vm, int pit, QStringList vars, QWidget *parent = 0);
 
-public Q_SLOTS:
-  void display(Gecode::Reflection::VarMap&, int pit);
-  void displayOld(int pit); ///< Use to show the variable at point in time pit
-  void reset(void); ///< Use to reset the view
+  public Q_SLOTS:
+    void display(Gecode::Reflection::VarMap&, int pit);
+    void displayOld(int pit); ///< Use to show the variable at point in time pit
+    void reset(void); ///< Use to reset the view
 
-private:
-  void init(void);
+  protected:
+    void init(void);
+    
+    virtual void initT(QVector<Reflection::VarSpec*> specs) = 0;
+    virtual void resetT(void) = 0;
+    virtual void displayT(QVector<Reflection::VarSpec*> spec) = 0;
+    virtual void displayOldT(int pit) = 0;
 
-  QGraphicsScene *scene;
-  IntVarArrayItem *intVarArrayItem;
-  Gecode::Reflection::VarMap& vm;
-  int firstPointInTime;
-  QStringList vars;
-};
+    QGraphicsScene *scene;
+    Gecode::Reflection::VarMap& vm;
+    int firstPointInTime;
+    QStringList vars;
+  };
 
 }}}
 

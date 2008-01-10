@@ -36,21 +36,16 @@
 
 #include "gecode/gist/config.hh"
 
-//#include "intvarview.h"
-#include "gecode/gist/visualisation/intvararrayview.hh"
-//#include "boolvarview.h"
-//#include "boolvararrayview.h"
+#include "gecode/gist/visualisation/vararrayviewt.hh"
+#include "gecode/gist/visualisation/intvaritem.hh"
+#include "gecode/gist/visualisation/setvaritem.hh"
 
 namespace Gecode { namespace Gist {
 
   Config::Config(void)
     {
-      // TODO nikopp: make the visualisations available after the
-      //              interface has been implemented (see IntVarArray)
-//      visualisationMap.insert("IntVar", &IntVarView::create);
-      visualisationMap.insert("IntVarArray", &Visualisation::IntVarArrayView::create);
-//      visualisationMap.insert("BoolVar", &BoolVarView::create);
-//      visualisationMap.insert("BoolVarArray", &BoolVarArrayView::create);
+      visualisationMap.insert("IntVarArray", &Visualisation::VarArrayViewT<Visualisation::IntVarItem>::create);
+      visualisationMap.insert("SetVarArray", &Visualisation::VarArrayViewT<Visualisation::SetVarItem>::create);
     }
 
 }}

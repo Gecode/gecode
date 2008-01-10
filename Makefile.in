@@ -555,12 +555,14 @@ GISTHDR0 = \
 	nodevisitor.icc postscript.hh shapelist.hh \
 	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh \
 	mainwindow.hh \
+	analysiscursor.hh \
 	addchild.hh addvisualisationdialog.hh reflectionhelpers.hh \
 	ui_addchild.hh ui_addvisualisationdialog.hh\
 	config.hh \
-	visualisation/intvararrayitem.hh visualisation/intvararrayview.hh \
+	visualisation/vararrayview.hh visualisation/vararrayviewt.hh \
+	visualisation/vararrayitem.hh visualisation/varitem.hh \
 	visualisation/intvaritem.hh \
-	analysiscursor.hh
+	visualisation/setvaritem.hh
 
 GISTSRC0 = \
 	drawingcursor.cc gist.cc node.cc nodecursor.cc \
@@ -569,14 +571,16 @@ GISTSRC0 = \
 	mainwindow.cc preferences.cc \
 	addchild.cc addvisualisationdialog.cc reflectionhelpers.cc \
 	config.cc \
-	visualisation/intvararrayitem.cc visualisation/intvararrayview.cc \
+	analysiscursor.cc \
+	visualisation/vararrayview.cc \
+	visualisation/varitem.cc \
 	visualisation/intvaritem.cc \
-	analysiscursor.cc
+	visualisation/setvaritem.cc
 
 GISTMOCSRC0 = \
 	moc_treecanvas.cc moc_mainwindow.cc moc_preferences.cc \
 	moc_addchild.cc moc_addvisualisationdialog.cc \
-	visualisation/moc_intvararrayview.cc
+	visualisation/moc_vararrayview.cc
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)

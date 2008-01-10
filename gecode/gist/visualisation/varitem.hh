@@ -34,62 +34,34 @@
  *
  */
 
-#include "gecode/gist/visualisation/intvararrayitem.hh"
+#ifndef GECODE_GIST_VISUALISATION_VARITEM_HH
+#define GECODE_GIST_VISUALISATION_VARITEM_HH
 
-#include <QtGui/QGraphicsTextItem>
-#include <QtGui/QBrush>
+#include <QtGui/QGraphicsRectItem>
+
+#include "gecode/minimodel.hh"
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-  IntVarArrayItem::IntVarArrayItem(QVector<Reflection::VarSpec*> specs, QGraphicsItem *parent)
-  : QGraphicsRectItem(parent)
-  , numberOfUpdates(0)
-  { 
-    numberOfVariables = specs.size();
-    initGraphic(specs);
-  }
+class VarItem : public QGraphicsRectItem {
+  
+public:
+  VarItem(Reflection::VarSpec* spec, QGraphicsItem *parent = 0);
 
-  void
-  IntVarArrayItem::display(QVector<Reflection::VarSpec*> specs) {
+  void display(Reflection::VarSpec* spec);
+  void displayOld(int pit); ///< Use to show the variable at point in time \a pit
+  void reset(void);
 
-    for (int i = 0; i < numberOfVariables; ++i) {
-      intVarItems[i]->display(specs[i]);
-    }
-    current = ++numberOfUpdates;
-  }
+protected:
+  virtual void updateGraphic(void) = 0;
+  virtual void store(Reflection::VarSpec* spec) = 0; ///< store the information of the variable on the stack
 
-  void
-  IntVarArrayItem::displayOld(int pit) {
-
-    if(pit > numberOfUpdates || pit < 0) {
-      return;
-    }
-
-    for (int j = 0; j < numberOfVariables; ++j) {
-      intVarItems[j]->displayOld(pit);
-    }
-
-    current = pit;
-  }
-
-  void
-  IntVarArrayItem::initGraphic(QVector<Reflection::VarSpec*> specs) {
-
-    intVarItems.resize(numberOfVariables);
-
-    for (int i = 0; i < numberOfVariables; ++i) {
-
-      IntVarItem* item = new IntVarItem(specs[i], this);
-
-      if(i>0)
-        item->moveBy(0, childrenBoundingRect().height());
-
-      intVarItems[i] = item;
-    }
-
-    setRect(childrenBoundingRect());
-  }
+  int current; ///< Number of actually drawn item
+  int noOfUpdates; ///< Number of received updates
+};
 
 }}}
+
+#endif
 
 // STATISTICS: gist-any

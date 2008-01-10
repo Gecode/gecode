@@ -34,37 +34,64 @@
  *
  */
 
-#ifndef GECODE_GIST_VISUALISATION_INTVARARRAYITEM_HH
-#define GECODE_GIST_VISUALISATION_INTVARARRAYITEM_HH
+#include "gecode/gist/visualisation/vararrayview.hh"
 
-#include <QtGui/QGraphicsRectItem>
-#include <QtCore/QVector>
-
-#include <gecode/minimodel.hh>
-
-#include "intvaritem.hh"
+#include <QGraphicsTextItem>
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-class IntVarArrayItem : public QGraphicsRectItem {
+  VarArrayView::VarArrayView(Gecode::Reflection::VarMap& vm0, int pit, QStringList vars0, QWidget *parent)
+  : QGraphicsView(parent)
+  , vm(vm0)
+  , firstPointInTime(pit)
+  , vars(vars0)
+  {
+    scene = new QGraphicsScene(this);
+    setScene(scene);
+    setAlignment(Qt::AlignLeft | Qt::AlignTop);
+  }
 
-public:
-  IntVarArrayItem(QVector<Reflection::VarSpec*> specs, QGraphicsItem *parent = 0);
+  void
+  VarArrayView::init() {
 
-  void display(QVector<Reflection::VarSpec*> specs); ///< Use to commit an update
-  void displayOld(int pit); ///< Use to show the variable at point in time pit
+    QVector<Reflection::VarSpec*> specs;
+    QStringList _vars = vars;
+    while(!_vars.empty()) {
+      specs.push_back(new Reflection::VarSpec(vm.spec(_vars.takeFirst().toStdString().c_str())));
+    }
+    
+   initT(specs);
+   
+   setFixedSize(sceneRect().size().toSize() + QSize(5,5));
+  }
+  
+  // TODO nikopp: this ist not used yet and I am not sure if it is a good idea at all
+  //              maybe one should just create a new visualisation instead of resetting
+  //              the old one
+  void
+  VarArrayView::reset(void) {
+    resetT();
+  }
 
-private:
-  void initGraphic(QVector<Reflection::VarSpec*> specs); 
+  void
+  VarArrayView::displayOld(int pit) {
+    displayOldT(pit);
+  }
+  
+  void
+  VarArrayView::display(Gecode::Reflection::VarMap& _vm, int pit) {
 
-  QVector<IntVarItem*> intVarItems;
-  int numberOfVariables;
-  int numberOfUpdates;
-  int current; ///< Number of actually drawn item
-};
+    // TODO nikopp: use pit to implement 'gaps' when view is muted
+    
+    QVector<Reflection::VarSpec*> specs;
+    QStringList _vars = vars;
+    while(!_vars.empty()) {
+      specs.push_back(new Reflection::VarSpec(_vm.spec(_vars.takeFirst().toStdString().c_str())));
+    }
+    
+    displayT(specs);
+  }
 
 }}}
-
-#endif
 
 // STATISTICS: gist-any

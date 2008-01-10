@@ -34,40 +34,53 @@
  *
  */
 
-#include "gecode/gist/visualisation/intvaritem.hh"
-
 #include <QtGui/QBrush>
+
+#include "gecode/gist/visualisation/setvaritem.hh"
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-  IntVarItem::IntVarItem(Reflection::VarSpec* spec, QGraphicsItem *parent)
+  SetVarItem::SetVarItem(Reflection::VarSpec* spec, QGraphicsItem *parent)
   : VarItem(spec, parent)
-  { 
-    // this item is supposed to display an IntVar
-    if(spec->vti() == Int::IntVarImpConf::vti) {
-      Reflection::IntArrayArg* dom = spec->dom()->toIntArray();
+{ 
+  // this item is supposed to display a SetVar
+  if(spec->vti() == Set::SetVarImpConf::vti) {
+    
+    int lb_card = spec->dom()->first()->second()->toInt();
+    int ub_card = spec->dom()->second()->second()->toInt();
 
-      int domSize = dom->size();
+    Reflection::IntArrayArg* lower_bound_dom = spec->dom()->first()->first()->toIntArray();
+    Reflection::IntArrayArg* upper_bound_dom = spec->dom()->second()->first()->toIntArray();
+    
+    int lb_domSize = lower_bound_dom->size();
+    int ub_domSize = upper_bound_dom->size();
 
-      initMin = (*dom)[0];
-      initMax = (*dom)[domSize-1];
-
-      arraylength = 2*(initMax - initMin + 1);
-
-      QBitArray array(arraylength, false);
-      updates.push(array);
-
-      initGraphic();
+    if(ub_domSize > 0) {
+      initMin = (*upper_bound_dom)[0];
+      initMax = (*upper_bound_dom)[ub_domSize-1];
     }
-    else {
-      arraylength = -1;
-      new QGraphicsTextItem("not an IntVar", this);
-      setRect(childrenBoundingRect());
+    if(lb_domSize > 0) {
+      initMin = std::min(initMin, (*lower_bound_dom)[0]);
+      initMax = std::max(initMax, (*lower_bound_dom)[lb_domSize-1]);
     }
+    arraylength = 2*(initMax - initMin + 1);
+
+    QBitArray array(arraylength, false);
+    updates.push(array);
+    bound_updates.push(lb_card);
+    bound_updates.push(ub_card);
+
+    initGraphic();
   }
+  else {
+    arraylength = -1;
+    new QGraphicsTextItem("not a SetVar", this);
+    setRect(childrenBoundingRect());
+  }
+}
 
   void
-  IntVarItem::display(Reflection::VarSpec* spec) {
+  SetVarItem::display(Reflection::VarSpec* spec) {
     if(arraylength < 0) {
       return;
     }
@@ -75,7 +88,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   }
 
   void
-  IntVarItem::displayOld(int pit) {
+  SetVarItem::displayOld(int pit) {
     if(arraylength < 0) {
       return;
     }
@@ -83,8 +96,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   }
 
   void
-  IntVarItem::initGraphic(void) {
-
+  SetVarItem::initGraphic(void) {
     int vectorSize = initMax - initMin +1;
 
     QGraphicsTextItem largest (QString::number(initMax));
@@ -106,43 +118,61 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       //centre the number in the square
       number->moveBy((item->boundingRect().width() - number->boundingRect().width())/2,
                      (item->boundingRect().height() - number->boundingRect().height())/2);
-      if(j>0)
+      if(j>0) {
         item->moveBy(childrenBoundingRect().width(),0);
+      }
       domainItems[j] = item;
     }
+    
+    int maxCard = bound_updates[1];
+    int minCard = bound_updates[0];
+    QGraphicsRectItem* cardItem = new QGraphicsRectItem(this);
+    cardText = new QGraphicsTextItem("# " + QString::number(maxCard) + "-" + QString::number(maxCard), cardItem);
+    
+    cardItem->setRect(cardItem->childrenBoundingRect());
+    cardItem->moveBy(childrenBoundingRect().width(),0);
+    cardText->setPlainText("# " + QString::number(minCard) + "-" + QString::number(maxCard));
 
     setRect(childrenBoundingRect());
   }
 
   void
-  IntVarItem::store(Reflection::VarSpec* spec) {
+  SetVarItem::store(Reflection::VarSpec* spec) {
+    Reflection::IntArrayArg* lower_bound_dom = spec->dom()->first()->first()->toIntArray();
+    Reflection::IntArrayArg* upper_bound_dom = spec->dom()->second()->first()->toIntArray();
 
-    Reflection::IntArrayArg* dom = spec->dom()->toIntArray();
-
-    int domSize = dom->size();
-    bool assigned = (*dom)[0] == (*dom)[domSize-1];
+    int lb_domSize = lower_bound_dom->size();
+    int ub_domSize = upper_bound_dom->size();
 
     QBitArray array(arraylength, false);
 
     int i = initMin;
-    int k = 0;
     int j = 0;
+    int k_lb = 0;
+    int k_ub = 0;
 
-    while(k < domSize) {
-      while(i < (*dom)[k]) {
+    while(k_ub < ub_domSize) {
+      while(i < (*upper_bound_dom)[k_ub]) {
         array.setBit(2*j,true);
         ++i;
         ++j;
       }
-      ++k;
-      i = (*dom)[k] + 1;
+      ++k_ub;
+      while(k_lb < lb_domSize && (*lower_bound_dom)[k_lb] <= (*upper_bound_dom)[k_ub]) {
+        i = (*lower_bound_dom)[k_lb];
+        j = i - initMin;
+        ++k_lb;
+        while(i <= (*lower_bound_dom)[k_lb]) {
+          array.setBit(2*j,true);
+          array.setBit(2*j+1,true);
+          ++i;
+          ++j;
+        }
+        ++k_lb;
+      }
+      i = (*upper_bound_dom)[k_ub] + 1;
       j = i - initMin;
-      ++k;
-    }
-
-    if(assigned) {
-      array.setBit(2*(j-1),true);
-      array.setBit(2*(j-1)+1,true);
+      ++k_ub;
     }
 
     while(i <= initMax) {
@@ -151,13 +181,19 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       ++j;
     }
 
+    int lb_card = spec->dom()->first()->second()->toInt();
+    int ub_card = spec->dom()->second()->second()->toInt();
+
     updates.push(array);
+    bound_updates.push(lb_card);
+    bound_updates.push(ub_card);
   }
 
   void
-  IntVarItem::updateGraphic(void) {
-
+  SetVarItem::updateGraphic(void) {
     QBitArray array = updates[current];
+    int lb_card = bound_updates[2*current];
+    int ub_card = bound_updates[2*current+1];
 
     for (int i = 0; i <= initMax - initMin; ++i) {
       if(array.testBit(2*i))
@@ -168,6 +204,8 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       else
         domainItems[i]->setBrush(Qt::white);
     }
+    
+    cardText->setPlainText("# " + QString::number(lb_card) + "-" + QString::number(ub_card));
   }
 
 }}}
