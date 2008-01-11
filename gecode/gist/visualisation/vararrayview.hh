@@ -40,6 +40,7 @@
 #include <QtGui/QGraphicsView>
 #include <QtGui/QSlider>
 #include <QtGui/QGridLayout>
+#include <QtGui/QPushButton>
 #include <QtCore/QString>
 
 #include <gecode/minimodel.hh>
@@ -75,6 +76,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     QGraphicsScene* scene;
     QGraphicsView* view;
     QSlider* timeBar;
+    QPushButton* muteButton;
     Gecode::Reflection::VarMap& vm;
     int firstPointInTime;
     QStringList vars;

@@ -57,9 +57,13 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     timeBar->setMaximum(firstPointInTime);
     timeBar->setObjectName("visTimeBar");
 
+    // TODO nikopp: implement functionality of mute button
+    muteButton = new QPushButton("Mute", this);
+    
     grid = new QGridLayout(this);
     grid->addWidget(view);
     grid->addWidget(timeBar);
+    grid->addWidget(muteButton);
     
     setLayout(grid);
     

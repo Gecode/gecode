@@ -301,7 +301,6 @@ namespace Gecode { namespace Gist {
     QScrollArea* sa = 
       static_cast<QScrollArea*>(parentWidget()->parentWidget());
     sa->ensureVisible(x, y);
-    
   }
 
   void
@@ -557,11 +556,12 @@ namespace Gecode { namespace Gist {
   }
   
   void
-  TreeCanvasImpl::markCurrentNode(int i) {
+  TreeCanvasImpl::markCurrentNode(int pit) {
     QMutexLocker locker(&mutex);
-    if(nodeMap.size() > i && nodeMap[i] != NULL) {
-      setCurrentNode(nodeMap[i]);
+    if(nodeMap.size() > pit && nodeMap[pit] != NULL) {
+      setCurrentNode(nodeMap[pit]);
       centerCurrentNode();
+      emit pointInTimeChanged(pit);
     }
   }
 
@@ -765,11 +765,8 @@ namespace Gecode { namespace Gist {
               varView, SLOT(display(Gecode::Reflection::VarMap&, int)));
       connect(this, SIGNAL(pointInTimeChanged(int)),
               varView, SLOT(displayOld(int)));
-      
       connect(varView->findChild<QWidget*>("visTimeBar"), SIGNAL(valueChanged(int)),
               this, SLOT(markCurrentNode(int)));
-      
-      
     }
   }
   
@@ -1219,7 +1216,7 @@ namespace Gecode { namespace Gist {
     
 #ifdef GECODE_GIST_EXPERIMENTAL
     connect(timeBar, SIGNAL(valueChanged(int)), canvas, SLOT(markCurrentNode(int)));
-    connect(timeBar, SIGNAL(valueChanged(int)), canvas, SIGNAL(pointInTimeChanged(int)));
+    connect(canvas, SIGNAL(pointInTimeChanged(int)), timeBar, SLOT(setValue(int)));
 #endif
     
     layout->addWidget(scrollArea, 0,0);
