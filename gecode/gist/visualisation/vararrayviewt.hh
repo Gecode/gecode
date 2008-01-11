@@ -91,6 +91,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   template<class VarItem>
   void
   VarArrayViewT<VarItem>::displayT(QVector<Reflection::VarSpec*> specs) {
+    varArrayItem->setVisible(true);
     varArrayItem->display(specs);
   }
 
@@ -98,12 +99,13 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   void
   VarArrayViewT<VarItem>::displayOldT(int pit) {
 
-    if(pit < firstPointInTime)
+    if(pit < firstPointInTime) {
       varArrayItem->setVisible(false);
-    else
+    }
+    else {
       varArrayItem->setVisible(true);
-    
-    varArrayItem->displayOld(pit - firstPointInTime + 1);
+      varArrayItem->displayOld(pit - firstPointInTime + 1);
+    }
   }
 
 }}}
