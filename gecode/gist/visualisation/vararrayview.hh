@@ -61,6 +61,9 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     void displayOld(int pit); ///< Use to show the variable at point in time pit
     void reset(void); ///< Use to reset the view
 
+  private Q_SLOTS:
+    void on_muteButton_clicked(void);
+    
   protected:
     void init(void);
     

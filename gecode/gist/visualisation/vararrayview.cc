@@ -57,8 +57,8 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     timeBar->setMaximum(firstPointInTime);
     timeBar->setObjectName("visTimeBar");
 
-    // TODO nikopp: implement functionality of mute button
     muteButton = new QPushButton("Mute", this);
+    muteButton->setObjectName("muteButton");
     
     grid = new QGridLayout(this);
     grid->addWidget(view);
@@ -68,6 +68,8 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     setLayout(grid);
     
     connect(timeBar, SIGNAL(valueChanged(int)), this, SLOT(displayOld(int)));
+    
+    QMetaObject::connectSlotsByName(this);
   }
 
   void
@@ -122,6 +124,10 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     timeBar->setValue(pit);
   }
 
+  void
+  VarArrayView::on_muteButton_clicked(void) {
+    // TODO nikopp: implement functionality of mute button
+  }
 }}}
 
 // STATISTICS: gist-any
