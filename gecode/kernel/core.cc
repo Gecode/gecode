@@ -230,8 +230,7 @@ namespace Gecode {
     PropModEvent pme_o = p->u.pme;
     // Clear pme but leave propagator in queue
     p->u.pme = 0;
-    ExecStatus es = p->propagate(this,pme_o);
-    switch (es) {
+    switch (p->propagate(this,pme_o)) {
     case ES_FAILED:
       fail(); 
       return false;
@@ -371,7 +370,7 @@ namespace Gecode {
      * Stage one
      *
      * Copy all data structures (which in turn will invoke the
-     * constructor Space::Space.
+     * constructor Space::Space).
      */
     Space* c = copy(share);
 
