@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMin::tell(Space* home, unsigned int a, SetView x, int v) {
     return (a == 0) ? x.include(home,v) : x.exclude(home,v);
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValMin::type(void) {
     return Support::Symbol("Set::Branch::ValMin");
   }
@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMax::tell(Space* home, unsigned int a, SetView x, int v) {
     return (a == 0) ? x.include(home,v) : x.exclude(home,v);
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValMax::type(void) {
     return Support::Symbol("Set::Branch::ValMax");
   }

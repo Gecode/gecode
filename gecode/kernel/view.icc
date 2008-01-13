@@ -584,7 +584,7 @@ namespace Gecode {
     return a;
   }
   template <class View, unsigned int n>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ViewTuple<View,n>::type(void) {
     /// TODO! FIXME!
     return "<"+View::type()+","+">";

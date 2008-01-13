@@ -275,7 +275,7 @@ namespace Gecode {
       return view.spec(home, m);
     }
 
-    forceinline Support::Symbol
+    inline Support::Symbol
     SingletonView::type(void) {
       return Support::Symbol("Set::SingletonView");
     }

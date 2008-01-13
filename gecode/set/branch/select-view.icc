@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Branch {
     GECODE_NEVER;
     return VSS_NONE;
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByNone::type(void) {
     return Support::Symbol("Set::Branch::ByNone");
   }
@@ -71,7 +71,7 @@ namespace Gecode { namespace Set { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMinCard::type(void) {
     return Support::Symbol("Set::Branch::ByMinCard");
   }
@@ -89,7 +89,7 @@ namespace Gecode { namespace Set { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMaxCard::type(void) {
     return Support::Symbol("Set::Branch::ByMaxCard");
   }
@@ -109,7 +109,7 @@ namespace Gecode { namespace Set { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMinUnknown::type(void) {
     return Support::Symbol("Set::Branch::ByMinUnknown");
   }
@@ -137,7 +137,7 @@ namespace Gecode { namespace Set { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMaxUnknown::type(void) {
     return Support::Symbol("Set::Branch::ByMaxUnknown");
   }

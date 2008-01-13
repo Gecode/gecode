@@ -298,7 +298,7 @@ namespace Gecode {
     MinusView::spec(Space* home, Reflection::VarMap& m) {
       return view.spec(home, m);
     }
-    forceinline Support::Symbol
+    inline Support::Symbol
     MinusView::type(void) {
       return Support::Symbol("Int::MinusView");
     }

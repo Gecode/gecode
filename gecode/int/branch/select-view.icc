@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByNone<View>::type(void) {
     return Support::Symbol("Int::Branch::ByNone");
   }
@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMinMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ByMinMin");
   }
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMinMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ByMinMax");
   }
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMaxMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ByMaxMin");
   }
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByMaxMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ByMaxMax");
   }
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   BySizeMin<View>::type(void) {
     return Support::Symbol("Int::Branch::BySizeMin");
   }
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   BySizeMax<View>::type(void) {
     return Support::Symbol("Int::Branch::BySizeMax");
   }
@@ -203,7 +203,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByDegreeMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ByDegreeMin");
   }
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByDegreeMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ByDegreeMax");
   }
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByDegreeMinNoTies<View>::type(void) {
     return Support::Symbol("Int::Branch::ByDegreeMinNoTies");
   }
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByDegreeMaxNoTies<View>::type(void) {
     return Support::Symbol("Int::Branch::ByDegreeMaxNoTies");
   }
@@ -298,7 +298,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   BySizeDegreeMin<View>::type(void) {
     return Support::Symbol("Int::Branch::BySizeDegreeMin");
   }
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   BySizeDegreeMax<View>::type(void) {
     return Support::Symbol("Int::Branch::BySizeDegreeMax");
   }
@@ -345,7 +345,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByRegretMinMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ByRegretMinMin");
   }
@@ -366,7 +366,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByRegretMinMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ByRegretMinMax");
   }
@@ -388,7 +388,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByRegretMaxMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ByRegretMaxMin");
   }
@@ -409,7 +409,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ByRegretMaxMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ByRegretMaxMax");
   }

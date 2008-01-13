@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  forceinline Support::Symbol
+  Support::Symbol
   NaryEq<BV>::name(void) {
     return Reflection::mangle<BV>("Int::Bool::NaryEq");
   }

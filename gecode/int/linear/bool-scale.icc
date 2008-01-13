@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Support::quicksort<ScaleBool,ScaleDec>(fst(), size(), scale_dec);
   }
 
-  forceinline Support::Symbol
+  inline Support::Symbol
   ScaleBoolArray::type(void) {
     return Support::Symbol("Int::Linear::ScaleBoolArray");
   }
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Linear {
   EmptyScaleBoolArray::size(void) const { return 0; }
   forceinline void 
   EmptyScaleBoolArray::sort(void) {}
-  forceinline Support::Symbol
+  inline Support::Symbol
   EmptyScaleBoolArray::type(void) {
     return Support::Symbol("Int::Linear::EmptyScaleBoolArray");
   }

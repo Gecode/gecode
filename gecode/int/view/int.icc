@@ -259,7 +259,7 @@ namespace Gecode { namespace Int {
   IntView::spec(Space* home, Reflection::VarMap& m) {
     return varimp->spec(home, m);
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   IntView::type(void) {
     return Support::Symbol("Int::IntView");
   }

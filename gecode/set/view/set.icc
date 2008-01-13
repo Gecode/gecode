@@ -177,7 +177,7 @@ namespace Gecode { namespace Set {
     return varimp->spec(home, m);
   }
 
-  forceinline Support::Symbol
+  inline Support::Symbol
   SetView::type(void) {
     return Support::Symbol("Set::SetView");
   }

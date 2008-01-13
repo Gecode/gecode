@@ -203,7 +203,7 @@ namespace Gecode { namespace Int { namespace GCC {
       Reflection::Arg::newPair(Reflection::Arg::newInt(c),
         Reflection::Arg::newInt(count)));
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   OccurBndsView::type(void) {
     return Support::Symbol("Int::GCC::OccurBndsView");
   }
@@ -744,7 +744,7 @@ namespace Gecode { namespace Int { namespace GCC {
       Reflection::Arg::newPair(Reflection::Arg::newInt(c),
         Reflection::Arg::newInt(count)), view.spec(home, m));
   }
-  forceinline Support::Symbol
+  inline Support::Symbol
   CardView::type(void) {
     return Support::Symbol("Int::GCC::CardView");
   }

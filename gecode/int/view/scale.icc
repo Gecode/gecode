@@ -352,7 +352,7 @@ namespace Gecode {
                                       view.spec(home, m));
     }
     template <class Val, class UnsVal>
-    forceinline Support::Symbol
+    inline Support::Symbol
     ScaleView<Val,UnsVal>::type(void) {
       return Support::Symbol("Int::ScaleView");
     }

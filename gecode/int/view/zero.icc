@@ -290,7 +290,7 @@ namespace Gecode {
     ZeroIntView::spec(Space*, Reflection::VarMap&) {
       return Reflection::Arg::newInt(0);
     }
-    forceinline Support::Symbol
+    inline Support::Symbol
     ZeroIntView::type(void) {
       return Support::Symbol("ConstIntView");
     }

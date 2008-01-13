@@ -53,7 +53,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
 
   template<bool exclude>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValMinUnknown<exclude>::type(void) {
     return Support::Symbol("CpltSet::Branch::ValMinUnknown");
   }
@@ -96,7 +96,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
 
   template<bool exclude>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValMaxUnknown<exclude>::type(void) {
     return Support::Symbol("CpltSet::Branch::ValMaxUnknown");
   }

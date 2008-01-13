@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.gr(home,n);
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ValMin");
   }
@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValMed<View>::type(void) {
     return Support::Symbol("Int::Branch::ValMed");
   }
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.le(home,n);
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ValMax");
   }
@@ -146,7 +146,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValSplitMin<View>::type(void) {
     return Support::Symbol("Int::Branch::ValSplitMin");
   }
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.gr(home,n) : x.lq(home,n);
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValSplitMax<View>::type(void) {
     return Support::Symbol("Int::Branch::ValSplitMax");
   }
@@ -232,8 +232,8 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
-  forceinline
-  Support::Symbol NoValue::type(void) {
+  inline Support::Symbol
+  NoValue::type(void) {
     return Support::Symbol("Int::Branch::NoValue");
   }
 
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.zero(home) : x.one(home);
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValZeroOne<View>::type(void) {
     return Support::Symbol("Int::Branch::ValZeroOne");
   }
@@ -283,7 +283,7 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.one(home) : x.zero(home);
   }
   template<class View>
-  forceinline Support::Symbol
+  inline Support::Symbol
   ValOneZero<View>::type(void) {
     return Support::Symbol("Int::Branch::ValOneZero");
   }

@@ -99,8 +99,6 @@ namespace Gecode { namespace Support {
     Symbol(const Symbol& s0);
     /// Assignment operator
     const Symbol& operator=(const Symbol& s0);
-    /// Deallocate memory
-    void dispose(void);
     /// Test if this Symbol is equal to \a s0
     bool operator==(const Symbol& s0) const;
     /// Test if this Symbol is equal to \a s0

@@ -288,7 +288,7 @@ namespace Gecode { namespace Set {
     return args;
   }
 
-  forceinline Support::Symbol
+  inline Support::Symbol
   ConstantView::type(void) {
     return Support::Symbol("Set::ConstantView");
   }
@@ -462,7 +462,7 @@ namespace Gecode { namespace Set {
     return NULL;
   }
 
-  forceinline Support::Symbol
+  inline Support::Symbol
   EmptyView::type(void) {
     return Support::Symbol("Set::EmptyView");
   }
@@ -643,7 +643,7 @@ namespace Gecode { namespace Set {
     return NULL;
   }
 
-  forceinline Support::Symbol
+  inline Support::Symbol
   UniverseView::type(void) {
     return Support::Symbol("Set::UniverseView");
   }
