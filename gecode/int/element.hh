@@ -85,9 +85,9 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform copying during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Const function (return PC_BINARY_HI)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Element {
       const Support::Symbol& name);
   public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform copying during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -209,9 +209,9 @@ namespace Gecode { namespace Int { namespace Element {
      * otherwise as dynamic PC_LINEAR_HI.
      *
      */
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification

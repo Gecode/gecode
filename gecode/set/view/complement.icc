@@ -278,14 +278,14 @@ namespace Gecode { namespace Set {
   }
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::me(PropModEvent pme) {
-    return me_negateset(View::me(pme));
+  ComplementView<View>::me(ModEventDelta med) {
+    return me_negateset(View::me(med));
   }
 
   template <class View>
-  forceinline PropModEvent
-  ComplementView<View>::pme(ModEvent me) {
-    return me_negateset(View::pme(me));
+  forceinline ModEventDelta
+  ComplementView<View>::med(ModEvent me) {
+    return me_negateset(View::med(me));
   }
 
   template <class View>

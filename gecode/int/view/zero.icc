@@ -226,12 +226,12 @@ namespace Gecode {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
-    ZeroIntView::me(PropModEvent) {
+    ZeroIntView::me(ModEventDelta) {
       return ME_INT_NONE;
     }
-    forceinline PropModEvent
-    ZeroIntView::pme(ModEvent me) {
-      return static_cast<PropModEvent>(me);
+    forceinline ModEventDelta
+    ZeroIntView::med(ModEvent me) {
+      return static_cast<ModEventDelta>(me);
     }
 
 

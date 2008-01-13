@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   ExecStatus
-  Eq<BVA,BVB>::propagate(Space* home, PropModEvent) {
+  Eq<BVA,BVB>::propagate(Space* home, ModEventDelta) {
 #define GECODE_INT_STATUS(S0,S1) \
   ((BVA::S0<<(1*BVA::BITS))|(BVB::S1<<(0*BVB::BITS)))
     switch ((x0.status() << (1*BVA::BITS)) | (x1.status() << (0*BVB::BITS))) {
@@ -189,13 +189,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   PropCost
-  NaryEq<BV>::cost(PropModEvent) const {
+  NaryEq<BV>::cost(ModEventDelta) const {
     return PC_UNARY_LO;
   }
 
   template<class BV>
   ExecStatus
-  NaryEq<BV>::propagate(Space* home, PropModEvent) {
+  NaryEq<BV>::propagate(Space* home, ModEventDelta) {
     int n=x.size();
     int i=0;
     while (true) {

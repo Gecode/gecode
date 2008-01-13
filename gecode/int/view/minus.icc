@@ -225,12 +225,12 @@ namespace Gecode {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
-    MinusView::me(PropModEvent pme) {
-      return IntView::me(pme);
+    MinusView::me(ModEventDelta med) {
+      return IntView::me(med);
     }
-    forceinline PropModEvent
-    MinusView::pme(ModEvent me) {
-      return IntView::pme(me);
+    forceinline ModEventDelta
+    MinusView::med(ModEvent me) {
+      return IntView::med(me);
     }
 
 

@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class VA, class VB>
   ExecStatus
-  SquarePlus<VA,VB>::propagate(Space* home, PropModEvent) {
+  SquarePlus<VA,VB>::propagate(Space* home, ModEventDelta) {
     bool mod;
     do {
       mod = false;
@@ -258,13 +258,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  Square<View>::cost(PropModEvent) const {
+  Square<View>::cost(ModEventDelta) const {
     return PC_BINARY_HI;
   }
 
   template <class View>
   ExecStatus
-  Square<View>::propagate(Space* home, PropModEvent) {
+  Square<View>::propagate(Space* home, ModEventDelta) {
     // x0 * x0 = x1
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
@@ -324,7 +324,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   ExecStatus
-  MultPlus<Val,VA,VB,VC>::propagate(Space* home, PropModEvent) {
+  MultPlus<Val,VA,VB,VC>::propagate(Space* home, ModEventDelta) {
     assert(p(x0) && p(x1) && p(x2));
     bool mod;
     do {
@@ -425,13 +425,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  Mult<View>::cost(PropModEvent) const {
+  Mult<View>::cost(ModEventDelta) const {
     return PC_TERNARY_HI;
   }
 
   template <class View>
   ExecStatus
-  Mult<View>::propagate(Space* home, PropModEvent) {
+  Mult<View>::propagate(Space* home, ModEventDelta) {
     if (p(x0)) {
       if (p(x1) || p(x2)) goto rewrite_ppp;
       if (n(x1) || n(x2)) goto rewrite_pnn;

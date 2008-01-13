@@ -235,6 +235,12 @@ namespace Gecode { namespace Int {
   }
 
 
+  forceinline ModEventDelta
+  IntView::med(ModEvent me) {
+    return VarViewBase<IntVarImp>::med(me);
+  }
+
+
 
   /*
    * Cloning

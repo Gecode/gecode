@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as PC_BINARY_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as PC_BINARY_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -232,9 +232,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -356,7 +356,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -410,7 +410,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -445,7 +445,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -487,7 +487,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -529,7 +529,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -580,7 +580,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -617,7 +617,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \relates Lin
    */
   template <class Val, class View>
-  void bounds_p(PropModEvent pme, ViewArray<View>& x, 
+  void bounds_p(ModEventDelta med, ViewArray<View>& x, 
                 Val& c, Val& sl, Val& su);
 
   /**
@@ -626,7 +626,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \relates Lin
    */
   template <class Val, class View>
-  void bounds_n(PropModEvent pme, ViewArray<View>& y,
+  void bounds_n(ModEventDelta med, ViewArray<View>& y,
                 Val& c, Val& sl, Val& su);
 
   /**
@@ -656,7 +656,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -695,9 +695,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Propagation cost
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -738,7 +738,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -778,7 +778,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -818,7 +818,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -859,7 +859,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -906,7 +906,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -935,7 +935,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as dynamic PC_UNARY_HI)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -965,7 +965,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Create copy during cloning
       virtual Actor* copy(Space* home, bool share);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, PropModEvent pme);
+      virtual ExecStatus propagate(Space* home, ModEventDelta med);
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
@@ -991,7 +991,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Give advice to propagator
       virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, PropModEvent pme);
+      virtual ExecStatus propagate(Space* home, ModEventDelta med);
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
@@ -1031,7 +1031,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Create copy during cloning
       virtual Actor* copy(Space* home, bool share);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, PropModEvent pme);
+      virtual ExecStatus propagate(Space* home, ModEventDelta med);
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
@@ -1057,7 +1057,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Give advice to propagator
       virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, PropModEvent pme);
+      virtual ExecStatus propagate(Space* home, ModEventDelta med);
       /// Specification for this propagator
       virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Post propagator according to specification
@@ -1097,9 +1097,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -1139,7 +1139,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -1166,7 +1166,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -1199,7 +1199,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -1232,7 +1232,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -1361,7 +1361,7 @@ namespace Gecode { namespace Int { namespace Linear {
     LinBoolScale(Space* home, bool share, Propagator& pr, 
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(PropModEvent pme) const;
+    virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -1388,7 +1388,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -1422,7 +1422,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
@@ -1456,7 +1456,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification

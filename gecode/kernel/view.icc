@@ -89,10 +89,10 @@ namespace Gecode {
     //@{
     /// Schedule propagator \a p with modification event \a me
     static void schedule(Space* home, Propagator* p, ModEvent me);
-    /// Return modification event for view type in \a pme
-    static ModEvent me(PropModEvent pme);
-    /// Translate modification event \a me to propagator modification event for view
-    static PropModEvent pme(ModEvent me);
+    /// Return modification event for view type in \a med
+    static ModEvent me(ModEventDelta med);
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
     static ModEvent combine(ModEvent me1, ModEvent me2);
     //@}
@@ -387,13 +387,13 @@ namespace Gecode {
   }
   template <class VarImp>
   forceinline ModEvent
-  VarViewBase<VarImp>::me(PropModEvent pme) {
-    return VarImp::me(pme);
+  VarViewBase<VarImp>::me(ModEventDelta med) {
+    return VarImp::me(med);
   }
   template <class VarImp>
-  forceinline PropModEvent
-  VarViewBase<VarImp>::pme(ModEvent me) {
-    return VarImp::pme(me);
+  forceinline ModEventDelta
+  VarViewBase<VarImp>::med(ModEvent me) {
+    return VarImp::med(me);
   }
   template <class VarImp>
   forceinline ModEvent

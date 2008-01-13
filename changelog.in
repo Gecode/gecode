@@ -102,10 +102,10 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 Both the cost and propagate function of a propagator take the
-current propagator modification event as input. Likewise,
+current modification event delta as input. Likewise,
 retrieving the modification event for a particular View must use
-the static function View::me with the passed propagator
-modification event. Again, this feature committed the kernel to a
+the static function View::me with the passed
+modification event delta. Again, this feature committed the kernel to a
 particular implementation which might not be available in the
 future.
 
@@ -141,10 +141,28 @@ The kernel has undergone some cleanups and improvements:
    types). Moreover, if the need for more variable types arises this is 
    straightforward to do.
  - The addition of new variable types for users has been simplified.
- - The main propagation loop has been entirely rewritten (much simpler).
+ - The main propagation loop has been entirely rewritten (much much simpler).
+   Now, the kernel does not optimize any longer for the case if a
+   variable is modified more than once suring propagator execution.
+   While this changes the asymptotic complexity it reduces the propagator
+   execution overhead by up to 30%. And a propagator is still free
+   to make sure that a variable is modified only once (may propagators
+   do that already).
+ - Variable implementations became smaller by one word. Now variable
+   implementations are optimal in the sense that no additional memory
+   is needed for cloning or book-keeping, the memory required for 
+   propagation is sufficient.
  - Spaces have lost some weight as memory for datastructures only used
-   during cloning or propagation are shared (saves some 12% of memory
+   during cloning or propagation are shared (saves some 20% of memory
    per space).
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Propagator modification events have been renamed to modification event
+deltas (because that is what they are).
 
 [ENTRY]
 Module: kernel
@@ -152,7 +170,7 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 To not confuse variable implementations with variables, variable
-implementations are now always called VarImp, and not variable.
+implementations are now always called VarImp, and not Variable.
 
 [ENTRY]
 Module: gist

@@ -390,13 +390,13 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, class Tuple, bool Perm>
-  PropCost Sorted<View, Tuple, Perm>::cost(PropModEvent) const {
+  PropCost Sorted<View, Tuple, Perm>::cost(ModEventDelta) const {
     return cost_hi(xz.size(), PC_LINEAR_HI);
   }
 
   template<class View, class Tuple, bool Perm>
   ExecStatus
-  Sorted<View, Tuple, Perm>::propagate(Space* home, PropModEvent) {
+  Sorted<View, Tuple, Perm>::propagate(Space* home, ModEventDelta) {
     int  n           = xz.size();
     bool secondpass  = false;
     bool nofix       = false;

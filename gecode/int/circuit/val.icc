@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   PropCost
-  Val<View>::cost(PropModEvent) const {
+  Val<View>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   ExecStatus
-  Val<View>::propagate(Space* home, PropModEvent) {
+  Val<View>::propagate(Space* home, ModEventDelta) {
     GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));
     ExecStatus esc = connected(home);
     if (esc != ES_FIX)

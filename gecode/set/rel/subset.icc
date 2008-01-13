@@ -91,7 +91,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   ExecStatus
-  SubSet<View0,View1>::propagate(Space* home, PropModEvent) {
+  SubSet<View0,View1>::propagate(Space* home, ModEventDelta) {
     bool oneassigned = x0.assigned() || x1.assigned();
     unsigned int x0glbsize;
     do {

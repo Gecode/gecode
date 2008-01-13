@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   PropCost
-  LinkSingle::cost(PropModEvent) const {
+  LinkSingle::cost(ModEventDelta) const {
     return PC_UNARY_LO;
   }
 
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   ExecStatus
-  LinkSingle::propagate(Space* home, PropModEvent) {
+  LinkSingle::propagate(Space* home, ModEventDelta) {
     if (x0.zero()) {
       GECODE_ME_CHECK(x1.eq(home,0));
     } else if (x0.one()) {

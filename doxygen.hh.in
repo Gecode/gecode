@@ -649,14 +649,19 @@ variable has been changed by an operation on the variable. Delta
 objects are passed together with advisors to the advise member
 function of a propagator.
 
-\section GlossaryPME Propagator modification event
+\section GlossaryMED Modification event delta
 
-A propagator maintains as propagator modification event for each
-variable domain a modification event. These modification events
-describe which modification events occurred on all views
-(variables) the propagator depends on (see \ref
-GlossaryPropagator). A propagator modification event is available
-through a view or variable implementation (see for example \ref
+A propagator maintains a delta of modification events for all
+variable types. A modification event delta is available to the
+propagate and cost member functions of a propagator and describes
+the modification events that have occurred since the last execution of a
+propagator.  A modification event delta is highly abstract: it
+does not reveal for which variable a particular modification
+event occurred, it only reveals that a certain modification event
+has occurred for any variable of a given variable
+type. Modification events for a particular variable type can be
+extracted from a modification event delta through the respective
+view or variable implementation (see for example \ref
 TaskActorIntView or \ref TaskActorSetView).
 
 \section GlossaryVariable Variable

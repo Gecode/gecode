@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  Intersection<View0,View1,View2>::propagate(Space* home, PropModEvent) {
+  Intersection<View0,View1,View2>::propagate(Space* home, ModEventDelta) {
 
     bool x0ass=x0.assigned();
     bool x1ass=x1.assigned();
@@ -249,7 +249,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   PropCost
-  IntersectionN<View0,View1>::cost(PropModEvent) const {
+  IntersectionN<View0,View1>::cost(ModEventDelta) const {
     return PC_QUADRATIC_LO;
   }
 
@@ -291,7 +291,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  IntersectionN<View0,View1>::propagate(Space* home, PropModEvent) {
+  IntersectionN<View0,View1>::propagate(Space* home, ModEventDelta) {
 
     bool repeat = false;
     do {

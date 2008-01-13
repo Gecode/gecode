@@ -243,14 +243,14 @@ namespace Gecode { namespace Set {
   }
   template <class View>
   forceinline ModEvent
-  OffsetSetView<View>::me(PropModEvent pme) {
-    return View::me(pme);
+  OffsetSetView<View>::me(ModEventDelta med) {
+    return View::me(med);
   }
 
   template <class View>
-  forceinline PropModEvent
-  OffsetSetView<View>::pme(ModEvent me) {
-    return View::pme(me);
+  forceinline ModEventDelta
+  OffsetSetView<View>::med(ModEvent me) {
+    return View::med(me);
   }
 
   template <class View>

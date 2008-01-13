@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   ExecStatus
-  Seq::propagate(Space* home, PropModEvent) {
+  Seq::propagate(Space* home, ModEventDelta) {
     bool modified = false;
     bool assigned;
     do {

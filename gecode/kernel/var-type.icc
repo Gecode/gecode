@@ -295,14 +295,14 @@ namespace Gecode { namespace Int {
     static const int idx_d = -1;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_INT_DOM;
-    /// Start of bits for propagator modification event
-    static const int pme_bits_fst = 0;
-    /// Number of bits for propagator modification event
+    /// Start of bits for modification event delta
+    static const int med_bits_fst = 0;
+    /// Number of bits for modification event delta
     static const int me_bits_num = 2;
-    /// Bitmask for propagator modification event
+    /// Bitmask for modification event
     static const int me_bits_mask = (1 << 2) - 1;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Return difference when changing modification event \a me_o to \a me_n
     static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
     /// Variable type identifier for reflection
@@ -318,8 +318,8 @@ namespace Gecode { namespace Int {
     static const int idx_u = -1;
     /// Index for disposal
     static const int idx_d = -1;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = 0;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = 0;
   };
 }}
 #endif
@@ -334,14 +334,14 @@ namespace Gecode { namespace Int {
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_BOOL_VAL;
-    /// Start of bits for propagator modification event
-    static const int pme_bits_fst = Gecode::Int::IntVarImpConf::pme_bits_lst;
-    /// Number of bits for propagator modification event
+    /// Start of bits for modification event delta
+    static const int med_bits_fst = Gecode::Int::IntVarImpConf::med_bits_lst;
+    /// Number of bits for modification event delta
     static const int me_bits_num = 1;
-    /// Bitmask for propagator modification event
+    /// Bitmask for modification event
     static const int me_bits_mask = (1 << 1) - 1;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Return difference when changing modification event \a me_o to \a me_n
     static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
     /// Variable type identifier for reflection
@@ -357,8 +357,8 @@ namespace Gecode { namespace Int {
     static const int idx_u = Gecode::Int::IntVarImpConf::idx_u;
     /// Index for disposal
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = Gecode::Int::IntVarImpConf::pme_bits_lst;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = Gecode::Int::IntVarImpConf::med_bits_lst;
   };
 }}
 #endif
@@ -373,14 +373,14 @@ namespace Gecode { namespace Set {
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_SET_ANY;
-    /// Start of bits for propagator modification event
-    static const int pme_bits_fst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
-    /// Number of bits for propagator modification event
+    /// Start of bits for modification event delta
+    static const int med_bits_fst = Gecode::Int::BoolVarImpConf::med_bits_lst;
+    /// Number of bits for modification event delta
     static const int me_bits_num = 4;
-    /// Bitmask for propagator modification event
+    /// Bitmask for modification event
     static const int me_bits_mask = (1 << 4) - 1;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Return difference when changing modification event \a me_o to \a me_n
     static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
     /// Variable type identifier for reflection
@@ -396,8 +396,8 @@ namespace Gecode { namespace Set {
     static const int idx_u = Gecode::Int::BoolVarImpConf::idx_u;
     /// Index for disposal
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = Gecode::Int::BoolVarImpConf::pme_bits_lst;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = Gecode::Int::BoolVarImpConf::med_bits_lst;
   };
 }}
 #endif
@@ -417,14 +417,14 @@ namespace Gecode { namespace CpltSet {
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = PC_CPLTSET_DOM;
-    /// Start of bits for propagator modification event
-    static const int pme_bits_fst = Gecode::Set::SetVarImpConf::pme_bits_lst;
-    /// Number of bits for propagator modification event
+    /// Start of bits for modification event delta
+    static const int med_bits_fst = Gecode::Set::SetVarImpConf::med_bits_lst;
+    /// Number of bits for modification event delta
     static const int me_bits_num = 2;
-    /// Bitmask for propagator modification event
+    /// Bitmask for modification event
     static const int me_bits_mask = (1 << 2) - 1;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = pme_bits_fst + me_bits_num;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Return difference when changing modification event \a me_o to \a me_n
     static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
     /// Variable type identifier for reflection
@@ -440,8 +440,8 @@ namespace Gecode { namespace CpltSet {
     static const int idx_u = Gecode::Set::SetVarImpConf::idx_u;
     /// Index for disposal
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = Gecode::Set::SetVarImpConf::pme_bits_lst;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = Gecode::Set::SetVarImpConf::med_bits_lst;
   };
 }}
 #endif
@@ -455,8 +455,8 @@ namespace Gecode {
     static const int idx_u = Gecode::CpltSet::CpltSetVarImpConf::idx_u+1;
     /// Index for dispose
     static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
-    /// Return difference when changing propagator modification event \a pme_o to \a pme_n
-    static PropModEvent pmec(PropModEvent pme_o, PropModEvent pme_n);
+    /// Return difference when changing modification event delta \a med_o to \a med_n
+    static ModEventDelta medc(ModEventDelta med_o, ModEventDelta med_n);
   };
 
 }
@@ -642,58 +642,58 @@ namespace Gecode { namespace CpltSet {
 }}
 #endif
 namespace Gecode {
-  forceinline PropModEvent
-  AllVarConf::pmec(PropModEvent pme_o, PropModEvent pme_n) {
-    PropModEvent pme_c = 0;
+  forceinline ModEventDelta
+  AllVarConf::medc(ModEventDelta med_o, ModEventDelta med_n) {
+    ModEventDelta med_c = 0;
 #ifdef GECODE_HAVE_INT_VARS
     {
       // Compute the old modification event
-      ModEvent me_o = (pme_o >> Gecode::Int::IntVarImpConf::pme_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
+      ModEvent me_o = (med_o >> Gecode::Int::IntVarImpConf::med_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
       // Compute the new modification event
-      ModEvent me_n = (pme_n >> Gecode::Int::IntVarImpConf::pme_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
+      ModEvent me_n = (med_n >> Gecode::Int::IntVarImpConf::med_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
       // Compute combined event
       ModEvent me_c = Gecode::Int::IntVarImpConf::mec(me_o,me_n);
       // Add combined event
-      pme_c |= me_c << Gecode::Int::IntVarImpConf::pme_bits_fst;
+      med_c |= me_c << Gecode::Int::IntVarImpConf::med_bits_fst;
     }
 #endif
 #ifdef GECODE_HAVE_INT_VARS
     {
       // Compute the old modification event
-      ModEvent me_o = (pme_o >> Gecode::Int::BoolVarImpConf::pme_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
+      ModEvent me_o = (med_o >> Gecode::Int::BoolVarImpConf::med_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
       // Compute the new modification event
-      ModEvent me_n = (pme_n >> Gecode::Int::BoolVarImpConf::pme_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
+      ModEvent me_n = (med_n >> Gecode::Int::BoolVarImpConf::med_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
       // Compute combined event
       ModEvent me_c = Gecode::Int::BoolVarImpConf::mec(me_o,me_n);
       // Add combined event
-      pme_c |= me_c << Gecode::Int::BoolVarImpConf::pme_bits_fst;
+      med_c |= me_c << Gecode::Int::BoolVarImpConf::med_bits_fst;
     }
 #endif
 #ifdef GECODE_HAVE_SET_VARS
     {
       // Compute the old modification event
-      ModEvent me_o = (pme_o >> Gecode::Set::SetVarImpConf::pme_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
+      ModEvent me_o = (med_o >> Gecode::Set::SetVarImpConf::med_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
       // Compute the new modification event
-      ModEvent me_n = (pme_n >> Gecode::Set::SetVarImpConf::pme_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
+      ModEvent me_n = (med_n >> Gecode::Set::SetVarImpConf::med_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
       // Compute combined event
       ModEvent me_c = Gecode::Set::SetVarImpConf::mec(me_o,me_n);
       // Add combined event
-      pme_c |= me_c << Gecode::Set::SetVarImpConf::pme_bits_fst;
+      med_c |= me_c << Gecode::Set::SetVarImpConf::med_bits_fst;
     }
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
     {
       // Compute the old modification event
-      ModEvent me_o = (pme_o >> Gecode::CpltSet::CpltSetVarImpConf::pme_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
+      ModEvent me_o = (med_o >> Gecode::CpltSet::CpltSetVarImpConf::med_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
       // Compute the new modification event
-      ModEvent me_n = (pme_n >> Gecode::CpltSet::CpltSetVarImpConf::pme_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
+      ModEvent me_n = (med_n >> Gecode::CpltSet::CpltSetVarImpConf::med_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
       // Compute combined event
       ModEvent me_c = Gecode::CpltSet::CpltSetVarImpConf::mec(me_o,me_n);
       // Add combined event
-      pme_c |= me_c << Gecode::CpltSet::CpltSetVarImpConf::pme_bits_fst;
+      med_c |= me_c << Gecode::CpltSet::CpltSetVarImpConf::med_bits_fst;
     }
 #endif
-    return pme_c;
+    return med_c;
   }
 }
 

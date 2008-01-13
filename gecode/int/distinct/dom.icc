@@ -681,9 +681,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   PropCost
-  Dom<View>::cost(PropModEvent pme) const {
+  Dom<View>::cost(ModEventDelta med) const {
     return cost_lo(x.size(),
-                   (View::me(pme) == ME_INT_VAL)
+                   (View::me(med) == ME_INT_VAL)
                    ? PC_LINEAR_LO : PC_CUBIC_LO);
   }
 
@@ -707,14 +707,14 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  Dom<View>::propagate(Space* home, PropModEvent pme) {
-    if (View::me(pme) == ME_INT_VAL) {
+  Dom<View>::propagate(Space* home, ModEventDelta med) {
+    if (View::me(med) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,x);
       GECODE_ES_CHECK(es);
       if (x.size() < 2)
         return ES_SUBSUMED(this,home);
       if (es == ES_FIX)
-        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+        return ES_FIX_PARTIAL(this,View::med(ME_INT_DOM));
       es = prop_bnd<View>(home,x);
       if (x.size() < 2)
         return ES_SUBSUMED(this,home);
@@ -723,7 +723,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (x.size() < 2)
         return ES_SUBSUMED(this,home);
       GECODE_ES_CHECK(es);
-      return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      return ES_FIX_PARTIAL(this,View::med(ME_INT_DOM));
     }
 
     if (x.size() == 2)

@@ -93,8 +93,8 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   PropCost
-  LinkMulti::cost(PropModEvent pme) const {
-    return (IntView::me(pme) == ME_INT_VAL) ? 
+  LinkMulti::cost(ModEventDelta med) const {
+    return (IntView::me(med) == ME_INT_VAL) ? 
       PC_UNARY_LO : cost_lo(x.size(),PC_LINEAR_LO);
   }
 
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   ExecStatus
-  LinkMulti::propagate(Space* home, PropModEvent pme) {
+  LinkMulti::propagate(Space* home, ModEventDelta med) {
     int n = x.size();
 
     // Always maintain the invariant that y lies inside the x-array
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Channel {
     assert((y.min()-o == 0) && (y.max()-o == n-1));
 
     // Propagate from y to Boolean views
-    if ((IntView::me(pme) == ME_INT_BND) || (IntView::me(pme) == ME_INT_DOM)) {
+    if ((IntView::me(med) == ME_INT_BND) || (IntView::me(med) == ME_INT_DOM)) {
       ViewValues<IntView> v(y);
       int i=0; 
       do {
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Channel {
     }
 
     // Propagate from Boolean views to y
-    if (BoolView::me(pme) == ME_BOOL_VAL) {
+    if (BoolView::me(med) == ME_BOOL_VAL) {
       BoolIter bv(x,o);
       GECODE_ME_CHECK(y.minus_v(home,bv,false));
     }

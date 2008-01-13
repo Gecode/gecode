@@ -190,8 +190,8 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   PropCost
-  Dom<View,shared>::cost(PropModEvent pme) const {
-    return (View::me(pme) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
+  Dom<View,shared>::cost(ModEventDelta med) const {
+    return (View::me(med) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
   }
 
   template <class View, bool shared>
@@ -221,14 +221,14 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   ExecStatus
-  Dom<View,shared>::propagate(Space* home, PropModEvent pme) {
+  Dom<View,shared>::propagate(Space* home, ModEventDelta med) {
     GECODE_AUTOSTACK(int,-1, xa, n);
     GECODE_AUTOSTACK(int,-1, ya, n);
 
     DomInfo<View>* x = xy;
     DomInfo<View>* y = xy+n;
 
-    if (View::me(pme) == ME_INT_VAL) {
+    if (View::me(med) == ME_INT_VAL) {
       // Scan x and y for assigned but not yet propagated views
       for (int i = n; i--; ) {
         if (x[i].doval()) xa.push(i);
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int { namespace Channel {
                            (home,n,y,x,n_na,ya,xa)));
           assert(ya.empty());
         } while (!xa.empty() || !ya.empty());
-        return ES_NOFIX_PARTIAL(this,View::pme(ME_INT_DOM));
+        return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
       } else {
         do {
           // Propagate assigned views for x
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Channel {
                            (home,n,y,x,n_na,ya,xa)));
           assert(ya.empty());
         } while (!xa.empty());
-        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+        return ES_FIX_PARTIAL(this,View::med(ME_INT_DOM));
       }
     }
 

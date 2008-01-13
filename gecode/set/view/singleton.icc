@@ -257,12 +257,12 @@ namespace Gecode {
       return Gecode::Int::IntView::schedule(home,p,me_settoint(me));
     }
     forceinline ModEvent
-    SingletonView::me(PropModEvent pme) {
-      return me_inttoset(Int::IntView::me(pme));
+    SingletonView::me(ModEventDelta med) {
+      return me_inttoset(Int::IntView::me(med));
     }
-    forceinline PropModEvent
-    SingletonView::pme(ModEvent me) {
-      return SetView::pme(me_settoint(me));
+    forceinline ModEventDelta
+    SingletonView::med(ModEvent me) {
+      return SetView::med(me_settoint(me));
     }
 
     forceinline void

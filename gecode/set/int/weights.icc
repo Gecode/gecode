@@ -188,7 +188,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   PropCost
-  Weights<View>::cost(PropModEvent) const {
+  Weights<View>::cost(ModEventDelta) const {
     return PC_LINEAR_LO;
   }
 
@@ -251,7 +251,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  Weights<View>::propagate(Space* home, PropModEvent) {
+  Weights<View>::propagate(Space* home, ModEventDelta) {
 
     if (x.assigned()) {
       GlbRanges<View> glb(x);

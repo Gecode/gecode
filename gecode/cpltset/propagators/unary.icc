@@ -55,7 +55,7 @@ namespace Gecode { namespace CpltSet {
   
   template <class View>
   forceinline PropCost
-  UnaryCpltSetPropagator<View>::cost(PropModEvent) const {
+  UnaryCpltSetPropagator<View>::cost(ModEventDelta) const {
     // we have only linear costs (in terms of the size of a bdd) 
     // if one of the bdds is constant
     if (manager.ctrue(x.dom()) || manager.ctrue(d)) {
@@ -105,7 +105,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus 
-  UnaryCpltSetPropagator<View>::propagate(Space* home, PropModEvent) {
+  UnaryCpltSetPropagator<View>::propagate(Space* home, ModEventDelta) {
     // std::cerr << "propagate unary: \n";
     // std::cerr << x << " " << x.glbSize() << " " << x.unknownSize() << "\n";
 //     UnknownRanges<CpltSetView> delta(x);

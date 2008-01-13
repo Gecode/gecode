@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View, class Card, bool isView>
   PropCost
-  Val<View, Card, isView>::cost(PropModEvent) const {
+  Val<View, Card, isView>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   ExecStatus
-  Val<View, Card, isView>::propagate(Space* home, PropModEvent) {
+  Val<View, Card, isView>::propagate(Space* home, ModEventDelta) {
     assert(x.size() > 0);
 
     bool mod = false;

@@ -177,21 +177,21 @@ namespace Gecode {
     Propagator* p;
     while (pool_get(p)) {
       pn++;
-      // Keep old propagator modification events
-      PropModEvent pme_o = p->u.pme;
-      // Clear pme but leave propagator in queue
-      p->u.pme = 0;
-      switch (p->propagate(this,pme_o)) {
+      // Keep old modification event delta
+      ModEventDelta med_o = p->u.med;
+      // Clear med but leave propagator in queue
+      p->u.med = 0;
+      switch (p->propagate(this,med_o)) {
       case ES_FAILED:
         fail(); 
         return false;
       case ES_FIX:
-        // Clear pme and put into idle queue
-        p->u.pme = 0; p->unlink(); a_actors.head(p);
+        // Clear med and put into idle queue
+        p->u.med = 0; p->unlink(); a_actors.head(p);
         break;
       case ES_NOFIX:
-        // If no need to be run, clear pme and put into idle queue
-        if (p->u.pme == 0) {
+        // If no need to be run, clear med and put into idle queue
+        if (p->u.med == 0) {
           p->unlink(); a_actors.head(p);
         }
         break;
@@ -226,21 +226,21 @@ namespace Gecode {
     Propagator* p;
     if (!pool_get(p))
       return true;
-    // Keep old propagator modification events
-    PropModEvent pme_o = p->u.pme;
-    // Clear pme but leave propagator in queue
-    p->u.pme = 0;
-    switch (p->propagate(this,pme_o)) {
+    // Keep old modification event delta
+    ModEventDelta med_o = p->u.med;
+    // Clear med but leave propagator in queue
+    p->u.med = 0;
+    switch (p->propagate(this,med_o)) {
     case ES_FAILED:
       fail(); 
       return false;
     case ES_FIX:
-      // Clear pme and put into idle queue
-      p->u.pme = 0; p->unlink(); a_actors.head(p);
+      // Clear med and put into idle queue
+      p->u.med = 0; p->unlink(); a_actors.head(p);
       break;
     case ES_NOFIX:
-      // If no need to be run, clear pme and put into idle queue
-      if (p->u.pme == 0) {
+      // If no need to be run, clear med and put into idle queue
+      if (p->u.med == 0) {
         p->unlink(); a_actors.head(p);
       }
       break;

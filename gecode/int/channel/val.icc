@@ -202,7 +202,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   ExecStatus
-  Val<View,shared>::propagate(Space* home, PropModEvent) {
+  Val<View,shared>::propagate(Space* home, ModEventDelta) {
     GECODE_AUTOSTACK(int,-1, xa, n);
     GECODE_AUTOSTACK(int,-1, ya, n);
 

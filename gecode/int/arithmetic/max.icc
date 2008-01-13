@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  Max<View>::propagate(Space* home, PropModEvent) {
+  Max<View>::propagate(Space* home, ModEventDelta) {
     bool mod = false;
     do {
       mod = false;
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  NaryMax<View>::propagate(Space* home, PropModEvent) {
+  NaryMax<View>::propagate(Space* home, ModEventDelta) {
   rerun:
     int maxmax = Limits::Int::int_min-1;
     int maxmin = Limits::Int::int_min-1;

@@ -127,15 +127,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  AbsBnd<View>::cost(PropModEvent pme) const {
-    if (View::me(pme) == ME_INT_VAL)
+  AbsBnd<View>::cost(ModEventDelta med) const {
+    if (View::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
     return PC_BINARY_LO;
   }
 
   template <class View>
   ExecStatus
-  AbsBnd<View>::propagate(Space* home, PropModEvent) {
+  AbsBnd<View>::propagate(Space* home, ModEventDelta) {
     return prop_bnd<View,Rel::EqBnd>(home, this, x0, x1);
   }
 
@@ -199,21 +199,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  AbsDom<View>::cost(PropModEvent pme) const {
-    if (View::me(pme) == ME_INT_VAL)
+  AbsDom<View>::cost(ModEventDelta med) const {
+    if (View::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
-    if (View::me(pme) == ME_INT_DOM)
+    if (View::me(med) == ME_INT_DOM)
       return PC_BINARY_HI;
     return PC_BINARY_LO;
   }
 
   template <class View>
   ExecStatus
-  AbsDom<View>::propagate(Space* home, PropModEvent pme) {
+  AbsDom<View>::propagate(Space* home, ModEventDelta med) {
 
-    if (View::me(pme) != ME_INT_DOM) {
+    if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_bnd<View,Rel::EqDom>(home, this, x0, x1)));
-      return ES_NOFIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
     }
 
     Iter::Ranges::Singleton positive(0, Limits::Int::int_max);

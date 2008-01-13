@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, PropCond pc>
   PropCost
-  Lin<Val,P,N,pc>::cost(PropModEvent) const {
+  Lin<Val,P,N,pc>::cost(ModEventDelta) const {
     return cost_lo(x.size() + y.size(), PC_LINEAR_LO);
   }
 
@@ -149,9 +149,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   void
-  bounds_p(PropModEvent pme, ViewArray<View>& x, Val& c, Val& sl, Val& su) {
+  bounds_p(ModEventDelta med, ViewArray<View>& x, Val& c, Val& sl, Val& su) {
     int n = x.size();
-    if (IntView::me(pme) == ME_INT_VAL) {
+    if (IntView::me(med) == ME_INT_VAL) {
       for (int i = n; i--; ) {
         Val m = x[i].min();
         if (x[i].assigned()) {
@@ -170,9 +170,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   void
-  bounds_n(PropModEvent pme, ViewArray<View>& y, Val& c, Val& sl, Val& su) {
+  bounds_n(ModEventDelta med, ViewArray<View>& y, Val& c, Val& sl, Val& su) {
     int n = y.size();
-    if (IntView::me(pme) == ME_INT_VAL) {
+    if (IntView::me(med) == ME_INT_VAL) {
       for (int i = n; i--; ) {
         Val m = y[i].max();
         if (y[i].assigned()) {
@@ -192,16 +192,16 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  prop_bnd(Space* home, PropModEvent pme, Propagator* p,
+  prop_bnd(Space* home, ModEventDelta med, Propagator* p,
            ViewArray<P>& x, ViewArray<N>& y, Val& c) {
     // Eliminate singletons
     Val sl = 0;
     Val su = 0;
 
-    bounds_p<Val,P>(pme, x, c, sl, su);
-    bounds_n<Val,N>(pme, y, c, sl, su);
+    bounds_p<Val,P>(med, x, c, sl, su);
+    bounds_n<Val,N>(med, y, c, sl, su);
 
-    if ((IntView::me(pme) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
+    if ((IntView::me(med) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
         GECODE_ME_CHECK(x[0].eq(home,c)); 
         return ES_SUBSUMED(p,sizeof(*p));
@@ -426,8 +426,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Eq<Val,P,N>::propagate(Space* home, PropModEvent pme) {
-    return prop_bnd<Val,P,N>(home,pme,this,x,y,c);
+  Eq<Val,P,N>::propagate(Space* home, ModEventDelta med) {
+    return prop_bnd<Val,P,N>(home,med,this,x,y,c);
   }
 
   /*
@@ -493,7 +493,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::propagate(Space* home, PropModEvent pme) {
+  ReEq<Val,P,N,Ctrl>::propagate(Space* home, ModEventDelta med) {
     if (b.zero())
       GECODE_REWRITE(this,(Nq<Val,P,N>::post(home,x,y,c)));
     if (b.one())
@@ -502,8 +502,8 @@ namespace Gecode { namespace Int { namespace Linear {
     Val sl = 0;
     Val su = 0;
 
-    bounds_p<Val,P>(pme, x, c, sl, su);
-    bounds_n<Val,N>(pme, y, c, sl, su);
+    bounds_p<Val,P>(med, x, c, sl, su);
+    bounds_n<Val,N>(med, y, c, sl, su);
 
     if ((-sl == c) && (-su == c)) {
       GECODE_ME_CHECK(b.one_none(home)); 
@@ -665,7 +665,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Nq<Val,P,N>::propagate(Space* home, PropModEvent) {
+  Nq<Val,P,N>::propagate(Space* home, ModEventDelta) {
     for (int i = x.size(); i--; )
       if (x[i].assigned()) {
         c -= x[i].val();  x.move_lst(i);
@@ -836,11 +836,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Lq<Val,P,N>::propagate(Space* home, PropModEvent pme) {
+  Lq<Val,P,N>::propagate(Space* home, ModEventDelta med) {
     // Eliminate singletons
     Val sl = 0;
 
-    if (IntView::me(pme) == ME_INT_VAL) {
+    if (IntView::me(med) == ME_INT_VAL) {
       for (int i = x.size(); i--; ) {
         Val m = x[i].min();
         if (x[i].assigned()) {
@@ -969,7 +969,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  ReLq<Val,P,N>::propagate(Space* home, PropModEvent pme) {
+  ReLq<Val,P,N>::propagate(Space* home, ModEventDelta med) {
     if (b.zero())
       GECODE_REWRITE(this,(Lq<Val,N,P>::post(home,y,x,-c-1)));
     if (b.one())
@@ -979,8 +979,8 @@ namespace Gecode { namespace Int { namespace Linear {
     Val sl = 0;
     Val su = 0;
 
-    bounds_p<Val,P>(pme,x,c,sl,su);
-    bounds_n<Val,N>(pme,y,c,sl,su);
+    bounds_p<Val,P>(med,x,c,sl,su);
+    bounds_n<Val,N>(med,y,c,sl,su);
 
     if (-sl > c) {
       GECODE_ME_CHECK(b.zero_none(home)); 

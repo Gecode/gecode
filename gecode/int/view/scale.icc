@@ -264,14 +264,14 @@ namespace Gecode {
     }
     template <class Val, class UnsVal>
     forceinline ModEvent
-    ScaleView<Val,UnsVal>::me(PropModEvent pme) {
-      return IntView::me(pme);
+    ScaleView<Val,UnsVal>::me(ModEventDelta med) {
+      return IntView::me(med);
     }
 
     template <class Val, class UnsVal>
-    forceinline PropModEvent
-    ScaleView<Val,UnsVal>::pme(ModEvent me) {
-      return IntView::pme(me);
+    forceinline ModEventDelta
+    ScaleView<Val,UnsVal>::med(ModEvent me) {
+      return IntView::med(me);
     }
 
 

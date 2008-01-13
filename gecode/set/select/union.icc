@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   PropCost
-  SelectUnion<SView,RView>::cost(PropModEvent) const {
+  SelectUnion<SView,RView>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
@@ -131,7 +131,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnion<SView,RView>::propagate(Space* home, PropModEvent) {
+  SelectUnion<SView,RView>::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
     bool loopVar;

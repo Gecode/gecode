@@ -154,16 +154,16 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Propagator modification events
+   * \brief Modification event deltas
    *
-   * Propagator modification events are used by propagators. A
+   * Modification event deltas are used by propagators. A
    * propagator stores a modification event for each variable type.
    * They can be accessed through a variable or a view from a given
    * propagator. They can be constructed from a given modevent by
    * a variable or view.
    * \ingroup TaskActor
    */
-  typedef int PropModEvent;
+  typedef int ModEventDelta;
 
 }
 
@@ -180,14 +180,14 @@ namespace Gecode {
     static const int idx_d = -1;
     /// Maximal propagation condition
     static const PropCond pc_max = PC_GEN_ASSIGNED;
-    /// Start of bits for propagator modification event
-    static const int pme_bits_fst = 0;
-    /// Number of bits for propagator modification event
+    /// Start of bits for modification event delta
+    static const int med_bits_fst = 0;
+    /// Number of bits for modification event delta
     static const int me_bits_num = 0;
-    /// Bitmask for propagator modification event
+    /// Bitmask for modification event
     static const int me_bits_mask = 0;
-    /// End of bits for propagator modification event
-    static const int pme_bits_lst = 0;
+    /// End of bits for modification event delta
+    static const int med_bits_lst = 0;
     /// Return difference when changing modification event \a me_o to \a me_n
     static ModEvent mec(ModEvent me_o, ModEvent me_n);
     /// Variable type identifier for reflection
@@ -417,10 +417,10 @@ namespace Gecode {
     //@{
     /// Schedule propagator \a p with modification event \a me
     static void schedule(Space* home, Propagator* p, ModEvent me);
-    /// Project modification event for this variable type from \a pme
-    static ModEvent me(PropModEvent pme);
-    /// Translate modification event \a me into propagator modification event
-    static PropModEvent pme(ModEvent me);
+    /// Project modification event for this variable type from \a med
+    static ModEvent me(ModEventDelta med);
+    /// Translate modification event \a me into modification event delta
+    static ModEventDelta med(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
     static ModEvent combine(ModEvent me1, ModEvent me2);
     //@}
@@ -611,7 +611,7 @@ namespace Gecode {
    * \code return ES_SUBSUMED(this,sizeof(*this)) \endcode.
    *
    * \warning Has a side-effect on the propagator. Overwrites
-   *          the propagator modification events of a propagator.
+   *          the modification event delta of a propagator.
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
@@ -622,7 +622,7 @@ namespace Gecode {
    * First disposes the propagator and then returns subsumtion.
    *
    * \warning Has a side-effect on the propagator. Overwrites
-   *          the propagator modification events of a propagator.
+   *          the modification event delta of a propagator.
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
@@ -630,23 +630,23 @@ namespace Gecode {
   /**
    * \brief %Propagator \a p has computed partial fixpoint
    *
-   * %Set propagator modification events after processing of
-   * variables to \a pme.
+   * %Set modification event delta after processing of
+   * variables to \a med.
    * \warning Has a side-effect on the propagator. 
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_FIX_PARTIAL(Propagator* p, PropModEvent pme);
+  ExecStatus ES_FIX_PARTIAL(Propagator* p, ModEventDelta med);
   /**
    * \brief %Propagator \a p has not computed partial fixpoint
    *
-   * %Set propagator modification events before processing of
-   * variables to \a pme.
+   * %Set modification event delta before processing of
+   * variables to \a med.
    * \warning Has a side-effect on the propagator.
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_NOFIX_PARTIAL(Propagator* p, PropModEvent pme);
+  ExecStatus ES_NOFIX_PARTIAL(Propagator* p, ModEventDelta med);
 
 
 
@@ -659,14 +659,14 @@ namespace Gecode {
     template <class VIC> friend class VarImp;
     friend ExecStatus ES_SUBSUMED(Propagator*, size_t);
     friend ExecStatus ES_SUBSUMED(Propagator*, Space*);
-    friend ExecStatus ES_FIX_PARTIAL(Propagator*, PropModEvent);
-    friend ExecStatus ES_NOFIX_PARTIAL(Propagator*, PropModEvent);
+    friend ExecStatus ES_FIX_PARTIAL(Propagator*, ModEventDelta);
+    friend ExecStatus ES_NOFIX_PARTIAL(Propagator*, ModEventDelta);
     friend class Advisor;
     template <class A> friend class Council;
   private:
     union {
       /// A set of modification events (used during propagation)
-      PropModEvent pme;
+      ModEventDelta med;
       /// The size of the propagator (used during subsumption)
       size_t size;
       /// A list of advisors (used during cloning)
@@ -704,9 +704,9 @@ namespace Gecode {
      * For more details, see the individual functions.
      *
      */
-    virtual ExecStatus propagate(Space* home, PropModEvent pme) = 0;
+    virtual ExecStatus propagate(Space* home, ModEventDelta med) = 0;
     /// Cost function
-    virtual PropCost cost(PropModEvent pme) const  = 0;
+    virtual PropCost cost(ModEventDelta med) const  = 0;
     /**
      * \brief Advise function
      *
@@ -1835,21 +1835,21 @@ namespace Gecode {
 
 
   /*
-   * Propagator modification events
+   * Modification event delta
    *
    */
 
   template <class VIC>
   forceinline ModEvent
-  VarImp<VIC>::me(PropModEvent pme) {
-    return static_cast<ModEvent>((pme >> VIC::pme_bits_fst) & 
+  VarImp<VIC>::me(ModEventDelta med) {
+    return static_cast<ModEvent>((med >> VIC::med_bits_fst) & 
                                  VIC::me_bits_mask);
   }
 
   template <class VIC>
-  forceinline PropModEvent
-  VarImp<VIC>::pme(ModEvent me) {
-    return static_cast<PropModEvent>(me << VIC::pme_bits_fst);
+  forceinline ModEventDelta
+  VarImp<VIC>::med(ModEvent me) {
+    return static_cast<ModEventDelta>(me << VIC::med_bits_fst);
   }
 
   template <class VIC>
@@ -1894,14 +1894,14 @@ namespace Gecode {
   forceinline
   Propagator::Propagator(Space* home) {
     u.advisors = NULL;
-    assert(u.pme == 0 && u.size == 0);
+    assert(u.med == 0 && u.size == 0);
     home->a_actors.head(this);
   }
 
   forceinline
   Propagator::Propagator(Space*, bool, Propagator& p) {
     u.advisors = NULL;
-    assert(u.pme == 0 && u.size == 0);
+    assert(u.med == 0 && u.size == 0);
     // Set forwarding pointer
     p.prev(this);
   }
@@ -1967,7 +1967,7 @@ namespace Gecode {
 
   forceinline void
   Space::pool_put(Propagator* p) {
-    ActorLink* c = &pu.p.pool[p->cost(p->u.pme)];
+    ActorLink* c = &pu.p.pool[p->cost(p->u.med)];
     c->tail(p);
     if (c > pu.p.pool_next)
       pu.p.pool_next = c;
@@ -1981,16 +1981,16 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Space::process(Propagator* p) {
-    PropModEvent pme_o = p->u.pme;
+    ModEventDelta med_o = p->u.med;
     // Compute the old modification event
-    ModEvent me_o = (pme_o >> VIC::pme_bits_fst) & VIC::me_bits_mask;
+    ModEvent me_o = (med_o >> VIC::med_bits_fst) & VIC::me_bits_mask;
     // Get the new modification event (xor-ed with the old one)
     ModEvent me_c = me_o ^ ME_GEN_ASSIGNED;
     // Event has not changed, do not nothing
     if (me_c == 0)
       return;
     // Update modification event for propagator (use xor)
-    p->u.pme ^= me_c << VIC::pme_bits_fst;
+    p->u.med ^= me_c << VIC::med_bits_fst;
     // Put propagator into right queue
     p->unlink(); pool_put(p);
   }
@@ -1998,16 +1998,16 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Space::process(Propagator* p, ModEvent me) {
-    PropModEvent pme_o = p->u.pme;
+    ModEventDelta med_o = p->u.med;
     // Compute the old modification event
-    ModEvent me_o = (pme_o >> VIC::pme_bits_fst) & VIC::me_bits_mask;
+    ModEvent me_o = (med_o >> VIC::med_bits_fst) & VIC::me_bits_mask;
     // Get the new modification event (xor-ed with the old one)
     ModEvent me_c = VIC::mec(me_o,me);
     // Event has not changed, do not nothing
     if (me_c == 0)
       return;
     // Update modification event for propagator (use xor)
-    p->u.pme ^= me_c << VIC::pme_bits_fst;
+    p->u.med ^= me_c << VIC::med_bits_fst;
     // Put propagator into right queue
     p->unlink(); pool_put(p);
   }
@@ -2030,14 +2030,14 @@ namespace Gecode {
   }
 
   forceinline ExecStatus
-  ES_FIX_PARTIAL(Propagator* p, PropModEvent pme) {
-    p->u.pme = pme; 
+  ES_FIX_PARTIAL(Propagator* p, ModEventDelta med) {
+    p->u.med = med; 
     return __ES_PARTIAL;
   }
 
   forceinline ExecStatus
-  ES_NOFIX_PARTIAL(Propagator* p, PropModEvent pme) {
-    p->u.pme ^= AllVarConf::pmec(p->u.pme,pme); 
+  ES_NOFIX_PARTIAL(Propagator* p, ModEventDelta med) {
+    p->u.med ^= AllVarConf::medc(p->u.med,med); 
     return __ES_PARTIAL;
   }
 

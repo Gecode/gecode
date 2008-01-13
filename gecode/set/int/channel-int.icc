@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   PropCost
-  ChannelInt<View>::cost(PropModEvent) const { return PC_QUADRATIC_LO; }
+  ChannelInt<View>::cost(ModEventDelta) const { return PC_QUADRATIC_LO; }
 
   template <class View>
   size_t
@@ -107,7 +107,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  ChannelInt<View>::propagate(Space* home, PropModEvent) {
+  ChannelInt<View>::propagate(Space* home, ModEventDelta) {
     int assigned = 0;
     for (int v=xs.size(); v--;) {
       if (xs[v].assigned()) {

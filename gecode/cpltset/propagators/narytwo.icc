@@ -145,7 +145,7 @@ namespace Gecode { namespace CpltSet {
   
   template <class View0, class View1>
   forceinline ExecStatus 
-  NaryTwoCpltSetPropagator<View0, View1>::propagate(Space* home, PropModEvent) {
+  NaryTwoCpltSetPropagator<View0, View1>::propagate(Space* home, ModEventDelta) {
     bool assigned = true;
     int n = x.size();
     ExecStatus es = ES_OK;
@@ -167,7 +167,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   PropCost
-  NaryTwoCpltSetPropagator<View0,View1>::cost(PropModEvent) const {
+  NaryTwoCpltSetPropagator<View0,View1>::cost(ModEventDelta) const {
     return cost_lo(x.size()+2, PC_LINEAR_LO);
   }
 

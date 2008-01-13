@@ -232,12 +232,12 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  ConstantView::me(PropModEvent) {
+  ConstantView::me(ModEventDelta) {
     return ME_SET_NONE;
   }
-  forceinline PropModEvent
-  ConstantView::pme(ModEvent me) {
-    return SetVarImp::pme(me);
+  forceinline ModEventDelta
+  ConstantView::med(ModEvent me) {
+    return SetVarImp::med(me);
   }
 
   forceinline void
@@ -434,12 +434,12 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  EmptyView::me(PropModEvent) {
+  EmptyView::me(ModEventDelta) {
     return ME_SET_NONE;
   }
-  forceinline PropModEvent
-  EmptyView::pme(ModEvent me) {
-    return SetVarImp::pme(me);
+  forceinline ModEventDelta
+  EmptyView::med(ModEvent me) {
+    return SetVarImp::med(me);
   }
 
   forceinline void
@@ -615,12 +615,12 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  UniverseView::me(PropModEvent) {
+  UniverseView::me(ModEventDelta) {
     return ME_SET_NONE;
   }
-  forceinline PropModEvent
-  UniverseView::pme(ModEvent me) {
-    return SetVarImp::pme(me);
+  forceinline ModEventDelta
+  UniverseView::med(ModEvent me) {
+    return SetVarImp::med(me);
   }
   forceinline void
   UniverseView::subscribe(Space* home, Propagator* p, PropCond,bool) {

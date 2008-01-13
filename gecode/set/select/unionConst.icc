@@ -64,7 +64,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   PropCost
-  SelectUnionConst<SView,RView>::cost(PropModEvent) const {
+  SelectUnionConst<SView,RView>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
@@ -150,7 +150,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnionConst<SView,RView>::propagate(Space* home, PropModEvent) {
+  SelectUnionConst<SView,RView>::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
     GECODE_AUTOARRAY(bool, stillSelected, n);

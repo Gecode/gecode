@@ -158,12 +158,12 @@ namespace Gecode {
         (void) home; (void) p; (void) me;
       }
       /// Return modification event of propagator \a p for view
-      static ModEvent pme(const Propagator* p) {
+      static ModEvent med(const Propagator* p) {
         (void) p;
         return ME_INT_NONE;
       }
-      /// Translate modification event \a me to propagator modification event for view
-      static PropModEvent pme(ModEvent me) {
+      /// Translate modification event \a me to modification event delta for view
+      static ModEventDelta med(ModEvent me) {
         (void) me;
         return ME_INT_NONE;
       }

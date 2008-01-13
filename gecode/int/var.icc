@@ -346,6 +346,13 @@ namespace Gecode { namespace Int {
     void cancel(Space* home, Advisor* a);
     //@}
 
+    /// \name Variable implementation-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
+
+
   private:
     /// Return copy of not-yet copied variable
     GECODE_INT_EXPORT IntVarImp* perform_copy(Space* home, bool share);
@@ -657,6 +664,12 @@ namespace Gecode { namespace Int {
     void subscribe(Space* home, Advisor* a);
     /// Cancel subscription of advisor \a a
     void cancel(Space* home, Advisor* a);
+    //@}
+
+    /// \name Variable implementation-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
     //@}
 
     /// \name Support for delta information for advisors

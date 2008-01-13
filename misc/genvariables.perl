@@ -377,19 +377,19 @@ if ($gen_typeicc) {
     }
     print "    /// Maximal propagation condition\n";
     print "    static const Gecode::PropCond pc_max = $maxpc[$f];\n";
-    print "    /// Start of bits for propagator modification event\n";
-    print "    static const int pme_bits_fst = ";
+    print "    /// Start of bits for modification event delta\n";
+    print "    static const int med_bits_fst = ";
     if ($f == 0) {
       print "0;\n";
     } else {
-      print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
+      print "$namespace[$f-1]::$conf[$f-1]::med_bits_lst;\n";
     }
-    print "    /// Number of bits for propagator modification event\n";
+    print "    /// Number of bits for modification event delta\n";
     print "    static const int me_bits_num = $bits[$f];\n";
-    print "    /// Bitmask for propagator modification event\n";
+    print "    /// Bitmask for modification event\n";
     print "    static const int me_bits_mask = (1 << $bits[$f]) - 1;\n";
-    print "    /// End of bits for propagator modification event\n";
-    print "    static const int pme_bits_lst = pme_bits_fst + me_bits_num;\n";
+    print "    /// End of bits for modification event delta\n";
+    print "    static const int med_bits_lst = med_bits_fst + me_bits_num;\n";
     print "    /// Return difference when changing modification event \\a me_o to \\a me_n\n";
     print "    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);\n";
     print "    /// Variable type identifier for reflection\n";
@@ -416,12 +416,12 @@ if ($gen_typeicc) {
       } else {
 	print "$namespace[$f-1]::$conf[$f-1]::idx_d;\n";
       }
-      print "    /// End of bits for propagator modification event\n";
-      print "    static const int pme_bits_lst = ";
+      print "    /// End of bits for modification event delta\n";
+      print "    static const int med_bits_lst = ";
       if ($f == 0) {
 	print "0;\n";
       } else {
-	print "$namespace[$f-1]::$conf[$f-1]::pme_bits_lst;\n";
+	print "$namespace[$f-1]::$conf[$f-1]::med_bits_lst;\n";
       }
       print "  };\n";
       print $ftr[$f];
@@ -437,8 +437,8 @@ if ($gen_typeicc) {
   print "    static const int idx_u = $namespace[$n_files-1]::$conf[$n_files-1]::idx_u+1;\n";
   print "    /// Index for dispose\n";
   print "    static const int idx_d = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
-  print "    /// Return difference when changing propagator modification event \\a pme_o to \\a pme_n\n";
-  print "    static PropModEvent pmec(PropModEvent pme_o, PropModEvent pme_n);\n";
+  print "    /// Return difference when changing modification event delta \\a med_o to \\a med_n\n";
+  print "    static ModEventDelta medc(ModEventDelta med_o, ModEventDelta med_n);\n";
   print "  };\n\n}\n\n";
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
@@ -517,25 +517,25 @@ if ($gen_typeicc) {
     print $endif[$f];
   }
   print "namespace Gecode {\n";
-  print "  forceinline PropModEvent\n";
-  print "  AllVarConf::pmec(PropModEvent pme_o, PropModEvent pme_n) {\n";
-  print "    PropModEvent pme_c = 0;\n";
+  print "  forceinline ModEventDelta\n";
+  print "  AllVarConf::medc(ModEventDelta med_o, ModEventDelta med_n) {\n";
+  print "    ModEventDelta med_c = 0;\n";
   for ($f = 0; $f<$n_files; $f++) {
     $vic = "$namespace[$f]::$conf[$f]";
     print $ifdef[$f];
     print "    {\n";
     print "      // Compute the old modification event\n";
-    print "      ModEvent me_o = (pme_o >> ${vic}::pme_bits_fst) & ${vic}::me_bits_mask;\n";
+    print "      ModEvent me_o = (med_o >> ${vic}::med_bits_fst) & ${vic}::me_bits_mask;\n";
     print "      // Compute the new modification event\n";
-    print "      ModEvent me_n = (pme_n >> ${vic}::pme_bits_fst) & ${vic}::me_bits_mask;\n";
+    print "      ModEvent me_n = (med_n >> ${vic}::med_bits_fst) & ${vic}::me_bits_mask;\n";
     print "      // Compute combined event\n";
     print "      ModEvent me_c = ${vic}::mec(me_o,me_n);\n";
     print "      // Add combined event\n";
-    print "      pme_c |= me_c << ${vic}::pme_bits_fst;\n";
+    print "      med_c |= me_c << ${vic}::med_bits_fst;\n";
     print "    }\n";
     print $endif[$f];
   }
-  print "    return pme_c;\n";
+  print "    return med_c;\n";
   print "  }\n}\n\n";
 }
 

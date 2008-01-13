@@ -281,6 +281,12 @@ namespace Gecode {
 
 
 
+    forceinline ModEventDelta
+    BoolView::med(ModEvent me) {
+      return VarViewBase<BoolVarImp>::med(me);
+    }
+
+
     /*
      * Cloning
      *
@@ -408,12 +414,12 @@ namespace Gecode {
       return BoolView::schedule(home,p,me);
     }
     forceinline ModEvent
-    NegBoolView::me(PropModEvent pme) {
-      return BoolView::me(pme);
+    NegBoolView::me(ModEventDelta med) {
+      return BoolView::me(med);
     }
-    forceinline PropModEvent
-    NegBoolView::pme(ModEvent me) {
-      return BoolView::pme(me);
+    forceinline ModEventDelta
+    NegBoolView::med(ModEvent me) {
+      return BoolView::med(me);
     }
 
 

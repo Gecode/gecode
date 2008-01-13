@@ -229,12 +229,12 @@ namespace Gecode {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
-    OffsetView::me(PropModEvent pme) {
-      return IntView::me(pme);
+    OffsetView::me(ModEventDelta med) {
+      return IntView::me(med);
     }
-    forceinline PropModEvent
-    OffsetView::pme(ModEvent me) {
-      return IntView::pme(me);
+    forceinline ModEventDelta
+    OffsetView::med(ModEvent me) {
+      return IntView::med(me);
     }
 
 

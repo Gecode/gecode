@@ -138,16 +138,16 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  PropCost PartitionN<View0,View1>::cost(PropModEvent) const {
+  PropCost PartitionN<View0,View1>::cost(ModEventDelta) const {
     return PC_QUADRATIC_LO;
   }
 
   template <class View0, class View1>
   ExecStatus
-  PartitionN<View0,View1>::propagate(Space* home, PropModEvent pme) {
+  PartitionN<View0,View1>::propagate(Space* home, ModEventDelta med) {
 
-    ModEvent me0 = View0::me(pme);
-    ModEvent me1 = View1::me(pme);
+    ModEvent me0 = View0::me(med);
+    ModEvent me1 = View1::me(med);
     bool ubevent = Rel::testSetEventUB(me0, me1);
     bool lbevent = Rel::testSetEventLB(me0, me1);
     bool anybevent = Rel::testSetEventAnyB(me0, me1);

@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac>
   PropCost
-  View<VA,VB,VC,pc_ac>::cost(PropModEvent) const {
+  View<VA,VB,VC,pc_ac>::cost(ModEventDelta) const {
     // This is required for subscribing to variables in the
     // above constructor, but this is then the only time this
     // virtual function is ever used!
@@ -410,7 +410,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewBnd<VA,VB,VC>::propagate(Space* home, PropModEvent) {
+  ViewBnd<VA,VB,VC>::propagate(Space* home, ModEventDelta) {
     assert(n > 1);
     RelTestBnd<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
@@ -493,8 +493,8 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   PropCost
-  ViewDom<VA,VB,VC>::cost(PropModEvent pme) const {
-    if (VA::me(pme) != ME_INT_DOM)
+  ViewDom<VA,VB,VC>::cost(ModEventDelta med) const {
+    if (VA::me(med) != ME_INT_DOM)
       return PC_LINEAR_LO;
     else
       return PC_LINEAR_HI;
@@ -534,9 +534,9 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewDom<VA,VB,VC>::propagate(Space* home, PropModEvent pme) {
+  ViewDom<VA,VB,VC>::propagate(Space* home, ModEventDelta med) {
     assert(n > 1);
-    if (VA::me(pme) != ME_INT_DOM) {
+    if (VA::me(med) != ME_INT_DOM) {
       RelTestBnd<VA,VC> rt;
       GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
                        (home,iv,n,x0,x1,this,rt)));
@@ -556,7 +556,7 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK(x1.gq(home,min));
       return (x1.assigned() && (min == max)) ?
         ES_SUBSUMED(this,home) :
-        ES_NOFIX_PARTIAL(this,VA::pme(ME_INT_DOM));
+        ES_NOFIX_PARTIAL(this,VA::med(ME_INT_DOM));
     }
     RelTestDom<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >

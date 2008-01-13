@@ -232,12 +232,12 @@ namespace Gecode {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
-    ConstIntView::me(PropModEvent) {
+    ConstIntView::me(ModEventDelta) {
       return ME_INT_NONE;
     }
-    forceinline PropModEvent
-    ConstIntView::pme(ModEvent me) {
-      return static_cast<PropModEvent>(me);
+    forceinline ModEventDelta
+    ConstIntView::med(ModEvent me) {
+      return static_cast<ModEventDelta>(me);
     }
 
 

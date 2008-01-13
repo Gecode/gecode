@@ -114,8 +114,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   public:
     virtual size_t dispose(Space* home);
     virtual Actor*     copy(Space* home, bool share);
-    virtual PropCost   cost(PropModEvent pme) const;
-    virtual ExecStatus propagate(Space* home, PropModEvent pme);
+    virtual PropCost   cost(ModEventDelta med) const;
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Post propagator according to specification
