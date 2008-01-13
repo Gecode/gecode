@@ -45,13 +45,14 @@
 /** \brief Specification of one tile
  *
  * This structure can be used to specify a tile with specified width
- * and height, and a char-array tile consiting of spaces and X's
- * showing the tile in row-major order.
+ * and height, number of such tiles (all with unique values), and a
+ * char-array tile showing the tile in row-major order.
  *
  * \relates Pentominoes
  */
 struct TileSpec {
   int width, height;
+  int amount;
   const char *tile;
 };
 
@@ -63,7 +64,12 @@ struct TileSpec {
  *
  * \relates Pentominoes
  */
-extern const TileSpec *specs[];
+extern const TileSpec *examples[];
+/** \brief Board specification sizes
+ *
+ * \relates Pentominoes
+ */
+extern const int examples_size[];
 /** \brief Number of board specifications
  *
  * \relates Pentominoes
@@ -268,13 +274,24 @@ private:
   const TileSpec *spec;
   /// Width and height of the board
   int width, height;
-  /// Number of tiles to place
-  int ntiles;
   /// Whether the board is filled or not
   bool filled;
+  /// Number of specifications of tiles to place
+  int nspecs;
+  /// Number of tiles to place
+  int ntiles;
 
   /// The variables for the board.
   IntVarArray board;
+
+  /// Compute number of tiles
+  int compute_number_of_tiles(const TileSpec* ts, int nspecs) {
+    int res = 0;
+    for (int i = nspecs; i--; ) {
+      res += ts[i].amount;
+    }
+    return res;
+  }
 
   /// Returns the regular expression for placing a specific tile \a
   /// tile in a specific rotation.
@@ -318,13 +335,14 @@ private:
 public:
   /// Construction of the model.
   Pentominoes(const SizeOptions& opt)
-    : spec(specs[opt.size()]), 
+    : spec(examples[opt.size()]), 
       width(spec[0].width+1), // Add one for extra row at end.
       height(spec[0].height),
-      ntiles(spec[1].width), 
-      filled(spec[1].height),
+      filled(spec[0].amount),
+      nspecs(examples_size[opt.size()]-1), 
+      ntiles(compute_number_of_tiles(spec+1, nspecs)), 
       board(this, width*height, filled,ntiles+1) {
-    spec += 2; // No need for the specification-part any longer
+    spec += 1; // No need for the specification-part any longer
     
     // Set end-of-line markers
     for (int h = 0; h < height; ++h) {
@@ -335,26 +353,30 @@ public:
 
     // Post constraints
     if (opt.propagation() == PROPAGATION_INT) {
-      for (int i = 0; i < ntiles; ++i) {
-        // Color
-        int col = i+1;
-        // Expression for color col
-        REG mark(col);
-        // Build expression for complement to color col
-        REG other; 
-        bool first = true;
-        for (int j = filled; j <= ntiles; ++j) {
-          if (j == col) continue;
-          if (first) {
-            other = REG(j);
-            first = false;
-          } else {
-            other |= REG(j);
+      int tile = 0;
+      for (int i = 0; i < nspecs; ++i) {
+        for (int j = 0; j < spec[i].amount; ++j) {
+          // Color
+          int col = tile+1;
+          // Expression for color col
+          REG mark(col);
+          // Build expression for complement to color col
+          REG other; 
+          bool first = true;
+          for (int j = filled; j <= ntiles; ++j) {
+            if (j == col) continue;
+            if (first) {
+              other = REG(j);
+              first = false;
+            } else {
+              other |= REG(j);
+            }
           }
+          // End of line marker
+          REG eol(ntiles+1);
+          extensional(this, board, get_constraint(i, mark, other, eol));
+          ++tile;
         }
-        // End of line marker
-        REG eol(ntiles+1);
-        extensional(this, board, get_constraint(i, mark, other, eol));
       }
     } else { // opt.propagation() == PROPAGATION_BOOLEAN
       int ncolors = ntiles + 2;
@@ -375,15 +397,20 @@ public:
       // 0/1-variables and apply it to the projection of
       // the board on the color for the tile.
       REG other(0), mark(1);
-      for (int i = 0; i < ntiles; ++i) {
-        // Projection for color c
-        BoolVarArgs c(board.size());
-
-        for (int j = board.size(); j--; ) {
-          c[j] = p[j*ncolors+i+1];
-        }
+      int tile = 0;
+      for (int i = 0; i < nspecs; ++i) {
+        for (int j = 0; j < spec[i].amount; ++j) {
+          int col = tile+1;
+          // Projection for color col
+          BoolVarArgs c(board.size());
+          
+          for (int k = board.size(); k--; ) {
+            c[k] = p[k*ncolors+col];
+          }
         
-        extensional(this, c, get_constraint(i, mark, other, other));
+          extensional(this, c, get_constraint(i, mark, other, other));
+          ++tile;
+        }
       }
     }
     
@@ -412,7 +439,8 @@ public:
   
   /// Constructor for cloning \a s
   Pentominoes(bool share, Pentominoes& s) :
-    Example(share,s), spec(s.spec), width(s.width), height(s.height) {
+    Example(share,s), spec(s.spec), width(s.width), height(s.height),
+    filled(s.filled), nspecs(s.nspecs) {
     board.update(this, share, s.board);
   }
   
@@ -478,72 +506,68 @@ main(int argc, char* argv[]) {
 static const TileSpec puzzle0[] = 
   {
     // Width and height of board
-    {4, 4, ""},
-    // Number of tiles and whether the board is filled
-    {5, true, ""},
-    {2, 3,
+    {4, 4, true, ""},
+    {2, 3, 1, 
      "XX"
      "X "
      "X "},
-    {2, 1,
+    {2, 1, 1,
      "XX"},
-    {3, 3,
+    {3, 3, 1,
      " XX"
      "  X"
      "XXX"},
-    {1, 1,
+    {1, 1, 1,
      "X"},
-    {3, 1,
+    {3, 1, 1,
      "XXX"}
   };
 /// Standard specification
 static const TileSpec puzzle1[] =
   {
     // Width and height of board
-    {8, 8, ""},
-    // Number of tiles and whether the board is filled
-    {10, true, ""},
-    {3, 3,
+    {8, 8, true, ""},
+    {3, 3, 1,
      "XXX"
      "XXX"
      "XX "},
-    {5, 3,
+    {5, 3, 1,
      "  XXX"
      "  X  "
      "XXX  "},
-    {3, 4,
+    {3, 4, 1,
      "XXX"
      "XXX"
      "  X"
      "  X"},
-    {3, 4,
+    {3, 4, 1,
      "XXX"
      "  X"
      "  X"
      "  X"},
-    {2, 5,
+    {2, 5, 1,
      " X"
      " X"
      " X"
      "XX"
      "XX"},
-    {4, 2,
+    {4, 2, 1,
      "XX  "
      "XXXX"},
-    {3, 3,
+    {3, 3, 1,
      "XXX"
      "  X"
      "  X"},
-    {2, 3, 
+    {2, 3, 1,
      "XX"
      "X "
      "X "},
-    {2, 4,
+    {2, 4, 1,
      "XX"
      "XX"
      "XX"
      "XX"},
-    {3, 2,
+    {3, 2, 1,
      "XX "
      "XXX"}
   };
@@ -552,10 +576,8 @@ static const TileSpec puzzle1[] =
 static const TileSpec square2[] =
   {
     // Width and height of board
-    {10, 10, ""},
-    // Number of tiles and whether the board is filled
-    {8, true, ""},
-    {6, 6,
+    {10, 10, true, ""},
+    {6, 6, 1,
      "XXXXXX"
      "XXXXXX"
      "XXXXXX"
@@ -563,31 +585,12 @@ static const TileSpec square2[] =
      "XXXXXX"
      "XXXXXX"
     },
-    {4, 4,
+    {4, 4, 3,
      "XXXX"
      "XXXX"
      "XXXX"
      "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {2, 2,
-     "XX"
-     "XX"},
-    {2, 2,
-     "XX"
-     "XX"},
-    {2, 2,
-     "XX"
-     "XX"},
-    {2, 2,
+    {2, 2, 4,
      "XX"
      "XX"}
   };
@@ -596,10 +599,8 @@ static const TileSpec square2[] =
 static const TileSpec square3[] =
   {
     // Width and height of board
-    {20, 20, ""},
-    // Number of tiles and whether the board is filled
-    {17, true, ""},
-    {9, 9,
+    {20, 20, true, ""},
+    {9, 9, 1,
      "XXXXXXXXX"
      "XXXXXXXXX"
      "XXXXXXXXX"
@@ -610,7 +611,7 @@ static const TileSpec square3[] =
      "XXXXXXXXX"
      "XXXXXXXXX"
     },
-    {8, 8,
+    {8, 8, 2,
      "XXXXXXXX"
      "XXXXXXXX"
      "XXXXXXXX"
@@ -620,17 +621,7 @@ static const TileSpec square3[] =
      "XXXXXXXX"
      "XXXXXXXX"
     },
-    {8, 8,
-     "XXXXXXXX"
-     "XXXXXXXX"
-     "XXXXXXXX"
-     "XXXXXXXX"
-     "XXXXXXXX"
-     "XXXXXXXX"
-     "XXXXXXXX"
-     "XXXXXXXX"
-    },
-    {7, 7,
+    {7, 7, 1,
      "XXXXXXX"
      "XXXXXXX"
      "XXXXXXX"
@@ -639,111 +630,76 @@ static const TileSpec square3[] =
      "XXXXXXX"
      "XXXXXXX"
     },
-    {5, 5,
+    {5, 5, 1,
      "XXXXX"
      "XXXXX"
      "XXXXX"
      "XXXXX"
      "XXXXX"
     },
-    {4, 4,
+    {4, 4, 5,
      "XXXX"
      "XXXX"
      "XXXX"
      "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {3, 3,
+    {3, 3, 3,
      "XXX"
      "XXX"
      "XXX"},
-    {3, 3,
-     "XXX"
-     "XXX"
-     "XXX"},
-    {3, 3,
-     "XXX"
-     "XXX"
-     "XXX"},
-    {2, 2,
+    {2, 2, 2,
      "XX"
      "XX"},
-    {2, 2,
-     "XX"
-     "XX"},
-    {1, 1,
-     "X"},
-    {1, 1,
+    {1, 1, 2,
      "X"}
   };
 
 static const TileSpec pentomino6x10[] =
   {
     // Width and height of board
-    {10, 6, ""},
-    // Number of tiles and whether the board is filled
-    {12, true, ""},
-    {2, 4,
+    {10, 6, true, ""},
+    {2, 4, 1,
      "X "
      "X "
      "X "
      "XX"},
-    {3,3,
+    {3,3, 1,
      "XX "
      " XX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "XXX"
      " X "
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      " XX"
      "XX "},
-    {2,4,
+    {2,4, 1,
      " X"
      "XX"
      " X"
      " X"},
-    {5,1,
+    {5,1, 1,
      "XXXXX"},
-    {3,3,
+    {3,3, 1,
      "X  "
      "XXX"
      "  X"},
-    {4,2,
+    {4,2, 1,
      " XXX"
      "XX  "},
-    {2,3,
+    {2,3, 1,
      "XX"
      "XX"
      " X"},
-    {3,2,
+    {3,2, 1,
      "X X"
      "XXX"},
-    {3,3,
+    {3,3, 1,
      " X "
      "XXX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      "  X"
      "XXX"}
@@ -752,52 +708,50 @@ static const TileSpec pentomino6x10[] =
 static const TileSpec pentomino5x12[] =
   {
     // Width and height of board
-    {12, 5, ""},
-    // Number of tiles and whether the board is filled
-    {12, true, ""},
-    {2, 4,
+    {12, 5, true, ""},
+    {2, 4, 1,
      "X "
      "X "
      "X "
      "XX"},
-    {3,3,
+    {3,3, 1,
      "XX "
      " XX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "XXX"
      " X "
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      " XX"
      "XX "},
-    {2,4,
+    {2,4, 1,
      " X"
      "XX"
      " X"
      " X"},
-    {5,1,
+    {5,1, 1,
      "XXXXX"},
-    {3,3,
+    {3,3, 1,
      "X  "
      "XXX"
      "  X"},
-    {4,2,
+    {4,2, 1,
      " XXX"
      "XX  "},
-    {2,3,
+    {2,3, 1,
      "XX"
      "XX"
      " X"},
-    {3,2,
+    {3,2, 1,
      "X X"
      "XXX"},
-    {3,3,
+    {3,3, 1,
      " X "
      "XXX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      "  X"
      "XXX"}
@@ -806,52 +760,50 @@ static const TileSpec pentomino5x12[] =
 static const TileSpec pentomino4x15[] =
   {
     // Width and height of board
-    {15, 4, ""},
-    // Number of tiles and whether the board is filled
-    {12, true, ""},
-    {2, 4,
+    {15, 4, true, ""},
+    {2, 4, 1,
      "X "
      "X "
      "X "
      "XX"},
-    {3,3,
+    {3,3, 1,
      "XX "
      " XX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "XXX"
      " X "
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      " XX"
      "XX "},
-    {2,4,
+    {2,4, 1,
      " X"
      "XX"
      " X"
      " X"},
-    {5,1,
+    {5,1, 1,
      "XXXXX"},
-    {3,3,
+    {3,3, 1,
      "X  "
      "XXX"
      "  X"},
-    {4,2,
+    {4,2, 1,
      " XXX"
      "XX  "},
-    {2,3,
+    {2,3, 1,
      "XX"
      "XX"
      " X"},
-    {3,2,
+    {3,2, 1,
      "X X"
      "XXX"},
-    {3,3,
+    {3,3, 1,
      " X "
      "XXX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      "  X"
      "XXX"}
@@ -860,63 +812,70 @@ static const TileSpec pentomino4x15[] =
 static const TileSpec pentomino3x20[] =
   {
     // Width and height of board
-    {20, 3, ""},
-    // Number of tiles and whether the board is filled
-    {12, true, ""},
-    {2, 4,
+    {20, 3, true, ""},
+    {2, 4, 1,
      "X "
      "X "
      "X "
      "XX"},
-    {3,3,
+    {3,3, 1,
      "XX "
      " XX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "XXX"
      " X "
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      " XX"
      "XX "},
-    {2,4,
+    {2,4, 1,
      " X"
      "XX"
      " X"
      " X"},
-    {5,1,
+    {5,1, 1,
      "XXXXX"},
-    {3,3,
+    {3,3, 1,
      "X  "
      "XXX"
      "  X"},
-    {4,2,
+    {4,2, 1,
      " XXX"
      "XX  "},
-    {2,3,
+    {2,3, 1,
      "XX"
      "XX"
      " X"},
-    {3,2,
+    {3,2, 1,
      "X X"
      "XXX"},
-    {3,3,
+    {3,3, 1,
      " X "
      "XXX"
      " X "},
-    {3,3,
+    {3,3, 1,
      "  X"
      "  X"
      "XXX"}
   };
 
 /// List of specifications
-const TileSpec *specs[] = {puzzle0, puzzle1, square2, square3,
+const TileSpec *examples[] = {puzzle0, puzzle1, square2, square3,
                            pentomino6x10,pentomino5x12,
                            pentomino4x15,pentomino3x20};
+const int examples_size[] = {sizeof(puzzle0)/sizeof(TileSpec),
+                             sizeof(puzzle1)/sizeof(TileSpec),
+                             sizeof(square2)/sizeof(TileSpec),
+                             sizeof(square3)/sizeof(TileSpec),
+                             sizeof(pentomino6x10)/sizeof(TileSpec),
+                             sizeof(pentomino5x12)/sizeof(TileSpec),
+                             sizeof(pentomino4x15)/sizeof(TileSpec),
+                             sizeof(pentomino3x20)/sizeof(TileSpec)};
+
 /// Number of specifications
-const unsigned n_examples = sizeof(specs)/sizeof(TileSpec*);
+const unsigned n_examples = sizeof(examples)/sizeof(TileSpec*);
 //@}
 
 // Symmetry functions
