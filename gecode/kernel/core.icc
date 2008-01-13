@@ -189,13 +189,15 @@ namespace Gecode {
     /// End of bits for propagator modification event
     static const int pme_bits_lst = 0;
     /// Return difference when changing modification event \a me_o to \a me_n
-    static ModEvent mec(ModEvent me_o, ModEvent me_n) {
-      GECODE_NEVER; return 0;
-    }
+    static ModEvent mec(ModEvent me_o, ModEvent me_n);
     /// Variable type identifier for reflection
     static GECODE_KERNEL_EXPORT const Support::Symbol vti;
   };
 
+  forceinline ModEvent
+  NoIdxVarImpConf::mec(ModEvent, ModEvent) {
+    GECODE_NEVER; return 0;
+  }
 
 
   /*
