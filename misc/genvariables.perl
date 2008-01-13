@@ -673,6 +673,7 @@ if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline Gecode::ModEvent
   $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= $me_max[$f]);
     if (Gecode::me_failed($base[$f]::notify(home,me,d)))
       return Gecode::ME_GEN_FAILED;
     process(home);
@@ -685,6 +686,7 @@ EOF
   print <<EOF
   forceinline Gecode::ModEvent
   $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= $me_max[$f]);
     if (Gecode::me_failed($base[$f]::notify(home,me,d)))
       return Gecode::ME_GEN_FAILED;
     switch (me) {

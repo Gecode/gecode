@@ -95,6 +95,7 @@ namespace Gecode { namespace Int {
 
   forceinline Gecode::ModEvent
   IntVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_INT_DOM+1);
     if (Gecode::me_failed(Gecode::VarImp< Gecode::Int::IntVarImpConf>::notify(home,me,d)))
       return Gecode::ME_GEN_FAILED;
     switch (me) {
@@ -173,6 +174,7 @@ namespace Gecode { namespace Int {
 
   forceinline Gecode::ModEvent
   BoolVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_BOOL_VAL+1);
     if (Gecode::me_failed(Gecode::VarImp< Gecode::Int::BoolVarImpConf>::notify(home,me,d)))
       return Gecode::ME_GEN_FAILED;
     process(home);
@@ -239,6 +241,7 @@ namespace Gecode { namespace Set {
 
   forceinline Gecode::ModEvent
   SetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_SET_CBB+1);
     if (Gecode::me_failed(Gecode::VarImp< Gecode::Set::SetVarImpConf>::notify(home,me,d)))
       return Gecode::ME_GEN_FAILED;
     switch (me) {
@@ -353,6 +356,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline Gecode::ModEvent
   CpltSetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_CPLTSET_DOM+1);
     if (Gecode::me_failed(Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf>::notify(home,me,d)))
       return Gecode::ME_GEN_FAILED;
     switch (me) {
