@@ -126,7 +126,8 @@ SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
 	dynamic-stack exception map memory \
 	random sentinel-stack sort \
-	static-pqueue static-stack symbol
+	static-pqueue static-stack symbol \
+	marked-pointer
 
 BUDDYSRC0 = \
 	bddio.c \

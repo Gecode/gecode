@@ -6,8 +6,8 @@
  *     Niko Paltzer, 2007
  *
  *  Last modified:
- *     $Date: 2007-11-29 19:46:48 +0100 (Thu, 29 Nov 2007) $ by $Author: schulte $
- *     $Revision: 5506 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

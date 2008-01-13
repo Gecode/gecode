@@ -399,9 +399,7 @@ namespace Gecode {
         static_cast<VarImp<NoIdxVarImpConf>*>(c->pu.u.vars_noidx);
       while (x != NULL) {
         VarImp<NoIdxVarImpConf>* n = x->next();
-        x->free_copied = 1+0;
-        x->idx[0]      = NULL;
-        x->idx[1]      = NULL;
+        x->idx[0] = x->idx[1] = NULL;
         x = n;
       }
     }

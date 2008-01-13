@@ -98,6 +98,7 @@
 #include "gecode/support/exception.icc"
 #include "gecode/support/cast.icc"
 #include "gecode/support/memory.icc"
+#include "gecode/support/marked-pointer.icc"
 
 /*
  * Common datastructures and algorithms
