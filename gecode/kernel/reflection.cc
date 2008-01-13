@@ -801,8 +801,8 @@ namespace Gecode { namespace Reflection {
   }
 
   SpecIter::SpecIter(Space* s0, VarMap& m0)
-  : m(&m0), s(s0), queue(s0->pu.p.pool_next), isBranching(false), 
-    curSpec(NULL) {
+  : m(&m0), s(s0), queue(s0->pu.p.pool_next - &s0->pu.p.pool[0]), 
+    isBranching(false), curSpec(NULL) {
     if (queue >= 0)
       cur = &s->pu.p.pool[queue];
     else

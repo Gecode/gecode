@@ -69,7 +69,7 @@ namespace Gecode {
     d_cur = NULL;
     d_lst = NULL;
     // Initialize propagator pool
-    pu.p.pool_next = 0;
+    pu.p.pool_next = &pu.p.pool[0];
     for (int i=0; i<=PC_MAX; i++)
       pu.p.pool[i].init();
     pu.p.branch_id = 0;
@@ -156,14 +156,14 @@ namespace Gecode {
   Space::pool_get(Propagator*& p) {
     while (true) {
       // Head of the queue
-      ActorLink* lnk = &pu.p.pool[pu.p.pool_next];
+      ActorLink* lnk = pu.p.pool_next;
       // First propagator or link back to queue
       ActorLink* fst = lnk->next();
       if (lnk != fst) {
         p = static_cast<Propagator*>(fst);
         return true;
       }
-      if (pu.p.pool_next == 0)
+      if (pu.p.pool_next == &pu.p.pool[0])
         return false;
       pu.p.pool_next--;
     }
@@ -420,7 +420,7 @@ namespace Gecode {
     for (SharedHandle::Object* s = c->pu.u.shared; s != NULL; s = s->next)
       s->fwd = NULL;
     // Initialize propagator pool
-    c->pu.p.pool_next = 0;
+    c->pu.p.pool_next = &c->pu.p.pool[0];
     for (int i=0; i<=PC_MAX; i++)
       c->pu.p.pool[i].init();
     // Copy processing only data

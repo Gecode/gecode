@@ -1025,9 +1025,9 @@ namespace Gecode {
       /// Data only available during processing
       struct {
         /// Next cost level to check
-        int pool_next;
+        ActorLink* pool_next;
         /// Waiting propagators according to cost
-        ActorLink pool[PC_MAX+1];
+        ActorLink  pool[PC_MAX+1];
         /// Id of next branching to be created
         unsigned int branch_id;
         /// Number of subscriptions (not during copying)
@@ -1967,8 +1967,8 @@ namespace Gecode {
 
   forceinline void
   Space::pool_put(Propagator* p) {
-    int c = p->cost(p->u.pme);
-    pu.p.pool[c].tail(p);
+    ActorLink* c = &pu.p.pool[p->cost(p->u.pme)];
+    c->tail(p);
     if (c > pu.p.pool_next)
       pu.p.pool_next = c;
   }
