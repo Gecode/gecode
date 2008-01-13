@@ -211,33 +211,21 @@ namespace Gecode {
 
   bool
   Space::stable(void) const {
-    int pn = pu.p.pool_next;
-    while (true) {
-      // Head of the queue
-      const ActorLink* lnk = &pu.p.pool[pn];
-      // First propagator or link back to queue
-      const ActorLink* fst = lnk->next();
-      if (lnk != fst)
-        return false;
-      if (pn == 0)
-        return true;
-      pn--;
-    }
-    GECODE_NEVER;
-    return true;
+    Propagator* _p;
+    return !const_cast<Space*>(this)->pool_get(_p);
   }
 
   /*
    * Step-by-step propagation
    * 
    */
-  ExecStatus
+  bool
   Space::step(void) {
     if (failed())
-      return ES_FAILED;
+      return false;
     Propagator* p;
     if (!pool_get(p))
-      return ES_STABLE;
+      return true;
     // Keep old propagator modification events
     PropModEvent pme_o = p->u.pme;
     // Clear pme but leave propagator in queue
@@ -246,7 +234,7 @@ namespace Gecode {
     switch (es) {
     case ES_FAILED:
       fail(); 
-      break;
+      return false;
     case ES_FIX:
       // Clear pme and put into idle queue
       p->u.pme = 0; p->unlink(); a_actors.head(p);
@@ -267,7 +255,7 @@ namespace Gecode {
     default:
       GECODE_NEVER;
     }
-    return es;
+    return true;
   }
 
   void

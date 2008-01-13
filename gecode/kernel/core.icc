@@ -479,7 +479,6 @@ namespace Gecode {
     ES_OK               =  0, ///< Execution is okay
     ES_FIX              =  1, ///< Propagation has computed fixpoint
     __ES_PARTIAL        =  2, ///< Internal: propagator has computed partial fixpoint, do not use
-    ES_STABLE           =  3  ///< Used for step: space is already stable
   };
 
   /**
@@ -1246,10 +1245,13 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT bool stable(void) const;
     /**
-     * \brief Perform single propagation step
+     * \brief Perform single propagation step, if possible
+     *
+     * Returns false if the step lead to failure, true otherwise.
+     *
      * \ingroup TaskActor
      */
-    GECODE_KERNEL_EXPORT ExecStatus step(void);
+    GECODE_KERNEL_EXPORT bool step(void);
     /**
      * \brief Return number of propagators
      *
