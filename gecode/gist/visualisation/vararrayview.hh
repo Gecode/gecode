@@ -59,7 +59,6 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   public Q_SLOTS:
     void display(Gecode::Reflection::VarMap&, int pit);
     void displayOld(int pit); ///< Use to show the variable at point in time pit
-    void reset(void); ///< Use to reset the view
 
   private Q_SLOTS:
     void on_muteButton_clicked(void);
@@ -68,7 +67,6 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     void init(void);
     
     virtual void initT(QVector<Reflection::VarSpec*> specs) = 0;
-    virtual void resetT(void) = 0;
     virtual void displayT(QVector<Reflection::VarSpec*> spec) = 0;
     virtual void displayOldT(int pit) = 0;
 
@@ -79,10 +77,13 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     QGraphicsScene* scene;
     QGraphicsView* view;
     QSlider* timeBar;
+    QPushButton* resetButton;
     QPushButton* muteButton;
     Gecode::Reflection::VarMap& vm;
-    int firstPointInTime;
+    bool muted;
+    int nextInternalPit;
     QStringList vars;
+    QVector<int> pitMap;
   };
 
 }}}

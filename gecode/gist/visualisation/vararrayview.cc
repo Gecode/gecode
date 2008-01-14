@@ -43,27 +43,29 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   VarArrayView::VarArrayView(Gecode::Reflection::VarMap& vm0, int pit, QStringList vars0, QWidget *parent)
   : QWidget(parent)
   , vm(vm0)
-  , firstPointInTime(pit)
+  , muted(false)
+  , nextInternalPit(0)
   , vars(vars0)
+  , pitMap(2*pit+1, -1)
   {
     scene = new QGraphicsScene(this);
-    
+
     view = new QGraphicsView(this);
     view->setScene(scene);
     view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     
     timeBar = new QSlider(Qt::Horizontal, this);
-    timeBar->setMinimum(firstPointInTime);
-    timeBar->setMaximum(firstPointInTime);
+    timeBar->setMinimum(pit);
+    timeBar->setMaximum(pit);
     timeBar->setObjectName("visTimeBar");
 
     muteButton = new QPushButton("Mute", this);
     muteButton->setObjectName("muteButton");
     
     grid = new QGridLayout(this);
-    grid->addWidget(view);
-    grid->addWidget(timeBar);
-    grid->addWidget(muteButton);
+    grid->addWidget(view, 0, 0, 1, 2);
+    grid->addWidget(timeBar, 1, 0);
+    grid->addWidget(muteButton, 1, 1);
     
     setLayout(grid);
     
@@ -84,33 +86,35 @@ namespace Gecode { namespace Gist { namespace Visualisation {
    initT(specs);
   }
   
-  // TODO nikopp: this ist not used yet and I am not sure if it is a good idea at all
-  //              maybe one should just create a new visualisation instead of resetting
-  //              the old one
-  void
-  VarArrayView::reset(void) {
-    resetT();
-  }
-
   void
   VarArrayView::displayOld(int pit) {
-    displayOldT(pit);
-    updateTimeBar(pit);
+    if(!muted) {
+      displayOldT(pitMap[pit]);
+      updateTimeBar(pit);
+    }
   }
   
   void
   VarArrayView::display(Gecode::Reflection::VarMap& _vm, int pit) {
-
-    // TODO nikopp: use pit to implement 'gaps' when view is muted
-    
-    QVector<Reflection::VarSpec*> specs;
-    QStringList _vars = vars;
-    while(!_vars.empty()) {
-      specs.push_back(new Reflection::VarSpec(_vm.spec(_vars.takeFirst().toStdString().c_str())));
+    if(pitMap.size() <= pit) {
+      pitMap.resize(pitMap.size() + pit + 1);
     }
-    
-    displayT(specs);
-    extendTimeBar(pit);
+    // TODO nikopp: use pit to implement 'gaps' when view is muted
+    if(muted) {
+      pitMap[pit] = -1;
+    }
+    if(!muted) {
+      pitMap[pit] = nextInternalPit ++;
+      
+      QVector<Reflection::VarSpec*> specs;
+      QStringList _vars = vars;
+      while(!_vars.empty()) {
+        specs.push_back(new Reflection::VarSpec(_vm.spec(_vars.takeFirst().toStdString().c_str())));
+      }
+
+      displayT(specs);
+      extendTimeBar(pit);
+    }
   }
 
   void
@@ -126,8 +130,17 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
   void
   VarArrayView::on_muteButton_clicked(void) {
-    // TODO nikopp: implement functionality of mute button
+    muted = !muted;
+    if(muted) {
+      muteButton->setText("Unmute");
+      timeBar->setEnabled(false);
+    }
+    else {
+      muteButton->setText("Mute");
+      timeBar->setEnabled(true);
+    }
   }
+
 }}}
 
 // STATISTICS: gist-any
