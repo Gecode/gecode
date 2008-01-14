@@ -963,7 +963,8 @@ namespace Gecode { namespace Gist {
         setCurrentNode(newChild);
 
         while (true) {
-	  if (inputSpace->stable() || !inputSpace->step())
+	  inputSpace->step();
+	  if (inputSpace->failed())
 	    break;
 
           VisualNode* newChild =

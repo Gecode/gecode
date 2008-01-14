@@ -69,7 +69,7 @@ namespace Gecode {
     d_cur = NULL;
     d_lst = NULL;
     // Initialize propagator pool
-    pu.p.pool_next = &pu.p.pool[0];
+    pu.p.pool_next = &pu.p.pool[0]-1;
     for (int i=0; i<=PC_MAX; i++)
       pu.p.pool[i].init();
     pu.p.branch_id = 0;
@@ -154,78 +154,24 @@ namespace Gecode {
 
   forceinline bool
   Space::pool_get(Propagator*& p) {
-    while (true) {
+    assert(pu.p.pool_next >= &pu.p.pool[0]);
+    do {
       // Head of the queue
-      ActorLink* lnk = pu.p.pool_next;
+      ActorLink* queue = pu.p.pool_next;
       // First propagator or link back to queue
-      ActorLink* fst = lnk->next();
-      if (lnk != fst) {
+      ActorLink* fst = queue->next();
+      if (queue != fst) {
         p = static_cast<Propagator*>(fst);
         return true;
       }
-      if (pu.p.pool_next == &pu.p.pool[0])
-        return false;
-      pu.p.pool_next--;
-    }
-    GECODE_NEVER;
+      
+    } while (--pu.p.pool_next >= &pu.p.pool[0]);
+    assert(pu.p.pool_next < &pu.p.pool[0]);
     return false;
   }
 
-  bool
-  Space::propagate(unsigned long int& pn) {
-    assert(!failed());
-    Propagator* p;
-    while (pool_get(p)) {
-      pn++;
-      // Keep old modification event delta
-      ModEventDelta med_o = p->u.med;
-      // Clear med but leave propagator in queue
-      p->u.med = 0;
-      switch (p->propagate(this,med_o)) {
-      case ES_FAILED:
-        fail(); 
-        return false;
-      case ES_FIX:
-        // Clear med and put into idle queue
-        p->u.med = 0; p->unlink(); a_actors.head(p);
-        break;
-      case ES_NOFIX:
-        // If no need to be run, clear med and put into idle queue
-        if (p->u.med == 0) {
-          p->unlink(); a_actors.head(p);
-        }
-        break;
-      case __ES_SUBSUMED:
-        p->unlink(); reuse(p,p->u.size);
-        break;
-      case __ES_PARTIAL:
-        // Schedule propagator with specified propagator events
-        p->unlink(); pool_put(p);
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    }
-    return true;
-  }
-
-  bool
-  Space::stable(void) const {
-    Propagator* _p;
-    return !const_cast<Space*>(this)->pool_get(_p);
-  }
-
-  /*
-   * Step-by-step propagation
-   * 
-   */
-  bool
-  Space::step(void) {
-    if (failed())
-      return false;
-    Propagator* p;
-    if (!pool_get(p))
-      return true;
+  forceinline bool
+  Space::execute(Propagator* p) {
     // Keep old modification event delta
     ModEventDelta med_o = p->u.med;
     // Clear med but leave propagator in queue
@@ -255,6 +201,37 @@ namespace Gecode {
       GECODE_NEVER;
     }
     return true;
+  }
+
+  void
+  Space::propagate(unsigned long int& pn) {
+    assert(!stable());
+    GECODE_ASSUME(pu.p.pool_next >= &pu.p.pool[0]);
+    Propagator* p;
+    while (pool_get(p)) {
+      pn++;
+      if (!execute(p)) 
+        break;
+    }
+    assert(stable());
+  }
+
+  /*
+   * Step-by-step propagation
+   * 
+   */
+  void
+  Space::step(void) {
+    if (stable())
+      return;
+    Propagator* p;
+    if (!pool_get(p)) {
+      GECODE_NEVER;
+    }
+    if (!execute(p))
+      return;
+    // Establish invariant
+    (void) pool_get(p);
   }
 
   void
@@ -363,7 +340,9 @@ namespace Gecode {
 
   Space*
   Space::clone(bool share, unsigned long int& pn) {
-    if (failed() || !propagate(pn))
+    if (!stable())
+      propagate(pn);
+    if (failed())
       throw SpaceFailed("Space::clone");
 
     /*
@@ -419,7 +398,7 @@ namespace Gecode {
     for (SharedHandle::Object* s = c->pu.u.shared; s != NULL; s = s->next)
       s->fwd = NULL;
     // Initialize propagator pool
-    c->pu.p.pool_next = &c->pu.p.pool[0];
+    c->pu.p.pool_next = &c->pu.p.pool[0]-1;
     for (int i=0; i<=PC_MAX; i++)
       c->pu.p.pool[i].init();
     // Copy processing only data

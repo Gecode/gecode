@@ -110,7 +110,7 @@ namespace Gecode {
     /// Create shared handle with no object pointing to
     SharedHandle(void);
     /// Create shared handle that points to shared object \a so
-    SharedHandle(Object* o);
+    SharedHandle(Object* so);
     /// Copy constructor maintaining reference count
     SharedHandle(const SharedHandle& sh);
     /// Assignment operator mainitaining reference count
@@ -182,7 +182,7 @@ namespace Gecode {
     static const PropCond pc_max = PC_GEN_ASSIGNED;
     /// Start of bits for modification event delta
     static const int med_bits_fst = 0;
-    /// Number of bits for modification event delta
+    /// Number of bits for modification event
     static const int me_bits_num = 0;
     /// Bitmask for modification event
     static const int me_bits_mask = 0;
@@ -277,7 +277,8 @@ namespace Gecode {
   class Delta {
     template <class VIC> friend class VarImp;
   private:
-    ModEvent me; ///< Store modification event
+    /// Modification event
+    ModEvent me; 
   public:
     /// Return modification event
     ModEvent modevent(void) const;
@@ -303,17 +304,24 @@ namespace Gecode {
     static const int idx_d = VIC::idx_d;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = VIC::pc_max;
-    /// Number of free subscription entries
-    unsigned int free;
     /**
-     * \brief Stores where entries start (idx[pc])
+     * \brief Subscribed actors (idx[pc])
      *
-     * During update, the first two entries in the original are used
-     * for cloning (the original values are stored in the copy).
+     * The entries from idx[0] to idx[pc_max+1] are propagators,
+     * where the entries between idx[pc] and idx[pc+1] are
+     * the propagators that have subscribed with propagation condition pc.
+     *
+     * The entries between idx[pc_max+1] and idx[pc_max+2] are the
+     * advisors subscribed to the variable implementation.
+     *
+     * During cloning, the first two entries in the original are used
+     * as follows (the original values are stored in the copy).
      *  - idx[0] is used as forwarding pointer (a marked pointer)
      *  - idx[1] points to the next copied variable
      */
     ActorLink** idx[pc_max+3];
+    /// Number of free subscription entries
+    unsigned int free;
 
     /**
      * \brief Update copied variable \a x
@@ -1003,9 +1011,6 @@ namespace Gecode {
      * \brief Points to the first branching to be used for status
      *
      * If equal to &a_actors, no branching does exist.
-     *
-     * If it is NULL, the space is failed.
-     *
      */
     Branching* b_status;
     /**
@@ -1018,13 +1023,23 @@ namespace Gecode {
      * referring to the earlier branching.
      *
      * If equal to &a_actors, no branching does exist.
-     *
      */
     Branching* b_commit;
     union {
       /// Data only available during processing
       struct {
-        /// Next cost level to check
+        /**
+         * \brief Cost level with next propagator to be executed
+         *
+         * This maintains the following invariant (but only if the
+         * space does not perform propagation):
+         *  - If pool_next points to an entry in the pool, this
+         *    entry contains a propagator.
+         *  - Otherwise, pool_next is smaller then the beginning of
+         *    the pool. Then, the space is stable.
+         *  - If the space is stable and pool_next is NULL, the space
+         *    is failed.
+         */
         ActorLink* pool_next;
         /// Waiting propagators according to cost
         ActorLink  pool[PC_MAX+1];
@@ -1051,6 +1066,12 @@ namespace Gecode {
     void pool_put(Propagator* p);
     /// Get propagator \a p from pool
     bool pool_get(Propagator*& p);
+    /**
+     * \brief Execute propagator with pool handling
+     *
+     * Returns false, if propagator fails.
+     */
+    bool execute(Propagator* p);
     //@}
     /**
      * \name Process, update, and dispose variables
@@ -1081,9 +1102,8 @@ namespace Gecode {
 
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
-
-    /// Perform propagation, return false if failed
-    GECODE_KERNEL_EXPORT bool propagate(unsigned long int& pn);
+    /// Perform propagation
+    GECODE_KERNEL_EXPORT void propagate(unsigned long int& pn);
 
     /**
      * \name Processing propagators
@@ -1243,31 +1263,21 @@ namespace Gecode {
      * \brief Return if space is stable (at fixpoint or failed)
      * \ingroup TaskActor
      */
-    GECODE_KERNEL_EXPORT bool stable(void) const;
-    /**
-     * \brief Perform single propagation step, if possible
-     *
-     * Returns false if the step lead to failure, true otherwise.
-     *
-     * \ingroup TaskActor
-     */
-    GECODE_KERNEL_EXPORT bool step(void);
+    bool stable(void) const;
+    /// Perform single propagation step, if possible
+    GECODE_KERNEL_EXPORT void step(void);
     /**
      * \brief Return number of propagators
      *
      * Note that this function takes linear time in the number of
-     * propagators. The number is only accurate when the space is
-     * stable (that is, at fixpoint and all propagation is done).
-     *
-     * Throws an exception of type SpaceFailed, if the space is failed.
+     * propagators.
      */
     GECODE_KERNEL_EXPORT unsigned int propagators(void) const;
     /**
      * \brief Return number of branchings
      *
-     * Note that this function takes linear time in the number of branchings.
-     *
-     * Throws an exception of type SpaceFailed, if the space is failed.
+     * Note that this function takes linear time in the number of
+     * branchings.
      */
     GECODE_KERNEL_EXPORT unsigned int branchings(void) const;
 
@@ -1556,11 +1566,6 @@ namespace Gecode {
     return b_status->description(this);
   }
 
-  forceinline bool
-  Space::failed(void) const {
-    return b_status == NULL;
-  }
-
 
   /*
    * Main control for propagation and branching
@@ -1573,8 +1578,10 @@ namespace Gecode {
    */
   forceinline SpaceStatus
   Space::status(unsigned long int& pn) {
-    // Perform propagation and do not continue when failed
-    if (failed() || !propagate(pn))
+    // Perform propagation if necessary
+    if (!stable())
+      propagate(pn);
+    if (failed())
       return SS_FAILED;
     /*
      * Find the next branching that has still alternatives left
@@ -1758,17 +1765,17 @@ namespace Gecode {
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space*) {
-    free = 0;
     for (PropCond i=0; i<pc_max+3; i++)
       idx[i] = NULL;
+    free = 0;
   }
 
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(void) {
-    free = 0;
     for (PropCond i=0; i<pc_max+3; i++)
       idx[i] = NULL;
+    free = 0;
   }
 
 
@@ -1815,9 +1822,9 @@ namespace Gecode {
   forceinline
   VarImp<VIC>::VarImp(Space* home, bool, VarImp<VIC>& x) {
     VarImpBase** reg;
+    free = 0;
     if (x.idx[0] == NULL) {
       // Variable implementation needs no index structure
-      free = 0;
       for (PropCond i=0; i<pc_max+3; i++)
         idx[i] = NULL;
       reg = &home->pu.u.vars_noidx;
@@ -1975,7 +1982,17 @@ namespace Gecode {
 
   forceinline void
   Space::fail(void) {
-    b_status = NULL;
+    pu.p.pool_next = NULL;
+  }
+
+  forceinline bool
+  Space::failed(void) const {
+    return pu.p.pool_next == NULL;
+  }
+
+  forceinline bool
+  Space::stable(void) const {
+    return pu.p.pool_next < &pu.p.pool[0];
   }
 
   template <class VIC>
@@ -2216,16 +2233,15 @@ namespace Gecode {
     // this refers to the variable to be updated (clone)
     // x refers to the original
     // Recover from copy
-    x->idx[0]      = idx[0];
-    x->idx[1]      = idx[1];
+    x->idx[0] = idx[0];
     ActorLink** f = x->idx[0];
+    x->idx[1] = idx[1];
     int n = static_cast<int>(x->idx[pc_max+2] - f);
-    free = 0;
     ActorLink** t = sub;
     sub += n;
     idx[0] = t;
     ptrdiff_t o = t - f;
-    for (PropCond i = pc_max+2; i>0; i--)
+    for (PropCond i = 1; i<pc_max+3; i++)
       idx[i] = x->idx[i]+o;
     while ((n-4) >= 0) {
       n -= 4;
@@ -2287,23 +2303,22 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   VarImp<VIC>::process(Space* home) {
+    for (PropCond i=1; i<pc_max+1; i++)
+      idx[i] = NULL;
+    ActorLink** b = idx[0]; idx[0] = NULL;
     {
-      ActorLink** b = idx[0];
-      ActorLink** p = idx[pc_max+1];
+      ActorLink** p = idx[pc_max+1]; idx[pc_max+1] = NULL;
       while (p-- > b)
         home->process<VIC>(static_cast<Propagator*>(*p));
     }
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+2])
     {
-      ActorLink** b = idx[0];
-      ActorLink** p = idx[pc_max+2];
+      ActorLink** p = idx[pc_max+2]; idx[pc_max+2] = NULL;
       home->pu.p.n_sub -= (p-b);
       // Information needed to release the dependency array
       unsigned int n = free + (p-b);
       home->reuse(p-n,n*sizeof(ActorLink*));
-      for (PropCond i=0; i<pc_max+3; i++)
-        idx[i] = NULL;
     }
   }
 
