@@ -83,7 +83,7 @@
 
 /**
  * \brief Check whether execution status \a es is failed or subsumed, and 
- * forward failure or subsumtion.
+ * forward failure or subsumption.
  *
  * \ingroup TaskActor
  */
