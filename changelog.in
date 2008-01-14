@@ -70,6 +70,14 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The number of propagators and branchings can be accurately
+retrieved from both failed and non-stable spaces.
+
+[ENTRY]
 Module: examples
 What:   new
 Rank:   minor

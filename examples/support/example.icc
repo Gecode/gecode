@@ -166,13 +166,9 @@ Example::run(const Options& o) {
         int i = o.solutions();
         t.start();
         Script* s = new Script(o);
-        unsigned int n_p = 0;
-        unsigned int n_b = 0;
+        unsigned int n_p = s->propagators();
+        unsigned int n_b = s->branchings();
         unsigned long int p = 0;
-        if (s->status(p) != SS_FAILED) {
-          n_p = s->propagators();
-          n_b = s->branchings();
-        }
         if (o.sac() != SAC_NONE) {
           s->sac_collect_vars();
           while (s->sac(p) && o.sac() == SAC_FULL);
@@ -212,13 +208,9 @@ Example::run(const Options& o) {
         cout << o.name() << endl;
         int i = o.solutions();
         Script* s = new Script(o);
-        unsigned int n_p = 0;
-        unsigned int n_b = 0;
+        unsigned int n_p = s->propagators();
+        unsigned int n_b = s->branchings();
         unsigned long int p = 0;
-        if (s->status(p) != SS_FAILED) {
-          n_p = s->propagators();
-          n_b = s->branchings();
-        }
         if (o.sac() != SAC_NONE) {
           s->sac_collect_vars();
           while (s->sac(p) && o.sac() == SAC_FULL);

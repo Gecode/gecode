@@ -409,9 +409,10 @@ namespace Gecode {
 
   unsigned int
   Space::propagators(void) const {
-    if (failed())
-      throw SpaceFailed("Space::propagators");
     unsigned int n = 0;
+    for (ActorLink* q = pu.p.pool_next; q >= &pu.p.pool[0]; q--)
+      for (ActorLink* a = q->next(); a != q; a = a->next())
+        n++;
     for (const ActorLink* a = a_actors.next(); a != b_commit; a = a->next())
       n++;
     return n;
@@ -419,8 +420,6 @@ namespace Gecode {
 
   unsigned int
   Space::branchings(void) const {
-    if (failed())
-      throw SpaceFailed("Space::branchings");
     unsigned int n = 0;
     for (const ActorLink* a = b_status; a != &a_actors; a = a->next())
       n++;
