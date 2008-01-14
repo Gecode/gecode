@@ -34,9 +34,13 @@
  *
  */
 
+#include "gecode/config.hh"
+
+#ifdef GECODE_HAVE_SET_VARS
 #include <QtGui/QBrush>
 
 #include "gecode/gist/visualisation/setvaritem.hh"
+#include "gecode/set.hh"
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
@@ -209,5 +213,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   }
 
 }}}
+
+#endif
 
 // STATISTICS: gist-any

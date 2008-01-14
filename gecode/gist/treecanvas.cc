@@ -49,6 +49,16 @@
 #include "gecode/gist/analysiscursor.hh"
 #include "gecode/gist/addchild.hh"
 #include "gecode/gist/config.hh"
+#include "gecode/gist/addvisualisationdialog.hh"
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+#ifdef GECODE_HAVE_INT_VARS
+#include "gecode/int.hh"
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+#include "gecode/set.hh"
+#endif
+#endif
 
 namespace Gecode { namespace Gist {
 
@@ -823,12 +833,17 @@ namespace Gecode { namespace Gist {
 
     newChild->setStatus(SPECIAL);
     
-    if(vm.spec(var.toStdString().c_str()).vti() == Int::IntVarImpConf::vti) {
+    if(false) {
+#ifdef GECODE_HAVE_INT_VARS
+    } else if(vm.spec(var.toStdString().c_str()).vti() == Int::IntVarImpConf::vti) {
       IntRelType rel = static_cast<IntRelType>(rel0);
       newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
+#endif
+#ifdef GECODE_HAVE_SET_VARS
     } else if(vm.spec(var.toStdString().c_str()).vti() == Set::SetVarImpConf::vti) {
       SetRelType rel = static_cast<SetRelType>(rel0);
       newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
+#endif
     } else {
       // TODO nikopp: implement other options
     }

@@ -40,8 +40,6 @@
 
 #ifdef GECODE_HAVE_QT
 #include "gecode/serialization/javascript.hh"
-#include "gecode/int.hh"
-#include "gecode/set.hh"
 #include "gecode/serialization.hh"
 #endif
 

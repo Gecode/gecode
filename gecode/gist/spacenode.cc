@@ -37,6 +37,15 @@
 #include "gecode/gist/spacenode.hh"
 #include <stack>
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+#ifdef GECODE_HAVE_INT_VARS
+#include "gecode/int.hh"
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+#include "gecode/set.hh"
+#endif
+#endif
+
 namespace Gecode { namespace Gist {
   
   // TODO nikopp: doxygen comments
@@ -94,15 +103,8 @@ namespace Gecode { namespace Gist {
    debug = !debug;
   }
   
-  SpecialDesc::SpecialDesc(std::string varName, IntRelType r0, int v0)
-  : vn(varName), v(v0) {
-    rel.i = r0;
-  }
-
-  SpecialDesc::SpecialDesc(std::string varName, SetRelType s0, int v0)
-  : vn(varName), v(v0) {
-    rel.s = s0;
-  }
+  SpecialDesc::SpecialDesc(std::string varName, int rel0, int v0)
+  : vn(varName), v(v0), rel(rel0) { }
 
   BestNode::BestNode(SpaceNode* s0, Better* b0) : s(s0), b(b0) {}
   
@@ -223,14 +225,18 @@ namespace Gecode { namespace Gist {
               if(b.desc.special != NULL) {
 
                 const Support::Symbol vName = b.desc.special->vn.c_str();
-//                VarImpBase* var = vm.var(vName);
 
-                if(vm.spec(vName).vti() == Int::IntVarImp::vti) {
+                if(false) {
+#ifdef GECODE_HAVE_INT_VARS
+                } else if(vm.spec(vName).vti() == Int::IntVarImp::vti) {
                   IntVar iv = vm.var(vName);
-                  rel(curSpace, iv, b.desc.special->rel.i, b.desc.special->v);
+                  rel(curSpace, iv, static_cast<IntRelType>(b.desc.special->rel), b.desc.special->v);
+#endif
+#ifdef GECODE_HAVE_SET_VARS
                 } else if(vm.spec(vName).vti() == Set::SetVarImp::vti) {
                   SetVar sv = vm.var(vName);
-                  dom(curSpace, sv, b.desc.special->rel.s, b.desc.special->v);
+                  dom(curSpace, sv, static_cast<SetRelType>(b.desc.special->rel), b.desc.special->v);
+#endif
                 } else {
                   // TODO nikopp: implement other possibilities
                 }

@@ -36,6 +36,8 @@
 
 #include "gecode/gist/analysiscursor.hh"
 
+#include "gecode/int.hh"
+
 namespace Gecode { namespace Gist {
 
   void

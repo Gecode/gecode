@@ -37,7 +37,9 @@
 
 #include "gecode/serialization.hh"
 
+#ifdef GECODE_HAVE_INT_VARS
 #include "gecode/int.hh"
+#endif
 #ifdef GECODE_HAVE_SET_VARS
 #include "gecode/set.hh"
 #endif
@@ -68,7 +70,7 @@ namespace Gecode { namespace Serialization {
       Var var(view);
       return os << var;
     }
-    
+#ifdef GECODE_HAVE_INT_VARS
     VarImpBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
       Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
       VarImpBase* ret = Int::IntView(IntVar(home, IntSet(ai))).var();
@@ -100,6 +102,7 @@ namespace Gecode { namespace Serialization {
         rel(home, BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v))),
             IRT_EQ, 1);
     }
+#endif
 #ifdef GECODE_HAVE_SET_VARS
     VarImpBase* createSetVar(Space* home, Reflection::VarSpec& spec) {
       int cardMin = spec.dom()->first()->second()->toInt();
@@ -130,6 +133,7 @@ namespace Gecode { namespace Serialization {
     class VariableCreators {
     public:
         VariableCreators() {
+#ifdef GECODE_HAVE_INT_VARS
         Reflection::registry().add(Int::IntVarImp::vti, createIntVar);
         Reflection::registry().add(Int::IntVarImp::vti, constrainIntVar);
         Reflection::registry().add(Int::IntVarImp::vti, updateVar<IntVar>);
@@ -138,6 +142,7 @@ namespace Gecode { namespace Serialization {
         Reflection::registry().add(Int::BoolVarImp::vti, constrainBoolVar);
         Reflection::registry().add(Int::BoolVarImp::vti, updateVar<BoolVar>);
         Reflection::registry().add(Int::BoolVarImp::vti, printVar<BoolVar>);
+#endif
 #ifdef GECODE_HAVE_SET_VARS
         Reflection::registry().add(Set::SetVarImp::vti, createSetVar);
         Reflection::registry().add(Set::SetVarImp::vti, constrainSetVar);

@@ -37,15 +37,23 @@
 #include "gecode/gist/config.hh"
 
 #include "gecode/gist/visualisation/vararrayviewt.hh"
+#ifdef GECODE_HAVE_INT_VARS
 #include "gecode/gist/visualisation/intvaritem.hh"
+#endif
+#ifdef GECODE_HAVE_SET_VARS
 #include "gecode/gist/visualisation/setvaritem.hh"
+#endif
 
 namespace Gecode { namespace Gist {
 
   Config::Config(void)
     {
+#ifdef GECODE_HAVE_INT_VARS
       visualisationMap.insert("IntVarArray", &Visualisation::VarArrayViewT<Visualisation::IntVarItem>::create);
+#endif
+#ifdef GECODE_HAVE_SET_VARS
       visualisationMap.insert("SetVarArray", &Visualisation::VarArrayViewT<Visualisation::SetVarItem>::create);
+#endif
     }
 
 }}

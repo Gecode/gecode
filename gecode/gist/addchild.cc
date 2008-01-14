@@ -35,10 +35,17 @@
  */
 
 #include "gecode/gist/addchild.hh"
+#ifdef GECODE_HAVE_INT_VARS
+#include "gecode/int.hh"
+#endif
+#ifdef GECODE_HAVE_SET_VARS
 #include "gecode/set.hh"
+#endif
 
 namespace Gecode { namespace Gist {
 
+// TODO nikopp: to make this usable for arbitrary kinds of variables, a variable must be able to
+//              return the required values
   AddChild::AddChild(Reflection::VarMap& vm, QWidget *parent)
   : QDialog(parent)
   {
@@ -54,13 +61,18 @@ namespace Gecode { namespace Gist {
       data << QVariant(QString(vmi.spec().name().toString().c_str()));
       data << QVariant(QString(vmi.spec().vti().toString().c_str()));
       
-      if(vmi.spec().vti() == Int::IntVarImpConf::vti) {
+      if(false) {
+#ifdef GECODE_HAVE_INT_VARS
+      } else if(vmi.spec().vti() == Int::IntVarImpConf::vti) {
         Reflection::IntArrayArg* dom = vmi.spec().dom()->toIntArray();
         data << QVariant((*dom)[0]) << QVariant((*dom)[dom->size()-1]);
+#endif
+#ifdef GECODE_HAVE_SET_VARS
       } else if(vmi.spec().vti() == Set::SetVarImpConf::vti) {
         Reflection::IntArrayArg* ub_dom = vmi.spec().dom()->second()->first()->toIntArray();
         data << QVariant((*ub_dom)[0]) << QVariant((*ub_dom)[ub_dom->size()-1]);
-      } else {
+#endif
+        } else {
         // TODO nikopp: implement other possibilities
       }
 
@@ -114,7 +126,9 @@ namespace Gecode { namespace Gist {
     QVariantList data = ui.varList->currentItem()->data(Qt::UserRole).toList();
     Support::Symbol vti = data.at(1).toString().toStdString().c_str();
     
-    if(vti == Int::IntVarImpConf::vti) {
+    if(false) {
+#ifdef GECODE_HAVE_INT_VARS
+    } else if(vti == Int::IntVarImpConf::vti) {
       QListWidgetItem* eq = new QListWidgetItem("==", ui.relList);
       eq->setData(Qt::UserRole, QVariant(Gecode::IRT_EQ));
       QListWidgetItem* nq = new QListWidgetItem("!=", ui.relList);
@@ -127,11 +141,14 @@ namespace Gecode { namespace Gist {
       gq->setData(Qt::UserRole, QVariant(Gecode::IRT_GQ));
       QListWidgetItem* gr = new QListWidgetItem(">", ui.relList);
       gr->setData(Qt::UserRole, QVariant(Gecode::IRT_GR));
+#endif
+#ifdef GECODE_HAVE_SET_VARS
     } else if (vti == Set::SetVarImpConf::vti) {
       QListWidgetItem* in = new QListWidgetItem("contains", ui.relList);
       in->setData(Qt::UserRole, QVariant(Gecode::SRT_SUP));
       QListWidgetItem* out = new QListWidgetItem("does not contain", ui.relList);
       out->setData(Qt::UserRole, QVariant(Gecode::SRT_DISJ));
+#endif
     } else {
       // TODO nikopp: implement other options
     }

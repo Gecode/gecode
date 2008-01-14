@@ -37,6 +37,8 @@
 #ifndef GECODE_GIST_VISUALISATION_SETVARITEM_HH
 #define GECODE_GIST_VISUALISATION_SETVARITEM_HH
 
+#include "gecode/config.hh"
+
 #include <QtCore/QStack>
 #include <QtCore/QBitArray>
 

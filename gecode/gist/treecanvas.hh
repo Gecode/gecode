@@ -43,7 +43,6 @@
 
 #include "gecode/gist/gist.hh"
 #include "gecode/gist/visualnode.hh"
-#include "gecode/gist/addvisualisationdialog.hh"
 
 namespace Gecode {  namespace Gist {
   
