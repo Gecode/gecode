@@ -105,6 +105,36 @@ namespace Gecode {
     Linear::post(home,t,n,r,y,0,ICL_DEF,pk);
   }
 
+  void
+  linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
+         BoolVar b, IntConLevel icl, PropKind pk) {
+    IntVar z(home,0,x.size());
+    linear(home,x,IRT_EQ,z,icl,pk); rel(home,z,r,c,b,icl,pk);
+  }
+
+  void
+  linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
+         BoolVar b, IntConLevel icl, PropKind pk) {
+    IntVar z(home,0,x.size());
+    linear(home,x,IRT_EQ,z,icl,pk); rel(home,z,r,y,b,icl,pk);
+  }
+
+  void
+  linear(Space* home,
+         const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
+         BoolVar b, IntConLevel icl, PropKind pk) {
+    IntVar z(home,Limits::Int::int_min,Limits::Int::int_max);
+    linear(home,a,x,IRT_EQ,z,icl,pk); rel(home,z,r,c,b,icl,pk);
+  }
+
+  void
+  linear(Space* home,
+         const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
+         BoolVar b, IntConLevel icl, PropKind pk) {
+    IntVar z(home,Limits::Int::int_min,Limits::Int::int_max);
+    linear(home,a,x,IRT_EQ,z,icl,pk); rel(home,z,r,y,b,icl,pk);
+  }
+
   namespace {
     using namespace Int;
     GECODE_REGISTER1(Linear::EqBoolInt<BoolView>::Memory);

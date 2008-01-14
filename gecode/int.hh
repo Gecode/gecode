@@ -1414,10 +1414,20 @@ namespace Gecode {
   linear(Space* home, const BoolVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
+  GECODE_INT_EXPORT void
+  linear(Space* home, const BoolVarArgs& x,
+         IntRelType r, int c, BoolVar b,
+         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const BoolVarArgs& x,
          IntRelType r, IntVar y,
+         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
+  GECODE_INT_EXPORT void
+  linear(Space* home, const BoolVarArgs& x,
+         IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
    *
@@ -1428,6 +1438,15 @@ namespace Gecode {
   linear(Space* home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f\right)\Leftrightarrow b$
+   *
+   *  Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   */
+  GECODE_INT_EXPORT void
+  linear(Space* home, const IntArgs& a, const BoolVarArgs& x,
+         IntRelType r, int c, BoolVar b,
+         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1436,6 +1455,15 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space* home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, IntVar y,
+         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f\right)\Leftrightarrow b$
+   *
+   *  Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   */
+  GECODE_INT_EXPORT void
+  linear(Space* home, const IntArgs& a, const BoolVarArgs& x,
+         IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 

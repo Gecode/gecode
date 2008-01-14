@@ -180,11 +180,21 @@ Rank:   major
 The %Gecode Interactive Search Tool (Gist), a Qt-based graphical search 
 engine, is now part of the main %Gecode distribution.
 
+
+
 [RELEASE]
 Version: 2.0.1
 Date:    Soon
 [DESCRIPTION]
 Fixes or what?
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+Thanks:	Mohamad Rabbath
+[DESCRIPTION]
+Re-added reified linear constraints for Boolean variables.
 
 [ENTRY]
 Module: int
