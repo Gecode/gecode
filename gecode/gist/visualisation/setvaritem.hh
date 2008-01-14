@@ -60,7 +60,6 @@ protected:
   virtual void store(Reflection::VarSpec* spec); ///< store the information of the variable on the stack
 
   QVector<QGraphicsRectItem*> domainItems;
-//  QGraphicsRectItem* cardItem;
   QGraphicsTextItem* cardText;
   int initMin; ///< Initial domain minimum
   int initMax; ///< Initial domain maximum

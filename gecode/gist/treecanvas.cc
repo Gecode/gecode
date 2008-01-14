@@ -695,7 +695,9 @@ namespace Gecode { namespace Gist {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
+#ifdef GECODE_GIST_EXPERIMENTAL
       emit currentNodeChanged(n->getSpace(), n->getStatus());
+#endif
       QWidget::update();
     }
   }
