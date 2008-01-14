@@ -688,7 +688,7 @@ namespace Gecode {
      * follows:
      *  - ES_FAILED: the propagator has detected failure
      *  - ES_NOFIX: the propagator has done propagation
-     *  - ES_FIX: the propgator has done propagation and has computed
+     *  - ES_FIX: the propagator has done propagation and has computed
      *    a fixpoint. That is, running the propagator immediately
      *    again will do nothing.
      *
