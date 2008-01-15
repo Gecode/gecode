@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Christian Schulte, 2004
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,38 +35,50 @@
  *
  */
 
-namespace Gecode { namespace Support {
+/// Concatenate \a R and \a LINE
+#define GECODE_CAT2(R,LINE) R ## LINE
+/// Concatenate macro-expanded \a R and \a LINE
+#define GECODE_CAT(R,LINE) GECODE_CAT2(R,LINE)
+/// Generate fresh name with prefix P
+#define GECODE_FRESH(P) GECODE_CAT(_GECODE_ ## P, __LINE__)
 
-  /// Cast \a p into pointer of type \a T
-  template <class T>
-  T ptr_cast(void* p);
+/**
+ * \def GECODE_NEVER
+ * \brief Assert that this command is never executed
+ *
+ * This is preferred over assert(false) as it is used for optimization,
+ * if supported by a compiler (for example, Microsoft Visual C++).
+ *
+ */
 
-  /**
-   * \brief Static non-null cast: cast a non-null pointer \a p
-   *
-   * This is meant to be a hint to the opitimizer. If the class of
-   * \a p has no virtual functions, but \a T has, a normal static
-   * cast must distinguish whether \a p is NULL or not.
-   *
-   * At least for MSVC, this can be optimized by telling the optimizer
-   * that the pointer is not NULL.
-   */
-  template <class T>
-  T snn_cast(void* p);
+#if defined(_MSC_VER) && defined(NDEBUG)
 
-  template <class T>
-  forceinline T
-  ptr_cast(void* p) {
-    return static_cast<T>(p);
-  }
+#define GECODE_NEVER __assume(false);
 
-  template <class T>
-  forceinline T
-  snn_cast(void* p) {
-    GECODE_ASSUME(p != NULL);
-    return static_cast<T>(p);
-  }
+#else
 
-}}
+#define GECODE_NEVER assert(false);
+
+#endif
+
+/**
+ * \def GECODE_ASSUME
+ * \brief Assert certain property
+ *
+ * This might be used for optimization as well (for example, 
+ * Microsoft Visual C++), otherwise it behaves like any
+ * assert.
+ *
+ */
+
+#if defined(_MSC_VER) && defined(NDEBUG)
+
+#define GECODE_ASSUME(p) __assume((p));
+
+#else
+
+#define GECODE_ASSUME(p) assert((p));
+
+#endif
 
 // STATISTICS: support-any

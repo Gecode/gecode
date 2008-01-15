@@ -35,13 +35,6 @@
  *
  */
 
-/// Concatenate \a R and \a LINE
-#define GECODE_CAT2(R,LINE) R ## LINE
-/// Concatenate macro-expanded \a R and \a LINE
-#define GECODE_CAT(R,LINE) GECODE_CAT2(R,LINE)
-/// Generate fresh name with prefix P
-#define GECODE_FRESH(P) GECODE_CAT(_GECODE_ ## P, __LINE__)
-
 /**
  * \brief Check whether modification event \a me is failed, and forward failure.
  *
@@ -120,45 +113,5 @@
     return ::Gecode::ES_FAILED;                                         \
   return ES_SUBSUMED(__p__ ## __LINE__,__s__ ## __LINE__);              \
 }
-
-
-/**
- * \def GECODE_NEVER
- * \brief Assert that this command is never executed
- *
- * This is preferred over assert(false) as it is used for optimization,
- * if supported by a compiler (for example, Microsoft Visual C++).
- *
- */
-
-#if defined(_MSC_VER) && defined(NDEBUG)
-
-#define GECODE_NEVER __assume(false);
-
-#else
-
-#define GECODE_NEVER assert(false);
-
-#endif
-
-/**
- * \def GECODE_ASSUME
- * \brief Assert certain property
- *
- * This might be used for optimization as well (for example, 
- * Microsoft Visual C++), otherwise it behaves like any
- * assert.
- *
- */
-
-#if defined(_MSC_VER) && defined(NDEBUG)
-
-#define GECODE_ASSUME(p) __assume((p));
-
-#else
-
-#define GECODE_ASSUME(p) assert((p));
-
-#endif
 
 // STATISTICS: kernel-other

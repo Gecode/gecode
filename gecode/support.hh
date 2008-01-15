@@ -95,6 +95,7 @@
  *
  */
 
+#include "gecode/support/macros.icc"
 #include "gecode/support/exception.icc"
 #include "gecode/support/cast.icc"
 #include "gecode/support/memory.icc"
