@@ -62,6 +62,25 @@
 #endif
 
 /**
+ * \def GECODE_NOT_NULL
+ * \brief Assert that a pointer is never NULL
+ *
+ * This is preferred over assert as it is used for optimization,
+ * if supported by a compiler (for example, Microsoft Visual C++).
+ *
+ */
+
+#if defined(_MSC_VER) && defined(NDEBUG)
+
+#define GECODE_NOT_NULL(p) __assume(p != NULL);
+
+#else
+
+#define GECODE_NOT_NULL(p) assert(p != NULL);
+
+#endif
+
+/**
  * \def GECODE_ASSUME
  * \brief Assert certain property
  *

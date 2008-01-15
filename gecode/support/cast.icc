@@ -63,7 +63,7 @@ namespace Gecode { namespace Support {
   template <class T1, class T2>
   forceinline T1
   snn_cast(T2 p) {
-    GECODE_ASSUME(p != NULL);
+    GECODE_NOT_NULL(p);
     return static_cast<T1>(p);
   }
 

@@ -525,6 +525,7 @@ namespace Gecode {
     friend class Branching;
     friend class Space;
     template <class VIC> friend class VarImp;
+    template <class T1, class T2> friend T1 Support::snn_cast(T2);
   private:
     ActorLink* _next; ActorLink* _prev;
   public:
@@ -558,6 +559,7 @@ namespace Gecode {
     friend class Reflection::SpecIter;
     template <class VIC> friend class VarImp;
     template <class A> friend class Council;
+    template <class T1, class T2> friend T1 Support::snn_cast(T2);
   public:
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
@@ -1618,7 +1620,7 @@ namespace Gecode {
   forceinline Propagator* 
   Advisor::propagator(void) const { 
     assert(!disposed());
-    return static_cast<Propagator*>(ActorLink::prev()); 
+    return Support::snn_cast<Propagator*>(ActorLink::prev()); 
   }
   template <class A>
   forceinline void

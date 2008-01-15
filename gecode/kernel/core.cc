@@ -285,7 +285,8 @@ namespace Gecode {
      * as all of its descriptions must have been used already.
      *
      */
-    while ((b_commit != &a_actors) && (d->_id != b_commit->id)) {
+    while ((b_commit != Support::snn_cast<Branching*>(&a_actors)) && 
+           (d->_id != b_commit->id)) {
       Branching* b = b_commit;
       b_commit = Support::snn_cast<Branching*>(b_commit->next());
       if (b == b_status)
@@ -293,7 +294,7 @@ namespace Gecode {
       b->unlink(); 
       reuse(b,b->dispose(this));
     }
-    if (b_commit == &a_actors)
+    if (b_commit == Support::snn_cast<Branching*>(&a_actors))
       throw SpaceNoBranching();
     if (a >= d->alternatives())
       throw SpaceIllegalAlternative();
@@ -328,7 +329,8 @@ namespace Gecode {
       ActorLink* p  = &a_actors;
       ActorLink* e  = &s.a_actors;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        ActorLink* c = Support::snn_cast<Actor*>(a)->copy(this,share);
+        Actor* c = Support::snn_cast<Actor*>(a)->copy(this,share);
+        GECODE_NOT_NULL(c);
         // Link copied actor
         p->next(c); c->prev(p);
         // Note that forwarding is done in the constructors
@@ -354,7 +356,7 @@ namespace Gecode {
         Actor** f = s.d_fst;
         do {
           n--;
-          a[n] = static_cast<Actor*>(f[n]->prev());
+          a[n] = Support::snn_cast<Actor*>(f[n]->prev());
         } while (n != 0);
       }
     }
@@ -471,10 +473,11 @@ namespace Gecode {
   Reflection::BranchSpec
   Space::branchSpec(Reflection::VarMap& m, const BranchingDesc* d) {
     Branching* bra = b_commit;
-    while ((bra != &a_actors) && (d->_id != bra->id)) {
+    while ((bra != Support::snn_cast<Branching*>(&a_actors)) && 
+           (d->_id != bra->id)) {
       bra = Support::snn_cast<Branching*>(bra->next());
     }
-    if (bra == &a_actors)
+    if (bra == Support::snn_cast<Branching*>(&a_actors))
       throw SpaceNoBranching();
     return bra->branchSpec(this, m, d);
   }
