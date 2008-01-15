@@ -525,7 +525,6 @@ namespace Gecode {
     friend class Branching;
     friend class Space;
     template <class VIC> friend class VarImp;
-    template <class T1, class T2> friend T1 Support::snn_cast(T2);
   private:
     ActorLink* _next; ActorLink* _prev;
   public:
@@ -559,7 +558,9 @@ namespace Gecode {
     friend class Reflection::SpecIter;
     template <class VIC> friend class VarImp;
     template <class A> friend class Council;
-    template <class T1, class T2> friend T1 Support::snn_cast(T2);
+  private:
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static Actor* cast(ActorLink* al);
   public:
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
@@ -682,6 +683,8 @@ namespace Gecode {
       /// A list of advisors (used during cloning)
       Gecode::ActorLink* advisors;
     } u;
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static Propagator* cast(ActorLink* al);
   protected:
     /// Constructor for creation
     Propagator(Space* home);
@@ -928,7 +931,10 @@ namespace Gecode {
     friend class BranchingDesc;
     friend class Reflection::SpecIter;
   private:
-    unsigned int id; ///< Unique identity (to match to branching descriptions)
+    /// Unique identity (to match to branching descriptions)
+    unsigned int id; 
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static Branching* cast(ActorLink* al);
   protected:
     /// Constructor for creation
     Branching(Space* home);
@@ -1539,6 +1545,30 @@ namespace Gecode {
     p->_next = a; a->_prev = p;
   }
 
+  forceinline Actor* 
+  Actor::cast(ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    ActorLink& t = *al;
+    return static_cast<Actor*>(&t);
+  }
+  forceinline Propagator* 
+  Propagator::cast(ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    ActorLink& t = *al;
+    return static_cast<Propagator*>(&t);
+  }
+  forceinline Branching* 
+  Branching::cast(ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    ActorLink& t = *al;
+    return static_cast<Branching*>(&t);
+  }
+
+
+
   forceinline size_t
   Actor::dispose(Space*) {
     return sizeof(*this);
@@ -1588,10 +1618,10 @@ namespace Gecode {
      * branching.
      *
      */
-    while (b_status != &a_actors) {
+    while (b_status != Branching::cast(&a_actors)) {
       if (b_status->status(this))
         return SS_BRANCH;
-      b_status = Support::snn_cast<Branching*>(b_status->next());
+      b_status = Branching::cast(b_status->next());
     }
     // No branching with alternatives left, space is solved
     return SS_SOLVED;
@@ -1620,7 +1650,7 @@ namespace Gecode {
   forceinline Propagator* 
   Advisor::propagator(void) const { 
     assert(!disposed());
-    return Support::snn_cast<Propagator*>(ActorLink::prev()); 
+    return Propagator::cast(ActorLink::prev()); 
   }
   template <class A>
   forceinline void
@@ -2286,7 +2316,7 @@ namespace Gecode {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
-      home->process<VIC>(Support::snn_cast<Propagator*>(*p),me);
+      home->process<VIC>(Propagator::cast(*p),me);
   }
 
   template <class VIC>
@@ -2298,7 +2328,7 @@ namespace Gecode {
     {
       ActorLink** p = idx[pc_max+1]; idx[pc_max+1] = NULL;
       while (p-- > b)
-        home->process<VIC>(Support::snn_cast<Propagator*>(*p));
+        home->process<VIC>(Propagator::cast(*p));
     }
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+2])

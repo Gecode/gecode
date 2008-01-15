@@ -41,30 +41,10 @@ namespace Gecode { namespace Support {
   template <class T>
   T ptr_cast(void* p);
 
-  /**
-   * \brief Static non-null cast: cast a non-null pointer \a p
-   *
-   * This is meant to be a hint to the optimizer. If \a T2
-   * has no virtual functions, but \a T2 has, a normal static
-   * cast must distinguish whether \a p is NULL or not.
-   *
-   * At least for MSVC, this can be optimized by telling the optimizer
-   * that \a p is not NULL.
-   */
-  template <class T1, class T2>
-  T1 snn_cast(T2 p);
-
   template <class T>
   forceinline T
   ptr_cast(void* p) {
     return static_cast<T>(p);
-  }
-
-  template <class T1, class T2>
-  forceinline T1
-  snn_cast(T2 p) {
-    GECODE_NOT_NULL(p);
-    return static_cast<T1>(p);
   }
 
 }}
