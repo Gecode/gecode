@@ -1058,21 +1058,8 @@ namespace Gecode {
         SharedHandle::Object* shared;
       } u;
     } pu;
-    /**
-     * \name Pool of waiting propagators
-     */
-    //@{
     /// Put propagator \a p to pool
     void pool_put(Propagator* p);
-    /// Get propagator \a p from pool
-    bool pool_get(Propagator*& p);
-    /**
-     * \brief Execute propagator with pool handling
-     *
-     * Returns false, if propagator fails.
-     */
-    bool execute(Propagator* p);
-    //@}
     /**
      * \name Process, update, and dispose variables
      */

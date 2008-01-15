@@ -151,27 +151,13 @@ namespace Gecode {
    * Performing propagation
    *
    */
-
-  forceinline bool
-  Space::pool_get(Propagator*& p) {
-    assert(pu.p.pool_next >= &pu.p.pool[0]);
-    do {
-      // Head of the queue
-      ActorLink* queue = pu.p.pool_next;
-      // First propagator or link back to queue
-      ActorLink* fst = queue->next();
-      if (queue != fst) {
-        p = static_cast<Propagator*>(fst);
-        return true;
-      }
-      
-    } while (--pu.p.pool_next >= &pu.p.pool[0]);
-    assert(pu.p.pool_next < &pu.p.pool[0]);
-    return false;
-  }
-
-  forceinline bool
-  Space::execute(Propagator* p) {
+  void
+  Space::propagate(unsigned long int& pn) {
+    assert(!stable() && (pu.p.pool_next >= &pu.p.pool[0]));
+    Propagator* p;
+    goto unstable;
+  execute:
+    pn++;
     // Keep old modification event delta
     ModEventDelta med_o = p->u.med;
     // Clear med but leave propagator in queue
@@ -179,16 +165,93 @@ namespace Gecode {
     switch (p->propagate(this,med_o)) {
     case ES_FAILED:
       fail(); 
-      return false;
+      return;
+    case ES_NOFIX:
+      // Find next, if possible
+      if (p->u.med != 0) {
+      unstable:
+        // There is at least one propagator in the pool
+        do {
+          assert(pu.p.pool_next >= &pu.p.pool[0]);
+          // First propagator or link back to queue
+          ActorLink* fst = pu.p.pool_next->next();
+          if (pu.p.pool_next != fst) {
+            GECODE_ASSUME(fst != NULL);
+            p = static_cast<Propagator*>(fst);
+            goto execute;
+          }
+          pu.p.pool_next--;
+        } while (true);
+        GECODE_NEVER;
+      }
+      // Fall through
     case ES_FIX:
       // Clear med and put into idle queue
       p->u.med = 0; p->unlink(); a_actors.head(p);
-      break;
-    case ES_NOFIX:
-      // If no need to be run, clear med and put into idle queue
-      if (p->u.med == 0) {
-        p->unlink(); a_actors.head(p);
+    stable_or_unstable:
+      // There might be a propagator in the pool
+      do {
+        assert(pu.p.pool_next >= &pu.p.pool[0]);
+        // First propagator or link back to queue
+        ActorLink* fst = pu.p.pool_next->next();
+        if (pu.p.pool_next != fst) {
+          GECODE_ASSUME(fst != NULL);
+          p = static_cast<Propagator*>(fst);
+          goto execute;
+        }
+      } while (--pu.p.pool_next >= &pu.p.pool[0]);
+      assert(pu.p.pool_next < &pu.p.pool[0]);
+      return;
+    case __ES_SUBSUMED:
+      p->unlink(); reuse(p,p->u.size);
+      goto stable_or_unstable;
+    case __ES_PARTIAL:
+      // Schedule propagator with specified propagator events
+      p->unlink(); pool_put(p);
+      goto unstable;
+    default:
+      GECODE_NEVER;
+    }
+    GECODE_NEVER;
+  }
+
+  /*
+   * Step-by-step propagation
+   * 
+   */
+  void
+  Space::step(void) {
+    if (stable())
+      return;
+    assert(!stable() && (pu.p.pool_next >= &pu.p.pool[0]));
+    Propagator* p;
+    // There is at least one propagator in the pool
+    do {
+      assert(pu.p.pool_next >= &pu.p.pool[0]);
+      // First propagator or link back to queue
+      ActorLink* fst = pu.p.pool_next->next();
+      if (pu.p.pool_next != fst) {
+        p = static_cast<Propagator*>(fst);
+        break;
       }
+      pu.p.pool_next--;
+    } while (true);
+    // Keep old modification event delta
+    ModEventDelta med_o = p->u.med;
+    // Clear med but leave propagator in queue
+    p->u.med = 0;
+    switch (p->propagate(this,med_o)) {
+    case ES_FAILED:
+      fail(); 
+      return;
+    case ES_NOFIX:
+      // Find next, if possible
+      if (p->u.med != 0)
+        break;
+      // Fall through
+    case ES_FIX:
+      // Clear med and put into idle queue
+      p->u.med = 0; p->unlink(); a_actors.head(p);
       break;
     case __ES_SUBSUMED:
       p->unlink(); reuse(p,p->u.size);
@@ -200,38 +263,15 @@ namespace Gecode {
     default:
       GECODE_NEVER;
     }
-    return true;
-  }
-
-  void
-  Space::propagate(unsigned long int& pn) {
-    assert(!stable());
-    GECODE_ASSUME(pu.p.pool_next >= &pu.p.pool[0]);
-    Propagator* p;
-    while (pool_get(p)) {
-      pn++;
-      if (!execute(p)) 
+    // There might be a propagator in the pool
+    do {
+      assert(pu.p.pool_next >= &pu.p.pool[0]);
+      // First propagator or link back to queue
+      if (pu.p.pool_next != pu.p.pool_next->next())
         break;
-    }
-    assert(stable());
-  }
-
-  /*
-   * Step-by-step propagation
-   * 
-   */
-  void
-  Space::step(void) {
-    if (stable())
-      return;
-    Propagator* p;
-    if (!pool_get(p)) {
-      GECODE_NEVER;
-    }
-    if (!execute(p))
-      return;
-    // Establish invariant
-    (void) pool_get(p);
+    } while (--pu.p.pool_next >= &pu.p.pool[0]);
+    assert(pu.p.pool_next < &pu.p.pool[0]);
+    return;
   }
 
   void
