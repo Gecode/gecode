@@ -62,8 +62,8 @@ namespace Gecode {
 #endif
     // Initialize actor and branching links
     a_actors.init();
-    b_status = static_cast<Branching*>(&a_actors);
-    b_commit = static_cast<Branching*>(&a_actors);
+    b_status = Support::snn_cast<Branching*>(&a_actors);
+    b_commit = Support::snn_cast<Branching*>(&a_actors);
     // Initialize array for forced deletion to be empty
     d_fst = NULL;
     d_cur = NULL;
@@ -177,7 +177,7 @@ namespace Gecode {
           // First propagator or link back to queue
           ActorLink* fst = pu.p.pool_next->next();
           if (pu.p.pool_next != fst) {
-            p = static_cast<Propagator*>(fst);
+            p = Support::snn_cast<Propagator*>(fst);
             goto execute;
           }
           pu.p.pool_next--;
@@ -195,7 +195,7 @@ namespace Gecode {
         // First propagator or link back to queue
         ActorLink* fst = pu.p.pool_next->next();
         if (pu.p.pool_next != fst) {
-          p = static_cast<Propagator*>(fst);
+          p = Support::snn_cast<Propagator*>(fst);
           goto execute;
         }
       } while (--pu.p.pool_next >= &pu.p.pool[0]);
@@ -230,7 +230,7 @@ namespace Gecode {
       // First propagator or link back to queue
       ActorLink* fst = pu.p.pool_next->next();
       if (pu.p.pool_next != fst) {
-        p = static_cast<Propagator*>(fst);
+        p = Support::snn_cast<Propagator*>(fst);
         break;
       }
       pu.p.pool_next--;
@@ -287,7 +287,7 @@ namespace Gecode {
      */
     while ((b_commit != &a_actors) && (d->_id != b_commit->id)) {
       Branching* b = b_commit;
-      b_commit = static_cast<Branching*>(b_commit->next());
+      b_commit = Support::snn_cast<Branching*>(b_commit->next());
       if (b == b_status)
         b_status = b_commit;
       b->unlink(); 
@@ -328,7 +328,7 @@ namespace Gecode {
       ActorLink* p  = &a_actors;
       ActorLink* e  = &s.a_actors;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        ActorLink* c = static_cast<Actor*>(a)->copy(this,share);
+        ActorLink* c = Support::snn_cast<Actor*>(a)->copy(this,share);
         // Link copied actor
         p->next(c); c->prev(p);
         // Note that forwarding is done in the constructors
@@ -360,14 +360,14 @@ namespace Gecode {
     }
     // Setup branching pointers
     if (s.b_status == &s.a_actors) {
-      b_status = static_cast<Branching*>(&a_actors);
+      b_status = Support::snn_cast<Branching*>(&a_actors);
     } else {
-      b_status = static_cast<Branching*>(s.b_status->prev());
+      b_status = Support::snn_cast<Branching*>(s.b_status->prev());
     }
     if (s.b_commit == &s.a_actors) {
-      b_commit = static_cast<Branching*>(&a_actors);
+      b_commit = Support::snn_cast<Branching*>(&a_actors);
     } else {
-      b_commit = static_cast<Branching*>(s.b_commit->prev());
+      b_commit = Support::snn_cast<Branching*>(s.b_commit->prev());
     }
   }
 
@@ -418,7 +418,7 @@ namespace Gecode {
     ActorLink* c_a = p_a->next();
     // First update propagators and check for advisors that also must be reset
     while (c_a != b_commit) {
-      Propagator* p = static_cast<Propagator*>(c_a);
+      Propagator* p = Support::snn_cast<Propagator*>(c_a);
       if (p->u.advisors != NULL) {
         ActorLink* a = p->u.advisors;
         p->u.advisors = NULL;
@@ -472,7 +472,7 @@ namespace Gecode {
   Space::branchSpec(Reflection::VarMap& m, const BranchingDesc* d) {
     Branching* bra = b_commit;
     while ((bra != &a_actors) && (d->_id != bra->id)) {
-      bra = static_cast<Branching*>(bra->next());
+      bra = Support::snn_cast<Branching*>(bra->next());
     }
     if (bra == &a_actors)
       throw SpaceNoBranching();

@@ -1589,7 +1589,7 @@ namespace Gecode {
     while (b_status != &a_actors) {
       if (b_status->status(this))
         return SS_BRANCH;
-      b_status = static_cast<Branching*>(b_status->next());
+      b_status = Support::snn_cast<Branching*>(b_status->next());
     }
     // No branching with alternatives left, space is solved
     return SS_SOLVED;
@@ -2284,7 +2284,7 @@ namespace Gecode {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
-      home->process<VIC>(static_cast<Propagator*>(*p),me);
+      home->process<VIC>(Support::snn_cast<Propagator*>(*p),me);
   }
 
   template <class VIC>
@@ -2296,7 +2296,7 @@ namespace Gecode {
     {
       ActorLink** p = idx[pc_max+1]; idx[pc_max+1] = NULL;
       while (p-- > b)
-        home->process<VIC>(static_cast<Propagator*>(*p));
+        home->process<VIC>(Support::snn_cast<Propagator*>(*p));
     }
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+2])
