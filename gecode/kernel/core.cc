@@ -155,11 +155,12 @@ namespace Gecode {
   Space::propagate(unsigned long int& pn) {
     assert(!stable() && (pu.p.pool_next >= &pu.p.pool[0]));
     Propagator* p;
+    ModEventDelta med_o;
     goto unstable;
   execute:
     pn++;
     // Keep old modification event delta
-    ModEventDelta med_o = p->u.med;
+    med_o = p->u.med;
     // Clear med but leave propagator in queue
     p->u.med = 0;
     switch (p->propagate(this,med_o)) {
@@ -176,7 +177,6 @@ namespace Gecode {
           // First propagator or link back to queue
           ActorLink* fst = pu.p.pool_next->next();
           if (pu.p.pool_next != fst) {
-            GECODE_ASSUME(fst != NULL);
             p = static_cast<Propagator*>(fst);
             goto execute;
           }
@@ -195,7 +195,6 @@ namespace Gecode {
         // First propagator or link back to queue
         ActorLink* fst = pu.p.pool_next->next();
         if (pu.p.pool_next != fst) {
-          GECODE_ASSUME(fst != NULL);
           p = static_cast<Propagator*>(fst);
           goto execute;
         }
