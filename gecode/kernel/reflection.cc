@@ -695,7 +695,7 @@ namespace Gecode { namespace Reflection {
   class BranchSpec::Arguments {
   public:
     /// The number of alternatives of this branch
-    int   n;
+    unsigned int   n;
     /// The arguments of this branch
     Arg** a;
     /// The id of the corresponding branching
@@ -712,13 +712,13 @@ namespace Gecode { namespace Reflection {
   BranchSpec::Arguments::Arguments(unsigned int id0, unsigned int n0)
    : n(n0), id(id0), r(1) {
      a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
-     for (int i=n; i--;)
+     for (unsigned int i=n; i--;)
        a[i] = NULL;
   }
 
   inline
   BranchSpec::Arguments::~Arguments(void) {
-    for (int i=n; i--;)
+    for (unsigned int i=n; i--;)
       delete a[i];
     Memory::free(a);
   }
@@ -744,14 +744,14 @@ namespace Gecode { namespace Reflection {
 
   Arg*
   BranchSpec::operator[](int i) const {
-    if (i >= _args->n)
+    if (i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
   Arg*&
   BranchSpec::operator[](int i) {
-    if (i >= _args->n)
+    if (i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
