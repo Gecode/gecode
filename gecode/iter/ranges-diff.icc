@@ -75,36 +75,36 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Diff<I,J>::operator++(void) {
     // Precondition: mi <= ma
     // Task: find next mi greater than ma
-  retry:
-    if (!i()) goto done;
-    mi = ma+1;
-    ma = i.max();
-    if (mi > i.max()) {
-      ++i;
-      if (!i()) goto done;
-      mi = i.min();
+    while (true) {
+      if (!i()) break;
+      mi = ma+1;
       ma = i.max();
-    }
-    while (j() && (j.max() < mi))
-      ++j;
-    if (j() && (j.min() <= ma)) {
-      // Now the interval [mi ... ma] must be shrunken
-      // Is [mi ... ma] completely consumed?
-      if ((mi >= j.min()) && (ma <= j.max()))
-        goto retry;
-      // Does [mi ... ma] overlap on the left?
-      if (j.min() <= mi) {
-        mi = j.max()+1;
-        // Search for max!
-        ++j;
-        if (j() && (j.min() <= ma))
-          ma = j.min()-1;
-      } else {
-        ma = j.min()-1;
+      if (mi > i.max()) {
+        ++i;
+        if (!i()) break;
+        mi = i.min();
+        ma = i.max();
       }
+      while (j() && (j.max() < mi))
+        ++j;
+      if (j() && (j.min() <= ma)) {
+        // Now the interval [mi ... ma] must be shrunken
+        // Is [mi ... ma] completely consumed?
+        if ((mi >= j.min()) && (ma <= j.max()))
+          continue;
+        // Does [mi ... ma] overlap on the left?
+        if (j.min() <= mi) {
+          mi = j.max()+1;
+          // Search for max!
+          ++j;
+          if (j() && (j.min() <= ma))
+            ma = j.min()-1;
+        } else {
+          ma = j.min()-1;
+        }
+      }
+      return;
     }
-    return;
-  done:
     finish();
   }
 
