@@ -447,7 +447,7 @@ if ($gen_typeicc) {
     print "  $conf[$f]::mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n) {\n";
 
     if ($me_max_n[$f] == 2) {
-      print "    return (me_o|me_n)^me_o;\n";
+      print "    return !me_o & me_n;\n";
     } elsif ($me_max_n[$f] <= 4) {
       print "    const int med = (\n";
 
