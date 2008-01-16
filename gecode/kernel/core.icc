@@ -543,6 +543,8 @@ namespace Gecode {
     void head(ActorLink* al);
     /// Insert \a al directly before this
     void tail(ActorLink* al);
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    template <class T> static ActorLink* cast(T* a);
   };
 
 
@@ -551,6 +553,7 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class GECODE_VTABLE_EXPORT Actor : private ActorLink {
+    friend class ActorLink;
     friend class Space;
     friend class Propagator;
     friend class Advisor;
@@ -666,6 +669,7 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class GECODE_VTABLE_EXPORT Propagator : public Actor {
+    friend class ActorLink;
     friend class Space;
     template <class VIC> friend class VarImp;
     friend ExecStatus ES_SUBSUMED(Propagator*, size_t);
@@ -927,6 +931,7 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class GECODE_VTABLE_EXPORT Branching : public Actor {
+    friend class ActorLink;
     friend class Space;
     friend class BranchingDesc;
     friend class Reflection::SpecIter;
@@ -1545,6 +1550,14 @@ namespace Gecode {
     p->_next = a; a->_prev = p;
   }
 
+  template <class T>
+  forceinline ActorLink* 
+  ActorLink::cast(T* a) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(a);
+    ActorLink& t = *a;
+    return static_cast<ActorLink*>(&t);
+  }
   forceinline Actor* 
   Actor::cast(ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
@@ -2137,13 +2150,13 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   VarImp<VIC>::subscribe(Space* home, Propagator* p, PropCond pc,
-                           bool assigned, ModEvent me, bool process) {
+                         bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
       if (process)
         home->process<VIC>(p);
     } else {
-      enter(home,p,pc);
+      enter(home,ActorLink::cast(p),pc);
       // Process propagator
       if (process && (pc != PC_GEN_ASSIGNED))
         home->process<VIC>(p,me);
@@ -2195,7 +2208,7 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::cancel(Space* home, Propagator* p, PropCond pc, bool assigned) {
     if (!assigned)
-      remove(home,p,pc);
+      remove(home,ActorLink::cast(p),pc);
   }
 
   template <class VIC>

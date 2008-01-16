@@ -330,9 +330,8 @@ namespace Gecode {
       ActorLink* e  = &s.a_actors;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
         Actor* c = Actor::cast(a)->copy(this,share);
-        GECODE_NOT_NULL(c);
         // Link copied actor
-        p->next(c); c->prev(p);
+        p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
         // Note that forwarding is done in the constructors
         p = c;
       }
