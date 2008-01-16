@@ -482,6 +482,9 @@ namespace Gecode { namespace Int {
     int max0 = ri.max();
     ++ri;
 
+    IntDelta d;
+    ModEvent me;
+
     // Is new domain range?
     if (!ri()) {
       // Remove possible rangelist (if it was not a range, the domain
@@ -494,11 +497,8 @@ namespace Gecode { namespace Int {
       const int max1 = dom.max(); dom.max(max0);
       if ((min0 == min1) && (max0 == max1))
         return ME_INT_NONE;
-      IntDelta d;
-      if (min0 == max0)
-        return notify(home,ME_INT_VAL,&d);
-      else
-        return notify(home,ME_INT_BND,&d);
+      me = (min0 == max0) ? ME_INT_VAL : ME_INT_BND;
+      goto notify;
     }
 
     if (depends || range()) {
@@ -521,15 +521,12 @@ namespace Gecode { namespace Int {
       if (size() == s)
         return ME_INT_NONE;
       
-      IntDelta d;
       const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
       const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
       holes = width() - s;
       
-      if ((min0 == min1) && (max0 == max1))
-        return notify(home,ME_INT_DOM,&d);
-      else      
-        return notify(home,ME_INT_BND,&d);
+      me = ((min0 == min1) && (max0 == max1)) ? ME_INT_DOM : ME_INT_BND;
+      goto notify;
     } else {
       // Set up two sentinel elements
       RangeList f, l;
@@ -624,21 +621,21 @@ namespace Gecode { namespace Int {
       // Set new first and last ranges
       fst(fn); lst(ln);
 
-      IntDelta d;
-
       if (b > 0) {
         assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
         dom.min(fn->min()); dom.max(ln->max());
         holes -= b;
-        return notify(home,ME_INT_BND,&d);
+        me = ME_INT_BND; goto notify;
       }
 
       if (h > 0) {
         assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
-        return notify(home,ME_INT_DOM,&d);
+        me = ME_INT_DOM; goto notify;
       }
       return ME_INT_NONE;
     }
+  notify:
+    return notify(home,me,&d);
   }
 
   template <class I>
@@ -750,6 +747,7 @@ namespace Gecode { namespace Int {
     }
 
     IntDelta d;
+    ModEvent me;
 
     // Only a single range left?
     if (fn == ln) {
@@ -758,10 +756,8 @@ namespace Gecode { namespace Int {
       fn->dispose(home);
       fst(NULL); lst(NULL);
       holes = 0;
-      if (assigned())
-        return notify(home,ME_INT_VAL,&d);
-      else
-        return notify(home,ME_INT_BND,&d);
+      me = assigned() ? ME_INT_VAL : ME_INT_BND;
+      goto notify;
     }
 
     // The number of removed values
@@ -778,15 +774,17 @@ namespace Gecode { namespace Int {
       assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
       dom.min(fn->min()); dom.max(ln->max());
       holes -= b;
-      return notify(home,ME_INT_BND,&d);
+      me = ME_INT_BND; goto notify;
     }
 
     if (h > 0) {
       assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
-      return notify(home,ME_INT_DOM,&d);
+      me = ME_INT_DOM; goto notify;
     }
 
     return ME_INT_NONE;
+  notify:
+    return notify(home,me,&d);
   }
 
   template <class I>
