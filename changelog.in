@@ -69,6 +69,22 @@ Date:    Later
 Fixes or what?
 
 [ENTRY]
+Module: iter
+What:   fix
+Rank:   minor
+Thanks: David Barton
+[DESCRIPTION]
+Changed Ranges::Diff to make older versions of gcc happy.
+
+[ENTRY]
+Module: other
+What:   fix
+Rank:   minor
+Thanks: David Barton
+[DESCRIPTION]
+Fixed linking order so that static linking works again.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
