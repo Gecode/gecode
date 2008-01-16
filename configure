@@ -7678,8 +7678,8 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-Ox -fp:fast -wd4355 -w34640 -w34365 -w34800 -w34265 -GS-"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -wd4355 -w34640 -w34365 -w34800 -w34265 -GS-"
+        CFLAGS="${CFLAGS}${CFLAGS:+ }-Ox -fp:fast -GS- -wd4355"
+    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -GS- -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD -MD"
         GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
@@ -9183,8 +9183,8 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-Ox -fp:fast -wd4355 -w34640 -w34365 -w34800 -w34265 -GS-"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -wd4355 -w34640 -w34365 -w34800 -w34265 -GS-"
+        CFLAGS="${CFLAGS}${CFLAGS:+ }-Ox -fp:fast -GS- -wd4355"
+    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -GS- -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD -MD"
         GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
