@@ -482,7 +482,6 @@ namespace Gecode { namespace Int {
     int max0 = ri.max();
     ++ri;
 
-    IntDelta d;
     ModEvent me;
 
     // Is new domain range?
@@ -635,6 +634,7 @@ namespace Gecode { namespace Int {
       return ME_INT_NONE;
     }
   notify:
+    IntDelta d;
     return notify(home,me,&d);
   }
 
@@ -746,7 +746,6 @@ namespace Gecode { namespace Int {
       return ME_INT_FAILED;
     }
 
-    IntDelta d;
     ModEvent me;
 
     // Only a single range left?
@@ -784,6 +783,7 @@ namespace Gecode { namespace Int {
 
     return ME_INT_NONE;
   notify:
+    IntDelta d;
     return notify(home,me,&d);
   }
 

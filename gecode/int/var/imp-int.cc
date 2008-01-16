@@ -91,14 +91,15 @@ namespace Gecode { namespace Int {
   IntVarImp::lq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
     IntDelta d(m+1,dom.max());
+    ModEvent me = ME_INT_BND;
     if (range()) { // Is already range...
       dom.max(m);
-      if (assigned()) goto notify_val;
+      if (assigned()) me = ME_INT_VAL;
     } else if (m < fst()->next(NULL)->min()) { // Becomes range...
       dom.max(std::min(m,fst()->max()));
       fst()->dispose(home,NULL,lst());
       fst(NULL); holes = 0;
-      if (assigned()) goto notify_val;
+      if (assigned()) me = ME_INT_VAL;
     } else { // Stays non-range...
       RangeList* n = NULL;
       RangeList* c = lst();
@@ -116,23 +117,22 @@ namespace Gecode { namespace Int {
         c->next(n,NULL); lst(c);
       }
     }
-    return notify(home,ME_INT_BND,&d);
-  notify_val:
-    return notify(home,ME_INT_VAL,&d);
+    return notify(home,me,&d);
   }
 
   ModEvent
   IntVarImp::gq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
     IntDelta d(dom.min(),m-1);
+    ModEvent me = ME_INT_BND;
     if (range()) { // Is already range...
       dom.min(m);
-      if (assigned()) goto notify_val;
+      if (assigned()) me = ME_INT_VAL;
     } else if (m > lst()->prev(NULL)->max()) { // Becomes range...
       dom.min(std::max(m,lst()->min()));
       fst()->dispose(home,NULL,lst());
       fst(NULL); holes = 0;
-      if (assigned()) goto notify_val;
+      if (assigned()) me = ME_INT_VAL;
     } else { // Stays non-range...
       RangeList* p = NULL;
       RangeList* c = fst();
@@ -150,9 +150,7 @@ namespace Gecode { namespace Int {
         c->prev(p,NULL); fst(c);
       }
     }
-    return notify(home,ME_INT_BND,&d);
-  notify_val:
-    return notify(home,ME_INT_VAL,&d);
+    return notify(home,me,&d);
   }
 
   ModEvent
@@ -183,21 +181,23 @@ namespace Gecode { namespace Int {
   ModEvent
   IntVarImp::nq_full(Space* home, int m) {
     assert(!((m < dom.min()) || (m > dom.max())));
-    IntDelta d(m,m);
+    ModEvent me = ME_INT_DOM;
     if (range()) {
       if ((m == dom.min()) && (m == dom.max()))
         return ME_INT_FAILED;
       if (m == dom.min()) {
-        dom.min(m+1); goto notify_bnd_or_val;
+        dom.min(m+1);
+        me = assigned() ? ME_INT_VAL : ME_INT_BND;
+      } else if (m == dom.max()) {
+        dom.max(m-1);
+        me = assigned() ? ME_INT_VAL : ME_INT_BND;
+      } else {
+        RangeList* f = new (home) RangeList(dom.min(),m-1);
+        RangeList* l = new (home) RangeList(m+1,dom.max());
+        f->prevnext(NULL,l);
+        l->prevnext(f,NULL);
+        fst(f); lst(l); holes = 1;
       }
-      if (m == dom.max()) {
-        dom.max(m-1); goto notify_bnd_or_val;
-      }
-      RangeList* f = new (home) RangeList(dom.min(),m-1);
-      RangeList* l = new (home) RangeList(m+1,dom.max());
-      f->prevnext(NULL,l);
-      l->prevnext(f,NULL);
-      fst(f); lst(l); holes = 1;
     } else if (m < fst()->next(NULL)->min()) { // Concerns the first range...
       int f_max = fst()->max();
       if (m > f_max)
@@ -210,16 +210,16 @@ namespace Gecode { namespace Int {
           // Works as at the ends there are only NULL pointers
           fst()->dispose(home,f_next);
           fst(NULL); holes = 0;
-          goto notify_bnd_or_val;
+          me = assigned() ? ME_INT_VAL : ME_INT_BND;
         } else { // Remains non-range
           f_next->prev(fst(),NULL);
           fst()->dispose(home); fst(f_next);
           holes -= dom.min() - f_min - 1;
-          goto notify_bnd;
+          me = ME_INT_BND;
         }
       } else if (m == f_min) {
         dom.min(m+1); fst()->min(m+1);
-        goto notify_bnd;
+        me = ME_INT_BND;
       } else if (m == f_max) {
         fst()->max(m-1); holes += 1;
       } else {
@@ -241,16 +241,16 @@ namespace Gecode { namespace Int {
           // Turns into range
           l_prev->dispose(home,lst());
           fst(NULL); holes = 0;
-          goto notify_bnd_or_val;
+          me = assigned() ? ME_INT_VAL : ME_INT_BND;
         } else { // Remains non-range
           l_prev->next(lst(),NULL);
           lst()->dispose(home); lst(l_prev);
           holes -= l_max - dom.max() - 1;
-          goto notify_bnd;
+          me = ME_INT_BND;
         }
       } else if (m == l_max) {
         dom.max(m-1); lst()->max(m-1);
-        goto notify_bnd;
+        me = ME_INT_BND;
       } else if (m == l_min) {
         lst()->min(m+1); holes += 1;
       } else { // Create new hole
@@ -304,12 +304,8 @@ namespace Gecode { namespace Int {
         }
       }
     }
-    return notify(home,ME_INT_DOM,&d);
-  notify_bnd_or_val:
-    if (assigned())
-      return notify(home,ME_INT_VAL,&d);
-  notify_bnd:
-    return notify(home,ME_INT_BND,&d);
+    IntDelta d(m,m);
+    return notify(home,me,&d);
   }
 
 
