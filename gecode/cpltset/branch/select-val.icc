@@ -60,9 +60,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template<bool exclude>
   forceinline void
-  ValMinUnknown<exclude>::branchSpec(Space* home,
+  ValMinUnknown<exclude>::branchingSpec(Space* home,
                                      Reflection::VarMap& m,
-                                     Reflection::BranchSpec& bs,
+                                     Reflection::BranchingSpec& bs,
                                      CpltSetView x, int n) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);
@@ -103,9 +103,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template<bool exclude>
   forceinline void
-  ValMaxUnknown<exclude>::branchSpec(Space* home,
+  ValMaxUnknown<exclude>::branchingSpec(Space* home,
                                      Reflection::VarMap& m,
-                                     Reflection::BranchSpec& bs,
+                                     Reflection::BranchingSpec& bs,
                                      CpltSetView x, int n) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);

@@ -468,7 +468,7 @@ namespace Gecode {
   namespace Reflection {
     class SpecIter;
     class ActorSpec;
-    class BranchSpec;
+    class BranchingSpec;
     class VarMap;
   }
 
@@ -981,8 +981,9 @@ namespace Gecode {
     
     /// \name Reflection
     //@{
-    virtual GECODE_KERNEL_EXPORT Reflection::BranchSpec
-    branchSpec(Space* home, Reflection::VarMap& m, const BranchingDesc* d);
+    /// Specification for BranchingDesc \a d
+    virtual GECODE_KERNEL_EXPORT Reflection::BranchingSpec
+    branchingSpec(Space* home, Reflection::VarMap& m, const BranchingDesc* d);
     //@}
   };
 
@@ -1290,8 +1291,8 @@ namespace Gecode {
     virtual void getVars(Reflection::VarMap& m, bool registerOnly);
     /// Get reflection for BranchingDesc \a d
     GECODE_KERNEL_EXPORT
-    Reflection::BranchSpec branchSpec(Reflection::VarMap& m,
-                                      const BranchingDesc* d);
+    Reflection::BranchingSpec branchingSpec(Reflection::VarMap& m,
+                                            const BranchingDesc* d);
     //@}
 
     /**

@@ -54,8 +54,8 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValMin<View>::branchSpec(Space* home,
-                           Reflection::VarMap& m, Reflection::BranchSpec& bs,
+  ValMin<View>::branchingSpec(Space* home,
+                           Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                            View x, int n) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);
@@ -86,8 +86,8 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValMed<View>::branchSpec(Space* home,
-                           Reflection::VarMap& m, Reflection::BranchSpec& bs,
+  ValMed<View>::branchingSpec(Space* home,
+                           Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                            View x, int n) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);
@@ -119,8 +119,8 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValMax<View>::branchSpec(Space* home,
-                           Reflection::VarMap& m, Reflection::BranchSpec& bs,
+  ValMax<View>::branchingSpec(Space* home,
+                           Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                            View x, int n) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);
@@ -152,9 +152,9 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValSplitMin<View>::branchSpec(Space* home,
+  ValSplitMin<View>::branchingSpec(Space* home,
                                 Reflection::VarMap& m,
-                                Reflection::BranchSpec& bs,
+                                Reflection::BranchingSpec& bs,
                                 View x, int n) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);
@@ -186,9 +186,9 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValSplitMax<View>::branchSpec(Space* home,
+  ValSplitMax<View>::branchingSpec(Space* home,
                                 Reflection::VarMap& m,
-                                Reflection::BranchSpec& bs,
+                                Reflection::BranchingSpec& bs,
                                 View x, int n) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);
@@ -254,9 +254,9 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValZeroOne<View>::branchSpec(Space* home,
+  ValZeroOne<View>::branchingSpec(Space* home,
                                Reflection::VarMap& m,
-                               Reflection::BranchSpec& bs,
+                               Reflection::BranchingSpec& bs,
                                View x, NoValue) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);
@@ -289,9 +289,9 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValOneZero<View>::branchSpec(Space* home,
+  ValOneZero<View>::branchingSpec(Space* home,
                                Reflection::VarMap& m,
-                               Reflection::BranchSpec& bs,
+                               Reflection::BranchingSpec& bs,
                                View x, NoValue) {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
     (*a0)[0] = x.spec(home, m);

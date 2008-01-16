@@ -691,8 +691,8 @@ namespace Gecode { namespace Reflection {
    *
    */
    
-  /// Implementation of a BranchSpec
-  class BranchSpec::Arguments {
+  /// Implementation of a BranchingSpec
+  class BranchingSpec::Arguments {
   public:
     /// The number of alternatives of this branch
     unsigned int   n;
@@ -709,7 +709,7 @@ namespace Gecode { namespace Reflection {
   };
 
   inline
-  BranchSpec::Arguments::Arguments(unsigned int id0, unsigned int n0)
+  BranchingSpec::Arguments::Arguments(unsigned int id0, unsigned int n0)
    : n(n0), id(id0), r(1) {
      a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
      for (unsigned int i=n; i--;)
@@ -717,22 +717,22 @@ namespace Gecode { namespace Reflection {
   }
 
   inline
-  BranchSpec::Arguments::~Arguments(void) {
+  BranchingSpec::Arguments::~Arguments(void) {
     for (unsigned int i=n; i--;)
       delete a[i];
     Memory::free(a);
   }
   
-  BranchSpec::BranchSpec(unsigned int id, unsigned int a) {
+  BranchingSpec::BranchingSpec(unsigned int id, unsigned int a) {
     _args = new Arguments(id, a);
   }
 
-  BranchSpec::BranchSpec(const BranchSpec& s) : _args(s._args) {
+  BranchingSpec::BranchingSpec(const BranchingSpec& s) : _args(s._args) {
     _args->r++;
   }
   
-  const BranchSpec&
-  BranchSpec::operator=(const BranchSpec& s) {
+  const BranchingSpec&
+  BranchingSpec::operator=(const BranchingSpec& s) {
     if (this != &s) {
       if (--_args->r == 0)
         delete _args;
@@ -743,31 +743,31 @@ namespace Gecode { namespace Reflection {
   }
 
   Arg*
-  BranchSpec::operator[](int i) const {
+  BranchingSpec::operator[](int i) const {
     if (i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
   Arg*&
-  BranchSpec::operator[](int i) {
+  BranchingSpec::operator[](int i) {
     if (i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
-  BranchSpec::~BranchSpec(void) {
+  BranchingSpec::~BranchingSpec(void) {
     if (--_args->r == 0)
       delete _args;
   }
   
   unsigned int
-  BranchSpec::id(void) const {
+  BranchingSpec::id(void) const {
     return _args->id;
   }
 
   unsigned int
-  BranchSpec::alternatives(void) const {
+  BranchingSpec::alternatives(void) const {
     return _args->n;
   }
   

@@ -75,8 +75,8 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
-    void branchSpec(Space* home,
-                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+    void branchingSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                     SetView x, int n);
   };
 
@@ -96,8 +96,8 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
-    void branchSpec(Space* home,
-                    Reflection::VarMap& m, Reflection::BranchSpec& bs,
+    void branchingSpec(Space* home,
+                    Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                     SetView x, int n);
   };
 

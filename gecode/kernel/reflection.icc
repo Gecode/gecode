@@ -328,19 +328,19 @@ namespace Gecode { namespace Reflection {
     * \brief %Branch specification
     * \ingroup TaskReflection
     */  
-  class GECODE_KERNEL_EXPORT BranchSpec {
+  class GECODE_KERNEL_EXPORT BranchingSpec {
   private:
     class Arguments;
     Arguments* _args;
   public:
     /// Construct spec for branching with \a id and \a a alternatives
-    BranchSpec(unsigned int id, unsigned int a);
+    BranchingSpec(unsigned int id, unsigned int a);
     /// Copy constructor
-    BranchSpec(const BranchSpec& s);
+    BranchingSpec(const BranchingSpec& s);
     /// Assignment operator
-    const BranchSpec& operator=(const BranchSpec& s);
+    const BranchingSpec& operator=(const BranchingSpec& s);
     /// Destructor
-    GECODE_MSC_VIRTUAL ~BranchSpec(void);
+    GECODE_MSC_VIRTUAL ~BranchingSpec(void);
     
     /// Return id of the branching
     unsigned int id(void) const;

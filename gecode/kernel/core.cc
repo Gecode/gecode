@@ -471,8 +471,8 @@ namespace Gecode {
   void
   Space::getVars(Reflection::VarMap&, bool) {}
 
-  Reflection::BranchSpec
-  Space::branchSpec(Reflection::VarMap& m, const BranchingDesc* d) {
+  Reflection::BranchingSpec
+  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc* d) {
     Branching* bra = b_commit;
     while ((bra != Branching::cast(&a_actors)) && 
            (d->_id != bra->id)) {
@@ -480,7 +480,7 @@ namespace Gecode {
     }
     if (bra == Branching::cast(&a_actors))
       throw SpaceNoBranching();
-    return bra->branchSpec(this, m, d);
+    return bra->branchingSpec(this, m, d);
   }
 
   /*
@@ -497,8 +497,8 @@ namespace Gecode {
    * Branching
    *
    */
-  Reflection::BranchSpec
-  Branching::branchSpec(Space*, Reflection::VarMap&, const BranchingDesc*) {
+  Reflection::BranchingSpec
+  Branching::branchingSpec(Space*, Reflection::VarMap&, const BranchingDesc*) {
     throw Reflection::NoReflectionDefinedException();
   }
 
