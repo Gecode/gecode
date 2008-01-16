@@ -2336,16 +2336,14 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   VarImp<VIC>::process(Space* home) {
-    for (PropCond i=1; i<pc_max+1; i++)
-      idx[i] = NULL;
+    // Entries in index structure are disabled. However they
+    // must still work for cloning (idx[0]) and degree (idx[PC+2])
     ActorLink** b = idx[0]; idx[0] = NULL;
     {
-      ActorLink** p = idx[pc_max+1]; idx[pc_max+1] = NULL;
+      ActorLink** p = idx[pc_max+1];
       while (p-- > b)
         home->process<VIC>(Propagator::cast(*p));
     }
-    // Entries in index structure are disabled. However they
-    // must still work for cloning (idx[0]) and degree (idx[PC+2])
     {
       ActorLink** p = idx[pc_max+2]; idx[pc_max+2] = NULL;
       home->pu.p.n_sub -= (p-b);
