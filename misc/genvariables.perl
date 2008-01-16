@@ -672,12 +672,12 @@ EOF
 if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline Gecode::ModEvent
-  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
-    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= $me_max[$f]);
-    if (Gecode::me_failed($base[$f]::notify(home,me,d)))
+  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta* d) {
+    process(home,Gecode::PC_GEN_ASSIGNED,Gecode::PC_GEN_ASSIGNED,Gecode::ME_GEN_ASSIGNED);
+    if (Gecode::me_failed($base[$f]::advise(home,Gecode::ME_GEN_ASSIGNED,d)))
       return Gecode::ME_GEN_FAILED;
-    process(home);
-    return me;
+    cancel(home);
+    return Gecode::ME_GEN_ASSIGNED;
   }
 
 EOF
@@ -686,9 +686,6 @@ EOF
   print <<EOF
   forceinline Gecode::ModEvent
   $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
-    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= $me_max[$f]);
-    if (Gecode::me_failed($base[$f]::notify(home,me,d)))
-      return Gecode::ME_GEN_FAILED;
     switch (me) {
 EOF
 ;
@@ -707,11 +704,7 @@ EOF
 
   for ($i=0; $i<$me_n[$f]; $i++) {
     $n = $men[$f][$i];
-    if ($mespecial{$f}{$n} eq "ASSIGNED") {
-      print "    case ME_$vti[$f]_$n:\n";
-      print "      process(home);\n";
-      print "      break;\n";
-    } elsif (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
+    if (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
       print "    case ME_$vti[$f]_$n:\n";
       print "      // Conditions: ";
       for ($j=0; $j<$pc_n[$f]; $j++) {
@@ -732,7 +725,15 @@ EOF
 	  print "PC_$vti[$f]_" . $val2pc[$f][$j] . ",ME_$vti[$f]_$n);\n";
 	}
       }
-      print "      break;\n";
+      if ($mespecial{$f}{$n} eq "ASSIGNED") {
+        print "      if (Gecode::me_failed($base[$f]::advise(home,ME_$vti[$f]_$n,d)))\n";
+        print "        return Gecode::ME_GEN_FAILED;\n";
+
+        print "      cancel(home);\n";
+        print "      return ME_$vti[$f]_$n;\n";
+      } else {
+        print "      return $base[$f]::advise(home,ME_$vti[$f]_$n,d);\n";
+      }
     }
   }
 
@@ -740,7 +741,8 @@ EOF
   print <<EOF
     default: GECODE_NEVER;
     }
-    return me;
+    GECODE_NEVER;
+    return Gecode::ME_GEN_FAILED;
   }
 EOF
 ;

@@ -95,24 +95,26 @@ namespace Gecode { namespace Int {
 
   forceinline Gecode::ModEvent
   IntVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
-    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_INT_DOM+1);
-    if (Gecode::me_failed(Gecode::VarImp< Gecode::Int::IntVarImpConf>::notify(home,me,d)))
-      return Gecode::ME_GEN_FAILED;
     switch (me) {
     case ME_INT_VAL:
-      process(home);
-      break;
+      // Conditions: VAL BND DOM 
+      process(home,PC_INT_VAL,PC_INT_DOM,ME_INT_VAL);
+      if (Gecode::me_failed(Gecode::VarImp< Gecode::Int::IntVarImpConf>::advise(home,ME_INT_VAL,d)))
+        return Gecode::ME_GEN_FAILED;
+      cancel(home);
+      return ME_INT_VAL;
     case ME_INT_BND:
       // Conditions: BND DOM 
       process(home,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
-      break;
+      return Gecode::VarImp< Gecode::Int::IntVarImpConf>::advise(home,ME_INT_BND,d);
     case ME_INT_DOM:
       // Conditions: DOM 
       process(home,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
-      break;
+      return Gecode::VarImp< Gecode::Int::IntVarImpConf>::advise(home,ME_INT_DOM,d);
     default: GECODE_NEVER;
     }
-    return me;
+    GECODE_NEVER;
+    return Gecode::ME_GEN_FAILED;
   }
 }}
 #endif
@@ -173,12 +175,12 @@ namespace Gecode { namespace Int {
   }
 
   forceinline Gecode::ModEvent
-  BoolVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
-    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_BOOL_VAL+1);
-    if (Gecode::me_failed(Gecode::VarImp< Gecode::Int::BoolVarImpConf>::notify(home,me,d)))
+  BoolVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta* d) {
+    process(home,Gecode::PC_GEN_ASSIGNED,Gecode::PC_GEN_ASSIGNED,Gecode::ME_GEN_ASSIGNED);
+    if (Gecode::me_failed(Gecode::VarImp< Gecode::Int::BoolVarImpConf>::advise(home,Gecode::ME_GEN_ASSIGNED,d)))
       return Gecode::ME_GEN_FAILED;
-    process(home);
-    return me;
+    cancel(home);
+    return Gecode::ME_GEN_ASSIGNED;
   }
 
 }}
@@ -241,45 +243,47 @@ namespace Gecode { namespace Set {
 
   forceinline Gecode::ModEvent
   SetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
-    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_SET_CBB+1);
-    if (Gecode::me_failed(Gecode::VarImp< Gecode::Set::SetVarImpConf>::notify(home,me,d)))
-      return Gecode::ME_GEN_FAILED;
     switch (me) {
     case ME_SET_VAL:
-      process(home);
-      break;
+      // Conditions: VAL CARD CLUB CGLB ANY 
+      process(home,PC_SET_VAL,PC_SET_ANY,ME_SET_VAL);
+      if (Gecode::me_failed(Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_VAL,d)))
+        return Gecode::ME_GEN_FAILED;
+      cancel(home);
+      return ME_SET_VAL;
     case ME_SET_CARD:
       // Conditions: CARD CLUB CGLB ANY 
       process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CARD);
-      break;
+      return Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CARD,d);
     case ME_SET_LUB:
       // Conditions: CLUB ANY 
       process(home,PC_SET_CLUB,PC_SET_CLUB,ME_SET_LUB);
       process(home,PC_SET_ANY,PC_SET_ANY,ME_SET_LUB);
-      break;
+      return Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_LUB,d);
     case ME_SET_GLB:
       // Conditions: CGLB ANY 
       process(home,PC_SET_CGLB,PC_SET_ANY,ME_SET_GLB);
-      break;
+      return Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_GLB,d);
     case ME_SET_BB:
       // Conditions: CLUB CGLB ANY 
       process(home,PC_SET_CLUB,PC_SET_ANY,ME_SET_BB);
-      break;
+      return Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_BB,d);
     case ME_SET_CLUB:
       // Conditions: CARD CLUB CGLB ANY 
       process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CLUB);
-      break;
+      return Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CLUB,d);
     case ME_SET_CGLB:
       // Conditions: CARD CLUB CGLB ANY 
       process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CGLB);
-      break;
+      return Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CGLB,d);
     case ME_SET_CBB:
       // Conditions: CARD CLUB CGLB ANY 
       process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CBB);
-      break;
+      return Gecode::VarImp< Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CBB,d);
     default: GECODE_NEVER;
     }
-    return me;
+    GECODE_NEVER;
+    return Gecode::ME_GEN_FAILED;
   }
 }}
 #endif
@@ -356,20 +360,22 @@ namespace Gecode { namespace CpltSet {
 
   forceinline Gecode::ModEvent
   CpltSetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
-    GECODE_ASSUME(me > ME_GEN_NONE); GECODE_ASSUME(me <= ME_CPLTSET_DOM+1);
-    if (Gecode::me_failed(Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf>::notify(home,me,d)))
-      return Gecode::ME_GEN_FAILED;
     switch (me) {
     case ME_CPLTSET_VAL:
-      process(home);
-      break;
+      // Conditions: VAL DOM 
+      process(home,PC_CPLTSET_VAL,PC_CPLTSET_DOM,ME_CPLTSET_VAL);
+      if (Gecode::me_failed(Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf>::advise(home,ME_CPLTSET_VAL,d)))
+        return Gecode::ME_GEN_FAILED;
+      cancel(home);
+      return ME_CPLTSET_VAL;
     case ME_CPLTSET_DOM:
       // Conditions: DOM 
       process(home,PC_CPLTSET_DOM,PC_CPLTSET_DOM,ME_CPLTSET_DOM);
-      break;
+      return Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf>::advise(home,ME_CPLTSET_DOM,d);
     default: GECODE_NEVER;
     }
-    return me;
+    GECODE_NEVER;
+    return Gecode::ME_GEN_FAILED;
   }
 }}
 #endif
