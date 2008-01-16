@@ -86,6 +86,14 @@ Fixed linking order so that static linking works again.
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   minor
+Thanks:	Mohamad Rabbath
+[DESCRIPTION]
+Re-added reified linear constraints for Boolean variables.
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
