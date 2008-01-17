@@ -441,7 +441,7 @@ namespace Gecode {
     c->pu.p.pool_next = &c->pu.p.pool[0]-1;
     for (int i=0; i<=PC_MAX; i++)
       c->pu.p.pool[i].init();
-    // Copy processing only data
+    // Copy propagation only data
     c->pu.p.n_sub = pu.p.n_sub;
     c->pu.p.branch_id = pu.p.branch_id;
     return c;

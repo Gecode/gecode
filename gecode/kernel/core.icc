@@ -361,20 +361,20 @@ namespace Gecode {
 
     /// \name Dependencies
     //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+    /** \brief Subscribe propagator \a p with propagation condition \a pc
      *
-     * In case \a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      *
      * In case the variable is assigned (that is, \a assigned is 
-     * true), the subscribing propagator is processed for execution.
-     * Otherwise, the propagator subscribes and is processed for execution
+     * true), the subscribing propagator is scheduled for execution.
+     * Otherwise, the propagator subscribes and is scheduled for execution
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
     void subscribe(Space* home, Propagator* p, PropCond pc,
-                   bool assigned, ModEvent me, bool process);
+                   bool assigned, ModEvent me, bool schedule);
     /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *
      * If the variable is assigned, \a assigned must be true.
@@ -406,9 +406,9 @@ namespace Gecode {
     /**
      * \brief Run advisors when variable implementation has been modified with modification event \a me and domain change \a d
      *
-     * Returns ME_GEN_FAILED if notification has failed, \a me otherwise.
+     * Returns false if an advisor has failed.
      */
-    ModEvent advise(Space* home, ModEvent me, Delta* d);
+    bool advise(Space* home, ModEvent me, Delta* d);
     //@}
 
     /// \name Cloning variables
@@ -436,8 +436,8 @@ namespace Gecode {
     //@}
 
   protected:
-    /// Process subscribed propagators
-    void process(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
+    /// Schedule subscribed propagators
+    void schedule(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
 
   public:
     /// \name Memory management
@@ -641,8 +641,9 @@ namespace Gecode {
   /**
    * \brief %Propagator \a p has computed partial fixpoint
    *
-   * %Set modification event delta after processing of
-   * variables to \a med.
+   * %Set modification event delta to \a med and schedule propagator
+   * accordingly.
+   *
    * \warning Has a side-effect on the propagator. 
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
@@ -651,8 +652,9 @@ namespace Gecode {
   /**
    * \brief %Propagator \a p has not computed partial fixpoint
    *
-   * %Set modification event delta before processing of
-   * variables to \a med.
+   * Combine current modification event delta with \a and schedule
+   * propagator accordingly.
+   *
    * \warning Has a side-effect on the propagator.
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
@@ -1037,7 +1039,7 @@ namespace Gecode {
      */
     Branching* b_commit;
     union {
-      /// Data only available during processing
+      /// Data only available during propagation
       struct {
         /**
          * \brief Cost level with next propagator to be executed
@@ -1072,7 +1074,7 @@ namespace Gecode {
     /// Put propagator \a p to pool
     void pool_put(Propagator* p);
     /**
-     * \name Process, update, and dispose variables
+     * \name update, and dispose variables
      */
     //@{
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -1103,8 +1105,8 @@ namespace Gecode {
     /// Perform propagation
     GECODE_KERNEL_EXPORT void propagate(unsigned long int& pn);
 
-    /// Process propagator \a p with modification event \a me
-    template <class VIC> void process(Propagator* p, ModEvent me);
+    /// Schedule propagator \a p with modification event \a me
+    template <class VIC> void schedule(Propagator* p, ModEvent me);
 
   public:
     /**
@@ -2020,7 +2022,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  Space::process(Propagator* p, ModEvent me) {
+  Space::schedule(Propagator* p, ModEvent me) {
     ModEventDelta med_o = p->u.med;
     // Compute the old modification event
     ModEvent me_o = (med_o >> VIC::med_bits_fst) & VIC::me_bits_mask;
@@ -2038,16 +2040,16 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   VarImp<VIC>::schedule(Space* home, Propagator* p, ModEvent me) {
-    home->process<VIC>(p,me);
+    home->schedule<VIC>(p,me);
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::process(Space* home, PropCond pc1, PropCond pc2, ModEvent me) {
+  VarImp<VIC>::schedule(Space* home, PropCond pc1, PropCond pc2, ModEvent me) {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
-      home->process<VIC>(Propagator::cast(*p),me);
+      home->schedule<VIC>(Propagator::cast(*p),me);
   }
 
 
@@ -2134,16 +2136,16 @@ namespace Gecode {
   template <class VIC>
   void
   VarImp<VIC>::subscribe(Space* home, Propagator* p, PropCond pc,
-                         bool assigned, ModEvent me, bool process) {
+                         bool assigned, ModEvent me, bool schedule) {
     if (assigned) {
-      // Do not subscribe, just process the propagator
-      if (process)
-        home->process<VIC>(p,ME_GEN_ASSIGNED);
+      // Do not subscribe, just schedule the propagator
+      if (schedule)
+        home->schedule<VIC>(p,ME_GEN_ASSIGNED);
     } else {
       enter(home,ActorLink::cast(p),pc);
-      // Process propagator
-      if (process && (pc != PC_GEN_ASSIGNED))
-        home->process<VIC>(p,me);
+      // Schedule propagator
+      if (schedule && (pc != PC_GEN_ASSIGNED))
+        home->schedule<VIC>(p,me);
     }
   }
 
@@ -2215,7 +2217,7 @@ namespace Gecode {
   }
 
   template <class VIC>
-  forceinline ModEvent
+  forceinline bool
   VarImp<VIC>::advise(Space* home, ModEvent me, Delta* d) {
     /*
      * An advisor that is executed might remove itself due to subsumtion.
@@ -2225,7 +2227,7 @@ namespace Gecode {
     ActorLink** la = idx[pc_max+1];
     ActorLink** le = idx[pc_max+2];
     if (la == le)
-      return me;
+      return true;
     d->me = me;
     // An advisor that is run, might be removed during execution.
     // As removal is done from the back the advisors have to be executed
@@ -2237,7 +2239,7 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
-        return ME_GEN_FAILED;
+        return false;
       case ES_NOFIX:
         schedule(home,p,me);
         break;
@@ -2245,13 +2247,13 @@ namespace Gecode {
         GECODE_NEVER;
       }
     } while (++la < le);
-    return me;
+    return true;
   }
 
 
 
   /*
-   * PROCESSING
+   * Variables
    *
    */
 

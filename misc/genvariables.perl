@@ -67,7 +67,16 @@ print <<EOF
 /*
  *  CAUTION:
  *    This file has been automatically generated. Do not edit,
- *    edit the specification file "variable.vsl" instead.
+ *    edit the specification file "variable.vsl" and the following
+ *    files instead:
+EOF
+;
+
+for ($f=0; $f<$n_files; $f++) {
+  print " *     - $files[$f]\n";
+}
+
+print <<EOF
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -186,7 +195,9 @@ for ($f=0; $f<$n_files; $f++) {
 	    $mespecial{$f}{$lhs} = $rhs;
 	    if ($rhs eq "ASSIGNED") {
 	      $me_assigned[$f] = "ME_$vti[$f]_$lhs";
-	    }
+	    } elsif ($rhs eq "FAILED") {
+	      $me_failed[$f] = "ME_$vti[$f]_$lhs";
+	    } els
 	  }
 	  $n = $lhs;
 	} elsif ($l =~ /^Name:\s*(\w+)/io) {
@@ -232,6 +243,9 @@ for ($f=0; $f<$n_files; $f++) {
 	    die "Unknown special propagation condition: $rhs\n";
 	  }
 	  $pcspecial{$f}{$lhs} = $rhs;
+	  if ($rhs eq "ASSIGNED") {
+	    $pc_assigned[$f] = "PC_$vti[$f]_$lhs";
+	  }
 	  $n = $lhs;
 	} elsif ($l =~ /^Name:\s*(\w+)/io) {
 	  # Found a normal modification event
@@ -295,7 +309,6 @@ for ($f=0; $f<$n_files; $f++) {
 
   for ($b=1; (1 << $b) < $me_max_n[$f]; $b++) {}
   $bits[$f] = $b;
-
 }
 
 if ($gen_typeicc) {
@@ -578,19 +591,19 @@ EOF
     $class[$f](Gecode::Space* home);
     /// \\name Dependencies
     //\@{
-    /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
+    /** \\brief Subscribe propagator \\a p with propagation condition \\a pc
      *
-     * In case \\a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
+     * In case \\a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      *
      * In case the variable is assigned (that is, \\a assigned is 
-     * true), the subscribing propagator is processed for execution.
-     * Otherwise, the propagator subscribes and is processed for execution
+     * true), the subscribing propagator is scheduled for execution.
+     * Otherwise, the propagator subscribes and is scheduled for execution
      * with modification event \\a me provided that \\a pc is different
      * from \\a PC_GEN_ASSIGNED.
      */
-    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process);
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \\a a
     void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
@@ -658,8 +671,8 @@ EOF
   print <<EOF
 
   forceinline void
-  $class[$f]::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool process) {
-    $base[$f]::subscribe(home,p,pc,assigned,$me_subscribe[$f],process);
+  $class[$f]::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
+    $base[$f]::subscribe(home,p,pc,assigned,$me_subscribe[$f],schedule);
   }
   forceinline void
   $class[$f]::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
@@ -673,11 +686,11 @@ if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline Gecode::ModEvent
   $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta* d) {
-    process(home,Gecode::PC_GEN_ASSIGNED,Gecode::PC_GEN_ASSIGNED,Gecode::ME_GEN_ASSIGNED);
-    if (Gecode::me_failed($base[$f]::advise(home,Gecode::ME_GEN_ASSIGNED,d)))
-      return Gecode::ME_GEN_FAILED;
+    schedule(home,$pc_assigned[$f],$pc_assigned[$f],$me_assigned[$f]);
+    if (!$base[$f]::advise(home,$me_assigned[$f],d))
+      return $me_failed[$f];
     cancel(home);
-    return Gecode::ME_GEN_ASSIGNED;
+    return $me_assigned[$f];
   }
 
 EOF
@@ -707,16 +720,22 @@ EOF
     if (!($mespecial{$f}{$n} eq "NONE") && !($mespecial{$f}{$n} eq "FAILED")) {
       print "    case ME_$vti[$f]_$n:\n";
       print "      // Conditions: ";
+      $fst = 1;
       for ($j=0; $j<$pc_n[$f]; $j++) {
         if ($mepc{$f}{$men[$f][$i]}{$pcn[$f][$j]}) {
-          print $pcn[$f][$j] . " ";
+          if ($fst) {
+            $fst = 0;
+          } else {
+            print ", ";
+          }
+          print $pcn[$f][$j];
         }
       }
       print "\n";
       for ($j=0; $j<$pc_n[$f]; $j++) {
 	if ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j]}) {
 	  # Found initial entry (plus one for stopping)
-	  print "      process(home,PC_$vti[$f]_" . $val2pc[$f][$j] . ",";
+	  print "      schedule(home,PC_$vti[$f]_" . $val2pc[$f][$j] . ",";
 	  # Look for all connected entries
 	  while ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j+1]}) {
 	    $j++;
@@ -725,15 +744,12 @@ EOF
 	  print "PC_$vti[$f]_" . $val2pc[$f][$j] . ",ME_$vti[$f]_$n);\n";
 	}
       }
+      print "      if (!$base[$f]::advise(home,ME_$vti[$f]_$n,d))\n";
+      print "        return $me_failed[$f];\n";
       if ($mespecial{$f}{$n} eq "ASSIGNED") {
-        print "      if (Gecode::me_failed($base[$f]::advise(home,ME_$vti[$f]_$n,d)))\n";
-        print "        return Gecode::ME_GEN_FAILED;\n";
-
         print "      cancel(home);\n";
-        print "      return ME_$vti[$f]_$n;\n";
-      } else {
-        print "      return $base[$f]::advise(home,ME_$vti[$f]_$n,d);\n";
       }
+      print "      break;\n";
     }
   }
 
@@ -741,8 +757,7 @@ EOF
   print <<EOF
     default: GECODE_NEVER;
     }
-    GECODE_NEVER;
-    return Gecode::ME_GEN_FAILED;
+    return me;
   }
 EOF
 ;
