@@ -1102,8 +1102,6 @@ namespace Gecode {
 
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
-    /// Perform propagation
-    GECODE_KERNEL_EXPORT void propagate(unsigned long int& pn);
 
     /// Schedule propagator \a p with modification event \a me
     template <class VIC> void schedule(Propagator* p, ModEvent me);
@@ -1165,7 +1163,7 @@ namespace Gecode {
      *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      * \ingroup TaskSearch
      */
-    SpaceStatus status(unsigned long int& pn=unused_uli);
+    GECODE_KERNEL_EXPORT SpaceStatus status(unsigned long int& pn=unused_uli);
 
     /**
      * \brief Create new branching description for current branching
@@ -1187,9 +1185,9 @@ namespace Gecode {
     /**
      * \brief Clone space
      *
-     * Propagates the space until fixpoint and increments \a pn by the
-     * number of propagator executions. If propagation results in
-     * a failed space, an exception of type SpaceFailed is thrown.
+     * Assumes that the space is stable and not failed. If the space is
+     * failed, an exception of type SpaceFailed is thrown. If the space
+     * is not stable, an exception of SpaceNotStable is thrown.
      *
      * Otherwise, a clone of the space is returned. If \a share is true,
      * sharable datastructures are shared among the clone and the original
@@ -1200,8 +1198,7 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT
-    Space* clone(bool share=true, unsigned long int& pn=unused_uli);
+    GECODE_KERNEL_EXPORT Space* clone(bool share=true);
 
     /**
      * \brief Commit branching description \a d and for alternative \a a
@@ -1232,8 +1229,7 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT
-    void commit(const BranchingDesc* d, unsigned int a);
+    GECODE_KERNEL_EXPORT void commit(const BranchingDesc* d, unsigned int a);
 
     /**
      * \brief Fail space
@@ -1589,48 +1585,6 @@ namespace Gecode {
   forceinline const BranchingDesc*
   Space::description(void) const {
     return b_status->description(this);
-  }
-
-
-  /*
-   * Main control for propagation and branching
-   *  - a space only propagates and branches if requested by
-   *    either a status, commit, or clone operation
-   *  - for all of the operations the number of propagation
-   *    steps performed is returned in the last (optional)
-   *    reference argument
-   *
-   */
-  forceinline SpaceStatus
-  Space::status(unsigned long int& pn) {
-    // Perform propagation if necessary
-    if (!stable())
-      propagate(pn);
-    if (failed())
-      return SS_FAILED;
-    /*
-     * Find the next branching that has still alternatives left
-     *
-     * It is important to note that branchings reporting to have no more
-     * alternatives left can not be deleted. They can not be deleted
-     * as there might be branching descriptions to be used in commit
-     * that refer to one of these branchings.
-     *
-     * A branching reporting that no more alternatives exist will eventually
-     * be deleted in commit. It will be deleted if the first branching
-     * description is used in commit that does not refer to this branching.
-     * As we insist that branching descriptions are used in order of
-     * creation, all further branching descriptions cannot refer to this
-     * branching.
-     *
-     */
-    while (b_status != Branching::cast(&a_actors)) {
-      if (b_status->status(this))
-        return SS_BRANCH;
-      b_status = Branching::cast(b_status->next());
-    }
-    // No branching with alternatives left, space is solved
-    return SS_SOLVED;
   }
 
 

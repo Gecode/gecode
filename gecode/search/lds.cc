@@ -128,7 +128,7 @@ namespace Gecode { namespace Search {
           delete desc;
         } else {
           ds.top().next();
-          cur = ds.top().space()->clone(true,propagate);
+          cur = ds.top().space()->clone();
           clone++;
           cur->commit(desc,a);
         }
@@ -167,7 +167,7 @@ namespace Gecode { namespace Search {
           unsigned int alt          = desc->alternatives();
           if (alt > 1) {
             unsigned int d_a = (d >= alt-1) ? alt-1 : d;
-            Space* cc = cur->clone(true,propagate);
+            Space* cc = cur->clone();
             EngineCtrl::push(cc,desc);
             ProbeNode sn(cc,desc,d_a-1);
             clone++;
@@ -202,7 +202,7 @@ namespace Gecode { namespace Search {
       e.current(s);
     } else {
       root = s;
-      Space* c = (d_max == 0) ? s : s->clone(true,e.propagate);
+      Space* c = (d_max == 0) ? s : s->clone();
       e.init(c,0);
       e.current(s);
       e.current(NULL);
@@ -230,7 +230,7 @@ namespace Gecode { namespace Search {
         root = NULL;
       } else {
         e.clone++;
-        e.reset(root->clone(true,e.propagate),d_cur);
+        e.reset(root->clone(),d_cur);
       }
     }
     return NULL;

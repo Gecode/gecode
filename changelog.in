@@ -72,6 +72,16 @@ Lots of nice gimmicks for Christmas!
 [ENTRY]
 Module: kernel
 What:   change
+Rank:   major
+[DESCRIPTION]
+Only stable and non-failed spaces can be cloned, otherwise
+Space::clone raises an exception. This makes cloning and
+propagation fully orthogonal. To emulate the old behaviour, just
+execute Space::status before Space::clone.
+
+[ENTRY]
+Module: kernel
+What:   change
 Rank:   minor
 [DESCRIPTION]
 The number of propagators and branchings can be accurately
@@ -118,7 +128,7 @@ particular implementation which might not be available in the
 future.
 
 [ENTRY]
-Module: other
+Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]

@@ -185,11 +185,11 @@ namespace Gecode { namespace Search {
       // It is important to replace the space on the stack with the
       // copy: a copy might be much smaller due to flushed caches
       // of propagators
-      Space* c = s->clone(true,stat.propagate);
+      Space* c = s->clone();
       ds[l].space(c);
       stat.constrained(s,c);
     } else {
-      s = s->clone(true,stat.propagate);
+      s = s->clone();
     }
     stat.clone++;
 
@@ -208,8 +208,10 @@ namespace Gecode { namespace Search {
         commit(s,i);
       // Is there any point to make a copy?
       if (i<n-1) {
+        // Propagate to fixpoint
+        SpaceStatus ss = s->status(stat.propagate);
         // Again, the space might already propagate to failure
-        if (constrained && s->status(stat.propagate) == SS_FAILED) {
+        if (constrained &&  (ss == SS_FAILED)) {
           // s must be deleted as it is not on the stack
           delete s;
           stat.commit += (i-l);
@@ -218,7 +220,7 @@ namespace Gecode { namespace Search {
           return NULL;
         }
         stat.clone++;
-        ds[i].space(s->clone(true,stat.propagate));
+        ds[i].space(s->clone());
         stat.adapt(ds[i].space());
         d = static_cast<unsigned int>(n-i);
       }

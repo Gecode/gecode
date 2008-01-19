@@ -51,6 +51,13 @@ namespace Gecode {
     SpaceFailed(const char* l);
   };
 
+  /// %Exception: Operation on not stable space invoked
+  class GECODE_VTABLE_EXPORT SpaceNotStable : public Exception {
+  public:
+    /// Initialize with location \a l
+    SpaceNotStable(const char* l);
+  };
+
   /// %Exception: Commit when no branching present
   class GECODE_VTABLE_EXPORT SpaceNoBranching : public Exception {
   public:
@@ -71,10 +78,13 @@ namespace Gecode {
    * Classes for exceptions raised by kernel
    *
    */
-
   inline
   SpaceFailed::SpaceFailed(const char* l)
     : Exception(l,"Attempt to invoke operation on failed space") {}
+
+  inline
+  SpaceNotStable::SpaceNotStable(const char* l)
+    : Exception(l,"Attempt to invoke operation on not stable space") {}
 
   inline
   SpaceNoBranching::SpaceNoBranching(void)

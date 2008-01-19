@@ -146,32 +146,52 @@ namespace Gecode {
 #endif
   }
 
-
   /*
-   * Performing propagation
+   * Main control for propagation and branching
    *
    */
-  void
-  Space::propagate(unsigned long int& pn) {
-    assert(!stable() && (pu.p.pool_next >= &pu.p.pool[0]));
-    Propagator* p;
-    ModEventDelta med_o;
-    goto unstable;
-  execute:
-    pn++;
-    // Keep old modification event delta
-    med_o = p->u.med;
-    // Clear med but leave propagator in queue
-    p->u.med = 0;
-    switch (p->propagate(this,med_o)) {
-    case ES_FAILED:
-      fail(); 
-      return;
-    case ES_NOFIX:
-      // Find next, if possible
-      if (p->u.med != 0) {
-      unstable:
-        // There is at least one propagator in the pool
+  SpaceStatus
+  Space::status(unsigned long int& pn) {
+    if (failed())
+      return SS_FAILED;
+    if (!stable()) {
+      assert(pu.p.pool_next >= &pu.p.pool[0]);
+      Propagator* p;
+      ModEventDelta med_o;
+      goto unstable;
+    execute:
+      pn++;
+      // Keep old modification event delta
+      med_o = p->u.med;
+      // Clear med but leave propagator in queue
+      p->u.med = 0;
+      switch (p->propagate(this,med_o)) {
+      case ES_FAILED:
+        fail(); 
+        return SS_FAILED;
+      case ES_NOFIX:
+        // Find next, if possible
+        if (p->u.med != 0) {
+        unstable:
+          // There is at least one propagator in the pool
+          do {
+            assert(pu.p.pool_next >= &pu.p.pool[0]);
+            // First propagator or link back to queue
+            ActorLink* fst = pu.p.pool_next->next();
+            if (pu.p.pool_next != fst) {
+              p = Propagator::cast(fst);
+              goto execute;
+            }
+            pu.p.pool_next--;
+          } while (true);
+          GECODE_NEVER;
+        }
+        // Fall through
+      case ES_FIX:
+        // Clear med and put into idle queue
+        p->u.med = 0; p->unlink(); a_actors.head(p);
+      stable_or_unstable:
+        // There might be a propagator in the pool
         do {
           assert(pu.p.pool_next >= &pu.p.pool[0]);
           // First propagator or link back to queue
@@ -180,39 +200,46 @@ namespace Gecode {
             p = Propagator::cast(fst);
             goto execute;
           }
-          pu.p.pool_next--;
-        } while (true);
+        } while (--pu.p.pool_next >= &pu.p.pool[0]);
+        assert(pu.p.pool_next < &pu.p.pool[0]);
+        goto stable;
+      case __ES_SUBSUMED:
+        p->unlink(); reuse(p,p->u.size);
+        goto stable_or_unstable;
+      case __ES_PARTIAL:
+        // Schedule propagator with specified propagator events
+        p->unlink(); pool_put(p);
+        goto unstable;
+      default:
         GECODE_NEVER;
       }
-      // Fall through
-    case ES_FIX:
-      // Clear med and put into idle queue
-      p->u.med = 0; p->unlink(); a_actors.head(p);
-    stable_or_unstable:
-      // There might be a propagator in the pool
-      do {
-        assert(pu.p.pool_next >= &pu.p.pool[0]);
-        // First propagator or link back to queue
-        ActorLink* fst = pu.p.pool_next->next();
-        if (pu.p.pool_next != fst) {
-          p = Propagator::cast(fst);
-          goto execute;
-        }
-      } while (--pu.p.pool_next >= &pu.p.pool[0]);
-      assert(pu.p.pool_next < &pu.p.pool[0]);
-      return;
-    case __ES_SUBSUMED:
-      p->unlink(); reuse(p,p->u.size);
-      goto stable_or_unstable;
-    case __ES_PARTIAL:
-      // Schedule propagator with specified propagator events
-      p->unlink(); pool_put(p);
-      goto unstable;
-    default:
-      GECODE_NEVER;
     }
-    GECODE_NEVER;
+  stable:
+    /*
+     * Find the next branching that has still alternatives left
+     *
+     * It is important to note that branchings reporting to have no more
+     * alternatives left can not be deleted. They can not be deleted
+     * as there might be branching descriptions to be used in commit
+     * that refer to one of these branchings.
+     *
+     * A branching reporting that no more alternatives exist will eventually
+     * be deleted in commit. It will be deleted if the first branching
+     * description is used in commit that does not refer to this branching.
+     * As we insist that branching descriptions are used in order of
+     * creation, all further branching descriptions cannot refer to this
+     * branching.
+     *
+     */
+    while (b_status != Branching::cast(&a_actors)) {
+      if (b_status->status(this))
+        return SS_BRANCH;
+      b_status = Branching::cast(b_status->next());
+    }
+    // No branching with alternatives left, space is solved
+    return SS_SOLVED;
   }
+
 
   /*
    * Step-by-step propagation
@@ -379,11 +406,11 @@ namespace Gecode {
    */
 
   Space*
-  Space::clone(bool share, unsigned long int& pn) {
-    if (!stable())
-      propagate(pn);
+  Space::clone(bool share) {
     if (failed())
       throw SpaceFailed("Space::clone");
+    if (!stable())
+      throw SpaceNotStable("Space::clone");
 
     /*
      * Stage one
