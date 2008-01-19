@@ -484,7 +484,7 @@ namespace Gecode {
 namespace Gecode { namespace Int {
 
   /// Type for status of a Boolean variable
-  typedef int BoolStatus;
+  typedef unsigned int BoolStatus;
 
   /**
    * \brief Boolean variable implementation
@@ -504,7 +504,6 @@ namespace Gecode { namespace Int {
      *   assigned to 1, and 2 represents an unassigned variable.
      * - No other values are possible.
      */
-    BoolStatus dom;
 
     GECODE_INT_EXPORT static BoolVarImp s_one;
     GECODE_INT_EXPORT static BoolVarImp s_zero;

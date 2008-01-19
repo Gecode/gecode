@@ -180,6 +180,8 @@ namespace Gecode {
     static const int idx_d = -1;
     /// Maximal propagation condition
     static const PropCond pc_max = PC_GEN_ASSIGNED;
+    /// Freely available bits
+    static const int free_bits = 0;
     /// Start of bits for modification event delta
     static const int med_bits_fst = 0;
     /// Number of bits for modification event
@@ -302,6 +304,10 @@ namespace Gecode {
     static const int idx_u = VIC::idx_u;
     /// Index for disposal
     static const int idx_d = VIC::idx_d;
+    /// Number of freely available bits
+    static const int free_bits = VIC::free_bits;
+    /// Number of free subscription entries
+    unsigned int free_and_bits;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = VIC::pc_max;
     /**
@@ -320,8 +326,6 @@ namespace Gecode {
      *  - idx[1] points to the next copied variable
      */
     ActorLink** idx[pc_max+3];
-    /// Number of free subscription entries
-    unsigned int free;
 
     /**
      * \brief Update copied variable \a x
@@ -434,6 +438,11 @@ namespace Gecode {
     /// Combine modifications events \a me1 and \a me2
     static ModEvent combine(ModEvent me1, ModEvent me2);
     //@}
+
+    /// Provide access to free bits
+    unsigned int bits(void) const;
+    /// Provide access to free bits
+    unsigned int& bits(void);
 
   protected:
     /// Schedule subscribed propagators
@@ -1746,7 +1755,7 @@ namespace Gecode {
   VarImp<VIC>::VarImp(Space*) {
     for (PropCond i=0; i<pc_max+3; i++)
       idx[i] = NULL;
-    free = 0;
+    free_and_bits = 0;
   }
 
   template <class VIC>
@@ -1754,7 +1763,7 @@ namespace Gecode {
   VarImp<VIC>::VarImp(void) {
     for (PropCond i=0; i<pc_max+3; i++)
       idx[i] = NULL;
-    free = 0;
+    free_and_bits = 0;
   }
 
 
@@ -1763,6 +1772,18 @@ namespace Gecode {
   VarImp<VIC>::degree(void) const {
     assert(!copied());
     return static_cast<unsigned int>(idx[pc_max+2] - idx[0]);
+  }
+
+  template <class VIC>
+  forceinline unsigned int
+  VarImp<VIC>::bits(void) const {
+    return free_and_bits;
+  }
+
+  template <class VIC>
+  forceinline unsigned int&
+  VarImp<VIC>::bits(void) {
+    return free_and_bits;
   }
 
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -1801,7 +1822,7 @@ namespace Gecode {
   forceinline
   VarImp<VIC>::VarImp(Space* home, bool, VarImp<VIC>& x) {
     VarImpBase** reg;
-    free = 0;
+    free_and_bits = x.free_and_bits & ((1 << free_bits) - 1);
     if (x.idx[0] == NULL) {
       // Variable implementation needs no index structure
       for (PropCond i=0; i<pc_max+3; i++)
@@ -2041,9 +2062,9 @@ namespace Gecode {
   VarImp<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
     // Count one new subscription
     home->pu.p.n_sub += 1;
-    if (free == 0)
+    if ((free_and_bits >> free_bits) == 0)
       resize(home);
-    free--;
+    free_and_bits -= 1 << free_bits;
     // Enter subscription
     --idx[0];
     for (PropCond i = 0; i < pc; i++)
@@ -2054,10 +2075,10 @@ namespace Gecode {
   template <class VIC>
   void
   VarImp<VIC>::resize(Space* home) {
-    assert(free == 0);
     if (idx[0] == NULL) {
+      assert((free_and_bits >> free_bits) == 0);
       // Create fresh dependency array with four entries
-      free = 4;
+      free_and_bits += 4 << free_bits;
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(4*sizeof(ActorLink*))) + 4;
       for (PropCond i=0; i<pc_max+3; i++)
@@ -2075,7 +2096,7 @@ namespace Gecode {
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(m*sizeof(ActorLink*))) + m-n;
-      free = m-n;
+      free_and_bits += (m-n) << free_bits;
       // Copy entries
       memcpy(prop, idx[0], n*sizeof(ActorLink*));
       home->reuse(idx[0], n*sizeof(ActorLink*));
@@ -2140,7 +2161,7 @@ namespace Gecode {
     for (PropCond i=pc; i>0; i--)
       *(idx[i]++)=*(idx[i-1]);
     idx[0]++;
-    free++;
+    free_and_bits += 1 << free_bits;
     home->pu.p.n_sub -= 1;
   }
 
@@ -2166,7 +2187,7 @@ namespace Gecode {
     ActorLink** b = idx[0]; idx[0] = NULL;
     ActorLink** p = idx[pc_max+2]; idx[pc_max+2] = NULL;
     home->pu.p.n_sub -= (p-b);
-    unsigned int n = free + (p-b);
+    unsigned int n = (free_and_bits >> VIC::free_bits) + (p-b);
     home->reuse(p-n,n*sizeof(ActorLink*));
   }
 

@@ -42,11 +42,16 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline
-  BoolVarImp::BoolVarImp(int n)
-    : dom((n << 1) | n) {}
+  BoolVarImp::BoolVarImp(int n) {
+    assert(bits() == 0);
+    bits() |= (n << 1) | n;
+  }
   forceinline
   BoolVarImp::BoolVarImp(Space* home, int min, int max)
-    : BoolVarImpBase(home), dom((max << 1) | min) {}
+    : BoolVarImpBase(home) {
+    assert(bits() == 0);
+    bits() |= (max << 1) | min;
+  }
 
 
   /*
@@ -55,16 +60,15 @@ namespace Gecode { namespace Int {
    */
   forceinline BoolStatus
   BoolVarImp::status(void) const {
-    GECODE_ASSUME(dom >= 0); GECODE_ASSUME(dom <= 3);
-    return dom;
+    return bits() & 3;
   }
   forceinline int
   BoolVarImp::min(void) const {
-    return status() & 1;
+    return bits() & 1;
   }
   forceinline int
   BoolVarImp::max(void) const {
-    return status() >> 1;
+    return (bits() & 2) >> 1;
   }
   forceinline int
   BoolVarImp::med(void) const {
@@ -244,7 +248,7 @@ namespace Gecode { namespace Int {
 
   forceinline
   BoolVarImp::BoolVarImp(Space* home, bool share, BoolVarImp& x)
-    : BoolVarImpBase(home,share,x), dom(x.dom) {}
+    : BoolVarImpBase(home,share,x) {}
   forceinline BoolVarImp*
   BoolVarImp::copy(Space* home, bool share) {
     if (copied())

@@ -149,6 +149,8 @@ for ($f=0; $f<$n_files; $f++) {
   $pc_n[$f] = 0; # running number of propagation conditions
 
 
+  $free_bits[$f] = 0;
+
   while ($l = <FILE>) {
   LINE:
     next if ($l =~ /^\#/);
@@ -167,6 +169,8 @@ for ($f=0; $f<$n_files; $f++) {
 	  $dispose[$f] = 1;
 	} elsif ($l =~ /^Namespace:\s*([^ \t\r\n]+)/io) {
 	  $namespace[$f] = $1;
+	} elsif ($l =~ /^Bits:\s*([^ \t\r\n]+)/io) {
+	  $free_bits[$f] = $1+0;
 	}
       }
       goto LINE;
@@ -390,6 +394,8 @@ if ($gen_typeicc) {
     }
     print "    /// Maximal propagation condition\n";
     print "    static const Gecode::PropCond pc_max = $maxpc[$f];\n";
+    print "    /// Freely available bits\n";
+    print "    static const int free_bits = $free_bits[$f];\n";
     print "    /// Start of bits for modification event delta\n";
     print "    static const int med_bits_fst = ";
     if ($f == 0) {

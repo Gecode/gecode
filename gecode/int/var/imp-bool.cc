@@ -45,7 +45,8 @@ namespace Gecode { namespace Int {
   ModEvent
   BoolVarImp::one_none(Space* home) {
     assert(none());
-    dom = ONE;
+    bits() ^= (NONE ^ ONE);
+    assert(one());
     IntDelta d(false);
     return notify(home,ME_BOOL_VAL,&d);
   }
@@ -53,7 +54,8 @@ namespace Gecode { namespace Int {
   ModEvent
   BoolVarImp::zero_none(Space* home) {
     assert(none());
-    dom = ZERO;
+    bits() ^= (NONE ^ ZERO);
+    assert(zero());
     IntDelta d(false);
     return notify(home,ME_BOOL_VAL,&d);
   }
@@ -65,7 +67,7 @@ namespace Gecode { namespace Int {
     if (specIndex != -1)
       return Reflection::Arg::newVar(specIndex);
     Reflection::VarSpec* spec =
-      new Reflection::VarSpec(vti, Reflection::Arg::newInt(dom));
+      new Reflection::VarSpec(vti, Reflection::Arg::newInt(status()));
     return (Reflection::Arg::newVar(m.put(this, spec)));
   }
 

@@ -46,6 +46,10 @@
 ## Dispose defines whether this variable type provides a dispose
 ## function that must be called for all variables in a space when the
 ## space is destroyed. If it is omitted, false is assumed.
+##
+## Bits defines the number of bits that should be reserved for use by the
+## variable implementation. The number of bits reduces the number of
+## propagators that can subscribe to the variable implementation.
 [General]
 Name:		Int
 Ifdef:		GECODE_HAVE_INT_VARS

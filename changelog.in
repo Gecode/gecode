@@ -70,6 +70,13 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Boolean variables consume 20% less memory.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
