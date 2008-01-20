@@ -436,7 +436,7 @@ namespace Gecode {
     /// Translate modification event \a me into modification event delta
     static ModEventDelta med(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
-    static ModEvent combine(ModEvent me1, ModEvent me2);
+    static ModEvent me_combine(ModEvent me1, ModEvent me2);
     //@}
 
     /// Provide access to free bits
@@ -1861,8 +1861,8 @@ namespace Gecode {
 
   template <class VIC>
   forceinline ModEvent
-  VarImp<VIC>::combine(ModEvent me1, ModEvent me2) {
-    return me2^VIC::mec(me2,me1);
+  VarImp<VIC>::me_combine(ModEvent me1, ModEvent me2) {
+    return VIC::me_combine(me1,me2);
   }
 
   /*

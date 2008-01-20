@@ -94,7 +94,7 @@ namespace Gecode {
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
-    static ModEvent combine(ModEvent me1, ModEvent me2);
+    static ModEvent me_combine(ModEvent me1, ModEvent me2);
     //@}
 
     /// \name Dependencies
@@ -397,8 +397,8 @@ namespace Gecode {
   }
   template <class VarImp>
   forceinline ModEvent
-  VarViewBase<VarImp>::combine(ModEvent me1, ModEvent me2) {
-    return VarImp::combine(me1,me2);
+  VarViewBase<VarImp>::me_combine(ModEvent me1, ModEvent me2) {
+    return VarImp::me_combine(me1,me2);
   }
 
   template <class VarImp>

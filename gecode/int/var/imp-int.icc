@@ -334,13 +334,21 @@ namespace Gecode { namespace Int {
   IntVarImp::gq(Space* home, int n) {
     if (n <= dom.min()) return ME_INT_NONE;
     if (n > dom.max())  return ME_INT_FAILED;
-    return gq_full(home,n);
+    ModEvent me = gq_full(home,n);
+    GECODE_ASSUME((me == ME_INT_FAILED) | 
+                  (me == ME_INT_VAL) | 
+                  (me == ME_INT_BND));
+    return me;
   }
   forceinline ModEvent
   IntVarImp::gq(Space* home, double n) {
     if (n <= dom.min()) return ME_INT_NONE;
     if (n > dom.max())  return ME_INT_FAILED;
-    return gq_full(home,static_cast<int>(n));
+    ModEvent me = gq_full(home,static_cast<int>(n));
+    GECODE_ASSUME((me == ME_INT_FAILED) | 
+                  (me == ME_INT_VAL) | 
+                  (me == ME_INT_BND));
+    return me;
   }
 
 
@@ -348,13 +356,21 @@ namespace Gecode { namespace Int {
   IntVarImp::lq(Space* home, int n) {
     if (n >= dom.max()) return ME_INT_NONE;
     if (n < dom.min())  return ME_INT_FAILED;
-    return lq_full(home,n);
+    ModEvent me = lq_full(home,n);
+    GECODE_ASSUME((me == ME_INT_FAILED) | 
+                  (me == ME_INT_VAL) | 
+                  (me == ME_INT_BND));
+    return me;
   }
   forceinline ModEvent
   IntVarImp::lq(Space* home, double n) {
     if (n >= dom.max()) return ME_INT_NONE;
     if (n < dom.min())  return ME_INT_FAILED;
-    return lq_full(home,static_cast<int>(n));
+    ModEvent me = lq_full(home,static_cast<int>(n));
+    GECODE_ASSUME((me == ME_INT_FAILED) | 
+                  (me == ME_INT_VAL) | 
+                  (me == ME_INT_BND));
+    return me;
   }
 
 
@@ -364,7 +380,9 @@ namespace Gecode { namespace Int {
       return ME_INT_FAILED;
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
-    return eq_full(home,n);
+    ModEvent me = eq_full(home,n);
+    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL)); 
+    return me;
   }
   forceinline ModEvent
   IntVarImp::eq(Space* home, double m) {
@@ -373,7 +391,9 @@ namespace Gecode { namespace Int {
     int n = static_cast<int>(m);
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
-    return eq_full(home,n);
+    ModEvent me = eq_full(home,n);
+    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL)); 
+    return me;
   }
 
 
@@ -381,13 +401,19 @@ namespace Gecode { namespace Int {
   IntVarImp::nq(Space* home, int n) {
     if ((n < dom.min()) || (n > dom.max())) 
       return ME_INT_NONE;
-    return nq_full(home,n);
+    ModEvent me = nq_full(home,n);
+    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL) | 
+                  (me == ME_INT_BND) | (me == ME_INT_DOM)); 
+    return me;
   }
   forceinline ModEvent
   IntVarImp::nq(Space* home, double d) {
     if ((d < dom.min()) || (d > dom.max())) 
       return ME_INT_NONE;
-    return nq_full(home,static_cast<int>(d));
+    ModEvent me = nq_full(home,static_cast<int>(d));
+    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL) | 
+                  (me == ME_INT_BND) | (me == ME_INT_DOM)); 
+    return me;
   }
 
 
@@ -824,8 +850,12 @@ namespace Gecode { namespace Int {
     } while (i() && (i.val() == v));
 
     // Is there only a single value to be pruned?
-    if (!i() || (i.val() > dom.max()))
-      return nq_full(home,v);
+    if (!i() || (i.val() > dom.max())) {
+      ModEvent me = nq_full(home,v);
+      GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL) | 
+                    (me == ME_INT_BND) | (me == ME_INT_DOM)); 
+      return me;
+    }
 
     // Set up two sentinel elements
     RangeList f, l;

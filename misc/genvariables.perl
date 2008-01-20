@@ -409,6 +409,8 @@ if ($gen_typeicc) {
     print "    static const int me_bits_mask = (1 << $bits[$f]) - 1;\n";
     print "    /// End of bits for modification event delta\n";
     print "    static const int med_bits_lst = med_bits_fst + me_bits_num;\n";
+    print "    /// Combine modification events \\a me1 and \\a me2\n";
+    print "    static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);\n";
     print "    /// Return difference when changing modification event \\a me_o to \\a me_n\n";
     print "    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);\n";
     print "    /// Variable type identifier for reflection\n";
@@ -459,6 +461,82 @@ if ($gen_typeicc) {
   print "    /// Return difference when changing modification event delta \\a med_o to \\a med_n\n";
   print "    static ModEventDelta medc(ModEventDelta med_o, ModEventDelta med_n);\n";
   print "  };\n\n}\n\n";
+  for ($f = 0; $f<$n_files; $f++) {
+    print $ifdef[$f];
+    print $hdr[$f];
+    print "  forceinline Gecode::ModEvent\n";
+    print "  $conf[$f]::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {\n";
+
+    if ($me_max_n[$f] == 2) {
+      print "    return me1 | me2;\n";
+    } elsif ($me_max_n[$f] <= 4) {
+      print "    const int med = (\n";
+
+      for ($i=0; $i<$me_max_n[$f];$i++) {
+	$n1 = $val2me[$f][$i];
+	print "      (\n";
+	for ($j=0; $j<$me_max_n[$f];$j++) {
+	  $n2 = $val2me[$f][$j];
+	  if ($n1 eq "NONE") {
+	    $n3 = $n2;
+	  } elsif ($n2 eq "NONE") {
+	    $n3 = $n1;
+	  } else {
+	    $n3 = $mec{$f}{$n1}{$n2};
+	  }
+	  print "        (ME_$vti[$f]_$n3 << ";
+	  print (($i << 3) + ($j << 1));
+	  if ($j+1 == $me_max_n[$f]) {
+	    print ")   ";
+	  } else {
+	    print ") | ";
+	  }
+	  print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
+	}
+	if ($i+1 == $me_max_n[$f]) {
+	  print "      )\n";
+	} else {
+	  print "      ) |\n";
+	}
+      }
+      print "    );\n";
+      print "    return (((med >> (me2 << 3)) >> (me1 << 1)) & 3);\n";
+    } else {
+      print "    static const unsigned char med[$me_max[$f]][$me_max[$f]] = {\n";
+      for ($i=0; $i<$me_max_n[$f];$i++) {
+	$n1 = $val2me[$f][$i];
+	print "      {\n";
+	for ($j=0; $j<$me_max_n[$f];$j++) {
+	  $n2 = $val2me[$f][$j];
+	  if ($n1 eq "NONE") {
+	    $n3 = $n2;
+	  } elsif ($n2 eq "NONE") {
+	    $n3 = $n1;
+	  } else {
+	    $n3 = $mec{$f}{$n1}{$n2};
+	  }
+	  print "        ME_$vti[$f]_$n3";
+	  if ($j+1 == $me_max_n[$f]) {
+	    print " ";
+	  } else {
+	    print ",";
+	  }
+	  print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
+	}
+	print "      }";
+	if ($i+1 == $me_max_n[$f]) {
+	  print "\n";
+	} else {
+	  print ",\n";
+	}
+      }
+      print "    };\n";
+      print "    return static_cast<Gecode::ModEvent>(med[me1][me2]);\n";
+    }
+    print "  }\n\n";
+    print $ftr[$f];
+    print $endif[$f];
+  }
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
     print $hdr[$f];
