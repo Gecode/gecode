@@ -586,7 +586,7 @@ namespace Gecode {
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)
-    static void  operator delete(void* p, size_t s);
+    static void  operator delete(void* p);
 #endif
     /// Not used
     static void* operator new(size_t s);
@@ -596,7 +596,7 @@ namespace Gecode {
     /// To avoid warnings from GCC
     GECODE_KERNEL_EXPORT virtual ~Actor(void);
     /// Not used (uses dispose instead)
-    static void  operator delete(void* p, size_t s);
+    static void  operator delete(void* p);
 #endif
   };
 
@@ -841,7 +841,7 @@ namespace Gecode {
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)
-    static void  operator delete(void* p, size_t s);
+    static void  operator delete(void* p);
 #endif
     /// Not used
     static void* operator new(size_t s);
@@ -1377,9 +1377,9 @@ namespace Gecode {
    */
 
   forceinline void
-  Actor::operator delete(void*, size_t) {}
+  Actor::operator delete(void*) {}
   forceinline void
-  Actor::operator delete(void*,Space*) {}
+  Actor::operator delete(void*, Space*) {}
   forceinline void*
   Actor::operator new(size_t s, Space* home) {
     return home->alloc(s);
@@ -1399,10 +1399,10 @@ namespace Gecode {
 
 #ifndef __GNUC__
   forceinline void
-  Advisor::operator delete(void*, size_t) {}
+  Advisor::operator delete(void*) {}
 #endif
   forceinline void
-  Advisor::operator delete(void*,Space*) {}
+  Advisor::operator delete(void*, Space*) {}
   forceinline void*
   Advisor::operator new(size_t s, Space* home) {
     return home->alloc(s);
