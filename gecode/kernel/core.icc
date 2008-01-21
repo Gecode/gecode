@@ -183,13 +183,11 @@ namespace Gecode {
     /// Freely available bits
     static const int free_bits = 0;
     /// Start of bits for modification event delta
-    static const int med_bits_fst = 0;
-    /// Number of bits for modification event
-    static const int me_bits_num = 0;
-    /// Bitmask for modification event
-    static const int me_bits_mask = 0;
+    static const int med_fst = 0;
     /// End of bits for modification event delta
-    static const int med_bits_lst = 0;
+    static const int med_lst = 0;
+    /// Bitmask for modification event delta
+    static const int med_mask = 0;
     /// Combine modification events \a me1 and \a me2
     static Gecode::ModEvent me_combine(ModEvent me1, ModEvent me2);
     /// Update modification even delta \a med by \a me, return true on change
@@ -1851,14 +1849,13 @@ namespace Gecode {
   template <class VIC>
   forceinline ModEvent
   VarImp<VIC>::me(ModEventDelta med) {
-    return static_cast<ModEvent>((med >> VIC::med_bits_fst) & 
-                                 VIC::me_bits_mask);
+    return static_cast<ModEvent>((med & VIC::med_mask) >> VIC::med_fst);
   }
 
   template <class VIC>
   forceinline ModEventDelta
   VarImp<VIC>::med(ModEvent me) {
-    return static_cast<ModEventDelta>(me << VIC::med_bits_fst);
+    return static_cast<ModEventDelta>(me << VIC::med_fst);
   }
 
   template <class VIC>

@@ -397,18 +397,16 @@ if ($gen_typeicc) {
     print "    /// Freely available bits\n";
     print "    static const int free_bits = $free_bits[$f];\n";
     print "    /// Start of bits for modification event delta\n";
-    print "    static const int med_bits_fst = ";
+    print "    static const int med_fst = ";
     if ($f == 0) {
       print "0;\n";
     } else {
-      print "$namespace[$f-1]::$conf[$f-1]::med_bits_lst;\n";
+      print "$namespace[$f-1]::$conf[$f-1]::med_lst;\n";
     }
-    print "    /// Number of bits for modification event delta\n";
-    print "    static const int me_bits_num = $bits[$f];\n";
-    print "    /// Bitmask for modification event\n";
-    print "    static const int me_bits_mask = (1 << $bits[$f]) - 1;\n";
     print "    /// End of bits for modification event delta\n";
-    print "    static const int med_bits_lst = med_bits_fst + me_bits_num;\n";
+    print "    static const int med_lst = med_fst + $bits[$f];\n";
+    print "    /// Bitmask for modification event delta\n";
+    print "    static const int med_mask = ((1 << $bits[$f]) - 1) << med_fst;\n";
     print "    /// Combine modification events \\a me1 and \\a me2\n";
     print "    static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);\n";
     print "    /// Update modification even delta \\a med by \\a me, return true on change\n";
@@ -438,11 +436,11 @@ if ($gen_typeicc) {
 	print "$namespace[$f-1]::$conf[$f-1]::idx_d;\n";
       }
       print "    /// End of bits for modification event delta\n";
-      print "    static const int med_bits_lst = ";
+      print "    static const int med_lst = ";
       if ($f == 0) {
 	print "0;\n";
       } else {
-	print "$namespace[$f-1]::$conf[$f-1]::med_bits_lst;\n";
+	print "$namespace[$f-1]::$conf[$f-1]::med_lst;\n";
       }
       print "  };\n";
       print $ftr[$f];
@@ -557,24 +555,40 @@ if ($gen_typeicc) {
       print "    case $ME_NONE:\n";
       print "      return false;\n";
       print "    case $ME_ASSIGNED:\n";
-      print "      if ((med & ($ME_ASSIGNED << med_bits_fst)) != 0)\n";
+      print "      if ((med & ($ME_ASSIGNED << med_fst)) != 0)\n";
       print "        return false;\n";
-      print "      med |= $ME_ASSIGNED << med_bits_fst;\n";
+      print "      med |= $ME_ASSIGNED << med_fst;\n";
       print "      return true;\n";
     } else {
       $lvti = lc($vti[$f]);
       for ($i=0; $i<$me_max_n[$f];$i++) {
 	$n1 = $val2me[$f][$i];
+	$weak = 1;
+	for ($j=0; $j<$me_max_n[$f];$j++) {
+	  $n2 = $val2me[$f][$j];
+	  if (!($n2 eq "NONE") && !($n2 eq $n1) &&
+	      !($mec{$f}{$n1}{$n2} eq $n2)) {
+	    $weak = 0;
+	  }
+	}
         print "    case ME_$vti[$f]_$n1:\n";
         if ($n1 eq "NONE") {
           print "      return false;\n";
         } elsif ($mespecial{$f}{$n1} eq "ASSIGNED") {
           print "      {\n";
-          print "        Gecode::ModEventDelta med_$lvti = med & (me_bits_mask << med_bits_fst);\n";
-          print "        if (med_$lvti == (ME_$vti[$f]_$n1 << med_bits_fst))\n";
+          print "        Gecode::ModEventDelta med_$lvti = med & med_mask;\n";
+          print "        if (med_$lvti == (ME_$vti[$f]_$n1 << med_fst))\n";
           print "          return false;\n";
           print "        med ^= med_$lvti;\n";
-          print "        med |= ME_$vti[$f]_$n1 << med_bits_fst;\n";
+          print "        med |= ME_$vti[$f]_$n1 << med_fst;\n";
+          print "        return true;\n";
+          print "      }\n";
+	} elsif ($weak) {
+          print "      {\n";
+          print "        Gecode::ModEventDelta med_$lvti = med & med_mask;\n";
+          print "        if (med_$lvti != 0)\n";
+          print "          return false;\n";
+          print "        med |= ME_$vti[$f]_$n1 << med_fst;\n";
           print "        return true;\n";
           print "      }\n";
 	} else {
@@ -598,11 +612,11 @@ if ($gen_typeicc) {
 	      }
 	    }
             print "\n        );\n";
-            print "        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;\n";
+            print "        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n";
             print "        Gecode::ModEvent me_n = me_c >> (me_o << 2);\n";
             print "        if (me_n == 0)\n";
             print "          return false;\n";
-            print "        med ^= me_n << med_bits_fst;\n";
+            print "        med ^= me_n << med_fst;\n";
             print "        return true;\n";
           } else {
             print "        static const Gecode::ModEventDelta me_c[$me_max[$f]] = {\n";
@@ -613,13 +627,13 @@ if ($gen_typeicc) {
 	      } else {
 	        $n3 = $mec{$f}{$n1}{$n2};
 	      }
-	      print "          (ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3) << med_bits_fst";
+	      print "          (ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3) << med_fst";
 	      if ($j+1 != $me_max_n[$f]) {
 	        print ",\n";
 	      }
 	    }
             print "\n        };\n";
-            print "        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;\n";
+            print "        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n";
             print "        Gecode::ModEventDelta med_n = me_c[me_o];\n";
             print "        if (med_n == 0)\n";
             print "          return false;\n";
@@ -644,7 +658,7 @@ if ($gen_typeicc) {
   for ($f = 0; $f<$n_files; $f++) {
     $vic = "$namespace[$f]::$conf[$f]";
     print $ifdef[$f];
-    print "    (void) ${vic}::med_update(med1,(med2 >> ${vic}::med_bits_fst) & ${vic}::me_bits_mask);\n";
+    print "    (void) ${vic}::med_update(med1,(med2 & ${vic}::med_mask) >> ${vic}::med_fst);\n";
     print $endif[$f];
   }
   print "    return med1;\n";
