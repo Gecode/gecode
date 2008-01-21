@@ -138,12 +138,17 @@ namespace Gecode {
    */
   class FreeList {
   protected:
+    /// Pointer to next freelist object
     FreeList* _next;
   public:
+    /// Use uninitialized
     FreeList(void);
-    FreeList(FreeList*);
+    /// Initialize with next freelist object \a n
+    FreeList(FreeList* n);
+    /// Return next freelist object
     FreeList* next(void) const;
-    void next(FreeList*);
+    /// Set next freelist object to \a n
+    void next(FreeList* n);
   };
 
   /// Manage memory for space

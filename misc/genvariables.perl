@@ -221,6 +221,8 @@ for ($f=0; $f<$n_files; $f++) {
       $men[$f][$me_n[$f]] = $n;
       $meh[$f][$me_n[$f]] = $h;
       $me_n[$f]++;
+      $mec{$f}{"NONE"}{$n} = $n;
+      $mec{$f}{$n}{"NONE"} = $n;
       goto LINE;
     } elsif ($l =~ /^\[ModEventFooter\]/io) {
       while (($l = <FILE>) && !($l =~ /^\[/)) {
@@ -311,6 +313,21 @@ for ($f=0; $f<$n_files; $f++) {
   $me_max[$f]   = "ME_$vti[$f]_" . $val2me[$f][$o-1] . "+1";
   $me_max_n[$f] = $o;
 
+  $len = 0;
+  for ($i=0; $i<$me_max_n[$f];$i++) {
+    $n = $val2me[$f][$i];
+    $me_a{$f}{$n} = "ME_$vti[$f]_$n";
+    if (length($me_a{$f}{$n}) > $len) {
+      $len = length($me_a{$f}{$n});
+    }
+  }
+  for ($i=0; $i<$me_max_n[$f]; $i++) {
+    $n = $val2me[$f][$i];
+    while ($len > length($me_a{$f}{$n})) {
+      $me_a{$f}{$n} = "$me_a{$f}{$n} ";
+    }
+  }
+
   for ($b=1; (1 << $b) < $me_max_n[$f]; $b++) {}
   $bits[$f] = $b;
 }
@@ -367,7 +384,7 @@ if ($gen_typeicc) {
       print "#endif\n\n";
     }
     print $hdr[$f];
-    print "  /// Configuration class for $name[$f]-variable implementations\n";
+    print "  /// Configuration for $name[$f]-variable implementations\n";
     print "  class $conf[$f] {\n";
     print "  public:\n";
     print "    /// Index for cloning\n";
@@ -418,7 +435,7 @@ if ($gen_typeicc) {
     if (!($ifdef[$f] eq "")) {
       print "#else\n";
       print $hdr[$f];
-      print "  /// Configuration class for $name[$f]-variable implementations\n";
+      print "  /// Dummy configuration for $name[$f]-variable implementations\n";
       print "  class $conf[$f] {\n";
       print "  public:\n";
       print "    /// Index for cloning\n";
@@ -449,7 +466,7 @@ if ($gen_typeicc) {
   }
   print "\n";
   print "namespace Gecode {\n\n";
-  print "  /// Configuration class for all variable implementations\n";
+  print "  /// Configuration for all variable implementations\n";
   print "  class AllVarConf {\n";
   print "  public:\n";
   print "    /// Index for cloning\n";
@@ -475,24 +492,18 @@ if ($gen_typeicc) {
 	print "      (\n";
 	for ($j=0; $j<$me_max_n[$f];$j++) {
 	  $n2 = $val2me[$f][$j];
-	  if ($n1 eq "NONE") {
-	    $n3 = $n2;
-	  } elsif ($n2 eq "NONE") {
-	    $n3 = $n1;
-	  } else {
-	    $n3 = $mec{$f}{$n1}{$n2};
-	  }
+	  $n3 = $mec{$f}{$n1}{$n2};
 	  $shift = (($i << 3) + ($j << 1));
 	  if ($shift < 10) {
 	    $shift = " $shift";
 	  }
-	  print "        (ME_$vti[$f]_$n3 << $shift)";
+	  print "        ($me_a{$f}{$n3} << $shift)";
 	  if ($j+1 == $me_max_n[$f]) {
 	    print "   ";
 	  } else {
 	    print " | ";
 	  }
-	  print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
+	  print " // [$me_a{$f}{$n1}][$me_a{$f}{$n2}]\n";
 	}
 	if ($i+1 == $me_max_n[$f]) {
 	  print "      )\n";
@@ -509,20 +520,14 @@ if ($gen_typeicc) {
 	print "      {\n";
 	for ($j=0; $j<$me_max_n[$f];$j++) {
 	  $n2 = $val2me[$f][$j];
-	  if ($n1 eq "NONE") {
-	    $n3 = $n2;
-	  } elsif ($n2 eq "NONE") {
-	    $n3 = $n1;
-	  } else {
-	    $n3 = $mec{$f}{$n1}{$n2};
-	  }
-	  print "        ME_$vti[$f]_$n3";
+	  $n3 = $mec{$f}{$n1}{$n2};
+	  print "        $me_a{$f}{$n3}";
 	  if ($j+1 == $me_max_n[$f]) {
 	    print " ";
 	  } else {
 	    print ",";
 	  }
-	  print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
+	  print " // [$me_a{$f}{$n1}][$me_a{$f}{$n2}]\n";
 	}
 	print "      }";
 	if ($i+1 == $me_max_n[$f]) {
@@ -534,13 +539,7 @@ if ($gen_typeicc) {
       print "    };\n";
       print "    return me_c[me1][me2];\n";
     }
-    print "  }\n\n";
-    print $ftr[$f];
-    print $endif[$f];
-  }
-  for ($f = 0; $f<$n_files; $f++) {
-    print $ifdef[$f];
-    print $hdr[$f];
+    print "  }\n";
     print "  forceinline bool\n";
     print "  $conf[$f]::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {\n";
 
@@ -558,7 +557,7 @@ if ($gen_typeicc) {
       print "      if ((med & ($ME_ASSIGNED << med_fst)) != 0)\n";
       print "        return false;\n";
       print "      med |= $ME_ASSIGNED << med_fst;\n";
-      print "      return true;\n";
+      print "      break;\n";
     } else {
       $lvti = lc($vti[$f]);
       for ($i=0; $i<$me_max_n[$f];$i++) {
@@ -580,8 +579,8 @@ if ($gen_typeicc) {
           print "        if (med_$lvti == (ME_$vti[$f]_$n1 << med_fst))\n";
           print "          return false;\n";
           print "        med ^= med_$lvti;\n";
-          print "        med |= ME_$vti[$f]_$n1 << med_fst;\n";
-          print "        return true;\n";
+          print "        med ^= ME_$vti[$f]_$n1 << med_fst;\n";
+          print "        break;\n";
           print "      }\n";
 	} elsif ($weak) {
           print "      {\n";
@@ -589,7 +588,7 @@ if ($gen_typeicc) {
           print "        if (med_$lvti != 0)\n";
           print "          return false;\n";
           print "        med |= ME_$vti[$f]_$n1 << med_fst;\n";
-          print "        return true;\n";
+          print "        break;\n";
           print "      }\n";
 	} else {
           print "      {\n";
@@ -597,16 +596,12 @@ if ($gen_typeicc) {
             print "        static const Gecode::ModEvent me_c = (\n";
 	    for ($j=0; $j<$me_max_n[$f];$j++) {
 	      $n2 = $val2me[$f][$j];
-	      if ($n2 eq "NONE") {
-	        $n3 = $n1;
-	      } else {
-	        $n3 = $mec{$f}{$n1}{$n2};
-	      }
+	      $n3 = $mec{$f}{$n1}{$n2};
               $shift = $j << 2;
 	      if ($shift < 10) {
                 $shift = " $shift";
               }
-	      print "          ((ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3) << $shift)";
+	      print "          (($me_a{$f}{$n2} ^ $me_a{$f}{$n3}) << $shift)";
 	      if ($j+1 != $me_max_n[$f]) {
 	        print " |\n";
 	      }
@@ -617,17 +612,13 @@ if ($gen_typeicc) {
             print "        if (me_n == 0)\n";
             print "          return false;\n";
             print "        med ^= me_n << med_fst;\n";
-            print "        return true;\n";
+            print "        break;\n";
           } else {
             print "        static const Gecode::ModEventDelta me_c[$me_max[$f]] = {\n";
 	    for ($j=0; $j<$me_max_n[$f];$j++) {
 	      $n2 = $val2me[$f][$j];
-	      if ($n2 eq "NONE") {
-	        $n3 = $n1;
-	      } else {
-	        $n3 = $mec{$f}{$n1}{$n2};
-	      }
-	      print "          (ME_$vti[$f]_$n2 ^ ME_$vti[$f]_$n3) << med_fst";
+	      $n3 = $mec{$f}{$n1}{$n2};
+	      print "          ($me_a{$f}{$n2} ^ $me_a{$f}{$n3}) << med_fst";
 	      if ($j+1 != $me_max_n[$f]) {
 	        print ",\n";
 	      }
@@ -638,7 +629,7 @@ if ($gen_typeicc) {
             print "        if (med_n == 0)\n";
             print "          return false;\n";
             print "        med ^= med_n;\n";
-            print "        return true;\n";
+            print "        break;\n";
           }
           print "      }\n";
         }
@@ -646,8 +637,7 @@ if ($gen_typeicc) {
     }
     print "    default: GECODE_NEVER;\n";
     print "    }\n";
-    print "    GECODE_NEVER;\n";
-    print "    return false;\n";
+    print "    return true;\n";
     print "  }\n\n";
     print $ftr[$f];
     print $endif[$f];
@@ -710,14 +700,14 @@ EOF
      * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      *
-     * In case the variable is assigned (that is, \\a assigned is 
+     * In case the variable is assigned (that is, \\a assigned is
      * true), the subscribing propagator is scheduled for execution.
      * Otherwise, the propagator subscribes and is scheduled for execution
      * with modification event \\a me provided that \\a pc is different
-     * from \\a PC_GEN_ASSIGNED.
+     * from \\a $pc_assigned[$f].
      */
     void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \\a a
+    /// Subscribe advisor \\a a if \\a assigned is false.
     void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
     Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
@@ -734,11 +724,19 @@ EOF
   }
 
   print <<EOF
-
   };
-
 EOF
 ;
+
+  print $ftr[$f];
+  print $endif[$f];
+
+
+}
+
+  for ($f = 0; $f<$n_files; $f++) {
+    print $ifdef[$f];
+    print $hdr[$f];
 
 if ($dispose[$f]) {
   print <<EOF
@@ -872,14 +870,12 @@ EOF
     }
     return me;
   }
+
 EOF
 ;
 }
-
-
   print $ftr[$f];
   print $endif[$f];
-
 }
 
     print <<EOF

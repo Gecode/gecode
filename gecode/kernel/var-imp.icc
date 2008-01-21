@@ -62,21 +62,133 @@ namespace Gecode { namespace Int {
      * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      *
-     * In case the variable is assigned (that is, \a assigned is 
+     * In case the variable is assigned (that is, \a assigned is
      * true), the subscribing propagator is scheduled for execution.
      * Otherwise, the propagator subscribes and is scheduled for execution
      * with modification event \a me provided that \a pc is different
-     * from \a PC_GEN_ASSIGNED.
+     * from \a PC_INT_VAL.
      */
     void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a
+    /// Subscribe advisor \a a if \a assigned is false.
     void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
     Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
     //@}
-
   };
-
+}}
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+namespace Gecode { namespace Int { 
+  /// Base-class for Bool-variable implementations
+  class BoolVarImpBase : public Gecode::VarImp< Gecode::Int::BoolVarImpConf> {
+  protected:
+    /// Constructor for cloning \a x
+    BoolVarImpBase(Gecode::Space* home, bool share, BoolVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    BoolVarImpBase(void);
+    /// Constructor for creating variable
+    BoolVarImpBase(Gecode::Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is
+     * true), the subscribing propagator is scheduled for execution.
+     * Otherwise, the propagator subscribes and is scheduled for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_BOOL_VAL.
+     */
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    /// Subscribe advisor \a a if \a assigned is false.
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    //@}
+  };
+}}
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+namespace Gecode { namespace Set { 
+  /// Base-class for Set-variable implementations
+  class SetVarImpBase : public Gecode::VarImp< Gecode::Set::SetVarImpConf> {
+  protected:
+    /// Constructor for cloning \a x
+    SetVarImpBase(Gecode::Space* home, bool share, SetVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    SetVarImpBase(void);
+    /// Constructor for creating variable
+    SetVarImpBase(Gecode::Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is
+     * true), the subscribing propagator is scheduled for execution.
+     * Otherwise, the propagator subscribes and is scheduled for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_SET_VAL.
+     */
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    /// Subscribe advisor \a a if \a assigned is false.
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    //@}
+  };
+}}
+#endif
+#ifdef GECODE_HAVE_CPLTSET_VARS
+namespace Gecode { namespace CpltSet { 
+  /// Base-class for CpltSet-variable implementations
+  class CpltSetVarImpBase : public Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf> {
+  private:
+    /// Link to next variable, used for disposal
+    CpltSetVarImpBase* _next_d;
+  protected:
+    /// Constructor for cloning \a x
+    CpltSetVarImpBase(Gecode::Space* home, bool share, CpltSetVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    CpltSetVarImpBase(void);
+    /// Constructor for creating variable
+    CpltSetVarImpBase(Gecode::Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is
+     * true), the subscribing propagator is scheduled for execution.
+     * Otherwise, the propagator subscribes and is scheduled for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_CPLTSET_VAL.
+     */
+    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    /// Subscribe advisor \a a if \a assigned is false.
+    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    //@}
+    /// Return link to next variable to be disposed
+    CpltSetVarImpBase* next_d(void) const;
+  };
+}}
+#endif
+#ifdef GECODE_HAVE_INT_VARS
+namespace Gecode { namespace Int { 
 
   forceinline
   IntVarImpBase::IntVarImpBase(void) {}
@@ -124,43 +236,11 @@ namespace Gecode { namespace Int {
     }
     return me;
   }
+
 }}
 #endif
 #ifdef GECODE_HAVE_INT_VARS
 namespace Gecode { namespace Int { 
-  /// Base-class for Bool-variable implementations
-  class BoolVarImpBase : public Gecode::VarImp< Gecode::Int::BoolVarImpConf> {
-  protected:
-    /// Constructor for cloning \a x
-    BoolVarImpBase(Gecode::Space* home, bool share, BoolVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    BoolVarImpBase(void);
-    /// Constructor for creating variable
-    BoolVarImpBase(Gecode::Space* home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is 
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_GEN_ASSIGNED.
-     */
-    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
-    //@}
-
-  };
-
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(void) {}
@@ -195,39 +275,6 @@ namespace Gecode { namespace Int {
 #endif
 #ifdef GECODE_HAVE_SET_VARS
 namespace Gecode { namespace Set { 
-  /// Base-class for Set-variable implementations
-  class SetVarImpBase : public Gecode::VarImp< Gecode::Set::SetVarImpConf> {
-  protected:
-    /// Constructor for cloning \a x
-    SetVarImpBase(Gecode::Space* home, bool share, SetVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    SetVarImpBase(void);
-    /// Constructor for creating variable
-    SetVarImpBase(Gecode::Space* home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is 
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_GEN_ASSIGNED.
-     */
-    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
-    //@}
-
-  };
-
 
   forceinline
   SetVarImpBase::SetVarImpBase(void) {}
@@ -306,48 +353,11 @@ namespace Gecode { namespace Set {
     }
     return me;
   }
+
 }}
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
 namespace Gecode { namespace CpltSet { 
-  /// Base-class for CpltSet-variable implementations
-  class CpltSetVarImpBase : public Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf> {
-  private:
-    /// Link to next variable, used for disposal
-    CpltSetVarImpBase* _next_d;
-  protected:
-    /// Constructor for cloning \a x
-    CpltSetVarImpBase(Gecode::Space* home, bool share, CpltSetVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    CpltSetVarImpBase(void);
-    /// Constructor for creating variable
-    CpltSetVarImpBase(Gecode::Space* home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is 
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_GEN_ASSIGNED.
-     */
-    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
-    //@}
-    /// Return link to next variable to be disposed
-    CpltSetVarImpBase* next_d(void) const;
-
-  };
-
 
   forceinline
   CpltSetVarImpBase::CpltSetVarImpBase(void) {}
@@ -399,6 +409,7 @@ namespace Gecode { namespace CpltSet {
     }
     return me;
   }
+
 }}
 #endif
 namespace Gecode {
