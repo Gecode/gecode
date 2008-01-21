@@ -61,7 +61,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   bool disjoint(I& i, J& j);
 
   /// Is one iterator subsumed by another, or is the intersection empty?
-  enum SubsumtionStatus {
+  enum SubsumptionStatus {
     SS_SUBSUMED, ///< Subsumed (subset)
     SS_EMPTY,    ///< Intersection is empty
     SS_NONE      ///< Neither of the above
@@ -69,7 +69,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   /// Check whether range iterator \a i subsumes \a j, or whether intersection is empty
   template <class I, class J>
-  SubsumtionStatus subsumes(I& i, J& j);
+  SubsumptionStatus subsumes(I& i, J& j);
   //@}
 
 
@@ -127,7 +127,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
   template <class I, class J>
-  inline SubsumtionStatus
+  inline SubsumptionStatus
   subsumes(I& i, J& j) {
     bool subsumed = true;
     bool empty    = true;

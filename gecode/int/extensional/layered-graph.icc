@@ -383,7 +383,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     o_ch.reset();
 
-    // Check subsumtion
+    // Check subsumption
     if (c.empty())
       return ES_SUBSUMED(this,home);
     return ES_FIX;

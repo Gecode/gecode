@@ -643,7 +643,7 @@ namespace Gecode {
   /**
    * \brief %Propagator \a p is subsumed
    *
-   * First disposes the propagator and then returns subsumtion.
+   * First disposes the propagator and then returns subsumption.
    *
    * \warning Has a side-effect on the propagator. Overwrites
    *          the modification event delta of a propagator.
@@ -2180,7 +2180,7 @@ namespace Gecode {
   forceinline bool
   VarImp<VIC>::advise(Space* home, ModEvent me, Delta* d) {
     /*
-     * An advisor that is executed might remove itself due to subsumtion.
+     * An advisor that is executed might remove itself due to subsumption.
      * As entries are removed from front to back, the advisors must
      * be iterated in forward direction.
      */
