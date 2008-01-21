@@ -312,8 +312,8 @@ namespace Gecode { namespace Int {
     static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Combine modification events \a me1 and \a me2
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
-    /// Return difference when changing modification event \a me_o to \a me_n
-    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
+    /// Update modification even delta \a med by \a me, return true on change
+    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     /// Variable type identifier for reflection
     static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
@@ -355,8 +355,8 @@ namespace Gecode { namespace Int {
     static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Combine modification events \a me1 and \a me2
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
-    /// Return difference when changing modification event \a me_o to \a me_n
-    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
+    /// Update modification even delta \a med by \a me, return true on change
+    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     /// Variable type identifier for reflection
     static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
@@ -398,8 +398,8 @@ namespace Gecode { namespace Set {
     static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Combine modification events \a me1 and \a me2
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
-    /// Return difference when changing modification event \a me_o to \a me_n
-    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
+    /// Update modification even delta \a med by \a me, return true on change
+    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     /// Variable type identifier for reflection
     static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
@@ -446,8 +446,8 @@ namespace Gecode { namespace CpltSet {
     static const int med_bits_lst = med_bits_fst + me_bits_num;
     /// Combine modification events \a me1 and \a me2
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
-    /// Return difference when changing modification event \a me_o to \a me_n
-    static Gecode::ModEvent mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n);
+    /// Update modification even delta \a med by \a me, return true on change
+    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     /// Variable type identifier for reflection
     static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
@@ -476,8 +476,8 @@ namespace Gecode {
     static const int idx_u = Gecode::CpltSet::CpltSetVarImpConf::idx_u+1;
     /// Index for dispose
     static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
-    /// Return difference when changing modification event delta \a med_o to \a med_n
-    static ModEventDelta medc(ModEventDelta med_o, ModEventDelta med_n);
+    /// Combine modification event delta \a med1 with \a med2
+    static ModEventDelta med_combine(ModEventDelta med1, ModEventDelta med2);
   };
 
 }
@@ -664,237 +664,296 @@ namespace Gecode { namespace CpltSet {
 #endif
 #ifdef GECODE_HAVE_INT_VARS
 namespace Gecode { namespace Int { 
-  forceinline Gecode::ModEvent
-  IntVarImpConf::mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n) {
-    const int med = (
-      (
-        ((ME_INT_NONE ^ ME_INT_NONE) << 0) |  // [ME_INT_NONE][ME_INT_NONE]
-        ((ME_INT_VAL ^ ME_INT_VAL) << 2) |  // [ME_INT_NONE][ME_INT_VAL]
-        ((ME_INT_BND ^ ME_INT_BND) << 4) |  // [ME_INT_NONE][ME_INT_BND]
-        ((ME_INT_DOM ^ ME_INT_DOM) << 6)    // [ME_INT_NONE][ME_INT_DOM]
-      ) |
-      (
-        ((ME_INT_NONE ^ ME_INT_VAL) << 8) |  // [ME_INT_VAL][ME_INT_NONE]
-        ((ME_INT_VAL ^ ME_INT_VAL) << 10) |  // [ME_INT_VAL][ME_INT_VAL]
-        ((ME_INT_BND ^ ME_INT_VAL) << 12) |  // [ME_INT_VAL][ME_INT_BND]
-        ((ME_INT_DOM ^ ME_INT_VAL) << 14)    // [ME_INT_VAL][ME_INT_DOM]
-      ) |
-      (
-        ((ME_INT_NONE ^ ME_INT_BND) << 16) |  // [ME_INT_BND][ME_INT_NONE]
-        ((ME_INT_VAL ^ ME_INT_VAL) << 18) |  // [ME_INT_BND][ME_INT_VAL]
-        ((ME_INT_BND ^ ME_INT_BND) << 20) |  // [ME_INT_BND][ME_INT_BND]
-        ((ME_INT_DOM ^ ME_INT_BND) << 22)    // [ME_INT_BND][ME_INT_DOM]
-      ) |
-      (
-        ((ME_INT_NONE ^ ME_INT_DOM) << 24) |  // [ME_INT_DOM][ME_INT_NONE]
-        ((ME_INT_VAL ^ ME_INT_VAL) << 26) |  // [ME_INT_DOM][ME_INT_VAL]
-        ((ME_INT_BND ^ ME_INT_BND) << 28) |  // [ME_INT_DOM][ME_INT_BND]
-        ((ME_INT_DOM ^ ME_INT_DOM) << 30)    // [ME_INT_DOM][ME_INT_DOM]
-      )
-    );
-    return (((med >> (me_n << 3)) >> (me_o << 1)) & 3);
+  forceinline bool
+  IntVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
+    switch (me) {
+    case ME_INT_NONE:
+      return false;
+    case ME_INT_VAL:
+      {
+        Gecode::ModEventDelta med_int = med & (me_bits_mask << med_bits_fst);
+        if (med_int == (ME_INT_VAL << med_bits_fst))
+          return false;
+        med ^= med_int;
+        med |= ME_INT_VAL << med_bits_fst;
+        return true;
+      }
+    case ME_INT_BND:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_INT_NONE ^ ME_INT_BND) <<  0) |
+          ((ME_INT_VAL ^ ME_INT_VAL) <<  4) |
+          ((ME_INT_BND ^ ME_INT_BND) <<  8) |
+          ((ME_INT_DOM ^ ME_INT_BND) << 12)
+        );
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEvent me_n = me_c >> (me_o << 2);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_bits_fst;
+        return true;
+      }
+    case ME_INT_DOM:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_INT_NONE ^ ME_INT_DOM) <<  0) |
+          ((ME_INT_VAL ^ ME_INT_VAL) <<  4) |
+          ((ME_INT_BND ^ ME_INT_BND) <<  8) |
+          ((ME_INT_DOM ^ ME_INT_DOM) << 12)
+        );
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEvent me_n = me_c >> (me_o << 2);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_bits_fst;
+        return true;
+      }
+    default: GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return false;
   }
 
 }}
 #endif
 #ifdef GECODE_HAVE_INT_VARS
 namespace Gecode { namespace Int { 
-  forceinline Gecode::ModEvent
-  BoolVarImpConf::mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n) {
-    return !me_o & me_n;
+  forceinline bool
+  BoolVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
+    switch (me) {
+    case ME_BOOL_NONE:
+      return false;
+    case ME_BOOL_VAL:
+      if ((med & (ME_BOOL_VAL << med_bits_fst)) != 0)
+        return false;
+      med |= ME_BOOL_VAL << med_bits_fst;
+      return true;
+    default: GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return false;
   }
 
 }}
 #endif
 #ifdef GECODE_HAVE_SET_VARS
 namespace Gecode { namespace Set { 
-  forceinline Gecode::ModEvent
-  SetVarImpConf::mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n) {
-    static const unsigned char med[ME_SET_CBB+1][ME_SET_CBB+1] = {
+  forceinline bool
+  SetVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
+    switch (me) {
+    case ME_SET_NONE:
+      return false;
+    case ME_SET_VAL:
       {
-        ME_SET_NONE ^ ME_SET_NONE, // [ME_SET_NONE][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_NONE][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CARD, // [ME_SET_NONE][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_LUB, // [ME_SET_NONE][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_GLB, // [ME_SET_NONE][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_BB, // [ME_SET_NONE][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_NONE][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_NONE][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_NONE][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_VAL  // [ME_SET_VAL][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_CARD, // [ME_SET_CARD][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CARD][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CARD, // [ME_SET_CARD][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_CLUB, // [ME_SET_CARD][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_CGLB, // [ME_SET_CARD][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CARD][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_CARD][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_CARD][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CARD][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_LUB, // [ME_SET_LUB][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_LUB][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CLUB, // [ME_SET_LUB][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_LUB, // [ME_SET_LUB][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_BB, // [ME_SET_LUB][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_BB, // [ME_SET_LUB][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_LUB][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_LUB][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_LUB][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_GLB, // [ME_SET_GLB][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_GLB][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CGLB, // [ME_SET_GLB][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_BB, // [ME_SET_GLB][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_GLB, // [ME_SET_GLB][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_BB, // [ME_SET_GLB][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_GLB][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_GLB][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_GLB][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_BB, // [ME_SET_BB][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_BB][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_BB][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CLUB][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CLUB][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CGLB][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CGLB][ME_SET_CBB]
-      },
-      {
-        ME_SET_NONE ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_NONE]
-        ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CBB][ME_SET_VAL]
-        ME_SET_CARD ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CARD]
-        ME_SET_LUB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_LUB]
-        ME_SET_GLB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_GLB]
-        ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_BB]
-        ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CLUB]
-        ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CGLB]
-        ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CBB][ME_SET_CBB]
+        Gecode::ModEventDelta med_set = med & (me_bits_mask << med_bits_fst);
+        if (med_set == (ME_SET_VAL << med_bits_fst))
+          return false;
+        med ^= med_set;
+        med |= ME_SET_VAL << med_bits_fst;
+        return true;
       }
-    };
-    return static_cast<Gecode::ModEvent>(med[me_n][me_o]);
+    case ME_SET_CARD:
+      {
+        static const Gecode::ModEventDelta me_c[ME_SET_CBB+1] = {
+          (ME_SET_NONE ^ ME_SET_CARD) << med_bits_fst,
+          (ME_SET_VAL ^ ME_SET_VAL) << med_bits_fst,
+          (ME_SET_CARD ^ ME_SET_CARD) << med_bits_fst,
+          (ME_SET_LUB ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_GLB ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_BB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CLUB ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_CGLB ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_CBB ^ ME_SET_CBB) << med_bits_fst
+        };
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEventDelta med_n = me_c[me_o];
+        if (med_n == 0)
+          return false;
+        med ^= med_n;
+        return true;
+      }
+    case ME_SET_LUB:
+      {
+        static const Gecode::ModEventDelta me_c[ME_SET_CBB+1] = {
+          (ME_SET_NONE ^ ME_SET_LUB) << med_bits_fst,
+          (ME_SET_VAL ^ ME_SET_VAL) << med_bits_fst,
+          (ME_SET_CARD ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_LUB ^ ME_SET_LUB) << med_bits_fst,
+          (ME_SET_GLB ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_BB ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_CLUB ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_CGLB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CBB ^ ME_SET_CBB) << med_bits_fst
+        };
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEventDelta med_n = me_c[me_o];
+        if (med_n == 0)
+          return false;
+        med ^= med_n;
+        return true;
+      }
+    case ME_SET_GLB:
+      {
+        static const Gecode::ModEventDelta me_c[ME_SET_CBB+1] = {
+          (ME_SET_NONE ^ ME_SET_GLB) << med_bits_fst,
+          (ME_SET_VAL ^ ME_SET_VAL) << med_bits_fst,
+          (ME_SET_CARD ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_LUB ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_GLB ^ ME_SET_GLB) << med_bits_fst,
+          (ME_SET_BB ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_CLUB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CGLB ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_CBB ^ ME_SET_CBB) << med_bits_fst
+        };
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEventDelta med_n = me_c[me_o];
+        if (med_n == 0)
+          return false;
+        med ^= med_n;
+        return true;
+      }
+    case ME_SET_BB:
+      {
+        static const Gecode::ModEventDelta me_c[ME_SET_CBB+1] = {
+          (ME_SET_NONE ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_VAL ^ ME_SET_VAL) << med_bits_fst,
+          (ME_SET_CARD ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_LUB ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_GLB ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_BB ^ ME_SET_BB) << med_bits_fst,
+          (ME_SET_CLUB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CGLB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CBB ^ ME_SET_CBB) << med_bits_fst
+        };
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEventDelta med_n = me_c[me_o];
+        if (med_n == 0)
+          return false;
+        med ^= med_n;
+        return true;
+      }
+    case ME_SET_CLUB:
+      {
+        static const Gecode::ModEventDelta me_c[ME_SET_CBB+1] = {
+          (ME_SET_NONE ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_VAL ^ ME_SET_VAL) << med_bits_fst,
+          (ME_SET_CARD ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_LUB ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_GLB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_BB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CLUB ^ ME_SET_CLUB) << med_bits_fst,
+          (ME_SET_CGLB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CBB ^ ME_SET_CBB) << med_bits_fst
+        };
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEventDelta med_n = me_c[me_o];
+        if (med_n == 0)
+          return false;
+        med ^= med_n;
+        return true;
+      }
+    case ME_SET_CGLB:
+      {
+        static const Gecode::ModEventDelta me_c[ME_SET_CBB+1] = {
+          (ME_SET_NONE ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_VAL ^ ME_SET_VAL) << med_bits_fst,
+          (ME_SET_CARD ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_LUB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_GLB ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_BB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CLUB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CGLB ^ ME_SET_CGLB) << med_bits_fst,
+          (ME_SET_CBB ^ ME_SET_CBB) << med_bits_fst
+        };
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEventDelta med_n = me_c[me_o];
+        if (med_n == 0)
+          return false;
+        med ^= med_n;
+        return true;
+      }
+    case ME_SET_CBB:
+      {
+        static const Gecode::ModEventDelta me_c[ME_SET_CBB+1] = {
+          (ME_SET_NONE ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_VAL ^ ME_SET_VAL) << med_bits_fst,
+          (ME_SET_CARD ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_LUB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_GLB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_BB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CLUB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CGLB ^ ME_SET_CBB) << med_bits_fst,
+          (ME_SET_CBB ^ ME_SET_CBB) << med_bits_fst
+        };
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEventDelta med_n = me_c[me_o];
+        if (med_n == 0)
+          return false;
+        med ^= med_n;
+        return true;
+      }
+    default: GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return false;
   }
 
 }}
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
 namespace Gecode { namespace CpltSet { 
-  forceinline Gecode::ModEvent
-  CpltSetVarImpConf::mec(Gecode::ModEvent me_o, Gecode::ModEvent me_n) {
-    const int med = (
-      (
-        ((ME_CPLTSET_NONE ^ ME_CPLTSET_NONE) << 0) |  // [ME_CPLTSET_NONE][ME_CPLTSET_NONE]
-        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 2) |  // [ME_CPLTSET_NONE][ME_CPLTSET_VAL]
-        ((ME_CPLTSET_DOM ^ ME_CPLTSET_DOM) << 4)    // [ME_CPLTSET_NONE][ME_CPLTSET_DOM]
-      ) |
-      (
-        ((ME_CPLTSET_NONE ^ ME_CPLTSET_VAL) << 8) |  // [ME_CPLTSET_VAL][ME_CPLTSET_NONE]
-        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 10) |  // [ME_CPLTSET_VAL][ME_CPLTSET_VAL]
-        ((ME_CPLTSET_DOM ^ ME_CPLTSET_VAL) << 12)    // [ME_CPLTSET_VAL][ME_CPLTSET_DOM]
-      ) |
-      (
-        ((ME_CPLTSET_NONE ^ ME_CPLTSET_DOM) << 16) |  // [ME_CPLTSET_DOM][ME_CPLTSET_NONE]
-        ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) << 18) |  // [ME_CPLTSET_DOM][ME_CPLTSET_VAL]
-        ((ME_CPLTSET_DOM ^ ME_CPLTSET_DOM) << 20)    // [ME_CPLTSET_DOM][ME_CPLTSET_DOM]
-      )
-    );
-    return (((med >> (me_n << 3)) >> (me_o << 1)) & 3);
+  forceinline bool
+  CpltSetVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
+    switch (me) {
+    case ME_CPLTSET_NONE:
+      return false;
+    case ME_CPLTSET_VAL:
+      {
+        Gecode::ModEventDelta med_cpltset = med & (me_bits_mask << med_bits_fst);
+        if (med_cpltset == (ME_CPLTSET_VAL << med_bits_fst))
+          return false;
+        med ^= med_cpltset;
+        med |= ME_CPLTSET_VAL << med_bits_fst;
+        return true;
+      }
+    case ME_CPLTSET_DOM:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_CPLTSET_NONE ^ ME_CPLTSET_DOM) <<  0) |
+          ((ME_CPLTSET_VAL ^ ME_CPLTSET_VAL) <<  4) |
+          ((ME_CPLTSET_DOM ^ ME_CPLTSET_DOM) <<  8)
+        );
+        Gecode::ModEvent me_o = (med >> med_bits_fst) & me_bits_mask;
+        Gecode::ModEvent me_n = me_c >> (me_o << 2);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_bits_fst;
+        return true;
+      }
+    default: GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return false;
   }
 
 }}
 #endif
 namespace Gecode {
   forceinline ModEventDelta
-  AllVarConf::medc(ModEventDelta med_o, ModEventDelta med_n) {
-    ModEventDelta med_c = 0;
+  AllVarConf::med_combine(ModEventDelta med1, ModEventDelta med2) {
 #ifdef GECODE_HAVE_INT_VARS
-    {
-      // Compute the old modification event
-      ModEvent me_o = (med_o >> Gecode::Int::IntVarImpConf::med_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
-      // Compute the new modification event
-      ModEvent me_n = (med_n >> Gecode::Int::IntVarImpConf::med_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask;
-      // Compute combined event
-      ModEvent me_c = Gecode::Int::IntVarImpConf::mec(me_o,me_n);
-      // Add combined event
-      med_c |= me_c << Gecode::Int::IntVarImpConf::med_bits_fst;
-    }
+    (void) Gecode::Int::IntVarImpConf::med_update(med1,(med2 >> Gecode::Int::IntVarImpConf::med_bits_fst) & Gecode::Int::IntVarImpConf::me_bits_mask);
 #endif
 #ifdef GECODE_HAVE_INT_VARS
-    {
-      // Compute the old modification event
-      ModEvent me_o = (med_o >> Gecode::Int::BoolVarImpConf::med_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
-      // Compute the new modification event
-      ModEvent me_n = (med_n >> Gecode::Int::BoolVarImpConf::med_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask;
-      // Compute combined event
-      ModEvent me_c = Gecode::Int::BoolVarImpConf::mec(me_o,me_n);
-      // Add combined event
-      med_c |= me_c << Gecode::Int::BoolVarImpConf::med_bits_fst;
-    }
+    (void) Gecode::Int::BoolVarImpConf::med_update(med1,(med2 >> Gecode::Int::BoolVarImpConf::med_bits_fst) & Gecode::Int::BoolVarImpConf::me_bits_mask);
 #endif
 #ifdef GECODE_HAVE_SET_VARS
-    {
-      // Compute the old modification event
-      ModEvent me_o = (med_o >> Gecode::Set::SetVarImpConf::med_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
-      // Compute the new modification event
-      ModEvent me_n = (med_n >> Gecode::Set::SetVarImpConf::med_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask;
-      // Compute combined event
-      ModEvent me_c = Gecode::Set::SetVarImpConf::mec(me_o,me_n);
-      // Add combined event
-      med_c |= me_c << Gecode::Set::SetVarImpConf::med_bits_fst;
-    }
+    (void) Gecode::Set::SetVarImpConf::med_update(med1,(med2 >> Gecode::Set::SetVarImpConf::med_bits_fst) & Gecode::Set::SetVarImpConf::me_bits_mask);
 #endif
 #ifdef GECODE_HAVE_CPLTSET_VARS
-    {
-      // Compute the old modification event
-      ModEvent me_o = (med_o >> Gecode::CpltSet::CpltSetVarImpConf::med_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
-      // Compute the new modification event
-      ModEvent me_n = (med_n >> Gecode::CpltSet::CpltSetVarImpConf::med_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask;
-      // Compute combined event
-      ModEvent me_c = Gecode::CpltSet::CpltSetVarImpConf::mec(me_o,me_n);
-      // Add combined event
-      med_c |= me_c << Gecode::CpltSet::CpltSetVarImpConf::med_bits_fst;
-    }
+    (void) Gecode::CpltSet::CpltSetVarImpConf::med_update(med1,(med2 >> Gecode::CpltSet::CpltSetVarImpConf::med_bits_fst) & Gecode::CpltSet::CpltSetVarImpConf::me_bits_mask);
 #endif
-    return med_c;
+    return med1;
   }
 }
 

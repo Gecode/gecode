@@ -190,15 +190,21 @@ namespace Gecode {
     static const int me_bits_mask = 0;
     /// End of bits for modification event delta
     static const int med_bits_lst = 0;
-    /// Return difference when changing modification event \a me_o to \a me_n
-    static ModEvent mec(ModEvent me_o, ModEvent me_n);
+    /// Combine modification events \a me1 and \a me2
+    static Gecode::ModEvent me_combine(ModEvent me1, ModEvent me2);
+    /// Update modification even delta \a med by \a me, return true on change
+    static bool med_update(ModEventDelta& med, ModEvent me);
     /// Variable type identifier for reflection
     static GECODE_KERNEL_EXPORT const Support::Symbol vti;
   };
 
   forceinline ModEvent
-  NoIdxVarImpConf::mec(ModEvent, ModEvent) {
+  NoIdxVarImpConf::me_combine(ModEvent, ModEvent) {
     GECODE_NEVER; return 0;
+  }
+  forceinline bool
+  NoIdxVarImpConf::med_update(ModEventDelta&, ModEvent) {
+    GECODE_NEVER; return false;
   }
 
 
@@ -1998,16 +2004,8 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   Space::schedule(Propagator* p, ModEvent me) {
-    ModEventDelta med_o = p->u.med;
-    // Compute the old modification event
-    ModEvent me_o = (med_o >> VIC::med_bits_fst) & VIC::me_bits_mask;
-    // Get the new modification event (xor-ed with the old one)
-    ModEvent me_c = VIC::mec(me_o,me);
-    // Event has not changed, do not nothing
-    if (me_c == 0)
+    if (!VIC::med_update(p->u.med,me))
       return;
-    // Update modification event for propagator (use xor)
-    p->u.med ^= me_c << VIC::med_bits_fst;
     // Put propagator into right queue
     p->unlink(); pool_put(p);
   }
@@ -2047,7 +2045,7 @@ namespace Gecode {
 
   forceinline ExecStatus
   ES_NOFIX_PARTIAL(Propagator* p, ModEventDelta med) {
-    p->u.med ^= AllVarConf::medc(p->u.med,med); 
+    p->u.med ^= AllVarConf::med_combine(p->u.med,med); 
     return __ES_PARTIAL;
   }
 
