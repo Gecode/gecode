@@ -787,12 +787,12 @@ namespace Gecode { namespace Reflection {
     delete curSpec;
     curSpec = NULL;
     cur = cur->next();
-    while ((queue > 0) && (cur == &s->pu.p.pool[queue])) {
+    while ((queue > 0) && (cur == &s->pc.p.queue[queue])) {
       queue--;
-      cur = &s->pu.p.pool[queue];
+      cur = &s->pc.p.queue[queue];
       cur = cur->next();
     }
-    if ((queue == 0) && (cur == &s->pu.p.pool[0])) {
+    if ((queue == 0) && (cur == &s->pc.p.queue[0])) {
       queue--;
       cur = s->a_actors.next();
     }
@@ -801,10 +801,10 @@ namespace Gecode { namespace Reflection {
   }
 
   SpecIter::SpecIter(Space* s0, VarMap& m0)
-  : m(&m0), s(s0), queue(s0->pu.p.pool_next - &s0->pu.p.pool[0]), 
+  : m(&m0), s(s0), queue(s0->pc.p.active - &s0->pc.p.queue[0]), 
     isBranching(false), curSpec(NULL) {
     if (queue >= 0)
-      cur = &s->pu.p.pool[queue];
+      cur = &s->pc.p.queue[queue];
     else
       cur = &s->a_actors;
     ++(*this);

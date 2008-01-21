@@ -294,8 +294,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = 0;
+    /// Index for cloning
+    static const int idx_c = 0;
     /// Index for disposal
     static const int idx_d = -1;
     /// Maximal propagation condition
@@ -323,8 +323,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Int-variable implementations
   class IntVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = -1;
+    /// Index for cloning
+    static const int idx_c = -1;
     /// Index for disposal
     static const int idx_d = -1;
     /// End of bits for modification event delta
@@ -337,8 +337,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = Gecode::Int::IntVarImpConf::idx_u+1;
+    /// Index for cloning
+    static const int idx_c = Gecode::Int::IntVarImpConf::idx_c+1;
     /// Index for disposal
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// Maximal propagation condition
@@ -366,8 +366,8 @@ namespace Gecode { namespace Int {
   /// Configuration class for Bool-variable implementations
   class BoolVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = Gecode::Int::IntVarImpConf::idx_u;
+    /// Index for cloning
+    static const int idx_c = Gecode::Int::IntVarImpConf::idx_c;
     /// Index for disposal
     static const int idx_d = Gecode::Int::IntVarImpConf::idx_d;
     /// End of bits for modification event delta
@@ -380,8 +380,8 @@ namespace Gecode { namespace Set {
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = Gecode::Int::BoolVarImpConf::idx_u+1;
+    /// Index for cloning
+    static const int idx_c = Gecode::Int::BoolVarImpConf::idx_c+1;
     /// Index for disposal
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// Maximal propagation condition
@@ -409,8 +409,8 @@ namespace Gecode { namespace Set {
   /// Configuration class for Set-variable implementations
   class SetVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = Gecode::Int::BoolVarImpConf::idx_u;
+    /// Index for cloning
+    static const int idx_c = Gecode::Int::BoolVarImpConf::idx_c;
     /// Index for disposal
     static const int idx_d = Gecode::Int::BoolVarImpConf::idx_d;
     /// End of bits for modification event delta
@@ -428,8 +428,8 @@ namespace Gecode { namespace CpltSet {
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = Gecode::Set::SetVarImpConf::idx_u+1;
+    /// Index for cloning
+    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c+1;
     /// Index for disposal
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
     /// Maximal propagation condition
@@ -457,8 +457,8 @@ namespace Gecode { namespace CpltSet {
   /// Configuration class for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
-    /// Index for update
-    static const int idx_u = Gecode::Set::SetVarImpConf::idx_u;
+    /// Index for cloning
+    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c;
     /// Index for disposal
     static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
     /// End of bits for modification event delta
@@ -472,8 +472,8 @@ namespace Gecode {
   /// Configuration class for all variable implementations
   class AllVarConf {
   public:
-    /// Index for update
-    static const int idx_u = Gecode::CpltSet::CpltSetVarImpConf::idx_u+1;
+    /// Index for cloning
+    static const int idx_c = Gecode::CpltSet::CpltSetVarImpConf::idx_c+1;
     /// Index for dispose
     static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
     /// Combine modification event delta \a med1 with \a med2

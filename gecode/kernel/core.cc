@@ -68,12 +68,12 @@ namespace Gecode {
     d_fst = NULL;
     d_cur = NULL;
     d_lst = NULL;
-    // Initialize propagator pool
-    pu.p.pool_next = &pu.p.pool[0]-1;
+    // Initialize propagator queues
+    pc.p.active = &pc.p.queue[0]-1;
     for (int i=0; i<=PC_MAX; i++)
-      pu.p.pool[i].init();
-    pu.p.branch_id = 0;
-    pu.p.n_sub = 0;
+      pc.p.queue[i].init();
+    pc.p.branch_id = 0;
+    pc.p.n_sub = 0;
   }
 
 
@@ -155,7 +155,7 @@ namespace Gecode {
     if (failed())
       return SS_FAILED;
     if (!stable()) {
-      assert(pu.p.pool_next >= &pu.p.pool[0]);
+      assert(pc.p.active >= &pc.p.queue[0]);
       Propagator* p;
       ModEventDelta med_o;
       goto unstable;
@@ -173,16 +173,16 @@ namespace Gecode {
         // Find next, if possible
         if (p->u.med != 0) {
         unstable:
-          // There is at least one propagator in the pool
+          // There is at least one propagator in a queue
           do {
-            assert(pu.p.pool_next >= &pu.p.pool[0]);
+            assert(pc.p.active >= &pc.p.queue[0]);
             // First propagator or link back to queue
-            ActorLink* fst = pu.p.pool_next->next();
-            if (pu.p.pool_next != fst) {
+            ActorLink* fst = pc.p.active->next();
+            if (pc.p.active != fst) {
               p = Propagator::cast(fst);
               goto execute;
             }
-            pu.p.pool_next--;
+            pc.p.active--;
           } while (true);
           GECODE_NEVER;
         }
@@ -191,24 +191,24 @@ namespace Gecode {
         // Clear med and put into idle queue
         p->u.med = 0; p->unlink(); a_actors.head(p);
       stable_or_unstable:
-        // There might be a propagator in the pool
+        // There might be a propagator in the queue
         do {
-          assert(pu.p.pool_next >= &pu.p.pool[0]);
+          assert(pc.p.active >= &pc.p.queue[0]);
           // First propagator or link back to queue
-          ActorLink* fst = pu.p.pool_next->next();
-          if (pu.p.pool_next != fst) {
+          ActorLink* fst = pc.p.active->next();
+          if (pc.p.active != fst) {
             p = Propagator::cast(fst);
             goto execute;
           }
-        } while (--pu.p.pool_next >= &pu.p.pool[0]);
-        assert(pu.p.pool_next < &pu.p.pool[0]);
+        } while (--pc.p.active >= &pc.p.queue[0]);
+        assert(pc.p.active < &pc.p.queue[0]);
         goto stable;
       case __ES_SUBSUMED:
         p->unlink(); reuse(p,p->u.size);
         goto stable_or_unstable;
       case __ES_PARTIAL:
         // Schedule propagator with specified propagator events
-        p->unlink(); pool_put(p);
+        enqueue(p);
         goto unstable;
       default:
         GECODE_NEVER;
@@ -249,18 +249,18 @@ namespace Gecode {
   Space::step(void) {
     if (stable())
       return;
-    assert(!stable() && (pu.p.pool_next >= &pu.p.pool[0]));
+    assert(!stable() && (pc.p.active >= &pc.p.queue[0]));
     Propagator* p;
-    // There is at least one propagator in the pool
+    // There is at least one propagator in the queue
     do {
-      assert(pu.p.pool_next >= &pu.p.pool[0]);
+      assert(pc.p.active >= &pc.p.queue[0]);
       // First propagator or link back to queue
-      ActorLink* fst = pu.p.pool_next->next();
-      if (pu.p.pool_next != fst) {
+      ActorLink* fst = pc.p.active->next();
+      if (pc.p.active != fst) {
         p = Propagator::cast(fst);
         break;
       }
-      pu.p.pool_next--;
+      pc.p.active--;
     } while (true);
     // Keep old modification event delta
     ModEventDelta med_o = p->u.med;
@@ -284,19 +284,19 @@ namespace Gecode {
       break;
     case __ES_PARTIAL:
       // Schedule propagator with specified propagator events
-      p->unlink(); pool_put(p);
+      enqueue(p);
       break;
     default:
       GECODE_NEVER;
     }
-    // There might be a propagator in the pool
+    // There might be a propagator in the queue
     do {
-      assert(pu.p.pool_next >= &pu.p.pool[0]);
+      assert(pc.p.active >= &pc.p.queue[0]);
       // First propagator or link back to queue
-      if (pu.p.pool_next != pu.p.pool_next->next())
+      if (pc.p.active != pc.p.active->next())
         break;
-    } while (--pu.p.pool_next >= &pu.p.pool[0]);
-    assert(pu.p.pool_next < &pu.p.pool[0]);
+    } while (--pc.p.active >= &pc.p.queue[0]);
+    assert(pc.p.active < &pc.p.queue[0]);
     return;
   }
 
@@ -342,15 +342,15 @@ namespace Gecode {
    */
 
   Space::Space(bool share, Space& s) 
-    : mm(s.mm,s.pu.p.n_sub*sizeof(Propagator**)) {
+    : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)) {
 #ifdef GECODE_HAVE_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
 #endif
-    for (int i=0; i<AllVarConf::idx_u; i++)
-      pu.u.vars_u[i] = NULL;
-    pu.u.vars_noidx = NULL;
-    pu.u.shared = NULL;
+    for (int i=0; i<AllVarConf::idx_c; i++)
+      pc.c.vars_u[i] = NULL;
+    pc.c.vars_noidx = NULL;
+    pc.c.shared = NULL;
     // Copy all actors
     {
       ActorLink* p  = &a_actors;
@@ -429,7 +429,7 @@ namespace Gecode {
     // Update variables without indexing structure
     {
       VarImp<NoIdxVarImpConf>* x = 
-        static_cast<VarImp<NoIdxVarImpConf>*>(c->pu.u.vars_noidx);
+        static_cast<VarImp<NoIdxVarImpConf>*>(c->pc.c.vars_noidx);
       while (x != NULL) {
         VarImp<NoIdxVarImpConf>* n = x->next();
         x->idx[0] = x->idx[1] = NULL;
@@ -462,22 +462,22 @@ namespace Gecode {
     }
     assert(c_a->prev() == p_a);
     // Reset links for shared objects
-    for (SharedHandle::Object* s = c->pu.u.shared; s != NULL; s = s->next)
+    for (SharedHandle::Object* s = c->pc.c.shared; s != NULL; s = s->next)
       s->fwd = NULL;
-    // Initialize propagator pool
-    c->pu.p.pool_next = &c->pu.p.pool[0]-1;
+    // Initialize propagator queue
+    c->pc.p.active = &c->pc.p.queue[0]-1;
     for (int i=0; i<=PC_MAX; i++)
-      c->pu.p.pool[i].init();
+      c->pc.p.queue[i].init();
     // Copy propagation only data
-    c->pu.p.n_sub = pu.p.n_sub;
-    c->pu.p.branch_id = pu.p.branch_id;
+    c->pc.p.n_sub = pc.p.n_sub;
+    c->pc.p.branch_id = pc.p.branch_id;
     return c;
   }
 
   unsigned int
   Space::propagators(void) const {
     unsigned int n = 0;
-    for (ActorLink* q = pu.p.pool_next; q >= &pu.p.pool[0]; q--)
+    for (ActorLink* q = pc.p.active; q >= &pc.p.queue[0]; q--)
       for (ActorLink* a = q->next(); a != q; a = a->next())
         n++;
     for (ActorLink* a = a_actors.next(); 

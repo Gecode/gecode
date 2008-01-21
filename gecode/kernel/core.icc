@@ -175,7 +175,7 @@ namespace Gecode {
   class NoIdxVarImpConf {
   public:
     /// Index for update
-    static const int idx_u = -1;
+    static const int idx_c = -1;
     /// Index for disposal
     static const int idx_d = -1;
     /// Maximal propagation condition
@@ -307,7 +307,7 @@ namespace Gecode {
     template <class VarType> friend class VarDisposer;
   private:
     /// Index for update
-    static const int idx_u = VIC::idx_u;
+    static const int idx_c = VIC::idx_c;
     /// Index for disposal
     static const int idx_d = VIC::idx_d;
     /// Number of freely available bits
@@ -1061,33 +1061,33 @@ namespace Gecode {
          *
          * This maintains the following invariant (but only if the
          * space does not perform propagation):
-         *  - If pool_next points to an entry in the pool, this
-         *    entry contains a propagator.
-         *  - Otherwise, pool_next is smaller then the beginning of
-         *    the pool. Then, the space is stable.
-         *  - If the space is stable and pool_next is NULL, the space
-         *    is failed.
+         *  - If active points to a queue, this queue might contain
+         *    a propagator. However, there will be at least on queue
+         *    containing a propagator.
+         *  - Otherwise, active is smaller than the beginning of
+         *    the queues. Then, the space is stable.
+         *  - If active is NULL, the space is failed.
          */
-        ActorLink* pool_next;
-        /// Waiting propagators according to cost
-        ActorLink  pool[PC_MAX+1];
+        ActorLink* active;
+        /// Scheduled propagators according to cost
+        ActorLink queue[PC_MAX+1];
         /// Id of next branching to be created
         unsigned int branch_id;
-        /// Number of subscriptions (not during copying)
+        /// Number of subscriptions
         unsigned int n_sub;
       } p;
-      /// Data available only during update
+      /// Data available only during copying
       struct {
         /// Entries for updating variables
-        VarImpBase* vars_u[AllVarConf::idx_u];
+        VarImpBase* vars_u[AllVarConf::idx_c];
         /// Keep variables during copying without index structure
         VarImpBase* vars_noidx;
         /// Linked list of shared objects
         SharedHandle::Object* shared;
-      } u;
-    } pu;
-    /// Put propagator \a p to pool
-    void pool_put(Propagator* p);
+      } c;
+    } pc;
+    /// Put propagator \a p into right queue
+    void enqueue(Propagator* p);
     /**
      * \name update, and dispose variables
      */
@@ -1117,10 +1117,6 @@ namespace Gecode {
 
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
-
-    /// Schedule propagator \a p with modification event \a me
-    template <class VIC> void schedule(Propagator* p, ModEvent me);
-
   public:
     /**
      * \brief Default constructor
@@ -1492,8 +1488,8 @@ namespace Gecode {
     } else {
       o = sh.o->copy(); 
       sh.o->fwd = o;
-      sh.o->next = home->pu.u.shared; 
-      home->pu.u.shared = sh.o;
+      sh.o->next = home->pc.c.shared; 
+      home->pc.c.shared = sh.o;
       subscribe();
     }
   }
@@ -1833,12 +1829,12 @@ namespace Gecode {
       // Variable implementation needs no index structure
       for (PropCond i=0; i<pc_max+3; i++)
         idx[i] = NULL;
-      reg = &home->pu.u.vars_noidx;
+      reg = &home->pc.c.vars_noidx;
     } else {
       // Save original values in copy
       idx[0] = x.idx[0];
       idx[1] = x.idx[1];
-      reg = &home->pu.u.vars_u[idx_u];
+      reg = &home->pc.c.vars_u[idx_c];
     }
     // Set forwarding pointer
     x.idx[0] = reinterpret_cast<ActorLink**>(Support::mark(this));
@@ -1928,7 +1924,7 @@ namespace Gecode {
   forceinline
   Branching::Branching(Space* home) {
     // Propagators are put at the tail of the link of actors
-    id = home->pu.p.branch_id++;
+    id = home->pc.p.branch_id++;
     // If no branching available, make it the first one
     if (home->b_status == &(home->a_actors)) {
       home->b_status = this;
@@ -1974,46 +1970,39 @@ namespace Gecode {
 
 
   /*
-   * Propagator pools
+   * Propagator queues
    *
    */
 
   forceinline void
-  Space::pool_put(Propagator* p) {
-    ActorLink* c = &pu.p.pool[p->cost(p->u.med)];
-    c->tail(p);
-    if (c > pu.p.pool_next)
-      pu.p.pool_next = c;
+  Space::enqueue(Propagator* p) {
+    ActorLink::cast(p)->unlink();
+    ActorLink* c = &pc.p.queue[p->cost(p->u.med)];
+    c->tail(ActorLink::cast(p));
+    if (c > pc.p.active)
+      pc.p.active = c;
   }
 
   forceinline void
   Space::fail(void) {
-    pu.p.pool_next = NULL;
+    pc.p.active = NULL;
   }
 
   forceinline bool
   Space::failed(void) const {
-    return pu.p.pool_next == NULL;
+    return pc.p.active == NULL;
   }
 
   forceinline bool
   Space::stable(void) const {
-    return pu.p.pool_next < &pu.p.pool[0];
-  }
-
-  template <class VIC>
-  forceinline void
-  Space::schedule(Propagator* p, ModEvent me) {
-    if (!VIC::med_update(p->u.med,me))
-      return;
-    // Put propagator into right queue
-    p->unlink(); pool_put(p);
+    return pc.p.active < &pc.p.queue[0];
   }
 
   template <class VIC>
   forceinline void
   VarImp<VIC>::schedule(Space* home, Propagator* p, ModEvent me) {
-    home->schedule<VIC>(p,me);
+    if (VIC::med_update(p->u.med,me))
+      home->enqueue(p);
   }
 
   template <class VIC>
@@ -2022,7 +2011,8 @@ namespace Gecode {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
-      home->schedule<VIC>(Propagator::cast(*p),me);
+      if (VIC::med_update(Propagator::cast(*p)->u.med,me))
+        home->enqueue(Propagator::cast(*p));
   }
 
 
@@ -2059,7 +2049,7 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
     // Count one new subscription
-    home->pu.p.n_sub += 1;
+    home->pc.p.n_sub += 1;
     if ((free_and_bits >> free_bits) == 0)
       resize(home);
     free_and_bits -= 1 << free_bits;
@@ -2090,7 +2080,7 @@ namespace Gecode {
       ActorLink** s = static_cast<ActorLink**>
         (home->mm.subscriptions());
       unsigned int m = 
-        ((s <= idx[0]) && (idx[0] < s+home->pu.p.n_sub)) ?
+        ((s <= idx[0]) && (idx[0] < s+home->pc.p.n_sub)) ?
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(m*sizeof(ActorLink*))) + m-n;
@@ -2113,12 +2103,12 @@ namespace Gecode {
     if (assigned) {
       // Do not subscribe, just schedule the propagator
       if (schedule)
-        home->schedule<VIC>(p,ME_GEN_ASSIGNED);
+        VarImp<VIC>::schedule(home,p,ME_GEN_ASSIGNED);
     } else {
       enter(home,ActorLink::cast(p),pc);
       // Schedule propagator
       if (schedule && (pc != PC_GEN_ASSIGNED))
-        home->schedule<VIC>(p,me);
+        VarImp<VIC>::schedule(home,p,me);
     }
   }
 
@@ -2160,7 +2150,7 @@ namespace Gecode {
       *(idx[i]++)=*(idx[i-1]);
     idx[0]++;
     free_and_bits += 1 << free_bits;
-    home->pu.p.n_sub -= 1;
+    home->pc.p.n_sub -= 1;
   }
 
   template <class VIC>
@@ -2184,7 +2174,7 @@ namespace Gecode {
     // must still work for cloning (idx[0]) and degree (idx[PC+2])
     ActorLink** b = idx[0]; idx[0] = NULL;
     ActorLink** p = idx[pc_max+2]; idx[pc_max+2] = NULL;
-    home->pu.p.n_sub -= (p-b);
+    home->pc.p.n_sub -= (p-b);
     unsigned int n = (free_and_bits >> VIC::free_bits) + (p-b);
     home->reuse(p-n,n*sizeof(ActorLink*));
   }
@@ -2265,7 +2255,7 @@ namespace Gecode {
   template <class VIC>
   forceinline void
   VarImp<VIC>::update(Space* home, ActorLink**& sub) {
-    VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home->pu.u.vars_u[idx_u]);
+    VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home->pc.c.vars_u[idx_c]);
     while (x != NULL) {
       VarImp<VIC>* n = x->next(); x->forward()->update(x,sub); x = n;
     }

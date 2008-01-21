@@ -370,12 +370,12 @@ if ($gen_typeicc) {
     print "  /// Configuration class for $name[$f]-variable implementations\n";
     print "  class $conf[$f] {\n";
     print "  public:\n";
-    print "    /// Index for update\n";
-    print "    static const int idx_u = ";
+    print "    /// Index for cloning\n";
+    print "    static const int idx_c = ";
     if ($f == 0) {
       print "0;\n";
     } else {
-      print "$namespace[$f-1]::$conf[$f-1]::idx_u+1;\n";
+      print "$namespace[$f-1]::$conf[$f-1]::idx_c+1;\n";
     }
     print "    /// Index for disposal\n";
     print "    static const int idx_d = ";
@@ -423,12 +423,12 @@ if ($gen_typeicc) {
       print "  /// Configuration class for $name[$f]-variable implementations\n";
       print "  class $conf[$f] {\n";
       print "  public:\n";
-      print "    /// Index for update\n";
-      print "    static const int idx_u = ";
+      print "    /// Index for cloning\n";
+      print "    static const int idx_c = ";
       if ($f == 0) {
 	print "-1;\n";
       } else {
-	print "$namespace[$f-1]::$conf[$f-1]::idx_u;\n";
+	print "$namespace[$f-1]::$conf[$f-1]::idx_c;\n";
       }
       print "    /// Index for disposal\n";
       print "    static const int idx_d = ";
@@ -454,8 +454,8 @@ if ($gen_typeicc) {
   print "  /// Configuration class for all variable implementations\n";
   print "  class AllVarConf {\n";
   print "  public:\n";
-  print "    /// Index for update\n";
-  print "    static const int idx_u = $namespace[$n_files-1]::$conf[$n_files-1]::idx_u+1;\n";
+  print "    /// Index for cloning\n";
+  print "    static const int idx_c = $namespace[$n_files-1]::$conf[$n_files-1]::idx_c+1;\n";
   print "    /// Index for dispose\n";
   print "    static const int idx_d = $namespace[$n_files-1]::$conf[$n_files-1]::idx_d+1;\n";
   print "    /// Combine modification event delta \\a med1 with \\a med2\n";
