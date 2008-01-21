@@ -216,7 +216,8 @@ namespace Gecode { namespace Set {
     return intersect(home, i, i);
   }
 
-  template <class I> forceinline ModEvent
+  template <class I>
+  inline ModEvent
   SetVarImp::intersectI(Space* home, I& iterator) {
     if (assigned()) {
       BndSetRanges lbi(glb);
@@ -242,7 +243,8 @@ namespace Gecode { namespace Set {
       return intersect(home, mi, ma);    
   }
 
-  template <class I> ModEvent
+  template <class I>
+  ModEvent
   SetVarImp::intersectI_full(Space* home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
     if (lub.intersectI(home, si)) {
@@ -313,7 +315,8 @@ namespace Gecode { namespace Set {
       return include(home, mi, ma);
   }
 
-  template <class I> ModEvent
+  template <class I>
+  ModEvent
   SetVarImp::includeI_full(Space* home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
     if (glb.includeI(home, si)) {
@@ -347,7 +350,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::exclude(Space* home,int i, int j) {
+  SetVarImp::exclude(Space* home, int i, int j) {
     Iter::Ranges::Singleton sij(i,j);
     BndSetRanges lb(glb);
     Iter::Ranges::Inter<Iter::Ranges::Singleton,BndSetRanges> probe(sij,lb);
@@ -360,15 +363,15 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::exclude(Space* home,int i) {
+  SetVarImp::exclude(Space* home, int i) {
     return exclude(home, i, i);
   }
 
-  template <class I> forceinline ModEvent
+  template <class I>
+  inline ModEvent
   SetVarImp::excludeI(Space* home, I& iterator) {
-    if (!iterator()) {
+    if (!iterator())
       return ME_SET_NONE;
-    }
     if (assigned()) {
       BndSetRanges ubi(lub);
       Iter::Ranges::Inter<BndSetRanges,I> probe(ubi,iterator);
@@ -383,7 +386,8 @@ namespace Gecode { namespace Set {
       return exclude(home, mi, ma);
   }
 
-  template <class I> ModEvent
+  template <class I>
+  ModEvent
   SetVarImp::excludeI_full(Space* home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
     if (lub.excludeI(home, si)) {
