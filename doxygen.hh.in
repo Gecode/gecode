@@ -1054,15 +1054,15 @@ same propagator. Examples of views are \ref TaskActorIntView and
 
 
 /**
- * \page PageHowToChange_2 How to Change to Gecode 2.0.0
+ * \page PageHowToChange_2 How to Change from Gecode 1.3.1 to Gecode 2.0.x
  *
 
-As Gecode 2.0.0 is a major revision of Gecode, your programs are
-likely to require some modifications before they work again. All
-modifications are straightforward, though.
+As Gecode 2.0.0 is a major revision of Gecode, your programs that are written
+for Gecode 1.3.1 are likely to require some modifications before they work
+again. All modifications are straightforward, though.
 
-This short summary is how to adapt your models, for changes to
-propagator implementations, etc, please consult the changelog.
+This short summary shows how to adapt your models and linker invocation, for
+changes to propagator implementations, etc, please consult the changelog.
 
 \section SecChange2IntBool IntVar and BoolVar
 
@@ -1114,5 +1114,11 @@ documentation for \ref TaskModelIntCard "details".
 \section SecChange2Sorted Sortedness constraint
 
 The sortedness constraint has been renamed to sorted.
+
+\section Linking
+
+Some generic functionality has been put into its own library (\code
+libgecodesupport \endcode on Unix systems, \code GecodeSupport.dll \endcode on
+Windows). You have to link against this library now.
 
 */
