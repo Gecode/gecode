@@ -486,15 +486,15 @@ namespace Gecode {
 namespace Gecode { namespace Int { 
   forceinline Gecode::ModEvent
   IntVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
-    const int med = (
+    static const Gecode::ModEvent me_c = (
       (
-        (ME_INT_NONE << 0) |  // [ME_INT_NONE][ME_INT_NONE]
-        (ME_INT_VAL << 2) |  // [ME_INT_NONE][ME_INT_VAL]
-        (ME_INT_BND << 4) |  // [ME_INT_NONE][ME_INT_BND]
-        (ME_INT_DOM << 6)    // [ME_INT_NONE][ME_INT_DOM]
+        (ME_INT_NONE <<  0) |  // [ME_INT_NONE][ME_INT_NONE]
+        (ME_INT_VAL <<  2) |  // [ME_INT_NONE][ME_INT_VAL]
+        (ME_INT_BND <<  4) |  // [ME_INT_NONE][ME_INT_BND]
+        (ME_INT_DOM <<  6)    // [ME_INT_NONE][ME_INT_DOM]
       ) |
       (
-        (ME_INT_VAL << 8) |  // [ME_INT_VAL][ME_INT_NONE]
+        (ME_INT_VAL <<  8) |  // [ME_INT_VAL][ME_INT_NONE]
         (ME_INT_VAL << 10) |  // [ME_INT_VAL][ME_INT_VAL]
         (ME_INT_VAL << 12) |  // [ME_INT_VAL][ME_INT_BND]
         (ME_INT_VAL << 14)    // [ME_INT_VAL][ME_INT_DOM]
@@ -512,7 +512,7 @@ namespace Gecode { namespace Int {
         (ME_INT_DOM << 30)    // [ME_INT_DOM][ME_INT_DOM]
       )
     );
-    return (((med >> (me2 << 3)) >> (me1 << 1)) & 3);
+    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;
   }
 
 }}
@@ -530,7 +530,7 @@ namespace Gecode { namespace Int {
 namespace Gecode { namespace Set { 
   forceinline Gecode::ModEvent
   SetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
-    static const unsigned char med[ME_SET_CBB+1][ME_SET_CBB+1] = {
+    static const Gecode::ModEvent me_c[ME_SET_CBB+1][ME_SET_CBB+1] = {
       {
         ME_SET_NONE, // [ME_SET_NONE][ME_SET_NONE]
         ME_SET_VAL, // [ME_SET_NONE][ME_SET_VAL]
@@ -631,7 +631,7 @@ namespace Gecode { namespace Set {
         ME_SET_CBB  // [ME_SET_CBB][ME_SET_CBB]
       }
     };
-    return static_cast<Gecode::ModEvent>(med[me1][me2]);
+    return me_c[me1][me2];
   }
 
 }}
@@ -640,14 +640,14 @@ namespace Gecode { namespace Set {
 namespace Gecode { namespace CpltSet { 
   forceinline Gecode::ModEvent
   CpltSetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
-    const int med = (
+    static const Gecode::ModEvent me_c = (
       (
-        (ME_CPLTSET_NONE << 0) |  // [ME_CPLTSET_NONE][ME_CPLTSET_NONE]
-        (ME_CPLTSET_VAL << 2) |  // [ME_CPLTSET_NONE][ME_CPLTSET_VAL]
-        (ME_CPLTSET_DOM << 4)    // [ME_CPLTSET_NONE][ME_CPLTSET_DOM]
+        (ME_CPLTSET_NONE <<  0) |  // [ME_CPLTSET_NONE][ME_CPLTSET_NONE]
+        (ME_CPLTSET_VAL <<  2) |  // [ME_CPLTSET_NONE][ME_CPLTSET_VAL]
+        (ME_CPLTSET_DOM <<  4)    // [ME_CPLTSET_NONE][ME_CPLTSET_DOM]
       ) |
       (
-        (ME_CPLTSET_VAL << 8) |  // [ME_CPLTSET_VAL][ME_CPLTSET_NONE]
+        (ME_CPLTSET_VAL <<  8) |  // [ME_CPLTSET_VAL][ME_CPLTSET_NONE]
         (ME_CPLTSET_VAL << 10) |  // [ME_CPLTSET_VAL][ME_CPLTSET_VAL]
         (ME_CPLTSET_VAL << 12)    // [ME_CPLTSET_VAL][ME_CPLTSET_DOM]
       ) |
@@ -657,7 +657,7 @@ namespace Gecode { namespace CpltSet {
         (ME_CPLTSET_DOM << 20)    // [ME_CPLTSET_DOM][ME_CPLTSET_DOM]
       )
     );
-    return (((med >> (me2 << 3)) >> (me1 << 1)) & 3);
+    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;
   }
 
 }}

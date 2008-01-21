@@ -470,7 +470,7 @@ if ($gen_typeicc) {
     if ($me_max_n[$f] == 2) {
       print "    return me1 | me2;\n";
     } elsif ($me_max_n[$f] <= 4) {
-      print "    const int med = (\n";
+      print "    static const Gecode::ModEvent me_c = (\n";
 
       for ($i=0; $i<$me_max_n[$f];$i++) {
 	$n1 = $val2me[$f][$i];
@@ -484,12 +484,15 @@ if ($gen_typeicc) {
 	  } else {
 	    $n3 = $mec{$f}{$n1}{$n2};
 	  }
-	  print "        (ME_$vti[$f]_$n3 << ";
-	  print (($i << 3) + ($j << 1));
+	  $shift = (($i << 3) + ($j << 1));
+	  if ($shift < 10) {
+	    $shift = " $shift";
+	  }
+	  print "        (ME_$vti[$f]_$n3 << $shift)";
 	  if ($j+1 == $me_max_n[$f]) {
-	    print ")   ";
+	    print "   ";
 	  } else {
-	    print ") | ";
+	    print " | ";
 	  }
 	  print " // [ME_$vti[$f]_$n1][ME_$vti[$f]_$n2]\n";
 	}
@@ -500,9 +503,9 @@ if ($gen_typeicc) {
 	}
       }
       print "    );\n";
-      print "    return (((med >> (me2 << 3)) >> (me1 << 1)) & 3);\n";
+      print "    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;\n";
     } else {
-      print "    static const unsigned char med[$me_max[$f]][$me_max[$f]] = {\n";
+      print "    static const Gecode::ModEvent me_c[$me_max[$f]][$me_max[$f]] = {\n";
       for ($i=0; $i<$me_max_n[$f];$i++) {
 	$n1 = $val2me[$f][$i];
 	print "      {\n";
@@ -531,7 +534,7 @@ if ($gen_typeicc) {
 	}
       }
       print "    };\n";
-      print "    return static_cast<Gecode::ModEvent>(med[me1][me2]);\n";
+      print "    return me_c[me1][me2];\n";
     }
     print "  }\n\n";
     print $ftr[$f];
