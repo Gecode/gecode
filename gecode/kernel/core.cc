@@ -39,21 +39,75 @@
 
 namespace Gecode {
 
-  GECODE_KERNEL_EXPORT unsigned long int Space::unused_uli;
-
   /*
-   * Spaces
+   * Variable type disposer
    *
    */
+  void
+  VarDisposerBase::dispose(Space*,VarImpBase*) {}
 
-#ifdef GECODE_HAVE_VAR_DISPOSE
-  GECODE_KERNEL_EXPORT VarDisposerBase* Space::vd[AllVarConf::idx_d];
-#endif
-
-  void VarDisposerBase::dispose(Space*,VarImpBase*) {}
   VarDisposerBase::~VarDisposerBase(void) {}
 
 
+
+  /*
+   * Actor
+   *
+   */
+  Reflection::ActorSpec&
+  Actor::spec(Space*, Reflection::VarMap&) {
+    throw Reflection::NoReflectionDefinedException();
+  }
+
+  Reflection::ActorSpec&
+  Actor::spec(Space*, Reflection::VarMap&, const Support::Symbol& name) {
+    return *new Reflection::ActorSpec(name);
+  }
+
+  size_t
+  Actor::allocated(void) const {
+    return 0;
+  }
+
+#ifdef __GNUC__
+  /// To avoid warnings from GCC
+  Actor::~Actor(void) {}
+#endif
+
+
+
+  /*
+   * Propagator
+   *
+   */
+  ExecStatus 
+  Propagator::advise(Space*, Advisor*, const Delta*) {
+    assert(false);
+    return ES_FAILED;
+  }
+
+
+
+  /*
+   * Branching
+   *
+   */
+  Reflection::BranchingSpec
+  Branching::branchingSpec(Space*, Reflection::VarMap&, const BranchingDesc*) {
+    throw Reflection::NoReflectionDefinedException();
+  }
+
+
+
+  /*
+   * Space: Misc
+   *
+   */
+  unsigned long int Space::unused_uli;
+
+#ifdef GECODE_HAVE_VAR_DISPOSE
+  VarDisposerBase* Space::vd[AllVarConf::idx_d];
+#endif
 
   Space::Space(void) {
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -62,35 +116,15 @@ namespace Gecode {
 #endif
     // Initialize actor and branching links
     a_actors.init();
-    b_status = Branching::cast(&a_actors);
-    b_commit = Branching::cast(&a_actors);
+    b_status = b_commit = Branching::cast(&a_actors);
     // Initialize array for forced deletion to be empty
-    d_fst = NULL;
-    d_cur = NULL;
-    d_lst = NULL;
+    d_fst = d_cur = d_lst = NULL;
     // Initialize propagator queues
     pc.p.active = &pc.p.queue[0]-1;
     for (int i=0; i<=PC_MAX; i++)
       pc.p.queue[i].init();
     pc.p.branch_id = 0;
     pc.p.n_sub = 0;
-  }
-
-
-
-  /*
-   * Space deletion
-   *
-   */
-
-#ifdef __GNUC__
-  /// To avoid warnings from GCC
-  Actor::~Actor(void) {}
-#endif
-
-  size_t
-  Actor::allocated(void) const {
-    return 0;
   }
 
   size_t
@@ -124,6 +158,40 @@ namespace Gecode {
     }
   }
   
+  unsigned int
+  Space::propagators(void) const {
+    unsigned int n = 0;
+    for (ActorLink* q = pc.p.active; q >= &pc.p.queue[0]; q--)
+      for (ActorLink* a = q->next(); a != q; a = a->next())
+        n++;
+    for (ActorLink* a = a_actors.next(); 
+         Branching::cast(a) != b_commit; a = a->next())
+      n++;
+    return n;
+  }
+
+  unsigned int
+  Space::branchings(void) const {
+    unsigned int n = 0;
+    for (ActorLink* a = Branching::cast(b_status); 
+         a != &a_actors; a = a->next())
+      n++;
+    return n;
+  }
+
+  void
+  Space::getVars(Reflection::VarMap&, bool) {}
+
+  Reflection::BranchingSpec
+  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc* d) {
+    Branching* b = b_commit;
+    while ((b != Branching::cast(&a_actors)) && (d->_id != b->id))
+      b = Branching::cast(b->next());
+    if (b == Branching::cast(&a_actors))
+      throw SpaceNoBranching();
+    return b->branchingSpec(this, m, d);
+  }
+
   Space::~Space(void) {
     // Mark space as failed
     fail();
@@ -146,8 +214,10 @@ namespace Gecode {
 #endif
   }
 
+
+
   /*
-   * Main control for propagation and branching
+   * Space: propagation
    *
    */
   SpaceStatus
@@ -240,11 +310,6 @@ namespace Gecode {
     return SS_SOLVED;
   }
 
-
-  /*
-   * Step-by-step propagation
-   * 
-   */
   void
   Space::step(void) {
     if (stable())
@@ -329,6 +394,8 @@ namespace Gecode {
       fail();
   }
 
+
+
   /*
    * Space cloning
    *
@@ -340,7 +407,6 @@ namespace Gecode {
    *    variables is updated and their forwarding information is reset.
    *
    */
-
   Space::Space(bool share, Space& s) 
     : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)) {
 #ifdef GECODE_HAVE_VAR_DISPOSE
@@ -353,8 +419,8 @@ namespace Gecode {
     pc.c.shared = NULL;
     // Copy all actors
     {
-      ActorLink* p  = &a_actors;
-      ActorLink* e  = &s.a_actors;
+      ActorLink* p = &a_actors;
+      ActorLink* e = &s.a_actors;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
         Actor* c = Actor::cast(a)->copy(this,share);
         // Link copied actor
@@ -370,9 +436,7 @@ namespace Gecode {
       ptrdiff_t n = s.d_cur - s.d_fst;
       if (n == 0) {
         // No actors
-        d_fst = NULL;
-        d_cur = NULL;
-        d_lst = NULL;
+        d_fst = d_cur = d_lst = NULL;
       } else {
         // Leave one entry free
         Actor** a = static_cast<Actor**>(alloc((n+1)*sizeof(Actor*)));
@@ -399,12 +463,6 @@ namespace Gecode {
     }
   }
 
-
-  /*
-   * Stage 2: updating variables
-   *
-   */
-
   Space*
   Space::clone(bool share) {
     if (failed())
@@ -412,35 +470,20 @@ namespace Gecode {
     if (!stable())
       throw SpaceNotStable("Space::clone");
 
-    /*
-     * Stage one
-     *
-     * Copy all data structures (which in turn will invoke the
-     * constructor Space::Space).
-     */
+    // Copy all data structures (which in turn will invoke the constructor)
     Space* c = copy(share);
 
-    /*
-     * Stage two
-     *
-     * Update subscriptions and reset forwarding pointers
-     *
-     */
     // Update variables without indexing structure
-    {
-      VarImp<NoIdxVarImpConf>* x = 
-        static_cast<VarImp<NoIdxVarImpConf>*>(c->pc.c.vars_noidx);
-      while (x != NULL) {
-        VarImp<NoIdxVarImpConf>* n = x->next();
-        x->idx[0] = x->idx[1] = NULL;
-        x = n;
-      }
+    VarImp<NoIdxVarImpConf>* x = 
+      static_cast<VarImp<NoIdxVarImpConf>*>(c->pc.c.vars_noidx);
+    while (x != NULL) {
+      VarImp<NoIdxVarImpConf>* n = x->next();
+      x->idx[0] = x->idx[1] = NULL;
+      x = n;
     }
     // Update variables with indexing structure
-    {
-      ActorLink** s = static_cast<ActorLink**>(c->mm.subscriptions());
-      c->update(s);
-    }
+    c->update(static_cast<ActorLink**>(c->mm.subscriptions()));
+
     // Re-establish prev links (reset forwarding information)
     ActorLink* p_a = &a_actors;
     ActorLink* c_a = p_a->next();
@@ -456,14 +499,16 @@ namespace Gecode {
       }
       c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
     }
-    // Now the branchings
+    // Update branchings
     while (c_a != &a_actors) {
       c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
     }
     assert(c_a->prev() == p_a);
+
     // Reset links for shared objects
     for (SharedHandle::Object* s = c->pc.c.shared; s != NULL; s = s->next)
       s->fwd = NULL;
+
     // Initialize propagator queue
     c->pc.p.active = &c->pc.p.queue[0]-1;
     for (int i=0; i<=PC_MAX; i++)
@@ -472,75 +517,6 @@ namespace Gecode {
     c->pc.p.n_sub = pc.p.n_sub;
     c->pc.p.branch_id = pc.p.branch_id;
     return c;
-  }
-
-  unsigned int
-  Space::propagators(void) const {
-    unsigned int n = 0;
-    for (ActorLink* q = pc.p.active; q >= &pc.p.queue[0]; q--)
-      for (ActorLink* a = q->next(); a != q; a = a->next())
-        n++;
-    for (ActorLink* a = a_actors.next(); 
-         Branching::cast(a) != b_commit; a = a->next())
-      n++;
-    return n;
-  }
-
-  unsigned int
-  Space::branchings(void) const {
-    unsigned int n = 0;
-    for (ActorLink* a = Branching::cast(b_status); 
-         a != &a_actors; a = a->next())
-      n++;
-    return n;
-  }
-
-  void
-  Space::getVars(Reflection::VarMap&, bool) {}
-
-  Reflection::BranchingSpec
-  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc* d) {
-    Branching* bra = b_commit;
-    while ((bra != Branching::cast(&a_actors)) && 
-           (d->_id != bra->id)) {
-      bra = Branching::cast(bra->next());
-    }
-    if (bra == Branching::cast(&a_actors))
-      throw SpaceNoBranching();
-    return bra->branchingSpec(this, m, d);
-  }
-
-  /*
-   * Propagator
-   *
-   */
-  ExecStatus 
-  Propagator::advise(Space*, Advisor*, const Delta*) {
-    assert(false);
-    return ES_FAILED;
-  }
-
-  /*
-   * Branching
-   *
-   */
-  Reflection::BranchingSpec
-  Branching::branchingSpec(Space*, Reflection::VarMap&, const BranchingDesc*) {
-    throw Reflection::NoReflectionDefinedException();
-  }
-
-  /*
-   * Actor
-   *
-   */
-  Reflection::ActorSpec&
-  Actor::spec(Space*, Reflection::VarMap&) {
-    throw Reflection::NoReflectionDefinedException();
-  }
-
-  Reflection::ActorSpec&
-  Actor::spec(Space*, Reflection::VarMap&, const Support::Symbol& name) {
-    return *new Reflection::ActorSpec(name);
   }
 
 }

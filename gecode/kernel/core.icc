@@ -241,14 +241,9 @@ namespace Gecode {
    */
   class GECODE_VTABLE_EXPORT VarDisposerBase {
   public:
-    /**
-      * \brief Dispose variables
-      *
-      * If needed for the variable type, dispose a list of
-      * variables, with \a x being the first variable in the list.
-      */
+    /// Dispose list of variable implementations starting at \a x
     GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarImpBase* x);
-    /// Destructor (not really used)
+    /// Destructor (not used)
     GECODE_KERNEL_EXPORT virtual ~VarDisposerBase(void);
   };
 
@@ -263,23 +258,11 @@ namespace Gecode {
   public:
     /// Constructor (registers disposer with kernel)
     VarDisposer(void);
-    /**
-      * \brief Dispose variables
-      *
-      * If needed for the variable type, dispose a list of
-      * variables, with \a x being the first variable in the list.
-      */
+    /// Dispose list of variable implementations starting at \a x
     virtual void dispose(Space* home, VarImpBase* x);
   };
 
-  /**
-   * \brief Domain change information to be supplied to advisors
-   *
-   * Generically, this class only manages modification events. More
-   * information is of course dependent on the particular variable
-   * types and is managed by subclassing.
-   *
-   */
+  /// Generic domain change information to be supplied to advisors
   class Delta {
     template <class VIC> friend class VarImp;
   private:
@@ -289,7 +272,6 @@ namespace Gecode {
     /// Return modification event
     ModEvent modevent(void) const;
   };
-
 
   /**
    * \brief Base-class for variable implementations
@@ -1509,21 +1491,29 @@ namespace Gecode {
 
 
   /*
-   * ActorLinks as common superclass for propagators and branchings
+   * ActorLinks
    *
    */
-
   forceinline ActorLink*
-  ActorLink::prev(void) const { return _prev; }
+  ActorLink::prev(void) const {
+    return _prev; 
+  }
   forceinline ActorLink*
-  ActorLink::next(void) const { return _next; }
+  ActorLink::next(void) const { 
+    return _next; 
+  }
   forceinline ActorLink**
-  ActorLink::next_ref(void) { return &_next; }
+  ActorLink::next_ref(void) { 
+    return &_next; 
+  }
   forceinline void
-  ActorLink::prev(ActorLink* al) { _prev = al; }
+  ActorLink::prev(ActorLink* al) { 
+    _prev = al; 
+  }
   forceinline void
-  ActorLink::next(ActorLink* al) { _next = al; }
-
+  ActorLink::next(ActorLink* al) { 
+    _next = al; 
+  }
   forceinline void
   ActorLink::unlink(void) {
     ActorLink* p = _prev; ActorLink* n = _next;
@@ -2008,8 +1998,7 @@ namespace Gecode {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
-      if (VIC::med_update(Propagator::cast(*p)->u.med,me))
-        home->enqueue(Propagator::cast(*p));
+      schedule(home,Propagator::cast(*p),me);
   }
 
 
@@ -2270,8 +2259,7 @@ namespace Gecode {
   VarDisposer<VarType>::dispose(Space* home, VarImpBase* _x) {
     VarType* x = static_cast<VarType*>(_x);
     do {
-      x->dispose(home);
-      x = static_cast<VarType*>(x->next_d());
+      x->dispose(home); x = static_cast<VarType*>(x->next_d());
     } while (x != NULL);
   }
 
