@@ -401,19 +401,13 @@ namespace Gecode { namespace Int {
   IntVarImp::nq(Space* home, int n) {
     if ((n < dom.min()) || (n > dom.max())) 
       return ME_INT_NONE;
-    ModEvent me = nq_full(home,n);
-    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL) | 
-                  (me == ME_INT_BND) | (me == ME_INT_DOM)); 
-    return me;
+    return nq_full(home,n);
   }
   forceinline ModEvent
   IntVarImp::nq(Space* home, double d) {
     if ((d < dom.min()) || (d > dom.max())) 
       return ME_INT_NONE;
-    ModEvent me = nq_full(home,static_cast<int>(d));
-    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL) | 
-                  (me == ME_INT_BND) | (me == ME_INT_DOM)); 
-    return me;
+    return nq_full(home,static_cast<int>(d));
   }
 
 
@@ -850,12 +844,8 @@ namespace Gecode { namespace Int {
     } while (i() && (i.val() == v));
 
     // Is there only a single value to be pruned?
-    if (!i() || (i.val() > dom.max())) {
-      ModEvent me = nq_full(home,v);
-      GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL) | 
-                    (me == ME_INT_BND) | (me == ME_INT_DOM)); 
-      return me;
-    }
+    if (!i() || (i.val() > dom.max()))
+      return nq_full(home,v);
 
     // Set up two sentinel elements
     RangeList f, l;
