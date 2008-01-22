@@ -166,7 +166,7 @@ namespace Gecode {
     if (o != NULL) {
       int mask = (1<<o->n_log)-1;
       int p = n & mask;
-      while ((o->table[p].symbol != n) && (o->table[p].fst != NULL))
+      while ((o->table[p].fst != NULL) && (o->table[p].symbol != n))
         p = (p+1) & mask;
       c_trans = o->table[p].fst;
       e_trans = o->table[p].lst;

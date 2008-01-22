@@ -612,7 +612,8 @@ namespace Gecode {
    * \li Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *     and domain-consistency (\a icl = ICL_DOM).
    * \li Throws an exception of type Int::NumericalOverflow, if
-   *     the integers in \a n exceed the limits in Limits::Int.
+   *     the integers in \a n exceed the limits in Limits::Int
+   *     or if the combinations of \a n and \a x exceed the limits.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a n are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x contains

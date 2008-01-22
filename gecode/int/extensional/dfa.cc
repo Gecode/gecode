@@ -512,10 +512,8 @@ namespace Gecode {
     table = static_cast<HashEntry*>
       (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
     // Initialize table
-    for (int i=(1<<n_log); i--; ) {
-      table[i].symbol = Limits::Int::int_min-1;
+    for (int i=(1<<n_log); i--; )
       table[i].fst = table[i].lst = NULL;
-    }
     int mask = (1 << n_log) - 1;
     // Enter transitions to table
     for (unsigned int i = 0; i<n_trans; ) {

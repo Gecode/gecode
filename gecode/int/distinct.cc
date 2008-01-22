@@ -70,11 +70,18 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::distinct");
     if (home->failed()) return;
     ViewArray<OffsetView> cx(home,x.size());
-    for (int i = c.size(); i--; )
-      if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
+    for (int i = c.size(); i--; ) {
+      double cx_min = (static_cast<double>(c[i]) + 
+                       static_cast<double>(x[i].min()));
+      double cx_max = (static_cast<double>(c[i]) + 
+                       static_cast<double>(x[i].max()));
+      if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max) ||
+          (cx_min < static_cast<double>(Limits::Int::int_min)) ||
+          (cx_max > static_cast<double>(Limits::Int::int_max)))
         throw NumericalOverflow("Int::distinct");
       else
         cx[i].init(x[i],c[i]);
+    }
     switch (icl) {
     case ICL_BND:
       GECODE_ES_FAIL(home,Distinct::Bnd<OffsetView>::post(home,cx));

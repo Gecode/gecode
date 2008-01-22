@@ -200,9 +200,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   NaryMax<View>::propagate(Space* home, ModEventDelta) {
   rerun:
-    int maxmax = Limits::Int::int_min-1;
-    int maxmin = Limits::Int::int_min-1;
-    for (int i = x.size(); i--; ) {
+    assert(x.size() > 0);
+    int maxmax = x[x.size()-1].max();
+    int maxmin = x[x.size()-1].min();
+    for (int i = x.size()-1; i--; ) {
       maxmax = std::max(x[i].max(),maxmax);
       maxmin = std::max(x[i].min(),maxmin);
     }

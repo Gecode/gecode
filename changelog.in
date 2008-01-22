@@ -71,6 +71,13 @@ Lots of nice gimmicks for Christmas!
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Distinct with integer offsets checks accurately for overflow now.
+
+[ENTRY]
+Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
