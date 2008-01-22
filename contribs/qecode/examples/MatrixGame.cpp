@@ -37,11 +37,17 @@ THE SOFTWARE.
 #define UNIVERSAL true
 #define EXISTENTIAL false
 
+// The Matrix game consists in a square boolean matrix of size 2^depth. First player cuts it vertically in two parts and removes one half,
+// while secodn player do the same, but cutting the matrix horizontally. The game ends when there are only one cell left in the matrix. 
+// If this last cell has value 1, the first player wins. If it has value 0, the second player wins. 
+
+// The present model of this game is pure QBF, that QeCode can handle (though not as fast as QBF solvers...)
+
 using namespace MiniModel;
 
 int main (int argc, char * const argv[]) {
     
-    int depth = 6;  // à 8, on sature la mémoire
+    int depth = 6;  // Size of the matrix is 2^depth. Larger values may take long to solve...
     int nbDecisionVar = 2*depth;
     int nbScope = nbDecisionVar+1;
     int boardSize = (int)pow((double)2,(double)depth);

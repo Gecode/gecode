@@ -35,7 +35,7 @@ THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-    int N = 20; 
+    int N = 20; // Initial number of matches
     
     int* scopeSize = new int[N+2];
     for (int i=0;i<N+2;i++) 
