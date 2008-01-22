@@ -257,12 +257,415 @@ operator<<(std::ostream&, const Gecode::IntSet& s);
 
 #include "gecode/int/int-set.icc"
 
+#include "gecode/int/var-imp.icc"
 
-#include "gecode/int/var.icc"
+namespace Gecode {
+
+  namespace Int {
+    class IntView;
+  }
+
+  /**
+   * \brief Integer variables
+   *
+   * \ingroup TaskModelIntVars
+   */
+  class IntVar {
+    friend class IntVarArray;
+  private:
+    /// Integer variable implementation used
+    Int::IntVarImp* varimp;
+    /**
+     * \brief Initialize variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. No exceptions are thrown.
+     */
+    void _init(Space* home, int min, int max);
+    /**
+     * \brief Initialize variable with arbitrary domain
+     *
+     * The variable is created with a domain described by \a d.
+     * No exceptions are thrown.
+     */
+    void _init(Space* home, const IntSet& d);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    IntVar(void);
+    /// Initialize from integer variable \a x
+    IntVar(const IntVar& x);
+    /// Initialize from integer view \a x
+    IntVar(const Int::IntView& x);
+    /// Initialize from reflection variable \a x
+    IntVar(const Reflection::Var& x);
+    /**
+     * \brief Initialize variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. The following exceptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min or \a max exceed the limits for integers as defined
+     *    in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT IntVar(Space* home, int min ,int max);
+    /**
+     * \brief Initialize variable with arbitrary domain
+     *
+     * The variable is created with a domain described by \a d.
+     * The following exceptions might be thrown:
+     *  - If \a d is empty, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a d contains values that exceed the limits for integers
+     *    as defined in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT IntVar(Space* home, const IntSet& d);
+    /**
+     * \brief Initialize variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. The following exceptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min or \a max exceed the limits for integers as defined
+     *    in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT void init(Space* home, int min, int max);
+    /**
+     * \brief Initialize variable with arbitrary domain
+     *
+     * The variable is created with a domain described by \a d.
+     * The following exceptions might be thrown:
+     *  - If \a d is empty, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a d contains values that exceed the limits for integers
+     *    as defined in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT void init(Space* home, const IntSet& d);
+    //@}
+
+    /// \name Variable implementation access
+    //@{
+    /// Return integer variable implementation
+    Int::IntVarImp* var(void) const;
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return degree (number of subscribed propagators)
+    unsigned int degree(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    /// Test whether view is assigned
+    bool assigned(void) const;
+
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this variable to be a clone of variable \a x
+    void update(Space* home, bool share, IntVar& x);
+    //@}    
+  };
+
+
+  /**
+   * \brief %Range iterator for integer variables
+   * \ingroup TaskModelIntVars
+   */
+  class IntVarRanges : public Int::IntVarImpFwd {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    IntVarRanges(void);
+    /// Initialize with ranges for integer variable \a x
+    IntVarRanges(const IntVar& x);
+    /// Initialize with ranges for integer variable \a x
+    void init(const IntVar& x);
+    //@}
+  };
+
+  /**
+   * \brief Value iterator for integer variables
+   * \ingroup TaskModelIntVars
+   */
+  class IntVarValues : public Iter::Ranges::ToValues<IntVarRanges> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    IntVarValues(void);
+    /// Initialize with values for \a x
+    IntVarValues(const IntVar& x);
+    /// Initialize with values \a x
+    void init(const IntVar& x);
+    //@}
+  };
+
+  namespace Int {
+    class BoolView;
+  }
+
+  /**
+   * \brief Boolean integer variables
+   *
+   * \ingroup TaskModelIntVars
+   */
+  class BoolVar {
+    friend class BoolVarArray;
+  private:
+    /// Integer variable implementation used
+    Int::BoolVarImp* varimp;
+    /**
+     * \brief Initialize Boolean variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. No exceptions are thrown.
+     */
+    void _init(Space* home, int min, int max);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    BoolVar(void);
+    /// Initialize from Boolean variable \a x
+    BoolVar(const BoolVar& x);
+    /// Initialize from Boolean view \a x
+    BoolVar(const Int::BoolView& x);
+    /// Initialize from reflection variable \a x
+    BoolVar(const Reflection::Var& x);
+    /**
+     * \brief Initialize Boolean variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. The following exceptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min is less than 0 or \a max is greater than 1,
+     *    an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT BoolVar(Space* home, int min, int max);
+    /**
+     * \brief Initialize Boolean variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. The following exceptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min is less than 0 or \a max is greater than 1,
+     *    an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT void init(Space* home, int min, int max);
+    //@}
+
+    /// \name Variable implementation access
+    //@{
+    /// Return integer variable implementation
+    Int::BoolVarImp* var(void) const;
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return degree (number of subscribed propagators)
+    unsigned int degree(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    /// Test whether view is assigned
+    bool assigned(void) const;
+
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    //@}
+
+    /// \name Boolean domain tests
+    //@{
+    /// Test whether domain is zero
+    bool zero(void) const;
+    /// Test whether domain is one
+    bool one(void) const;
+    /// Test whether domain is neither zero nor one
+    bool none(void) const;
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this variable to be a clone of variable \a x
+    void update(Space* home, bool share, BoolVar& x);
+    //@}
+    
+  };
+
+}
+
+/**
+ * \brief Print integer variable \a x
+ * \relates Gecode::IntVar
+ */
+std::ostream&
+operator<<(std::ostream&, const Gecode::IntVar& x);
+/**
+ * \brief Print Boolean variable \a x
+ * \relates Gecode::BoolVar
+ */
+std::ostream&
+operator<<(std::ostream&, const Gecode::BoolVar& x);
+
 #include "gecode/int/view.icc"
 #include "gecode/int/propagator.icc"
-#include "gecode/int/array.icc"
 
+namespace Gecode {
+
+  /**
+   * \defgroup TaskModelIntArgs Argument arrays
+   *
+   * Argument arrays are just good enough for passing arguments
+   * with automatic memory management.
+   * \ingroup TaskModelInt
+   */
+
+  //@{
+  /// Passing integer arguments
+  typedef PrimArgArray<int>    IntArgs;
+  /// Passing integer variables
+  typedef VarArgArray<IntVar>  IntVarArgs;
+  /// Passing Boolean variables
+  typedef VarArgArray<BoolVar> BoolVarArgs;
+  /// Passing set arguments
+  typedef PrimArgArray<IntSet> IntSetArgs;
+  //@}
+
+  /**
+   * \defgroup TaskModelIntVarArrays Variable arrays
+   *
+   * Variable arrays can store variables. They are typically used
+   * for storing the variables being part of a solution (script). However,
+   * they can also be used for temporary purposes (even though
+   * memory is not reclaimed until the space it is created for
+   * is deleted).
+   * \ingroup TaskModelInt
+   */
+
+  /**
+   * \brief Integer variable array
+   * \ingroup TaskModelIntVarArrays
+   */
+  class IntVarArray : public VarArray<IntVar> {
+  public:
+    /// \name Creation and initialization
+    //@{
+    /// Default constructor (array of size 0)
+    IntVarArray(void);
+    /// Allocate array for \a n integer variables (variables are uninitialized)
+    IntVarArray(Space* home, int n);
+    /// Initialize from integer variable array \a a (share elements)
+    IntVarArray(const IntVarArray& a);
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain ranging from \a min
+     * to \a max. The following execptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min or \a max exceed the limits for integers as defined
+     *    in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT
+    IntVarArray(Space* home, int n, int min, int max);
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain described by \a s.
+     * The following execptions might be thrown:
+     *  - If \a s is empty, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a s contains values that exceed the limits for integers
+     *    as defined in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT
+    IntVarArray(Space* home, int n, const IntSet& s);
+    //@}
+  };
+
+  /**
+   * \brief Boolean variable array
+   * \ingroup TaskModelIntVarArrays
+   */
+  class BoolVarArray : public VarArray<BoolVar> {
+  public:
+    /// \name Creation and initialization
+    //@{
+    /// Default constructor (array of size 0)
+    BoolVarArray(void);
+    /// Allocate array for \a n Boolean variables (variables are uninitialized)
+    BoolVarArray(Space* home, int n);
+    /// Initialize from Boolean variable array \a a (share elements)
+    BoolVarArray(const BoolVarArray& a);
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain ranging from \a min
+     * to \a max. The following execptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min is less than 0 or \a max is greater than 1,
+     *    an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT
+    BoolVarArray(Space* home, int n, int min, int max);
+    //@}
+  };
+
+}
+
+#include "gecode/int/array.icc"
 
 namespace Gecode {
 

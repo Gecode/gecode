@@ -1,4 +1,3 @@
-
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
@@ -38,108 +37,6 @@
 
 namespace Gecode {
 
-  /**
-   * \defgroup TaskModelIntArgs Argument arrays
-   *
-   * Argument arrays are just good enough for passing arguments
-   * with automatic memory management.
-   * \ingroup TaskModelInt
-   */
-
-  //@{
-  /// Passing integer arguments
-  typedef PrimArgArray<int>    IntArgs;
-  /// Passing integer variables
-  typedef VarArgArray<IntVar>  IntVarArgs;
-  /// Passing Boolean variables
-  typedef VarArgArray<BoolVar> BoolVarArgs;
-  /// Passing set arguments
-  typedef PrimArgArray<IntSet> IntSetArgs;
-  //@}
-
-  /**
-   * \defgroup TaskModelIntVarArrays Variable arrays
-   *
-   * Variable arrays can store variables. They are typically used
-   * for storing the variables being part of a solution (script). However,
-   * they can also be used for temporary purposes (even though
-   * memory is not reclaimed until the space it is created for
-   * is deleted).
-   * \ingroup TaskModelInt
-   */
-
-  /**
-   * \brief Integer variable array
-   * \ingroup TaskModelIntVarArrays
-   */
-  class IntVarArray : public VarArray<IntVar> {
-  public:
-    /// \name Creation and initialization
-    //@{
-    /// Default constructor (array of size 0)
-    IntVarArray(void);
-    /// Allocate array for \a n integer variables (variables are uninitialized)
-    IntVarArray(Space* home, int n);
-    /// Initialize from integer variable array \a a (share elements)
-    IntVarArray(const IntVarArray& a);
-    /**
-     * \brief Initialize array with \a n new variables
-     *
-     * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
-     *  - If \a min is greater than \a max, an exception of type
-     *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a min or \a max exceed the limits for integers as defined
-     *    in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
-     */
-    GECODE_INT_EXPORT
-    IntVarArray(Space* home, int n, int min, int max);
-    /**
-     * \brief Initialize array with \a n new variables
-     *
-     * The variables are created with a domain described by \a s.
-     * The following execptions might be thrown:
-     *  - If \a s is empty, an exception of type
-     *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a s contains values that exceed the limits for integers
-     *    as defined in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
-     */
-    GECODE_INT_EXPORT
-    IntVarArray(Space* home, int n, const IntSet& s);
-    //@}
-  };
-  /**
-   * \brief Boolean variable array
-   * \ingroup TaskModelIntVarArrays
-   */
-  class BoolVarArray : public VarArray<BoolVar> {
-  public:
-    /// \name Creation and initialization
-    //@{
-    /// Default constructor (array of size 0)
-    BoolVarArray(void);
-    /// Allocate array for \a n Boolean variables (variables are uninitialized)
-    BoolVarArray(Space* home, int n);
-    /// Initialize from Boolean variable array \a a (share elements)
-    BoolVarArray(const BoolVarArray& a);
-    /**
-     * \brief Initialize array with \a n new variables
-     *
-     * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
-     *  - If \a min is greater than \a max, an exception of type
-     *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a min is less than 0 or \a max is greater than 1,
-     *    an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
-     */
-    GECODE_INT_EXPORT
-    BoolVarArray(Space* home, int n, int min, int max);
-    //@}
-  };
-
   /// Traits of IntVarArray
   template <>
   class ArrayTraits<IntVarArray> {
@@ -148,6 +45,7 @@ namespace Gecode {
     typedef IntVar       value_type;
     typedef IntVarArgs   args_type;
   };
+
   /// Traits of IntVarArgs
   template <>
   class ArrayTraits<IntVarArgs> {
@@ -156,6 +54,7 @@ namespace Gecode {
     typedef IntVar     value_type;
     typedef IntVarArgs args_type;
   };
+
   /// Traits of IntArgs
   template <>
   class ArrayTraits<IntArgs> {
@@ -164,6 +63,7 @@ namespace Gecode {
     typedef int     value_type;
     typedef IntArgs args_type;
   };
+
   /// Traits of BoolVarArray
   template <>
   class ArrayTraits<BoolVarArray> {
@@ -172,6 +72,7 @@ namespace Gecode {
     typedef BoolVar       value_type;
     typedef BoolVarArgs   args_type;
   };
+
   /// Traits of BoolVarArgs
   template <>
   class ArrayTraits<BoolVarArgs> {

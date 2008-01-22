@@ -38,10 +38,10 @@
 ##
 
 # Integer variables
-File:	gecode/int/var-imp-int.vis
+File:	gecode/int/var-imp/int.vis
 
 # Boolean variables
-File:	gecode/int/var-imp-bool.vis
+File:	gecode/int/var-imp/bool.vis
 
 # Set variables
 File:	gecode/set/var-imp.vis

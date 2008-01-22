@@ -257,7 +257,7 @@ SEARCHBUILDDIRS = search
 #
 
 INTSRC0 = \
-	int-set.cc var/imp-int.cc var/imp-bool.cc var/int.cc var/bool.cc \
+	int-set.cc var-imp/int.cc var-imp/bool.cc var/int.cc var/bool.cc \
 	view/print.cc array.cc bool.cc \
 	extensional/dfa.cc extensional/tuple-set.cc extensional.cc \
 	dom.cc rel.cc element.cc count.cc arithmetic.cc \
@@ -292,8 +292,8 @@ INTHDR0 = \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sorted/matching.icc sorted/narrowing.icc \
 	sorted/order.icc sorted/propagate.icc sorted/sortsup.icc \
-	int-set.icc var/delta.icc var/bool.icc \
-	var/imp-int.icc var/imp-bool.icc var/int.icc \
+	int-set.icc var-imp/delta.icc var/bool.icc \
+	var-imp/int.icc var-imp/bool.icc var/int.icc \
 	view/bool.icc view/constint.icc view/zero.icc view/int.icc \
 	view/minus.icc \
 	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
@@ -301,7 +301,7 @@ INTHDR0 = \
 	count.hh cumulatives.hh distinct.hh dom.hh \
 	element.hh exception.icc  gcc.hh linear.hh \
 	propagator.icc extensional.hh rel.hh \
-	sorted.hh var.icc view.icc \
+	sorted.hh var-imp.icc view.icc \
 	channel.hh channel/dom.icc channel/val.icc \
 	channel/base.icc channel/link-single.icc channel/link-multi.icc \
 	circuit.hh circuit/base.icc circuit/val.icc circuit/dom.icc
@@ -866,8 +866,8 @@ compilesubdirs:
 #
 
 ALLVIS0 = \
-	gecode/int/var-imp-int \
-	gecode/int/var-imp-bool \
+	gecode/int/var-imp/int \
+	gecode/int/var-imp/bool \
 	gecode/set/var-imp \
 	gecode/cpltset/var-imp
 ALLVIS = \
@@ -1195,8 +1195,8 @@ DIST_FILES= \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
 	misc/gecode-serialization.pc.in \
 	gecode/config.hh.in \
-	gecode/int/var-imp-int.vis \
-	gecode/int/var-imp-bool.vis \
+	gecode/int/var-imp/int.vis \
+	gecode/int/var-imp/bool.vis \
 	gecode/set/var-imp.vis \
 	gecode/cpltset/var-imp.vis \
 	gecode/support/buddy/AUTHORS \

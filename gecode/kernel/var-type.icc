@@ -3,8 +3,8 @@
  *    This file has been automatically generated. Do not edit,
  *    edit the specification file "variable.vsl" and the following
  *    files instead:
- *     - gecode/int/var-imp-int.vis
- *     - gecode/int/var-imp-bool.vis
+ *     - gecode/int/var-imp/int.vis
+ *     - gecode/int/var-imp/bool.vis
  *     - gecode/set/var-imp.vis
  *     - gecode/cpltset/var-imp.vis
  *

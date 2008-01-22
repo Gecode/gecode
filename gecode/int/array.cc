@@ -69,8 +69,6 @@ namespace Gecode {
       x[i]._init(home,min,max);
   }
 
-
 }
-
 
 // STATISTICS: int-post
