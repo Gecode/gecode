@@ -43,9 +43,6 @@
 
 namespace Gecode { namespace Int {
 
-  class IntVarImpFwd;
-  class IntVarImpBwd;
-
   class IntVarImp;
   class BoolVarImp;
 
@@ -81,6 +78,8 @@ namespace Gecode { namespace Int {
 
 namespace Gecode { namespace Int {
 
+  class IntVarImpFwd;
+  class IntVarImpBwd;
 
   /**
    * \brief Integer variable implementation
@@ -466,20 +465,13 @@ namespace Gecode { namespace Int {
     //@}
   };
 
-
-  class IntView;
-  class BoolView;
-
 }}
 
 #include "gecode/int/var/imp-int.icc"
 
 namespace Gecode {
-
   class BoolVar;
-
 }
-
 
 namespace Gecode { namespace Int {
 
@@ -703,6 +695,10 @@ namespace Gecode { namespace Int {
 
 namespace Gecode {
 
+  namespace Int {
+    class IntView;
+  }
+
   /**
    * \brief Integer variables
    *
@@ -867,6 +863,10 @@ namespace Gecode {
     void init(const IntVar& x);
     //@}
   };
+
+  namespace Int {
+    class BoolView;
+  }
 
   /**
    * \brief Boolean integer variables
