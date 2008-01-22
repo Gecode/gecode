@@ -70,6 +70,27 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   major
+Thanks:	Stefano Gualandi
+[DESCRIPTION]
+LDS was broken for examples without solutions.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The range of integer variables have been extended by one
+bit. For example, on a standard machine (regardless of 32 or 64
+bits), the largest possible integer value for an integer variable
+is 2^31-2, the smallest -2^31+2. With other words, only the
+integer values 2^31-1, -2^31, and -2^31+1 are missing from the
+two-complement representation (and we will never use these values for the
+sake of mental sanity. We promise).
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
@@ -163,13 +184,14 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-The kernel has undergone some cleanups and improvements:
+The kernel has undergone some cleanups and improvements (much of
+it got actually reimplemented):
  - Automatically generated stubs for variable implementations are directly
    inlined into the kernel. This improves performance, but more
    importantly, lifts some limits on the number of variables. Now, the
-   only limit is that the sum of the logarithms of the number of 
-   modification events of all variables does not exceed 32 
-   (as an estimate, the kernel now can handle around 10 to 16 variables 
+   only limit is that the sum of the ceiling of the logarithms of the 
+   number of modification events of all variables does not exceed 32 (what?)
+   (as an estimate, the kernel now can handle around 10 to 16 variable
    types). Moreover, if the need for more variable types arises this is 
    straightforward to do.
  - The addition of new variable types for users has been simplified.
@@ -178,14 +200,14 @@ The kernel has undergone some cleanups and improvements:
    variable is modified more than once suring propagator execution.
    While this changes the asymptotic complexity it reduces the propagator
    execution overhead by up to 30%. And a propagator is still free
-   to make sure that a variable is modified only once (may propagators
+   to make sure that a variable is modified only once (many propagators
    do that already).
  - Variable implementations became smaller by one word. Now variable
    implementations are optimal in the sense that no additional memory
    is needed for cloning or book-keeping, the memory required for 
    propagation is sufficient.
  - Spaces have lost some weight as memory for datastructures only used
-   during cloning or propagation are shared (saves some 20% of memory
+   during cloning or propagation are shared (saves some 25% of memory
    per space).
 
 [ENTRY]

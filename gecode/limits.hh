@@ -70,14 +70,14 @@ namespace Gecode { namespace Limits {
      */
 
     /// Largest allowed integer value
-    const int int_max        = ((INT_MAX)>>1) - 1;
+    const int int_max =  INT_MAX - 1;
     /// Smallest allowed integer value
-    const int int_min        = -int_max;
+    const int int_min = -int_max;
 
     /// Largest double that can exactly be represented
-    const double double_max  =  9007199254740991.0;
+    const double double_max = 9007199254740991.0;
     /// Smallest double that can exactly be represented
-    const double double_min  = -9007199254740991.0;
+    const double double_min = -9007199254740991.0;
 
   }
 
@@ -89,11 +89,11 @@ namespace Gecode { namespace Limits {
      */
 
     /// Largest allowed integer in integer set
-    const int int_max        = ((INT_MAX)>>2) - 1;
+    const int int_max = ((INT_MAX)>>2) - 1;
     /// Smallest allowed integer in integer set
-    const int int_min        = -int_max;
+    const int int_min = -int_max;
     /// Maximum cardinality of an integer set
-    const unsigned int card_max       = int_max-int_min+1;
+    const unsigned int card_max = int_max-int_min+1;
   }
 
 }}
