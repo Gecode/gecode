@@ -6,6 +6,9 @@
  *  Copyright:
  *     Christian Schulte, 2004
  *
+ *  Bugfixes provided by:
+ *     Stefano Gualandi
+ *
  *  Last modified:
  *     $Date$ by $Author$
  *     $Revision$
@@ -188,13 +191,12 @@ namespace Gecode { namespace Search {
 
 
   /*
-   * The LDS engine proper (_LDS means: all the logic but just
-   * for space, type casts are done in LDS)
+   * The LDS engine proper
    *
    */
 
   LDS::LDS(Space* s, unsigned int d, Stop* st, size_t sz)
-    : d_cur(0), d_max(d), no_solution(true), e(st,sz) {
+    : d_cur(0), d_max(d), e(st,sz) {
     if (s->status(e.propagate) == SS_FAILED) {
       root = NULL;
       e.init(NULL,0);
@@ -218,13 +220,10 @@ namespace Gecode { namespace Search {
   LDS::next(void) {
     while (true) {
       Space* s = e.explore();
-      if (s != NULL) {
-        no_solution = false;
+      if (s != NULL)
         return s;
-      }
-      if (no_solution || (++d_cur > d_max))
+      if (++d_cur > d_max)
         break;
-      no_solution = true;
       if (d_cur == d_max) {
         e.reset(root,d_cur);
         root = NULL;
