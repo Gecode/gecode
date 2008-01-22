@@ -538,7 +538,8 @@ namespace Gecode { namespace Reflection {
     return registry().printVariable(os, _var, _vti);
   }
 
-  template <class VarImp> VarImp*
+  template <class VarImp>
+  VarImp*
   Var::var(void) const {
     if (! (VarImp::vti == _vti))
       throw ReflectionException("VTI mismatch");

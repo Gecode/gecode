@@ -457,6 +457,7 @@ namespace Gecode {
   const Support::Symbol
   VarImp<VIC>::vti = VIC::vti;
 
+
   namespace Reflection {
     class SpecIter;
     class ActorSpec;
@@ -601,7 +602,6 @@ namespace Gecode {
   };
 
 
-
   /**
    * \brief %Propagator \a p is subsumed
    *
@@ -655,8 +655,6 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   ExecStatus ES_NOFIX_PARTIAL(Propagator* p, ModEventDelta med);
-
-
 
   /**
    * \brief Base-class for propagators
@@ -752,6 +750,7 @@ namespace Gecode {
     //@}
   };
 
+
   /** 
    * \brief Council of advisors
    * 
@@ -802,6 +801,33 @@ namespace Gecode {
 
 
   /**
+   * \brief %Advisor \a a is subsumed
+   *
+   * Disposes the advisor and: 
+   *  - returns subsumption.
+   *  - returns that the propagator of \a a need not be run.
+   *
+   * \warning Has a side-effect on the advisor. Use only directly when
+   *          returning from advise.
+   * \ingroup TaskActorStatus
+   */
+  template <class A>
+  ExecStatus ES_SUBSUMED_FIX(A* a, Space* home, Council<A>& c);
+  /**
+   * \brief %Advisor \a a is subsumed
+   *
+   * Disposes the advisor and: 
+   *  - returns subsumption.
+   *  - returns that the propagator of \a a must be run.
+   *
+   * \warning Has a side-effect on the advisor. Use only directly when
+   *          returning from advise.
+   * \ingroup TaskActorStatus
+   */
+  template <class A>
+  ExecStatus ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c);
+
+  /**
    * \brief Base-class for advisors
    *
    * Advisors are typically subclassed for each propagator that
@@ -814,7 +840,7 @@ namespace Gecode {
   class Advisor : private ActorLink {
     template <class VIC> friend class VarImp;
     template <class A> friend class Council;
-    template <class A>  friend class Advisors;
+    template <class A> friend class Advisors;
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
@@ -847,39 +873,6 @@ namespace Gecode {
     static void* operator new(size_t s);
   };
 
-  /**
-   * \brief %Advisor \a a is subsumed
-   *
-   * Disposes the advisor and: 
-   *  - returns subsumption.
-   *  - returns that the propagator of \a a need not be run.
-   *
-   * \warning Has a side-effect on the advisor. Use only directly when
-   *          returning from advise.
-   * \ingroup TaskActorStatus
-   */
-  template <class A>
-  ExecStatus ES_SUBSUMED_FIX(A* a, Space* home, Council<A>& c);
-  /**
-   * \brief %Advisor \a a is subsumed
-   *
-   * Disposes the advisor and: 
-   *  - returns subsumption.
-   *  - returns that the propagator of \a a must be run.
-   *
-   * \warning Has a side-effect on the advisor. Use only directly when
-   *          returning from advise.
-   * \ingroup TaskActorStatus
-   */
-  template <class A>
-  ExecStatus ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c);
-
-
-
-  /*
-   * Branchings
-   *
-   */
 
   class Branching;
 
@@ -1305,15 +1298,20 @@ namespace Gecode {
 
 
 
-  /***
-   *** MEMORY MANAGEMENT
-   ***
-   ***/
-
   /*
-   * Heap allocated: Space, BranchingDesc
+   * Memory management
    *
    */
+
+  // Heap allocated
+  forceinline void* 
+  SharedHandle::Object::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
+  forceinline void
+  SharedHandle::Object::operator delete(void* p) {
+    Memory::free(p);
+  }
 
   forceinline void*
   Space::operator new(size_t s) {
@@ -1333,11 +1331,7 @@ namespace Gecode {
     return Memory::malloc(s);
   }
 
-  /*
-   * Space allocation: general space heaps and free lists
-   *
-   */
-
+  // Space allocation: general space heaps and free lists
   forceinline void*
   Space::alloc(size_t s) {
     return mm.alloc(s);
@@ -1346,7 +1340,6 @@ namespace Gecode {
   Space::reuse(void* p, size_t s) {
     return mm.reuse(p,s);
   }
-
   template <size_t s>
   forceinline void*
   Space::fl_alloc(void) {
@@ -1371,11 +1364,7 @@ namespace Gecode {
   }
 #endif
 
-  /*
-   * Space allocated entities: Actors, variable implementations, and advisors
-   *
-   */
-
+  // Space allocated entities: Actors, variable implementations, and advisors
   forceinline void
   Actor::operator delete(void*) {}
   forceinline void
@@ -1413,15 +1402,6 @@ namespace Gecode {
    * Shared objects and handles
    *
    */
-  forceinline void* 
-  SharedHandle::Object::operator new(size_t s) {
-    return Memory::malloc(s);
-  }
-  forceinline void
-  SharedHandle::Object::operator delete(void* p) {
-    Memory::free(p);
-  }
-
   forceinline
   SharedHandle::Object::Object(void) 
     : use_cnt(0), fwd(NULL) {}
@@ -1491,38 +1471,45 @@ namespace Gecode {
 
 
   /*
-   * ActorLinks
+   * ActorLink
    *
    */
   forceinline ActorLink*
   ActorLink::prev(void) const {
     return _prev; 
   }
+
   forceinline ActorLink*
   ActorLink::next(void) const { 
     return _next; 
   }
+
   forceinline ActorLink**
   ActorLink::next_ref(void) { 
     return &_next; 
   }
+
   forceinline void
   ActorLink::prev(ActorLink* al) { 
     _prev = al; 
   }
+
   forceinline void
   ActorLink::next(ActorLink* al) { 
     _next = al; 
   }
+
   forceinline void
   ActorLink::unlink(void) {
     ActorLink* p = _prev; ActorLink* n = _next;
     p->_next = n; n->_prev = p;
   }
+
   forceinline void
   ActorLink::init(void) {
     _next = this; _prev =this;
   }
+
   forceinline void
   ActorLink::head(ActorLink* a) {
     // Inserts al at head of link-chain (that is, after this)
@@ -1530,6 +1517,7 @@ namespace Gecode {
     this->_next = a; a->_prev = this;
     a->_next = n; n->_prev = a;
   }
+
   forceinline void
   ActorLink::tail(ActorLink* a) {
     // Inserts al at tail of link-chain (that is, before this)
@@ -1546,6 +1534,13 @@ namespace Gecode {
     ActorLink& t = *a;
     return static_cast<ActorLink*>(&t);
   }
+
+
+
+  /*
+   * Actor
+   *
+   */
   forceinline Actor* 
   Actor::cast(ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
@@ -1553,22 +1548,25 @@ namespace Gecode {
     ActorLink& t = *al;
     return static_cast<Actor*>(&t);
   }
-  forceinline Propagator* 
-  Propagator::cast(ActorLink* al) {
-    // Turning al into a reference is for gcc, assume is for MSVC
-    GECODE_NOT_NULL(al);
-    ActorLink& t = *al;
-    return static_cast<Propagator*>(&t);
-  }
-  forceinline Branching* 
-  Branching::cast(ActorLink* al) {
-    // Turning al into a reference is for gcc, assume is for MSVC
-    GECODE_NOT_NULL(al);
-    ActorLink& t = *al;
-    return static_cast<Branching*>(&t);
+
+  forceinline void
+  Actor::force(Space* home) {
+    if (home->d_cur == home->d_lst)
+      home->d_resize();
+    *(home->d_cur++) = this;
   }
 
-
+  forceinline void
+  Actor::unforce(Space* home) {
+    // Check wether array has already been discarded as space
+    // deletion is already in progress
+    Actor** f = home->d_fst;
+    if (f != NULL) {
+      while (this != *f)
+        f++;
+      *f = *(--home->d_cur);
+    }
+  }
 
   forceinline size_t
   Actor::dispose(Space*) {
@@ -1577,18 +1575,128 @@ namespace Gecode {
 
 
   /*
-   * Spaces
+   * Propagator
    *
    */
+  forceinline Propagator* 
+  Propagator::cast(ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    ActorLink& t = *al;
+    return static_cast<Propagator*>(&t);
+  }
 
-  forceinline const BranchingDesc*
-  Space::description(void) const {
-    return b_status->description(this);
+  forceinline
+  Propagator::Propagator(Space* home) {
+    u.advisors = NULL;
+    assert(u.med == 0 && u.size == 0);
+    home->a_actors.head(this);
+  }
+
+  forceinline
+  Propagator::Propagator(Space*, bool, Propagator& p) {
+    u.advisors = NULL;
+    assert(u.med == 0 && u.size == 0);
+    // Set forwarding pointer
+    p.prev(this);
+  }
+
+  forceinline ExecStatus
+  ES_SUBSUMED(Propagator* p, size_t s) {
+    p->u.size = s; 
+    return __ES_SUBSUMED;
+  }
+
+  forceinline ExecStatus
+  ES_SUBSUMED(Propagator* p, Space* home) {
+    p->u.size = p->dispose(home); 
+    return __ES_SUBSUMED;
+  }
+
+  forceinline ExecStatus
+  ES_FIX_PARTIAL(Propagator* p, ModEventDelta med) {
+    p->u.med = med; 
+    return __ES_PARTIAL;
+  }
+
+  forceinline ExecStatus
+  ES_NOFIX_PARTIAL(Propagator* p, ModEventDelta med) {
+    p->u.med ^= AllVarConf::med_combine(p->u.med,med); 
+    return __ES_PARTIAL;
   }
 
 
+
   /*
-   * Advisors
+   * Branching
+   *
+   */
+  forceinline Branching* 
+  Branching::cast(ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    ActorLink& t = *al;
+    return static_cast<Branching*>(&t);
+  }
+
+  forceinline
+  Branching::Branching(Space* home) {
+    // Propagators are put at the tail of the link of actors
+    id = home->pc.p.branch_id++;
+    // If no branching available, make it the first one
+    if (home->b_status == &(home->a_actors)) {
+      home->b_status = this;
+      if (home->b_commit == &(home->a_actors))
+        home->b_commit = this;
+    }
+    home->a_actors.tail(this);
+  }
+
+  forceinline
+  Branching::Branching(Space*, bool, Branching& b)
+    : id(b.id)  {
+    // Set forwarding pointer
+    b.prev(this);
+  }
+
+
+
+  /*
+   * Branching description
+   *
+   */
+  forceinline
+  BranchingDesc::BranchingDesc(const Branching* b, const unsigned int a)
+    : _id(b->id), _alt(a) {}
+
+  forceinline unsigned int
+  BranchingDesc::alternatives(void) const {
+    return _alt;
+  }
+
+  forceinline unsigned int
+  BranchingDesc::id(void) const {
+    return _id;
+  }
+
+  forceinline
+  BranchingDesc::~BranchingDesc(void) {}
+
+
+
+  /*
+   * Delta information for advisors
+   *
+   */
+  forceinline ModEvent
+  Delta::modevent(void) const {
+    return me;
+  }
+
+
+
+  /*
+   * Advisor
    *
    */
   template <class A>
@@ -1600,17 +1708,21 @@ namespace Gecode {
     // Link to next advisor in next()
     ActorLink::next(c.advisors); c.advisors = static_cast<A*>(this);
   }
+
   forceinline 
   Advisor::Advisor(Space*, bool, Advisor&) {}
+
   forceinline bool
   Advisor::disposed(void) const { 
     return prev() == NULL;
   }
+
   forceinline Propagator* 
   Advisor::propagator(void) const { 
     assert(!disposed());
     return Propagator::cast(ActorLink::prev()); 
   }
+
   template <class A>
   forceinline void
   Advisor::dispose(Space*,Council<A>&) {
@@ -1628,6 +1740,7 @@ namespace Gecode {
     a->dispose(home,c);
     return ES_FIX;
   }
+
   template <class A>
   forceinline ExecStatus
   ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c) {
@@ -1635,6 +1748,12 @@ namespace Gecode {
     return ES_NOFIX;
   }
 
+
+
+  /*
+   * Advisor council
+   *
+   */
   template <class A>
   forceinline
   Council<A>::Council(void) {}
@@ -1709,6 +1828,11 @@ namespace Gecode {
   }
 
   
+
+  /*
+   * Advisor iterator
+   *
+   */
   template <class A>
   forceinline
   Advisors<A>::Advisors(Council<A>& c)
@@ -1716,11 +1840,13 @@ namespace Gecode {
     while ((a != NULL) && static_cast<A*>(a)->disposed())
       a = a->next();
   }
+
   template <class A>
   forceinline bool
   Advisors<A>::operator()(void) const {
     return a != NULL;
   }
+
   template <class A>
   forceinline void
   Advisors<A>::operator++(void) {
@@ -1728,6 +1854,7 @@ namespace Gecode {
       a = a->next();
     } while ((a != NULL) && static_cast<A*>(a)->disposed());
   }
+
   template <class A>
   forceinline A*
   Advisors<A>::advisor(void) const {
@@ -1735,11 +1862,46 @@ namespace Gecode {
   }
 
 
+
   /*
-   * Variable implementations
+   * Space
    *
    */
+  forceinline void
+  Space::enqueue(Propagator* p) {
+    ActorLink::cast(p)->unlink();
+    ActorLink* c = &pc.p.queue[p->cost(p->u.med)];
+    c->tail(ActorLink::cast(p));
+    if (c > pc.p.active)
+      pc.p.active = c;
+  }
 
+  forceinline const BranchingDesc*
+  Space::description(void) const {
+    return b_status->description(this);
+  }
+
+  forceinline void
+  Space::fail(void) {
+    pc.p.active = NULL;
+  }
+
+  forceinline bool
+  Space::failed(void) const {
+    return pc.p.active == NULL;
+  }
+
+  forceinline bool
+  Space::stable(void) const {
+    return pc.p.active < &pc.p.queue[0];
+  }
+
+
+
+  /*
+   * Variable implementation
+   *
+   */
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space*) {
@@ -1755,7 +1917,6 @@ namespace Gecode {
       idx[i] = NULL;
     free_and_bits = 0;
   }
-
 
   template <class VIC>
   forceinline unsigned int
@@ -1795,12 +1956,14 @@ namespace Gecode {
   VarImp<VIC>::copied(void) const {
     return Support::marked(idx[0]);
   }
+
   template <class VIC>
   forceinline VarImp<VIC>*
   VarImp<VIC>::forward(void) const {
     assert(copied());
     return reinterpret_cast<VarImp<VIC>*>(Support::unmark(idx[0]));
   }
+
   template <class VIC>
   forceinline VarImp<VIC>*
   VarImp<VIC>::next(void) const {
@@ -1830,12 +1993,6 @@ namespace Gecode {
     x.idx[1] = reinterpret_cast<ActorLink**>(*reg); *reg = &x;
   }
 
-
-  /*
-   * Modification event delta
-   *
-   */
-
   template <class VIC>
   forceinline ModEvent
   VarImp<VIC>::me(ModEventDelta med) {
@@ -1854,137 +2011,6 @@ namespace Gecode {
     return VIC::me_combine(me1,me2);
   }
 
-  /*
-   * Delta information for advisors
-   *
-   */
-  forceinline ModEvent
-  Delta::modevent(void) const {
-    return me;
-  }
-
-
-  /*
-   * Propagators
-   *
-   */
-  forceinline void
-  Actor::force(Space* home) {
-    if (home->d_cur == home->d_lst)
-      home->d_resize();
-    *(home->d_cur++) = this;
-  }
-  forceinline void
-  Actor::unforce(Space* home) {
-    // Check wether array has already been discarded as space
-    // deletion is already in progress
-    Actor** f = home->d_fst;
-    if (f != NULL) {
-      while (this != *f)
-        f++;
-      *f = *(--home->d_cur);
-    }
-  }
-
-
-  forceinline
-  Propagator::Propagator(Space* home) {
-    u.advisors = NULL;
-    assert(u.med == 0 && u.size == 0);
-    home->a_actors.head(this);
-  }
-
-  forceinline
-  Propagator::Propagator(Space*, bool, Propagator& p) {
-    u.advisors = NULL;
-    assert(u.med == 0 && u.size == 0);
-    // Set forwarding pointer
-    p.prev(this);
-  }
-
-
-  /*
-   * Branchings
-   *
-   */
-
-  forceinline
-  Branching::Branching(Space* home) {
-    // Propagators are put at the tail of the link of actors
-    id = home->pc.p.branch_id++;
-    // If no branching available, make it the first one
-    if (home->b_status == &(home->a_actors)) {
-      home->b_status = this;
-      if (home->b_commit == &(home->a_actors))
-        home->b_commit = this;
-    }
-    home->a_actors.tail(this);
-  }
-
-  forceinline
-  Branching::Branching(Space*, bool, Branching& b)
-    : id(b.id)  {
-    // Set forwarding pointer
-    b.prev(this);
-  }
-
-
-
-  /*
-   * Branching descriptions
-   *
-   */
-
-  forceinline
-  BranchingDesc::BranchingDesc(const Branching* b, const unsigned int a)
-    : _id(b->id), _alt(a) {}
-
-  forceinline unsigned int
-  BranchingDesc::alternatives(void) const {
-    return _alt;
-  }
-
-  forceinline unsigned int
-  BranchingDesc::id(void) const {
-    return _id;
-  }
-
-  forceinline
-  BranchingDesc::~BranchingDesc(void) {}
-
-
-
-
-
-  /*
-   * Propagator queues
-   *
-   */
-
-  forceinline void
-  Space::enqueue(Propagator* p) {
-    ActorLink::cast(p)->unlink();
-    ActorLink* c = &pc.p.queue[p->cost(p->u.med)];
-    c->tail(ActorLink::cast(p));
-    if (c > pc.p.active)
-      pc.p.active = c;
-  }
-
-  forceinline void
-  Space::fail(void) {
-    pc.p.active = NULL;
-  }
-
-  forceinline bool
-  Space::failed(void) const {
-    return pc.p.active == NULL;
-  }
-
-  forceinline bool
-  Space::stable(void) const {
-    return pc.p.active < &pc.p.queue[0];
-  }
-
   template <class VIC>
   forceinline void
   VarImp<VIC>::schedule(Space* home, Propagator* p, ModEvent me) {
@@ -2000,36 +2026,6 @@ namespace Gecode {
     while (p-- > b)
       schedule(home,Propagator::cast(*p),me);
   }
-
-
-  forceinline ExecStatus
-  ES_SUBSUMED(Propagator* p, size_t s) {
-    p->u.size = s; 
-    return __ES_SUBSUMED;
-  }
-  forceinline ExecStatus
-  ES_SUBSUMED(Propagator* p, Space* home) {
-    p->u.size = p->dispose(home); 
-    return __ES_SUBSUMED;
-  }
-
-  forceinline ExecStatus
-  ES_FIX_PARTIAL(Propagator* p, ModEventDelta med) {
-    p->u.med = med; 
-    return __ES_PARTIAL;
-  }
-
-  forceinline ExecStatus
-  ES_NOFIX_PARTIAL(Propagator* p, ModEventDelta med) {
-    p->u.med ^= AllVarConf::med_combine(p->u.med,med); 
-    return __ES_PARTIAL;
-  }
-
-
-  /*
-   * Subscribing to a variable
-   *
-   */
 
   template <class VIC>
   forceinline void
@@ -2104,12 +2100,6 @@ namespace Gecode {
     if (!assigned)
       enter(home,a,pc_max+1);
   }
-
-
-  /*
-   * Cancelling a subscription
-   *
-   */
 
   template <class VIC>
   forceinline void
@@ -2199,13 +2189,6 @@ namespace Gecode {
     return true;
   }
 
-
-
-  /*
-   * Variables
-   *
-   */
-
   template <class VIC>
   forceinline void
   VarImp<VIC>::update(VarImp<VIC>* x, ActorLink**& sub) {
@@ -2247,6 +2230,12 @@ namespace Gecode {
     }
   }
 
+
+
+  /*
+   * Variable disposer
+   *
+   */
   template <class VarType>
   VarDisposer<VarType>::VarDisposer(void) {
 #ifdef GECODE_HAVE_VAR_DISPOSE
