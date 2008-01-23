@@ -467,6 +467,7 @@
  *  - \ref TaskActor "Programming propagators and branchings"
  *  - \ref TaskVar
  *  - \ref TaskTest
+ *  - \ref TaskReflSer
  *
  * \section SecByFunc Available functionality
  *
