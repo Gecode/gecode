@@ -323,8 +323,7 @@ namespace Gecode { namespace Set { namespace Select {
         assert(n==1);
         GECODE_REWRITE(this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
       } else {
-        GECODE_ME_CHECK(x0.exclude(home,Limits::Set::int_min,
-                                   Limits::Set::int_max));
+        GECODE_ME_CHECK(x0.cardMax(home, 0));
         return ES_SUBSUMED(this,home);
       }
     }

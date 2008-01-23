@@ -302,9 +302,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         GECODE_ME_CHECK( y.cardMax(home,x[i].cardMax()) );
         GECODE_ME_CHECK( x[i].cardMin(home,y.cardMin()) );
         if (x[i].cardMax()==0) {
-          GECODE_ME_CHECK( y.exclude(home,
-                                     Limits::Set::int_min,
-                                     Limits::Set::int_max) );
+          GECODE_ME_CHECK( y.cardMax(home, 0));
           intOfDets.dispose(home);
           return ES_SUBSUMED(this,home);
         }
@@ -380,8 +378,7 @@ namespace Gecode { namespace Set { namespace RelOp {
           if (intOfDets.intersectI(home,det)) {repeat = true;}
           x.move_lst(i);
           if (intOfDets.size()==0) {
-            GECODE_ME_CHECK( y.exclude(home,Limits::Set::int_min,
-                                       Limits::Set::int_max) );
+            GECODE_ME_CHECK( y.cardMax(home,0) );
             intOfDets.dispose(home);
             return ES_SUBSUMED(this,home);
           }

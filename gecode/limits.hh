@@ -89,7 +89,7 @@ namespace Gecode { namespace Limits {
      */
 
     /// Largest allowed integer in integer set
-    const int int_max = ((INT_MAX)>>2) - 1;
+    const int int_max = (Gecode::Limits::Int::int_max / 2) - 1;
     /// Smallest allowed integer in integer set
     const int int_min = -int_max;
     /// Maximum cardinality of an integer set

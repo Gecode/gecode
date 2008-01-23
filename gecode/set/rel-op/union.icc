@@ -194,10 +194,8 @@ namespace Gecode { namespace Set { namespace RelOp {
       }
 
       if (x2.cardMax() == 0) {
-        GECODE_ME_CHECK( x0.exclude(home,Limits::Set::int_min,
-                                    Limits::Set::int_max) );
-        GECODE_ME_CHECK( x1.exclude(home,Limits::Set::int_min,
-                                    Limits::Set::int_max) );
+        GECODE_ME_CHECK( x0.cardMax(home, 0) );
+        GECODE_ME_CHECK( x1.cardMax(home, 0) );
         return ES_SUBSUMED(this,home);
       }
 
