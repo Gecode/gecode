@@ -420,7 +420,7 @@ CPLTSETSRC0 =	\
 
 CPLTSETHDR0 =		                \
 	view.icc bddmanager.icc exception.icc array.icc \
-	support.icc var.icc \
+	support.icc var-imp.icc \
 	var-imp/imp.icc var/cpltset.icc view/cpltset.icc \
 	propagators.hh \
 	propagators/unary.icc propagators/binary.icc \
