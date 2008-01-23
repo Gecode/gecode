@@ -767,7 +767,8 @@ namespace Gecode { namespace Int {
     }
 
     ModEvent me;
-
+    unsigned int b;
+    
     // Only a single range left?
     if (fn == ln) {
       assert(h > 0);
@@ -784,8 +785,8 @@ namespace Gecode { namespace Int {
     // Unlink sentinel ranges
     fn->prev(&f,NULL); ln->next(&l,NULL);
     // How many values where removed at the bounds
-    unsigned int b = (static_cast<unsigned int>(fn->min()-dom.min()) +
-                      static_cast<unsigned int>(dom.max()-ln->max()));
+    b = (static_cast<unsigned int>(fn->min()-dom.min()) +
+         static_cast<unsigned int>(dom.max()-ln->max()));
     // Set new first and last ranges
     fst(fn); lst(ln);
 
