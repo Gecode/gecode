@@ -341,8 +341,8 @@ SETSRC0 =								 \
 	int.cc								 \
 	select.cc select/disjoint.cc sequence.cc			 \
 	distinct.cc distinct/atmostOne.cc				 \
-	sequence/seq.cc sequence/seq-u.cc array.cc var/imp.cc		 \
-	var/integerset.cc var/set.cc view/print.cc			 \
+	sequence/seq.cc sequence/seq-u.cc array.cc var-imp/imp.cc	 \
+	var-imp/integerset.cc var/set.cc view/print.cc			 \
 	projectors.cc							 \
 	projectors/set-expr.cc projectors/projector.cc			 \
 	projectors/projector-set.cc					 \
@@ -350,13 +350,15 @@ SETSRC0 =								 \
 	projectors/compiler.cc						 \
 	projectors/formula.cc
 SETHDR0 =								     \
-	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
+	view.icc exception.icc int.hh select.hh var-imp.icc int/card.icc     \
 	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
 	int/channel-bool.icc select/idxarray.hh			             \
 	select/idxarray.icc select/inter.icc select/union.icc                \
 	select/unionConst.icc                                                \
-	select/disjoint.icc array.icc var/imp.icc var/integerset.icc	     \
-	var/delta.icc var/iter.icc var/set.icc				     \
+	select/disjoint.icc array.icc					     \
+	var-imp/imp.icc var-imp/integerset.icc	     			     \
+	var-imp/delta.icc var-imp/iter.icc 				     \
+	var/set.icc							     \
 	view/complement.icc view/const.icc view/set.icc view/singleton.icc   \
 	view/offset.icc                                                      \
 	rel/subset.icc rel/re-subset.icc rel/eq.icc rel/nq.icc rel/re-eq.icc \
@@ -399,8 +401,8 @@ export LINKSET      	=
 endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
-	set/select set/sequence set/var set/view set/projectors \
-	set/projectors/propagator
+	set/select set/sequence set/var set/var-imp set/view 	\
+	set/projectors set/projectors/propagator
 
 #
 # CpltSet COMPONENTS
@@ -868,7 +870,7 @@ compilesubdirs:
 ALLVIS0 = \
 	gecode/int/var-imp/int \
 	gecode/int/var-imp/bool \
-	gecode/set/var-imp \
+	gecode/set/var-imp/set \
 	gecode/cpltset/var-imp
 ALLVIS = \
 	$(ALLVIS0:%=$(top_srcdir)/%.vis) \

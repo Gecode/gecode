@@ -82,7 +82,7 @@ namespace Gecode { namespace Serialization {
           IntSet(ai));
     }
     VarImpBase* createBoolVar(Space* home, Reflection::VarSpec& spec) {
-      int dom = spec.dom()->toInt();
+      unsigned int dom = spec.dom()->toInt();
       int min = 0;
       int max = 1;
       if (dom == Int::BoolVarImp::ZERO)
@@ -94,7 +94,7 @@ namespace Gecode { namespace Serialization {
     }
     void constrainBoolVar(Space* home, VarImpBase* v,
                           Reflection::VarSpec& spec) {
-      int d = spec.dom()->toInt();
+      unsigned int d = spec.dom()->toInt();
       if (d == Int::BoolVarImp::ZERO)
         rel(home, BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v))),
             IRT_EQ, 0);

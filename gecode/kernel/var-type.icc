@@ -5,7 +5,7 @@
  *    files instead:
  *     - gecode/int/var-imp/int.vis
  *     - gecode/int/var-imp/bool.vis
- *     - gecode/set/var-imp.vis
+ *     - gecode/set/var-imp/set.vis
  *     - gecode/cpltset/var-imp.vis
  *
  *  This file contains generated code fragments which are

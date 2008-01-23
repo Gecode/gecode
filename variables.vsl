@@ -44,7 +44,7 @@ File:	gecode/int/var-imp/int.vis
 File:	gecode/int/var-imp/bool.vis
 
 # Set variables
-File:	gecode/set/var-imp.vis
+File:	gecode/set/var-imp/set.vis
 
 # Complete set variables
 File:	gecode/cpltset/var-imp.vis
