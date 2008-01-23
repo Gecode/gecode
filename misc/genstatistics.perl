@@ -86,7 +86,7 @@ while ($file = @ARGV[$i++]) {
 @modorder = ("kernel","search","int","set","cpltset","minimodel",
 	     "serialization", "iter","support","example","test");
 
-@catorder = ("core","var","prop","branch","post",
+@catorder = ("core","var","prop","branch","post","search",
 	     "int","set","cpltset","stress","any","other");
 $i = 0;
 
@@ -108,6 +108,7 @@ $catclear{"core"} = "Core functionality";
 $catclear{"var"} = "Variables, views, and variable implementations";
 $catclear{"prop"} = "Propagators";
 $catclear{"branch"} = "Branchings";
+$catclear{"search"} = "Search engines";
 $catclear{"post"} = "Posting propagators and branchings";
 $catclear{"any"} = "All";
 $catclear{"other"} = "Miscellaneous";
