@@ -1156,7 +1156,7 @@ namespace Gecode {
      * Space::status on the same space has been called and in between
      * no non-const member function has been called on this space.
      *
-     * Note that the above invariant obly pertains to calls of member
+     * Note that the above invariant only pertains to calls of member
      * functions of the same space. If the invariant is violated, the
      * system is likely to crash (hopefully it does). In particular, if
      * applied to a space with no current branching, the system will
