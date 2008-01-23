@@ -55,14 +55,14 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   Support::Symbol
-  LinkSingle::name(void) {
+  LinkSingle::ati(void) {
     return Support::Symbol("Int::Channel::LinkSingle");
   }
 
   Reflection::ActorSpec&
   LinkSingle::spec(Space* home, Reflection::VarMap& m) {
     return MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
-      ::spec(home, m, name());
+      ::spec(home, m, ati());
   }
 
   void

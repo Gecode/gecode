@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 
@@ -246,7 +246,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 
@@ -427,7 +427,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 
@@ -460,7 +460,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 }}}

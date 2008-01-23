@@ -97,8 +97,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   Reflection::ActorSpec&
   MemoryLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m,
-                             const Support::Symbol& name) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
+                             const Support::Symbol& ati) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
     return s << x.spec(home, m) << c;
   }
 
@@ -157,8 +157,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   Reflection::ActorSpec&
   SpeedLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m,
-                            const Support::Symbol& name) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
+                            const Support::Symbol& ati) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
     Reflection::ArrayArg* a = 
       Reflection::Arg::newArray(x.size()+n_s);
     int i = 0;
@@ -194,14 +194,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   inline Support::Symbol
-  GqBoolInt<VX>::Memory::name(void) {
+  GqBoolInt<VX>::Memory::ati(void) {
     return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Memory");
   }
 
   template <class VX>
   Reflection::ActorSpec&
   GqBoolInt<VX>::Memory::spec(Space* home, Reflection::VarMap& m) {
-    return MemoryLinBoolInt<VX>::spec(home, m, name());
+    return MemoryLinBoolInt<VX>::spec(home, m, ati());
   }
 
   template <class VX>
@@ -278,14 +278,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   inline Support::Symbol
-  GqBoolInt<VX>::Speed::name(void) {
+  GqBoolInt<VX>::Speed::ati(void) {
     return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Speed");
   }
 
   template <class VX>
   Reflection::ActorSpec&
   GqBoolInt<VX>::Speed::spec(Space* home, Reflection::VarMap& m) {
-    return SpeedLinBoolInt<VX>::spec(home, m, name());
+    return SpeedLinBoolInt<VX>::spec(home, m, ati());
   }
 
   template <class VX>
@@ -409,14 +409,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   inline Support::Symbol
-  EqBoolInt<VX>::Memory::name(void) {
+  EqBoolInt<VX>::Memory::ati(void) {
     return Reflection::mangle<VX>("Int::Linear::EqBoolInt::Memory");
   }
 
   template <class VX>
   Reflection::ActorSpec&
   EqBoolInt<VX>::Memory::spec(Space* home, Reflection::VarMap& m) {
-    return MemoryLinBoolInt<VX>::spec(home, m, name());
+    return MemoryLinBoolInt<VX>::spec(home, m, ati());
   }
 
   template <class VX>
@@ -500,14 +500,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   inline Support::Symbol
-  EqBoolInt<VX>::Speed::name(void) {
+  EqBoolInt<VX>::Speed::ati(void) {
     return Reflection::mangle<VX>("Int::Linear::EqBoolInt::Speed");
   }
 
   template <class VX>
   Reflection::ActorSpec&
   EqBoolInt<VX>::Speed::spec(Space* home, Reflection::VarMap& m) {
-    return SpeedLinBoolInt<VX>::spec(home, m, name());
+    return SpeedLinBoolInt<VX>::spec(home, m, ati());
   }
 
   template <class VX>
@@ -683,7 +683,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   inline Support::Symbol
-  NqBoolInt<VX>::name(void) {
+  NqBoolInt<VX>::ati(void) {
     return Reflection::mangle<VX>("Int::Linear::NqBoolInt");
   }
 
@@ -691,7 +691,7 @@ namespace Gecode { namespace Int { namespace Linear {
   Reflection::ActorSpec&
   NqBoolInt<VX>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      BinaryPropagator<VX, PC_INT_VAL>::spec(home, m, name());
+      BinaryPropagator<VX, PC_INT_VAL>::spec(home, m, ati());
     return s << x.spec(home, m) << c;
   }
 

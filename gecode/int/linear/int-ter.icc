@@ -90,8 +90,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C, PropCond pc>
   Reflection::ActorSpec&
   LinTer<Val,A,B,C,pc>::spec(Space* home, Reflection::VarMap& m,
-                             const Support::Symbol& name) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
+                             const Support::Symbol& ati) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
     return s << x0.spec(home, m)
              << x1.spec(home, m)
              << x2.spec(home, m)
@@ -135,14 +135,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   inline Support::Symbol
-  EqTer<Val,A,B,C>::name(void) {
+  EqTer<Val,A,B,C>::ati(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::EqTer");
   }
 
   template <class Val, class A, class B, class C>
   Reflection::ActorSpec&
   EqTer<Val,A,B,C>::spec(Space* home, Reflection::VarMap& m) {
-    return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, name());
+    return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class Val, class A, class B, class C>
@@ -231,14 +231,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   inline Support::Symbol
-  NqTer<Val,A,B,C>::name(void) {
+  NqTer<Val,A,B,C>::ati(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::NqTer");
   }
 
   template <class Val, class A, class B, class C>
   Reflection::ActorSpec&
   NqTer<Val,A,B,C>::spec(Space* home, Reflection::VarMap& m) {
-    return LinTer<Val,A,B,C,PC_INT_VAL>::spec(home, m, name());
+    return LinTer<Val,A,B,C,PC_INT_VAL>::spec(home, m, ati());
   }
 
   template <class Val, class A, class B, class C>
@@ -311,14 +311,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class C>
   inline Support::Symbol
-  LqTer<Val,A,B,C>::name(void) {
+  LqTer<Val,A,B,C>::ati(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::LqTer");
   }
 
   template <class Val, class A, class B, class C>
   Reflection::ActorSpec&
   LqTer<Val,A,B,C>::spec(Space* home, Reflection::VarMap& m) {
-    return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, name());
+    return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class Val, class A, class B, class C>

@@ -106,7 +106,7 @@ namespace Gecode { namespace Reflection {
   void
   Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) {
     poster p = NULL;
-    if (!ro->posters.get(spec.name(),p)) {
+    if (!ro->posters.get(spec.ati(),p)) {
       throw Reflection::ReflectionException("Constraint not found");
     }
     p(home, vm, spec);
@@ -544,8 +544,8 @@ namespace Gecode { namespace Reflection {
   /// Implementation of an ActorSpec, holding all information about an actor
   class ActorSpec::Arguments {
   public:
-    /// The name of this actor
-    Support::Symbol _name;
+    /// The actor type identifier of this actor
+    Support::Symbol _ati;
     /// The size of the argument array
     int   size;
     /// The number of arguments of this actor
@@ -568,8 +568,8 @@ namespace Gecode { namespace Reflection {
    */
 
   inline
-  ActorSpec::Arguments::Arguments(const Support::Symbol& name)
-   :  _name(name), size(4), n(0), r(1) {
+  ActorSpec::Arguments::Arguments(const Support::Symbol& ati)
+   :  _ati(ati), size(4), n(0), r(1) {
      a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*size));
   }
 
@@ -591,8 +591,8 @@ namespace Gecode { namespace Reflection {
     _args->a = newargs;
   }
 
-  ActorSpec::ActorSpec(const Support::Symbol& name) {
-    _args = new Arguments(name);
+  ActorSpec::ActorSpec(const Support::Symbol& ati) {
+    _args = new Arguments(ati);
   }
 
   ActorSpec::ActorSpec(const ActorSpec& s) : _args(s._args) {
@@ -623,13 +623,8 @@ namespace Gecode { namespace Reflection {
   }
 
   Support::Symbol
-  ActorSpec::name(void) const {
-    return _args->_name;
-  }
-
-  bool
-  ActorSpec::hasName(void) const {
-    return !_args->_name.empty();
+  ActorSpec::ati(void) const {
+    return _args->_ati;
   }
 
   bool
@@ -778,12 +773,12 @@ namespace Gecode { namespace Reflection {
    */
    
   bool
-  SpecIter::operator()(void) const {
+  ActorSpecIter::operator()(void) const {
     return cur != &s->a_actors;
   }
 
   void
-  SpecIter::operator++(void) {
+  ActorSpecIter::operator++(void) {
     delete curSpec;
     curSpec = NULL;
     cur = cur->next();
@@ -800,7 +795,7 @@ namespace Gecode { namespace Reflection {
       isBranching = true;
   }
 
-  SpecIter::SpecIter(Space* s0, VarMap& m0)
+  ActorSpecIter::ActorSpecIter(Space* s0, VarMap& m0)
   : m(&m0), s(s0), queue(s0->pc.p.active - &s0->pc.p.queue[0]), 
     isBranching(false), curSpec(NULL) {
     if (queue >= 0)
@@ -811,7 +806,7 @@ namespace Gecode { namespace Reflection {
   }
 
   ActorSpec&
-  SpecIter::actor(void) const {
+  ActorSpecIter::actor(void) const {
     if (!curSpec) {
       curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
       if (isBranching)

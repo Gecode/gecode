@@ -459,7 +459,7 @@ namespace Gecode {
 
 
   namespace Reflection {
-    class SpecIter;
+    class ActorSpecIter;
     class ActorSpec;
     class BranchingSpec;
     class VarMap;
@@ -551,7 +551,7 @@ namespace Gecode {
     friend class Propagator;
     friend class Advisor;
     friend class Branching;
-    friend class Reflection::SpecIter;
+    friend class Reflection::ActorSpecIter;
     template <class VIC> friend class VarImp;
     template <class A> friend class Council;
   private:
@@ -921,7 +921,7 @@ namespace Gecode {
     friend class ActorLink;
     friend class Space;
     friend class BranchingDesc;
-    friend class Reflection::SpecIter;
+    friend class Reflection::ActorSpecIter;
   private:
     /// Unique identity (to match to branching descriptions)
     unsigned int id; 
@@ -994,7 +994,7 @@ namespace Gecode {
     friend class Propagator;
     friend class Branching;
     friend class Advisor;
-    friend class Reflection::SpecIter;
+    friend class Reflection::ActorSpecIter;
     template <class VIC> friend class VarImp;
     template <class VarType> friend class VarDisposer;
     friend class SharedHandle;

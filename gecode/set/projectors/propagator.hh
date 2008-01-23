@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Projection {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     static  ExecStatus post(Space* home, ViewArray<SetView>& x,
                             ProjectorSet& ps);
   };
@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Projection {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     GECODE_SET_EXPORT static  ExecStatus post(Space* home,
                                               ViewArray<SetView>& x,
                                               Gecode::Int::BoolView b,
@@ -149,7 +149,7 @@ namespace Gecode { namespace Set { namespace Projection {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     static  ExecStatus post(Space* home, ViewArray<SetView>& x,
                             Gecode::Int::IntView i, Projector& p);
   };

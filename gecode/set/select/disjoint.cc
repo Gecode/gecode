@@ -49,13 +49,13 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   Support::Symbol
-  SelectDisjoint::name(void) {
+  SelectDisjoint::ati(void) {
     return Support::Symbol("Set::Select::Disjoint");
   }
 
   Reflection::ActorSpec&
   SelectDisjoint::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     return s << iv.spec(home, m) << x1.spec(home, m);
   }
 

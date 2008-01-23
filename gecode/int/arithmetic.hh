@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -341,7 +341,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 }}}

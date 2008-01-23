@@ -66,14 +66,14 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   Support::Symbol
-  ReSubset<View0,View1>::name(void) {
+  ReSubset<View0,View1>::ati(void) {
     return Reflection::mangle<View0,View1>("Set::Rel::ReSubset");
   }
 
   template <class View0, class View1>
   Reflection::ActorSpec&
   ReSubset<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     return s << x0.spec(home, m)
              << x1.spec(home, m)
              << b.spec(home, m);

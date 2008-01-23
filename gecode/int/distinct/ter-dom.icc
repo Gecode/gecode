@@ -78,14 +78,14 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   Support::Symbol
-  TerDom<View>::name(void) {
+  TerDom<View>::ati(void) {
     return Reflection::mangle<View>("Int::Distinct::TerDom");
   }
 
   template <class View>
   Reflection::ActorSpec&
   TerDom<View>::spec(Space* home, Reflection::VarMap& m) {
-    return TernaryPropagator<View,PC_INT_DOM>::spec(home, m, name());
+    return TernaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
   /// Check whether x0 forms a Hall set of cardinality one

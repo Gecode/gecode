@@ -103,8 +103,8 @@ namespace Gecode {
     virtual Reflection::BranchingSpec branchingSpec(Space* home, 
                                               Reflection::VarMap& m,
                                               const BranchingDesc* d);
-    /// Name of this branching
-    static Support::Symbol name(void);
+    /// Actor type identifier of this branching
+    static Support::Symbol ati(void);
     /// Post branching according to specification
     static void post(Space* home, Reflection::VarMap& m,
                      const Reflection::ActorSpec& spec);
@@ -152,8 +152,8 @@ namespace Gecode {
     virtual Reflection::BranchingSpec branchingSpec(Space* home, 
                                               Reflection::VarMap& m,
                                               const BranchingDesc* d);
-    /// Name of this assignment
-    static Support::Symbol name(void);
+    /// Actor type identifier of this assignment
+    static Support::Symbol ati(void);
     /// Post assignment according to specification
     static void post(Space* home, Reflection::VarMap& m,
                      const Reflection::ActorSpec& spec);
@@ -306,7 +306,7 @@ namespace Gecode {
 
   template <class View, class Val, class ViewSel, class ValSel>
   Support::Symbol
-  ViewValBranching<View,Val,ViewSel,ValSel>::name(void) {
+  ViewValBranching<View,Val,ViewSel,ValSel>::ati(void) {
     return Reflection::mangle<View,Val,ViewSel,ValSel>("ViewValBranching");
   }
 
@@ -323,7 +323,7 @@ namespace Gecode {
   Reflection::ActorSpec&
   ViewValBranching<View,Val,ViewSel,ValSel>::spec(Space* home,
     Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Branching::spec(home, m, name());
+    Reflection::ActorSpec& s = Branching::spec(home, m, ati());
     return s << x.spec(home, m);
   }
 
@@ -400,7 +400,7 @@ namespace Gecode {
 
   template <class View, class Val, class ValSel>
   Support::Symbol
-  ViewValAssignment<View,Val,ValSel>::name(void) {
+  ViewValAssignment<View,Val,ValSel>::ati(void) {
     return Reflection::mangle<View,Val,ValSel>("ViewValAssignment");
   }
 
@@ -417,7 +417,7 @@ namespace Gecode {
   Reflection::ActorSpec&
   ViewValAssignment<View,Val,ValSel>::spec(Space* home,
     Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Branching::spec(home, m, name());
+    Reflection::ActorSpec& s = Branching::spec(home, m, ati());
     return s << x.spec(home, m);
   }
 

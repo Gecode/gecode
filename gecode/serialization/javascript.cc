@@ -124,7 +124,7 @@ namespace Gecode {
     Reflection::VarMapIter vmi(vm);
     int varCount = 0;
     int soCount = 0;
-    for (Reflection::SpecIter si(home, vm); si(); ++si) {
+    for (Reflection::ActorSpecIter si(home, vm); si(); ++si) {
       Reflection::ActorSpec& s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
         Reflection::VarSpec& vs = vmi.spec();
@@ -148,7 +148,7 @@ namespace Gecode {
           emitSharedObject(os, soBase++, vm, s[i]);
       }
 
-      os << "constraint(\"" << s.name() << "\", ";
+      os << "constraint(\"" << s.ati() << "\", ";
 
       soBase = soCount;
       for (int i=0; i<s.noOfArgs(); i++) {

@@ -78,7 +78,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   template <bool negated>
   Support::Symbol
-  NaryProjection<negated>::name(void) {
+  NaryProjection<negated>::ati(void) {
     if (negated)
       return Support::Symbol("set.projectors.NaryProjection<true>");
     else

@@ -198,8 +198,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   Reflection::ActorSpec&
   LinBoolScale<SBAP,SBAN,VX,pcx>::spec(Space* home, Reflection::VarMap& m,
-                                       const Support::Symbol& name) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
+                                       const Support::Symbol& ati) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
 
     Reflection::IntArrayArg* c_p = Reflection::Arg::newIntArray(p.size());
     ViewArray<BoolView> b_p(home, p.size());
@@ -272,14 +272,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   inline Support::Symbol
-  EqBoolScale<SBAP,SBAN,VX>::name(void) {
+  EqBoolScale<SBAP,SBAN,VX>::ati(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::EqBoolScale");
   }
 
   template<class SBAP, class SBAN, class VX>
   Reflection::ActorSpec&
   EqBoolScale<SBAP,SBAN,VX>::spec(Space* home, Reflection::VarMap& m) {
-    return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, name());
+    return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, ati());
   }
 
   template<class SBAP, class SBAN, class VX>
@@ -526,14 +526,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   inline Support::Symbol
-  LqBoolScale<SBAP,SBAN,VX>::name(void) {
+  LqBoolScale<SBAP,SBAN,VX>::ati(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::LqBoolScale");
   }
 
   template<class SBAP, class SBAN, class VX>
   Reflection::ActorSpec&
   LqBoolScale<SBAP,SBAN,VX>::spec(Space* home, Reflection::VarMap& m) {
-    return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, name());
+    return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, ati());
   }
 
   template<class SBAP, class SBAN, class VX>
@@ -719,14 +719,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   inline Support::Symbol
-  NqBoolScale<SBAP,SBAN,VX>::name(void) {
+  NqBoolScale<SBAP,SBAN,VX>::ati(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::NqBoolScale");
   }
 
   template<class SBAP, class SBAN, class VX>
   Reflection::ActorSpec&
   NqBoolScale<SBAP,SBAN,VX>::spec(Space* home, Reflection::VarMap& m) {
-    return LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::spec(home, m, name());
+    return LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::spec(home, m, ati());
   }
 
   template<class SBAP, class SBAN, class VX>

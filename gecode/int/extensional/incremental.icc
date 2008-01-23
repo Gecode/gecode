@@ -168,14 +168,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Gecode::Support::Symbol
-  Incremental<View>::name(void) {
+  Incremental<View>::ati(void) {
     return Reflection::mangle<View>("Int::Extensional::Incremental");
   }
 
   template <class View>
   Reflection::ActorSpec&
   Incremental<View>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     return s << x.spec(home, m)
              << tupleSet.spec(m);
   }

@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Support::Symbol
-  Card<View>::name(void) {
+  Card<View>::ati(void) {
    return Reflection::mangle<View>("Set::Int::Card");
   }
 
@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Int {
   Reflection::ActorSpec&
   Card<View>::spec(Space* home, Reflection::VarMap& m) {
    return IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>
-     ::spec(home, m, name());
+     ::spec(home, m, ati());
   }
 
   template <class View>

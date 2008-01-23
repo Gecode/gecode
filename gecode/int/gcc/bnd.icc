@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   Support::Symbol
-  BndImp<View, Card, isView, shared>::name(void) {
+  BndImp<View, Card, isView, shared>::ati(void) {
     Support::Symbol mangled("Int::GCC::Bnd");
     mangled += "<";
     mangled += View::type();
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   Reflection::ActorSpec&
   BndImp<View,Card,isView,shared>::spec(Space* home, Reflection::VarMap& m) {
-    return Propagator::spec(home, m, name())
+    return Propagator::spec(home, m, ati())
       << x.spec(home, m) << k.spec(home, m) << card_fixed << skip_lbc;
   }
 

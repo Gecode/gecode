@@ -73,14 +73,14 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   Support::Symbol
-  SelectIntersection<SView,RView>::name(void) {
+  SelectIntersection<SView,RView>::ati(void) {
     return Reflection::mangle<SView,RView>("Set::Select::Intersection");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec&
   SelectIntersection<SView,RView>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     int count = 0;
     for (IntSetRanges ur(universe); ur(); ++ur)
       count++;

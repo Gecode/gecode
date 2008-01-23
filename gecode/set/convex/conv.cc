@@ -49,13 +49,13 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   Support::Symbol
-  Convex::name(void) {
+  Convex::ati(void) {
     return Support::Symbol("Set::Convex::Convex");
   }
 
   Reflection::ActorSpec&
   Convex::spec(Space* home, Reflection::VarMap& m) {
-    return UnaryPropagator<SetView,PC_SET_ANY>::spec(home, m, name());
+    return UnaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
   }
 
   ExecStatus

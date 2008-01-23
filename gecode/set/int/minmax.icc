@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Support::Symbol
-  MinElement<View>::name(void) {
+  MinElement<View>::ati(void) {
    return Reflection::mangle<View>("Set::Int::MinElement");
   }
 
@@ -82,7 +82,7 @@ namespace Gecode { namespace Set { namespace Int {
   Reflection::ActorSpec&
   MinElement<View>::spec(Space* home, Reflection::VarMap& m) {
    return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
-     ::spec(home, m, name());
+     ::spec(home, m, ati());
   }
 
   template <class View>
@@ -181,7 +181,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Support::Symbol
-  MaxElement<View>::name(void) {
+  MaxElement<View>::ati(void) {
     return Reflection::mangle<View>("Set::Int::MaxElement");
   }
 
@@ -189,7 +189,7 @@ namespace Gecode { namespace Set { namespace Int {
   Reflection::ActorSpec&
   MaxElement<View>::spec(Space* home, Reflection::VarMap& m) {
     return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
-      ::spec(home, m, name());
+      ::spec(home, m, ati());
   }
 
   template <class View>

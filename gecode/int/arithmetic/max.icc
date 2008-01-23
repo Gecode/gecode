@@ -126,14 +126,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Support::Symbol
-  Max<View>::name(void) {
+  Max<View>::ati(void) {
     return Reflection::mangle<View>("Int::Arithmetic::Max");
   }
 
   template <class View>
   Reflection::ActorSpec&
   Max<View>::spec(Space* home, Reflection::VarMap& m) {
-    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, name());
+    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
   /*
@@ -235,14 +235,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Support::Symbol
-  NaryMax<View>::name(void) {
+  NaryMax<View>::ati(void) {
     return Reflection::mangle<View>("Int::Arithmetic::NaryMax");
   }
 
   template <class View>
   Reflection::ActorSpec&
   NaryMax<View>::spec(Space* home, Reflection::VarMap& m) {
-    return NaryOnePropagator<View,PC_INT_BND>::spec(home, m, name());
+    return NaryOnePropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
 }}}

@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 = c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$(x_0+x_1 = c)\Leftrightarrow b\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c, Ctrl b);
   };
@@ -241,7 +241,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 \neq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -282,7 +282,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 \leq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 \geq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$(x_0+x_1 \leq c)\Leftrightarrow b\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c, BoolView b);
   };
@@ -452,7 +452,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1+x_2 = c\f$
     static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
   };
@@ -494,7 +494,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1+x_2 \neq c\f$
     static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
   };
@@ -536,7 +536,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1+x_2 \leq c\f$
     static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
   };
@@ -663,7 +663,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
@@ -704,7 +704,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
     post(Space* home, ViewArray<View>& x, ViewArray<View>& y, Val c);
@@ -745,7 +745,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\Leftrightarrow b\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
@@ -785,7 +785,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\neq c\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
@@ -825,7 +825,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
@@ -866,7 +866,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\Leftrightarrow b\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
@@ -972,7 +972,7 @@ namespace Gecode { namespace Int { namespace Linear {
       static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
-      static Support::Symbol name(void);
+      static Support::Symbol ati(void);
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
@@ -998,7 +998,7 @@ namespace Gecode { namespace Int { namespace Linear {
       static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
-      static Support::Symbol name(void);
+      static Support::Symbol ati(void);
     };
 
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
@@ -1038,7 +1038,7 @@ namespace Gecode { namespace Int { namespace Linear {
       static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
-      static Support::Symbol name(void);
+      static Support::Symbol ati(void);
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
@@ -1064,7 +1064,7 @@ namespace Gecode { namespace Int { namespace Linear {
       static void post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
-      static Support::Symbol name(void);
+      static Support::Symbol ati(void);
     };
   public:
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
@@ -1106,7 +1106,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
     static  ExecStatus post(Space* home, ViewArray<VX>& b, int c);
   };
@@ -1173,7 +1173,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
@@ -1206,7 +1206,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \neq y\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
@@ -1239,7 +1239,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \geq y\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
@@ -1395,7 +1395,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator
     static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };
@@ -1429,7 +1429,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator
     static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };
@@ -1463,7 +1463,7 @@ namespace Gecode { namespace Int { namespace Linear {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator
     static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };

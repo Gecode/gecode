@@ -365,15 +365,13 @@ namespace Gecode { namespace Reflection {
     
     /// \name Actor information
     //@{
-    /// Return name
-    Support::Symbol name(void) const;
+    /// Return actor type identifier
+    Support::Symbol ati(void) const;
     /// Return number of arguments
     int noOfArgs(void) const;
     /// Return argument \a i
     Arg* operator[](int i) const;
 
-    /// Return if name is not empty
-    bool hasName(void) const;
     /// Return whether the actor is a branching
     bool isBranching(void) const;
     /** \brief Return queue where the actor is currently scheduled
@@ -408,6 +406,14 @@ namespace Gecode { namespace Reflection {
     * A BranchingSpec contains information about the alternatives of a Space.
     * It is similar to a BranchingDesc, but not opaque: you can query the
     * information.
+    *
+    * The id of the branching lets you identify the ActorSpec that corresponds 
+    * to the branching that generated a BranchingSpec.
+    *
+    * The specification for an alternative is an ArrayArg that may contain 
+    * strings and references to variables. The concatenation of the strings 
+    * and variables is a human-readable description of what constraints are 
+    * posted for the given alternative.
     *
     * \ingroup TaskReflection
     */  
@@ -530,8 +536,8 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varUpdater vu);
     /// Register variable print function for \a vti
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varPrinter vp);
-    /// Register constraint posting function for constraint name \a id
-    GECODE_KERNEL_EXPORT void add(const Support::Symbol& id, poster p);
+    /// Register constraint posting function for actor type identifier \a ati
+    GECODE_KERNEL_EXPORT void add(const Support::Symbol& ati, poster p);
     /// Print list of all registered posters to \a out
     GECODE_KERNEL_EXPORT void print(std::ostream& out);
   private:
@@ -549,7 +555,7 @@ namespace Gecode { namespace Reflection {
     * \ingroup TaskReflection
     *
     * The registered Propagator class \a P has to provide two functions:
-    *  - static Support::Symbol name(void)
+    *  - static Support::Symbol ati(void)
     *  - static void post(Space*, const VarMap&, const ActorSpec&)
     */
   template <class P>
@@ -561,7 +567,7 @@ namespace Gecode { namespace Reflection {
 
   template <class P>
   Registrar<P>::Registrar(void) {
-    registry().add(P::name(), &P::post);
+    registry().add(P::ati(), &P::post);
   }
 
   /**
@@ -730,21 +736,21 @@ namespace Reflection {
     static Support::Symbol t(void) { return Support::Symbol("IntSet"); }    
   };
 
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ">";
     return mangled;
   }
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0, bool b>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
@@ -752,11 +758,11 @@ namespace Reflection {
     mangled += ">";
     return mangled;
   }
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0, class View1>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
@@ -764,11 +770,11 @@ namespace Reflection {
     mangled += ">";
     return mangled;
   }
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0, class View1, bool b>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
@@ -778,11 +784,11 @@ namespace Reflection {
     mangled += ">";
     return mangled;
   }
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0, class View1, class View2>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
@@ -792,11 +798,11 @@ namespace Reflection {
     mangled += ">";
     return mangled;
   }
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0, class View1, class View2, bool b>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
@@ -808,11 +814,11 @@ namespace Reflection {
     mangled += ">";
     return mangled;
   }
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0, class View1, class View2, class View3>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
@@ -824,11 +830,11 @@ namespace Reflection {
     mangled += ">";
     return mangled;
   }
-  /// Mangle name with type information
+  /// Mangle ati with type information
   template <class View0, class View1, class View2, class View3, bool b>
   Support::Symbol
-  mangle(const Support::Symbol& name) {
-    Support::Symbol mangled = name.copy();
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";

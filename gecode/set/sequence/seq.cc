@@ -56,13 +56,13 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   Support::Symbol
-  Seq::name(void) {
+  Seq::ati(void) {
     return Support::Symbol("Set::Sequence::Sequence");
   }
 
   Reflection::ActorSpec&
   Seq::spec(Space* home, Reflection::VarMap& m) {
-    return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, name());
+    return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, ati());
   }
 
   void

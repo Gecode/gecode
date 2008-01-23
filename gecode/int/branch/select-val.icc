@@ -55,17 +55,18 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class View>
   forceinline void
   ValMin<View>::branchingSpec(Space* home,
-                           Reflection::VarMap& m, Reflection::BranchingSpec& bs,
+                           Reflection::VarMap& m,
+                           Reflection::BranchingSpec& bs,
                            View x, int n) {
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
+    std::stringstream s;
+    s << n;
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
-    (*a0)[2] = Reflection::Arg::newInt(n);
+    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
     (*a1)[0] = x.spec(home, m);
-    (*a1)[1] = Reflection::Arg::newInt(IRT_GR);
-    (*a1)[2] = Reflection::Arg::newInt(n);
+    (*a1)[1] = Reflection::Arg::newString((std::string(">")+s.str()).c_str());
     bs[1] = a1;
   }
 
@@ -87,17 +88,19 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class View>
   forceinline void
   ValMed<View>::branchingSpec(Space* home,
-                           Reflection::VarMap& m, Reflection::BranchingSpec& bs,
+                           Reflection::VarMap& m,
+                           Reflection::BranchingSpec& bs,
                            View x, int n) {
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
+    std::stringstream s;
+    s << n;
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
-    (*a0)[2] = Reflection::Arg::newInt(n);
+    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
     (*a1)[0] = x.spec(home, m);
-    (*a1)[1] = Reflection::Arg::newInt(IRT_NQ);
-    (*a1)[2] = Reflection::Arg::newInt(n);
+    (*a1)[1] = 
+      Reflection::Arg::newString((std::string("!=")+s.str()).c_str());
     bs[1] = a1;
   }
 
@@ -122,15 +125,16 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMax<View>::branchingSpec(Space* home,
                            Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                            View x, int n) {
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
+    std::stringstream s;
+    s << n;
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
-    (*a0)[2] = Reflection::Arg::newInt(n);
+    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
     (*a1)[0] = x.spec(home, m);
-    (*a1)[1] = Reflection::Arg::newInt(IRT_LE);
-    (*a1)[2] = Reflection::Arg::newInt(n);
+    (*a1)[1] = 
+      Reflection::Arg::newString((std::string("<")+s.str()).c_str());
     bs[1] = a1;
   }
 
@@ -156,15 +160,16 @@ namespace Gecode { namespace Int { namespace Branch {
                                 Reflection::VarMap& m,
                                 Reflection::BranchingSpec& bs,
                                 View x, int n) {
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
+    std::stringstream s;
+    s << n;
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newInt(IRT_LQ);
-    (*a0)[2] = Reflection::Arg::newInt(n);
+    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
     (*a1)[0] = x.spec(home, m);
-    (*a1)[1] = Reflection::Arg::newInt(IRT_GR);
-    (*a1)[2] = Reflection::Arg::newInt(n);
+    (*a1)[1] = 
+      Reflection::Arg::newString((std::string(">")+s.str()).c_str());
     bs[1] = a1;
   }
 
@@ -190,15 +195,16 @@ namespace Gecode { namespace Int { namespace Branch {
                                 Reflection::VarMap& m,
                                 Reflection::BranchingSpec& bs,
                                 View x, int n) {
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
+    std::stringstream s;
+    s << n;
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newInt(IRT_GR);
-    (*a0)[2] = Reflection::Arg::newInt(n);
+    (*a0)[1] = Reflection::Arg::newString((std::string(">")+s.str()).c_str());
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
     (*a1)[0] = x.spec(home, m);
-    (*a1)[1] = Reflection::Arg::newInt(IRT_LQ);
-    (*a1)[2] = Reflection::Arg::newInt(n);
+    (*a1)[1] = 
+      Reflection::Arg::newString((std::string("<=")+s.str()).c_str());
     bs[1] = a1;
   }
 
@@ -258,15 +264,13 @@ namespace Gecode { namespace Int { namespace Branch {
                                Reflection::VarMap& m,
                                Reflection::BranchingSpec& bs,
                                View x, NoValue) {
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
-    (*a0)[2] = Reflection::Arg::newInt(0);
+    (*a0)[1] = Reflection::Arg::newString("= 0");
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
     (*a1)[0] = x.spec(home, m);
-    (*a1)[1] = Reflection::Arg::newInt(IRT_EQ);
-    (*a1)[2] = Reflection::Arg::newInt(1);
+    (*a1)[1] = Reflection::Arg::newString("= 1");
     bs[1] = a1;
   }
 
@@ -293,15 +297,13 @@ namespace Gecode { namespace Int { namespace Branch {
                                Reflection::VarMap& m,
                                Reflection::BranchingSpec& bs,
                                View x, NoValue) {
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newInt(IRT_EQ);
-    (*a0)[2] = Reflection::Arg::newInt(1);
+    (*a0)[1] = Reflection::Arg::newString("= 1");
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(3);
+    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
     (*a1)[0] = x.spec(home, m);
-    (*a1)[1] = Reflection::Arg::newInt(IRT_EQ);
-    (*a1)[2] = Reflection::Arg::newInt(0);
+    (*a1)[1] = Reflection::Arg::newString("= 0");
     bs[1] = a1;
   }
 

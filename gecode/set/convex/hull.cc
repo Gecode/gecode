@@ -51,13 +51,13 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   Support::Symbol
-  ConvexHull::name(void) {
+  ConvexHull::ati(void) {
     return Support::Symbol("Set::Convex::ConvexHull");
   }
 
   Reflection::ActorSpec&
   ConvexHull::spec(Space* home, Reflection::VarMap& m) {
-    return BinaryPropagator<SetView,PC_SET_ANY>::spec(home, m, name());
+    return BinaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
   }
 
   ExecStatus

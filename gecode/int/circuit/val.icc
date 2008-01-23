@@ -65,14 +65,14 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   Support::Symbol
-  Val<View>::name(void) {
+  Val<View>::ati(void) {
     return Reflection::mangle<View>("Int::Circuit::Val");
   }
 
   template <class View>
   Reflection::ActorSpec&
   Val<View>::spec(Space* home, Reflection::VarMap& m) {
-    return Base<View>::spec(home, m, name());
+    return Base<View>::spec(home, m, ati());
   }
 
   template <class View>

@@ -71,14 +71,14 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   Support::Symbol
-  SelectUnion<SView,RView>::name(void) {
+  SelectUnion<SView,RView>::ati(void) {
     return Reflection::mangle<SView,RView>("Set::Select::Union");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec&
   SelectUnion<SView,RView>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     return s << x0.spec(home, m)
              << iv.spec(home, m)
              << x1.spec(home, m);

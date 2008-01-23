@@ -116,14 +116,14 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   inline Support::Symbol
-  Eq<BVA,BVB>::name(void) {
+  Eq<BVA,BVB>::ati(void) {
     return Reflection::mangle<BVA,BVB>("Int::Bool::Eq");
   }
 
   template<class BVA, class BVB>
   Reflection::ActorSpec&
   Eq<BVA,BVB>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolBinary<BVA,BVB>::spec(home, m, name());
+    return BoolBinary<BVA,BVB>::spec(home, m, ati());
   }
 
   template<class BVA, class BVB>
@@ -221,14 +221,14 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   Support::Symbol
-  NaryEq<BV>::name(void) {
+  NaryEq<BV>::ati(void) {
     return Reflection::mangle<BV>("Int::Bool::NaryEq");
   }
   
   template<class BV>
   Reflection::ActorSpec&
   NaryEq<BV>::spec(Space* home, Reflection::VarMap& m) {
-    return NaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, name());
+    return NaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, ati());
   }
 
 }}}

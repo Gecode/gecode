@@ -141,14 +141,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Support::Symbol
-  AbsBnd<View>::name(void) {
+  AbsBnd<View>::ati(void) {
     return Reflection::mangle<View>("Int::Arithmetic::AbsBnd");
   }
 
   template <class View>
   Reflection::ActorSpec&
   AbsBnd<View>::spec(Space* home, Reflection::VarMap& m) {
-    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, name());
+    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class View>
@@ -261,14 +261,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Support::Symbol
-  AbsDom<View>::name(void) {
+  AbsDom<View>::ati(void) {
     return Reflection::mangle<View>("Int::Arithmetic::AbsDom");
   }
 
   template <class View>
   Reflection::ActorSpec&
   AbsDom<View>::spec(Space* home, Reflection::VarMap& m) {
-    return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, name());
+    return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
 }}}

@@ -197,14 +197,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Support::Symbol
-  Match<View>::name(void) {
+  Match<View>::ati(void) {
     return Reflection::mangle<View>("Set::Int::Match");
   }
 
   template <class View>
   Reflection::ActorSpec&
   Match<View>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     return s << x0.spec(home, m)
              << xs.spec(home, m);
   }

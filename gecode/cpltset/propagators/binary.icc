@@ -70,7 +70,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   Support::Symbol
-  BinaryCpltSetPropagator<View0,View1>::name(void) {
+  BinaryCpltSetPropagator<View0,View1>::ati(void) {
     return 
       Reflection::mangle<View0,View1>("CpltSet::BinaryCpltSetPropagator");
   }

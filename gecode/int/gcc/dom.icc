@@ -142,14 +142,14 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   Support::Symbol
-  Dom<View,Card,isView>::name(void) {
+  Dom<View,Card,isView>::ati(void) {
     return Reflection::mangle<View,Card,isView>("Int::GCC::Dom");
   }
 
   template <class View, class Card, bool isView>
   Reflection::ActorSpec&
   Dom<View,Card,isView>::spec(Space* home, Reflection::VarMap& m) {
-    return Propagator::spec(home, m, name())
+    return Propagator::spec(home, m, ati())
       << y.spec(home, m) << k.spec(home, m) << card_fixed;
   }
 

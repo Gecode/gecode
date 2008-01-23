@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   inline Support::Symbol
-  ReRange<View>::name(void) {
+  ReRange<View>::ati(void) {
     return Reflection::mangle<View>("Int::Dom::ReRange");
   }
 
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Dom {
   Reflection::ActorSpec&
   ReRange<View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      ReUnaryPropagator<View,PC_INT_BND,BoolView>::spec(home, m, name());
+      ReUnaryPropagator<View,PC_INT_BND,BoolView>::spec(home, m, ati());
     return s << min << max;
   }
 

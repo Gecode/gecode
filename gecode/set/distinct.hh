@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Distinct {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 }}}

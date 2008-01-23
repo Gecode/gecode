@@ -80,14 +80,14 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   inline Support::Symbol
-  Nq<View>::name(void) {
+  Nq<View>::ati(void) {
     return Reflection::mangle<View>("Int::Rel::Nq");
   }
 
   template <class View>
   Reflection::ActorSpec&
   Nq<View>::spec(Space* home, Reflection::VarMap& m) {
-    return BinaryPropagator<View,PC_INT_VAL>::spec(home, m, name());
+    return BinaryPropagator<View,PC_INT_VAL>::spec(home, m, ati());
   }
 
   template <class View>
@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   inline Support::Symbol
-  NaryNq<View>::name(void) {
+  NaryNq<View>::ati(void) {
     return Reflection::mangle<View>("Int::Rel::NaryNq");
   }
 
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Rel {
   Reflection::ActorSpec&
   NaryNq<View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::spec(home, m, name());
+      BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::spec(home, m, ati());
     Reflection::ArrayArg* a = Reflection::Arg::newArray(x.size());
     for (int i=x.size(); i--; )
       (*a)[i] = x[i][0].spec(home, m);

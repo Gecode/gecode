@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     static  ExecStatus post(Space* home, const ViewArray<ViewM>&,
                             const ViewArray<View>&, const ViewArray<ViewD>&,
                             const ViewArray<View>&, const ViewArray<ViewH>&,

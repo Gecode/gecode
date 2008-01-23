@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   inline Support::Symbol
-  Lex<View>::name(void) {
+  Lex<View>::ati(void) {
     return Reflection::mangle<View>("Int::Rel::Lex");
   }
 
@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Rel {
   Reflection::ActorSpec&
   Lex<View>::spec(Space* home, Reflection::VarMap& m) {
     return NaryPropagator<ViewTuple<View,2>,PC_INT_BND>
-      ::spec(home, m, name()) << strict;
+      ::spec(home, m, ati()) << strict;
   }
 
   template <class View>

@@ -197,8 +197,8 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC, PropCond pc_ac>
   Reflection::ActorSpec&
   View<VA,VB,VC,pc_ac>::spec(Space* home, Reflection::VarMap& m,
-                             const Support::Symbol& name) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
+                             const Support::Symbol& ati) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
     Reflection::IntArrayArg* ai = Reflection::Arg::newIntArray(n);
     for (int i=n; i--;)
       (*ai)[i] = iv[i].idx;
@@ -378,14 +378,14 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   inline Support::Symbol
-  ViewBnd<VA,VB,VC>::name(void) {
+  ViewBnd<VA,VB,VC>::ati(void) {
     return Reflection::mangle<VA,VB,VC>("Int::Element::ViewBnd");
   }
 
   template <class VA, class VB, class VC>
   Reflection::ActorSpec&
   ViewBnd<VA,VB,VC>::spec(Space* home, Reflection::VarMap& m) {
-    return View<VA,VB,VC,PC_INT_BND>::spec(home, m, name());
+    return View<VA,VB,VC,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class VA, class VB, class VC>
@@ -502,14 +502,14 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   inline Support::Symbol
-  ViewDom<VA,VB,VC>::name(void) {
+  ViewDom<VA,VB,VC>::ati(void) {
     return Reflection::mangle<VA,VB,VC>("Int::Element::ViewDom");
   }
 
   template <class VA, class VB, class VC>
   Reflection::ActorSpec&
   ViewDom<VA,VB,VC>::spec(Space* home, Reflection::VarMap& m) {
-    return View<VA,VB,VC,PC_INT_DOM>::spec(home, m, name());
+    return View<VA,VB,VC,PC_INT_DOM>::spec(home, m, ati());
   }
 
   template <class VA, class VB, class VC>

@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   inline Support::Symbol
-  CardProjection::name(void) {
+  CardProjection::ati(void) {
     return Support::Symbol("set.projectors.CardProjection");
   }
 

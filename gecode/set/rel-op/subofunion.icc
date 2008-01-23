@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   Support::Symbol
-  SubOfUnion<View0,View1,View2>::name(void) {
+  SubOfUnion<View0,View1,View2>::ati(void) {
     return Reflection::mangle<View0,View1,View2>("Set::RelOp::SubOfUnion");
   }
 
@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   Reflection::ActorSpec&
   SubOfUnion<View0,View1,View2>::spec(Space* home, Reflection::VarMap& m) {
     return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-      View2,PC_SET_ANY>::spec(home, m, name());
+      View2,PC_SET_ANY>::spec(home, m, ati());
   }
 
   template <class View0, class View1, class View2>

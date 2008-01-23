@@ -81,7 +81,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   Support::Symbol
-  Distinct<View0,View1>::name(void) {
+  Distinct<View0,View1>::ati(void) {
     return Reflection::mangle<View0,View1>("Set::Rel::Distinct");
   }
 
@@ -89,7 +89,7 @@ namespace Gecode { namespace Set { namespace Rel {
   Reflection::ActorSpec&
   Distinct<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
     return MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>
-      ::spec(home, m, name());
+      ::spec(home, m, ati());
   }
 
   template <class View0, class View1>
@@ -133,7 +133,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0>
   Support::Symbol
-  DistinctDoit<View0>::name(void) {
+  DistinctDoit<View0>::ati(void) {
     return Reflection::mangle<View0>("Set::Rel::DistinctDoit");
   }
 
@@ -141,7 +141,7 @@ namespace Gecode { namespace Set { namespace Rel {
   Reflection::ActorSpec&
   DistinctDoit<View0>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      UnaryPropagator<View0,PC_SET_ANY>::spec(home, m, name());
+      UnaryPropagator<View0,PC_SET_ANY>::spec(home, m, ati());
     return s << y.spec(home, m);
   }
 

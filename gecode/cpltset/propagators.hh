@@ -74,7 +74,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -123,7 +123,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -154,7 +154,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -195,7 +195,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -239,7 +239,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator
@@ -304,7 +304,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);

@@ -558,14 +558,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Gecode::Support::Symbol
-  LayeredGraph<View>::name(void) {
+  LayeredGraph<View>::ati(void) {
     return Reflection::mangle<View>("Int::Extensional::LayeredGraph");
   }
 
   template <class View>
   Reflection::ActorSpec&
   LayeredGraph<View>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     return s << x.spec(home, m)
              << dfa.spec(m);
   }

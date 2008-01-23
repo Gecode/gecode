@@ -56,14 +56,14 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   Support::Symbol
-  SeqU::name(void) {
+  SeqU::ati(void) {
     return Support::Symbol("Set::Sequence::Union");
   }
 
   Reflection::ActorSpec&
   SeqU::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-     NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m, name());
+     NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
     int count = 0;
     for (BndSetRanges uod(unionOfDets); uod(); ++uod)
       count++;

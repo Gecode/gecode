@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Element {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$i_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IntSharedArray& i,
                             ViewA x0, ViewB x1);
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Element {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);
@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Element {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);

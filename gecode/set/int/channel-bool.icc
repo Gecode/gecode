@@ -278,14 +278,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Support::Symbol
-  ChannelBool<View>::name(void) {
+  ChannelBool<View>::ati(void) {
     return Reflection::mangle<View>("Set::Int::ChannelBool");
   }
 
   template <class View>
   Reflection::ActorSpec&
   ChannelBool<View>::spec(Space* home, Reflection::VarMap& m) {
-    return Super::spec(home, m, name());
+    return Super::spec(home, m, ati());
   }
   
   template <class View>

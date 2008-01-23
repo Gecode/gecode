@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Channel {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Channel {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Channel {
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     GECODE_INT_EXPORT
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
   /**
@@ -237,7 +237,7 @@ namespace Gecode { namespace Int { namespace Channel {
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     GECODE_INT_EXPORT
-    static Support::Symbol name(void);
+    static Support::Symbol ati(void);
   };
 
 }}}

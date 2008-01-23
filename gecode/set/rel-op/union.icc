@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   Support::Symbol
-  Union<View0,View1,View2>::name(void) {
+  Union<View0,View1,View2>::ati(void) {
     return Reflection::mangle<View0,View1,View2>("Set::RelOp::Union");
   }
 
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   Reflection::ActorSpec&
   Union<View0,View1,View2>::spec(Space* home, Reflection::VarMap& m) {
     return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-      View2,PC_SET_ANY>::spec(home, m, name());
+      View2,PC_SET_ANY>::spec(home, m, ati());
   }
 
   template <class View0, class View1, class View2>
@@ -291,7 +291,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   Support::Symbol
-  UnionN<View0,View1>::name(void) {
+  UnionN<View0,View1>::ati(void) {
     return Reflection::mangle<View0,View1>("Set::RelOp::UnionN");
   }
 
@@ -300,7 +300,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   UnionN<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
       MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
-        ::spec(home, m, name());
+        ::spec(home, m, ati());
     int count = 0;
     for (BndSetRanges uod(unionOfDets); uod(); ++uod)
       count++;

@@ -689,14 +689,14 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   Support::Symbol
-  Dom<View>::name(void) {
+  Dom<View>::ati(void) {
     return Reflection::mangle<View>("Int::Distinct::Dom");
   }
 
   template <class View>
   Reflection::ActorSpec&
   Dom<View>::spec(Space* home, Reflection::VarMap& m) {
-    return NaryPropagator<View,PC_INT_DOM>::spec(home, m, name());
+    return NaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
   template <class View>

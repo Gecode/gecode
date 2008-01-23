@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   Support::Symbol
-  Val<ViewM,ViewD,ViewH,View>::name(void) {
+  Val<ViewM,ViewD,ViewH,View>::ati(void) {
     return 
       Reflection::mangle<ViewM,ViewD,ViewH,View>("Int::Cumulatives::Val");
   }
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   Reflection::ActorSpec&
   Val<ViewM,ViewD,ViewH,View>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
+    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
 
     return s << machine.spec(home, m)
              << start.spec(home, m)

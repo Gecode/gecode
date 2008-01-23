@@ -66,7 +66,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   Support::Symbol
-  ReNaryProjection::name(void) {
+  ReNaryProjection::ati(void) {
     return Support::Symbol("set.projectors.ReNaryProjection");
   }
 
