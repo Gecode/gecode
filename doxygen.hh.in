@@ -374,7 +374,7 @@
  */
 
 /**
- * \defgroup FuncCpltSetSelView %CpltSet view selection for branching
+ * \defgroup FuncCpltSetSelView CpltSet view selection for branching
  *
  * Contains a description of view selection strategies on CpltSet
  * views that can be used together with the generic view/value
@@ -386,7 +386,7 @@
  */
 
 /**
- * \defgroup FuncCpltSetSelVal %CpltSet value selection for branching
+ * \defgroup FuncCpltSetSelVal CpltSet value selection for branching
  *
  * Contains a description of value selection strategies on CpltSet
  * views that can be used together with the generic view/value
