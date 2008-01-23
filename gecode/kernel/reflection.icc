@@ -72,27 +72,58 @@ namespace Gecode { namespace Reflection {
   /**
     * \brief Arguments for actor and variable specifications
     *
+    * These arguments implement a simple term language. A term is
+    * an integer, a variable, an array of terms, an array of integers,
+    * a string, a pair, a shared object, or a reference to a shared object.
+    *
     * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT Arg {
-  public:
+  protected:
+    /// The different types of arguments
     enum argtype {
-      INT_ARG,VAR_ARG,ARRAY_ARG,
-      INT_ARRAY_ARG,STRING_ARG,PAIR_ARG,
-      SHARED_OBJECT_ARG, SHARED_REF_ARG };
+      INT_ARG,           ///< Integer argument
+      VAR_ARG,           ///< Variable argument
+      ARRAY_ARG,         ///< Array argument
+      INT_ARRAY_ARG,     ///< Integer array argument
+      STRING_ARG,        ///< String argument
+      PAIR_ARG,          ///< Pair argument
+      SHARED_OBJECT_ARG, ///< Shared object argument
+      SHARED_REF_ARG     ///< Reference to shared object argument
+    };
+
+    /// Argument type of this Arg
     argtype t;
+    
     union {
+      /* \brief  
+       * This integer represents different things for different types of Arg:
+       *  - an integer for INT_ARG
+       *  - a variable index for VAR_ARG
+       *  - the size of an ARRAY_ARG or an INT_ARRAY_ARG
+       *  - the index of a shared reference for SHARED_REF_ARG
+       */
+      /// The integer of an INT_ARG, the index of a VAR_ARG or SHARED_REF_ARG, or the size of an ARRAY_ARG or INT_ARRAY_ARG
       int i;
+      /// The string of a STRING_ARG
       char* s;
+      /// The first argument of a PAIR_ARG, or the object of a SHARED_OBJECT_ARG
       Arg* first;
     } arg1;
+
     union {
+      /// The second argument of a PAIR_ARG
       Arg* second;
+      /// The array of an ARRAY_ARG
       Arg** aa;
+      /// The array of an INT_ARRAY_ARG
       int* ia;
     } arg2;
+    /// Constructor
+    Arg(argtype t);
     
-    /// Test if this represents an integer
+  public:
+    /// %Test if this represents an integer
     bool         isInt(void) const;
     /// Return the integer that this argument represents
     int          toInt(void) const;
@@ -101,7 +132,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as an int argument
     void         initInt(int i);
     
-    /// Test if this represents a variable
+    /// %Test if this represents a variable
     bool         isVar(void) const;
     /// Return the variable number that this argument represents
     int          toVar(void) const;
@@ -110,7 +141,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as a variable argument
     void         initVar(int i);
     
-    /// Test if this represents an array
+    /// %Test if this represents an array
     bool             isArray(void) const;
     /// Return the array that this argument represents
     ArrayArg*        toArray(void);
@@ -121,7 +152,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as an array argument with size \a n
     void         initArray(int n);
     
-    /// Test if this represents an array
+    /// %Test if this represents an array
     bool                isIntArray(void) const;
     /// Return the array that this argument represents
     IntArrayArg*        toIntArray(void);
@@ -135,7 +166,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as an int array argument with size \a n
     void         initIntArray(int n);
 
-    /// Test if this represents a string
+    /// %Test if this represents a string
     bool         isString(void) const;
     /// Return the string that this argument represents
     const char*  toString(void) const;
@@ -144,7 +175,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as a string argument
     void         initString(const char* s);
     
-    /// Test if this represents a pair
+    /// %Test if this represents a pair
     bool         isPair(void) const;
     /// Return the first component of the pair that this argument represents
     Arg*         first(void);
@@ -159,7 +190,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as a pair argument from \a a and \a b
     void         initPair(Arg* a, Arg* b);
     
-    /// Test if this represents a shared object
+    /// %Test if this represents a shared object
     bool         isSharedObject(void) const;
     /// Return the shared object that this argument represents
     Arg*         toSharedObject(void);
@@ -170,7 +201,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as a shared object
     void         initSharedObject(Arg* a);
     
-    /// Test if this represents a shared object reference
+    /// %Test if this represents a shared object reference
     bool         isSharedReference(void) const;
     /// Return the shared object that this argument represents
     int          toSharedReference(void) const;
@@ -179,8 +210,6 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as a reference to a shared object
     void         initSharedReference(int ref);
     
-    /// Constructor
-    Arg(argtype t);
     /// Destructor
     GECODE_MSC_VIRTUAL ~Arg(void);
   };
@@ -188,6 +217,10 @@ namespace Gecode { namespace Reflection {
 
   /**
     * \brief Array arguments
+    *
+    * This is a convenience class that exposes an array interface
+    * for an Arg that was created via Arg::newArray.
+    *
     * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT ArrayArg : public Arg {
@@ -195,13 +228,20 @@ namespace Gecode { namespace Reflection {
     /// Use Arg::newArray instead
     ArrayArg(void);
   public:
+    /// Element access
     const Arg* operator[](int i) const;
+    /// Element access
     Arg*& operator[](int i);
+    /// Size of the array
     int size(void) const;
   };
 
   /**
     * \brief Integer array arguments
+      *
+      * This is a convenience class that exposes an array interface
+      * for an Arg that was created via Arg::newIntArray.
+      *
     * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT IntArrayArg : public Arg {
@@ -209,8 +249,11 @@ namespace Gecode { namespace Reflection {
     /// Use Arg::newIntArray instead
     IntArrayArg(void);
   public:
+    /// Element access
     const int& operator[](int i) const;
+    /// Element access
     int& operator[](int i);
+    /// Size of the array
     int size(void) const;
   };
 
@@ -229,7 +272,7 @@ namespace Gecode { namespace Reflection {
   public:
     /// Constructor
     IntArrayArgRanges(Reflection::IntArrayArg* a0);
-    /// Test whether iterator is still at a valid range
+    /// %Test whether iterator is still at a valid range
     bool operator()(void);
     /// Move iterator to next range
     void operator++(void);
@@ -278,10 +321,12 @@ namespace Gecode { namespace Reflection {
   class GECODE_KERNEL_EXPORT ActorSpec {
   private:
     class Arguments;
+    /// The arguments of this actor
     Arguments* _args;
     /// Resize argument array
     void resize(void);
     friend class SpecIter;
+    /// Set the queue of the actor to \a q
     void queue(int q);
   public:
     /// Construct actor specification with \a name
@@ -314,23 +359,24 @@ namespace Gecode { namespace Reflection {
      */
     int branchingId(void) const;
 
-    /// Add \a a to specification \a spec
+    /// Add \a a to specification
     ActorSpec& operator<<(Arg* a);
-    /// Add \a i to specification \a spec
+    /// Add \a i to specification
     ActorSpec& operator<<(int i);
-    /// Add \a i to specification \a spec
+    /// Add \a i to specification
     ActorSpec& operator<<(unsigned int i);
-    /// Add \a d to specification \a spec, where \a d is cast into an integer
+    /// Add \a d to specification, where \a d is cast into an integer
     ActorSpec& operator<<(double d);
   };
   
   /**
-    * \brief %Branch specification
+    * \brief %Branching specification
     * \ingroup TaskReflection
     */  
   class GECODE_KERNEL_EXPORT BranchingSpec {
   private:
     class Arguments;
+    /// The arguments of this branching
     Arguments* _args;
   public:
     /// Construct spec for branching with \a id and \a a alternatives
@@ -381,7 +427,7 @@ namespace Gecode { namespace Reflection {
   public:
     /// Constructor
     SpecIter(Space*, VarMap&);
-    /// Test whether iterator still has actor specifications or is done
+    /// %Test whether iterator still has actor specifications or is done
     bool operator()(void) const;
     /// Move iterator to next actor
     void operator++(void);
