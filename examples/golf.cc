@@ -57,9 +57,7 @@ struct Tournament {
 static const Tournament t[]=
   { {8,4,9},
     {5,3,7},
-    {4,3,2},
-    {5,4,2},
-    {6,4,3}
+    {4,3,2}
   };
 /// Number of tournaments
 static const unsigned int n_examples = sizeof(t) / sizeof(Tournament);
@@ -125,11 +123,6 @@ public:
     }
 
     if (opt.model() == MODEL_SYMMETRY) {
-
-      // for (int g=0; g<groups; g++) {
-      //   IntSet w0g(g*playersInGroup,(g+1)*playersInGroup-1);
-      //   dom(this, group(0,g), SRT_EQ, w0g);
-      // }
 
       /*
        * Redundant constraints and static symmetry breaking from
@@ -206,7 +199,7 @@ public:
 
     }
 
-    branch(this, groupsS, SET_VAR_MIN_CARD, SET_VAL_MIN);
+    branch(this, groupsS, SET_VAR_MIN_UNKNOWN_ELEM, SET_VAL_MIN);
   }
 
   /// Print solution
