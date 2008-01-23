@@ -76,6 +76,9 @@ namespace Gecode { namespace Reflection {
     * an integer, a variable, an array of terms, an array of integers,
     * a string, a pair, a shared object, or a reference to a shared object.
     *
+    * Variables are represented by integers that correspond to indices in a
+    * VarMap.
+    *
     * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT Arg {
@@ -96,13 +99,6 @@ namespace Gecode { namespace Reflection {
     argtype t;
     
     union {
-      /* \brief  
-       * This integer represents different things for different types of Arg:
-       *  - an integer for INT_ARG
-       *  - a variable index for VAR_ARG
-       *  - the size of an ARRAY_ARG or an INT_ARRAY_ARG
-       *  - the index of a shared reference for SHARED_REF_ARG
-       */
       /// The integer of an INT_ARG, the index of a VAR_ARG or SHARED_REF_ARG, or the size of an ARRAY_ARG or INT_ARRAY_ARG
       int i;
       /// The string of a STRING_ARG
@@ -134,7 +130,7 @@ namespace Gecode { namespace Reflection {
     
     /// %Test if this represents a variable
     bool         isVar(void) const;
-    /// Return the variable number that this argument represents
+    /// Return the variable index that this argument represents
     int          toVar(void) const;
     /// Create new variable argument
     static Arg*  newVar(int i);
@@ -286,6 +282,18 @@ namespace Gecode { namespace Reflection {
   
   /**
     * \brief %Variable specification
+    *
+    * A VarSpec contains an abstract specification of a variable 
+    * implementation. These specifications are typically stored in a VarMap.
+    *
+    * The type of the variable is represented as a Symbol and called vti 
+    * (variable type identifier). In order to find out what type of variable a 
+    * VarSpec corresponds to, you can compare the vti with VarImp::vti of a 
+    * concrete variable type (e.g. IntVarImp::vti).
+    *
+    * The domain of a variable is represented as an Arg. The concrete encoding 
+    * depends on the variable type.
+    *
     * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT VarSpec {
@@ -316,6 +324,23 @@ namespace Gecode { namespace Reflection {
   
   /**
     * \brief %Actor specification
+    *
+    * An ActorSpec contains all the information that characterizes an Actor. 
+    * The specifications for all the actors in a Space object can be accessed 
+    * using an ActorSpecIter.
+    *
+    * Each ActorSpec describes either a Branching or a Propagator 
+    * (reflected by ActorSpec::isBranching). As a user of the Reflection API,
+    * you can access the information describing an Actor as an array of 
+    * arguments, represented as objects of the Arg class.
+    *
+    * Every propagator and branching must be able to return a specification
+    * through the virtual function Actor::spec. If you use one of the 
+    * convenience classes like BinaryPropagator, have a look at the 
+    * implementation of AbsBnd::spec. If you subclass Propagator directly, or 
+    * you have additional arguments that have to be put into the ActorSpec, 
+    * please look at BinaryPropagator::spec.
+    *
     * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT ActorSpec {
@@ -325,7 +350,7 @@ namespace Gecode { namespace Reflection {
     Arguments* _args;
     /// Resize argument array
     void resize(void);
-    friend class SpecIter;
+    friend class ActorSpecIter;
     /// Set the queue of the actor to \a q
     void queue(int q);
   public:
@@ -338,14 +363,15 @@ namespace Gecode { namespace Reflection {
     /// Destructor
     GECODE_MSC_VIRTUAL ~ActorSpec(void);
     
-    /// Return argument \a i
-    Arg* operator[](int i) const;
-    /// Return number of arguments
-    int noOfArgs(void) const;
-    /// Add \a arg to the specification (as last argument)
-    void add(Arg* arg);
+    /// \name Actor information
+    //@{
     /// Return name
     Support::Symbol name(void) const;
+    /// Return number of arguments
+    int noOfArgs(void) const;
+    /// Return argument \a i
+    Arg* operator[](int i) const;
+
     /// Return if name is not empty
     bool hasName(void) const;
     /// Return whether the actor is a branching
@@ -357,7 +383,13 @@ namespace Gecode { namespace Reflection {
     /** \brief Return identifier of the branching
      *  Only valid if isBranching returns true
      */
-    int branchingId(void) const;
+    int branchingId(void) const;      
+    //@}
+    
+    /// \name Populating the specification
+    //@{
+    /// Add \a arg to the specification (as last argument)
+    void add(Arg* arg);
 
     /// Add \a a to specification
     ActorSpec& operator<<(Arg* a);
@@ -367,10 +399,16 @@ namespace Gecode { namespace Reflection {
     ActorSpec& operator<<(unsigned int i);
     /// Add \a d to specification, where \a d is cast into an integer
     ActorSpec& operator<<(double d);
+    //@}
   };
   
   /**
     * \brief %Branching specification
+    *
+    * A BranchingSpec contains information about the alternatives of a Space.
+    * It is similar to a BranchingDesc, but not opaque: you can query the
+    * information.
+    *
     * \ingroup TaskReflection
     */  
   class GECODE_KERNEL_EXPORT BranchingSpec {
@@ -388,15 +426,18 @@ namespace Gecode { namespace Reflection {
     /// Destructor
     GECODE_MSC_VIRTUAL ~BranchingSpec(void);
     
+    ///\name Branching information
+    //@{
     /// Return id of the branching
     unsigned int id(void) const;
     /// Return number of alternatives
     unsigned int alternatives(void) const;
-    /// Return alternative \a i
+    /// Return specification of alternative \a i
     Arg* operator[](int i) const;
     
-    /// Return alternative \a i
+    /// Return specification of alternative \a i
     Arg*& operator[](int i);
+    //@}
   };
   
   class VarMap;
@@ -406,11 +447,11 @@ namespace Gecode { namespace Reflection {
     *
     * Use this iterator to access specifications of all actors (propagators 
     * and branchings) of a space. The iterator also provides access to the
-    * corresponding variables map.
+    * corresponding variable map.
     *
     * \ingroup TaskReflection
     */
-  class GECODE_KERNEL_EXPORT SpecIter {
+  class GECODE_KERNEL_EXPORT ActorSpecIter {
   private:
     /// The variable map used by this iterator
     VarMap*    m;
@@ -426,7 +467,7 @@ namespace Gecode { namespace Reflection {
     mutable ActorSpec* curSpec;
   public:
     /// Constructor
-    SpecIter(Space*, VarMap&);
+    ActorSpecIter(Space*, VarMap&);
     /// %Test whether iterator still has actor specifications or is done
     bool operator()(void) const;
     /// Move iterator to next actor

@@ -1033,6 +1033,7 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_KERNEL_EXPORT=" \
                          "GECODE_SEARCH_EXPORT=" \
                          "GECODE_MINIMODEL_EXPORT=" \
+                         "GECODE_MSC_VIRTUAL=" \
                          "forceinline=inline"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
