@@ -217,6 +217,7 @@ namespace Gecode {
 
 }
 
+#include "gecode/cpltset/var/cpltset.icc"
 #include "gecode/cpltset/view/cpltset.icc"
 
 /**

@@ -92,8 +92,402 @@ namespace Gecode { namespace CpltSet {
 #include "gecode/cpltset/bddmanager.icc"
 
 #include "gecode/cpltset/support.icc"
-#include "gecode/cpltset/var.icc"
+#include "gecode/cpltset/var-imp.icc"
+
+namespace Gecode { 
+  /**
+   * \brief Bdd variable as complete domain representation for finite integer sets
+   *
+   */  
+  class CpltSetVar {
+  private:
+    /// Bdd variable implementation using 
+    CpltSet::CpltSetVarImp* varimp;  
+  public:
+    /// Default constructor
+    CpltSetVar(void);
+
+    /// Deallocate memory
+    void dispose(Space* home);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVar(Space* home,
+               int glbMin,int glbMax,int lubMin,int lubMax,
+               unsigned int cardMin = 0,
+               unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,
+              int glbMin,int glbMax,int lubMin,int lubMax,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVar(Space* home,
+               const IntSet& glbD,int lubMin,int lubMax,
+               unsigned int cardMin = 0,
+               unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,
+              const IntSet& glbD,int lubMin,int lubMax,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVar(Space* home,
+               int glbMin,int glbMax,const IntSet& lubD,
+               unsigned int cardMin = 0,
+               unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,
+              int glbMin,int glbMax,const IntSet& lubD,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVar(Space* home,
+               const IntSet& glbD,const IntSet& lubD,
+               unsigned int cardMin = 0,
+               unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with greatest lower bound \a glbD,
+     * least upper bound \a lubD, and cardinality minimum \a cardMin 
+     * and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,
+              const IntSet& glbD,const IntSet& lubD,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
+    //@}
+
+    /// \name Variable implementation access
+    //@{
+    /// Return bdd variable implementation
+    CpltSet::CpltSetVarImp* var(void) const;
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return the size of the greatest lower bound
+    unsigned int glbSize(void) const;
+    /// Return the size of the least upper bound
+    unsigned int lubSize(void) const;
+    /// Return the size of lub-glb
+    unsigned int unknownSize(void) const;
+    /// Return current cardinality minimum
+    unsigned int cardMin(void) const;
+    /// Return current cardinality maximum
+    unsigned int cardMax(void) const;
+    /// Return minimum of the least upper bound
+    int lubMin(void) const;
+    /// Return maximum of the least upper bound
+    int lubMax(void) const;
+    /// Return minimum of the greatest lower bound
+    int glbMin(void) const;
+    /// Return maximum of the greatest lower bound
+    int glbMax(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether \a i is in greatest lower bound
+    bool contains(int i) const;
+    /// Test whether \a i is not in the least upper bound
+    bool notContains(int i) const;
+    /// Test whether this variable is assigned
+    bool assigned(void) const;
+    //@}
+    
+    /// \name Cloning
+    //@{
+    /// Update this variable to be a clone of variable \a x
+    void update(Space* home, bool share, CpltSetVar& x);
+    //@}
+
+  };
+
+  /// Range iterator for the greatest lower bound of a bdd variable
+  class CpltSetVarGlbRanges {
+  private:
+    Set::GlbRanges<CpltSet::CpltSetVarImp*> iter;
+  public:
+    CpltSetVarGlbRanges(void);
+    CpltSetVarGlbRanges(const CpltSetVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int min(void) const;
+    int max(void) const;
+  };
+
+  /// Value iterator for the greatest lower bound of a bdd variable
+  class CpltSetVarGlbValues {
+  private:
+    CpltSet::GlbValues<CpltSet::CpltSetVarImp*> iter;
+  public:
+    CpltSetVarGlbValues(void);
+    CpltSetVarGlbValues(const CpltSetVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int val(void) const;
+  };
+
+  /// Range iterator for the least upper bound of a bdd variable
+  class CpltSetVarLubRanges {
+  private:
+    Set::LubRanges<CpltSet::CpltSetVarImp*> iter;
+  public:
+    CpltSetVarLubRanges(void);
+    CpltSetVarLubRanges(const CpltSetVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int min(void) const;
+    int max(void) const;
+  };
+
+  /// Value iterator for the least upper bound of a bdd variable
+  class CpltSetVarLubValues {
+  private:
+    CpltSet::LubValues<CpltSet::CpltSetVarImp*> iter;
+  public:
+    CpltSetVarLubValues(void);
+    CpltSetVarLubValues(const CpltSetVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int val(void) const;
+  };
+
+  /// Range iterator for the unknown set of a bdd variable
+  class CpltSetVarUnknownRanges {
+  private:
+    Set::UnknownRanges<CpltSet::CpltSetVarImp*> iter;
+  public:
+    CpltSetVarUnknownRanges(void);
+    CpltSetVarUnknownRanges(const CpltSetVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int min(void) const;
+    int max(void) const;
+  };
+
+}
+
+/**
+ * \brief Print bdd variable \a x
+ * \relates Gecode::CpltSetVar
+ */
+GECODE_CPLTSET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::CpltSetVar& x);
+
 #include "gecode/cpltset/view.icc"
+
+namespace Gecode {
+  /**
+   * \defgroup TaskModelCpltSetArgs Argument arrays
+   * 
+   * Argument arrays are just good enough for passing arguments
+   * with automatic memory management.
+   * \ingroup TaskModelCpltSet
+   */
+
+  //@{
+  /// Passing set variables
+  typedef VarArgArray<CpltSetVar>  CpltSetVarArgs;
+  //@}
+
+  /**
+   * \defgroup TaskModelCpltSetVarArrays Variable arrays
+   * 
+   * Variable arrays can store variables. They are typically used
+   * for storing the variables being part of a solution. However,
+   * they can also be used for temporary purposes (even though
+   * memory is not reclaimed until the space it is created for
+   * is deleted).
+   * \ingroup TaskModelCpltSet
+   */
+
+  /**
+   * \brief %CpltSet variable array
+   * \ingroup TaskModelCpltSetVarArrays
+   */
+  class CpltSetVarArray : public VarArray<CpltSetVar> {
+  public:
+    CpltSetVarArray(void);
+    CpltSetVarArray(const CpltSetVarArray&);
+    /// Create an uninitialized array of size \a n
+    GECODE_CPLTSET_EXPORT CpltSetVarArray(Space* home, int n);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVarArray(Space* home,
+                    int n,int glbMin,int glbMax,int lubMin,int lubMax,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVarArray(Space* home,
+                    int n,const IntSet& glb, int lubMin, int lubMax,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVarArray(Space* home,
+                    int n,int glbMin,int glbMax,const IntSet& lub,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_CPLTSET_EXPORT 
+    CpltSetVarArray(Space* home, int n,
+                    const IntSet& glb,const IntSet& lub,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
+  };
+}
+
 #include "gecode/cpltset/array.icc"
 
 

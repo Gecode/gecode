@@ -6,7 +6,7 @@
  *     - gecode/int/var-imp/int.vis
  *     - gecode/int/var-imp/bool.vis
  *     - gecode/set/var-imp/set.vis
- *     - gecode/cpltset/var-imp.vis
+ *     - gecode/cpltset/var-imp/cpltset.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:

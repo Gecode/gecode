@@ -409,18 +409,19 @@ SETBUILDDIRS	=						\
 #
 
 CPLTSETSRC0 =	\
-	branch.cc array.cc support.cc             \
-	bddmanager.cc \
-	var/imp.cc var/cpltset.cc  view/print.cc                  \
-	constraints/singleton.cc \
+	branch.cc array.cc support.cc             			  \
+	bddmanager.cc 							  \
+	var-imp/imp.cc var/cpltset.cc  view/print.cc                  	  \
+	constraints/singleton.cc 					  \
 	constraints/dom.cc constraints/rel.cc constraints/cardinality.cc  \
-	constraints/atmost.cc constraints/partition.cc \
-	constraints/select.cc constraints/distinct.cc constraints/rangeroots.cc
+	constraints/atmost.cc constraints/partition.cc 			  \
+	constraints/select.cc constraints/distinct.cc  			  \
+	constraints/rangeroots.cc
 
 CPLTSETHDR0 =		                \
 	view.icc bddmanager.icc exception.icc array.icc \
 	support.icc var.icc \
-	var/imp.icc var/cpltset.icc view/cpltset.icc \
+	var-imp/imp.icc var/cpltset.icc view/cpltset.icc \
 	propagators.hh \
 	propagators/unary.icc propagators/binary.icc \
 	propagators/nary.icc propagators/naryone.icc propagators/narytwo.icc \
@@ -871,7 +872,7 @@ ALLVIS0 = \
 	gecode/int/var-imp/int \
 	gecode/int/var-imp/bool \
 	gecode/set/var-imp/set \
-	gecode/cpltset/var-imp
+	gecode/cpltset/var-imp/cpltset
 ALLVIS = \
 	$(ALLVIS0:%=$(top_srcdir)/%.vis) \
 	$(top_srcdir)/misc/genvariables.perl
