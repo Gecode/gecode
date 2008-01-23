@@ -94,15 +94,16 @@ namespace Gecode {
     }
   }
 
-  GECODE_REGISTER1(Distinct::Val<IntView>);
-  GECODE_REGISTER1(Distinct::Val<OffsetView>);
-  GECODE_REGISTER1(Distinct::Bnd<IntView>);
-  GECODE_REGISTER1(Distinct::Bnd<OffsetView>);
-  GECODE_REGISTER1(Distinct::Dom<IntView>);
-  GECODE_REGISTER1(Distinct::Dom<OffsetView>);
-  GECODE_REGISTER1(Distinct::TerDom<IntView>);
-  GECODE_REGISTER1(Distinct::TerDom<OffsetView>);
-
+  namespace {
+    GECODE_REGISTER1(Distinct::Val<IntView>);
+    GECODE_REGISTER1(Distinct::Val<OffsetView>);
+    GECODE_REGISTER1(Distinct::Bnd<IntView>);
+    GECODE_REGISTER1(Distinct::Bnd<OffsetView>);
+    GECODE_REGISTER1(Distinct::Dom<IntView>);
+    GECODE_REGISTER1(Distinct::Dom<OffsetView>);
+    GECODE_REGISTER1(Distinct::TerDom<IntView>);
+    GECODE_REGISTER1(Distinct::TerDom<OffsetView>);
+  }
 }
 
 // STATISTICS: int-post
