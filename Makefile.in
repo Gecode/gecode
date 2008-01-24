@@ -955,6 +955,10 @@ gecode/serialization/%$(SBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
+gecode/serialization/moc_%$(OBJSUFFIX): gecode/serialization/moc_%.cc
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
+	@GECODE_BUILD_SERIALIZATION_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/serialization/moc_%.cc: $(top_srcdir)/gecode/serialization/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/serialization $< -o $@
 
