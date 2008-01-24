@@ -626,6 +626,22 @@ namespace Gecode { namespace Gist {
       while (v.next());      
     }
   }
+
+  bool
+  TreeCanvasImpl::event(QEvent* event) {
+    if (event->type() == QEvent::ToolTip) {
+      QHelpEvent* he = static_cast<QHelpEvent*>(event);
+      VisualNode* n;
+      n = root->findNode(static_cast<int>(he->x()/scale-xtrans),
+                         static_cast<int>((he->y()-30)/scale));
+      if (n != NULL && !n->isHidden() && n->getStatus() == BRANCH) {
+        QToolTip::showText(he->globalPos(), QString(n->toolTip().c_str()));
+      } else {
+        QToolTip::hideText();
+      }
+    }
+    return QWidget::event(event);
+  }
   
   void
   TreeCanvasImpl::paintEvent(QPaintEvent* event) {
@@ -707,9 +723,9 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     if (event->button() == Qt::LeftButton) {
       VisualNode* n;
-        n = root->findNode(static_cast<int>(event->x()/scale-xtrans),
-                           static_cast<int>((event->y()-30)/scale));
-        setCurrentNode(n);
+      n = root->findNode(static_cast<int>(event->x()/scale-xtrans),
+                         static_cast<int>((event->y()-30)/scale));
+      setCurrentNode(n);
       if (n != NULL) {
         event->accept();
         return;

@@ -235,6 +235,8 @@ namespace Gecode {  namespace Gist {
     /// The next point in time
     int nextPit;
 
+    /// General event handler, used for displaying tool tips
+    bool event(QEvent *event);
     /// Paint the tree
     void paintEvent(QPaintEvent* event);
     /// Handle mouse press event

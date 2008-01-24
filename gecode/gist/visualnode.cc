@@ -336,6 +336,49 @@ namespace Gecode { namespace Gist {
 #endif
     return cur;
   }
+
+  std::string
+  VisualNode::toolTip(void) {
+    if (getStatus() != BRANCH)
+      return "";
+    Space* ws = getSpace();
+    (void) ws->status();
+    assert(ws->status() == SS_BRANCH);
+    const BranchingDesc* d = ws->description();
+    Reflection::VarMap vm;
+    ws->getVars(vm, false);
+    std::string tt;
+    try {
+      Reflection::BranchingSpec bs = ws->branchingSpec(vm,d);
+      delete d;
+      tt = "Alternatives:\n";
+      for (unsigned int i=0; i<bs.alternatives(); i++) {
+        std::ostringstream is; is << i;
+        tt += is.str()+": ";
+        Reflection::ArrayArg* aa = bs[i]->toArray();
+        for (int j=0; j<aa->size(); j++) {
+          if ((*aa)[j]->isString()) {
+            tt += (*aa)[j]->toString();
+          } else if ((*aa)[j]->isVar()) {
+            int v = (*aa)[j]->toVar();
+            if (vm.hasName(v))
+              tt += vm.name(v).toString();
+            else {
+              std::ostringstream vs; vs << v;
+              tt += "_v"+vs.str();
+            }
+          } else {
+            tt += "error in BranchingSpec";
+          }
+        }
+        if (i < bs.alternatives()-1)
+          tt += "\n";
+      }
+    } catch (Reflection::ReflectionException&) {
+      tt = "No information available";
+    }
+    return tt;
+  }
   
 }}
 

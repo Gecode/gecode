@@ -41,6 +41,7 @@
 #include "gecode/gist/shapelist.hh"
 #include "gecode/kernel.hh"
 #include <vector>
+#include <string>
 #ifdef GECODE_GIST_EXPERIMENTAL
 #include <QList>
 #endif
@@ -191,6 +192,8 @@ namespace Gecode { namespace Gist {
     VisualNode* getChild(int i);
     /// Find a node in this subtree at coordinates \a x, \a y
     VisualNode* findNode(int x, int y);    
+    
+    std::string toolTip(void);
   };
 
 }}
