@@ -93,7 +93,8 @@ namespace Gecode {
    *
    */
   Reflection::BranchingSpec
-  Branching::branchingSpec(Space*, Reflection::VarMap&, const BranchingDesc*) {
+  Branching::branchingSpec(const Space*,
+                           Reflection::VarMap&, const BranchingDesc*) const {
     throw Reflection::NoReflectionDefinedException();
   }
 
@@ -183,8 +184,8 @@ namespace Gecode {
   Space::getVars(Reflection::VarMap&, bool) {}
 
   Reflection::BranchingSpec
-  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc* d) {
-    Branching* b = b_commit;
+  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc* d) const {
+    const Branching* b = b_commit;
     while ((b != Branching::cast(&a_actors)) && (d->_id != b->id))
       b = Branching::cast(b->next());
     if (b == Branching::cast(&a_actors))

@@ -683,10 +683,10 @@ namespace Gecode { namespace Set {
     SetVarImp* copy(Space* home, bool share);
     //@}
 
-    /// \name Serialization
+    /// \name Reflection
     //@{
     GECODE_SET_EXPORT Reflection::Arg*
-    spec(Space* home, Reflection::VarMap& m);
+    spec(const Space* home, Reflection::VarMap& m) const;
     //@}
 
     /// \name Delta information for advisors

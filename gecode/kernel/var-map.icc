@@ -66,25 +66,22 @@ namespace Gecode { namespace Reflection {
   private:
     class VarMapObj;
     VarMapObj* vo;
-
-    /// Number of variable indices in use
-    int n;
-    /// Number of shared object indices in use
-    int so;
     
   public:
     /// Default constructor
     VarMap(void);
+    /// Copy constructor
+    VarMap(const VarMap&);
+    /// Assignment operator
+    VarMap& operator=(const VarMap&);
     /// Destructor
     GECODE_MSC_VIRTUAL ~VarMap(void);
     
     /// Return number of entries
     int size(void) const;
-    /// Remove all entries
-    void clear(void);
     
     /// Return index for variable implementation \a x
-    int index(VarImpBase* x) const;
+    int index(const VarImpBase* x) const;
     /// Return index for variable implementation with name \a n
     int index(const Support::Symbol& n) const;
 
@@ -92,12 +89,12 @@ namespace Gecode { namespace Reflection {
     bool nameIsKnown(const Support::Symbol& n) const;
 
     /// Return if variable implementation \a x has a name
-    bool hasName(VarImpBase* x) const;
+    bool hasName(const VarImpBase* x) const;
     /// Return if variable implementation at index \a i has a name
     bool hasName(int i) const;
 
     /// Return name for variable implementation \a x
-    Support::Symbol name(VarImpBase* x) const;
+    Support::Symbol name(const VarImpBase* x) const;
     /// Return name for variable implementation at index \a i
     Support::Symbol name(int i) const;
 
@@ -111,7 +108,7 @@ namespace Gecode { namespace Reflection {
     Var var(int i) const;
 
     /// Return specification for variable implementation \a x
-    VarSpec& spec(VarImpBase* x) const;
+    VarSpec& spec(const VarImpBase* x) const;
     /// Return specification for variable implementation at index \a i
     VarSpec& spec(int i) const;
     /// Return specification for variable implementation with name \a n
@@ -121,7 +118,7 @@ namespace Gecode { namespace Reflection {
     void name(VarImpBase* x, const Support::Symbol& n);
 
     /// Insert specification \a vs for variable implementation \a x, return index
-    int put(VarImpBase* x, VarSpec* vs);
+    int put(const VarImpBase* x, VarSpec* vs);
 
     /// Insert a shared object into the table
     void putMasterObject(void* obj);
@@ -146,11 +143,7 @@ namespace Gecode { namespace Reflection {
              bool registerOnly = false);
 
     //@}
-  private:
-    /// Copy constructor must not be used
-    VarMap(const VarMap&);
-    /// Assignment operator must not be used
-    VarMap& operator=(const VarMap&);
+
   };
   
   /**

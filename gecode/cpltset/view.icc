@@ -187,10 +187,10 @@ namespace Gecode {
       void update(Space* home, bool share, CpltSetView& x);
       //@}
 
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
 

@@ -274,7 +274,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline Reflection::Arg*
-  ConstantView::spec(Space*, Reflection::VarMap&) {
+  ConstantView::spec(const Space*, Reflection::VarMap&) const {
     int count = 0;
     for (ArrayRanges ars(ranges, size); ars(); ++ars) {
       count++;
@@ -458,7 +458,7 @@ namespace Gecode { namespace Set {
   EmptyView::update(Space*, bool, EmptyView&) {}
 
   forceinline Reflection::Arg*
-  EmptyView::spec(Space*, Reflection::VarMap&) {
+  EmptyView::spec(const Space*, Reflection::VarMap&) const {
     return NULL;
   }
 
@@ -639,7 +639,7 @@ namespace Gecode { namespace Set {
   UniverseView::update(Space*, bool, UniverseView&) {}
 
   forceinline Reflection::Arg*
-  UniverseView::spec(Space*, Reflection::VarMap&) {
+  UniverseView::spec(const Space*, Reflection::VarMap&) const {
     return NULL;
   }
 

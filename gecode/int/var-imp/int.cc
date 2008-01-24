@@ -358,7 +358,7 @@ namespace Gecode { namespace Int {
   }
 
   Reflection::Arg*
-  IntVarImp::spec(Space*, Reflection::VarMap& m) {
+  IntVarImp::spec(const Space*, Reflection::VarMap& m) const {
     int varIndex = m.index(this);
     if (varIndex != -1)
       return Reflection::Arg::newVar(varIndex);

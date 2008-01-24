@@ -323,7 +323,7 @@ namespace Gecode {
     bool shared(const View& y, bool strict=false) const;
     //@}
 
-    /// \name Serialization
+    /// \name Reflection
     //@{
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
     //@}

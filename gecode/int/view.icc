@@ -276,10 +276,10 @@ namespace Gecode {
       void update(Space* home, bool share, IntView& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -481,10 +481,10 @@ namespace Gecode {
       void update(Space* home, bool share, MinusView& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -689,10 +689,10 @@ namespace Gecode {
       void update(Space* home, bool share, OffsetView& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -886,10 +886,10 @@ namespace Gecode {
       void update(Space* home, bool share, ScaleView<Val,UnsVal>& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -1107,10 +1107,10 @@ namespace Gecode {
       void update(Space* home, bool share, ConstIntView& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -1306,10 +1306,10 @@ namespace Gecode {
       void update(Space* home, bool share, ZeroIntView& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -1527,10 +1527,10 @@ namespace Gecode {
       void update(Space* home, bool share, BoolView& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -1687,10 +1687,10 @@ namespace Gecode {
       void update(Space* home, bool share, NegBoolView& x);
       //@}
       
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };

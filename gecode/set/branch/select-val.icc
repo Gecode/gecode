@@ -57,9 +57,9 @@ namespace Gecode { namespace Set { namespace Branch {
     return Support::Symbol("Set::Branch::ValMin");
   }
   forceinline void
-  ValMin::branchingSpec(Space* home,
-                     Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                     SetView x, int n) {
+  ValMin::branchingSpec(const Space* home,
+                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
+                        SetView x, int n) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
@@ -91,9 +91,9 @@ namespace Gecode { namespace Set { namespace Branch {
     return Support::Symbol("Set::Branch::ValMax");
   }
   forceinline void
-  ValMax::branchingSpec(Space* home,
-                     Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                     SetView x, int n) {
+  ValMax::branchingSpec(const Space* home,
+                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
+                        SetView x, int n) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;

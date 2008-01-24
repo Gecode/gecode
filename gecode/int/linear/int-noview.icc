@@ -194,7 +194,7 @@ namespace Gecode {
       }
       //@}
 
-      /// \name Serialization
+      /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
@@ -290,7 +290,7 @@ namespace Gecode {
     }
     //@}
 
-    /// \name Serialization
+    /// \name Reflection
     //@{
     /// Return specification for this array, using variable map \a m
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {

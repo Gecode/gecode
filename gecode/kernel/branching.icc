@@ -100,9 +100,10 @@ namespace Gecode {
     /// Return specification for this branching given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Return specification for a branch
-    virtual Reflection::BranchingSpec branchingSpec(Space* home, 
-                                              Reflection::VarMap& m,
-                                              const BranchingDesc* d);
+    virtual Reflection::BranchingSpec
+    branchingSpec(const Space* home, 
+                  Reflection::VarMap& m,
+                  const BranchingDesc* d) const;
     /// Actor type identifier of this branching
     static Support::Symbol ati(void);
     /// Post branching according to specification
@@ -149,9 +150,10 @@ namespace Gecode {
     /// Return specification for this assignment given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Return specification for a branch
-    virtual Reflection::BranchingSpec branchingSpec(Space* home, 
-                                              Reflection::VarMap& m,
-                                              const BranchingDesc* d);
+    virtual Reflection::BranchingSpec
+    branchingSpec(const Space* home, 
+                  Reflection::VarMap& m,
+                  const BranchingDesc* d) const;
     /// Actor type identifier of this assignment
     static Support::Symbol ati(void);
     /// Post assignment according to specification
@@ -329,8 +331,8 @@ namespace Gecode {
 
   template <class View, class Val, class ViewSel, class ValSel>
   Reflection::BranchingSpec
-  ViewValBranching<View,Val,ViewSel,ValSel>::branchingSpec(Space* home, 
-    Reflection::VarMap& m, const BranchingDesc* d) {
+  ViewValBranching<View,Val,ViewSel,ValSel>::branchingSpec(const Space* home, 
+    Reflection::VarMap& m, const BranchingDesc* d) const {
     Reflection::BranchingSpec bs(d->id(), d->alternatives());
     const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
     ValSel vs;
@@ -423,8 +425,8 @@ namespace Gecode {
 
   template <class View, class Val, class ValSel>
   Reflection::BranchingSpec
-  ViewValAssignment<View,Val,ValSel>::branchingSpec(Space* home, 
-    Reflection::VarMap& m, const BranchingDesc* d) {
+  ViewValAssignment<View,Val,ValSel>::branchingSpec(const Space* home, 
+    Reflection::VarMap& m, const BranchingDesc* d) const {
     Reflection::BranchingSpec bs(d->id(), 2);
     const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
     ValSel vs;

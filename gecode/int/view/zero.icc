@@ -287,7 +287,7 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    ZeroIntView::spec(Space*, Reflection::VarMap&) {
+    ZeroIntView::spec(const Space*, Reflection::VarMap&) const {
       return Reflection::Arg::newInt(0);
     }
     inline Support::Symbol

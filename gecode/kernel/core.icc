@@ -538,6 +538,8 @@ namespace Gecode {
     void tail(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     template <class T> static ActorLink* cast(T* a);
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    template <class T> static const ActorLink* cast(const T* a);
   };
 
 
@@ -557,6 +559,8 @@ namespace Gecode {
   private:
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Actor* cast(ActorLink* al);
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static const Actor* cast(const ActorLink* al);
   public:
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
@@ -681,6 +685,8 @@ namespace Gecode {
     } u;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Propagator* cast(ActorLink* al);
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static const Propagator* cast(const ActorLink* al);
   protected:
     /// Constructor for creation
     Propagator(Space* home);
@@ -927,6 +933,8 @@ namespace Gecode {
     unsigned int id; 
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Branching* cast(ActorLink* al);
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static const Branching* cast(const ActorLink* al);
   protected:
     /// Constructor for creation
     Branching(Space* home);
@@ -970,7 +978,8 @@ namespace Gecode {
     //@{
     /// Specification for BranchingDesc \a d
     virtual GECODE_KERNEL_EXPORT Reflection::BranchingSpec
-    branchingSpec(Space* home, Reflection::VarMap& m, const BranchingDesc* d);
+    branchingSpec(const Space* home,
+                  Reflection::VarMap& m, const BranchingDesc* d) const;
     //@}
   };
 
@@ -1264,7 +1273,7 @@ namespace Gecode {
     /// Get reflection for BranchingDesc \a d
     GECODE_KERNEL_EXPORT
     Reflection::BranchingSpec branchingSpec(Reflection::VarMap& m,
-                                            const BranchingDesc* d);
+                                            const BranchingDesc* d) const;
     //@}
 
     /**
@@ -1535,6 +1544,14 @@ namespace Gecode {
     return static_cast<ActorLink*>(&t);
   }
 
+  template <class T>
+  forceinline const ActorLink* 
+  ActorLink::cast(const T* a) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(a);
+    const ActorLink& t = *a;
+    return static_cast<const ActorLink*>(&t);
+  }
 
 
   /*
@@ -1547,6 +1564,14 @@ namespace Gecode {
     GECODE_NOT_NULL(al);
     ActorLink& t = *al;
     return static_cast<Actor*>(&t);
+  }
+
+  forceinline const Actor* 
+  Actor::cast(const ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    const ActorLink& t = *al;
+    return static_cast<const Actor*>(&t);
   }
 
   forceinline void
@@ -1584,6 +1609,14 @@ namespace Gecode {
     GECODE_NOT_NULL(al);
     ActorLink& t = *al;
     return static_cast<Propagator*>(&t);
+  }
+
+  forceinline const Propagator* 
+  Propagator::cast(const ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    const ActorLink& t = *al;
+    return static_cast<const Propagator*>(&t);
   }
 
   forceinline
@@ -1637,6 +1670,14 @@ namespace Gecode {
     GECODE_NOT_NULL(al);
     ActorLink& t = *al;
     return static_cast<Branching*>(&t);
+  }
+
+  forceinline const Branching* 
+  Branching::cast(const ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    const ActorLink& t = *al;
+    return static_cast<const Branching*>(&t);
   }
 
   forceinline

@@ -54,10 +54,10 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValMin<View>::branchingSpec(Space* home,
-                           Reflection::VarMap& m,
-                           Reflection::BranchingSpec& bs,
-                           View x, int n) {
+  ValMin<View>::branchingSpec(const Space* home,
+                              Reflection::VarMap& m,
+                              Reflection::BranchingSpec& bs,
+                              View x, int n) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
@@ -87,10 +87,10 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValMed<View>::branchingSpec(Space* home,
-                           Reflection::VarMap& m,
-                           Reflection::BranchingSpec& bs,
-                           View x, int n) {
+  ValMed<View>::branchingSpec(const Space* home,
+                              Reflection::VarMap& m,
+                              Reflection::BranchingSpec& bs,
+                              View x, int n) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
@@ -122,9 +122,10 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValMax<View>::branchingSpec(Space* home,
-                           Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                           View x, int n) {
+  ValMax<View>::branchingSpec(const Space* home,
+                              Reflection::VarMap& m,
+                              Reflection::BranchingSpec& bs,
+                              View x, int n) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
@@ -156,10 +157,10 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValSplitMin<View>::branchingSpec(Space* home,
-                                Reflection::VarMap& m,
-                                Reflection::BranchingSpec& bs,
-                                View x, int n) {
+  ValSplitMin<View>::branchingSpec(const Space* home,
+                                   Reflection::VarMap& m,
+                                   Reflection::BranchingSpec& bs,
+                                   View x, int n) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
@@ -191,10 +192,10 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValSplitMax<View>::branchingSpec(Space* home,
-                                Reflection::VarMap& m,
-                                Reflection::BranchingSpec& bs,
-                                View x, int n) {
+  ValSplitMax<View>::branchingSpec(const Space* home,
+                                   Reflection::VarMap& m,
+                                   Reflection::BranchingSpec& bs,
+                                   View x, int n) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
@@ -260,10 +261,10 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValZeroOne<View>::branchingSpec(Space* home,
-                               Reflection::VarMap& m,
-                               Reflection::BranchingSpec& bs,
-                               View x, NoValue) {
+  ValZeroOne<View>::branchingSpec(const Space* home,
+                                  Reflection::VarMap& m,
+                                  Reflection::BranchingSpec& bs,
+                                  View x, NoValue) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     (*a0)[0] = x.spec(home, m);
     (*a0)[1] = Reflection::Arg::newString("= 0");
@@ -293,10 +294,10 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template <class View>
   forceinline void
-  ValOneZero<View>::branchingSpec(Space* home,
-                               Reflection::VarMap& m,
-                               Reflection::BranchingSpec& bs,
-                               View x, NoValue) {
+  ValOneZero<View>::branchingSpec(const Space* home,
+                                  Reflection::VarMap& m,
+                                  Reflection::BranchingSpec& bs,
+                                  View x, NoValue) const {
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     (*a0)[0] = x.spec(home, m);
     (*a0)[1] = Reflection::Arg::newString("= 1");
