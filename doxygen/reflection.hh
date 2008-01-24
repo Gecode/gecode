@@ -62,14 +62,14 @@ For information on how to recreate a Space object from a description obtained by
 The starting point for reflection in Gecode is a Space. The basic work cycle is to iterate over all the actors in a space using an ActorSpecIter, collecting the variables that the actors reference in a VarMap. The iterator returns an ActorSpec for each actor, and the VarMap contains a VarSpec for each variable. All the specifications in the VarMap can be accessed using a VarMapIter.
 
 \code
-Space* space = ...
-Reflection::VarMap vm;
-Reflection::VarMapIter vmi(vm);
-for (Reflection::ActorSpecIter si(space, vm); si(); ++si) {
-  Reflection::ActorSpec aSpec = si.actor();
+Gecode::Space* space = ...
+Gecode::Reflection::VarMap vm;
+Gecode::Reflection::VarMapIter vmi(vm);
+for (Gecode::Reflection::ActorSpecIter si(space, vm); si(); ++si) {
+  Gecode::Reflection::ActorSpec aSpec = si.actor();
   doSomethingForAnActor(aSpec);
   for (; vmi(); ++vmi) {
-    Reflection::VarSpec vSpec = vmi.spec();
+    Gecode::Reflection::VarSpec vSpec = vmi.spec();
     doSomethingForAVariable(vSpec);
   }
 }
@@ -98,6 +98,14 @@ The concrete representation of a variable's or actor's state depends on its conc
 
 Several propagators can share the same variable, and reflection makes this sharing explicit. The VarMap contains one entry per variable that is referenced by an actor, and it is filled by iterating over the actors. The specification of an actor only contains an integer reference into the VarMap that was used when the specification was created.
 
+\sa
+Gecode::Reflection::ActorSpecIter
+Gecode::Reflection::ActorSpec
+Gecode::Reflection::VarSpec
+Gecode::Reflection::VarMap
+Gecode::Reflection::VarMapIter
+Gecode::Reflection::Arg
+
 \section SecReflAddSupport Adding reflection support to actors and variables
 
 When the ActorSpecIter iterates over the actors of a space, each actor has to deliver its specification through the virtual function Actor::spec. When this function is called, the actor creates an ActorSpec with its <em>actor type identifier</em> (ati) and fills it with a representation of its arguments, encoded into objects of type Reflection::Arg. The specification for the views is delegated to the views or view arrays that the actor uses.
@@ -105,6 +113,51 @@ When the ActorSpecIter iterates over the actors of a space, each actor has to de
 We now go through the steps that are needed for reflection of actors and variables.
 
 \subsection SecReflAddSupportProp Propagators
+
+Propagators implement the virtual function Gecode::Reflection::Actor::spec. It creates an ActorSpec with a proper actor type identifier and arguments. The following example provides reflection for a propagator with an IntView \c x, a ViewArray of IntViews \c y, and an integer constant \c c:
+
+\code
+class MyPropagator : public Gecode::Propagator {
+protected:
+  IntView            x;
+  ViewArray<IntView> y;
+  int                c;
+public:
+  virtual Gecode::Reflection::ActorSpec&
+  spec(const Space* home, Gecode::Reflection::VarMap& m) const {
+    Gecode::Reflection::ActorSpec spec =
+      Gecode::Propagator::spec(home, m, "MyPropagator");
+    spec << x.spec(home, m);
+    spec << y.spec(home, m);
+    spec << c;
+    return spec;
+  }
+};
+\endcode
+
+For a generic propagator, the types of its views must be part of the actor type identifier. All views have a static function \c type to enable this, and the reflection library contains name mangling functions:
+
+\code
+template <class View0, class View1>
+class MyGenericPropagator : public Gecode::Propagator {
+protected:
+  View0            x;
+  ViewArray<View1> y;
+  int              c;
+public:
+  virtual Gecode::Reflection::ActorSpec&
+  spec(const Space* home, Gecode::Reflection::VarMap& m) const {
+    Gecode::Support::Symbol name =
+      Gecode::Reflection::mangle<View0,View1>("MyGenericPropagator");
+    Gecode::Reflection::ActorSpec spec =
+      Gecode::Propagator::spec(home, m, name);
+    spec << x.spec(home, m);
+    spec << y.spec(home, m);
+    spec << c;
+    return spec;
+  }
+};
+\endcode
 
 \subsection SecReflAddSupportBranching Branchings
 
