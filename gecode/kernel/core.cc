@@ -55,12 +55,13 @@ namespace Gecode {
    *
    */
   Reflection::ActorSpec&
-  Actor::spec(Space*, Reflection::VarMap&) {
+  Actor::spec(const Space*, Reflection::VarMap&) const {
     throw Reflection::NoReflectionDefinedException();
   }
 
   Reflection::ActorSpec&
-  Actor::spec(Space*, Reflection::VarMap&, const Support::Symbol& name) {
+  Actor::spec(const Space*, Reflection::VarMap&,
+              const Support::Symbol& name) const {
     return *new Reflection::ActorSpec(name);
   }
 

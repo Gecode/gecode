@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   Reflection::ActorSpec&
-  Seq::spec(Space* home, Reflection::VarMap& m) {
+  Seq::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, ati());
   }
 

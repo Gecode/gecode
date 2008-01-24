@@ -140,7 +140,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -251,7 +252,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     static ExecStatus post(Space* home, ViewArray<View>& x, const TupleSet& t);
 
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -369,7 +371,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

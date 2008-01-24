@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   Reflection::ActorSpec&
-  ConvexHull::spec(Space* home, Reflection::VarMap& m) {
+  ConvexHull::spec(const Space* home, Reflection::VarMap& m) const {
     return BinaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
   }
 

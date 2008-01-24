@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec&
-  MinElement<View>::spec(Space* home, Reflection::VarMap& m) {
+  MinElement<View>::spec(const Space* home, Reflection::VarMap& m) const {
    return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
      ::spec(home, m, ati());
   }
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec&
-  MaxElement<View>::spec(Space* home, Reflection::VarMap& m) {
+  MaxElement<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
       ::spec(home, m, ati());
   }

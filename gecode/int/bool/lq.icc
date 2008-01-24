@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   Reflection::ActorSpec&
-  Lq<BV>::spec(Space* home, Reflection::VarMap& m) {
+  Lq<BV>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolBinary<BV,BV>::spec(home, m, ati());
   }
 

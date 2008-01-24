@@ -165,7 +165,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -251,7 +252,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -295,7 +297,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

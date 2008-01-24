@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   Reflection::ActorSpec&
-  LinkSingle::spec(Space* home, Reflection::VarMap& m) {
+  LinkSingle::spec(const Space* home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
       ::spec(home, m, ati());
   }

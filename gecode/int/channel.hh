@@ -69,8 +69,8 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Constructor for posting
     Base(Space* home, int n, Info* xy);
     // Specification for this propagator
-    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::Symbol& name);
+    Reflection::ActorSpec& spec(const Space* home, Reflection::VarMap& m,
+                                const Support::Symbol& name) const;
   public:
     /// Propagation cost
     virtual PropCost cost(ModEventDelta med) const;
@@ -113,7 +113,8 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Post propagator for channeling
     static  ExecStatus post(Space* home, int n, ValInfo<View>* xy);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -158,7 +159,8 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Post propagator for channeling on \a xy
     static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -192,7 +194,8 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Post propagator for \f$ x_0 = x_1\f$
     static  ExecStatus post(Space* home, BoolView x0, IntView x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post according to specification
     GECODE_INT_EXPORT
     static void post(Space* home, Reflection::VarMap& vars,
@@ -231,7 +234,8 @@ namespace Gecode { namespace Int { namespace Channel {
     static  ExecStatus post(Space* home, 
                             ViewArray<BoolView>& x, IntView y, int o);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

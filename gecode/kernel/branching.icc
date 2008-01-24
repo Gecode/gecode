@@ -98,7 +98,8 @@ namespace Gecode {
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a);
     /// Return specification for this branching given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
     branchingSpec(const Space* home, 
@@ -148,7 +149,8 @@ namespace Gecode {
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a);
     /// Return specification for this assignment given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
     branchingSpec(const Space* home, 
@@ -326,8 +328,8 @@ namespace Gecode {
 
   template <class View, class Val, class ViewSel, class ValSel>
   Reflection::ActorSpec&
-  ViewValBranching<View,Val,ViewSel,ValSel>::spec(Space* home,
-                                                  Reflection::VarMap& m) {
+  ViewValBranching<View,Val,ViewSel,ValSel>::spec(const Space* home,
+    Reflection::VarMap& m) const {
     Reflection::ActorSpec& s = Branching::spec(home, m, ati());
     return s << x.spec(home, m);
   }
@@ -420,8 +422,8 @@ namespace Gecode {
 
   template <class View, class Val, class ValSel>
   Reflection::ActorSpec&
-  ViewValAssignment<View,Val,ValSel>::spec(Space* home,
-    Reflection::VarMap& m) {
+  ViewValAssignment<View,Val,ValSel>::spec(const Space* home,
+    Reflection::VarMap& m) const {
     Reflection::ActorSpec& s = Branching::spec(home, m, ati());
     return s << x.spec(home, m);
   }

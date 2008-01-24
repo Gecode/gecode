@@ -75,7 +75,8 @@ namespace Gecode { namespace Set { namespace Convex {
     static  ExecStatus  post(Space* home,SetView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -105,7 +106,8 @@ namespace Gecode { namespace Set { namespace Convex {
     static  ExecStatus  post(Space* home,SetView x,SetView y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

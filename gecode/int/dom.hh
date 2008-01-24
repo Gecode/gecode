@@ -75,7 +75,8 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Mangled name
     static Support::Symbol ati(void);
     /// Post propagator according to specification
@@ -109,7 +110,8 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Mangled name
     static Support::Symbol ati(void);
     /// Post propagator according to specification

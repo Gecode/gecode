@@ -325,7 +325,7 @@ namespace Gecode {
 
     /// \name Reflection
     //@{
-    Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+    Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
     //@}
 
   private:
@@ -977,7 +977,7 @@ namespace Gecode {
 
   template <class View>
   Reflection::Arg*
-  ViewArray<View>::spec(Space* home, Reflection::VarMap& m) {
+  ViewArray<View>::spec(const Space* home, Reflection::VarMap& m) const {
     if (n == 0)
       return NULL;
     Reflection::ArrayArg* s = Reflection::Arg::newArray(n);

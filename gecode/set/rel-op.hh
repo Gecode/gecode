@@ -84,7 +84,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Post propagator \f$ z \supseteq x \cap y\f$ 
     static  ExecStatus  post(Space* home, View0 x, View1 y, View2 z);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -121,7 +122,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Post propagator \f$ z \subseteq x \cap y\f$ 
     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -159,7 +161,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Post propagator \f$ z=x\cap y\f$ 
     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -196,7 +199,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Post propagator \f$ z=x\cup y\f$
     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -238,7 +242,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -280,7 +285,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -323,7 +329,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

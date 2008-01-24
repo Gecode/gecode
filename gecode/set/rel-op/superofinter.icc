@@ -79,7 +79,8 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   Reflection::ActorSpec&
-  SuperOfInter<View0,View1,View2>::spec(Space* home, Reflection::VarMap& m) {
+  SuperOfInter<View0,View1,View2>::spec(const Space* home,
+                                        Reflection::VarMap& m) const {
     return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
       View2,PC_SET_CLUB>::spec(home, m, ati());
   }

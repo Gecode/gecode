@@ -197,7 +197,7 @@ namespace Gecode {
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
+      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const {
         (void) home; (void) m;
         return NULL;
       }
@@ -293,7 +293,7 @@ namespace Gecode {
     /// \name Reflection
     //@{
     /// Return specification for this array, using variable map \a m
-    Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
+    Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const {
       (void) home; (void) m;
       return Reflection::Arg::newArray(0);
     }

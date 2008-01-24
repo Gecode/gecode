@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   Reflection::ActorSpec&
-  ReIntSet<View>::spec(Space* home, Reflection::VarMap& m) {
+  ReIntSet<View>::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec& s =
       ReUnaryPropagator<View,PC_INT_DOM,BoolView>::spec(home, m, ati());
     int count=0;

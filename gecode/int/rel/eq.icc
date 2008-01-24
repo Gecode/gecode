@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View0, class View1>
   Reflection::ActorSpec&
-  EqBnd<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+  EqBnd<View0,View1>::spec(const Space* home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>
       ::spec(home, m, ati());
   }
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View0, class View1>
   Reflection::ActorSpec&
-  EqDom<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+  EqDom<View0,View1>::spec(const Space* home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>
       ::spec(home, m, ati());
   }
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   Reflection::ActorSpec&
-  NaryEqDom<View>::spec(Space* home, Reflection::VarMap& m) {
+  NaryEqDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryPropagator<View,PC_INT_DOM>
       ::spec(home, m, ati());
   }
@@ -421,7 +421,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   Reflection::ActorSpec&
-  NaryEqBnd<View>::spec(Space* home, Reflection::VarMap& m) {
+  NaryEqBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryPropagator<View,PC_INT_BND>
       ::spec(home, m, ati());
   }
@@ -520,7 +520,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   Reflection::ActorSpec&
-  ReEqDom<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+  ReEqDom<View,CtrlView>::spec(const Space* home,
+                               Reflection::VarMap& m) const {
     return ReBinaryPropagator<View,PC_INT_DOM,CtrlView>
       ::spec(home, m, ati());
   }
@@ -601,7 +602,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   Reflection::ActorSpec&
-  ReEqBnd<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+  ReEqBnd<View,CtrlView>::spec(const Space* home,
+                               Reflection::VarMap& m) const {
     return ReBinaryPropagator<View,PC_INT_BND,CtrlView>
       ::spec(home, m, ati());
   }
@@ -689,7 +691,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   Reflection::ActorSpec&
-  ReEqDomInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+  ReEqDomInt<View,CtrlView>::spec(const Space* home,
+                                  Reflection::VarMap& m) const {
     return ReUnaryPropagator<View,PC_INT_DOM,CtrlView>
       ::spec(home, m, ati()) << c;
   }
@@ -789,7 +792,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   Reflection::ActorSpec&
-  ReEqBndInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+  ReEqBndInt<View,CtrlView>::spec(const Space* home,
+                                  Reflection::VarMap& m) const {
     return ReUnaryPropagator<View,PC_INT_BND,CtrlView>
       ::spec(home, m, ati()) << c;
   }

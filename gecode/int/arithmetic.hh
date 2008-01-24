@@ -87,7 +87,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -137,7 +138,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -172,7 +174,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -204,7 +207,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -237,7 +241,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -271,7 +276,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -303,7 +309,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -339,7 +346,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Cost function (defined as PC_TERNARY_HI)
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };

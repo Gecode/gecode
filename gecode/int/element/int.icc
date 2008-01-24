@@ -393,7 +393,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   Reflection::ActorSpec&
-  Int<ViewA,ViewB>::spec(Space* home, Reflection::VarMap& m) {
+  Int<ViewA,ViewB>::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
     return s << x0.spec(home, m)
              << x1.spec(home, m)

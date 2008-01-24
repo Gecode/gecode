@@ -795,7 +795,7 @@ namespace Gecode { namespace Reflection {
       isBranching = true;
   }
 
-  ActorSpecIter::ActorSpecIter(Space* s0, VarMap& m0)
+  ActorSpecIter::ActorSpecIter(const Space* s0, VarMap& m0)
   : m(&m0), s(s0), queue(s0->pc.p.active - &s0->pc.p.queue[0]), 
     isBranching(false), curSpec(NULL) {
     if (queue >= 0)
@@ -808,9 +808,9 @@ namespace Gecode { namespace Reflection {
   ActorSpec&
   ActorSpecIter::actor(void) const {
     if (!curSpec) {
-      curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
+      curSpec = &static_cast<const Actor*>(cur)->spec(s,*m);
       if (isBranching)
-        curSpec->queue(-1-static_cast<Branching*>(cur)->id);
+        curSpec->queue(-1-static_cast<const Branching*>(cur)->id);
       else
         curSpec->queue(queue+1);        
     }

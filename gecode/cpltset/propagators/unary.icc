@@ -73,7 +73,8 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   Reflection::ActorSpec&
-  UnaryCpltSetPropagator<View>::spec(Space*, Reflection::VarMap&) {
+  UnaryCpltSetPropagator<View>::spec(const Space*,
+                                     Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   } 
   

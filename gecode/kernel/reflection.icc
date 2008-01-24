@@ -460,20 +460,20 @@ namespace Gecode { namespace Reflection {
   class GECODE_KERNEL_EXPORT ActorSpecIter {
   private:
     /// The variable map used by this iterator
-    VarMap*    m;
+    VarMap*      m;
     /// The space for which to iterate the actors
-    Space*     s;
+    const Space* s;
     /// The queue to iterate
     int        queue;
     /// The current actor
-    ActorLink *cur;
+    const ActorLink *cur;
     /// Whether the current actor is a branching
     bool       isBranching;
     /// The current ActorSpec
     mutable ActorSpec* curSpec;
   public:
     /// Constructor
-    ActorSpecIter(Space*, VarMap&);
+    ActorSpecIter(const Space*, VarMap&);
     /// %Test whether iterator still has actor specifications or is done
     bool operator()(void) const;
     /// Move iterator to next actor

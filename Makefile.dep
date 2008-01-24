@@ -5158,7 +5158,7 @@ gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/gist/node$(OBJSUFFIX) gecode/gist/node$(SBJSUFFIX): \
-	./gecode/gist/node.hh 
+	./gecode/config.hh ./gecode/gist/node.hh 
 gecode/gist/nodecursor$(OBJSUFFIX) gecode/gist/nodecursor$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/gist/better.hh ./gecode/gist/node.hh \
 	./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.icc ./gecode/gist/shapelist.hh \

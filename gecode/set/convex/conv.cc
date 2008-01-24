@@ -54,7 +54,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   Reflection::ActorSpec&
-  Convex::spec(Space* home, Reflection::VarMap& m) {
+  Convex::spec(const Space* home, Reflection::VarMap& m) const {
     return UnaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
   }
 

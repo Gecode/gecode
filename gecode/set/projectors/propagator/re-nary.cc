@@ -71,7 +71,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   Reflection::ActorSpec&
-  ReNaryProjection::spec(Space*, Reflection::VarMap&) {
+  ReNaryProjection::spec(const Space*, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   }
 

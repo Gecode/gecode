@@ -284,7 +284,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec&
-  ChannelBool<View>::spec(Space* home, Reflection::VarMap& m) {
+  ChannelBool<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return Super::spec(home, m, ati());
   }
   

@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   Reflection::ActorSpec&
-  SeqU::spec(Space* home, Reflection::VarMap& m) {
+  SeqU::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec& s =
      NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
     int count = 0;

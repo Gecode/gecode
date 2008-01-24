@@ -78,8 +78,8 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec&
-  BaseInt<VX,VY>::spec(Space* home, Reflection::VarMap& m,
-                       const Support::Symbol& ati) {
+  BaseInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m,
+                       const Support::Symbol& ati) const {
     Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
     return s << x.spec(home, m)
              << n_s
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec&
-  EqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+  EqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
     return BaseInt<VX,VY>::spec(home, m, ati());
   }
 
@@ -269,7 +269,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec&
-  GqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+  GqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
     return BaseInt<VX,VY>::spec(home, m, ati());
   }
 
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec&
-  LqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+  LqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
     return BaseInt<VX,VY>::spec(home, m, ati());
   }
 
@@ -526,7 +526,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec&
-  NqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+  NqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec& s =
       BinaryPropagator<VX, PC_INT_DOM>::spec(home, m, ati());
     return s << x.spec(home, m)

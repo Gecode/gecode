@@ -69,8 +69,8 @@ namespace Gecode {
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::Symbol& name);
+    Reflection::ActorSpec& spec(const Space* home, Reflection::VarMap& m,
+                                const Support::Symbol& name) const;
   };
 
   //@}
@@ -111,8 +111,9 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   Reflection::ActorSpec&
-  IntSetPropagator<View,pcs,pci>::spec(Space* home, Reflection::VarMap& m,
-    const Support::Symbol& name) {
+  IntSetPropagator<View,pcs,pci>::spec(const Space* home,
+                                       Reflection::VarMap& m,
+                                       const Support::Symbol& name) const {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x0.spec(home, m)
              << x1.spec(home, m);

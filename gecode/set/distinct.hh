@@ -72,7 +72,8 @@ namespace Gecode { namespace Set { namespace Distinct {
     static ExecStatus post(Space* home,ViewArray<SetView> x,unsigned int c);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    virtual Reflection::ActorSpec& spec(const Space* home,
+                                        Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
