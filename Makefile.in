@@ -1191,7 +1191,7 @@ config.status: $(top_srcdir)/configure
 	./config.status --recheck
 Makefile: $(top_srcdir)/Makefile.in config.status
 	./config.status --file $@:$<
-doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
+doxygen.hh: $(top_srcdir)/doxygen/doxygen.hh.in config.status
 	./config.status --file $@:$<
 
 #

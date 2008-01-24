@@ -52,6 +52,8 @@ AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 
 : ${CXXFLAGS=""} dnl we do not want autoconf's default
 : ${CFLAGS=""}   dnl we do not want autoconf's default
+: ${DLLFLAGS=""}   dnl we do not want autoconf's default
+: ${GLDFLAGS=""}   dnl we do not want autoconf's default
 
 AC_PROG_CXX
 AC_PROG_CC
@@ -231,7 +233,8 @@ AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 
-AC_CONFIG_FILES([Makefile doxygen.conf doxygen.hh
+AC_CONFIG_FILES([Makefile doxygen.conf:doxygen/doxygen.conf.in
+	doxygen.hh:doxygen/doxygen.hh.in
 	misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc 
 	misc/gecode-minimodel.pc])
 AC_OUTPUT

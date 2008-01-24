@@ -179,12 +179,15 @@
  * \defgroup TaskReflection Reflection API
  *
  * The reflection API provides information about the propagators, branchings,
- * and variables in a space.
+ * and variables in a space. More detailed, step-by-step information can be 
+ * found in the \ref PageReflection "reflection tutorial".
  *
  * Requires \code #include "gecode/kernel.hh" \endcode
  *
  * \ingroup TaskReflSer
  */
+
+#include "doxygen/reflection.hh"
 
 /**
  * \defgroup TaskSerialization Serialization
@@ -193,6 +196,8 @@
  * space, and recreate a copy of the original space from that representation.  
  * It provides funcionality for creating variables and posting propagators in 
  * a space using the specifications obtained through reflection.
+ * More detailed, step-by-step information can be 
+ * found in the \ref PageSerialization "serialization tutorial".
  *
  * Requires \code #include "gecode/serialization.hh" \endcode
  *
