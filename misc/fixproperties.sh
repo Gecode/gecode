@@ -41,7 +41,7 @@ set -e
 KEYWORDEXTS="cc icc hh sh perl ac in vsl vis"
 
 for ext in ${KEYWORDEXTS}; do
-    find . -name "*.$ext" ! -wholename './contribs/*' -prune \
+    find . -name "*.$ext" ! -path './contribs/*' -prune \
     -exec svn propset svn:keywords 'Author Date Id Revision' "{}" ";"
 done
 
@@ -49,14 +49,29 @@ done
 NORMALDIRS="cpltset int iter kernel minimodel search set serialization support gist"
 
 for dir in ${NORMALDIRS}; do
-    find . -type d -wholename "./gecode/$dir*" \
-	! -wholename '*.svn*' \
-	-exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
-done
-find . -type d -wholename "./examples*" \
-    ! -wholename '*.svn*' \
+    find . -type d -path "./gecode/$dir*" \
+    ! -path '*.svn*' \
     -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
-find . -type d -wholename "./test*" \
-    ! -wholename '*.svn*' \
+done
+
+# Create list of executable examples, append it to svn-ignore.txt
+IGNOREEXAMPLES=`mktemp -t fixproperties` || exit 1
+(cat misc/svn-ignore.txt; \
+  find "./examples" -name "*.cc" | sed -e 's/\.cc//g' | xargs -n1 basename) \
+  > ${IGNOREEXAMPLES}
+svn propset svn:ignore -F ${IGNOREEXAMPLES} './examples'
+rm -f ${IGNOREEXAMPLES}
+
+find . -type d -path "./examples/*" \
+    ! -path '*.svn*' \
     -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
 
+# Append the test executable to svn-ignore.txt
+IGNORETEST=`mktemp -t fixproperties` || exit 1
+(cat misc/svn-ignore.txt; echo "test") > ${IGNORETEST}
+svn propset svn:ignore -F ${IGNORETEST} './test'
+rm -f ${IGNORETEST}
+
+find . -type d -path "./test/*" \
+    ! -path '*.svn*' \
+    -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
