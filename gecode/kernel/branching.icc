@@ -170,8 +170,11 @@ namespace Gecode {
   template <class Val>
   class PosValDesc : public BranchingDesc {
   protected:
+    /// Position of view
     const int _pos;
+    /// Value to assign to
     const Val _val;
+    /// Start position in view array
     const int _start;
   public:
     /** \brief Initialize description for branching \a b, position \a p, value \a n, and start position \a s.
@@ -324,7 +327,7 @@ namespace Gecode {
   template <class View, class Val, class ViewSel, class ValSel>
   Reflection::ActorSpec&
   ViewValBranching<View,Val,ViewSel,ValSel>::spec(Space* home,
-    Reflection::VarMap& m) {
+                                                  Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Branching::spec(home, m, ati());
     return s << x.spec(home, m);
   }

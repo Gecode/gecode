@@ -50,6 +50,7 @@ namespace Test {
 
     /// Values for selecting branchings
     enum HowToBranch {
+      HTB_NONE,   ///< Do not branch
       HTB_UNARY,  ///< Branch with single alternative
       HTB_BINARY, ///< Branch with two alternatives
       HTB_NARY    ///< Branch with many alternatives
@@ -57,6 +58,7 @@ namespace Test {
 
     /// Values for selecting how to constrain
     enum HowToConstrain {
+      HTC_NONE,         ///< Do not constrain
       HTC_LEX_SMALLEST, ///< Constrain for lexically smallest
       HTC_LEX_LARGEST,  ///< Constrain for lexically biggest 
       HTC_BAL_SMALLEST, ///< Constrain for smallest balance
@@ -69,6 +71,103 @@ namespace Test {
       WM_FAIL_SEARCH,    ///< Model without solutions
       WM_SOLUTIONS       ///< Model with solutions
     };
+
+    /*
+
+    /// %Branching description storing position and values
+    class PosValuesDesc : public BranchingDesc {
+    protected:
+      /// Position of view
+      int _pos;
+      /// Values to assign to
+      int* _values;
+    public:
+      /// Initialize description for branching \a b, position \a p, and view \a x
+      PosValuesDesc(const Branching* b, int p, IntView x)
+        : BranchingDesc(b,x.size()), 
+          _pos(p), 
+          _values(static_cast<int*>(Memory::malloc(sizeof(int)*x.size()))) {
+        ViewValues<IntView> v(x);
+        int i=0;
+        while (v()) {
+          _values[i]=v.val(); ++i; ++v;
+        }
+      }
+      /// Return position in array
+      int pos(void) const {
+        return _pos;
+      }
+      /// Return value to branch with
+      int val(unsigned int a) const {
+        return _values[a];
+      }
+      /// Report size occupied
+      virtual size_t size(void) const {
+        0;
+      }
+      /// Destructor
+      virtual ~PosValuesDesc(void) {
+        Memory::free(_values);
+      }
+    };
+
+
+    /// Class for nary branchings
+    class NaryBranching : public Branching {
+    protected:
+      ViewArray<View> x; ///< Views to branch on
+      /// Constructor for cloning \a b
+      NaryBranching(Space* home, bool share, NaryBranching& b) 
+        : Branching(home,share,b) {
+        x.update(home,share,b.x);
+      }
+    public:
+      /// Constructor for creation
+      NaryBranching(Space* home, ViewArray<View>& x0) 
+        : Branching(home), x(x0) {}
+      /// Check status of branching, return true if alternatives left
+      virtual bool status(const Space* home) const {
+        for (int i=0; i<x.size(); i++)
+          if (!x[i].assigned())
+            return true;
+        return false;
+      }
+      /// Return branching description
+      virtual const BranchingDesc* description(const Space* home) const {
+        int i=0; 
+        while (x[i].assigned()) 
+          i++;
+        return new PosValuesDesc(this,i,x[i]);
+      }
+      /// Perform commit for branching description \a d and alternative \a a
+      virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+                                unsigned int a) {
+        const PosValuesDesc* pvd = static_cast<const PosValuesDesc*>(d);
+        return me_failed(x[pvd->pos()].eq(home,pvd->val(a)))
+          ? ES_FAILED : ES_OK;
+      }
+      /// Return specification for this branching given a variable map \a m
+      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m) {
+        return "ViewValBranching";
+      }
+
+      /// Return specification for a branch
+      virtual Reflection::BranchingSpec branchingSpec(Space* home, 
+                                                      Reflection::VarMap& m,
+                                                      const BranchingDesc* d);
+      /// Actor type identifier of this branching
+      static Support::Symbol ati(void) {
+        return "Test::Search::ViewValuesBranching";
+      }
+      /// Post branching according to specification
+      static void post(Space* home, Reflection::VarMap& m,
+                       const Reflection::ActorSpec& spec);
+      /// Perform cloning
+      virtual Actor* copy(Space* home, bool share);
+    };
+
+
+    */
 
     /// Space that immediately fails
     class FailImmediate : public Space {
@@ -102,6 +201,8 @@ namespace Test {
       /// Branch on \ x according to \a htb
       void branch(const IntVarArgs& x, HowToBranch htb) {
         switch (htb) {
+        case HTB_NONE:
+          break;
         case HTB_UNARY:
           assign(this, x, INT_ASSIGN_MIN);
           break;
@@ -135,6 +236,8 @@ namespace Test {
       void constrain(Space* _s) {
         HasSolutions* s = static_cast<HasSolutions*>(_s);
         switch (htc) {
+        case HTC_NONE:
+          break;
         case HTC_LEX_SMALLEST:
         case HTC_LEX_LARGEST:
           {
