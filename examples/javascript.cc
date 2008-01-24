@@ -119,7 +119,9 @@ public:
     programFile.close();
     fromJavaScript(this, program);
     Reflection::VarMap vm;
-    for (Reflection::SpecIter si(this, vm); si(); ++si) { (void) si.actor(); }
+    for (Reflection::ActorSpecIter si(this, vm); si(); ++si) {
+      (void) si.actor();
+    }
     for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
       x.add(this, Reflection::Var(vmi.varImpBase(), vmi.spec().vti()));
     }
