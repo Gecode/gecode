@@ -720,7 +720,7 @@ namespace Gecode { namespace Set {
 
 }}
 
-#include "gecode/set/var-imp/imp.icc"
+#include "gecode/set/var-imp/set.icc"
 
 namespace Gecode {
 

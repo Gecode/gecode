@@ -328,7 +328,7 @@ export INTLIB		=
 export LINKINT      	=
 endif
 INTBUILDDIRS	= \
-	int int/var int/view int/extensional \
+	int int/var int/var-imp int/view int/extensional \
 	int/channel int/linear int/bool int/branch
 
 #
@@ -341,7 +341,7 @@ SETSRC0 =								 \
 	int.cc								 \
 	select.cc select/disjoint.cc sequence.cc			 \
 	distinct.cc distinct/atmostOne.cc				 \
-	sequence/seq.cc sequence/seq-u.cc array.cc var-imp/imp.cc	 \
+	sequence/seq.cc sequence/seq-u.cc array.cc var-imp/set.cc	 \
 	var-imp/integerset.cc var/set.cc view/print.cc			 \
 	projectors.cc							 \
 	projectors/set-expr.cc projectors/projector.cc			 \
@@ -356,7 +356,7 @@ SETHDR0 =								     \
 	select/idxarray.icc select/inter.icc select/union.icc                \
 	select/unionConst.icc                                                \
 	select/disjoint.icc array.icc					     \
-	var-imp/imp.icc var-imp/integerset.icc	     			     \
+	var-imp/set.icc var-imp/integerset.icc	     			     \
 	var-imp/delta.icc var-imp/iter.icc 				     \
 	var/set.icc							     \
 	view/complement.icc view/const.icc view/set.icc view/singleton.icc   \
@@ -411,7 +411,7 @@ SETBUILDDIRS	=						\
 CPLTSETSRC0 =	\
 	branch.cc array.cc support.cc             			  \
 	bddmanager.cc 							  \
-	var-imp/imp.cc var/cpltset.cc  view/print.cc                  	  \
+	var-imp/cpltset.cc var/cpltset.cc  view/print.cc                  \
 	constraints/singleton.cc 					  \
 	constraints/dom.cc constraints/rel.cc constraints/cardinality.cc  \
 	constraints/atmost.cc constraints/partition.cc 			  \
@@ -421,7 +421,7 @@ CPLTSETSRC0 =	\
 CPLTSETHDR0 =		                \
 	view.icc bddmanager.icc exception.icc array.icc \
 	support.icc var-imp.icc \
-	var-imp/imp.icc var/cpltset.icc view/cpltset.icc \
+	var-imp/cpltset.icc var/cpltset.icc view/cpltset.icc \
 	propagators.hh \
 	propagators/unary.icc propagators/binary.icc \
 	propagators/nary.icc propagators/naryone.icc propagators/narytwo.icc \
@@ -455,7 +455,7 @@ export CPLTSETLIB		=
 export LINKCPLTSET      	=
 endif
 CPLTSETBUILDDIRS	=						\
-	cpltset cpltset/var cpltset/view cpltset/propagators \
+	cpltset cpltset/var cpltset/var-imp cpltset/view cpltset/propagators \
 	cpltset/branch cpltset/constraints
 
 #

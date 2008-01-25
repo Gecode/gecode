@@ -460,6 +460,6 @@ namespace Gecode { namespace CpltSet {
 
 }}
 
-#include "gecode/cpltset/var-imp/imp.icc"
+#include "gecode/cpltset/var-imp/cpltset.icc"
 
 // STATISTICS: cpltset-var
