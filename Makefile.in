@@ -497,7 +497,7 @@ MMBUILDDIRS	= minimodel
 #
 
 SERSRC0 = \
-	flatzinc.cc javascript.cc deserializer.cc registry.cc boost.cc
+	flatzinc.cc javascript.cc boost.cc
 
 ifeq "@enable_qt@" "yes"
 SERMOCSRC0 = moc_javascript.cc
@@ -508,10 +508,11 @@ endif
 SERHDR0 = \
 	boost.icc
 
-SERSRC 		= $(SERSRC0:%=gecode/serialization/%) $(SERMOCSRC0:%=gecode/serialization/%)
+SERSRC 		= $(SERSRC0:%=gecode/serialization/%) 
+SERMOCSRC	= $(SERMOCSRC0:%=gecode/serialization/%)
 SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)
-SEROBJ		= $(SERSRC:%.cc=%$(OBJSUFFIX))
-SERSBJ		= $(SERSRC:%.cc=%$(SBJSUFFIX))
+SEROBJ		= $(SERSRC:%.cc=%$(OBJSUFFIX)) $(SERMOCSRC:%.cc=%$(OBJSUFFIX))
+SERSBJ		= $(SERSRC:%.cc=%$(SBJSUFFIX)) $(SERMOCSRC:%.cc=%$(SBJSUFFIX))
 
 ifeq "@enable_serialization@" "yes"
 export SERDLL		= $(LIBPREFIX)@SER@$(DLLSUFFIX)

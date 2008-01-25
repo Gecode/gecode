@@ -685,8 +685,15 @@ namespace Gecode { namespace Set {
 
     /// \name Reflection
     //@{
-    GECODE_SET_EXPORT Reflection::Arg*
+    /// Return specification
+    GECODE_INT_EXPORT Reflection::Arg*
     spec(const Space* home, Reflection::VarMap& m) const;
+    /// Create variable implementation from specification
+    static GECODE_INT_EXPORT VarImpBase*
+    create(Space* home, Reflection::VarSpec& spec);
+    /// Constrain variable implementation using specification
+    static GECODE_INT_EXPORT void
+    constrain(Space* home, VarImpBase* v, Reflection::VarSpec& spec);
     //@}
 
     /// \name Delta information for advisors
@@ -714,5 +721,16 @@ namespace Gecode { namespace Set {
 }}
 
 #include "gecode/set/var-imp/imp.icc"
+
+namespace Gecode {
+
+  class SetVar;
+
+  template <>
+  class VarVarImpTraits<Set::SetVarImp> {
+  public:
+    typedef SetVar Var;
+  };
+}
 
 // STATISTICS: set-var

@@ -355,12 +355,12 @@ namespace Gecode { namespace Gist {
       for (unsigned int i=0; i<bs.alternatives(); i++) {
         std::ostringstream is; is << i;
         tt += is.str()+": ";
-        Reflection::ArrayArg* aa = bs[i]->toArray();
-        for (int j=0; j<aa->size(); j++) {
-          if ((*aa)[j]->isString()) {
-            tt += (*aa)[j]->toString();
-          } else if ((*aa)[j]->isVar()) {
-            int v = (*aa)[j]->toVar();
+        Reflection::ArrayArg& aa = *bs[i]->toArray();
+        for (int j=0; j<aa.size(); j++) {
+          if (aa[j]->isString()) {
+            tt += aa[j]->toString();
+          } else if (aa[j]->isVar()) {
+            int v = aa[j]->toVar();
             if (vm.hasName(v))
               tt += vm.name(v).toString();
             else {

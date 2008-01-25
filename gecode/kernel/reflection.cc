@@ -622,6 +622,13 @@ namespace Gecode { namespace Reflection {
     return _args->n;
   }
 
+  void
+  ActorSpec::checkArity(int n) const {
+    if (_args->n != n) {
+      throw ReflectionException("Illegal arity in ActorSpec");
+    }
+  }
+
   Support::Symbol
   ActorSpec::ati(void) const {
     return _args->_ati;
@@ -815,6 +822,35 @@ namespace Gecode { namespace Reflection {
         curSpec->queue(queue+1);        
     }
     return *curSpec;
+  }
+
+  Unreflector::Unreflector(Space* home0, Reflection::VarMap& m0)
+    : home(home0), m(m0) {}
+
+  Unreflector::~Unreflector(void) {}
+    
+  Reflection::VarMap&
+  Unreflector::varMap(void) const {
+    return m;
+  }
+
+  void
+  Unreflector::var(Reflection::VarSpec& spec) {
+    VarImpBase* vb = NULL;
+    if (!spec.name().empty() &&
+        (vb = m.varImpBase(spec.name())) != NULL) {
+      // TODO: assert that spec and original var are compatible,
+      // constrain domain of var to spec
+      Reflection::registry().constrainVar(home, vb, spec);
+    } else {
+      vb = Reflection::registry().createVar(home, spec);
+    }
+    (void) m.put(vb, new Reflection::VarSpec(spec));
+  }
+
+  void
+  Unreflector::post(Reflection::ActorSpec& spec) {
+    Reflection::registry().post(home, m, spec);
   }
 
 }}

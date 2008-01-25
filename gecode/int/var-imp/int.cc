@@ -386,6 +386,23 @@ namespace Gecode { namespace Int {
     return Reflection::Arg::newVar(m.put(this, spec));
   }
 
+  VarImpBase*
+  IntVarImp::create(Space* home, Reflection::VarSpec& spec) {
+    Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
+    return new (home) IntVarImp(home, IntSet(ai));
+  }
+
+  void
+  IntVarImp::constrain(Space* home, VarImpBase* v,
+                       Reflection::VarSpec& spec) {
+    Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
+    GECODE_ME_FAIL(home,
+      static_cast<Int::IntVarImp*>(v)->inter_r(home, ai, false));
+  }
+
+  namespace {
+    Reflection::VarImpRegistrar<IntVarImp> registerIntVarImp;
+  }
 
 }}
 

@@ -176,6 +176,38 @@ namespace Gecode { namespace Set {
     return (Reflection::Arg::newVar(m.put(this, spec)));
   }
 
+  VarImpBase*
+  SetVarImp::create(Space* home, Reflection::VarSpec& spec) {
+    int cardMin = spec.dom()->first()->second()->toInt();
+    int cardMax = spec.dom()->second()->second()->toInt();
+    Reflection::IntArrayArgRanges 
+      glb(spec.dom()->first()->first()->toIntArray());
+    Reflection::IntArrayArgRanges 
+      lub(spec.dom()->second()->first()->toIntArray());
+    return new (home) SetVarImp(home, IntSet(glb), IntSet(lub),
+                                cardMin, cardMax);
+  }
+
+  void
+  SetVarImp::constrain(Space* home, VarImpBase* v,
+                       Reflection::VarSpec& spec) {
+    int cardMin = spec.dom()->first()->second()->toInt();
+    int cardMax = spec.dom()->second()->second()->toInt();
+    Reflection::IntArrayArgRanges 
+      glb(spec.dom()->first()->first()->toIntArray());
+    Reflection::IntArrayArgRanges 
+      lub(spec.dom()->second()->first()->toIntArray());
+    SetVarImp* s = static_cast<SetVarImp*>(v);
+    GECODE_ME_FAIL(home, s->cardMin(home, cardMin));
+    GECODE_ME_FAIL(home, s->cardMax(home, cardMax));
+    GECODE_ME_FAIL(home, s->includeI(home, glb));
+    GECODE_ME_FAIL(home, s->intersectI(home, lub));
+  }
+
+  namespace {
+    Reflection::VarImpRegistrar<SetVarImp> registerSetVarImp;
+  }
+
 }}
 
 // STATISTICS: set-var

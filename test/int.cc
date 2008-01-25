@@ -136,7 +136,7 @@ namespace Test { namespace Int {
       Gecode::Reflection::VarMap cvm;
       cvm.putArray(c, c->x, "x", true);
       cvm.put(c, c->b, "b", true);
-      Gecode::Serialization::Deserializer d(c, cvm);
+      Gecode::Reflection::Unreflector d(c, cvm);
       Gecode::Reflection::VarMapIter vmi(vm);
       try {
         for (Gecode::Reflection::ActorSpecIter si(this, vm); si(); ++si) {

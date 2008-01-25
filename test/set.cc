@@ -191,7 +191,7 @@ namespace Test { namespace Set {
       cvm.putArray(c, c->x, "x", true);
       cvm.putArray(c, c->y, "y", true);
       cvm.put(c, c->b, "b", true);
-      Gecode::Serialization::Deserializer d(c, cvm);
+      Gecode::Reflection::Unreflector d(c, cvm);
       Gecode::Reflection::VarMapIter vmi(vm);
       try {
         for (Gecode::Reflection::ActorSpecIter si(this, vm); si(); ++si) {

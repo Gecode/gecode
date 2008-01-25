@@ -106,48 +106,13 @@ namespace Gecode {
   void fromJavaScript(Space* home, const std::string& model);
 #endif
 
-  namespace Serialization {
+}
 
-    /**
-     * \namespace Gecode::Serialization
-     * \brief Serialization and deserialization support
-     */
-
-    /**
-     * \brief Deserialization from VarSpec and ActorSpec
-     * \ingroup TaskSerialization
-     *
-     * A Deserializer allows you to install variables and propagators in a 
-     * Space using variable and actor specifications.
-     *
-     */
-    class GECODE_SERIALIZATION_EXPORT Deserializer {
-    private:
-      /// The space in which to create variables and post constraints
-      Space* home;
-      /// The VarMap that indicates which variables to reuse
-      Reflection::VarMap& m;
-      
-    public:
-      /// Constructor
-      Deserializer(Space* home0, Reflection::VarMap& m0);
-
-      /// Destructor
-      GECODE_MSC_VIRTUAL ~Deserializer(void);
-      
-      /// Return the VarMap
-      Reflection::VarMap& varMap(void) const;
-      
-      /// Create a new variable from \a spec
-      void var(Reflection::VarSpec& spec);
-
-      /// Post the constraint defined by \a spec
-      void post(Reflection::ActorSpec& spec);
-    };
-  
-  
-  }
-  
+namespace Serialization {
+  /**
+   * \namespace Gecode::Serialization
+   * \brief Serialization and deserialization support
+   */
 }
 
 #ifdef GECODE_HAVE_BOOST_SERIALIZATION

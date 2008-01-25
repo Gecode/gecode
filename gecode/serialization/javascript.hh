@@ -54,7 +54,7 @@ namespace Gecode { namespace Serialization {
     QScriptValue pairProto;
     Gecode::Space* s;
     Gecode::Reflection::VarMap vm;
-    Gecode::Serialization::Deserializer d;
+    Gecode::Reflection::Unreflector d;
     GJSSpace(QScriptEngine*, Gecode::Space* s0);
     Gecode::Reflection::Arg* scriptValToArg(QScriptValue v);
   public Q_SLOTS:

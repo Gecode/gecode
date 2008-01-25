@@ -369,6 +369,8 @@ namespace Gecode { namespace Reflection {
     Support::Symbol ati(void) const;
     /// Return number of arguments
     int noOfArgs(void) const;
+    /// Check that the number of arguments is \a n, throw exception otherwise
+    void checkArity(int n) const;
     /// Return argument \a i
     Arg* operator[](int i) const;
 
@@ -550,24 +552,74 @@ namespace Gecode { namespace Reflection {
   /// The registry object \ingroup TaskReflection
   GECODE_KERNEL_EXPORT Registry& registry(void);
 
-  /** \brief Class used for registering propagators
+  /** \brief Class used for registering actors
     *
     * \ingroup TaskReflection
     *
-    * The registered Propagator class \a P has to provide two functions:
+    * The registered Actor class \a P has to provide two functions:
     *  - static Support::Symbol ati(void)
     *  - static void post(Space*, const VarMap&, const ActorSpec&)
     */
   template <class P>
-  class Registrar {
+  class ActorRegistrar {
   public:
     /// Default constructor
-    Registrar(void);
+    ActorRegistrar(void);
   };
 
   template <class P>
-  Registrar<P>::Registrar(void) {
+  ActorRegistrar<P>::ActorRegistrar(void) {
     registry().add(P::ati(), &P::post);
+  }
+
+  /** \brief Class used for registering variable implementations
+    *
+    * \ingroup TaskReflection
+    *
+    * The registered variable implementation class \a V has to
+    * provide two functions:
+    *  - static void create(Space*, Reflection::VarSpec&)
+    *  - static void contrain(Space*, VarImpBase*, Reflection::VarSpec&)
+    */
+  template <class V>
+  class VarImpRegistrar {
+  private:
+    static VarImpBase* updateVar(Space* home, bool share, VarImpBase* v);
+    static std::ostream& printVar(std::ostream& os, VarImpBase* v);
+  public:
+    /// Default constructor
+    VarImpRegistrar(void);
+  };
+
+  template <class V>
+  VarImpBase*
+  VarImpRegistrar<V>::updateVar(Space* home, bool share, VarImpBase* v) {
+    typedef typename VarVarImpTraits<V>::Var Var;
+    typedef typename VarViewTraits<Var>::View View;
+    View view(static_cast<V*>(v));
+    Var var(view);
+    Var varCopy;
+    varCopy.update(home, share, var);
+    View viewCopy(varCopy);
+    return viewCopy.var();
+  }
+
+  template <class V>
+  std::ostream&
+  VarImpRegistrar<V>::printVar(std::ostream& os, VarImpBase* v) {
+    typedef typename VarVarImpTraits<V>::Var Var;
+    typedef typename VarViewTraits<Var>::View View;
+    View view(static_cast<V*>(v));
+    Var var(view);
+    return os << var;
+  }
+
+  template <class V>
+  VarImpRegistrar<V>::VarImpRegistrar(void) {
+    registry().add(V::vti, &V::create);
+    registry().add(V::vti, &V::constrain);
+    registry().add(V::vti, &VarImpRegistrar<V>::updateVar);
+    registry().add(V::vti, &VarImpRegistrar<V>::printVar);
   }
 
   /**
@@ -599,6 +651,38 @@ namespace Gecode { namespace Reflection {
     /// Cast to concrete variable type
     template <class VarImp>
     VarImp* var(void) const;
+  };
+
+  /**
+   * \brief Unreflection from VarSpec and ActorSpec
+   * \ingroup TaskReflection
+   *
+   * An Unreflector allows you to install variables and propagators in a 
+   * Space using variable and actor specifications.
+   *
+   */
+  class GECODE_KERNEL_EXPORT Unreflector {
+  private:
+    /// The space in which to create variables and post constraints
+    Space* home;
+    /// The VarMap that indicates which variables to reuse
+    Reflection::VarMap& m;
+    
+  public:
+    /// Constructor
+    Unreflector(Space* home0, Reflection::VarMap& m0);
+
+    /// Destructor
+    GECODE_MSC_VIRTUAL ~Unreflector(void);
+    
+    /// Return the VarMap
+    Reflection::VarMap& varMap(void) const;
+    
+    /// Create a new variable from \a spec
+    void var(Reflection::VarSpec& spec);
+
+    /// Post the constraint defined by \a spec
+    void post(Reflection::ActorSpec& spec);
   };
 
   forceinline
@@ -645,22 +729,22 @@ namespace Gecode { namespace Reflection {
 
 /// Register a propagator with zero or one template argument
 #define GECODE_REGISTER1(P) \
-  ::Gecode::Reflection::Registrar< P > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P > GECODE_FRESH(r);
 /// Register a propagator with two template arguments
 #define GECODE_REGISTER2(P1,P2) \
-  ::Gecode::Reflection::Registrar< P1,P2 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2 > GECODE_FRESH(r);
 /// Register a propagator with three template arguments
 #define GECODE_REGISTER3(P1,P2,P3) \
-  ::Gecode::Reflection::Registrar< P1,P2,P3 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3 > GECODE_FRESH(r);
 /// Register a propagator with four template arguments
 #define GECODE_REGISTER4(P1,P2,P3,P4) \
-  ::Gecode::Reflection::Registrar< P1,P2,P3,P4 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4 > GECODE_FRESH(r);
 /// Register a propagator with five template arguments
 #define GECODE_REGISTER5(P1,P2,P3,P4,P5) \
-  ::Gecode::Reflection::Registrar< P1,P2,P3,P4,P5 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4,P5 > GECODE_FRESH(r);
 /// Register a propagator with six template arguments
 #define GECODE_REGISTER6(P1,P2,P3,P4,P5,P6) \
-  ::Gecode::Reflection::Registrar< P1,P2,P3,P4,P5,P6 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4,P5,P6 > GECODE_FRESH(r);
 
   //@}
 

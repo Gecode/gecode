@@ -47,6 +47,15 @@ namespace Gecode {
   class VarViewTraits {};
 
   /**
+   * \brief Traits class for mapping variables implementations to variables
+   *
+   * Each variable implementation must specialize this traits class and add
+   * a \code typedef \endcode for the corresponding variable.
+   */
+  template <class Var>
+  class VarVarImpTraits {};
+
+  /**
    * \brief Traits class for views and variable implementations
    *
    * Each view must specialize this traits class and add a \code
