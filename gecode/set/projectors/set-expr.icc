@@ -99,20 +99,20 @@ namespace Gecode {
   forceinline
   SetExpr::SetExpr(void) : ax(NULL), sign(1) {}
 
-  forceinline SetExpr
+  inline SetExpr
   operator-(const SetExpr& s) { return SetExpr(s, -1); }
 
-  forceinline SetExpr
+  inline SetExpr
   operator||(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_UNION, t, 1);
   }
 
-  forceinline SetExpr
+  inline SetExpr
   operator&&(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_INTER, t, 1);
   }
 
-  forceinline SetExpr
+  inline SetExpr
   operator-(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_INTER, t, -1);
   }
