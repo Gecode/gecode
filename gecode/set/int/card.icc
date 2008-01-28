@@ -107,6 +107,7 @@ namespace Gecode { namespace Set { namespace Int {
   void
   Card<View>::post(Space* home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     View x0(home, vars, spec[0]);
     Gecode::Int::IntView x1(home, vars, spec[1]);
     (void) new (home) Card<View>(home,x0,x1);

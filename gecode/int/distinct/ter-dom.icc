@@ -59,6 +59,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   void
   TerDom<View>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
     View x2(home, vars, spec[1]);

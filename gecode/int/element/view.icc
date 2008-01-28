@@ -393,6 +393,7 @@ namespace Gecode { namespace Int { namespace Element {
   ViewBnd<VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
+    spec.checkArity(4);
     VB x0(home, vars, spec[0]);
     VC x1(home, vars, spec[1]);
     Reflection::IntArrayArg* ia = spec[2]->toIntArray();
@@ -517,6 +518,7 @@ namespace Gecode { namespace Int { namespace Element {
   ViewDom<VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
+    spec.checkArity(4);
     VB x0(home, vars, spec[0]);
     VC x1(home, vars, spec[1]);
     Reflection::IntArrayArg* ia = spec[2]->toIntArray();

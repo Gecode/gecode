@@ -109,6 +109,7 @@ namespace Gecode { namespace Int { namespace GCC {
   void
   Val<View,Card,isView>::post(Space* home, Reflection::VarMap& vars,
                               const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
     ViewArray<Card> k(home, vars, spec[1]);
     (void) new (home) Val(home, x, k);

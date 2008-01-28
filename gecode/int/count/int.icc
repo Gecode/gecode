@@ -156,6 +156,7 @@ namespace Gecode { namespace Int { namespace Count {
   void
   EqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
     VY y(home, vars, spec[2]);
@@ -277,6 +278,7 @@ namespace Gecode { namespace Int { namespace Count {
   void
   GqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
     VY y(home, vars, spec[2]);
@@ -395,6 +397,7 @@ namespace Gecode { namespace Int { namespace Count {
   void
   LqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
     VY y(home, vars, spec[2]);
@@ -538,6 +541,7 @@ namespace Gecode { namespace Int { namespace Count {
   void
   NqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
+    spec.checkArity(5);
     VX x0(home, vars, spec[0]);
     VX x1(home, vars, spec[1]);
     ViewArray<VX> xx(home, vars, spec[2]);

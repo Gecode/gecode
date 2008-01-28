@@ -404,6 +404,7 @@ namespace Gecode { namespace Int { namespace Element {
   void
   Int<ViewA,ViewB>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewA x0(home, vars, spec[0]);
     ViewB x1(home, vars, spec[1]);
     Reflection::IntArrayArg* a = spec[2]->toIntArray();

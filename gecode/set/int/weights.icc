@@ -351,6 +351,7 @@ namespace Gecode { namespace Set { namespace Int {
   void
   Weights<View>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     Reflection::IntArrayArg* elementsArg = spec[0]->toIntArray();
     Reflection::IntArrayArg* weightsArg = spec[1]->toIntArray();
     IntArgs elements(elementsArg->size());

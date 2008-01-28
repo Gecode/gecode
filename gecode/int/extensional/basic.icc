@@ -91,6 +91,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   void
   Basic<View>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
     TupleSet tupleSet(vars, spec[1]);
     (void) new (home) Basic<View>(home,x,tupleSet);    

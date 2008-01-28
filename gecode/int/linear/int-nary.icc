@@ -418,6 +418,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   Eq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -484,6 +485,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   ReEq<Val,P,N,Ctrl>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -657,6 +659,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   Nq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -828,6 +831,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   Lq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
     Val c = spec[2]->toInt();

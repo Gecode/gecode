@@ -175,6 +175,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   void
   AtmostOne::post(Space* home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<SetView> s(home, vars, spec[0]);
     int c = spec[1]->toInt();
     (void) new (home) AtmostOne(home,s,c);

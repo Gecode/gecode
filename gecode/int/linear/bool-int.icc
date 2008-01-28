@@ -209,6 +209,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   GqBoolInt<VX>::Memory::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<VX> x(home, vars, spec[0]);
     int c   = spec[1]->toInt();
     (void) new (home) Memory(home, x, c);
@@ -293,6 +294,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   GqBoolInt<VX>::Speed::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
     (void) new (home) Speed(home, x, c);
@@ -425,6 +427,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   EqBoolInt<VX>::Memory::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
     (void) new (home) Memory(home, x, c);
@@ -516,6 +519,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   EqBoolInt<VX>::Speed::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
     (void) new (home) Speed(home, x, c);
@@ -701,6 +705,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   NqBoolInt<VX>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     VX x0(home, vars, spec[0]);
     VX x1(home, vars, spec[1]);
     int c = spec[3]->toInt();

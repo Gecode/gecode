@@ -79,6 +79,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   void
   Dom<View>::post(Space* home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) Dom<View>(home, x);
   }

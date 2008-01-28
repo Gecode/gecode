@@ -109,6 +109,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   PartitionN<View0,View1>::post(Space* home,
                                 Reflection::VarMap& vars,
                                 const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<View0> x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);
     Reflection::IntArrayArgRanges zr(spec[2]->toIntArray());

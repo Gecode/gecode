@@ -151,6 +151,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline void
   SquarePlus<VA,VB>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
+     spec.checkArity(2);
      VA x0(home, vars, spec[0]);
      VB x1(home, vars, spec[1]);
      (void) new (home) SquarePlus<VA,VB>(home,x0,x1);
@@ -240,6 +241,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline void
   Square<View>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
+     spec.checkArity(2);
      View x0(home, vars, spec[0]);
      View x1(home, vars, spec[1]);
      (void) new (home) Square<View>(home,x0,x1);
@@ -383,6 +385,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline void
   MultPlus<Val,VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
+     spec.checkArity(3);
      VA x0(home, vars, spec[0]);
      VB x1(home, vars, spec[1]);
      VC x2(home, vars, spec[2]);
@@ -564,6 +567,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline void
   Mult<View>::post(Space* home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
+     spec.checkArity(3);
      View x0(home, vars, spec[0]);
      View x1(home, vars, spec[1]);
      View x2(home, vars, spec[2]);

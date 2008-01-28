@@ -111,6 +111,7 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   OrTrueSubsumed<BV>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
     (void) new (home) OrTrueSubsumed<BV>(home,b0,b1);
@@ -214,6 +215,7 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   BinOrTrue<BVA,BVB>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     BVA b0(home, vars, spec[0]);
     BVB b1(home, vars, spec[1]);
     (void) new (home) BinOrTrue<BVA,BVB>(home,b0,b1);
@@ -342,6 +344,7 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   TerOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
     BV b2(home, vars, spec[2]);
@@ -545,6 +548,7 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   QuadOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
     BV b2(home, vars, spec[2]);
@@ -711,6 +715,7 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   Or<BVA,BVB,BVC>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     BVA b0(home, vars, spec[0]);
     BVB b1(home, vars, spec[1]);
     BVB b2(home, vars, spec[2]);
@@ -863,6 +868,7 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   NaryOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     BV b0(home, vars, spec[0]);
     BV b1(home, vars, spec[1]);
     ViewArray<BV> b(home, vars, spec[2]);
@@ -969,6 +975,7 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   NaryOr<BV>::post(Space* home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<BV> b(home, vars, spec[0]);
     BV b0(home, vars, spec[1]);
     (void) new (home) NaryOr<BV>(home,b,b0);

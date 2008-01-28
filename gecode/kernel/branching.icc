@@ -322,6 +322,7 @@ namespace Gecode {
   ViewValBranching<View,Val,ViewSel,ValSel>
     ::post(Space* home, Reflection::VarMap& vars,
            const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) ViewValBranching<View,Val,ViewSel,ValSel>(home, x);
   }
@@ -416,6 +417,7 @@ namespace Gecode {
   ViewValAssignment<View,Val,ValSel>
     ::post(Space* home, Reflection::VarMap& vars,
            const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) ViewValAssignment<View,Val,ValSel>(home, x);
   }

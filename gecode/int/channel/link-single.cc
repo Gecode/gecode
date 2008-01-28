@@ -68,6 +68,7 @@ namespace Gecode { namespace Int { namespace Channel {
   void
   LinkSingle::post(Space* home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     BoolView b(home, vars, spec[0]);
     IntView x(home, vars, spec[1]);
     (void) new (home) LinkSingle(home, b, x);

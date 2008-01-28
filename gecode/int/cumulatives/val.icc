@@ -167,6 +167,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   void
   Val<ViewM,ViewD,ViewH,View>::post(Space* home, Reflection::VarMap& vars,
                                     const Reflection::ActorSpec& spec) {
+    spec.checkArity(7);
     ViewArray<ViewM> machine(home, vars, spec[0]);
     ViewArray<View>  start(home, vars, spec[1]);
     ViewArray<ViewD> duration(home, vars, spec[2]);

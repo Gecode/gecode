@@ -163,6 +163,7 @@ namespace Gecode { namespace Set { namespace Int {
   void
   ChannelInt<View>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<Gecode::Int::IntView> x0(home, vars, spec[0]);
     ViewArray<View> x1(home, vars, spec[1]);
     (void) new (home) ChannelInt<View>(home,x0,x1);

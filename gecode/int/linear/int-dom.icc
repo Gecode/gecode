@@ -427,6 +427,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   DomEq<Val,View>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<View> x(home, vars, spec[0]);
     ViewArray<View> y(home, vars, spec[1]);
     Val c = spec[2]->toInt();

@@ -158,6 +158,7 @@ namespace Gecode { namespace Int { namespace GCC {
   void
   Dom<View,Card,isView>::post(Space* home, Reflection::VarMap& vars,
                               const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<View> x(home, vars, spec[0]);
     ViewArray<Card> k(home, vars, spec[1]);
     bool card_fixed = spec[2]->toInt();

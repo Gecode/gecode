@@ -90,6 +90,7 @@ namespace Gecode { namespace Set { namespace Select {
   SelectUnion<SView,RView>::post(Space* home,
                                  Reflection::VarMap& vars,
                                  const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     SView x0(home, vars, spec[0]);
     IdxViewArray<SView> iv(home, vars, spec[1]);
     RView x1(home, vars, spec[2]);

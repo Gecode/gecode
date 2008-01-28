@@ -84,6 +84,7 @@ namespace Gecode { namespace Set { namespace Rel {
   void
   ReSubset<View0,View1>::post(Space* home, Reflection::VarMap& vars,
                               const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View0 x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);
     Gecode::Int::BoolView b(home, vars, spec[2]);

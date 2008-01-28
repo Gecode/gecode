@@ -89,6 +89,7 @@ namespace Gecode { namespace Int { namespace Dom {
   void
   ReRange<View>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     View x0(home, vars, spec[0]);
     BoolView b(home, vars, spec[1]);
     int min = spec[2]->toInt();

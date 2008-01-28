@@ -86,6 +86,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   Lq<View>::post(Space* home, Reflection::VarMap& vars,
                  const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
     (void) new (home) Lq<View>(home, x0, x1);
@@ -151,6 +152,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   Le<View>::post(Space* home, Reflection::VarMap& vars,
                  const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
     (void) new (home) Le<View>(home, x0, x1);
@@ -227,6 +229,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReLq<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                             const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
     CtrlView b(home, vars, spec[2]);
@@ -313,6 +316,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReLqInt<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View x0(home, vars, spec[0]);
     CtrlView b(home, vars, spec[1]);
     int c = spec[2]->toInt();

@@ -72,6 +72,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   Lex<View>::post(Space* home, Reflection::VarMap& vars,
   const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     ViewArray<ViewTuple<View,2> > x(home, vars, spec[0]);
     bool strict = spec[1]->toInt();
     (void) new (home) Lex<View>(home, x, strict);

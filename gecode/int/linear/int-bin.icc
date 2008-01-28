@@ -196,6 +196,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   EqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -284,6 +285,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   ReEqBin<Val,A,B,Ctrl>::post(Space* home, Reflection::VarMap& vars,
                               const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -369,6 +371,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   NqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -439,6 +442,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   LqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -507,6 +511,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   GqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
@@ -569,6 +574,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   ReLqBin<Val,A,B>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     A x(home, vars, spec[0]);
     B y(home, vars, spec[1]);
     Val c = spec[2]->toInt();

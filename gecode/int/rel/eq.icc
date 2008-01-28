@@ -95,6 +95,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   EqBnd<View0,View1>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     View0 x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);
     (void) new (home) EqBnd<View0,View1>(home, x0, x1);
@@ -179,6 +180,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   EqDom<View0,View1>::post(Space* home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
     View0 x0(home, vars, spec[0]);
     View1 x1(home, vars, spec[1]);
     (void) new (home) EqDom<View0,View1>(home, x0, x1);
@@ -280,6 +282,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   NaryEqDom<View>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) NaryEqDom<View>(home, x);
   }
@@ -430,6 +433,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   NaryEqBnd<View>::post(Space* home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) NaryEqBnd<View>(home, x);
   }
@@ -530,6 +534,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReEqDom<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
     CtrlView b(home, vars, spec[2]);
@@ -612,6 +617,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReEqBnd<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View x0(home, vars, spec[0]);
     View x1(home, vars, spec[1]);
     CtrlView b(home, vars, spec[2]);
@@ -701,6 +707,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReEqDomInt<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View x0(home, vars, spec[0]);
     CtrlView b(home, vars, spec[1]);
     int c = spec[2]->toInt();
@@ -802,6 +809,7 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReEqBndInt<View,CtrlView>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     View x0(home, vars, spec[0]);
     CtrlView b(home, vars, spec[1]);
     int c = spec[2]->toInt();

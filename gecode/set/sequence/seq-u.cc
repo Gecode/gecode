@@ -79,6 +79,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   void
   SeqU::post(Space* home, Reflection::VarMap& vars,
              const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<SetView> x0(home, vars, spec[0]);
     SetView x1(home, vars, spec[1]);
     Reflection::IntArrayArgRanges r(spec[2]->toIntArray());

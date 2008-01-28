@@ -103,6 +103,7 @@ namespace Gecode { namespace Set { namespace Select {
   SelectUnionConst<SView,RView>::post(Space* home,
                                       Reflection::VarMap& vars,
                                       const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     SView x0(home, vars, spec[0]);
     Reflection::ArrayArg* sets = spec[1]->toArray();
     SharedArray<IntSet> iv(sets->size());

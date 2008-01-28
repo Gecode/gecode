@@ -297,6 +297,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   EqBoolScale<SBAP,SBAN,VX>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(6);
     Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
     Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
@@ -552,6 +553,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   LqBoolScale<SBAP,SBAN,VX>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(6);
     Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
     Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
@@ -746,6 +748,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   NqBoolScale<SBAP,SBAN,VX>::post(Space* home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(6);
     Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
     Reflection::IntArrayArg* c_n = spec[2]->toIntArray();

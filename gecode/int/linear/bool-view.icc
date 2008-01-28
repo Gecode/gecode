@@ -153,6 +153,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   EqBoolView<XV,YV>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<XV> x(home, vars, spec[0]);
     YV y(home, vars, spec[1]);
     int c = spec[2]->toInt();
@@ -261,6 +262,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   NqBoolView<XV,YV>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<XV> x(home, vars, spec[0]);
     YV y(home, vars, spec[1]);
     int c = spec[2]->toInt();
@@ -360,6 +362,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   GqBoolView<XV,YV>::post(Space* home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
     ViewArray<XV> x(home, vars, spec[0]);
     YV y(home, vars, spec[1]);
     int c = spec[2]->toInt();

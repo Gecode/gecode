@@ -149,6 +149,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   EqTer<Val,A,B,C>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     A x0(home, vars, spec[0]);
     B x1(home, vars, spec[1]);
     C x2(home, vars, spec[2]);
@@ -245,6 +246,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   NqTer<Val,A,B,C>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     A x0(home, vars, spec[0]);
     B x1(home, vars, spec[1]);
     C x2(home, vars, spec[2]);
@@ -325,6 +327,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   LqTer<Val,A,B,C>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
     A x0(home, vars, spec[0]);
     B x1(home, vars, spec[1]);
     C x2(home, vars, spec[2]);
