@@ -481,7 +481,7 @@ namespace Gecode {
   class IntVar;
   
   template <>
-  class VarVarImpTraits<Int::IntVarImp> {
+  class VarImpVarTraits<Int::IntVarImp> {
   public:
     typedef IntVar Var;
   };
@@ -718,7 +718,7 @@ namespace Gecode { namespace Int {
 
 namespace Gecode {
   template <>
-  class VarVarImpTraits<Int::BoolVarImp> {
+  class VarImpVarTraits<Int::BoolVarImp> {
   public:
     typedef BoolVar Var;
   };

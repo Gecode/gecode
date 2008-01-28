@@ -54,6 +54,8 @@ namespace Gecode { namespace Reflection {
     Support::SymbolMap<varUpdater> varUpdaters;
     /// The registry of variable print functions
     Support::SymbolMap<varPrinter> varPrinters;
+    /// The registry of variable reflection functions
+    Support::SymbolMap<varSpec> varSpecs;
   };
   
   Registry::Registry(void) : ro(new RegistryObject()) {}
@@ -66,7 +68,7 @@ namespace Gecode { namespace Reflection {
   };
   
   VarImpBase*
-  Registry::createVar(Space* home, VarSpec& spec) {
+  Registry::createVar(Space* home, VarSpec& spec) const {
     varCreator vc = NULL;
     if (!ro->varCreators.get(spec.vti(),vc)) {
       throw Reflection::ReflectionException("VTI not found");
@@ -75,7 +77,7 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  Registry::constrainVar(Space* home, VarImpBase* v, VarSpec& spec) {
+  Registry::constrainVar(Space* home, VarImpBase* v, VarSpec& spec) const {
     varConstrainer vc = NULL;
     if (!ro->varConstrainers.get(spec.vti(),vc)) {
       throw Reflection::ReflectionException("VTI not found");
@@ -85,7 +87,7 @@ namespace Gecode { namespace Reflection {
 
   VarImpBase*
   Registry::updateVariable(Space* home, bool share, VarImpBase* v,
-                           const Support::Symbol& vti) {
+                           const Support::Symbol& vti) const {
     varUpdater vu = NULL;
     if (!ro->varUpdaters.get(vti,vu)) {
       throw Reflection::ReflectionException("VTI not found");
@@ -95,7 +97,7 @@ namespace Gecode { namespace Reflection {
 
   std::ostream&
   Registry::printVariable(std::ostream& os, VarImpBase* v,
-                          const Support::Symbol& vti) {
+                          const Support::Symbol& vti) const {
     varPrinter vp = NULL;
     if (!ro->varPrinters.get(vti,vp)) {
       throw Reflection::ReflectionException("VTI not found");
@@ -103,8 +105,18 @@ namespace Gecode { namespace Reflection {
     return vp(os, v);
   }
 
+  Arg*
+  Registry::spec(const Space* home, VarMap& vm,
+                 VarImpBase* v, const Support::Symbol& vti) const {
+    varSpec vs = NULL;
+    if (!ro->varSpecs.get(vti,vs)) {
+      throw Reflection::ReflectionException("VTI not found");      
+    }
+    return vs(home, vm, v);
+  }
+
   void
-  Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) {
+  Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) const {
     poster p = NULL;
     if (!ro->posters.get(spec.ati(),p)) {
       throw Reflection::ReflectionException("Constraint not found");
@@ -130,6 +142,11 @@ namespace Gecode { namespace Reflection {
   void
   Registry::add(Support::Symbol vti, varPrinter vp) {
     ro->varPrinters.put(vti, vp);
+  }
+
+  void
+  Registry::add(Support::Symbol vti, varSpec vs) {
+    ro->varSpecs.put(vti, vs);
   }
 
   void
@@ -851,6 +868,24 @@ namespace Gecode { namespace Reflection {
   void
   Unreflector::post(Reflection::ActorSpec& spec) {
     Reflection::registry().post(home, m, spec);
+  }
+
+  /* Generic variable */
+  
+  void
+  Var::update(Space* home, bool share, Var& v) {
+    new (&_vti) Support::Symbol(v._vti);
+    _var = registry().updateVariable(home, share, v._var, v._vti);
+  }
+
+  std::ostream&
+  Var::print(std::ostream& os) const {
+    return registry().printVariable(os, _var, _vti);
+  }
+  
+  Arg*
+  Var::spec(const Space* home, VarMap& vm) const {
+    return registry().spec(home, vm, _var, _vti);
   }
 
 }}

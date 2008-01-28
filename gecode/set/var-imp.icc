@@ -727,7 +727,7 @@ namespace Gecode {
   class SetVar;
 
   template <>
-  class VarVarImpTraits<Set::SetVarImp> {
+  class VarImpVarTraits<Set::SetVarImp> {
   public:
     typedef SetVar Var;
   };

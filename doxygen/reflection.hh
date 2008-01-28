@@ -207,6 +207,27 @@ void printAlternatives(Gecode::Space* home) {
 
 All the reflection classes provide memory management. This means that you must not free the argument objects, they are automatically deallocated when the ActorSpec, VarSpec, or BranchingSpec is deallocated. Copying specifications is cheap, as all classes are reference counted.
 
+\subsection SecReflUsageInterfacing Interfacing to Gecode through reflection
+
+The (un-)reflection API makes interfacing to %Gecode very easy. We provide a full JavaScript interface (through TrollTech's Qt library), and it only requires 150 lines of code.
+
+An interface can benefit from reflection in three ways:
+
+  - The generic Gecode::Reflection::Var class leaves the C++ part of the 
+    interface independent of the actual variable types that are supported. 
+    Every variable type supported by %Gecode is automatically supported by the 
+    interface.
+
+  - Instead of a post function for every propagator and branching and variable 
+    creation functions for all the variable types, only the 
+    Gecode::Reflection::Unreflector has to be exported.
+
+  - All propagators and branchings that are supported by %Gecode are 
+    immediately available through the interface. When propagators are added to
+    %Gecode, no new interfacing code has to be written. If the propagators are 
+    added as additional libraries, the interface does not even have to be 
+    recompiled.
+
 \section SecReflAddSupport Adding reflection support to actors and variables
 
 When the ActorSpecIter iterates over the actors of a space, each actor has to deliver its specification through the virtual function Actor::spec. When this function is called, the actor creates an ActorSpec with its <em>actor type identifier</em> (ati) and fills it with a representation of its arguments, encoded into objects of type Reflection::Arg. The specification for the views is delegated to the views or view arrays that the actor uses.

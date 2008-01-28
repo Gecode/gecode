@@ -503,6 +503,8 @@ namespace Gecode { namespace Reflection {
     typedef VarImpBase* (*varUpdater) (Space*, bool, VarImpBase*);
     /// The type of variable printing functions
     typedef std::ostream& (*varPrinter) (std::ostream&, VarImpBase*);
+    /// The type of variable reflection functions
+    typedef Arg* (*varSpec) (const Space* home, VarMap& m, VarImpBase*);
 
     /// Constructor
     GECODE_KERNEL_EXPORT Registry(void);
@@ -510,25 +512,31 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT GECODE_MSC_VIRTUAL ~Registry(void);
 
     /// Create a new variable in \a home from \a spec and return it
-    GECODE_KERNEL_EXPORT VarImpBase* createVar(Space* home, VarSpec& spec);
+    GECODE_KERNEL_EXPORT VarImpBase*
+    createVar(Space* home, VarSpec& spec) const;
 
     /// Constrain \a v to \a spec
     GECODE_KERNEL_EXPORT void
-    constrainVar(Space* home, VarImpBase* v, VarSpec& spec);
+    constrainVar(Space* home, VarImpBase* v, VarSpec& spec) const;
 
     /// Update variable \a v with type identifier \a vti during cloning
     GECODE_KERNEL_EXPORT VarImpBase*
     updateVariable(Space* home, bool share, VarImpBase* v,
-                   const Support::Symbol& vti);
+                   const Support::Symbol& vti) const;
 
     /// Print variable \a v with type identifier \a vti to \a os
     GECODE_KERNEL_EXPORT std::ostream&
     printVariable(std::ostream& os, VarImpBase* v,
-                  const Support::Symbol& vti);
+                  const Support::Symbol& vti) const;
+
+    /// Reflection for variable \a v with type identifier \a vti
+    GECODE_KERNEL_EXPORT Arg*
+    spec(const Space* home, VarMap& vm,
+         VarImpBase* v, const Support::Symbol& vti) const;
 
     /// Post constraint in \a home for \a spec using variables \a vars
     GECODE_KERNEL_EXPORT void
-    post(Space* home, VarMap& vm, const ActorSpec& spec);
+    post(Space* home, VarMap& vm, const ActorSpec& spec) const;
 
     /// Register variable creation function for \a vti
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varCreator vc);
@@ -538,6 +546,8 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varUpdater vu);
     /// Register variable print function for \a vti
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varPrinter vp);
+    /// Register variable reflection function for \a vti
+    GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varSpec vp);
     /// Register constraint posting function for actor type identifier \a ati
     GECODE_KERNEL_EXPORT void add(const Support::Symbol& ati, poster p);
     /// Print list of all registered posters to \a out
@@ -586,6 +596,8 @@ namespace Gecode { namespace Reflection {
   private:
     static VarImpBase* updateVar(Space* home, bool share, VarImpBase* v);
     static std::ostream& printVar(std::ostream& os, VarImpBase* v);
+    static Reflection::Arg* spec(const Space* home, Reflection::VarMap& m,
+                                 VarImpBase* v);
   public:
     /// Default constructor
     VarImpRegistrar(void);
@@ -594,7 +606,7 @@ namespace Gecode { namespace Reflection {
   template <class V>
   VarImpBase*
   VarImpRegistrar<V>::updateVar(Space* home, bool share, VarImpBase* v) {
-    typedef typename VarVarImpTraits<V>::Var Var;
+    typedef typename VarImpVarTraits<V>::Var Var;
     typedef typename VarViewTraits<Var>::View View;
     View view(static_cast<V*>(v));
     Var var(view);
@@ -607,11 +619,21 @@ namespace Gecode { namespace Reflection {
   template <class V>
   std::ostream&
   VarImpRegistrar<V>::printVar(std::ostream& os, VarImpBase* v) {
-    typedef typename VarVarImpTraits<V>::Var Var;
+    typedef typename VarImpVarTraits<V>::Var Var;
     typedef typename VarViewTraits<Var>::View View;
     View view(static_cast<V*>(v));
     Var var(view);
     return os << var;
+  }
+
+  template <class V>
+  Reflection::Arg*
+  VarImpRegistrar<V>::spec(const Space* home, Reflection::VarMap& m,
+                           VarImpBase* v) {
+    typedef typename VarImpVarTraits<V>::Var Var;
+    typedef typename VarViewTraits<Var>::View View;
+    View view(static_cast<V*>(v));
+    return view.spec(home, m);
   }
 
   template <class V>
@@ -620,6 +642,7 @@ namespace Gecode { namespace Reflection {
     registry().add(V::vti, &V::constrain);
     registry().add(V::vti, &VarImpRegistrar<V>::updateVar);
     registry().add(V::vti, &VarImpRegistrar<V>::printVar);
+    registry().add(V::vti, &VarImpRegistrar<V>::spec);
   }
 
   /**
@@ -645,9 +668,11 @@ namespace Gecode { namespace Reflection {
     /// Construct from \a var with variable type identifier \a vti
     Var(VarImpBase* var, const Support::Symbol& vti);
     /// Update during cloning
-    void update(Space* home, bool share, Var& v);
+    GECODE_KERNEL_EXPORT void update(Space* home, bool share, Var& v);
     /// Output to \a os
-    std::ostream& print(std::ostream& os) const;
+    GECODE_KERNEL_EXPORT std::ostream& print(std::ostream& os) const;
+    /// Reflection
+    GECODE_KERNEL_EXPORT Arg* spec(const Space* home, VarMap& vm) const;
     /// Cast to concrete variable type
     template <class VarImp>
     VarImp* var(void) const;
@@ -697,24 +722,19 @@ namespace Gecode { namespace Reflection {
   }
 
   template <>
-  forceinline
+  inline
   Var::Var(const Var& v) : _var(v._var), _vti(v._vti) {}
   
-  forceinline
+  inline
   Var::Var(VarImpBase* var, const Support::Symbol& vti)
     : _var(var), _vti(vti) {}
+
+  template <>
+  inline VarImpBase*
+  Var::var(void) const {
+    return static_cast<VarImpBase*>(_var);
+  }
   
-  forceinline void
-  Var::update(Space* home, bool share, Var& v) {
-    new (&_vti) Support::Symbol(v._vti);
-    _var = registry().updateVariable(home, share, v._var, v._vti);
-  }
-
-  forceinline std::ostream&
-  Var::print(std::ostream& os) const {
-    return registry().printVariable(os, _var, _vti);
-  }
-
   template <class VarImp>
   VarImp*
   Var::var(void) const {
