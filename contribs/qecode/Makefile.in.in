@@ -4,9 +4,11 @@
 # Jeremie Vautard, Universite d'Orleans
 
 #
-gecode_top_srcdir = $(top_srcdir)
-qecode_top_srcdir = $(curdir)
+gecode_top_srcdir = ../../$(top_srcdir)
+gecode_top_builddir = ../..
 
+qecode_top_srcdir = $(gecode_top_srcdir)/contribs/qecode
+qecode_top_builddir = .
 
 KERNELDLL := $(KERNELDLL:%=../../%)
 INTDLL := $(INTDLL:%=../../%)
@@ -38,7 +40,10 @@ QECODEHDR0 =
 QECODESRC	= $(QECODESRC0)
 QECODEHDR	= qecode.hh $(QECODEHDR0)
 QECODEOBJ	= $(QECODESRC:%.cc=%$(OBJSUFFIX))
-QECODEFLAGS	= -L$(qecode_top_srcdir)../../ -I../../gecode -I$(qecode_top_srcdir)../../  
+QECODEFLAGS	= \
+	-I$(gecode_top_srcdir) -I$(gecode_top_builddir) \
+	-I$(qecode_top_srcdir) -I$(qecode_top_builddir) \
+	-L$(gecode_top_builddir) -L$(qecode_top_builddir)
 QECODEDLL	= $(LIBPREFIX)@QECODE@$(DLLSUFFIX)
 QECODESTATICLIB	= $(LIBPREFIX)@QECODE@$(STATICLIBSUFFIX)
 QECODELIB	= $(LIBPREFIX)@QECODE@$(LIBSUFFIX)
@@ -71,10 +76,10 @@ all : $(LIBTARGETS)
 # Object targets
 #
 
-%$(OBJSUFFIX): %.cc
+%$(OBJSUFFIX): $(qecode_top_srcdir)/%.cc
 	$(CXX) $(CXXFLAGS)  $(QECODEFLAGS) \
 	@COMPILEOBJ@$@ @CXXIN@ $<
-%$(SBJSUFFIX): %.cc
+%$(SBJSUFFIX): $(qecode_top_srcdir)/%.cc
 	$(CXX) $(CXXFLAGS)   $(QECODEFLAGS) \
 	@COMPILESBJ@$@ @CXXIN@ $<
 
@@ -119,19 +124,19 @@ $(QECODESTATICLIB): $(QECODEOBJ)
 #for linux: ?
 CXXFLAGS := $(CXXFLAGS) $(QECODEFLAGS) 
 
-
 #
 # Autoconf
 #
 
-configure: configure.ac 
-	autoconf
-config.status: configure
+$(qecode_top_srcdir)/configure: $(qecode_top_srcdir)/configure.ac 
+	(cd $(qecode_top_srcdir) && autoconf)
+config.status: $(qecode_top_srcdir)/configure
 	../../config.status --recheck
 	./config.status --recheck
 # use the sustitutions from gecode to generate the Makefile.in
-Makefile.in: Makefile.in.in ../../config.status 
-	../../config.status --file ./Makefile.in:./Makefile.in.in
+Makefile.in: $(qecode_top_srcdir)/Makefile.in.in ../../config.status 
+	../../config.status \
+	  --file Makefile.in:$(qecode_top_srcdir)/Makefile.in.in
 
 # use the sustitutions from configure to generate the Makefile
 Makefile: Makefile.in ./config.status 

@@ -16,7 +16,7 @@ AC_CONFIG_SRCDIR(qecore.hh)
 dnl the names of the generated dlls
 AC_SUBST(QECODE,     "qecode")
 
-../../config.status --file Makefile.in:Makefile.in.in
+../../config.status --file Makefile.in:${srcdir}/Makefile.in.in
 
 AC_CONFIG_COMMANDS([Makefile.in]) 
 AC_CONFIG_FILES([Makefile])
