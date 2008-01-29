@@ -99,7 +99,7 @@ namespace Gecode {
                               unsigned int a);
     /// Return specification for this branching given a variable map \a m
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
     branchingSpec(const Space* home, 

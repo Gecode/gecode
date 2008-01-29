@@ -47,6 +47,7 @@ namespace Test {
   namespace Branch {
 
     using namespace Gecode;
+    using namespace Gecode::Int;
 
     /// Values for selecting branchings
     enum HowToBranch {
@@ -72,8 +73,6 @@ namespace Test {
       WM_SOLUTIONS       ///< Model with solutions
     };
 
-    /*
-
     /// %Branching description storing position and values
     class PosValuesDesc : public BranchingDesc {
     protected:
@@ -97,7 +96,7 @@ namespace Test {
       int pos(void) const {
         return _pos;
       }
-      /// Return value to branch with
+      /// Return value to branch with for alternative \a a
       int val(unsigned int a) const {
         return _values[a];
       }
@@ -115,7 +114,8 @@ namespace Test {
     /// Class for nary branchings
     class NaryBranching : public Branching {
     protected:
-      ViewArray<View> x; ///< Views to branch on
+      /// Views to branch on
+      ViewArray<IntView> x; 
       /// Constructor for cloning \a b
       NaryBranching(Space* home, bool share, NaryBranching& b) 
         : Branching(home,share,b) {
@@ -123,8 +123,12 @@ namespace Test {
       }
     public:
       /// Constructor for creation
-      NaryBranching(Space* home, ViewArray<View>& x0) 
+      NaryBranching(Space* home, ViewArray<IntView>& x0) 
         : Branching(home), x(x0) {}
+      /// Perform cloning
+      virtual Actor* copy(Space* home, bool share) {
+        return new (home) NaryBranching(home,share,*this);
+      }
       /// Check status of branching, return true if alternatives left
       virtual bool status(const Space* home) const {
         for (int i=0; i<x.size(); i++)
@@ -146,28 +150,29 @@ namespace Test {
         return me_failed(x[pvd->pos()].eq(home,pvd->val(a)))
           ? ES_FAILED : ES_OK;
       }
+      /// Actor type identifier of this branching
+      static Support::Symbol ati(void) {
+        return "Test::Search::NaryBranching";
+      }
       /// Return specification for this branching given a variable map \a m
-      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m) {
-        return "ViewValBranching";
+      virtual Reflection::ActorSpec spec(Space* home, Reflection::VarMap& m) {
+        Reflection::ActorSpec s(ati());
+        return s << x.spec(home, m);
       }
 
       /// Return specification for a branch
       virtual Reflection::BranchingSpec branchingSpec(Space* home, 
                                                       Reflection::VarMap& m,
-                                                      const BranchingDesc* d);
-      /// Actor type identifier of this branching
-      static Support::Symbol ati(void) {
-        return "Test::Search::ViewValuesBranching";
+                                                      const BranchingDesc* d) {
+        Reflection::BranchingSpec bs(d);
+        return bs;
       }
       /// Post branching according to specification
       static void post(Space* home, Reflection::VarMap& m,
-                       const Reflection::ActorSpec& spec);
-      /// Perform cloning
-      virtual Actor* copy(Space* home, bool share);
+                       const Reflection::ActorSpec& spec) {
+      }
     };
 
-
-    */
 
     /// Space that immediately fails
     class FailImmediate : public Space {
