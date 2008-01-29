@@ -37,12 +37,12 @@
 /**
   \page PageReflection The Reflection API
 
-The reflection API allows to get information about all the actors (propagators and branchings) and the variables in a Space. It also provides the reverse direction: creating a variable or actor in a space, given a specification. Some use cases for reflection are
+Reflection in %Gecode provides information about all the actors (propagators and branchings) and the variables in a Space. %Gecode also enables the reverse direction: creating a variable or actor in a space, given a specification. Some use cases for reflection are
   - \b %Serialization, which creates an external, platform-independent 
     representation of a space that can be used to recreate a copy of the 
     original space. This facilitates the development of distributed search 
-    engines, allows to store instances of constraint problems, and can be used 
-    to transfer a problem instance from one solver to another.
+    engines, makes it possible to store instances of constraint problems, and 
+    can be used to transfer a problem instance from one solver to another.
 
   - \b Visualization of variable domains or the propagators in a space can 
     help with debugging scripts or propagators. %Gecode's Gist uses reflection 
@@ -205,7 +205,7 @@ void printAlternatives(Gecode::Space* home) {
 
 \subsection SecReflUsageMemory Memory management
 
-All the reflection classes provide memory management. This means that you must not free the argument objects, they are automatically deallocated when the ActorSpec, VarSpec, or BranchingSpec is deallocated. Copying specifications is cheap, as all classes are reference counted.
+All the reflection classes provide memory management. This means that you must not free the argument objects, they are automatically deallocated when the ActorSpec, VarSpec, or BranchingSpec is deallocated. Copying specifications is cheap, as all classes use reference counting.
 
 \subsection SecReflUsageInterfacing Interfacing to Gecode through reflection
 
@@ -245,9 +245,11 @@ protected:
   ViewArray<IntView> y;
   int                c;
 public:
+  // Return specification for reflection
   virtual Gecode::Reflection::ActorSpec
   spec(const Space* home, Gecode::Reflection::VarMap& m) const {
-    Gecode::Reflection::ActorSpec spec("MyPropagator");
+    Gecode::Support::Symbol ati("MyPropagator");
+    Gecode::Reflection::ActorSpec spec(ati);
     spec << x.spec(home, m);
     spec << y.spec(home, m);
     spec << c;
@@ -266,6 +268,7 @@ protected:
   ViewArray<View1> y;
   int              c;
 public:
+  // Return specification for reflection
   virtual Gecode::Reflection::ActorSpec
   spec(const Space* home, Gecode::Reflection::VarMap& m) const {
     Gecode::Support::Symbol ati =
@@ -293,10 +296,11 @@ protected:
 public:
   // Constructor
   MyGenericPropagator(Space*,View0,ViewArray<View1>&,int);
-  // 
+  // Actor type identifier
   static Gecode::Symbol ati(void) const {
     return Gecode::Reflection::mangle<View0,View1>("MyGenericPropagator");
   }
+  // Return specification for reflection
   virtual Gecode::Reflection::ActorSpec
   spec(const Space* home, Gecode::Reflection::VarMap& m) const {
     Gecode::Reflection::ActorSpec spec(ati());
@@ -305,6 +309,7 @@ public:
     spec << c;
     return spec;
   }
+  // Posting the propagator from a specification
   static void
   post(Space* home, Reflection::VarMap& vars, const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
@@ -315,6 +320,8 @@ public:
   }
 };
 \endcode
+
+Using the static function \c ati for both registration and reflection (in \c spec) makes sure that the type identifiers are the same.
 
 The function \c checkArity makes sure that \c spec contains exactly 3 arguments and throws an exception otherwise. The accessor functions (like Gecode::Reflection::Arg::toInt) also check that the argument type matches. The reflection constructors for views and view arrays use these accesor functions, so an incorrect view type will be detected.
 
