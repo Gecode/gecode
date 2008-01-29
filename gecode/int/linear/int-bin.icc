@@ -73,10 +73,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, PropCond pc>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LinBin<Val,A,B,pc>::spec(const Space* home, Reflection::VarMap& m,
                            const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << x0.spec(home, m)
              << x1.spec(home, m)
              << c;
@@ -135,10 +135,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, PropCond pc, class Ctrl>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReLinBin<Val,A,B,pc,Ctrl>::spec(const Space* home, Reflection::VarMap& m,
                                   const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << x0.spec(home, m)
              << x1.spec(home, m)
              << c
@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   EqBin<Val,A,B>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, ati());
   }
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class Ctrl>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReEqBin<Val,A,B,Ctrl>::spec(const Space* home,
                               Reflection::VarMap& m) const {
     return ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::spec(home, m, ati());
@@ -362,7 +362,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NqBin<Val,A,B>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinBin<Val,A,B,PC_INT_VAL>::spec(home, m, ati());
   }
@@ -433,7 +433,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LqBin<Val,A,B>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, ati());
   }
@@ -502,7 +502,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   GqBin<Val,A,B>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, ati());
   }
@@ -565,7 +565,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReLqBin<Val,A,B>::spec(const Space* home, Reflection::VarMap& m) const {
     return ReLinBin<Val,A,B,PC_INT_BND,BoolView>::spec(home, m, ati());
   }

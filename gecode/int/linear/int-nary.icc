@@ -93,10 +93,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N, PropCond pc>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Lin<Val,P,N,pc>::spec(const Space* home, Reflection::VarMap& m,
                         const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << x.spec(home, m)
              << y.spec(home, m)
              << c;
@@ -132,10 +132,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N, PropCond pc, class Ctrl>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReLin<Val,P,N,pc,Ctrl>::spec(const Space* home, Reflection::VarMap& m,
                                const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << Lin<Val,P,N,pc>::x.spec(home, m)
              << Lin<Val,P,N,pc>::y.spec(home, m)
              << Lin<Val,P,N,pc>::c
@@ -409,7 +409,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Eq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
     return Lin<Val,P,N,PC_INT_BND>::spec(home, m, ati());
   }
@@ -476,7 +476,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N, class Ctrl>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReEq<Val,P,N,Ctrl>::spec(const Space* home, Reflection::VarMap& m) const {
     return ReLin<Val,P,N,PC_INT_BND,Ctrl>::spec(home, m, ati());
   }
@@ -650,7 +650,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Nq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
     return Lin<Val,P,N,PC_INT_VAL>::spec(home, m, ati());
   }
@@ -822,7 +822,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Lq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
     return Lin<Val,P,N,PC_INT_BND>::spec(home, m, ati());
   }
@@ -955,7 +955,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReLq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
     return ReLin<Val,P,N,PC_INT_BND,BoolView>::spec(home, m, ati());
   }

@@ -127,11 +127,11 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   BndImp<View,Card,isView,shared>::spec(const Space* home,
                                         Reflection::VarMap& m) const {
-    return Propagator::spec(home, m, ati())
-      << x.spec(home, m) << k.spec(home, m) << card_fixed << skip_lbc;
+    Reflection::ActorSpec s(ati());
+    return s << x.spec(home, m) << k.spec(home, m) << card_fixed << skip_lbc;
   }
 
   template <class View, class Card, bool isView, bool shared>

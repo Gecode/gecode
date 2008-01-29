@@ -54,15 +54,9 @@ namespace Gecode {
    * Actor
    *
    */
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Actor::spec(const Space*, Reflection::VarMap&) const {
     throw Reflection::NoReflectionDefinedException();
-  }
-
-  Reflection::ActorSpec&
-  Actor::spec(const Space*, Reflection::VarMap&,
-              const Support::Symbol& name) const {
-    return *new Reflection::ActorSpec(name);
   }
 
   size_t

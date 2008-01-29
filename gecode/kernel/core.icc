@@ -583,12 +583,8 @@ namespace Gecode {
     static void  operator delete(void* p, Space* home);
     /// Return specification for this actor given a variable map \a m
     GECODE_KERNEL_EXPORT
-    virtual Reflection::ActorSpec& spec(const Space* home,
-                                        Reflection::VarMap& m) const;
-    /// Return specification given a variable map \a m and \a name
-    GECODE_KERNEL_EXPORT
-    Reflection::ActorSpec& spec(const Space* home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)
@@ -894,21 +890,23 @@ namespace Gecode {
    */
   class BranchingDesc {
     friend class Space;
+    friend class Reflection::BranchingSpec;
   private:
     unsigned int _id;  ///< Identity to match creating branching
     unsigned int _alt; ///< Number of alternatives
+
+    /// Return id of the creating branching
+    unsigned int id(void) const;
   protected:
     /// Initialize for particular branching \a b and alternatives \a a
     BranchingDesc(const Branching* b, const unsigned int a);
   public:
     /// Return number of alternatives
     unsigned int alternatives(void) const;
-    /// Return id of the creating branching
-    unsigned int id(void) const;
-    /// Report size occupied by branching description
-    virtual size_t size(void) const = 0;
     /// Destructor
     GECODE_KERNEL_EXPORT virtual ~BranchingDesc(void);
+    /// Report size occupied by branching description
+    virtual size_t size(void) const = 0;
     /// Allocate memory from heap
     static void* operator new(size_t);
     /// Return memory to heap

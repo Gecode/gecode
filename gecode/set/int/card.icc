@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Card<View>::spec(const Space* home, Reflection::VarMap& m) const {
    return IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>
      ::spec(home, m, ati());

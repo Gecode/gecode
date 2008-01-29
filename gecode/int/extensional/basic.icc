@@ -80,9 +80,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Basic<View>::spec(const Space* home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
     return s << x.spec(home, m)
              << tupleSet.spec(m);
   }

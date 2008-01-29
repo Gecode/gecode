@@ -125,7 +125,7 @@ namespace Gecode {
     int varCount = 0;
     int soCount = 0;
     for (Reflection::ActorSpecIter si(home, vm); si(); ++si) {
-      Reflection::ActorSpec& s = si.actor();
+      Reflection::ActorSpec s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
         Reflection::VarSpec& vs = vmi.spec();
         os << "var ";

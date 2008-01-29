@@ -74,10 +74,10 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   BoolBinary<BVA,BVB>::spec(const Space* home, Reflection::VarMap& m,
                             const Support::Symbol& name) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
+    Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
              << x1.spec(home, m);
   }
@@ -132,10 +132,10 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB, class BVC>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   BoolTernary<BVA,BVB,BVC>::spec(const Space* home, Reflection::VarMap& m, 
                                  const Support::Symbol& name) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
+    Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
              << x1.spec(home, m)
              << x2.spec(home, m);

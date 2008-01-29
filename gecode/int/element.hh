@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for creation
     View(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
     /// Specification for this propagator
-    Reflection::ActorSpec& spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,

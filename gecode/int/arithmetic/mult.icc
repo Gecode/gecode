@@ -205,7 +205,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class VA, class VB>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   SquarePlus<VA,VB>::spec(const Space* home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>
       ::spec(home, m, ati());
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Square<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
@@ -399,7 +399,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class Val, class VA, class VB, class VC>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   MultPlus<Val,VA,VB,VC>::spec(const Space* home,
                                Reflection::VarMap& m) const {
     return MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
@@ -581,7 +581,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Mult<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }

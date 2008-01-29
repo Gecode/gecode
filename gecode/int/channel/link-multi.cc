@@ -103,9 +103,9 @@ namespace Gecode { namespace Int { namespace Channel {
     return Support::Symbol("Int::Channel::LinkMulti");
   }
   
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LinkMulti::spec(const Space* home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s =
+    Reflection::ActorSpec s =
       MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
         ::spec(home, m, ati());
     return s << o;

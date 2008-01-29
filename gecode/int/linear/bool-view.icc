@@ -74,10 +74,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LinBoolView<XV,YV>::spec(const Space* home, Reflection::VarMap& m,
                            const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << x.spec(home, m)
              << y.spec(home, m)
              << c;
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   EqBoolView<XV,YV>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinBoolView<XV,YV>::spec(home, m, ati());
   }
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NqBoolView<XV,YV>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinBoolView<XV,YV>::spec(home, m, ati());
   }
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   GqBoolView<XV,YV>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinBoolView<XV,YV>::spec(home, m, ati());
   }

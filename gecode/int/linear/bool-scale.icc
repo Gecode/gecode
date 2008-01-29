@@ -196,11 +196,11 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LinBoolScale<SBAP,SBAN,VX,pcx>::spec(const Space* home,
                                        Reflection::VarMap& m,
                                        const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
 
     Reflection::IntArrayArg* c_p = Reflection::Arg::newIntArray(p.size());
     Reflection::ArrayArg* b_p;
@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   EqBoolScale<SBAP,SBAN,VX>::spec(const Space* home,
                                   Reflection::VarMap& m) const {
     return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, ati());
@@ -543,7 +543,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LqBoolScale<SBAP,SBAN,VX>::spec(const Space* home,
                                   Reflection::VarMap& m) const {
     return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, ati());
@@ -738,7 +738,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NqBoolScale<SBAP,SBAN,VX>::spec(const Space* home,
                                   Reflection::VarMap& m) const {
     return LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::spec(home, m, ati());

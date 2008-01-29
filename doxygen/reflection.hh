@@ -245,10 +245,9 @@ protected:
   ViewArray<IntView> y;
   int                c;
 public:
-  virtual Gecode::Reflection::ActorSpec&
+  virtual Gecode::Reflection::ActorSpec
   spec(const Space* home, Gecode::Reflection::VarMap& m) const {
-    Gecode::Reflection::ActorSpec spec =
-      Gecode::Propagator::spec(home, m, "MyPropagator");
+    Gecode::Reflection::ActorSpec spec("MyPropagator");
     spec << x.spec(home, m);
     spec << y.spec(home, m);
     spec << c;
@@ -267,12 +266,11 @@ protected:
   ViewArray<View1> y;
   int              c;
 public:
-  virtual Gecode::Reflection::ActorSpec&
+  virtual Gecode::Reflection::ActorSpec
   spec(const Space* home, Gecode::Reflection::VarMap& m) const {
     Gecode::Support::Symbol ati =
       Gecode::Reflection::mangle<View0,View1>("MyGenericPropagator");
-    Gecode::Reflection::ActorSpec spec =
-      Gecode::Propagator::spec(home, m, ati);
+    Gecode::Reflection::ActorSpec spec(ati);
     spec << x.spec(home, m);
     spec << y.spec(home, m);
     spec << c;
@@ -299,10 +297,9 @@ public:
   static Gecode::Symbol ati(void) const {
     return Gecode::Reflection::mangle<View0,View1>("MyGenericPropagator");
   }
-  virtual Gecode::Reflection::ActorSpec&
+  virtual Gecode::Reflection::ActorSpec
   spec(const Space* home, Gecode::Reflection::VarMap& m) const {
-    Gecode::Reflection::ActorSpec spec =
-      Gecode::Propagator::spec(home, m, ati());
+    Gecode::Reflection::ActorSpec spec(ati());
     spec << x.spec(home, m);
     spec << y.spec(home, m);
     spec << c;

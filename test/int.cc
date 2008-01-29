@@ -140,7 +140,7 @@ namespace Test { namespace Int {
       Gecode::Reflection::VarMapIter vmi(vm);
       try {
         for (Gecode::Reflection::ActorSpecIter si(this, vm); si(); ++si) {
-          Gecode::Reflection::ActorSpec& s = si.actor();
+          Gecode::Reflection::ActorSpec s = si.actor();
           for (; vmi(); ++vmi) {
             try {
               d.var(vmi.spec());

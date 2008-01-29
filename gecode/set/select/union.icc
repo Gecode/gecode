@@ -76,10 +76,10 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   SelectUnion<SView,RView>::spec(const Space* home,
                                  Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
     return s << x0.spec(home, m)
              << iv.spec(home, m)
              << x1.spec(home, m);

@@ -69,10 +69,10 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   BaseView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m,
                                const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << x.spec(home, m)
              << y.spec(home, m)
              << z.spec(home, m)
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   EqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }
@@ -335,7 +335,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }
@@ -410,7 +410,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   GqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }

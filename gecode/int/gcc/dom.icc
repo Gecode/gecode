@@ -147,11 +147,11 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Dom<View,Card,isView>::spec(const Space* home,
                               Reflection::VarMap& m) const {
-    return Propagator::spec(home, m, ati())
-      << y.spec(home, m) << k.spec(home, m) << card_fixed;
+    Reflection::ActorSpec s(ati());
+    return s << y.spec(home, m) << k.spec(home, m) << card_fixed;
   }
 
   template <class View, class Card, bool isView>

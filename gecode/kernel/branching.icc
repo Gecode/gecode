@@ -98,7 +98,7 @@ namespace Gecode {
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a);
     /// Return specification for this branching given a variable map \a m
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
@@ -149,7 +149,7 @@ namespace Gecode {
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a);
     /// Return specification for this assignment given a variable map \a m
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
@@ -328,10 +328,10 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ViewValBranching<View,Val,ViewSel,ValSel>::spec(const Space* home,
     Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Branching::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
   }
 
@@ -339,7 +339,7 @@ namespace Gecode {
   Reflection::BranchingSpec
   ViewValBranching<View,Val,ViewSel,ValSel>::branchingSpec(const Space* home, 
     Reflection::VarMap& m, const BranchingDesc* d) const {
-    Reflection::BranchingSpec bs(d->id(), d->alternatives());
+    Reflection::BranchingSpec bs(d);
     const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
     ValSel vs;
     vs.branchingSpec(home, m, bs, x[pvd->start()+pvd->pos()], pvd->val());
@@ -423,22 +423,34 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ValSel>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ViewValAssignment<View,Val,ValSel>::spec(const Space* home,
     Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Branching::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
+  }
+
+  namespace {
+    /// \brief Dummy description needed for reflection
+    class AssignmentDesc : public BranchingDesc {
+    public:
+      /// Constructor
+      AssignmentDesc(const Branching* b) : BranchingDesc(b, 1) {}
+      /// Report size occupied by branching description
+      virtual size_t size(void) const { return 0; };
+    };
   }
 
   template <class View, class Val, class ValSel>
   Reflection::BranchingSpec
   ViewValAssignment<View,Val,ValSel>::branchingSpec(const Space* home, 
     Reflection::VarMap& m, const BranchingDesc* d) const {
-    Reflection::BranchingSpec bs(d->id(), 2);
+    Reflection::BranchingSpec bs(d);
     const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
     ValSel vs;
     vs.branchingSpec(home, m, bs, x[pvd->start()+pvd->pos()], pvd->val());
-    Reflection::BranchingSpec realBs(d->id(), 1);
+    AssignmentDesc realDesc(this);
+    Reflection::BranchingSpec realBs(&realDesc);
     realBs[0] = bs[0];
     return realBs;
   }

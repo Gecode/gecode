@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Max<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
@@ -242,7 +242,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NaryMax<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryOnePropagator<View,PC_INT_BND>::spec(home, m, ati());
   }

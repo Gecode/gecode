@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Eq<BVA,BVB>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolBinary<BVA,BVB>::spec(home, m, ati());
   }
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
   
   template<class BV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NaryEq<BV>::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, ati());
   }

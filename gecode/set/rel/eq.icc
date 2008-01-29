@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Eq<View0,View1>::spec(const Space* home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
       ::spec(home, m, ati());

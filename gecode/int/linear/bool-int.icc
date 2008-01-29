@@ -95,10 +95,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   MemoryLinBoolInt<VX>::spec(const Space* home, Reflection::VarMap& m,
                              const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << x.spec(home, m) << c;
   }
 
@@ -155,10 +155,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   SpeedLinBoolInt<VX>::spec(const Space* home, Reflection::VarMap& m,
                             const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     Reflection::ArrayArg* a = 
       Reflection::Arg::newArray(x.size()+n_s);
     int i = 0;
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   GqBoolInt<VX>::Memory::spec(const Space* home,
                               Reflection::VarMap& m) const {
     return MemoryLinBoolInt<VX>::spec(home, m, ati());
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   GqBoolInt<VX>::Speed::spec(const Space* home, Reflection::VarMap& m) const {
     return SpeedLinBoolInt<VX>::spec(home, m, ati());
   }
@@ -417,7 +417,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   EqBoolInt<VX>::Memory::spec(const Space* home,
                               Reflection::VarMap& m) const {
     return MemoryLinBoolInt<VX>::spec(home, m, ati());
@@ -510,7 +510,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   EqBoolInt<VX>::Speed::spec(const Space* home, Reflection::VarMap& m) const {
     return SpeedLinBoolInt<VX>::spec(home, m, ati());
   }
@@ -694,9 +694,9 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NqBoolInt<VX>::spec(const Space* home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s =
+    Reflection::ActorSpec s =
       BinaryPropagator<VX, PC_INT_VAL>::spec(home, m, ati());
     return s << x.spec(home, m) << c;
   }

@@ -86,10 +86,10 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Bnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec& spec = Propagator::spec(home, m, ati());
-    return spec << x.spec(home, m);
+    Reflection::ActorSpec s(ati());
+    return s << x.spec(home, m);
   }
 
 

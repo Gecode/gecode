@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space* home, Reflection::VarMap& vars,
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   OrTrueSubsumed<BV>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolBinary<BV,BV>::spec(home, m, ati());
   }
@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   BinOrTrue<BVA,BVB>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolBinary<BVA,BVB>::spec(home, m, ati());
   }
@@ -334,7 +334,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   TerOrTrue<BV>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolBinary<BV,BV>::spec(home, m, ati())
            << x2.spec(home, m);
@@ -537,7 +537,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   QuadOrTrue<BV>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolBinary<BV,BV>::spec(home, m, ati())
       << x2.spec(home, m)
@@ -706,7 +706,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Or<BVA,BVB,BVC>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolTernary<BVA,BVB,BVC>::spec(home, m, ati());      
   }
@@ -858,7 +858,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NaryOrTrue<BV>::spec(const Space* home, Reflection::VarMap& m) const {
     return BinaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, ati())
       << x.spec(home, m);
@@ -966,7 +966,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NaryOr<BV>::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryOnePropagator<BV,PC_BOOL_VAL>::spec(home, m, ati());      
   }

@@ -132,7 +132,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NaryTwoCpltSetPropagator<View0,View1>::spec(const Space*,
                                               Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");

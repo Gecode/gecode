@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Lq<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Le<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,PC_INT_BND>
       ::spec(home, m, ati());
@@ -219,7 +219,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReLq<View,CtrlView>::spec(const Space* home, Reflection::VarMap& m) const {
     return
       ReBinaryPropagator<View,PC_INT_BND,CtrlView>::spec(home, m, ati());
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
   
   template <class View, class CtrlView>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReLqInt<View,CtrlView>::spec(const Space* home,
                                Reflection::VarMap& m) const {
     return ReUnaryPropagator<View,PC_INT_BND,CtrlView>

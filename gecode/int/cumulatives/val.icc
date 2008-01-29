@@ -149,10 +149,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Val<ViewM,ViewD,ViewH,View>::spec(const Space* home,
                                     Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
 
     return s << machine.spec(home, m)
              << start.spec(home, m)

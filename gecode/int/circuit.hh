@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Ensure path property: prune edges that could give to small cycles
     ExecStatus path(Space* home);
     /// Specification for this propagator
-    Reflection::ActorSpec& spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Delete propagator and return its size
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);

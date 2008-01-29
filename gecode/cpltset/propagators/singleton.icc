@@ -67,7 +67,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View1, class View2>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Singleton<View1,View2>::spec(const Space*, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   } 

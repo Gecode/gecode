@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View, bool shared>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Dom<View,shared>::spec(const Space* home, Reflection::VarMap& m) const {
     return Base<DomInfo<View>,PC_INT_DOM>::spec(home, m, ati());
   }

@@ -88,10 +88,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C, PropCond pc>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LinTer<Val,A,B,C,pc>::spec(const Space* home, Reflection::VarMap& m,
                              const Support::Symbol& ati) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati);
+    Reflection::ActorSpec s(ati);
     return s << x0.spec(home, m)
              << x1.spec(home, m)
              << x2.spec(home, m)
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   EqTer<Val,A,B,C>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, ati());
   }
@@ -237,7 +237,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NqTer<Val,A,B,C>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinTer<Val,A,B,C,PC_INT_VAL>::spec(home, m, ati());
   }
@@ -318,7 +318,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   LqTer<Val,A,B,C>::spec(const Space* home, Reflection::VarMap& m) const {
     return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, ati());
   }

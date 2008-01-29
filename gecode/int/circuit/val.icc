@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Val<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return Base<View>::spec(home, m, ati());
   }

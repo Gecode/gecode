@@ -72,7 +72,7 @@ namespace Gecode { namespace CpltSet {
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -122,7 +122,7 @@ namespace Gecode { namespace CpltSet {
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -154,7 +154,7 @@ namespace Gecode { namespace CpltSet {
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -196,7 +196,7 @@ namespace Gecode { namespace CpltSet {
                               int l, int r, int ypos);
   public:
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -241,7 +241,7 @@ namespace Gecode { namespace CpltSet {
                               int ypos, int zpos);
   public:
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -307,7 +307,7 @@ namespace Gecode { namespace CpltSet {
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);

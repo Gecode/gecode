@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Val<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryPropagator<View,PC_INT_VAL>::spec(home, m, ati());
   }

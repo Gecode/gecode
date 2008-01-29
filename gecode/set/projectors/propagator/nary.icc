@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   template <bool negated>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   NaryProjection<negated>::spec(const Space*, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   }

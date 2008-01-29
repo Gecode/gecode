@@ -338,9 +338,9 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Weights<View>::spec(const Space* home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
     return s << Reflection::Arg::newIntArray(elements)
              << Reflection::Arg::newIntArray(weights)
              << x.spec(home, m)

@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Projection {
     return Support::Symbol("set.projectors.ReNaryProjection");
   }
 
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   ReNaryProjection::spec(const Space*, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   }

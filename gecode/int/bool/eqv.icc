@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Bool {
     return Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Eqv");
   }
   template <class BVA, class BVB, class BVC>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   Eqv<BVA,BVB,BVC>::spec(const Space* home, Reflection::VarMap& m) const {
     return BoolTernary<BVA,BVB,BVC>::spec(home, m, ati());
   }

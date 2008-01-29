@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Projection {
     return Support::Symbol("set.projectors.CardProjection");
   }
 
-  forceinline Reflection::ActorSpec&
+  forceinline Reflection::ActorSpec
   CardProjection::spec(const Space*, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   }

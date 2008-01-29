@@ -53,9 +53,9 @@ namespace Gecode { namespace Set { namespace Select {
     return Support::Symbol("Set::Select::Disjoint");
   }
 
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   SelectDisjoint::spec(const Space* home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
     return s << iv.spec(home, m) << x1.spec(home, m);
   }
 

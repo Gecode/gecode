@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Projection {
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -110,7 +110,7 @@ namespace Gecode { namespace Set { namespace Projection {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -149,7 +149,7 @@ namespace Gecode { namespace Set { namespace Projection {
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec& spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);

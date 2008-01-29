@@ -344,6 +344,7 @@ namespace Gecode { namespace Reflection {
     * \ingroup TaskReflection
     */
   class GECODE_KERNEL_EXPORT ActorSpec {
+    friend class BranchingSpec;
   private:
     class Arguments;
     /// The arguments of this actor
@@ -353,6 +354,10 @@ namespace Gecode { namespace Reflection {
     friend class ActorSpecIter;
     /// Set the queue of the actor to \a q
     void queue(int q);
+    /** \brief Return identifier of the branching
+     *  Only valid if isBranching returns true
+     */
+    unsigned int branchingId(void) const;
   public:
     /// Construct actor specification with \a name
     ActorSpec(const Support::Symbol& name);
@@ -380,10 +385,6 @@ namespace Gecode { namespace Reflection {
      *  Only valid if isBranching returns false
      */
     int queue(void) const;
-    /** \brief Return identifier of the branching
-     *  Only valid if isBranching returns true
-     */
-    int branchingId(void) const;      
     //@}
     
     /// \name Populating the specification
@@ -425,8 +426,8 @@ namespace Gecode { namespace Reflection {
     /// The arguments of this branching
     Arguments* _args;
   public:
-    /// Construct spec for branching with \a id and \a a alternatives
-    BranchingSpec(unsigned int id, unsigned int a);
+    /// Construct spec for branching description \a d
+    BranchingSpec(const BranchingDesc* d);
     /// Copy constructor
     BranchingSpec(const BranchingSpec& s);
     /// Assignment operator
@@ -436,8 +437,8 @@ namespace Gecode { namespace Reflection {
     
     ///\name Branching information
     //@{
-    /// Return id of the branching
-    unsigned int id(void) const;
+    /// Check if specification was created by \a b
+    bool createdBy(const ActorSpec& b) const;
     /// Return number of alternatives
     unsigned int alternatives(void) const;
     /// Return specification of alternative \a i
@@ -471,8 +472,6 @@ namespace Gecode { namespace Reflection {
     const ActorLink *cur;
     /// Whether the current actor is a branching
     bool       isBranching;
-    /// The current ActorSpec
-    mutable ActorSpec* curSpec;
   public:
     /// Constructor
     ActorSpecIter(const Space*, VarMap&);
@@ -481,7 +480,7 @@ namespace Gecode { namespace Reflection {
     /// Move iterator to next actor
     void operator++(void);
     /// Return actor specification for current iterator position
-    ActorSpec& actor(void) const;
+    ActorSpec actor(void) const;
   };
 
   /**

@@ -661,9 +661,10 @@ namespace Gecode { namespace Reflection {
     return _args->queue-1;
   }
 
-  int
+  unsigned int
   ActorSpec::branchingId(void) const {
-    return -_args->queue-1;
+    assert(isBranching());
+    return static_cast<unsigned int>(-_args->queue-1);
   }
 
   ActorSpec::~ActorSpec(void) {
@@ -742,8 +743,8 @@ namespace Gecode { namespace Reflection {
     Memory::free(a);
   }
   
-  BranchingSpec::BranchingSpec(unsigned int id, unsigned int a) {
-    _args = new Arguments(id, a);
+  BranchingSpec::BranchingSpec(const BranchingDesc* d) {
+    _args = new Arguments(d->id(), d->alternatives());
   }
 
   BranchingSpec::BranchingSpec(const BranchingSpec& s) : _args(s._args) {
@@ -780,9 +781,11 @@ namespace Gecode { namespace Reflection {
       delete _args;
   }
   
-  unsigned int
-  BranchingSpec::id(void) const {
-    return _args->id;
+  bool
+  BranchingSpec::createdBy(const ActorSpec& b) const {
+    if (!b.isBranching())
+      throw ReflectionException("ActorSpec does not belong to a Branching");
+    return _args->id == b.branchingId();
   }
 
   unsigned int
@@ -803,8 +806,6 @@ namespace Gecode { namespace Reflection {
 
   void
   ActorSpecIter::operator++(void) {
-    delete curSpec;
-    curSpec = NULL;
     cur = cur->next();
     while ((queue > 0) && (cur == &s->pc.p.queue[queue])) {
       queue--;
@@ -821,7 +822,7 @@ namespace Gecode { namespace Reflection {
 
   ActorSpecIter::ActorSpecIter(const Space* s0, VarMap& m0)
   : m(&m0), s(s0), queue(s0->pc.p.active - &s0->pc.p.queue[0]), 
-    isBranching(false), curSpec(NULL) {
+    isBranching(false) {
     if (queue >= 0)
       cur = &s->pc.p.queue[queue];
     else
@@ -829,16 +830,14 @@ namespace Gecode { namespace Reflection {
     ++(*this);
   }
 
-  ActorSpec&
+  ActorSpec
   ActorSpecIter::actor(void) const {
-    if (!curSpec) {
-      curSpec = &static_cast<const Actor*>(cur)->spec(s,*m);
-      if (isBranching)
-        curSpec->queue(-1-static_cast<const Branching*>(cur)->id);
-      else
-        curSpec->queue(queue+1);        
-    }
-    return *curSpec;
+    ActorSpec spec = static_cast<const Actor*>(cur)->spec(s,*m);
+    if (isBranching)
+      spec.queue(-1-static_cast<const Branching*>(cur)->id);
+    else
+      spec.queue(queue+1);        
+    return spec;
   }
 
   Unreflector::Unreflector(Space* home0, Reflection::VarMap& m0)

@@ -75,10 +75,10 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
-  Reflection::ActorSpec&
+  Reflection::ActorSpec
   SelectUnionConst<SView,RView>::spec(const Space* home,
                                       Reflection::VarMap& m) const {
-    Reflection::ActorSpec& s = Propagator::spec(home, m, ati());
+    Reflection::ActorSpec s(ati());
     Reflection::ArrayArg* a = Reflection::Arg::newArray(iv.size());
     for (int i=0; i<iv.size(); i++) {
       int count = 0;
