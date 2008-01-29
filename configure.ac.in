@@ -229,8 +229,11 @@ AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 
-AC_CONFIG_FILES([Makefile doxygen.conf:doxygen/doxygen.conf.in
-	doxygen.hh:doxygen/doxygen.hh.in
-	misc/gecode.pc misc/gecode-search.pc misc/gecode-serialization.pc 
-	misc/gecode-minimodel.pc])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
+AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
+AC_CONFIG_FILES([misc/gecode.pc])
+AC_CONFIG_FILES([misc/gecode-search.pc])
+AC_CONFIG_FILES([misc/gecode-serialization.pc])
+AC_CONFIG_FILES([misc/gecode-minimodel.pc])
 AC_OUTPUT
