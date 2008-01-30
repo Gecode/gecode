@@ -139,6 +139,16 @@ bool isVarArgs(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   return true;
 }
 
+bool isIntSetArgs(Gecode::Reflection::Arg* a) {
+  if (!a->isArray())
+    return false;
+  Gecode::Reflection::ArrayArg& aa = *a->toArray();
+  for (int i=aa.size(); i--;)
+    if (!aa[i]->isIntArray())
+      return false;
+  return true;
+}
+
 EOF
 ;
 
@@ -310,7 +320,7 @@ sub recognized {
     } elsif ($a =~ /([a-zA-Z]+)VarArgs$/) {
     } elsif ($a =~ /([a-zA-Z]+)Var$/) {
     } elsif ($a eq "IntArgs") {
-    # } elsif ($a eq "IntSetArgs") {
+    } elsif ($a eq "IntSetArgs") {
     } elsif ($a eq "IntSet") {
     } elsif (exists $enums{$a}) {
     } else {
@@ -329,8 +339,8 @@ sub outputArgCond {
     print "isVar<Gecode::$1Var>(vm, spec[$_[1]])";
   } elsif ($_[0] eq "IntArgs") {
     print "spec[$_[1]]->isIntArray()";
-  # } elsif ($_[0] eq "IntSetArgs") {
-  #   print "isIntSetArgs(spec[$_[1]])";
+  } elsif ($_[0] eq "IntSetArgs") {
+    print "isIntSetArgs(spec[$_[1]])";
   } elsif ($_[0] eq "IntSet") {
     print "spec[$_[1]]->isIntArray()";
   } elsif (exists $enums{$_[0]}) {
@@ -366,7 +376,21 @@ sub outputArg {
     print "for (int i=a".$_[1].".size(); i--;) ".
           "x$_[1]"."[i] = a$_[1]"."[i];\n"
   } elsif ($_[0] eq "IntSetArgs") {
-    print "isIntSetArgs(spec[$_[1]])";
+    print "          ";
+    print "Gecode::Reflection::ArrayArg& a$_[1] = *spec[$_[1]]->toArray();\n";
+    print "          ";
+    print "Gecode::IntSetArgs x$_[1](a$_[1].size());\n";
+    print "          ";
+    print "for (int i=a".$_[1].".size(); i--;) {\n";
+
+    print "            ";
+    print "Gecode::Reflection::IntArrayArg* aa$_[1] = ".
+          "a$_[1]"."[i]->toIntArray();\n";
+    print "            ";
+    print "Gecode::Reflection::IntArrayArgRanges aar$_[1](aa$_[1]);\n";
+    print "            ";
+    print "x$_[1]"."[i] = Gecode::IntSet(aar$_[1]);\n";
+    print "          }\n";
   } elsif ($_[0] eq "IntSet") {
     print "          ";
     print "Gecode::Reflection::IntArrayArg* a$_[1] = ".

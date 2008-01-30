@@ -75,6 +75,16 @@ bool isVarArgs(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   return true;
 }
 
+bool isIntSetArgs(Gecode::Reflection::Arg* a) {
+  if (!a->isArray())
+    return false;
+  Gecode::Reflection::ArrayArg& aa = *a->toArray();
+  for (int i=aa.size(); i--;)
+    if (!aa[i]->isIntArray())
+      return false;
+  return true;
+}
+
 class Register_rel {
 public:
   /// Identifier for this post function
@@ -4129,6 +4139,22 @@ public:
           Gecode::selectSet(home, x0,x1,x2);
           return;
         }
+        if(isIntSetArgs(spec[0]) &&
+           isVar<Gecode::IntVar>(vm, spec[1]) &&
+           isVar<Gecode::SetVar>(vm, spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::IntSetArgs x0(a0.size());
+          for (int i=a0.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
+            x0[i] = Gecode::IntSet(aar0);
+          }
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          Gecode::selectSet(home, x0,x1,x2);
+          return;
+        }
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectSet");
       }
       break;
@@ -4143,6 +4169,24 @@ public:
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
           for (int i=a0.size(); i--;)
             x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          int x3 = static_cast<int>(spec[3]->toInt());
+          Gecode::selectSet(home, x0,x1,x2,x3);
+          return;
+        }
+        if(isIntSetArgs(spec[0]) &&
+           isVar<Gecode::IntVar>(vm, spec[1]) &&
+           isVar<Gecode::SetVar>(vm, spec[2]) &&
+           spec[3]->isInt())
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::IntSetArgs x0(a0.size());
+          for (int i=a0.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
+            x0[i] = Gecode::IntSet(aar0);
+          }
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::SetVar x2(vm.var(spec[2]->toVar()));
           int x3 = static_cast<int>(spec[3]->toInt());
@@ -4569,6 +4613,23 @@ public:
           Gecode::count(home, x0,x1);
           return;
         }
+        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+           isIntSetArgs(spec[1]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
+          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
+          Gecode::IntSetArgs x1(a1.size());
+          for (int i=a1.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
+            x1[i] = Gecode::IntSet(aar1);
+          }
+          Gecode::count(home, x0,x1);
+          return;
+        }
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::count");
       }
       break;
@@ -4592,6 +4653,26 @@ public:
           return;
         }
         if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+           isIntSetArgs(spec[1]) &&
+           isEnum("IntConLevel",spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
+          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
+          Gecode::IntSetArgs x1(a1.size());
+          for (int i=a1.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
+            x1[i] = Gecode::IntSet(aar1);
+          }
+          Gecode::IntConLevel x2 =
+            static_cast<Gecode::IntConLevel>(spec[2]->second()->toInt());
+          Gecode::count(home, x0,x1,x2);
+          return;
+        }
+        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
            spec[2]->isIntArray())
         {
@@ -4603,6 +4684,27 @@ public:
           Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
           for (int i=a1.size(); i--;)
             x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
+          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
+          Gecode::IntArgs x2(a2.size());
+          for (int i=a2.size(); i--;) x2[i] = a2[i];
+          Gecode::count(home, x0,x1,x2);
+          return;
+        }
+        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+           isIntSetArgs(spec[1]) &&
+           spec[2]->isIntArray())
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
+          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
+          Gecode::IntSetArgs x1(a1.size());
+          for (int i=a1.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
+            x1[i] = Gecode::IntSet(aar1);
+          }
           Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
           Gecode::IntArgs x2(a2.size());
           for (int i=a2.size(); i--;) x2[i] = a2[i];
@@ -4752,6 +4854,29 @@ public:
           return;
         }
         if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+           isIntSetArgs(spec[1]) &&
+           isEnum("IntConLevel",spec[2]) &&
+           isEnum("PropKind",spec[3]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
+          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
+          Gecode::IntSetArgs x1(a1.size());
+          for (int i=a1.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
+            x1[i] = Gecode::IntSet(aar1);
+          }
+          Gecode::IntConLevel x2 =
+            static_cast<Gecode::IntConLevel>(spec[2]->second()->toInt());
+          Gecode::PropKind x3 =
+            static_cast<Gecode::PropKind>(spec[3]->second()->toInt());
+          Gecode::count(home, x0,x1,x2,x3);
+          return;
+        }
+        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
            spec[2]->isIntArray() &&
            isEnum("IntConLevel",spec[3]))
@@ -4764,6 +4889,30 @@ public:
           Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
           for (int i=a1.size(); i--;)
             x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
+          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
+          Gecode::IntArgs x2(a2.size());
+          for (int i=a2.size(); i--;) x2[i] = a2[i];
+          Gecode::IntConLevel x3 =
+            static_cast<Gecode::IntConLevel>(spec[3]->second()->toInt());
+          Gecode::count(home, x0,x1,x2,x3);
+          return;
+        }
+        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+           isIntSetArgs(spec[1]) &&
+           spec[2]->isIntArray() &&
+           isEnum("IntConLevel",spec[3]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
+          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
+          Gecode::IntSetArgs x1(a1.size());
+          for (int i=a1.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
+            x1[i] = Gecode::IntSet(aar1);
+          }
           Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
           Gecode::IntArgs x2(a2.size());
           for (int i=a2.size(); i--;) x2[i] = a2[i];
@@ -4929,6 +5078,33 @@ public:
           Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
           for (int i=a1.size(); i--;)
             x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
+          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
+          Gecode::IntArgs x2(a2.size());
+          for (int i=a2.size(); i--;) x2[i] = a2[i];
+          Gecode::IntConLevel x3 =
+            static_cast<Gecode::IntConLevel>(spec[3]->second()->toInt());
+          Gecode::PropKind x4 =
+            static_cast<Gecode::PropKind>(spec[4]->second()->toInt());
+          Gecode::count(home, x0,x1,x2,x3,x4);
+          return;
+        }
+        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+           isIntSetArgs(spec[1]) &&
+           spec[2]->isIntArray() &&
+           isEnum("IntConLevel",spec[3]) &&
+           isEnum("PropKind",spec[4]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
+          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
+          Gecode::IntSetArgs x1(a1.size());
+          for (int i=a1.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
+            x1[i] = Gecode::IntSet(aar1);
+          }
           Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
           Gecode::IntArgs x2(a2.size());
           for (int i=a2.size(); i--;) x2[i] = a2[i];
@@ -5294,6 +5470,22 @@ public:
           Gecode::selectUnion(home, x0,x1,x2);
           return;
         }
+        if(isIntSetArgs(spec[0]) &&
+           isVar<Gecode::SetVar>(vm, spec[1]) &&
+           isVar<Gecode::SetVar>(vm, spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::IntSetArgs x0(a0.size());
+          for (int i=a0.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
+            x0[i] = Gecode::IntSet(aar0);
+          }
+          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          Gecode::selectUnion(home, x0,x1,x2);
+          return;
+        }
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
       }
       break;
@@ -5308,6 +5500,24 @@ public:
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
           for (int i=a0.size(); i--;)
             x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
+          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          int x3 = static_cast<int>(spec[3]->toInt());
+          Gecode::selectUnion(home, x0,x1,x2,x3);
+          return;
+        }
+        if(isIntSetArgs(spec[0]) &&
+           isVar<Gecode::SetVar>(vm, spec[1]) &&
+           isVar<Gecode::SetVar>(vm, spec[2]) &&
+           spec[3]->isInt())
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::IntSetArgs x0(a0.size());
+          for (int i=a0.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
+            x0[i] = Gecode::IntSet(aar0);
+          }
           Gecode::SetVar x1(vm.var(spec[1]->toVar()));
           Gecode::SetVar x2(vm.var(spec[2]->toVar()));
           int x3 = static_cast<int>(spec[3]->toInt());
