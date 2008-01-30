@@ -315,6 +315,7 @@ export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
 export INTSTATICLIB	= $(LIBPREFIX)@INT@$(STATICLIBSUFFIX)
 export INTLIB		= $(LIBPREFIX)@INT@$(LIBSUFFIX)
 export LINKINT      	= $(LINKPREFIX)@INT@$(LINKSUFFIX)
+export POSTINT          = gecode/int.hh
 ifeq "@need_soname@" "yes"
 export INTSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@INT@$(SOSUFFIX)
@@ -326,6 +327,7 @@ export INTDLL		=
 export INTSTATICLIB	=
 export INTLIB		=
 export LINKINT      	=
+export POSTINT          =
 endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
@@ -387,6 +389,7 @@ export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
 export SETSTATICLIB	= $(LIBPREFIX)@SET@$(STATICLIBSUFFIX)
 export SETLIB		= $(LIBPREFIX)@SET@$(LIBSUFFIX)
 export LINKSET      	= $(LINKPREFIX)@SET@$(LINKSUFFIX)
+export POSTSET          = gecode/set.hh
 ifeq "@need_soname@" "yes"
 export SETSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SET@$(SOSUFFIX)
@@ -398,6 +401,7 @@ export SETDLL		=
 export SETSTATICLIB	=
 export SETLIB		=
 export LINKSET      	=
+export POSTSET          =
 endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
@@ -499,6 +503,8 @@ MMBUILDDIRS	= minimodel
 SERSRC0 = \
 	flatzinc.cc javascript.cc boost.cc
 
+SERREGSRC = gecode/serialization/register.cc
+
 ifeq "@enable_qt@" "yes"
 SERMOCSRC0 = moc_javascript.cc
 else
@@ -511,8 +517,14 @@ SERHDR0 = \
 SERSRC 		= $(SERSRC0:%=gecode/serialization/%) 
 SERMOCSRC	= $(SERMOCSRC0:%=gecode/serialization/%)
 SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)
-SEROBJ		= $(SERSRC:%.cc=%$(OBJSUFFIX)) $(SERMOCSRC:%.cc=%$(OBJSUFFIX))
-SERSBJ		= $(SERSRC:%.cc=%$(SBJSUFFIX)) $(SERMOCSRC:%.cc=%$(SBJSUFFIX))
+SEROBJ		= \
+	$(SERSRC:%.cc=%$(OBJSUFFIX)) \
+	$(SERMOCSRC:%.cc=%$(OBJSUFFIX)) \
+	$(SERREGSRC:%.cc=%$(OBJSUFFIX))
+SERSBJ		= \
+	$(SERSRC:%.cc=%$(SBJSUFFIX)) \
+	$(SERMOCSRC:%.cc=%$(SBJSUFFIX)) \
+	$(SERREGSRC:%.cc=%$(SBJSUFFIX))
 
 ifeq "@enable_serialization@" "yes"
 export SERDLL		= $(LIBPREFIX)@SER@$(DLLSUFFIX)
@@ -887,6 +899,16 @@ $(top_srcdir)/gecode/kernel/var-type.cc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -typecc $< > $@
 $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
+
+#
+# Registry of post functions
+#
+
+POSTHDR = $(POSTINT) $(POSTSET)
+
+$(top_srcdir)/gecode/serialization/register.cc: \
+			$(POSTHDR) gecode/config.hh $(top_srcdir)/misc/genregistry.perl
+	perl $(top_srcdir)/misc/genregistry.perl $(POSTHDR) > $@ 2>/dev/null
 
 
 #

@@ -70,6 +70,16 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   major
+[DESCRIPTION]
+The serialization library now contains a registry of all the Gecode post 
+functions. This makes interfacing to Gecode much easier. The registry is 
+automatically generated from the post functions defined in gecode/int.hh and 
+gecode/set.hh.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

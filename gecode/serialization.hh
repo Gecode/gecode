@@ -106,13 +106,16 @@ namespace Gecode {
   void fromJavaScript(Space* home, const std::string& model);
 #endif
 
-}
-
 namespace Serialization {
   /**
    * \namespace Gecode::Serialization
    * \brief Serialization and deserialization support
    */
+  
+  /// Initialize the registry of post functions
+  GECODE_SERIALIZATION_EXPORT 
+  void initRegistry(void);
+}
 }
 
 #ifdef GECODE_HAVE_BOOST_SERIALIZATION
@@ -139,6 +142,7 @@ namespace Gecode {
 #include "gecode/serialization/boost.icc"
 
 #endif
+
 
 #endif
 
