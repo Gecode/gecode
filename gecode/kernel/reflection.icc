@@ -410,9 +410,6 @@ namespace Gecode { namespace Reflection {
     * It is similar to a BranchingDesc, but not opaque: you can query the
     * information.
     *
-    * The id of the branching lets you identify the ActorSpec that corresponds 
-    * to the branching that generated a BranchingSpec.
-    *
     * The specification for an alternative is an ArrayArg that may contain 
     * strings and references to variables. The concatenation of the strings 
     * and variables is a human-readable description of what constraints are 
@@ -426,7 +423,13 @@ namespace Gecode { namespace Reflection {
     /// The arguments of this branching
     Arguments* _args;
   public:
-    /// Construct spec for branching description \a d
+    /** \brief Construct spec for branching description \a d
+     *
+     * This constructor is used by a Branching to create a BranchingSpec.
+     * As a user of the reflection API, you have to query use the function
+     * Gecode::Space::branchingSpec instead.
+     *
+     */
     BranchingSpec(const BranchingDesc* d);
     /// Copy constructor
     BranchingSpec(const BranchingSpec& s);
