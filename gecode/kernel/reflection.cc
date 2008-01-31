@@ -842,13 +842,13 @@ namespace Gecode { namespace Reflection {
   void
   ActorSpecIter::operator++(void) {
     cur = cur->next();
-    while ((queue > 0) && (cur == &s->pc.p.queue[queue])) {
-      queue--;
-      cur = &s->pc.p.queue[queue];
+    while (active >= &s->pc.p.queue[0] && (cur == active)) {
+      active--;
+      cur = active;
       cur = cur->next();
     }
-    if ((queue == 0) && (cur == &s->pc.p.queue[0])) {
-      queue--;
+    if (active == &s->pc.p.queue[0] && cur == active) {
+      active--;
       cur = s->a_actors.next();
     }
     if (cur == s->b_commit)
@@ -856,12 +856,12 @@ namespace Gecode { namespace Reflection {
   }
 
   ActorSpecIter::ActorSpecIter(const Space* s0, VarMap& m0)
-  : m(&m0), s(s0), queue(s0->pc.p.active - &s0->pc.p.queue[0]), 
+  : m(&m0), s(s0), active(s0->pc.p.active), 
     isBranching(false) {
-    if (queue >= 0)
-      cur = &s->pc.p.queue[queue];
-    else
+    if (s->stable())
       cur = &s->a_actors;
+    else
+      cur = active;
     ++(*this);
   }
 
@@ -871,7 +871,7 @@ namespace Gecode { namespace Reflection {
     if (isBranching)
       spec.queue(-1-static_cast<const Branching*>(cur)->id);
     else
-      spec.queue(queue+1);        
+      spec.queue( (active - &s->pc.p.queue[0]) + 1);
     return spec;
   }
 

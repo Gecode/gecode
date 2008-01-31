@@ -476,7 +476,7 @@ namespace Gecode { namespace Reflection {
     /// The space for which to iterate the actors
     const Space* s;
     /// The queue to iterate
-    int        queue;
+    const ActorLink *active;
     /// The current actor
     const ActorLink *cur;
     /// Whether the current actor is a branching
