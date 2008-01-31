@@ -907,9 +907,12 @@ $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 POSTHDR = $(POSTINT) $(POSTSET)
 
 $(top_srcdir)/gecode/serialization/register.cc: \
-			gecode/int.hh gecode/set.hh gecode/minimodel.hh $(top_srcdir)/misc/genregistry.perl
-	perl $(top_srcdir)/misc/genregistry.perl \
-	  gecode/int.hh gecode/set.hh gecode/minimodel.hh > $@ 2>/dev/null
+	$(top_srcdir)/gecode/int.hh $(top_srcdir)/gecode/set.hh \
+	$(top_srcdir)/gecode/minimodel.hh $(top_srcdir)/misc/genregistry.perl
+	(cd $(top_srcdir) && \
+	 perl misc/genregistry.perl \
+	  gecode/int.hh gecode/set.hh gecode/minimodel.hh \
+	  > gecode/serialization/register.cc 2>/dev/null)
 
 
 #
