@@ -624,14 +624,50 @@ namespace Gecode { namespace Gist {
     }
   }
 
+  VisualNode*
+  TreeCanvasImpl::eventNode(QEvent* event) {
+    int x = 0;
+    int y = 0;
+    switch (event->type()) {
+    case QEvent::ToolTip:
+        {
+          QHelpEvent* he = static_cast<QHelpEvent*>(event);
+          x = he->x();
+          y = he->y();
+          break;
+        }
+    case QEvent::MouseButtonDblClick:
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonRelease:
+    case QEvent::MouseMove:
+        {
+          QMouseEvent* me = static_cast<QMouseEvent*>(event);
+          x = me->x();
+          y = me->y();
+          break;
+        }
+    case QEvent::ContextMenu:
+        {
+          QContextMenuEvent* ce = static_cast<QContextMenuEvent*>(event);
+          x = ce->x();
+          y = ce->y();
+          break;
+        }
+    default:
+      return NULL;
+    }
+    VisualNode* n;
+    n = root->findNode(static_cast<int>(x/scale-xtrans),
+                       static_cast<int>((y-30)/scale));
+    return n;  
+  }
+  
   bool
   TreeCanvasImpl::event(QEvent* event) {
     if (event->type() == QEvent::ToolTip) {
-      QHelpEvent* he = static_cast<QHelpEvent*>(event);
-      VisualNode* n;
-      n = root->findNode(static_cast<int>(he->x()/scale-xtrans),
-                         static_cast<int>((he->y()-30)/scale));
+      VisualNode* n = eventNode(event);
       if (n != NULL && !n->isHidden() && n->getStatus() == BRANCH) {
+        QHelpEvent* he = static_cast<QHelpEvent*>(event);
         QToolTip::showText(he->globalPos(), QString(n->toolTip().c_str()));
       } else {
         QToolTip::hideText();
@@ -676,18 +712,24 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvasImpl::mouseDoubleClickEvent(QMouseEvent* /*event*/) {
-    inspectCurrentNode();
+  TreeCanvasImpl::mouseDoubleClickEvent(QMouseEvent* event) {
+    if(event->button() == Qt::LeftButton) {
+      VisualNode* n = eventNode(event);
+      if(n == currentNode) {      
+        inspectCurrentNode();
+        event->accept();
+        return;
+      }
+    }
+    event->ignore();
   }
   
   void
   TreeCanvasImpl::contextMenuEvent(QContextMenuEvent* event) {
     QMutexLocker locker(&mutex);
-    VisualNode* n;
-      n = root->findNode(static_cast<int>(event->x()/scale-xtrans), 
-                         static_cast<int>((event->y()-30)/scale));
-      setCurrentNode(n);
+    VisualNode* n = eventNode(event);
     if (n != NULL) {
+      setCurrentNode(n);
       emit contextMenu(event);
       event->accept();
       return;
@@ -725,9 +767,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::mousePressEvent(QMouseEvent* event) {
     QMutexLocker locker(&mutex);
     if (event->button() == Qt::LeftButton) {
-      VisualNode* n;
-      n = root->findNode(static_cast<int>(event->x()/scale-xtrans),
-                         static_cast<int>((event->y()-30)/scale));
+      VisualNode* n = eventNode(event);
       setCurrentNode(n);
       if (n != NULL) {
         event->accept();
