@@ -105,22 +105,29 @@ Module: set
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The range of set variables has been adapted to the range of integer variables. 
-A set can hold values from -2^30+2 to 2^30-2, its maximum cardinality 
-therefore is 2^31-3.
+The limits for set variables have been moved from Limits::Set to
+Set::Limits.
+
+The range of set variables has been adapted to the range of
+integer variables.  For example, on a standard machine
+(regardless of 32 or 64 bits), a set can hold values from -2^30+2
+to 2^30-2, its maximum cardinality therefore is 2^31-3.
 
 [ENTRY]
 Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The range of integer variables have been extended by one
-bit. For example, on a standard machine (regardless of 32 or 64
-bits), the largest possible integer value for an integer variable
-is 2^31-2, the smallest -2^31+2. With other words, only the
-integer values 2^31-1, -2^31, and -2^31+1 are missing from the
-two-complement representation (and we will never use these values for the
-sake of mental sanity. We promise).
+The limits for set variables have been moved from Limits::Set to
+Set::Limits.
+
+The range of integer variables have been extended by one bit. For
+example, on a standard machine (regardless of 32 or 64 bits), the
+largest possible integer value for an integer variable is 2^31-2,
+the smallest -2^31+2. With other words, only the integer values
+2^31-1, -2^31, and -2^31+1 are missing from the two-complement
+representation (and we will never use these values for the sake
+of mental sanity. We promise).
 
 [ENTRY]
 Module: int

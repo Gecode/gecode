@@ -226,9 +226,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   Square<View>::post(Space* home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
     GECODE_ME_CHECK(x0.lq(home,floor(sqrt(static_cast<double>
-                                          (Limits::Int::int_max)))));
+                                          (Limits::int_max)))));
     GECODE_ME_CHECK(x0.gq(home,-floor(sqrt(static_cast<double>
-                                           (-Limits::Int::int_min)))));
+                                           (-Limits::int_min)))));
     if (x0.min() >= 0)
       return SquarePlus<IntView,IntView>::post(home,x0,x1);
     if (x0.max() <= 0)

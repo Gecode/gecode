@@ -60,9 +60,7 @@ namespace Gecode {
 
     int i = 0;
     int sum_height = initial;
-    if (initial < Limits::Int::int_min ||
-        initial > Limits::Int::int_max)
-      throw new NumericalOverflow("MiniModel::producer_consumer");
+    Int::Limits::check(initial,"MiniModel::producer_consumer");
 
     int maxval = 0;
     for (int j = produce_date.size(); j--; )
@@ -84,9 +82,7 @@ namespace Gecode {
       end[i] = produce_date[k];
       duration[i] = IntVar(home, end[i].min(), end[i].max());
       height[i] = produce_amount[k];
-      if (height[i] < Limits::Int::int_min ||
-          height[i] > Limits::Int::int_max)
-        throw new NumericalOverflow("MiniModel::producer_consumer");
+      Int::Limits::check(height[i],"MiniModel::producer_consumer");
     }
 
     // Construct consumer tasks
@@ -98,9 +94,7 @@ namespace Gecode {
       duration[i] = IntVar(home, maxval - start[i].max(),
                            maxval - start[i].min());
       height[i] = consume_amount[k];
-      if (height[i] < Limits::Int::int_min ||
-          height[i] > Limits::Int::int_max)
-        throw new NumericalOverflow("MiniModel::producer_consumer");
+      Int::Limits::check(height[i],"MiniModel::producer_consumer");
     }
 
     limit[0] = sum_height;
@@ -142,9 +136,7 @@ namespace Gecode {
           duration.size() !=  height.size())
         throw new ArgumentSizeMismatch("MiniModel::cumulative");
 
-      if (limit < Limits::Int::int_min ||
-          limit > Limits::Int::int_max)
-        throw new NumericalOverflow("MiniModel::cumulative");
+      Int::Limits::check(limit, "MiniModel::cumulative");
 
       int n = start.size() + !at_most;
       IntArgs m(n), l(1, limit);
@@ -152,10 +144,10 @@ namespace Gecode {
       Height h(n);
 
       if (!at_most) {
-        int smin = Limits::Int::int_max, 
-            smax = Limits::Int::int_min, 
-            emin = Limits::Int::int_max, 
-            emax = Limits::Int::int_min;
+        int smin = Int::Limits::int_max, 
+            smax = Int::Limits::int_min, 
+            emin = Int::Limits::int_max, 
+            emax = Int::Limits::int_min;
         IntVarArgs end(n-1);
         for (int i = start.size(); i--; ) {
           m[i] = 0;
@@ -163,7 +155,7 @@ namespace Gecode {
           smin = std::min(s[i].min(), smin);
           smax = std::max(s[i].max(), smax);
           d[i] = make_intvar(home, duration[i]);
-          e[i] = IntVar(home, Limits::Int::int_min, Limits::Int::int_max);
+          e[i] = IntVar(home, Int::Limits::int_min, Int::Limits::int_max);
           end[i] = e[i];
           emin = std::min(e[i].min(), emin);
           emax = std::max(e[i].max(), emax);

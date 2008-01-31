@@ -223,7 +223,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                                    ViewArray<View0>& x, View1 y) {
     switch (x.size()) {
     case 0:
-      GECODE_ME_CHECK(y.cardMin(home, Limits::Set::card_max));
+      GECODE_ME_CHECK(y.cardMin(home, Limits::card_max));
       return ES_OK;
     case 1:
       return Rel::Eq<View0,View1>::post(home, x[0], y);

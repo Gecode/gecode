@@ -52,7 +52,7 @@ namespace Gecode { namespace Set {
   SetVarImp::SetVarImp(Space* home)
     : SetVarImpBase(home), lub(home), glb(home) {
     _cardMin = 0;
-    _cardMax = Limits::Set::card_max;
+    _cardMax = Limits::card_max;
     assert(_cardMax==lub.size());
   }
 

@@ -120,11 +120,11 @@ namespace Gecode {
           GECODE_ME_FAIL(home,_s.exclude(home, is.min(), is.max()));
           GECODE_ME_FAIL(home,
                          _s.include(home,
-                                    Limits::Set::int_min,
+                                    Set::Limits::int_min,
                                     is.min()-1) );
           GECODE_ME_FAIL(home,
                          _s.include(home, is.max()+1,
-                                    Limits::Set::int_max) );
+                                    Set::Limits::int_max) );
         } else {
           IntSetRanges rd1(is);
           Set::RangesCompl<IntSetRanges > rdC1(rd1);

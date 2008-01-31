@@ -70,11 +70,11 @@ namespace Gecode { namespace Set { namespace Int {
     // result in failure.
     unsigned int xssize = xs.size();
     for (int i=ys.size(); i--;) {
-      GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::Set::int_max));
-      GECODE_ME_CHECK(ys[i].exclude(home, Limits::Set::int_min, -1));
+      GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::int_max));
+      GECODE_ME_CHECK(ys[i].exclude(home, Limits::int_min, -1));
     }
     unsigned int yssize = ys.size();
-    if (yssize > static_cast<unsigned int>(Limits::Int::int_max))
+    if (yssize > static_cast<unsigned int>(Gecode::Int::Limits::int_max))
       return ES_FAILED;
     for (int i=xs.size(); i--;) {
       GECODE_ME_CHECK(xs[i].gq(home, 0));

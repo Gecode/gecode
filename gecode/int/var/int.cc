@@ -41,24 +41,24 @@ namespace Gecode {
 
   IntVar::IntVar(Space* home, int min, int max)
     : varimp(new (home) Int::IntVarImp(home,min,max)) {
-    if ((min < Limits::Int::int_min) || (max > Limits::Int::int_max))
-      throw Int::VariableOutOfRangeDomain("IntVar::IntVar");
+    Int::Limits::check(min,"IntVar::IntVar");
+    Int::Limits::check(max,"IntVar::IntVar");
     if (min > max)
       throw Int::VariableEmptyDomain("IntVar::IntVar");
   }
 
   IntVar::IntVar(Space* home, const IntSet& ds)
     : varimp(new (home) Int::IntVarImp(home,ds)) {
-    if ((ds.min() < Limits::Int::int_min) || (ds.max() > Limits::Int::int_max))
-      throw Int::VariableOutOfRangeDomain("IntVar::IntVar");
+    Int::Limits::check(ds.min(),"IntVar::IntVar");
+    Int::Limits::check(ds.max(),"IntVar::IntVar");
     if (ds.size() == 0)
       throw Int::VariableEmptyDomain("IntVar::IntVar");
   }
 
   void
   IntVar::init(Space* home, int min, int max) {
-    if ((min < Limits::Int::int_min) || (max > Limits::Int::int_max))
-      throw Int::VariableOutOfRangeDomain("IntVar::init");
+    Int::Limits::check(min,"IntVar::IntVar");
+    Int::Limits::check(max,"IntVar::IntVar");
     if (min > max)
       throw Int::VariableEmptyDomain("IntVar::init");
     varimp = new (home) Int::IntVarImp(home,min,max);
@@ -66,8 +66,8 @@ namespace Gecode {
 
   void
   IntVar::init(Space* home, const IntSet& ds) {
-    if ((ds.min() < Limits::Int::int_min) || (ds.max() > Limits::Int::int_max))
-      throw Int::VariableOutOfRangeDomain("IntVar::init");
+    Int::Limits::check(ds.min(),"IntVar::IntVar");
+    Int::Limits::check(ds.max(),"IntVar::IntVar");
     if (ds.size() == 0)
       throw Int::VariableEmptyDomain("IntVar::init");
     varimp = new (home) Int::IntVarImp(home,ds);

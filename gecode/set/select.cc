@@ -83,8 +83,8 @@ namespace Gecode {
   selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
-    IntSet universe(Limits::Set::int_min,
-                    Limits::Set::int_max);
+    IntSet universe(Set::Limits::int_min,
+                    Set::Limits::int_max);
     if (offset == 0) {
       GECODE_ES_FAIL(home,
                      (Select::SelectIntersection<SetView,SetView>::

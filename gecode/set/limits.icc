@@ -4,11 +4,11 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Christian Schulte, 2005
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2008-01-23 13:29:34 +0100 (Wed, 23 Jan 2008) $ by $Author: tack $
+ *     $Revision: 5953 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,75 +35,20 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode { namespace Set {
 
-  /**
-   * \brief Value iterator for single value
-   *
-   * \ingroup FuncIterValues
-   */
+    inline void
+    Limits::check(int n, const char* l) {
+      if ((n < int_min) || (n > int_max))
+        throw OutOfLimits(l);
+    }
 
-  class Singleton {
-  protected:
-    /// Whether the iterator is done
-    bool done;
-    /// The single value
-    int v;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Singleton(void);
-    /// Initialize with value \a v
-    Singleton(int v);
-    /// Initialize with value \a v
-    void init(int v);
-    //@}
+    inline void
+    Limits::check(unsigned n, const char* l) {
+      if (n > card_max)
+        throw OutOfLimits(l);
+    }
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator++(void);
-    //@}
+}}
 
-    /// \name %Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
-
-
-  forceinline
-  Singleton::Singleton(void) {}
-
-  forceinline
-  Singleton::Singleton(int v0)
-    : done(false), v(v0) {}
-
-  forceinline void
-  Singleton::init(int v0) {
-    done=false; v=v0;
-  }
-
-  forceinline void
-  Singleton::operator++(void) {
-    done=true;
-  }
-  forceinline bool
-  Singleton::operator()(void) const {
-    return !done;
-  }
-
-  forceinline int
-  Singleton::val(void) const {
-    return v;
-  }
-
-
-}}}
-
-// STATISTICS: iter-any
-
+// STATISTICS: set-var

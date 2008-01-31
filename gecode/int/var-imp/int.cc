@@ -37,8 +37,6 @@
 
 #include "gecode/int.hh"
 
-#include "gecode/limits.hh"
-
 namespace Gecode { namespace Int {
 
   forceinline bool

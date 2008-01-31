@@ -51,62 +51,60 @@ namespace Gecode {
                  unsigned int minCard, unsigned int maxCard)
     : x(new (home) Set::SetVarImp(home,lbMin,lbMax,ubMin,ubMax,
                                   minCard,maxCard)) {
-    if ((lbMin < Limits::Set::int_min) || 
-        (lbMax > Limits::Set::int_max) ||
-        (ubMin < Limits::Set::int_min) || 
-        (ubMax > Limits::Set::int_max))
-      throw Set::VariableOutOfRangeDomain("SetVar");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVar");
+    Set::Limits::check(lbMin,"SetVar::SetVar");
+    Set::Limits::check(lbMax,"SetVar::SetVar");
+    Set::Limits::check(ubMin,"SetVar::SetVar");
+    Set::Limits::check(ubMax,"SetVar::SetVar");
+    Set::Limits::check(maxCard,"SetVar::SetVar");
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVar");
+      throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
   SetVar::SetVar(Space* home, const IntSet& glb,int ubMin,int ubMax,
                  unsigned int minCard, unsigned int maxCard)
     : x(new (home) Set::SetVarImp(home,glb,ubMin,ubMax,minCard,maxCard)) {
-    if ( ((glb.size() > 0) &&
-          ((glb.min() < Limits::Set::int_min) ||
-           (glb.max() > Limits::Set::int_max))) ||
-         (ubMin < Limits::Set::int_min) || 
-         (ubMax > Limits::Set::int_max))
-      throw Set::VariableOutOfRangeDomain("SetVar");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVar");
+    if (glb.size() > 0) {
+      Set::Limits::check(glb.min(),"SetVar::SetVar");
+      Set::Limits::check(glb.max(),"SetVar::SetVar");
+    }
+    Set::Limits::check(ubMin,"SetVar::SetVar");
+    Set::Limits::check(ubMax,"SetVar::SetVar");
+    Set::Limits::check(maxCard,"SetVar::SetVar");
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVar");
+      throw Set::VariableEmptyDomain("SetVar::SetVar");
+    if (minCard > maxCard)
+      throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
   SetVar::SetVar(Space* home,int lbMin,int lbMax,const IntSet& lub,
                  unsigned int minCard, unsigned int maxCard)
     : x(new (home) Set::SetVarImp(home,lbMin,lbMax,lub,minCard,maxCard)) {
-    if ( ((lub.size() > 0) &&
-          ((lub.min() < Limits::Set::int_min) ||
-           (lub.max() > Limits::Set::int_max))) ||
-         (lbMin < Limits::Set::int_min) || 
-         (lbMax > Limits::Set::int_max))
-      throw Set::VariableOutOfRangeDomain("SetVarArray");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVar");
+    Set::Limits::check(lbMin,"SetVar::SetVar");
+    Set::Limits::check(lbMax,"SetVar::SetVar");
+    if (lub.size() > 0) {
+      Set::Limits::check(lub.min(),"SetVar::SetVar");
+      Set::Limits::check(lub.max(),"SetVar::SetVar");
+    }
+    Set::Limits::check(maxCard,"SetVar::SetVar");
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVar");
+      throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
   SetVar::SetVar(Space* home,
                  const IntSet& glb, const IntSet& lub,
                  unsigned int minCard, unsigned int maxCard)
     : x(new (home) Set::SetVarImp(home,glb,lub,minCard,maxCard)) {
-    if (((glb.size() > 0) &&
-         ((glb.min() < Limits::Set::int_min) ||
-          (glb.max() > Limits::Set::int_max)))  ||
-        ((glb.size() > 0) &&
-         ((lub.min() < Limits::Set::int_min) ||
-          (lub.max() > Limits::Set::int_max))))
-      throw Set::VariableOutOfRangeDomain("SetVar");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVar");
+    if (glb.size() > 0) {
+      Set::Limits::check(glb.min(),"SetVar::SetVar");
+      Set::Limits::check(glb.max(),"SetVar::SetVar");
+    }
+    if (lub.size() > 0) {
+      Set::Limits::check(lub.min(),"SetVar::SetVar");
+      Set::Limits::check(lub.max(),"SetVar::SetVar");
+    }
+    Set::Limits::check(maxCard,"SetVar::SetVar");
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVar");
+      throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
 }

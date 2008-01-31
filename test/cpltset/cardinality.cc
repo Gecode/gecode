@@ -126,7 +126,7 @@ namespace Test { namespace CpltSet {
 
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-        Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
+        Gecode::cardinality(home, x[0], 1, Gecode::Set::Limits::int_max);
       }
     };
     CpltSetCardMinInf _cpltsetcardmininf("Card::MinInf");

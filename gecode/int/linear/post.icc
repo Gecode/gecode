@@ -53,11 +53,11 @@ namespace Gecode { namespace Int { namespace Linear {
         max += t[i].a*t[i].x.min();
         min += t[i].a*t[i].x.max();
       }
-    if (min < Limits::Int::int_min)
-      min = Limits::Int::int_min;
+    if (min < Limits::int_min)
+      min = Limits::int_min;
     l = static_cast<int>(min);
-    if (max > Limits::Int::int_max)
-      max = Limits::Int::int_max;
+    if (max > Limits::int_max)
+      max = Limits::int_max;
     u = static_cast<int>(max);
   }
 
@@ -89,14 +89,12 @@ namespace Gecode { namespace Int { namespace Linear {
       int i = 0;
       int j = 0;
       while (i < n) {
+        Limits::check(t[i].a,"Int::linear");
         double a = t[i].a;
-        if ((a < Limits::Int::int_min) || (a > Limits::Int::int_max))
-          throw NumericalOverflow("Int::linear");
         View x = t[i].x;
         while ((++i < n) && same(t[i].x,x)) {
           a += t[i].a;
-          if ((a < INT_MIN) || (a > INT_MAX))
-            throw NumericalOverflow("Int::linear");
+          Limits::check(a,"Int::linear");
         }
         if (a != 0.0) {
           t[j].a = static_cast<int>(a); t[j].x = x; j++;

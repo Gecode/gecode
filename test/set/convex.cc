@@ -95,7 +95,7 @@ namespace Test { namespace Set {
         if (!xr0()) {
           if (!xr1()) return false;
           if (x0min != xr1.min()) return false;
-          int x1max = Limits::Set::int_min;
+          int x1max = Gecode::Set::Limits::int_min;
           while (xr1()) { x1max = xr1.max(); ++xr1;}
           if (x0max != x1max) return false;
           return true;

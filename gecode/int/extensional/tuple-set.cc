@@ -136,7 +136,7 @@ namespace Gecode {
 
     // Add final largest tuple
     IntArgs ia(arity);
-    for (int i = arity; i--; ) ia[i] = Limits::Int::int_max+1;
+    for (int i = arity; i--; ) ia[i] = Int::Limits::int_max+1;
     int real_min = min, real_max = max;
     add(ia);
     min = real_min; max = real_max;

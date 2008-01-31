@@ -141,12 +141,12 @@ namespace Gecode { namespace Set { namespace Int {
     }
 
     GECODE_ME_CHECK( x0.exclude(home,
-                                Limits::Set::int_min, x1.min()-1) );
+                                Limits::int_min, x1.min()-1) );
 
     if (x1.assigned()) {
       GECODE_ME_CHECK(x0.include(home,x1.val()));
       GECODE_ME_CHECK(x0.exclude(home,
-                                 Limits::Set::int_min, x1.val()-1));
+                                 Limits::int_min, x1.val()-1));
       return ES_SUBSUMED(this,home);
     }
 
@@ -212,12 +212,12 @@ namespace Gecode { namespace Set { namespace Int {
     assert(x0.cardMin()>=1);
     GECODE_ME_CHECK(x1.gq(home,x0.lubMinN(x0.cardMin()-1)));
     GECODE_ME_CHECK(x0.exclude(home,
-                               x1.max()+1,Limits::Set::int_max) );
+                               x1.max()+1,Limits::int_max) );
 
     if (x1.assigned()) {
       GECODE_ME_CHECK(x0.include(home,x1.val()));
       GECODE_ME_CHECK( x0.exclude(home,
-                                  x1.val()+1,Limits::Set::int_max) );
+                                  x1.val()+1,Limits::int_max) );
       return ES_SUBSUMED(this,home);
     }
 

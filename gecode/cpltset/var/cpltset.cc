@@ -55,15 +55,15 @@ namespace Gecode {
   }
 
   CpltSetVar::CpltSetVar(Space* home, int glbMin,int glbMax,
-                 const IntSet& lubD,
-                 unsigned int cardMin, unsigned int cardMax) {
+                         const IntSet& lubD,
+                         unsigned int cardMin, unsigned int cardMax) {
     varimp = new (home) CpltSet::CpltSetVarImp(home, glbMin, glbMax, 
                                                lubD, cardMin, cardMax);
   }
 
   CpltSetVar::CpltSetVar(Space* home, const IntSet& glbD,
-                 const IntSet& lubD,
-                 unsigned int cardMin, unsigned int cardMax) {
+                         const IntSet& lubD,
+                         unsigned int cardMin, unsigned int cardMax) {
     varimp = new (home) CpltSet::CpltSetVarImp(home, 
                                                glbD, lubD, cardMin, cardMax);
   }

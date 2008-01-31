@@ -46,11 +46,10 @@ namespace Gecode {
           int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
-    for (int i = c.size(); i--; )
-      if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
-        throw NumericalOverflow("Int::element");
-      else
-        cs[i] = c[i];
+    for (int i = c.size(); i--; ) {
+      Limits::check(c[i],"Int::element");
+      cs[i] = c[i];
+    }
     if (offset==0) {
       GECODE_ES_FAIL(home,(Element::Int<IntView,IntView>::post(home,cs,x0,x1)));
     } else {
@@ -64,11 +63,10 @@ namespace Gecode {
           int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
-    for (int i = c.size(); i--; )
-      if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
-        throw NumericalOverflow("Int::element");
-      else
-        cs[i] = c[i];
+    for (int i = c.size(); i--; ) {
+      Limits::check(c[i],"Int::element");
+      cs[i] = c[i];
+    }
     if (offset==0) {
       GECODE_ES_FAIL(home,(Element::Int<IntView,BoolView>::post(home,cs,x0,x1)));
     } else {
@@ -82,11 +80,10 @@ namespace Gecode {
           int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
-    for (int i = c.size(); i--; )
-      if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
-        throw NumericalOverflow("Int::element");
-      else
-        cs[i] = c[i];
+    for (int i = c.size(); i--; ) {
+      Limits::check(c[i],"Int::element");
+      cs[i] = c[i];
+    }
     ConstIntView cx1(x1);
     if (offset==0) {
       GECODE_ES_FAIL(home,(Element::Int<IntView,ConstIntView>

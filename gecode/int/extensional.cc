@@ -113,11 +113,10 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<OffsetView> cx(home,x.size());
-    for (int i = c.size(); i--; )
-      if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
-        throw NumericalOverflow("Int::extensional");
-      else
-        cx[i].init(x[i],c[i]);
+    for (int i = c.size(); i--; ) {
+      Limits::check(c[i],"Int::extensional");
+      cx[i].init(x[i],c[i]);
+    }
 
     // All variables in the correct domain
     for (int i = cx.size(); i--; ) {

@@ -105,15 +105,15 @@ public:
   Warehouses(const Options&)
     : supplier(this, n_stores, 0, n_suppliers-1),
       open(this, n_suppliers, 0, 1),
-      cost(this, n_stores, 0, Limits::Int::int_max),
-      total(this, 0, Limits::Int::int_max) {
+      cost(this, n_stores, 0, Int::Limits::int_max),
+      total(this, 0, Int::Limits::int_max) {
     // Compute total cost
     {
       // Opening cost
       IntArgs c(n_suppliers);
       for (int i=0; i<n_suppliers; i++)
         c[i]=building_cost;
-      IntVar oc(this, 0, Limits::Int::int_max);
+      IntVar oc(this, 0, Int::Limits::int_max);
       linear(this, c, open, IRT_EQ, oc);
       // Total cost of stores
       IntVarArgs tc(n_stores+1);

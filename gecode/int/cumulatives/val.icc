@@ -388,8 +388,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       std::list<Event>::iterator it = events.begin();
       std::list<int> prune_tasks;
       std::vector<int> contribution(start.size(), at_most
-                                    ? Limits::Int::int_max
-                                    : Limits::Int::int_min);
+                                    ? Limits::int_max
+                                    : Limits::int_min);
 
       d = it->date;
       while (it != events.end()) {

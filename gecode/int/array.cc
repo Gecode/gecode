@@ -41,20 +41,20 @@ namespace Gecode {
 
   IntVarArray::IntVarArray(Space* home, int n, int min, int max)
     : VarArray<IntVar>(home,n) {
-    if ((min < Limits::Int::int_min) || (max > Limits::Int::int_max))
-      throw Int::VariableOutOfRangeDomain("IntVarArray");
+    Int::Limits::check(min,"IntVarArray::IntVarArray");
+    Int::Limits::check(max,"IntVarArray::IntVarArray");
     if (min > max)
-      throw Int::VariableEmptyDomain("IntVarArray");
+      throw Int::VariableEmptyDomain("IntVarArray::IntVarArray");
     for (int i = size(); i--; )
       x[i]._init(home,min,max);
   }
 
   IntVarArray::IntVarArray(Space* home, int n, const IntSet& s)
     : VarArray<IntVar>(home,n) {
-    if ((s.min() < Limits::Int::int_min) || (s.max() > Limits::Int::int_max))
-      throw Int::VariableOutOfRangeDomain("IntVarArray");
+    Int::Limits::check(s.min(),"IntVarArray::IntVarArray");
+    Int::Limits::check(s.max(),"IntVarArray::IntVarArray");
     if (s.size() == 0)
-      throw Int::VariableEmptyDomain("IntVarArray");
+      throw Int::VariableEmptyDomain("IntVarArray::IntVarArray");
     for (int i = size(); i--; )
       x[i]._init(home,s);
   }
@@ -62,9 +62,9 @@ namespace Gecode {
   BoolVarArray::BoolVarArray(Space* home, int n, int min, int max)
     : VarArray<BoolVar>(home, n) {
     if ((min < 0) || (max > 1))
-      throw Int::VariableOutOfRangeDomain("BoolVarArray");
+      throw Int::NotZeroOne("BoolVarArray::BoolVarArray");
     if (min > max)
-      throw Int::VariableEmptyDomain("BoolVarArray");
+      throw Int::VariableEmptyDomain("BoolVarArray::BoolVarArray");
     for (int i = size(); i--; )
       x[i]._init(home,min,max);
   }

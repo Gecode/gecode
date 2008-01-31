@@ -322,8 +322,7 @@ namespace Gecode { namespace Int { namespace Linear {
            Term<BoolView>* t, int n,
            IntRelType r, View x, int c, PropKind pk) {
 
-    if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
-      throw NumericalOverflow("Int::linear");
+    Limits::check(c,"Int::linear");
 
     {
       double d = c;
@@ -349,7 +348,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
 
       if ((d < INT_MIN) || (d > INT_MAX))
-        throw NumericalOverflow("Int::linear");
+        throw OutOfLimits("Int::linear");
       
       c = static_cast<int>(d);
     }
@@ -378,7 +377,7 @@ namespace Gecode { namespace Int { namespace Linear {
       for (int i=n_n; i--; )
         sl += t_n[i].a;
       if ((su < INT_MIN) || (su > INT_MAX) || (sl < INT_MIN) || (sl > INT_MAX))
-        throw NumericalOverflow("Int::linear");
+        throw OutOfLimits("Int::linear");
     }
     
     if (unit && (n_n == 0)) {

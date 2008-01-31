@@ -68,15 +68,8 @@ public:
     post(this, x[0]+x[1]+x[2]+x[3] == s);
 
     // The product of all variables is s (corrected by scale factor)
-    {
-      IntVar t0(this,0,Limits::Int::int_max);
-      IntVar t1(this,0,Limits::Int::int_max);
-      IntVar t2(this,0,Limits::Int::int_max);
-      rel(this, t2, IRT_EQ, s*100*100*100);
-      mult(this, x[0], x[1], t0);
-      mult(this, x[2], x[3], t1);
-      mult(this, t0, t1, t2);
-    }
+    rel(this, mult(this, mult(this, x[0], x[1]), mult(this, x[2], x[3])), 
+        IRT_EQ, s*100*100*100);
 
     // Break symmetries: order the variables
     rel(this, x[0], IRT_LQ, x[1]);

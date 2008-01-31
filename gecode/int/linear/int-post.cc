@@ -51,8 +51,7 @@ namespace Gecode { namespace Int { namespace Linear {
         d -= t[i].a * static_cast<double>(t[i].x.val());
         t[i]=t[--n];
       }
-    if ((d < Limits::Int::double_min) || (d > Limits::Int::double_max))
-      throw NumericalOverflow("Int::linear");
+    Limits::check(d,"Int::linear");
   }
 
   /// Rewrite all inequations in terms of IRT_LQ
@@ -95,8 +94,8 @@ namespace Gecode { namespace Int { namespace Linear {
     sl -= d;
     su -= d;
 
-    if ((sl < Limits::Int::double_min) || (su > Limits::Int::double_max))
-      throw NumericalOverflow("Int::linear");
+    Limits::check(sl,"Int::linear");
+    Limits::check(su,"Int::linear");
 
     return ((sl>=INT_MIN) && (su<=INT_MAX));
   }
@@ -168,8 +167,7 @@ namespace Gecode { namespace Int { namespace Linear {
   post(Space* home, Term<IntView>* t, int n, IntRelType r, int c,
        IntConLevel icl) {
 
-    if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
-      throw NumericalOverflow("Int::linear");
+    Limits::check(c,"Int::linear");
 
     double d = c;
     
@@ -306,8 +304,7 @@ namespace Gecode { namespace Int { namespace Linear {
        Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel) {
 
-    if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
-      throw NumericalOverflow("Int::linear");
+    Limits::check(c,"Int::linear");
 
     double d = c;
     

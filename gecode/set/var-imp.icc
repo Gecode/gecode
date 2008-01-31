@@ -168,9 +168,9 @@ namespace Gecode { namespace Set {
 
   public:
     /// Returned by empty sets when asked for their maximum element
-    static const int MAX_OF_EMPTY = Limits::Set::int_min-1;
+    static const int MAX_OF_EMPTY = Limits::int_min-1;
     /// Returned by empty sets when asked for their minimum element
-    static const int MIN_OF_EMPTY = Limits::Set::int_max+1;
+    static const int MIN_OF_EMPTY = Limits::int_max+1;
 
     /// \name Constructors and initialization
     //@{
@@ -325,13 +325,13 @@ namespace Gecode { namespace Set {
     //@{
     /// Default constructor. Creates an empty set.
     LUBndSet(void);
-    /// Initialize as the full set including everything between Limits::Set::int_min and Limits::Set::int_max
+    /// Initialize as the full set including everything between Limits::int_min and Limits::int_max
     LUBndSet(Space* home);
     /// Initialize as the set \f$ \{i,\dots,j\}\f$
     LUBndSet(Space* home, int i, int j);
     /// Initialize as the set represented by \a s
     LUBndSet(Space* home, const IntSet& s);
-    /// Initialize as the full set including everything between Limits::Set::int_min and Limits::Set::int_max
+    /// Initialize as the full set including everything between Limits::int_min and Limits::int_max
     void init(Space* home);
     //@}
 
@@ -366,7 +366,7 @@ namespace Gecode { namespace Set {
    */
   template <class I>
   class RangesCompl :
-    public Iter::Ranges::Compl<Limits::Set::int_min, Limits::Set::int_max, I> {
+    public Iter::Ranges::Compl<Limits::int_min, Limits::int_max, I> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -534,7 +534,7 @@ namespace Gecode { namespace Set {
      */
     SetVarImp(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
                unsigned int cardMin = 0,
-               unsigned int cardMax = Limits::Set::card_max);
+               unsigned int cardMax = Limits::card_max);
     /**
      * \brief Initialize with given bounds and cardinality
      *

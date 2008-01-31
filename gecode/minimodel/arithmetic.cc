@@ -77,8 +77,8 @@ if (home->failed()) {                           \
   IntVar
   min(Space* home, const IntVarArgs& x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
-    int min = Limits::Int::int_max;
-    int max = Limits::Int::int_max;
+    int min = Int::Limits::int_max;
+    int max = Int::Limits::int_max;
     for (int i=x.size(); i--; ) {
       min = std::min(min,x[i].min());
       max = std::min(max,x[i].max());
@@ -101,8 +101,8 @@ if (home->failed()) {                           \
   IntVar
   max(Space* home, const IntVarArgs& x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
-    int min = Limits::Int::int_min;
-    int max = Limits::Int::int_min;
+    int min = Int::Limits::int_min;
+    int max = Int::Limits::int_min;
     for (int i=x.size(); i--; ) {
       min = std::max(min,x[i].min());
       max = std::max(max,x[i].max());
@@ -115,7 +115,7 @@ if (home->failed()) {                           \
   IntVar
   mult(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
-    IntVar z(home, Limits::Int::int_min, Limits::Int::int_max);
+    IntVar z(home, Int::Limits::int_min, Int::Limits::int_max);
     mult(home, x, y, z, icl);
     return z;
   }
@@ -123,7 +123,7 @@ if (home->failed()) {                           \
   IntVar
   sqr(Space* home, IntVar x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
-    IntVar y(home, 0, Limits::Int::int_max);
+    IntVar y(home, 0, Int::Limits::int_max);
     mult(home, x, x, y, icl);
     return y;
   }

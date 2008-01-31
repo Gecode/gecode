@@ -56,15 +56,13 @@ namespace Gecode {
                            unsigned int minCard,
                            unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
-    if ((lbMin < Limits::Set::int_min) || 
-        (lbMax > Limits::Set::int_max) ||
-        (ubMin < Limits::Set::int_min) || 
-        (ubMax > Limits::Set::int_max))
-      throw Set::VariableOutOfRangeDomain("SetVarArray");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVarArray");
+    Set::Limits::check(lbMin,"SetVarArray::SetVarArray");
+    Set::Limits::check(lbMax,"SetVarArray::SetVarArray");
+    Set::Limits::check(ubMin,"SetVarArray::SetVarArray");
+    Set::Limits::check(ubMax,"SetVarArray::SetVarArray");
+    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVarArray");
+      throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
     for (int i = size(); i--; )
       x[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);    
   }
@@ -73,16 +71,15 @@ namespace Gecode {
                            const IntSet& glb,int ubMin,int ubMax,
                            unsigned int minCard,unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
-    if ( ((glb.size() > 0) &&
-          ((glb.min() < Limits::Set::int_min) ||
-           (glb.max() > Limits::Set::int_max))) ||
-         (ubMin < Limits::Set::int_min) || 
-         (ubMax > Limits::Set::int_max))
-      throw Set::VariableOutOfRangeDomain("SetVar");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVarArray");
+    if (glb.size() > 0) {
+      Set::Limits::check(glb.min(),"SetVarArray::SetVarArray");
+      Set::Limits::check(glb.max(),"SetVarArray::SetVarArray");
+    }
+    Set::Limits::check(ubMin,"SetVarArray::SetVarArray");
+    Set::Limits::check(ubMax,"SetVarArray::SetVarArray");
+    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVarArray");
+      throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
     for (int i = size(); i--; )
       x[i].init(home,glb,ubMin,ubMax,minCard,maxCard);
   }
@@ -91,16 +88,15 @@ namespace Gecode {
                            int lbMin,int lbMax,const IntSet& lub,
                            unsigned int minCard,unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
-    if ( ((lub.size() > 0) &&
-          ((lub.min() < Limits::Set::int_min) ||
-           (lub.max() > Limits::Set::int_max))) ||
-         (lbMin < Limits::Set::int_min) || 
-         (lbMax > Limits::Set::int_max))
-      throw Set::VariableOutOfRangeDomain("SetVarArray");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVarArray");
+    Set::Limits::check(lbMin,"SetVarArray::SetVarArray");
+    Set::Limits::check(lbMax,"SetVarArray::SetVarArray");
+    if (lub.size() > 0) {
+      Set::Limits::check(lub.min(),"SetVarArray::SetVarArray");
+      Set::Limits::check(lub.max(),"SetVarArray::SetVarArray");
+    }
+    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVarArray");
+      throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
     for (int i = size(); i--; )
       x[i].init(home,lbMin,lbMax,lub,minCard,maxCard);
   }
@@ -109,19 +105,19 @@ namespace Gecode {
                            const IntSet& glb, const IntSet& lub,
                            unsigned int minCard, unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
-    if (((glb.size() > 0) &&
-         ((glb.min() < Limits::Set::int_min) ||
-          (glb.max() > Limits::Set::int_max)))  ||
-        ((lub.size() > 0) &&
-         ((lub.min() < Limits::Set::int_min) ||
-          (lub.max() > Limits::Set::int_max))))
-      throw Set::VariableOutOfRangeDomain("SetVar");
-    if (maxCard > Limits::Set::card_max)
-      throw Set::VariableOutOfRangeCardinality("SetVar");
+    if (glb.size() > 0) {
+      Set::Limits::check(glb.min(),"SetVarArray::SetVarArray");
+      Set::Limits::check(glb.max(),"SetVarArray::SetVarArray");
+    }
+    if (lub.size() > 0) {
+      Set::Limits::check(lub.min(),"SetVarArray::SetVarArray");
+      Set::Limits::check(lub.max(),"SetVarArray::SetVarArray");
+    }
+    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
     for (int i = size(); i--; )
       x[i].init(home,glb,lub,minCard,maxCard);
     if (minCard > maxCard)
-      throw Set::VariableFailedDomain("SetVar");
+      throw Set::VariableEmptyDomain("SetVar");
   }
 
 }

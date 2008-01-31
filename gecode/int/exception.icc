@@ -44,26 +44,11 @@ namespace Gecode { namespace Int {
 
   //@{
 
-  /// %Exception: %Variable created with empty domain
-  class GECODE_VTABLE_EXPORT VariableEmptyDomain : public Exception {
+  /// %Exception: Value out of limits
+  class GECODE_VTABLE_EXPORT OutOfLimits : public Exception {
   public:
     /// Initialize with location \a l
-    VariableEmptyDomain(const char* l);
-  };
-
-  /// %Exception: %Variable created with values too large for domain
-  class GECODE_VTABLE_EXPORT VariableOutOfRangeDomain : public Exception {
-  public:
-    /// Initialize with location \a l
-    VariableOutOfRangeDomain(const char* l);
-  };
-
-
-  /// %Exception: Numerical overflow
-  class GECODE_VTABLE_EXPORT NumericalOverflow : public Exception {
-  public:
-    /// Initialize with location \a l
-    NumericalOverflow(const char* l);
+    OutOfLimits(const char* l);
   };
 
   /// %Exception: Not 0/1 integer
@@ -73,6 +58,13 @@ namespace Gecode { namespace Int {
     NotZeroOne(const char* l);
   };
 
+
+  /// %Exception: %Variable created with empty domain
+  class GECODE_VTABLE_EXPORT VariableEmptyDomain : public Exception {
+  public:
+    /// Initialize with location \a l
+    VariableEmptyDomain(const char* l);
+  };
 
   /// %Exception: Too few arguments available in argument array
   class GECODE_VTABLE_EXPORT TooFewArguments : public Exception  {
@@ -128,16 +120,12 @@ namespace Gecode { namespace Int {
    */
 
   inline
+  OutOfLimits::OutOfLimits(const char* l)
+    : Exception(l,"Number out of limits") {}
+
+  inline
   VariableEmptyDomain::VariableEmptyDomain(const char* l)
     : Exception(l,"Attempt to create variable with empty domain") {}
-
-  inline
-  VariableOutOfRangeDomain::VariableOutOfRangeDomain(const char* l)
-    : Exception(l,"Attempt to create variable with wrong values") {}
-
-  inline
-  NumericalOverflow::NumericalOverflow(const char* l)
-    : Exception(l,"Integer overflow") {}
 
   inline
   NotZeroOne::NotZeroOne(const char* l)

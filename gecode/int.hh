@@ -58,10 +58,6 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/limits.hh"
-
-#include "gecode/kernel.hh"
-
 /*
  * Support for DLLs under Windows
  *
@@ -89,11 +85,43 @@ namespace Gecode { namespace Int {
 #endif
 #endif
 
+#include <climits>
+#include <cfloat>
 #include <iostream>
 
+#include "gecode/kernel.hh"
 #include "gecode/iter.hh"
-
 #include "gecode/int/exception.icc"
+
+namespace Gecode { namespace Int {
+
+  /**
+   * \brief Numerical limits for integer variables
+   *
+   * The integer limits are chosen such that addition and subtraction
+   * of two values within the limits can be done safely without
+   * numerical overflow. Also, changing the sign is always possible
+   * without overflow.
+   * \ingroup TaskModelIntVars
+   */
+  namespace Limits {
+    /// Largest allowed integer value
+    const int int_max =  INT_MAX - 1;
+    /// Smallest allowed integer value
+    const int int_min = -int_max;
+    /// Largest double that can exactly be represented
+    const double double_max = 9007199254740991.0;
+    /// Smallest double that can exactly be represented
+    const double double_min = -9007199254740991.0;
+    /// Check whether integer \a n is in range, otherwise throw overflow exception with information \a l
+    void check(int n, const char* l);
+    /// Check whether double \a n is in range, otherwise throw overflow exception with information \a l
+    void check(double n, const char* l);
+  }
+
+}}
+
+#include "gecode/int/limits.icc"
 
 namespace Gecode {
 
@@ -308,8 +336,8 @@ namespace Gecode {
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min or \a max exceed the limits for integers as defined
-     *    in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
      */
     GECODE_INT_EXPORT IntVar(Space* home, int min ,int max);
     /**
@@ -320,8 +348,8 @@ namespace Gecode {
      *  - If \a d is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a d contains values that exceed the limits for integers
-     *    as defined in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    as defined in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
      */
     GECODE_INT_EXPORT IntVar(Space* home, const IntSet& d);
     /**
@@ -332,8 +360,8 @@ namespace Gecode {
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min or \a max exceed the limits for integers as defined
-     *    in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
      */
     GECODE_INT_EXPORT void init(Space* home, int min, int max);
     /**
@@ -344,8 +372,8 @@ namespace Gecode {
      *  - If \a d is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a d contains values that exceed the limits for integers
-     *    as defined in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    as defined in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
      */
     GECODE_INT_EXPORT void init(Space* home, const IntSet& d);
     //@}
@@ -469,7 +497,7 @@ namespace Gecode {
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min is less than 0 or \a max is greater than 1,
      *    an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    Gecode::Int::NotZeroOne is thrown.
      */
     GECODE_INT_EXPORT BoolVar(Space* home, int min, int max);
     /**
@@ -481,7 +509,7 @@ namespace Gecode {
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min is less than 0 or \a max is greater than 1,
      *    an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    Gecode::Int::NotZerOne is thrown.
      */
     GECODE_INT_EXPORT void init(Space* home, int min, int max);
     //@}
@@ -612,8 +640,8 @@ namespace Gecode {
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min or \a max exceed the limits for integers as defined
-     *    in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
      */
     GECODE_INT_EXPORT
     IntVarArray(Space* home, int n, int min, int max);
@@ -625,8 +653,8 @@ namespace Gecode {
      *  - If \a s is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a s contains values that exceed the limits for integers
-     *    as defined in Gecode::Limits::Int, an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    as defined in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
      */
     GECODE_INT_EXPORT
     IntVarArray(Space* home, int n, const IntSet& s);
@@ -656,7 +684,7 @@ namespace Gecode {
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min is less than 0 or \a max is greater than 1,
      *    an exception of type
-     *    Gecode::Int::VariableOutOfDomain is thrown.
+     *    Gecode::Int::NotZeroOne is thrown.
      */
     GECODE_INT_EXPORT
     BoolVarArray(Space* home, int n, int min, int max);
@@ -942,24 +970,24 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ n_{x_0+\mathit{offset}}=x_1\f$
    *
-   *  Throws an exception of type Int::NumericalOverflow, if
-   *  the integers in \a n exceed the limits in Limits::Int.
+   *  Throws an exception of type Int::OutOfLimits, if
+   *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntArgs& n, IntVar x0, IntVar x1, int offset=0,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$ n_{x_0+\mathit{offset}}=x_1\f$
    *
-   *  Throws an exception of type Int::NumericalOverflow, if
-   *  the integers in \a n exceed the limits in Limits::Int.
+   *  Throws an exception of type Int::OutOfLimits, if
+   *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntArgs& n, IntVar x0, BoolVar x1, int offset=0, 
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$ n_{x_0+\mathit{offset}}=x_1\f$
    *
-   *  Throws an exception of type Int::NumericalOverflow, if
-   *  the integers in \a n exceed the limits in Limits::Int.
+   *  Throws an exception of type Int::OutOfLimits, if
+   *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntArgs& n, IntVar x0, int x1, int offset=0, 
@@ -1014,8 +1042,8 @@ namespace Gecode {
    *
    * \li Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *     and domain-consistency (\a icl = ICL_DOM).
-   * \li Throws an exception of type Int::NumericalOverflow, if
-   *     the integers in \a n exceed the limits in Limits::Int
+   * \li Throws an exception of type Int::OutOfLimits, if
+   *     the integers in \a n exceed the limits in Int::Limits
    *     or if the combinations of \a n and \a x exceed the limits.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a n are of different size.
@@ -1130,9 +1158,9 @@ namespace Gecode {
    *
    * \exception Int::ArgumentSizeMismatch thrown if the sizes of the arguments
    *            representing tasks does not match.
-   * \exception Int::NumericalOverflow thrown if any numerical argument is
-   *            larger than Limits::Int::int_max or less than
-   *            Limits::Int::int_min.
+   * \exception Int::OutOfLimits thrown if any numerical argument is
+   *            larger than Int::Limits::int_max or less than
+   *            Int::Limits::int_min.
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntVarArgs& machine,
@@ -1620,8 +1648,8 @@ namespace Gecode {
    * \li Supports implementations optimized for memory (\a pk = \a
    * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
-   * \li Throws an exception of type Int::NumericalOverflow, if
-   *     the integers in \a n exceed the limits in Limits::Int.
+   * \li Throws an exception of type Int::OutOfLimits, if
+   *     the integers in \a n exceed the limits in Int::Limits.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a c are of different size.
    *
@@ -1717,13 +1745,13 @@ namespace Gecode {
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
-   *    defined in Limits::Int, an exception of type
-   *    Int::NumericalOverflow is thrown.
+   *    defined in Int::Limits, an exception of type
+   *    Int::OutOfLimits is thrown.
    *  - Assume the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
-   *    for doubles as defined in Limits::Int, an exception of
-   *    type Int::NumericalOverflow is thrown.
+   *    for doubles as defined in Int::Limits, an exception of
+   *    type Int::OutOfLimits is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    */
@@ -1802,13 +1830,13 @@ namespace Gecode {
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
-   *    defined in Limits::Int, an exception of type
-   *    Int::NumericalOverflow is thrown.
+   *    defined in Int::Limits, an exception of type
+   *    Int::OutOfLimits is thrown.
    *  - Assume the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
-   *    for integers as defined in Limits::Int, an exception of
-   *    type Int::NumericalOverflow is thrown.
+   *    for integers as defined in Int::Limits, an exception of
+   *    type Int::OutOfLimits is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    */

@@ -217,7 +217,7 @@ namespace Gecode { namespace Set {
 
     RangeList* p = NULL;
     RangeList* c = fst();
-    d._lubMin = Limits::Set::int_max+1;
+    d._lubMin = Limits::int_max+1;
     while (c != NULL) {
       if (c->max() >= mi){
         if (c->min() > ma) { return result; } //in a hole

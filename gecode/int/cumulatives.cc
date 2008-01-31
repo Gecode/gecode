@@ -53,9 +53,7 @@ namespace Gecode {
     make_view_array(Space *home, const IntArgs& in) {
       ViewArray<ConstIntView> res(home, in.size());
       for (int i = in.size(); i--; ) {
-        if (in[i] < Limits::Int::int_min ||
-            in[i] > Limits::Int::int_max)
-          throw new NumericalOverflow("Int::cumulatives");
+        Limits::check(in[i],"Int::cumulatives");
         res[i] = ConstIntView(in[i]);
       }
 

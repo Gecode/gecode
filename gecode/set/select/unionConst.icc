@@ -180,14 +180,14 @@ namespace Gecode { namespace Set { namespace Select {
       // exclude inconsistent x_i from x1.
 
       GLBndSet sofarBefore(home);
-      LUBndSet selectedInter(home, IntSet (Limits::Set::int_min,
-                                   Limits::Set::int_max));
+      LUBndSet selectedInter(home, IntSet (Limits::int_min,
+                                   Limits::int_max));
       GECODE_AUTOARRAY(GLBndSet, before, n);
 
       int i = 0;
       
       unsigned int maxCard = 0;
-      unsigned int minCard = Limits::Set::card_max;
+      unsigned int minCard = Limits::card_max;
       
       while ( vx1ub() ) {
 

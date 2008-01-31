@@ -71,10 +71,10 @@ namespace Gecode { namespace Set { namespace Convex {
 
       //intersect x1 with (x0.lubMin(),x0.lubMax())
       //This empties x1 if x0.ub is empty. twice.
-      GECODE_ME_CHECK( x1.exclude(home,Limits::Set::int_min,
+      GECODE_ME_CHECK( x1.exclude(home,Limits::int_min,
                                   x0.lubMin()-1) );
       GECODE_ME_CHECK( x1.exclude(home,x0.lubMax()+1,
-                                  Limits::Set::int_max) );
+                                  Limits::int_max) );
 
       int minElement = std::min(x1.glbMin(),x0.glbMin());
       int maxElement = std::max(x1.glbMax(),x0.glbMax());
