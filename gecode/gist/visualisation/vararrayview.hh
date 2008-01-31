@@ -43,9 +43,9 @@
 #include <QtGui/QPushButton>
 #include <QtCore/QString>
 
-#include <gecode/minimodel.hh>
+#include "gecode/minimodel.hh"
 
-#include "vararrayitem.hh"
+#include "gecode/gist/visualisation/vararrayitem.hh"
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
