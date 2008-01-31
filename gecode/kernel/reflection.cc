@@ -842,7 +842,7 @@ namespace Gecode { namespace Reflection {
   void
   ActorSpecIter::operator++(void) {
     cur = cur->next();
-    while (active >= &s->pc.p.queue[0] && (cur == active)) {
+    while (active > &s->pc.p.queue[0] && (cur == active)) {
       active--;
       cur = active;
       cur = cur->next();
