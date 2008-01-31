@@ -228,6 +228,9 @@ namespace Gecode {
         Gecode::Reflection::Arg* a = scriptValToArg(v.property("a"));
         Gecode::Reflection::Arg* b = scriptValToArg(v.property("b"));
         return Gecode::Reflection::Arg::newPair(a,b);
+      } else if (v.isString()) {
+        return Gecode::Reflection::Arg::newString(
+                 v.toString().toStdString().c_str());
       } else {
         return NULL;
       }

@@ -192,6 +192,8 @@ EOF
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_$e(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
 EOF
   ;

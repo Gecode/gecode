@@ -61,6 +61,8 @@ Gecode::IntValBranch toEnum_IntValBranch(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_IntValBranch(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "INT_VAL_MIN"))
     return true;
@@ -88,6 +90,8 @@ Gecode::SetOpType toEnum_SetOpType(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_SetOpType(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "SOT_UNION"))
     return true;
@@ -109,6 +113,8 @@ Gecode::SetValBranch toEnum_SetValBranch(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_SetValBranch(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "SET_VAL_MIN"))
     return true;
@@ -132,6 +138,8 @@ Gecode::SetVarBranch toEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "SET_VAR_NONE"))
     return true;
@@ -181,6 +189,8 @@ Gecode::IntVarBranch toEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "INT_VAR_NONE"))
     return true;
@@ -232,6 +242,8 @@ Gecode::IntRelType toEnum_IntRelType(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_IntRelType(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "IRT_EQ"))
     return true;
@@ -261,6 +273,8 @@ Gecode::IntConLevel toEnum_IntConLevel(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_IntConLevel(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "ICL_VAL"))
     return true;
@@ -288,6 +302,8 @@ Gecode::BoolOpType toEnum_BoolOpType(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_BoolOpType(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "BOT_AND"))
     return true;
@@ -313,6 +329,8 @@ Gecode::PropKind toEnum_PropKind(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_PropKind(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "PK_DEF"))
     return true;
@@ -334,6 +352,8 @@ Gecode::IntAssign toEnum_IntAssign(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_IntAssign(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "INT_ASSIGN_MIN"))
     return true;
@@ -361,6 +381,8 @@ Gecode::SetRelType toEnum_SetRelType(Gecode::Reflection::Arg* a) {
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_SetRelType(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
   const char* av = a->toString();
   if (!strcmp(av, "SRT_EQ"))
     return true;

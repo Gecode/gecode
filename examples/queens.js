@@ -42,17 +42,16 @@ function queens(n) {
   var qp = new Array;
   for (var i=0; i<n; i++) {
     q[i] = variable("Int", "q"+i, [0,n-1]);
-    qm[i] = pair(-i, q[i]);
-    qp[i] = pair(i, q[i]);
+    qm[i] = -i;
+    qp[i] = i;
   }
-  constraint("Int::Distinct::Val<Int::IntView>", q);
-  constraint("Int::Distinct::Val<Int::OffsetView>", qm);
-  constraint("Int::Distinct::Val<Int::OffsetView>", qp);
-  constraint("ViewValBranching<Int::IntView,"+
-                              "int,Int::Branch::BySizeMin,"+
-                              "Int::Branch::ValMin>", q);
+  constraint("Gecode::Post::distinct", q);
+  constraint("Gecode::Post::distinct", qm, q);
+  constraint("Gecode::Post::distinct", qp, q);
+  constraint("Gecode::Post::branch", q, "INT_VAR_NONE", "INT_VAL_MIN");
   return q;
 }
+
 
 // Execute the script
 queens(10)

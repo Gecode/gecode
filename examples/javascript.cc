@@ -155,6 +155,7 @@ int
 main(int argc, char* argv[]) {
   FileNameOptions opt("JavaScript");
   opt.parse(argc,argv);
+  Gecode::Serialization::initRegistry();
   Example::run<JavaScript,DFS,FileNameOptions>(opt);
   return 0;
 }
