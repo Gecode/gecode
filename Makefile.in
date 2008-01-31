@@ -907,9 +907,9 @@ $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 POSTHDR = $(POSTINT) $(POSTSET)
 
 $(top_srcdir)/gecode/serialization/register.cc: \
-			gecode/int.hh gecode/set.hh $(top_srcdir)/misc/genregistry.perl
+			gecode/int.hh gecode/set.hh gecode/minimodel.hh $(top_srcdir)/misc/genregistry.perl
 	perl $(top_srcdir)/misc/genregistry.perl \
-	  gecode/int.hh gecode/set.hh > $@ 2>/dev/null
+	  gecode/int.hh gecode/set.hh gecode/minimodel.hh > $@ 2>/dev/null
 
 
 #
@@ -1082,10 +1082,10 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL)
+$(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(MMDLL) $(CPLTSETDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		$(LINKSET) $(BOOST_LINK) $(LINKQT) \
+		$(LINKSET) $(LINKMM) $(BOOST_LINK) $(LINKQT) \
 		@LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1536,6 +1536,7 @@ depend: $(VARIMP:%=$(top_srcdir)/%)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
+	gecode/serialization/register.cc \
 	$(TESTSRC) > Makefile.dep
 
 -include Makefile.dep

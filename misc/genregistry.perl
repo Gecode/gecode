@@ -35,7 +35,7 @@
 #
 #
 
-%ignore = ("init" => "");
+%ignore = ("init" => "", "NodeType" => "");
 
 print <<EOF
 /*
@@ -112,15 +112,21 @@ foreach $file (@ARGV) {
       $currentPost = $1;
       chomp($currentPost);
       $withinPost = 1;
+    } elsif ($l =~ /inline void(.*)/) {
+      $currentPost = $1;
+      chomp($currentPost);
+      $withinPost = 1;
     } elsif ($withinPost == 1) {
       chomp($l);
       $l =~ s/ [ ]+/ /g;
       $currentPost .= $l;
     } elsif ($l =~ /enum ([a-zA-Z]+)(.*)/) {
-      $withinEnum = 1;
-      $currentEnum = $1;
-      @enumArgs = ();
-      $l = $2;
+      if (not exists $ignore{$1}) {
+        $withinEnum = 1;
+        $currentEnum = $1;
+        @enumArgs = ();
+        $l = $2;
+      }
     }
     if ($withinEnum == 1) {
       if ($l =~ /([A-Z]+_[A-Z_]+)/) {
@@ -134,7 +140,8 @@ foreach $file (@ARGV) {
     }
     if ($withinPost && $l =~ /;/) {
       $withinPost = 0;
-      if ($currentPost =~ /([a-z][a-zA-Z]*)\(Space\s*\*\s*home\s*,\s*(.*)\)/) 
+      if ($currentPost =~ 
+          /([a-z][a-zA-Z_]*)\(Space\s*\*\s*home\s*,\s*([^)]*)\)/) 
       {
         my $postFunName = $1;
         if (exists $ignore{$postFunName}) {

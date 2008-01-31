@@ -1244,5 +1244,6 @@ namespace Gecode { namespace MiniModel {
 
 #endif
 
+// IFDEF: GECODE_HAVE_INT_VARS
 // STATISTICS: minimodel-any
 
