@@ -685,7 +685,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     VisualNode* n;
       n = root->findNode(static_cast<int>(event->x()/scale-xtrans), 
-                         static_cast<int>((event->y()+30)/scale-38));
+                         static_cast<int>((event->y()-30)/scale));
       setCurrentNode(n);
     if (n != NULL) {
       emit contextMenu(event);
