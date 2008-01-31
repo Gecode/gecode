@@ -52,7 +52,7 @@ while ($target = $ARGV[$i++]) {
   my %done = ();
   push @todo, $target;
   while ($f = pop @todo) {
-    open FILE, "$root/$f";
+    open FILE, "$root/$f" || die "File missing: $root/$f\n";
     while ($l = <FILE>) {
       if ($l =~ /^\#include "(.*)"/) {
 	$g = $1;
