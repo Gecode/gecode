@@ -506,51 +506,65 @@ namespace Gecode { namespace Reflection {
     delete _dom;
   }
 
+  VarSpec::VarSpec(void) : _dom(NULL) {}
+  
   VarSpec::VarSpec(Support::Symbol vti, Arg* dom) 
   : _dom(new Domain(vti,dom)) {}
 
   VarSpec::VarSpec(const VarSpec& s) : _dom(s._dom) {
-    _dom->r++;
+    if (_dom)
+      _dom->r++;
   }
   
   const VarSpec&
   VarSpec::operator=(const VarSpec& s) {
     if (this != &s) {
-      if (--_dom->r == 0)
+      if (_dom && --_dom->r == 0)
         delete _dom;
       _dom = s._dom;
-      _dom->r++;
+      if (_dom)
+        _dom->r++;
     }
     return *this;
   }
   
   VarSpec::~VarSpec(void) {
-    if (--_dom->r == 0)
+    if (_dom && --_dom->r == 0)
       delete _dom;
   }
 
   void
   VarSpec::name(const Support::Symbol& n) {
+    if (_dom == NULL)
+      throw ReflectionException("Empty VarSpec");
     _dom->_n = n;
   }
   
   Support::Symbol
   VarSpec::name(void) const {
+    if (_dom == NULL)
+      throw ReflectionException("Empty VarSpec");
     return _dom->_n;
   }
 
   bool
   VarSpec::hasName(void) const {
+    if (_dom == NULL)
+      throw ReflectionException("Empty VarSpec");
     return !_dom->_n.empty();
   }
 
   Support::Symbol
   VarSpec::vti(void) const {
+    if (_dom == NULL)
+      throw ReflectionException("Empty VarSpec");
     return _dom->_vti;
   }
 
   Arg*
   VarSpec::dom(void) const {
+    if (_dom == NULL)
+      throw ReflectionException("Empty VarSpec");
     return _dom->_dom;
   }
 
@@ -599,6 +613,7 @@ namespace Gecode { namespace Reflection {
 
   void
   ActorSpec::resize(void) {
+    assert(_args != NULL);
     _args->size = _args->size * 3 / 2;
     Arg** newargs =
       static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*_args->size));
@@ -608,72 +623,86 @@ namespace Gecode { namespace Reflection {
     _args->a = newargs;
   }
 
+  ActorSpec::ActorSpec(void) : _args(NULL) {}
+
   ActorSpec::ActorSpec(const Support::Symbol& ati) {
     _args = new Arguments(ati);
   }
 
   ActorSpec::ActorSpec(const ActorSpec& s) : _args(s._args) {
-    _args->r++;
+    if (_args != NULL)
+      _args->r++;
   }
   
   const ActorSpec&
   ActorSpec::operator=(const ActorSpec& s) {
     if (this != &s) {
-      if (--_args->r == 0)
+      if (_args && --_args->r == 0)
         delete _args;
       _args = s._args;
-      _args->r++;
+      if (_args)
+        _args->r++;
     }
     return *this;
   }
 
   Arg*
   ActorSpec::operator[](int i) const {
-    if (i >= _args->n)
+    if (_args == NULL || i < 0 || i >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
   int
   ActorSpec::noOfArgs(void) const {
-    return _args->n;
+    return _args == NULL ? 0 : _args->n;
   }
 
   void
   ActorSpec::checkArity(int n) const {
-    if (_args->n != n) {
+    if (_args == NULL || _args->n != n) {
       throw ReflectionException("Illegal arity in ActorSpec");
     }
   }
 
   Support::Symbol
   ActorSpec::ati(void) const {
+    if (_args == NULL)
+      throw ReflectionException("Empty ActorSpec");
     return _args->_ati;
   }
 
   bool
   ActorSpec::isBranching(void) const {
+    if (_args == NULL)
+      throw ReflectionException("Empty ActorSpec");
     return _args->queue < 0;
   }
 
   int
   ActorSpec::queue(void) const {
+    if (_args == NULL)
+      throw ReflectionException("Empty ActorSpec");
     return _args->queue-1;
   }
 
   unsigned int
   ActorSpec::branchingId(void) const {
+    if (_args == NULL)
+      throw ReflectionException("Empty ActorSpec");
     assert(isBranching());
     return static_cast<unsigned int>(-_args->queue-1);
   }
 
   ActorSpec::~ActorSpec(void) {
-    if (--_args->r == 0)
+    if (_args && --_args->r == 0)
       delete _args;
   }
 
   void
   ActorSpec::add(Arg* arg) {
+    if (_args == NULL)
+      throw ReflectionException("Empty ActorSpec");
     if (_args->n == _args->size)
       resize();
     _args->a[_args->n] = arg;
@@ -703,6 +732,8 @@ namespace Gecode { namespace Reflection {
 
   void
   ActorSpec::queue(int q) {
+    if (_args == NULL)
+      throw ReflectionException("Empty ActorSpec");
     _args->queue = q;
   }
 
@@ -743,41 +774,45 @@ namespace Gecode { namespace Reflection {
     Memory::free(a);
   }
   
+  BranchingSpec::BranchingSpec(void) : _args(NULL) {}
+  
   BranchingSpec::BranchingSpec(const BranchingDesc* d) {
     _args = new Arguments(d->id(), d->alternatives());
   }
 
   BranchingSpec::BranchingSpec(const BranchingSpec& s) : _args(s._args) {
-    _args->r++;
+    if (_args)
+      _args->r++;
   }
   
   const BranchingSpec&
   BranchingSpec::operator=(const BranchingSpec& s) {
     if (this != &s) {
-      if (--_args->r == 0)
+      if (_args && --_args->r == 0)
         delete _args;
       _args = s._args;
-      _args->r++;
+      if (_args)
+        _args->r++;
     }
     return *this;
   }
 
   Arg*
   BranchingSpec::operator[](int i) const {
-    if (i < 0 || static_cast<unsigned int>(i) >= _args->n)
+    if (_args == NULL || i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
   Arg*&
   BranchingSpec::operator[](int i) {
-    if (i < 0 || static_cast<unsigned int>(i) >= _args->n)
+    if (_args == NULL || i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
   BranchingSpec::~BranchingSpec(void) {
-    if (--_args->r == 0)
+    if (_args && --_args->r == 0)
       delete _args;
   }
   
@@ -785,12 +820,12 @@ namespace Gecode { namespace Reflection {
   BranchingSpec::createdBy(const ActorSpec& b) const {
     if (!b.isBranching())
       throw ReflectionException("ActorSpec does not belong to a Branching");
-    return _args->id == b.branchingId();
+    return _args != NULL && _args->id == b.branchingId();
   }
 
   unsigned int
   BranchingSpec::alternatives(void) const {
-    return _args->n;
+    return _args == NULL ? 0 : _args->n;
   }
   
 

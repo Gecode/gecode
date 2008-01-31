@@ -302,6 +302,8 @@ namespace Gecode { namespace Reflection {
     /// A representation of the domain of this variable
     Domain* _dom;
   public:
+    /// Construct empty VarSpec
+    VarSpec(void);
     /// Construct specification for a variable
     VarSpec(Support::Symbol vti, Arg* domain);
     /// Copy constructor
@@ -359,6 +361,8 @@ namespace Gecode { namespace Reflection {
      */
     unsigned int branchingId(void) const;
   public:
+    /// Construct empty ActorSpec
+    ActorSpec(void);
     /// Construct actor specification with \a name
     ActorSpec(const Support::Symbol& name);
     /// Copy constructor
@@ -423,6 +427,8 @@ namespace Gecode { namespace Reflection {
     /// The arguments of this branching
     Arguments* _args;
   public:
+    /// Default constructor
+    BranchingSpec(void);
     /** \brief Construct spec for branching description \a d
      *
      * This constructor is used by a Branching to create a BranchingSpec.

@@ -396,7 +396,7 @@ The high-level post functions are generated automatically from the post function
   <TH>Comment</TH>
 </TR>
 <TR><TD>\c int</TD><TD>\c INT</TD></TR>
-<TR><TD>\c unsigned int</TD><TD>\c INT</TD></TR>
+<TR><TD><TT>unsigned int</TT></TD><TD>\c INT</TD></TR>
 <TR><TD>\c bool</TD><TD>\c INT</TD></TR>
 <TR><TD>\c IntVar</TD><TD>\c VAR</TD></TR>
 <TR><TD>\c BoolVar</TD><TD>\c VAR</TD></TR>
