@@ -90,7 +90,7 @@ namespace Gecode { namespace Gist {
 
   AnalysisCursor::AnalysisCursor(VisualNode* root, int& min, int& max)
   : NodeCursor<VisualNode>(root), minHeat(min), maxHeat(max) {
-    minHeat = Limits::Int::int_max;
+    minHeat = Gecode::Int::Limits::int_max;
     maxHeat = 0;
     processTopDown();
   }
