@@ -357,7 +357,6 @@ namespace Gecode {
       if (pc.p.active != pc.p.active->next())
         break;
     } while (--pc.p.active >= &pc.p.queue[0]);
-    assert(pc.p.active < &pc.p.queue[0]);
     return;
   }
 
