@@ -199,7 +199,7 @@ KERNELHDR0 = \
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
-	gecode/limits.hh gecode/kernel.hh \
+	gecode/kernel.hh \
 	$(KERNELHDR0:%=gecode/kernel/%.icc) \
 	$(VARIMPHDR)
 KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
@@ -269,6 +269,7 @@ INTSRC0 = \
 	channel.cc channel/link-single.cc channel/link-multi.cc \
 	circuit.cc unshare.cc
 INTHDR0 = \
+	limits.icc \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
 	branch/select-val.icc branch/select-view.icc \
@@ -352,6 +353,7 @@ SETSRC0 =								 \
 	projectors/compiler.cc						 \
 	projectors/formula.cc
 SETHDR0 =								     \
+	limits.icc \
 	view.icc exception.icc int.hh select.hh var-imp.icc int/card.icc     \
 	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
 	int/channel-bool.icc select/idxarray.hh			             \
@@ -1126,9 +1128,9 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
-$(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL)
+$(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKCPLTSET) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKCPLTSET) $(LINKMM) \
 		$(BOOST_LINK) $(LINKQT) @LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
