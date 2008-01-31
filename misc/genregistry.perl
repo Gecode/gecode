@@ -35,18 +35,6 @@
 #
 #
 
-%enums = ("IntConLevel" => "",
-          "PropKind" => "",
-          "IntAssign" => "",
-          "IntRelType" => "",
-          "BoolOpType" => "",
-          "IntValBranch" => "",
-          "IntVarBranch" => "",
-          "SetRelType" => "",
-          "SetOpType" => "",
-          "SetValBranch" => "",
-          "SetVarBranch" => "");
-
 %ignore = ("init" => "");
 
 print <<EOF
@@ -104,55 +92,8 @@ foreach $file (@ARGV) {
   print "#include \"$file\"\n";
 }
 
-print <<EOF
-
-#include "gecode/serialization.hh"
-
-namespace {
-
-/// Check if \a corresponds to enum \a e
-bool isEnum(const char* e, Gecode::Reflection::Arg* a) {
-  return a->isPair() && a->first()->isString() &&
-         !strcmp(a->first()->toString(), e);
-}
-
-/// Check if \a a corresponds to a variable in \a vm with type \a Var
-template <class Var>
-bool isVar(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
-  if (!a->isVar())
-    return false;
-  Gecode::Reflection::VarSpec& s = vm.spec(a->toVar());
-  typedef typename Gecode::VarViewTraits<Var>::View View;
-  typedef typename Gecode::ViewVarImpTraits<View>::VarImp VarImp;
-  return s.vti() == VarImp::vti;
-}
-
-/// Check if \a a corresponds to an array of \a Var variables in \a vm
-template <class Var>
-bool isVarArgs(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
-  if (!a->isArray())
-    return false;
-  Gecode::Reflection::ArrayArg& aa = *a->toArray();
-  for (int i=aa.size(); i--;)
-    if (!isVar<Var>(vm, aa[i]))
-      return false;
-  return true;
-}
-
-bool isIntSetArgs(Gecode::Reflection::Arg* a) {
-  if (!a->isArray())
-    return false;
-  Gecode::Reflection::ArrayArg& aa = *a->toArray();
-  for (int i=aa.size(); i--;)
-    if (!aa[i]->isIntArray())
-      return false;
-  return true;
-}
-
-EOF
-;
-
 my %postFunctions;
+my %enumerations = ("PropKind" => [ ("PK_DEF", "PK_SPEED", "PK_MEMORY") ]);
 
 # Collect post functions from header files, filenames given on command line
 foreach $file (@ARGV) {
@@ -160,7 +101,10 @@ foreach $file (@ARGV) {
   open HEADERFILE, $file || die "open failed";
 
   $currentPost = "";
+  $currentEnum = "";
+  my @enumArgs;
   $withinPost = 0;
+  $withinEnum = 0;
   while ($l = <HEADERFILE>) {
     if ($l =~ /GECODE_[A-Z]+_EXPORT.*void(.*)/) {
       $currentPost = $1;
@@ -170,6 +114,20 @@ foreach $file (@ARGV) {
       chomp($l);
       $l =~ s/ [ ]+/ /g;
       $currentPost .= $l;
+    } elsif ($l =~ /enum ([a-zA-Z]+)(.*)/) {
+      $withinEnum = 1;
+      $currentEnum = $1;
+      @enumArgs = ();
+      $l = $2;
+    }
+    if ($withinEnum == 1) {
+      if ($l =~ /([A-Z]+_[A-Z_]+)/) {
+        push(@enumArgs, $1);
+      }
+      if ($l =~ /};/) {
+        $withinEnum = 0;
+        $enumerations{$currentEnum} = [ @enumArgs ];
+      }
     }
     if ($withinPost && $l =~ /;/) {
       $withinPost = 0;
@@ -210,6 +168,78 @@ foreach $file (@ARGV) {
 foreach $key (keys %postFunctions) {
   $postFunctions{$key} = [ sort {@{$a} <=> @{$b}} (@{$postFunctions{$key}}) ];
 }
+
+print <<EOF
+
+#include "gecode/serialization.hh"
+
+namespace {
+EOF
+;
+
+foreach $e (keys %enumerations) {
+  print <<EOF
+Gecode::$e toEnum_$e(Gecode::Reflection::Arg* a) {
+  assert(a->isString());
+  const char* av = a->toString();
+EOF
+;
+  foreach $ev (@{$enumerations{$e}}) {
+    print "  if (!strcmp(av, \"$ev\"))\n";
+    print "    return Gecode::$ev;\n"
+  }
+  print <<EOF
+  throw Gecode::Reflection::ReflectionException("Internal error");
+}
+bool isEnum_$e(Gecode::Reflection::Arg* a) {
+  const char* av = a->toString();
+EOF
+  ;
+  foreach $ev (@{$enumerations{$e}}) {
+    print "  if (!strcmp(av, \"$ev\"))\n";
+    print "    return true;\n"
+  }
+  print "  return false;\n";
+  print "}\n";
+}
+
+print <<EOF
+
+/// Check if \a a corresponds to a variable in \a vm with type \a Var
+template <class Var>
+bool isVar(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
+  if (!a->isVar())
+    return false;
+  Gecode::Reflection::VarSpec& s = vm.spec(a->toVar());
+  typedef typename Gecode::VarViewTraits<Var>::View View;
+  typedef typename Gecode::ViewVarImpTraits<View>::VarImp VarImp;
+  return s.vti() == VarImp::vti;
+}
+
+/// Check if \a a corresponds to an array of \a Var variables in \a vm
+template <class Var>
+bool isVarArgs(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
+  if (!a->isArray())
+    return false;
+  Gecode::Reflection::ArrayArg& aa = *a->toArray();
+  for (int i=aa.size(); i--;)
+    if (!isVar<Var>(vm, aa[i]))
+      return false;
+  return true;
+}
+
+bool isIntSetArgs(Gecode::Reflection::Arg* a) {
+  if (!a->isArray())
+    return false;
+  Gecode::Reflection::ArrayArg& aa = *a->toArray();
+  for (int i=aa.size(); i--;)
+    if (!aa[i]->isIntArray())
+      return false;
+  return true;
+}
+
+EOF
+;
 
 # Output one registration class per (overloaded) post function name
 foreach $key (keys %postFunctions) {
@@ -322,7 +352,7 @@ sub recognized {
     } elsif ($a eq "IntArgs") {
     } elsif ($a eq "IntSetArgs") {
     } elsif ($a eq "IntSet") {
-    } elsif (exists $enums{$a}) {
+    } elsif (exists $enumerations{$a}) {
     } else {
       return 0;
     }
@@ -343,8 +373,8 @@ sub outputArgCond {
     print "isIntSetArgs(spec[$_[1]])";
   } elsif ($_[0] eq "IntSet") {
     print "spec[$_[1]]->isIntArray()";
-  } elsif (exists $enums{$_[0]}) {
-    print "isEnum(\"$_[0]\",spec[$_[1]])";
+  } elsif (exists $enumerations{$_[0]}) {
+    print "isEnum_$_[0](spec[$_[1]])";
   } else {
     print "unknown($_[0])";
   }
@@ -399,11 +429,9 @@ sub outputArg {
     print "Gecode::Reflection::IntArrayArgRanges ar$_[1](a$_[1]);\n";
     print "          ";
     print "Gecode::IntSet x$_[1](ar$_[1]);\n";
-  } elsif (exists $enums{$_[0]}) {
+  } elsif (exists $enumerations{$_[0]}) {
     print "          ";
-    print "Gecode::$_[0] x$_[1] =\n";
-    print "            ";
-    print "static_cast<Gecode::$_[0]>(spec[$_[1]]->second()->toInt());\n";
+    print "Gecode::$_[0] x$_[1] = toEnum_$_[0](spec[$_[1]]);\n";
   } else {
     print "unknown($_[0])";
   }  

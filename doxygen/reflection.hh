@@ -228,6 +228,8 @@ An interface can benefit from reflection in three ways:
     added as additional libraries, the interface does not even have to be 
     recompiled.
 
+Please refer to \ref PageReflectionRegistry for more information on the propagators that are available through unreflection.
+
 \section SecReflAddSupport Adding reflection support to actors and variables
 
 When the ActorSpecIter iterates over the actors of a space, each actor has to deliver its specification through the virtual function Actor::spec. When this function is called, the actor creates an ActorSpec with its <em>actor type identifier</em> (ati) and fills it with a representation of its arguments, encoded into objects of type Reflection::Arg. The specification for the views is delegated to the views or view arrays that the actor uses.
@@ -361,5 +363,55 @@ The \c spec function of a view returns a <em>reference to a variable</em>. As a 
 Views and variables also have constructors for unreflection. Again, the Views delegate unreflection of the underlying variable. See Gecode::IntVar::IntVar(const Gecode::Reflection::Var&) and Gecode::Int::IntView::IntView(Space*, const Reflection::VarMap&, Reflection::Arg*).
 
 For unreflection, the registry contains functions for creating, constraining, updating, and printing variable implementations. If a variable implementation implements the two functions \c create and \c constrain, it can be registered using a Gecode::Reflection::VarImpRegistrar. The generic variables (Gecode::Reflection::Var) use the registry to perform updates. For an example of how to implement the necessary functionality, see Gecode::Int::IntVarImp.
+
+*/
+
+/**
+  \page PageReflectionRegistry The Reflection Registry
+
+The registry maps an actor type identifier (ati) to a function that posts the corresponding constraint. The type of these post functions is defined in the registry as
+\code
+class Registry {
+public:
+    /// The type of constraint posting functions
+    typedef void (*poster) (Gecode::Space*,
+                            Gecode::Reflection::VarMap&,
+                            const Gecode::Reflection::ActorSpec&);
+};
+\endcode
+
+There are two kinds of post functions in the registry:
+  - One function per actor instance. These functions correspond directly to individual propagators and branchings. For instance, the registry contains a function for the ati \c Int::Distinct::Dom<Int::OffsetView>. Each propagator registers one post function per instance. The registry is populated with these post functions as soon as the library in which the propagator is defined is loaded.
+  
+  - One function per constraint post function (the functions found in gecode/int.hh or gecode/set.hh, for example). The functions are useful for interfacing to Gecode, as they provide a higher-level interface to the propagators. For example, the registry contains a post function for the ati \c Gecode::rel. Depending on the arguments given in the ActorSpec, this function can post any of the \c rel constraints found in gecode/int.hh and gecode/set.hh. All high-level post functions are registered when the serialization library is loaded, which can be triggered by callling Gecode::Serialization::initRegistry.
+
+\section SecRegistryArgMapping Mapping arguments to ActorSpecs
+
+The high-level post functions are generated automatically from the post functions in gecode/int.hh and gecode/set.hh. The argument types are mapped automatically to Gecode::Reflection::Arg terms.
+
+<TABLE>
+<TR>
+  <TH>C++ argument type</TH>
+  <TH>Reflection::Arg type</TH>
+  <TH>Comment</TH>
+</TR>
+<TR><TD>\c int</TD><TD>\c INT</TD></TR>
+<TR><TD>\c unsigned int</TD><TD>\c INT</TD></TR>
+<TR><TD>\c bool</TD><TD>\c INT</TD></TR>
+<TR><TD>\c IntVar</TD><TD>\c VAR</TD></TR>
+<TR><TD>\c BoolVar</TD><TD>\c VAR</TD></TR>
+<TR><TD>\c SetVar</TD><TD>\c VAR</TD></TR>
+<TR><TD>\c IntVarArgs</TD><TD><TT>[VAR,...,VAR]</TT></TD></TR>
+<TR><TD>\c BoolVarArgs</TD><TD><TT> [VAR,...,VAR]</TT></TD></TR>
+<TR><TD>\c SetVarArgs</TD><TD><TT>[VAR,...,VAR]</TT></TD></TR>
+<TR><TD>\c IntArgs</TD><TD><TT>[INT,...,INT]</TT></TD></TR>
+<TR><TD>\c IntSet</TD><TD><TT>[INT,...,INT]</TT></TD>
+<TD>Two consecutive integers are interpreted as a range</TD></TR>
+<TR><TD>\c IntSetArgs</TD><TD><TT>[[INT,...,INT],...,[INT,...,INT]]</TT></TD>
+<TD>Same representation as for IntSet</TD></TR>
+<TR><TD>Any enumeration</TD><TD><TT>STRING</TT></TD>
+<TD>The string representation of the enum value, e.g. \c "IRT_EQ"</TD>
+</TR>
+</TABLE>
 
 */
