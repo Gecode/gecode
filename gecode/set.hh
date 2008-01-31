@@ -995,4 +995,5 @@ namespace Gecode {
 
 #endif
 
+// IFDEF: GECODE_HAVE_SET_VARS
 // STATISTICS: set-post

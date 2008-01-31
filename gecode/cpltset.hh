@@ -785,5 +785,5 @@ namespace Gecode {
 
 #endif
 
-
+// IFDEF: GECODE_HAVE_CPLTSET_VARS
 // STATISTICS: set-post

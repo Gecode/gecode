@@ -2019,5 +2019,6 @@ operator<<(std::ostream&, const Gecode::TupleSet& ts);
 
 #endif
 
+// IFDEF: GECODE_HAVE_INT_VARS
 // STATISTICS: int-post
 

@@ -907,8 +907,9 @@ $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 POSTHDR = $(POSTINT) $(POSTSET)
 
 $(top_srcdir)/gecode/serialization/register.cc: \
-			$(POSTHDR) gecode/config.hh $(top_srcdir)/misc/genregistry.perl
-	perl $(top_srcdir)/misc/genregistry.perl $(POSTHDR) > $@ 2>/dev/null
+			gecode/int.hh gecode/set.hh $(top_srcdir)/misc/genregistry.perl
+	perl $(top_srcdir)/misc/genregistry.perl \
+	  gecode/int.hh gecode/set.hh > $@ 2>/dev/null
 
 
 #

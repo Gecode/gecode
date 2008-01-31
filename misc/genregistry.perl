@@ -88,12 +88,11 @@ print <<EOF
 EOF
 ;
 
-foreach $file (@ARGV) {
-  print "#include \"$file\"\n";
-}
-
 my %postFunctions;
-my %enumerations = ("PropKind" => [ ("PK_DEF", "PK_SPEED", "PK_MEMORY") ]);
+my %enumerations = ("PropKind" => [ ("gecode/kernel.hh",
+                                     "PK_DEF", "PK_SPEED", "PK_MEMORY") ]);
+
+my %ifdefs = ("gecode/kernel.hh" => "1");
 
 # Collect post functions from header files, filenames given on command line
 foreach $file (@ARGV) {
@@ -106,6 +105,9 @@ foreach $file (@ARGV) {
   $withinPost = 0;
   $withinEnum = 0;
   while ($l = <HEADERFILE>) {
+    if ($l =~ /\/\/ IFDEF: (.*)/) {
+      $ifdefs{$file} = "defined($1)";
+    }
     if ($l =~ /GECODE_[A-Z]+_EXPORT.*void(.*)/) {
       $currentPost = $1;
       chomp($currentPost);
@@ -126,6 +128,7 @@ foreach $file (@ARGV) {
       }
       if ($l =~ /};/) {
         $withinEnum = 0;
+        unshift(@enumArgs, $file);
         $enumerations{$currentEnum} = [ @enumArgs ];
       }
     }
@@ -141,6 +144,7 @@ foreach $file (@ARGV) {
           # Push full version
           my @processedArgs = processArgs(@args);
           if (recognized(@processedArgs)) {
+            unshift(@processedArgs, $file);
             push(@{$postFunctions{$postFunName}}, [ @processedArgs ]);
           } else {
             print STDERR "ignored:\n  $currentPost\n";
@@ -154,6 +158,7 @@ foreach $file (@ARGV) {
               }
               @processedArgs = processArgs(@shorterArgs);
               if (recognized(@processedArgs)) {
+                unshift(@processedArgs, $file);
                 push(@{$postFunctions{$postFunName}}, [ @processedArgs ]);
               }
             }
@@ -169,6 +174,14 @@ foreach $key (keys %postFunctions) {
   $postFunctions{$key} = [ sort {@{$a} <=> @{$b}} (@{$postFunctions{$key}}) ];
 }
 
+print "#include \"gecode/config.hh\"\n";
+
+foreach $file (@ARGV) {
+  print "#if $ifdefs{$file}\n";
+  print "#include \"$file\"\n";
+  print "#endif\n";
+}
+
 print <<EOF
 
 #include "gecode/serialization.hh"
@@ -178,7 +191,10 @@ EOF
 ;
 
 foreach $e (keys %enumerations) {
+my $file = shift(@{$enumerations{$e}});
+my $ifdef = $ifdefs{$file};
   print <<EOF
+#if $ifdef
 Gecode::$e toEnum_$e(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -203,11 +219,12 @@ EOF
   }
   print "  return false;\n";
   print "}\n";
+  print "#endif\n";
 }
 
 print <<EOF
 
-/// Check if \a a corresponds to a variable in \a vm with type \a Var
+/// Check if \\a a corresponds to a variable in \\a vm with type \\a Var
 template <class Var>
 bool isVar(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   if (!a->isVar())
@@ -218,7 +235,7 @@ bool isVar(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   return s.vti() == VarImp::vti;
 }
 
-/// Check if \a a corresponds to an array of \a Var variables in \a vm
+/// Check if \\a a corresponds to an array of \\a Var variables in \\a vm
 template <class Var>
 bool isVarArgs(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   if (!a->isArray())
@@ -262,6 +279,7 @@ EOF
   
   $arity = -1;
   foreach $f (@{$postFunctions{$key}}) {
+    my $file = shift (@{$f});
     if ($arity != scalar(@{$f})) {
       if ($arity >= 0) {
         print "        throw Gecode::Reflection::ReflectionException(\"Argument type mismatch for Gecode::Post::$key\");\n";
@@ -273,14 +291,16 @@ EOF
       print "      {\n";
     }
 
+    my $ifdef = $ifdefs{$file};
+    print "#if $ifdef\n";
     # Check arguments
-    print   "        if(";
+    print   "        if (";
     my $count = 0;
     my @args = @{$f};
     foreach $a (@args) {
       outputArgCond($a, $count);
       if ($count < scalar(@args)-1) {
-        print " &&\n           ";
+        print " &&\n            ";
       }
       $count++;
     }
@@ -305,6 +325,7 @@ EOF
     print ");\n";
     print "          return;\n";
     print "        }\n";
+    print "#endif\n";
   }
   if ($arity >= 0) {
     print "        throw Gecode::Reflection::ReflectionException(\"Argument type mismatch for Gecode::Post::$key\");\n";

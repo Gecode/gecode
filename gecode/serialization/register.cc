@@ -39,12 +39,18 @@
  *
  */
 
+#include "gecode/config.hh"
+#if defined(GECODE_HAVE_INT_VARS)
 #include "gecode/int.hh"
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
 #include "gecode/set.hh"
+#endif
 
 #include "gecode/serialization.hh"
 
 namespace {
+#if defined(GECODE_HAVE_INT_VARS)
 Gecode::IntValBranch toEnum_IntValBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -76,6 +82,8 @@ bool isEnum_IntValBranch(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
 Gecode::SetOpType toEnum_SetOpType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -103,6 +111,8 @@ bool isEnum_SetOpType(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
 Gecode::SetValBranch toEnum_SetValBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -122,6 +132,8 @@ bool isEnum_SetValBranch(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
 Gecode::SetVarBranch toEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -153,6 +165,8 @@ bool isEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
 Gecode::IntVarBranch toEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -224,6 +238,8 @@ bool isEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
 Gecode::IntRelType toEnum_IntRelType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -259,6 +275,8 @@ bool isEnum_IntRelType(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
 Gecode::IntConLevel toEnum_IntConLevel(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -286,6 +304,8 @@ bool isEnum_IntConLevel(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
 Gecode::BoolOpType toEnum_BoolOpType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -317,6 +337,8 @@ bool isEnum_BoolOpType(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if 1
 Gecode::PropKind toEnum_PropKind(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -340,6 +362,8 @@ bool isEnum_PropKind(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
 Gecode::IntAssign toEnum_IntAssign(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -363,6 +387,8 @@ bool isEnum_IntAssign(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
 Gecode::SetRelType toEnum_SetRelType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -398,8 +424,9 @@ bool isEnum_SetRelType(Gecode::Reflection::Arg* a) {
     return true;
   return false;
 }
+#endif
 
-/// Check if  a corresponds to a variable in  vm with type  Var
+/// Check if \a a corresponds to a variable in \a vm with type \a Var
 template <class Var>
 bool isVar(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   if (!a->isVar())
@@ -410,7 +437,7 @@ bool isVar(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   return s.vti() == VarImp::vti;
 }
 
-/// Check if  a corresponds to an array of  Var variables in  vm
+/// Check if \a a corresponds to an array of \a Var variables in \a vm
 template <class Var>
 bool isVarArgs(Gecode::Reflection::VarMap& vm, Gecode::Reflection::Arg* a) {
   if (!a->isArray())
@@ -445,8 +472,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -456,8 +484,10 @@ public:
           Gecode::rel(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -467,14 +497,16 @@ public:
           Gecode::rel(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::rel");
       }
       break;
     case 3:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -482,9 +514,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -495,9 +529,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -505,9 +541,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -518,9 +556,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -531,9 +571,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -547,9 +589,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -557,9 +601,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -570,9 +616,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -580,9 +628,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -593,9 +643,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -609,9 +661,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -622,9 +676,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isEnum_BoolOpType(spec[0]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isEnum_BoolOpType(spec[0]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
         {
           Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -635,9 +691,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isEnum_BoolOpType(spec[0]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isEnum_BoolOpType(spec[0]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -648,9 +706,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -658,9 +718,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -668,9 +730,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -678,9 +742,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -688,9 +754,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -698,9 +766,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isEnum_SetOpType(spec[0]) &&
-           isVarArgs<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isEnum_SetOpType(spec[0]) &&
+            isVarArgs<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::SetOpType x0 = toEnum_SetOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -711,9 +781,11 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
-        if(isEnum_SetOpType(spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isEnum_SetOpType(spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::SetOpType x0 = toEnum_SetOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -724,15 +796,17 @@ public:
           Gecode::rel(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::rel");
       }
       break;
     case 4:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -741,10 +815,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -756,10 +832,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -768,10 +846,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -783,10 +863,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -795,10 +877,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -807,10 +891,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -822,10 +908,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -840,10 +928,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -852,10 +942,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -867,10 +959,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -879,10 +973,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -894,10 +990,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -912,10 +1010,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -927,10 +1027,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_BoolOpType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_BoolOpType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
@@ -939,10 +1041,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_BoolOpType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_BoolOpType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
@@ -951,10 +1055,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isEnum_BoolOpType(spec[0]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isEnum_BoolOpType(spec[0]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -966,10 +1072,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isEnum_BoolOpType(spec[0]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isEnum_BoolOpType(spec[0]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -981,10 +1089,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -993,10 +1103,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -1007,10 +1119,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -1019,10 +1133,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -1031,10 +1147,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isEnum_SetOpType(spec[0]) &&
-           isVarArgs<Gecode::SetVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVar<Gecode::SetVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isEnum_SetOpType(spec[0]) &&
+            isVarArgs<Gecode::SetVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVar<Gecode::SetVar>(vm, spec[3]))
         {
           Gecode::SetOpType x0 = toEnum_SetOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -1048,10 +1166,12 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
-        if(isEnum_SetOpType(spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVar<Gecode::SetVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isEnum_SetOpType(spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVar<Gecode::SetVar>(vm, spec[3]))
         {
           Gecode::SetOpType x0 = toEnum_SetOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -1065,16 +1185,18 @@ public:
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::rel");
       }
       break;
     case 5:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1084,11 +1206,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1101,11 +1225,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1115,11 +1241,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1132,11 +1260,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1146,11 +1276,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1160,11 +1292,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1180,11 +1314,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1194,11 +1330,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1211,11 +1349,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1225,11 +1365,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1242,11 +1384,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1262,11 +1406,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_BoolOpType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_BoolOpType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
@@ -1276,11 +1422,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_BoolOpType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_BoolOpType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
@@ -1290,11 +1438,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isEnum_BoolOpType(spec[0]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isEnum_BoolOpType(spec[0]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -1307,11 +1457,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isEnum_BoolOpType(spec[0]) &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isEnum_BoolOpType(spec[0]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -1324,11 +1476,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetOpType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           isEnum_SetRelType(spec[3]) &&
-           isVar<Gecode::SetVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetOpType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            isEnum_SetRelType(spec[3]) &&
+            isVar<Gecode::SetVar>(vm, spec[4]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetOpType x1 = toEnum_SetOpType(spec[1]);
@@ -1338,11 +1492,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isEnum_SetOpType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           isEnum_SetRelType(spec[3]) &&
-           isVar<Gecode::SetVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (spec[0]->isIntArray() &&
+            isEnum_SetOpType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            isEnum_SetRelType(spec[3]) &&
+            isVar<Gecode::SetVar>(vm, spec[4]))
         {
           Gecode::Reflection::IntArrayArg* a0 = spec[0]->toIntArray();
           Gecode::Reflection::IntArrayArgRanges ar0(a0);
@@ -1354,11 +1510,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetOpType(spec[1]) &&
-           spec[2]->isIntArray() &&
-           isEnum_SetRelType(spec[3]) &&
-           isVar<Gecode::SetVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetOpType(spec[1]) &&
+            spec[2]->isIntArray() &&
+            isEnum_SetRelType(spec[3]) &&
+            isVar<Gecode::SetVar>(vm, spec[4]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetOpType x1 = toEnum_SetOpType(spec[1]);
@@ -1370,11 +1528,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetOpType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           isEnum_SetRelType(spec[3]) &&
-           spec[4]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetOpType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            isEnum_SetRelType(spec[3]) &&
+            spec[4]->isIntArray())
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetOpType x1 = toEnum_SetOpType(spec[1]);
@@ -1386,11 +1546,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isEnum_SetOpType(spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           isEnum_SetRelType(spec[3]) &&
-           spec[4]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (spec[0]->isIntArray() &&
+            isEnum_SetOpType(spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            isEnum_SetRelType(spec[3]) &&
+            spec[4]->isIntArray())
         {
           Gecode::Reflection::IntArrayArg* a0 = spec[0]->toIntArray();
           Gecode::Reflection::IntArrayArgRanges ar0(a0);
@@ -1404,11 +1566,13 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetOpType(spec[1]) &&
-           spec[2]->isIntArray() &&
-           isEnum_SetRelType(spec[3]) &&
-           spec[4]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetOpType(spec[1]) &&
+            spec[2]->isIntArray() &&
+            isEnum_SetRelType(spec[3]) &&
+            spec[4]->isIntArray())
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetOpType x1 = toEnum_SetOpType(spec[1]);
@@ -1422,17 +1586,19 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::rel");
       }
       break;
     case 6:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1443,12 +1609,14 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
@@ -1459,12 +1627,14 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_BoolOpType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_BoolOpType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
@@ -1475,12 +1645,14 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_BoolOpType(spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_BoolOpType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
@@ -1491,6 +1663,7 @@ public:
           Gecode::rel(home, x0,x1,x2,x3,x4,x5);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::rel");
       }
       break;
@@ -1512,12 +1685,14 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-        if(isVar<Gecode::SetVar>(vm, spec[0]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::convex(home, x0);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::convex");
       }
       break;
@@ -1539,8 +1714,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -1550,6 +1726,7 @@ public:
           Gecode::selectDisjoint(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectDisjoint");
       }
       break;
@@ -1571,10 +1748,11 @@ public:
     switch(spec.noOfArgs()) {
     case 4:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           spec[3]->isIntArray())
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isIntArray())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -1588,16 +1766,18 @@ public:
           Gecode::selectInterIn(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInterIn");
       }
       break;
     case 5:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           spec[3]->isIntArray() &&
-           spec[4]->isInt())
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isIntArray() &&
+            spec[4]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -1612,6 +1792,7 @@ public:
           Gecode::selectInterIn(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInterIn");
       }
       break;
@@ -1633,9 +1814,10 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -1646,15 +1828,17 @@ public:
           Gecode::selectInter(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInter");
       }
       break;
     case 4:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -1666,6 +1850,7 @@ public:
           Gecode::selectInter(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInter");
       }
       break;
@@ -1687,10 +1872,11 @@ public:
     switch(spec.noOfArgs()) {
     case 4:
       {
-        if(spec[0]->isIntArray() &&
-           spec[1]->isIntArray() &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (spec[0]->isIntArray() &&
+            spec[1]->isIntArray() &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -1703,6 +1889,7 @@ public:
           Gecode::weights(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::weights");
       }
       break;
@@ -1724,7 +1911,8 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -1733,6 +1921,7 @@ public:
           Gecode::sequence(home, x0);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sequence");
       }
       break;
@@ -1754,7 +1943,8 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1763,7 +1953,9 @@ public:
           Gecode::unshare(home, x0);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1772,13 +1964,15 @@ public:
           Gecode::unshare(home, x0);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::unshare");
       }
       break;
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1788,8 +1982,10 @@ public:
           Gecode::unshare(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1799,14 +1995,16 @@ public:
           Gecode::unshare(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::unshare");
       }
       break;
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]) &&
-           isEnum_PropKind(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]) &&
+            isEnum_PropKind(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1817,9 +2015,11 @@ public:
           Gecode::unshare(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]) &&
-           isEnum_PropKind(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]) &&
+            isEnum_PropKind(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1830,6 +2030,7 @@ public:
           Gecode::unshare(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::unshare");
       }
       break;
@@ -1851,9 +2052,10 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt())
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1864,9 +2066,11 @@ public:
           Gecode::linear(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1877,9 +2081,11 @@ public:
           Gecode::linear(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1890,9 +2096,11 @@ public:
           Gecode::linear(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -1903,15 +2111,17 @@ public:
           Gecode::linear(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::linear");
       }
       break;
     case 4:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1923,10 +2133,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1938,10 +2150,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1953,10 +2167,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -1968,10 +2184,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -1985,10 +2203,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2002,10 +2222,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2017,10 +2239,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2032,10 +2256,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2047,10 +2273,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2062,10 +2290,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2079,10 +2309,12 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2096,16 +2328,18 @@ public:
           Gecode::linear(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::linear");
       }
       break;
     case 5:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2118,11 +2352,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2135,11 +2371,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2152,11 +2390,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2169,11 +2409,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2188,11 +2430,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2207,11 +2451,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2226,11 +2472,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isVar<Gecode::BoolVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isVar<Gecode::BoolVar>(vm, spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2245,11 +2493,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2262,11 +2512,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2279,11 +2531,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2296,11 +2550,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2313,11 +2569,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2332,11 +2590,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2351,11 +2611,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2370,11 +2632,13 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isVar<Gecode::BoolVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isVar<Gecode::BoolVar>(vm, spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2389,17 +2653,19 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::linear");
       }
       break;
     case 6:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2413,12 +2679,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2432,12 +2700,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2453,12 +2723,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2474,12 +2746,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2495,12 +2769,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2516,12 +2792,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2535,12 +2813,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntRelType(spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -2554,12 +2834,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2575,12 +2857,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2596,12 +2880,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2617,12 +2903,14 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2638,18 +2926,20 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::linear");
       }
       break;
     case 7:
       {
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]) &&
-           isEnum_PropKind(spec[6]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]) &&
+            isEnum_PropKind(spec[6]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2666,13 +2956,15 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]) &&
-           isEnum_PropKind(spec[6]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]) &&
+            isEnum_PropKind(spec[6]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2689,13 +2981,15 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]) &&
-           isEnum_PropKind(spec[6]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]) &&
+            isEnum_PropKind(spec[6]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2712,13 +3006,15 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isVar<Gecode::BoolVar>(vm, spec[4]) &&
-           isEnum_IntConLevel(spec[5]) &&
-           isEnum_PropKind(spec[6]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isVar<Gecode::BoolVar>(vm, spec[4]) &&
+            isEnum_IntConLevel(spec[5]) &&
+            isEnum_PropKind(spec[6]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -2735,6 +3031,7 @@ public:
           Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::linear");
       }
       break;
@@ -2756,8 +3053,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2770,14 +3068,16 @@ public:
           Gecode::sorted(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sorted");
       }
       break;
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2791,15 +3091,17 @@ public:
           Gecode::sorted(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sorted");
       }
       break;
     case 4:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2814,6 +3116,7 @@ public:
           Gecode::sorted(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sorted");
       }
       break;
@@ -2835,8 +3138,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2846,22 +3150,26 @@ public:
           Gecode::max(home, x0,x1);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::max(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::max");
       }
       break;
     case 3:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -2869,9 +3177,11 @@ public:
           Gecode::max(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2882,15 +3192,17 @@ public:
           Gecode::max(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::max");
       }
       break;
     case 4:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -2899,10 +3211,12 @@ public:
           Gecode::max(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2914,16 +3228,18 @@ public:
           Gecode::max(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::max");
       }
       break;
     case 5:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -2933,6 +3249,7 @@ public:
           Gecode::max(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::max");
       }
       break;
@@ -2954,13 +3271,14 @@ public:
     switch(spec.noOfArgs()) {
     case 7:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -2989,13 +3307,15 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3023,13 +3343,15 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3057,13 +3379,15 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3090,13 +3414,15 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3124,13 +3450,15 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3157,13 +3485,15 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3190,13 +3520,15 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3222,19 +3554,21 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cumulatives");
       }
       break;
     case 8:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3264,14 +3598,16 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3300,14 +3636,16 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3336,14 +3674,16 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3371,14 +3711,16 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3407,14 +3749,16 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3442,14 +3786,16 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3477,14 +3823,16 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3511,20 +3859,22 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cumulatives");
       }
       break;
     case 9:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3555,15 +3905,17 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3593,15 +3945,17 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3631,15 +3985,17 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3668,15 +4024,17 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3706,15 +4064,17 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3743,15 +4103,17 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3780,15 +4142,17 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-           spec[4]->isIntArray() &&
-           spec[5]->isIntArray() &&
-           spec[6]->isInt() &&
-           isEnum_IntConLevel(spec[7]) &&
-           isEnum_PropKind(spec[8]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
+            spec[4]->isIntArray() &&
+            spec[5]->isIntArray() &&
+            spec[6]->isInt() &&
+            isEnum_IntConLevel(spec[7]) &&
+            isEnum_PropKind(spec[8]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -3816,6 +4180,7 @@ public:
           Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cumulatives");
       }
       break;
@@ -3837,8 +4202,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3851,16 +4217,20 @@ public:
           Gecode::channel(home, x0,x1);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::channel(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -3870,8 +4240,10 @@ public:
           Gecode::channel(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::SetVar>(vm, spec[1]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::SetVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3884,8 +4256,10 @@ public:
           Gecode::channel(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -3895,14 +4269,16 @@ public:
           Gecode::channel(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::channel");
       }
       break;
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3916,9 +4292,11 @@ public:
           Gecode::channel(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -3926,9 +4304,11 @@ public:
           Gecode::channel(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -3939,15 +4319,17 @@ public:
           Gecode::channel(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::channel");
       }
       break;
     case 4:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -3962,10 +4344,12 @@ public:
           Gecode::channel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -3974,10 +4358,12 @@ public:
           Gecode::channel(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -3989,16 +4375,18 @@ public:
           Gecode::channel(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::channel");
       }
       break;
     case 5:
       {
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -4011,6 +4399,7 @@ public:
           Gecode::channel(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::channel");
       }
       break;
@@ -4032,22 +4421,25 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::cardinality(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cardinality");
       }
       break;
     case 3:
       {
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt())
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt())
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           unsigned int x1 = static_cast<unsigned int>(spec[1]->toInt());
@@ -4055,6 +4447,7 @@ public:
           Gecode::cardinality(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cardinality");
       }
       break;
@@ -4076,7 +4469,8 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4085,13 +4479,15 @@ public:
           Gecode::distinct(home, x0);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::distinct");
       }
       break;
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4101,8 +4497,10 @@ public:
           Gecode::distinct(home, x0,x1);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -4114,14 +4512,16 @@ public:
           Gecode::distinct(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::distinct");
       }
       break;
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]) &&
-           isEnum_PropKind(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]) &&
+            isEnum_PropKind(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4132,9 +4532,11 @@ public:
           Gecode::distinct(home, x0,x1,x2);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -4147,15 +4549,17 @@ public:
           Gecode::distinct(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::distinct");
       }
       break;
     case 4:
       {
-        if(spec[0]->isIntArray() &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -4169,6 +4573,7 @@ public:
           Gecode::distinct(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::distinct");
       }
       break;
@@ -4190,9 +4595,10 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -4203,9 +4609,11 @@ public:
           Gecode::selectSet(home, x0,x1,x2);
           return;
         }
-        if(isIntSetArgs(spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isIntSetArgs(spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::IntSetArgs x0(a0.size());
@@ -4219,15 +4627,17 @@ public:
           Gecode::selectSet(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectSet");
       }
       break;
     case 4:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -4239,10 +4649,12 @@ public:
           Gecode::selectSet(home, x0,x1,x2,x3);
           return;
         }
-        if(isIntSetArgs(spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isIntSetArgs(spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::IntSetArgs x0(a0.size());
@@ -4257,6 +4669,7 @@ public:
           Gecode::selectSet(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectSet");
       }
       break;
@@ -4278,8 +4691,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray())
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray())
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
@@ -4288,8 +4702,10 @@ public:
           Gecode::dom(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4301,14 +4717,16 @@ public:
           Gecode::dom(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::dom");
       }
       break;
     case 3:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt())
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt())
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           int x1 = static_cast<int>(spec[1]->toInt());
@@ -4316,9 +4734,11 @@ public:
           Gecode::dom(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4329,9 +4749,11 @@ public:
           Gecode::dom(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
@@ -4341,9 +4763,11 @@ public:
           Gecode::dom(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4356,9 +4780,11 @@ public:
           Gecode::dom(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isVar<Gecode::BoolVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
@@ -4368,9 +4794,11 @@ public:
           Gecode::dom(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -4378,9 +4806,11 @@ public:
           Gecode::dom(home, x0,x1,x2);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           spec[2]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            spec[2]->isIntArray())
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -4390,15 +4820,17 @@ public:
           Gecode::dom(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::dom");
       }
       break;
     case 4:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           int x1 = static_cast<int>(spec[1]->toInt());
@@ -4407,10 +4839,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4422,10 +4856,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
@@ -4436,10 +4872,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4453,10 +4891,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           int x1 = static_cast<int>(spec[1]->toInt());
@@ -4465,10 +4905,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
@@ -4479,10 +4921,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt())
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -4491,10 +4935,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -4503,10 +4949,12 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           spec[2]->isIntArray() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            spec[2]->isIntArray() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -4517,16 +4965,18 @@ public:
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::dom");
       }
       break;
     case 5:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           int x1 = static_cast<int>(spec[1]->toInt());
@@ -4536,11 +4986,13 @@ public:
           Gecode::dom(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4553,11 +5005,13 @@ public:
           Gecode::dom(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           int x1 = static_cast<int>(spec[1]->toInt());
@@ -4567,11 +5021,13 @@ public:
           Gecode::dom(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
@@ -4583,11 +5039,13 @@ public:
           Gecode::dom(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetRelType(spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[4]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[4]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
@@ -4597,17 +5055,19 @@ public:
           Gecode::dom(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::dom");
       }
       break;
     case 6:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           spec[2]->isInt() &&
-           isVar<Gecode::BoolVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           int x1 = static_cast<int>(spec[1]->toInt());
@@ -4618,6 +5078,7 @@ public:
           Gecode::dom(home, x0,x1,x2,x3,x4,x5);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::dom");
       }
       break;
@@ -4639,8 +5100,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4653,8 +5115,10 @@ public:
           Gecode::count(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isIntSetArgs(spec[1]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isIntSetArgs(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4670,14 +5134,16 @@ public:
           Gecode::count(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::count");
       }
       break;
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4691,9 +5157,11 @@ public:
           Gecode::count(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isIntSetArgs(spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isIntSetArgs(spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4710,9 +5178,11 @@ public:
           Gecode::count(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4728,9 +5198,11 @@ public:
           Gecode::count(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isIntSetArgs(spec[1]) &&
-           spec[2]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isIntSetArgs(spec[1]) &&
+            spec[2]->isIntArray())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4749,9 +5221,11 @@ public:
           Gecode::count(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           spec[2]->isIntArray())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            spec[2]->isIntArray())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4766,15 +5240,17 @@ public:
           Gecode::count(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::count");
       }
       break;
     case 4:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt())
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4786,10 +5262,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4801,10 +5279,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4818,10 +5298,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4833,10 +5315,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4848,10 +5332,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4865,10 +5351,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4883,10 +5371,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isIntSetArgs(spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isIntSetArgs(spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4904,10 +5394,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4924,10 +5416,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isIntSetArgs(spec[1]) &&
-           spec[2]->isIntArray() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isIntSetArgs(spec[1]) &&
+            spec[2]->isIntArray() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4947,10 +5441,12 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           spec[2]->isIntArray() &&
-           isEnum_IntConLevel(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            spec[2]->isIntArray() &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4966,16 +5462,18 @@ public:
           Gecode::count(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::count");
       }
       break;
     case 5:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -4988,11 +5486,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5005,11 +5505,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5024,11 +5526,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5041,11 +5545,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5058,11 +5564,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5077,11 +5585,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isIntArray() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isIntArray() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5099,11 +5609,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isIntSetArgs(spec[1]) &&
-           spec[2]->isIntArray() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isIntSetArgs(spec[1]) &&
+            spec[2]->isIntArray() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5124,11 +5636,13 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           spec[2]->isIntArray() &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            spec[2]->isIntArray() &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5145,17 +5659,19 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::count");
       }
       break;
     case 6:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5169,12 +5685,14 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5188,12 +5706,14 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntRelType(spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntRelType(spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5209,12 +5729,14 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isInt() &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isInt() &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5228,12 +5750,14 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5247,12 +5771,14 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           spec[1]->isIntArray() &&
-           isEnum_IntRelType(spec[2]) &&
-           isVar<Gecode::IntVar>(vm, spec[3]) &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            spec[1]->isIntArray() &&
+            isEnum_IntRelType(spec[2]) &&
+            isVar<Gecode::IntVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5268,6 +5794,7 @@ public:
           Gecode::count(home, x0,x1,x2,x3,x4,x5);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::count");
       }
       break;
@@ -5289,8 +5816,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5300,22 +5828,26 @@ public:
           Gecode::min(home, x0,x1);
           return;
         }
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::min(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::min");
       }
       break;
     case 3:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -5323,9 +5855,11 @@ public:
           Gecode::min(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5336,15 +5870,17 @@ public:
           Gecode::min(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::min");
       }
       break;
     case 4:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -5353,10 +5889,12 @@ public:
           Gecode::min(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5368,16 +5906,18 @@ public:
           Gecode::min(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::min");
       }
       break;
     case 5:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -5387,6 +5927,7 @@ public:
           Gecode::min(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::min");
       }
       break;
@@ -5408,8 +5949,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isVarArgs<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
@@ -5419,6 +5961,7 @@ public:
           Gecode::match(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::match");
       }
       break;
@@ -5440,9 +5983,10 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -5453,9 +5997,11 @@ public:
           Gecode::selectUnion(home, x0,x1,x2);
           return;
         }
-        if(isIntSetArgs(spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isIntSetArgs(spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::IntSetArgs x0(a0.size());
@@ -5469,15 +6015,17 @@ public:
           Gecode::selectUnion(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
       }
       break;
     case 4:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -5489,10 +6037,12 @@ public:
           Gecode::selectUnion(home, x0,x1,x2,x3);
           return;
         }
-        if(isIntSetArgs(spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]) &&
-           isVar<Gecode::SetVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isIntSetArgs(spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::IntSetArgs x0(a0.size());
@@ -5507,6 +6057,7 @@ public:
           Gecode::selectUnion(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
       }
       break;
@@ -5528,8 +6079,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -5539,6 +6091,7 @@ public:
           Gecode::sequentialUnion(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sequentialUnion");
       }
       break;
@@ -5560,9 +6113,10 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntVarBranch(spec[1]) &&
-           isEnum_IntValBranch(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntVarBranch(spec[1]) &&
+            isEnum_IntValBranch(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5573,9 +6127,11 @@ public:
           Gecode::branch(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntVarBranch(spec[1]) &&
-           isEnum_IntValBranch(spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntVarBranch(spec[1]) &&
+            isEnum_IntValBranch(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -5586,9 +6142,11 @@ public:
           Gecode::branch(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           isEnum_SetVarBranch(spec[1]) &&
-           isEnum_SetValBranch(spec[2]))
+#endif
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetVarBranch(spec[1]) &&
+            isEnum_SetValBranch(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -5599,6 +6157,7 @@ public:
           Gecode::branch(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::branch");
       }
       break;
@@ -5620,9 +6179,10 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5632,9 +6192,11 @@ public:
           Gecode::element(home, x0,x1,x2);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5644,9 +6206,11 @@ public:
           Gecode::element(home, x0,x1,x2);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5656,9 +6220,11 @@ public:
           Gecode::element(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5669,9 +6235,11 @@ public:
           Gecode::element(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5682,9 +6250,11 @@ public:
           Gecode::element(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -5695,9 +6265,11 @@ public:
           Gecode::element(home, x0,x1,x2);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -5708,15 +6280,17 @@ public:
           Gecode::element(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::element");
       }
       break;
     case 4:
       {
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5727,10 +6301,12 @@ public:
           Gecode::element(home, x0,x1,x2,x3);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5741,10 +6317,12 @@ public:
           Gecode::element(home, x0,x1,x2,x3);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5755,10 +6333,12 @@ public:
           Gecode::element(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5770,10 +6350,12 @@ public:
           Gecode::element(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5785,10 +6367,12 @@ public:
           Gecode::element(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -5800,10 +6384,12 @@ public:
           Gecode::element(home, x0,x1,x2,x3);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt())
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -5815,16 +6401,18 @@ public:
           Gecode::element(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::element");
       }
       break;
     case 5:
       {
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5836,11 +6424,13 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5852,11 +6442,13 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5868,11 +6460,13 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5885,11 +6479,13 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -5902,11 +6498,13 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -5919,11 +6517,13 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -5936,17 +6536,19 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::element");
       }
       break;
     case 6:
       {
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5959,12 +6561,14 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5977,12 +6581,14 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(spec[0]->isIntArray() &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (spec[0]->isIntArray() &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
           Gecode::IntArgs x0(a0.size());
@@ -5995,12 +6601,14 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -6014,12 +6622,14 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -6033,12 +6643,14 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::BoolVar>(vm, spec[2]) &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -6052,12 +6664,14 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4,x5);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           spec[2]->isInt() &&
-           spec[3]->isInt() &&
-           isEnum_IntConLevel(spec[4]) &&
-           isEnum_PropKind(spec[5]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            spec[2]->isInt() &&
+            spec[3]->isInt() &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -6071,6 +6685,7 @@ public:
           Gecode::element(home, x0,x1,x2,x3,x4,x5);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::element");
       }
       break;
@@ -6092,22 +6707,25 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::abs(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::abs");
       }
       break;
     case 3:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -6115,15 +6733,17 @@ public:
           Gecode::abs(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::abs");
       }
       break;
     case 4:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isEnum_IntConLevel(spec[2]) &&
-           isEnum_PropKind(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -6132,6 +6752,7 @@ public:
           Gecode::abs(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::abs");
       }
       break;
@@ -6153,14 +6774,16 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVar<Gecode::SetVar>(vm, spec[0]) &&
-           isVar<Gecode::SetVar>(vm, spec[1]))
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
           Gecode::SetVar x1(vm.var(spec[1]->toVar()));
           Gecode::convexHull(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::convexHull");
       }
       break;
@@ -6182,7 +6805,8 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -6191,13 +6815,15 @@ public:
           Gecode::circuit(home, x0);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::circuit");
       }
       break;
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -6207,14 +6833,16 @@ public:
           Gecode::circuit(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::circuit");
       }
       break;
     case 3:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntConLevel(spec[1]) &&
-           isEnum_PropKind(spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntConLevel(spec[1]) &&
+            isEnum_PropKind(spec[2]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -6225,6 +6853,7 @@ public:
           Gecode::circuit(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::circuit");
       }
       break;
@@ -6246,8 +6875,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-           isEnum_IntAssign(spec[1]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntAssign(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
@@ -6257,8 +6887,10 @@ public:
           Gecode::assign(home, x0,x1);
           return;
         }
-        if(isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-           isEnum_IntAssign(spec[1]))
+#endif
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntAssign(spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
@@ -6268,6 +6900,7 @@ public:
           Gecode::assign(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::assign");
       }
       break;
@@ -6289,9 +6922,10 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -6299,15 +6933,17 @@ public:
           Gecode::mult(home, x0,x1,x2);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mult");
       }
       break;
     case 4:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -6316,16 +6952,18 @@ public:
           Gecode::mult(home, x0,x1,x2,x3);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mult");
       }
       break;
     case 5:
       {
-        if(isVar<Gecode::IntVar>(vm, spec[0]) &&
-           isVar<Gecode::IntVar>(vm, spec[1]) &&
-           isVar<Gecode::IntVar>(vm, spec[2]) &&
-           isEnum_IntConLevel(spec[3]) &&
-           isEnum_PropKind(spec[4]))
+#if defined(GECODE_HAVE_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
@@ -6335,6 +6973,7 @@ public:
           Gecode::mult(home, x0,x1,x2,x3,x4);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mult");
       }
       break;
@@ -6356,8 +6995,9 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-        if(isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-           spec[1]->isInt())
+#if defined(GECODE_HAVE_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            spec[1]->isInt())
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
@@ -6367,6 +7007,7 @@ public:
           Gecode::atmostOne(home, x0,x1);
           return;
         }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::atmostOne");
       }
       break;
