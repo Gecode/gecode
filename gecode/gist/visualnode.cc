@@ -194,16 +194,6 @@ namespace Gecode { namespace Gist {
     VisualNode::getRealAlternative(void) {
       return realAlternative;
     }
-
-    void
-    VisualNode::addPit(int pit) {
-      pits << pit;
-    }
-    
-    QList<int>
-    VisualNode::getPits(void) {
-      return pits;
-    }
 #endif
 
   void

@@ -76,8 +76,6 @@ namespace Gecode { namespace Gist {
     VisualNode* realParent;
     /// The alternative of the node before expansion
     int realAlternative;
-    /// The points in time at which the node was inspected
-    QList<int> pits;
 #endif
 
     /// Heat value 
@@ -152,10 +150,6 @@ namespace Gecode { namespace Gist {
     void setRealAlternative(int alternative);
     /// Get the node's real alternative
     int getRealAlternative(void);
-    /// Add a new point in time
-    void addPit(int pit);
-    /// Get the list of points in time
-    QList<int> getPits(void);
 #endif
 
     /// Return heat value
