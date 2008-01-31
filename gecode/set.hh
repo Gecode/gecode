@@ -44,6 +44,8 @@
 #ifndef __GECODE_SET_HH__
 #define __GECODE_SET_HH__
 
+#include "gecode/config.hh"
+
 namespace Gecode { namespace Set {
   /** 
    * \namespace Gecode::Set

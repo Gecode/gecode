@@ -43,6 +43,8 @@
 #ifndef __GECODE_INT_HH__
 #define __GECODE_INT_HH__
 
+#include "gecode/config.hh"
+
 namespace Gecode { namespace Int {
 
   /**
