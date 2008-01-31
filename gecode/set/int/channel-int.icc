@@ -149,7 +149,7 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   Support::Symbol
   ChannelInt<View>::ati(void) {
-    return Reflection::mangle<View>("Set::Int::ChannelInt");
+    return Reflection::mangle<View>("Gecode::Set::Int::ChannelInt");
   }
 
   template <class View>

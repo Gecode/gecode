@@ -261,7 +261,7 @@ namespace Gecode { namespace Int {
   }
   inline Support::Symbol
   IntView::type(void) {
-    return Support::Symbol("Int::IntView");
+    return Support::Symbol("Gecode::Int::IntView");
   }
 
 

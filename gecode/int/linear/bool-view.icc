@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class XV, class YV>
   inline Support::Symbol
   EqBoolView<XV,YV>::ati(void) {
-    return Reflection::mangle<XV,YV>("Int::Linear::EqBoolView");
+    return Reflection::mangle<XV,YV>("Gecode::Int::Linear::EqBoolView");
   }
 
   template <class XV, class YV>
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class XV, class YV>
   inline Support::Symbol
   NqBoolView<XV,YV>::ati(void) {
-    return Reflection::mangle<XV,YV>("Int::Linear::NqBoolView");
+    return Reflection::mangle<XV,YV>("Gecode::Int::Linear::NqBoolView");
   }
 
   template <class XV, class YV>
@@ -349,7 +349,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class XV, class YV>
   inline Support::Symbol
   GqBoolView<XV,YV>::ati(void) {
-    return Reflection::mangle<XV,YV>("Int::Linear::GqBoolView");
+    return Reflection::mangle<XV,YV>("Gecode::Int::Linear::GqBoolView");
   }
 
   template <class XV, class YV>

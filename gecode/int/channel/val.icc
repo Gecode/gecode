@@ -231,7 +231,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, bool shared>
   Support::Symbol
   Val<View,shared>::ati(void) {
-    return Reflection::mangle<View,shared>("Int::Channel::Val");
+    return Reflection::mangle<View,shared>("Gecode::Int::Channel::Val");
   }
 
   template <class View, bool shared>

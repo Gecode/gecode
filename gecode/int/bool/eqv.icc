@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BVA, class BVB, class BVC>
   inline Support::Symbol
   Eqv<BVA,BVB,BVC>::ati(void) {
-    return Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Eqv");
+    return Reflection::mangle<BVA,BVB,BVC>("Gecode::Int::Bool::Eqv");
   }
   template <class BVA, class BVB, class BVC>
   Reflection::ActorSpec

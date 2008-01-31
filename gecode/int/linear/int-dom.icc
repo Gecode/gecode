@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class View>
   inline Support::Symbol
   DomEq<Val,View>::ati(void) {
-    return Reflection::mangle<Val,View>("Int::Linear::DomEq");
+    return Reflection::mangle<Val,View>("Gecode::Int::Linear::DomEq");
   }
 
   template <class Val, class View>

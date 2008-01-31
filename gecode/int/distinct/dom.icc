@@ -691,7 +691,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   Support::Symbol
   Dom<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Distinct::Dom");
+    return Reflection::mangle<View>("Gecode::Int::Distinct::Dom");
   }
 
   template <class View>

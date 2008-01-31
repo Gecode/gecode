@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   inline Support::Symbol
   Lq<BV>::ati(void) {
-    return Reflection::mangle<BV>("Int::Bool::Lq");
+    return Reflection::mangle<BV>("Gecode::Int::Bool::Lq");
   }
 
   template<class BV>

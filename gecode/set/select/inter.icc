@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   Support::Symbol
   SelectIntersection<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Set::Select::Intersection");
+    return Reflection::mangle<SView,RView>("Gecode::Set::Select::Intersection");
   }
 
   template <class SView, class RView>

@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Dom {
   template <class View>
   inline Support::Symbol
   ReIntSet<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Dom::ReIntSet");
+    return Reflection::mangle<View>("Gecode::Int::Dom::ReIntSet");
   }
 
   template <class View>

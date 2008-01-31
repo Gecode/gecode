@@ -355,7 +355,7 @@ namespace Gecode {
     template <class Val, class UnsVal>
     inline Support::Symbol
     ScaleView<Val,UnsVal>::type(void) {
-      return Support::Symbol("Int::ScaleView");
+      return Support::Symbol("Gecode::Int::ScaleView");
     }
 
 

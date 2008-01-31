@@ -334,7 +334,7 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   Support::Symbol
   Weights<View>::ati(void) {
-    return Reflection::mangle<View>("Set::Int::Weights");
+    return Reflection::mangle<View>("Gecode::Set::Int::Weights");
   }
 
   template <class View>

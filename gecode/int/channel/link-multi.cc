@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   Support::Symbol
   LinkMulti::ati(void) {
-    return Support::Symbol("Int::Channel::LinkMulti");
+    return Support::Symbol("Gecode::Int::Channel::LinkMulti");
   }
   
   Reflection::ActorSpec

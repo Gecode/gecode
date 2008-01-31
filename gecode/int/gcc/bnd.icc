@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   Support::Symbol
   BndImp<View, Card, isView, shared>::ati(void) {
-    Support::Symbol mangled("Int::GCC::Bnd");
+    Support::Symbol mangled("Gecode::Int::GCC::Bnd");
     mangled += "<";
     mangled += View::type();
     mangled += ",";

@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   Support::Symbol
   SuperOfInter<View0,View1,View2>::ati(void) {
-    return Reflection::mangle<View0,View1,View2>("Set::RelOp::SuperOfInter");
+    return Reflection::mangle<View0,View1,View2>("Gecode::Set::RelOp::SuperOfInter");
   }
 
   template <class View0, class View1, class View2>

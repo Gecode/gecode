@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Convex {
 
   Support::Symbol
   Convex::ati(void) {
-    return Support::Symbol("Set::Convex::Convex");
+    return Support::Symbol("Gecode::Set::Convex::Convex");
   }
 
   Reflection::ActorSpec

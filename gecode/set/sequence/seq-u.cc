@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   Support::Symbol
   SeqU::ati(void) {
-    return Support::Symbol("Set::Sequence::Union");
+    return Support::Symbol("Gecode::Set::Sequence::Union");
   }
 
   Reflection::ActorSpec

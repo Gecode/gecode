@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   Support::Symbol
   Val<ViewM,ViewD,ViewH,View>::ati(void) {
     return 
-      Reflection::mangle<ViewM,ViewD,ViewH,View>("Int::Cumulatives::Val");
+      Reflection::mangle<ViewM,ViewD,ViewH,View>("Gecode::Int::Cumulatives::Val");
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>

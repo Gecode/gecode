@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View0, class View1>
   inline Support::Symbol
   EqBnd<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Int::Rel::EqBnd");
+    return Reflection::mangle<View0,View1>("Gecode::Int::Rel::EqBnd");
   }
 
   template <class View0, class View1>
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View0, class View1>
   inline Support::Symbol
   EqDom<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Int::Rel::EqDom");
+    return Reflection::mangle<View0,View1>("Gecode::Int::Rel::EqDom");
   }
 
   template <class View0, class View1>
@@ -268,7 +268,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   inline Support::Symbol
   NaryEqDom<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Rel::NaryEqDom");
+    return Reflection::mangle<View>("Gecode::Int::Rel::NaryEqDom");
   }
 
   template <class View>
@@ -419,7 +419,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   inline Support::Symbol
   NaryEqBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Rel::NaryEqBnd");
+    return Reflection::mangle<View>("Gecode::Int::Rel::NaryEqBnd");
   }
 
   template <class View>
@@ -519,7 +519,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   inline Support::Symbol
   ReEqDom<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDom");
+    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqDom");
   }
 
   template <class View, class CtrlView>
@@ -602,7 +602,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   inline Support::Symbol
   ReEqBnd<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqBnd");
+    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqBnd");
   }
 
   template <class View, class CtrlView>
@@ -692,7 +692,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   inline Support::Symbol
   ReEqDomInt<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDomInt");
+    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqDomInt");
   }
 
   template <class View, class CtrlView>
@@ -794,7 +794,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   inline Support::Symbol
   ReEqBndInt<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqBndInt");
+    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqBndInt");
   }
 
   template <class View, class CtrlView>

@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   inline Support::Symbol
   Lq<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Rel::Lq");
+    return Reflection::mangle<View>("Gecode::Int::Rel::Lq");
   }
 
   template <class View>
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   inline Support::Symbol
   Le<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Rel::Le");
+    return Reflection::mangle<View>("Gecode::Int::Rel::Le");
   }
 
   template <class View>
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   inline Support::Symbol
   ReLq<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Int::Rel::ReLq");
+    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReLq");
   }
 
   template <class View, class CtrlView>
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   inline Support::Symbol
   ReLqInt<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Int::Rel::ReLqInt");
+    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReLqInt");
   }
   
   template <class View, class CtrlView>

@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   Support::Symbol
   ReEq<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Set::Rel::ReEq");
+    return Reflection::mangle<View0,View1>("Gecode::Set::Rel::ReEq");
   }
 
   template <class View0, class View1>

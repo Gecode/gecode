@@ -179,7 +179,7 @@ namespace Gecode { namespace Set {
 
   inline Support::Symbol
   SetView::type(void) {
-    return Support::Symbol("Set::SetView");
+    return Support::Symbol("Gecode::Set::SetView");
   }
 
   /*

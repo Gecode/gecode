@@ -63,7 +63,7 @@ namespace Gecode { namespace CpltSet {
   template <class View1, class View2>
   Support::Symbol
   Singleton<View1,View2>::ati(void) {
-    return Reflection::mangle<View1,View2>("CpltSet::Singleton");
+    return Reflection::mangle<View1,View2>("Gecode::CpltSet::Singleton");
   }
 
   template <class View1, class View2>

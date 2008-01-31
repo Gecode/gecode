@@ -306,7 +306,7 @@ namespace Gecode {
     }
     inline Support::Symbol
     BoolView::type(void) {
-      return Support::Symbol("Int::BoolView");
+      return Support::Symbol("Gecode::Int::BoolView");
     }
 
     /*
@@ -488,7 +488,7 @@ namespace Gecode {
     }
     inline Support::Symbol
     NegBoolView::type(void) {
-      return Support::Symbol("Int::NegBoolView");
+      return Support::Symbol("Gecode::Int::NegBoolView");
     }
 
     /**

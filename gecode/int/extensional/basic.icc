@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   Gecode::Support::Symbol
   Basic<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Extensional::Basic");
+    return Reflection::mangle<View>("Gecode::Int::Extensional::Basic");
   }
 
   template <class View>

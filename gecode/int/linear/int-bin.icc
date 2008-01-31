@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   inline Support::Symbol
   EqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Int::Linear::EqBin");
+    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::EqBin");
   }
 
   template <class Val, class A, class B>
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class Ctrl>
   inline Support::Symbol
   ReEqBin<Val,A,B,Ctrl>::ati(void) {
-    return Reflection::mangle<Val,A,B,Ctrl>("Int::Linear::ReEqBin");
+    return Reflection::mangle<Val,A,B,Ctrl>("Gecode::Int::Linear::ReEqBin");
   }
 
   template <class Val, class A, class B, class Ctrl>
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   inline Support::Symbol
   NqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Int::Linear::NqBin");
+    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::NqBin");
   }
 
   template <class Val, class A, class B>
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   inline Support::Symbol
   LqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Int::Linear::LqBin");
+    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::LqBin");
   }
 
   template <class Val, class A, class B>
@@ -498,7 +498,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   inline Support::Symbol
   GqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Int::Linear::GqBin");
+    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::GqBin");
   }
 
   template <class Val, class A, class B>
@@ -561,7 +561,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   Support::Symbol
   ReLqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Int::Linear::ReLqBin");
+    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::ReLqBin");
   }
 
   template <class Val, class A, class B>

@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   Support::Symbol
   Val<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Circuit::Val");
+    return Reflection::mangle<View>("Gecode::Int::Circuit::Val");
   }
 
   template <class View>

@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   Support::Symbol
   Seq::ati(void) {
-    return Support::Symbol("Set::Sequence::Sequence");
+    return Support::Symbol("Gecode::Set::Sequence::Sequence");
   }
 
   Reflection::ActorSpec

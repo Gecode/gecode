@@ -68,7 +68,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   Support::Symbol
   UnaryCpltSetPropagator<View>::ati(void) {
-    return Reflection::mangle<View>("CpltSet::UnaryCpltSetPropagator");
+    return Reflection::mangle<View>("Gecode::CpltSet::UnaryCpltSetPropagator");
   }
 
   template <class View>

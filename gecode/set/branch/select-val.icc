@@ -54,7 +54,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   inline Support::Symbol
   ValMin::type(void) {
-    return Support::Symbol("Set::Branch::ValMin");
+    return Support::Symbol("Gecode::Set::Branch::ValMin");
   }
   forceinline void
   ValMin::branchingSpec(const Space* home,
@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   inline Support::Symbol
   ValMax::type(void) {
-    return Support::Symbol("Set::Branch::ValMax");
+    return Support::Symbol("Gecode::Set::Branch::ValMax");
   }
   forceinline void
   ValMax::branchingSpec(const Space* home,

@@ -203,7 +203,7 @@ namespace Gecode {
       }
       /// Type of this view
       static Support::Symbol type(void) {
-        return Support::Symbol("Int::Linear::NoView");
+        return Support::Symbol("Gecode::Int::Linear::NoView");
       }
       //@}
 

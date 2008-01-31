@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Convex {
 
   Support::Symbol
   ConvexHull::ati(void) {
-    return Support::Symbol("Set::Convex::ConvexHull");
+    return Support::Symbol("Gecode::Set::Convex::ConvexHull");
   }
 
   Reflection::ActorSpec

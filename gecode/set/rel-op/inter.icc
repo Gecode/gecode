@@ -64,7 +64,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   Support::Symbol
   Intersection<View0,View1,View2>::ati(void) {
-    return Reflection::mangle<View0,View1,View2>("Set::RelOp::Intersection");
+    return Reflection::mangle<View0,View1,View2>("Gecode::Set::RelOp::Intersection");
   }
 
   template <class View0, class View1, class View2>
@@ -258,7 +258,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   Support::Symbol
   IntersectionN<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Set::RelOp::IntersectionN");
+    return Reflection::mangle<View0,View1>("Gecode::Set::RelOp::IntersectionN");
   }
 
   template <class View0, class View1>

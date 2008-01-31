@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   Support::Symbol
   Card<View>::ati(void) {
-   return Reflection::mangle<View>("Set::Int::Card");
+   return Reflection::mangle<View>("Gecode::Set::Int::Card");
   }
 
   template <class View>

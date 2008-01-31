@@ -314,7 +314,7 @@ namespace Gecode {
   template <class View, class Val, class ViewSel, class ValSel>
   Support::Symbol
   ViewValBranching<View,Val,ViewSel,ValSel>::ati(void) {
-    return Reflection::mangle<View,Val,ViewSel,ValSel>("ViewValBranching");
+    return Reflection::mangle<View,Val,ViewSel,ValSel>("Gecode::ViewValBranching");
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
@@ -409,7 +409,7 @@ namespace Gecode {
   template <class View, class Val, class ValSel>
   Support::Symbol
   ViewValAssignment<View,Val,ValSel>::ati(void) {
-    return Reflection::mangle<View,Val,ValSel>("ViewValAssignment");
+    return Reflection::mangle<View,Val,ValSel>("Gecode::ViewValAssignment");
   }
 
   template <class View, class Val, class ValSel>

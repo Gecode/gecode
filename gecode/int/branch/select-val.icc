@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   inline Support::Symbol
   ValMin<View>::type(void) {
-    return Support::Symbol("Int::Branch::ValMin");
+    return Support::Symbol("Gecode::Int::Branch::ValMin");
   }
   template <class View>
   forceinline void
@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   inline Support::Symbol
   ValMed<View>::type(void) {
-    return Support::Symbol("Int::Branch::ValMed");
+    return Support::Symbol("Gecode::Int::Branch::ValMed");
   }
   template <class View>
   forceinline void
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   inline Support::Symbol
   ValMax<View>::type(void) {
-    return Support::Symbol("Int::Branch::ValMax");
+    return Support::Symbol("Gecode::Int::Branch::ValMax");
   }
   template <class View>
   forceinline void
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   inline Support::Symbol
   ValSplitMin<View>::type(void) {
-    return Support::Symbol("Int::Branch::ValSplitMin");
+    return Support::Symbol("Gecode::Int::Branch::ValSplitMin");
   }
   template <class View>
   forceinline void
@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   inline Support::Symbol
   ValSplitMax<View>::type(void) {
-    return Support::Symbol("Int::Branch::ValSplitMax");
+    return Support::Symbol("Gecode::Int::Branch::ValSplitMax");
   }
   template <class View>
   forceinline void
@@ -241,7 +241,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   inline Support::Symbol
   NoValue::type(void) {
-    return Support::Symbol("Int::Branch::NoValue");
+    return Support::Symbol("Gecode::Int::Branch::NoValue");
   }
 
   template<class View>
@@ -257,7 +257,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   inline Support::Symbol
   ValZeroOne<View>::type(void) {
-    return Support::Symbol("Int::Branch::ValZeroOne");
+    return Support::Symbol("Gecode::Int::Branch::ValZeroOne");
   }
   template <class View>
   forceinline void
@@ -290,7 +290,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   inline Support::Symbol
   ValOneZero<View>::type(void) {
-    return Support::Symbol("Int::Branch::ValOneZero");
+    return Support::Symbol("Gecode::Int::Branch::ValOneZero");
   }
   template <class View>
   forceinline void

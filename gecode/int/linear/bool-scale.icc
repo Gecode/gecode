@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   inline Support::Symbol
   ScaleBoolArray::type(void) {
-    return Support::Symbol("Int::Linear::ScaleBoolArray");
+    return Support::Symbol("Gecode::Int::Linear::ScaleBoolArray");
   }
 
   /*
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Linear {
   EmptyScaleBoolArray::sort(void) {}
   inline Support::Symbol
   EmptyScaleBoolArray::type(void) {
-    return Support::Symbol("Int::Linear::EmptyScaleBoolArray");
+    return Support::Symbol("Gecode::Int::Linear::EmptyScaleBoolArray");
   }
 
 
@@ -283,7 +283,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   inline Support::Symbol
   EqBoolScale<SBAP,SBAN,VX>::ati(void) {
-    return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::EqBoolScale");
+    return Reflection::mangle<SBAP,SBAN,VX>("Gecode::Int::Linear::EqBoolScale");
   }
 
   template<class SBAP, class SBAN, class VX>
@@ -539,7 +539,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   inline Support::Symbol
   LqBoolScale<SBAP,SBAN,VX>::ati(void) {
-    return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::LqBoolScale");
+    return Reflection::mangle<SBAP,SBAN,VX>("Gecode::Int::Linear::LqBoolScale");
   }
 
   template<class SBAP, class SBAN, class VX>
@@ -734,7 +734,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   inline Support::Symbol
   NqBoolScale<SBAP,SBAN,VX>::ati(void) {
-    return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::NqBoolScale");
+    return Reflection::mangle<SBAP,SBAN,VX>("Gecode::Int::Linear::NqBoolScale");
   }
 
   template<class SBAP, class SBAN, class VX>

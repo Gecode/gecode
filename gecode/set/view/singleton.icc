@@ -277,7 +277,7 @@ namespace Gecode {
 
     inline Support::Symbol
     SingletonView::type(void) {
-      return Support::Symbol("Set::SingletonView");
+      return Support::Symbol("Gecode::Set::SingletonView");
     }
 
     /*

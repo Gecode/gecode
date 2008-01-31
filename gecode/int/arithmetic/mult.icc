@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   Support::Symbol
   SquarePlus<VA,VB>::ati(void) {
-    return Reflection::mangle<VA,VB>("Int::Arithmetic::SquarePlus");
+    return Reflection::mangle<VA,VB>("Gecode::Int::Arithmetic::SquarePlus");
   }
 
   template <class VA, class VB>
@@ -292,7 +292,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   Support::Symbol
   Square<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Arithmetic::Square");
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::Square");
   }
 
   template <class View>
@@ -395,7 +395,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class Val, class VA, class VB, class VC>
   Support::Symbol
   MultPlus<Val,VA,VB,VC>::ati(void) {
-    return Reflection::mangle<VA,VB,VC,Val>("Int::Arithmetic::MultPlus");
+    return Reflection::mangle<VA,VB,VC,Val>("Gecode::Int::Arithmetic::MultPlus");
   }
 
   template <class Val, class VA, class VB, class VC>
@@ -577,7 +577,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   Support::Symbol
   Mult<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Arithmetic::Mult");
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::Mult");
   }
 
   template <class View>

@@ -198,7 +198,7 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   Support::Symbol
   Match<View>::ati(void) {
-    return Reflection::mangle<View>("Set::Int::Match");
+    return Reflection::mangle<View>("Gecode::Set::Int::Match");
   }
 
   template <class View>

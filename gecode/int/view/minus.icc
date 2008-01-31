@@ -300,7 +300,7 @@ namespace Gecode {
     }
     inline Support::Symbol
     MinusView::type(void) {
-      return Support::Symbol("Int::MinusView");
+      return Support::Symbol("Gecode::Int::MinusView");
     }
 
     /**

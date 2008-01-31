@@ -60,7 +60,7 @@ namespace Gecode { namespace Set { namespace Distinct {
 
   Support::Symbol
   AtmostOne::ati(void) {
-    return Support::Symbol("Set::Distinct::AtmostOne");
+    return Support::Symbol("Gecode::Set::Distinct::AtmostOne");
   }
 
   Reflection::ActorSpec

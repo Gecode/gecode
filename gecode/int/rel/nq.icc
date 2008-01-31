@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   inline Support::Symbol
   Nq<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Rel::Nq");
+    return Reflection::mangle<View>("Gecode::Int::Rel::Nq");
   }
 
   template <class View>
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   inline Support::Symbol
   NaryNq<View>::ati(void) {
-    return Reflection::mangle<View>("Int::Rel::NaryNq");
+    return Reflection::mangle<View>("Gecode::Int::Rel::NaryNq");
   }
 
   template <class View>

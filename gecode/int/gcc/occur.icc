@@ -205,7 +205,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   inline Support::Symbol
   OccurBndsView::type(void) {
-    return Support::Symbol("Int::GCC::OccurBndsView");
+    return Support::Symbol("Gecode::Int::GCC::OccurBndsView");
   }
 
   forceinline
@@ -746,7 +746,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   inline Support::Symbol
   CardView::type(void) {
-    return Support::Symbol("Int::GCC::CardView");
+    return Support::Symbol("Gecode::Int::GCC::CardView");
   }
   forceinline
   CardView::CardView(Space* home, const Reflection::VarMap& m,

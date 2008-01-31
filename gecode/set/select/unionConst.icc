@@ -71,7 +71,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   Support::Symbol
   SelectUnionConst<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Set::Select::UnionConst");
+    return Reflection::mangle<SView,RView>("Gecode::Set::Select::UnionConst");
   }
 
   template <class SView, class RView>

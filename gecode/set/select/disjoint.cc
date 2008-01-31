@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   Support::Symbol
   SelectDisjoint::ati(void) {
-    return Support::Symbol("Set::Select::Disjoint");
+    return Support::Symbol("Gecode::Set::Select::Disjoint");
   }
 
   Reflection::ActorSpec

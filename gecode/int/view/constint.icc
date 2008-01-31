@@ -300,7 +300,7 @@ namespace Gecode {
     }
     inline Support::Symbol
     ConstIntView::type(void) {
-      return Support::Symbol("Int::ConstIntView");
+      return Support::Symbol("Gecode::Int::ConstIntView");
     }
 
     /**

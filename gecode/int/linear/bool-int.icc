@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   inline Support::Symbol
   GqBoolInt<VX>::Memory::ati(void) {
-    return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Memory");
+    return Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Memory");
   }
 
   template <class VX>
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   inline Support::Symbol
   GqBoolInt<VX>::Speed::ati(void) {
-    return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Speed");
+    return Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Speed");
   }
 
   template <class VX>
@@ -413,7 +413,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   inline Support::Symbol
   EqBoolInt<VX>::Memory::ati(void) {
-    return Reflection::mangle<VX>("Int::Linear::EqBoolInt::Memory");
+    return Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Memory");
   }
 
   template <class VX>
@@ -506,7 +506,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   inline Support::Symbol
   EqBoolInt<VX>::Speed::ati(void) {
-    return Reflection::mangle<VX>("Int::Linear::EqBoolInt::Speed");
+    return Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Speed");
   }
 
   template <class VX>
@@ -690,7 +690,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class VX>
   inline Support::Symbol
   NqBoolInt<VX>::ati(void) {
-    return Reflection::mangle<VX>("Int::Linear::NqBoolInt");
+    return Reflection::mangle<VX>("Gecode::Int::Linear::NqBoolInt");
   }
 
   template<class VX>

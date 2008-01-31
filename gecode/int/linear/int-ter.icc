@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C>
   inline Support::Symbol
   EqTer<Val,A,B,C>::ati(void) {
-    return Reflection::mangle<Val,A,B,C>("Int::Linear::EqTer");
+    return Reflection::mangle<Val,A,B,C>("Gecode::Int::Linear::EqTer");
   }
 
   template <class Val, class A, class B, class C>
@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C>
   inline Support::Symbol
   NqTer<Val,A,B,C>::ati(void) {
-    return Reflection::mangle<Val,A,B,C>("Int::Linear::NqTer");
+    return Reflection::mangle<Val,A,B,C>("Gecode::Int::Linear::NqTer");
   }
 
   template <class Val, class A, class B, class C>
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C>
   inline Support::Symbol
   LqTer<Val,A,B,C>::ati(void) {
-    return Reflection::mangle<Val,A,B,C>("Int::Linear::LqTer");
+    return Reflection::mangle<Val,A,B,C>("Gecode::Int::Linear::LqTer");
   }
 
   template <class Val, class A, class B, class C>

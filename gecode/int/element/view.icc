@@ -379,7 +379,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC>
   inline Support::Symbol
   ViewBnd<VA,VB,VC>::ati(void) {
-    return Reflection::mangle<VA,VB,VC>("Int::Element::ViewBnd");
+    return Reflection::mangle<VA,VB,VC>("Gecode::Int::Element::ViewBnd");
   }
 
   template <class VA, class VB, class VC>
@@ -504,7 +504,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC>
   inline Support::Symbol
   ViewDom<VA,VB,VC>::ati(void) {
-    return Reflection::mangle<VA,VB,VC>("Int::Element::ViewDom");
+    return Reflection::mangle<VA,VB,VC>("Gecode::Int::Element::ViewDom");
   }
 
   template <class VA, class VB, class VC>

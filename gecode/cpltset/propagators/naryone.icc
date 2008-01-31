@@ -67,7 +67,7 @@ namespace Gecode { namespace CpltSet {
   Support::Symbol
   NaryOneCpltSetPropagator<View0, View1>::ati(void) {
     return 
-      Reflection::mangle<View0,View1>("CpltSet::NaryOneCpltSetPropagator");
+      Reflection::mangle<View0,View1>("Gecode::CpltSet::NaryOneCpltSetPropagator");
   }
 
   template <class View0, class View1>

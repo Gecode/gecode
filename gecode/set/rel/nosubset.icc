@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   Support::Symbol
   NoSubSet<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Set::Rel::NoSubSet");
+    return Reflection::mangle<View0,View1>("Gecode::Set::Rel::NoSubSet");
   }
 
   template <class View0, class View1>

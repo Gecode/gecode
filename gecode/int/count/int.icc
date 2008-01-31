@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   Support::Symbol
   EqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Int::Count::EqInt");
+    return Reflection::mangle<VX,VY>("Gecode::Int::Count::EqInt");
   }
 
   template <class VX, class VY>
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   Support::Symbol
   GqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Int::Count::GqInt");
+    return Reflection::mangle<VX,VY>("Gecode::Int::Count::GqInt");
   }
 
   template <class VX, class VY>
@@ -384,7 +384,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   Support::Symbol
   LqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Int::Count::LqInt");
+    return Reflection::mangle<VX,VY>("Gecode::Int::Count::LqInt");
   }
 
   template <class VX, class VY>
@@ -524,7 +524,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   Support::Symbol
   NqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Int::Count::NqInt");
+    return Reflection::mangle<VX,VY>("Gecode::Int::Count::NqInt");
   }
 
   template <class VX, class VY>
