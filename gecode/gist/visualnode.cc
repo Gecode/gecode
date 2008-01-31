@@ -70,10 +70,10 @@ namespace Gecode { namespace Gist {
 
   bool
   VisualNode::isHidden(void) { return hidden; }
-  
+
   void
   VisualNode::setHidden(bool h) { hidden = h; }
-  
+
   void
   VisualNode::dirtyUp(void) {
     VisualNode* cur = this;
@@ -324,6 +324,10 @@ namespace Gecode { namespace Gist {
       cur = cur->getChild(0);
     }
 #endif
+   
+    if(cur == this && !cur->containsCoordinateAtDepth(x, 0)) {
+      return NULL;
+    }
     return cur;
   }
 
