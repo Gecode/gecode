@@ -580,9 +580,6 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     assert(nextPit == nodeMap.size());
     nodeMap << currentNode;
-#ifdef GECODE_GIST_EXPERIMENTAL
-    currentNode->addPit(nextPit);
-#endif
     nextPit++;
   }
 
@@ -712,7 +709,13 @@ namespace Gecode { namespace Gist {
       currentNode = n;
       currentNode->setMarked(true);
 #ifdef GECODE_GIST_EXPERIMENTAL
-      emit currentNodeChanged(n->getSpace(), n->getStatus());
+      NodeStatus status = n->getStatus();
+      if(status != UNDETERMINED) {
+        emit currentNodeChanged(n->getSpace(), status);
+      }
+      else {
+        emit currentNodeChanged(NULL, status);
+      }
 #endif
       QWidget::update();
     }
