@@ -43,8 +43,6 @@
 
 $i=0;
 
-$predef{"vti.icc"} = 1;
-
 $root = $ARGV[$i++];
 
 while ($target = $ARGV[$i++]) {
@@ -52,12 +50,12 @@ while ($target = $ARGV[$i++]) {
   my %done = ();
   push @todo, $target;
   while ($f = pop @todo) {
-    open FILE, "$root/$f" || die "File missing: $root/$f\n";
+    open FILE, "$root/$f" or die "File missing: $root/$f\n";
     while ($l = <FILE>) {
       if ($l =~ /^\#include "(.*)"/) {
 	$g = $1;
 	$g =~ s|^\./||og;
-	if ($predef{$g} || ((-e "$root/$g") && !$done{$g})) {
+	if (!$done{$g}) {
 	  push @todo, $g;
 	  $done{$g} = 1;
 	}
