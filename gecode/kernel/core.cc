@@ -287,7 +287,14 @@ namespace Gecode {
      * It is important to note that branchings reporting to have no more
      * alternatives left can not be deleted. They can not be deleted
      * as there might be branching descriptions to be used in commit
-     * that refer to one of these branchings.
+     * that refer to one of these branchings. This e.g. happens when
+     * we combine branch-and-bound search with adaptive recomputation: during 
+     * recomputation, a copy is constrained to be better than the currently 
+     * best solution, then the first half of the BranchingDescs is posted,
+     * and a fixpoint computed (for storing in the middle of the path). Then
+     * the remaining BranchingDescs are posted, and because of the additional
+     * constraints that the space must be better than the previous solution,
+     * the corresponding Branchings may already have no alternatives left.
      *
      * A branching reporting that no more alternatives exist will eventually
      * be deleted in commit. It will be deleted if the first branching
