@@ -978,7 +978,7 @@ namespace Gecode { namespace Gist {
         newChild->dirtyUp();
         setCurrentNode(newChild);
 
-        while (true) {
+        while(!inputSpace->stable()) {
 	  inputSpace->step();
 	  if (inputSpace->failed())
 	    break;
