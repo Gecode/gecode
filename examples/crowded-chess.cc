@@ -266,8 +266,8 @@ public:
       count(this, bb, R, IRT_EQ, 1, opt.icl());
 
       //Connect (queens|rooks)[i] to the row it is in
-      element(this, aa, queens[i], Q, 0, ICL_DOM);
-      element(this, aa,  rooks[i], R, 0, ICL_DOM);
+      element(this, aa, queens[i], Q, ICL_DOM);
+      element(this, aa,  rooks[i], R, ICL_DOM);
     }
 
     // N-queens constraints

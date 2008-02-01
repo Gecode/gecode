@@ -229,9 +229,9 @@ public:
       r.hag(w,rh,ra,rg);
         
       for (int p=0; p<periods(); p++) {
-        element(this, rh, n[p], h(p,w), 0);
-        element(this, ra, n[p], a(p,w), 0);
-        element(this, rg, n[p], g(p,w), 0);
+        element(this, rh, n[p], h(p,w));
+        element(this, ra, n[p], a(p,w));
+        element(this, rg, n[p], g(p,w));
       }
     }
 

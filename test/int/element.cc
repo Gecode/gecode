@@ -64,7 +64,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::element(home, c, x[0], x[1], 0);
+         Gecode::element(home, c, x[0], x[1]);
        }
      };
    
@@ -83,7 +83,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::element(home, c, x[0], x[0], 0);
+         Gecode::element(home, c, x[0], x[0]);
        }
      };
    
@@ -102,7 +102,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::element(home, c, x[0], Gecode::channel(home,x[1]), 0);
+         Gecode::element(home, c, x[0], Gecode::channel(home,x[1]));
        }
      };
    
@@ -121,7 +121,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs c(x.size()-2);
          for (int i=0; i<x.size()-2; i++)
            c[i]=x[2+i];
-         Gecode::element(home, c, x[0], x[1], 0, icl);
+         Gecode::element(home, c, x[0], x[1], icl);
        }
      };
    
@@ -140,7 +140,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs c(x.size()-1);
          for (int i=0; i<x.size()-1; i++)
            c[i]=x[1+i];
-         Gecode::element(home, c, x[0], x[0], 0, icl);
+         Gecode::element(home, c, x[0], x[0], icl);
        }
      };
    
@@ -163,7 +163,7 @@ namespace Test { namespace Int {
          BoolVarArgs c(x.size()-2);
          for (int i=0; i<x.size()-2; i++)
            c[i]=channel(home,x[2+i]);
-         element(home, c, x[0], channel(home,x[1]), 0);
+         element(home, c, x[0], channel(home,x[1]));
        }
      };
    

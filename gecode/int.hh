@@ -970,55 +970,53 @@ namespace Gecode {
    */
 
   //@{
-  /** \brief Post propagator for \f$ n_{x_0+\mathit{offset}}=x_1\f$
+  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Space* home, const IntArgs& n, IntVar x0, IntVar x1, int offset=0,
+  element(Space* home, const IntArgs& n, IntVar x0, IntVar x1,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /** \brief Post propagator for \f$ n_{x_0+\mathit{offset}}=x_1\f$
+  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Space* home, const IntArgs& n, IntVar x0, BoolVar x1, int offset=0, 
+  element(Space* home, const IntArgs& n, IntVar x0, BoolVar x1,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /** \brief Post propagator for \f$ n_{x_0+\mathit{offset}}=x_1\f$
+  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Space* home, const IntArgs& n, IntVar x0, int x1, int offset=0, 
+  element(Space* home, const IntArgs& n, IntVar x0, int x1,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /** \brief Post propagator for \f$ x_{y_0+\mathit{offset}}=y_1\f$
+  /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
-  element(Space* home, const IntVarArgs& x, IntVar y0, IntVar y1, int offset=0,
+  element(Space* home, const IntVarArgs& x, IntVar y0, IntVar y1,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /** \brief Post propagator for \f$ x_{y_0+\mathit{offset}}=y_1\f$
+  /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
-  element(Space* home, const IntVarArgs& x, IntVar y0, int y1, int offset=0, 
+  element(Space* home, const IntVarArgs& x, IntVar y0, int y1,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Post propagator for \f$ x_{y_0+\mathit{offset}}=y_1\f$
+  /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Space* home, const BoolVarArgs& x, IntVar y0, BoolVar y1, 
-          int offset=0, 
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Post propagator for \f$ x_{y_0+\mathit{offset}}=y_1\f$
+  /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Space* home, const BoolVarArgs& x, IntVar y0, int y1,
-          int offset=0, 
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 
