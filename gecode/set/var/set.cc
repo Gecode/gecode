@@ -63,10 +63,7 @@ namespace Gecode {
   SetVar::SetVar(Space* home, const IntSet& glb,int ubMin,int ubMax,
                  unsigned int minCard, unsigned int maxCard)
     : x(new (home) Set::SetVarImp(home,glb,ubMin,ubMax,minCard,maxCard)) {
-    if (glb.size() > 0) {
-      Set::Limits::check(glb.min(),"SetVar::SetVar");
-      Set::Limits::check(glb.max(),"SetVar::SetVar");
-    }
+    Set::Limits::check(glb,"SetVar::SetVar");
     Set::Limits::check(ubMin,"SetVar::SetVar");
     Set::Limits::check(ubMax,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");
@@ -81,10 +78,7 @@ namespace Gecode {
     : x(new (home) Set::SetVarImp(home,lbMin,lbMax,lub,minCard,maxCard)) {
     Set::Limits::check(lbMin,"SetVar::SetVar");
     Set::Limits::check(lbMax,"SetVar::SetVar");
-    if (lub.size() > 0) {
-      Set::Limits::check(lub.min(),"SetVar::SetVar");
-      Set::Limits::check(lub.max(),"SetVar::SetVar");
-    }
+    Set::Limits::check(lub,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");
     if (minCard > maxCard)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
@@ -94,14 +88,8 @@ namespace Gecode {
                  const IntSet& glb, const IntSet& lub,
                  unsigned int minCard, unsigned int maxCard)
     : x(new (home) Set::SetVarImp(home,glb,lub,minCard,maxCard)) {
-    if (glb.size() > 0) {
-      Set::Limits::check(glb.min(),"SetVar::SetVar");
-      Set::Limits::check(glb.max(),"SetVar::SetVar");
-    }
-    if (lub.size() > 0) {
-      Set::Limits::check(lub.min(),"SetVar::SetVar");
-      Set::Limits::check(lub.max(),"SetVar::SetVar");
-    }
+    Set::Limits::check(glb,"SetVar::SetVar");
+    Set::Limits::check(lub,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");
     if (minCard > maxCard)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
