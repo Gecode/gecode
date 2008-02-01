@@ -40,7 +40,7 @@
  *
  */
 
-#include "gecode/config.hh"
+#include "gecode/kernel.hh"
 #if defined(GECODE_HAS_INT_VARS)
 #include "gecode/int.hh"
 #endif
