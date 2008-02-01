@@ -39,12 +39,161 @@
 
 namespace Gecode { namespace CpltSet {
 
+  CpltSetVarImp::CpltSetVarImp(Space* home, 
+                               int glbMin, int glbMax, int lubMin, int lubMax,
+                               unsigned int cardMin, unsigned int cardMax) 
+    : CpltSetVarImpBase(home), domain(bdd_true()), 
+      min(lubMin), max(lubMax), _assigned(false) {
+
+    IntSet glb(glbMin, glbMax);
+    IntSet lub(lubMin, lubMax);
+    testConsistency(glb, lub, cardMin, cardMax, "CpltSetVarImp");
+
+    _offset = manager.allocate(tableWidth());
+
+    for (int i = glbMax; i >= glbMin; i--) {
+      domain &= element(i - min);
+    } 
+
+    unsigned int range = tableWidth();
+    domain &= cardcheck(range, _offset,
+                        static_cast<int> (cardMin), 
+                        static_cast<int> (cardMax));   
+
+    assert(!manager.cfalse(domain));
+  }
+
+  CpltSetVarImp::CpltSetVarImp(Space* home,
+                               int glbMin, int glbMax, const IntSet& lubD,
+                               unsigned int cardMin, unsigned int cardMax) 
+    : CpltSetVarImpBase(home), domain(bdd_true()), 
+      min(lubD.min()), max(lubD.max()),
+      _assigned(false) {
+
+    IntSet glb(glbMin, glbMax);
+    testConsistency(glb, lubD, cardMin, cardMax, "CpltSetVarImp");
+
+    IntSetRanges lub(lubD);
+    Iter::Ranges::ToValues<IntSetRanges> lval(lub);
+    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(lval);
+
+    _offset = manager.allocate(tableWidth());
+    vc.last();
+    
+    int c = glbMax;
+    for (int i = max; i >= min; i--) {
+      if (i != vc.val()) {
+        if (c >= glbMin && c == i) {
+          throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
+        }
+        domain &= elementNeg(i - min);
+      } else {
+        if (c >= glbMin && c == i) {
+          domain &= element(i - min);
+          c--;
+        }
+        --vc;
+      }
+    }
+
+    unsigned int range = tableWidth();
+    domain &= cardcheck(range, _offset,
+                        static_cast<int> (cardMin), 
+                        static_cast<int> (cardMax));   
+
+    assert(!manager.cfalse(domain));
+  }
+
+  CpltSetVarImp::CpltSetVarImp(Space* home,
+                               const IntSet& glbD, int lubMin, int lubMax,
+                               unsigned int cardMin, unsigned int cardMax) 
+    : CpltSetVarImpBase(home), domain(bdd_true()), 
+      min(lubMin), max(lubMax), _assigned(false) {
+
+    IntSet lub(lubMin, lubMax);
+    testConsistency(glbD, lub, cardMin, cardMax, "CpltSetVarImp");
+
+    IntSetRanges glb(glbD);
+    Iter::Ranges::ToValues<IntSetRanges> gval(glb);
+    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(gval);
+    
+    vc.last();
+    _offset = manager.allocate(tableWidth());
+
+    for (vc.last(); vc(); --vc) {
+      domain &= element(vc.val() - min);
+    } 
+
+    unsigned int range = tableWidth();
+    domain &= cardcheck(range, _offset,
+                        static_cast<int> (cardMin), 
+                        static_cast<int> (cardMax));
+
+    assert(!manager.cfalse(domain));
+  }
+
+  CpltSetVarImp::CpltSetVarImp(Space* home,
+                               const IntSet& glbD,const IntSet& lubD,
+                               unsigned int cardMin, unsigned int cardMax) 
+    : CpltSetVarImpBase(home), domain(bdd_true()), 
+      min(lubD.min()), max(lubD.max()),
+      _assigned(false) {
+
+    testConsistency(glbD, lubD, cardMin, cardMax, "CpltSetVarImp");
+
+    IntSetRanges glb(glbD);
+    Iter::Ranges::ToValues<IntSetRanges> gval(glb);
+    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > 
+      vcglb(gval);
+    IntSetRanges lub(lubD);
+    Iter::Ranges::ToValues<IntSetRanges> lval(lub);
+    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > 
+      vclub(lval);
+  
+    _offset = manager.allocate(tableWidth());
+
+    vcglb.last();
+    vclub.last();
+  
+    for (int i = max; i >= min; i--) {
+      if (i != vclub.val()) {
+        if (vcglb() && vcglb.val() == i) {
+          throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
+        }
+        domain &= elementNeg(i - min);
+      } else {
+        if (vcglb() && vcglb.val() == i) {
+          domain &= element(i - min);
+        }
+        --vclub;
+      }
+    }
+
+    unsigned int range = tableWidth();
+    domain &= cardcheck(range, _offset,
+                        static_cast<int> (cardMin), 
+                        static_cast<int> (cardMax));   
+
+    assert(!manager.cfalse(domain));
+  }
+
   // copy bddvar
-  forceinline
   CpltSetVarImp::CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x)
     : CpltSetVarImpBase(home,share,x), 
       domain(x.domain), min(x.min), max(x.max),
       _offset(x._offset), _assigned(false) {
+  }
+
+  inline void 
+  CpltSetVarImp::dispose(Space*) {
+    manager.dispose(domain);
+    // only variables with nodes in the table need to be disposed
+    if (!(_offset == 0 && 
+          min == Set::Limits::int_min &&
+          max == Set::Limits::int_max)
+        ) {
+      manager.dispose(_offset, (int) tableWidth());
+    }
   }
 
   CpltSetVarImp*
@@ -57,6 +206,325 @@ namespace Gecode { namespace CpltSet {
   CpltSetVarImp::spec(const Space*, Reflection::VarMap&) const {
     // \todo FIXME implemente reflection
     return NULL;
+  }
+
+  // a variable is only assigned if all bdd variables representing
+  // the elements of the set have either a constant false or a constant true
+  inline bool
+  CpltSetVarImp::assigned(void) {
+    if (!_assigned) {
+      // (C1) there is only one solution (i.e. only one path)
+      bool cond1 = (unsigned int) manager.bddpath(domain) == 1;
+      // (C2) the solution talks about all elements 
+      //      (i.e. the number of nodes used for the bdd uses the bdd nodes
+      //      of all elements for the CpltSetVar)
+      bool cond2 = (unsigned int) manager.bddsize(domain) == tableWidth();
+      _assigned = cond1 && cond2;
+    } 
+    return _assigned;
+  }
+
+  ModEvent 
+  CpltSetVarImp::intersect(Space* home, bdd& d) {
+    bool assigned_before = assigned();
+    bdd olddom = domain;
+    domain &= d;
+
+    bool assigned_new = assigned();
+    if (manager.cfalse(domain)) 
+      return ME_CPLTSET_FAILED; 
+
+    ModEvent me = ME_CPLTSET_NONE;
+    if (assigned_new) {
+      if (assigned_before) {
+        me = ME_CPLTSET_NONE;
+        return me;
+      } else {
+        me =  ME_CPLTSET_VAL;
+      }
+      Delta d;
+      return notify(home, me, &d);
+    } else {
+      if (olddom != domain) {
+        me = ME_CPLTSET_DOM;
+        Delta d;
+        return notify(home, me, &d);
+      }
+    }
+    return me;
+  }
+
+  ModEvent 
+  CpltSetVarImp::exclude(Space* home, int a, int b) {
+    // values are already excluded
+    if (a > max  || b < min) 
+      return ME_CPLTSET_NONE;
+
+    int mi = std::max(min, a);
+    int ma = std::min(b, max);
+
+    bdd notinlub  = bdd_true();
+    // get the negated bdds for value i in [a..b]
+    for (int i = ma; i >= mi; i--)         
+      notinlub &= elementNeg(i - min);
+
+    return intersect(home, notinlub);
+  }
+
+  ModEvent 
+  CpltSetVarImp::include(Space* home, int a, int b) {
+    if (a < min || b > max) 
+      return ME_CPLTSET_FAILED;
+
+    bdd in_glb  = bdd_true();
+    for (int i = b; i >= a; i--)
+      in_glb &= element(i - min);
+
+    return intersect(home, in_glb);
+  }
+
+  ModEvent
+  CpltSetVarImp::nq(Space* home, int a, int b) {
+    if (b < min || a > max) 
+      return ME_CPLTSET_NONE;
+
+    Iter::Ranges::Singleton m(a, b);
+    bdd ass = !(iterToBdd(m));    
+    return intersect(home, ass);
+  }
+
+  ModEvent
+  CpltSetVarImp::eq(Space* home, int a, int b) {
+    if (b < min || a > max) 
+      return ME_CPLTSET_FAILED;
+
+    Iter::Ranges::Singleton m(a, b);
+    bdd ass = iterToBdd(m);
+    return intersect(home, ass);
+  }
+
+  ModEvent 
+  CpltSetVarImp::intersect(Space* home, int a, int b) {
+    ModEvent me_left = exclude(home, Set::Limits::int_min, a - 1);
+
+    if (me_failed(me_left) || me_left == ME_CPLTSET_VAL) 
+      return me_left;
+
+    ModEvent me_right = exclude(home, b + 1, Set::Limits::int_max);
+
+    if (me_failed(me_right) || me_right == ME_CPLTSET_VAL) 
+      return me_right;
+
+    if (me_left > 0 || me_right > 0) 
+      return ME_CPLTSET_DOM;
+
+    return ME_CPLTSET_NONE;    
+  }
+
+  ModEvent 
+  CpltSetVarImp::cardinality(Space* home, int l, int u) {
+    unsigned int maxcard = tableWidth();
+    // compute the cardinality formula
+    bdd c = cardcheck(maxcard, _offset, l, u);
+    return intersect(home, c);
+  }
+
+  bool
+  CpltSetVarImp::knownIn(int v) const {
+    if (manager.ctrue(domain)) 
+      return false;
+    if (v<min || v>max)
+      return false;
+    bdd bv = manager.negbddpos(_offset+v-min);
+    return (manager.cfalse(domain & bv));
+  }
+
+  bool
+  CpltSetVarImp::knownOut(int v) const {
+    if (manager.ctrue(domain)) 
+      return false;
+    if (v<min || v>max)
+      return false;
+    bdd bv = manager.bddpos(_offset+v-min);
+    return (manager.cfalse(domain & bv));
+  }
+
+  inline int 
+  CpltSetVarImp::lubMaxN(int n) const {
+    if (manager.ctrue(domain)) 
+      return initialLubMax() - n;
+
+    GECODE_AUTOARRAY(NodeStatus, status, tableWidth());
+    DomBddIterator iter(this);
+
+    if (!iter()) 
+      return MAX_OF_EMPTY;
+    
+    for (int i = 0; iter(); i++, ++iter) {
+      status[i] = iter.status();     
+    }
+    int c = 0;
+    for (int j = tableWidth() - 1; j--; ) {
+      if (status[j] != FIX_NOT_LUB) {
+        if (c == n) { 
+          c = j; 
+          break; 
+        } 
+        c++;
+      }
+    }
+    return initialLubMax() - c;
+  }
+
+  unsigned int
+  CpltSetVarImp::lubSize(void) const {
+    if (manager.ctrue(domain)) 
+      return tableWidth();
+    
+    BddIterator iter(domain);
+    int out = 0;
+    while (iter()) {
+      if (iter.status() == FIX_NOT_LUB)
+        out++;
+      ++iter;
+    }
+    return tableWidth() - out;
+  }
+
+  int 
+  CpltSetVarImp::glbMin(void) const {
+    if (manager.ctrue(domain)) 
+      return initialLubMin();
+
+    BddIterator iter(domain);
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+        int idx = iter.label() - offset();
+        return initialLubMin() + idx;
+      } 
+      ++iter;
+    }
+    return MIN_OF_EMPTY;
+  }
+
+  int 
+  CpltSetVarImp::glbMax(void) const {
+    if (manager.ctrue(domain)) 
+      return initialLubMax();
+  
+    BddIterator iter(domain);
+    int lastglb = -1;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+        int idx = iter.label() - offset();
+        lastglb = initialLubMin() + idx;
+      } 
+      ++iter;
+    }
+    return (lastglb == -1) ? MAX_OF_EMPTY : lastglb;
+  }
+
+  unsigned int
+  CpltSetVarImp::glbSize(void) const {
+    if (manager.ctrue(domain)) { return 0; }
+    BddIterator iter(domain);
+    int size = 0;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) { size++; }
+      ++iter;
+    }
+    return size;
+  }
+
+  int 
+  CpltSetVarImp::unknownMin(void) const {
+    if (manager.ctrue(domain)) { return initialLubMin(); } 
+    BddIterator iter(domain);
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_UNKNOWN || status == UNDET) {
+        int idx = iter.label() - offset();
+        return initialLubMin() + idx;
+      } 
+      ++iter;
+    }
+    return MIN_OF_EMPTY;
+  }
+
+  int 
+  CpltSetVarImp::unknownMax(void) const {
+    if (manager.ctrue(domain)) 
+      return initialLubMax();
+
+    BddIterator iter(domain);
+    int lastunknown = -1;
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_UNKNOWN || status == UNDET) {
+        int idx = iter.label() - offset();
+        lastunknown = initialLubMin() + idx;
+      } 
+      ++iter;
+    }
+    return (lastunknown == -1) ?  MAX_OF_EMPTY : lastunknown;
+  }
+
+  unsigned int
+  CpltSetVarImp::unknownSize(void) const {
+    int size = tableWidth();
+    if (manager.ctrue(domain))
+      return size;
+
+    BddIterator iter(domain);
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_GLB || status == FIX_NOT_LUB) { size--; }
+      ++iter;
+    }
+    return size;
+  }    
+
+  int 
+  CpltSetVarImp::lubMin(void) const {
+    if (manager.ctrue(domain)) { return initialLubMin(); }
+    Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
+    return !lub() ? MIN_OF_EMPTY : lub.min();
+  }
+
+  int 
+  CpltSetVarImp::lubMax(void) const {
+    if (manager.ctrue(domain)) { return initialLubMax(); }
+    Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
+    if (!lub()) { return MAX_OF_EMPTY; }
+    int maxlub = initialLubMax();
+    while (lub()) {
+      maxlub = lub.max();
+      ++lub;
+    }
+    return maxlub;
+  }
+
+  int 
+  CpltSetVarImp::lubMinN(int n) const {
+    if (manager.ctrue(domain)) 
+      return initialLubMin() + n; 
+
+    Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
+
+    if (!lub()) 
+      return MIN_OF_EMPTY; 
+
+    while (lub()) {
+      if (n < (int) lub.width()) {
+        return lub.min() + n;
+      } else {
+        n -= lub.width();
+      }
+      ++lub;
+    }
+    // what to return if n is greater than the number of possible values ?
+    // we should throw an exception here
+    return MIN_OF_EMPTY;
   }
 
   // initialize the iterator structure

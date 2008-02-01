@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace CpltSet {
 
-  forceinline void 
+  inline void 
   CpltSetVarImp::printdom(void) const {
     manager.print_set(domain);
   }
@@ -45,189 +45,20 @@ namespace Gecode { namespace CpltSet {
   forceinline unsigned int 
   CpltSetVarImp::tableWidth(void) const { return max - min + 1; }
 
-  forceinline bdd
+  inline bdd
   CpltSetVarImp::element(int i) const { 
     return manager.bddpos(_offset + i); 
   }
 
-  forceinline bdd
+  inline bdd
   CpltSetVarImp::elementNeg(int i) const {
     return manager.negbddpos(_offset + i);
   }
 
-  forceinline
-  CpltSetVarImp::CpltSetVarImp(Space* home, 
-                               int glbMin, int glbMax, int lubMin, int lubMax,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
-      min(lubMin), max(lubMax), _assigned(false) {
 
-    IntSet glb(glbMin, glbMax);
-    IntSet lub(lubMin, lubMax);
-    testConsistency(glb, lub, cardMin, cardMax, "CpltSetVarImp");
-
-    _offset = manager.allocate(tableWidth());
-
-    for (int i = glbMax; i >= glbMin; i--) {
-      domain &= element(i - min);
-    } 
-
-    unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
-                        static_cast<int> (cardMin), 
-                        static_cast<int> (cardMax));   
-
-    assert(!manager.cfalse(domain));
-  }
-
-  forceinline
-  CpltSetVarImp::CpltSetVarImp(Space* home,
-                               int glbMin, int glbMax, const IntSet& lubD,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
-      min(lubD.min()), max(lubD.max()),
-      _assigned(false) {
-
-    IntSet glb(glbMin, glbMax);
-    testConsistency(glb, lubD, cardMin, cardMax, "CpltSetVarImp");
-
-    IntSetRanges lub(lubD);
-    Iter::Ranges::ToValues<IntSetRanges> lval(lub);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(lval);
-
-    _offset = manager.allocate(tableWidth());
-    vc.last();
-    
-    int c = glbMax;
-    for (int i = max; i >= min; i--) {
-      if (i != vc.val()) {
-        if (c >= glbMin && c == i) {
-          throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
-        }
-        domain &= elementNeg(i - min);
-      } else {
-        if (c >= glbMin && c == i) {
-          domain &= element(i - min);
-          c--;
-        }
-        --vc;
-      }
-    }
-
-    unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
-                        static_cast<int> (cardMin), 
-                        static_cast<int> (cardMax));   
-
-    assert(!manager.cfalse(domain));
-  }
-
-  forceinline
-  CpltSetVarImp::CpltSetVarImp(Space* home,
-                               const IntSet& glbD, int lubMin, int lubMax,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
-      min(lubMin), max(lubMax), _assigned(false) {
-
-    IntSet lub(lubMin, lubMax);
-    testConsistency(glbD, lub, cardMin, cardMax, "CpltSetVarImp");
-
-    IntSetRanges glb(glbD);
-    Iter::Ranges::ToValues<IntSetRanges> gval(glb);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(gval);
-    
-    vc.last();
-    _offset = manager.allocate(tableWidth());
-
-    for (vc.last(); vc(); --vc) {
-      domain &= element(vc.val() - min);
-    } 
-
-    unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
-                        static_cast<int> (cardMin), 
-                        static_cast<int> (cardMax));
-
-    assert(!manager.cfalse(domain));
-  }
-
-  forceinline
-  CpltSetVarImp::CpltSetVarImp(Space* home,
-                               const IntSet& glbD,const IntSet& lubD,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
-      min(lubD.min()), max(lubD.max()),
-      _assigned(false) {
-
-    testConsistency(glbD, lubD, cardMin, cardMax, "CpltSetVarImp");
-
-    IntSetRanges glb(glbD);
-    Iter::Ranges::ToValues<IntSetRanges> gval(glb);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > 
-      vcglb(gval);
-    IntSetRanges lub(lubD);
-    Iter::Ranges::ToValues<IntSetRanges> lval(lub);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > 
-      vclub(lval);
-  
-    _offset = manager.allocate(tableWidth());
-
-    vcglb.last();
-    vclub.last();
-  
-    for (int i = max; i >= min; i--) {
-      if (i != vclub.val()) {
-        if (vcglb() && vcglb.val() == i) {
-          throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
-        }
-        domain &= elementNeg(i - min);
-      } else {
-        if (vcglb() && vcglb.val() == i) {
-          domain &= element(i - min);
-        }
-        --vclub;
-      }
-    }
-
-    unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
-                        static_cast<int> (cardMin), 
-                        static_cast<int> (cardMax));   
-
-    assert(!manager.cfalse(domain));
-  }
-
-  forceinline bdd 
+  inline bdd 
   CpltSetVarImp::dom(void) const {
     return domain;
-  }
-
-  forceinline void 
-  CpltSetVarImp::dispose(Space*) {
-    manager.dispose(domain);
-    // only variables with nodes in the table need to be disposed
-    if (!(_offset == 0 && 
-          min == Set::Limits::int_min &&
-          max == Set::Limits::int_max)
-        ) {
-      manager.dispose(_offset, (int) tableWidth());
-    }
-  }
-
-  // a variable is only assigned if all bdd variables representing
-  // the elements of the set have either a constant false or a constant true
-  forceinline bool
-  CpltSetVarImp::assigned(void) {
-    if (!_assigned) {
-      // (C1) there is only one solution (i.e. only one path)
-      bool cond1 = (unsigned int) manager.bddpath(domain) == 1;
-      // (C2) the solution talks about all elements 
-      //      (i.e. the number of nodes used for the bdd uses the bdd nodes
-      //      of all elements for the CpltSetVar)
-      bool cond2 = (unsigned int) manager.bddsize(domain) == tableWidth();
-      _assigned = cond1 && cond2;
-    } 
-    return _assigned;
   }
 
   forceinline unsigned int
@@ -239,7 +70,7 @@ namespace Gecode { namespace CpltSet {
   forceinline int
   CpltSetVarImp::initialLubMax(void) const { return max; }
 
-  forceinline unsigned int 
+  inline unsigned int 
   CpltSetVarImp::cardMin(void) const {
     if (manager.ctrue(domain)) { return 0; }
     bdd d = domain;
@@ -249,7 +80,7 @@ namespace Gecode { namespace CpltSet {
     return l;
   }
 
-  forceinline unsigned int 
+  inline unsigned int 
   CpltSetVarImp::cardMax(void) const {
     if (manager.ctrue(domain)) { return tableWidth(); }
     bdd d = domain;
@@ -259,60 +90,8 @@ namespace Gecode { namespace CpltSet {
     return u;
   }
 
-  forceinline ModEvent 
-  CpltSetVarImp::intersect(Space* home, bdd& d) {
-    bool assigned_before = assigned();
-    bdd olddom = domain;
-    domain &= d;
-
-    bool assigned_new = assigned();
-    if (manager.cfalse(domain)) 
-      return ME_CPLTSET_FAILED; 
-
-    ModEvent me = ME_CPLTSET_NONE;
-    if (assigned_new) {
-      if (assigned_before) {
-        me = ME_CPLTSET_NONE;
-        return me;
-      } else {
-        me =  ME_CPLTSET_VAL;
-      }
-      Delta d;
-      return notify(home, me, &d);
-    } else {
-      if (olddom != domain) {
-        me = ME_CPLTSET_DOM;
-        Delta d;
-        return notify(home, me, &d);
-      }
-    }
-    return me;
-  }
-
-  forceinline ModEvent 
-  CpltSetVarImp::exclude(Space* home, int a, int b) {
-    // values are already excluded
-    if (a > max  || b < min) 
-      return ME_CPLTSET_NONE;
-
-    int mi = std::max(min, a);
-    int ma = std::min(b, max);
-
-    bdd notinlub  = bdd_true();
-    // get the negated bdds for value i in [a..b]
-    for (int i = ma; i >= mi; i--)         
-      notinlub &= elementNeg(i - min);
-
-    return intersect(home, notinlub);
-  }
-
-  forceinline ModEvent 
-  CpltSetVarImp::exclude(Space* home, int v) {
-    return exclude(home, v, v);
-  }
-
   template <class I> 
-  forceinline ModEvent 
+  ModEvent 
   CpltSetVarImp::excludeI(Space* home, I& i) {
     // we can only exclude what intersects the min and max element of the variable
     Iter::Ranges::Singleton s(min, max);
@@ -338,23 +117,18 @@ namespace Gecode { namespace CpltSet {
     return intersect(home, not_lub);
   }
 
-  forceinline ModEvent 
-  CpltSetVarImp::include(Space* home, int a, int b) {
-    if (a < min || b > max) 
-      return ME_CPLTSET_FAILED;
-
-    bdd in_glb  = bdd_true();
-    for (int i = b; i >= a; i--)
-      in_glb &= element(i - min);
-
-    return intersect(home, in_glb);
+  inline ModEvent 
+  CpltSetVarImp::include(Space* home, int v) {
+    return include(home, v, v);
   }
 
-  forceinline ModEvent 
-  CpltSetVarImp::include(Space* home, int v) { return include(home, v, v); }
+  inline ModEvent 
+  CpltSetVarImp::exclude(Space* home, int v) {
+    return exclude(home, v, v);
+  }
 
   template <class I> 
-  forceinline ModEvent 
+  ModEvent 
   CpltSetVarImp::includeI(Space* home, I& i) {
     if (!i()) 
       return ME_CPLTSET_NONE;
@@ -372,45 +146,24 @@ namespace Gecode { namespace CpltSet {
     return intersect(home, in_glb);  
   }
 
-
-  forceinline ModEvent
-  CpltSetVarImp::nq(Space* home, int a, int b) {
-    if (b < min || a > max) 
-      return ME_CPLTSET_NONE;
-
-    Iter::Ranges::Singleton m(a, b);
-    bdd ass = !(iterToBdd(m));    
-    return intersect(home, ass);
-  }
-
-  forceinline ModEvent
+  inline ModEvent
   CpltSetVarImp::nq(Space* home, int v) { return nq(home, v, v); }
 
   template <class I>
-  forceinline ModEvent
+  ModEvent
   CpltSetVarImp::nqI(Space* home, I& i) {
     bdd ass = !(iterToBdd(i));
     return intersect(home, ass);
   }
 
-  forceinline ModEvent
-  CpltSetVarImp::eq(Space* home, int a, int b) {
-    if (b < min || a > max) 
-      return ME_CPLTSET_FAILED;
-
-    Iter::Ranges::Singleton m(a, b);
-    bdd ass = iterToBdd(m);
-    return intersect(home, ass);
-  }
-
-  forceinline ModEvent
+  inline ModEvent
   CpltSetVarImp::eq(Space* home, int v) { return eq(home, v, v); }
 
   // gen _assigned needs a test in case
   // we try to build an _assigned
   // that is not allowed by the variable domain
   template <class I>
-  forceinline ModEvent
+  ModEvent
   CpltSetVarImp::eqI(Space* home, I& i) {
     if (i()) {
       if (i.min() < min || i.min() > max) 
@@ -420,51 +173,25 @@ namespace Gecode { namespace CpltSet {
     return intersect(home, ass);
   }
 
-  forceinline ModEvent 
-  CpltSetVarImp::intersect(Space* home, int a, int b) {
-    ModEvent me_left = exclude(home, Set::Limits::int_min, a - 1);
-
-    if (me_failed(me_left) || me_left == ME_CPLTSET_VAL) 
-      return me_left;
-
-    ModEvent me_right = exclude(home, b + 1, Set::Limits::int_max);
-
-    if (me_failed(me_right) || me_right == ME_CPLTSET_VAL) 
-      return me_right;
-
-    if (me_left > 0 || me_right > 0) 
-      return ME_CPLTSET_DOM;
-
-    return ME_CPLTSET_NONE;    
-  }
-
-  forceinline ModEvent 
+  inline ModEvent 
   CpltSetVarImp::intersect(Space* home, int i) {
     return intersect(home, i, i);
   }
 
   template <class I> 
-  forceinline ModEvent 
+  ModEvent 
   CpltSetVarImp::intersectI(Space* home, I& i) {
     Iter::Ranges::Compl<Set::Limits::int_min, Set::Limits::int_max, I> 
       compI(i);
     return excludeI(home, compI); 
   }
 
-  forceinline ModEvent 
-  CpltSetVarImp::cardinality(Space* home, int l, int u) {
-    unsigned int maxcard = tableWidth();
-    // compute the cardinality formula
-    bdd c = cardcheck(maxcard, _offset, l, u);
-    return intersect(home, c);
-  }
-
-  forceinline ModEvent 
+  inline ModEvent 
   CpltSetVarImp::cardMin(Space* home, unsigned int newMin) {
     return cardinality(home, newMin, tableWidth());
   }
 
-  forceinline ModEvent 
+  inline ModEvent 
   CpltSetVarImp::cardMax(Space* home, unsigned int newMax) {
     return cardinality(home, 0, newMax);
   }
@@ -472,7 +199,7 @@ namespace Gecode { namespace CpltSet {
   // given the empty iterator we should produce an 
   // _assigned for the empty set.
   template <class I>
-  forceinline bdd
+  bdd
   CpltSetVarImp::iterToBdd(I& i) {
 
     Iter::Ranges::ToValues<I> vali(i);
@@ -497,7 +224,7 @@ namespace Gecode { namespace CpltSet {
     return ass;
   }
 
-  forceinline bool
+  inline bool
   CpltSetVarImp::range(void) const { return manager.ctrue(domain); }
 
   /*
@@ -526,24 +253,13 @@ namespace Gecode { namespace CpltSet {
     CpltSetVarImpBase::cancel(home,p,pc,assigned());
   }
 
-  forceinline bool
-  CpltSetVarImp::knownIn(int v) const {
-    if (manager.ctrue(domain)) 
-      return false;
-    if (v<min || v>max)
-      return false;
-    bdd bv = manager.negbddpos(_offset+v-min);
-    return (manager.cfalse(domain & bv));
-  }
-
-  forceinline bool
-  CpltSetVarImp::knownOut(int v) const {
-    if (manager.ctrue(domain)) 
-      return false;
-    if (v<min || v>max)
-      return false;
-    bdd bv = manager.bddpos(_offset+v-min);
-    return (manager.cfalse(domain & bv));
+  /*
+   * Support for delta information
+   *
+   */
+  forceinline ModEvent
+  CpltSetVarImp::modevent(const Delta* d) {
+    return d->modevent();
   }
 
   /// Iterator for the values in the greatest lower bound of a bdd variable implementation
@@ -646,13 +362,13 @@ namespace Gecode { namespace CpltSet {
   forceinline bool
   BddIterator::empty(void) const { return (l == 0) && (r == n - 1); }
 
-  forceinline bool
+  inline bool
   BddIterator::operator()(void) const {
     bool valid = (!empty() || singleton );
     return valid;
   }
 
-  forceinline int 
+  inline int 
   BddIterator::label(void) const { 
     if (!operator()()) { 
       return -1; 
@@ -669,7 +385,7 @@ namespace Gecode { namespace CpltSet {
    *
    */
 
-  forceinline void
+  inline void
   DomBddIterator::init(const CpltSetVarImp* x, bdd& remain) {
     vector_level = 0;
     mi    = x->min;
@@ -684,7 +400,7 @@ namespace Gecode { namespace CpltSet {
     bdd_level   = BddIterator::label() - off;
   }
 
-  forceinline void
+  inline void
   DomBddIterator::init(const CpltSetVarImp* x) {
     bdd dom = x->dom();
     init(x, dom);
@@ -699,7 +415,7 @@ namespace Gecode { namespace CpltSet {
     DomBddIterator::init(x, dom);
   }
 
-  forceinline
+  inline
   DomBddIterator::DomBddIterator(const CpltSetVarImp* x, bdd& remain) {
     vector_level = 0;
     mi    = x->min;
@@ -721,7 +437,7 @@ namespace Gecode { namespace CpltSet {
     return vector_level < (ma-mi+1);
   }
 
-  forceinline void
+  inline void
   DomBddIterator::operator++(void) {
     if (same()) {
       BddIterator::operator++();
@@ -730,12 +446,12 @@ namespace Gecode { namespace CpltSet {
     vector_level++;
   }
 
-  forceinline NodeStatus
+  inline NodeStatus
   DomBddIterator::status(void) const{
     return same() ? BddIterator::status() : FIX_UNKNOWN;
   }
 
-  forceinline int
+  inline int
   DomBddIterator::val(void) const {
     return same() ? mi + BddIterator::label() - off : mi + vector_level;
   }
@@ -743,7 +459,7 @@ namespace Gecode { namespace CpltSet {
   forceinline
   GlbValues<CpltSetVarImp*>::GlbValues(void) {}
 
-  forceinline
+  inline
   GlbValues<CpltSetVarImp*>::GlbValues(const CpltSetVarImp* x) 
     : mi(x->min), ma(x->max) {
     DomBddIterator::init(x);
@@ -753,7 +469,7 @@ namespace Gecode { namespace CpltSet {
 
   }
 
-  forceinline void 
+  inline void 
   GlbValues<CpltSetVarImp*>::init(const CpltSetVarImp* x) {
     mi = x->min;  
     ma = x->max;
@@ -763,7 +479,7 @@ namespace Gecode { namespace CpltSet {
     }
   }
 
-  forceinline void 
+  inline void 
   GlbValues<CpltSetVarImp*>::operator++(void) {
     DomBddIterator::operator++();
     while (operator()() && status() != FIX_GLB) {
@@ -779,7 +495,7 @@ namespace Gecode { namespace CpltSet {
   forceinline
   LubValues<CpltSetVarImp*>::LubValues(void) {}
 
-  forceinline
+  inline
   LubValues<CpltSetVarImp*>::LubValues(const CpltSetVarImp* x) 
     : mi(x->min), ma(x->max) {
     DomBddIterator::init(x);
@@ -788,7 +504,7 @@ namespace Gecode { namespace CpltSet {
     }
   }
 
-  forceinline void 
+  inline void 
   LubValues<CpltSetVarImp*>::init(const CpltSetVarImp* x) {
     mi = x->min;  
     ma = x->max;
@@ -799,7 +515,7 @@ namespace Gecode { namespace CpltSet {
     }
   }
 
-  forceinline void 
+  inline void 
   LubValues<CpltSetVarImp*>::operator++(void) {
     DomBddIterator::operator++();
     while (DomBddIterator::operator()() && status() == FIX_NOT_LUB) {
@@ -807,21 +523,20 @@ namespace Gecode { namespace CpltSet {
     }
   }
 
-  forceinline bool
+  inline bool
   LubValues<CpltSetVarImp*>::operator()(void) const {
     return DomBddIterator::operator()() && status() != FIX_NOT_LUB;
   }
 
-  forceinline int
+  inline int
   LubValues<CpltSetVarImp*>::val(void) const {
     return DomBddIterator::val();
   }
 
   forceinline
-  UnknownValues<CpltSetVarImp*>::UnknownValues(void) {
-  }
+  UnknownValues<CpltSetVarImp*>::UnknownValues(void) {}
 
-  forceinline
+  inline
   UnknownValues<CpltSetVarImp*>::UnknownValues(const CpltSetVarImp* x) 
     : mi(x->min), ma(x->max) {
     DomBddIterator::init(x);
@@ -831,7 +546,7 @@ namespace Gecode { namespace CpltSet {
     }
   }
 
-  forceinline void 
+  inline void 
   UnknownValues<CpltSetVarImp*>::init(const CpltSetVarImp* x) {
     mi = x->min;  
     ma = x->max;
@@ -843,7 +558,7 @@ namespace Gecode { namespace CpltSet {
     }
   }
 
-  forceinline void 
+  inline void 
   UnknownValues<CpltSetVarImp*>::operator++(void) {
     DomBddIterator::operator++();
     while (operator()() && 
@@ -852,145 +567,11 @@ namespace Gecode { namespace CpltSet {
     }
   }
 
-  forceinline int
+  inline int
   UnknownValues<CpltSetVarImp*>::val(void) const {
     return DomBddIterator::val();
   }
   
-  forceinline int 
-  CpltSetVarImp::lubMaxN(int n) const {
-    if (manager.ctrue(domain)) 
-      return initialLubMax() - n;
-
-    GECODE_AUTOARRAY(NodeStatus, status, tableWidth());
-    DomBddIterator iter(this);
-
-    if (!iter()) 
-      return MAX_OF_EMPTY;
-    
-    for (int i = 0; iter(); i++, ++iter) {
-      status[i] = iter.status();     
-    }
-    int c = 0;
-    for (int j = tableWidth() - 1; j--; ) {
-      if (status[j] != FIX_NOT_LUB) {
-        if (c == n) { 
-          c = j; 
-          break; 
-        } 
-        c++;
-      }
-    }
-    return initialLubMax() - c;
-  }
-
-  forceinline unsigned int
-  CpltSetVarImp::lubSize(void) const {
-    if (manager.ctrue(domain)) 
-      return tableWidth();
-    
-    BddIterator iter(domain);
-    int out = 0;
-    while (iter()) {
-      if (iter.status() == FIX_NOT_LUB)
-        out++;
-      ++iter;
-    }
-    return tableWidth() - out;
-  }
-
-  forceinline int 
-  CpltSetVarImp::glbMin(void) const {
-    if (manager.ctrue(domain)) 
-      return initialLubMin();
-
-    BddIterator iter(domain);
-    while (iter()) {
-      if (iter.status() == FIX_GLB) {
-        int idx = iter.label() - offset();
-        return initialLubMin() + idx;
-      } 
-      ++iter;
-    }
-    return MIN_OF_EMPTY;
-  }
-
-  forceinline int 
-  CpltSetVarImp::glbMax(void) const {
-    if (manager.ctrue(domain)) 
-      return initialLubMax();
-  
-    BddIterator iter(domain);
-    int lastglb = -1;
-    while (iter()) {
-      if (iter.status() == FIX_GLB) {
-        int idx = iter.label() - offset();
-        lastglb = initialLubMin() + idx;
-      } 
-      ++iter;
-    }
-    return (lastglb == -1) ? MAX_OF_EMPTY : lastglb;
-  }
-
-  forceinline unsigned int
-  CpltSetVarImp::glbSize(void) const {
-    if (manager.ctrue(domain)) { return 0; }
-    BddIterator iter(domain);
-    int size = 0;
-    while (iter()) {
-      if (iter.status() == FIX_GLB) { size++; }
-      ++iter;
-    }
-    return size;
-  }
-
-  forceinline int 
-  CpltSetVarImp::unknownMin(void) const {
-    if (manager.ctrue(domain)) { return initialLubMin(); } 
-    BddIterator iter(domain);
-    while (iter()) {
-      NodeStatus status = iter.status();
-      if (status == FIX_UNKNOWN || status == UNDET) {
-        int idx = iter.label() - offset();
-        return initialLubMin() + idx;
-      } 
-      ++iter;
-    }
-    return MIN_OF_EMPTY;
-  }
-
-  forceinline int 
-  CpltSetVarImp::unknownMax(void) const {
-    if (manager.ctrue(domain)) 
-      return initialLubMax();
-
-    BddIterator iter(domain);
-    int lastunknown = -1;
-    while (iter()) {
-      NodeStatus status = iter.status();
-      if (status == FIX_UNKNOWN || status == UNDET) {
-        int idx = iter.label() - offset();
-        lastunknown = initialLubMin() + idx;
-      } 
-      ++iter;
-    }
-    return (lastunknown == -1) ?  MAX_OF_EMPTY : lastunknown;
-  }
-
-  forceinline unsigned int
-  CpltSetVarImp::unknownSize(void) const {
-    int size = tableWidth();
-    if (manager.ctrue(domain))
-      return size;
-
-    BddIterator iter(domain);
-    while (iter()) {
-      NodeStatus status = iter.status();
-      if (status == FIX_GLB || status == FIX_NOT_LUB) { size--; }
-      ++iter;
-    }
-    return size;
-  }    
 }
 
 namespace Set {
@@ -1015,16 +596,19 @@ namespace Set {
   forceinline
   GlbRanges<CpltSet::CpltSetVarImp*>::GlbRanges(void) {}
 
-  forceinline
-  GlbRanges<CpltSet::CpltSetVarImp*>::GlbRanges(const CpltSet::CpltSetVarImp* x) {
+  inline
+  GlbRanges<CpltSet::CpltSetVarImp*>
+  ::GlbRanges(const CpltSet::CpltSetVarImp* x) {
     CpltSet::GlbValues<CpltSet::CpltSetVarImp*> v(x);
     Iter::Values::ToRanges<CpltSet::GlbValues<CpltSet::CpltSetVarImp*> >::init(v);
   }
 
-  forceinline void 
-  GlbRanges<CpltSet::CpltSetVarImp*>::init(const CpltSet::CpltSetVarImp* x) {
+  inline void 
+  GlbRanges<CpltSet::CpltSetVarImp*>
+  ::init(const CpltSet::CpltSetVarImp* x) {
     CpltSet::GlbValues<CpltSet::CpltSetVarImp*> v(x);
-    Iter::Values::ToRanges<CpltSet::GlbValues<CpltSet::CpltSetVarImp*> >::init(v);
+    Iter::Values::ToRanges<
+      CpltSet::GlbValues<CpltSet::CpltSetVarImp*> >::init(v);
   }
 
   /** \brief Range iterator for least upper bound of CpltSet variable 
@@ -1048,16 +632,19 @@ namespace Set {
   forceinline
   LubRanges<CpltSet::CpltSetVarImp*>::LubRanges(void) {}
 
-  forceinline
-  LubRanges<CpltSet::CpltSetVarImp*>::LubRanges(const CpltSet::CpltSetVarImp* x) {
+  inline
+  LubRanges<CpltSet::CpltSetVarImp*>
+  ::LubRanges(const CpltSet::CpltSetVarImp* x) {
     CpltSet::LubValues<CpltSet::CpltSetVarImp*> v(x);
-    Iter::Values::ToRanges<CpltSet::LubValues<CpltSet::CpltSetVarImp*> >::init(v);
+    Iter::Values::ToRanges<
+      CpltSet::LubValues<CpltSet::CpltSetVarImp*> >::init(v);
   }
 
-  forceinline void 
+  inline void 
   LubRanges<CpltSet::CpltSetVarImp*>::init(const CpltSet::CpltSetVarImp* x) {
     CpltSet::LubValues<CpltSet::CpltSetVarImp*> v(x);
-    Iter::Values::ToRanges<CpltSet::LubValues<CpltSet::CpltSetVarImp*> >::init(v);
+    Iter::Values::ToRanges<
+      CpltSet::LubValues<CpltSet::CpltSetVarImp*> >::init(v);
   }
   
   /// Range iterator for the unknown set of CpltSet variable implementation
@@ -1079,7 +666,7 @@ namespace Set {
   forceinline
   UnknownRanges<CpltSet::CpltSetVarImp*>::UnknownRanges(void) {}
 
-  forceinline
+  inline
   UnknownRanges<CpltSet::CpltSetVarImp*>
   ::UnknownRanges(const CpltSet::CpltSetVarImp* x) {
     CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> v(x);
@@ -1087,7 +674,7 @@ namespace Set {
       CpltSet::CpltSetVarImp*> >::init(v);
   }
 
-  forceinline void 
+  inline void 
   UnknownRanges<CpltSet::CpltSetVarImp*>
   ::init(const CpltSet::CpltSetVarImp* x) {
     CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> v(x);
@@ -1095,62 +682,6 @@ namespace Set {
       CpltSet::CpltSetVarImp*> >::init(v);
   }
 
-}
-
-namespace CpltSet {
-
-  forceinline int 
-  CpltSetVarImp::lubMin(void) const {
-    if (manager.ctrue(domain)) { return initialLubMin(); }
-    Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
-    return !lub() ? MIN_OF_EMPTY : lub.min();
-  }
-
-  forceinline int 
-  CpltSetVarImp::lubMax(void) const {
-    if (manager.ctrue(domain)) { return initialLubMax(); }
-    Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
-    if (!lub()) { return MAX_OF_EMPTY; }
-    int maxlub = initialLubMax();
-    while (lub()) {
-      maxlub = lub.max();
-      ++lub;
-    }
-    return maxlub;
-  }
-
-  forceinline int 
-  CpltSetVarImp::lubMinN(int n) const {
-    if (manager.ctrue(domain)) 
-      return initialLubMin() + n; 
-
-    Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
-
-    if (!lub()) 
-      return MIN_OF_EMPTY; 
-
-    while (lub()) {
-      if (n < (int) lub.width()) {
-        return lub.min() + n;
-      } else {
-        n -= lub.width();
-      }
-      ++lub;
-    }
-    // what to return if n is greater than the number of possible values ?
-    // we should throw an exception here
-    return MIN_OF_EMPTY;
-  }
-
-  /*
-   * Support for delta information
-   *
-   */
-  forceinline ModEvent
-  CpltSetVarImp::modevent(const Delta* d) {
-    return d->modevent();
-  }
-  
 }}
 
 // STATISTICS: cpltset-var

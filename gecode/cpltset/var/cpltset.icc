@@ -41,17 +41,18 @@ namespace Gecode {
   forceinline
   CpltSetVar::CpltSetVar(void) : varimp(NULL) {}
 
-  forceinline void
+  inline void
   CpltSetVar::init(Space* home, int glbMin, int glbMax, 
                int lubMin, int lubMax,
                unsigned int cardMin, unsigned int cardMax) {
     varimp = new (home) CpltSet::CpltSetVarImp(home,
                                                glbMin, glbMax, 
-                                               lubMin, lubMax, cardMin, cardMax);
+                                               lubMin, lubMax,
+                                               cardMin, cardMax);
   }
 
 
-  forceinline void
+  inline void
   CpltSetVar::init(Space* home,
                    int glbMin, int glbMax, const IntSet& lubD,
                    unsigned int cardMin, unsigned int cardMax) {
@@ -60,7 +61,7 @@ namespace Gecode {
                                                lubD, cardMin, cardMax);
   }
 
-  forceinline void
+  inline void
   CpltSetVar::init(Space* home, const IntSet& glbD,
                    int lubMin, int lubMax,
                    unsigned int cardMin, unsigned int cardMax) {
@@ -69,7 +70,7 @@ namespace Gecode {
                                                cardMin, cardMax);
   }
 
-  forceinline void
+  inline void
   CpltSetVar::init(Space* home, 
                    const IntSet& glbD, const IntSet& lubD,
                    unsigned int cardMin, unsigned int cardMax) {
@@ -77,7 +78,7 @@ namespace Gecode {
                                                glbD, lubD, cardMin, cardMax);
   }
 
-  forceinline void
+  inline void
   CpltSetVar::dispose(Space* home) {
     varimp->dispose(home);
     varimp = NULL;

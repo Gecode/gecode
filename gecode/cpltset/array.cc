@@ -56,6 +56,14 @@ namespace Gecode {
                                    unsigned int minCard,
                                    unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {    
+    Set::Limits::check(lbMin,"SetVarArray::SetVarArray");
+    Set::Limits::check(lbMax,"SetVarArray::SetVarArray");
+    Set::Limits::check(ubMin,"SetVarArray::SetVarArray");
+    Set::Limits::check(ubMax,"SetVarArray::SetVarArray");
+    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
+    if (minCard > maxCard)
+      throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
+
     IntSet glb(lbMin, lbMax);
     IntSet lub(ubMin, ubMax);      
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
@@ -70,7 +78,14 @@ namespace Gecode {
                                    const IntSet& glb,int ubMin,int ubMax,
                                    unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
-    IntSet lub(ubMin, ubMax);      
+    Set::Limits::check(glb,"SetVarArray::SetVarArray");
+    Set::Limits::check(ubMin,"SetVarArray::SetVarArray");
+    Set::Limits::check(ubMax,"SetVarArray::SetVarArray");
+    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
+    if (minCard > maxCard)
+      throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
+
+    IntSet lub(ubMin, ubMax);
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)

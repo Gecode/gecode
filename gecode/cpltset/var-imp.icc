@@ -163,21 +163,31 @@ namespace Gecode { namespace CpltSet {
     bool _assigned;
   protected:
     /// Constructor for cloning \a x
+    GECODE_CPLTSET_EXPORT
     CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x);
     /// Produce bdd representing \a i for this variable
     template <class I>
     bdd iterToBdd(I& i);
 
   public:
+    /// Construct variable with given domain
+    GECODE_CPLTSET_EXPORT
     CpltSetVarImp(Space* home, int glbMin, int glbMax, int lubMin, int lubMax, 
                   unsigned int cardMin, unsigned int cardMax);
+    /// Construct variable with given domain
+    GECODE_CPLTSET_EXPORT
     CpltSetVarImp(Space* home, const IntSet& glbD, int lubMin, int lubMax, 
                   unsigned int cardMin, unsigned int cardMax);
+    /// Construct variable with given domain
+    GECODE_CPLTSET_EXPORT
     CpltSetVarImp(Space* home, int glbMin, int glbMax, const IntSet& lubD,
                   unsigned int cardMin, unsigned int cardMax);
+    /// Construct variable with given domain
+    GECODE_CPLTSET_EXPORT
     CpltSetVarImp(Space* home, const IntSet& glbD,const IntSet& lubD,
                   unsigned int cardMin, unsigned int cardMax);
     // Delete a bdd variable
+    GECODE_CPLTSET_EXPORT
     void dispose(Space* home);
   public:
     /// \name Set bounds update by value
@@ -185,17 +195,17 @@ namespace Gecode { namespace CpltSet {
     /// Exclude value \a v from lub
     ModEvent exclude(Space* home, int v);
     /// Exclude range \f$ [a,\dots, b] \f$ from
-    ModEvent exclude(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent exclude(Space* home, int a, int b);
 
     /// Include value \a v in glb
     ModEvent include(Space* home, int v);
     /// Include range \f$ [a,\dots, b] \f$ in glb
-    ModEvent include(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent include(Space* home, int a, int b);
 
     /// Intersect domain with singleton set \f$ \{i\} \f$
     ModEvent intersect(Space* home, int i);
     /// Intersect domain with range \f$ [a..b] \f$
-    ModEvent intersect(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent intersect(Space* home, int a, int b);
     //@}
 
     /// \name Set bounds update by range iterator
@@ -211,7 +221,7 @@ namespace Gecode { namespace CpltSet {
     /// \name Set cardinality update 
     //@{
     /// Restrict cardinality to be at least l and at most u
-    ModEvent cardinality(Space* home, int l, int u);
+    GECODE_CPLTSET_EXPORT ModEvent cardinality(Space* home, int l, int u);
     /// Restrict cardinality to be at least n
     ModEvent cardMin(Space* home,unsigned int n);
     /// Restrict cardinality to be at most n
@@ -223,12 +233,12 @@ namespace Gecode { namespace CpltSet {
     /// Restrict domain values to be different from singleton set \f$\{v\}\f$.
     ModEvent nq(Space* home, int v);
     /// Restrict domain values to be different from range \f$[a,b]\f$.
-    ModEvent nq(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent nq(Space* home, int a, int b);
 
     /// Restrict domain to be equal to singleton set \f$\{v\}\f$.
     ModEvent eq(Space* home, int v);
     /// Restrict domain to be equal to range \f$[a,b]\f$.
-    ModEvent eq(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent eq(Space* home, int a, int b);
     //@}
 
     /// \name Set domain update by range iterator
@@ -242,7 +252,7 @@ namespace Gecode { namespace CpltSet {
     /// \name Set domain update by bdd
     //@{
     /// Intersect domain with the domain represented by \a d
-    ModEvent intersect(Space* home, bdd& d);
+    GECODE_CPLTSET_EXPORT ModEvent intersect(Space* home, bdd& d);
     //@}
     
     /// \name Value access
@@ -254,28 +264,28 @@ namespace Gecode { namespace CpltSet {
     unsigned int cardMax(void) const;
 
     /// Return minimum of the greatest lower bound
-    int glbMin(void) const;
+    GECODE_CPLTSET_EXPORT int glbMin(void) const;
     /// Return maximum of the greatest lower bound
-    int glbMax(void) const;
+    GECODE_CPLTSET_EXPORT int glbMax(void) const;
     /// Return the size of the greatest lower bound
-    unsigned int glbSize(void) const;
+    GECODE_CPLTSET_EXPORT unsigned int glbSize(void) const;
     /// Return minimum of the least upper bound
-    int lubMin(void) const;
+    GECODE_CPLTSET_EXPORT int lubMin(void) const;
     /// Return maximum of the least upper bound
-    int lubMax(void) const;
+    GECODE_CPLTSET_EXPORT int lubMax(void) const;
     /// Return the size of the least upper bound
-    unsigned int lubSize(void) const;
+    GECODE_CPLTSET_EXPORT unsigned int lubSize(void) const;
     /// Return \a n -th smallest element in the least upper bound
-    int lubMinN(int n) const;
+    GECODE_CPLTSET_EXPORT int lubMinN(int n) const;
     /// Return \a n -th largest element in the least upper bound
-    int lubMaxN(int n) const;
+    GECODE_CPLTSET_EXPORT int lubMaxN(int n) const;
 
     /// Return minimum of the difference between the greatest lower and the least upper bound
-    int unknownMin(void) const;
+    GECODE_CPLTSET_EXPORT int unknownMin(void) const;
     /// Return maximum of the difference between the greatest lower and the least upper bound
-    int unknownMax(void) const;
+    GECODE_CPLTSET_EXPORT int unknownMax(void) const;
     /// Return the size of the difference between the greatest lower and the least upper bound
-    unsigned int unknownSize(void) const;
+    GECODE_CPLTSET_EXPORT unsigned int unknownSize(void) const;
 
     //@}
 
@@ -305,11 +315,11 @@ namespace Gecode { namespace CpltSet {
     /// \name Domain tests
     //@{
     /// Test whether variable is assigned
-    bool assigned(void) ;
+    GECODE_CPLTSET_EXPORT bool assigned(void) ;
     /// Test whether \a i is contained in the greatest lower bound
-    bool knownIn(int i) const;
+    GECODE_CPLTSET_EXPORT bool knownIn(int i) const;
     /// Test whether \a i is not contained in the least upper bound
-    bool knownOut(int i) const;
+    GECODE_CPLTSET_EXPORT bool knownOut(int i) const;
     /// Test whether domain is a range 
     bool range(void) const;
     //@}
