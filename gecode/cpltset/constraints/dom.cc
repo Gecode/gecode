@@ -41,6 +41,7 @@ namespace Gecode {
   
   void 
   dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s) {
+    Set::Limits::check(s, "CpltSet::dom");
     if (home->failed()) return;
     CpltSet::CpltSetView bv(x);
 

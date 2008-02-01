@@ -45,6 +45,8 @@ namespace Gecode {
   void
   cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u) {
     if (home->failed()) return;
+    Set::Limits::check(l, "CpltSet::cardinality");
+    Set::Limits::check(u, "CpltSet::cardinality");
 
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;

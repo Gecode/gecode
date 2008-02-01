@@ -618,19 +618,19 @@ namespace Gecode {
   
   /// Post propagator for \f$ |x \cap is| =  c \f$ 
   GECODE_CPLTSET_EXPORT void
-  exactly(Space* home, CpltSetVar x, IntSet& is, int c);
+  exactly(Space* home, CpltSetVar x, IntSet& is, unsigned int c);
 
   /// Post propagator for \f$ 0 \leq |x \cap is| \leq c \f$ 
   GECODE_CPLTSET_EXPORT void
-  atmost(Space* home, CpltSetVar x, IntSet& is, int c);
+  atmost(Space* home, CpltSetVar x, IntSet& is, unsigned int c);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \f$ 
   GECODE_CPLTSET_EXPORT void
-  atmost(Space* home, CpltSetVar x, CpltSetVar y, int c);
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge x \sim_{lex} y\f$ 
   GECODE_CPLTSET_EXPORT void
-  atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
+  atmostLex(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c, 
             CpltSetRelType lex);
 
   /**
@@ -681,14 +681,14 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   partitionLexCard(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
-                   int c);
+                   unsigned int c);
 
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
    *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$ 
    */
   GECODE_CPLTSET_EXPORT void
-  partitionCard(Space* home, const CpltSetVarArgs& x, int c);
+  partitionCard(Space* home, const CpltSetVarArgs& x, unsigned int c);
 
   //@}
   
@@ -732,7 +732,7 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   nvalue(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
-         int n, const CpltSetVarArgs& allvars);
+         unsigned int n, const CpltSetVarArgs& allvars);
 
   /** \brief Post propagator for \f$ t = \bigcup_{i\in s} x_i \wedge v = \bigcup_{i\in u} y_i
    *  \wedge v \subseteq t \f$

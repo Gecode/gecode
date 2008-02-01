@@ -363,16 +363,19 @@ namespace Gecode {
     partition_con(home, x, y, false, SRT_EQ, false, -1);
   }
 
-  void partitionLex(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex) {
+  void partitionLex(Space* home, const CpltSetVarArgs& x,
+                    CpltSetRelType lex) {
     partition_con(home, x, true, lex, false, -1);
   }
 
   void partitionLexCard(Space* home, const CpltSetVarArgs& x,
-                        CpltSetRelType lex, int c) {
+                        CpltSetRelType lex, unsigned int c) {
+    Set::Limits::check(c, "CpltSet::partitionLexCard");
     partition_con(home, x, true, lex, true, c);
   }
 
-  void partitionCard(Space* home, const CpltSetVarArgs& x, int c) {
+  void partitionCard(Space* home, const CpltSetVarArgs& x, unsigned int c) {
+    Set::Limits::check(c, "CpltSet::partitionCard");
     partition_con(home, x, false, SRT_EQ, true, c);
   }
 }

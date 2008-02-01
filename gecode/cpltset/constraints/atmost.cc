@@ -352,8 +352,9 @@ namespace Gecode {
   using namespace CpltSet::AtMost;
 
   void
-  exactly(Space* home, CpltSetVar x, IntSet& is, int c) {
+  exactly(Space* home, CpltSetVar x, IntSet& is, unsigned int c) {
     if (home->failed()) return;
+    Set::Limits::check(c, "CpltSet::exactly");
 
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
@@ -407,7 +408,8 @@ namespace Gecode {
   }
 
   void
-  atmost(Space* home, CpltSetVar x, IntSet& is, int c) {
+  atmost(Space* home, CpltSetVar x, IntSet& is, unsigned int c) {
+    Set::Limits::check(c, "CpltSet::atmost");
     if (home->failed()) return;
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
@@ -423,34 +425,44 @@ namespace Gecode {
   }
 
   void 
-  atmost(Space* home, CpltSetVar x, CpltSetVar y, int c) {
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c) {
+    Set::Limits::check(c, "CpltSet::atmost");
     atmost_con(home, x, y, c, SRT_EQ, -1);
   }
 
   void 
-  atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
+  atmostLex(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c, 
             CpltSetRelType lex) {
+    Set::Limits::check(c, "CpltSet::atmostLex");
     atmost_con(home, x, y, c, lex, -1);
   }
 
   void 
-  atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-                CpltSetRelType lex, int d) {
+  atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c, 
+                CpltSetRelType lex, unsigned int d) {
+    Set::Limits::check(c, "CpltSet::atmostLexCard");
+    Set::Limits::check(d, "CpltSet::atmostLexCard");
     atmost_con(home, x, y, c, lex, d);
   }
 
   void 
-  atmostCard(Space* home, CpltSetVar x, CpltSetVar y, int c, int d) {
+  atmostCard(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c,
+             unsigned int d) {
+    Set::Limits::check(c, "CpltSet::atmostCard");
+    Set::Limits::check(d, "CpltSet::atmostCard");
     atmost_con(home, x, y, c, SRT_EQ, d);
   }
 
   void 
-  atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z, int c) {
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z,
+         unsigned int c) {
+    Set::Limits::check(c, "CpltSet::atmost");
     atmost_con(home, x, y, z, c, SRT_EQ, -1);
   }
 
   void 
-  atmostOne(Space* home, const CpltSetVarArgs& x, int c) {
+  atmostOne(Space* home, const CpltSetVarArgs& x, unsigned int c) {
+    Set::Limits::check(c, "CpltSet::atmostOne");
     atmostOne_con(home, x, c);
   }
 

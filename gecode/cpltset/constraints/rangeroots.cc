@@ -445,7 +445,8 @@ namespace Gecode {
   }
 
   void nvalue(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
-                    CpltSetVar t, int n, const CpltSetVarArgs& allvars) {
+              CpltSetVar t, unsigned int n, const CpltSetVarArgs& allvars) {
+    Set::Limits::check(n, "CpltSet::nvalue");
     nvalue_con(home, x, s, t, n, allvars);
   }
 
