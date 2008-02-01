@@ -210,7 +210,7 @@ namespace Gecode { namespace CpltSet {
 
   // a variable is only assigned if all bdd variables representing
   // the elements of the set have either a constant false or a constant true
-  inline bool
+  bool
   CpltSetVarImp::assigned(void) {
     if (!_assigned) {
       // (C1) there is only one solution (i.e. only one path)
