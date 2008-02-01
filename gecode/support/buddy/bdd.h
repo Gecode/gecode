@@ -40,7 +40,7 @@
 
 #include "gecode/config.hh"
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility push(default)
 #endif
 
@@ -59,7 +59,7 @@
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 
 #define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
 
@@ -928,7 +928,7 @@ extern GECODE_SUPPORT_EXPORT bddstrmhandler bdd_strm_hook(bddstrmhandler);
 
 #endif /* CPLUSPLUS */
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility pop
 #endif
 

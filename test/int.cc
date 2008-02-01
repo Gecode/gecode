@@ -128,7 +128,7 @@ namespace Test { namespace Int {
     }
 
     TestSpace* cloneWithReflection(void) {
-#ifdef GECODE_HAVE_SERIALIZATION
+#ifdef GECODE_HAS_SERIALIZATION
       TestSpace* c = new TestSpace(x.size(), d, reified, test);
       Gecode::Reflection::VarMap vm;
       vm.putArray(this, x, "x");

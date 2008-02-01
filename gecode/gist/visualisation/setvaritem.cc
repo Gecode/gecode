@@ -36,7 +36,7 @@
 
 #include "gecode/config.hh"
 
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 #include <QtGui/QBrush>
 
 #include "gecode/gist/visualisation/setvaritem.hh"

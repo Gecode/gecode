@@ -219,7 +219,7 @@ AC_GECODE_ENABLE_MODULE(minimodel, yes,
 
 AC_GECODE_ENABLE_MODULE(serialization, yes,
 	[build serialization library],
-	[AC_DEFINE(GECODE_HAVE_SERIALIZATION)])
+	[AC_DEFINE(GECODE_HAS_SERIALIZATION)])
 
 AC_GECODE_ENABLE_MODULE(search, yes,
         [build search engines])

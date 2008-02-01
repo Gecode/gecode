@@ -43,18 +43,16 @@
 #include "gecode/config.hh"
 
 /*
- * Support for DLLs under Windows
+ * Linking and compiler workarounds
  *
  */
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
-#define GECODE_VTABLE_EXPORT
-
 /**
   * \brief Workaround for a bug in the Microsoft C++ compiler
   *
-  * Details for the bug can be found in
+  * Details for the bug can be found at
   * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
   */
 #define GECODE_MSC_VIRTUAL virtual
@@ -64,30 +62,20 @@
 #else
 #define GECODE_SUPPORT_EXPORT __declspec( dllimport )
 #endif
-
-#else
-
-/**
-  * \brief Workaround for a bug in the Microsoft C++ compiler
-  *
-  * Details for the bug can be found in
-  * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
-  */
-#define GECODE_MSC_VIRTUAL
-
-#ifdef GCC_HASCLASSVISIBILITY
-
-#define GECODE_VTABLE_EXPORT __attribute__ ((visibility("default")))
-
-#define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
-
-#else
-
 #define GECODE_VTABLE_EXPORT
 
-#define GECODE_SUPPORT_EXPORT
+#else
 
+#define GECODE_MSC_VIRTUAL
+
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
+#define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
+#define GECODE_VTABLE_EXPORT __attribute__ ((visibility("default")))
+#else
+#define GECODE_SUPPORT_EXPORT
+#define GECODE_VTABLE_EXPORT
 #endif
+
 #endif
 
 /*

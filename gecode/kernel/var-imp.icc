@@ -42,7 +42,7 @@
  *
  */
 
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /// Base-class for Int-variable implementations
   class IntVarImpBase : public Gecode::VarImp< Gecode::Int::IntVarImpConf> {
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /// Base-class for Bool-variable implementations
   class BoolVarImpBase : public Gecode::VarImp< Gecode::Int::BoolVarImpConf> {
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 namespace Gecode { namespace Set { 
   /// Base-class for Set-variable implementations
   class SetVarImpBase : public Gecode::VarImp< Gecode::Set::SetVarImpConf> {
@@ -147,7 +147,7 @@ namespace Gecode { namespace Set {
   };
 }}
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
 namespace Gecode { namespace CpltSet { 
   /// Base-class for CpltSet-variable implementations
   class CpltSetVarImpBase : public Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf> {
@@ -187,7 +187,7 @@ namespace Gecode { namespace CpltSet {
   };
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
 
   forceinline
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int {
 
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
 
   forceinline
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int {
 
 }}
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 namespace Gecode { namespace Set { 
 
   forceinline
@@ -356,7 +356,7 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
 namespace Gecode { namespace CpltSet { 
 
   forceinline
@@ -416,16 +416,16 @@ namespace Gecode {
 
   forceinline void
   Space::update(ActorLink** sub) {
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
     Gecode::VarImp< Gecode::Int::IntVarImpConf>::update(this,sub);
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
     Gecode::VarImp< Gecode::Int::BoolVarImpConf>::update(this,sub);
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     Gecode::VarImp< Gecode::Set::SetVarImpConf>::update(this,sub);
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
     Gecode::VarImp< Gecode::CpltSet::CpltSetVarImpConf>::update(this,sub);
 #endif
   }

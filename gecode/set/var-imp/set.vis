@@ -39,7 +39,7 @@
 
 [General]
 Name:		Set
-Ifdef:		GECODE_HAVE_SET_VARS
+Ifdef:		GECODE_HAS_SET_VARS
 Namespace:	Gecode::Set
 [ModEventHeader]
   /**

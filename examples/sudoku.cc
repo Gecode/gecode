@@ -41,10 +41,10 @@
 
 #include "examples/support.hh"
 
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 #include "gecode/set.hh"
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
 #include "gecode/cpltset.hh"
 #endif
 
@@ -67,13 +67,13 @@ protected:
   /// The size of the problem
   const int n;
 public:
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
   /// Model variants
   enum {
     MODEL_INT,   ///< Use integer constraints
     MODEL_SET,   ///< Use set constraints
     MODEL_MIXED  ///< Use both integer and set constraints
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
     ,MODEL_CPLT  ///< Use CpltSet constraints
 #endif
   };
@@ -97,7 +97,7 @@ protected:
   /// Values for the fields
   IntVarArray x;
 public:
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
   /// Propagation variants
   enum {
     PROP_NONE, ///< No additional constraints
@@ -129,7 +129,7 @@ public:
         if (int v = sudokuField(examples[opt.size()], nn, i, j))
           rel(this, m(i,j), IRT_EQ, v );
 
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     if (opt.propagation() == PROP_SAME) {
       // Implied constraints linking squares and rows
       for (int b=0; b<n; b++) {
@@ -202,7 +202,7 @@ public:
     os << std::endl;
   }
 
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 private:
   /// Post the constraint that \a a and \a b take the same values
   void same(Space* home, int nn, IntVarArgs a, IntVarArgs b) {
@@ -227,7 +227,7 @@ private:
 #endif
 };
 
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 /**
  * \brief %Example: Solving %Sudoku puzzles using set constraints
  *
@@ -331,7 +331,7 @@ public:
   }
 };
 
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
 /**
  * \brief %Example: Solving %Sudoku puzzles using CpltSet constraints
  *
@@ -510,13 +510,13 @@ main(int argc, char* argv[]) {
   opt.size(0);
   opt.icl(ICL_DOM);
   opt.solutions(1);
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
   opt.model(Sudoku::MODEL_INT);
   opt.model(Sudoku::MODEL_INT, "int", "use integer constraints");
   opt.model(Sudoku::MODEL_SET, "set", "use set constraints");
   opt.model(Sudoku::MODEL_MIXED, "mixed", 
             "use both integer and set constraints");
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
   CpltSet::manager.init(5000000, 2000000);
   opt.model(Sudoku::MODEL_CPLT, "cpltset", 
             "use CpltSet constraints");
@@ -532,7 +532,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
   switch (opt.model()) {
   case Sudoku::MODEL_INT:
     Example::run<SudokuInt,DFS,SizeOptions>(opt);
@@ -543,7 +543,7 @@ main(int argc, char* argv[]) {
   case Sudoku::MODEL_MIXED:
     Example::run<SudokuMixed,DFS,SizeOptions>(opt);
     break;
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
   case Sudoku::MODEL_CPLT:
     Example::run<SudokuCpltSet,DFS,SizeOptions>(opt);
     break;

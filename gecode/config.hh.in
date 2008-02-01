@@ -48,37 +48,37 @@
 #undef GECODE_MEMORY_ALIGNMENT
 
 /* Whether integer variables are built */
-#undef GECODE_HAVE_INT_VARS
+#undef GECODE_HAS_INT_VARS
 
 /* Whether set variables are built */
-#undef GECODE_HAVE_SET_VARS
+#undef GECODE_HAS_SET_VARS
 
 /* Whether bdd variables are built */
-#undef GECODE_HAVE_CPLTSET_VARS
+#undef GECODE_HAS_CPLTSET_VARS
 
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
 
 /* Whether we have mtrace for memory leak debugging*/
-#undef GECODE_HAVE_MTRACE
+#undef GECODE_HAS_MTRACE
 
 /* Whether gcc understands visibility attributes */
-#undef GCC_HASCLASSVISIBILITY
+#undef GECODE_GCC_HAS_CLASS_VISIBILITY
 
 /* Whether to include audit code */
 #undef GECODE_AUDIT
 
 /* Whether serialization support is built */
-#undef GECODE_HAVE_SERIALIZATION
+#undef GECODE_HAS_SERIALIZATION
 
 /* Whether to compile with boost serialization support */
-#undef GECODE_HAVE_BOOST_SERIALIZATION
+#undef GECODE_HAS_BOOST_SERIALIZATION
 
 /* Whether Qt is available */
-#undef GECODE_HAVE_QT
+#undef GECODE_HAS_QT
 
 /* Whether Gist is available */
-#undef GECODE_HAVE_GIST
+#undef GECODE_HAS_GIST
 
 /* Whether to compile Gist experimental features */
 #undef GECODE_GIST_EXPERIMENTAL

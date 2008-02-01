@@ -35,10 +35,10 @@
  */
 
 #include "gecode/gist/addchild.hh"
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 #include "gecode/int.hh"
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 #include "gecode/set.hh"
 #endif
 
@@ -62,12 +62,12 @@ namespace Gecode { namespace Gist {
       data << QVariant(QString(vmi.spec().vti().toString().c_str()));
       
       if(false) {
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
       } else if(vmi.spec().vti() == Int::IntVarImpConf::vti) {
         Reflection::IntArrayArg* dom = vmi.spec().dom()->toIntArray();
         data << QVariant((*dom)[0]) << QVariant((*dom)[dom->size()-1]);
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
       } else if(vmi.spec().vti() == Set::SetVarImpConf::vti) {
         Reflection::IntArrayArg* ub_dom = vmi.spec().dom()->second()->first()->toIntArray();
         data << QVariant((*ub_dom)[0]) << QVariant((*ub_dom)[ub_dom->size()-1]);
@@ -127,7 +127,7 @@ namespace Gecode { namespace Gist {
     Support::Symbol vti = data.at(1).toString().toStdString().c_str();
     
     if(false) {
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
     } else if(vti == Int::IntVarImpConf::vti) {
       QListWidgetItem* eq = new QListWidgetItem("==", ui.relList);
       eq->setData(Qt::UserRole, QVariant(Gecode::IRT_EQ));
@@ -142,7 +142,7 @@ namespace Gecode { namespace Gist {
       QListWidgetItem* gr = new QListWidgetItem(">", ui.relList);
       gr->setData(Qt::UserRole, QVariant(Gecode::IRT_GR));
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     } else if (vti == Set::SetVarImpConf::vti) {
       QListWidgetItem* in = new QListWidgetItem("contains", ui.relList);
       in->setData(Qt::UserRole, QVariant(Gecode::SRT_SUP));

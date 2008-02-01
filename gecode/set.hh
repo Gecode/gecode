@@ -44,26 +44,14 @@
 #ifndef __GECODE_SET_HH__
 #define __GECODE_SET_HH__
 
-#include "gecode/config.hh"
-
-namespace Gecode { namespace Set {
-  /** 
-   * \namespace Gecode::Set
-   * \brief Finite integer sets
-   * 
-   * The Gecode::Set namespace contains all functionality required
-   * to program propagators and branchings for finite integer sets.
-   * In addition, all propagators and branchings for finite integer
-   * sets provided by %Gecode are contained as nested namespaces.
-   *
-   */
-}}
+#include "gecode/kernel.hh"
+#include "gecode/int.hh"
+#include "gecode/iter.hh"
 
 /*
- * Support for DLLs under Windows
+ * Configure linking
  *
  */
-
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
@@ -75,20 +63,24 @@ namespace Gecode { namespace Set {
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
-
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #define GECODE_SET_EXPORT __attribute__ ((visibility("default")))
-
 #else
-
 #define GECODE_SET_EXPORT
-
-#endif
 #endif
 
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
-#include "gecode/iter.hh"
+#endif
+
+/** 
+ * \namespace Gecode::Set
+ * \brief Finite integer sets
+ * 
+ * The Gecode::Set namespace contains all functionality required
+ * to program propagators and branchings for finite integer sets.
+ * In addition, all propagators and branchings for finite integer
+ * sets provided by %Gecode are contained as nested namespaces.
+ *
+ */
 
 #include "gecode/set/exception.icc"
 
@@ -1018,5 +1010,5 @@ namespace Gecode {
 
 #endif
 
-// IFDEF: GECODE_HAVE_SET_VARS
+// IFDEF: GECODE_HAS_SET_VARS
 // STATISTICS: set-post

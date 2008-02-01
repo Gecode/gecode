@@ -56,7 +56,7 @@
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 
 #define GECODE_SERIALIZATION_EXPORT __attribute__ ((visibility("default")))
 
@@ -97,7 +97,7 @@ namespace Gecode {
   GECODE_SERIALIZATION_EXPORT
   void emitJavaScript(Space* home, std::ostream& os);
 
-#ifdef GECODE_HAVE_QT
+#ifdef GECODE_HAS_QT
   /**
     * \brief Parse JavaScript \a model and post constraints in \a home
     * \ingroup TaskSerialization
@@ -118,7 +118,7 @@ namespace Serialization {
 }
 }
 
-#ifdef GECODE_HAVE_BOOST_SERIALIZATION
+#ifdef GECODE_HAS_BOOST_SERIALIZATION
 
 namespace Gecode {
   /**

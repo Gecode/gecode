@@ -41,10 +41,10 @@ AC_DEFUN([AC_GECODE_PKGCONFIG],
 	 AC_MSG_CHECKING(whether to generate pkg-config files)
 	 if test "${PKGCONFIG}x" = "x"; then
 	    AC_MSG_RESULT(no)
-	    AC_SUBST(HAVE_PKGCONFIG, "no")
+	    AC_SUBST(HAS_PKGCONFIG, "no")
 	 else
 	    AC_MSG_RESULT(yes)
-	    AC_SUBST(HAVE_PKGCONFIG, "yes")
+	    AC_SUBST(HAS_PKGCONFIG, "yes")
 	 fi])
 
 AC_DEFUN([AC_GECODE_GET_OS],
@@ -255,7 +255,7 @@ dnl
 dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_ADD_VTI],
-   [AC_DEFINE(GECODE_HAVE_$1_VARS)])
+   [AC_DEFINE(GECODE_HAS_$1_VARS)])
 AC_DEFUN([AC_GECODE_VTI],
    [
    AC_ARG_ENABLE([$1-vars],
@@ -375,7 +375,7 @@ AC_DEFUN([AC_GECODE_LEAK_DEBUG],
 	 if test "${enable_leak_debug:-no}" = "yes"; then
 	    AC_MSG_RESULT(yes)
 	    AC_CHECK_DECL(mtrace,
-			  [AC_DEFINE(GECODE_HAVE_MTRACE)],
+			  [AC_DEFINE(GECODE_HAS_MTRACE)],
 			  [AC_MSG_ERROR(mtrace not available.)],
 			  [[#include <mcheck.h>]])	    
 	 else
@@ -504,7 +504,7 @@ AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
 	 if test "${enable_gcc_visibility:-yes}" = "yes"; then
 	    AC_MSG_RESULT(yes)
 	    AC_GECODE_CHECK_CXXFLAG([-fvisibility=hidden],
-	      [AC_DEFINE(GCC_HASCLASSVISIBILITY)
+	      [AC_DEFINE(GECODE_GCC_HAS_CLASS_VISIBILITY)
 	       AC_GECODE_ADD_TO_COMPILERFLAGS([-fvisibility=hidden])],
 	       [])
 	 else
@@ -825,7 +825,7 @@ AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
   if test "${with_boost:-no}" != "no"; then
       AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost}/include/boost-1_33_1])
       AC_SUBST(BOOST_LINK,["-L${with_boost}/lib -lboost_serialization"])
-      AC_DEFINE(GECODE_HAVE_BOOST_SERIALIZATION)
+      AC_DEFINE(GECODE_HAS_BOOST_SERIALIZATION)
   fi
 ])
 
@@ -846,7 +846,7 @@ AC_DEFUN([AC_GECODE_QT],
   AC_MSG_CHECKING(whether to build with Qt support)
   if test "${enable_qt:-no}" = "yes"; then
     AC_MSG_RESULT(yes)
-    AC_DEFINE(GECODE_HAVE_QT)
+    AC_DEFINE(GECODE_HAS_QT)
 
     AC_CHECK_PROG(QMAKE, qmake, [found])
     if test "${QMAKE}x" = "x"; then
@@ -912,7 +912,7 @@ AC_DEFUN([AC_GECODE_GIST],
   if test "${enable_gist:-no}" = "yes"; then
     enable_qt="yes";
     AC_MSG_RESULT(yes)
-    AC_DEFINE(GECODE_HAVE_GIST)
+    AC_DEFINE(GECODE_HAS_GIST)
   else
     AC_MSG_RESULT(no)
   fi

@@ -38,7 +38,7 @@
 #include "gecode/kernel.hh"
 #include "gecode/serialization.hh"
 
-#ifdef GECODE_HAVE_QT
+#ifdef GECODE_HAS_QT
 #include "gecode/serialization/javascript.hh"
 #include "gecode/serialization.hh"
 #endif
@@ -181,7 +181,7 @@ namespace Gecode {
     os << "];" << endl;
   }
 
-#ifdef GECODE_HAVE_QT
+#ifdef GECODE_HAS_QT
 
   namespace Serialization {
     Gecode::Reflection::Arg*

@@ -36,17 +36,17 @@
  */
 
 #include "gecode/serialization.hh"
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 #include "gecode/int.hh"
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 #include "gecode/set.hh"
 #endif
 
 namespace Gecode {
   
   namespace {
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
     void emitIntVar(std::ostream& os, int varNo, Reflection::VarSpec& vs) {
       using namespace std;
       os << "var ";
@@ -93,7 +93,7 @@ namespace Gecode {
         os << ": _v" << varNo << ";" << endl;
     }
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     void emitSetVar(std::ostream& os, int varNo, Reflection::VarSpec& vs) {
       using namespace std;
       os << "var set of ";
@@ -324,13 +324,13 @@ namespace Gecode {
       for (; vmi(); ++vmi, ++varCount) {
         Reflection::VarSpec& vs = vmi.spec();
         if (false) { }
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
         else if (vs.vti() == Int::IntVarImp::vti)
           emitIntVar(os, varCount, vs);
         else if (vs.vti() == Int::BoolVarImp::vti)
           emitBoolVar(os, varCount, vs);
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
         else if (vs.vti() == Set::SetVarImp::vti)
           emitSetVar(os, varCount, vs);
 #endif        

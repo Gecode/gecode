@@ -39,7 +39,7 @@
 
 #include "test/test.hh"
 
-#ifdef GECODE_HAVE_MTRACE
+#ifdef GECODE_HAS_MTRACE
 #include <mcheck.h>
 #endif
 
@@ -198,7 +198,7 @@ namespace Test {
 int
 main(int argc, char* argv[]) {
   using namespace Test;
-#ifdef GECODE_HAVE_MTRACE
+#ifdef GECODE_HAS_MTRACE
   mtrace();
 #endif
 

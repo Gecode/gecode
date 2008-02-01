@@ -666,7 +666,7 @@ CFLAGS
 ac_ct_CC
 RANLIB
 PKGCONFIG
-HAVE_PKGCONFIG
+HAS_PKGCONFIG
 PROG_DIFF
 PROG_TAR
 PROG_MAKE
@@ -3335,12 +3335,12 @@ echo $ECHO_N "checking whether to generate pkg-config files... $ECHO_C" >&6; }
 	 if test "${PKGCONFIG}x" = "x"; then
 	    { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
-	    HAVE_PKGCONFIG="no"
+	    HAS_PKGCONFIG="no"
 
 	 else
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-	    HAVE_PKGCONFIG="yes"
+	    HAS_PKGCONFIG="yes"
 
 	 fi
 
@@ -4411,7 +4411,7 @@ fi
 echo "${ECHO_T}$ac_cv_have_decl_mtrace" >&6; }
 if test $ac_cv_have_decl_mtrace = yes; then
   cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_MTRACE 1
+#define GECODE_HAS_MTRACE 1
 _ACEOF
 
 else
@@ -4500,7 +4500,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 echo "${ECHO_T}yes" >&6; }
       CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
       cat >>confdefs.h <<\_ACEOF
-#define GCC_HASCLASSVISIBILITY 1
+#define GECODE_GCC_HAS_CLASS_VISIBILITY 1
 _ACEOF
 
 	       CFLAGS="${CFLAGS}${CFLAGS:+ }-fvisibility=hidden"
@@ -5900,7 +5900,7 @@ fi
       BOOST_LINK="-L${with_boost}/lib -lboost_serialization"
 
       cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_BOOST_SERIALIZATION 1
+#define GECODE_HAS_BOOST_SERIALIZATION 1
 _ACEOF
 
   fi
@@ -9460,7 +9460,7 @@ echo "${ECHO_T}yes" >&6; }
      enable_set_vars="yes";
      enable_int_vars="yes";
      cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_SET_VARS 1
+#define GECODE_HAS_SET_VARS 1
 _ACEOF
 
    else
@@ -9490,7 +9490,7 @@ echo "${ECHO_T}yes" >&6; }
      enable_cpltset_vars="yes";
 
      cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_CPLTSET_VARS 1
+#define GECODE_HAS_CPLTSET_VARS 1
 _ACEOF
 
    else
@@ -9516,7 +9516,7 @@ echo "${ECHO_T}yes" >&6; }
      enable_int_vars="yes";
 
      cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_INT_VARS 1
+#define GECODE_HAS_INT_VARS 1
 _ACEOF
 
    else
@@ -9542,7 +9542,7 @@ echo $ECHO_N "checking whether to build Gist... $ECHO_C" >&6; }
     { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
     cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_GIST 1
+#define GECODE_HAS_GIST 1
 _ACEOF
 
   else
@@ -9582,7 +9582,7 @@ echo $ECHO_N "checking whether to build with Qt support... $ECHO_C" >&6; }
     { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
     cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_QT 1
+#define GECODE_HAS_QT 1
 _ACEOF
 
 
@@ -9735,7 +9735,7 @@ echo $ECHO_N "checking whether to build serialization... $ECHO_C" >&6; }
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 	    cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAVE_SERIALIZATION 1
+#define GECODE_HAS_SERIALIZATION 1
 _ACEOF
 
 	 else
@@ -10495,7 +10495,7 @@ CFLAGS!$CFLAGS$ac_delim
 ac_ct_CC!$ac_ct_CC$ac_delim
 RANLIB!$RANLIB$ac_delim
 PKGCONFIG!$PKGCONFIG$ac_delim
-HAVE_PKGCONFIG!$HAVE_PKGCONFIG$ac_delim
+HAS_PKGCONFIG!$HAS_PKGCONFIG$ac_delim
 PROG_DIFF!$PROG_DIFF$ac_delim
 PROG_TAR!$PROG_TAR$ac_delim
 PROG_MAKE!$PROG_MAKE$ac_delim

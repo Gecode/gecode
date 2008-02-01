@@ -106,7 +106,7 @@ am(double t[], int n);
 double
 dev(double t[], int n);
 
-#ifdef GECODE_HAVE_GIST
+#ifdef GECODE_HAS_GIST
 
 /**
  * \brief Traits class for search engines
@@ -276,7 +276,7 @@ Example::run(const Options& o) {
              << endl;
       }
       break;
-#ifdef GECODE_HAVE_GIST
+#ifdef GECODE_HAS_GIST
     case EM_GIST:
       {
         Gist::PrintingInspector<Script> pi(o.name());

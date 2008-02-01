@@ -336,7 +336,7 @@ namespace Gecode {
     void remove(Space* home, ActorLink* a, PropCond pc);
 
   protected:
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
     /// Return reference to variables (dispose)
     static VarImp<VIC>* vars_d(Space* home);
     /// Set reference to variables (dispose)
@@ -1073,7 +1073,7 @@ namespace Gecode {
      * \name update, and dispose variables
      */
     //@{
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
     /// Registered variable type disposers
     GECODE_KERNEL_EXPORT static VarDisposerBase* vd[AllVarConf::idx_d];
     /// Entries for disposing variables
@@ -1359,7 +1359,7 @@ namespace Gecode {
     mm.template fl_dispose<s>(f,l);
   }
 
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
   template <class VIC>
   forceinline VarImpBase*
   Space::vars_d(void) const {
@@ -1977,7 +1977,7 @@ namespace Gecode {
     return free_and_bits;
   }
 
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
   template <class VIC>
   forceinline VarImp<VIC>*
   VarImp<VIC>::vars_d(Space* home) {
@@ -2278,7 +2278,7 @@ namespace Gecode {
    */
   template <class VarType>
   VarDisposer<VarType>::VarDisposer(void) {
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
     Space::vd[VarType::idx_d] = this;
 #endif
   }

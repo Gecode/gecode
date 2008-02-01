@@ -36,18 +36,18 @@
  */
 
 #include "gecode/config.hh"
-#ifdef GECODE_HAVE_BOOST_SERIALIZATION
+#ifdef GECODE_HAS_BOOST_SERIALIZATION
 
 #include <fstream>
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility push(default)
 #endif
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility pop
 #endif
 
@@ -73,6 +73,6 @@ namespace Gecode {
 
 }
 
-#endif // GECODE_HAVE_BOOST_SERIALIZATION
+#endif // GECODE_HAS_BOOST_SERIALIZATION
 
 // STATISTICS: serialization-any

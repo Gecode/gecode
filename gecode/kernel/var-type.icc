@@ -42,7 +42,7 @@
  *
  */
 
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int {
   //@}
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int {
   //@}
 }}
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 namespace Gecode { namespace Set { 
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
@@ -250,7 +250,7 @@ namespace Gecode { namespace Set {
   //@}
 }}
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
 namespace Gecode { namespace CpltSet { 
   /**
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
@@ -289,7 +289,7 @@ namespace Gecode { namespace CpltSet {
   //@}
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /// Configuration for Int-variable implementations
   class IntVarImpConf {
@@ -330,7 +330,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /// Configuration for Bool-variable implementations
   class BoolVarImpConf {
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 namespace Gecode { namespace Set { 
   /// Configuration for Set-variable implementations
   class SetVarImpConf {
@@ -412,10 +412,10 @@ namespace Gecode { namespace Set {
   };
 }}
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
 
-#ifndef GECODE_HAVE_VAR_DISPOSE
-#define GECODE_HAVE_VAR_DISPOSE 1
+#ifndef GECODE_HAS_VAR_DISPOSE
+#define GECODE_HAS_VAR_DISPOSE 1
 #endif
 
 namespace Gecode { namespace CpltSet { 
@@ -474,7 +474,7 @@ namespace Gecode {
 
 }
 
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   forceinline Gecode::ModEvent
   IntVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
@@ -550,7 +550,7 @@ namespace Gecode { namespace Int {
 
 }}
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   forceinline Gecode::ModEvent
   BoolVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
@@ -573,7 +573,7 @@ namespace Gecode { namespace Int {
 
 }}
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 namespace Gecode { namespace Set { 
   forceinline Gecode::ModEvent
   SetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
@@ -841,7 +841,7 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
 namespace Gecode { namespace CpltSet { 
   forceinline Gecode::ModEvent
   CpltSetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
@@ -896,16 +896,16 @@ namespace Gecode { namespace CpltSet {
 namespace Gecode {
   forceinline ModEventDelta
   AllVarConf::med_combine(ModEventDelta med1, ModEventDelta med2) {
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
     (void) Gecode::Int::IntVarImpConf::med_update(med1,(med2 & Gecode::Int::IntVarImpConf::med_mask) >> Gecode::Int::IntVarImpConf::med_fst);
 #endif
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
     (void) Gecode::Int::BoolVarImpConf::med_update(med1,(med2 & Gecode::Int::BoolVarImpConf::med_mask) >> Gecode::Int::BoolVarImpConf::med_fst);
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     (void) Gecode::Set::SetVarImpConf::med_update(med1,(med2 & Gecode::Set::SetVarImpConf::med_mask) >> Gecode::Set::SetVarImpConf::med_fst);
 #endif
-#ifdef GECODE_HAVE_CPLTSET_VARS
+#ifdef GECODE_HAS_CPLTSET_VARS
     (void) Gecode::CpltSet::CpltSetVarImpConf::med_update(med1,(med2 & Gecode::CpltSet::CpltSetVarImpConf::med_mask) >> Gecode::CpltSet::CpltSetVarImpConf::med_fst);
 #endif
     return med1;

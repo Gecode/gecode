@@ -43,28 +43,17 @@
 #ifndef __GECODE_INT_HH__
 #define __GECODE_INT_HH__
 
-#include "gecode/config.hh"
+#include <climits>
+#include <cfloat>
+#include <iostream>
 
-namespace Gecode { namespace Int {
-
-  /**
-   * \namespace Gecode::Int
-   * \brief Finite domain integers
-   *
-   * The Gecode::Int namespace contains all functionality required
-   * to program propagators and branchings for finite domain integers.
-   * In addition, all propagators and branchings for finite domain
-   * integers provided by %Gecode are contained as nested namespaces.
-   *
-   */
-
-}}
+#include "gecode/kernel.hh"
+#include "gecode/iter.hh"
 
 /*
- * Support for DLLs under Windows
+ * Configure linking
  *
  */
-
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
@@ -76,23 +65,25 @@ namespace Gecode { namespace Int {
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
-
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #define GECODE_INT_EXPORT __attribute__ ((visibility("default")))
-
 #else
-
 #define GECODE_INT_EXPORT
-
-#endif
 #endif
 
-#include <climits>
-#include <cfloat>
-#include <iostream>
+#endif
 
-#include "gecode/kernel.hh"
-#include "gecode/iter.hh"
+/**
+ * \namespace Gecode::Int
+ * \brief Finite domain integers
+ *
+ * The Gecode::Int namespace contains all functionality required
+ * to program propagators and branchings for finite domain integers.
+ * In addition, all propagators and branchings for finite domain
+ * integers provided by %Gecode are contained as nested namespaces.
+ *
+ */
+
 #include "gecode/int/exception.icc"
 
 namespace Gecode { namespace Int {
@@ -2047,6 +2038,6 @@ operator<<(std::ostream&, const Gecode::TupleSet& ts);
 
 #endif
 
-// IFDEF: GECODE_HAVE_INT_VARS
+// IFDEF: GECODE_HAS_INT_VARS
 // STATISTICS: int-post
 

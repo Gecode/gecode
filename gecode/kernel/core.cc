@@ -101,12 +101,12 @@ namespace Gecode {
    */
   unsigned long int Space::unused_uli;
 
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
   VarDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
   Space::Space(void) {
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
 #endif
@@ -202,7 +202,7 @@ namespace Gecode {
         a++;
       }
     }
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
     // Delete variables that were registered for disposal
     for (int i=AllVarConf::idx_d; i--;)
       if (_vars_d[i] != NULL)
@@ -411,7 +411,7 @@ namespace Gecode {
    */
   Space::Space(bool share, Space& s) 
     : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)) {
-#ifdef GECODE_HAVE_VAR_DISPOSE
+#ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
 #endif

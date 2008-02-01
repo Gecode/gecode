@@ -35,7 +35,7 @@
  *
  */
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility push(default)
 #endif
 
@@ -45,7 +45,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/base_object.hpp>
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility pop
 #endif
 

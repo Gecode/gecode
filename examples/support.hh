@@ -54,7 +54,7 @@ enum ExampleMode {
   EM_SOLUTION, ///< Print solution and some statistics
   EM_TIME,     ///< Measure average runtime
   EM_STAT      ///< Print statistics for example
-#ifdef GECODE_HAVE_GIST
+#ifdef GECODE_HAS_GIST
   ,
   EM_GIST      ///< Run example in Gist
 #endif
@@ -362,7 +362,7 @@ public:
   explicit Example(Example& e);
 };
 
-#ifdef GECODE_HAVE_GIST
+#ifdef GECODE_HAS_GIST
 #include "gecode/gist/gist.hh"
 #endif
 

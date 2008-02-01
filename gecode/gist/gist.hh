@@ -55,7 +55,7 @@
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 
 #define GECODE_GIST_EXPORT __attribute__ ((visibility("default")))
 

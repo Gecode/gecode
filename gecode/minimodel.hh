@@ -66,7 +66,7 @@
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 
 #define GECODE_MINIMODEL_EXPORT __attribute__ ((visibility("default")))
 
@@ -1244,6 +1244,6 @@ namespace Gecode { namespace MiniModel {
 
 #endif
 
-// IFDEF: GECODE_HAVE_INT_VARS
+// IFDEF: GECODE_HAS_INT_VARS
 // STATISTICS: minimodel-any
 

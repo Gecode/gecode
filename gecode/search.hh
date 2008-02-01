@@ -45,10 +45,9 @@
 #include "gecode/kernel.hh"
 
 /*
- * Support for DLLs under Windows
+ * Configure linking
  *
  */
-
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
@@ -60,15 +59,12 @@
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
-
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #define GECODE_SEARCH_EXPORT __attribute__ ((visibility("default")))
-
 #else
-
 #define GECODE_SEARCH_EXPORT
-
 #endif
+
 #endif
 
 namespace Gecode {

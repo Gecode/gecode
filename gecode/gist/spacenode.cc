@@ -38,10 +38,10 @@
 #include <stack>
 
 #ifdef GECODE_GIST_EXPERIMENTAL
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
 #include "gecode/int.hh"
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
 #include "gecode/set.hh"
 #endif
 #endif
@@ -227,12 +227,12 @@ namespace Gecode { namespace Gist {
                 const Support::Symbol vName = b.desc.special->vn.c_str();
 
                 if(false) {
-#ifdef GECODE_HAVE_INT_VARS
+#ifdef GECODE_HAS_INT_VARS
                 } else if(vm.spec(vName).vti() == Int::IntVarImp::vti) {
                   IntVar iv = vm.var(vName);
                   rel(curSpace, iv, static_cast<IntRelType>(b.desc.special->rel), b.desc.special->v);
 #endif
-#ifdef GECODE_HAVE_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
                 } else if(vm.spec(vName).vti() == Set::SetVarImp::vti) {
                   SetVar sv = vm.var(vName);
                   dom(curSpace, sv, static_cast<SetRelType>(b.desc.special->rel), b.desc.special->v);

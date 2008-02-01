@@ -173,7 +173,7 @@ Options::Options(const char* n)
   _mode.add(EM_SOLUTION, "solution"); 
   _mode.add(EM_TIME, "time");
   _mode.add(EM_STAT, "stat");
-#ifdef GECODE_HAVE_GIST
+#ifdef GECODE_HAS_GIST
   _mode.add(EM_GIST, "gist");
 #endif
 

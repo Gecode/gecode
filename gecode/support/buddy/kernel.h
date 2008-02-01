@@ -40,7 +40,7 @@
 
 #include "gecode/config.hh"
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility push(default)
 #endif
 
@@ -232,7 +232,7 @@ extern void   bdd_cpp_init(void);
 }
 #endif
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility pop
 #endif
 

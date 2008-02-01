@@ -35,7 +35,7 @@
 
 [General]
 Name:		Bool
-Ifdef:		GECODE_HAVE_INT_VARS
+Ifdef:		GECODE_HAS_INT_VARS
 Namespace:	Gecode::Int
 Bits:		2
 [ModEventHeader]

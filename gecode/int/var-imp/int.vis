@@ -52,7 +52,7 @@
 ## propagators that can subscribe to the variable implementation.
 [General]
 Name:		Int
-Ifdef:		GECODE_HAVE_INT_VARS
+Ifdef:		GECODE_HAS_INT_VARS
 Namespace:	Gecode::Int
 ##
 ## Definition of modification events

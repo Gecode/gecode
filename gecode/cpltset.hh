@@ -39,15 +39,14 @@
 #define __GECODE_CPLTSET_HH__
 
 #include "gecode/kernel.hh"
-#include "gecode/int.hh"
 #include "gecode/iter.hh"
+#include "gecode/int.hh"
 #include "gecode/set.hh"
 
 /*
- * Support for DLLs under Windows
+ * Configure linking
  *
  */
-
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
@@ -59,8 +58,7 @@
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
-
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #define GECODE_CPLTSET_EXPORT __attribute__ ((visibility("default")))
 #else
 #define GECODE_CPLTSET_EXPORT
@@ -70,23 +68,19 @@
 
 #include "gecode/cpltset/exception.icc"
 
-namespace Gecode { namespace CpltSet {
-
-  /** 
-   * \namespace Gecode::CpltSet
-   * \brief Complete representation of finite integer sets using ROBDD's
-   * 
-   * The Gecode::CpltSet namespace contains all functionality required
-   * to program propagators and branchings for finite integer set variables,
-   * where the variables' domains are represented completely (without 
-   * approximation) using reduced ordered binary decision diagrams (ROBDDs).
-   *
-   * In addition, all propagators and branchings for these variables
-   * provided by %Gecode are contained as nested namespaces.
-   *
-   */
-
-}}
+/** 
+ * \namespace Gecode::CpltSet
+ * \brief Complete representation of finite integer sets using ROBDD's
+ * 
+ * The Gecode::CpltSet namespace contains all functionality required
+ * to program propagators and branchings for finite integer set variables,
+ * where the variables' domains are represented completely (without 
+ * approximation) using reduced ordered binary decision diagrams (ROBDDs).
+ *
+ * In addition, all propagators and branchings for these variables
+ * provided by %Gecode are contained as nested namespaces.
+ *
+ */
 
 #include "gecode/cpltset/bddmanager.icc"
 
@@ -784,5 +778,5 @@ namespace Gecode {
 
 #endif
 
-// IFDEF: GECODE_HAVE_CPLTSET_VARS
+// IFDEF: GECODE_HAS_CPLTSET_VARS
 // STATISTICS: set-post

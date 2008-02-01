@@ -41,7 +41,7 @@
 
 #include "test/set.hh"
 
-#ifdef GECODE_HAVE_SERIALIZATION
+#ifdef GECODE_HAS_SERIALIZATION
 #include "gecode/serialization.hh"
 #endif
 
@@ -181,7 +181,7 @@ namespace Test { namespace Set {
     }
 
     SetTestSpace* cloneWithReflection(void) {
-#ifdef GECODE_HAVE_SERIALIZATION
+#ifdef GECODE_HAS_SERIALIZATION
       SetTestSpace* c = new SetTestSpace(x.size(), d, withInt, reified, test);
       Gecode::Reflection::VarMap vm;
       vm.putArray(this, x, "x");
