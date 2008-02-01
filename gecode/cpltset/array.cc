@@ -56,13 +56,13 @@ namespace Gecode {
                                    unsigned int minCard,
                                    unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {    
-    Set::Limits::check(lbMin,"SetVarArray::SetVarArray");
-    Set::Limits::check(lbMax,"SetVarArray::SetVarArray");
-    Set::Limits::check(ubMin,"SetVarArray::SetVarArray");
-    Set::Limits::check(ubMax,"SetVarArray::SetVarArray");
-    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
+    Set::Limits::check(lbMin,"CpltSetVarArray::CpltSetVarArray");
+    Set::Limits::check(lbMax,"CpltSetVarArray::CpltSetVarArray");
+    Set::Limits::check(ubMin,"CpltSetVarArray::CpltSetVarArray");
+    Set::Limits::check(ubMax,"CpltSetVarArray::CpltSetVarArray");
+    Set::Limits::check(maxCard,"CpltSetVarArray::CpltSetVarArray");
     if (minCard > maxCard)
-      throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
+      throw Set::VariableEmptyDomain("CpltSetVarArray::CpltSetVarArray");
 
     IntSet glb(lbMin, lbMax);
     IntSet lub(ubMin, ubMax);      
@@ -78,12 +78,12 @@ namespace Gecode {
                                    const IntSet& glb,int ubMin,int ubMax,
                                    unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
-    Set::Limits::check(glb,"SetVarArray::SetVarArray");
-    Set::Limits::check(ubMin,"SetVarArray::SetVarArray");
-    Set::Limits::check(ubMax,"SetVarArray::SetVarArray");
-    Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
+    Set::Limits::check(glb,"CpltSetVarArray::CpltSetVarArray");
+    Set::Limits::check(ubMin,"CpltSetVarArray::CpltSetVarArray");
+    Set::Limits::check(ubMax,"CpltSetVarArray::CpltSetVarArray");
+    Set::Limits::check(maxCard,"CpltSetVarArray::CpltSetVarArray");
     if (minCard > maxCard)
-      throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
+      throw Set::VariableEmptyDomain("CpltSetVarArray::CpltSetVarArray");
 
     IntSet lub(ubMin, ubMax);
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
