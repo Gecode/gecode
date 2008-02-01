@@ -104,8 +104,10 @@ namespace Gecode { namespace Set {
     const unsigned int card_max = int_max-int_min+1;
     /// Check whether integer \a n is in range, otherwise throw overflow exception with information \a l
     void check(int n, const char* l);
-    /// Check whether unsigned int \a n is in range, otherwise throw overflow exception with information \a l
+    /// Check whether unsigned int \a n is in range for cardinality, otherwise throw overflow exception with information \a l
     void check(unsigned int n, const char* l);
+    /// Check whether minimum and maximum of IntSet \a s is in range, otherwise throw overflow exception with information \a l
+    void check(const IntSet& s, const char* l);
   }
 
 }}

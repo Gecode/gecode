@@ -78,6 +78,7 @@ namespace Gecode {
   void
   rel(Space* home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
     if (home->failed()) return;
+    Set::Limits::check(z, "Set::rel");
     ViewArray<SetView> xa(home,x);
     switch(op) {
     case SOT_UNION:
@@ -133,6 +134,7 @@ namespace Gecode {
   void
   rel(Space* home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y) {
     if (home->failed()) return;
+    Set::Limits::check(z, "Set::rel");
     ViewArray<SingletonView> xa(home,x.size());
     for (int i=x.size(); i--;) {
       Int::IntView iv(x[i]);

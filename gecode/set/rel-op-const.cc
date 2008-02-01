@@ -50,6 +50,7 @@ namespace Gecode {
   void
   rel(Space* home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
       SetVar z) {
+    Set::Limits::check(x, "Set::rel");
     ConstantView xv(home, x);
     rel_op_post<ConstantView,SetView,SetView>(home, xv, op, y, r, z);
   }  
@@ -57,6 +58,7 @@ namespace Gecode {
   void
   rel(Space* home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
       SetVar z) {
+    Set::Limits::check(y, "Set::rel");
     ConstantView yv(home, y);
 
     if (op==SOT_MINUS) {
@@ -151,6 +153,7 @@ namespace Gecode {
   void
   rel(Space* home, SetVar x, SetOpType op, SetVar y, SetRelType r,
       const IntSet& z) {
+    Set::Limits::check(z, "Set::rel");
     if (r == SRT_CMPL) {
       IntSetRanges zr(z);
       RangesCompl<IntSetRanges> zrc(zr);
@@ -166,6 +169,8 @@ namespace Gecode {
   void
   rel(Space* home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
       const IntSet& z) {
+    Set::Limits::check(x, "Set::rel");
+    Set::Limits::check(z, "Set::rel");
     ConstantView xv(home, x);
     if (r == SRT_CMPL) {
       IntSetRanges zr(z);
@@ -182,6 +187,8 @@ namespace Gecode {
   void
   rel(Space* home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
       const IntSet& z) {
+    Set::Limits::check(y, "Set::rel");
+    Set::Limits::check(z, "Set::rel");
     ConstantView yv(home, y);
     ConstantView zv(home, z);
 

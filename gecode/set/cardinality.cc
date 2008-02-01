@@ -47,6 +47,8 @@ namespace Gecode {
   void
   cardinality(Space* home, SetVar x, unsigned int i, unsigned int j) {
     if (home->failed()) return;
+    Set::Limits::check(i, "Set::cardinality");
+    Set::Limits::check(j, "Set::cardinality");
     Set::SetView _x(x);
     GECODE_ME_FAIL(home,_x.cardMin(home, i));
     GECODE_ME_FAIL(home,_x.cardMax(home, j));

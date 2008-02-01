@@ -49,6 +49,15 @@ namespace Gecode { namespace Set {
         throw OutOfLimits(l);
     }
 
+    inline void
+    Limits::check(const IntSet& s, const char* l) {
+      if (s.size() > 0 &&
+          (s.min() < int_min || s.max() > int_max ||
+           s.min() > int_max || s.max() < int_min)) {
+        throw OutOfLimits(l);
+      }
+    }
+
 }}
 
 // STATISTICS: set-var

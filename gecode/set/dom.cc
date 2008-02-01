@@ -45,12 +45,15 @@ namespace Gecode {
 
   void
   dom(Space* home, SetVar s, SetRelType r, int i) {
+    Set::Limits::check(i, "Set::dom");
     IntSet d(i,i);
     dom(home, s, r, d);
   }
 
   void
   dom(Space* home, SetVar s, SetRelType r, int i, int j) {
+    Set::Limits::check(i, "Set::dom");
+    Set::Limits::check(j, "Set::dom");
     IntSet d(i,j);
     dom(home, s, r, d);
   }
@@ -58,6 +61,7 @@ namespace Gecode {
   void
   dom(Space* home, SetVar s, SetRelType r, const IntSet& is) {
     if (home->failed()) return;
+    Set::Limits::check(is, "Set::dom");
 
     Set::SetView _s(s);
 
@@ -140,12 +144,15 @@ namespace Gecode {
 
   void
   dom(Space* home, SetVar s, SetRelType r, int i, BoolVar b) {
+    Set::Limits::check(i, "Set::dom");
     IntSet d(i,i);
     dom(home, s, r, d, b);
   }
 
   void
   dom(Space* home, SetVar s, SetRelType r, int i, int j, BoolVar b) {
+    Set::Limits::check(i, "Set::dom");
+    Set::Limits::check(j, "Set::dom");
     IntSet d(i,j);
     dom(home, s, r, d, b);
   }
@@ -153,6 +160,7 @@ namespace Gecode {
   void
   dom(Space* home, SetVar s, SetRelType r, const IntSet& is, BoolVar b) {
     if (home->failed()) return;
+    Set::Limits::check(is, "Set::dom");
     switch(r) {
     case SRT_EQ:
       {
