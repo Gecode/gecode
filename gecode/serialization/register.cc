@@ -1711,32 +1711,6 @@ public:
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInterIn");
       }
       break;
-    case 5:
-      {
-#if defined(GECODE_HAVE_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]) &&
-            spec[3]->isIntArray() &&
-            spec[4]->isInt())
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          Gecode::Reflection::IntArrayArg* a3 = spec[3]->toIntArray();
-          Gecode::Reflection::IntArrayArgRanges ar3(a3);
-          Gecode::IntSet x3(ar3);
-          int x4 = static_cast<int>(spec[4]->toInt());
-          Gecode::selectInterIn(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInterIn");
-      }
-      break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInterIn");
     }
   }
@@ -3552,48 +3526,6 @@ public:
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
       }
       break;
-    case 4:
-      {
-#if defined(GECODE_HAVE_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]) &&
-            spec[3]->isInt())
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::selectUnion(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAVE_SET_VARS)
-        if (isIntSetArgs(spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]) &&
-            spec[3]->isInt())
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::IntSetArgs x0(a0.size());
-          for (int i=a0.size(); i--;) {
-            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
-            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
-            x0[i] = Gecode::IntSet(aar0);
-          }
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::selectUnion(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
-      }
-      break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
     }
   }
@@ -4846,28 +4778,6 @@ public:
           Gecode::SetVar x1(vm.var(spec[1]->toVar()));
           Gecode::SetVar x2(vm.var(spec[2]->toVar()));
           Gecode::selectInter(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInter");
-      }
-      break;
-    case 4:
-      {
-#if defined(GECODE_HAVE_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]) &&
-            spec[3]->isInt())
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::selectInter(home, x0,x1,x2,x3);
           return;
         }
 #endif
@@ -7283,48 +7193,6 @@ public:
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::SetVar x2(vm.var(spec[2]->toVar()));
           Gecode::selectSet(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectSet");
-      }
-      break;
-    case 4:
-      {
-#if defined(GECODE_HAVE_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]) &&
-            spec[3]->isInt())
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::selectSet(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAVE_SET_VARS)
-        if (isIntSetArgs(spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]) &&
-            spec[3]->isInt())
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::IntSetArgs x0(a0.size());
-          for (int i=a0.size(); i--;) {
-            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
-            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
-            x0[i] = Gecode::IntSet(aar0);
-          }
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::selectSet(home, x0,x1,x2,x3);
           return;
         }
 #endif

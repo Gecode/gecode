@@ -929,7 +929,7 @@ namespace Gecode {
    * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset=0);
+  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z);
 
   /**
    * \brief Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y+\mathit{offset}] \f$
@@ -939,7 +939,7 @@ namespace Gecode {
    * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z, int offset=0);
+  selectUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z);
 
   /** 
    * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y+\mathit{offset}] \f$ using \f$ \mathcal{U} \f$ as universe
@@ -949,7 +949,7 @@ namespace Gecode {
    * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset=0);
+  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z);
 
   /** 
    * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y+\mathit{offset}] \f$ using \a u as universe
@@ -960,7 +960,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   selectInterIn(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
-                const IntSet& u, int offset=0);
+                const IntSet& u);
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_SET_EXPORT void
@@ -972,7 +972,7 @@ namespace Gecode {
    * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z, int offset=0);
+  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z);
 
   /**
    * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y+\mathit{offset}] \f$ 
@@ -980,7 +980,7 @@ namespace Gecode {
    * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z, int offset=0);
+  selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z);
 
   //@}
 

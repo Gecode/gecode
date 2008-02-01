@@ -44,122 +44,70 @@ namespace Gecode {
   using namespace Gecode::Set;
 
   void
-  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset) {
+  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
-    if (offset == 0) {
-      GECODE_ES_FAIL(home,
-                     (Select::SelectUnion<SetView,SetView>::
-                      post(home,z,iv,y)));
-    } else {
-      SetView vy(y);
-      OffsetSetView<SetView> oy(vy, offset);
-      GECODE_ES_FAIL(home,
-                     (Select::SelectUnion<SetView,OffsetSetView<SetView> >::
-                      post(home,z,iv,oy)));
-    }
+    GECODE_ES_FAIL(home,
+                   (Select::SelectUnion<SetView,SetView>::
+                    post(home,z,iv,y)));
   }
 
   void
-  selectUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z, int offset) {
+  selectUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z) {
     SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
       new (&x[i]) IntSet(s[i]);
     if (home->failed()) return;
-    if (offset == 0) {
-      GECODE_ES_FAIL(home,
-                     (Select::SelectUnionConst<SetView,SetView>::
-                      post(home,z,x,y)));
-    } else {
-      SetView vy(y);
-      OffsetSetView<SetView> oy(vy, offset);
-      GECODE_ES_FAIL(home,
-                     (Select::SelectUnionConst<SetView,OffsetSetView<SetView> >::
-                      post(home,z,x,oy)));
-    }
+    GECODE_ES_FAIL(home,
+                   (Select::SelectUnionConst<SetView,SetView>::
+                    post(home,z,x,y)));
   }
 
   void
-  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset) {
+  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
     IntSet universe(Set::Limits::int_min,
                     Set::Limits::int_max);
-    if (offset == 0) {
-      GECODE_ES_FAIL(home,
-                     (Select::SelectIntersection<SetView,SetView>::
-                      post(home,z,iv,y,universe)));
-    } else {
-      SetView vy(y);
-      OffsetSetView<SetView> oy(vy, offset);
-      GECODE_ES_FAIL(home,
-                     (Select::SelectIntersection<SetView,OffsetSetView<SetView> >::
-                      post(home,z,iv,oy,universe)));
-    }
+    GECODE_ES_FAIL(home,
+                   (Select::SelectIntersection<SetView,SetView>::
+                    post(home,z,iv,y,universe)));
   }
 
   void
   selectInterIn(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
-                const IntSet& universe, int offset) {
+                const IntSet& universe) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
-    if (offset == 0) {
-      GECODE_ES_FAIL(home,
-                     (Select::SelectIntersection<SetView,SetView>::
-                      post(home,z,iv,y,universe)));
-    } else {
-      SetView vy(y);
-      OffsetSetView<SetView> oy(vy, offset);
-      GECODE_ES_FAIL(home,
-                     (Select::SelectIntersection<SetView,OffsetSetView<SetView> >::
-                      post(home,z,iv,oy,universe)));
-    }
+    GECODE_ES_FAIL(home,
+                   (Select::SelectIntersection<SetView,SetView>::
+                    post(home,z,iv,y,universe)));
   }
 
   void
-  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z, int offset) {
+  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView > iv(home, x);
     SetView zv(z);
 
-    if (offset == 0) {
-      Int::IntView yv(y);
-      SingletonView single(yv);
-      GECODE_ES_FAIL(home,(Select::SelectUnion<SetView,
-                           SingletonView>::post(home, z, iv, single)));
-    } else {
-      Int::IntView yv(y);
-      SingletonView single(yv);
-      OffsetSetView<SingletonView> osingle(single, offset);
-      GECODE_ES_FAIL(home,(Select::SelectUnion<SetView,
-                           OffsetSetView<SingletonView> >::post(home, z, iv,
-                                                                osingle)));
-      
-    }
+    Int::IntView yv(y);
+    SingletonView single(yv);
+    GECODE_ES_FAIL(home,(Select::SelectUnion<SetView,
+                         SingletonView>::post(home, z, iv, single)));
   }
 
   void
-  selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z, int offset) {
+  selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z) {
     if (home->failed()) return;
     SetView zv(z);
     SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
       new (&x[i]) IntSet(s[i]);
 
-    if (offset == 0) {
-      Int::IntView yv(y);
-      SingletonView single(yv);
-      GECODE_ES_FAIL(home,(Select::SelectUnionConst<SetView,
-                           SingletonView>::post(home, z, x, single)));
-    } else {
-      Int::IntView yv(y);
-      SingletonView single(yv);
-      OffsetSetView<SingletonView> osingle(single, offset);
-      GECODE_ES_FAIL(home,(Select::SelectUnionConst<SetView,
-                           OffsetSetView<SingletonView> >::post(home, z, x,
-                                                                osingle)));
-      
-    }
+    Int::IntView yv(y);
+    SingletonView single(yv);
+    GECODE_ES_FAIL(home,(Select::SelectUnionConst<SetView,
+                         SingletonView>::post(home, z, x, single)));
   }
 
   void
@@ -170,16 +118,11 @@ namespace Gecode {
   }
 
   namespace {
-    GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SingletonView> >);
-    GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SetView> >);
     GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::SingletonView>);
     GECODE_REGISTER2(Select::SelectUnion<Gecode::Set::SetView, Gecode::Set::SetView>);
     GECODE_REGISTER1(Select::SelectDisjoint);
-    GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SingletonView> >);
-    GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SetView> >);
     GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::SingletonView>);
     GECODE_REGISTER2(Select::SelectUnionConst<Gecode::Set::SetView, Gecode::Set::SetView>);
-    GECODE_REGISTER2(Select::SelectIntersection<Gecode::Set::SetView, Gecode::Set::OffsetSetView<Gecode::Set::SetView> >);
     GECODE_REGISTER2(Select::SelectIntersection<Gecode::Set::SetView, Gecode::Set::SetView>);
     
   }

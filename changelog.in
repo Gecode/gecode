@@ -70,6 +70,14 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: set
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+The offset arguments for selection constraints have been removed, as you can 
+simply add dummy elements to the array to achieve the same effect.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   major
