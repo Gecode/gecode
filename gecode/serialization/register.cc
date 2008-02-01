@@ -41,20 +41,20 @@
  */
 
 #include "gecode/config.hh"
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 #include "gecode/int.hh"
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
 #include "gecode/set.hh"
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 #include "gecode/minimodel.hh"
 #endif
 
 #include "gecode/serialization.hh"
 
 namespace {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 Gecode::IntValBranch toEnum_IntValBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -87,7 +87,7 @@ bool isEnum_IntValBranch(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
 Gecode::SetOpType toEnum_SetOpType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -116,7 +116,7 @@ bool isEnum_SetOpType(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
 Gecode::SetValBranch toEnum_SetValBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -137,7 +137,7 @@ bool isEnum_SetValBranch(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
 Gecode::SetVarBranch toEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -170,7 +170,7 @@ bool isEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 Gecode::IntVarBranch toEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -243,7 +243,7 @@ bool isEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 Gecode::IntRelType toEnum_IntRelType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -280,7 +280,7 @@ bool isEnum_IntRelType(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 Gecode::IntConLevel toEnum_IntConLevel(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -309,7 +309,7 @@ bool isEnum_IntConLevel(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 Gecode::BoolOpType toEnum_BoolOpType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -367,7 +367,7 @@ bool isEnum_PropKind(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
 Gecode::IntAssign toEnum_IntAssign(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -392,7 +392,7 @@ bool isEnum_IntAssign(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
 Gecode::SetRelType toEnum_SetRelType(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
@@ -476,7 +476,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]))
         {
@@ -489,7 +489,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]))
         {
@@ -507,7 +507,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -519,7 +519,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -534,7 +534,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt())
@@ -546,7 +546,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt())
@@ -561,7 +561,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -576,7 +576,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]))
@@ -594,7 +594,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]))
@@ -606,7 +606,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]))
@@ -621,7 +621,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt())
@@ -633,7 +633,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt())
@@ -648,7 +648,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[2]))
@@ -666,7 +666,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -681,7 +681,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isEnum_BoolOpType(spec[0]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]))
@@ -696,7 +696,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isEnum_BoolOpType(spec[0]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -711,7 +711,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -723,7 +723,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -735,7 +735,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -747,7 +747,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -759,7 +759,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -771,7 +771,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isEnum_SetOpType(spec[0]) &&
             isVarArgs<Gecode::SetVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -786,7 +786,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isEnum_SetOpType(spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -806,7 +806,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -820,7 +820,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -837,7 +837,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -851,7 +851,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -868,7 +868,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -882,7 +882,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -896,7 +896,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -913,7 +913,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -933,7 +933,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -947,7 +947,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -964,7 +964,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -978,7 +978,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -995,7 +995,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1015,7 +1015,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -1032,7 +1032,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_BoolOpType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1046,7 +1046,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_BoolOpType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1060,7 +1060,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isEnum_BoolOpType(spec[0]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1077,7 +1077,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isEnum_BoolOpType(spec[0]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -1094,7 +1094,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -1108,7 +1108,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             spec[2]->isIntArray() &&
@@ -1124,7 +1124,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -1138,7 +1138,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -1152,7 +1152,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isEnum_SetOpType(spec[0]) &&
             isVarArgs<Gecode::SetVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -1171,7 +1171,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isEnum_SetOpType(spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -1195,7 +1195,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -1211,7 +1211,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -1230,7 +1230,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -1246,7 +1246,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -1265,7 +1265,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -1281,7 +1281,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -1297,7 +1297,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -1319,7 +1319,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1335,7 +1335,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1354,7 +1354,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -1370,7 +1370,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -1389,7 +1389,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1411,7 +1411,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_BoolOpType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1427,7 +1427,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_BoolOpType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1443,7 +1443,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isEnum_BoolOpType(spec[0]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1462,7 +1462,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isEnum_BoolOpType(spec[0]) &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -1481,7 +1481,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetOpType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -1497,7 +1497,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (spec[0]->isIntArray() &&
             isEnum_SetOpType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -1515,7 +1515,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetOpType(spec[1]) &&
             spec[2]->isIntArray() &&
@@ -1533,7 +1533,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetOpType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -1551,7 +1551,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (spec[0]->isIntArray() &&
             isEnum_SetOpType(spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -1571,7 +1571,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetOpType(spec[1]) &&
             spec[2]->isIntArray() &&
@@ -1596,7 +1596,7 @@ public:
       break;
     case 6:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -1614,7 +1614,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -1632,7 +1632,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_BoolOpType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1650,7 +1650,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_BoolOpType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1689,7 +1689,7 @@ public:
     switch(spec.noOfArgs()) {
     case 4:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -1729,7 +1729,7 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
@@ -1761,7 +1761,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
@@ -1782,7 +1782,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -1805,7 +1805,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -1846,7 +1846,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt())
@@ -1861,7 +1861,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -1876,7 +1876,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isInt())
@@ -1893,7 +1893,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -1908,7 +1908,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -1923,7 +1923,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -1945,7 +1945,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -1962,7 +1962,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -1979,7 +1979,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isInt() &&
@@ -1998,7 +1998,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -2015,7 +2015,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -2032,7 +2032,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -2072,7 +2072,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -2085,7 +2085,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -2100,7 +2100,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -2112,7 +2112,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -2132,7 +2132,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -2146,7 +2146,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -2168,7 +2168,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -2205,7 +2205,7 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
@@ -2221,7 +2221,7 @@ public:
       break;
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]))
         {
@@ -2234,7 +2234,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
@@ -2254,7 +2254,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]) &&
             isEnum_PropKind(spec[2]))
@@ -2269,7 +2269,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -2291,7 +2291,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -2331,7 +2331,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray())
         {
@@ -2343,7 +2343,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray())
         {
@@ -2363,7 +2363,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt())
@@ -2375,7 +2375,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt())
@@ -2390,7 +2390,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntConLevel(spec[2]))
@@ -2404,7 +2404,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntConLevel(spec[2]))
@@ -2421,7 +2421,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::BoolVar>(vm, spec[2]))
@@ -2435,7 +2435,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             spec[2]->isInt())
@@ -2447,7 +2447,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             spec[2]->isIntArray())
@@ -2466,7 +2466,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -2480,7 +2480,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -2497,7 +2497,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntConLevel(spec[2]) &&
@@ -2513,7 +2513,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntConLevel(spec[2]) &&
@@ -2532,7 +2532,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -2546,7 +2546,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -2562,7 +2562,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -2576,7 +2576,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -2590,7 +2590,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             spec[2]->isIntArray() &&
@@ -2611,7 +2611,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -2627,7 +2627,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -2646,7 +2646,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -2662,7 +2662,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -2680,7 +2680,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -2701,7 +2701,7 @@ public:
       break;
     case 6:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -2740,7 +2740,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
@@ -2756,7 +2756,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isIntSetArgs(spec[1]))
         {
@@ -2780,7 +2780,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -2798,7 +2798,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isIntSetArgs(spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -2819,7 +2819,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray())
@@ -2839,7 +2839,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isIntSetArgs(spec[1]) &&
             spec[2]->isIntArray())
@@ -2862,7 +2862,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isIntArray())
@@ -2886,7 +2886,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isEnum_IntRelType(spec[2]) &&
@@ -2903,7 +2903,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -2920,7 +2920,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntRelType(spec[2]) &&
@@ -2939,7 +2939,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isEnum_IntRelType(spec[2]) &&
@@ -2956,7 +2956,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -2973,7 +2973,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntRelType(spec[2]) &&
@@ -2992,7 +2992,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -3012,7 +3012,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isIntSetArgs(spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -3035,7 +3035,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -3057,7 +3057,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isIntSetArgs(spec[1]) &&
             spec[2]->isIntArray() &&
@@ -3082,7 +3082,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isIntArray() &&
@@ -3108,7 +3108,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3127,7 +3127,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -3146,7 +3146,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3167,7 +3167,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3186,7 +3186,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -3205,7 +3205,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3226,7 +3226,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -3250,7 +3250,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isIntSetArgs(spec[1]) &&
             spec[2]->isIntArray() &&
@@ -3277,7 +3277,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isIntArray() &&
@@ -3305,7 +3305,7 @@ public:
       break;
     case 6:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3326,7 +3326,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -3347,7 +3347,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3370,7 +3370,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3391,7 +3391,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -3412,7 +3412,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntRelType(spec[2]) &&
@@ -3456,7 +3456,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
@@ -3490,7 +3490,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -3505,7 +3505,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isIntSetArgs(spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -3544,7 +3544,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -3558,7 +3558,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]))
@@ -3572,7 +3572,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -3586,7 +3586,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -3601,7 +3601,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -3616,7 +3616,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]))
@@ -3631,7 +3631,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -3651,7 +3651,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -3667,7 +3667,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -3683,7 +3683,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -3699,7 +3699,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -3716,7 +3716,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -3733,7 +3733,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -3750,7 +3750,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -3772,7 +3772,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -3790,7 +3790,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -3808,7 +3808,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -3826,7 +3826,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -3845,7 +3845,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -3864,7 +3864,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -3883,7 +3883,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -3923,7 +3923,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -3938,7 +3938,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -3955,7 +3955,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -3990,7 +3990,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt())
@@ -4005,7 +4005,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -4020,7 +4020,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isInt())
@@ -4037,7 +4037,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -4052,7 +4052,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -4067,7 +4067,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -4089,7 +4089,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -4106,7 +4106,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -4123,7 +4123,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isInt() &&
@@ -4142,7 +4142,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4159,7 +4159,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4176,7 +4176,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4216,7 +4216,7 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
@@ -4232,7 +4232,7 @@ public:
       break;
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]))
         {
@@ -4250,7 +4250,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]) &&
             isEnum_PropKind(spec[2]))
@@ -4286,7 +4286,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntAssign(spec[1]))
         {
@@ -4299,7 +4299,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntAssign(spec[1]))
         {
@@ -4333,7 +4333,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -4350,7 +4350,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4369,7 +4369,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4406,7 +4406,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             spec[1]->isInt())
         {
@@ -4440,7 +4440,7 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]))
         {
           Gecode::SetVar x0(vm.var(spec[0]->toVar()));
@@ -4469,7 +4469,7 @@ public:
     switch(spec.noOfArgs()) {
     case 1:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
@@ -4480,7 +4480,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
@@ -4496,7 +4496,7 @@ public:
       break;
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]))
         {
@@ -4509,7 +4509,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]))
         {
@@ -4527,7 +4527,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]) &&
             isEnum_PropKind(spec[2]))
@@ -4542,7 +4542,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntConLevel(spec[1]) &&
             isEnum_PropKind(spec[2]))
@@ -4578,7 +4578,7 @@ public:
     switch(spec.noOfArgs()) {
     case 4:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (spec[0]->isIntArray() &&
             spec[1]->isIntArray() &&
             isVar<Gecode::SetVar>(vm, spec[2]) &&
@@ -4617,7 +4617,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -4653,7 +4653,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]))
         {
@@ -4687,7 +4687,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt())
@@ -4702,7 +4702,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -4717,7 +4717,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt())
@@ -4732,7 +4732,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -4752,7 +4752,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -4769,7 +4769,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4786,7 +4786,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -4803,7 +4803,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4820,7 +4820,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -4839,7 +4839,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -4858,7 +4858,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -4875,7 +4875,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -4892,7 +4892,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4909,7 +4909,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -4926,7 +4926,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -4945,7 +4945,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -4969,7 +4969,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -4988,7 +4988,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -5007,7 +5007,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -5026,7 +5026,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -5045,7 +5045,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5066,7 +5066,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5087,7 +5087,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5108,7 +5108,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5129,7 +5129,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -5148,7 +5148,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -5167,7 +5167,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -5186,7 +5186,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -5205,7 +5205,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5226,7 +5226,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5247,7 +5247,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5268,7 +5268,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5294,7 +5294,7 @@ public:
       break;
     case 6:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -5315,7 +5315,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -5336,7 +5336,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5359,7 +5359,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5382,7 +5382,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5405,7 +5405,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5428,7 +5428,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -5449,7 +5449,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -5470,7 +5470,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5493,7 +5493,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5516,7 +5516,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5539,7 +5539,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5567,7 +5567,7 @@ public:
       break;
     case 7:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5592,7 +5592,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5617,7 +5617,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5642,7 +5642,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5688,7 +5688,7 @@ public:
     switch(spec.noOfArgs()) {
     case 7:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -5725,7 +5725,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -5761,7 +5761,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -5797,7 +5797,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -5832,7 +5832,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -5868,7 +5868,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -5903,7 +5903,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -5938,7 +5938,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -5977,7 +5977,7 @@ public:
       break;
     case 8:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6016,7 +6016,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6054,7 +6054,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6092,7 +6092,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6129,7 +6129,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6167,7 +6167,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6204,7 +6204,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6241,7 +6241,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6282,7 +6282,7 @@ public:
       break;
     case 9:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6323,7 +6323,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6363,7 +6363,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6403,7 +6403,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6442,7 +6442,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6482,7 +6482,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -6521,7 +6521,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6560,7 +6560,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -6619,7 +6619,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
@@ -6635,7 +6635,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -6645,7 +6645,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::BoolVar>(vm, spec[1]))
         {
@@ -6655,7 +6655,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -6668,7 +6668,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::SetVar>(vm, spec[1]))
         {
@@ -6684,7 +6684,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]))
         {
@@ -6702,7 +6702,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -6720,7 +6720,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -6732,7 +6732,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -6744,7 +6744,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -6764,7 +6764,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -6784,7 +6784,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -6798,7 +6798,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -6812,7 +6812,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -6834,7 +6834,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -6874,7 +6874,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -6889,7 +6889,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt())
@@ -6922,7 +6922,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]))
         {
@@ -6938,7 +6938,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray())
         {
@@ -6958,7 +6958,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -6976,7 +6976,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isEnum_IntConLevel(spec[2]))
@@ -7014,7 +7014,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -7029,7 +7029,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isIntSetArgs(spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::SetVar>(vm, spec[2]))
@@ -7068,7 +7068,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -7081,7 +7081,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]))
         {
@@ -7096,7 +7096,7 @@ public:
       break;
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -7108,7 +7108,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -7128,7 +7128,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -7142,7 +7142,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]) &&
@@ -7164,7 +7164,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -7201,7 +7201,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]))
         {
@@ -7235,7 +7235,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntVarBranch(spec[1]) &&
             isEnum_IntValBranch(spec[2]))
@@ -7250,7 +7250,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntVarBranch(spec[1]) &&
             isEnum_IntValBranch(spec[2]))
@@ -7265,7 +7265,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetVarBranch(spec[1]) &&
             isEnum_SetValBranch(spec[2]))
@@ -7301,7 +7301,7 @@ public:
     switch(spec.noOfArgs()) {
     case 2:
       {
-#if defined(GECODE_HAVE_SET_VARS)
+#if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isVar<Gecode::SetVar>(vm, spec[1]))
         {
@@ -7332,7 +7332,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt())
@@ -7347,7 +7347,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt())
@@ -7362,7 +7362,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isInt())
@@ -7379,7 +7379,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -7394,7 +7394,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -7409,7 +7409,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[2]))
@@ -7431,7 +7431,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
@@ -7448,7 +7448,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isInt() &&
@@ -7465,7 +7465,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isInt() &&
@@ -7484,7 +7484,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -7501,7 +7501,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVar<Gecode::IntVar>(vm, spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -7518,7 +7518,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
@@ -7558,7 +7558,7 @@ public:
     switch(spec.noOfArgs()) {
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7589,7 +7589,7 @@ public:
       break;
     case 6:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7638,7 +7638,7 @@ public:
     switch(spec.noOfArgs()) {
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7661,7 +7661,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7683,7 +7683,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -7705,7 +7705,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isIntArray() &&
@@ -7731,7 +7731,7 @@ public:
       break;
     case 5:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7756,7 +7756,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7780,7 +7780,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -7804,7 +7804,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isIntArray() &&
@@ -7832,7 +7832,7 @@ public:
       break;
     case 6:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7859,7 +7859,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
@@ -7885,7 +7885,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
@@ -7911,7 +7911,7 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isIntArray() &&
             spec[2]->isIntArray() &&
@@ -7957,7 +7957,7 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]))
@@ -7980,7 +7980,7 @@ public:
       break;
     case 4:
       {
-#if defined(GECODE_HAVE_INT_VARS)
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
