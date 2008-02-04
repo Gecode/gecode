@@ -69,7 +69,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     
     setLayout(grid);
     
-    connect(timeBar, SIGNAL(valueChanged(int)), this, SLOT(displayOld(int)));
+    connect(timeBar, SIGNAL(valueChanged(int)), this, SIGNAL(pointInTimeChanged(int)));
     
     QMetaObject::connectSlotsByName(this);
   }

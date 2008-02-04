@@ -60,6 +60,9 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     void display(Gecode::Reflection::VarMap&, int pit);
     void displayOld(int pit); ///< Use to show the variable at point in time pit
 
+  Q_SIGNALS:
+    void pointInTimeChanged(int pit);
+
   private Q_SLOTS:
     void on_muteButton_clicked(void);
     
