@@ -44,7 +44,7 @@
 namespace Test { 
 
   /// Tests for search engines
-  namespace Branch {
+  namespace Search {
 
     using namespace Gecode;
     using namespace Gecode::Int;
@@ -102,7 +102,7 @@ namespace Test {
       }
       /// Report size occupied
       virtual size_t size(void) const {
-        0;
+        return 0;
       }
       /// Destructor
       virtual ~PosValuesDesc(void) {
@@ -201,9 +201,11 @@ namespace Test {
     public:
       /// Variables used
       IntVarArray x;
+      /// How to branch
+      HowToBranch htb1, htb2, htb3;
       /// How to constrain
       HowToConstrain htc;
-      /// Branch on \ x according to \a htb
+      /// Branch on \a x according to \a htb
       void branch(const IntVarArgs& x, HowToBranch htb) {
         switch (htb) {
         case HTB_NONE:
@@ -215,18 +217,24 @@ namespace Test {
           Gecode::branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
           break;
         case HTB_NARY:
-          assign(this, x, INT_ASSIGN_MIN);
-          break;
+          {
+            ViewArray<IntView> xv(this,x);
+            new (this) NaryBranching(this, xv);
+            break;
+          }
         }
       }
       /// Constructor for space creation
-      HasSolutions(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
-                   HowToConstrain htc0) 
-        : x(this,6,0,5), htc(htc0) {
-        distinct(this,x);
+      HasSolutions(HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
+                   HowToConstrain _htc) 
+        : x(this,6,0,5), htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {
+        distinct(this, x);
+        rel(this, x[3], IRT_NQ, 0);
+        rel(this, x[4], IRT_NQ, 0);
+        rel(this, x[5], IRT_NQ, 0);
         IntVarArgs x1(2); x1[0]=x[0]; x1[1]=x[1]; branch(x1, htb1);
-        IntVarArgs x2(2); x2[0]=x[2]; x2[1]=x[2]; branch(x2, htb2);
-        IntVarArgs x3(2); x3[0]=x[4]; x3[1]=x[4]; branch(x3, htb3);
+        IntVarArgs x2(2); x2[0]=x[2]; x2[1]=x[3]; branch(x2, htb2);
+        IntVarArgs x3(2); x3[0]=x[4]; x3[1]=x[5]; branch(x3, htb3);
       }
       /// Constructor for cloning \a s
       HasSolutions(bool share, HasSolutions& s) 
@@ -272,6 +280,19 @@ namespace Test {
       }
     };
 
+    class TestDFS : public Base {
+    public:
+      TestDFS(void) : Base("DFS") {
+      }
+      virtual bool run(void) {
+        HasSolutions* s = new HasSolutions(HTB_UNARY,HTB_NARY,HTB_NARY,
+                                           HTC_NONE);
+        //        explore(s);
+        return true;
+      }
+    };
+
+    TestDFS _tdfs;
   }
 
 }
