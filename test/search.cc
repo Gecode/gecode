@@ -175,19 +175,21 @@ namespace Test {
       }
     };
 
-    /// Space with number of solutions
-    class Solutions : public Space {
+    /// Space with information
+    class TestSpace : public Space {
     public:
       /// Constructor for space creation
-      Solutions(void) {}
+      TestSpace(void) {}
       /// Constructor for cloning \a s
-      Solutions(bool share, Solutions& s) : Space(share,s) {}
+      TestSpace(bool share, TestSpace& s) : Space(share,s) {}
       /// Return number of solutions
       virtual unsigned int solutions(void) const = 0;
+      /// Verify that this is best solution
+      virtual bool best(void) const = 0;
     };
 
     /// Space that immediately fails
-    class FailImmediate : public Solutions {
+    class FailImmediate : public TestSpace {
     public:
       /// Variables used
       IntVarArray x;
@@ -197,7 +199,7 @@ namespace Test {
         rel(this, x[0], IRT_EQ, 1);
       }
       /// Constructor for cloning \a s
-      FailImmediate(bool share, FailImmediate& s) : Solutions(share,s) {
+      FailImmediate(bool share, FailImmediate& s) : TestSpace(share,s) {
         x.update(this, share, s.x);
       }
       /// Copy during cloning
@@ -211,6 +213,10 @@ namespace Test {
       virtual unsigned int solutions(void) const {
         return 0;
       }
+      /// Verify that this is best solution
+      virtual bool best(void) const {
+        return false;
+      }
       /// Return name
       static std::string name(void) {
         return "Fail";
@@ -218,7 +224,7 @@ namespace Test {
     };
 
     /// Space that requires propagation and has solutions
-    class HasSolutions : public Solutions {
+    class HasSolutions : public TestSpace {
     public:
       /// Variables used
       IntVarArray x;
@@ -258,7 +264,7 @@ namespace Test {
       }
       /// Constructor for cloning \a s
       HasSolutions(bool share, HasSolutions& s) 
-        : Solutions(share,s), htc(s.htc) {
+        : TestSpace(share,s), htc(s.htc) {
         x.update(this, share, s.x);
       }
       /// Copy during cloning
@@ -310,6 +316,33 @@ namespace Test {
           return 4;
         return 8;
       }
+      /// Verify that this is best solution
+      virtual bool best(void) const {
+        if ((htb1 == HTB_NONE) || (htb2 == HTB_NONE) || (htb3 == HTB_NONE))
+          return true;
+        switch (htc) {
+        case HTC_NONE: 
+          return true;
+        case HTC_LEX_LE:
+          return ((x[0].val()==4) && (x[1].val()==5) &&
+                  (x[2].val()==2) && (x[3].val()==3) && 
+                  (x[4].val()==0) && (x[5].val()==1));
+        case HTC_LEX_GR:
+          return ((x[0].val()==5) && (x[1].val()==4) &&
+                  (x[2].val()==3) && (x[3].val()==2) &&
+                  (x[4].val()==1) && (x[5].val()==0));
+        case HTC_BAL_LE:
+          return ((x[0].val()==4) && (x[1].val()==5) &&
+                  (x[2].val()==2) && (x[3].val()==3) && 
+                  (x[4].val()==0) && (x[5].val()==1));
+        case HTC_BAL_GR:
+          return ((x[0].val()==4) && (x[1].val()==5) &&
+                  (x[2].val()==3) && (x[3].val()==2) &&
+                  (x[4].val()==0) && (x[5].val()==1));
+        default: GECODE_NEVER;
+        }
+        return false;
+      }
       /// Return name
       static std::string name(void) {
         return "Sol";
@@ -320,7 +353,7 @@ namespace Test {
     class Test : public Base {
     public:
       /// Space defining problem to be searched
-      Solutions* space;
+      TestSpace* space;
       /// Map unsigned integer to string
       static std::string str(unsigned int i) {
         std::stringstream s;
@@ -353,7 +386,7 @@ namespace Test {
         return "";
       }
       /// Initialize test
-      Test(const std::string& str, Solutions* s) 
+      Test(const std::string& str, TestSpace* s) 
         : Base("Search::"+str), space(s) {}
       /// Delete test
       virtual ~Test(void) {
@@ -427,13 +460,16 @@ namespace Test {
                new Model(htb1,htb2,htb3,htc)), c_d(c_d0), a_d(a_d0) {}
       /// Run test
       virtual bool run(void) {
-        Engine<Model> dfs(static_cast<Model*>(space),c_d,a_d);
-        unsigned int n = 0;
-        while (Model* s = dfs.next()) {
-          delete s; n++;
+        Engine<Model> best(static_cast<Model*>(space),c_d,a_d);
+        Model* b = NULL;
+        while (Model* s = best.next()) {
+          delete b; b=s;
         }
-        //        return n == space->solutions();
-        return true;
+        bool ok = (b == NULL) || b->best();
+        if (!ok) 
+          std::cout << b->x;
+        delete b;
+        return ok;
       }
     };
 
@@ -517,8 +553,10 @@ namespace Test {
         new LDS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE);
 
         // Best solution search
-        for (unsigned int c_d = 1; c_d<10; c_d++)
-          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
+        //        for (unsigned int c_d = 1; c_d<10; c_d++)
+        //          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
+        for (unsigned int c_d = 1; c_d<2; c_d++)
+          for (unsigned int a_d = 1; a_d<2; a_d++) {
             for (ConstrainTypes htc; htc(); ++htc)
               for (BranchTypes htb1; htb1(); ++htb1)
                 for (BranchTypes htb2; htb2(); ++htb2)
