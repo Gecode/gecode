@@ -344,6 +344,7 @@ namespace Gecode {  namespace Gist {
 
   private Q_SLOTS:
     void on_canvas_contextMenu(QContextMenuEvent*);
+    void on_canvas_currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus);
     void on_canvas_statusChanged(const Statistics&, bool);
   protected:
     /// Close the widget

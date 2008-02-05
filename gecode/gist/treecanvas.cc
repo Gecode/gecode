@@ -254,6 +254,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
 #ifdef GECODE_GIST_EXPERIMENTAL
     if(currentNode->isStepNode()) {
+    // TODO nikopp: ugly things happen in this case that I do not fully understand
       return;
     }
 #endif
@@ -750,7 +751,6 @@ namespace Gecode { namespace Gist {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
-#ifdef GECODE_GIST_EXPERIMENTAL
       NodeStatus status = n->getStatus();
       if(status != UNDETERMINED) {
         emit currentNodeChanged(n->getSpace(), status);
@@ -758,7 +758,6 @@ namespace Gecode { namespace Gist {
       else {
         emit currentNodeChanged(NULL, status);
       }
-#endif
       QWidget::update();
     }
   }
@@ -1248,13 +1247,9 @@ namespace Gecode { namespace Gist {
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(inspectCN);
+    contextMenu->addAction(centerCN);
 
     contextMenu->addSeparator();
-
-    contextMenu->addAction(navUp);
-    contextMenu->addAction(navDown);
-    contextMenu->addAction(navLeft);
-    contextMenu->addAction(navRight);
 
     contextMenu->addAction(searchNext);
     contextMenu->addAction(searchAll);      
@@ -1267,21 +1262,17 @@ namespace Gecode { namespace Gist {
 
     contextMenu->addSeparator();
 
-    contextMenu->addAction(zoomToFit);
-    contextMenu->addAction(centerCN);
-
-    contextMenu->addSeparator();
-
-    contextMenu->addAction(exportPostscript);
-
-    contextMenu->addSeparator();
-
     contextMenu->addAction(setPath);
     contextMenu->addAction(inspectPath);
+
+    contextMenu->addSeparator();
 
 #ifdef GECODE_GIST_EXPERIMENTAL
     contextMenu->addAction(addChild);
     contextMenu->addAction(addFixpoint);
+
+    contextMenu->addSeparator();
+
     contextMenu->addAction(expandCurrentNode);
     contextMenu->addAction(toggleDebug);
 #endif
@@ -1329,6 +1320,86 @@ namespace Gecode { namespace Gist {
     emit statusChanged(stats,finished);
   }
 
+  void
+  TreeCanvas::on_canvas_currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus status) {
+    switch (status) {
+        case Gecode::Gist::SOLVED:
+        case Gecode::Gist::FAILED:
+          navDown->setEnabled(false);
+          navLeft->setEnabled(true);
+          navRight->setEnabled(true);
+
+          searchNext->setEnabled(false);
+          searchAll->setEnabled(false);
+          toggleHidden->setEnabled(false);
+          hideFailed->setEnabled(false);
+          unhideAll->setEnabled(false);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+          addChild->setEnabled(false);
+          addFixpoint->setEnabled(false);
+          expandCurrentNode->setEnabled(true);
+          toggleDebug->setEnabled(false);
+#endif
+          break;
+        case Gecode::Gist::UNDETERMINED:
+          navDown->setEnabled(false);
+          navLeft->setEnabled(true);
+          navRight->setEnabled(true);
+
+          searchNext->setEnabled(true);
+          searchAll->setEnabled(true);
+          toggleHidden->setEnabled(false);
+          hideFailed->setEnabled(false);
+          unhideAll->setEnabled(false);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+          addChild->setEnabled(false);
+          addFixpoint->setEnabled(false);
+          expandCurrentNode->setEnabled(true);
+          toggleDebug->setEnabled(false);
+#endif
+          break;
+        case Gecode::Gist::BRANCH:
+        case Gecode::Gist::SPECIAL:
+          navDown->setEnabled(true);
+          navLeft->setEnabled(true);
+          navRight->setEnabled(true);
+
+          searchNext->setEnabled(true);
+          searchAll->setEnabled(true);
+          toggleHidden->setEnabled(true);
+          hideFailed->setEnabled(true);
+          unhideAll->setEnabled(true);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+          addChild->setEnabled(true);
+          addFixpoint->setEnabled(true);
+          expandCurrentNode->setEnabled(true);
+          toggleDebug->setEnabled(false);
+#endif
+          break;
+        case Gecode::Gist::STEP:
+          navDown->setEnabled(true);
+          navLeft->setEnabled(false);
+          navRight->setEnabled(false);
+
+          searchNext->setEnabled(true);
+          searchAll->setEnabled(true);
+          toggleHidden->setEnabled(true);
+          hideFailed->setEnabled(false);
+          unhideAll->setEnabled(true);
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+          addChild->setEnabled(true);
+          addFixpoint->setEnabled(true);
+          expandCurrentNode->setEnabled(false);
+          toggleDebug->setEnabled(true);
+#endif
+          break;
+    }
+  }
+  
   void
   TreeCanvas::finish(void) {
     canvas->finish();
