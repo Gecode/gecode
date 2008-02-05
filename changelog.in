@@ -125,6 +125,15 @@ Thanks:	Stefano Gualandi
 LDS was broken for examples without solutions.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   major
+Thanks:	Stefano Gualandi
+[DESCRIPTION]
+Restart was broken in case the problem failed immediately with
+propagation only.
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor
