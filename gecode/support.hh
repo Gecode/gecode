@@ -40,7 +40,7 @@
 
 #include <cassert>
 
-#include "gecode/config.hh"
+#include "gecode/support/config.icc"
 
 /*
  * Linking and compiler workarounds

@@ -216,7 +216,7 @@ export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
 export LINKKERNEL      = $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
 KERNELBUILDDIRS = kernel
 
-EXTRA_HEADERS   = gecode/config.hh
+EXTRA_HEADERS   = gecode/support/config.icc
 
 #
 # SEARCH COMPONENTS
@@ -1233,7 +1233,7 @@ DIST_FILES= \
 	doxygen.conf.in doxygen.hh.in install-sh misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
 	misc/gecode-serialization.pc.in \
-	gecode/config.hh.in \
+	gecode/support/config.icc.in \
 	gecode/int/var-imp/int.vis \
 	gecode/int/var-imp/bool.vis \
 	gecode/set/var-imp.vis \

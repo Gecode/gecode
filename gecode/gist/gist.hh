@@ -34,15 +34,15 @@
  *
  */
 
-#ifndef GECODE_GIST_GIST_HH
-#define GECODE_GIST_GIST_HH
+#ifndef __GECODE_GIST_HH__
+#define __GECODE_GIST_HH__
+
+#include "gecode/kernel.hh"
 
 /*
- * Support for DLLs under Windows
+ * Configure linking
  *
  */
-
-#include "gecode/config.hh"
 
 #if !defined(GIST_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
@@ -56,21 +56,19 @@
 #else
 
 #ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
-
 #define GECODE_GIST_EXPORT __attribute__ ((visibility("default")))
-
 #else
-
 #define GECODE_GIST_EXPORT
-
 #endif
+
 #endif
 
 class QWidget;
 
-#include "gecode/gist/better.hh"
 #include <string>
 #include <sstream>
+
+#include "gecode/gist/better.hh"
 
 namespace Gecode { 
   

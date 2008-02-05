@@ -38,9 +38,6 @@
  *
  */
 
-#ifndef __GECODE_CONFIG_HH__
-#define __GECODE_CONFIG_HH__
-
 /* How to tell the compiler to really, really inline */
 #undef forceinline
 
@@ -83,6 +80,4 @@
 /* Whether to compile Gist experimental features */
 #undef GECODE_GIST_EXPERIMENTAL
 
-#endif
-
-// STATISTICS: kernel-other
+// STATISTICS: support-any
