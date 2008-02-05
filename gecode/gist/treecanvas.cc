@@ -34,12 +34,12 @@
  *
  */
 
-#include "gecode/gist/treecanvas.hh"
-
 #include <QtGui/QPainter>
 
 #include <stack>
 #include <fstream>
+
+#include "gecode/gist/treecanvas.hh"
 
 #include "gecode/gist/nodevisitor.hh"
 #include "gecode/gist/shapelist.hh"
@@ -48,7 +48,6 @@
 #include "gecode/gist/drawingcursor.hh"
 #include "gecode/gist/analysiscursor.hh"
 #include "gecode/gist/addchild.hh"
-#include "gecode/gist/config.hh"
 #include "gecode/gist/addvisualisationdialog.hh"
 
 #ifdef GECODE_GIST_EXPERIMENTAL

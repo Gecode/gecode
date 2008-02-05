@@ -42,21 +42,19 @@
 #include <QList>
 #include <QGraphicsView>
 
-#include "gecode/kernel.hh"
-#include "gecode/gist/gist.hh"
+#include "gecode/gist.hh"
 
 typedef QWidget* (*pt2createView)(Gecode::Reflection::VarMap&, int, QStringList, QWidget*);
 
 namespace Gecode { namespace Gist {
 
-  class GECODE_GIST_EXPORT Config
-    {
-    public:
-      Config(void);
-
-      QMap<QString, pt2createView> visualisationMap;
-    };
-
+  class GECODE_GIST_EXPORT Config {
+  public:
+    Config(void);
+    
+    QMap<QString, pt2createView> visualisationMap;
+  };
+  
 }}
 
 #endif

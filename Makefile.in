@@ -569,7 +569,7 @@ ITERHDR = gecode/iter.hh \
 #
 
 GISTHDR0 = \
-	better.hh drawingcursor.hh gist.hh \
+	better.hh drawingcursor.hh \
 	gist.icc node.hh nodecursor.hh nodecursor.icc nodevisitor.hh \
 	nodevisitor.icc postscript.hh shapelist.hh \
 	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh \
@@ -603,7 +603,7 @@ GISTMOCSRC0 = \
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
-GISTHDR = $(GISTHDR0:%=gecode/gist/%)
+GISTHDR = $(GISTHDR0:%=gecode/gist/%) gecode/gist.hh
 
 GISTOBJ	= $(GISTSRC:%.cc=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(OBJSUFFIX))
 GISTSBJ	= $(GISTSRC:%.cc=%$(SBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(SBJSUFFIX))

@@ -35,7 +35,7 @@
  */
 
 #include "gecode/minimodel.hh"
-#include "gecode/gist/gist.hh"
+#include "gecode/gist.hh"
 
 using namespace Gecode;
 

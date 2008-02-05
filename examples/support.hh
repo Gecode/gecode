@@ -42,6 +42,10 @@
 #include "gecode/int.hh"
 #include "gecode/search.hh"
 
+#ifdef GECODE_HAS_GIST
+#include "gecode/gist.hh"
+#endif
+
 using namespace Gecode;
 
 /*
@@ -349,9 +353,9 @@ public:
   IntVarArray _sac_iva;
  protected:
   /// Collect variables for SAC processing
-  void sac_collect_vars();
+  void sac_collect_vars(void);
   /// Remove variables after SAC processing
-  void sac_remove_vars();
+  void sac_remove_vars(void);
   /** \brief Run one round of singleton arc consistency.
    *
    * Returns true if a variable ahs been modified.
@@ -361,10 +365,6 @@ public:
   /// Catch wrong definitions of copy constructor
   explicit Example(Example& e);
 };
-
-#ifdef GECODE_HAS_GIST
-#include "gecode/gist/gist.hh"
-#endif
 
 #include "examples/support/example.icc"
 

@@ -3194,7 +3194,7 @@ gecode/serialization/boost$(OBJSUFFIX) gecode/serialization/boost$(SBJSUFFIX): \
 	./gecode/support/symbol.icc 
 examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3235,7 +3235,7 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3276,7 +3276,7 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -3311,7 +3311,7 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3352,7 +3352,7 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -3387,7 +3387,7 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3428,7 +3428,7 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3469,7 +3469,7 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -3504,7 +3504,7 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3545,7 +3545,7 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3586,7 +3586,7 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3627,7 +3627,7 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3668,7 +3668,7 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3709,7 +3709,7 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3750,7 +3750,7 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -3785,7 +3785,7 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3826,7 +3826,7 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -3861,7 +3861,7 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3902,7 +3902,7 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -3946,8 +3946,8 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/bddmanager.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/support.icc \
 	./gecode/cpltset/var-imp.icc ./gecode/cpltset/var-imp/cpltset.icc ./gecode/cpltset/var/cpltset.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc ./gecode/gist/better.hh \
-	./gecode/gist/gist.hh ./gecode/gist/gist.icc ./gecode/int.hh \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/cpltset.icc ./gecode/gist.hh \
+	./gecode/gist/better.hh ./gecode/gist/gist.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
 	./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc ./gecode/int/limits.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
@@ -3994,7 +3994,7 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/support/symbol.icc 
 examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4035,7 +4035,7 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4076,7 +4076,7 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4117,7 +4117,7 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4158,7 +4158,7 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4199,7 +4199,7 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4240,7 +4240,7 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4281,7 +4281,7 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4322,7 +4322,7 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4363,7 +4363,7 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4404,7 +4404,7 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4445,7 +4445,7 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4480,7 +4480,7 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4515,7 +4515,7 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4550,7 +4550,7 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4585,7 +4585,7 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4620,7 +4620,7 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4655,7 +4655,7 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4690,7 +4690,7 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4725,7 +4725,7 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4760,7 +4760,7 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4801,7 +4801,7 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4842,7 +4842,7 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4889,7 +4889,7 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/support/symbol.icc 
 examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -4930,7 +4930,7 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
@@ -4977,7 +4977,7 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/support/symbol.icc 
 examples/javascript$(OBJSUFFIX) examples/javascript$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -5013,7 +5013,7 @@ examples/javascript$(OBJSUFFIX) examples/javascript$(SBJSUFFIX): \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -5048,7 +5048,7 @@ examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 examples/support/example$(OBJSUFFIX) examples/support/example$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.icc ./examples/support/options.icc \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -5097,7 +5097,7 @@ gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/gist/mainwindow.hh ./gecode/gist/node.hh ./gecode/gist/shapelist.hh \
 	./gecode/gist/spacenode.hh ./gecode/gist/textoutput.hh ./gecode/gist/treecanvas.hh \
 	./gecode/gist/visualnode.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
@@ -5187,9 +5187,9 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 gecode/gist/textoutput$(OBJSUFFIX) gecode/gist/textoutput$(SBJSUFFIX): \
 	./gecode/gist/textoutput.hh 
 gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
-	./gecode/gist/addchild.hh ./gecode/gist/addvisualisationdialog.hh ./gecode/gist/analysiscursor.hh \
-	./gecode/gist/better.hh ./gecode/gist/config.hh ./gecode/gist/drawingcursor.hh \
-	./gecode/gist/gist.hh ./gecode/gist/gist.icc ./gecode/gist/node.hh \
+	./gecode/gist.hh ./gecode/gist/addchild.hh ./gecode/gist/addvisualisationdialog.hh \
+	./gecode/gist/analysiscursor.hh ./gecode/gist/better.hh ./gecode/gist/config.hh \
+	./gecode/gist/drawingcursor.hh ./gecode/gist/gist.icc ./gecode/gist/node.hh \
 	./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.icc ./gecode/gist/nodevisitor.hh \
 	./gecode/gist/nodevisitor.icc ./gecode/gist/postscript.hh ./gecode/gist/shapelist.hh \
 	./gecode/gist/spacenode.hh ./gecode/gist/treecanvas.hh ./gecode/gist/ui_addchild.hh \
@@ -5246,8 +5246,8 @@ gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
 	./gecode/support/symbol.icc 
 gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
-	./gecode/gist/better.hh ./gecode/gist/drawingcursor.hh ./gecode/gist/gecodelogo.icc \
-	./gecode/gist/gist.hh ./gecode/gist/gist.icc ./gecode/gist/mainwindow.hh \
+	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/drawingcursor.hh \
+	./gecode/gist/gecodelogo.icc ./gecode/gist/gist.icc ./gecode/gist/mainwindow.hh \
 	./gecode/gist/node.hh ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.icc \
 	./gecode/gist/preferences.hh ./gecode/gist/shapelist.hh ./gecode/gist/spacenode.hh \
 	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/kernel.hh \
@@ -5302,8 +5302,8 @@ gecode/gist/addchild$(OBJSUFFIX) gecode/gist/addchild$(SBJSUFFIX): \
 	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
 	./gecode/support/symbol.icc 
 gecode/gist/addvisualisationdialog$(OBJSUFFIX) gecode/gist/addvisualisationdialog$(SBJSUFFIX): \
-	./gecode/gist/addvisualisationdialog.hh ./gecode/gist/better.hh ./gecode/gist/config.hh \
-	./gecode/gist/gist.hh ./gecode/gist/gist.icc ./gecode/gist/ui_addvisualisationdialog.hh \
+	./gecode/gist.hh ./gecode/gist/addvisualisationdialog.hh ./gecode/gist/better.hh \
+	./gecode/gist/config.hh ./gecode/gist/gist.icc ./gecode/gist/ui_addvisualisationdialog.hh \
 	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
@@ -5319,8 +5319,8 @@ gecode/gist/addvisualisationdialog$(OBJSUFFIX) gecode/gist/addvisualisationdialo
 gecode/gist/reflectionhelpers$(OBJSUFFIX) gecode/gist/reflectionhelpers$(SBJSUFFIX): \
 	./gecode/gist/reflectionhelpers.hh 
 gecode/gist/config$(OBJSUFFIX) gecode/gist/config$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/gist/better.hh ./gecode/gist/config.hh \
-	./gecode/gist/gist.hh ./gecode/gist/gist.icc ./gecode/gist/visualisation/intvaritem.hh \
+	./gecode/config.hh ./gecode/gist.hh ./gecode/gist/better.hh \
+	./gecode/gist/config.hh ./gecode/gist/gist.icc ./gecode/gist/visualisation/intvaritem.hh \
 	./gecode/gist/visualisation/setvaritem.hh ./gecode/gist/visualisation/vararrayitem.hh ./gecode/gist/visualisation/vararrayview.hh \
 	./gecode/gist/visualisation/vararrayviewt.hh ./gecode/gist/visualisation/varitem.hh ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc \
@@ -7043,7 +7043,6 @@ test/branch/distinct$(OBJSUFFIX) test/branch/distinct$(SBJSUFFIX): \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
 	./test/branch.hh ./test/test.hh ./test/test.icc 
 test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
-	./gecode/gist/better.hh ./gecode/gist/gist.hh ./gecode/gist/gist.icc \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \

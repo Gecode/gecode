@@ -39,8 +39,6 @@
 #include "gecode/minimodel.hh"
 #include "gecode/search.hh"
 
-#include "gecode/gist/gist.hh"
-
 #include "test/test.hh"
 
 namespace Test { 
