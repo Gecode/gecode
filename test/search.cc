@@ -353,7 +353,8 @@ namespace Test {
         return "";
       }
       /// Initialize test
-      Test(const std::string& str, Solutions* s) : Base(str), space(s) {}
+      Test(const std::string& str, Solutions* s) 
+        : Base("Search::"+str), space(s) {}
       /// Delete test
       virtual ~Test(void) {
         delete space;
@@ -387,6 +388,55 @@ namespace Test {
       }
     };
 
+    /// Test for limited discrepancy search
+    template <class Model>
+    class LDS : public Test {
+    public:
+      /// Initialize test
+      LDS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3)
+        : Test("LDS::"+Model::name()+"::"+
+               str(htb1)+"::"+str(htb2)+"::"+str(htb3),
+               new Model(htb1,htb2,htb3,HTC_NONE)) {}
+      /// Run test
+      virtual bool run(void) {
+        Gecode::LDS<Model> lds(static_cast<Model*>(space),10);
+        unsigned int n = 0;
+        while (Model* s = lds.next()) {
+          delete s; n++;
+        }
+        return n == space->solutions();
+      }
+    };
+
+    /// Test for best solution search
+    template <class Model, template<class> class Engine>
+    class Best : public Test {
+    private:
+      /// Minimal recomputation distance
+      unsigned int c_d;
+      /// Adaptive recomputation distance
+      unsigned int a_d;
+    public:
+      /// Initialize test
+      Best(const std::string& b, HowToConstrain htc,
+           HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
+           unsigned int c_d0, unsigned int a_d0) 
+        : Test(b+"::"+Model::name()+"::"+str(htc)+"::"+
+               str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
+               str(c_d0)+"::"+str(a_d0),
+               new Model(htb1,htb2,htb3,htc)), c_d(c_d0), a_d(a_d0) {}
+      /// Run test
+      virtual bool run(void) {
+        Engine<Model> dfs(static_cast<Model*>(space),c_d,a_d);
+        unsigned int n = 0;
+        while (Model* s = dfs.next()) {
+          delete s; n++;
+        }
+        //        return n == space->solutions();
+        return true;
+      }
+    };
+
     /// Iterator for branching types
     class BranchTypes {
     private:
@@ -401,7 +451,7 @@ namespace Test {
       bool operator()(void) const {
         return i<3;
       } 
-      /// Increment to next relation type
+      /// Increment to next branching type
       void operator++(void) {
         i++;
       }
@@ -413,22 +463,81 @@ namespace Test {
 
     const HowToBranch BranchTypes::htbs[3] = {HTB_UNARY, HTB_BINARY, HTB_NARY};
     
+    /// Iterator for constrain types
+    class ConstrainTypes {
+    private:
+      /// Array of constrain types
+      static const HowToConstrain htcs[5];
+      /// Current position in constrain type array
+      int i; 
+    public:
+      /// Initialize iterator
+      ConstrainTypes(void) : i(0) {}
+      /// Test whether iterator is done
+      bool operator()(void) const {
+        return i<4;
+      } 
+      /// Increment to next constrain type
+      void operator++(void) {
+        i++;
+      }
+      /// Return current constrain type
+      HowToConstrain htc(void) const {
+        return htcs[i];
+      }
+    };
+
+    const HowToConstrain ConstrainTypes::htcs[5] = 
+      {HTC_NONE, HTC_LEX_LE, HTC_LEX_GR, HTC_BAL_LE, HTC_BAL_GR};
+    
 
     /// Help class to create and register tests
     class Create {
     public:
       /// Perform creation and registration
       Create(void) {
+        // Depth-first search
         for (unsigned int c_d = 1; c_d<10; c_d++)
           for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
             for (BranchTypes htb1; htb1(); ++htb1)
               for (BranchTypes htb2; htb2(); ++htb2)
                 for (BranchTypes htb3; htb3(); ++htb3)
-                  new DFS<HasSolutions>(htb1.htb(), htb2.htb(), htb3.htb(),
-                                        c_d, a_d);
+                  (void) new DFS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb(),
+                                               c_d, a_d);
             new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, c_d, a_d);
             new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, c_d, a_d);
           }
+
+        // Limited discrepancy search
+        for (BranchTypes htb1; htb1(); ++htb1)
+          for (BranchTypes htb2; htb2(); ++htb2)
+            for (BranchTypes htb3; htb3(); ++htb3)
+              (void) new LDS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb());
+        new LDS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE);
+        new LDS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE);
+
+        // Best solution search
+        for (unsigned int c_d = 1; c_d<10; c_d++)
+          for (unsigned int a_d = 1; a_d<=c_d; a_d++)
+            for (ConstrainTypes htc; htc(); ++htc) {
+              for (BranchTypes htb1; htb1(); ++htb1)
+                for (BranchTypes htb2; htb2(); ++htb2)
+                  for (BranchTypes htb3; htb3(); ++htb3) {
+                    (void) new Best<HasSolutions,BAB>
+                      ("BAB",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),c_d,a_d);
+                    (void) new Best<HasSolutions,Restart>
+                      ("Restart",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),c_d,a_d);
+                  }
+              (void) new Best<FailImmediate,BAB>
+                ("BAB",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
+              (void) new Best<FailImmediate,Restart>
+                ("Restart",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
+              (void) new Best<HasSolutions,BAB>
+                ("BAB",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
+              (void) new Best<HasSolutions,Restart>
+                ("Restart",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
+            }
+
       }
     };
 
