@@ -234,6 +234,8 @@ namespace Gecode {
       void current(const Space* s);
       /// Reset statistics for space \a s
       void reset(const Space* s);
+      /// Reset statistics for failed space
+      void reset(void);
     };
 
     /**
@@ -348,6 +350,8 @@ namespace Gecode {
       void init(Space* s);
       /// Reset engine to restart at space \a s
       void reset(Space* s);
+      /// Reset engine to restart at failed space
+      void reset(void);
       /// %Search for next solution
       Space* explore(void);
       /// Return stack size used by engine

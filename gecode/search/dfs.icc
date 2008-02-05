@@ -63,6 +63,15 @@ namespace Gecode {
       EngineCtrl::reset(s);
     }
 
+    forceinline void
+    DfsEngine::reset(void) {
+      delete cur;
+      rcs.reset();
+      cur = NULL;
+      d   = 0;
+      EngineCtrl::reset();
+    }
+
     forceinline size_t
     DfsEngine::stacksize(void) const {
       return rcs.stacksize();

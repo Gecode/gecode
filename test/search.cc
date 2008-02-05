@@ -467,7 +467,7 @@ namespace Test {
     class ConstrainTypes {
     private:
       /// Array of constrain types
-      static const HowToConstrain htcs[5];
+      static const HowToConstrain htcs[4];
       /// Current position in constrain type array
       int i; 
     public:
@@ -487,8 +487,8 @@ namespace Test {
       }
     };
 
-    const HowToConstrain ConstrainTypes::htcs[5] = 
-      {HTC_NONE, HTC_LEX_LE, HTC_LEX_GR, HTC_BAL_LE, HTC_BAL_GR};
+    const HowToConstrain ConstrainTypes::htcs[4] = 
+      {HTC_LEX_LE, HTC_LEX_GR, HTC_BAL_LE, HTC_BAL_GR};
     
 
     /// Help class to create and register tests
@@ -518,8 +518,8 @@ namespace Test {
 
         // Best solution search
         for (unsigned int c_d = 1; c_d<10; c_d++)
-          for (unsigned int a_d = 1; a_d<=c_d; a_d++)
-            for (ConstrainTypes htc; htc(); ++htc) {
+          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
+            for (ConstrainTypes htc; htc(); ++htc)
               for (BranchTypes htb1; htb1(); ++htb1)
                 for (BranchTypes htb2; htb2(); ++htb2)
                   for (BranchTypes htb3; htb3(); ++htb3) {
@@ -528,15 +528,11 @@ namespace Test {
                     (void) new Best<HasSolutions,Restart>
                       ("Restart",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),c_d,a_d);
                   }
-              (void) new Best<FailImmediate,BAB>
-                ("BAB",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
-              (void) new Best<FailImmediate,Restart>
-                ("Restart",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
-              (void) new Best<HasSolutions,BAB>
-                ("BAB",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
-              (void) new Best<HasSolutions,Restart>
-                ("Restart",htc.htc(),HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
-            }
+            (void) new Best<FailImmediate,BAB>
+              ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
+            (void) new Best<HasSolutions,BAB>
+              ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
+          }
 
       }
     };
