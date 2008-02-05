@@ -39,6 +39,8 @@
 #include "gecode/minimodel.hh"
 #include "gecode/search.hh"
 
+#include "gecode/gist/gist.hh"
+
 #include "test/test.hh"
 
 namespace Test { 
@@ -59,11 +61,11 @@ namespace Test {
 
     /// Values for selecting how to constrain
     enum HowToConstrain {
-      HTC_NONE,         ///< Do not constrain
-      HTC_LEX_SMALLEST, ///< Constrain for lexically smallest
-      HTC_LEX_LARGEST,  ///< Constrain for lexically biggest 
-      HTC_BAL_SMALLEST, ///< Constrain for smallest balance
-      HTC_BAL_LARGEST   ///< Constrain for largest balance
+      HTC_NONE,   ///< Do not constrain
+      HTC_LEX_LE, ///< Constrain for lexically smallest
+      HTC_LEX_GR, ///< Constrain for lexically biggest 
+      HTC_BAL_LE, ///< Constrain for smallest balance
+      HTC_BAL_GR  ///< Constrain for largest balance
     };
 
     /// Values for selecting models
@@ -130,14 +132,14 @@ namespace Test {
         return new (home) NaryBranching(home,share,*this);
       }
       /// Check status of branching, return true if alternatives left
-      virtual bool status(const Space* home) const {
+      virtual bool status(const Space*) const {
         for (int i=0; i<x.size(); i++)
           if (!x[i].assigned())
             return true;
         return false;
       }
       /// Return branching description
-      virtual const BranchingDesc* description(const Space* home) const {
+      virtual const BranchingDesc* description(const Space*) const {
         int i=0; 
         while (x[i].assigned()) 
           i++;
@@ -161,30 +163,41 @@ namespace Test {
       }
 
       /// Return specification for a branch
-      virtual Reflection::BranchingSpec branchingSpec(Space* home, 
-                                                      Reflection::VarMap& m,
+      virtual Reflection::BranchingSpec branchingSpec(Space*, 
+                                                      Reflection::VarMap&,
                                                       const BranchingDesc* d) {
         Reflection::BranchingSpec bs(d);
         return bs;
       }
       /// Post branching according to specification
-      static void post(Space* home, Reflection::VarMap& m,
-                       const Reflection::ActorSpec& spec) {
+      static void post(Space*, Reflection::VarMap&,
+                       const Reflection::ActorSpec&) {
       }
     };
 
+    /// Space with number of solutions
+    class Solutions : public Space {
+    public:
+      /// Constructor for space creation
+      Solutions(void) {}
+      /// Constructor for cloning \a s
+      Solutions(bool share, Solutions& s) : Space(share,s) {}
+      /// Return number of solutions
+      virtual unsigned int solutions(void) const = 0;
+    };
 
     /// Space that immediately fails
-    class FailImmediate : public Space {
+    class FailImmediate : public Solutions {
     public:
       /// Variables used
       IntVarArray x;
       /// Constructor for space creation
-      FailImmediate(void) : x(this,1,0,0) {
+      FailImmediate(HowToBranch, HowToBranch, HowToBranch, HowToConstrain) 
+        : x(this,1,0,0) {
         rel(this, x[0], IRT_EQ, 1);
       }
       /// Constructor for cloning \a s
-      FailImmediate(bool share, FailImmediate& s) : Space(share,s) {
+      FailImmediate(bool share, FailImmediate& s) : Solutions(share,s) {
         x.update(this, share, s.x);
       }
       /// Copy during cloning
@@ -194,10 +207,18 @@ namespace Test {
       /// Add constraint for next better solution
       void constrain(Space*) {
       }
+      /// Return number of solutions
+      virtual unsigned int solutions(void) const {
+        return 0;
+      }
+      /// Return name
+      static std::string name(void) {
+        return "Fail";
+      }
     };
 
     /// Space that requires propagation and has solutions
-    class HasSolutions : public Space {
+    class HasSolutions : public Solutions {
     public:
       /// Variables used
       IntVarArray x;
@@ -229,16 +250,15 @@ namespace Test {
                    HowToConstrain _htc) 
         : x(this,6,0,5), htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {
         distinct(this, x);
-        rel(this, x[3], IRT_NQ, 0);
-        rel(this, x[4], IRT_NQ, 0);
-        rel(this, x[5], IRT_NQ, 0);
+        rel(this, x[2], IRT_LQ, 3); rel(this, x[3], IRT_LQ, 3);
+        rel(this, x[4], IRT_LQ, 1); rel(this, x[5], IRT_LQ, 1);
         IntVarArgs x1(2); x1[0]=x[0]; x1[1]=x[1]; branch(x1, htb1);
         IntVarArgs x2(2); x2[0]=x[2]; x2[1]=x[3]; branch(x2, htb2);
         IntVarArgs x3(2); x3[0]=x[4]; x3[1]=x[5]; branch(x3, htb3);
       }
       /// Constructor for cloning \a s
       HasSolutions(bool share, HasSolutions& s) 
-        : Space(share,s), htc(s.htc) {
+        : Solutions(share,s), htc(s.htc) {
         x.update(this, share, s.x);
       }
       /// Copy during cloning
@@ -251,17 +271,17 @@ namespace Test {
         switch (htc) {
         case HTC_NONE:
           break;
-        case HTC_LEX_SMALLEST:
-        case HTC_LEX_LARGEST:
+        case HTC_LEX_LE:
+        case HTC_LEX_GR:
           {
             IntVarArgs y(6);
             for (int i=0; i<6; i++)
               y[i].init(this, s->x[i].val(), s->x[i].val());
-            lex(this, x, (htc == HTC_LEX_SMALLEST) ? IRT_LE : IRT_GR, y);
+            lex(this, x, (htc == HTC_LEX_LE) ? IRT_LE : IRT_GR, y);
             break;
           }
-        case HTC_BAL_SMALLEST:
-        case HTC_BAL_LARGEST:
+        case HTC_BAL_LE:
+        case HTC_BAL_GR:
           {
             IntVarArgs y(6);
             for (int i=0; i<6; i++)
@@ -272,27 +292,147 @@ namespace Test {
             post(this, y[0]+y[1]+y[2]-y[3]-y[4]-y[5] == ys);
             rel(this, 
                 abs(this,xs), 
-                (htc == HTC_BAL_SMALLEST) ? IRT_LE : IRT_GR,
+                (htc == HTC_BAL_LE) ? IRT_LE : IRT_GR,
                 abs(this,ys));
             break;
           }
         }
       }
+      /// Return number of solutions
+      virtual unsigned int solutions(void) const {
+        if (htb1 == HTB_NONE) {
+          assert((htb2 == HTB_NONE) && (htb3 == HTB_NONE));
+          return 1;
+        }
+        if ((htb1 == HTB_UNARY) || (htb2 == HTB_UNARY))
+          return 0;
+        if (htb3 == HTB_UNARY)
+          return 4;
+        return 8;
+      }
+      /// Return name
+      static std::string name(void) {
+        return "Sol";
+      }
     };
 
-    class TestDFS : public Base {
+    /// Base class for search tests
+    class Test : public Base {
     public:
-      TestDFS() : Base("DFS") {
+      /// Space defining problem to be searched
+      Solutions* space;
+      /// Map unsigned integer to string
+      static std::string str(unsigned int i) {
+        std::stringstream s;
+        s << i;
+        return s.str();
       }
-      virtual bool run(void) {
-        HasSolutions* s = new HasSolutions(HTB_UNARY,HTB_NARY,HTB_NARY,
-                                           HTC_NONE);
-        //        explore(s);
-        return true;
+      /// Map branching to string
+      static std::string str(HowToBranch htb) {
+        switch (htb) {
+        case HTB_NONE:   return "None";
+        case HTB_UNARY:  return "Unary";
+        case HTB_BINARY: return "Binary";
+        case HTB_NARY:   return "Nary";
+        default: GECODE_NEVER;
+        }
+        GECODE_NEVER;
+        return "";
+      }
+      /// Map constrain to string
+      static std::string str(HowToConstrain htc) {
+        switch (htc) {
+        case HTC_NONE:   return "None";
+        case HTC_LEX_LE: return "LexLe";
+        case HTC_LEX_GR: return "LexGr";
+        case HTC_BAL_LE: return "BalLe";
+        case HTC_BAL_GR: return "BalGr";
+        default: GECODE_NEVER;
+        }
+        GECODE_NEVER;
+        return "";
+      }
+      /// Initialize test
+      Test(const std::string& str, Solutions* s) : Base(str), space(s) {}
+      /// Delete test
+      virtual ~Test(void) {
+        delete space;
       }
     };
 
-    TestDFS _tdfs;
+    /// Test for depth-first search
+    template <class Model>
+    class DFS : public Test {
+    private:
+      /// Minimal recomputation distance
+      unsigned int c_d;
+      /// Adaptive recomputation distance
+      unsigned int a_d;
+    public:
+      /// Initialize test
+      DFS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
+          unsigned int c_d0, unsigned int a_d0) 
+        : Test("DFS::"+Model::name()+"::"+
+               str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
+               str(c_d0)+"::"+str(a_d0),
+               new Model(htb1,htb2,htb3,HTC_NONE)), c_d(c_d0), a_d(a_d0) {}
+      /// Run test
+      virtual bool run(void) {
+        Gecode::DFS<Model> dfs(static_cast<Model*>(space),c_d,a_d);
+        unsigned int n = 0;
+        while (Model* s = dfs.next()) {
+          delete s; n++;
+        }
+        return n == space->solutions();
+      }
+    };
+
+    /// Iterator for branching types
+    class BranchTypes {
+    private:
+      /// Array of branching types
+      static const HowToBranch htbs[3];
+      /// Current position in branching type array
+      int i; 
+    public:
+      /// Initialize iterator
+      BranchTypes(void) : i(0) {}
+      /// Test whether iterator is done
+      bool operator()(void) const {
+        return i<3;
+      } 
+      /// Increment to next relation type
+      void operator++(void) {
+        i++;
+      }
+      /// Return current branching type
+      HowToBranch htb(void) const {
+        return htbs[i];
+      }
+    };
+
+    const HowToBranch BranchTypes::htbs[3] = {HTB_UNARY, HTB_BINARY, HTB_NARY};
+    
+
+    /// Help class to create and register tests
+    class Create {
+    public:
+      /// Perform creation and registration
+      Create(void) {
+        for (unsigned int c_d = 1; c_d<10; c_d++)
+          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
+            for (BranchTypes htb1; htb1(); ++htb1)
+              for (BranchTypes htb2; htb2(); ++htb2)
+                for (BranchTypes htb3; htb3(); ++htb3)
+                  new DFS<HasSolutions>(htb1.htb(), htb2.htb(), htb3.htb(),
+                                        c_d, a_d);
+            new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, c_d, a_d);
+            new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, c_d, a_d);
+          }
+      }
+    };
+
+    Create c;
   }
 
 }
