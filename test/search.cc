@@ -415,11 +415,18 @@ namespace Test {
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
-        Gecode::DFS<Model> dfs(m,c_d,a_d);
+        Gecode::Search::FailStop f(2);
+        Gecode::DFS<Model> dfs(m,c_d,a_d,&f);
         int n = m->solutions();
         delete m;
-        while (Model* s = dfs.next()) {
-          delete s; n--;
+        while (true) {
+          Model* s = dfs.next();
+          if (s != NULL) {
+            n--; delete s;
+          }
+          if ((s == NULL) && !f.stop(dfs.statistics()))
+            break;
+          f.limit(f.limit()+2);
         }
         return n == 0;
       }
@@ -437,11 +444,18 @@ namespace Test {
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
+        Gecode::Search::FailStop f(2);
+        Gecode::LDS<Model> lds(m,50,&f);
         int n = m->solutions();
-        Gecode::LDS<Model> lds(m,50);
         delete m;
-        while (Model* s = lds.next()) {
-          delete s; n--;
+        while (true) {
+          Model* s = lds.next();
+          if (s != NULL) {
+            n--; delete s;
+          }
+          if ((s == NULL) && !f.stop(lds.statistics()))
+            break;
+          f.limit(f.limit()+2);
         }
         return n == 0;
       }
@@ -467,15 +481,20 @@ namespace Test {
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3,htc);
-        Engine<Model> best(m,c_d,a_d);
+        Gecode::Search::FailStop f(2);
+        Engine<Model> best(m,c_d,a_d,&f);
         delete m;
         Model* b = NULL;
-        while (Model* s = best.next()) {
-          delete b; b=s;
+        while (true) {
+          Model* s = best.next();
+          if (s != NULL) {
+            delete b; b=s;
+          }
+          if ((s == NULL) && !f.stop(best.statistics()))
+            break;
+          f.limit(f.limit()+2);
         }
         bool ok = (b == NULL) || b->best();
-        if (!ok) 
-          std::cout << b->x;
         delete b;
         return ok;
       }
