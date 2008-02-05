@@ -45,7 +45,11 @@ namespace Gecode {
   template <class T>
   Restart<T>::Restart(T* s, unsigned int c_d, unsigned int a_d,
                       Search::Stop* st) :
-    Gecode::DFS<T>(s,c_d,a_d,st), root(s->clone()), best(NULL) {}
+    Gecode::DFS<T>(s,c_d,a_d,st),
+    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {
+    // Failure and propagation must not be counted, has happened already
+    // in the DFS constructor
+  }
 
   template <class T>
   forceinline
