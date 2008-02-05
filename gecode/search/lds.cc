@@ -127,7 +127,7 @@ namespace Gecode { namespace Search {
         if (a == 0) {
           cur = ds.pop().space();
           EngineCtrl::pop(cur,desc);
-          cur->commit(desc,a);
+          cur->commit(desc,0);
           delete desc;
         } else {
           ds.top().next();
@@ -196,15 +196,18 @@ namespace Gecode { namespace Search {
    */
 
   LDS::LDS(Space* s, unsigned int d, Stop* st, size_t sz)
-    : d_cur(0), d_max(d), e(st,sz) {
+    : root(NULL), d_cur(0), d_max(d), e(st,sz) {
     if (s->status(e.propagate) == SS_FAILED) {
-      root = NULL;
       e.init(NULL,0);
       e.fail += 1;
       e.current(s);
     } else {
-      root = s;
-      Space* c = (d_max == 0) ? s : s->clone();
+      e.clone++;;
+      Space* c = s->clone();
+      if (d_max > 0) {
+        root = c->clone();
+        e.clone++;
+      }
       e.init(c,0);
       e.current(s);
       e.current(NULL);
@@ -225,9 +228,10 @@ namespace Gecode { namespace Search {
       if (++d_cur > d_max)
         break;
       if (d_cur == d_max) {
-        e.reset(root,d_cur);
+        if (root != NULL)
+          e.reset(root,d_cur);
         root = NULL;
-      } else {
+      } else if (root != NULL) {
         e.clone++;
         e.reset(root->clone(),d_cur);
       }

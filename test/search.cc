@@ -432,7 +432,7 @@ namespace Test {
                new Model(htb1,htb2,htb3,HTC_NONE)) {}
       /// Run test
       virtual bool run(void) {
-        Gecode::LDS<Model> lds(static_cast<Model*>(space),10);
+        Gecode::LDS<Model> lds(static_cast<Model*>(space),50);
         unsigned int n = 0;
         while (Model* s = lds.next()) {
           delete s; n++;
