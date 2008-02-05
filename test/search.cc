@@ -424,7 +424,7 @@ namespace Test {
           if (s != NULL) {
             n--; delete s;
           }
-          if ((s == NULL) && !f.stop(dfs.statistics()))
+          if ((s == NULL) && !dfs.stopped())
             break;
           f.limit(f.limit()+2);
         }
@@ -453,7 +453,7 @@ namespace Test {
           if (s != NULL) {
             n--; delete s;
           }
-          if ((s == NULL) && !f.stop(lds.statistics()))
+          if ((s == NULL) && !lds.stopped())
             break;
           f.limit(f.limit()+2);
         }
@@ -490,7 +490,7 @@ namespace Test {
           if (s != NULL) {
             delete b; b=s;
           }
-          if ((s == NULL) && !f.stop(best.statistics()))
+          if ((s == NULL) && !best.stopped())
             break;
           f.limit(f.limit()+2);
         }

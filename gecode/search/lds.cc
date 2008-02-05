@@ -116,11 +116,11 @@ namespace Gecode { namespace Search {
   ProbeEngine::explore(void) {
     start();
     while (true) {
-      if (stop(stacksize()))
-        return NULL;
       if (cur == NULL) {
       backtrack:
         if (ds.empty())
+          return NULL;
+        if (stop(stacksize()))
           return NULL;
         unsigned int a            = ds.top().alt();
         const BranchingDesc* desc = ds.top().desc();
@@ -142,8 +142,6 @@ namespace Gecode { namespace Search {
       if (d == 0) {
         Space* s = cur;
         while (s->status(propagate) == SS_BRANCH) {
-          if (stop(stacksize()))
-            return NULL;
           const BranchingDesc* desc = s->description();
           s->commit(desc,0);
           delete desc;
@@ -225,6 +223,8 @@ namespace Gecode { namespace Search {
       Space* s = e.explore();
       if (s != NULL)
         return s;
+      if ((s == NULL) && e.stopped())
+        return NULL;
       if (++d_cur > d_max)
         break;
       if (d_cur == d_max) {
