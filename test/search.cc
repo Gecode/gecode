@@ -282,7 +282,7 @@ namespace Test {
 
     class TestDFS : public Base {
     public:
-      TestDFS(void) : Base("DFS") {
+      TestDFS() : Base("DFS") {
       }
       virtual bool run(void) {
         HasSolutions* s = new HasSolutions(HTB_UNARY,HTB_NARY,HTB_NARY,
