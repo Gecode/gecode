@@ -181,7 +181,7 @@ namespace Test {
       /// Constructor for cloning \a s
       TestSpace(bool share, TestSpace& s) : Space(share,s) {}
       /// Return number of solutions
-      virtual unsigned int solutions(void) const = 0;
+      virtual int solutions(void) const = 0;
       /// Verify that this is best solution
       virtual bool best(void) const = 0;
     };
@@ -192,7 +192,8 @@ namespace Test {
       /// Variables used
       IntVarArray x;
       /// Constructor for space creation
-      FailImmediate(HowToBranch, HowToBranch, HowToBranch, HowToConstrain) 
+      FailImmediate(HowToBranch, HowToBranch, HowToBranch, 
+                    HowToConstrain=HTC_NONE) 
         : x(this,1,0,0) {
         rel(this, x[0], IRT_EQ, 1);
       }
@@ -208,7 +209,7 @@ namespace Test {
       void constrain(Space*) {
       }
       /// Return number of solutions
-      virtual unsigned int solutions(void) const {
+      virtual int solutions(void) const {
         return 0;
       }
       /// Verify that this is best solution
@@ -251,7 +252,7 @@ namespace Test {
       }
       /// Constructor for space creation
       HasSolutions(HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
-                   HowToConstrain _htc) 
+                   HowToConstrain _htc=HTC_NONE) 
         : x(this,6,0,5), htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {
         distinct(this, x);
         rel(this, x[2], IRT_LQ, 3); rel(this, x[3], IRT_LQ, 3);
@@ -262,7 +263,8 @@ namespace Test {
       }
       /// Constructor for cloning \a s
       HasSolutions(bool share, HasSolutions& s) 
-        : TestSpace(share,s), htc(s.htc) {
+        : TestSpace(share,s), 
+          htb1(s.htb1), htb2(s.htb2), htb3(s.htb3), htc(s.htc) {
         x.update(this, share, s.x);
       }
       /// Copy during cloning
@@ -303,7 +305,7 @@ namespace Test {
         }
       }
       /// Return number of solutions
-      virtual unsigned int solutions(void) const {
+      virtual int solutions(void) const {
         if (htb1 == HTB_NONE) {
           assert((htb2 == HTB_NONE) && (htb3 == HTB_NONE));
           return 1;
@@ -316,7 +318,8 @@ namespace Test {
       }
       /// Verify that this is best solution
       virtual bool best(void) const {
-        if ((htb1 == HTB_NONE) || (htb2 == HTB_NONE) || (htb3 == HTB_NONE))
+        if ((htb1 == HTB_NONE) || (htb2 == HTB_NONE) || (htb3 == HTB_NONE) ||
+            (htb1 == HTB_UNARY) || (htb2 == HTB_UNARY) || (htb3 == HTB_UNARY))
           return true;
         switch (htc) {
         case HTC_NONE: 
@@ -350,8 +353,10 @@ namespace Test {
     /// Base class for search tests
     class Test : public Base {
     public:
-      /// Space defining problem to be searched
-      TestSpace* space;
+      /// How to branch
+      HowToBranch htb1, htb2, htb3;
+      /// How to constrain
+      HowToConstrain htc;
       /// Map unsigned integer to string
       static std::string str(unsigned int i) {
         std::stringstream s;
@@ -384,12 +389,11 @@ namespace Test {
         return "";
       }
       /// Initialize test
-      Test(const std::string& str, TestSpace* s) 
-        : Base("Search::"+str), space(s) {}
-      /// Delete test
-      virtual ~Test(void) {
-        delete space;
-      }
+      Test(const std::string& s,
+           HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
+           HowToConstrain _htc=HTC_NONE) 
+        : Base("Search::"+s), 
+          htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {}
     };
 
     /// Test for depth-first search
@@ -407,15 +411,17 @@ namespace Test {
         : Test("DFS::"+Model::name()+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0),
-               new Model(htb1,htb2,htb3,HTC_NONE)), c_d(c_d0), a_d(a_d0) {}
+               htb1,htb2,htb3), c_d(c_d0), a_d(a_d0) {}
       /// Run test
       virtual bool run(void) {
-        Gecode::DFS<Model> dfs(static_cast<Model*>(space),c_d,a_d);
-        unsigned int n = 0;
+        Model* m = new Model(htb1,htb2,htb3);
+        Gecode::DFS<Model> dfs(m,c_d,a_d);
+        int n = m->solutions();
+        delete m;
         while (Model* s = dfs.next()) {
-          delete s; n++;
+          delete s; n--;
         }
-        return n == space->solutions();
+        return n == 0;
       }
     };
 
@@ -427,15 +433,17 @@ namespace Test {
       LDS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3)
         : Test("LDS::"+Model::name()+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3),
-               new Model(htb1,htb2,htb3,HTC_NONE)) {}
+               htb1,htb2,htb3) {}
       /// Run test
       virtual bool run(void) {
-        Gecode::LDS<Model> lds(static_cast<Model*>(space),50);
-        unsigned int n = 0;
+        Model* m = new Model(htb1,htb2,htb3);
+        int n = m->solutions();
+        Gecode::LDS<Model> lds(m,50);
+        delete m;
         while (Model* s = lds.next()) {
-          delete s; n++;
+          delete s; n--;
         }
-        return n == space->solutions();
+        return n == 0;
       }
     };
 
@@ -455,10 +463,12 @@ namespace Test {
         : Test(b+"::"+Model::name()+"::"+str(htc)+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0),
-               new Model(htb1,htb2,htb3,htc)), c_d(c_d0), a_d(a_d0) {}
+               htb1,htb2,htb3,htc), c_d(c_d0), a_d(a_d0) {}
       /// Run test
       virtual bool run(void) {
-        Engine<Model> best(static_cast<Model*>(space),c_d,a_d);
+        Model* m = new Model(htb1,htb2,htb3,htc);
+        Engine<Model> best(m,c_d,a_d);
+        delete m;
         Model* b = NULL;
         while (Model* s = best.next()) {
           delete b; b=s;
@@ -551,10 +561,8 @@ namespace Test {
         new LDS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE);
 
         // Best solution search
-        //        for (unsigned int c_d = 1; c_d<10; c_d++)
-        //          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
-        for (unsigned int c_d = 1; c_d<2; c_d++)
-          for (unsigned int a_d = 1; a_d<2; a_d++) {
+        for (unsigned int c_d = 1; c_d<10; c_d++)
+          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
             for (ConstrainTypes htc; htc(); ++htc)
               for (BranchTypes htb1; htb1(); ++htb1)
                 for (BranchTypes htb2; htb2(); ++htb2)
