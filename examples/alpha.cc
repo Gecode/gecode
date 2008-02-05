@@ -125,11 +125,15 @@ main(int argc, char* argv[]) {
   Options opt("Alpha");
   opt.solutions(0);
   opt.iterations(10);
-  opt.branching(Alpha::BRANCH_NONE);
+  opt.branching(Alpha::BRANCH_SIZE);
   opt.branching(Alpha::BRANCH_NONE, "none");
   opt.branching(Alpha::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
-  Example::run<Alpha,DFS,Options>(opt);
+  Alpha* a = new Alpha(opt);
+  LDS<Alpha> lds(a,500000);
+  while (Alpha* s = lds.next()) {
+    s->print(std::cout); delete s;
+  }
   return 0;
 }
 

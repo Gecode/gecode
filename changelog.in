@@ -70,7 +70,7 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
-Module: kernel
+Module: search
 What:   bug
 Rank:   major
 [DESCRIPTION]
@@ -122,7 +122,9 @@ What:   bug
 Rank:   major
 Thanks:	Stefano Gualandi
 [DESCRIPTION]
-LDS was broken for examples without solutions.
+LDS had numerous quirks. It has been fixed and greatly improved:
+it is detected when the entire search tree has been probed, in
+dependent of the maximal discrepancy.
 
 [ENTRY]
 Module: search

@@ -87,22 +87,29 @@ namespace Gecode { namespace Search {
 
   forceinline void
   ProbeEngine::init(Space* s, unsigned int d0) {
-    cur = s;
-    d   = d0;
+    cur       = s;
+    d         = d0;
+    exhausted = true;
   }
 
   forceinline void
   ProbeEngine::reset(Space* s, unsigned int d0) {
     delete cur;
     assert(ds.empty());
-    cur = s;
-    d   = d0;
+    cur       = s;
+    d         = d0;
+    exhausted = true;
     EngineCtrl::reset(s);
   }
 
   forceinline size_t
   ProbeEngine::stacksize(void) const {
     return ds.size();
+  }
+
+  forceinline bool
+  ProbeEngine::done(void) const {
+    return exhausted;
   }
 
   forceinline
@@ -143,6 +150,8 @@ namespace Gecode { namespace Search {
         Space* s = cur;
         while (s->status(propagate) == SS_BRANCH) {
           const BranchingDesc* desc = s->description();
+          if (desc->alternatives() > 1)
+            exhausted = false;
           s->commit(desc,0);
           delete desc;
         }
@@ -167,6 +176,8 @@ namespace Gecode { namespace Search {
           const BranchingDesc* desc = cur->description();
           unsigned int alt          = desc->alternatives();
           if (alt > 1) {
+            if (d < alt-1)
+              exhausted = false;
             unsigned int d_a = (d >= alt-1) ? alt-1 : d;
             Space* cc = cur->clone();
             EngineCtrl::push(cc,desc);
@@ -223,9 +234,7 @@ namespace Gecode { namespace Search {
       Space* s = e.explore();
       if (s != NULL)
         return s;
-      if ((s == NULL) && e.stopped())
-        return NULL;
-      if (++d_cur > d_max)
+      if (((s == NULL) && e.stopped()) || (++d_cur > d_max) || e.done())
         break;
       if (d_cur == d_max) {
         if (root != NULL)

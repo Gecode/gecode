@@ -468,6 +468,8 @@ namespace Gecode {
       Space* cur;
       /// Current discrepancy
       unsigned int d;
+      /// Whether entire search space has been exhausted
+      bool exhausted;
     public:
       /// Initialize for spaces of size \a s
       ProbeEngine(Stop* st, size_t s);
@@ -481,6 +483,8 @@ namespace Gecode {
       ~ProbeEngine(void);
       /// %Search for next solution
       Space* explore(void);
+      /// Test whether probing is done
+      bool done(void) const;
     };
 
     /**
