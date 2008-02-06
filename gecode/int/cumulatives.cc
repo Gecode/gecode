@@ -106,7 +106,7 @@ namespace Gecode {
           start.size() != duration.size() ||
           duration.size() != end.size()   ||
           end.size() != height.size())
-        throw new ArgumentSizeMismatch("Int::cumulatives");
+        throw ArgumentSizeMismatch("Int::cumulatives");
 
       ViewArray<typename ViewType<Machine>::Result>
         vmachine  = make_view_array(home,  machine);

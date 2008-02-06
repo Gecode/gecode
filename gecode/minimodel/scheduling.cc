@@ -51,7 +51,7 @@ namespace Gecode {
   {
     if (produce_date.size() != produce_amount.size() ||
         consume_date.size() != consume_amount.size())
-      throw new ArgumentSizeMismatch("Minimodel::producer_consumer");
+      throw ArgumentSizeMismatch("Minimodel::producer_consumer");
 
     int ntasks = produce_date.size() + consume_date.size();
 
@@ -140,7 +140,7 @@ namespace Gecode {
     {
       if (start.size() != duration.size() ||
           duration.size() !=  height.size())
-        throw new ArgumentSizeMismatch("MiniModel::cumulative");
+        throw ArgumentSizeMismatch("MiniModel::cumulative");
 
       if (limit < Limits::Int::int_min ||
           limit > Limits::Int::int_max)
@@ -228,7 +228,7 @@ namespace Gecode {
                IntConLevel cl)
     {
       if (start.size() != duration.size())
-        throw new ArgumentSizeMismatch("MiniModel::serialized");
+        throw ArgumentSizeMismatch("MiniModel::serialized");
 
       IntArgs height(start.size());
       for (int i = start.size(); i--; ) height[i] = 1;
