@@ -203,7 +203,7 @@ namespace Gecode {
           QScriptValueIterator vi(v);
           while (vi.hasNext()) {
             vi.next();
-            (*a)[count++] = vi.value().toNumber();
+            (*a)[count++] = static_cast<int>(vi.value().toNumber());
           }
           return a;
         } else {
@@ -219,11 +219,11 @@ namespace Gecode {
           return a;      
         }
       } else if (v.isNumber()) {
-        return Gecode::Reflection::Arg::newInt(v.toNumber());
+        return Gecode::Reflection::Arg::newInt(static_cast<int>(v.toNumber()));
       } else if (v.isBoolean()) {
         return Gecode::Reflection::Arg::newInt(v.toBoolean());    
       } else if (v.isObject() && v.prototype().strictlyEquals(varProto)) {
-        return Gecode::Reflection::Arg::newVar(v.property("no").toNumber());    
+        return Gecode::Reflection::Arg::newVar(static_cast<int>(v.property("no").toNumber()));    
       } else if (v.isObject() && v.prototype().strictlyEquals(pairProto)) {
         Gecode::Reflection::Arg* a = scriptValToArg(v.property("a"));
         Gecode::Reflection::Arg* b = scriptValToArg(v.property("b"));
@@ -246,7 +246,7 @@ namespace Gecode {
     GJSSpace::variable(const QString& vti, QScriptValue args) {
       assert(args.isArray());
       Support::Symbol vtiSymbol(vti.toStdString().c_str(), true);
-      int size = args.property("length").toNumber();
+      int size = static_cast<int>(args.property("length").toNumber());
       if (size < 1 || size > 2) {
         throw Exception("Serialization", "Argument mismatch");
       }
