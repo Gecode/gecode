@@ -38,6 +38,9 @@
 namespace Gecode {
 
   forceinline
+  ProjectorSet::ProjectorSet(void) {}
+
+  forceinline
   ProjectorSet::ProjectorSet(int n) : _ps(n), _count(0), _arity(0) {}
 
   forceinline void

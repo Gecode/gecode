@@ -231,6 +231,9 @@ namespace Gecode {
     
   public:
     
+    /// Construct empty projector set
+    ProjectorSet(void);
+    
     /// Construct projector set for \a n projectors
     ProjectorSet(int n);
 
