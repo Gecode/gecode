@@ -73,12 +73,34 @@ soon as possible.
 
 [ENTRY]
 Module: test
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in reflection tests.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in set projection propagators.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in IntSet.
+
+[ENTRY]
+Module: test
 What:   new
 Rank:   major
 [DESCRIPTION]
 Added comprehensive tests for all search engines.
 
 [ENTRY]
+>>>>>>> .r6094
 Module: search
 What:   bug
 Rank:   major
