@@ -70,14 +70,6 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
-Module: search
-What:   bug
-Rank:   major
-[DESCRIPTION]
-Assignment branchings wrongly reported that they feature two alternatives
-rather than one.
-	
-[ENTRY]
 Module: int
 What:   removed
 Rank:   minor
@@ -115,25 +107,6 @@ a BranchingDesc. The name function of a Propagator has been renamed to ati
 Unreflection of variables now checks dynamically that the variable types 
 match. Unreflection of propagators checks the number of arguments. A 
 tutorial-style section on reflection has been added to the documentation.
-
-[ENTRY]
-Module: search
-What:   bug
-Rank:   major
-Thanks:	Stefano Gualandi
-[DESCRIPTION]
-LDS had numerous quirks. It has been fixed and greatly improved:
-it is detected when the entire search tree has been probed, in
-dependent of the maximal discrepancy.
-
-[ENTRY]
-Module: search
-What:   bug
-Rank:   major
-Thanks:	Stefano Gualandi
-[DESCRIPTION]
-Restart was broken in case the problem failed immediately with
-propagation only upon initialization or request for a next solution.
 
 [ENTRY]
 Module: set
@@ -315,6 +288,33 @@ Version: 2.0.1
 Date:    Soon
 [DESCRIPTION]
 Fixes or what?
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Assignment branchings wrongly reported that they feature two alternatives
+rather than one.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+Thanks: Stefano Gualandi
+[DESCRIPTION]
+LDS had numerous quirks. It has been fixed and greatly improved:
+it is detected when the entire search tree has been probed, in
+dependent of the maximal discrepancy.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+Thanks: Stefano Gualandi
+[DESCRIPTION]
+Restart was broken in case the problem failed immediately with
+propagation only upon initialization or request for a next solution.
 
 [ENTRY]
 Module: iter
