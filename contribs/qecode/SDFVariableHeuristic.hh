@@ -1,4 +1,4 @@
-/*****************************************************************[scoreSDF.hh]
+/*****************************************************************[SDFVariableHeuristic.hh]
 Copyright (c) 2007, Universite d'Orleans - Jeremie Vautard, Marco Benedetti,
 Arnaud Lallouet.
 
@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include "qecore.hh"
 
 /** A score attribuer for performing smallest domain first search. */
-class QECODE_VTABLE_EXPORT sdf : public ScoreAttribuer {
+class QECODE_VTABLE_EXPORT SmallestDomainFirst : public VariableHeuristic {
 public:
   QECODE_EXPORT virtual int score(QSpace* qs,int var);
 };

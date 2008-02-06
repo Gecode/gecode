@@ -22,11 +22,9 @@ THE SOFTWARE.
 
 #include "qsolver.hh"
 #include "implicative.hh"
-#include "scoreSDF.hh"
+#include "SDFVariableHeuristic.hh"
 #include "NaiveValueHeuristics.hh"
 #include "FirstFailValueHeuristic.hh"
-#define UNIVERSAL true
-#define EXISTENTIAL false
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // This is a model of the nim-fibonacci game. We have a N matches set. First player may  //
@@ -41,7 +39,7 @@ int main() {
     for (int i=0;i<N+2;i++) 
         scopeSize[i] = 2;
     
-    Implicative p(N+2,EXISTENTIAL,scopeSize);
+    Implicative p(N+2,QECODE_EXISTENTIAL,scopeSize);
     
     p.QIntVar(0,1,N-1);
     p.QIntVar(1,0,N);
@@ -58,7 +56,7 @@ int main() {
     
     p.makeStructure();
     
-    sdf heur;
+    SmallestDomainFirst heur;
 //    SmallestValueFirst v_heur;
     FirstFailValue v_heur;
     QSolver s(&p,&heur,&v_heur);

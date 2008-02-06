@@ -50,4 +50,7 @@ THE SOFTWARE.
 #endif
 #endif
 
+#define QECODE_EXISTENTIAL false
+#define QECODE_UNIVERSAL true
+
 #endif

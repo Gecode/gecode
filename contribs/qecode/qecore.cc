@@ -37,7 +37,7 @@ QSpace::QSpace(QSpace& qs) {
 
 #define MARKER size
 
-BranchingHeuristic::BranchingHeuristic(QSpace* qs,ScoreAttribuer* ev) {
+BranchingHeuristic::BranchingHeuristic(QSpace* qs,VariableHeuristic* ev) {
   
   eval=ev;
   size=qs->nv();

@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 #include "qsolver.hh"
 #include "implicative.hh"
-#include "scoreSDF.hh"
+#include "SDFVariableHeuristic.hh"
 #include "NaiveValueHeuristics.hh"
 
 #define UNIVERSAL true
@@ -83,7 +83,7 @@ int main (int argc, char * const argv[]) {
         scopesSize[i]=1;
     scopesSize[nbScope-1]=2;
     
-    Implicative p(nbScope, EXISTENTIAL, scopesSize);
+    Implicative p(nbScope, QECODE_EXISTENTIAL, scopesSize);
     
     // Defining the variable of the n first scopes ...
     for (int i=0; i<nbDecisionVar; i++)
@@ -123,7 +123,7 @@ int main (int argc, char * const argv[]) {
      */
     
     // We will use a Smallest Domain First branching heuristic for solving this problem.
-    sdf heur;
+    SmallestDomainFirst heur;
     SmallestValueFirst v_heur;
     
     // So, we build a quantified solver for our problem p, using the heuristic we just created.
