@@ -72,6 +72,13 @@ branchings). We highly encourage you to switch to Gecode 2.0.1 as
 soon as possible.
 
 [ENTRY]
+Module: test
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added comprehensive tests for all search engines.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major
