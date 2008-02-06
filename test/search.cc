@@ -39,8 +39,6 @@
 #include "gecode/minimodel.hh"
 #include "gecode/search.hh"
 
-#include "gecode/gist/gist.hh"
-
 #include "test/test.hh"
 
 namespace Test { 
@@ -153,22 +151,16 @@ namespace Test {
           ? ES_FAILED : ES_OK;
       }
       /// Actor type identifier of this branching
-      static Support::Symbol ati(void) {
+      static Support::Symbol name(void) {
         return "Test::Search::NaryBranching";
       }
       /// Return specification for this branching given a variable map \a m
-      virtual Reflection::ActorSpec spec(Space* home, Reflection::VarMap& m) {
-        Reflection::ActorSpec s(ati());
+      virtual Reflection::ActorSpec&
+      spec(Space* home, Reflection::VarMap& m) {
+        Reflection::ActorSpec& s = Branching::spec(home,m,name());
         return s << x.spec(home, m);
       }
 
-      /// Return specification for a branch
-      virtual Reflection::BranchingSpec branchingSpec(Space*, 
-                                                      Reflection::VarMap&,
-                                                      const BranchingDesc* d) {
-        Reflection::BranchingSpec bs(d);
-        return bs;
-      }
       /// Post branching according to specification
       static void post(Space*, Reflection::VarMap&,
                        const Reflection::ActorSpec&) {

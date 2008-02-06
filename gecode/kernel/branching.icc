@@ -158,7 +158,7 @@ namespace Gecode {
    *
    * The maximal number of alternatives is defined by \a alt.
    */
-  template <class Val, unsigned int alt>
+  template <class Val, unsigned int a>
   class PosValDesc : public BranchingDesc {
   protected:
     /// Position of view
@@ -196,34 +196,34 @@ namespace Gecode {
    *
    */
 
-  template <class Val, unsigned int alt>
+  template <class Val, unsigned int a>
   forceinline
-  PosValDesc<Val,alt>::PosValDesc(const Branching* b, const int p,
+  PosValDesc<Val,a>::PosValDesc(const Branching* b, const int p,
                                   const Val& n, const int s)
-    : BranchingDesc(b,alt), _pos(p), _val(n), _start(s) {}
+    : BranchingDesc(b,a), _pos(p), _val(n), _start(s) {}
 
-  template <class Val, unsigned int alt>
+  template <class Val, unsigned int a>
   forceinline int
-  PosValDesc<Val,alt>::pos(void) const {
+  PosValDesc<Val,a>::pos(void) const {
     return _pos;
   }
 
-  template <class Val, unsigned int alt>
+  template <class Val, unsigned int a>
   forceinline Val
-  PosValDesc<Val,alt>::val(void) const {
+  PosValDesc<Val,a>::val(void) const {
     return _val;
   }
 
-  template <class Val, unsigned int alt>
+  template <class Val, unsigned int a>
   forceinline int
-  PosValDesc<Val,alt>::start(void) const {
+  PosValDesc<Val,a>::start(void) const {
     return _start;
   }
 
-  template <class Val, unsigned int alt>
+  template <class Val, unsigned int a>
   size_t
-  PosValDesc<Val,alt>::size(void) const {
-    return sizeof(PosValDesc<Val,alt>);
+  PosValDesc<Val,a>::size(void) const {
+    return sizeof(PosValDesc<Val,a>);
   }
 
 
