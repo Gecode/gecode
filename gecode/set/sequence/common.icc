@@ -57,9 +57,9 @@ namespace Gecode { namespace Set { namespace Sequence {
         cur_max = std::max(cur_max, x[i].glbMax());
       if (x[i].cardMin() > 0)
         cur_max = std::max(cur_max, x[i].lubMinN(x[i].cardMin()-1));
-      if (cur_max >= Limits::int_min)
+      if (cur_max >= Limits::min)
         GECODE_SET_ME_CHECK_VAL_B(modified,
-                                  x[i+1].exclude(home, Limits::int_min,
+                                  x[i+1].exclude(home, Limits::min,
                                                  cur_max),
                                   assigned);
 
@@ -85,10 +85,10 @@ namespace Gecode { namespace Set { namespace Sequence {
           cur_min = std::min(cur_min, maxN);
         }
       }
-      if (Limits::int_max>=cur_min)
+      if (Limits::max>=cur_min)
         GECODE_SET_ME_CHECK_VAL_B(modified,
                                   x[lastElem-i-1].exclude(home, cur_min,
-                                                          Limits::int_max),
+                                                          Limits::max),
                                   assigned);
     }
     return ES_NOFIX;

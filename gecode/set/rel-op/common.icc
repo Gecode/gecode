@@ -167,7 +167,7 @@ namespace Set { namespace RelOp {
         if (rightSum[i] < rightSum[i+1]) {
           //overflow, fill the rest of the array.
           for (int j=i; j>0;j--) {
-            rightSum[j]=Limits::card_max;
+            rightSum[j]=Limits::card;
           }
           break;
         }
@@ -183,7 +183,7 @@ namespace Set { namespace RelOp {
           GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home,y.cardMin()-jsum));
         }
         leftAcc += x[i].cardMax();
-        if (leftAcc < x[i].cardMax()) {leftAcc = Limits::card_max;}
+        if (leftAcc < x[i].cardMax()) {leftAcc = Limits::card;}
       }
     }
 
@@ -287,7 +287,7 @@ namespace Set { namespace RelOp {
         if (rightMaxSum[i] < rightMaxSum[i+1]) {
           //overflow, fill the rest of the array.
           for (int j=i; j>0;j--) {
-            rightMaxSum[j]=Limits::card_max;
+            rightMaxSum[j]=Limits::card;
           }
           break;
         }
@@ -320,7 +320,7 @@ namespace Set { namespace RelOp {
 
         leftMaxAcc += x[i].cardMax();
         if (leftMaxAcc < x[i].cardMax())
-          leftMaxAcc = Limits::card_max;
+          leftMaxAcc = Limits::card;
         leftMinAcc += x[i].cardMin();
         if (leftMinAcc < x[i].cardMin())
           GECODE_ME_CHECK(ME_SET_FAILED);

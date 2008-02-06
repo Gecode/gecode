@@ -189,8 +189,8 @@ namespace Gecode { namespace CpltSet {
     manager.dispose(domain);
     // only variables with nodes in the table need to be disposed
     if (!(_offset == 0 && 
-          min == Set::Limits::int_min &&
-          max == Set::Limits::int_max)
+          min == Set::Limits::min &&
+          max == Set::Limits::max)
         ) {
       manager.dispose(_offset, (int) tableWidth());
     }
@@ -305,12 +305,12 @@ namespace Gecode { namespace CpltSet {
 
   ModEvent 
   CpltSetVarImp::intersect(Space* home, int a, int b) {
-    ModEvent me_left = exclude(home, Set::Limits::int_min, a - 1);
+    ModEvent me_left = exclude(home, Set::Limits::min, a - 1);
 
     if (me_failed(me_left) || me_left == ME_CPLTSET_VAL) 
       return me_left;
 
-    ModEvent me_right = exclude(home, b + 1, Set::Limits::int_max);
+    ModEvent me_right = exclude(home, b + 1, Set::Limits::max);
 
     if (me_failed(me_right) || me_right == ME_CPLTSET_VAL) 
       return me_right;

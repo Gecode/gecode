@@ -123,7 +123,7 @@ namespace Gecode {
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    IntVar z(home,Limits::int_min,Limits::int_max);
+    IntVar z(home,Limits::min,Limits::max);
     linear(home,a,x,IRT_EQ,z,icl,pk); rel(home,z,r,c,b,icl,pk);
   }
 
@@ -131,7 +131,7 @@ namespace Gecode {
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    IntVar z(home,Limits::int_min,Limits::int_max);
+    IntVar z(home,Limits::min,Limits::max);
     linear(home,a,x,IRT_EQ,z,icl,pk); rel(home,z,r,y,b,icl,pk);
   }
 

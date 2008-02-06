@@ -528,10 +528,10 @@ namespace Gecode { namespace Set {
   UniverseView::assigned(void) const { return true; }
 
   forceinline unsigned int
-  UniverseView::glbSize(void) const { return Set::Limits::card_max; }
+  UniverseView::glbSize(void) const { return Set::Limits::card; }
 
   forceinline unsigned int
-  UniverseView::lubSize(void) const { return Set::Limits::card_max; }
+  UniverseView::lubSize(void) const { return Set::Limits::card; }
 
   forceinline unsigned int
   UniverseView::unknownSize(void) const { return 0; }
@@ -543,31 +543,31 @@ namespace Gecode { namespace Set {
   UniverseView::notContains(int) const { return false; }
 
   forceinline unsigned int
-  UniverseView::cardMin(void) const { return Set::Limits::card_max; }
+  UniverseView::cardMin(void) const { return Set::Limits::card; }
 
   forceinline unsigned int
-  UniverseView::cardMax(void) const { return Limits::card_max; }
+  UniverseView::cardMax(void) const { return Limits::card; }
 
   forceinline int
-  UniverseView::lubMin(void) const { return Limits::card_max; }
+  UniverseView::lubMin(void) const { return Limits::card; }
 
   forceinline int
-  UniverseView::lubMax(void) const { return Limits::card_max; }
+  UniverseView::lubMax(void) const { return Limits::card; }
 
   forceinline int
-  UniverseView::glbMin(void) const { return Limits::card_max; }
+  UniverseView::glbMin(void) const { return Limits::card; }
 
   forceinline int
-  UniverseView::glbMax(void) const { return Limits::card_max; }
+  UniverseView::glbMax(void) const { return Limits::card; }
 
   forceinline ModEvent
   UniverseView::cardMin(Space*,unsigned int c) {
-    return c>Limits::card_max ? ME_SET_FAILED : ME_SET_NONE;
+    return c>Limits::card ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   forceinline ModEvent
   UniverseView::cardMax(Space*,unsigned int c) {
-    return c>=Limits::card_max ? ME_SET_NONE : ME_SET_FAILED;
+    return c>=Limits::card ? ME_SET_NONE : ME_SET_FAILED;
   }
 
 
@@ -598,15 +598,15 @@ namespace Gecode { namespace Set {
 
   forceinline ModEvent
   UniverseView::intersect(Space*,int i,int j) {
-    return (i>Limits::int_min ||
-            j<Limits::int_max) ? ME_SET_FAILED : ME_SET_NONE;
+    return (i>Limits::min ||
+            j<Limits::max) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template <class I> forceinline ModEvent
   UniverseView::intersectI(Space*,I& i) {
     return (i() &&
-            (i.min()>Limits::int_min ||
-             i.max()<Limits::int_max) ) ?
+            (i.min()>Limits::min ||
+             i.max()<Limits::max) ) ?
       ME_SET_FAILED : ME_SET_NONE;
   }
 
@@ -747,12 +747,12 @@ namespace Gecode { namespace Set {
     //@{
     /// Default constructor
     LubRanges(void)
-      : Iter::Ranges::Singleton(Limits::int_min,
-                                Limits::int_max) {}
+      : Iter::Ranges::Singleton(Limits::min,
+                                Limits::max) {}
     /// Initialize with ranges for view \a x
     LubRanges(const UniverseView& x)
-      : Iter::Ranges::Singleton(Limits::int_min,
-                                Limits::int_max) {
+      : Iter::Ranges::Singleton(Limits::min,
+                                Limits::max) {
         (void)x;
       }
     /// Initialize with ranges for view \a x
@@ -771,12 +771,12 @@ namespace Gecode { namespace Set {
     //@{
     /// Default constructor
     GlbRanges(void)
-      : Iter::Ranges::Singleton(Limits::int_min,
-                                Limits::int_max) {}
+      : Iter::Ranges::Singleton(Limits::min,
+                                Limits::max) {}
     /// Initialize with ranges for view \a x
     GlbRanges(const UniverseView& x)
-      : Iter::Ranges::Singleton(Limits::int_min,
-                                Limits::int_max) {
+      : Iter::Ranges::Singleton(Limits::min,
+                                Limits::max) {
       (void)x;
     }
     /// Initialize with ranges for view \a x

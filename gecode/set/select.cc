@@ -67,8 +67,8 @@ namespace Gecode {
   selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
-    IntSet universe(Set::Limits::int_min,
-                    Set::Limits::int_max);
+    IntSet universe(Set::Limits::min,
+                    Set::Limits::max);
     GECODE_ES_FAIL(home,
                    (Select::SelectIntersection<SetView,SetView>::
                     post(home,z,iv,y,universe)));

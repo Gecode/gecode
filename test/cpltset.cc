@@ -383,7 +383,7 @@ namespace Test { namespace CpltSet {
             Base::rand(aisize - x[i].cardMin());
           assert( newc > x[i].cardMin() );
           assert( newc <= aisize );
-          cardinality(i, newc, Gecode::Set::Limits::card_max);
+          cardinality(i, newc, Gecode::Set::Limits::card);
         }
         break;
       case 3:

@@ -108,7 +108,7 @@ namespace Gecode { namespace Set { namespace Sequence {
       Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, beforeR);
       if (diff()) {
         GECODE_ME_CHECK_MODIFIED(modified, x[i].exclude(home, diff.min(),
-                                                        Limits::int_max));
+                                                        Limits::max));
       }
     }
     before.dispose(home);
@@ -125,7 +125,7 @@ namespace Gecode { namespace Set { namespace Sequence {
         for (; diff(); ++diff)
           max = diff.max();
         GECODE_ME_CHECK_MODIFIED(modified, x[i].exclude(home,
-                                                        Limits::int_min,
+                                                        Limits::min,
                                                         max));
       }
     }    

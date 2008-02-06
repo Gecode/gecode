@@ -143,9 +143,9 @@ namespace Gecode { namespace CpltSet {
 
   public:
     /// Returned by empty sets when asked for their maximum element
-    static const int MAX_OF_EMPTY = Gecode::Set::Limits::int_min-1;
+    static const int MAX_OF_EMPTY = Gecode::Set::Limits::min-1;
     /// Returned by empty sets when asked for their minimum element
-    static const int MIN_OF_EMPTY = Gecode::Set::Limits::int_max+1;
+    static const int MIN_OF_EMPTY = Gecode::Set::Limits::max+1;
 
     void printdom(void) const;
   private:

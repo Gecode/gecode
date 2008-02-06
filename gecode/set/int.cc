@@ -72,28 +72,28 @@ namespace Gecode {
       break;
     case IRT_LQ:
       {
-        IntVar tmp(home, Int::Limits::int_min, Int::Limits::int_max);
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
         rel(home, tmp, IRT_LQ, x);
         GECODE_ES_FAIL(home,Set::Int::MaxElement<Set::SetView>::post(home,s,tmp));
       }
       break;
     case IRT_LE:
       {
-        IntVar tmp(home, Int::Limits::int_min, Int::Limits::int_max);
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
         rel(home, tmp, IRT_LE, x);
         GECODE_ES_FAIL(home,Set::Int::MaxElement<Set::SetView>::post(home,s,tmp));
       }
       break;
     case IRT_GQ:
       {
-        IntVar tmp(home, Int::Limits::int_min, Int::Limits::int_max);
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
         rel(home, tmp, IRT_GQ, x);
         GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,tmp));
       }
       break;
     case IRT_GR:
       {
-        IntVar tmp(home, Int::Limits::int_min, Int::Limits::int_max);
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
         rel(home, tmp, IRT_GR, x);
         GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,tmp));
       }

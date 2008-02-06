@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((sl < double_min) || (su > double_max))
       throw OutOfLimits("Int::linear");
 
-    return ((sl >= Limits::int_min) && (su <= Limits::int_max));
+    return ((sl >= Limits::min) && (su <= Limits::max));
   }
 
   /**

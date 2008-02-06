@@ -338,7 +338,7 @@ namespace Gecode {
   post(Space* home, const MiniModel::LinExpr<Var>& e, IntConLevel icl) {
     if (!home->failed())
       return e.post(home,icl);
-    IntVar x(home,Int::Limits::int_min,Int::Limits::int_max);
+    IntVar x(home,Int::Limits::min,Int::Limits::max);
     return x;
   }
 

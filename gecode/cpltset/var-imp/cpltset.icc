@@ -181,7 +181,7 @@ namespace Gecode { namespace CpltSet {
   template <class I> 
   ModEvent 
   CpltSetVarImp::intersectI(Space* home, I& i) {
-    Iter::Ranges::Compl<Set::Limits::int_min, Set::Limits::int_max, I> 
+    Iter::Ranges::Compl<Set::Limits::min, Set::Limits::max, I> 
       compI(i);
     return excludeI(home, compI); 
   }

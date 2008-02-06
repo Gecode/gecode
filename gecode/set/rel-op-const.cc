@@ -237,7 +237,7 @@ namespace Gecode {
       case SRT_SUP:
         {
           // z <= tmp
-          SetVar tmp(home,z,Limits::int_min, Limits::int_max);
+          SetVar tmp(home,z,Limits::min, Limits::max);
           SetView xv(x);
           ComplementView<SetView> cx(xv);
           

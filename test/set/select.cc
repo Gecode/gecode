@@ -101,7 +101,7 @@ namespace Test { namespace Set {
              ++sel2, selected++);
         CountableSetRanges x4r(x.lub, x[4]);
         if (selected==0)
-          return Iter::Ranges::size(x4r)==Gecode::Set::Limits::card_max;
+          return Iter::Ranges::size(x4r)==Gecode::Set::Limits::card;
         GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
         CountableSetValues selector(x.lub, x[3]);
         for (int i=selected; i--;++selector) {

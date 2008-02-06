@@ -218,8 +218,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
     }
 
-    Iter::Ranges::Singleton positive(0, Limits::int_max);
-    Iter::Ranges::Singleton negative(Limits::int_min, 0);
+    Iter::Ranges::Singleton positive(0, Limits::max);
+    Iter::Ranges::Singleton negative(Limits::min, 0);
 
     IntVarRanges xr1(x0);
     IntVarRanges xr2(x0);

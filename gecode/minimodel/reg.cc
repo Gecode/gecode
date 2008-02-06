@@ -756,7 +756,7 @@ namespace Gecode {
 
     PosSetAllocator    psm;
     StatePoolAllocator spm;
-    REG r = *this + REG(Int::Limits::int_max+1);
+    REG r = *this + REG(Int::Limits::max+1);
     int n_pos = r.e->n_pos();
 
     GECODE_AUTOARRAY(PosInfo, pi, n_pos);

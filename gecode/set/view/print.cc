@@ -115,9 +115,9 @@ operator<<(std::ostream& os, const EmptyView&) {
 
 std::ostream&
 operator<<(std::ostream& os, const UniverseView&) {
-  return os << "{" << Gecode::Set::Limits::int_min << ".."
-            << Gecode::Set::Limits::int_max << "}#("
-            << Gecode::Set::Limits::card_max << ")";
+  return os << "{" << Gecode::Set::Limits::min << ".."
+            << Gecode::Set::Limits::max << "}#("
+            << Gecode::Set::Limits::card << ")";
 }
 
 std::ostream&

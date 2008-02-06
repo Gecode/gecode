@@ -39,13 +39,13 @@ namespace Gecode { namespace Int {
 
     inline void
     Limits::check(int n, const char* l) {
-      if ((n < int_min) || (n > int_max))
+      if ((n < min) || (n > max))
         throw OutOfLimits(l);
     }
 
     inline void
     Limits::check(double n, const char* l) {
-      if ((n < int_min) || (n > int_max))
+      if ((n < min) || (n > max))
         throw OutOfLimits(l);
     }
 

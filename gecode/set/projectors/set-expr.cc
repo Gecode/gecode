@@ -247,8 +247,8 @@ namespace Gecode {
       case SetExprCode::COMPLEMENT:
         {
           Iterator* it = s.pop();
-          s.push(new Iter::Ranges::Virt::Compl<Limits::int_min,
-                                               Limits::int_max> (it));
+          s.push(new Iter::Ranges::Virt::Compl<Limits::min,
+                                               Limits::max> (it));
         }
         break;
       case SetExprCode::INTER:
@@ -291,8 +291,8 @@ namespace Gecode {
         break;
       case SetExprCode::UNIVERSE:
         {
-          Iter::Ranges::Singleton it(Limits::int_min,
-                                     Limits::int_max);
+          Iter::Ranges::Singleton it(Limits::min,
+                                     Limits::max);
           s.push(new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton> (it));
         }
         break;

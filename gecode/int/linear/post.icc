@@ -53,11 +53,11 @@ namespace Gecode { namespace Int { namespace Linear {
         max += t[i].a*t[i].x.min();
         min += t[i].a*t[i].x.max();
       }
-    if (min < Limits::int_min)
-      min = Limits::int_min;
+    if (min < Limits::min)
+      min = Limits::min;
     l = static_cast<int>(min);
-    if (max > Limits::int_max)
-      max = Limits::int_max;
+    if (max > Limits::max)
+      max = Limits::max;
     u = static_cast<int>(max);
   }
 

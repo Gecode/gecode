@@ -56,8 +56,8 @@ namespace Gecode { namespace CpltSet {
         throw CpltSet::VariableFailedDomain(location);
 
       if (
-          (glbMin < Set::Limits::int_min) || 
-          (glbMax > Set::Limits::int_max)
+          (glbMin < Set::Limits::min) || 
+          (glbMax > Set::Limits::max)
           ) 
         throw CpltSet::VariableOutOfRangeDomain(location);
       
@@ -74,8 +74,8 @@ namespace Gecode { namespace CpltSet {
       int  lubMin = lub.min();
       int  lubMax = lub.max();
       if (
-          (lubMin < Set::Limits::int_min) || 
-          (lubMax > Set::Limits::int_max)
+          (lubMin < Set::Limits::min) || 
+          (lubMax > Set::Limits::max)
          )
         throw CpltSet::VariableOutOfRangeDomain(location);
 
@@ -86,7 +86,7 @@ namespace Gecode { namespace CpltSet {
     if (cardMax < 0)    
       throw CpltSet::VariableFailedDomain(location);
 
-    if ((unsigned int) cardMax > Set::Limits::card_max)
+    if ((unsigned int) cardMax > Set::Limits::card)
       throw CpltSet::VariableOutOfRangeCardinality(location);
 
     if ( 

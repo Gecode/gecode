@@ -376,7 +376,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   LUBndSet::LUBndSet(Space* home)
-    : BndSet(home,Limits::int_min,Limits::int_max) {}
+    : BndSet(home,Limits::min,Limits::max) {}
 
   forceinline
   LUBndSet::LUBndSet(Space* home, int mi, int ma)
@@ -389,12 +389,12 @@ namespace Gecode { namespace Set {
   forceinline void
   LUBndSet::init(Space* home) {
     RangeList *p =
-      new (home) RangeList(Limits::int_min,
-                           Limits::int_max,
+      new (home) RangeList(Limits::min,
+                           Limits::max,
                            NULL);
     fst(p);
     lst(p);
-    _size = Limits::card_max;
+    _size = Limits::card;
   }
 
   forceinline bool
@@ -468,14 +468,14 @@ namespace Gecode { namespace Set {
 
   template <class I>
   RangesCompl<I>::RangesCompl(I& i)
-    : Iter::Ranges::Compl<Limits::int_min,
-                          Limits::int_max,
+    : Iter::Ranges::Compl<Limits::min,
+                          Limits::max,
                           I>(i) {}
 
   template <class I> void
   RangesCompl<I>::init(I& i) {
-    Iter::Ranges::Compl<Limits::int_min,
-      Limits::int_max,I>::init(i);
+    Iter::Ranges::Compl<Limits::min,
+      Limits::max,I>::init(i);
   }
 
 }}

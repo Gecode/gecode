@@ -102,19 +102,19 @@ namespace Gecode {
           GECODE_ME_FAIL(home,bv.exclude(home, s.min(), s.max()));
           GECODE_ME_FAIL(home,
                          bv.include(home,
-                                    Set::Limits::int_min,
+                                    Set::Limits::min,
                                     s.min()-1) );
           GECODE_ME_FAIL(home,
                          bv.include(home, s.max()+1,
-                                    Set::Limits::int_max) );
+                                    Set::Limits::max) );
         } else {
           IntSetRanges rd1(s);
-          Iter::Ranges::Compl<Set::Limits::int_min, 
-            Set::Limits::int_max, IntSetRanges > rdC1(rd1);
+          Iter::Ranges::Compl<Set::Limits::min, 
+            Set::Limits::max, IntSetRanges > rdC1(rd1);
           GECODE_ME_FAIL(home,bv.includeI(home, rdC1));
           IntSetRanges rd2(s);
-          Iter::Ranges::Compl<Set::Limits::int_min, 
-            Set::Limits::int_max, IntSetRanges > rdC2(rd2);
+          Iter::Ranges::Compl<Set::Limits::min, 
+            Set::Limits::max, IntSetRanges > rdC2(rd2);
           GECODE_ME_FAIL(home,bv.intersectI(home, rdC2));
         }
       }

@@ -60,7 +60,7 @@ namespace Test { namespace Set {
         : SetTest(t,4,ds_33,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        int max = Gecode::Set::Limits::int_min - 1;
+        int max = Gecode::Set::Limits::min - 1;
         for (int i=0; i<4; i++) {
           CountableSetRanges xir(x.lub, x[i]);
           IntSet xi(xir);
@@ -88,7 +88,7 @@ namespace Test { namespace Set {
         : SetTest(t,4,ds_33,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        int max = Gecode::Set::Limits::int_min - 1;
+        int max = Gecode::Set::Limits::min - 1;
         for (int i=0; i<3; i++) {
           CountableSetRanges xir(x.lub, x[i]);
           IntSet xi(xir);

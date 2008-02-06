@@ -98,9 +98,9 @@ namespace Gecode { namespace Int {
    */
   namespace Limits {
     /// Largest allowed integer value
-    const int int_max =  INT_MAX - 1;
+    const int max =  INT_MAX - 1;
     /// Smallest allowed integer value
-    const int int_min = -int_max;
+    const int min = -max;
     /// Check whether integer \a n is in range, otherwise throw overflow exception with information \a l
     void check(int n, const char* l);
     /// Check whether double \a n is in integer range, otherwise throw overflow exception with information \a l
@@ -1145,8 +1145,8 @@ namespace Gecode {
    * \exception Int::ArgumentSizeMismatch thrown if the sizes of the arguments
    *            representing tasks does not match.
    * \exception Int::OutOfLimits thrown if any numerical argument is
-   *            larger than Int::Limits::int_max or less than
-   *            Int::Limits::int_min.
+   *            larger than Int::Limits::max or less than
+   *            Int::Limits::min.
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntVarArgs& machine,

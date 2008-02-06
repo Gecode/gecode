@@ -86,13 +86,13 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline unsigned int
   ComplementView<View>::glbSize(void) const {
-    return Limits::card_max - view.lubSize();
+    return Limits::card - view.lubSize();
   }
 
   template <class View>
   forceinline unsigned int
   ComplementView<View>::lubSize(void) const {
-    return Limits::card_max - view.glbSize();
+    return Limits::card - view.glbSize();
   }
 
   template <class View>
@@ -112,13 +112,13 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline unsigned int
   ComplementView<View>::cardMin() const {
-    return Limits::card_max - view.cardMax();
+    return Limits::card - view.cardMax();
   }
 
   template <class View>
   forceinline unsigned int
   ComplementView<View>::cardMax() const {
-    return Limits::card_max - view.cardMin();
+    return Limits::card - view.cardMin();
   }
 
   template <class View>
@@ -174,16 +174,16 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline ModEvent
   ComplementView<View>::cardMin(Space* home, unsigned int c) {
-    if (c < Limits::card_max)
-      return me_negateset(view.cardMax(home, Limits::card_max - c));
+    if (c < Limits::card)
+      return me_negateset(view.cardMax(home, Limits::card - c));
     return ME_SET_NONE;
   }
 
   template <class View>
   forceinline ModEvent
   ComplementView<View>::cardMax(Space* home, unsigned int c) {
-    if (c < Limits::card_max)
-      return me_negateset(view.cardMin(home, Limits::card_max - c));
+    if (c < Limits::card)
+      return me_negateset(view.cardMin(home, Limits::card - c));
     return ME_SET_NONE;
   }
 

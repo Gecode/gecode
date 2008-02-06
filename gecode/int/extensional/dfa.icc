@@ -132,14 +132,14 @@ namespace Gecode {
   DFA::symbol_min(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
     return ((d != NULL) && (d->n_trans > 0)) ? 
-      d->trans[0].symbol : Int::Limits::int_min;
+      d->trans[0].symbol : Int::Limits::min;
   }
 
   forceinline int
   DFA::symbol_max(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
     return ((d != NULL) && (d->n_trans > 0)) ? 
-      d->trans[d->n_trans-1].symbol : Int::Limits::int_max;
+      d->trans[d->n_trans-1].symbol : Int::Limits::max;
   }
 
 

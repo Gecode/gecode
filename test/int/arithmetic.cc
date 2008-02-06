@@ -241,16 +241,16 @@ namespace Test { namespace Int {
    
    
      const int v1[7] = {
-       Gecode::Int::Limits::int_min, Gecode::Int::Limits::int_min+1,
+       Gecode::Int::Limits::min, Gecode::Int::Limits::min+1,
        -1,0,1,
-       Gecode::Int::Limits::int_max-1, Gecode::Int::Limits::int_max
+       Gecode::Int::Limits::max-1, Gecode::Int::Limits::max
      };
      const int v2[9] = {
        static_cast<int>(-sqrt(static_cast<double>
-                              (-Gecode::Int::Limits::int_min))),
+                              (-Gecode::Int::Limits::min))),
        -4,-2,-1,0,1,2,4,
        static_cast<int>(sqrt(static_cast<double>
-                             (Gecode::Int::Limits::int_max)))
+                             (Gecode::Int::Limits::max)))
      };
      
      Gecode::IntSet d1(v1,7);

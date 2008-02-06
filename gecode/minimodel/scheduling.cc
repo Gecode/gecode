@@ -144,10 +144,10 @@ namespace Gecode {
       Height h(n);
 
       if (!at_most) {
-        int smin = Int::Limits::int_max, 
-            smax = Int::Limits::int_min, 
-            emin = Int::Limits::int_max, 
-            emax = Int::Limits::int_min;
+        int smin = Int::Limits::max, 
+            smax = Int::Limits::min, 
+            emin = Int::Limits::max, 
+            emax = Int::Limits::min;
         IntVarArgs end(n-1);
         for (int i = start.size(); i--; ) {
           m[i] = 0;
@@ -155,7 +155,7 @@ namespace Gecode {
           smin = std::min(s[i].min(), smin);
           smax = std::max(s[i].max(), smax);
           d[i] = make_intvar(home, duration[i]);
-          e[i] = IntVar(home, Int::Limits::int_min, Int::Limits::int_max);
+          e[i] = IntVar(home, Int::Limits::min, Int::Limits::max);
           end[i] = e[i];
           emin = std::min(e[i].min(), emin);
           emax = std::max(e[i].max(), emax);

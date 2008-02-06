@@ -111,8 +111,8 @@ namespace Gecode {
      * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -124,7 +124,7 @@ namespace Gecode {
     CpltSetVar(Space* home,
                int glbMin,int glbMax,int lubMin,int lubMax,
                unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card_max);
+               unsigned int cardMax = Set::Limits::card);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -133,8 +133,8 @@ namespace Gecode {
      * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -145,7 +145,7 @@ namespace Gecode {
     void init(Space* home,
               int glbMin,int glbMax,int lubMin,int lubMax,
               unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card_max);
+              unsigned int cardMax = Set::Limits::card);
 
     /**
      * \brief Initialize variable with given bounds and cardinality
@@ -155,8 +155,8 @@ namespace Gecode {
      * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -168,7 +168,7 @@ namespace Gecode {
     CpltSetVar(Space* home,
                const IntSet& glbD,int lubMin,int lubMax,
                unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card_max);
+               unsigned int cardMax = Set::Limits::card);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -177,8 +177,8 @@ namespace Gecode {
      * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -189,7 +189,7 @@ namespace Gecode {
     void init(Space* home,
               const IntSet& glbD,int lubMin,int lubMax,
               unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card_max);
+              unsigned int cardMax = Set::Limits::card);
 
     /**
      * \brief Initialize variable with given bounds and cardinality
@@ -199,8 +199,8 @@ namespace Gecode {
      * least upper bound \a lubD, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -212,7 +212,7 @@ namespace Gecode {
     CpltSetVar(Space* home,
                int glbMin,int glbMax,const IntSet& lubD,
                unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card_max);
+               unsigned int cardMax = Set::Limits::card);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -221,8 +221,8 @@ namespace Gecode {
      * least upper bound \a lubD, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -233,7 +233,7 @@ namespace Gecode {
     void init(Space* home,
               int glbMin,int glbMax,const IntSet& lubD,
               unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card_max);
+              unsigned int cardMax = Set::Limits::card);
 
     /**
      * \brief Initialize variable with given bounds and cardinality
@@ -243,8 +243,8 @@ namespace Gecode {
      * least upper bound \a lubD, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -256,7 +256,7 @@ namespace Gecode {
     CpltSetVar(Space* home,
                const IntSet& glbD,const IntSet& lubD,
                unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card_max);
+               unsigned int cardMax = Set::Limits::card);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -264,8 +264,8 @@ namespace Gecode {
      * least upper bound \a lubD, and cardinality minimum \a cardMin 
      * and maximum \a cardMax.
      * The following exceptions might be thrown:
-     *  - If the bounds are no legal set bounds (between Set::Limits::int_min
-     *    and Set::Limits::int_max), an exception of type
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
      *    Gecode::Set::VariableOutOfRangeDomain is thrown.
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
@@ -276,7 +276,7 @@ namespace Gecode {
     void init(Space* home,
               const IntSet& glbD,const IntSet& lubD,
               unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card_max);
+              unsigned int cardMax = Set::Limits::card);
     //@}
 
     /// \name Variable implementation access
@@ -444,7 +444,7 @@ namespace Gecode {
     CpltSetVarArray(Space* home,
                     int n,int glbMin,int glbMax,int lubMin,int lubMax,
                     unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card_max);
+                    unsigned int maxCard = Set::Limits::card);
     /**
      * \brief Create an array of size \a n.
      *
@@ -455,7 +455,7 @@ namespace Gecode {
     CpltSetVarArray(Space* home,
                     int n,const IntSet& glb, int lubMin, int lubMax,
                     unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card_max);
+                    unsigned int maxCard = Set::Limits::card);
     /**
      * \brief Create an array of size \a n.
      *
@@ -466,7 +466,7 @@ namespace Gecode {
     CpltSetVarArray(Space* home,
                     int n,int glbMin,int glbMax,const IntSet& lub,
                     unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card_max);
+                    unsigned int maxCard = Set::Limits::card);
     /**
      * \brief Create an array of size \a n.
      *
@@ -477,7 +477,7 @@ namespace Gecode {
     CpltSetVarArray(Space* home, int n,
                     const IntSet& glb,const IntSet& lub,
                     unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card_max);
+                    unsigned int maxCard = Set::Limits::card);
   };
 }
 
