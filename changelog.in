@@ -70,13 +70,6 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
-Module: test
-What:   new
-Rank:   major
-[DESCRIPTION]
-Added comprehensive tests for all search engines.
-
-[ENTRY]
 Module: int
 What:   removed
 Rank:   minor
@@ -298,6 +291,13 @@ This is a bug-fix only release. Very unfortunately, it fixes
 three serious bugs in search (LDS, Restart, and assignment
 branchings). We highly encourage you to switch to Gecode 2.0.1 as
 soon as possible.
+
+[ENTRY]
+Module: test
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added comprehensive tests for all search engines.
 
 [ENTRY]
 Module: search
