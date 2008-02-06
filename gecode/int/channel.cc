@@ -91,6 +91,7 @@ namespace Gecode {
   channel(Space* home, const BoolVarArgs& x, IntVar y, int o, 
           IntConLevel, PropKind) {
     using namespace Int;
+    Limits::check(o,"Int::channel");
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
     GECODE_ES_FAIL(home,Channel::LinkMulti::post(home,xv,y,o));

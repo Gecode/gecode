@@ -36,7 +36,6 @@
  */
 
 #include "gecode/int/cumulatives.hh"
-
 #include "gecode/int/linear.hh"
 
 namespace Gecode {
@@ -45,12 +44,12 @@ namespace Gecode {
 
   namespace {
     ViewArray<IntView>
-    make_view_array(Space *home, const IntVarArgs& in) {
+    make_view_array(Space* home, const IntVarArgs& in) {
       return ViewArray<IntView>(home, in);
     }
 
     ViewArray<ConstIntView>
-    make_view_array(Space *home, const IntArgs& in) {
+    make_view_array(Space* home, const IntArgs& in) {
       ViewArray<ConstIntView> res(home, in.size());
       for (int i = in.size(); i--; ) {
         Limits::check(in[i],"Int::cumulatives");
@@ -75,7 +74,7 @@ namespace Gecode {
     };
 
     void
-    sum(Space *home, const IntVar& s, const IntVar& d, const IntVar& e) {
+    sum(Space* home, IntVar s, IntVar d, IntVar e) {
       GECODE_AUTOARRAY(Linear::Term<IntView>, t, 3);
       t[0].a= 1; t[0].x=s;
       t[1].a= 1; t[1].x=d;
@@ -84,7 +83,7 @@ namespace Gecode {
     }
 
     void
-    sum(Space *home, const IntVar& s, int d, const IntVar& e) {
+    sum(Space* home, IntVar s, int d, IntVar e) {
       GECODE_AUTOARRAY(Linear::Term<IntView>, t, 2);
       t[0].a= 1; t[0].x=s;
       t[1].a=-1; t[1].x=e;
@@ -98,13 +97,12 @@ namespace Gecode {
                      const IntVarArgs& end, const Height& height,
                      const IntArgs& limit, bool at_most,
                      IntConLevel) {
-      if (home->failed()) return;
-
       if (machine.size() != start.size()  ||
           start.size() != duration.size() ||
           duration.size() != end.size()   ||
           end.size() != height.size())
         throw ArgumentSizeMismatch("Int::cumulatives");
+      if (home->failed()) return;
 
       ViewArray<typename ViewType<Machine>::Result>
         vmachine  = make_view_array(home,  machine);
@@ -127,9 +125,8 @@ namespace Gecode {
       // By definition, s+d=e should hold.
       // We enforce this using basic linear constraints, since the
       // sweep-algorithm does not check for it.
-      for (int i = start.size(); i--; ) {
+      for (int i = start.size(); i--; )
         sum(home, start[i], duration[i], end[i]);
-      }
     }
   }
 

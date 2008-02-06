@@ -90,9 +90,7 @@ namespace Gecode { namespace Int {
   /**
    * \brief Numerical limits for integer variables
    *
-   * The integer limits are chosen such that addition and subtraction
-   * of two values within the limits can be done safely without
-   * numerical overflow. Also, changing the sign is always possible
+   * The integer limits are chosen such changing the sign is always possible
    * without overflow.
    * \ingroup TaskModelIntVars
    */
@@ -101,9 +99,9 @@ namespace Gecode { namespace Int {
     const int max =  INT_MAX - 1;
     /// Smallest allowed integer value
     const int min = -max;
-    /// Check whether integer \a n is in range, otherwise throw overflow exception with information \a l
+    /// Check whether integer \a n is in range, otherwise throw out of limits with information \a l
     void check(int n, const char* l);
-    /// Check whether double \a n is in integer range, otherwise throw overflow exception with information \a l
+    /// Check whether double \a n is in integer range, otherwise throw out of limits exception with information \a l
     void check(double n, const char* l);
   }
 
@@ -1030,7 +1028,7 @@ namespace Gecode {
    *     and domain-consistency (\a icl = ICL_DOM).
    * \li Throws an exception of type Int::OutOfLimits, if
    *     the integers in \a n exceed the limits in Int::Limits
-   *     or if the combinations of \a n and \a x exceed the limits.
+   *     or if the sum of \a n and \a x exceed the limits.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a n are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x contains
@@ -1705,8 +1703,7 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$
    *
-   * Only bounds-consistency is supported. The propagator
-   * is overflow safe.
+   * Only bounds-consistency is supported.
    */
   GECODE_INT_EXPORT void
   mult(Space* home, IntVar x0, IntVar x1, IntVar x2,
@@ -1735,8 +1732,8 @@ namespace Gecode {
    *    Int::OutOfLimits is thrown.
    *  - Assume the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
-   *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
-   *    for doubles as defined in Int::Limits, an exception of
+   *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the maximal
+   *    available precision (at least \f$2^48\f$), an exception of
    *    type Int::OutOfLimits is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).

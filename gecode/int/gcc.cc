@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template<class Card, bool isView>
-  forceinline bool
+  inline bool
   check_alldiff(int n, ViewArray<Card>& k){
     if (k.size() == n) {
       for (int i=k.size(); i--;)
@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class View>
-  forceinline int
+  inline int
   x_card(ViewArray<View>& x, IntConLevel) {
     int n = x.size();
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, n);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class Card, class View>
-  forceinline void
+  inline void
   initcard(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
            int lb, int ub, IntConLevel icl) {
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, x.size());
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class Card, class View, bool isView>
-  forceinline void
+  inline void
   setcard(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
           int xmin, int xmax) {
 
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template<class Card, bool isView>
-  forceinline ExecStatus
+  inline ExecStatus
   card_cons(Space* home, ViewArray<Card>& k, int n) {
     // this should be the required min and allowed max
     int smin = 0;
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template<class Card, bool isView>
-  forceinline void
+  inline void
   post_template(Space* home, ViewArray<IntView>& x, ViewArray<Card>& k,
                 IntConLevel& icl){
     int  n        = x_card(x, icl);
@@ -313,13 +313,17 @@ namespace Gecode { namespace Int { namespace GCC {
   void count(Space* home, const IntVarArgs& x,
              const IntSetArgs& c, const IntArgs& v,
              IntConLevel icl, PropKind) {
-    unsigned int vsize = v.size();
-    unsigned int csize = c.size();
+    int vsize = v.size();
+    int csize = c.size();
     if (vsize != csize)
       throw ArgumentSizeMismatch("Int::count");
-    
     if (x.same())
       throw ArgumentSame("Int::count");
+    for (int i=c.size(); i--; ) {
+      Limits::check(v[i],"Int::count");
+      Limits::check(c[i].min(),"Int::count");
+      Limits::check(c[i].max(),"Int::count");
+    }
 
     if (home->failed())
       return;

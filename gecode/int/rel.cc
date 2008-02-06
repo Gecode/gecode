@@ -46,6 +46,7 @@ namespace Gecode {
   void
   rel(Space* home, IntVar x0, IntRelType r, int n, 
       IntConLevel, PropKind) {
+    Limits::check(n,"Int::rel");
     if (home->failed()) return;
     IntView x(x0);
     switch (r) {
@@ -62,6 +63,7 @@ namespace Gecode {
   void
   rel(Space* home, const IntVarArgs& x, IntRelType r, int n, 
       IntConLevel, PropKind) {
+    Limits::check(n,"Int::rel");
     if (home->failed()) return;
     switch (r) {
     case IRT_EQ: 
@@ -222,6 +224,7 @@ namespace Gecode {
   void
   rel(Space* home, IntVar x, IntRelType r, int n, BoolVar b,
       IntConLevel icl, PropKind) {
+    Limits::check(n,"Int::rel");
     if (home->failed()) return;
     switch (r) {
     case IRT_EQ:
