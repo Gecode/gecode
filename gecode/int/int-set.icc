@@ -84,6 +84,7 @@ namespace Gecode {
 
   forceinline void
   IntSet::update(Space* home, bool share, IntSet& s) {
+    sar.~SharedArray();
     sar.update(home, share, s.sar);
   }
 
