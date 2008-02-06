@@ -6,6 +6,9 @@
  *  Copyright:
  *     Christian Schulte, 2004
  *
+ *  Bugfixes provided by:
+ *     Stefano Gualandi
+ *
  *  Last modified:
  *     $Date$ by $Author$
  *     $Revision$
@@ -84,22 +87,29 @@ namespace Gecode { namespace Search {
 
   forceinline void
   ProbeEngine::init(Space* s, unsigned int d0) {
-    cur = s;
-    d   = d0;
+    cur       = s;
+    d         = d0;
+    exhausted = true;
   }
 
   forceinline void
   ProbeEngine::reset(Space* s, unsigned int d0) {
     delete cur;
     assert(ds.empty());
-    cur = s;
-    d   = d0;
+    cur       = s;
+    d         = d0;
+    exhausted = true;
     EngineCtrl::reset(s);
   }
 
   forceinline size_t
   ProbeEngine::stacksize(void) const {
     return ds.size();
+  }
+
+  forceinline bool
+  ProbeEngine::done(void) const {
+    return exhausted;
   }
 
   forceinline
@@ -113,18 +123,18 @@ namespace Gecode { namespace Search {
   ProbeEngine::explore(void) {
     start();
     while (true) {
-      if (stop(stacksize()))
-        return NULL;
       if (cur == NULL) {
       backtrack:
         if (ds.empty())
+          return NULL;
+        if (stop(stacksize()))
           return NULL;
         unsigned int a            = ds.top().alt();
         const BranchingDesc* desc = ds.top().desc();
         if (a == 0) {
           cur = ds.pop().space();
           EngineCtrl::pop(cur,desc);
-          cur->commit(desc,a);
+          cur->commit(desc,0);
           delete desc;
         } else {
           ds.top().next();
@@ -139,9 +149,9 @@ namespace Gecode { namespace Search {
       if (d == 0) {
         Space* s = cur;
         while (s->status(propagate) == SS_BRANCH) {
-          if (stop(stacksize()))
-            return NULL;
           const BranchingDesc* desc = s->description();
+          if (desc->alternatives() > 1)
+            exhausted = false;
           s->commit(desc,0);
           delete desc;
         }
@@ -166,6 +176,8 @@ namespace Gecode { namespace Search {
           const BranchingDesc* desc = cur->description();
           unsigned int alt          = desc->alternatives();
           if (alt > 1) {
+            if (d < alt-1)
+              exhausted = false;
             unsigned int d_a = (d >= alt-1) ? alt-1 : d;
             Space* cc = cur->clone(true,propagate);
             EngineCtrl::push(cc,desc);
@@ -188,21 +200,23 @@ namespace Gecode { namespace Search {
 
 
   /*
-   * The LDS engine proper (_LDS means: all the logic but just
-   * for space, type casts are done in LDS)
+   * The LDS engine proper
    *
    */
 
   LDS::LDS(Space* s, unsigned int d, Stop* st, size_t sz)
-    : d_cur(0), d_max(d), no_solution(true), e(st,sz) {
+    : root(NULL), d_cur(0), d_max(d), e(st,sz) {
     if (s->status(e.propagate) == SS_FAILED) {
-      root = NULL;
       e.init(NULL,0);
       e.fail += 1;
       e.current(s);
     } else {
-      root = s;
-      Space* c = (d_max == 0) ? s : s->clone(true,e.propagate);
+      e.clone++;;
+      Space* c = s->clone();
+      if (d_max > 0) {
+        root = c->clone();
+        e.clone++;
+      }
       e.init(c,0);
       e.current(s);
       e.current(NULL);
@@ -218,17 +232,15 @@ namespace Gecode { namespace Search {
   LDS::next(void) {
     while (true) {
       Space* s = e.explore();
-      if (s != NULL) {
-        no_solution = false;
+      if (s != NULL)
         return s;
-      }
-      if (no_solution || (++d_cur > d_max))
+      if (((s == NULL) && e.stopped()) || (++d_cur > d_max) || e.done())
         break;
-      no_solution = true;
       if (d_cur == d_max) {
-        e.reset(root,d_cur);
+        if (root != NULL)
+          e.reset(root,d_cur);
         root = NULL;
-      } else {
+      } else if (root != NULL) {
         e.clone++;
         e.reset(root->clone(true,e.propagate),d_cur);
       }

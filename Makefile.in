@@ -689,12 +689,15 @@ endif
 BRANCHTESTSRC0 = \
 	test/branch.cc test/branch/distinct.cc 
 
+SEARCHTESTSRC0 = \
+	test/search.cc
+
 TESTSRC0 = test/test.cc
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) \
 	$(SETTESTSRC) $(CPLTSETTESTSRC) \
-	$(BRANCHTESTSRC0)
+	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0)
 
 TESTHDR0 = \
 	test.hh test.icc int.hh int.icc set.hh cpltset.hh branch.hh

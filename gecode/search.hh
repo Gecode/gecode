@@ -238,6 +238,8 @@ namespace Gecode {
       void current(const Space* s);
       /// Reset statistics for space \a s
       void reset(const Space* s);
+      /// Reset statistics for failed space
+      void reset(void);
     };
 
     /**
@@ -352,6 +354,8 @@ namespace Gecode {
       void init(Space* s);
       /// Reset engine to restart at space \a s
       void reset(Space* s);
+      /// Reset engine to restart at failed space
+      void reset(void);
       /// %Search for next solution
       Space* explore(void);
       /// Return stack size used by engine
@@ -468,6 +472,8 @@ namespace Gecode {
       Space* cur;
       /// Current discrepancy
       unsigned int d;
+      /// Whether entire search space has been exhausted
+      bool exhausted;
     public:
       /// Initialize for spaces of size \a s
       ProbeEngine(Stop* st, size_t s);
@@ -481,6 +487,8 @@ namespace Gecode {
       ~ProbeEngine(void);
       /// %Search for next solution
       Space* explore(void);
+      /// Test whether probing is done
+      bool done(void) const;
     };
 
     /**

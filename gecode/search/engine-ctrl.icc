@@ -120,6 +120,12 @@ namespace Gecode { namespace Search {
       memory = mem_total;
   }
 
+  forceinline void
+  EngineCtrl::reset(void) {
+    mem_cur   = 0;
+    mem_total = 0;
+  }
+
 }}
 
 // STATISTICS: search-any

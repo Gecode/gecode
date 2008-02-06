@@ -141,7 +141,7 @@ namespace Gecode {
     }
   }
   
-  forceinline
+  inline
   std::set<int>
   Formula::Node::fv(void) {
     std::set<int> s;
