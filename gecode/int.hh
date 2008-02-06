@@ -44,7 +44,6 @@
 #define __GECODE_INT_HH__
 
 #include <climits>
-#include <cfloat>
 #include <iostream>
 
 #include "gecode/kernel.hh"

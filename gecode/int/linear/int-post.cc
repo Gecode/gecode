@@ -35,11 +35,11 @@
  *
  */
 
+#include <cfloat>
+#include <algorithm>
+
 #include "gecode/int/rel.hh"
 #include "gecode/int/linear.hh"
-
-#include <algorithm>
-#include <climits>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((sl < double_min) || (su > double_max))
       throw OutOfLimits("Int::linear");
 
-    return ((sl>=INT_MIN) && (su<=INT_MAX));
+    return ((sl >= Limits::int_min) && (su <= Limits::int_max));
   }
 
   /**

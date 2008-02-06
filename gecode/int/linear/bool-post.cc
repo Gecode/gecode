@@ -37,8 +37,6 @@
 
 #include "gecode/int/linear.hh"
 
-#include <climits>
-
 namespace Gecode { namespace Int { namespace Linear {
 
   void
@@ -347,8 +345,7 @@ namespace Gecode { namespace Int { namespace Linear {
           t[i]=t[--n];
         }
 
-      if ((d < INT_MIN) || (d > INT_MAX))
-        throw OutOfLimits("Int::linear");
+      Limits::check(d,"Int::linear");
       
       c = static_cast<int>(d);
     }
@@ -376,8 +373,8 @@ namespace Gecode { namespace Int { namespace Linear {
         su -= t_p[i].a;
       for (int i=n_n; i--; )
         sl += t_n[i].a;
-      if ((su < INT_MIN) || (su > INT_MAX) || (sl < INT_MIN) || (sl > INT_MAX))
-        throw OutOfLimits("Int::linear");
+      Limits::check(sl,"Int::linear");
+      Limits::check(su,"Int::linear");
     }
     
     if (unit && (n_n == 0)) {

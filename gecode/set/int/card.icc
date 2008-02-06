@@ -39,8 +39,6 @@
  *
  */
 
-
-
 #include "gecode/set.hh"
 #include "gecode/int.hh"
 
@@ -56,7 +54,7 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline ExecStatus
   Card<View>::post(Space* home, View x0, Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
-    GECODE_ME_CHECK(x0.cardMax(home, INT_MAX));
+    GECODE_ME_CHECK(x0.cardMax(home, Gecode::Int::Limits::int_max));
     (void) new (home) Card(home,x0,x1);
     return ES_OK;
   }
