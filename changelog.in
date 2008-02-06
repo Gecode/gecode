@@ -64,9 +64,11 @@
 
 [RELEASE]
 Version: 2.0.1
-Date:    Later
+Date:    2007-02-06
 [DESCRIPTION]
-Fixes or what?
+This is a bug-fix only release. Very unfortunately, it fixes two
+serious bugs in search (LDS and restart). We highly encourage you
+to switch to Gecode 2.0.1 as soon as possible.
 
 [ENTRY]
 Module: search
@@ -83,8 +85,8 @@ Rank:   major
 Thanks: Stefano Gualandi
 [DESCRIPTION]
 LDS had numerous quirks. It has been fixed and greatly improved:
-it is detected when the entire search tree has been probed, in
-dependent of the maximal discrepancy.
+it is detected when the entire search tree has been probed,
+independent of the maximal discrepancy.
 
 [ENTRY]
 Module: search
@@ -93,7 +95,8 @@ Rank:   major
 Thanks: Stefano Gualandi
 [DESCRIPTION]
 Restart was broken in case the problem failed immediately with
-propagation only upon initialization or request for a next solution.
+propagation only, both when being initialized or when requesting
+a next solution.
 
 [ENTRY]
 Module: iter
