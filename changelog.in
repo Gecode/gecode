@@ -66,9 +66,10 @@
 Version: 2.0.1
 Date:    2007-02-06
 [DESCRIPTION]
-This is a bug-fix only release. Very unfortunately, it fixes two
-serious bugs in search (LDS and restart). We highly encourage you
-to switch to Gecode 2.0.1 as soon as possible.
+This is a bug-fix only release. Very unfortunately, it fixes
+three serious bugs in search (LDS, Restart, and assignment
+branchings). We highly encourage you to switch to Gecode 2.0.1 as
+soon as possible.
 
 [ENTRY]
 Module: search
