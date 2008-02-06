@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/config.hh"
+#include "gecode/support.hh"
 #ifdef GECODE_HAS_BOOST_SERIALIZATION
 
 #include <fstream>

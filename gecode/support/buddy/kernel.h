@@ -38,7 +38,7 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
-#include "gecode/config.hh"
+#include "gecode/support/config.icc"
 
 #ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility push(default)

@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/config.hh"
+#include "gecode/support.hh"
 
 #ifdef GECODE_HAS_SET_VARS
 #include <QtGui/QBrush>
