@@ -43,6 +43,11 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
+  /// Largest double that can exactly be represented
+  const double double_max = 9007199254740991.0;
+  /// Smallest double that can exactly be represented
+  const double double_min = -9007199254740991.0;
+
   /// Eliminate assigned views
   inline void
   eliminate(Term<IntView>* t, int &n, double& d) {
@@ -51,7 +56,8 @@ namespace Gecode { namespace Int { namespace Linear {
         d -= t[i].a * static_cast<double>(t[i].x.val());
         t[i]=t[--n];
       }
-    Limits::check(d,"Int::linear");
+    if ((d < double_min) || (d > double_max))
+      throw OutOfLimits("Int::linear");
   }
 
   /// Rewrite all inequations in terms of IRT_LQ
@@ -94,8 +100,8 @@ namespace Gecode { namespace Int { namespace Linear {
     sl -= d;
     su -= d;
 
-    Limits::check(sl,"Int::linear");
-    Limits::check(su,"Int::linear");
+    if ((sl < double_min) || (su > double_max))
+      throw OutOfLimits("Int::linear");
 
     return ((sl>=INT_MIN) && (su<=INT_MAX));
   }

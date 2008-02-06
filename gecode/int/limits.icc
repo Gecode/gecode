@@ -45,7 +45,7 @@ namespace Gecode { namespace Int {
 
     inline void
     Limits::check(double n, const char* l) {
-      if ((n < double_min) || (n > double_max))
+      if ((n < int_min) || (n > int_max))
         throw OutOfLimits(l);
     }
 

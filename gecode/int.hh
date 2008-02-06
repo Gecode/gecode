@@ -102,13 +102,9 @@ namespace Gecode { namespace Int {
     const int int_max =  INT_MAX - 1;
     /// Smallest allowed integer value
     const int int_min = -int_max;
-    /// Largest double that can exactly be represented
-    const double double_max = 9007199254740991.0;
-    /// Smallest double that can exactly be represented
-    const double double_min = -9007199254740991.0;
     /// Check whether integer \a n is in range, otherwise throw overflow exception with information \a l
     void check(int n, const char* l);
-    /// Check whether double \a n is in range, otherwise throw overflow exception with information \a l
+    /// Check whether double \a n is in integer range, otherwise throw overflow exception with information \a l
     void check(double n, const char* l);
   }
 
