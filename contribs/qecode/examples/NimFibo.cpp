@@ -41,7 +41,7 @@ int main() {
     for (int i=0;i<N+2;i++) 
         scopeSize[i] = 2;
     
-    Implicative p(N+2,EXISTENTIAL,scopeSize,2);
+    Implicative p(N+2,EXISTENTIAL,scopeSize);
     
     p.QIntVar(0,1,N-1);
     p.QIntVar(1,0,N);
