@@ -321,7 +321,6 @@ Rank:   major
 Added comprehensive tests for all search engines.
 
 [ENTRY]
->>>>>>> .r6094
 Module: search
 What:   bug
 Rank:   major
