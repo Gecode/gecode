@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Projection {
   forceinline
   ReNaryProjection::ReNaryProjection
   (Space* home, bool share, ReNaryProjection& p)
-    : Propagator(home,share,p), ps(0) {
+    : Propagator(home,share,p) {
     x.update(home,share,p.x);
     b.update(home,share,p.b);
     ps.update(home,share,p.ps);

@@ -200,12 +200,14 @@ namespace Test { namespace Set {
             try {
               d.var(vmi.spec());
             } catch (Gecode::Reflection::ReflectionException e) {
+              delete c;
               return NULL;
             }            
           }
           try {
             d.post(s);
           } catch (Gecode::Reflection::ReflectionException e) {
+            delete c;
             return NULL;
           }
         }
@@ -213,6 +215,7 @@ namespace Test { namespace Set {
           try {
             d.var(vmi.spec());
           } catch (Gecode::Reflection::ReflectionException e) {
+            delete c;
             return NULL;
           }
         }
@@ -221,6 +224,7 @@ namespace Test { namespace Set {
           c->fail();
         return c;
       } catch (Gecode::Reflection::ReflectionException e) {
+        delete c;
         if (status() == Gecode::SS_FAILED)
           return this;
         return static_cast<SetTestSpace*>(clone());

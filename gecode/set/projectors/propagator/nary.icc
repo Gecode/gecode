@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace Projection {
   forceinline
   NaryProjection<negated>::NaryProjection
   (Space* home, bool share, NaryProjection& p)
-    : Propagator(home,share,p), ps(0) {
+    : Propagator(home,share,p) {
     x.update(home,share,p.x);
     pc.update(home, share, p.pc);
     ps.update(home, share, p.ps);

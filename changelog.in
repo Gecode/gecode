@@ -285,12 +285,33 @@ engine, is now part of the main %Gecode distribution.
 
 [RELEASE]
 Version: 2.0.1
-Date:    2007-02-06
+Date:    2008-02-07
 [DESCRIPTION]
 This is a bug-fix only release. Very unfortunately, it fixes
 three serious bugs in search (LDS, Restart, and assignment
 branchings). We highly encourage you to switch to Gecode 2.0.1 as
 soon as possible.
+
+[ENTRY]
+Module: test
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in reflection tests.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in set projection propagators.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in IntSet.
 
 [ENTRY]
 Module: test
@@ -300,6 +321,7 @@ Rank:   major
 Added comprehensive tests for all search engines.
 
 [ENTRY]
+>>>>>>> .r6094
 Module: search
 What:   bug
 Rank:   major
