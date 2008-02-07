@@ -70,6 +70,14 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: other
+What:   documentation
+Rank:   minor
+Thanks: Martin Mann
+[DESCRIPTION]
+Function prototypes are now highlighted in the detailed function documentation.
+
+[ENTRY]
 Module: int
 What:   removed
 Rank:   minor
