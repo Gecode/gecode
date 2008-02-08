@@ -1397,7 +1397,7 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	  (cd $(DESTDIR)$(includedir) && tar xf -) && \
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do \
-	    cp $$f $(DESTDIR)$(pkgincludedir); done && \
+	    cp $$f $(DESTDIR)$(pkgincludedir)/support; done && \
 	for_pkgconfigfiles="$(PKGCONFIGFILES)" && \
 	  for f in $$for_pkgconfigfiles; do \
 	    mkdir -p $(DESTDIR)$(libdir)/pkgconfig; \

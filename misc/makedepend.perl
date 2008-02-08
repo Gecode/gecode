@@ -50,14 +50,20 @@ while ($target = $ARGV[$i++]) {
   my %done = ();
   push @todo, $target;
   while ($f = pop @todo) {
-    open FILE, "$root/$f" or die "File missing: $root/$f\n";
+    open FILE, "$root/$f" or
+      open FILE, "$f" or die "File missing: $root/$f\n";
+    
     while ($l = <FILE>) {
       if ($l =~ /^\#include "(.*)"/) {
 	$g = $1;
 	$g =~ s|^\./||og;
 	if (!$done{$g}) {
 	  push @todo, $g;
-	  $done{$g} = 1;
+	  if (-e "$root/$g") {
+	    $done{$g} = "$root/";
+	  } else {
+	    $done{$g} = "";
+	  }
 	}
       }
     }
@@ -71,7 +77,7 @@ while ($target = $ARGV[$i++]) {
       print "\\\n\t";
       $l = 0;
     }
-    print "$root/$g ";
+    print "$done{$g}$g ";
     $l++;
   }
   print "\n";
