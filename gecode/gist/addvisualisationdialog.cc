@@ -51,7 +51,13 @@ namespace Gecode { namespace Gist {
     Gecode::Reflection::VarMapIter vmi(vm);
 
     for(int i = 0; vmi(); ++vmi, ++i) {
-      ui.variablesListWidget->insertItem(i, vmi.spec().name().toString().c_str());
+      QString varName = vmi.spec().name().toString().c_str();
+      QString itemName(varName);
+      itemName.append(" (");
+      itemName.append(vmi.spec().vti().toString().c_str());
+      itemName.append(")");
+      QListWidgetItem* item = new QListWidgetItem(itemName, ui.variablesListWidget);
+      item->setData(Qt::UserRole, QVariant(varName));
     }
   }
 
@@ -60,7 +66,7 @@ namespace Gecode { namespace Gist {
     QList<QListWidgetItem*> itemList = ui.variablesListWidget->selectedItems();
     QStringList varList;
     while(!itemList.isEmpty()) {
-      varList << itemList.takeFirst()->text();
+      varList << itemList.takeFirst()->data(Qt::UserRole).toString();
     }
     return varList;
   }
