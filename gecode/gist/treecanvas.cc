@@ -1325,8 +1325,6 @@ namespace Gecode { namespace Gist {
         case Gecode::Gist::SOLVED:
         case Gecode::Gist::FAILED:
           navDown->setEnabled(false);
-          navLeft->setEnabled(true);
-          navRight->setEnabled(true);
 
           searchNext->setEnabled(false);
           searchAll->setEnabled(false);
@@ -1343,8 +1341,6 @@ namespace Gecode { namespace Gist {
           break;
         case Gecode::Gist::UNDETERMINED:
           navDown->setEnabled(false);
-          navLeft->setEnabled(true);
-          navRight->setEnabled(true);
 
           searchNext->setEnabled(true);
           searchAll->setEnabled(true);
@@ -1362,8 +1358,6 @@ namespace Gecode { namespace Gist {
         case Gecode::Gist::BRANCH:
         case Gecode::Gist::SPECIAL:
           navDown->setEnabled(true);
-          navLeft->setEnabled(true);
-          navRight->setEnabled(true);
 
           searchNext->setEnabled(true);
           searchAll->setEnabled(true);
@@ -1380,8 +1374,6 @@ namespace Gecode { namespace Gist {
           break;
         case Gecode::Gist::STEP:
           navDown->setEnabled(true);
-          navLeft->setEnabled(false);
-          navRight->setEnabled(false);
 
           searchNext->setEnabled(true);
           searchAll->setEnabled(true);
