@@ -493,12 +493,23 @@ namespace Gecode { namespace Int { namespace Extensional {
     return es;
   }
 
+  namespace {
+    template <class View>
+    struct SchedulingModEvent {
+      static const ModEvent me = ME_INT_BND;
+    };
+    template <>
+    struct SchedulingModEvent<BoolView> {
+      static const ModEvent me = ME_BOOL_VAL;
+    };
+  }
+
   template <class View>
   forceinline
   LayeredGraph<View>::LayeredGraph(Space* home, ViewArray<View>& x0, DFA& d)
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
-    ModEvent me = ME_INT_BND;
+    ModEvent me = SchedulingModEvent<View>::me;
     for (int i=x.size(); i--; )
       if (x[i].assigned()) {
         me = ME_INT_VAL;
