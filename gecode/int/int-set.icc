@@ -41,12 +41,10 @@ namespace Gecode {
    * Integer sets
    *
    */
-
   forceinline
-  IntSet::IntSet(void) : sar(0) {}
+  IntSet::IntSet(void) {}
 
   template <class I>
-  forceinline
   IntSet::IntSet(I& i) {
     Support::DynamicArray<Range> d;
     int n=0;
@@ -54,18 +52,23 @@ namespace Gecode {
       d[n].min = i.min(); d[n].max = i.max();
       ++n; ++i;
     }
-    sar.init(n);
-    for (int j=n; j--; )
-      sar[j]=d[j];
+    if (n > 0) {
+      IntSetObject* o = IntSetObject::allocate(n);
+      for (int j=n; j--; )
+        o->r[j]=d[j];
+      object(o);
+    }
   }
 
   template <>
   forceinline
-  IntSet::IntSet(const IntSet& s) : sar(s.sar) {}
+  IntSet::IntSet(const IntSet& s) 
+    : SharedHandle(s) {}
 
   template <>
   forceinline
-  IntSet::IntSet(IntSet& s) : sar(s.sar) {}
+  IntSet::IntSet(IntSet& s) 
+    : SharedHandle(s) {}
 
   forceinline
   IntSet::IntSet(const int r[][2], int n) { 
@@ -82,40 +85,41 @@ namespace Gecode {
     init(n,m); 
   }
 
-  forceinline void
-  IntSet::update(Space* home, bool share, IntSet& s) {
-    sar.~SharedArray();
-    sar.update(home, share, s.sar);
-  }
-
   forceinline int
   IntSet::min(int i) const {
-    return sar[i].min;
+    assert(object() != NULL);
+    return static_cast<IntSetObject*>(object())->r[i].min;
   }
 
   forceinline int
   IntSet::max(int i) const {
-    return sar[i].max;
+    assert(object() != NULL);
+    return static_cast<IntSetObject*>(object())->r[i].max;
   }
 
   forceinline unsigned int
   IntSet::width(int i) const {
-    return static_cast<unsigned int>(sar[i].max-sar[i].min)+1;
+    assert(object() != NULL);
+    IntSetObject* o = static_cast<IntSetObject*>(object());
+    return static_cast<unsigned int>(o->r[i].max-o->r[i].min)+1;
   }
 
   forceinline int
   IntSet::size(void) const {
-    return sar.size();
+    IntSetObject* o = static_cast<IntSetObject*>(object());
+    return (o == NULL) ? 0 : o->n;
   }
 
   forceinline int
   IntSet::min(void) const {
-    return sar.size() == 0 ? 1 : sar[0].min;
+    IntSetObject* o = static_cast<IntSetObject*>(object());
+    return (o == NULL) ? 1 : o->r[0].min;
   }
 
   forceinline int
   IntSet::max(void) const {
-    return sar.size() == 0 ? 0 : sar[sar.size()-1].max;
+    IntSetObject* o = static_cast<IntSetObject*>(object());
+    return (o == NULL) ? 0 : o->r[o->n-1].max;
   }
 
 
@@ -127,11 +131,13 @@ namespace Gecode {
   forceinline
   IntSetRanges::IntSetRanges(void) {}
   forceinline
-  IntSetRanges::IntSetRanges(const IntSet& s)
-    : i(s.size() == 0 ? 0 : &s.sar[0]), e(i+s.size()) {}
-  forceinline void
-  IntSetRanges::init(const IntSet& s) {
-    i=&s.sar[0]; e=i+s.size();
+  IntSetRanges::IntSetRanges(const IntSet& s) {
+    int n = s.size();
+    if (n > 0) {
+      i = &static_cast<IntSet::IntSetObject*>(s.object())->r[0]; e = i+n;
+    } else {
+      i = e = NULL;
+    }
   }
 
   forceinline void

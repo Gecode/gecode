@@ -39,6 +39,26 @@
 
 namespace Gecode {
 
+  IntSet::IntSetObject*
+  IntSet::IntSetObject::allocate(int n) {
+    IntSetObject* o = new IntSetObject;
+    o->n = n;
+    o->r = static_cast<Range*>(Memory::malloc(n*sizeof(Range)));
+    return o;
+  }
+
+  SharedHandle::Object*
+  IntSet::IntSetObject::copy(void) const {
+    IntSetObject* o = allocate(n);
+    for (int i=n; i--; )
+      o->r[i]=r[i];
+    return o;
+  }
+
+  IntSet::IntSetObject::~IntSetObject(void) {
+    Memory::free(r);
+  }
+
   /// Sort ranges according to increasing minimum
   class IntSet::MinInc {
   public:
@@ -70,12 +90,11 @@ namespace Gecode {
         }
       }
       r[j].min = min; r[j].max = max;
-      int n=j+1;
-      sar.init(n);
-      for (i=n; i--; )
-        sar[i]=r[i];
-    } else {
-      sar.init(0);
+      n=j+1;
+      IntSetObject* o = IntSetObject::allocate(n);
+      for (int i=n; i--; )
+        o->r[i]=r[i];
+      object(o);
     }
   }
 
@@ -102,20 +121,19 @@ namespace Gecode {
   void
   IntSet::init(int n, int m) {
     if (n <= m) {
-      sar.init(1);
-      sar[0].min = n; sar[0].max = m;
-    } else {
-      sar.init(0);
+      IntSetObject* o = IntSetObject::allocate(1);
+      o->r[0].min = n; o->r[0].max = m;
+      object(o);
     }
   }
 
-  const IntSet IntSet::empty(1,-1);
+  const IntSet IntSet::empty;
 
 }
 
 std::ostream&
 operator<<(std::ostream& os, const Gecode::IntSet& is) {
-  os << '<';
+  os << '{';
   for (int i = 0; i < is.size(); ) {
     int min = is.min(i);
     int max = is.max(i);
@@ -127,7 +145,7 @@ operator<<(std::ostream& os, const Gecode::IntSet& is) {
     if (i < is.size())
       os << ',';
   }
-  return os << '>';
+  return os << '}';
 }
 
 

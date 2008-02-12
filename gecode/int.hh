@@ -120,7 +120,7 @@ namespace Gecode {
    * of integers to be used as domains for integer variables.
    * \ingroup TaskModelIntVars TaskModelSetVars
    */
-  class IntSet {
+  class IntSet : public SharedHandle {
     friend class IntSetRanges;
   private:
     /// %Range (intervals) of integers
@@ -128,14 +128,28 @@ namespace Gecode {
     public:
       int min, max;
     };
-    /// Shared array that stores the ranges of the domain
-    SharedArray<Range> sar;
+    class IntSetObject : public SharedHandle::Object {
+    public:
+      /// Number of ranges
+      int n;
+      /// Array of ranges
+      Range* r;
+      /// Allocate object with \a m elements
+      GECODE_INT_EXPORT static IntSetObject* allocate(int m);
+      /// Return copy of object
+      GECODE_INT_EXPORT SharedHandle::Object* copy(void) const;
+      /// Delete object
+      GECODE_INT_EXPORT virtual ~IntSetObject(void);
+    };
     /// Sort ranges according to increasing minimum
     class MinInc;
     /// Normalize the first \a n elements of \a r
     GECODE_INT_EXPORT void normalize(Range* r, int n);
+    /// Initialize as range with minimum \a n and maximum \a m
     GECODE_INT_EXPORT void init(int n, int m);
+    /// Initialize with \a n integers from array \a r
     GECODE_INT_EXPORT void init(const int r[], int n);
+    /// Initialize with \a n ranges from array \a r
     GECODE_INT_EXPORT void init(const int r[][2], int n);
   public:
     /// \name Constructors and initialization
@@ -182,16 +196,6 @@ namespace Gecode {
     int min(void) const;
     /// Return maximum of entire set
     int max(void) const;
-    //@}
-
-    /// \name Cloning
-    //@{
-    /** \brief Update this set to be a copy of \a s
-     *
-     * If \a share is true, the copy is identical. Otherwise an independent
-     * copy is created.
-     */
-    void update(Space* home, bool share, IntSet& s);
     //@}
 
     /// \name Predefined value

@@ -70,6 +70,13 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+IntSet have been reimplemented for efficiency.
+
+[ENTRY]
 Module: other
 What:   documentation
 Rank:   minor
