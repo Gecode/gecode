@@ -397,6 +397,7 @@ namespace Gecode { namespace Gist {
     currentNode = root;
     pathHead = root;
     nodeMap.clear();
+    nextPit = 0;
     scale = 1.0;
     stats = Statistics();
     root->layout();
