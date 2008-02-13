@@ -530,7 +530,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
-   * Refied binary domain-consistent less equal
+   * Reified binary domain-consistent less equal
    *
    */
 

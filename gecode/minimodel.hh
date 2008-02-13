@@ -169,7 +169,7 @@ namespace Gecode {
       LinRel(int l, IntRelType irt, const LinExpr<Var>& r);
       /// Post propagator for relation (if \a t is false for negated relation)
       void post(Space* home, bool t, IntConLevel icl) const;
-      /// Post refied propagator for relation
+      /// Post reified propagator for relation
       void post(Space* home, const BoolVar& b) const;
     };
 

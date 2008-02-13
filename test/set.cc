@@ -149,7 +149,7 @@ namespace Test { namespace Set {
       *
       * Creates \a n set variables with domain \a d0,
       * \a i integer variables with domain \a d0, and stores whether
-      * the test is for a refied propagator (\a r), and the test itself
+      * the test is for a reified propagator (\a r), and the test itself
       * (\a t).
       * 
       */

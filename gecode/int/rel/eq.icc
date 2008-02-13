@@ -480,7 +480,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
 
   /*
-   * Refied domain-consistent equality
+   * Reified domain-consistent equality
    *
    */
 
@@ -563,7 +563,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
 
   /*
-   * Refied bounds-consistent equality
+   * Reified bounds-consistent equality
    *
    */
 
@@ -647,7 +647,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
 
   /*
-   * Refied domain-consistent equality (one variable)
+   * Reified domain-consistent equality (one variable)
    *
    */
 
@@ -749,7 +749,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
 
   /*
-   * Refied bounds-consistent equality (one variable)
+   * Reified bounds-consistent equality (one variable)
    *
    */
 

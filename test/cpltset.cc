@@ -86,7 +86,7 @@ namespace Test { namespace CpltSet {
       *
       * Creates \a n set variables with domain \a d,
       * \a i integer variables with domain \a d, and stores whether
-      * the test is for a refied propagator (\a r), the test itself
+      * the test is for a reified propagator (\a r), the test itself
       * (\a t) and the options (\a o). 
       * 
       */
