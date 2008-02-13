@@ -35,6 +35,9 @@
  *
  */
 
+// TODO nikopp: include only for checking for GECODE_GIST_EXPERIMENTAL 
+#include "gecode/support.hh"
+
 namespace Gecode { namespace Int { namespace Rel {
 
   /*
@@ -104,6 +107,8 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View0, class View1>
   ExecStatus
   EqBnd<View0,View1>::propagate(Space* home, ModEventDelta) {
+    // TODO nikopp: revert after demo
+#ifndef GECODE_GIST_EXPERIMENTAL
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
     } else if (x1.assigned()) {
@@ -122,11 +127,22 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     assert(x0.assigned() && x1.assigned());
     return ES_SUBSUMED(this,sizeof(*this));
+#else
+    GECODE_ME_CHECK(x0.gq(home,x1.min()));
+    GECODE_ME_CHECK(x1.gq(home,x0.min()));
+
+    GECODE_ME_CHECK(x0.lq(home,x1.max()));
+    GECODE_ME_CHECK(x1.lq(home,x0.max()));
+
+    if(x0.assigned() && x1.assigned())
+      if(x0.val() == x1.val())
+        return Gecode::ES_SUBSUMED(this,sizeof(*this));
+      else
+        return Gecode::ES_FAILED;
+    else 
+      return Gecode::ES_FIX;
+#endif
   }
-
-
-
-
 
   /*
    * Binary domain consistent equality
