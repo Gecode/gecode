@@ -177,6 +177,10 @@ namespace Gecode {  namespace Gist {
     void expandCurrentNode(void);
     /// Enable gdb debugging if the current node is a step node
     void toggleDebug(void);
+    /// Parse JavaScript and post constraints in copy of current node
+    void executeJavaScript(const QString&);
+    /// Replace the copy of the root node with \a s
+    void replaceRootCopy(Space* s);
 #endif
     
     /// Stop search and wait for it to finish
@@ -307,6 +311,7 @@ namespace Gecode {  namespace Gist {
     QAction* forwardTimeStep;
     QAction* backwardTimeStep;
     QAction* toggleDebug;
+    QAction* executeJavaScript;
 #endif
 
   public:

@@ -199,6 +199,11 @@ namespace Gecode { namespace Gist {
     void setHasFailedChildren(bool b);
     /// Whether the subtree of this node is known to contain solutions
     void setHasSolvedChildren(bool b);
+    
+    /// Parse JavaScript \a model and post constraints in space
+    void executeJavaScript(const std::string& model);
+    /// Replace the current copy of the node with \a s
+    void replaceCopy(Space* s);
 #endif
 
     /** \brief Compute and return the number of children

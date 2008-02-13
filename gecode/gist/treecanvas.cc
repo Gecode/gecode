@@ -1049,6 +1049,16 @@ namespace Gecode { namespace Gist {
     update();
     centerCurrentNode();
   }
+  
+  void
+  TreeCanvasImpl::executeJavaScript(const QString& model) {
+    root->executeJavaScript(model.toStdString());
+  }
+
+  void
+  TreeCanvasImpl::replaceRootCopy(Space* s) {
+    root->replaceCopy(s);
+  }
 #endif
 
   TreeCanvas::TreeCanvas(Space* root, Better* b,
@@ -1208,6 +1218,10 @@ namespace Gecode { namespace Gist {
     toggleDebug = new QAction("Toggle debug", this);
     toggleDebug->setShortcut(QKeySequence("Shift+D"));
     connect(toggleDebug, SIGNAL(triggered()), canvas, SLOT(toggleDebug()));
+    
+    executeJavaScript = new QAction("Execute JavaScript", this);
+    executeJavaScript->setShortcut(QKeySequence("Shift+J"));
+    connect(executeJavaScript, SIGNAL(triggered()), canvas, SLOT(executeJavaScript()));
 #endif
 
     addAction(inspectCN);
@@ -1243,6 +1257,7 @@ namespace Gecode { namespace Gist {
     addAction(forwardTimeStep);
     addAction(backwardTimeStep);
     addAction(toggleDebug);
+    addAction(executeJavaScript);
 #endif
 
     contextMenu = new QMenu(this);

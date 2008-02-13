@@ -38,6 +38,7 @@
 #include <stack>
 
 #ifdef GECODE_GIST_EXPERIMENTAL
+#include "gecode/serialization.hh"
 #ifdef GECODE_HAS_INT_VARS
 #include "gecode/int.hh"
 #endif
@@ -489,6 +490,20 @@ namespace Gecode { namespace Gist {
     if(isStepNode())
       return lastStep;
     return false;
+  }
+  
+  void
+  SpaceNode::executeJavaScript(const std::string& model) {
+    if(copy != NULL) {
+      Gecode::fromJavaScript(copy, model);
+      copy->status();
+    }
+  }
+  
+  void
+  SpaceNode::replaceCopy(Space* s) {
+    delete copy;
+    copy = s;
   }
 #endif
 
