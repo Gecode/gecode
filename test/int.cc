@@ -110,10 +110,15 @@ namespace Test { namespace Int {
     TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log=true)
       : d(d0), x(this,n,d), b(this,0,1), reified(r), test(t) {
       if (opt.log && log) {
+#ifndef GECODE_GIST_EXPERIMENTAL
         olog << ind(2) << "Initial: x[]=" << x;
         if (reified)
           olog << " b=" << b;
         olog << std::endl;
+#else
+        olog << "tree.replaceRootCopy(" << n << "," << d.min() << "," << d.max() << ");";
+        olog << std::endl;
+#endif
       }
     }
     /// Constructor for cloning \a s
@@ -125,6 +130,11 @@ namespace Test { namespace Int {
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
       return new TestSpace(share,*this);
+    }
+
+    virtual void getVars(Gecode::Reflection::VarMap& m, bool registerOnly) {
+      m.putArray(this,x,"x",registerOnly);
+      m.put(this,b,"b",registerOnly);
     }
 
     TestSpace* cloneWithReflection(void) {
@@ -194,21 +204,33 @@ namespace Test { namespace Int {
     void post(void) {
       if (reified){
         test->post(this,x,b);
+#ifndef GECODE_GIST_EXPERIMENTAL
         if (opt.log)
           olog << ind(3) << "Posting reified propagator" << std::endl;
+#endif
       } else {
         test->post(this,x);
+#ifndef GECODE_GIST_EXPERIMENTAL
         if (opt.log)
           olog << ind(3) << "Posting propagator" << std::endl;
-      }
+#endif
+        }
     }
     /// Compute a fixpoint and check for failure
     bool failed(void) {
       if (opt.log) {
+#ifdef GECODE_GIST_EXPERIMENTAL
+        olog << "tree.addFixpoint();" << std::endl;
+        olog << "tree.navDown();" << std::endl;
+        olog << "tree.inspectCurrentNode();" << std::endl;
+        olog << "tree.expandCurrentNode();" << std::endl;
+        return status() == Gecode::SS_FAILED;
+#else
         olog << ind(3) << "Fixpoint: " << x;
         bool f=(status() == Gecode::SS_FAILED);
         olog << std::endl << ind(3) << "     -->  " << x << std::endl;
         return f;
+#endif
       } else {
         return status() == Gecode::SS_FAILED;
       }
@@ -216,6 +238,18 @@ namespace Test { namespace Int {
     /// Perform integer tell operation on \a x[i]
     void rel(int i, Gecode::IntRelType irt, int n) {
       if (opt.log) {
+#ifdef GECODE_GIST_EXPERIMENTAL
+        olog << "tree.addChild(\"x" << i << "\", ";
+        switch (irt) {
+        case Gecode::IRT_EQ: olog << "IRT_EQ"; break;
+        case Gecode::IRT_NQ: olog << "IRT_NQ"; break;
+        case Gecode::IRT_LQ: olog << "IRT_LQ"; break;
+        case Gecode::IRT_LE: olog << "IRT_LE"; break;
+        case Gecode::IRT_GQ: olog << "IRT_GQ"; break;
+        case Gecode::IRT_GR: olog << "IRT_GR"; break;
+        }
+        olog << ", " << n << ");" << std::endl;
+#else
         olog << ind(4) << "x[" << i << "] ";
         switch (irt) {
         case Gecode::IRT_EQ: olog << "="; break;
@@ -226,6 +260,7 @@ namespace Test { namespace Int {
         case Gecode::IRT_GR: olog << ">"; break;
         }
         olog << " " << n << std::endl;
+#endif
       }
       Gecode::rel(this, x[i], irt, n);
     }
@@ -233,8 +268,10 @@ namespace Test { namespace Int {
     void rel(bool sol) {
       int n = sol ? 1 : 0;
       assert(reified);
+#ifndef GECODE_GIST_EXPERIMENTAL
       if (opt.log) 
         olog << ind(4) << "b = " << n << std::endl;
+#endif
       Gecode::rel(this, b, Gecode::IRT_EQ, n);
     }
     /// Assign all (or all but one, if \a skip is true) variables to values in \a a
@@ -323,8 +360,13 @@ namespace Test { namespace Int {
         if (failed())
           return true;
         TestSpace* c = static_cast<TestSpace*>(clone());
+#ifndef GECODE_GIST_EXPERIMENTAL
         if (opt.log)
           olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+#else
+        if (opt.log)
+          olog << "tree.addChild(\"x0\",IRT_LQ," << x[0].max() << ");" << std::endl;
+#endif
         c->post();
         if (c->failed()) {
           delete c; return false;
@@ -336,8 +378,10 @@ namespace Test { namespace Int {
         if (reified && (b.size() != c->b.size())) {
           delete c; return false;
         }
+#ifndef GECODE_GIST_EXPERIMENTAL
         if (opt.log)
           olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
+#endif
         delete c;
       }                                                
       return true;
@@ -358,6 +402,15 @@ namespace Test { namespace Int {
   }
 
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+  /// Check the test result and handle failed test
+#define CHECK_TEST(T,M)                                         \
+if (opt.log)                                                    \
+  olog << "//" << ind(3) << "Check: " << (M) << std::endl;      \
+if (!(T)) {                                                     \
+  problem = (M); delete s; goto failed;                         \
+}
+#else
   /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \
 if (opt.log)                                                    \
@@ -365,7 +418,17 @@ if (opt.log)                                                    \
 if (!(T)) {                                                     \
   problem = (M); delete s; goto failed;                         \
 }
+#endif
 
+#ifdef GECODE_GIST_EXPERIMENTAL
+  /// Start new test
+#define START_TEST(T)                                           \
+  if (opt.log) {                                                \
+     olog.str("");                                              \
+     olog << "//" << ind(2) << "Testing: " << (T) << std::endl; \
+  }                                                             \
+  test = (T);
+#else
   /// Start new test
 #define START_TEST(T)                                           \
   if (opt.log) {                                                \
@@ -373,11 +436,23 @@ if (!(T)) {                                                     \
      olog << ind(2) << "Testing: " << (T) << std::endl;         \
   }                                                             \
   test = (T);
-
+#endif
 
   void 
   Test::post(Gecode::Space*, Gecode::IntVarArray&, 
              Gecode::BoolVar) {}
+
+#ifdef GECODE_GIST_EXPERIMENTAL
+  void replace_all(std::string& text,const std::string& fnd,const std::string& rep)
+  {
+    size_t pos = text.find(fnd);
+    while(pos!=std::string::npos)
+    {
+      text.replace(pos,fnd.length(),rep);
+      pos = text.find(fnd,pos+rep.length());
+    }
+  }
+#endif
 
   bool
   Test::run(void) {
@@ -398,11 +473,15 @@ if (!(T)) {                                                     \
 
     while (a()) {
       bool sol = solution(a);
-      if (opt.log)
+      if (opt.log) {
+#ifdef GECODE_GIST_EXPERIMENTAL
+        olog << "//";
+#endif
         olog << ind(1) << "Assignment: " << a 
              << (sol ? " (solution)" : " (no solution)")
              << std::endl;
-
+      }
+      
       START_TEST("Assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,false,this);
@@ -411,14 +490,18 @@ if (!(T)) {                                                     \
         int choices = 3 + opt.reflection;
         switch (Base::rand(choices)) {
           case 0:
+#ifndef GECODE_GIST_EXPERIMENTAL
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
+#endif
             sc = s;
             s = NULL;
             break;
           case 1:
+#ifndef GECODE_GIST_EXPERIMENTAL
             if (opt.log)
-            olog << ind(3) << "Unshared copy" << std::endl;
+              olog << ind(3) << "Unshared copy" << std::endl;
+#endif
             if (s->status() != SS_FAILED) {
               sc = static_cast<TestSpace*>(s->clone(false));
             } else {
@@ -426,8 +509,10 @@ if (!(T)) {                                                     \
             }
             break;
           case 2:
+#ifndef GECODE_GIST_EXPERIMENTAL
             if (opt.log)
               olog << ind(3) << "Shared copy" << std::endl;
+#endif
             if (s->status() != SS_FAILED) {
               sc = static_cast<TestSpace*>(s->clone(true));
             } else {
@@ -435,8 +520,10 @@ if (!(T)) {                                                     \
             }
             break;
           case 3:
+#ifndef GECODE_GIST_EXPERIMENTAL
             if (opt.log)
               olog << ind(3) << "Reflection copy" << std::endl;
+#endif
             sc = s->cloneWithReflection();
             if (sc == s)
               s = NULL;
@@ -500,6 +587,16 @@ if (!(T)) {                                                     \
       {      
         TestSpace* s = new TestSpace(arity,dom,false,this);
         s->post();
+#ifdef GECODE_GIST_EXPERIMENTAL
+        std::ostringstream scriptstream;
+        Gecode::emitJavaScript(s, scriptstream);
+        std::string script = scriptstream.str();
+        
+        replace_all(script, "\n", "\\n");
+        replace_all(script, "\"", "\\\"");
+        
+        olog << "tree.executeJavaScript(\"" << script << "\");" << std::endl;
+#endif
         while (!s->failed() && !s->assigned())
           if (!s->prune(a)) {
             problem = "No fixpoint";
@@ -629,12 +726,17 @@ if (!(T)) {                                                     \
     return true;
 
   failed:
+#ifndef GECODE_GIST_EXPERIMENTAL
     if (opt.log)
       olog << "FAILURE" << std::endl
            << ind(1) << "Test:       " << test << std::endl
            << ind(1) << "Problem:    " << problem << std::endl;
     if (a() && opt.log)
       olog << ind(1) << "Assignment: " << a << std::endl;
+#else
+    if (opt.log)
+      olog << "tree.setPath();" << std::endl;
+#endif
     delete ap;
 
     return false;
