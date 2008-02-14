@@ -117,6 +117,8 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::update(void) {
     QMutexLocker locker(&mutex);
     layouter.layout(this);
+    if (autoZoom)
+      zoomToFit();
   }
 
   void
@@ -135,8 +137,6 @@ namespace Gecode { namespace Gist {
       root->hideFailed();
       update();
     }
-    if (autoZoom)
-      zoomToFit();
     
     if (finished)
       centerCurrentNode();
