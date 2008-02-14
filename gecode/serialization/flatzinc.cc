@@ -309,18 +309,9 @@ namespace Gecode {
       }
       return;    
     }
-    
-  }
-  
-  void emitFlatzinc(Space* home, std::ostream& os) {
-    using namespace std;
-    Reflection::VarMap vm;
-    home->getVars(vm, false);
-    Reflection::VarMapIter vmi(vm);
-    int varCount = 0;
-    int soCount = 0;
-    for (Reflection::ActorSpecIter si(home, vm); si(); ++si) {
-      Reflection::ActorSpec s = si.actor();
+
+    void emitVarMap(std::ostream& os, int& varCount,
+                    Reflection::VarMapIter& vmi) {
       for (; vmi(); ++vmi, ++varCount) {
         Reflection::VarSpec& vs = vmi.spec();
         if (false) { }
@@ -335,6 +326,22 @@ namespace Gecode {
           emitSetVar(os, varCount, vs);
 #endif        
       }
+    }
+  }
+  
+  
+  void emitFlatzinc(Space* home, std::ostream& os) {
+    using namespace std;
+    Reflection::VarMap vm;
+    home->getVars(vm, false);
+    Reflection::VarMapIter vmi(vm);
+    int varCount = 0;
+    int soCount = 0;
+    emitVarMap(os,varCount,vmi);
+    for (Reflection::ActorSpecIter si(home, vm); si(); ++si) {
+      Reflection::ActorSpec s = si.actor();
+
+      emitVarMap(os,varCount,vmi);
 
       int soBase = soCount;
       for (int i=0; i<s.noOfArgs(); i++) {

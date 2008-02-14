@@ -116,6 +116,27 @@ namespace Gecode {
     
   }
   
+  void emitVarMap(std::ostream& os, int& varCount,
+                  Reflection::VarMapIter& vmi,
+                  Reflection::VarMap& vm) {
+    using namespace std;
+    for (; vmi(); ++vmi, ++varCount) {
+      Reflection::VarSpec& vs = vmi.spec();
+      os << "var ";
+      if (!vs.name().empty()) {
+        os << vs.name();
+      } else {
+        os << "_v" << varCount;
+      }
+      os << " = variable(\"" << vs.vti() << "\", ";
+      if (!vs.name().empty()) {
+        os << "\"" << vs.name() << "\", ";
+      }
+      emitArg(os, vs.dom(), vm);
+      os << ");" << endl;
+    }    
+  }
+  
   void emitJavaScript(Space* home, std::ostream& os) {
     using namespace std;
     Reflection::VarMap vm;
@@ -124,23 +145,11 @@ namespace Gecode {
     Reflection::VarMapIter vmi(vm);
     int varCount = 0;
     int soCount = 0;
+    emitVarMap(os,varCount,vmi,vm);
     for (Reflection::ActorSpecIter si(home, vm); si(); ++si) {
       Reflection::ActorSpec s = si.actor();
-      for (; vmi(); ++vmi, ++varCount) {
-        Reflection::VarSpec& vs = vmi.spec();
-        os << "var ";
-        if (!vs.name().empty()) {
-          os << vs.name();
-        } else {
-          os << "_v" << varCount;
-        }
-        os << " = variable(\"" << vs.vti() << "\", ";
-        if (!vs.name().empty()) {
-          os << "\"" << vs.name() << "\", ";
-        }
-        emitArg(os, vs.dom(), vm);
-        os << ");" << endl;
-      }
+      
+      emitVarMap(os,varCount,vmi,vm);
 
       int soBase = soCount;
       for (int i=0; i<s.noOfArgs(); i++) {
