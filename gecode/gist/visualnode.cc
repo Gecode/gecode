@@ -45,7 +45,8 @@ namespace Gecode { namespace Gist {
   const Shape VisualNode::unitShape(Extent(20), &singletonShape);
 
   VisualNode::VisualNode(int alternative, BestNode* b)
-  : SpaceNode(alternative, b), offset(0), dirty(true), hidden(false), marked(false)
+  : SpaceNode(alternative, b), offset(0), dirty(true), 
+    childrenLayoutDone(false), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
 #ifdef GECODE_GIST_EXPERIMENTAL
   , expanded(false), collapsed(false), realParent(NULL)
@@ -55,7 +56,8 @@ namespace Gecode { namespace Gist {
   {}
 
   VisualNode::VisualNode(Space* root, Better* b)
-  : SpaceNode(root, b), offset(0), dirty(true), hidden(false), marked(false)
+  : SpaceNode(root, b), offset(0), dirty(true), childrenLayoutDone(false), 
+    hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
 #ifdef GECODE_GIST_EXPERIMENTAL
   , expanded(false), collapsed(false), realParent(NULL)
@@ -103,6 +105,12 @@ namespace Gecode { namespace Gist {
 
   void
   VisualNode::setDirty(bool d) { dirty = d; }
+
+  bool
+  VisualNode::childrenLayoutIsDone(void) { return childrenLayoutDone; }
+
+  void
+  VisualNode::setChildrenLayoutDone(bool d) { childrenLayoutDone = d; }
 
   bool
   VisualNode::isMarked(void) { return marked; }

@@ -67,6 +67,7 @@ namespace Gecode { namespace Gist {
                                  QWidget* parent)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
+    , layoutMutex(QMutex::Recursive)
     , inspector(NULL), heatView(false)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), nextPit(0) {
@@ -129,6 +130,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::statusChanged(bool finished) {
     QMutexLocker locker(&mutex);
+    QMutexLocker layoutLocker(&layoutMutex);
     if (autoHideFailed) {
       root->hideFailed();
       update();
@@ -202,6 +204,7 @@ namespace Gecode { namespace Gist {
   void
   LayoutThread::run(void) {
     QMutexLocker locker(&t->mutex);
+    QMutexLocker layoutLocker(&t->layoutMutex);
     t->root->layout();
     BoundingBox bb = t->root->getBoundingBox();
     
@@ -680,39 +683,37 @@ namespace Gecode { namespace Gist {
   
   void
   TreeCanvasImpl::paintEvent(QPaintEvent* event) {
-    if (mutex.tryLock(50)) {
-      QPainter painter(this);
-      painter.setRenderHint(QPainter::Antialiasing);
+    QMutexLocker locker(&layoutMutex);
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
 
-      if (heatView) {
-        painter.setPen(Qt::white);
-        painter.drawText(QRect(0,5,40,15), Qt::AlignRight, tr("cold"));
-        painter.setPen(Qt::black);
-        // Draw legend
-        for (int i=0; i<180; i+=10) {
-          int heat = (240 + i) % 360;
-          painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-          painter.drawRect(45+i, 5, 10, 15);
-        }
-        painter.setPen(Qt::white);
-        painter.drawText(QRect(230,5,40,15), Qt::AlignLeft, tr("hot"));
-        painter.setPen(Qt::black);
+    if (heatView) {
+      painter.setPen(Qt::white);
+      painter.drawText(QRect(0,5,40,15), Qt::AlignRight, tr("cold"));
+      painter.setPen(Qt::black);
+      // Draw legend
+      for (int i=0; i<180; i+=10) {
+        int heat = (240 + i) % 360;
+        painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
+        painter.drawRect(45+i, 5, 10, 15);
       }
-
-      if (!root->isDirty()) {
-        BoundingBox bb = root->getBoundingBox();
-        QRect origClip = event->rect();
-        painter.translate(0, 30);
-        painter.scale(scale,scale);
-        painter.translate(xtrans, 0);
-        QRect clip(static_cast<int>(origClip.x()/scale-xtrans), static_cast<int>(origClip.y()/scale),
-                   static_cast<int>(origClip.width()/scale), static_cast<int>(origClip.height()/scale));
-        DrawingCursor dc(root, painter, heatView, clip);
-        PreorderNodeVisitor<DrawingCursor> v(dc);
-        while (v.next());    
-      }
-      mutex.unlock();
+      painter.setPen(Qt::white);
+      painter.drawText(QRect(230,5,40,15), Qt::AlignLeft, tr("hot"));
+      painter.setPen(Qt::black);
     }
+
+    BoundingBox bb = root->getBoundingBox();
+    QRect origClip = event->rect();
+    painter.translate(0, 30);
+    painter.scale(scale,scale);
+    painter.translate(xtrans, 0);
+    QRect clip(static_cast<int>(origClip.x()/scale-xtrans), 
+               static_cast<int>(origClip.y()/scale),
+               static_cast<int>(origClip.width()/scale), 
+               static_cast<int>(origClip.height()/scale));
+    DrawingCursor dc(root, painter, heatView, clip);
+    PreorderNodeVisitor<DrawingCursor> v(dc);
+    while (v.next());    
   }
 
   void

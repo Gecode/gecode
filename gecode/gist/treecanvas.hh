@@ -202,6 +202,8 @@ namespace Gecode {  namespace Gist {
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
+    /// Mutex for synchronizing layout and drawing
+    QMutex layoutMutex;
     /// Search engine thread
     SearcherThread searcher;
     /// Layout thread

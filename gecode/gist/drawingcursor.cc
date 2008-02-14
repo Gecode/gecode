@@ -77,6 +77,7 @@ namespace Gecode { namespace Gist {
   DrawingCursor::mayMoveDownwards(void) {
     return NodeCursor<VisualNode>::mayMoveDownwards() &&
            !node()->isHidden() &&
+           node()->childrenLayoutIsDone() &&
            !isClipped();
   }
 

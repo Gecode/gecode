@@ -87,6 +87,7 @@ namespace Gecode { namespace Gist {
       currentNode->setBoundingBox(shape->getBoundingBox());
       currentNode->setDirty(false);
     }
+    currentNode->setChildrenLayoutDone(true);
   }
   
   HideFailedCursor::HideFailedCursor(VisualNode* root) : NodeCursor<VisualNode>(root) {}
@@ -113,6 +114,7 @@ namespace Gecode { namespace Gist {
         !n->hasSolvedChildren() &&
         n->getNoOfOpenChildren() == 0) {
       n->setHidden(true);
+      n->setChildrenLayoutDone(false);
       n->dirtyUp();
 #ifdef GECODE_GIST_EXPERIMENTAL
       if(n->isExpanded() && !n->isCollapsed() && n->getParent()->isHidden()) {

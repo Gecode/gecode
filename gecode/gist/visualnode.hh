@@ -55,6 +55,8 @@ namespace Gecode { namespace Gist {
     int offset;
     /// Whether the node needs re-layout
     bool dirty;
+    /// Whether the layout of the node's children is completed
+    bool childrenLayoutDone;
     /// Whether the node is hidden
     bool hidden;
     /// Whether the node is marked
@@ -116,6 +118,10 @@ namespace Gecode { namespace Gist {
     bool isDirty(void);
     /// Mark node as dirty
     void setDirty(bool d);
+    /// Return whether the layout of the node's children has been completed
+    bool childrenLayoutIsDone(void);
+    /// Mark node whether the layout of the node's children has been completed
+    void setChildrenLayoutDone(bool d);
     /// Return whether node is marked
     bool isMarked(void);
     /// Set mark of this node
