@@ -158,6 +158,8 @@ namespace Gecode {  namespace Gist {
     bool getAutoZoom(void);
     /// Set refresh rate
     void setRefresh(int i);
+    /// Resize to the outer widget size if auto zoom is enabled
+    void resizeToOuter(void);
 
     /// Calls getVars(\a vm) on the space of the root node
     void getRootVars(Gecode::Reflection::VarMap& vm);
@@ -338,6 +340,9 @@ namespace Gecode {  namespace Gist {
 
     /// Stop search and wait until finished
     void finish(void);
+
+    /// Handle resize event
+    void resizeEvent(QResizeEvent*);
 
   Q_SIGNALS:
     void statusChanged(const Statistics&, bool);

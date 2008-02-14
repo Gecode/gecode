@@ -276,9 +276,9 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::zoomToFit(void) {
     QMutexLocker locker(&mutex);
-    BoundingBox bb;
-    bb = root->getBoundingBox();
     if (root != NULL) {
+      BoundingBox bb;
+      bb = root->getBoundingBox();
       QWidget* p = parentWidget();
       if (p) {
         double newXScale =
@@ -679,6 +679,12 @@ namespace Gecode { namespace Gist {
       }
     }
     return QWidget::event(event);
+  }
+  
+  void
+  TreeCanvasImpl::resizeToOuter(void) {
+    if (autoZoom)
+      zoomToFit();
   }
   
   void
@@ -1321,6 +1327,11 @@ namespace Gecode { namespace Gist {
 
     // enables on_<sender>_<signal>() mechanism
     QMetaObject::connectSlotsByName(this);
+  }
+
+  void
+  TreeCanvas::resizeEvent(QResizeEvent*) {
+    canvas->resizeToOuter();
   }
 
   void
