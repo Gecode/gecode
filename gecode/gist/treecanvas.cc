@@ -698,16 +698,18 @@ namespace Gecode { namespace Gist {
         painter.setPen(Qt::black);
       }
 
-      BoundingBox bb = root->getBoundingBox();
-      QRect origClip = event->rect();
-      painter.translate(0, 30);
-      painter.scale(scale,scale);
-      painter.translate(xtrans, 0);
-      QRect clip(static_cast<int>(origClip.x()/scale-xtrans), static_cast<int>(origClip.y()/scale),
-                 static_cast<int>(origClip.width()/scale), static_cast<int>(origClip.height()/scale));
-      DrawingCursor dc(root, painter, heatView, clip);
-      PreorderNodeVisitor<DrawingCursor> v(dc);
-      while (v.next());    
+      if (!root->isDirty()) {
+        BoundingBox bb = root->getBoundingBox();
+        QRect origClip = event->rect();
+        painter.translate(0, 30);
+        painter.scale(scale,scale);
+        painter.translate(xtrans, 0);
+        QRect clip(static_cast<int>(origClip.x()/scale-xtrans), static_cast<int>(origClip.y()/scale),
+                   static_cast<int>(origClip.width()/scale), static_cast<int>(origClip.height()/scale));
+        DrawingCursor dc(root, painter, heatView, clip);
+        PreorderNodeVisitor<DrawingCursor> v(dc);
+        while (v.next());    
+      }
       mutex.unlock();
     }
   }
