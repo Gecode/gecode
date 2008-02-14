@@ -403,6 +403,7 @@ namespace Gecode { namespace Gist {
     root->layout();
     
     emit statusChanged(stats, true);
+    emit currentNodeChanged(NULL, UNDETERMINED);
     update();
   }
 
