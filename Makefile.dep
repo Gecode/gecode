@@ -5170,18 +5170,19 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
 	./gecode/kernel/reflection.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
-	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
-	./gecode/set/exception.icc ./gecode/set/limits.icc ./gecode/set/propagator.icc \
-	./gecode/set/var-imp.icc ./gecode/set/var-imp/delta.icc ./gecode/set/var-imp/integerset.icc \
-	./gecode/set/var-imp/iter.icc ./gecode/set/var-imp/set.icc ./gecode/set/var/set.icc \
-	./gecode/set/view.icc ./gecode/set/view/complement.icc ./gecode/set/view/const.icc \
-	./gecode/set/view/offset.icc ./gecode/set/view/set.icc ./gecode/set/view/singleton.icc \
-	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
-	./gecode/support/config.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/macros.icc ./gecode/support/map.icc \
-	./gecode/support/marked-pointer.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
+	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
+	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
+	./gecode/set/limits.icc ./gecode/set/propagator.icc ./gecode/set/var-imp.icc \
+	./gecode/set/var-imp/delta.icc ./gecode/set/var-imp/integerset.icc ./gecode/set/var-imp/iter.icc \
+	./gecode/set/var-imp/set.icc ./gecode/set/var/set.icc ./gecode/set/view.icc \
+	./gecode/set/view/complement.icc ./gecode/set/view/const.icc ./gecode/set/view/offset.icc \
+	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
+	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
+	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
+	./gecode/support/macros.icc ./gecode/support/map.icc ./gecode/support/marked-pointer.icc \
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc 
 gecode/gist/textoutput$(OBJSUFFIX) gecode/gist/textoutput$(SBJSUFFIX): \
 	./gecode/gist/textoutput.hh 
 gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \

@@ -303,7 +303,6 @@ namespace Gecode {  namespace Gist {
     QAction* forwardTimeStep;
     QAction* backwardTimeStep;
     QAction* toggleDebug;
-    QAction* executeJavaScript;
 #endif
 
   public:
