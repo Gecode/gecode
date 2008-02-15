@@ -73,6 +73,7 @@ namespace Gecode { namespace Gist {
     , refresh(500), nextPit(0) {
       QMutexLocker locker(&mutex);
       root = new VisualNode(rootSpace, b);
+      root->layout();
       root->setMarked(true);
       currentNode = root;
       pathHead = root;
@@ -80,13 +81,13 @@ namespace Gecode { namespace Gist {
 
       setAutoFillBackground(true);
 
-      connect(&searcher, SIGNAL(update()), this, SLOT(update()));
+      connect(&searcher, SIGNAL(update(int,int)), this, 
+                         SLOT(layoutDone(int,int)));
       connect(&searcher, SIGNAL(statusChanged(bool)), this, 
               SLOT(statusChanged(bool)));
-      connect(&layouter, SIGNAL(done(int,int)),
-              this, SLOT(layoutDone(int,int)));
       
       qRegisterMetaType<Gecode::Gist::NodeStatus>("Gecode::Gist::NodeStatus");
+      update();
   }
   
   TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; }
@@ -96,7 +97,7 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::scaleTree(int scale0) {
-    QMutexLocker locker(&mutex);
+    QMutexLocker locker(&layoutMutex);
     BoundingBox bb;
     if (scale0<1)
       scale0 = 1;
@@ -116,9 +117,20 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::update(void) {
     QMutexLocker locker(&mutex);
-    layouter.layout(this);
+    layoutMutex.lock();
+    if (root != NULL) {
+      root->layout();
+      BoundingBox bb = root->getBoundingBox();
+
+      int w = static_cast<int>((bb.right-bb.left+20)*scale);
+      int h = static_cast<int>(40+bb.depth*38*scale);
+      xtrans = -bb.left+10;
+      resize(w,h);
+    }
     if (autoZoom)
       zoomToFit();
+    layoutMutex.unlock();
+    QWidget::update();
   }
 
   void
@@ -131,15 +143,6 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::statusChanged(bool finished) {
-    QMutexLocker locker(&mutex);
-    QMutexLocker layoutLocker(&layoutMutex);
-    if (autoHideFailed) {
-      root->hideFailed();
-      update();
-    }
-    
-    if (finished)
-      centerCurrentNode();
     emit statusChanged(stats, finished);
   }
 
@@ -150,7 +153,48 @@ namespace Gecode { namespace Gist {
     t = ti;
     start();
   }
-    
+  
+  void
+  SearcherThread::updateCanvas(void) {
+    t->layoutMutex.lock();
+    if (t->root == NULL)
+      return;
+
+    if (t->autoHideFailed) {
+      t->root->hideFailed();
+    }
+    t->root->layout();
+    BoundingBox bb = t->root->getBoundingBox();
+
+    int w = static_cast<int>((bb.right-bb.left+20)*t->scale);
+    int h = static_cast<int>(40+bb.depth*38*t->scale);
+    t->xtrans = -bb.left+10;
+
+    if (t->autoZoom) {
+      QWidget* p = t->parentWidget();
+      if (p) {
+        double newXScale =
+          static_cast<double>(p->width()) / (bb.right - bb.left + 20);
+        double newYScale =
+          static_cast<double>(p->height()) / (bb.depth * 38 + 40);
+
+        int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
+        if (scale0<1)
+          scale0 = 1;
+        if (scale0>400)
+          scale0 = 400;
+        t->scale = (static_cast<double>(scale0)) / 100.0;
+
+        w = static_cast<int>((bb.right-bb.left+20)*t->scale);
+        h = static_cast<int>(40+bb.depth*38*t->scale);
+
+        emit scaleChanged(scale0);
+      }
+    }
+    t->layoutMutex.unlock();
+    emit update(w,h);
+  }
+  
   void
   SearcherThread::run() {
     {
@@ -165,10 +209,8 @@ namespace Gecode { namespace Gist {
       while (!stck.empty() && !t->stopSearchFlag) {
         if (t->refresh > 0 && ++nodeCount > t->refresh) {
           node->dirtyUp();
-          t->mutex.unlock();
+          updateCanvas();
           emit statusChanged(false);
-          emit update();
-          t->mutex.lock();
           nodeCount = 0;
         }
         VisualNode* n = stck.top(); stck.pop();
@@ -184,34 +226,17 @@ namespace Gecode { namespace Gist {
         }
       }
       node->dirtyUp();
-      if (sol != NULL) {
-        t->setCurrentNode(sol);
-      }
       t->stopSearchFlag = false;
       t->mutex.unlock();
+      if (sol != NULL) {
+        t->setCurrentNode(sol);
+      } else {
+        t->setCurrentNode(node);
+      }
     }
-    emit update();
+    updateCanvas();
     emit statusChanged(true);
     t->centerCurrentNode();
-  }
-
-  void
-  LayoutThread::layout(TreeCanvasImpl* ti) {
-    t = ti;
-    start();
-  }
-
-  void
-  LayoutThread::run(void) {
-    QMutexLocker locker(&t->mutex);
-    QMutexLocker layoutLocker(&t->layoutMutex);
-    t->root->layout();
-    BoundingBox bb = t->root->getBoundingBox();
-    
-    int w = static_cast<int>((bb.right-bb.left+20)*t->scale);
-    int h = static_cast<int>(40+bb.depth*38*t->scale);
-    t->xtrans = -bb.left+10;
-    emit done(w,h);
   }
 
   void
@@ -268,6 +293,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::unhideAll(void) {
     QMutexLocker locker(&mutex);
+    QMutexLocker layoutLocker(&layoutMutex);
     currentNode->unhideAll();
     update();
     centerCurrentNode();
@@ -275,7 +301,7 @@ namespace Gecode { namespace Gist {
   
   void
   TreeCanvasImpl::zoomToFit(void) {
-    QMutexLocker locker(&mutex);
+    QMutexLocker locker(&layoutMutex);
     if (root != NULL) {
       BoundingBox bb;
       bb = root->getBoundingBox();
@@ -285,7 +311,6 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->width()) / (bb.right - bb.left + 20);
         double newYScale =
           static_cast<double>(p->height()) / (bb.depth * 38 + 40);
-
         scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
       }
     }
@@ -757,15 +782,14 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::setCurrentNode(VisualNode* n) {
     QMutexLocker locker(&mutex);
-    if (n != NULL && n != currentNode) {
+    if (n != NULL) {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
       NodeStatus status = n->getStatus();
       if(status != UNDETERMINED) {
         emit currentNodeChanged(n->getSpace(), status);
-      }
-      else {
+      } else {
         emit currentNodeChanged(NULL, status);
       }
       QWidget::update();
@@ -794,6 +818,10 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::setAutoZoom(bool b) {
     autoZoom = b;
+    if (autoZoom) {
+      std::cerr << "set autozoom\n";
+      zoomToFit();
+    }
   }
 
   bool
@@ -1305,6 +1333,8 @@ namespace Gecode { namespace Gist {
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
     connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
+    connect(&canvas->searcher, SIGNAL(scaleChanged(int)),
+            scaleBar, SLOT(setValue(int)));
     
 #ifdef GECODE_GIST_EXPERIMENTAL
     connect(timeBar, SIGNAL(valueChanged(int)), canvas, SLOT(markCurrentNode(int)));
@@ -1320,7 +1350,6 @@ namespace Gecode { namespace Gist {
     
     setLayout(layout);
 
-    canvas->searchOne();
     canvas->show();
 
     resize(500, 400);
@@ -1347,6 +1376,51 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::on_canvas_statusChanged(const Statistics& stats,
                                       bool finished) {
+    if (!finished) {
+      inspectCN->setEnabled(false);
+      reset->setEnabled(false);
+      navUp->setEnabled(false);
+      navDown->setEnabled(false);
+      navLeft->setEnabled(false);
+      navRight->setEnabled(false);
+      navRoot->setEnabled(false);
+
+      searchNext->setEnabled(false);
+      searchAll->setEnabled(false);
+      toggleHidden->setEnabled(false);
+      hideFailed->setEnabled(false);
+      unhideAll->setEnabled(false);
+      zoomToFit->setEnabled(false);
+      centerCN->setEnabled(false);
+      exportPostscript->setEnabled(false);
+      print->setEnabled(false);
+
+      setPath->setEnabled(false);
+      inspectPath->setEnabled(false);
+      addVisualisation->setEnabled(false);
+
+      toggleHeatView->setEnabled(false);
+      analyzeTree->setEnabled(false);
+    } else {
+      inspectCN->setEnabled(true);
+      reset->setEnabled(true);
+      navUp->setEnabled(true);
+      navLeft->setEnabled(true);
+      navRight->setEnabled(true);
+      navRoot->setEnabled(true);
+
+      zoomToFit->setEnabled(true);
+      centerCN->setEnabled(true);
+      exportPostscript->setEnabled(true);
+      print->setEnabled(true);
+
+      setPath->setEnabled(true);
+      inspectPath->setEnabled(true);
+      addVisualisation->setEnabled(true);
+
+      toggleHeatView->setEnabled(true);
+      analyzeTree->setEnabled(true);
+    }
     emit statusChanged(stats,finished);
   }
 

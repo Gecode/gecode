@@ -207,11 +207,10 @@ namespace Gecode { namespace Gist {
     connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
     
+    show();
     PreferencesDialog pd(this);
     c.setAutoHideFailed(pd.hideFailed);
-    c.setAutoZoom(pd.zoom);
-    
-    show();
+    c.setAutoZoom(pd.zoom);    
   }
 
   void

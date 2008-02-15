@@ -87,7 +87,8 @@ namespace Gecode { namespace Gist {
       currentNode->setBoundingBox(shape->getBoundingBox());
       currentNode->setDirty(false);
     }
-    currentNode->setChildrenLayoutDone(true);
+    if (currentNode->getNumberOfChildren() >= 1)
+      currentNode->setChildrenLayoutDone(true);
   }
   
   HideFailedCursor::HideFailedCursor(VisualNode* root) : NodeCursor<VisualNode>(root) {}

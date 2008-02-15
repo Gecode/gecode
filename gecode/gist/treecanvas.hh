@@ -54,25 +54,15 @@ namespace Gecode {  namespace Gist {
     VisualNode* node;
     bool a;
     TreeCanvasImpl* t;
+    void updateCanvas(void);
   public:
     void search(VisualNode* n, bool all, TreeCanvasImpl* ti);
     
   Q_SIGNALS:
-    void update(void);
+    void update(int w, int h);
     void statusChanged(bool);
+    void scaleChanged(int);
     
-  protected:
-    void run(void);
-  };
-
-  class LayoutThread : public QThread {
-    Q_OBJECT
-  private:
-    TreeCanvasImpl* t;
-  public:
-    void layout(TreeCanvasImpl* ti);
-  Q_SIGNALS:
-    void done(int,int);
   protected:
     void run(void);
   };
@@ -82,7 +72,7 @@ namespace Gecode {  namespace Gist {
     Q_OBJECT
 
     friend class SearcherThread;
-    friend class LayoutThread;
+    friend class TreeCanvas;
 
   public:
     /// Constructor
@@ -208,8 +198,6 @@ namespace Gecode {  namespace Gist {
     QMutex layoutMutex;
     /// Search engine thread
     SearcherThread searcher;
-    /// Layout thread
-    LayoutThread layouter;
     /// Flag signalling the search to stop
     bool stopSearchFlag;
     /// The root node of the tree
