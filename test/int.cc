@@ -487,8 +487,7 @@ if (!(T)) {                                                     \
         TestSpace* s = new TestSpace(arity,dom,false,this);
         TestSpace* sc = NULL;
         s->post();
-        int choices = 3 + opt.reflection;
-        switch (Base::rand(choices)) {
+        switch (Base::rand(3)) {
           case 0:
 #ifndef GECODE_GIST_EXPERIMENTAL
             if (opt.log)
@@ -519,16 +518,6 @@ if (!(T)) {                                                     \
               sc = s; s = NULL;
             }
             break;
-          case 3:
-#ifndef GECODE_GIST_EXPERIMENTAL
-            if (opt.log)
-              olog << ind(3) << "Reflection copy" << std::endl;
-#endif
-            sc = s->cloneWithReflection();
-            if (sc == s)
-              s = NULL;
-            CHECK_TEST(sc != NULL, "Reflection error");
-            break;
           default: assert(false);
         }
         sc->assign(a);
@@ -539,6 +528,30 @@ if (!(T)) {                                                     \
           CHECK_TEST(sc->failed(), "Solved on non-solution");
         }
         delete s; delete sc;
+      }
+      if (opt.reflection) {
+        START_TEST("Assignment (after posting + reflection)");
+        {
+          TestSpace* s = new TestSpace(arity,dom,false,this);
+          TestSpace* sc = NULL;
+          s->post();
+  #ifndef GECODE_GIST_EXPERIMENTAL
+          if (opt.log)
+            olog << ind(3) << "Reflection copy" << std::endl;
+  #endif
+          sc = s->cloneWithReflection();
+          if (sc == s)
+            s = NULL;
+          CHECK_TEST(sc != NULL, "Reflection error");
+          sc->assign(a);
+          if (sol) {
+            CHECK_TEST(!sc->failed(), "Failed on solution");
+            CHECK_TEST(sc->propagators()==0, "No subsumption");
+          } else {
+            CHECK_TEST(sc->failed(), "Solved on non-solution");
+          }
+          delete s; delete sc;
+        }
       }
       START_TEST("Partial assignment (after posting)");
       {

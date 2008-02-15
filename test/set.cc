@@ -567,8 +567,7 @@ if (!(T)) {                                                     \
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
         SetTestSpace* sc = NULL;
         s->post();
-        int choices = 3 + opt.reflection;
-        switch (Base::rand(choices)) {
+        switch (Base::rand(3)) {
           case 0:
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
@@ -593,14 +592,6 @@ if (!(T)) {                                                     \
               sc = s; s = NULL;
             }
             break;
-          case 3:
-            if (opt.log)
-              olog << ind(3) << "Reflection copy" << std::endl;
-            sc = s->cloneWithReflection();
-            if (sc == s)
-              s = NULL;
-            CHECK_TEST(sc != NULL, "Reflection error");
-            break;
           default: assert(false);          
         }
         sc->assign(a);
@@ -611,6 +602,28 @@ if (!(T)) {                                                     \
           CHECK_TEST(sc->failed(), "Solved on non-solution");
         }
         delete s; delete sc;
+      }
+      if (opt.reflection) {
+        START_TEST("Assignment (after posting + reflection)");
+        {
+          SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
+          SetTestSpace* sc = NULL;
+          s->post();
+          if (opt.log)
+            olog << ind(3) << "Reflection copy" << std::endl;
+          sc = s->cloneWithReflection();
+          if (sc == s)
+            s = NULL;
+          CHECK_TEST(sc != NULL, "Reflection error");
+          sc->assign(a);
+          if (is_sol) {
+            CHECK_TEST(!sc->failed(), "Failed on solution");
+            CHECK_TEST(sc->propagators()==0, "No subsumption");
+          } else {
+            CHECK_TEST(sc->failed(), "Solved on non-solution");
+          }
+          delete s; delete sc;
+        }
       }
       START_TEST("Assignment (before posting)");
       {
