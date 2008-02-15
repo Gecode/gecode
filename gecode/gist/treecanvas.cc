@@ -819,7 +819,6 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::setAutoZoom(bool b) {
     autoZoom = b;
     if (autoZoom) {
-      std::cerr << "set autozoom\n";
       zoomToFit();
     }
   }
