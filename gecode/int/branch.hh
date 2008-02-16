@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       View x, int n) const;
+                       int alt, View x, int n) const;
   };
 
   /**
@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       View x, int n) const;
+                       int alt, View x, int n) const;
   };
 
   /**
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       View x, int n) const;
+                       int alt, View x, int n) const;
   };
 
   /**
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       View x, int n) const;
+                       int alt, View x, int n) const;
   };
 
   /**
@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       View x, int n) const;
+                       int alt, View x, int n) const;
   };
 
   /// Create branchings for a given view selection strategy \a SelView
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       View x, NoValue n) const;
+                       int alt, View x, NoValue n) const;
   };
 
   /**
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       View x, NoValue n) const;
+                       int alt, View x, NoValue n) const;
   };
 
 

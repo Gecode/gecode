@@ -70,8 +70,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
-                    Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                    CpltSetView x, int n) const;
+                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
+                       int alt, CpltSetView x, int n) const;
   };
 
   /**
@@ -92,8 +92,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
-                    Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                    CpltSetView x, int n) const;
+                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
+                       int alt, CpltSetView x, int n) const;
   };
 
   /// Create branchings for a given view selection strategy \a ViewSel

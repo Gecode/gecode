@@ -343,7 +343,7 @@ namespace Gecode {
     Reflection::BranchingSpec bs(d);
     const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
     ValSel vs;
-    vs.branchingSpec(home, m, bs, x[pvd->start()+pvd->pos()], pvd->val());
+    vs.branchingSpec(home, m, bs, 2, x[pvd->start()+pvd->pos()], pvd->val());
     return bs;
   }
 
@@ -438,7 +438,7 @@ namespace Gecode {
     Reflection::BranchingSpec bs(d);
     const PosValDesc<Val,1>* pvd = static_cast<const PosValDesc<Val,1>*>(d);
     ValSel vs;
-    vs.branchingSpec(home, m, bs, x[pvd->start()+pvd->pos()], pvd->val());
+    vs.branchingSpec(home, m, bs, 1, x[pvd->start()+pvd->pos()], pvd->val());
     return bs;
   }
 

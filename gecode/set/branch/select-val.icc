@@ -59,17 +59,20 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline void
   ValMin::branchingSpec(const Space* home,
                         Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                        SetView x, int n) const {
+                        int alt, SetView x, int n) const {
+    assert(alt <= 2);
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
     (*a0)[0] = Reflection::Arg::newString((s.str()+" in ").c_str());
     (*a0)[1] = x.spec(home, m);
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-    (*a1)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());
-    (*a1)[1] = x.spec(home, m);
-    bs[1] = a1;
+    if (alt == 2) {
+      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
+      (*a1)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());
+      (*a1)[1] = x.spec(home, m);
+      bs[1] = a1;
+    }
   }
 
   forceinline int
@@ -93,17 +96,20 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline void
   ValMax::branchingSpec(const Space* home,
                         Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                        SetView x, int n) const {
+                        int alt, SetView x, int n) const {
+    assert(alt <= 2);
     Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
     std::stringstream s;
     s << n;
     (*a0)[0] = Reflection::Arg::newString((s.str()+" in ").c_str());
     (*a0)[1] = x.spec(home, m);
     bs[0] = a0;
-    Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-    (*a1)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());
-    (*a1)[1] = x.spec(home, m);
-    bs[1] = a1;
+    if (alt == 2) {
+      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
+      (*a1)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());
+      (*a1)[1] = x.spec(home, m);
+      bs[1] = a1;
+    }
   }
 
   template <class SelView>
