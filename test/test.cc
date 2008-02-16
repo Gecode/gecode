@@ -114,7 +114,8 @@ namespace Test {
   }
 
   std::vector<std::pair<bool, const char*> > testpat;
-    
+  const char* startFrom = NULL;
+  
   void
   Options::parse(int argc, char* argv[]) {
     int i = 1;
@@ -138,6 +139,8 @@ namespace Test {
                   << "\t\tprefixing the pattern with \"-\" negates the pattern"
                   << std::endl
                   << "\t\tmultiple pattern-options may be given" << std::endl
+                  << "\t-start (string) default: (none)" << std::endl
+                  << "\t\tsimple pattern for the first test to run" << std::endl
                   << "\t-log"
                   << std::endl
                   << "\t\tlog execution of tests"
@@ -173,6 +176,9 @@ namespace Test {
           testpat.push_back(std::make_pair(true, argv[i] + 1));
         else
           testpat.push_back(std::make_pair(false, argv[i]));
+      } else if (!strcmp(argv[i],"-start")) {
+        if (++i == argc) goto missing;
+        startFrom = argv[i];
       } else if (!strcmp(argv[i],"-log")) {
         log = true;
       } else if (!strcmp(argv[i],"-stop")) {
@@ -211,8 +217,16 @@ main(int argc, char* argv[]) {
   opt.parse(argc, argv);
   Base::rand.seed(opt.seed);
 
+  bool started = startFrom == NULL ? true : false;
+
   for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
     try {
+      if (!started) {
+        if (t->name().find(startFrom) != std::string::npos)
+          started = true;
+        else
+          goto next;
+      }
       if (testpat.size() != 0) {
         bool match_found   = false;
         bool some_positive = false;
