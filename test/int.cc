@@ -220,9 +220,9 @@ namespace Test { namespace Int {
     bool failed(void) {
       if (opt.log) {
 #ifdef GECODE_GIST_EXPERIMENTAL
-        olog << "tree.addFixpoint();" << std::endl;
-        olog << "tree.navDown();" << std::endl;
-        olog << "tree.inspectCurrentNode();" << std::endl;
+        olog << "tree.addFixpoint();";
+        olog << "tree.navDown();";
+        olog << "tree.inspectCurrentNode();";
         olog << "tree.expandCurrentNode();" << std::endl;
         return status() == Gecode::SS_FAILED;
 #else
@@ -365,7 +365,7 @@ namespace Test { namespace Int {
           olog << ind(3) << "Testing fixpoint on copy" << std::endl;
 #else
         if (opt.log)
-          olog << "tree.addChild(\"x0\",IRT_LQ," << x[0].max() << ");" << std::endl;
+          olog << "// ";
 #endif
         c->post();
         if (c->failed()) {
@@ -378,6 +378,10 @@ namespace Test { namespace Int {
         if (reified && (b.size() != c->b.size())) {
           delete c; return false;
         }
+#ifdef GECODE_GIST_EXPERIMENTAL
+        if (opt.log)
+          olog << "// ";
+#endif
 #ifndef GECODE_GIST_EXPERIMENTAL
         if (opt.log)
           olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
