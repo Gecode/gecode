@@ -149,6 +149,21 @@ namespace Test { namespace Int {
        }
      };
    
+     /// Test for linear equality
+     class LinEqF : public Test {
+     public:
+       /// Create and register test
+       LinEqF(void) : Test("MiniModel::Lin::Eq::F",2,-2,2,false) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (2*x[0]+2) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::post(home, Gecode::post(home, 2*x[0]+2) == x[1]);
+       }
+     };
+   
      /// Test for linear inequality
      class LinGr : public Test {
      public:
@@ -499,6 +514,7 @@ namespace Test { namespace Int {
      LinEqC lineqc;
      LinEqD lineqd;
      LinEqE lineqe;
+     LinEqF lineqf;
    
      LinGr lingr;
      LinLe linle;

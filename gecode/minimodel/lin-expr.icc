@@ -193,7 +193,7 @@ namespace Gecode { namespace MiniModel {
     GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n+1);
     (void) ax->fill(ts,0,sign);
     int min, max;
-    Int::Linear::estimate(&ts[0],n,sign*-c,min,max);
+    Int::Linear::estimate(&ts[0],n,sign*c,min,max);
     IntVar x(home, min, max);
     ts[n].x = x; ts[n].a = -1;
     Int::Linear::post(home, ts, n+1, IRT_EQ, sign*-c, icl);
@@ -206,7 +206,7 @@ namespace Gecode { namespace MiniModel {
     GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n);
     (void) ax->fill(ts,0,sign);
     int min, max;
-    Int::Linear::estimate(&ts[0],n,sign*-c,min,max);
+    Int::Linear::estimate(&ts[0],n,sign*c,min,max);
     IntVar x(home, min, max);
     Int::Linear::post(home, ts, n, IRT_EQ, x, sign*-c, icl);
     return x;
