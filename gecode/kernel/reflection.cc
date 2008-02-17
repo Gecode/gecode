@@ -856,12 +856,13 @@ namespace Gecode { namespace Reflection {
   }
 
   ActorSpecIter::ActorSpecIter(const Space* s0, VarMap& m0)
-  : m(&m0), s(s0), active(s0->pc.p.active), 
+  : m(&m0), s(s0),
+    active(s0->pc.p.active == NULL ?
+           &s->pc.p.queue[PC_MAX] : s0->pc.p.active),
+    cur(active),
     isBranching(false) {
-    if (s->stable())
+    if (s->stable() && !s->failed())
       cur = &s->a_actors;
-    else
-      cur = active;
     ++(*this);
   }
 
