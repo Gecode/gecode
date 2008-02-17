@@ -493,23 +493,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     return es;
   }
 
-  namespace {
-    template <class View>
-    struct SchedulingModEvent {
-      static const ModEvent me = ME_INT_BND;
-    };
-    template <>
-    struct SchedulingModEvent<BoolView> {
-      static const ModEvent me = ME_BOOL_VAL;
-    };
-  }
-
   template <class View>
   forceinline
   LayeredGraph<View>::LayeredGraph(Space* home, ViewArray<View>& x0, DFA& d)
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
-    ModEvent me = SchedulingModEvent<View>::me;
+    ModEvent me = ME_INT_BND;
     for (int i=x.size(); i--; )
       if (x[i].assigned()) {
         me = ME_INT_VAL;
@@ -517,6 +506,18 @@ namespace Gecode { namespace Int { namespace Extensional {
         x[i].subscribe(home, new (home) Index(home,this,c,i));
       }
     View::schedule(home,this,me);
+    this->force(home);
+  }
+
+  template <>
+  forceinline
+  LayeredGraph<BoolView>::LayeredGraph(Space* home, ViewArray<BoolView>& x0,
+                                       DFA& d)
+    : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
+    assert(x.size() > 0);
+    for (int i=x.size(); i--; )
+      x[i].subscribe(home, new (home) Index(home,this,c,i));
+    BoolView::schedule(home,this,ME_BOOL_VAL);
     this->force(home);
   }
 
