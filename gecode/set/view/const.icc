@@ -85,8 +85,10 @@ namespace Gecode { namespace Set {
   ConstantView::ConstantView(void) : ranges(NULL), size(0), domSize(0) {}
 
   forceinline
-  ConstantView::ConstantView(Space* home, const IntSet& dom)
-    : ranges(NULL), size(dom.size()), domSize(0) {
+  void
+  ConstantView::init(Space* home, const IntSet& dom) {
+    size = dom.size();
+    domSize = 0;
     if (size > 0) {
       ranges = static_cast<int*>(home->alloc(2*size*sizeof(int)));
       IntSetRanges dr(dom);
@@ -96,17 +98,23 @@ namespace Gecode { namespace Set {
         ranges[i+1] = max;
         domSize += (max-min+1);
       }
+    } else {
+      ranges = NULL;
     }
+  }
+
+  forceinline
+  ConstantView::ConstantView(Space* home, const IntSet& dom) {
+    init(home, dom);
   }
 
   forceinline
   ConstantView::ConstantView(Space* home,
                              const Reflection::VarMap&,
-                             Reflection::Arg* arg)
-   : ranges(NULL), size(0), domSize(0) {
-    Reflection::IntArrayArgRanges r(arg->toIntArray());      
+                             Reflection::Arg* arg) {
+    Reflection::IntArrayArgRanges r(arg->toIntArray());
     IntSet is(r);
-    ConstantView(home, is);
+    init(home, is);
   }
 
   forceinline bool

@@ -38,7 +38,6 @@
  */
 
 #include "test/int.hh"
-#include "gecode/serialization.hh"
 
 #include <algorithm>
 
@@ -138,7 +137,6 @@ namespace Test { namespace Int {
     }
 
     TestSpace* cloneWithReflection(void) {
-#ifdef GECODE_HAS_SERIALIZATION
       TestSpace* c = new TestSpace(x.size(), d, reified, test);
       Gecode::Reflection::VarMap vm;
       vm.putArray(this, x, "x");
@@ -185,11 +183,6 @@ namespace Test { namespace Int {
           return this;
         return static_cast<TestSpace*>(clone());
       }
-#else
-      if (status() == Gecode::SS_FAILED)
-        return this;
-      return static_cast<TestSpace*>(clone());
-#endif	
     }
 
     /// Test whether all variables are assigned

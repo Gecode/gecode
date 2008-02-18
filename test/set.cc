@@ -41,10 +41,6 @@
 
 #include "test/set.hh"
 
-#ifdef GECODE_HAS_SERIALIZATION
-#include "gecode/serialization.hh"
-#endif
-
 #include <algorithm>
 
 namespace Test { namespace Set {
@@ -181,7 +177,6 @@ namespace Test { namespace Set {
     }
 
     SetTestSpace* cloneWithReflection(void) {
-#ifdef GECODE_HAS_SERIALIZATION
       SetTestSpace* c = new SetTestSpace(x.size(), d, withInt, reified, test);
       Gecode::Reflection::VarMap vm;
       vm.putArray(this, x, "x");
@@ -229,11 +224,6 @@ namespace Test { namespace Set {
           return this;
         return static_cast<SetTestSpace*>(clone());
       }
-#else
-      if (status() == Gecode::SS_FAILED)
-        return this;
-      return static_cast<SetTestSpace*>(clone());
-#endif
     }
 
     /// Post propagator
