@@ -120,6 +120,7 @@ namespace Gecode {
       }
       break;
     case INT_VAR_DEGREE_MIN:
+    case INT_VAR_SIZE_DEGREE_MAX:
       switch (vals) {
       case INT_VAL_MIN:
       case INT_VAL_MED:
@@ -141,6 +142,7 @@ namespace Gecode {
       }
       break;
     case INT_VAR_DEGREE_MAX:
+    case INT_VAR_SIZE_DEGREE_MIN:
       switch (vals) {
       case INT_VAL_MIN:
       case INT_VAL_MED:
