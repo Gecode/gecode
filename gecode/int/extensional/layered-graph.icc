@@ -500,11 +500,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(x.size() > 0);
     ModEvent me = ME_INT_BND;
     for (int i=x.size(); i--; )
-      if (x[i].assigned()) {
+      if (x[i].assigned())
         me = ME_INT_VAL;
-      } else {
+      else
         x[i].subscribe(home, new (home) Index(home,this,c,i));
-      }
     View::schedule(home,this,me);
     this->force(home);
   }
@@ -515,9 +514,14 @@ namespace Gecode { namespace Int { namespace Extensional {
                                        DFA& d)
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
+    bool schedule = false;
     for (int i=x.size(); i--; )
-      x[i].subscribe(home, new (home) Index(home,this,c,i));
-    BoolView::schedule(home,this,ME_BOOL_VAL);
+      if (x[i].assigned())
+        schedule = true;
+      else
+        x[i].subscribe(home, new (home) Index(home,this,c,i));
+    if (schedule)
+      BoolView::schedule(home,this,ME_BOOL_VAL);
     this->force(home);
   }
 
