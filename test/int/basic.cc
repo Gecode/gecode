@@ -47,6 +47,22 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
+     /// Test whether empty arrays work
+     class Empty : public Test {
+     public:
+       /// Initialize test
+       Empty(void) : Test("Empty",0,-3,3,false) {}
+       /// Check whether \a x is a solution
+       virtual bool solution(const Assignment&) const {
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray&) {
+         Gecode::IntVar x(home,0,0);
+         Gecode::rel(home, x, Gecode::IRT_EQ, 1);
+       }
+     };
+   
      /// Test whether testing infrastructure for integer variables works
      class Basic : public Test {
      public:
@@ -67,6 +83,7 @@ namespace Test { namespace Int {
        }
      };
    
+     Empty e;
      Basic b;
      //@}
    
