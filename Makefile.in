@@ -1372,7 +1372,7 @@ doc-apple: doc
 # Installation
 #
 
-ifeq "@HAVE_PKGCONFIG@" "yes"
+ifeq "@HAS_PKGCONFIG@" "yes"
 PKGCONFIGFILES = gecode.pc gecode-search.pc gecode-minimodel.pc gecode-serialization.pc
 else
 PKGCONFIGFILES =
