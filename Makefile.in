@@ -795,7 +795,8 @@ CPLTSETTESTSRC =
 endif
 
 BRANCHTESTSRC0 = \
-	test/branch.cc test/branch/int.cc test/branch/bool.cc 
+	test/branch.cc test/branch/int.cc test/branch/bool.cc \
+	test/branch/set.cc test/branch/cpltset.cc
 
 SEARCHTESTSRC0 = \
 	test/search.cc
