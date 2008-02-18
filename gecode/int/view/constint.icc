@@ -351,11 +351,11 @@ namespace Gecode {
 
     forceinline bool
     ViewRanges<ConstIntView>::operator()(void) const {
-      return n < Limits::max;
+      return n <= Limits::max;
     }
     forceinline void
     ViewRanges<ConstIntView>::operator++(void) {
-      n = Limits::max;
+      n = Limits::max+1;
     }
 
     forceinline int
