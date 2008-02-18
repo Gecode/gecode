@@ -668,6 +668,29 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
+      if (opt.reflection && reified) {
+        START_TEST("Assignment reified (after posting + reflection)");
+        {
+          SetTestSpace* s = new SetTestSpace(arity,lub,withInt,true,this);
+          SetTestSpace* sc = NULL;
+          s->post();
+          if (opt.log)
+            olog << ind(3) << "Reflection copy" << std::endl;
+          sc = s->cloneWithReflection();
+          if (sc == s)
+            s = NULL;
+          CHECK_TEST(sc != NULL, "Reflection error");
+          sc->assign(a);
+          CHECK_TEST(!sc->failed(), "Failed");
+          CHECK_TEST(sc->propagators()==0, "No subsumption");
+          if (is_sol) {
+            CHECK_TEST(sc->b.val()==1, "Zero on solution");
+          } else {
+            CHECK_TEST(sc->b.val()==0, "One on non-solution");
+          }
+          delete s; delete sc;
+        }
+      }
       START_TEST("Prune");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,false,this);
