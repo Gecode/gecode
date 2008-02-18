@@ -63,9 +63,8 @@ public :
    *  @param ns The number of scope i.e. the number of quantifier alternations in the prefix.
    *  @param firstQ Must be set to true if the first quantifier is universal, false otherwise.
    *  @param nv Array of integer which contains the number of variables by scope.
-   *  @param prop Propagation power (0 = UW, 1 = W, 2 = S, 3 = US)
    */
-  QECODE_EXPORT Implicative(int ns,bool firstQ,int* nv, int prop); 
+  QECODE_EXPORT Implicative(int ns,bool firstQ,int* nv); 
 
   /** Copy constructor for a restricted-quantified space.
    *  @param im The space we want to copy.

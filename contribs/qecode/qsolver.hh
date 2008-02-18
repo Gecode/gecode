@@ -48,7 +48,7 @@ private :
     QSpace* sp;
     int* nbRanges;
     BranchingHeuristic* bh;
-    ScoreAttribuer* eval;
+    VariableHeuristic* eval;
     valueHeuristic* valEval;
     bool rSolve(QSpace* qs,unsigned long int& nodes, unsigned long int& propsteps, int curvar);
 public :
@@ -58,7 +58,7 @@ public :
         *  @param sp The quantified space to be solved.
         *  @param ev The score attribuer ("evaluator") that will be used by the branching heuristic.
         */
-        QECODE_EXPORT QSolver(QSpace* sp, ScoreAttribuer* ev,valueHeuristic* ve);
+        QECODE_EXPORT QSolver(QSpace* sp, VariableHeuristic* ev,valueHeuristic* ve);
     
     
     /** \brief  Solves the quantified space.

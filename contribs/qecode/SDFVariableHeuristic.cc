@@ -1,4 +1,4 @@
-/*****************************************************************[scoreSDF.cc]
+/*****************************************************************[SDFVariableHeuristic.cc]
 Copyright (c) 2007, Universite d'Orleans - Jeremie Vautard, Marco Benedetti,
 Arnaud Lallouet.
 
@@ -20,9 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 *****************************************************************************/
-#include "scoreSDF.hh"
+#include "SDFVariableHeuristic.hh"
 
-int sdf::score(QSpace* qs, int var) {
+int SmallestDomainFirst::score(QSpace* qs, int var) {
     switch (qs->type_of_v[var]) {
         case VTYPE_BOOL : 
             return 2;

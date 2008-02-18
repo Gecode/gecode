@@ -177,10 +177,10 @@ public:
 
 
 
-/** \brief Base class for score attribuers.
- Score attribuers are used by the branching heuristic to define the current score of each variable, and branch on the variable which have the biggest score.
+/** \brief Base class for variable heuristics.
+ Variable heuristics are used by the branching heuristic to define the current score of each variable, and branch on the variable which have the biggest score.
  */
-class ScoreAttribuer {    
+class VariableHeuristic {    
 public:
 
   /** \brief Returns the score of a variable.
@@ -210,7 +210,7 @@ private :
   stackint touched;
   int* score;
   int curHeap;
-  ScoreAttribuer* eval;
+  VariableHeuristic* eval;
 
 public : 
       QECODE_EXPORT void updateVar(int pos, QSpace* qs);
@@ -218,9 +218,9 @@ public :
   /** \brief Constructor for a branching heuristic.
    *  constructor for a branching heuristic on a quantified space, using a score attribuer.
    *  @param qs The quantified space the branching heuristic is for.
-   *  @param ev the score attribuer this branching heuristic will use to determine the next variable
+   *  @param ev the variable heuristic this branching heuristic will use to determine the next variable
    */
-  QECODE_EXPORT BranchingHeuristic(QSpace* qs, ScoreAttribuer* ev);
+  QECODE_EXPORT BranchingHeuristic(QSpace* qs, VariableHeuristic* ev);
 
   /** Returns the next variable to branch on.
    * @param qs The current quantified space on which we are searching (must be a clone, possibly cloned, propagated and assigned multiple times of the quantified space given at the construction.)

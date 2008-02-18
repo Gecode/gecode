@@ -25,7 +25,7 @@ THE SOFTWARE.
 #include "implicative.hh"
 
 
-QSolver::QSolver(QSpace* qs, ScoreAttribuer* ev, valueHeuristic* ve) {
+QSolver::QSolver(QSpace* qs, VariableHeuristic* ev, valueHeuristic* ve) {
     debug=false;
     eval=ev;
     valEval = ve;

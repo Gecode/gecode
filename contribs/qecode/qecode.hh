@@ -38,7 +38,7 @@ THE SOFTWARE.
 
 #else
 
-#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
+#ifdef GCC_HASCLASSVISIBILITY
 
 #define QECODE_VTABLE_EXPORT __attribute__ ((visibility("default")))
 #define QECODE_EXPORT __attribute__ ((visibility("default")))
@@ -49,5 +49,8 @@ THE SOFTWARE.
 
 #endif
 #endif
+
+#define QECODE_EXISTENTIAL false
+#define QECODE_UNIVERSAL true
 
 #endif

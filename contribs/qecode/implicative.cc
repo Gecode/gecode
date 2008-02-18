@@ -23,7 +23,7 @@ THE SOFTWARE.
 #include "implicative.hh"
 #include "myDom.cc"
 
-Implicative::Implicative(int ns,bool firstQ,int* nv, int prop) : QSpace() {
+Implicative::Implicative(int ns,bool firstQ,int* nv) : QSpace() {
     n=0;
     for (int i=0;i<ns;i++) {
         n += nv[i];
@@ -56,7 +56,7 @@ Implicative::Implicative(int ns,bool firstQ,int* nv, int prop) : QSpace() {
     varInitialised=new bool[n];
     for (unsigned int i=0;i<n;i++) varInitialised[i]=false;
     currentDeclareSpace=0;
-    prop_power=prop;
+    prop_power=2;
 }
 
 
