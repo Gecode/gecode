@@ -167,6 +167,21 @@ namespace Test { namespace Int {
     return "NONE";
   }
   
+  inline std::string 
+  Test::str(Gecode::BoolOpType bot) {
+    using namespace Gecode;
+    switch (bot) {
+    case BOT_AND: return "And";
+    case BOT_OR:  return "Or";
+    case BOT_IMP: return "Imp";
+    case BOT_EQV: return "Eqv";
+    case BOT_XOR: return "Xor";
+    default: GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return "NONE";
+  }
+
   inline
   std::string
   Test::str(int i) {
@@ -178,13 +193,14 @@ namespace Test { namespace Int {
   template<class T>
   inline bool
   Test::cmp(T x, Gecode::IntRelType r, T y) {
+    using namespace Gecode;
     switch (r) {
-    case Gecode::IRT_EQ: return x == y;
-    case Gecode::IRT_NQ: return x != y;
-    case Gecode::IRT_LQ: return x <= y;
-    case Gecode::IRT_LE: return x < y;
-    case Gecode::IRT_GR: return x > y;
-    case Gecode::IRT_GQ: return x >= y;
+    case IRT_EQ: return x == y;
+    case IRT_NQ: return x != y;
+    case IRT_LQ: return x <= y;
+    case IRT_LE: return x < y;
+    case IRT_GR: return x > y;
+    case IRT_GQ: return x >= y;
     default: ;
     }
     return false;
@@ -222,6 +238,22 @@ namespace Test { namespace Int {
   inline Gecode::IntRelType
   IntRelTypes::irt(void) const {
     return irts[i];
+  }
+
+  inline
+  BoolOpTypes::BoolOpTypes(void) 
+    : i(sizeof(bots)/sizeof(Gecode::BoolOpType)-1) {}
+  inline bool 
+  BoolOpTypes::operator()(void) const {
+    return i>=0;
+  }
+  inline void 
+  BoolOpTypes::operator++(void) {
+    i--;
+  }
+  inline Gecode::BoolOpType
+  BoolOpTypes::bot(void) const {
+    return bots[i];
   }
 
 }}

@@ -179,6 +179,8 @@ namespace Test {
       static std::string str(Gecode::IntConLevel icl);
       /// Map integer relation to string
       static std::string str(Gecode::IntRelType pk);
+      /// Map Boolean operation to string
+      static std::string str(Gecode::BoolOpType bot);
       /// Map integer to string
       static std::string str(int i);
       //@}
@@ -224,6 +226,24 @@ namespace Test {
       void operator++(void);
       /// Return current relation type
       Gecode::IntRelType irt(void) const;
+    };
+    
+    /// Iterator for Boolean operation types
+    class BoolOpTypes {
+    private:
+      /// Array of operation types
+      static const Gecode::BoolOpType bots[5];
+      /// Current position in operation type array
+      int i; 
+    public:
+      /// Initialize iterator
+      BoolOpTypes(void);
+      /// Test whether iterator is done
+      bool operator()(void) const;
+      /// Increment to next operation type
+      void operator++(void);
+      /// Return current operation type
+      Gecode::BoolOpType bot(void) const;
     };
     
   }

@@ -43,201 +43,150 @@ namespace Test { namespace Int {
 
    /// Tests for Boolean constraints
    namespace Bool {
-   
+
+     inline int
+     check(int x0, Gecode::BoolOpType op, int x1) {
+       switch (op) {
+       case Gecode::BOT_AND: return x0 & x1;
+       case Gecode::BOT_OR:  return x0 | x1;
+       case Gecode::BOT_IMP: return !x0 | x1;
+       case Gecode::BOT_EQV: return x0 == x1;
+       case Gecode::BOT_XOR: return x0 != x1;
+       default: GECODE_NEVER;
+       }
+       GECODE_NEVER;
+       return 0;
+     }
+
      /**
       * \defgroup TaskTestIntBool Boolean constraints
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for Boolean conjunction
-     class And : public Test {
+     /// Test for binary Boolean operation
+     class BinOp : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       And(void) : Test("Bool::And",3,0,1) {}
+       BinOp(Gecode::BoolOpType op0) 
+         : Test("Bool::Bin::"+str(op0),3,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return (x[0]&x[1])==x[2];
+         return check(x[0],op,x[1]) == x[2];
        }
        /// Post constraint
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          rel(home, 
-             channel(home,x[0]), BOT_AND, channel(home,x[1]), 
+             channel(home,x[0]), op, channel(home,x[1]), 
              channel(home,x[2]));
        }
      };
      
-     /// Test for Boolean disjunction
-     class Or : public Test {
+     /// Test for binary Boolean operation with constant
+     class BinOpConst : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+       /// Integer constant
+       int c;
      public:
        /// Construct and register test
-       Or(void) : Test("Bool::Or",3,0,1) {}
+       BinOpConst(Gecode::BoolOpType op0, int c0) 
+         : Test("Bool::Bin::"+str(op0)+"::"+str(c0),2,0,1), 
+           op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return (x[0]|x[1])==x[2];
+         return check(x[0],op,x[1]) == c;
        }
        /// Post constraint
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, 
-             channel(home,x[0]), BOT_OR, channel(home,x[1]), 
-             channel(home,x[2]));
+         rel(home, channel(home,x[0]), op, channel(home,x[1]), c);
        }
      };
      
-     /// Test for Boolean implication
-     class Imp : public Test {
+     /// Test for Nary Boolean operation
+     class NaryOp : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       Imp(void) : Test("Bool::Imp",3,0,1) {}
+       NaryOp(Gecode::BoolOpType op0, int n) 
+         : Test("Bool::Nary::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return ((x[0] == 0 ? 1 : 0)|x[1])==x[2];
+         int b = check(x[0],op,x[1]);
+         for (int i=2; i<x.size()-1; i++)
+           b = check(b,op,x[i]);
+         return b == x[x.size()-1];
        }
        /// Post constraint
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, 
-             channel(home,x[0]), BOT_IMP, channel(home,x[1]), 
-             channel(home,x[2]));
-       }
-     };
-     
-     /// Test for Boolean equivalence
-     class Eqv : public Test {
-     public:
-       /// Construct and register test
-       Eqv(void) : Test("Bool::Eqv",3,0,1) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[0] == x[1])==x[2];
-       }
-       /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         rel(home, 
-             channel(home,x[0]), BOT_EQV, channel(home,x[1]), 
-             channel(home,x[2]));
-       }
-     };
-     
-     /// Test for Boolean exclusive or
-     class Xor : public Test {
-     public:
-       /// Construct and register test
-       Xor(void) : Test("Bool::Xor",3,0,1) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[0] != x[1])==x[2];
-       }
-       /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         rel(home, 
-             channel(home,x[0]), BOT_XOR, channel(home,x[1]), 
-             channel(home,x[2]));
-       }
-     };
-     
-     /// Test for Boolean n-ary conjunction
-     class AndNary : public Test {
-     public:
-       /// Construct and register test
-       AndNary(void) : Test("Bool::And::Nary",10,0,1) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         for (int i = x.size()-1; i--; )
-           if (x[i] == 0)
-             return x[x.size()-1] == 0;
-         return x[x.size()-1] == 1;
-       }
-       /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         BoolVarArgs b(2*(x.size()-1));
+         BoolVarArgs b(x.size()-1);
          for (int i=x.size()-1; i--; )
-           b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, BOT_AND, b, channel(home,x[x.size()-1]));
+           b[i]=channel(home,x[i]);
+         rel(home, op, b, channel(home,x[x.size()-1]));
        }
      };
      
-     /// Test for Boolean n-ary conjunction that is false
-     class AndNaryFalse : public Test {
+     /// Test for Nary Boolean operation with constant
+     class NaryOpConst : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+       /// Integer constant
+       int c;
      public:
        /// Construct and register test
-       AndNaryFalse(void) : Test("Bool::And::Nary::False",10,0,1) {}
+       NaryOpConst(Gecode::BoolOpType op0, int n, int c0) 
+         : Test("Bool::Nary::"+str(op0)+"::"+str(n)+"::"+str(c0),n,0,1), 
+           op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i = x.size(); i--; )
-           if (x[i] == 0)
-             return true;
-         return false;
+         int b = check(x[0],op,x[1]);
+         for (int i=2; i<x.size(); i++)
+           b = check(b,op,x[i]);
+         return b == c;
        }
        /// Post constraint
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         BoolVarArgs b(2*x.size());
+         BoolVarArgs b(x.size());
          for (int i=x.size(); i--; )
-           b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, BOT_AND, b, 0);
-       }
-     };
-   
-     /// Test for Boolean n-ary disjunction
-     class OrNary : public Test {
-     public:
-       /// Construct and register test
-       OrNary(void) : Test("Bool::Or::Nary",10,0,1) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         for (int i = x.size()-1; i--; )
-           if (x[i] == 1)
-             return x[x.size()-1] == 1;
-         return x[x.size()-1] == 0;
-       }
-       /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         BoolVarArgs b(2*(x.size()-1));
-         for (int i=x.size()-1; i--; )
-           b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, BOT_OR, b, channel(home,x[x.size()-1]));
+           b[i]=channel(home,x[i]);
+         rel(home, op, b, c);
        }
      };
      
-     /// Test for Boolean n-ary disjunction that is true
-     class OrNaryTrue : public Test {
+     /// Help class to create and register tests
+     class Create {
      public:
-       /// Construct and register test
-       OrNaryTrue(void) : Test("Bool::Or::Nary::True",10,0,1) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         for (int i = x.size(); i--; )
-           if (x[i] == 1)
-             return true;
-         return false;
-       }
-       /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       /// Perform creation and registration
+       Create(void) {
          using namespace Gecode;
-         BoolVarArgs b(2*x.size());
-         for (int i=x.size(); i--; )
-           b[2*i+0]=b[2*i+1]=channel(home,x[i]);
-         rel(home, BOT_OR, b, 1);
+         for (BoolOpTypes bots; bots(); ++bots) {
+           (void) new BinOp(bots.bot());
+           (void) new BinOpConst(bots.bot(),0);
+           (void) new BinOpConst(bots.bot(),1);
+           (void) new NaryOp(bots.bot(),2);
+           (void) new NaryOp(bots.bot(),6);
+           (void) new NaryOp(bots.bot(),10);
+           (void) new NaryOpConst(bots.bot(),2,0);
+           (void) new NaryOpConst(bots.bot(),6,0);
+           (void) new NaryOpConst(bots.bot(),10,0);
+           (void) new NaryOpConst(bots.bot(),2,1);
+           (void) new NaryOpConst(bots.bot(),6,1);
+           (void) new NaryOpConst(bots.bot(),10,1);
+         }
        }
      };
    
-     And band;
-     Or  bor;
-     Imp bimp;
-     Eqv beqv;
-     Xor bxor;
-   
-     AndNary      bandnary;
-     AndNaryFalse bandnaryfalse;
-     OrNary       bornary;
-     OrNaryTrue   bornarytrue;
-   
+     Create c;
      //@}
    
    }

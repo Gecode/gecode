@@ -400,6 +400,10 @@ namespace Test { namespace Int {
     {Gecode::IRT_EQ,Gecode::IRT_NQ,Gecode::IRT_LQ,
      Gecode::IRT_LE,Gecode::IRT_GQ,Gecode::IRT_GR};
 
+  const Gecode::BoolOpType BoolOpTypes::bots[] = 
+    {Gecode::BOT_AND,Gecode::BOT_OR,Gecode::BOT_IMP,
+     Gecode::BOT_EQV,Gecode::BOT_XOR};
+
   Assignment*
   Test::assignment(void) const {
     return new CpltAssignment(arity,dom);
