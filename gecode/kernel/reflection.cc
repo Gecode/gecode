@@ -229,7 +229,10 @@ namespace Gecode { namespace Reflection {
   Arg::newArray(int n) {
     Arg* ret = new Arg(ARRAY_ARG);
     ret->arg1.i = n;
-    ret->arg2.aa = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
+    if (n > 0)
+      ret->arg2.aa = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
+    else
+      ret->arg2.aa = NULL;
     return static_cast<ArrayArg*>(ret);
   }
   void
@@ -259,7 +262,10 @@ namespace Gecode { namespace Reflection {
   Arg::newIntArray(int n) {
     Arg* ret = new Arg(INT_ARRAY_ARG);
     ret->arg1.i = n;
-    ret->arg2.ia = static_cast<int*>(Memory::malloc(sizeof(int)*n));
+    if (n > 0)
+      ret->arg2.ia = static_cast<int*>(Memory::malloc(sizeof(int)*n));
+    else
+      ret->arg2.ia = NULL;
     return static_cast<IntArrayArg*>(ret);
   }
   void
@@ -397,10 +403,12 @@ namespace Gecode { namespace Reflection {
     case ARRAY_ARG:
       for (int i=arg1.i; i--;)
         delete arg2.aa[i];
-      Memory::free(arg2.aa);
+      if (arg2.aa != NULL)
+        Memory::free(arg2.aa);
       break;
     case INT_ARRAY_ARG:
-      Memory::free(arg2.aa);
+      if (arg2.ia != NULL)
+        Memory::free(arg2.ia);
       break;
     case PAIR_ARG:
       delete arg1.first;

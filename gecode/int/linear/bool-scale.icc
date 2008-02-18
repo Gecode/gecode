@@ -203,11 +203,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Reflection::ActorSpec s(ati);
 
     Reflection::IntArrayArg* c_p = Reflection::Arg::newIntArray(p.size());
-    Reflection::ArrayArg* b_p;
-    if (p.size() == 0)
-      b_p = NULL;
-    else
-      b_p = Reflection::Arg::newArray(p.size());
+    Reflection::ArrayArg* b_p = Reflection::Arg::newArray(p.size());
       
     int count = 0;
     for (ScaleBool* f = p.fst(); f != p.lst(); f++) {
@@ -216,11 +212,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     Reflection::IntArrayArg* c_n = Reflection::Arg::newIntArray(n.size());
-    Reflection::ArrayArg* b_n;
-    if (n.size() == 0)
-      b_n = NULL;
-    else
-      b_n = Reflection::Arg::newArray(n.size());
+    Reflection::ArrayArg* b_n = Reflection::Arg::newArray(n.size());
     count = 0;
     for (ScaleBool* f = n.fst(); f != n.lst(); f++) {
       (*c_n)[count] = f->a;

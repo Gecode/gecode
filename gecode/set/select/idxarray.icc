@@ -124,8 +124,6 @@ namespace Gecode { namespace Set { namespace Select {
   template <class View>
   Reflection::Arg*
   IdxViewArray<View>::spec(const Space* home, Reflection::VarMap& m) const {
-    if (n == 0)
-      return NULL;
     Reflection::IntArrayArg* is = Reflection::Arg::newIntArray(n);
     for (int i = 0; i<n; i++)
       (*is)[i] = xs[i].idx;
