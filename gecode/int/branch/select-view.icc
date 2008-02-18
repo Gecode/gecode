@@ -246,7 +246,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByDegreeMinNoTies<View>::select(const Space*, View x) {
     if (x.degree() < degree) {
-      degree = x.degree(); return VSS_SELECT;
+      degree = x.degree();
+      return (degree == 0) ? VSS_COMMIT : VSS_SELECT;
     }
     return VSS_NONE;
   }
