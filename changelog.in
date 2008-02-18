@@ -70,6 +70,14 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added missing branching for INT_VAR_SIZE_DEGREE_MIN and
+INT_VAR_SIZE_DEGREE_MAX for Boolean variables.
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   major
