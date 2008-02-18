@@ -35,58 +35,36 @@
  *
  */
 
-#ifndef __GECODE_TEST_BRANCH_HH__
-#define __GECODE_TEST_BRANCH_HH__
+#include "test/branch.hh"
 
-#include "gecode/int.hh"
+namespace Test { namespace Branch {
 
-#include "test/test.hh"
+  /// Test branching with distinct propagator
+  class Int : public IntTest {
+  public:
+    /// Create and register test
+    Int(const std::string& s, const Gecode::IntSet& d, int n)
+      : IntTest(s,n,d) {}
+    /// Post propagators on variables \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::distinct(home, x);
+    }
+  };
 
-namespace Test {
+  Gecode::IntSet d_dense(-2,2);
+  const int v_sparse[5] = {-100,-10,0,10,100};
+  Gecode::IntSet d_sparse(v_sparse,5);
 
-  /// Tests for branchings
-  namespace Branch {
+  Gecode::IntSet d_large(-2,10);
 
-    /**
-     * \brief Base class for tests for branching on integer variables
-     *
-     */
-    class IntTest : public Base {
-    protected:
-      /// Number of variables
-      int arity;
-      /// Domain of variables
-      Gecode::IntSet dom;
-    public:
-      /// Construct and register test
-      IntTest(const std::string& s, int a, const Gecode::IntSet& d);
-      /// Perform test
-      virtual bool run(void);
-      /// Post propagators on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
-    };
+  Int d_3("Dense::3",d_dense,3);
+  Int d_5("Dense::5",d_dense,5);
+  Int s_3("Sparse::3",d_sparse,3);
+  Int s_5("Sparse::5",d_sparse,5);
+  Int l_2("Large::2",d_large,2);
+  Int l_3("Large::3",d_large,3);
 
-    /**
-     * \brief Base class for tests for branching on Boolean variables
-     *
-     */
-    class BoolTest : public Base {
-    protected:
-      /// Number of variables
-      int arity;
-    public:
-      /// Construct and register test
-      BoolTest(const std::string& s, int a);
-      /// Perform test
-      virtual bool run(void);
-      /// Post propagators on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::BoolVarArray& x) = 0;
-    };
-
-  }
-
-}
-
-#endif
+}}
 
 // STATISTICS: test-branch
+

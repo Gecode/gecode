@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Mikael Lagerkvist, 2006
+ *     Christian Schulte, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -40,29 +40,20 @@
 namespace Test { namespace Branch {
 
   /// Test branching with distinct propagator
-  class Distinct : public CompleteTest {
+  class Bool : public BoolTest {
   public:
     /// Create and register test
-    Distinct(const std::string& s, const Gecode::IntSet& d, int n)
-      : CompleteTest("Distinct::"+s,n,d) {}
+    Bool(const std::string& s, int n)
+      : BoolTest(s,n) {}
     /// Post propagators on variables \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::distinct(home, x);
+    virtual void post(Gecode::Space* home, Gecode::BoolVarArray& x) {
+      Gecode::rel(home, Gecode::BOT_OR, x, 1);
     }
   };
 
-  Gecode::IntSet d_dense(-2,2);
-  const int v_sparse[5] = {-100,-10,0,10,100};
-  Gecode::IntSet d_sparse(v_sparse,5);
-
-  Gecode::IntSet d_large(-2,10);
-
-  Distinct d_3("Dense::3",d_dense,3);
-  Distinct d_5("Dense::5",d_dense,5);
-  Distinct s_3("Sparse::3",d_sparse,3);
-  Distinct s_5("Sparse::5",d_sparse,5);
-  Distinct l_2("Large::2",d_large,2);
-  Distinct l_3("Large::3",d_large,3);
+  Bool b_3("3",3);
+  Bool b_5("5",5);
+  Bool b_7("7",7);
 
 }}
 

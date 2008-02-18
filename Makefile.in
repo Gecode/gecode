@@ -795,7 +795,7 @@ CPLTSETTESTSRC =
 endif
 
 BRANCHTESTSRC0 = \
-	test/branch.cc test/branch/distinct.cc 
+	test/branch.cc test/branch/int.cc test/branch/bool.cc 
 
 SEARCHTESTSRC0 = \
 	test/search.cc
@@ -1087,7 +1087,7 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(MMDLL) $(CPLTSETDLL)
+$(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) 
 	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		$(LINKSET) $(LINKMM) $(BOOST_LINK) $(LINKQT) \
