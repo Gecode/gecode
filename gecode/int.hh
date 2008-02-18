@@ -747,7 +747,7 @@ namespace Gecode {
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /// Propagates \f$ l\leq x_i\leq m\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
-  dom(Space* home, IntVarArgs& x, int l, int m,
+  dom(Space* home, const IntVarArgs& x, int l, int m,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
   /// Propagates \f$ x\in s \f$
@@ -756,7 +756,7 @@ namespace Gecode {
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /// Propagates \f$ x_i\in s\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
-  dom(Space* home, IntVarArgs& x, const IntSet& s,
+  dom(Space* home, const IntVarArgs& x, const IntSet& s,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
   /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$

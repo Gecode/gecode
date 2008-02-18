@@ -71,6 +71,14 @@ Lots of nice gimmicks for Christmas!
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The overloaded versions of dom for variable arrays could not be
+resolved automatically.
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]

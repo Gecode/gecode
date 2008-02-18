@@ -51,18 +51,25 @@ namespace Test { namespace Int {
      class DomRange : public Test {
      public:
        /// Create and register test
-       DomRange(void) : Test("Dom::Range",1,-6,6,true) {}
+       DomRange(int n) : Test("Dom::Range::"+str(n),n,-4,4,n == 1) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return (x[0] >= -2) && (x[0] <= 2);
+         for (int i=x.size(); i--; )
+           if ((x[i] < -2) || (x[i] > 2))
+             return false;
+         return true;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::dom(home, x[0], -2, 2);
+         if (x.size() == 1)
+           Gecode::dom(home, x[0], -2, 2);
+         else
+           Gecode::dom(home, x, -2, 2);
        }
        /// Post reified constraint on \a x for \a b
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
                          Gecode::BoolVar b) {
+         assert(x.size() == 1);
          Gecode::dom(home, x[0], -2, 2, b);
        }
      };
@@ -77,27 +84,36 @@ namespace Test { namespace Int {
      class DomDom : public Test {
      public:
        /// Create and register test
-       DomDom(void) : Test("Dom::Dom",1,-6,6,true) {}
+       DomDom(int n) : Test("Dom::Dom::"+str(n),n,-6,6,n == 1) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return (((x[0] >= -4) && (x[0] <= -3)) ||
-                 ((x[0] >= -1) && (x[0] <= -1)) ||
-                 ((x[0] >=  1) && (x[0] <=  1)) ||
-                 ((x[0] >=  3) && (x[0] <=  5)));
+         for (int i=x.size(); i--; )
+           if (!(((x[i] >= -4) && (x[i] <= -3)) ||
+                 ((x[i] >= -1) && (x[i] <= -1)) ||
+                 ((x[i] >=  1) && (x[i] <=  1)) ||
+                 ((x[i] >=  3) && (x[i] <=  5))))
+             return false;
+         return true;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::dom(home, x[0], d);
+         if (x.size() == 1)
+           Gecode::dom(home, x[0], d);
+         else
+           Gecode::dom(home, x, d);
        }
        /// Post reified constraint on \a x for \a b
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
+         assert(x.size() == 1);
          Gecode::dom(home, x[0], d, b);
        }
      };
    
-     DomRange dr;
-     DomDom dd;
+     DomRange dr1(1);
+     DomRange dr3(3);
+     DomDom dd1(1);
+     DomDom dd3(3);
      //@}
    
    }
