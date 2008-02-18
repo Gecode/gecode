@@ -86,10 +86,9 @@ namespace Gecode { namespace Set { namespace Select {
   SelectDisjoint::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
-    bool fix_flag;
+    bool fix_flag = false;
     do {
-      fix_flag=false;
-
+      fix_flag = false;
       // Compute union of all selected elements' lower bounds
       GlbRanges<SetView> x1lb(x1);
       Iter::Ranges::ToValues<GlbRanges<SetView> > vx1lb(x1lb);
@@ -195,6 +194,7 @@ namespace Gecode { namespace Set { namespace Select {
             if (iv[i].idx!=iv[j].idx) {
               GlbRanges<SetView> xilb(iv[i].var);
               ModEvent me = iv[j].var.excludeI(home,xilb);
+              fix_flag |= me_modified(me);
               GECODE_ME_CHECK(me);
             }
           }
@@ -236,6 +236,7 @@ namespace Gecode { namespace Set { namespace Select {
         here:
           if (flag) {
             ModEvent me = x1.exclude(home,iv[i].idx);
+            fix_flag |= me_modified(me);
             GECODE_ME_CHECK(me);
           }
         }
@@ -284,13 +285,22 @@ namespace Gecode { namespace Set { namespace Select {
       here2:
         if (flag) {
           ModEvent me = x1.include(home,iv[i].idx);
+          fix_flag |= me_modified(me);
           GECODE_ME_CHECK(me);
-          fix_flag=true;
         }
       }
-    } while(fix_flag);
+    } while (fix_flag);
 
-    return ES_FIX;
+    bool allAssigned = true;
+    for (int i=iv.size(); i--;)
+      if (!iv[i].var.assigned()) {
+        allAssigned = false;
+        break;
+      }
+    if (!x1.assigned())
+      allAssigned = false;
+
+    return allAssigned ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
 }}}

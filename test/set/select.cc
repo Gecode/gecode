@@ -124,6 +124,45 @@ namespace Test { namespace Set {
     };
     SelectInter _selectinter("Select::Inter");
 
+    /// Test for SelectDisjoint constraint
+    class SelectDisjoint : public SetTest {
+    public:
+      /// Create and register test
+      SelectDisjoint(const char* t)
+        : SetTest(t,4,ds_012,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        int selected = 0;
+        for (CountableSetValues sel2(x.lub, x[3]); sel2();
+             ++sel2, selected++) {
+          if (sel2.val() < 0)
+            return false;
+        };
+        if (selected <= 1)
+          return true;
+        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetValues selector(x.lub, x[3]);
+        unsigned int cardsum = 0;
+        for (int i=selected; i--;++selector) {
+          if (selector.val()>=3 || selector.val()<0)
+            return false;
+          sel[i].init(x.lub, x[selector.val()]);
+          CountableSetRanges xicard(x.lub, x[selector.val()]);
+          cardsum += Iter::Ranges::size(xicard);
+        }
+        Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
+        return Iter::Ranges::size(u) == cardsum;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        SetVarArgs xs(x.size()-1);
+        for (int i=x.size()-1; i--;)
+          xs[i]=x[i];
+        Gecode::selectDisjoint(home, xs, x[x.size()-1]);
+      }
+    };
+    SelectDisjoint _selectdisjoint("Select::Disjoint");
+
     /// Test for SelectSet constraint
     class SelectSet : public SetTest {
     public:
@@ -147,6 +186,7 @@ namespace Test { namespace Set {
       }
     };
     SelectSet _selectset("Select::Set");
+
 
     //@}
 
