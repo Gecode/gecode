@@ -129,6 +129,14 @@ if (home->failed()) {                           \
   }
 
   IntVar
+  sqrt(Space* home, IntVar x, IntConLevel icl) {
+    GECODE_MM_RETURN_FAILED;
+    IntVar y(home, 0, std::max(0,x.max()));
+    mult(home, y, y, x, icl);
+    return y;
+  }
+
+  IntVar
   plus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,x.min()+y.min(),x.max()+y.max());

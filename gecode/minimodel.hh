@@ -738,6 +738,9 @@ namespace Gecode {
   /// Return variable constrained to \f$x^2\f$
   GECODE_MINIMODEL_EXPORT IntVar
   sqr(Space* home, IntVar x, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
+  GECODE_MINIMODEL_EXPORT IntVar
+  sqrt(Space* home, IntVar x, IntConLevel icl=ICL_DEF);
   /// Return variable constrained to \f$x+y\f$
   GECODE_MINIMODEL_EXPORT IntVar
   plus(Space* home, IntVar x, IntVar y, IntConLevel icl=ICL_DEF);

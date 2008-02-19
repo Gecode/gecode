@@ -70,6 +70,13 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added sqrt function.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor

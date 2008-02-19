@@ -400,12 +400,12 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for squaring constraint
-     class Square : public Test {
+     /// Test for sqr constraint
+     class Sqr : public Test {
      public:
        /// Create and register test
-       Square(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Square::"+s,2,d) {}
+       Sqr(const std::string& s, const Gecode::IntSet& d)
+         : Test("MiniModel::Sqr::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -415,7 +415,26 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, mult(home, x[0], x[0]), IRT_EQ, x[1], ICL_DOM);
+         rel(home, sqr(home, x[0]), IRT_EQ, x[1], ICL_DOM);
+       }
+     };
+   
+     /// Test for sqrt constraint
+     class Sqrt : public Test {
+     public:
+       /// Create and register test
+       Sqrt(const std::string& s, const Gecode::IntSet& d)
+         : Test("MiniModel::Sqrt::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[1]);
+         return (d1 >= 0.0) && (d1*d1 == d0);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         rel(home, sqrt(home,x[0]), IRT_EQ, x[1], ICL_DOM);
        }
      };
    
@@ -551,9 +570,13 @@ namespace Test { namespace Int {
      Mult mult_med("B",d2);
      Mult mult_min("C",d3);
    
-     Square square_max("A",d1);
-     Square square_med("B",d2);
-     Square square_min("C",d3);
+     Sqr sqr_max("A",d1);
+     Sqr sqr_med("B",d2);
+     Sqr sqr_min("C",d3);
+   
+     Sqrt sqrt_max("A",d1);
+     Sqrt sqrt_med("B",d2);
+     Sqrt sqrt_min("C",d3);
    
      Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
      Abs abs_bnd_med("B",d2,Gecode::ICL_BND);
