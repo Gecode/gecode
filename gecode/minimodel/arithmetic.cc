@@ -139,7 +139,13 @@ if (home->failed()) {                           \
   IntVar
   plus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
-    IntVar z(home,x.min()+y.min(),x.max()+y.max());
+    double min = static_cast<double>(x.min())+static_cast<double>(y.min());
+    min = std::min(static_cast<double>(Int::Limits::max),
+                   std::max(static_cast<double>(Int::Limits::min),min));
+    double max = static_cast<double>(x.max())+static_cast<double>(y.max());
+    max = std::min(static_cast<double>(Int::Limits::max),
+                   std::max(static_cast<double>(Int::Limits::min),max));
+    IntVar z(home, static_cast<int>(min), static_cast<int>(max));
     Int::Linear::Term<Int::IntView> ts[3];
     ts[0].a =  1; ts[0].x = x;
     ts[1].a =  1; ts[1].x = y;
@@ -151,7 +157,13 @@ if (home->failed()) {                           \
   IntVar
   minus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
-    IntVar z(home,x.min()-y.max(),x.max()-y.min());
+    double min = static_cast<double>(x.min())-static_cast<double>(y.max());
+    min = std::min(static_cast<double>(Int::Limits::max),
+                   std::max(static_cast<double>(Int::Limits::min),min));
+    double max = static_cast<double>(x.max())-static_cast<double>(y.min());
+    max = std::min(static_cast<double>(Int::Limits::max),
+                   std::max(static_cast<double>(Int::Limits::min),max));
+    IntVar z(home, static_cast<int>(min), static_cast<int>(max));
     Int::Linear::Term<Int::IntView> ts[3];
     ts[0].a =  1; ts[0].x = x;
     ts[1].a = -1; ts[1].x = y;

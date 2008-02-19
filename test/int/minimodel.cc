@@ -400,6 +400,50 @@ namespace Test { namespace Int {
        }
      };
    
+     /// Test for addition constraint
+     class Plus : public Test {
+     public:
+       /// Create and register test
+       Plus(const std::string& s, const Gecode::IntSet& d)
+         : Test("MiniModel::Plus::"+s,3,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[1]);
+         double d2 = static_cast<double>(x[2]);
+         return ((d0+d1 >= Gecode::Int::Limits::min) &&
+                 (d0+d1 <= Gecode::Int::Limits::max) && 
+                 (d0+d1 == d2));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         rel(home, plus(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
+       }
+     };
+   
+     /// Test for subtraction constraint
+     class Minus : public Test {
+     public:
+       /// Create and register test
+       Minus(const std::string& s, const Gecode::IntSet& d)
+         : Test("MiniModel::Minus::"+s,3,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[1]);
+         double d2 = static_cast<double>(x[2]);
+         return ((d0-d1 >= Gecode::Int::Limits::min) &&
+                 (d0-d1 <= Gecode::Int::Limits::max) && 
+                 (d0-d1 == d2));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         rel(home, minus(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
+       }
+     };
+   
      /// Test for sqr constraint
      class Sqr : public Test {
      public:
@@ -449,7 +493,7 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
-         return (d0<0 ? -d0 : d0) == d1;
+         return (d0<0.0 ? -d0 : d0) == d1;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -555,11 +599,9 @@ namespace Test { namespace Int {
        Gecode::Int::Limits::max-1, Gecode::Int::Limits::max
      };
      const int v2[9] = {
-       static_cast<int>(-sqrt(static_cast<double>
-                              (-Gecode::Int::Limits::min))),
+       static_cast<int>(-sqrt(static_cast<double>(-Gecode::Int::Limits::min))),
        -4,-2,-1,0,1,2,4,
-       static_cast<int>(sqrt(static_cast<double>
-                             (Gecode::Int::Limits::max)))
+       static_cast<int>(sqrt(static_cast<double>(Gecode::Int::Limits::max)))
      };
      
      Gecode::IntSet d1(v1,7);
@@ -569,6 +611,14 @@ namespace Test { namespace Int {
      Mult mult_max("A",d1);
      Mult mult_med("B",d2);
      Mult mult_min("C",d3);
+   
+     Plus plus_max("A",d1);
+     Plus plus_med("B",d2);
+     Plus plus_min("C",d3);
+   
+     Minus minus_max("A",d1);
+     Minus minus_med("B",d2);
+     Minus minus_min("C",d3);
    
      Sqr sqr_max("A",d1);
      Sqr sqr_med("B",d2);

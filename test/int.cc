@@ -536,10 +536,10 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,false,this);
           TestSpace* sc = NULL;
           s->post();
-  #ifndef GECODE_GIST_EXPERIMENTAL
+#ifndef GECODE_GIST_EXPERIMENTAL
           if (opt.log)
             olog << ind(3) << "Reflection copy" << std::endl;
-  #endif
+#endif
           sc = s->cloneWithReflection();
           if (sc == s)
             s = NULL;
@@ -684,10 +684,10 @@ if (!(T)) {                                                     \
             TestSpace* s = new TestSpace(arity,dom,true,this);
             TestSpace* sc = NULL;
             s->post();
-    #ifndef GECODE_GIST_EXPERIMENTAL
+#ifndef GECODE_GIST_EXPERIMENTAL
             if (opt.log)
               olog << ind(3) << "Reflection copy" << std::endl;
-    #endif
+#endif
             sc = s->cloneWithReflection();
             if (sc == s)
               s = NULL;
