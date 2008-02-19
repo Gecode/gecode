@@ -70,11 +70,11 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
-Module: minimodel
+Module: linear
 What:   bug
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
-Fixed potential overflow in plus and minus functions.
+Fixed overflow checking error in linear constraints.
 
 [ENTRY]
 Module: minimodel

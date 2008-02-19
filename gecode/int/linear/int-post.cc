@@ -103,7 +103,29 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((sl < double_min) || (su > double_max))
       throw OutOfLimits("Int::linear");
 
-    return ((sl >= Limits::min) && (su <= Limits::max));
+    bool is_ip = (sl >= Limits::min) && (su <= Limits::max);
+
+    for (int i = n_p; i--; ) {
+      if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) < double_min)
+        throw OutOfLimits("Int::linear");
+      if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) < Limits::min)
+        is_ip = false;
+      if (su - t_p[i].a * static_cast<double>(t_p[i].x.max()) > double_max)
+        throw OutOfLimits("Int::linear");
+      if (su - t_p[i].a * static_cast<double>(t_p[i].x.max()) > Limits::max)
+        is_ip = false;
+    }
+    for (int i = n_n; i--; ) {
+      if (sl + t_n[i].a * static_cast<double>(t_n[i].x.min()) < double_min)
+        throw OutOfLimits("Int::linear");
+      if (sl + t_n[i].a * static_cast<double>(t_n[i].x.min()) < Limits::min)
+        is_ip = false;
+      if (su + t_n[i].a * static_cast<double>(t_n[i].x.max()) > double_max)
+        throw OutOfLimits("Int::linear");
+      if (su + t_n[i].a * static_cast<double>(t_n[i].x.max()) > Limits::max)
+        is_ip = false;
+    }
+    return is_ip;
   }
 
   /**
