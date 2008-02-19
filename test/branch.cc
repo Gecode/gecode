@@ -44,7 +44,9 @@
 
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
+#ifdef GECODE_HAS_SET_VARS
 #include "gecode/set.hh"
+#endif
 
 #include "gecode/search.hh"
 
