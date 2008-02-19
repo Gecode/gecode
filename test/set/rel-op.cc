@@ -749,6 +749,11 @@ namespace Test { namespace Set {
         : SetTest("RelOp::InterN"+str(n0),n0+1,ds_22,false), n(n0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
+        if (n == 0) {
+          CountableSetRanges xnr(x.lub, x[n]);
+          return Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
+        }
+          
         GECODE_AUTOARRAY(CountableSetRanges, isrs, n);
         for (int i=n; i--; )
           isrs[i].init(x.lub, x[i]);
