@@ -131,15 +131,19 @@ namespace Gecode {
   forceinline
   IntSetRanges::IntSetRanges(void) {}
   forceinline
-  IntSetRanges::IntSetRanges(const IntSet& s) {
+  void
+  IntSetRanges::init(const IntSet& s) {
     int n = s.size();
     if (n > 0) {
       i = &static_cast<IntSet::IntSetObject*>(s.object())->r[0]; e = i+n;
     } else {
       i = e = NULL;
-    }
+    }    
   }
+  forceinline
+  IntSetRanges::IntSetRanges(const IntSet& s) { init(s); }
 
+  
   forceinline void
   IntSetRanges::operator++(void) {
     i++;

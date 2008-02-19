@@ -1111,22 +1111,6 @@ public:
 #if defined(GECODE_HAS_SET_VARS)
         if (isVar<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetRelType(spec[1]) &&
-            spec[2]->isIntArray() &&
-            isVar<Gecode::BoolVar>(vm, spec[3]))
-        {
-          Gecode::SetVar x0(vm.var(spec[0]->toVar()));
-          Gecode::SetRelType x1 = toEnum_SetRelType(spec[1]);
-          Gecode::Reflection::IntArrayArg* a2 = spec[2]->toIntArray();
-          Gecode::Reflection::IntArrayArgRanges ar2(a2);
-          Gecode::IntSet x2(ar2);
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::rel(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_SET_VARS)
-        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
-            isEnum_SetRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
             isVar<Gecode::BoolVar>(vm, spec[3]))
         {

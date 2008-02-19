@@ -109,8 +109,7 @@ namespace Gecode { namespace Set { namespace Select {
     SharedArray<IntSet> iv(sets->size());
     for (int i=sets->size(); i--; ) {
       Reflection::IntArrayArgRanges r((*sets)[i]->toIntArray());
-      IntSet is(r);
-      iv[i] = is;
+      new (&iv[i]) IntSet(r);
     }
     RView x1(home, vars, spec[2]);
     (void) new (home) SelectUnionConst(home, x0, iv, x1);

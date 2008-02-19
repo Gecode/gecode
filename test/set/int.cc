@@ -166,28 +166,78 @@ namespace Test { namespace Set {
     NoElem _noelem("Int::NoElem");
 
     /// Test for equality constraint
-    class The : public SetTest {
+    class Rel : public SetTest {
+    private:
+      Gecode::SetRelType srt;
+      bool inverse;
     public:
       /// Create and register test
-      The(const char* t)
-        : SetTest(t,1,ds_33,true,1) {}
+      Rel(Gecode::SetRelType srt0, bool inverse0)
+        : SetTest("Int::Rel::"+str(srt0)+(inverse0 ? "::i" : ""),
+                  1,ds_33,true,1)
+        , srt(srt0)
+        , inverse(inverse0) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        IntSet x0(xr0);
-        return x0.size()==1 && x0.min()==x0.max() &&
-          x0.max()==x.intval();
+        CountableSetRanges xr(x.lub, x[0]);
+        IntSet is(x.intval(), x.intval());
+        IntSetRanges dr(is);
+        Gecode::SetRelType rsrt = srt;
+        if (inverse) {
+          switch (srt) {
+            case SRT_SUB: rsrt = SRT_SUP; break;
+            case SRT_SUP: rsrt = SRT_SUB; break;
+            default: break;
+          }
+        }
+        switch (rsrt) {
+        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
+        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
+        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
+        case SRT_DISJ:
+          {
+            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+              inter(xr, dr);
+            return !inter();
+          }
+        case SRT_CMPL:
+          {
+            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+            return Iter::Ranges::equal(xr,drc);
+          }
+        }
+        GECODE_NEVER;
+        return false;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
-        Gecode::rel(home, x[0], SRT_EQ, y[0]);
+        if (!inverse)
+          Gecode::rel(home, x[0], srt, y[0]);
+        else
+          Gecode::rel(home, y[0], srt, x[0]);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_EQ, y[0], b);
+      virtual void post(Space* home, SetVarArray& x, IntVarArray& y,
+                        BoolVar b) {
+        if (!inverse)
+          Gecode::rel(home, x[0], srt, y[0], b);
+        else
+          Gecode::rel(home, y[0], srt, x[0], b);
       }
     };
-    The _the("Int::The");
+    Rel _rel_eq(Gecode::SRT_EQ,false);
+    Rel _rel_nq(Gecode::SRT_NQ,false);
+    Rel _rel_sub(Gecode::SRT_SUB,false);
+    Rel _rel_sup(Gecode::SRT_SUP,false);
+    Rel _rel_disj(Gecode::SRT_DISJ,false);
+    Rel _rel_cmpl(Gecode::SRT_CMPL,false);
+    Rel _rel_eqi(Gecode::SRT_EQ,true);
+    Rel _rel_nqi(Gecode::SRT_NQ,true);
+    Rel _rel_subi(Gecode::SRT_SUB,true);
+    Rel _rel_supi(Gecode::SRT_SUP,true);
+    Rel _rel_disji(Gecode::SRT_DISJ,true);
+    Rel _rel_cmpli(Gecode::SRT_CMPL,true);
 
     template <class I>
     int weightI(const IntArgs& elements,

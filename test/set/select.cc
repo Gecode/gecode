@@ -50,14 +50,15 @@ namespace Test { namespace Set {
       */
     //@{
 
-    static IntSet ds_012(-1,2);
+    static IntSet ds_12(-1,2);
+    static IntSet ds_13(-1,3);
 
     /// Test for SelectUnion constraint
     class SelectUnion : public SetTest {
     public:
       /// Create and register test
       SelectUnion(const char* t)
-        : SetTest(t,5,ds_012,false) {}
+        : SetTest(t,5,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -88,12 +89,52 @@ namespace Test { namespace Set {
     };
     SelectUnion _selectunion("Select::Union");
 
+    /// Test for SelectUnion constraint
+    class SelectUnionConst : public SetTest {
+    private:
+      const IntSet i0;
+      const IntSet i1;
+      const IntSet i2;
+    public:
+      /// Create and register test
+      SelectUnionConst(const char* t)
+        : SetTest(t,2,ds_13,false), i0(-3,-3), i1(-1,1), i2(0,2) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        int selected = 0;
+        for (CountableSetValues sel2(x.lub, x[0]); sel2();
+             ++sel2, selected++);
+        CountableSetValues x4v(x.lub, x[1]);
+        if (selected==0)
+          return !x4v();
+        IntSet iss[] = {i0, i1, i2};
+        GECODE_AUTOARRAY(IntSetRanges, sel, selected);
+        CountableSetValues selector(x.lub, x[0]);
+        for (int i=selected; i--;++selector) {
+          if (selector.val()>=3 || selector.val()<0)
+            return false;
+          sel[i].init(iss[selector.val()]);
+        }
+        Iter::Ranges::NaryUnion<IntSetRanges> u(sel, selected);
+
+        CountableSetRanges z(x.lub, x[1]);
+        return Iter::Ranges::equal(u, z);
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        IntSetArgs xs(3);
+        xs[0] = i0; xs[1] = i1; xs[2] = i2;
+        Gecode::selectUnion(home, xs, x[0], x[1]);
+      }
+    };
+    SelectUnionConst _selectunionconst("Select::UnionConst");
+
     /// Test for SelectInter constraint
     class SelectInter : public SetTest {
     public:
       /// Create and register test
       SelectInter(const char* t)
-        : SetTest(t,5,ds_012,false) {}
+        : SetTest(t,5,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -129,7 +170,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       SelectDisjoint(const char* t)
-        : SetTest(t,4,ds_012,false) {}
+        : SetTest(t,4,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -168,7 +209,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       SelectSet(const char* t)
-        : SetTest(t,4,ds_012,false,true) {}
+        : SetTest(t,4,ds_12,false,true) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         if (x.intval() < 0 || x.intval() > 2)

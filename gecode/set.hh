@@ -683,10 +683,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Space* home, SetVar x, SetRelType r, SetVar y, BoolVar b);
 
-  /// Post propagator for \f$ (x \sim_r s) \Leftrightarrow b \f$
-  GECODE_SET_EXPORT void
-  rel(Space* home, SetVar x, SetRelType r, const IntSet& s, BoolVar b);  
-
   /// Post propagator for \f$ s \sim_r \{x\}\f$
   GECODE_SET_EXPORT void
   rel(Space* home, SetVar s, SetRelType r, IntVar x);
