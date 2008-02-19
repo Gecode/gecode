@@ -99,16 +99,10 @@ namespace Test {
   Options opt;
   
   void report_error(std::string name) {
-#ifdef GECODE_GIST_EXPERIMENTAL
-    std::cout << std::endl << std::endl;
-    std::cout << "// " << name << std::endl;
-    std::cout << "tree.reset();" << std::endl;
-#else
     std::cout << "Options: -seed " << opt.seed;
     if (opt.fixprob != opt.deffixprob)
       std::cout << " -fixprob " << opt.fixprob;
     std::cout << " -test " << name << std::endl;
-#endif
     if (opt.log)
       std::cout << olog.str();
   }

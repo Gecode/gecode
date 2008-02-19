@@ -42,9 +42,6 @@
 #include "gecode/kernel.hh"
 #include <vector>
 #include <string>
-#ifdef GECODE_GIST_EXPERIMENTAL
-#include <QList>
-#endif
 
 namespace Gecode { namespace Gist {
 
@@ -68,17 +65,6 @@ namespace Gecode { namespace Gist {
     bool lastOnPath;
     /// The alternative that is next on the path
     int pathAlternative;
-
-#ifdef GECODE_GIST_EXPERIMENTAL
-    /// Whether the node is expanded
-    bool expanded;
-    /// Whether the node is collapsed (after it was expanded)
-    bool collapsed;
-    /// The parent of the node before expansion
-    VisualNode* realParent;
-    /// The alternative of the node before expansion
-    int realAlternative;
-#endif
 
     /// Heat value 
     unsigned char heat;
@@ -139,25 +125,6 @@ namespace Gecode { namespace Gist {
     /// Set the path attributes of the node
     void setPathInfos(bool onPath0, int pathAlternative0 = -1, bool lastOnPath0 = false);
     
-#ifdef GECODE_GIST_EXPERIMENTAL
-    /// Return whether node is expanded
-    bool isExpanded(void);
-    /// Set the node to be \a expanded
-    void setExpanded(bool expanded);
-    /// Return whether node is collapsed
-    bool isCollapsed(void);
-    /// Set the node to be \a collapsed
-    void setCollapsed(bool collapsed);
-    /// Set the node's real parent
-    void setRealParent(VisualNode* parent);
-    /// Get the node's real parent
-    VisualNode* getRealParent(void);
-    /// Set the node's real alternative
-    void setRealAlternative(int alternative);
-    /// Get the node's real alternative
-    int getRealAlternative(void);
-#endif
-
     /// Return heat value
     unsigned char getHeat(void) const;
     /// Set heat value to \a h
@@ -180,10 +147,6 @@ namespace Gecode { namespace Gist {
     BoundingBox getBoundingBox(void);
     /// Create a child for alternative \a alternative
     virtual VisualNode* createChild(int alternative);
-#ifdef GECODE_GIST_EXPERIMENTAL
-    /// Create a child step node
-    VisualNode* createStepChild(int alt, StepDesc* d);
-#endif
     /// Signal that the status has changed
     virtual void changedStatus();
     /// Return the parent

@@ -60,12 +60,6 @@ namespace Gecode { namespace Gist {
         shape = new Shape(extent);
       } else if (currentNode->isHidden()) {
         shape = new Shape(&VisualNode::unitShape);
-#ifdef GECODE_GIST_EXPERIMENTAL
-        if(currentNode->isStepNode()) {
-          delete shape;
-          shape = new Shape(currentNode->getChild(0)->getShape());
-        }
-#endif
       } else if (numberOfChildren == 0) {
         shape = new Shape(extent);
       } else {
@@ -96,15 +90,9 @@ namespace Gecode { namespace Gist {
   bool
   HideFailedCursor::mayMoveDownwards(void) {
     VisualNode* n = node();
-#ifdef GECODE_GIST_EXPERIMENTAL
-    return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           (n->hasSolvedChildren() || n->getNoOfOpenChildren() > 0) &&
-           (! n->isHidden()) || n->isStepNode();
-#else
     return NodeCursor<VisualNode>::mayMoveDownwards() &&
            (n->hasSolvedChildren() || n->getNoOfOpenChildren() > 0) &&
            (! n->isHidden());
-#endif
   }
   
   void
@@ -117,11 +105,6 @@ namespace Gecode { namespace Gist {
       n->setHidden(true);
       n->setChildrenLayoutDone(false);
       n->dirtyUp();
-#ifdef GECODE_GIST_EXPERIMENTAL
-      if(n->isExpanded() && !n->isCollapsed() && n->getParent()->isHidden()) {
-        n->setCollapsed(!n->isCollapsed());
-      }
-#endif
     }
   }
 
@@ -134,12 +117,6 @@ namespace Gecode { namespace Gist {
       n->setHidden(false);
       n->dirtyUp();
     }
-#ifdef GECODE_GIST_EXPERIMENTAL
-    if (n->isCollapsed()) {
-      n->setCollapsed(false);
-      n->dirtyUp();
-    }
-#endif
   }
   
 }}

@@ -37,16 +37,6 @@
 #include "gecode/gist/spacenode.hh"
 #include <stack>
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-#include "gecode/serialization.hh"
-#ifdef GECODE_HAS_INT_VARS
-#include "gecode/int.hh"
-#endif
-#ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
-#endif
-#endif
-
 namespace Gecode { namespace Gist {
   
   // TODO nikopp: doxygen comments
@@ -169,16 +159,6 @@ namespace Gecode { namespace Gist {
       SpaceNode* middleNode = curNode;
       int curDist = 0;
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-      // TODO nikopp: as long as the SpecialDesc is evaluated in the switch below, we need this varMap here
-      Reflection::VarMap vm;
-      if(specialNodeOnPath) {
-        curSpace->getVars(vm, false);
-      }
-
-#endif      
-
       while (!stck.empty()) {
         if (Config::a_d >= 0 &&
             curDist > Config::a_d &&
@@ -201,48 +181,10 @@ namespace Gecode { namespace Gist {
             break;
         case BK_STEP:
             {
-#ifdef GECODE_GIST_EXPERIMENTAL
-              if(b.desc.step->noOfSteps >0) {
-                if(b.desc.step->debug) {
-                  watch = !watch;
-                }
-                for (int i = 0; i < b.desc.step->noOfSteps; ++i) {
-                  curSpace->step();
-                }
-              }
-              else {
-                if(middleNode->getStatus() == BRANCH) {
-                  curSpace->commit(middleNode->desc.branch, b.alternative);
-                }
-                // make sure that the propagators enter the queue
-                curSpace->stable();
-              }
-#endif
             }
             break;
         case BK_SPECIAL_IN:
             {
-#ifdef GECODE_GIST_EXPERIMENTAL
-              if(b.desc.special != NULL) {
-
-                const Support::Symbol vName = b.desc.special->vn.c_str();
-
-                if(false) {
-#ifdef GECODE_HAS_INT_VARS
-                } else if(vm.spec(vName).vti() == Int::IntVarImp::vti) {
-                  IntVar iv = vm.var(vName);
-                  rel(curSpace, iv, static_cast<IntRelType>(b.desc.special->rel), b.desc.special->v);
-#endif
-#ifdef GECODE_HAS_SET_VARS
-                } else if(vm.spec(vName).vti() == Set::SetVarImp::vti) {
-                  SetVar sv = vm.var(vName);
-                  dom(curSpace, sv, static_cast<SetRelType>(b.desc.special->rel), b.desc.special->v);
-#endif
-                } else {
-                  // TODO nikopp: implement other possibilities
-                }
-              }
-#endif
             }
             break;
         case BK_SPECIAL_OUT:
@@ -372,11 +314,6 @@ namespace Gecode { namespace Gist {
     desc.branch = NULL;
     alternative = alt;
     status = UNDETERMINED;
-#ifdef GECODE_GIST_EXPERIMENTAL
-    metaStatus = UNDETERMINED;
-    firstStep = false;
-    lastStep = false;
-#endif
     _hasSolvedChildren = false;
     _hasFailedChildren = false;
   }
@@ -386,11 +323,6 @@ namespace Gecode { namespace Gist {
     desc.branch = NULL;
     if (root == NULL) {
       status = FAILED;
-#ifdef GECODE_GIST_EXPERIMENTAL
-      metaStatus = UNDETERMINED;
-      firstStep = false;
-      lastStep = false;
-#endif
       _hasSolvedChildren = false;
       _hasFailedChildren = true;
       setNumberOfChildren(0);
@@ -402,11 +334,6 @@ namespace Gecode { namespace Gist {
     else
       copy = root;
     status = UNDETERMINED;
-#ifdef GECODE_GIST_EXPERIMENTAL
-    metaStatus = UNDETERMINED;
-    firstStep = false;
-    lastStep = false;
-#endif
     _hasSolvedChildren = false;
     _hasFailedChildren = false;
     if (b != NULL)
@@ -438,74 +365,7 @@ namespace Gecode { namespace Gist {
   SpaceNode::isCurrentBest(void) {
     return curBest != NULL && curBest->s == this;
   }
-    
-#ifdef GECODE_GIST_EXPERIMENTAL
-  
-  bool SpaceNode::watch = false;
-  
-  Space*
-  SpaceNode::getInputSpace(void) {
-    if(status == SPECIAL)
-      return (getSpace());
-    
-    SpaceNode* p = getParent();
-    
-    Space* ret = p->getSpace();
-    
-    if(p->getStatus() != SPECIAL)
-      ret->commit(p->desc.branch, alternative);
-    
-    return ret;
-  }
 
-  bool
-  SpaceNode::isFirstStepNode(void) {
-    if(isStepNode())
-      return firstStep;
-    return false;
-  }
-  
-  void
-  SpaceNode::setFirstStepNode(bool fs) {
-    firstStep = fs;
-  }
-
-  void
-  SpaceNode::setLastStepNode(bool ls) {
-    lastStep = ls;
-  }
-
-  void
-  SpaceNode::setHasFailedChildren(bool b) {
-    _hasFailedChildren = b;
-  }
-  
-  void
-  SpaceNode::setHasSolvedChildren(bool b) {
-    _hasSolvedChildren = b;
-  }
-  
-  bool
-  SpaceNode::isLastStepNode(void) {
-    if(isStepNode())
-      return lastStep;
-    return false;
-  }
-  
-  void
-  SpaceNode::executeJavaScript(const std::string& model) {
-    if(copy != NULL) {
-      Gecode::fromJavaScript(copy, model);
-      copy->status();
-    }
-  }
-  
-  void
-  SpaceNode::replaceCopy(Space* s) {
-    delete copy;
-    copy = s;
-  }
-#endif
 
   int
   SpaceNode::getNumberOfChildNodes(Statistics& stats) {
@@ -580,20 +440,6 @@ namespace Gecode { namespace Gist {
   SpaceNode::getStatus(void) {
     return status;
   }
-  
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-  NodeStatus
-  SpaceNode::getMetaStatus(void) {
-    return metaStatus;
-  }
-  
-  void
-  SpaceNode::setMetaStatus(NodeStatus s) {
-    metaStatus = s;
-  }
-  
-#endif
   
   void
   SpaceNode::setStatus(NodeStatus s) {

@@ -50,15 +50,6 @@
 #include "gecode/gist/addchild.hh"
 #include "gecode/gist/addvisualisationdialog.hh"
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-#ifdef GECODE_HAS_INT_VARS
-#include "gecode/int.hh"
-#endif
-#ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
-#endif
-#endif
-
 namespace Gecode { namespace Gist {
 
   Inspector::~Inspector(void) {}
@@ -254,23 +245,6 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::toggleHidden(void) {
     QMutexLocker locker(&mutex);
-#ifdef GECODE_GIST_EXPERIMENTAL
-    if(currentNode->isStepNode()) {
-      VisualNode* curNode = currentNode;
-      while(curNode->getParent()->isStepNode()) {
-        curNode = curNode->getParent();
-      }
-      do {
-        curNode->toggleHidden();
-        curNode = curNode->getChild(0);
-      } while(curNode->isStepNode());
-      curNode->setCollapsed(!curNode->isCollapsed());
-      setCurrentNode(curNode);
-      update();
-      centerCurrentNode();
-      return;
-    }
-#endif
     currentNode->toggleHidden();
     update();
     centerCurrentNode();
@@ -279,12 +253,6 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::hideFailed(void) {
     QMutexLocker locker(&mutex);
-#ifdef GECODE_GIST_EXPERIMENTAL
-    if(currentNode->isStepNode()) {
-    // TODO nikopp: ugly things happen in this case that I do not fully understand
-      return;
-    }
-#endif
     currentNode->hideFailed();
     update();
     centerCurrentNode();
@@ -326,11 +294,6 @@ namespace Gecode { namespace Gist {
     while (c != NULL) {
       x += c->getOffset();
       y += 38;
-#ifdef GECODE_GIST_EXPERIMENTAL
-      if(c->isStepNode() && c->isHidden()) {
-        y -= 38;
-      }
-#endif
       c = c->getParent();
     }
     
@@ -470,12 +433,6 @@ namespace Gecode { namespace Gist {
     
     VisualNode* p = currentNode->getParent();
     
-#ifdef GECODE_GIST_EXPERIMENTAL
-    while (p != NULL && p->isStepNode() && p->isHidden()) {
-      p = p->getParent();
-    }
-#endif
-    
     setCurrentNode(p);
 
     if (p != NULL) {
@@ -499,11 +456,6 @@ namespace Gecode { namespace Gist {
               alt = currentNode->getPathAlternative();
             }
             VisualNode* n = currentNode->getChild(alt);
-#ifdef GECODE_GIST_EXPERIMENTAL
-            while (n->isStepNode() && n->isHidden()) {
-              n = n->getChild(0);
-            }
-#endif
             setCurrentNode(n);
             centerCurrentNode();
             break;
@@ -519,27 +471,6 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::navLeft(void) {
     QMutexLocker locker(&mutex);
-#ifdef GECODE_GIST_EXPERIMENTAL
-    VisualNode* p = currentNode;
-    while(p->getParent() != NULL && p->getParent()->isStepNode()
-        && p->getParent()->isHidden()) {
-      p = p->getParent();
-    }
-    if (p != NULL) {
-      int alt = p->getAlternative();
-      p = p->getParent();
-      if (p != NULL) {
-        if (alt > 0) {
-          VisualNode* n = p->getChild(alt-1);
-          while(n->isStepNode() && n->isHidden()) {
-            n = n->getChild(0);
-          }
-          setCurrentNode(n);
-          centerCurrentNode();
-        }
-      }
-    }
-#else
     VisualNode* p = currentNode->getParent();
     if (p != NULL) {
       int alt = currentNode->getAlternative();
@@ -549,33 +480,11 @@ namespace Gecode { namespace Gist {
         centerCurrentNode();
       }
     }
-#endif
   }
 
   void
   TreeCanvasImpl::navRight(void) {
     QMutexLocker locker(&mutex);
-#ifdef GECODE_GIST_EXPERIMENTAL
-    VisualNode* p = currentNode;
-    while(p->getParent() != NULL && p->getParent()->isStepNode()
-        && p->getParent()->isHidden()) {
-      p = p->getParent();
-    }
-    if (p != NULL) {
-      int alt = p->getAlternative();
-      p = p->getParent();
-      if (p != NULL) {
-        if (alt + 1 < p->getNumberOfChildNodes()) {
-          VisualNode* n = p->getChild(alt+1);
-          while(n->isStepNode() && n->isHidden()) {
-            n = n->getChild(0);
-          }
-          setCurrentNode(n);
-          centerCurrentNode();
-        }
-      }
-    }
-#else
     VisualNode* p = currentNode->getParent();
     if (p != NULL) {
       int alt = currentNode->getAlternative();
@@ -585,7 +494,6 @@ namespace Gecode { namespace Gist {
         centerCurrentNode();
       }
     }
-#endif
   }
   
   void
@@ -897,207 +805,6 @@ namespace Gecode { namespace Gist {
     }
   }
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-  void
-  TreeCanvasImpl::toggleDebug(void) {
-    if(currentNode->isStepNode()) {
-      currentNode->getStepDesc()->toggleDebug();
-      update();
-      centerCurrentNode();
-    }
-  }
-  
-  void
-  TreeCanvasImpl::addChild(const QString& var, int rel0, int value) {
-    QMutexLocker locker(&mutex);
-    switch (currentNode->getStatus()) {
-    case UNDETERMINED:
-    case FAILED:
-    case SOLVED:
-      return;
-      break;
-    case STEP:
-    case BRANCH:
-    case SPECIAL:
-      break;
-    }
-
-    Reflection::VarMap vm;
-    Space* space = currentNode->getSpace();
-    space->getVars(vm, false);
-
-    VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
-
-    newChild->setStatus(SPECIAL);
-    
-    if(false) {
-#ifdef GECODE_HAS_INT_VARS
-    } else if(vm.spec(var.toStdString().c_str()).vti() == Int::IntVarImpConf::vti) {
-      IntRelType rel = static_cast<IntRelType>(rel0);
-      newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
-#endif
-#ifdef GECODE_HAS_SET_VARS
-    } else if(vm.spec(var.toStdString().c_str()).vti() == Set::SetVarImpConf::vti) {
-      SetRelType rel = static_cast<SetRelType>(rel0);
-      newChild->setSpecialDesc(new SpecialDesc(var.toStdString(), rel, value));
-#endif
-    } else {
-      // TODO nikopp: implement other options
-    }
-    
-    newChild->setNumberOfChildren(0);
-    newChild->setNoOfOpenChildren(0);
-
-    currentNode->addChild(newChild);
-
-    newChild->setDirty(false);
-    newChild->dirtyUp();
-    setCurrentNode(newChild);
-    update();
-  }
-  
-  void
-  TreeCanvasImpl::addChild(void) {
-    QMutexLocker locker(&mutex);
-    switch (currentNode->getStatus()) {
-    case UNDETERMINED:
-    case FAILED:
-    case SOLVED:
-      return;
-      break;
-    case STEP:
-    case BRANCH:
-    case SPECIAL:
-      break;
-    }
-
-    Reflection::VarMap vm;
-    Space* space = currentNode->getSpace();
-    space->getVars(vm, false);
-
-    AddChild dialog(vm, this);
-
-    if(dialog.exec()) {
-
-      QString var = dialog.var();
-      int value = dialog.value();
-      int rel = dialog.rel();
-
-      addChild(var, rel, value);
-    }
-
-    delete space;
-  }
-
-  void
-  TreeCanvasImpl::addFixpoint(void) {
-    QMutexLocker locker(&mutex);
-    //	  new fixpoints may only be added to special nodes
-    switch (currentNode->getStatus()) {
-    case FAILED:
-    case SOLVED:
-    case UNDETERMINED:
-    case BRANCH:
-      break;
-    case STEP:
-    case SPECIAL:
-        {
-          VisualNode* newChild = currentNode->createChild(currentNode->getNumberOfChildren());
-
-          newChild->setStatus(UNDETERMINED);
-
-          currentNode->addChild(newChild);
-          currentNode->openUp();
-
-          newChild->setDirty(false);
-          newChild->dirtyUp();
-          update();
-          return;
-        }
-    }
-  }
-
-  void
-  TreeCanvasImpl::expandCurrentNode(void) {
-    QMutexLocker locker(&mutex);
-
-    if(currentNode->isExpanded()) {
-      setCurrentNode(currentNode->getParent());
-      toggleHidden();
-      return;
-    }
-    
-    switch (currentNode->getStatus()) {
-    case UNDETERMINED:
-    case STEP:
-    case SPECIAL:
-      break;
-    case FAILED:
-    case BRANCH:
-    case SOLVED:
-      if(currentNode != root) {
-        Space* inputSpace = currentNode->getInputSpace();
-        int alt = currentNode->getAlternative();
-        
-        VisualNode* curNode = currentNode;
-        VisualNode* parent = currentNode->getParent();
-        curNode->setRealParent(parent);
-        curNode->setRealAlternative(alt);
-        
-        setCurrentNode(parent);
-
-        VisualNode* newChild =
-          curNode->createStepChild(currentNode->getNumberOfChildren(),new StepDesc(0));
-        
-        newChild->setFirstStepNode(true);
-
-        currentNode->setChild(alt, newChild);
-
-        newChild->setDirty(false);
-        newChild->dirtyUp();
-        setCurrentNode(newChild);
-
-        while(!inputSpace->stable()) {
-	  inputSpace->step();
-	  if (inputSpace->failed())
-	    break;
-
-          VisualNode* newChild =
-            curNode->createStepChild(currentNode->getNumberOfChildren(),
-				     new StepDesc(1));
-
-          currentNode->addChild(newChild);
-
-          newChild->setDirty(false);
-          newChild->dirtyUp();
-          setCurrentNode(newChild);
-        } 
-        
-        currentNode->setLastStepNode(true);
-        currentNode->addChild(curNode);
-        if(curNode->isOpen()) {
-          currentNode->openUp();
-        }
-        setCurrentNode(curNode);
-        currentNode->setExpanded(true);
-      }
-      break;
-    }
-    update();
-    centerCurrentNode();
-  }
-  
-  void
-  TreeCanvasImpl::executeJavaScript(const QString& model) {
-    root->executeJavaScript(model.toStdString());
-  }
-
-  void
-  TreeCanvasImpl::replaceRootCopy(Space* s) {
-    root->replaceCopy(s);
-  }
-#endif
-
   TreeCanvas::TreeCanvas(Space* root, Better* b,
                          QWidget* parent) : QWidget(parent) {
     QGridLayout* layout = new QGridLayout(this);    
@@ -1123,14 +830,6 @@ namespace Gecode { namespace Gist {
     scaleBar->setMaximum(400);
     scaleBar->setValue(100);
     
-#ifdef GECODE_GIST_EXPERIMENTAL
-    timeBar = new QSlider(Qt::Horizontal, this);
-    timeBar->setObjectName("timeBar");
-    timeBar->setMinimum(0);
-    timeBar->setMaximum(0);
-    timeBar->setValue(0);
-#endif
-
     inspectCN = new QAction("Inspect", this);
     inspectCN->setShortcut(QKeySequence("Return"));
     connect(inspectCN, SIGNAL(triggered()), canvas, 
@@ -1231,32 +930,6 @@ namespace Gecode { namespace Gist {
     connect(analyzeTree, SIGNAL(triggered()), canvas, 
             SLOT(analyzeTree()));
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-    addChild = new QAction("Add child node", this);
-    addChild->setShortcut(QKeySequence("Shift+C"));
-    connect(addChild, SIGNAL(triggered()), canvas, SLOT(addChild()));
-
-    addFixpoint = new QAction("Add fixpoint node", this);
-    addFixpoint->setShortcut(QKeySequence("Shift+F"));
-    connect(addFixpoint, SIGNAL(triggered()), canvas, SLOT(addFixpoint()));
-
-    expandCurrentNode = new QAction("Expand/Collapse", this);
-    expandCurrentNode->setShortcut(QKeySequence("Shift+E"));
-    connect(expandCurrentNode, SIGNAL(triggered()), canvas, SLOT(expandCurrentNode()));
-    
-    forwardTimeStep = new QAction("Step forward", this);
-    forwardTimeStep->setShortcut(QKeySequence("+"));
-    forwardTimeStep->setObjectName("forwardTimeStep");
-    
-    backwardTimeStep = new QAction("Step backward", this);
-    backwardTimeStep->setShortcut(QKeySequence("-"));
-    backwardTimeStep->setObjectName("backwardTimeStep");
-    
-    toggleDebug = new QAction("Toggle debug", this);
-    toggleDebug->setShortcut(QKeySequence("Shift+D"));
-    connect(toggleDebug, SIGNAL(triggered()), canvas, SLOT(toggleDebug()));
-#endif
-
     addAction(inspectCN);
     addAction(stopCN);
     addAction(reset);
@@ -1283,15 +956,6 @@ namespace Gecode { namespace Gist {
     addAction(setPath);
     addAction(inspectPath);
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-    addAction(addChild);
-    addAction(addFixpoint);
-    addAction(expandCurrentNode);
-    addAction(forwardTimeStep);
-    addAction(backwardTimeStep);
-    addAction(toggleDebug);
-#endif
-
     contextMenu = new QMenu(this);
     contextMenu->addAction(inspectCN);
     contextMenu->addAction(centerCN);
@@ -1314,33 +978,14 @@ namespace Gecode { namespace Gist {
 
     contextMenu->addSeparator();
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-    contextMenu->addAction(addChild);
-    contextMenu->addAction(addFixpoint);
-
-    contextMenu->addSeparator();
-
-    contextMenu->addAction(expandCurrentNode);
-    contextMenu->addAction(toggleDebug);
-#endif
-    
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
     connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
     connect(&canvas->searcher, SIGNAL(scaleChanged(int)),
             scaleBar, SLOT(setValue(int)));
     
-#ifdef GECODE_GIST_EXPERIMENTAL
-    connect(timeBar, SIGNAL(valueChanged(int)), canvas, SLOT(markCurrentNode(int)));
-    connect(canvas, SIGNAL(pointInTimeChanged(int)), timeBar, SLOT(setValue(int)));
-#endif
-    
     layout->addWidget(scrollArea, 0,0);
     layout->addWidget(scaleBar, 0,1);
-    
-#ifdef GECODE_GIST_EXPERIMENTAL
-    layout->addWidget(timeBar, 1,0);
-#endif
     
     setLayout(layout);
 
@@ -1431,12 +1076,6 @@ namespace Gecode { namespace Gist {
           hideFailed->setEnabled(false);
           unhideAll->setEnabled(false);
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-          addChild->setEnabled(false);
-          addFixpoint->setEnabled(false);
-          expandCurrentNode->setEnabled(true);
-          toggleDebug->setEnabled(false);
-#endif
           break;
         case Gecode::Gist::UNDETERMINED:
           navDown->setEnabled(false);
@@ -1447,12 +1086,6 @@ namespace Gecode { namespace Gist {
           hideFailed->setEnabled(false);
           unhideAll->setEnabled(false);
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-          addChild->setEnabled(false);
-          addFixpoint->setEnabled(false);
-          expandCurrentNode->setEnabled(true);
-          toggleDebug->setEnabled(false);
-#endif
           break;
         case Gecode::Gist::BRANCH:
         case Gecode::Gist::SPECIAL:
@@ -1464,12 +1097,6 @@ namespace Gecode { namespace Gist {
           hideFailed->setEnabled(true);
           unhideAll->setEnabled(true);
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-          addChild->setEnabled(true);
-          addFixpoint->setEnabled(true);
-          expandCurrentNode->setEnabled(true);
-          toggleDebug->setEnabled(false);
-#endif
           break;
         case Gecode::Gist::STEP:
           navDown->setEnabled(true);
@@ -1480,12 +1107,6 @@ namespace Gecode { namespace Gist {
           hideFailed->setEnabled(false);
           unhideAll->setEnabled(true);
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-          addChild->setEnabled(true);
-          addFixpoint->setEnabled(true);
-          expandCurrentNode->setEnabled(false);
-          toggleDebug->setEnabled(true);
-#endif
           break;
     }
   }
@@ -1511,25 +1132,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::getAutoZoom(void) { return canvas->getAutoZoom(); }
   void
   TreeCanvas::setRefresh(int i) { canvas->setRefresh(i); }
-  
-#ifdef GECODE_GIST_EXPERIMENTAL
-  void
-  TreeCanvas::on_canvas_inspect(Gecode::Reflection::VarMap&, int pit) {
-    timeBar->setMaximum(pit);
-    timeBar->setValue(pit);
-  }
 
-  void
-  TreeCanvas::on_forwardTimeStep_triggered(void) {
-    timeBar->setValue(timeBar->value() + 1);
-  }
-
-  void
-  TreeCanvas::on_backwardTimeStep_triggered(void) {
-    timeBar->setValue(timeBar->value() - 1);
-  }
-#endif
-    
 }}
 
 // STATISTICS: gist-any

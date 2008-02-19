@@ -85,10 +85,6 @@ namespace Gecode { namespace Gist {
     void moveUpwards(void);
     /// Test if cursor may move to child
     bool mayMoveDownwards(void);
-#ifdef GECODE_GIST_EXPERIMENTAL
-    /// Test if cursor may move to child
-    bool mayMoveSidewards(void);
-#endif
     /// Move cursor to child
     void moveDownwards(void);
     /// Move cursor to sibling

@@ -158,23 +158,6 @@ namespace Gecode {  namespace Gist {
     /// Add a visualisation via a dialog
     void addVisualisation(void);
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-    /// Add a new special node as child to the current node via dialog
-    void addChild(void);
-    /// Add a new special node as child to the current node immediately
-    void addChild(const QString&, int, int);
-    /// Add a new fixpoint node as child to the current node if it is a special node
-    void addFixpoint(void);
-    /// Expand or collapse the current node
-    void expandCurrentNode(void);
-    /// Enable gdb debugging if the current node is a step node
-    void toggleDebug(void);
-    /// Parse JavaScript and post constraints in copy of current node
-    void executeJavaScript(const QString&);
-    /// Replace the copy of the root node with \a s
-    void replaceRootCopy(Space* s);
-#endif
-    
     /// Stop search and wait for it to finish
     void finish(void);
     
@@ -296,15 +279,6 @@ namespace Gecode {  namespace Gist {
     QAction* toggleHeatView;
     QAction* analyzeTree;
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-    QAction* addChild;
-    QAction* addFixpoint;
-    QAction* expandCurrentNode;
-    QAction* forwardTimeStep;
-    QAction* backwardTimeStep;
-    QAction* toggleDebug;
-#endif
-
   public:
     /// Constructor
     TreeCanvas(Space* root, Better* b = NULL, QWidget* parent = NULL);
@@ -333,13 +307,6 @@ namespace Gecode {  namespace Gist {
 
   Q_SIGNALS:
     void statusChanged(const Statistics&, bool);
-
-#ifdef GECODE_GIST_EXPERIMENTAL
-  private Q_SLOTS:
-    void on_canvas_inspect(Gecode::Reflection::VarMap&, int);
-    void on_forwardTimeStep_triggered(void);
-    void on_backwardTimeStep_triggered(void);
-#endif
 
   private Q_SLOTS:
     void on_canvas_contextMenu(QContextMenuEvent*);

@@ -119,21 +119,6 @@ namespace Gecode { namespace Gist {
     /// Current status of the node
     NodeStatus status;
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-    
-    /// Current meta-status of the special node
-    NodeStatus metaStatus;
-
-    /// Whether the node is the first step node
-    bool firstStep;
-    /// Whether the node is the last step node
-    bool lastStep;
-    
-  public:
-    /// Debug variable to trigger watchpoint
-    static bool watch;
-#endif
-    
   protected:
     /// Reference to currently best node (for branch-and-bound)
     BestNode* curBest;
@@ -178,34 +163,6 @@ namespace Gecode { namespace Gist {
     /// Return whether this node is the currently best solution
     bool isCurrentBest(void);
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-    /** Return initial working space (before any propagation is performed).
-     * Receiver must delete the space.
-     * Note that this does not not work for the root node.
-     */
-    Space* getInputSpace(void);
-    
-    /// Return whether this node represents the first step node
-    bool isFirstStepNode(void);
-    /// Return whether this node represents the last step node
-    bool isLastStepNode(void);
-    /// Set the node to represent the first step
-    void setFirstStepNode(bool firstStep);
-    /// Set the node to represent the last step
-    void setLastStepNode(bool lastStep);
-
-    /// Whether the subtree of this node is known to contain failure
-    void setHasFailedChildren(bool b);
-    /// Whether the subtree of this node is known to contain solutions
-    void setHasSolvedChildren(bool b);
-    
-    /// Parse JavaScript \a model and post constraints in space
-    void executeJavaScript(const std::string& model);
-    /// Replace the current copy of the node with \a s
-    void replaceCopy(Space* s);
-#endif
-
     /** \brief Compute and return the number of children
       *
       * On a node whose status is already determined, this function
@@ -222,12 +179,6 @@ namespace Gecode { namespace Gist {
     NodeStatus getStatus(void);
     /// Change the status of the to \a s
     void setStatus(NodeStatus s);
-#ifdef GECODE_GIST_EXPERIMENTAL
-    /// Return current meta-status of the node
-    NodeStatus getMetaStatus(void);
-    /// Change the meta-status of the node to \a s
-    void setMetaStatus(NodeStatus s);
-#endif
     /// Return whether this node represents a propagation step
     bool isStepNode(void);
     /// Change the SpecialDesc to \a d

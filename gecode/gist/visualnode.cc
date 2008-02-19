@@ -48,9 +48,6 @@ namespace Gecode { namespace Gist {
   : SpaceNode(alternative, b), offset(0), dirty(true), 
     childrenLayoutDone(false), hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
-#ifdef GECODE_GIST_EXPERIMENTAL
-  , expanded(false), collapsed(false), realParent(NULL)
-#endif
   , heat(0)
   , shape(NULL), box(0,0,0)
   {}
@@ -59,9 +56,6 @@ namespace Gecode { namespace Gist {
   : SpaceNode(root, b), offset(0), dirty(true), childrenLayoutDone(false), 
     hidden(false), marked(false)
   , onPath(false), lastOnPath(false), pathAlternative(-1)
-#ifdef GECODE_GIST_EXPERIMENTAL
-  , expanded(false), collapsed(false), realParent(NULL)
-#endif
   , heat(0)
   , shape(NULL), box(0,0,0)
   {}
@@ -161,48 +155,6 @@ namespace Gecode { namespace Gist {
     VisualNode* p = getParent();
     p->unPathUp();
   }
-  
-#ifdef GECODE_GIST_EXPERIMENTAL
-    bool
-    VisualNode::isExpanded(void) {
-      return expanded;
-    }
-
-    bool
-    VisualNode::isCollapsed(void) {
-      return collapsed;
-    }
-
-    void
-    VisualNode::setExpanded(bool exp) {
-      expanded = exp;
-    }
-
-    void
-    VisualNode::setCollapsed(bool col) {
-      collapsed = col;
-    }
-
-    void
-    VisualNode::setRealParent(VisualNode* parent) {
-      realParent = parent;
-    }
-    
-    VisualNode*
-    VisualNode::getRealParent(void) {
-      return realParent;
-    }
-
-    void
-    VisualNode::setRealAlternative(int alternative) {
-      realAlternative = alternative;
-    }
-
-    int
-    VisualNode::getRealAlternative(void) {
-      return realAlternative;
-    }
-#endif
 
   void
   VisualNode::toggleHidden(void) {
@@ -244,25 +196,6 @@ namespace Gecode { namespace Gist {
     return new VisualNode(alternative, curBest);
   }
 
-#ifdef GECODE_GIST_EXPERIMENTAL
-
-  VisualNode*
-  VisualNode::createStepChild(int alt, StepDesc* d)
-    {
-      VisualNode* ret = new VisualNode(alt, curBest);
-      ret->setStepDesc(d);
-      ret->setStatus(STEP);
-      ret->setMetaStatus(getStatus());
-      ret->setFirstStepNode(false);
-      ret->setLastStepNode(false);
-      ret->setHasFailedChildren(hasFailedChildren());
-      ret->setHasSolvedChildren(hasSolvedChildren());
-      ret->setNumberOfChildren(0);
-      ret->setNoOfOpenChildren(0);
-      ret->setPathInfos(isOnPath(),0,false);
-      return ret;
-    }
-#endif
 
   void
   VisualNode::changedStatus() { dirtyUp(); }
@@ -298,15 +231,9 @@ namespace Gecode { namespace Gist {
     int depth = y / 38;
 
     while (depth > 0 && cur != NULL) {
-#ifdef GECODE_GIST_EXPERIMENTAL
-      if (cur->isHidden() && !cur->isStepNode()) {
-        break;
-      }
-#else
      if (cur->isHidden()) {
         break;
       }
-#endif
       VisualNode* oldCur = cur;
       cur = NULL;
       for (int i=0; i<oldCur->noOfChildren; i++) {
@@ -318,20 +245,9 @@ namespace Gecode { namespace Gist {
           break;
         }
       }
-#ifdef GECODE_GIST_EXPERIMENTAL
-      if(cur == NULL || (!cur->isStepNode() || !cur->isHidden())) {
-        depth--;
-      }
-#else
       depth--;
-#endif
       y -= 38;
     }
-#ifdef GECODE_GIST_EXPERIMENTAL
-    while(cur != NULL && cur->isStepNode() && cur->isHidden()) {
-      cur = cur->getChild(0);
-    }
-#endif
    
     if(cur == this && !cur->containsCoordinateAtDepth(x, 0)) {
       return NULL;
