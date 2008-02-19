@@ -155,12 +155,12 @@ namespace Gecode { namespace Set { namespace Select {
     int n = iv.size();
 
     GECODE_AUTOARRAY(bool, stillSelected, n);
-    for (int i=n; i--;)
-      stillSelected[i] = false;
 
     bool loopVar;
     do {
       loopVar = false;
+      for (int i=n; i--;)
+        stillSelected[i] = false;
 
       // Cache the upper bound iterator, as we have to
       // modify the upper bound while iterating

@@ -70,6 +70,13 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a bug in selectUnion with constant IntSet arguments.
+
+[ENTRY]
 Module: linear
 What:   bug
 Rank:   major
