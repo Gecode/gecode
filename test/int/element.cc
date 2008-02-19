@@ -50,14 +50,14 @@ namespace Test { namespace Int {
       */
      //@{
      /// Test for element with integer array and integer variables
-     class IntInt : public Test {
+     class IntIntVar : public Test {
      protected:
        /// Array of integers
        Gecode::IntArgs c;
      public:
        /// Create and register test
-       IntInt(const std::string& s, const Gecode::IntArgs& c0)
-         : Test("Element::Int::Int::"+s,2,-4,8), c(c0) {}
+       IntIntVar(const std::string& s, const Gecode::IntArgs& c0)
+         : Test("Element::Int::Int::Var::"+s,2,-4,8), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
@@ -65,6 +65,28 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          Gecode::element(home, c, x[0], x[1]);
+       }
+     };
+   
+     /// Test for element with integer array and integer variables
+     class IntIntInt : public Test {
+     protected:
+       /// Array of integers
+       Gecode::IntArgs c;
+       /// Integer result
+       int r;
+     public:
+       /// Create and register test
+       IntIntInt(const std::string& s, const Gecode::IntArgs& c0, int r0)
+         : Test("Element::Int::Int::Int::"+s+"::"+str(r0),1,-4,8), 
+           c(c0), r(r0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==r;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::element(home, c, x[0], r);
        }
      };
    
@@ -88,14 +110,14 @@ namespace Test { namespace Int {
      };
    
      /// Test for element with integer array and integer and Boolean variable
-     class IntBool : public Test {
+     class IntBoolVar : public Test {
      protected:
        /// Array of integers
        Gecode::IntArgs c;
      public:
        /// Create and register test
-       IntBool(const std::string& s, const Gecode::IntArgs& c0)
-         : Test("Element::Int::Bool::"+s,2,-4,8), c(c0) {}
+       IntBoolVar(const std::string& s, const Gecode::IntArgs& c0)
+         : Test("Element::Int::Bool::Var::"+s,2,-4,8), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
@@ -106,12 +128,34 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for element with variable array and integer variables
-     class VarInt : public Test {
+     /// Test for element with integer array and integer and Boolean variable
+     class IntBoolInt : public Test {
+     protected:
+       /// Array of integers
+       Gecode::IntArgs c;
+       /// Integer result
+       int r;
      public:
        /// Create and register test
-       VarInt(Gecode::IntConLevel icl)
-         : Test("Element::Var::Int::"+str(icl),6,-1,3,false,icl) {}
+       IntBoolInt(const std::string& s, const Gecode::IntArgs& c0, int r0)
+         : Test("Element::Int::Bool::Int::"+s+"::"+str(r0),1,-4,8), 
+           c(c0), r(r0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==r;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::element(home, c, x[0], r);
+       }
+     };
+   
+     /// Test for element with variable array and integer variables
+     class VarIntVar : public Test {
+     public:
+       /// Create and register test
+       VarIntVar(Gecode::IntConLevel icl)
+         : Test("Element::Var::Int::Var::"+str(icl),6,-1,3,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<x.size()-2) && x[2+x[0]]==x[1];
@@ -122,6 +166,31 @@ namespace Test { namespace Int {
          for (int i=0; i<x.size()-2; i++)
            c[i]=x[2+i];
          Gecode::element(home, c, x[0], x[1], icl);
+       }
+     };
+   
+     /// Test for element with variable array and integer variables
+     class VarIntInt : public Test {
+     protected:
+       /// Integer result
+       int r;
+     public:
+       /// Create and register test
+       VarIntInt(Gecode::IntConLevel icl, int r0)
+         : Test("Element::Var::Int::Int::"+str(icl)+"::"+str(r0),
+                5,-1,3,false,icl), r(r0) {
+         testdomcon = false;
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==r;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::IntVarArgs c(x.size()-1);
+         for (int i=0; i<x.size()-1; i++)
+           c[i]=x[1+i];
+         Gecode::element(home, c, x[0], r, icl);
        }
      };
    
@@ -145,10 +214,10 @@ namespace Test { namespace Int {
      };
    
      /// Test for element with Boolean variable array and integer variable
-     class VarBool : public Test {
+     class VarBoolVar : public Test {
      public:
        /// Create and register test
-       VarBool(void) : Test("Element::Var::Bool",6,-1,3,false) {}
+       VarBoolVar(void) : Test("Element::Var::Bool::Var",6,-1,3,false) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size()-2; i++)
@@ -167,36 +236,92 @@ namespace Test { namespace Int {
        }
      };
    
-     Gecode::IntArgs ic1(5, -1,1,-3,3,-4);
-     Gecode::IntArgs ic2(8, -1,1,-1,1,-1,1,0,0);
-     Gecode::IntArgs ic3(1, -1);
-     Gecode::IntArgs ic4(7, 0,-1,2,-2,4,-3,6);
+     /// Test for element with Boolean variable array and integer variable
+     class VarBoolInt : public Test {
+     protected:
+       /// Integer result
+       int r;
+     public:
+       /// Create and register test
+       VarBoolInt(int r0) 
+         : Test("Element::Var::Bool::Int::"+str(r0),5,-1,3,false), r(r0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int i=0; i<x.size()-1; i++)
+           if ((x[1+i] < 0) || (x[1+i]>1))
+             return false;
+         return ((x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==r);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVarArgs c(x.size()-1);
+         for (int i=0; i<x.size()-1; i++)
+           c[i]=channel(home,x[1+i]);
+         element(home, c, x[0], r);
+       }
+     };
    
-     Gecode::IntArgs bc1(5, 0,1,1,0,1);
-     Gecode::IntArgs bc2(8, 1,1,0,1,0,1,0,0);
-     Gecode::IntArgs bc3(1, 1);
+     /// Help class to create and register tests
+     class Create {
+     public:
+       /// Perform creation and registration
+       Create(void) {
+         using namespace Gecode;
+         IntArgs ic1(5, -1,1,-3,3,-4);
+         IntArgs ic2(8, -1,1,-1,1,-1,1,0,0);
+         IntArgs ic3(1, -1);
+         IntArgs ic4(7, 0,-1,2,-2,4,-3,6);
+         
+         IntArgs bc1(5, 0,1,1,0,1);
+         IntArgs bc2(8, 1,1,0,1,0,1,0,0);
+         IntArgs bc3(1, 1);
    
-     IntInt ii1("A",ic1);
-     IntInt ii2("B",ic2);
-     IntInt ii3("C",ic3);
-     IntInt ii4("D",ic4);
+         (void) new IntIntVar("A",ic1);
+         (void) new IntIntVar("B",ic2);
+         (void) new IntIntVar("C",ic3);
+         (void) new IntIntVar("D",ic4);
+
+         for (int i=-4; i<=4; i++) {
+           (void) new IntIntInt("A",ic1,i);
+           (void) new IntIntInt("B",ic2,i);
+           (void) new IntIntInt("C",ic3,i);
+           (void) new IntIntInt("D",ic4,i);
+         }
+         
+         (void) new IntIntShared("A",ic1);
+         (void) new IntIntShared("B",ic2);
+         (void) new IntIntShared("C",ic3);
+         (void) new IntIntShared("D",ic4);
+         
+         (void) new IntBoolVar("A",bc1);
+         (void) new IntBoolVar("B",bc2);
+         (void) new IntBoolVar("C",bc3);
+         
+         for (int i=0; i<=1; i++) {
+           (void) new IntBoolInt("A",bc1,i);
+           (void) new IntBoolInt("B",bc2,i);
+           (void) new IntBoolInt("C",bc3,i);
+         }
+
+         (void) new VarIntVar(ICL_BND);
+         (void) new VarIntVar(ICL_DOM);
+
+         for (int i=-4; i<=4; i++) {
+           (void) new VarIntInt(ICL_BND,i);
+           (void) new VarIntInt(ICL_DOM,i);
+         }
+         
+         (void) new VarIntShared(ICL_BND);
+         (void) new VarIntShared(ICL_DOM);
+     
+         (void) new VarBoolVar();
+         (void) new VarBoolInt(0);
+         (void) new VarBoolInt(1);
+       }
+     };
    
-     IntIntShared iis1("A",ic1);
-     IntIntShared iis2("B",ic2);
-     IntIntShared iis3("C",ic3);
-     IntIntShared iis4("D",ic4);
-   
-     IntBool ib1("A",bc1);
-     IntBool ib2("B",bc2);
-     IntBool ib3("C",bc3);
-   
-     VarInt vibnd(Gecode::ICL_BND);
-     VarInt vidom(Gecode::ICL_DOM);
-   
-     VarIntShared visbnd(Gecode::ICL_BND);
-     VarIntShared visdom(Gecode::ICL_DOM);
-   
-     VarBool vb;
+     Create c;
      //@}
    
    }
