@@ -118,7 +118,7 @@ namespace Test { namespace Int {
      };
    
      /// Test for simple relation involving integer variable and integer constant
-     class IntBinInt : public Test {
+     class IntInt : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
@@ -126,7 +126,7 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Create and register test
-       IntBinInt(Gecode::IntRelType irt0, int n, int c0) 
+       IntInt(Gecode::IntRelType irt0, int n, int c0) 
          : Test("Rel::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),
                 n,-3,3,n==1), 
            irt(irt0), c(c0) {}
@@ -154,7 +154,7 @@ namespace Test { namespace Int {
      };
    
      /// Test for simple relation involving Boolean variable and integer constant
-     class BoolBinInt : public Test {
+     class BoolInt : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
@@ -162,8 +162,8 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Create and register test
-       BoolBinInt(Gecode::IntRelType irt0, int n, int c0) 
-         : Test("Rel::Bool::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),1,0,1), 
+       BoolInt(Gecode::IntRelType irt0, int n, int c0) 
+         : Test("Rel::Bool::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),n,0,1), 
            irt(irt0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -318,12 +318,12 @@ namespace Test { namespace Int {
            (void) new BoolBinVar(irts.irt(),2);
            (void) new BoolPairwise(irts.irt());
            for (int c=-4; c<=4; c++) {
-             (void) new IntBinInt(irts.irt(),1,c);
-             (void) new IntBinInt(irts.irt(),2,c);
+             (void) new IntInt(irts.irt(),1,c);
+             (void) new IntInt(irts.irt(),2,c);
            }
            for (int c=0; c<=1; c++) {
-             (void) new BoolBinInt(irts.irt(),1,c);
-             (void) new BoolBinInt(irts.irt(),2,c);
+             (void) new BoolInt(irts.irt(),1,c);
+             (void) new BoolInt(irts.irt(),2,c);
            }
            (void) new IntArray(irts.irt());
            (void) new BoolArray(irts.irt());
