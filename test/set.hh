@@ -221,6 +221,12 @@ namespace Test {
                         Gecode::IntVarArray&, Gecode::BoolVar) {}
       /// Perform test
       virtual bool run(void);
+
+      /// \name Mapping scalar values to strings
+      //@{
+      /// Map integer to string
+      static std::string str(int i);
+      //@}
     };
     //@}
 }}

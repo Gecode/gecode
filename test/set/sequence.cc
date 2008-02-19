@@ -82,14 +82,16 @@ namespace Test { namespace Set {
 
     /// Test for sequential-union constraint
     class SeqU : public SetTest {
+    private:
+      int n;
     public:
       /// Create and register test
-      SeqU(const char* t)
-        : SetTest(t,4,ds_33,false) {}
+      SeqU(int n0)
+        : SetTest("Sequence::SeqU"+str(n0),n0+1,ds_33,false), n(n0) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int max = Gecode::Set::Limits::min - 1;
-        for (int i=0; i<3; i++) {
+        for (int i=0; i<n; i++) {
           CountableSetRanges xir(x.lub, x[i]);
           IntSet xi(xir);
           if (xi.size() > 0) {
@@ -99,13 +101,12 @@ namespace Test { namespace Set {
               return false;
           }
         }
-        GECODE_AUTOARRAY(CountableSetRanges, isrs, 3);
-        isrs[0].init(x.lub, x[0]);
-        isrs[1].init(x.lub, x[1]);
-        isrs[2].init(x.lub, x[2]);
-        Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, 3);
-        CountableSetRanges x3r(x.lub, x[3]);
-        return Iter::Ranges::equal(u, x3r);
+        GECODE_AUTOARRAY(CountableSetRanges, isrs, n);
+        for (int i=n; i--; )
+          isrs[i].init(x.lub, x[i]);
+        Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
+        CountableSetRanges xnr(x.lub, x[n]);
+        return Iter::Ranges::equal(u, xnr);
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
@@ -115,7 +116,9 @@ namespace Test { namespace Set {
         Gecode::sequentialUnion(home, xs, x[x.size()-1]);
       }
     };
-    SeqU _sequ("Sequence::SeqU");
+    SeqU _sequ0(0);
+    SeqU _sequ1(1);
+    SeqU _sequ3(3);
 
 }}}
 

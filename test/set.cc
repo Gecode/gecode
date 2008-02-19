@@ -538,6 +538,13 @@ if (!(T)) {                                                     \
   }                                                             \
   test = (T);
 
+  std::string
+  SetTest::str(int i) {
+    std::stringstream s;
+    s << i;
+    return s.str();
+  }
+
   bool
   SetTest::run(void) {
     const char* test    = "NONE";
