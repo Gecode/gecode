@@ -224,6 +224,8 @@ namespace Test {
 
       /// \name Mapping scalar values to strings
       //@{
+      /// Map set relation to string
+      static std::string str(Gecode::SetRelType srt);
       /// Map integer to string
       static std::string str(int i);
       //@}

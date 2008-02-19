@@ -545,6 +545,19 @@ if (!(T)) {                                                     \
     return s.str();
   }
 
+  std::string
+  SetTest::str(Gecode::SetRelType srt) {
+    switch (srt) {
+    case Gecode::SRT_EQ: return "SRT_EQ";
+    case Gecode::SRT_NQ: return "SRT_NQ";
+    case Gecode::SRT_SUB: return "SRT_SUB";
+    case Gecode::SRT_SUP: return "SRT_SUP";
+    case Gecode::SRT_DISJ: return "SRT_DISJ";
+    case Gecode::SRT_CMPL: return "SRT_CMPL";
+    }
+    return "";
+  }
+
   bool
   SetTest::run(void) {
     const char* test    = "NONE";

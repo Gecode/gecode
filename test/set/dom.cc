@@ -56,52 +56,221 @@ namespace Test { namespace Set {
     static IntSet d1(d1r,4);
 
     static IntSet ds_33(-3,3);
+    static IntSet ds_55(-5,5);
 
     /// Test for equality with a range
-    class DomEqRange : public SetTest {
+    class DomRange : public SetTest {
+    private:
+      Gecode::SetRelType srt;
     public:
       /// Create and register test
-      DomEqRange(const char* t)
-        : SetTest(t,1,ds_33,true) {}
+      DomRange(SetRelType srt0)
+        : SetTest("Dom::Range::"+str(srt0),1,ds_55,true), srt(srt0) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSetRanges dr(ds_33);
-        return Iter::Ranges::equal(xr, dr);
+        switch (srt) {
+        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
+        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
+        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
+        case SRT_DISJ:
+          {
+            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+              inter(xr, dr);
+            return !inter();
+          }
+        case SRT_CMPL:
+          {
+            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+            return Iter::Ranges::equal(xr,drc);
+          }
+        }
+        GECODE_NEVER;
+        return false;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], SRT_EQ, ds_33);
+        Gecode::dom(home, x[0], srt, ds_33);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], SRT_EQ, ds_33, b);
+        Gecode::dom(home, x[0], srt, ds_33, b);
       }
     };
-    DomEqRange _domeqrange("Dom::EqRange");
+    DomRange _domrange_eq(SRT_EQ);
+    DomRange _domrange_nq(SRT_NQ);
+    DomRange _domrange_sub(SRT_SUB);
+    DomRange _domrange_sup(SRT_SUP);
+    DomRange _domrange_disj(SRT_DISJ);
+    DomRange _domrange_cmpl(SRT_CMPL);
 
-    /// Test for equality with a domain
-    class DomEqDom : public SetTest {
+    /// Test for equality with an integer range
+    class DomIntRange : public SetTest {
+    private:
+      Gecode::SetRelType srt;
     public:
       /// Create and register test
-      DomEqDom(const char* t)
-        : SetTest(t,1,d1,true) {}
+      DomIntRange(Gecode::SetRelType srt0)
+        : SetTest("Dom::IntRange::"+str(srt0),1,ds_55,true), srt(srt0) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr(x.lub, x[0]);
+        IntSet is(-3,-1);
+        IntSetRanges dr(is);
+        switch (srt) {
+        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
+        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
+        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
+        case SRT_DISJ:
+          {
+            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+              inter(xr, dr);
+            return !inter();
+          }
+        case SRT_CMPL:
+          {
+            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+            return Iter::Ranges::equal(xr,drc);
+          }
+        }
+        GECODE_NEVER;
+        return false;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        Gecode::dom(home, x[0], srt, -3, -1);
+      }
+      /// Post reified constraint on \a x for \a b
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
+        Gecode::dom(home, x[0], srt, -3, -1, b);
+      }
+    };
+    DomIntRange _domintrange_eq(SRT_EQ);
+    DomIntRange _domintrange_nq(SRT_NQ);
+    DomIntRange _domintrange_sub(SRT_SUB);
+    DomIntRange _domintrange_sup(SRT_SUP);
+    DomIntRange _domintrange_disj(SRT_DISJ);
+    DomIntRange _domintrange_cmpl(SRT_CMPL);
+
+    /// Test for equality with an integer
+    class DomInt : public SetTest {
+    private:
+      Gecode::SetRelType srt;
+    public:
+      /// Create and register test
+      DomInt(Gecode::SetRelType srt0)
+        : SetTest("Dom::Int::"+str(srt0),1,ds_55,true), srt(srt0) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr(x.lub, x[0]);
+        IntSet is(-3,-3);
+        IntSetRanges dr(is);
+        switch (srt) {
+        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
+        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
+        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
+        case SRT_DISJ:
+          {
+            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+              inter(xr, dr);
+            return !inter();
+          }
+        case SRT_CMPL:
+          {
+            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+            return Iter::Ranges::equal(xr,drc);
+          }
+        }
+        GECODE_NEVER;
+        return false;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        Gecode::dom(home, x[0], srt, -3);
+      }
+      /// Post reified constraint on \a x for \a b
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
+        Gecode::dom(home, x[0], srt, -3, b);
+      }
+    };
+    DomInt _domint_eq(SRT_EQ);
+    DomInt _domint_nq(SRT_NQ);
+    DomInt _domint_sub(SRT_SUB);
+    DomInt _domint_sup(SRT_SUP);
+    DomInt _domint_disj(SRT_DISJ);
+    DomInt _domint_cmpl(SRT_CMPL);
+
+    /// Test for equality with a domain
+    class DomDom : public SetTest {
+    private:
+      Gecode::SetRelType srt;
+    public:
+      /// Create and register test
+      DomDom(Gecode::SetRelType srt0)
+        : SetTest("Dom::Dom::"+str(srt0),1,d1,true), srt(srt0) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSetRanges dr(d1);
-        return Iter::Ranges::equal(xr, dr);
+        switch (srt) {
+        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
+        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
+        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
+        case SRT_DISJ:
+          {
+            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+              inter(xr, dr);
+            return !inter();
+          }
+        case SRT_CMPL:
+          {
+            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+            return Iter::Ranges::equal(xr,drc);
+          }
+        }
+        GECODE_NEVER;
+        return false;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], SRT_EQ, d1);
+        Gecode::dom(home, x[0], srt, d1);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], SRT_EQ, d1, b);
+        Gecode::dom(home, x[0], srt, d1, b);
       }
     };
-    DomEqDom _domeq("Dom::EqDom");
+    DomDom _domdom_eq(SRT_EQ);
+    DomDom _domdom_nq(SRT_NQ);
+    DomDom _domdom_sub(SRT_SUB);
+    DomDom _domdom_sup(SRT_SUP);
+    DomDom _domdom_disj(SRT_DISJ);
+    DomDom _domdom_cmpl(SRT_CMPL);
+
+    /// Test for equality with a domain
+    class CardRange : public SetTest {
+    public:
+      /// Create and register test
+      CardRange(void)
+        : SetTest("Dom::CardRange",1,d1,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr(x.lub, x[0]);
+        unsigned int card = Iter::Ranges::size(xr);
+        return card >= 2 && card <= 3;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        Gecode::cardinality(home, x[0], 2, 3);
+      }
+    };
+    CardRange _cardRange;
+
 }}}
 
 // STATISTICS: test-set

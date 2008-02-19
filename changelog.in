@@ -88,6 +88,13 @@ Module: set
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Fixed bug in dom for set variables, if called with SRT_NQ.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Fixed bug in selectDisjoint.
 
 [ENTRY]

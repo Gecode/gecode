@@ -90,13 +90,12 @@ namespace Gecode {
       }
       break;
     case SRT_NQ:
-        if (is.size() == 1) {
-          GECODE_ME_FAIL(home,_s.exclude(home, is.min(), is.max()));
-        } else {
-          Set::ConstantView cv(home, is);
-          GECODE_ES_FAIL(home,
-                         (Set::Rel::DistinctDoit<Set::SetView>::post(home, s, cv)));
-        }
+      {
+        Set::ConstantView cv(home, is);
+        GECODE_ES_FAIL(home,
+                       (Set::Rel::DistinctDoit<Set::SetView>::post(home, s, 
+                                                                   cv)));
+      }
       break;
     case SRT_SUB:
       {
