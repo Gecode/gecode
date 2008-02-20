@@ -115,6 +115,9 @@ AC_GECODE_GCC_VISIBILITY
 dnl check whether we want to produce code suitable for profiling
 AC_GECODE_PROFILE
 
+dnl check whether we want to produce code instrumented for gcov
+AC_GECODE_GCOV
+
 dnl check platform specific behaviour of arithmetic
 AC_GECODE_CHECK_ARITH
 
@@ -127,7 +130,7 @@ gnu)
   AC_GECODE_UNIX_PATHS
   AC_GECODE_GCC_GENERAL_SWITCHES
 
-  if test "${enable_debug:-no}" = "no"; then
+  if test "${enable_debug:-no}" = "no" -a "${enable_gcov:-no}" = "no"; then
     dnl compiler flags for an optimized build
     AC_GECODE_GCC_OPTIMIZED_SWITCHES
 
@@ -135,8 +138,10 @@ gnu)
     AC_GECODE_CHECK_COMPILERFLAG([-ffast-math])
     AC_GECODE_CHECK_COMPILERFLAG([-mthreads])
   else
-    dnl compiler flags for a debug build
-    AC_GECODE_GCC_DEBUG_SWITCHES
+    if test "${enable_debug:-no}" = "yes"; then
+      dnl compiler flags for a debug build
+      AC_GECODE_GCC_DEBUG_SWITCHES
+    fi
   fi
 
   ;;

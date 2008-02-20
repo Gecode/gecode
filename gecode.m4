@@ -409,6 +409,21 @@ AC_DEFUN([AC_GECODE_PROFILE],
 	    AC_MSG_RESULT(no)
 	 fi])
 
+AC_DEFUN([AC_GECODE_GCOV],
+	 [AC_ARG_ENABLE([gcov],
+	   AC_HELP_STRING([--enable-gcov],
+	     [build with gcov support @<:@default=no@:>@]))
+	 AC_MSG_CHECKING(whether to build with gcov support)
+	 if test "${enable_gcov:-no}" = "yes"; then
+	    AC_MSG_RESULT(yes)
+	    AC_GECODE_CHECK_COMPILERFLAG(-fprofile-arcs)
+	    AC_GECODE_CHECK_COMPILERFLAG(-ftest-coverage)
+	    AC_GECODE_ADD_TO_DLLFLAGS("-fprofile-arcs")
+	    AC_GECODE_ADD_TO_DLLFLAGS("-ftest-coverage")
+	 else
+	    AC_MSG_RESULT(no)
+	 fi])
+
 
 # Test for platform specific behaviour of arithmetic
 
