@@ -185,13 +185,13 @@ namespace Test { namespace Set {
         , sot(sot0), n(n0), shared(shared0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
-        int realN = shared == 0 ? n : (shared <= 2 ? 2 : 1);
+        int realN = shared == 0 ? n : 3;
 
         GECODE_AUTOARRAY(CountableSetRanges, isrs, realN);
         
         switch (shared) {
         case 0:
-          for (int i=realN; i--; )        
+          for (int i=realN; i--; )
             isrs[i].init(x.lub, x[i]);
           break;
         case 1:
@@ -213,7 +213,8 @@ namespace Test { namespace Set {
           GECODE_NEVER;
         }
         
-        CountableSetRanges xnr(x.lub, x[realN]);
+        int result = shared == 0 ? x.size() - 1 : (shared <= 2 ? 2 : 0);
+        CountableSetRanges xnr(x.lub, x[result]);
 
         switch (sot) {
         case SOT_DUNION:
@@ -235,7 +236,7 @@ namespace Test { namespace Set {
                 cardSum += Iter::Ranges::size(xir);
               }
             }
-            CountableSetRanges xnr2(x.lub, x[realN]);
+            CountableSetRanges xnr2(x.lub, x[result]);
             if (cardSum != Iter::Ranges::size(xnr2))
               return false;
           }
@@ -268,10 +269,7 @@ namespace Test { namespace Set {
           xn = x[x.size()-1];
           break;
         case 1:
-          xs[0] = x[0];
-          xs[1] = x[0];
-          xs[2] = x[1];
-          xn = x[2];
+          xs[0] = x[0]; xs[1] = x[0]; xs[2] = x[1]; xn = x[2];
           break;
         case 2:
           xs[0] = x[0]; xs[1] = x[1]; xs[2] = x[2]; xn = x[2];
