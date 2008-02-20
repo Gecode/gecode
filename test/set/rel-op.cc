@@ -242,12 +242,12 @@ namespace Test { namespace Set {
           // fall through to union case
         case SOT_UNION:
           {
-            Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
+            Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
             return Iter::Ranges::equal(u, xnr);
           }
         case SOT_INTER:
           {
-            Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, n);
+            Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
             return Iter::Ranges::equal(u, xnr);
           }
         default:
