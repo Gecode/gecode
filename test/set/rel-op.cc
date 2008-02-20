@@ -223,9 +223,17 @@ namespace Test { namespace Set {
             if (shared == 3 && (isrs[0]() || isrs[2]()))
               return false;
             unsigned int cardSum = 0;
-            for (int i=0; i<realN; i++) {
-              CountableSetRanges xir(x.lub, x[i]);
-              cardSum += Iter::Ranges::size(xir);
+            if (shared == 1) {
+              CountableSetRanges x2r(x.lub, x[2]);
+              cardSum = Iter::Ranges::size(x2r);
+            } else if (shared == 3) {
+              CountableSetRanges x1r(x.lub, x[1]);
+              cardSum = Iter::Ranges::size(x1r);
+            } else {
+              for (int i=0; i<realN; i++) {
+                CountableSetRanges xir(x.lub, x[i]);
+                cardSum += Iter::Ranges::size(xir);
+              }
             }
             CountableSetRanges xnr2(x.lub, x[realN]);
             if (cardSum != Iter::Ranges::size(xnr2))
