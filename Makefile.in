@@ -1515,7 +1515,8 @@ clean:
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(TESTOBJ) $(TESTSBJ) $(TESTOBJ:%$(OBJSUFFIX)=%.pdb)
-	$(RMF) $(GISTMOCSRC)
+	$(RMF) $(GISTMOCSRC) $(SERMOCSRC)
+	$(RMF) $(SERREGSRC:%.cc=%$(OBJSUFFIX))
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
@@ -1537,12 +1538,13 @@ distclean: veryclean
 	$(RMF) Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
+	$(RMF) $(SERREGSRC)
 
-depend: $(VARIMP:%=$(top_srcdir)/%)
+depend: $(VARIMP:%=$(top_srcdir)/%) $(SERREGSRC)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
-	gecode/serialization/register.cc \
+	$(SERREGSRC) \
 	$(TESTSRC) > Makefile.dep
 
 -include Makefile.dep
