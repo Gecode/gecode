@@ -301,7 +301,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     do {
       repeat = false;
       int xsize = x.size();
-
+      if (xsize == 0)
+        goto size0;
       for (int i = xsize; i--; ) {
         GECODE_ME_CHECK( y.cardMax(home,x[i].cardMax()) );
         GECODE_ME_CHECK( x[i].cardMin(home,y.cardMin()) );
@@ -388,6 +389,7 @@ namespace Gecode { namespace Set { namespace RelOp {
           }
         }
       }
+    size0:
       if (x.size()==0) {
         BndSetRanges all1(intOfDets);
         GECODE_ME_CHECK( y.intersectI(home,all1) );

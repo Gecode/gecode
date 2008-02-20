@@ -177,12 +177,16 @@ namespace Test { namespace Set {
       Gecode::SetOpType sot;
       int n;
       int shared;
+      bool withConst;
+      IntSet is;
     public:
       /// Create and register test
-      RelN(Gecode::SetOpType sot0, int n0, int shared0 = 0)
-        : SetTest("RelOp::N::"+str(sot0)+"::"+str(n0)+"::S"+str(shared0),
+      RelN(Gecode::SetOpType sot0, int n0, int shared0, bool withConst0)
+        : SetTest("RelOp::N::"+str(sot0)+"::"+str(n0)+"::S"+str(shared0)+
+                  "::C"+str(withConst0 ? 1 : 0),
                   shared0 == 0 ? n0+1 : (shared0 <= 2 ? 3 : 2),ds_12,false)
-        , sot(sot0), n(n0), shared(shared0) {}
+        , sot(sot0), n(n0), shared(shared0), withConst(withConst0)
+        , is(0,1) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int realN = shared == 0 ? n : 3;
@@ -212,7 +216,7 @@ namespace Test { namespace Set {
         default:
           GECODE_NEVER;
         }
-        
+                
         int result = shared == 0 ? x.size() - 1 : (shared <= 2 ? 2 : 0);
         CountableSetRanges xnr(x.lub, x[result]);
 
@@ -224,10 +228,7 @@ namespace Test { namespace Set {
             if (shared == 3 && (isrs[0]() || isrs[2]()))
               return false;
             unsigned int cardSum = 0;
-            if (shared == 1) {
-              CountableSetRanges x2r(x.lub, x[2]);
-              cardSum = Iter::Ranges::size(x2r);
-            } else if (shared == 3) {
+            if (shared == 1 || shared == 3) {
               CountableSetRanges x1r(x.lub, x[1]);
               cardSum = Iter::Ranges::size(x1r);
             } else {
@@ -236,6 +237,8 @@ namespace Test { namespace Set {
                 cardSum += Iter::Ranges::size(xir);
               }
             }
+            if (withConst)
+              cardSum += 2;
             CountableSetRanges xnr2(x.lub, x[result]);
             if (cardSum != Iter::Ranges::size(xnr2))
               return false;
@@ -243,13 +246,32 @@ namespace Test { namespace Set {
           // fall through to union case
         case SOT_UNION:
           {
-            Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
-            return Iter::Ranges::equal(u, xnr);
+            if (withConst) {
+              Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
+              IntSetRanges isr(is);
+              Iter::Ranges::Union<IntSetRanges,
+                Iter::Ranges::NaryUnion<CountableSetRanges> > uu(isr, u);
+              return Iter::Ranges::equal(uu, xnr);              
+            } else {
+              Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
+              return Iter::Ranges::equal(u, xnr);
+            }
           }
         case SOT_INTER:
           {
-            Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
-            return Iter::Ranges::equal(u, xnr);
+            if (withConst) {
+              Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
+              IntSetRanges isr(is);
+              Iter::Ranges::Inter<IntSetRanges,
+                Iter::Ranges::NaryInter<CountableSetRanges> > uu(isr, u);
+              if (realN == 0)
+                return Iter::Ranges::equal(isr, xnr);
+              else
+                return Iter::Ranges::equal(uu, xnr);              
+            } else {
+              Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
+              return Iter::Ranges::equal(u, xnr);
+            }
           }
         default:
           GECODE_NEVER;
@@ -281,7 +303,10 @@ namespace Test { namespace Set {
           GECODE_NEVER;
           break;
         }
-        Gecode::rel(home, sot, xs, xn);
+        if (!withConst)
+          Gecode::rel(home, sot, xs, xn);
+        else
+          Gecode::rel(home, sot, xs, is, xn);
       }
     };
 
@@ -290,15 +315,17 @@ namespace Test { namespace Set {
     public:
       /// Perform creation and registration
       CreateN(void) {
-        for (int i=0; i<=3; i++) {
-          (void) new RelN(Gecode::SOT_UNION, i, 0);
-          (void) new RelN(Gecode::SOT_DUNION, i, 0);
-          (void) new RelN(Gecode::SOT_INTER, i, 0);
+        for (int wc=0; wc<=1; wc++) {
+          for (int i=0; i<=3; i++) {
+            (void) new RelN(Gecode::SOT_UNION, i, 0, wc);
+            (void) new RelN(Gecode::SOT_DUNION, i, 0, wc);
+            (void) new RelN(Gecode::SOT_INTER, i, 0, wc);
 
-          if (i>0) {
-            (void) new RelN(Gecode::SOT_UNION, 0, i);
-            (void) new RelN(Gecode::SOT_DUNION, 0, i);
-            (void) new RelN(Gecode::SOT_INTER, 0, i);
+            if (i>0) {
+              (void) new RelN(Gecode::SOT_UNION, 0, i, wc);
+              (void) new RelN(Gecode::SOT_DUNION, 0, i, wc);
+              (void) new RelN(Gecode::SOT_INTER, 0, i, wc);
+            }
           }
         }
       }

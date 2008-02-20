@@ -72,11 +72,13 @@ Lots of nice gimmicks for Christmas!
 [ENTRY]
 Module: set
 What:   bug
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
-Fixed rel(Space*,SetVar,IntRelType irt,IntVar) for irt=IRT_NQ and 
+Fixed bugs in several set constraints:
+rel(Space*,SetVar,IntRelType irt,IntVar) for irt=IRT_NQ,
 rel(Space*,SetVar,SetOpType sot,const IntSet&,SetRelType srt,SetVar) for 
-sot=SOT_MINUS, srt=SRT_SUP.
+sot=SOT_MINUS, srt=SRT_SUP, selectDisjoint, selectUnion with constant IntSet 
+arguments, dom with SRT_NQ.
 
 [ENTRY]
 Module: kernel
@@ -84,13 +86,6 @@ What:   bug
 Rank:   minor
 [DESCRIPTION]
 Fixed bug in unreflection of empty VarArrays.
-
-[ENTRY]
-Module: set
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-Fixed a bug in selectUnion with constant IntSet arguments.
 
 [ENTRY]
 Module: linear
@@ -105,20 +100,6 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 Added sqrt function.
-
-[ENTRY]
-Module: set
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-Fixed bug in dom for set variables, if called with SRT_NQ.
-
-[ENTRY]
-Module: set
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-Fixed bug in selectDisjoint.
 
 [ENTRY]
 Module: int

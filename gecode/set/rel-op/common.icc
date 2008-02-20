@@ -157,6 +157,9 @@ namespace Set { namespace RelOp {
     }
     //y.cardMin - Sum(Xj.cardMax) <= Xi.card
 
+    if (x.size() == 0)
+      return ES_NOFIX;
+
     //TODO: overflow management is a waste now.
     {
       GECODE_AUTOARRAY(unsigned int, rightSum, xsize);
@@ -271,6 +274,9 @@ namespace Set { namespace RelOp {
       }
     }
     GECODE_ME_CHECK_MODIFIED(modified, y.cardMax(home,cardMaxSum));
+
+    if (x.size() == 0)
+      return ES_NOFIX;
 
   overflow:
 
