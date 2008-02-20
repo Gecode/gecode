@@ -50,480 +50,126 @@ namespace Test { namespace Set {
       */
     //@{
 
-    static IntSet ds_33(-2,2);
-    static IntSet ds_22(-1,2);
+    static IntSet ds_22(-2,2);
+    static IntSet ds_12(-1,2);
     
-    /// Test for ternary union constraint
-    class RelUnionEq : public SetTest {
+    /// Test for ternary relation constraint
+    class Rel : public SetTest {
+    private:
+      Gecode::SetOpType  sot;
+      Gecode::SetRelType srt;
+      int share;
+
+      template <class I, class J>
+      bool
+      sol(I& i, J& j) const {
+        switch (srt) {
+        case SRT_EQ: return Iter::Ranges::equal(i,j);
+        case SRT_NQ: return !Iter::Ranges::equal(i,j);
+        case SRT_SUB: return Iter::Ranges::subset(i,j);
+        case SRT_SUP: return Iter::Ranges::subset(j,i);
+        case SRT_DISJ:
+          {
+            Gecode::Iter::Ranges::Inter<I,J> inter(i,j);
+            return !inter();
+          }
+        case SRT_CMPL:
+          {
+            Gecode::Set::RangesCompl<J> jc(j);
+            return Iter::Ranges::equal(i,jc);
+          }
+        }
+        GECODE_NEVER;
+        return false;
+      }
+
     public:
       /// Create and register test
-      RelUnionEq(const char* t)
-        : SetTest(t,3,ds_33,false) {}
+      Rel(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int share0=0)
+        : SetTest("RelOp::"+str(sot0)+"::"+str(srt0)+"::S"+str(share0),
+                  share0 == 0 ? 3 : 2,ds_22,false)
+        , sot(sot0), srt(srt0), share(share0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
-          u(xr0,xr1);
-        return Iter::Ranges::equal(xr2, u);
+        int a,b,c;
+        switch (share) {
+          case 0: a=x[0]; b=x[1]; c=x[2]; break;
+          case 1: a=x[0]; b=x[0]; c=x[0]; break;
+          case 2: a=x[0]; b=x[0]; c=x[1]; break;
+          case 3: a=x[0]; b=x[1]; c=x[0]; break;
+          case 4: a=x[0]; b=x[1]; c=x[1]; break;
+        }
+        CountableSetRanges xr0(x.lub, a);
+        CountableSetRanges xr1(x.lub, b);
+        CountableSetRanges xr2(x.lub, c);
+        switch (sot) {
+        case SOT_UNION:
+          {
+            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+              u(xr0,xr1);
+            return sol(u,xr2);
+          }
+          break;
+        case SOT_DUNION:
+          {
+            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+              inter(xr0,xr1);
+            if (inter())
+              return false;
+            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+              u(xr0,xr1);
+            return sol(u,xr2);
+          }
+          break;
+        case SOT_INTER:
+          {
+            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+              u(xr0,xr1);
+            return sol(u,xr2);
+          }
+          break;
+        case SOT_MINUS:
+          {
+            Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> 
+              u(xr0,xr1);
+            return sol(u,xr2);
+          }
+          break;
+        }
+        GECODE_NEVER;
+        return false;
       }
       /// Post constraint on \a x
       void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_EQ, x[2]);
+        SetVar a,b,c;
+        switch (share) {
+          case 0: a=x[0]; b=x[1]; c=x[2]; break;
+          case 1: a=x[0]; b=x[0]; c=x[0]; break;
+          case 2: a=x[0]; b=x[0]; c=x[1]; break;
+          case 3: a=x[0]; b=x[1]; c=x[0]; break;
+          case 4: a=x[0]; b=x[1]; c=x[1]; break;
+        }
+        Gecode::rel(home, a, sot, b, srt, c);
       }
     };
-    RelUnionEq _relunioneq("RelOp::UnionEq");
 
-    /// Sharing test for ternary union constraint
-    class RelUnionEqS1 : public SetTest {
+    /// Help class to create and register tests
+    class Create {
     public:
-      /// Create and register test
-      RelUnionEqS1(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::equal(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_EQ, x[1]);
+      /// Perform creation and registration
+      Create(void) {
+        using namespace Gecode;
+        for (SetRelTypes srts; srts(); ++srts) {
+          for (SetOpTypes sots; sots(); ++sots) {
+            for (int i=0; i<=4; i++) {
+              (void) new Rel(sots.sot(),srts.srt(),i);
+            }
+          }
+        }      
       }
     };
-    RelUnionEqS1 _relunioneqs1("RelOp::Sharing::UnionEqS1");
-
-    /// Sharing test for ternary union constraint
-    class RelUnionEqS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionEqS2(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::subset(xr1, xr0);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_EQ, x[0]);
-      }
-    };
-    RelUnionEqS2 _relunioneqs2("RelOp::Sharing::UnionEqS2");
-
-    /// Sharing test for ternary union constraint
-    class RelUnionEqS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionEqS3(const char* t)
-        : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_EQ, x[0]);
-      }
-    };
-    RelUnionEqS3 _relunioneqs3("RelOp::Sharing::UnionEqS3");
-
-    /// Test for ternary partition constraint
-    class RelDUnionEq : public SetTest {
-    public:
-      /// Create and register test
-      RelDUnionEq(const char* t)
-        : SetTest(t,3,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
-          u(xr0,xr1);
-        CountableSetRanges xr02(x.lub, x[0]);
-        CountableSetRanges xr12(x.lub, x[1]);
-
-        return
-          Iter::Ranges::equal(xr2, u) &&
-          Iter::Ranges::disjoint(xr02, xr12);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_DUNION, x[1], SRT_EQ, x[2]);
-      }
-    };
-    RelDUnionEq _reldunioneq("RelOp::DUnionEq");
-
-    /// Sharing test for ternary partition constraint
-    class RelDUnionEqS1 : public SetTest {
-    public:
-      /// Create and register test
-      RelDUnionEqS1(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return !xr0() && !xr1();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_DUNION, x[0], SRT_EQ, x[1]);
-      }
-    };
-    RelDUnionEqS1 _reldunioneqs1("RelOp::Sharing::DUnionEqS1");
-
-    /// Sharing test for ternary partition constraint
-    class RelDUnionEqS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelDUnionEqS2(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        return !xr0();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_DUNION, x[1], SRT_EQ, x[1]);
-      }
-    };
-    RelDUnionEqS2 _reldunioneqs2("RelOp::Sharing::DUnionEqS2");
-
-    /// Sharing test for ternary partition constraint
-    class RelDUnionEqS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelDUnionEqS3(const char* t)
-        : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        return !xr0();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_DUNION, x[0], SRT_EQ, x[0]);
-      }
-    };
-    RelDUnionEqS3 _reldunioneqs3("RelOp::Sharing::DUnionEqS3");
-
-    /// Test for ternary intersection constraint
-    class RelInterEq : public SetTest {
-    public:
-      /// Create and register test
-      RelInterEq(const char* t)
-        : SetTest(t,3,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
-          u(xr0,xr1);
-        return Iter::Ranges::equal(xr2, u);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, x[2]);
-      }
-    };
-    RelInterEq _relintereq("RelOp::InterEq");
-
-    /// Sharing test for ternary intersection constraint
-    class RelInterEqS1 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterEqS1(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::subset(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, x[0]);
-      }
-    };
-    RelInterEqS1 _relintereqs1("RelOp::Sharing::InterEqS1");
-
-    /// Sharing test for ternary intersection constraint
-    class RelInterEqS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterEqS2(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::equal(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_EQ, x[1]);
-      }
-    };
-    RelInterEqS2 _relintereqs2("RelOp::Sharing::InterEqS2");
-
-    /// Sharing test for ternary intersection constraint
-    class RelInterEqS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterEqS3(const char* t)
-        : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_EQ, x[0]);
-      }
-    };
-    RelInterEqS3 _relintereqs3("RelOp::Sharing::InterEqS3");
-
-    /// Test for intersection/subset constraint
-    class RelInterSub : public SetTest {
-    public:
-      /// Create and register test
-      RelInterSub(const char* t)
-        : SetTest(t,3,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
-          u(xr0,xr1);
-        return Iter::Ranges::subset(u, xr2);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_SUB, x[2]);
-      }
-    };
-    RelInterSub _relintersub("RelOp::InterSub");
-
-    /// Sharing test for intersection/subset constraint
-    class RelInterSubS1 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterSubS1(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_SUB, x[1]);
-      }
-    };
-    RelInterSubS1 _relintersub1("RelOp::Sharing::InterSub1");
-
-    /// Sharing test for intersection/subset constraint
-    class RelInterSubS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterSubS2(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::subset(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_SUB, x[1]);
-      }
-    };
-    RelInterSubS2 _relintersub2("RelOp::Sharing::InterSub2");
-
-    /// Sharing test for intersection/subset constraint
-    class RelInterSubS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterSubS3(const char* t)
-        : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_SUB, x[0]);
-      }
-    };
-    RelInterSubS3 _relintersub3("RelOp::Sharing::InterSub3");
-
-    /// Test for set-minus constraint
-    class RelMinusEq : public SetTest {
-    public:
-      /// Create and register test
-      RelMinusEq(const char* t)
-        : SetTest(t,3,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
-
-        return Iter::Ranges::equal(xr2, u);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_MINUS, x[1], SRT_EQ, x[2]);
-      }
-    };
-    RelMinusEq _relminuseq("RelOp::MinusEq");
-
-    /// Sharing test for set-minus constraint
-    class RelMinusEqS1 : public SetTest {
-    public:
-      /// Create and register test
-      RelMinusEqS1(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr12(x.lub, x[1]);
-        Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
-
-        return Iter::Ranges::equal(xr12, u);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_MINUS, x[1], SRT_EQ, x[1]);
-      }
-    };
-    RelMinusEqS1 _relminuseqs1("RelOp::Sharing::MinusEqS1");
-
-    /// Sharing test for set-minus constraint
-    class RelMinusEqS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelMinusEqS2(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr1(x.lub, x[1]);
-        return !xr1();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_MINUS, x[0], SRT_EQ, x[1]);
-      }
-    };
-    RelMinusEqS2 _relminuseqs2("RelOp::Sharing::MinusEqS2");
-
-    /// Sharing test for set-minus constraint
-    class RelMinusEqS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelMinusEqS3(const char* t)
-        : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        return !xr0();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_MINUS, x[0], SRT_EQ, x[0]);
-      }
-    };
-    RelMinusEqS3 _relminuseqs3("RelOp::Sharing::MinusEqS3");
-
-    /// Test for union/superset constraint
-    class RelUnionSup : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionSup(const char* t)
-        : SetTest(t,3,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
-          u(xr0,xr1);
-        return Iter::Ranges::subset(xr2, u);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_SUP, x[2]);
-      }
-    };
-    RelUnionSup _relunionsup("RelOp::UnionSup");
-
-    /// Sharing test for union/superset constraint
-    class RelUnionSupS1 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionSupS1(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_SUP, x[1]);
-      }
-    };
-    RelUnionSupS1 _relunionsups1("RelOp::Sharing::UnionSupS1");
-
-    /// Sharing test for union/superset constraint
-    class RelUnionSupS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionSupS2(const char* t)
-        : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::subset(xr1, xr0);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_SUP, x[1]);
-      }
-    };
-    RelUnionSupS2 _relunionsups2("RelOp::Sharing::UnionSupS2");
-
-    /// Sharing test for union/superset constraint
-    class RelUnionSupS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionSupS3(const char* t)
-        : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_SUP, x[0]);
-      }
-    };
-    RelUnionSupS3 _relunionsups3("RelOp::Sharing::UnionSupS3");
+   
+    Create c;
 
     /// Test for n-ary partition constraint
     class RelDUnionN : public SetTest {
@@ -532,7 +178,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelDUnionN(int n0)
-        : SetTest("RelOp::DUnionN::"+str(n0),n0+1,ds_22,false), n(n0) {}
+        : SetTest("RelOp::DUnionN::"+str(n0),n0+1,ds_12,false), n(n0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         unsigned int cardSum = 0;
@@ -570,7 +216,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelDUnionNS1(const char* t)
-        : SetTest(t,3,ds_22,false) {}
+        : SetTest(t,3,ds_12,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -594,7 +240,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelDUnionNS2(const char* t)
-        : SetTest(t,3,ds_22,false) {}
+        : SetTest(t,3,ds_12,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -617,7 +263,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelDUnionNS3(const char* t)
-        : SetTest(t,2,ds_33,false) {}
+        : SetTest(t,2,ds_22,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -642,7 +288,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelUnionN(int n0)
-        : SetTest("RelOp::UnionN::"+str(n0),n0+1,ds_22,false), n(n0) {}
+        : SetTest("RelOp::UnionN::"+str(n0),n0+1,ds_12,false), n(n0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         GECODE_AUTOARRAY(CountableSetRanges, isrs, n);
@@ -670,7 +316,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelUnionNS1(const char* t)
-        : SetTest(t,3,ds_22,false) {}
+        : SetTest(t,3,ds_12,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -695,7 +341,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelUnionNS2(const char* t)
-        : SetTest(t,3,ds_22,false) {}
+        : SetTest(t,3,ds_12,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -721,7 +367,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelUnionNS3(const char* t)
-        : SetTest(t,2,ds_33,false) {}
+        : SetTest(t,2,ds_22,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -746,7 +392,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelInterN(int n0)
-        : SetTest("RelOp::InterN"+str(n0),n0+1,ds_22,false), n(n0) {}
+        : SetTest("RelOp::InterN"+str(n0),n0+1,ds_12,false), n(n0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         if (n == 0) {
@@ -780,7 +426,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelInterNS1(const char* t)
-        : SetTest(t,3,ds_22,false) {}
+        : SetTest(t,3,ds_12,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -805,7 +451,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelInterNS2(const char* t)
-        : SetTest(t,3,ds_22,false) {}
+        : SetTest(t,3,ds_12,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -831,7 +477,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelInterNS3(const char* t)
-        : SetTest(t,2,ds_33,false) {}
+        : SetTest(t,2,ds_22,false) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);

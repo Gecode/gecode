@@ -699,11 +699,11 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Space* home, IntVar x, SetRelType r, SetVar s, BoolVar b);
 
-  /// Post propagator for \f$\forall i\in s:\ i \sim_r x\f$
+  /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ i \sim_r x\f$
   GECODE_SET_EXPORT void
   rel(Space* home, SetVar s, IntRelType r, IntVar x);
 
-  /// Post propagator for \f$\forall i\in s:\ x \sim_r i\f$
+  /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ x \sim_r i\f$
   GECODE_SET_EXPORT void
   rel(Space* home, IntVar x, IntRelType r, SetVar s);
 
@@ -821,11 +821,13 @@ namespace Gecode {
 
   //@{
 
-  /// Post propagator that propagates that \a x is the minimal element of \a s 
+  /** \brief Post propagator that propagates that \a x is the
+   *  minimal element of \a s, and that \a s is not empty */
   GECODE_SET_EXPORT void
   min(Space* home, SetVar s, IntVar x);
   
-  /// Post propagator that propagates that \a x is the maximal element of \a s 
+  /** \brief Post propagator that propagates that \a x is the
+   *  maximal element of \a s, and that \a s is not empty */
   GECODE_SET_EXPORT void
   max(Space* home, SetVar s, IntVar x);
   

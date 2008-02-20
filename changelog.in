@@ -70,6 +70,13 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed rel(Space*,SetVar,IntRelType irt,IntVar) for irt=IRT_NQ.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor

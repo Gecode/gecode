@@ -736,6 +736,14 @@ if (!(T)) {                                                     \
      return false;
   }
 
+  const Gecode::SetRelType SetRelTypes::srts[] = 
+    {Gecode::SRT_EQ,Gecode::SRT_NQ,Gecode::SRT_SUB,
+     Gecode::SRT_SUP,Gecode::SRT_DISJ,Gecode::SRT_CMPL};
+
+  const Gecode::SetOpType SetOpTypes::sots[] = 
+    {Gecode::SOT_UNION, Gecode::SOT_DUNION,
+     Gecode::SOT_INTER, Gecode::SOT_MINUS};
+
 }}
 
 #undef START_TEST

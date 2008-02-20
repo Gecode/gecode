@@ -92,7 +92,7 @@ namespace Gecode { namespace Set { namespace Int {
     spec.checkArity(2);
     View x0(home, vars, spec[0]);
     Gecode::Int::IntView x1(home, vars, spec[1]);
-    (void) new (home) MinElement<View>(home,x0,x1);
+    (void) post(home,x0,x1);
   }
 
   template <class View>

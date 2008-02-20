@@ -36,6 +36,7 @@
  */
 
 #include "test/set.hh"
+#include "test/int.hh"
 #include "gecode/minimodel.hh"
 
 using namespace Gecode;
@@ -165,7 +166,7 @@ namespace Test { namespace Set {
     };
     NoElem _noelem("Int::NoElem");
 
-    /// Test for equality constraint
+    /// Test for relation constraint
     class Rel : public SetTest {
     private:
       Gecode::SetRelType srt;
@@ -238,6 +239,76 @@ namespace Test { namespace Set {
     Rel _rel_supi(Gecode::SRT_SUP,true);
     Rel _rel_disji(Gecode::SRT_DISJ,true);
     Rel _rel_cmpli(Gecode::SRT_CMPL,true);
+
+    /// Test for integer relation constraint
+    class IntRel : public SetTest {
+    private:
+      Gecode::IntRelType irt;
+      bool inverse;
+    public:
+      /// Create and register test
+      IntRel(Gecode::IntRelType irt0, bool inverse0)
+        : SetTest("Int::IntRel::"+Test::Int::Test::str(irt0)+
+                  (inverse0 ? "::i" : ""),1,ds_33,false,1)
+        , irt(irt0)
+        , inverse(inverse0) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetValues xr(x.lub, x[0]);
+        if (!xr())
+          return false;
+        for (; xr(); ++xr) {
+          switch (irt) {
+          case Gecode::IRT_EQ:
+            if (xr.val() != x.intval()) return false;
+            break;
+          case Gecode::IRT_NQ:
+            if (xr.val() == x.intval()) return false;
+            break;
+          case Gecode::IRT_GR:
+            if (!inverse && xr.val() <= x.intval()) return false;
+            if (inverse && xr.val() >= x.intval()) return false;
+            break;
+          case Gecode::IRT_GQ:
+            if (!inverse && xr.val() < x.intval()) return false;
+            if (inverse && xr.val() > x.intval()) return false;
+            break;
+          case Gecode::IRT_LE:
+            if (!inverse && xr.val() >= x.intval()) return false;
+            if (inverse && xr.val() <= x.intval()) return false;
+            break;
+          case Gecode::IRT_LQ:
+            if (!inverse && xr.val() > x.intval()) return false;
+            if (inverse && xr.val() < x.intval()) return false;
+            break;
+          default:
+            GECODE_NEVER;
+            return false;
+          }
+        }
+        return true;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+        if (!inverse)
+          Gecode::rel(home, x[0], irt, y[0]);
+        else
+          Gecode::rel(home, y[0], irt, x[0]);
+      }
+    };
+    IntRel _intrel_eq(Gecode::IRT_EQ,false);
+    IntRel _intrel_nq(Gecode::IRT_NQ,false);
+    IntRel _intrel_gr(Gecode::IRT_GR,false);
+    IntRel _intrel_gq(Gecode::IRT_GQ,false);
+    IntRel _intrel_le(Gecode::IRT_LE,false);
+    IntRel _intrel_lq(Gecode::IRT_LQ,false);
+    IntRel _intrel_eqi(Gecode::IRT_EQ,true);
+    IntRel _intrel_nqi(Gecode::IRT_NQ,true);
+    IntRel _intrel_gri(Gecode::IRT_GR,true);
+    IntRel _intrel_gqi(Gecode::IRT_GQ,true);
+    IntRel _intrel_lei(Gecode::IRT_LE,true);
+    IntRel _intrel_lqi(Gecode::IRT_LQ,true);
+
 
     template <class I>
     int weightI(const IntArgs& elements,

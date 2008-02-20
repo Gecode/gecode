@@ -226,11 +226,50 @@ namespace Test {
       //@{
       /// Map set relation to string
       static std::string str(Gecode::SetRelType srt);
+      /// Map set operation to string
+      static std::string str(Gecode::SetOpType srt);
       /// Map integer to string
       static std::string str(int i);
       //@}
     };
     //@}
+
+    /// Iterator for set relation types
+    class SetRelTypes {
+    private:
+      /// Array of relation types
+      static const Gecode::SetRelType srts[6];
+      /// Current position in relation type array
+      int i; 
+    public:
+      /// Initialize iterator
+      SetRelTypes(void);
+      /// Test whether iterator is done
+      bool operator()(void) const;
+      /// Increment to next relation type
+      void operator++(void);
+      /// Return current relation type
+      Gecode::SetRelType srt(void) const;
+    };
+    
+    /// Iterator for Boolean operation types
+    class SetOpTypes {
+    private:
+      /// Array of operation types
+      static const Gecode::SetOpType sots[4];
+      /// Current position in operation type array
+      int i; 
+    public:
+      /// Initialize iterator
+      SetOpTypes(void);
+      /// Test whether iterator is done
+      bool operator()(void) const;
+      /// Increment to next operation type
+      void operator++(void);
+      /// Return current operation type
+      Gecode::SetOpType sot(void) const;
+    };
+
 }}
 
 /**

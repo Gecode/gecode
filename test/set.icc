@@ -59,6 +59,50 @@ namespace Test { namespace Set {
     return "";
   }
 
+  inline
+  std::string
+  SetTest::str(Gecode::SetOpType sot) {
+    switch (sot) {
+    case Gecode::SOT_UNION: return "Union";
+    case Gecode::SOT_DUNION: return "DUnion";
+    case Gecode::SOT_INTER: return "Inter";
+    case Gecode::SOT_MINUS: return "Minus";
+    }
+    return "";
+  }
+
+  inline
+  SetRelTypes::SetRelTypes(void) 
+    : i(sizeof(srts)/sizeof(Gecode::SetRelType)-1) {}
+  inline bool 
+  SetRelTypes::operator()(void) const {
+    return i>=0;
+  }
+  inline void 
+  SetRelTypes::operator++(void) {
+    i--;
+  }
+  inline Gecode::SetRelType
+  SetRelTypes::srt(void) const {
+    return srts[i];
+  }
+
+  inline
+  SetOpTypes::SetOpTypes(void) 
+    : i(sizeof(sots)/sizeof(Gecode::SetOpType)-1) {}
+  inline bool 
+  SetOpTypes::operator()(void) const {
+    return i>=0;
+  }
+  inline void 
+  SetOpTypes::operator++(void) {
+    i--;
+  }
+  inline Gecode::SetOpType
+  SetOpTypes::sot(void) const {
+    return sots[i];
+  }
+
 }}
 
 // STATISTICS: test-set

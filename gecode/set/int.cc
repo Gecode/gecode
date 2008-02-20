@@ -62,11 +62,13 @@ namespace Gecode {
       break;
     case IRT_NQ:
       {
+        Gecode::Set::SetView sv(s);
+        GECODE_ME_FAIL(home, sv.cardMin(home, 1));
         Gecode::Int::IntView xv(x);
         Set::SingletonView xsingle(xv);
         GECODE_ES_FAIL(home,
-                       (Set::Rel::Distinct<Set::SetView,Set::SingletonView>
-                        ::post(home,s,xsingle)));
+                       (Set::Rel::NoSubSet<Set::SingletonView,Set::SetView>
+                        ::post(home,xsingle,sv)));
 
       }
       break;
