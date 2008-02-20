@@ -109,12 +109,16 @@ namespace Gecode {
           GECODE_ES_FAIL(home,
                          (SubSet<SetView,SetView>::post(home,z,tmp)));
           
+          GlbRanges<ConstantView> yr(yv);
+          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
+          IntSet yc(yrc);
+          ConstantView cy(home, yc);
+
           SetView xv(x);
-          ComplementView<SetView> cx(xv);
           GECODE_ES_FAIL(home,
                          (Intersection<ConstantView,
-                          ComplementView<SetView>,SetView>
-                          ::post(home,yv,cx,tmp)));
+                          SetView,SetView>
+                          ::post(home,cy,xv,tmp)));
         }
         break;
       case SRT_DISJ:

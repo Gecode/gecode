@@ -74,7 +74,9 @@ Module: set
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed rel(Space*,SetVar,IntRelType irt,IntVar) for irt=IRT_NQ.
+Fixed rel(Space*,SetVar,IntRelType irt,IntVar) for irt=IRT_NQ and 
+rel(Space*,SetVar,SetOpType sot,const IntSet&,SetRelType srt,SetVar) for 
+sot=SOT_MINUS, srt=SRT_SUP.
 
 [ENTRY]
 Module: kernel
