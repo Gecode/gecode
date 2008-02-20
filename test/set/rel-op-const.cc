@@ -244,6 +244,7 @@ namespace Test { namespace Set {
       IntSet is1;
       Gecode::SetOpType sot;
       Gecode::SetRelType srt;
+      bool inverse;
 
       template <class I, class J>
       bool
@@ -271,10 +272,12 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelISI(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
-             int intSet0, int intSet1)
+             int intSet0, int intSet1, bool inverse0)
        : SetTest("RelOp::ConstISI::"+str(sot0)+"::"+str(srt0)+"::"+
-                 str(intSet0)+"::"+str(intSet1),1,ds_33,false)
-       , is0(iss[intSet0]), is1(iss[intSet1]), sot(sot0), srt(srt0) {}
+                 str(intSet0)+"::"+str(intSet1)+
+                 (inverse0 ? "i" : ""),1,ds_33,false)
+       , is0(iss[intSet0]), is1(iss[intSet1]), sot(sot0), srt(srt0)
+       , inverse(inverse0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -308,9 +311,15 @@ namespace Test { namespace Set {
           break;
         case SOT_MINUS:
           {
-            Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> 
-              u(isr0,xr0);
-            return sol(u,isr1);
+            if (!inverse) {
+              Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> 
+                u(isr0,xr0);
+              return sol(u,isr1);
+            } else {
+              Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> 
+                u(xr0,isr0);
+              return sol(u,isr1);              
+            }
           }
           break;
         }
@@ -319,7 +328,10 @@ namespace Test { namespace Set {
       }
       /// Post constraint on \a x
       void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, is0, sot, x[0], srt, is1);
+        if (!inverse)
+          Gecode::rel(home, is0, sot, x[0], srt, is1);
+        else
+          Gecode::rel(home, x[0], sot, is0, srt, is1);
       }
     };
 
@@ -335,9 +347,12 @@ namespace Test { namespace Set {
               (void) new RelSIS(sots.sot(),srts.srt(),i,false);
               (void) new RelSIS(sots.sot(),srts.srt(),i,true);
               (void) new RelSSI(sots.sot(),srts.srt(),i);
-              (void) new RelISI(sots.sot(),srts.srt(),i,0);
-              (void) new RelISI(sots.sot(),srts.srt(),i,1);
-              (void) new RelISI(sots.sot(),srts.srt(),i,2);
+              (void) new RelISI(sots.sot(),srts.srt(),i,0,false);
+              (void) new RelISI(sots.sot(),srts.srt(),i,1,false);
+              (void) new RelISI(sots.sot(),srts.srt(),i,2,false);
+              (void) new RelISI(sots.sot(),srts.srt(),i,0,true);
+              (void) new RelISI(sots.sot(),srts.srt(),i,1,true);
+              (void) new RelISI(sots.sot(),srts.srt(),i,2,true);
             }
           }
         }      

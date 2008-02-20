@@ -243,12 +243,16 @@ namespace Gecode {
           // z <= tmp
           SetVar tmp(home,z,Limits::min, Limits::max);
           SetView xv(x);
-          ComplementView<SetView> cx(xv);
+
+          GlbRanges<ConstantView> yr(yv);
+          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
+          IntSet yc(yrc);
+          ConstantView cy(home, yc);
           
           GECODE_ES_FAIL(home,
                          (Intersection<ConstantView,
-                          ComplementView<SetView>,SetView>
-                          ::post(home,yv,cx,tmp)));
+                          SetView,SetView>
+                          ::post(home,cy,xv,tmp)));
         }
         break;
       case SRT_DISJ:

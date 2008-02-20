@@ -269,8 +269,12 @@ namespace Test { namespace Set {
               else
                 return Iter::Ranges::equal(uu, xnr);              
             } else {
-              Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
-              return Iter::Ranges::equal(u, xnr);
+              if (realN == 0) {
+                return Iter::Ranges::size(xnr) ==  Gecode::Set::Limits::card;
+              } else {
+                Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
+                return Iter::Ranges::equal(u, xnr);
+              }
             }
           }
         default:
