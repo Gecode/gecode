@@ -165,6 +165,42 @@ namespace Test { namespace Set {
     };
     SelectInter _selectinter("Select::Inter");
 
+    /// Test for SelectInter constraint
+    class SelectInterIn : public SetTest {
+    public:
+      /// Create and register test
+      SelectInterIn(const char* t)
+        : SetTest(t,5,ds_12,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        int selected = 0;
+        for (CountableSetValues sel2(x.lub, x[3]); sel2();
+             ++sel2, selected++);
+        CountableSetRanges x4r(x.lub, x[4]);
+        if (selected==0)
+          return Iter::Ranges::size(x4r)==4;
+        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetValues selector(x.lub, x[3]);
+        for (int i=selected; i--;++selector) {
+          if (selector.val()>=3 || selector.val()<0)
+            return false;
+          sel[i].init(x.lub, x[selector.val()]);
+        }
+        Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
+
+        CountableSetRanges z(x.lub, x[4]);
+        return Iter::Ranges::equal(u, z);
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        SetVarArgs xs(x.size()-2);
+        for (int i=x.size()-2; i--;)
+          xs[i]=x[i];
+        Gecode::selectInterIn(home, xs, x[x.size()-2], x[x.size()-1], ds_12);
+      }
+    };
+    SelectInterIn _selectinterin("Select::InterIn");
+
     /// Test for SelectDisjoint constraint
     class SelectDisjoint : public SetTest {
     public:

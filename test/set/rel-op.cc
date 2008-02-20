@@ -172,328 +172,133 @@ namespace Test { namespace Set {
     Create c;
 
     /// Test for n-ary partition constraint
-    class RelDUnionN : public SetTest {
+    class RelN : public SetTest {
     private:
+      Gecode::SetOpType sot;
       int n;
+      int shared;
     public:
       /// Create and register test
-      RelDUnionN(int n0)
-        : SetTest("RelOp::DUnionN::"+str(n0),n0+1,ds_12,false), n(n0) {}
+      RelN(Gecode::SetOpType sot0, int n0, int shared0 = 0)
+        : SetTest("RelOp::N::"+str(sot0)+"::"+str(n0)+"::S"+str(shared0),
+                  shared0 == 0 ? n0+1 : (shared0 <= 2 ? 3 : 2),ds_12,false)
+        , sot(sot0), n(n0), shared(shared0) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
-        unsigned int cardSum = 0;
-        for (int i=0; i<n; i++) {
-          CountableSetRanges xir(x.lub, x[i]);
-          cardSum += Iter::Ranges::size(xir);
+        int realN = shared == 0 ? n : (shared <= 2 ? 2 : 1);
+
+        GECODE_AUTOARRAY(CountableSetRanges, isrs, realN);
+        
+        switch (shared) {
+        case 0:
+          for (int i=realN; i--; )        
+            isrs[i].init(x.lub, x[i]);
+          break;
+        case 1:
+          isrs[0].init(x.lub, x[0]);
+          isrs[1].init(x.lub, x[0]);
+          isrs[2].init(x.lub, x[1]);
+          break;
+        case 2:
+          isrs[0].init(x.lub, x[0]);
+          isrs[1].init(x.lub, x[1]);
+          isrs[2].init(x.lub, x[2]);
+          break;
+        case 3:
+          isrs[0].init(x.lub, x[0]);
+          isrs[1].init(x.lub, x[1]);
+          isrs[2].init(x.lub, x[0]);
+          break;
+        default:
+          GECODE_NEVER;
         }
-        {
-          CountableSetRanges xnr(x.lub, x[n]);
-          if (cardSum != Iter::Ranges::size(xnr))
-            return false;
+        
+        CountableSetRanges xnr(x.lub, x[realN]);
+
+        switch (sot) {
+        case SOT_DUNION:
+          {
+            if (shared == 1 && (isrs[0]() || isrs[1]()))
+              return false;
+            if (shared == 3 && (isrs[0]() || isrs[2]()))
+              return false;
+            unsigned int cardSum = 0;
+            for (int i=0; i<realN; i++) {
+              CountableSetRanges xir(x.lub, x[i]);
+              cardSum += Iter::Ranges::size(xir);
+            }
+            CountableSetRanges xnr2(x.lub, x[realN]);
+            if (cardSum != Iter::Ranges::size(xnr2))
+              return false;
+          }
+          // fall through to union case
+        case SOT_UNION:
+          {
+            Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
+            return Iter::Ranges::equal(u, xnr);
+          }
+        case SOT_INTER:
+          {
+            Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, n);
+            return Iter::Ranges::equal(u, xnr);
+          }
+        default:
+          GECODE_NEVER;
         }
-
-        GECODE_AUTOARRAY(CountableSetRanges, isrs, n);
-        for (int i=n; i--; )        
-          isrs[i].init(x.lub, x[i]);
-        Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
-        CountableSetRanges xnr(x.lub, x[n]);
-        return Iter::Ranges::equal(u, xnr);
+        GECODE_NEVER;
+        return false;
       }
       /// Post constraint on \a x
       void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(x.size()-1);
-        for (int i=x.size()-1; i--;)
-          xs[i]=x[i];
-        Gecode::rel(home, SOT_DUNION, xs, x[x.size()-1]);
-      }
-    };
-    RelDUnionN _reldunionn0(0);
-    RelDUnionN _reldunionn1(1);
-    RelDUnionN _reldunionn3(3);
-
-    /// Sharing test for n-ary partition constraint
-    class RelDUnionNS1 : public SetTest {
-    public:
-      /// Create and register test
-      RelDUnionNS1(const char* t)
-        : SetTest(t,3,ds_12,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr2(x.lub, x[2]);
-        return !xr0() && Iter::Ranges::equal(xr1,xr2);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[0];
-        xs[2]=x[1];
-        Gecode::rel(home, SOT_DUNION, xs, x[2]);
-      }
-    };
-    RelDUnionNS1 _reldunionns1("RelOp::Sharing::DUnionNS1");
-
-    /// Sharing test for n-ary partition constraint
-    class RelDUnionNS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelDUnionNS2(const char* t)
-        : SetTest(t,3,ds_12,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return !xr0() && !xr1();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[1];
-        xs[2]=x[2];
-        Gecode::rel(home, SOT_DUNION, xs, x[2]);
-      }
-    };
-    RelDUnionNS2 _reldunionns2("RelOp::Sharing::DUnionNS2");
-
-    /// Sharing test for n-ary partition constraint
-    class RelDUnionNS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelDUnionNS3(const char* t)
-        : SetTest(t,2,ds_22,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return !xr0() && !xr1();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[1];
-        xs[2]=x[0];
-        Gecode::rel(home, SOT_DUNION, xs, x[0]);
-      }
-    };
-    RelDUnionNS3 _reldunionns3("RelOp::Sharing::DUnionNS3");
-
-    /// Test for n-ary union constraint
-    class RelUnionN : public SetTest {
-    private:
-      int n;
-    public:
-      /// Create and register test
-      RelUnionN(int n0)
-        : SetTest("RelOp::UnionN::"+str(n0),n0+1,ds_12,false), n(n0) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        GECODE_AUTOARRAY(CountableSetRanges, isrs, n);
-        for (int i=n; i--;)
-          isrs[i].init(x.lub, x[i]);
-        Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
-        CountableSetRanges xnr(x.lub, x[n]);
-        return Iter::Ranges::equal(u, xnr);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(x.size()-1);
-        for (int i=x.size()-1; i--;)
-          xs[i]=x[i];
-        Gecode::rel(home, SOT_UNION, xs, x[x.size()-1]);
-      }
-    };
-    RelUnionN _relunionn0(0);
-    RelUnionN _relunionn1(1);
-    RelUnionN _relunionn2(2);
-    RelUnionN _relunionn3(3);
-
-    /// Sharing test for n-ary union constraint
-    class RelUnionNS1 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionNS1(const char* t)
-        : SetTest(t,3,ds_12,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        Iter::Ranges::Union<CountableSetRanges,CountableSetRanges> u(xr0,xr1);
-        CountableSetRanges xr2(x.lub, x[2]);
-        return Iter::Ranges::equal(u,xr2);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[0];
-        xs[2]=x[1];
-        Gecode::rel(home, SOT_UNION, xs, x[2]);
-      }
-    };
-    RelUnionNS1 _relunionns1("RelOp::Sharing::UnionNS1");
-
-    /// Sharing test for n-ary union constraint
-    class RelUnionNS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionNS2(const char* t)
-        : SetTest(t,3,ds_12,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr21(x.lub, x[2]);
-        CountableSetRanges xr22(x.lub, x[2]);
-        return Iter::Ranges::subset(xr0,xr21) && 
-               Iter::Ranges::subset(xr1,xr22);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[1];
-        xs[2]=x[2];
-        Gecode::rel(home, SOT_UNION, xs, x[2]);
-      }
-    };
-    RelUnionNS2 _relunionns2("RelOp::Sharing::UnionNS2");
-
-    /// Sharing test for n-ary union constraint
-    class RelUnionNS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelUnionNS3(const char* t)
-        : SetTest(t,2,ds_22,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::subset(xr1,xr0);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[1];
-        xs[2]=x[0];
-        Gecode::rel(home, SOT_UNION, xs, x[0]);
-      }
-    };
-    RelUnionNS3 _relunionns3("RelOp::Sharing::UnionNS3");
-
-    /// Test for n-ary intersection constraint
-    class RelInterN : public SetTest {
-    private:
-      int n;
-    public:
-      /// Create and register test
-      RelInterN(int n0)
-        : SetTest("RelOp::InterN"+str(n0),n0+1,ds_12,false), n(n0) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        if (n == 0) {
-          CountableSetRanges xnr(x.lub, x[n]);
-          return Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
+        int size = shared == 0 ? x.size()-1 : 3;
+        SetVarArgs xs(size);
+        SetVar xn;
+        switch (shared) {
+        case 0:
+          for (int i=x.size()-1; i--;)
+            xs[i]=x[i];
+          xn = x[x.size()-1];
+          break;
+        case 1:
+          xs[0] = x[0];
+          xs[1] = x[0];
+          xs[2] = x[1];
+          xn = x[2];
+          break;
+        case 2:
+          xs[0] = x[0]; xs[1] = x[1]; xs[2] = x[2]; xn = x[2];
+          break;
+        case 3:
+          xs[0] = x[0]; xs[1] = x[1]; xs[2] = x[0]; xn = x[0];
+          break;
+        default:
+          GECODE_NEVER;
+          break;
         }
-          
-        GECODE_AUTOARRAY(CountableSetRanges, isrs, n);
-        for (int i=n; i--; )
-          isrs[i].init(x.lub, x[i]);
-        Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, n);
-        CountableSetRanges xnr(x.lub, x[n]);
-        return Iter::Ranges::equal(u, xnr);
-
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(x.size()-1);
-        for (int i=x.size()-1; i--;)
-          xs[i]=x[i];
-        Gecode::rel(home, SOT_INTER, xs, x[x.size()-1]);
+        Gecode::rel(home, sot, xs, xn);
       }
     };
-    RelInterN _relintern0(0);
-    RelInterN _relintern1(1);
-    RelInterN _relintern2(2);
-    RelInterN _relintern3(3);
 
-    /// Sharing test for n-ary intersection constraint
-    class RelInterNS1 : public SetTest {
+    /// Help class to create and register tests
+    class CreateN {
     public:
-      /// Create and register test
-      RelInterNS1(const char* t)
-        : SetTest(t,3,ds_12,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> u(xr0,xr1);
-        CountableSetRanges xr2(x.lub, x[2]);
-        return Iter::Ranges::equal(u,xr2);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[0];
-        xs[2]=x[1];
-        Gecode::rel(home, SOT_INTER, xs, x[2]);
-      }
-    };
-    RelInterNS1 _relinterns1("RelOp::Sharing::InterNS1");
+      /// Perform creation and registration
+      CreateN(void) {
+        for (int i=0; i<=3; i++) {
+          (void) new RelN(Gecode::SOT_UNION, i, 0);
+          (void) new RelN(Gecode::SOT_DUNION, i, 0);
+          (void) new RelN(Gecode::SOT_INTER, i, 0);
 
-    /// Sharing test for n-ary intersection constraint
-    class RelInterNS2 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterNS2(const char* t)
-        : SetTest(t,3,ds_12,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        CountableSetRanges xr21(x.lub, x[2]);
-        CountableSetRanges xr22(x.lub, x[2]);
-        return Iter::Ranges::subset(xr21,xr0) && 
-               Iter::Ranges::subset(xr22,xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[1];
-        xs[2]=x[2];
-        Gecode::rel(home, SOT_INTER, xs, x[2]);
+          if (i>0) {
+            (void) new RelN(Gecode::SOT_UNION, 0, i);
+            (void) new RelN(Gecode::SOT_DUNION, 0, i);
+            (void) new RelN(Gecode::SOT_INTER, 0, i);
+          }
+        }
       }
     };
-    RelInterNS2 _relinterns2("RelOp::Sharing::InterNS2");
 
-    /// Sharing test for n-ary intersection constraint
-    class RelInterNS3 : public SetTest {
-    public:
-      /// Create and register test
-      RelInterNS3(const char* t)
-        : SetTest(t,2,ds_22,false) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::subset(xr0,xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(3);
-        xs[0]=x[0];
-        xs[1]=x[1];
-        xs[2]=x[0];
-        Gecode::rel(home, SOT_INTER, xs, x[0]);
-      }
-    };
-    RelInterNS3 _relinterns3("RelOp::Sharing::InterNS3");
+    CreateN cn;
 
     //@}
 
