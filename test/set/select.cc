@@ -228,6 +228,33 @@ namespace Test { namespace Set {
     };
     SelectSet _selectset("Select::Set");
 
+    /// Test for SelectUnion constraint
+    class SelectSetConst : public SetTest {
+    private:
+      const IntSet i0;
+      const IntSet i1;
+      const IntSet i2;
+    public:
+      /// Create and register test
+      SelectSetConst(const char* t)
+        : SetTest(t,1,ds_13,false,true), i0(-3,-3), i1(-1,1), i2(0,2) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        if (x.intval() < 0 || x.intval() > 2)
+          return false;
+        CountableSetRanges xr(x.lub, x[0]);
+        IntSet iss[] = {i0, i1, i2};
+        IntSetRanges isr(iss[x.intval()]);
+        return Iter::Ranges::equal(xr, isr);
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+        IntSetArgs xs(3);
+        xs[0] = i0; xs[1] = i1; xs[2] = i2;
+        Gecode::selectSet(home, xs, y[0], x[0]);
+      }
+    };
+    SelectSetConst _selectsetconst("Select::SetConst");
 
     //@}
 
