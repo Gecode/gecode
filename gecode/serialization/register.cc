@@ -1660,6 +1660,73 @@ public:
   }
 };
 
+class Register_sqrt {
+public:
+  /// Identifier for this post function
+  static Gecode::Support::Symbol ati(void) {
+    return "Gecode::Post::sqrt";
+  }
+  
+  /// Post constraint described by \a spec
+  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
+                   const Gecode::Reflection::ActorSpec& spec) {
+    switch(spec.noOfArgs()) {
+    case 2:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::sqrt(home, x0,x1);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqrt");
+      }
+      break;
+    case 3:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
+          Gecode::sqrt(home, x0,x1,x2);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqrt");
+      }
+      break;
+    case 4:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isEnum_IntConLevel(spec[2]) &&
+            isEnum_PropKind(spec[3]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
+          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
+          Gecode::sqrt(home, x0,x1,x2,x3);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqrt");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqrt");
+    }
+  }
+};
+
 class Register_selectInterIn {
 public:
   /// Identifier for this post function
@@ -8061,6 +8128,7 @@ public:
 
 class PostRegistrar {
   GECODE_REGISTER1(Register_rel);
+  GECODE_REGISTER1(Register_sqrt);
   GECODE_REGISTER1(Register_selectInterIn);
   GECODE_REGISTER1(Register_sequence);
   GECODE_REGISTER1(Register_sorted);

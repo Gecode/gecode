@@ -274,10 +274,47 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
-    static  ExecStatus post(Space* home, View x0, View x1);
+    static ExecStatus post(Space* home, View x0, View x1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+
+
+  /**
+   * \brief Bounds-consistent square root propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class Sqrt : public BinaryPropagator<View,PC_INT_BND> {
+  protected:
+    using BinaryPropagator<View,PC_INT_BND>::x0;
+    using BinaryPropagator<View,PC_INT_BND>::x1;
+
+    /// Constructor for cloning \a p
+    Sqrt(Space* home, bool share, Sqrt<View>& p);
+    /// Constructor for posting
+    Sqrt(Space* home, View x0, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Cost function (defined as PC_BINARY_HI)
+    virtual PropCost cost(ModEventDelta med) const;
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Post propagator \f$x_0\cdot x_0=x_1\f$
+    static ExecStatus post(Space* home, View x0, View x1);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -359,6 +396,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 #include "gecode/int/arithmetic/abs.icc"
 #include "gecode/int/arithmetic/max.icc"
 #include "gecode/int/arithmetic/sqr.icc"
+#include "gecode/int/arithmetic/sqrt.icc"
 #include "gecode/int/arithmetic/mult.icc"
 
 #endif

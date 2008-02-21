@@ -87,6 +87,24 @@ namespace Test { namespace Int {
        }
      };
    
+     /// Test for square root constraint
+     class Sqrt : public Test {
+     public:
+       /// Create and register test
+       Sqrt(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Sqrt::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[1]);
+         return (d0 >= d1*d1) && (d0 < (d1+1)*(d1+1));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::sqrt(home, x[0], x[1]);
+       }
+     };
+   
      /// Test for absolute value constraint
      class Abs : public Test {
      public:
@@ -264,6 +282,10 @@ namespace Test { namespace Int {
      Sqr sqr_max("A",d1);
      Sqr sqr_med("B",d2);
      Sqr sqr_min("C",d3);
+   
+     Sqrt sqrt_max("A",d1);
+     Sqrt sqrt_med("B",d2);
+     Sqrt sqrt_min("C",d3);
    
      Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
      Abs abs_bnd_med("B",d2,Gecode::ICL_BND);

@@ -1720,6 +1720,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   sqr(Space* home, IntVar x0, IntVar x1,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+
+  /** \brief Post propagator for \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
+   *
+   * Only bounds-consistency is supported.
+   */
+  GECODE_INT_EXPORT void
+  sqrt(Space* home, IntVar x0, IntVar x1,
+       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 
   /**

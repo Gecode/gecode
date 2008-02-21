@@ -1,0 +1,134 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2008
+ *
+ *  Last modified:
+ *     $Date: 2008-02-06 18:48:22 +0100 (Wed, 06 Feb 2008) $ by $Author: schulte $
+ *     $Revision: 6102 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+#include <cmath>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  /*
+   * Positive bounds-consistent squaring
+   *
+   */
+  template <class View>
+  forceinline
+  Sqrt<View>::Sqrt(Space* home, View x0, View x1)
+    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+
+  template <class View>
+  forceinline ExecStatus
+  Sqrt<View>::post(Space* home, View x0, View x1) {
+    GECODE_ME_CHECK(x0.gq(home,0));
+    GECODE_ME_CHECK(x1.gq(home,0));
+    (void) new (home) Sqrt<View>(home,x0,x1);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  Sqrt<View>::post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+     spec.checkArity(2);
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
+     (void) new (home) Sqrt<View>(home,x0,x1);
+  }
+
+  template <class View>
+  forceinline
+  Sqrt<View>::Sqrt(Space* home, bool share, Sqrt<View>& p)
+    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  Sqrt<View>::copy(Space* home, bool share) {
+    return new (home) Sqrt<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  Sqrt<View>::cost(ModEventDelta) const {
+    return PC_BINARY_HI;
+  }
+
+  template <class View>
+  ExecStatus
+  Sqrt<View>::propagate(Space* home, ModEventDelta) {
+    bool mod;
+    do {
+      mod = false;
+      {
+        ModEvent me = x1.lq(home,floor(::sqrt(static_cast<double>(x0.max()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x1.gq(home,ceil(::sqrt(static_cast<double>(x0.min()))-1.0));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+        }
+      {
+        double next = static_cast<double>(x1.max()+1);
+        ModEvent me = x0.le(home,next*next);
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x0.gq(home,x1.min()*x1.min());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+    } while (mod);
+    return x0.assigned() && x1.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
+  }
+
+  template <class View>
+  Support::Symbol
+  Sqrt<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::Sqrt");
+  }
+
+  template <class View>
+  Reflection::ActorSpec
+  Sqrt<View>::spec(const Space* home, Reflection::VarMap& m) const {
+    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
+  }
+
+
+}}}
+
+// STATISTICS: int-prop
+

@@ -106,6 +106,13 @@ Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
+Added sqrt propagator.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
 Added sqr post function.
 
 [ENTRY]
