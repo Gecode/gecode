@@ -106,7 +106,7 @@ foreach $e (@examples) {
   $etarget = $e;
   $etarget =~ s/[ -]/_/g;
   print "$etarget:\n";
-  print "\t./examples/$e\n\n";
+  print "\t./examples/$e -time 240000\n\n";
 }
 
 print "done:\n";
