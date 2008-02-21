@@ -97,6 +97,13 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Arithmetic::Mult<IntView>::post(home,x0,x1,x2));
   }
 
+
+  void
+  sqr(Space* home, IntVar x0, IntVar x1, IntConLevel, PropKind) {
+    if (home->failed()) return;
+    GECODE_ES_FAIL(home,Arithmetic::Sqr<IntView>::post(home,x0,x1));
+  }
+
   namespace {
     GECODE_REGISTER1(Arithmetic::AbsBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::AbsDom<IntView>);
@@ -104,18 +111,16 @@ namespace Gecode {
     GECODE_REGISTER1(Arithmetic::Max<MinusView>);
     GECODE_REGISTER1(Arithmetic::Mult<IntView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<double,IntView,IntView,IntView>);
-    GECODE_REGISTER4(
-      Arithmetic::MultPlus<double,MinusView,IntView,MinusView>);
-    GECODE_REGISTER4(
-      Arithmetic::MultPlus<double,MinusView,MinusView,IntView>);
+    GECODE_REGISTER4(Arithmetic::MultPlus<double,MinusView,IntView,MinusView>);
+    GECODE_REGISTER4(Arithmetic::MultPlus<double,MinusView,MinusView,IntView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<int,IntView,IntView,IntView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<int,MinusView,IntView,MinusView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<int,MinusView,MinusView,IntView>);
     GECODE_REGISTER1(Arithmetic::NaryMax<IntView>);
     GECODE_REGISTER1(Arithmetic::NaryMax<MinusView>);
-    GECODE_REGISTER1(Arithmetic::Square<IntView>);
-    GECODE_REGISTER2(Arithmetic::SquarePlus<IntView,IntView>);
-    GECODE_REGISTER2(Arithmetic::SquarePlus<MinusView,IntView>);
+    GECODE_REGISTER1(Arithmetic::Sqr<IntView>);
+    GECODE_REGISTER2(Arithmetic::SqrPlus<IntView,IntView>);
+    GECODE_REGISTER2(Arithmetic::SqrPlus<MinusView,IntView>);
   }
 }
 

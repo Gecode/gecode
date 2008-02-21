@@ -137,40 +137,40 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class VA, class VB>
   forceinline
-  SquarePlus<VA,VB>::SquarePlus(Space* home, VA x0, VB x1)
+  SqrPlus<VA,VB>::SqrPlus(Space* home, VA x0, VB x1)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,x0,x1) {}
 
   template <class VA, class VB>
   forceinline ExecStatus
-  SquarePlus<VA,VB>::post(Space* home, VA x0, VB x1) {
-    (void) new (home) SquarePlus<VA,VB>(home,x0,x1);
+  SqrPlus<VA,VB>::post(Space* home, VA x0, VB x1) {
+    (void) new (home) SqrPlus<VA,VB>(home,x0,x1);
     return ES_OK;
   }
 
   template <class VA, class VB>
   forceinline void
-  SquarePlus<VA,VB>::post(Space* home, Reflection::VarMap& vars,
+  SqrPlus<VA,VB>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
      spec.checkArity(2);
      VA x0(home, vars, spec[0]);
      VB x1(home, vars, spec[1]);
-     (void) new (home) SquarePlus<VA,VB>(home,x0,x1);
+     (void) new (home) SqrPlus<VA,VB>(home,x0,x1);
   }
 
   template <class VA, class VB>
   forceinline
-  SquarePlus<VA,VB>::SquarePlus(Space* home, bool share, SquarePlus<VA,VB>& p)
+  SqrPlus<VA,VB>::SqrPlus(Space* home, bool share, SqrPlus<VA,VB>& p)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,share,p) {}
 
   template <class VA, class VB>
   Actor*
-  SquarePlus<VA,VB>::copy(Space* home, bool share) {
-    return new (home) SquarePlus<VA,VB>(home,share,*this);
+  SqrPlus<VA,VB>::copy(Space* home, bool share) {
+    return new (home) SqrPlus<VA,VB>(home,share,*this);
   }
 
   template <class VA, class VB>
   ExecStatus
-  SquarePlus<VA,VB>::propagate(Space* home, ModEventDelta) {
+  SqrPlus<VA,VB>::propagate(Space* home, ModEventDelta) {
     bool mod;
     do {
       mod = false;
@@ -200,79 +200,78 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class VA, class VB>
   Support::Symbol
-  SquarePlus<VA,VB>::ati(void) {
-    return Reflection::mangle<VA,VB>("Gecode::Int::Arithmetic::SquarePlus");
+  SqrPlus<VA,VB>::ati(void) {
+    return Reflection::mangle<VA,VB>("Gecode::Int::Arithmetic::SqrPlus");
   }
 
   template <class VA, class VB>
   Reflection::ActorSpec
-  SquarePlus<VA,VB>::spec(const Space* home, Reflection::VarMap& m) const {
+  SqrPlus<VA,VB>::spec(const Space* home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>
       ::spec(home, m, ati());
   }
 
   /*
-   * Bounds-consistent Square
+   * Bounds-consistent Sqr
    *
    */
 
   template <class View>
   forceinline
-  Square<View>::Square(Space* home, View x0, View x1)
+  Sqr<View>::Sqr(Space* home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template <class View>
   forceinline ExecStatus
-  Square<View>::post(Space* home, View x0, View x1) {
+  Sqr<View>::post(Space* home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
     GECODE_ME_CHECK(x0.lq(home,floor(sqrt(static_cast<double>
                                           (Limits::max)))));
     GECODE_ME_CHECK(x0.gq(home,-floor(sqrt(static_cast<double>
                                            (-Limits::min)))));
     if (x0.min() >= 0)
-      return SquarePlus<IntView,IntView>::post(home,x0,x1);
+      return SqrPlus<IntView,IntView>::post(home,x0,x1);
     if (x0.max() <= 0)
-      return SquarePlus<MinusView,IntView>::post(home,x0,x1);
-    (void) new (home) Square<View>(home,x0,x1);
+      return SqrPlus<MinusView,IntView>::post(home,x0,x1);
+    (void) new (home) Sqr<View>(home,x0,x1);
     return ES_OK;
   }
 
   template <class View>
   forceinline void
-  Square<View>::post(Space* home, Reflection::VarMap& vars,
+  Sqr<View>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
      spec.checkArity(2);
      View x0(home, vars, spec[0]);
      View x1(home, vars, spec[1]);
-     (void) new (home) Square<View>(home,x0,x1);
+     (void) new (home) Sqr<View>(home,x0,x1);
   }
 
   template <class View>
   forceinline
-  Square<View>::Square(Space* home, bool share, Square<View>& p)
+  Sqr<View>::Sqr(Space* home, bool share, Sqr<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
   Actor*
-  Square<View>::copy(Space* home, bool share) {
-    return new (home) Square<View>(home,share,*this);
+  Sqr<View>::copy(Space* home, bool share) {
+    return new (home) Sqr<View>(home,share,*this);
   }
 
   template <class View>
   PropCost
-  Square<View>::cost(ModEventDelta) const {
+  Sqr<View>::cost(ModEventDelta) const {
     return PC_BINARY_HI;
   }
 
   template <class View>
   ExecStatus
-  Square<View>::propagate(Space* home, ModEventDelta) {
-    // x0 * x0 = x1
+  Sqr<View>::propagate(Space* home, ModEventDelta) {
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
-      GECODE_REWRITE(this,(SquarePlus<IntView,IntView>::post(home,x0,x1)));
+      GECODE_REWRITE(this,(SqrPlus<IntView,IntView>::post(home,x0,x1)));
     if (x0.max() <= 0)
-      GECODE_REWRITE(this,(SquarePlus<MinusView,IntView>::post(home,x0,x1)));
+      GECODE_REWRITE(this,(SqrPlus<MinusView,IntView>::post(home,x0,x1)));
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                         x0.max()*x0.max())));
@@ -291,13 +290,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Support::Symbol
-  Square<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::Square");
+  Sqr<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::Sqr");
   }
 
   template <class View>
   Reflection::ActorSpec
-  Square<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Sqr<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
@@ -536,7 +535,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   Mult<View>::post(Space* home, View x0, View x1, View x2) {
     if (same(x0,x1))
-      return Square<View>::post(home,x0,x2);
+      return Sqr<View>::post(home,x0,x2);
     if (p(x0)) {
       if (p(x1) || p(x2)) goto post_ppp;
       if (n(x1) || n(x2)) goto post_pnn;

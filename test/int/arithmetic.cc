@@ -70,11 +70,11 @@ namespace Test { namespace Int {
      };
    
      /// Test for squaring constraint
-     class Square : public Test {
+     class Sqr : public Test {
      public:
        /// Create and register test
-       Square(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Square::"+s,2,d) {}
+       Sqr(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Sqr::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -83,7 +83,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[0], x[1]);
+         Gecode::sqr(home, x[0], x[1]);
        }
      };
    
@@ -261,9 +261,9 @@ namespace Test { namespace Int {
      Mult mult_med("B",d2);
      Mult mult_min("C",d3);
    
-     Square square_max("A",d1);
-     Square square_med("B",d2);
-     Square square_min("C",d3);
+     Sqr sqr_max("A",d1);
+     Sqr sqr_med("B",d2);
+     Sqr sqr_min("C",d3);
    
      Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
      Abs abs_bnd_med("B",d2,Gecode::ICL_BND);

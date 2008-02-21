@@ -222,14 +222,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides multiplication for positive views only.
    */
   template <class VA, class VB>
-  class SquarePlus : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
+  class SqrPlus : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
   protected:
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x0;
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x1;
     /// Constructor for posting
-    SquarePlus(Space* home, VA x0, VB x1);
+    SqrPlus(Space* home, VA x0, VB x1);
     /// Constructor for cloning \a p
-    SquarePlus(Space* home, bool share, SquarePlus<VA,VB>& p);
+    SqrPlus(Space* home, bool share, SqrPlus<VA,VB>& p);
   public:
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static ExecStatus post(Space* home, VA x0, VB x1);
@@ -254,15 +254,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Square : public BinaryPropagator<View,PC_INT_BND> {
+  class Sqr : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Square(Space* home, bool share, Square<View>& p);
+    Sqr(Space* home, bool share, Sqr<View>& p);
     /// Constructor for posting
-    Square(Space* home, View x0, View x1);
+    Sqr(Space* home, View x0, View x1);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);

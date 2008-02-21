@@ -1712,6 +1712,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   mult(Space* home, IntVar x0, IntVar x1, IntVar x2,
        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+
+  /** \brief Post propagator for \f$x_0\cdot x_0=x_1\f$
+   *
+   * Only bounds-consistency is supported.
+   */
+  GECODE_INT_EXPORT void
+  sqr(Space* home, IntVar x0, IntVar x1,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 
   /**

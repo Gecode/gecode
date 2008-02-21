@@ -124,7 +124,7 @@ if (home->failed()) {                           \
   sqr(Space* home, IntVar x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     IntVar y(home, 0, Int::Limits::max);
-    mult(home, x, x, y, icl);
+    sqr(home, x, y, icl);
     return y;
   }
 
