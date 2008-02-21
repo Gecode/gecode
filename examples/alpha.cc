@@ -49,7 +49,7 @@
 class Alpha : public Example {
 protected:
   /// Alphabet has 26 letters
-  static const int n = 2;
+  static const int n = 26;
   /// Array for letters
   IntVarArray      le;
 public:
@@ -59,8 +59,37 @@ public:
     BRANCH_SIZE  ///< Choose variable with smallest size
   };
   /// Actual model
-  Alpha(const Options& opt) : le(this,n,0,25) {
-    sqrt(this, le[0], le[1]);
+  Alpha(const Options& opt) : le(this,n,1,n) {
+    IntVar
+      a(le[ 0]), b(le[ 1]), c(le[ 2]), e(le[ 4]), f(le[ 5]),
+      g(le[ 6]), h(le[ 7]), i(le[ 8]), j(le[ 9]), k(le[10]),
+      l(le[11]), m(le[12]), n(le[13]), o(le[14]), p(le[15]),
+      q(le[16]), r(le[17]), s(le[18]), t(le[19]), u(le[20]),
+      v(le[21]), w(le[22]), x(le[23]), y(le[24]), z(le[25]);
+
+    post(this, b+a+l+l+e+t       == 45,  opt.icl());
+    post(this, c+e+l+l+o         == 43,  opt.icl());
+    post(this, c+o+n+c+e+r+t     == 74,  opt.icl());
+    post(this, f+l+u+t+e         == 30,  opt.icl());
+    post(this, f+u+g+u+e         == 50,  opt.icl());
+    post(this, g+l+e+e           == 66,  opt.icl());
+    post(this, j+a+z+z           == 58,  opt.icl());
+    post(this, l+y+r+e           == 47,  opt.icl());
+    post(this, o+b+o+e           == 53,  opt.icl());
+    post(this, o+p+e+r+a         == 65,  opt.icl());
+    post(this, p+o+l+k+a         == 59,  opt.icl());
+    post(this, q+u+a+r+t+e+t     == 50,  opt.icl());
+    post(this, s+a+x+o+p+h+o+n+e == 134, opt.icl());
+    post(this, s+c+a+l+e         == 51,  opt.icl());
+    post(this, s+o+l+o           == 37,  opt.icl());
+    post(this, s+o+n+g           == 61,  opt.icl());
+    post(this, s+o+p+r+a+n+o     == 82,  opt.icl());
+    post(this, t+h+e+m+e         == 72,  opt.icl());
+    post(this, v+i+o+l+i+n       == 100, opt.icl());
+    post(this, w+a+l+t+z         == 34,  opt.icl());
+
+    distinct(this, le, opt.icl());
+
     branch(this, le, 
            (opt.branching() == BRANCH_NONE) ? INT_VAR_NONE : INT_VAR_SIZE_MIN,
            INT_VAL_MIN);
