@@ -109,6 +109,7 @@ namespace Test {
 
   std::vector<std::pair<bool, const char*> > testpat;
   const char* startFrom = NULL;
+  bool list = false;
   
   void
   Options::parse(int argc, char* argv[]) {
@@ -149,6 +150,8 @@ namespace Test {
                   << "\t-reflection (boolean) default: "
                   << (reflection ? "true" : "false") << std::endl
                   << "\t\tuse reflection also for copying" << std::endl
+                  << "\t-list" << std::endl
+                  << "\t\toutput list of all test cases and exit" << std::endl
           ;
         exit(EXIT_SUCCESS);
       } else if (!strcmp(argv[i],"-seed")) {
@@ -189,6 +192,8 @@ namespace Test {
         } else if (argv[i][0] == 'f') {
           reflection = false;
         }
+      } else if (!strcmp(argv[i],"-list")) {
+        list = true;
       }
       i++;
     }
@@ -209,6 +214,14 @@ main(int argc, char* argv[]) {
 #endif
 
   opt.parse(argc, argv);
+  
+  if (list) {
+    for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
+      std::cout << t->name() << std::endl;
+    }
+    exit(EXIT_SUCCESS);
+  }
+  
   Base::rand.seed(opt.seed);
 
   bool started = startFrom == NULL ? true : false;
