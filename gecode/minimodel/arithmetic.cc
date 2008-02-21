@@ -47,7 +47,7 @@ if (home->failed()) {                           \
 }
 
   IntVar
-  abs(Space* home, IntVar x, IntConLevel icl) {
+  abs(Space* home, IntVar x, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     if ((icl == ICL_DOM) && (x.min() >= 0))
       return x;
@@ -60,22 +60,22 @@ if (home->failed()) {                           \
       min = 0; max = std::max(-x.min(),x.max());
     }
     IntVar y(home, min, max);
-    abs(home, x, y, icl);
+    abs(home, x, y, icl, pk);
     return y;
   }
 
   IntVar
-  min(Space* home, IntVar x, IntVar y, IntConLevel icl) {
+  min(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,
              std::min(x.min(),y.min()),
              std::min(x.max(),y.max()));
-    min(home, x, y, z, icl);
+    min(home, x, y, z, icl, pk);
     return z;
   }
 
   IntVar
-  min(Space* home, const IntVarArgs& x, IntConLevel icl) {
+  min(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     int min = Int::Limits::max;
     int max = Int::Limits::max;
@@ -84,22 +84,22 @@ if (home->failed()) {                           \
       max = std::min(max,x[i].max());
     }
     IntVar y(home, min, max);
-    Gecode::min(home, x, y, icl);
+    Gecode::min(home, x, y, icl, pk);
     return y;
   }
 
   IntVar
-  max(Space* home, IntVar x, IntVar y, IntConLevel icl) {
+  max(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,
              std::max(x.min(),y.min()),
              std::max(x.max(),y.max()));
-    max(home, x, y, z, icl);
+    max(home, x, y, z, icl, pk);
     return z;
   }
 
   IntVar
-  max(Space* home, const IntVarArgs& x, IntConLevel icl) {
+  max(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     int min = Int::Limits::min;
     int max = Int::Limits::min;
@@ -108,36 +108,36 @@ if (home->failed()) {                           \
       max = std::max(max,x[i].max());
     }
     IntVar y(home, min, max);
-    Gecode::max(home, x, y, icl);
+    Gecode::max(home, x, y, icl, pk);
     return y;
   }
 
   IntVar
-  mult(Space* home, IntVar x, IntVar y, IntConLevel icl) {
+  mult(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home, Int::Limits::min, Int::Limits::max);
-    mult(home, x, y, z, icl);
+    mult(home, x, y, z, icl, pk);
     return z;
   }
 
   IntVar
-  sqr(Space* home, IntVar x, IntConLevel icl) {
+  sqr(Space* home, IntVar x, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     IntVar y(home, 0, Int::Limits::max);
-    sqr(home, x, y, icl);
+    sqr(home, x, y, icl, pk);
     return y;
   }
 
   IntVar
-  sqrt(Space* home, IntVar x, IntConLevel icl) {
+  sqrt(Space* home, IntVar x, IntConLevel icl, PropKind pk) {
     GECODE_MM_RETURN_FAILED;
     IntVar y(home, 0, std::max(0,x.max()));
-    sqrt(home, x, y, icl);
+    sqrt(home, x, y, icl, pk);
     return y;
   }
 
   IntVar
-  plus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
+  plus(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind) {
     GECODE_MM_RETURN_FAILED;
     double min = static_cast<double>(x.min())+static_cast<double>(y.min());
     min = std::min(static_cast<double>(Int::Limits::max),
@@ -155,7 +155,7 @@ if (home->failed()) {                           \
   }
 
   IntVar
-  minus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
+  minus(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind) {
     GECODE_MM_RETURN_FAILED;
     double min = static_cast<double>(x.min())-static_cast<double>(y.max());
     min = std::min(static_cast<double>(Int::Limits::max),

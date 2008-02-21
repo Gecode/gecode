@@ -167,7 +167,8 @@ namespace Gecode { namespace MiniModel {
 
   template <class Var>
   inline void
-  LinExpr<Var>::post(Space* home, IntRelType irt, IntConLevel icl) const {
+  LinExpr<Var>::post(Space* home, IntRelType irt, 
+                     IntConLevel icl, PropKind) const {
     GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n);
     (void) ax->fill(ts,0,sign);
     Int::Linear::post(home, ts, n, irt, sign*-c, icl);
@@ -175,7 +176,8 @@ namespace Gecode { namespace MiniModel {
 
   template <>
   inline void
-  LinExpr<IntVar>::post(Space* home, IntRelType irt, const BoolVar& b) const {
+  LinExpr<IntVar>::post(Space* home, IntRelType irt, const BoolVar& b,
+                        IntConLevel, PropKind) const {
     GECODE_AUTOARRAY(Int::Linear::Term<Int::IntView>, ts, n);
     (void) ax->fill(ts,0,sign);
     Int::Linear::post(home, ts, n, irt, sign*-c, b);
@@ -183,13 +185,14 @@ namespace Gecode { namespace MiniModel {
 
   template <>
   inline void
-  LinExpr<BoolVar>::post(Space*, IntRelType, const BoolVar&) const {
+  LinExpr<BoolVar>::post(Space*, IntRelType, const BoolVar&,
+                         IntConLevel, PropKind) const {
     throw ReificationNotSupported("LinExpr::BoolVar");
   }
 
   template <>
   inline IntVar
-  LinExpr<IntVar>::post(Space* home, IntConLevel icl) const {
+  LinExpr<IntVar>::post(Space* home, IntConLevel icl, PropKind) const {
     GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n+1);
     (void) ax->fill(ts,0,sign);
     int min, max;
@@ -202,7 +205,7 @@ namespace Gecode { namespace MiniModel {
 
   template <>
   inline IntVar
-  LinExpr<BoolVar>::post(Space* home, IntConLevel icl) const {
+  LinExpr<BoolVar>::post(Space* home, IntConLevel icl, PropKind) const {
     GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n);
     (void) ax->fill(ts,0,sign);
     int min, max;
@@ -323,21 +326,22 @@ operator*(int a, const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t) {
 namespace Gecode {
 
   forceinline IntVar
-  post(Space*, const IntVar& x, IntConLevel) {
+  post(Space*, const IntVar& x, IntConLevel, PropKind) {
     return x;
   }
 
   inline IntVar
-  post(Space* home, int n, IntConLevel) {
+  post(Space* home, int n, IntConLevel, PropKind) {
     IntVar x(home, n, n);
     return x;
   }
 
   template <class Var>
   inline IntVar
-  post(Space* home, const MiniModel::LinExpr<Var>& e, IntConLevel icl) {
+  post(Space* home, const MiniModel::LinExpr<Var>& e, 
+       IntConLevel icl, PropKind pk) {
     if (!home->failed())
-      return e.post(home,icl);
+      return e.post(home,icl,pk);
     IntVar x(home,Int::Limits::min,Int::Limits::max);
     return x;
   }

@@ -47,7 +47,7 @@ namespace Gecode {
   producer_consumer(Space *home,
                     const IntVarArgs& produce_date, const IntArgs& produce_amount,
                     const IntVarArgs& consume_date, const IntArgs& consume_amount,
-                    int initial, IntConLevel cl)
+                    int initial, IntConLevel icl, PropKind pk)
   {
     if (produce_date.size() != produce_amount.size() ||
         consume_date.size() != consume_amount.size())
@@ -99,7 +99,7 @@ namespace Gecode {
 
     limit[0] = sum_height;
 
-    cumulatives(home, machine, start, duration, end, height, limit, true, cl);
+    cumulatives(home, machine, start, duration, end, height, limit, true, icl, pk);
   }
 
 
@@ -130,7 +130,7 @@ namespace Gecode {
     template<class Duration, class Height>
     void
     post_cumulative(Space *home, const IntVarArgs& start, const Duration& duration,
-                    const Height& height, int limit, bool at_most, IntConLevel cl)
+                    const Height& height, int limit, bool at_most, IntConLevel icl, PropKind pk)
     {
       if (start.size() != duration.size() ||
           duration.size() !=  height.size())
@@ -179,37 +179,37 @@ namespace Gecode {
         }
       }
 
-      cumulatives(home, m, s, d, e, h, l, at_most, cl);
+      cumulatives(home, m, s, d, e, h, l, at_most, icl, pk);
     }
 
   }
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-             const IntVarArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntVarArgs& height, int limit, bool at_most, IntConLevel icl, PropKind pk)
   {
-    post_cumulative(home, start, duration, height, limit, at_most, cl);
+    post_cumulative(home, start, duration, height, limit, at_most, icl, pk);
   }
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-             const IntVarArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntVarArgs& height, int limit, bool at_most, IntConLevel icl, PropKind pk)
   {
-    post_cumulative(home, start, duration, height, limit, at_most, cl);
+    post_cumulative(home, start, duration, height, limit, at_most, icl, pk);
   }
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-             const IntArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntArgs& height, int limit, bool at_most, IntConLevel icl, PropKind pk)
   {
-    post_cumulative(home, start, duration, height, limit, at_most, cl);
+    post_cumulative(home, start, duration, height, limit, at_most, icl, pk);
   }
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-             const IntArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntArgs& height, int limit, bool at_most, IntConLevel icl, PropKind pk)
   {
-    post_cumulative(home, start, duration, height, limit, at_most, cl);
+    post_cumulative(home, start, duration, height, limit, at_most, icl, pk);
   }
 
 
@@ -217,7 +217,7 @@ namespace Gecode {
     template <class Duration>
     void
     post_serialized(Space *home, const IntVarArgs& start, const Duration& duration,
-               IntConLevel cl)
+               IntConLevel icl, PropKind pk)
     {
       if (start.size() != duration.size())
         throw ArgumentSizeMismatch("MiniModel::serialized");
@@ -225,23 +225,23 @@ namespace Gecode {
       IntArgs height(start.size());
       for (int i = start.size(); i--; ) height[i] = 1;
 
-      post_cumulative(home, start, duration, height, 1, true, cl);
+      post_cumulative(home, start, duration, height, 1, true, icl, pk);
     }
   }
 
   void
   serialized(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-             IntConLevel cl)
+             IntConLevel icl, PropKind pk)
   {
-    post_serialized(home, start, duration, cl);
+    post_serialized(home, start, duration, icl, pk);
   }
 
 
   void
   serialized(Space *home, const IntVarArgs& start, const IntArgs& duration,
-             IntConLevel cl)
+             IntConLevel icl, PropKind pk)
   {
-        post_serialized(home, start, duration, cl);
+        post_serialized(home, start, duration, icl, pk);
   }
 
 }

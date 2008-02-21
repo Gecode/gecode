@@ -48,8 +48,8 @@ namespace Gecode {
       : e(e0), t(t0) {}
 
     forceinline void
-    BoolRel::post(Space* home) const {
-      e.post(home,t);
+    BoolRel::post(Space* home, IntConLevel icl, PropKind pk) const {
+      e.post(home,t,icl,pk);
     }
 
   }
@@ -72,9 +72,10 @@ namespace Gecode {
    *
    */
   inline void
-  post(Space* home, const MiniModel::BoolRel& r, IntConLevel) {
+  post(Space* home, const MiniModel::BoolRel& r, 
+       IntConLevel icl, PropKind pk) {
     if (home->failed()) return;
-    r.post(home);
+    r.post(home,icl,pk);
   }
 
 }

@@ -69,6 +69,15 @@ Date:    Even later
 [DESCRIPTION]
 Lots of nice gimmicks for Christmas!
 
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+All minimodel functionality now understands both IntConLevel and
+PropKind arguments.
+
 [ENTRY]
 Module: set
 What:   bug
