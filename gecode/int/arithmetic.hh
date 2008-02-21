@@ -282,6 +282,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static Support::Symbol ati(void);
   };
 
+
+
   /**
    * \brief Bounds-consistent positive multiplication propagator
    *
@@ -356,6 +358,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 #include "gecode/int/arithmetic/abs.icc"
 #include "gecode/int/arithmetic/max.icc"
+#include "gecode/int/arithmetic/sqr.icc"
 #include "gecode/int/arithmetic/mult.icc"
 
 #endif

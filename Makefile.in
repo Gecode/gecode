@@ -271,6 +271,7 @@ INTSRC0 = \
 INTHDR0 = \
 	limits.icc \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
+	arithmetic/sqr.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
 	branch/select-val.icc branch/select-view.icc \
 	count/view.icc count/int.icc count/rel.icc \
