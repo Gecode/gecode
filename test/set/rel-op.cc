@@ -337,6 +337,127 @@ namespace Test { namespace Set {
 
     CreateN cn;
 
+    /// Test for n-ary partition constraint
+    class RelIntN : public SetTest {
+    private:
+      Gecode::SetOpType sot;
+      int n;
+      bool withConst;
+      IntSet is;
+    public:
+      /// Create and register test
+      RelIntN(Gecode::SetOpType sot0, int n0, bool withConst0)
+        : SetTest("RelOp::IntN::"+str(sot0)+"::"+str(n0)+
+                  "::C"+str(withConst0 ? 1 : 0),
+                  1,ds_12,false,n0)
+        , sot(sot0), n(n0), withConst(withConst0)
+        , is(0,1) {}
+      /// Test whether \a x is solution
+      bool solution(const SetAssignment& x) const {
+        GECODE_AUTOARRAY(int, isrs, n);
+        for (int i=0; i<n; i++)
+          isrs[i] = x.ints()[i];
+        
+        IntSet iss(isrs,n);
+        CountableSetRanges xnr(x.lub, x[0]);
+
+        switch (sot) {
+        case SOT_DUNION:
+          {
+            IntSetRanges issr(iss);
+            unsigned int cardSum = Iter::Ranges::size(issr);
+            if (cardSum != n)
+              return false;
+            if (withConst) {
+              IntSetRanges isr(is);
+              cardSum += Iter::Ranges::size(isr);
+            }
+            CountableSetRanges xnr2(x.lub, x[0]);
+            if (cardSum != Iter::Ranges::size(xnr2))
+              return false;
+          }
+          // fall through to union case
+        case SOT_UNION:
+          {
+            if (withConst) {
+              IntSetRanges issr(iss);
+              IntSetRanges isr(is);
+              Iter::Ranges::Union<IntSetRanges,IntSetRanges > uu(isr, issr);
+              return Iter::Ranges::equal(uu, xnr);              
+            } else {
+              IntSetRanges issr(iss);
+              return Iter::Ranges::equal(issr, xnr);
+            }
+          }
+        case SOT_INTER:
+          {
+            bool allEqual = true;
+            for (int i=1; i<n; i++) {
+              if (isrs[i] != isrs[0]) {
+                allEqual = false;
+                break;
+              }
+            }
+            if (withConst) {
+              if (allEqual) {
+                if (n == 0) {
+                  IntSetRanges isr(is);
+                  return Iter::Ranges::equal(isr, xnr);
+                } else {
+                  Iter::Ranges::Singleton s(isrs[0],isrs[0]);
+                  IntSetRanges isr(is);
+                  Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton>
+                    uu(isr, s);
+                  return Iter::Ranges::equal(uu, xnr);
+                }
+              } else {
+                return Iter::Ranges::size(xnr) == 0;
+              }
+            } else {
+              if (allEqual) {
+                if (n == 0) {
+                  return Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
+                } else {
+                  Iter::Ranges::Singleton s(isrs[0],isrs[0]);
+                  return Iter::Ranges::equal(s, xnr);
+                }
+              } else {
+                return Iter::Ranges::size(xnr) == 0;
+              }
+            }
+          }
+        default:
+          GECODE_NEVER;
+        }
+        GECODE_NEVER;
+        return false;
+      }
+      /// Post constraint on \a x
+      void post(Space* home, SetVarArray& x, IntVarArray& y) {
+        if (!withConst)
+          Gecode::rel(home, sot, y, x[0]);
+        else
+          Gecode::rel(home, sot, y, is, x[0]);
+      }
+    };
+
+    /// Help class to create and register tests
+    class CreateIntN {
+    public:
+      /// Perform creation and registration
+      CreateIntN(void) {
+        for (int wc=0; wc<=1; wc++) {
+          for (int i=0; i<=3; i++) {
+            (void) new RelIntN(Gecode::SOT_UNION, i, wc);
+            (void) new RelIntN(Gecode::SOT_DUNION, i, wc);
+            (void) new RelIntN(Gecode::SOT_INTER, i, wc);
+          }
+        }
+      }
+    };
+
+    CreateIntN intcn;
+
     //@}
 
 }}}
