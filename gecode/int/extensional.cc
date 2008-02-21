@@ -69,12 +69,12 @@ namespace Gecode {
   extensional(Space* home, const IntVarArgs& x, const TupleSet& tupleSet, 
               IntConLevel, PropKind pk) {
     using namespace Int;
-    if (home->failed()) return;
     if (!tupleSet.finalized())
       const_cast<TupleSet&>(tupleSet).finalize();
 
     if (tupleSet.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
+    if (home->failed()) return;
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
@@ -97,52 +97,11 @@ namespace Gecode {
     }
   }
 
-  void
-  extensional(Space* home, const IntArgs& c, const IntVarArgs& x, 
-              const TupleSet& tupleSet, IntConLevel, PropKind pk) {
-    using namespace Int;
-    if (home->failed()) return;
-    if (!tupleSet.finalized())
-      const_cast<TupleSet&>(tupleSet).finalize();
-
-    if (c.size() != x.size())
-      throw ArgumentSizeMismatch("Int::extensional");
-    if (tupleSet.arity() != x.size())
-      throw ArgumentSizeMismatch("Int::extensional");
-    if (home->failed()) return;
-
-    // Construct view array
-    ViewArray<OffsetView> cx(home,x.size());
-    for (int i = c.size(); i--; ) {
-      Limits::check(c[i],"Int::extensional");
-      cx[i].init(x[i],c[i]);
-    }
-
-    // All variables in the correct domain
-    for (int i = cx.size(); i--; ) {
-      GECODE_ME_FAIL(home, cx[i].gq(home, tupleSet.min()));
-      GECODE_ME_FAIL(home, cx[i].lq(home, tupleSet.max()));
-    }
-
-    switch (pk) {
-    case PK_SPEED:
-      GECODE_ES_FAIL(home,(Extensional::Incremental<OffsetView>::
-                           post(home,cx,tupleSet)));
-      break;
-    default:
-      GECODE_ES_FAIL(home,(Extensional::Basic<OffsetView>::
-                           post(home,cx,tupleSet)));
-      break;
-    }
-  }
-
   GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::IntView>);
   GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::BoolView>);
 
   GECODE_REGISTER1(Int::Extensional::Basic<Int::IntView>);
-  GECODE_REGISTER1(Int::Extensional::Basic<Int::OffsetView>);
   GECODE_REGISTER1(Int::Extensional::Incremental<Int::IntView>);
-  GECODE_REGISTER1(Int::Extensional::Incremental<Int::OffsetView>);
 
 }
 

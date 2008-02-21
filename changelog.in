@@ -72,6 +72,20 @@ Lots of nice gimmicks for Christmas!
 
 [ENTRY]
 Module: minimodel
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed scheduling abstractions.
+
+[ENTRY]
+Module: int
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed extensional constraints with offset arguments.
+
+[ENTRY]
+Module: minimodel
 What:   new
 Rank:   minor
 [DESCRIPTION]

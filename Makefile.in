@@ -470,7 +470,7 @@ CPLTSETBUILDDIRS	=						\
 #
 
 MMSRC0 = \
-	scheduling.cc bool-expr.cc arithmetic.cc reg.cc 
+	bool-expr.cc arithmetic.cc reg.cc 
 MMHDR0 = \
 	lin-expr.icc lin-rel.icc exception.icc matrix.icc \
 	bool-expr.icc bool-rel.icc
