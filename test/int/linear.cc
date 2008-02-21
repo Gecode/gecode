@@ -50,7 +50,7 @@ namespace Test { namespace Int {
       */
      //@{
      /// Test linear relation over integer variables
-     class Int : public Test {
+     class IntInt : public Test {
      protected:
        /// Coefficients
        Gecode::IntArgs a;
@@ -58,10 +58,10 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       Int(const std::string& s, const Gecode::IntSet& d,
-           const Gecode::IntArgs& a0, Gecode::IntRelType irt0, 
-           Gecode::IntConLevel icl=Gecode::ICL_BND)
-         : Test("Linear::Int::"+
+       IntInt(const std::string& s, const Gecode::IntSet& d,
+              const Gecode::IntArgs& a0, Gecode::IntRelType irt0, 
+              Gecode::IntConLevel icl=Gecode::ICL_BND)
+         : Test("Linear::Int::Int::"+
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
                 a0.size(),d,icl != Gecode::ICL_DOM,icl), 
          a(a0), irt(irt0) {}
@@ -92,6 +92,60 @@ namespace Test { namespace Int {
            Gecode::linear(home, x, irt, 0, b, icl);
          else
            Gecode::linear(home, a, x, irt, 0, b, icl);
+       }
+     };
+   
+     /// Test linear relation over integer variables
+     class IntVar : public Test {
+     protected:
+       /// Coefficients
+       Gecode::IntArgs a;
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       IntVar(const std::string& s, const Gecode::IntSet& d,
+              const Gecode::IntArgs& a0, Gecode::IntRelType irt0, 
+              Gecode::IntConLevel icl=Gecode::ICL_BND)
+         : Test("Linear::Int::Var::"+
+                str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
+                a0.size()+1,d,icl != Gecode::ICL_DOM,icl), 
+           a(a0), irt(irt0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double e = 0.0;
+         for (int i=0; i<a.size(); i++)
+           e += a[i]*x[i];
+         return cmp(e, irt, static_cast<double>(x[a.size()]));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         int n = a.size();
+         bool unit = true;
+         Gecode::IntVarArgs y(n);
+         for (int i=n; i--; ) {
+           unit &= (a[i] == 1);
+           y[i] = x[i];
+         }
+         if (unit)
+           Gecode::linear(home, y, irt, x[n], icl);
+         else
+           Gecode::linear(home, a, y, irt, x[n], icl);
+       }
+       /// Post reified constraint on \a x for \a b
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                         Gecode::BoolVar b) {
+         int n = a.size();
+         bool unit = true;
+         Gecode::IntVarArgs y(n);
+         for (int i=n; i--; ) {
+           unit &= (a[i] == 1);
+           y[i] = x[i];
+         }
+         if (unit)
+           Gecode::linear(home, y, irt, x[n], b, icl);
+         else
+           Gecode::linear(home, a, y, irt, x[n], b, icl);
        }
      };
    
@@ -190,11 +244,15 @@ namespace Test { namespace Int {
            IntArgs a1(1, 0);
            
            for (IntRelTypes irts; irts(); ++irts) {
-             (void) new Int("11",d1,a1,irts.irt());
-             (void) new Int("21",d2,a1,irts.irt());
+             (void) new IntInt("11",d1,a1,irts.irt());
+             (void) new IntVar("11",d1,a1,irts.irt());
+             (void) new IntInt("21",d2,a1,irts.irt());
+             (void) new IntVar("21",d2,a1,irts.irt());
            }
-           (void) new Int("11",d1,a1,IRT_EQ,ICL_DOM);
-           (void) new Int("21",d2,a1,IRT_EQ,ICL_DOM);
+           (void) new IntInt("11",d1,a1,IRT_EQ,ICL_DOM);
+           (void) new IntVar("11",d1,a1,IRT_EQ,ICL_DOM);
+           (void) new IntInt("21",d2,a1,IRT_EQ,ICL_DOM);
+           (void) new IntVar("21",d2,a1,IRT_EQ,ICL_DOM);
    
            const int av2[5] = {1,1,1,1,1};
            const int av3[5] = {1,-1,-1,1,-1};
@@ -207,23 +265,39 @@ namespace Test { namespace Int {
              IntArgs a4(i, av4);
              IntArgs a5(i, av5);
              for (IntRelTypes irts; irts(); ++irts) {
-               (void) new Int("12",d1,a2,irts.irt());
-               (void) new Int("13",d1,a3,irts.irt());
-               (void) new Int("14",d1,a4,irts.irt());
-               (void) new Int("15",d1,a5,irts.irt());
-               (void) new Int("22",d2,a2,irts.irt());
-               (void) new Int("23",d2,a3,irts.irt());
-               (void) new Int("24",d2,a4,irts.irt());
-               (void) new Int("25",d2,a5,irts.irt());
+               (void) new IntInt("12",d1,a2,irts.irt());
+               (void) new IntInt("13",d1,a3,irts.irt());
+               (void) new IntInt("14",d1,a4,irts.irt());
+               (void) new IntInt("15",d1,a5,irts.irt());
+               (void) new IntInt("22",d2,a2,irts.irt());
+               (void) new IntInt("23",d2,a3,irts.irt());
+               (void) new IntInt("24",d2,a4,irts.irt());
+               (void) new IntInt("25",d2,a5,irts.irt());
+               if (i < 5) {
+                 (void) new IntVar("12",d1,a2,irts.irt());
+                 (void) new IntVar("13",d1,a3,irts.irt());
+                 (void) new IntVar("14",d1,a4,irts.irt());
+                 (void) new IntVar("15",d1,a5,irts.irt());
+                 (void) new IntVar("22",d2,a2,irts.irt());
+                 (void) new IntVar("23",d2,a3,irts.irt());
+                 (void) new IntVar("24",d2,a4,irts.irt());
+                 (void) new IntVar("25",d2,a5,irts.irt());
+               }
              }
-             (void) new Int("12",d1,a2,IRT_EQ,ICL_DOM);
-             (void) new Int("13",d1,a3,IRT_EQ,ICL_DOM);
-             (void) new Int("14",d1,a4,IRT_EQ,ICL_DOM);
-             (void) new Int("15",d1,a5,IRT_EQ,ICL_DOM);
-             (void) new Int("22",d2,a2,IRT_EQ,ICL_DOM);
-             (void) new Int("23",d2,a3,IRT_EQ,ICL_DOM);
-             (void) new Int("24",d2,a4,IRT_EQ,ICL_DOM);
-             (void) new Int("25",d2,a5,IRT_EQ,ICL_DOM);
+             (void) new IntInt("12",d1,a2,IRT_EQ,ICL_DOM);
+             (void) new IntInt("13",d1,a3,IRT_EQ,ICL_DOM);
+             (void) new IntInt("14",d1,a4,IRT_EQ,ICL_DOM);
+             (void) new IntInt("15",d1,a5,IRT_EQ,ICL_DOM);
+             (void) new IntInt("22",d2,a2,IRT_EQ,ICL_DOM);
+             (void) new IntInt("23",d2,a3,IRT_EQ,ICL_DOM);
+             (void) new IntInt("24",d2,a4,IRT_EQ,ICL_DOM);
+             (void) new IntInt("25",d2,a5,IRT_EQ,ICL_DOM);
+             if (i < 4) {
+               (void) new IntVar("12",d1,a2,IRT_EQ,ICL_DOM);
+               (void) new IntVar("13",d1,a3,IRT_EQ,ICL_DOM);
+               (void) new IntVar("14",d1,a4,IRT_EQ,ICL_DOM);
+               (void) new IntVar("15",d1,a5,IRT_EQ,ICL_DOM);
+             }
            }
          }
          {
