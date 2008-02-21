@@ -52,227 +52,71 @@ namespace Test { namespace Set {
 
     static IntSet ds_33(-3,3);
 
-    /// Test for binary disequality constraint
-    class RelBinNEq : public SetTest {
+    /// Test for binary set relation constraint
+    class RelBin : public SetTest {
+    private:
+      Gecode::SetRelType srt;
+      bool shared;
     public:
       /// Create and register test
-      RelBinNEq(const char* t)
-        : SetTest(t,2,ds_33,true) {}
+      RelBin(Gecode::SetRelType srt0, bool shared0)
+        : SetTest("Rel::Bin::"+str(srt0)+"::S"+(shared0 ? "1":"0"),
+                  shared ? 1 : 2,ds_33,true)
+        , srt(srt0), shared(shared0){}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
+        int x1 = shared ? x[0] : x[1];
         CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return !Iter::Ranges::equal(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_NQ, x[1]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_NQ, x[1], b);
-      }
-    };
-    RelBinNEq _relneq("Rel::BinNEq");
-
-    /// Sharing test for binary disequality constraint
-    class RelBinNEqS : public SetTest {
-    public:
-      /// Create and register test
-      RelBinNEqS(const char* t)
-        : SetTest(t,1,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
+        CountableSetRanges xr1(x.lub, x1);
+        switch (srt) {
+        case SRT_EQ: return Iter::Ranges::equal(xr0, xr1);
+        case SRT_NQ: return !Iter::Ranges::equal(xr0, xr1);
+        case SRT_SUB: return Iter::Ranges::subset(xr0, xr1);
+        case SRT_SUP: return Iter::Ranges::subset(xr1, xr0);
+        case SRT_DISJ:
+          {
+            Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges>
+              inter(xr0,xr1);
+            return !inter();
+          }
+        case SRT_CMPL:
+          {
+            Gecode::Set::RangesCompl<CountableSetRanges> rc(xr0);
+            return Iter::Ranges::equal(rc,xr1);
+          }
+        default:
+          GECODE_NEVER;
+        }
+        GECODE_NEVER;
         return false;
       }
       /// Post constraint on \a x
       void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_NQ, x[0]);
+        if (!shared)
+          Gecode::rel(home, x[0], srt, x[1]);
+        else
+          Gecode::rel(home, x[0], srt, x[0]);
       }
       /// Post reified constraint on \a x for \a b
       void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_NQ, x[0], b);
+        if (!shared)
+          Gecode::rel(home, x[0], srt, x[1], b);
+        else
+          Gecode::rel(home, x[0], srt, x[0], b);
       }
     };
-    RelBinNEqS _relneqs("Rel::Sharing::BinNEqS");
-
-    /// Test for binary equality constraint
-    class RelBinEq : public SetTest {
-    public:
-      /// Create and register test
-      RelBinEq(const char* t)
-        : SetTest(t,2,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::equal(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_EQ, x[1]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_EQ, x[1], b);
-      }
-    };
-    RelBinEq _releq("Rel::BinEq");
-
-    /// Sharing test for binary equality constraint
-    class RelBinEqS : public SetTest {
-    public:
-      /// Create and register test
-      RelBinEqS(const char* t)
-        : SetTest(t,1,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_EQ, x[0]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_EQ, x[0], b);
-      }
-    };
-    RelBinEqS _releqs("Rel::Sharing::BinEqS");
-
-    /// Test for binary subset constraint
-    class RelBinSub : public SetTest {
-    public:
-      /// Create and register test
-      RelBinSub(const char* t)
-        : SetTest(t,2,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::subset(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_SUB, x[1]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_SUB, x[1], b);
-      }
-    };
-    RelBinSub _relsub("Rel::BinSub");
-
-    /// Sharing test for binary subset constraint
-    class RelBinSubS : public SetTest {
-    public:
-      /// Create and register test
-      RelBinSubS(const char* t)
-        : SetTest(t,1,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return true;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_SUB, x[0]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_SUB, x[0], b);
-      }
-    };
-    RelBinSubS _relsubs("Rel::Sharing::BinSubS");
-
-    /// Test for binary disjointness constraint
-    class RelBinDisj : public SetTest {
-    public:
-      /// Create and register test
-      RelBinDisj(const char* t)
-        : SetTest(t,2,ds_33) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        return Iter::Ranges::disjoint(xr0, xr1);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_DISJ, x[1]);
-      }
-    };
-    RelBinDisj _reldisj("Rel::BinDisj");
-
-    /// Sharing test for binary disjointness constraint
-    class RelBinDisjS : public SetTest {
-    public:
-      /// Create and register test
-      RelBinDisjS(const char* t)
-        : SetTest(t,1,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        return !xr0();
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_DISJ, x[0]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_DISJ, x[0], b);
-      }
-    };
-    RelBinDisjS _reldisjs("Rel::Sharing::BinDisjS");
-
-    /// Test for binary complement constraint
-    class RelBinCompl : public SetTest {
-    public:
-      /// Create and register test
-      RelBinCompl(const char* t)
-        : SetTest(t,2,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        Gecode::Set::RangesCompl<CountableSetRanges> xr1c(xr1);
-        return Iter::Ranges::equal(xr0, xr1c);
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_CMPL, x[1]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_CMPL, x[1], b);
-      }
-    };
-    RelBinCompl _relcompl("Rel::BinCompl");
-
-    /// Sharing test for binary complement constraint
-    class RelBinComplS : public SetTest {
-    public:
-      /// Create and register test
-      RelBinComplS(const char* t)
-        : SetTest(t,1,ds_33,true) {}
-      /// Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        (void)x;
-        return false;
-      }
-      /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], SRT_CMPL, x[0]);
-      }
-      /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_CMPL, x[0], b);
-      }
-    };
-    RelBinComplS _relcompls("Rel::Sharing::BinComplS");
+    RelBin _relbin_eq(Gecode::SRT_EQ,false);
+    RelBin _relbin_nq(Gecode::SRT_NQ,false);
+    RelBin _relbin_sub(Gecode::SRT_SUB,false);
+    RelBin _relbin_sup(Gecode::SRT_SUP,false);
+    RelBin _relbin_disj(Gecode::SRT_DISJ,false);
+    RelBin _relbin_cmpl(Gecode::SRT_CMPL,false);
+    RelBin _relbin_shared_eq(Gecode::SRT_EQ,true);
+    RelBin _relbin_shared_nq(Gecode::SRT_NQ,true);
+    RelBin _relbin_shared_sub(Gecode::SRT_SUB,true);
+    RelBin _relbin_shared_sup(Gecode::SRT_SUP,true);
+    RelBin _relbin_shared_disj(Gecode::SRT_DISJ,true);
+    RelBin _relbin_shared_cmpl(Gecode::SRT_CMPL,true);
 
     //@}
 

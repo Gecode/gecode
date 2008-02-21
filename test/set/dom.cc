@@ -55,21 +55,35 @@ namespace Test { namespace Set {
     };
     static IntSet d1(d1r,4);
 
+    static const int d1cr[5][2] = {
+      {Gecode::Set::Limits::min,-5},
+      {-2,-2},{0,0},{2,2},
+      {6,Gecode::Set::Limits::max}
+    };
+    static IntSet d1c(d1cr,5);
+
     static IntSet ds_33(-3,3);
+
+    static const int d2r[2][2] = {
+      {Gecode::Set::Limits::min,-4}, {4,Gecode::Set::Limits::max}
+    };
+    static IntSet ds_33c(d2r,2);
     static IntSet ds_55(-5,5);
 
     /// Test for equality with a range
     class DomRange : public SetTest {
     private:
       Gecode::SetRelType srt;
+      IntSet is;
     public:
       /// Create and register test
       DomRange(SetRelType srt0)
-        : SetTest("Dom::Range::"+str(srt0),1,ds_55,true), srt(srt0) {}
+        : SetTest("Dom::Range::"+str(srt0),1,ds_55,true), srt(srt0)
+        , is(srt == Gecode::SRT_CMPL ? ds_33c: ds_33) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
-        IntSetRanges dr(ds_33);
+        IntSetRanges dr(is);
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr, dr);
         case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
@@ -92,11 +106,11 @@ namespace Test { namespace Set {
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], srt, ds_33);
+        Gecode::dom(home, x[0], srt, is);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], srt, ds_33, b);
+        Gecode::dom(home, x[0], srt, is, b);
       }
     };
     DomRange _domrange_eq(SRT_EQ);
@@ -208,14 +222,16 @@ namespace Test { namespace Set {
     class DomDom : public SetTest {
     private:
       Gecode::SetRelType srt;
+      Gecode::IntSet is;
     public:
       /// Create and register test
       DomDom(Gecode::SetRelType srt0)
-        : SetTest("Dom::Dom::"+str(srt0),1,d1,true), srt(srt0) {}
+        : SetTest("Dom::Dom::"+str(srt0),1,d1,true), srt(srt0)
+        , is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
-        IntSetRanges dr(d1);
+        IntSetRanges dr(is);
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr, dr);
         case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
@@ -238,11 +254,11 @@ namespace Test { namespace Set {
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], srt, d1);
+        Gecode::dom(home, x[0], srt, is);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], srt, d1, b);
+        Gecode::dom(home, x[0], srt, is, b);
       }
     };
     DomDom _domdom_eq(SRT_EQ);
@@ -252,7 +268,7 @@ namespace Test { namespace Set {
     DomDom _domdom_disj(SRT_DISJ);
     DomDom _domdom_cmpl(SRT_CMPL);
 
-    /// Test for equality with a domain
+    /// Test for cardinality range
     class CardRange : public SetTest {
     public:
       /// Create and register test

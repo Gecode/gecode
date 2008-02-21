@@ -366,7 +366,7 @@ namespace Test { namespace Set {
           {
             IntSetRanges issr(iss);
             unsigned int cardSum = Iter::Ranges::size(issr);
-            if (cardSum != n)
+            if (cardSum != static_cast<unsigned int>(n))
               return false;
             if (withConst) {
               IntSetRanges isr(is);
