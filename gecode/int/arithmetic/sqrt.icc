@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         mod |= me_modified(me);
       }
     } while (mod);
-    return x0.assigned() && x1.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
+    return x1.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
   template <class View>
