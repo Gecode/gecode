@@ -514,14 +514,10 @@ namespace Gecode { namespace Int { namespace Extensional {
                                        DFA& d)
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
-    bool schedule = false;
     for (int i=x.size(); i--; )
-      if (x[i].assigned())
-        schedule = true;
-      else
+      if (!x[i].assigned())
         x[i].subscribe(home, new (home) Index(home,this,c,i));
-    if (schedule)
-      BoolView::schedule(home,this,ME_BOOL_VAL);
+    BoolView::schedule(home,this,ME_BOOL_VAL);
     this->force(home);
   }
 
