@@ -174,8 +174,11 @@ Example::run(const Options& o) {
           while (s->sac(p) && o.sac() == SAC_FULL);
           s->sac_remove_vars();
         }
-        Search::Stop* stop = FailTimeStop::create(o.fail(), o.time());
-        Engine<Script> e(s,o.c_d(),o.a_d(),stop);
+        Search::Options so;
+        so.c_d  = o.c_d();
+        so.a_d  = o.a_d();
+        so.stop = FailTimeStop::create(o.fail(), o.time());
+        Engine<Script> e(s,so);
         delete s;
         do {
           Example* ex = e.next();
@@ -216,7 +219,10 @@ Example::run(const Options& o) {
           while (s->sac(p) && o.sac() == SAC_FULL);
           s->sac_remove_vars();
         }
-        Engine<Script> e(s,o.c_d(),o.a_d());
+        Search::Options so;
+        so.c_d  = o.c_d();
+        so.a_d  = o.a_d();
+        Engine<Script> e(s,so);
         delete s;
         do {
           Example* ex = e.next();
@@ -255,7 +261,10 @@ Example::run(const Options& o) {
               while (s->sac(p) && o.sac() == SAC_FULL);
               s->sac_remove_vars();
             }
-            Engine<Script> e(s,o.c_d(),o.a_d());
+            Search::Options so;
+            so.c_d  = o.c_d();
+            so.a_d  = o.a_d();
+            Engine<Script> e(s,so);
             delete s;
             do {
               Example* ex = e.next();

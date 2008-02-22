@@ -43,9 +43,8 @@ namespace Gecode {
    */
 
   template <class T>
-  Restart<T>::Restart(T* s, unsigned int c_d, unsigned int a_d,
-                      Search::Stop* st) :
-    Gecode::DFS<T>(s,c_d,a_d,st),
+  Restart<T>::Restart(T* s, const Search::Options& o) :
+    Gecode::DFS<T>(s,o),
     root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {
     // Failure and propagation must not be counted, has happened already
     // in the DFS constructor
@@ -86,8 +85,8 @@ namespace Gecode {
 
   template <class T>
   T*
-  restart(T* s, unsigned int c_d, unsigned int a_d, Search::Stop* st) {
-    Restart<T> b(s,c_d,a_d,st);
+  restart(T* s, const Search::Options& o) {
+    Restart<T> b(s,o);
     T* l = NULL;
     while (T* n = b.next()) {
       delete l; l = n;

@@ -3,12 +3,8 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contributing authors:
- *     Guido Tack <tack@gecode.org>
- *
  *  Copyright:
- *     Christian Schulte, 2004
- *     Guido Tack, 2004
+ *     Christian Schulte, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,79 +35,12 @@
  *
  */
 
-namespace Gecode {
+#include "gecode/search.hh"
 
-  /*
-   * BAB search engine
-   *
-   */
+namespace Gecode { namespace Search {
 
-  namespace Search {
+  const Options Options::default;
 
-    forceinline
-    BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
-                         Stop* st, size_t sz)
-      : EngineCtrl(st,sz), rcs(a_d), cur(NULL),
-        mark(0), es(ES_SOLUTION), best(NULL),
-        c_d(c_d0), d(0) {}
-
-
-    forceinline void
-    BabEngine::init(Space* s) {
-      cur = s;
-    }
-
-    forceinline size_t
-    BabEngine::stacksize(void) const {
-      return rcs.stacksize();
-    }
-
-    forceinline
-    BabEngine::~BabEngine(void) {
-      rcs.reset();
-      delete best;
-      delete cur;
-    }
-  }
-
-  /*
-   * Control for bab search engine
-   *
-   */
-
-  template <class T>
-  forceinline
-  BAB<T>::BAB(T* s, const Search::Options& o)
-    : Search::BAB(s,o.c_d,o.a_d,o.stop,sizeof(T)) {}
-
-  template <class T>
-  forceinline T*
-  BAB<T>::next(void) {
-    Space *s1, *s2;
-    while (e.explore(s1,s2) == Search::BabEngine::ES_CONSTRAIN)
-      dynamic_cast<T*>(s1)->constrain(dynamic_cast<T*>(s2));
-    return dynamic_cast<T*>(s1);
-  }
-
-
-
-
-  /*
-   * BAB convenience
-   *
-   */
-
-  template <class T>
-  T*
-  bab(T* s, const Search::Options& o) {
-    BAB<T> b(s,o);
-    T* l = NULL;
-    while (T* n = b.next()) {
-      delete l; l = n;
-    }
-    return l;
-  }
-
-}
+}}
 
 // STATISTICS: search-any

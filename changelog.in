@@ -71,6 +71,15 @@ Lots of nice gimmicks for Christmas!
 
 
 [ENTRY]
+Module: search
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All search engines now take an option value for configuration
+instead of individual arguments for recomputation, stop objects,
+etc.
+
+[ENTRY]
 Module: minimodel
 What:   removed
 Rank:   minor

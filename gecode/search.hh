@@ -195,6 +195,25 @@ namespace Gecode {
       virtual bool stop(const Statistics& s);
     };
 
+    /**
+     * \brief %Search engine options
+     *
+     * Defines options for search engines. Not all search engines might
+     * honor all option values.
+     */
+    class Options {
+    public:
+      /// Create a clone after every \a c_d commits
+      unsigned int c_d;
+      /// Create a clone during recomputation if distance is greater than \a a_d
+      unsigned int a_d;
+      /// Stop object for stopping search
+      Stop* stop;
+      /// Default options
+      GECODE_SEARCH_EXPORT static const Options default;
+      /// Initialize with default values
+      Options(void);
+    };
 
     /**
      * \brief %Search engine control including memory information
@@ -402,35 +421,15 @@ namespace Gecode {
   template <class T>
   class DFS : public Search::DFS {
   public:
-    /**
-     * \brief Initialize search engine
-     * \param s root node (subclass of Space)
-     * \param c_d minimal recomputation distance
-     * \param a_d adaptive recomputation distance
-     * \param st %Stop-object
-     */
-    DFS(T* s,
-        unsigned int c_d=Search::Config::c_d,
-        unsigned int a_d=Search::Config::a_d,
-        Search::Stop* st=NULL);
+    /// Initialize search engine for space \a s with options \a o
+    DFS(T* s, const Search::Options& o=Search::Options::default);
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
-  /**
-   * \brief Invoke depth-first search engine
-   * \param s root node (subclass \a T of Space)
-   * \param c_d minimal recomputation distance
-   * \param a_d adaptive recomputation distance
-   * \param st %Stop-object
-   * \ingroup TaskModelSearch
-   */
+  /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
   template <class T>
-  T* dfs(T* s,
-         unsigned int c_d=Search::Config::c_d,
-         unsigned int a_d=Search::Config::a_d,
-         Search::Stop* st=NULL);
-
+  T* dfs(T* s, const Search::Options& o=Search::Options::default);
 
 
   namespace Search {
@@ -524,25 +523,20 @@ namespace Gecode {
   template <class T>
   class LDS : public Search::LDS {
   public:
-    /** \brief Initialize engine
-     * \param s root node (subclass \a T of Space)
-     * \param d maximal discrepancy
-     * \param st %Stop-object
-     */
-    LDS(T* s, unsigned int d, Search::Stop* st=NULL);
+    /// Initialize engine with \a s as root node and maximal discrepancy \a d
+    LDS(T* s, unsigned int d,
+        const Search::Options& o=Search::Options::default);
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
   /**
-   * \brief Invoke limited-discrepancy search
-   * \param s root node (subclass \a T of Space)
-   * \param d maximum number of discrepancies
-   * \param st %Stop-object
+   * \brief Invoke limited-discrepancy search for \a s as root node and maximal discrepancy \a d
    * \ingroup TaskModelSearch
    */
   template <class T>
-  T* lds(T* s,unsigned int d, Search::Stop* st=NULL);
+  T* lds(T* s, unsigned int d,
+         const Search::Options& o=Search::Options::default);
 
 
 
@@ -643,56 +637,50 @@ namespace Gecode {
 
   /**
    * \brief Depth-first branch-and-bound search engine
+   *
+   * Additionally, \a s must implement a member function 
+   * \code void constrain(T* t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c->constrain(t) where \a t is the so-far
+   * best solution.
    * \ingroup TaskModelSearch
    */
   template <class T>
   class BAB : public Search::BAB {
   public:
-    /**
-     * \brief Initialize engine
-     * \param s Root node (subclass \a T of Space).
-     *          Additionally, \a s must implement
-     *          a member function \code void constrain(T* t) \endcode
-     *          Whenever exploration requires to add a constraint
-     *          to the space \a c currently being explored, the engine
-     *          executes \c c->constrain(t) where \a t is the so-far
-     *          best solution.
-     * \param c_d Minimal recomputation distance
-     * \param a_d Adaptive recomputation distance
-     * \param st %Stop-object
-     */
-    BAB(T* s,
-        unsigned int c_d=Search::Config::c_d,
-        unsigned int a_d=Search::Config::a_d,
-        Search::Stop* st=NULL);
+    /// Initialize engine for space \a s and options \a o
+    BAB(T* s, const Search::Options& o=Search::Options::default);
     /// Return next better solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
   /**
-   * \brief Perform depth-first branch-and-bound search
-   * \param s root node (subclass \a T of Space).
-   *          Additionally, \a s must implement
-   *          a member function \code void constrain(T* t) \endcode
-   *          Whenever exploration requires to add a constraint
-   *          to the space \a c currently being explored, the engine
-   *          executes \c c->constrain(t) where \a t is the so-far
-   *          best solution.
-   * \param c_d minimal recomputation distance
-   * \param a_d adaptive recomputation distance
-   * \param st %Stop-object
+   * \brief Perform depth-first branch-and-bound search for subclass \a T of space \a s and options \a o
+   *
+   * Additionally, \a s must implement a member function 
+   * \code void constrain(T* t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c->constrain(t) where \a t is the so-far
+   * best solution.
+   *
    * \ingroup TaskModelSearch
    */
   template <class T>
-  T* bab(T* s,
-         unsigned int c_d=Search::Config::c_d,
-         unsigned int a_d=Search::Config::a_d,
-         Search::Stop* st=NULL);
+  T* bab(T* s, const Search::Options& o=Search::Options::default);
 
 
 
   /**
    * \brief Depth-first restart best solution search engine
+   *
+   * Additionally, \a s must implement a member function 
+   * \code void constrain(T* t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c->constrain(t) where \a t is the so-far
+   * best solution.
    * \ingroup TaskModelSearch
    */
   template <class T>
@@ -703,23 +691,8 @@ namespace Gecode {
     /// So-far best solution
     Space* best;
   public:
-    /**
-     * \brief Initialize engine
-     * \param s root node (subclass \a T of Space).
-     *          Additionally, \a s must implement
-     *          a member function \code void constrain(T* t) \endcode
-     *          Whenever exploration requires to add a constraint
-     *          to the space \a c currently being explored, the engine
-     *          executes \c c->constrain(t) where \a t is the so-far
-     *          best solution.
-     * \param c_d minimal recomputation distance
-     * \param a_d adaptive recomputation distance
-     * \param st %Stop-object
-     */
-    Restart(T* s,
-            unsigned int c_d=Search::Config::c_d,
-            unsigned int a_d=Search::Config::a_d,
-            Search::Stop* st=NULL);
+    /// Initialize engine for space \a s and options \a o
+    Restart(T* s, const Search::Options& o=Search::Options::default);
     /// Destructor
     ~Restart(void);
     /// Return next better solution (NULL, if none exists or search has been stopped)
@@ -727,28 +700,24 @@ namespace Gecode {
   };
 
   /**
-   * \brief Perform depth-first restart best solution search
-   * \param s root node (subclass \a T of Space).
-   *          Additionally, \a s must implement
-   *          a member function \code void constrain(T* t) \endcode
-   *          Whenever exploration requires to add a constraint
-   *          to the space \a c currently being explored, the engine
-   *          executes \c c->constrain(t) where \a t is the so-far
-   *          best solution.
-   * \param c_d minimal recomputation distance
-   * \param a_d adaptive recomputation distance
-   * \param st %Stop-object
+   * \brief Perform depth-first restart best solution search for subclass \a T of space \a s and options \a o
+   * 
+   * Additionally, \a s must implement a member function 
+   * \code void constrain(T* t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c->constrain(t) where \a t is the so-far
+   * best solution.
+   * \ingroup TaskModelSearch
    */
   template <class T>
-  T* restart(T* s,
-             unsigned int c_d=Search::Config::c_d,
-             unsigned int a_d=Search::Config::a_d,
-             Search::Stop* st=NULL);
+  T* restart(T* s, const Search::Options& o=Search::Options::default);
 
 }
 
 #include "gecode/search/statistics.icc"
 #include "gecode/search/stop.icc"
+#include "gecode/search/options.icc"
 #include "gecode/search/engine-ctrl.icc"
 
 #include "gecode/search/reco-stack.icc"

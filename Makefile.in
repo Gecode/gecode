@@ -223,11 +223,11 @@ EXTRA_HEADERS   = gecode/support/config.icc
 #
 
 SEARCHSRC0 = \
-	dfs.cc lds.cc bab.cc stop.cc
+	dfs.cc lds.cc bab.cc stop.cc options.cc
 SEARCHHDR0 = \
 	bab.icc dfs.icc lds.icc restart.icc \
 	reco-stack.icc statistics.icc \
-	engine-ctrl.icc stop.icc
+	engine-ctrl.icc stop.icc options.icc
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)

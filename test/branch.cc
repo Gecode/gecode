@@ -287,12 +287,12 @@ namespace Test { namespace Branch {
   class RunInfo {
   public:
     std::string var, val;
-    int a_c, c_d;
+    unsigned int a_d, c_d;
     RunInfo(const char* varname, const char* valname,
-            int a_c_val, int c_d_val)
-      : var(varname), val(valname), a_c(a_c_val), c_d(c_d_val) {}
+            int a_d_val, int c_d_val)
+      : var(varname), val(valname), a_d(a_d_val), c_d(c_d_val) {}
     void print(std::ostream& o) const {
-      o << "(" << var << ", " << val << ", " << a_c << ", " << c_d << ")";
+      o << "(" << var << ", " << val << ", " << a_d << ", " << c_d << ")";
     }
   };
 
@@ -330,10 +330,11 @@ namespace Test { namespace Branch {
     for (int var = n_int_var_branch; var--; ) {
       for (int val = n_int_val_branch; val--; ) {
         IntTestSpace* clone = static_cast<IntTestSpace*>(root->clone(false));
-        int a_c = Base::rand(10);
-        int c_d = Base::rand(10);
+        Gecode::Search::Options o;
+        o.a_d = Base::rand(10);
+        o.c_d = Base::rand(10);
         branch(clone, clone->x, int_var_branch[var], int_val_branch[val]);
-        Gecode::DFS<IntTestSpace> e_s(clone, a_c, c_d);
+        Gecode::DFS<IntTestSpace> e_s(clone, o);
         delete clone;
         
         // Find number of solutions
@@ -346,7 +347,7 @@ namespace Test { namespace Branch {
         } while(true);
         results[solutions].push_back(RunInfo(int_var_branch_name[var], 
                                              int_val_branch_name[val],
-                                             a_c, c_d));
+                                             o.a_d, o.c_d));
       }
     }
     if (results.size() > 1) 
@@ -388,10 +389,11 @@ namespace Test { namespace Branch {
       for (int val = n_int_val_branch; val--; ) {
         BoolTestSpace* clone = 
           static_cast<BoolTestSpace*>(root->clone(false));
-        int a_c = Base::rand(10);
-        int c_d = Base::rand(10);
+        Gecode::Search::Options o;
+        o.a_d = Base::rand(10);
+        o.c_d = Base::rand(10);
         branch(clone, clone->x, int_var_branch[var], int_val_branch[val]);
-        Gecode::DFS<BoolTestSpace> e_s(clone, a_c, c_d);
+        Gecode::DFS<BoolTestSpace> e_s(clone, o);
         delete clone;
         
         // Find number of solutions
@@ -404,7 +406,7 @@ namespace Test { namespace Branch {
         } while(true);
         results[solutions].push_back(RunInfo(int_var_branch_name[var], 
                                              int_val_branch_name[val],
-                                             a_c, c_d));
+                                             o.a_d, o.c_d));
       }
     }
     if (results.size() > 1) 
@@ -447,10 +449,11 @@ namespace Test { namespace Branch {
     for (int var = n_set_var_branch; var--; ) {
       for (int val = n_set_val_branch; val--; ) {
         SetTestSpace* clone = static_cast<SetTestSpace*>(root->clone(false));
-        int a_c = Base::rand(10);
-        int c_d = Base::rand(10);
+        Gecode::Search::Options o;
+        o.a_d = Base::rand(10);
+        o.c_d = Base::rand(10);
         branch(clone, clone->x, set_var_branch[var], set_val_branch[val]);
-        Gecode::DFS<SetTestSpace> e_s(clone, a_c, c_d);
+        Gecode::DFS<SetTestSpace> e_s(clone, o);
         delete clone;
         
         // Find number of solutions
@@ -463,7 +466,7 @@ namespace Test { namespace Branch {
         } while(true);
         results[solutions].push_back(RunInfo(set_var_branch_name[var], 
                                              set_val_branch_name[val],
-                                             a_c, c_d));
+                                             o.a_d, o.c_d));
       }
     }
     if (results.size() > 1) 
@@ -509,11 +512,12 @@ namespace Test { namespace Branch {
       for (int val = n_cpltset_val_branch; val--; ) {
         CpltSetTestSpace* clone = 
           static_cast<CpltSetTestSpace*>(root->clone(false));
-        int a_c = Base::rand(10);
-        int c_d = Base::rand(10);
+        Gecode::Search::Options o;
+        o.a_d = Base::rand(10);
+        o.c_d = Base::rand(10);
         branch(clone, clone->x, cpltset_var_branch[var], 
                cpltset_val_branch[val]);
-        Gecode::DFS<CpltSetTestSpace> e_s(clone, a_c, c_d);
+        Gecode::DFS<CpltSetTestSpace> e_s(clone, o);
         delete clone;
         
         // Find number of solutions
@@ -526,7 +530,7 @@ namespace Test { namespace Branch {
         } while(true);
         results[solutions].push_back(RunInfo(cpltset_var_branch_name[var], 
                                              cpltset_val_branch_name[val],
-                                             a_c, c_d));
+                                             o.a_d, o.c_d));
       }
     }
     if (results.size() > 1) 

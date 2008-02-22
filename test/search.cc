@@ -416,7 +416,11 @@ namespace Test {
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
         Gecode::Search::FailStop f(2);
-        Gecode::DFS<Model> dfs(m,c_d,a_d,&f);
+        Gecode::Search::Options o;
+        o.c_d  = c_d;
+        o.a_d  = a_d;
+        o.stop = &f;
+        Gecode::DFS<Model> dfs(m,o);
         int n = m->solutions();
         delete m;
         while (true) {
@@ -445,7 +449,9 @@ namespace Test {
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
         Gecode::Search::FailStop f(2);
-        Gecode::LDS<Model> lds(m,50,&f);
+        Gecode::Search::Options o;
+        o.stop = &f;
+        Gecode::LDS<Model> lds(m,50,o);
         int n = m->solutions();
         delete m;
         while (true) {
@@ -482,7 +488,11 @@ namespace Test {
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3,htc);
         Gecode::Search::FailStop f(2);
-        Engine<Model> best(m,c_d,a_d,&f);
+        Gecode::Search::Options o;
+        o.c_d  = c_d;
+        o.a_d  = a_d;
+        o.stop = &f;
+        Engine<Model> best(m,o);
         delete m;
         Model* b = NULL;
         while (true) {
