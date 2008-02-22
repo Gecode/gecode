@@ -92,10 +92,9 @@ namespace Gecode {
    * \brief Bdd variable as complete domain representation for finite integer sets
    *
    */  
-  class CpltSetVar {
+  class CpltSetVar : public VarBase<CpltSet::CpltSetVarImp> {
   private:
-    /// Bdd variable implementation using 
-    CpltSet::CpltSetVarImp* varimp;  
+    using VarBase<CpltSet::CpltSetVarImp>::varimp;  
   public:
     /// Default constructor
     CpltSetVar(void);
@@ -277,12 +276,6 @@ namespace Gecode {
               const IntSet& glbD,const IntSet& lubD,
               unsigned int cardMin = 0,
               unsigned int cardMax = Set::Limits::card);
-    //@}
-
-    /// \name Variable implementation access
-    //@{
-    /// Return bdd variable implementation
-    CpltSet::CpltSetVarImp* var(void) const;
     //@}
 
     /// \name Value access

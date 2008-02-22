@@ -39,7 +39,7 @@
 namespace Gecode {
 
   forceinline
-  CpltSetVar::CpltSetVar(void) : varimp(NULL) {}
+  CpltSetVar::CpltSetVar(void) {}
 
   inline void
   CpltSetVar::init(Space* home, int glbMin, int glbMax, 
@@ -83,9 +83,6 @@ namespace Gecode {
     varimp->dispose(home);
     varimp = NULL;
   }
-
-  forceinline CpltSet::CpltSetVarImp*
-  CpltSetVar::var(void) const { return varimp; }
 
   forceinline bool
   CpltSetVar::contains(int i) const { return varimp->knownIn(i); }

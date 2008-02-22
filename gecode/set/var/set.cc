@@ -45,12 +45,13 @@
 namespace Gecode {
 
   SetVar::SetVar(Space* home)
-    : x(new (home) Set::SetVarImp(home)) {}
+    : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home)) {}
 
   SetVar::SetVar(Space* home,int lbMin,int lbMax,int ubMin,int ubMax,
                  unsigned int minCard, unsigned int maxCard)
-    : x(new (home) Set::SetVarImp(home,lbMin,lbMax,ubMin,ubMax,
-                                  minCard,maxCard)) {
+    : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,lbMin,lbMax,
+                                                        ubMin,ubMax,
+                                                        minCard,maxCard)) {
     Set::Limits::check(lbMin,"SetVar::SetVar");
     Set::Limits::check(lbMax,"SetVar::SetVar");
     Set::Limits::check(ubMin,"SetVar::SetVar");
@@ -62,7 +63,8 @@ namespace Gecode {
 
   SetVar::SetVar(Space* home, const IntSet& glb,int ubMin,int ubMax,
                  unsigned int minCard, unsigned int maxCard)
-    : x(new (home) Set::SetVarImp(home,glb,ubMin,ubMax,minCard,maxCard)) {
+    : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,glb,ubMin,ubMax,
+                                                        minCard,maxCard)) {
     Set::Limits::check(glb,"SetVar::SetVar");
     Set::Limits::check(ubMin,"SetVar::SetVar");
     Set::Limits::check(ubMax,"SetVar::SetVar");
@@ -75,7 +77,8 @@ namespace Gecode {
 
   SetVar::SetVar(Space* home,int lbMin,int lbMax,const IntSet& lub,
                  unsigned int minCard, unsigned int maxCard)
-    : x(new (home) Set::SetVarImp(home,lbMin,lbMax,lub,minCard,maxCard)) {
+    : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,lbMin,lbMax,lub,
+                                                        minCard,maxCard)) {
     Set::Limits::check(lbMin,"SetVar::SetVar");
     Set::Limits::check(lbMax,"SetVar::SetVar");
     Set::Limits::check(lub,"SetVar::SetVar");
@@ -87,7 +90,8 @@ namespace Gecode {
   SetVar::SetVar(Space* home,
                  const IntSet& glb, const IntSet& lub,
                  unsigned int minCard, unsigned int maxCard)
-    : x(new (home) Set::SetVarImp(home,glb,lub,minCard,maxCard)) {
+    : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,glb,lub,minCard,
+                                                        maxCard)) {
     Set::Limits::check(glb,"SetVar::SetVar");
     Set::Limits::check(lub,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");

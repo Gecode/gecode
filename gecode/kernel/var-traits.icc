@@ -52,7 +52,7 @@ namespace Gecode {
    * Each variable implementation must specialize this traits class and add
    * a \code typedef \endcode for the corresponding variable.
    */
-  template <class Var>
+  template <class VarImp>
   class VarImpVarTraits {};
 
   /**

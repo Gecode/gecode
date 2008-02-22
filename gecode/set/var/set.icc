@@ -47,53 +47,50 @@ namespace Gecode {
    */
 
   forceinline
-  SetVar::SetVar(void) {
-    //Beware! Constructor bypassed when instance created via VarArray!
-    //Use init() instead!
-  }
+  SetVar::SetVar(void) {}
 
   forceinline
-  SetVar::SetVar(const SetVar& x0) : x(x0.x) {}
+  SetVar::SetVar(const SetVar& x) 
+    : VarBase<Set::SetVarImp>(x.varimp) {}
 
   forceinline
-  SetVar::SetVar(const Set::SetView& x0) : x(x0.var()) {}
+  SetVar::SetVar(const Set::SetView& x) 
+    : VarBase<Set::SetVarImp>(x.var()) {}
 
   forceinline
-  SetVar::SetVar(const Reflection::Var& x0)   : x(x0.var<Set::SetVarImp>()) {}
+  SetVar::SetVar(const Reflection::Var& x) 
+    : VarBase<Set::SetVarImp>(x.var<Set::SetVarImp>()) {}
 
   forceinline void
   SetVar::init(Space* home) {
-    x = new (home) Set::SetVarImp(home);
+    varimp = new (home) Set::SetVarImp(home);
   }
 
   forceinline void
   SetVar::init(Space* home,int lbMin,int lbMax,int ubMin,int ubMax,
                unsigned int cardMin, unsigned int cardMax) {
-    x = new (home) Set::SetVarImp(home, lbMin,lbMax,ubMin,ubMax,
-                                  cardMin, cardMax);
+    varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, ubMin, ubMax,
+                                       cardMin, cardMax);
   }
 
   forceinline void
   SetVar::init(Space* home, const IntSet& glb,int ubMin,int ubMax,
                unsigned int cardMin, unsigned int cardMax) {
-    x = new (home) Set::SetVarImp(home, glb, ubMin, ubMax, cardMin, cardMax);
+    varimp = new (home) Set::SetVarImp(home, glb, ubMin, ubMax, 
+                                       cardMin, cardMax);
   }
 
   forceinline void
   SetVar::init(Space* home, int lbMin,int lbMax,const IntSet& lub,
                unsigned int cardMin, unsigned int cardMax) {
-    x = new (home) Set::SetVarImp(home, lbMin, lbMax, lub, cardMin, cardMax);
+    varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, lub, 
+                                       cardMin, cardMax);
   }
 
   forceinline void
   SetVar::init(Space* home, const IntSet& glb, const IntSet& lub,
                unsigned int cardMin, unsigned int cardMax) {
-    x = new (home) Set::SetVarImp(home, glb, lub, cardMin, cardMax);
-  }
-
-  forceinline Set::SetVarImp*
-  SetVar::var(void) const {
-    return x;
+    varimp = new (home) Set::SetVarImp(home, glb, lub, cardMin, cardMax);
   }
 
 
@@ -104,40 +101,40 @@ namespace Gecode {
    */
 
   forceinline unsigned int
-  SetVar::glbSize(void) const { return x->glbSize(); }
+  SetVar::glbSize(void) const { return varimp->glbSize(); }
 
   forceinline unsigned int
-  SetVar::lubSize(void) const { return x->lubSize(); }
+  SetVar::lubSize(void) const { return varimp->lubSize(); }
 
   forceinline unsigned int
-  SetVar::unknownSize(void) const { return x->lubSize() - x->glbSize(); }
+  SetVar::unknownSize(void) const { return varimp->lubSize()-varimp->glbSize(); }
 
   forceinline bool
-  SetVar::assigned(void)  const { return x->assigned(); }
+  SetVar::assigned(void)  const { return varimp->assigned(); }
 
   forceinline bool
-  SetVar::contains(int i) const { return (x->knownIn(i)); }
+  SetVar::contains(int i) const { return varimp->knownIn(i); }
 
   forceinline bool
-  SetVar::notContains(int i) const { return (x->knownOut(i)); }
+  SetVar::notContains(int i) const { return varimp->knownOut(i); }
 
   forceinline unsigned int
-  SetVar::cardMin(void) const { return x->cardMin(); }
+  SetVar::cardMin(void) const { return varimp->cardMin(); }
 
   forceinline unsigned int
-  SetVar::cardMax(void) const { return x->cardMax(); }
+  SetVar::cardMax(void) const { return varimp->cardMax(); }
 
   forceinline int
-  SetVar::lubMin(void) const { return x->lubMin(); }
+  SetVar::lubMin(void) const { return varimp->lubMin(); }
 
   forceinline int
-  SetVar::lubMax(void) const { return x->lubMax(); }
+  SetVar::lubMax(void) const { return varimp->lubMax(); }
 
   forceinline int
-  SetVar::glbMin(void) const { return x->glbMin(); }
+  SetVar::glbMin(void) const { return varimp->glbMin(); }
 
   forceinline int
-  SetVar::glbMax(void) const { return x->glbMax(); }
+  SetVar::glbMax(void) const { return varimp->glbMax(); }
 
   /*
    * Cloning
@@ -146,7 +143,7 @@ namespace Gecode {
 
   forceinline void
   SetVar::update(Space* home, bool share, SetVar& y) {
-    x = y.x->copy(home,share);
+    varimp = y.varimp->copy(home,share);
   }
 
 

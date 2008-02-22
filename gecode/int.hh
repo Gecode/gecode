@@ -288,11 +288,10 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntVars
    */
-  class IntVar {
+  class IntVar : public VarBase<Int::IntVarImp> {
     friend class IntVarArray;
   private:
-    /// Integer variable implementation used
-    Int::IntVarImp* varimp;
+    using VarBase<Int::IntVarImp>::varimp;
     /**
      * \brief Initialize variable with range domain
      *
@@ -368,12 +367,6 @@ namespace Gecode {
     GECODE_INT_EXPORT void init(Space* home, const IntSet& d);
     //@}
 
-    /// \name Variable implementation access
-    //@{
-    /// Return integer variable implementation
-    Int::IntVarImp* var(void) const;
-    //@}
-
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -389,8 +382,6 @@ namespace Gecode {
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
     unsigned int width(void) const;
-    /// Return degree (number of subscribed propagators)
-    unsigned int degree(void) const;
     //@}
 
     /// \name Domain tests
@@ -455,11 +446,10 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntVars
    */
-  class BoolVar {
+  class BoolVar : public VarBase<Int::BoolVarImp> {
     friend class BoolVarArray;
   private:
-    /// Integer variable implementation used
-    Int::BoolVarImp* varimp;
+    using VarBase<Int::BoolVarImp>::varimp;
     /**
      * \brief Initialize Boolean variable with range domain
      *
@@ -504,12 +494,6 @@ namespace Gecode {
     GECODE_INT_EXPORT void init(Space* home, int min, int max);
     //@}
 
-    /// \name Variable implementation access
-    //@{
-    /// Return integer variable implementation
-    Int::BoolVarImp* var(void) const;
-    //@}
-
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -525,8 +509,6 @@ namespace Gecode {
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
     unsigned int width(void) const;
-    /// Return degree (number of subscribed propagators)
-    unsigned int degree(void) const;
     //@}
 
     /// \name Domain tests

@@ -138,6 +138,7 @@
  */
 
 #include "gecode/kernel/view.icc"
+#include "gecode/kernel/var.icc"
 
 /*
  * Variable and argument arrays

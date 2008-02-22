@@ -50,23 +50,15 @@ namespace Gecode {
 
   forceinline
   BoolVar::BoolVar(void) {}
-
-
   forceinline
   BoolVar::BoolVar(const BoolVar& x)
-    : varimp(x.varimp) {}
+    : VarBase<Int::BoolVarImp>(x.varimp) {}
   forceinline
   BoolVar::BoolVar(const Int::BoolView& x)
-    : varimp(x.var()) {}
+    : VarBase<Int::BoolVarImp>(x.var()) {}
   forceinline
   BoolVar::BoolVar(const Reflection::Var& x)
-    : varimp(x.var<Int::BoolVarImp>()) {}
-
-  forceinline Int::BoolVarImp*
-  BoolVar::var(void) const {
-    return varimp;
-  }
-
+    : VarBase<Int::BoolVarImp>(x.var<Int::BoolVarImp>()) {}
 
   forceinline int
   BoolVar::val(void) const {
@@ -86,10 +78,6 @@ namespace Gecode {
   }
 
 
-  forceinline unsigned int
-  BoolVar::degree(void) const {
-    return varimp->degree();
-  }
   forceinline unsigned int
   BoolVar::width(void) const {
     return varimp->width();

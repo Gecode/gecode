@@ -54,9 +54,6 @@ namespace Gecode {
     /// Return dummy variable implementation of view
     VarImpBase* var(void) const;
     //@}
-  private:
-    static void* operator new(size_t);
-    static void operator delete(void*);
   };
 
 
@@ -114,9 +111,6 @@ namespace Gecode {
     /// Cancel subscription of advisor \a a
     void cancel(Space* home, Advisor* a);
     //@}
-  private:
-    static void* operator new(size_t);
-    static void operator delete(void*);
   };
 
   /** \name View comparison
@@ -161,10 +155,6 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
     //@}
-
-  private:
-    static void* operator new(size_t);
-    static void operator delete(void*);
   };
 
 
@@ -284,10 +274,6 @@ namespace Gecode {
     Reflection::Arg*  spec(const Space* home, Reflection::VarMap& m) const;
     static Support::Symbol type(void);
     //@}
-
-  private:
-    static void* operator new(size_t);
-    static void operator delete(void*);
   };
 
   /**

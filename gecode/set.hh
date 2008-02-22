@@ -119,11 +119,10 @@ namespace Gecode {
    * 
    * \ingroup TaskModelSetVars
    */
-  class SetVar {
+  class SetVar : public VarBase<Set::SetVarImp> {
     friend class SetVarArray;
   private:
-    /// Finite set variable implementation used
-    Set::SetVarImp* x;
+    using VarBase<Set::SetVarImp>::varimp;
     /// Initialize variable with empty greatest lower and full least upper bound
     void init(Space* home);
     /**
@@ -274,12 +273,6 @@ namespace Gecode {
            unsigned int cardMax = Set::Limits::card);
     //@}
 
-    /// \name Variable implementation access
-    //@{
-    /// Return set variable implementation
-    Set::SetVarImp* var(void) const;
-    ///@}
-    
     /// \name Value access
     //@{
     /// Return number of elements in the greatest lower bound
