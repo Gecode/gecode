@@ -47,31 +47,13 @@ namespace Gecode {
 
  namespace Int { namespace Unshare {
 
-    /// Check order for variables
-    template <class Var>
-    forceinline bool
-    varbefore(Var x, Var y) {
-      typename VarViewTraits<Var>::View vx(x);
-      typename VarViewTraits<Var>::View vy(y);
-      return before(vx,vy);
-    }
-
-    /// Check sharing for variables
-    template <class Var>
-    forceinline bool
-    varsame(Var x, Var y) {
-      typename VarViewTraits<Var>::View vx(x);
-      typename VarViewTraits<Var>::View vy(y);
-      return same(vx,vy);
-    }
-
     /// Sort order for variables
     template<class Var>
     class VarPtrLess {
     public:
       forceinline bool 
       operator()(const Var* a, const Var* b) {
-        return varbefore(*a,*b);
+        return before(*a,*b);
       }
     };
     
@@ -139,7 +121,7 @@ namespace Gecode {
       // Replace all shared variables with new and equal variables
       for (int i=0; i<n;) {
         int j=i++;
-        while ((i<n) && varsame(*y[j],*y[i]))
+        while ((i<n) && same(*y[j],*y[i]))
           i++;
         if (!y[j]->assigned())
           link(home,&y[j],i-j,icl);
