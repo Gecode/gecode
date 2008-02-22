@@ -57,7 +57,7 @@ namespace Gecode {
     : VarBase<Int::IntVarImp>(x.var()) {}
   forceinline
   IntVar::IntVar(const Reflection::Var& x)
-    : VarBase<Int::IntVarImp>(x.var<Int::IntVarImp>()) {}
+    : VarBase<Int::IntVarImp>(x) {}
 
 
   forceinline int
