@@ -642,7 +642,13 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,NONE,ONE):
       return ES_FIX;
     case GECODE_INT_STATUS(NONE,ZERO,NONE):
-      return ES_FIX;
+      switch (bool_test(x0,x2)) {
+      case BT_SAME: return ES_SUBSUMED(this,home);
+      case BT_COMP: return ES_FAILED;
+      case BT_NONE: return ES_FIX;
+      default: GECODE_NEVER;
+      }
+      GECODE_NEVER;
     case GECODE_INT_STATUS(NONE,ZERO,ZERO):
       GECODE_ME_CHECK(x0.zero_none(home)); break;
     case GECODE_INT_STATUS(NONE,ZERO,ONE):
@@ -656,7 +662,13 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ONE,ONE):
       x0.cancel(home,this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE):
-      return ES_FIX;
+      switch (bool_test(x1,x2)) {
+      case BT_SAME: return ES_SUBSUMED(this,home);
+      case BT_COMP: return ES_FAILED;
+      case BT_NONE: return ES_FIX;
+      default: GECODE_NEVER;
+      }
+      GECODE_NEVER;
     case GECODE_INT_STATUS(ZERO,NONE,ZERO):
       GECODE_ME_CHECK(x1.zero_none(home)); break;
     case GECODE_INT_STATUS(ZERO,NONE,ONE):

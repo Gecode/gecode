@@ -51,11 +51,11 @@ namespace Test { namespace Int {
       */
      //@{
      /// Test for multiplication constraint
-     class Mult : public Test {
+     class MultXYZ : public Test {
      public:
        /// Create and register test
-       Mult(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Mult::"+s,3,d) {}
+       MultXYZ(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Mult::XYZ::"+s,3,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -69,12 +69,88 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for squaring constraint
-     class Sqr : public Test {
+     /// Test for multiplication constraint with shared variables
+     class MultXXY : public Test {
      public:
        /// Create and register test
-       Sqr(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Sqr::"+s,2,d) {}
+       MultXXY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Mult::XXY::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[0]);
+         double d2 = static_cast<double>(x[1]);
+         return d0*d1 == d2;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::mult(home, x[0], x[0], x[1]);
+       }
+     };
+   
+     /// Test for multiplication constraint with shared variables
+     class MultXYX : public Test {
+     public:
+       /// Create and register test
+       MultXYX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Mult::XYX::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[1]);
+         double d2 = static_cast<double>(x[0]);
+         return d0*d1 == d2;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::mult(home, x[0], x[1], x[0]);
+       }
+     };
+   
+     /// Test for multiplication constraint with shared variables
+     class MultXYY : public Test {
+     public:
+       /// Create and register test
+       MultXYY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Mult::XYY::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[1]);
+         double d2 = static_cast<double>(x[1]);
+         return d0*d1 == d2;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::mult(home, x[0], x[1], x[1]);
+       }
+     };
+   
+     /// Test for multiplication constraint with shared variables
+     class MultXXX : public Test {
+     public:
+       /// Create and register test
+       MultXXX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Mult::XXX::"+s,1,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[0]);
+         double d2 = static_cast<double>(x[0]);
+         return d0*d1 == d2;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::mult(home, x[0], x[0], x[0]);
+       }
+     };
+   
+     /// Test for squaring constraint
+     class SqrXY : public Test {
+     public:
+       /// Create and register test
+       SqrXY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Sqr::XY::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -87,12 +163,29 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for square root constraint
-     class Sqrt : public Test {
+     /// Test for squaring constraint with shared variables
+     class SqrXX : public Test {
      public:
        /// Create and register test
-       Sqrt(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Sqrt::"+s,2,d) {}
+       SqrXX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Sqr::XX::"+s,1,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         return d0*d0 == d0;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::sqr(home, x[0], x[0]);
+       }
+     };
+   
+     /// Test for square root constraint
+     class SqrtXY : public Test {
+     public:
+       /// Create and register test
+       SqrtXY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Sqrt::XY::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -105,13 +198,30 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for absolute value constraint
-     class Abs : public Test {
+     /// Test for square root constraint with shared variables
+     class SqrtXX : public Test {
      public:
        /// Create and register test
-       Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
-         : Test("Arithmetic::Abs::"+str(icl)+"::"+s,
-                   2,d,false,icl) {}
+       SqrtXX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Sqrt::XX::"+s,1,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         return (d0 >= d0*d0) && (d0 < (d0+1)*(d0+1));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::sqrt(home, x[0], x[0]);
+       }
+     };
+   
+     /// Test for absolute value constraint
+     class AbsXY : public Test {
+     public:
+       /// Create and register test
+       AbsXY(const std::string& s, const Gecode::IntSet& d, 
+             Gecode::IntConLevel icl)
+         : Test("Arithmetic::Abs::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -124,12 +234,31 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for binary minimum constraint  
-     class Min : public Test {
+     /// Test for absolute value constraint with shared variables
+     class AbsXX : public Test {
      public:
        /// Create and register test
-       Min(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Min::Bin::"+s,3,d) {}
+       AbsXX(const std::string& s, const Gecode::IntSet& d, 
+             Gecode::IntConLevel icl)
+         : Test("Arithmetic::Abs::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         double d0 = static_cast<double>(x[0]);
+         double d1 = static_cast<double>(x[0]);
+         return (d0<0 ? -d0 : d0) == d1;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::abs(home, x[0], x[0], icl);
+       }
+     };
+   
+     /// Test for binary minimum constraint  
+     class MinXYZ : public Test {
+     public:
+       /// Create and register test
+       MinXYZ(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Min::Bin::XYZ::"+s,3,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[2];
@@ -141,11 +270,27 @@ namespace Test { namespace Int {
      };
    
      /// Test for binary minimum constraint with shared variables
-     class MinShared : public Test {
+     class MinXXY : public Test {
      public:
        /// Create and register test
-       MinShared(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Min::Bin::Shared::"+s,2,d) {}
+       MinXXY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Min::Bin::XYX::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return std::min(x[0],x[0]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::min(home, x[0], x[0], x[1]);
+       }
+     };
+   
+     /// Test for binary minimum constraint with shared variables
+     class MinXYX : public Test {
+     public:
+       /// Create and register test
+       MinXYX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Min::Bin::XYX::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[0];
@@ -156,12 +301,44 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for binary maximum constraint  
-     class Max : public Test {
+     /// Test for binary minimum constraint with shared variables
+     class MinXYY : public Test {
      public:
        /// Create and register test
-       Max(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Max::Bin::"+s,3,d) {}
+       MinXYY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Min::Bin::XYY::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return std::min(x[0],x[1]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::min(home, x[0], x[1], x[1]);
+       }
+     };
+   
+     /// Test for binary minimum constraint with shared variables
+     class MinXXX : public Test {
+     public:
+       /// Create and register test
+       MinXXX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Min::Bin::XXX::"+s,1,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return std::min(x[0],x[0]) == x[0];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::min(home, x[0], x[0], x[0]);
+       }
+     };
+   
+     /// Test for binary maximum constraint  
+     class MaxXYZ : public Test {
+     public:
+       /// Create and register test
+       MaxXYZ(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Max::Bin::XYZ::"+s,3,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[2];
@@ -173,11 +350,27 @@ namespace Test { namespace Int {
      };
    
      /// Test for binary maximum constraint with shared variables
-     class MaxShared : public Test {
+     class MaxXXY : public Test {
      public:
        /// Create and register test
-       MaxShared(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Max::Bin::Shared::"+s,2,d) {}
+       MaxXXY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Max::Bin::XXY::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return std::max(x[0],x[0]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::max(home, x[0], x[0], x[1]);
+       }
+     };
+   
+     /// Test for binary maximum constraint with shared variables
+     class MaxXYX : public Test {
+     public:
+       /// Create and register test
+       MaxXYX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Max::Bin::XYX::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[0];
@@ -185,6 +378,38 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          Gecode::max(home, x[0], x[1], x[0]);
+       }
+     };
+   
+     /// Test for binary maximum constraint with shared variables
+     class MaxXYY : public Test {
+     public:
+       /// Create and register test
+       MaxXYY(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Max::Bin::XYY::"+s,2,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return std::max(x[0],x[1]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::max(home, x[0], x[1], x[1]);
+       }
+     };
+   
+     /// Test for binary maximum constraint with shared variables
+     class MaxXXX : public Test {
+     public:
+       /// Create and register test
+       MaxXXX(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Max::Bin::XXX::"+s,1,d) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return std::max(x[0],x[0]) == x[0];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::max(home, x[0], x[0], x[0]);
        }
      };
    
@@ -258,12 +483,12 @@ namespace Test { namespace Int {
    
    
    
-     const int v1[7] = {
+     const int va[7] = {
        Gecode::Int::Limits::min, Gecode::Int::Limits::min+1,
        -1,0,1,
        Gecode::Int::Limits::max-1, Gecode::Int::Limits::max
      };
-     const int v2[9] = {
+     const int vb[9] = {
        static_cast<int>(-sqrt(static_cast<double>
                               (-Gecode::Int::Limits::min))),
        -4,-2,-1,0,1,2,4,
@@ -271,44 +496,99 @@ namespace Test { namespace Int {
                              (Gecode::Int::Limits::max)))
      };
      
-     Gecode::IntSet d1(v1,7);
-     Gecode::IntSet d2(v2,9);
-     Gecode::IntSet d3(-8,8);
+     Gecode::IntSet a(va,7);
+     Gecode::IntSet b(vb,9);
+     Gecode::IntSet c(-8,8);
    
-     Mult mult_max("A",d1);
-     Mult mult_med("B",d2);
-     Mult mult_min("C",d3);
+     MultXYZ mult_xyz_a("A",a);
+     MultXYZ mult_xyz_b("B",b);
+     MultXYZ mult_xyz_c("C",c);
    
-     Sqr sqr_max("A",d1);
-     Sqr sqr_med("B",d2);
-     Sqr sqr_min("C",d3);
+     MultXXY mult_xxy_a("A",a);
+     MultXXY mult_xxy_b("B",b);
+     MultXXY mult_xxy_c("C",c);
    
-     Sqrt sqrt_max("A",d1);
-     Sqrt sqrt_med("B",d2);
-     Sqrt sqrt_min("C",d3);
+     MultXYX mult_xyx_a("A",a);
+     MultXYX mult_xyx_b("B",b);
+     MultXYX mult_xyx_c("C",c);
    
-     Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
-     Abs abs_bnd_med("B",d2,Gecode::ICL_BND);
-     Abs abs_bnd_min("C",d3,Gecode::ICL_BND);
-     Abs abs_dom_max("A",d1,Gecode::ICL_DOM);
-     Abs abs_dom_med("B",d2,Gecode::ICL_DOM);
-     Abs abs_dom_min("C",d3,Gecode::ICL_DOM);
+     MultXYY mult_xyy_a("A",a);
+     MultXYY mult_xyy_b("B",b);
+     MultXYY mult_xyy_c("C",c);
    
-     Min min_max("A",d1);
-     Min min_med("B",d2);
-     Min min_min("C",d3);
+     MultXXX mult_xxx_a("A",a);
+     MultXXX mult_xxx_b("B",b);
+     MultXXX mult_xxx_c("C",c);
    
-     MinShared min_s_max("A",d1);
-     MinShared min_s_med("B",d2);
-     MinShared min_s_min("C",d3);
+     SqrXY sqr_xy_a("A",a);
+     SqrXY sqr_xy_b("B",b);
+     SqrXY sqr_xy_c("C",c);
    
-     Max max_max("A",d1);
-     Max max_med("B",d2);
-     Max max_min("C",d3);
+     SqrXX sqr_xx_a("A",a);
+     SqrXX sqr_xx_b("B",b);
+     SqrXX sqr_xx_c("C",c);
    
-     MaxShared max_s_max("A",d1);
-     MaxShared max_s_med("B",d2);
-     MaxShared max_s_min("C",d3);
+     SqrtXY sqrt_xy_a("A",a);
+     SqrtXY sqrt_xy_b("B",b);
+     SqrtXY sqrt_xy_c("C",c);
+   
+     SqrtXX sqrt_xx_a("A",a);
+     SqrtXX sqrt_xx_b("B",b);
+     SqrtXX sqrt_xx_c("C",c);
+   
+     AbsXY abs_xy_bnd_a("A",a,Gecode::ICL_BND);
+     AbsXY abs_xy_bnd_b("B",b,Gecode::ICL_BND);
+     AbsXY abs_xy_bnd_c("C",c,Gecode::ICL_BND);
+     AbsXY abs_xy_dom_a("A",a,Gecode::ICL_DOM);
+     AbsXY abs_xy_dom_b("B",b,Gecode::ICL_DOM);
+     AbsXY abs_xy_dom_c("C",c,Gecode::ICL_DOM);
+
+     AbsXX abs_xx_bnd_a("A",a,Gecode::ICL_BND);
+     AbsXX abs_xx_bnd_b("B",b,Gecode::ICL_BND);
+     AbsXX abs_xx_bnd_c("C",c,Gecode::ICL_BND);
+     AbsXX abs_xx_dom_a("A",a,Gecode::ICL_DOM);
+     AbsXX abs_xx_dom_b("B",b,Gecode::ICL_DOM);
+     AbsXX abs_xx_dom_c("C",c,Gecode::ICL_DOM);
+   
+     MinXYZ min_xyz_a("A",a);
+     MinXYZ min_xyz_b("B",b);
+     MinXYZ min_xyz_c("C",c);
+   
+     MinXXY min_xxy_a("A",a);
+     MinXXY min_xxy_b("B",b);
+     MinXXY min_xxy_c("C",c);
+   
+     MinXYX min_xyx_a("A",a);
+     MinXYX min_xyx_b("B",b);
+     MinXYX min_xyx_c("C",c);
+   
+     MinXYY min_xyy_a("A",a);
+     MinXYY min_xyy_b("B",b);
+     MinXYY min_xyy_c("C",c);
+   
+     MinXXX min_xxx_a("A",a);
+     MinXXX min_xxx_b("B",b);
+     MinXXX min_xxx_c("C",c);
+   
+     MaxXYZ max_xyz_a("A",a);
+     MaxXYZ max_xyz_b("B",b);
+     MaxXYZ max_xyz_c("C",c);
+   
+     MaxXXY max_xxy_a("A",a);
+     MaxXXY max_xxy_b("B",b);
+     MaxXXY max_xxy_c("C",c);
+   
+     MaxXYX max_xyx_a("A",a);
+     MaxXYX max_xyx_b("B",b);
+     MaxXYX max_xyx_c("C",c);
+   
+     MaxXYY max_xyy_a("A",a);
+     MaxXYY max_xyy_b("B",b);
+     MaxXYY max_xyy_c("C",c);
+   
+     MaxXXX max_xxx_a("A",a);
+     MaxXXX max_xxx_b("B",b);
+     MaxXXX max_xxx_c("C",c);
    
      MinNary min_nary;
      MinNaryShared min_s_nary;

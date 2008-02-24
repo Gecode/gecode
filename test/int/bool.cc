@@ -64,14 +64,14 @@ namespace Test { namespace Int {
       */
      //@{
      /// Test for binary Boolean operation
-     class BinOp : public Test {
+     class BinXYZ : public Test {
      protected:
        /// Boolean operation type for test
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       BinOp(Gecode::BoolOpType op0) 
-         : Test("Bool::Bin::"+str(op0),3,0,1), op(op0) {}
+       BinXYZ(Gecode::BoolOpType op0) 
+         : Test("Bool::Bin::XYZ::"+str(op0),3,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return check(x[0],op,x[1]) == x[2];
@@ -85,8 +85,92 @@ namespace Test { namespace Int {
        }
      };
      
+     /// Test for binary Boolean operation with shared variables
+     class BinXXY : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       BinXXY(Gecode::BoolOpType op0) 
+         : Test("Bool::Bin::XXY::"+str(op0),2,0,1), op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return check(x[0],op,x[0]) == x[1];
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVar b = channel(home,x[0]);
+         rel(home, b, op, b, channel(home,x[1]));
+       }
+     };
+     
+     /// Test for binary Boolean operation with shared variables
+     class BinXYX : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       BinXYX(Gecode::BoolOpType op0) 
+         : Test("Bool::Bin::XYX::"+str(op0),2,0,1), op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return check(x[0],op,x[1]) == x[0];
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVar b = channel(home,x[0]);
+         rel(home, b, op, channel(home,x[1]), b);
+       }
+     };
+     
+     /// Test for binary Boolean operation with shared variables
+     class BinXYY : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       BinXYY(Gecode::BoolOpType op0) 
+         : Test("Bool::Bin::XYY::"+str(op0),2,0,1), op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return check(x[0],op,x[1]) == x[1];
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVar b = channel(home,x[1]);
+         rel(home, channel(home,x[0]), op, b, b);
+       }
+     };
+     
+     /// Test for binary Boolean operation with shared variables
+     class BinXXX : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       BinXXX(Gecode::BoolOpType op0) 
+         : Test("Bool::Bin::XXX::"+str(op0),1,0,1), op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return check(x[0],op,x[0]) == x[0];
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVar b = channel(home,x[0]);
+         rel(home, b, op, b, b);
+       }
+     };
+     
      /// Test for binary Boolean operation with constant
-     class BinOpConst : public Test {
+     class BinConstXY : public Test {
      protected:
        /// Boolean operation type for test
        Gecode::BoolOpType op;
@@ -94,8 +178,8 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Construct and register test
-       BinOpConst(Gecode::BoolOpType op0, int c0) 
-         : Test("Bool::Bin::"+str(op0)+"::"+str(c0),2,0,1), 
+       BinConstXY(Gecode::BoolOpType op0, int c0) 
+         : Test("Bool::Bin::XY::"+str(op0)+"::"+str(c0),2,0,1), 
            op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -108,14 +192,38 @@ namespace Test { namespace Int {
        }
      };
      
+     /// Test for binary Boolean operation with shared variables and constant
+     class BinConstXX : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+       /// Integer constant
+       int c;
+     public:
+       /// Construct and register test
+       BinConstXX(Gecode::BoolOpType op0, int c0) 
+         : Test("Bool::Bin::XX::"+str(op0)+"::"+str(c0),1,0,1), 
+           op(op0), c(c0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return check(x[0],op,x[0]) == c;
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVar b = channel(home,x[0]);
+         rel(home, b, op, b, c);
+       }
+     };
+     
      /// Test for Nary Boolean operation
-     class NaryOp : public Test {
+     class Nary : public Test {
      protected:
        /// Boolean operation type for test
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       NaryOp(Gecode::BoolOpType op0, int n) 
+       Nary(Gecode::BoolOpType op0, int n) 
          : Test("Bool::Nary::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -134,8 +242,35 @@ namespace Test { namespace Int {
        }
      };
      
+     /// Test for Nary Boolean operation
+     class NaryShared : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       NaryShared(Gecode::BoolOpType op0, int n) 
+         : Test("Bool::Nary::Shared::"+str(op0)+"::"+str(n),n,0,1), 
+           op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int b = check(x[0],op,x[1]);
+         for (int i=2; i<x.size(); i++)
+           b = check(b,op,x[i]);
+         return b == x[x.size()-1];
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVarArgs b(x.size());
+         for (int i=x.size(); i--; )
+           b[i]=channel(home,x[i]);
+         rel(home, op, b, b[x.size()-1]);
+       }
+     };
+     
      /// Test for Nary Boolean operation with constant
-     class NaryOpConst : public Test {
+     class NaryConst : public Test {
      protected:
        /// Boolean operation type for test
        Gecode::BoolOpType op;
@@ -143,7 +278,7 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Construct and register test
-       NaryOpConst(Gecode::BoolOpType op0, int n, int c0) 
+       NaryConst(Gecode::BoolOpType op0, int n, int c0) 
          : Test("Bool::Nary::"+str(op0)+"::"+str(n)+"::"+str(c0),n,0,1), 
            op(op0), c(c0) {}
        /// Check whether \a x is solution
@@ -170,18 +305,27 @@ namespace Test { namespace Int {
        Create(void) {
          using namespace Gecode;
          for (BoolOpTypes bots; bots(); ++bots) {
-           (void) new BinOp(bots.bot());
-           (void) new BinOpConst(bots.bot(),0);
-           (void) new BinOpConst(bots.bot(),1);
-           (void) new NaryOp(bots.bot(),2);
-           (void) new NaryOp(bots.bot(),6);
-           (void) new NaryOp(bots.bot(),10);
-           (void) new NaryOpConst(bots.bot(),2,0);
-           (void) new NaryOpConst(bots.bot(),6,0);
-           (void) new NaryOpConst(bots.bot(),10,0);
-           (void) new NaryOpConst(bots.bot(),2,1);
-           (void) new NaryOpConst(bots.bot(),6,1);
-           (void) new NaryOpConst(bots.bot(),10,1);
+           (void) new BinXYZ(bots.bot());
+           (void) new BinXXY(bots.bot());
+           (void) new BinXYX(bots.bot());
+           (void) new BinXYY(bots.bot());
+           (void) new BinXXX(bots.bot());
+           (void) new BinConstXY(bots.bot(),0);
+           (void) new BinConstXY(bots.bot(),1);
+           (void) new BinConstXX(bots.bot(),0);
+           (void) new BinConstXX(bots.bot(),1);
+           (void) new Nary(bots.bot(),2);
+           (void) new Nary(bots.bot(),6);
+           (void) new Nary(bots.bot(),10);
+           (void) new NaryShared(bots.bot(),2);
+           (void) new NaryShared(bots.bot(),6);
+           (void) new NaryShared(bots.bot(),10);
+           (void) new NaryConst(bots.bot(),2,0);
+           (void) new NaryConst(bots.bot(),6,0);
+           (void) new NaryConst(bots.bot(),10,0);
+           (void) new NaryConst(bots.bot(),2,1);
+           (void) new NaryConst(bots.bot(),6,1);
+           (void) new NaryConst(bots.bot(),10,1);
          }
        }
      };

@@ -49,15 +49,15 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for simple relation involving two integer variables
-     class IntBinVar : public Test {
+     /// Test for simple relation involving integer variables
+     class IntVarXY : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntBinVar(Gecode::IntRelType irt0, int n, Gecode::IntConLevel icl)
-         : Test("Rel::Int::Var::"+str(irt0)+"::"+str(icl)+"::"+str(n),
+       IntVarXY(Gecode::IntRelType irt0, int n, Gecode::IntConLevel icl)
+         : Test("Rel::Int::Var::XY::"+str(irt0)+"::"+str(icl)+"::"+str(n),
                 n+1,-3,3,n==1,icl), 
            irt(irt0) {}
        /// Test whether \a x is solution
@@ -87,15 +87,46 @@ namespace Test { namespace Int {
        }
      };
    
-     /// Test for simple relation involving two Boolean variables
-     class BoolBinVar : public Test {
+     /// Test for simple relation involving shared integer variables
+     class IntVarXX : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       BoolBinVar(Gecode::IntRelType irt0, int n) 
-         : Test("Rel::Bool::Var::"+str(irt0)+"::"+str(n),n+1,0,1), irt(irt0) {}
+       IntVarXX(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
+         : Test("Rel::Int::Var::XX::"+str(irt0)+"::"+str(icl),
+                1,-3,3,true,icl), 
+           irt(irt0) {
+         testdomcon = ((irt != Gecode::IRT_LE) && 
+                       (irt != Gecode::IRT_GR) &&
+                       (irt != Gecode::IRT_NQ));
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return cmp(x[0],irt,x[0]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::rel(home, x[0], irt, x[0], icl);
+       }
+       /// Post reified constraint on \a x for \a b
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                         Gecode::BoolVar b) {
+         Gecode::rel(home, x[0], irt, x[0], b, icl);
+       }
+     };
+   
+     /// Test for simple relation involving Boolean variables
+     class BoolVarXY : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       BoolVarXY(Gecode::IntRelType irt0, int n) 
+         : Test("Rel::Bool::Var::XY::"+str(irt0)+"::"+str(n),n+1,0,1), 
+           irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x.size() == 2) {
@@ -110,10 +141,35 @@ namespace Test { namespace Int {
          if (x.size() == 2) {
            rel(home, channel(home,x[0]), irt, channel(home,x[1]));
          } else {
-           Gecode::BoolVarArgs y(2);
+           BoolVarArgs y(2);
            y[0]=channel(home,x[0]); y[1]=channel(home,x[1]);
            rel(home, y, irt, channel(home,x[2]));
          }
+       }
+     };
+   
+     /// Test for simple relation involving shared Boolean variables
+     class BoolVarXX : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       BoolVarXX(Gecode::IntRelType irt0) 
+         : Test("Rel::Bool::Var::XX::"+str(irt0),1,0,1), 
+           irt(irt0) {
+         testdomcon = ((irt != Gecode::IRT_LE) && 
+                       (irt != Gecode::IRT_GR) &&
+                       (irt != Gecode::IRT_NQ));
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return cmp(x[0],irt,x[0]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::BoolVar b = Gecode::channel(home,x[0]);
+         Gecode::rel(home, b, irt, b);
        }
      };
    
@@ -310,12 +366,14 @@ namespace Test { namespace Int {
          using namespace Gecode;
          for (IntRelTypes irts; irts(); ++irts) {
            for (IntConLevels icls; icls(); ++icls) {
-             (void) new IntBinVar(irts.irt(),1,icls.icl());
-             (void) new IntBinVar(irts.irt(),2,icls.icl());
+             (void) new IntVarXY(irts.irt(),1,icls.icl());
+             (void) new IntVarXY(irts.irt(),2,icls.icl());
+             (void) new IntVarXX(irts.irt(),icls.icl());
              (void) new IntPairwise(irts.irt(),icls.icl());
            }
-           (void) new BoolBinVar(irts.irt(),1);
-           (void) new BoolBinVar(irts.irt(),2);
+           (void) new BoolVarXY(irts.irt(),1);
+           (void) new BoolVarXY(irts.irt(),2);
+           (void) new BoolVarXX(irts.irt());
            (void) new BoolPairwise(irts.irt());
            for (int c=-4; c<=4; c++) {
              (void) new IntInt(irts.irt(),1,c);

@@ -1058,7 +1058,12 @@ namespace Gecode {
     channel(home,x1,x0,icl,pk);
   }
 
-  /// Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
+  /*
+   * \brief Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x
+   * contains the same unassigned variable multiply.
+   */
   GECODE_INT_EXPORT void
   channel(Space* home, const BoolVarArgs& x, IntVar y, int o=0,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
@@ -1600,6 +1605,8 @@ namespace Gecode {
    * \li Supports implementations optimized for memory (\a pk = \a
    *     PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
    *
    * \warning If the domains for the \f$x_i\f$ are not dense and
    * have similar bounds, lots of memory will be wasted (memory

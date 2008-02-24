@@ -116,6 +116,7 @@ namespace Gecode {
     GECODE_REGISTER1(Arithmetic::Max<IntView>);
     GECODE_REGISTER1(Arithmetic::Max<MinusView>);
     GECODE_REGISTER1(Arithmetic::Mult<IntView>);
+    GECODE_REGISTER1(Arithmetic::MultZeroOne<IntView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<double,IntView,IntView,IntView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<double,MinusView,IntView,MinusView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<double,MinusView,MinusView,IntView>);

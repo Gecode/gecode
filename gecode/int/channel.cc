@@ -91,6 +91,8 @@ namespace Gecode {
   channel(Space* home, const BoolVarArgs& x, IntVar y, int o, 
           IntConLevel, PropKind) {
     using namespace Int;
+    if (x.same())
+      throw ArgumentSame("Int::channel");
     Limits::check(o,"Int::channel");
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);

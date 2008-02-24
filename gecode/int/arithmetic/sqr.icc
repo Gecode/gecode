@@ -133,15 +133,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline ExecStatus
   Sqr<View>::post(Space* home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
-    GECODE_ME_CHECK(x0.lq(home,floor(::sqrt(static_cast<double>
-                                            (Limits::max)))));
-    GECODE_ME_CHECK(x0.gq(home,-floor(::sqrt(static_cast<double>
-                                             (-Limits::min)))));
-    if (x0.min() >= 0)
-      return SqrPlus<IntView,IntView>::post(home,x0,x1);
-    if (x0.max() <= 0)
-      return SqrPlus<MinusView,IntView>::post(home,x0,x1);
-    (void) new (home) Sqr<View>(home,x0,x1);
+    if (same(x0,x1)) {
+      GECODE_ME_CHECK(x1.lq(home,1));
+    } else {
+      GECODE_ME_CHECK(x0.lq(home,floor(::sqrt(static_cast<double>
+                                              (Limits::max)))));
+      GECODE_ME_CHECK(x0.gq(home,-floor(::sqrt(static_cast<double>
+                                               (-Limits::min)))));
+      if (x0.min() >= 0)
+        return SqrPlus<IntView,IntView>::post(home,x0,x1);
+      if (x0.max() <= 0)
+        return SqrPlus<MinusView,IntView>::post(home,x0,x1);
+      (void) new (home) Sqr<View>(home,x0,x1);
+    }
     return ES_OK;
   }
 

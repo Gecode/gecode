@@ -322,6 +322,41 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /**
+   * \brief Bounds-consistent propagator for \f$x_0\times x_1=x_0\f$
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class MultZeroOne : public BinaryPropagator<View,PC_INT_BND> {
+  protected:
+    using BinaryPropagator<View,PC_INT_BND>::x0;
+    using BinaryPropagator<View,PC_INT_BND>::x1;
+
+    /// Constructor for cloning \a p
+    MultZeroOne(Space* home, bool share, MultZeroOne<View>& p);
+    /// Constructor for posting
+    MultZeroOne(Space* home, View x0, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Post propagator \f$x_0\cdot x_1=x_0\f$
+    static ExecStatus post(Space* home, View x0, View x1);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+
+
+  /**
    * \brief Bounds-consistent positive multiplication propagator
    *
    * This propagator provides multiplication for positive views only.

@@ -69,6 +69,20 @@ Date:    Even later
 [DESCRIPTION]
 Lots of nice gimmicks for Christmas!
 
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Throw an exception if variables occur multiply for array-based
+channel constraints.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed multiplication propagator for x*y=x.
 
 [ENTRY]
 Module: search
@@ -252,7 +266,7 @@ largest possible integer value for an integer variable is 2^31-2,
 the smallest -2^31+2. With other words, only the integer values
 2^31-1, -2^31, and -2^31+1 are missing from the two-complement
 representation (and we will never use these values for the sake
-of mental sanity. We promise).
+of mental sanity. We promise.).
 
 [ENTRY]
 Module: int
@@ -354,7 +368,7 @@ it got actually reimplemented):
    inlined into the kernel. This improves performance, but more
    importantly, lifts some limits on the number of variables. Now, the
    only limit is that the sum of the ceiling of the logarithms of the 
-   number of modification events of all variables does not exceed 32 (what?)
+   number of modification events of all variables does not exceed 32
    (as an estimate, the kernel now can handle around 10 to 16 variable
    types). Moreover, if the need for more variable types arises this is 
    straightforward to do.
@@ -452,7 +466,7 @@ Rank:   major
 Thanks: Stefano Gualandi
 [DESCRIPTION]
 LDS had numerous quirks. It has been fixed and greatly improved:
-it is detected when the entire search tree has been probed,
+it detects when the entire search tree has been probed,
 independent of the maximal discrepancy.
 
 [ENTRY]
@@ -565,6 +579,8 @@ Rank:   minor
 [DESCRIPTION]
 Fixed a bug in the hash function for pointers, which could return
 negative array indices.
+
+
 
 [RELEASE]
 Version: 2.0.0
@@ -2021,8 +2037,8 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
-EqBnd and EqDom now take two template parameters for their views types. This
-allows using different views, e.g. to express x0=-x1 using a MinusView.
+EqBnd and EqDom now take two template parameters for their view types. This
+supports using different views, e.g. to express x0=-x1 using a MinusView.
 
 [ENTRY]
 Module: search

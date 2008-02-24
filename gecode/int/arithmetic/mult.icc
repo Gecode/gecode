@@ -131,6 +131,103 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /*
+   * Propagator for x * y = x
+   *
+   */
+
+  template <class View>
+  forceinline
+  MultZeroOne<View>::MultZeroOne(Space* home, View x0, View x1)
+    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+
+  template <class View>
+  forceinline ExecStatus
+  MultZeroOne<View>::post(Space* home, View x0, View x1) {
+    switch (rtest_eq_bnd(x0,0)) {
+    case RT_FALSE:
+      GECODE_ME_CHECK(x1.eq(home,1)); 
+      break;
+    case RT_TRUE:
+      break;
+    case RT_MAYBE:
+      switch (rtest_eq_bnd(x1,1)) {
+      case RT_FALSE:
+        GECODE_ME_CHECK(x0.eq(home,0)); 
+        break;
+      case RT_TRUE:
+        break;
+      case RT_MAYBE:
+        (void) new (home) MultZeroOne<View>(home,x0,x1); 
+        break;
+      default: GECODE_NEVER;
+      }
+      break;
+    default: GECODE_NEVER;
+    }
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  MultZeroOne<View>::post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+     spec.checkArity(2);
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
+     (void) new (home) MultZeroOne<View>(home,x0,x1);
+  }
+
+  template <class View>
+  forceinline
+  MultZeroOne<View>::MultZeroOne(Space* home, bool share, MultZeroOne<View>& p)
+    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  MultZeroOne<View>::copy(Space* home, bool share) {
+    return new (home) MultZeroOne<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  MultZeroOne<View>::propagate(Space* home, ModEventDelta) {
+    switch (rtest_eq_bnd(x0,0)) {
+    case RT_FALSE:
+      GECODE_ME_CHECK(x1.eq(home,1)); 
+      break;
+    case RT_TRUE:
+      break;
+    case RT_MAYBE:
+      switch (rtest_eq_bnd(x1,1)) {
+      case RT_FALSE:
+        GECODE_ME_CHECK(x0.eq(home,0)); 
+        break;
+      case RT_TRUE:
+        break;
+      case RT_MAYBE:
+        return ES_FIX;
+      default: GECODE_NEVER;
+      }
+      break;
+    default: GECODE_NEVER;
+    }
+    return ES_SUBSUMED(this,home);
+  }
+
+  template <class View>
+  Support::Symbol
+  MultZeroOne<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::MultZeroOne");
+  }
+
+  template <class View>
+  Reflection::ActorSpec
+  MultZeroOne<View>::spec(const Space* home, Reflection::VarMap& m) const {
+    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
+  }
+
+
+  /*
    * Positive bounds-consistent multiplication
    *
    */
@@ -366,6 +463,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   Mult<View>::post(Space* home, View x0, View x1, View x2) {
     if (same(x0,x1))
       return Sqr<View>::post(home,x0,x2);
+    if (same(x0,x2))
+      return MultZeroOne<View>::post(home,x0,x1);
+    if (same(x1,x2))
+      return MultZeroOne<View>::post(home,x1,x0);
     if (p(x0)) {
       if (p(x1) || p(x2)) goto post_ppp;
       if (n(x1) || n(x2)) goto post_pnn;

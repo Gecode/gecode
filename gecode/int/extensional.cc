@@ -66,13 +66,12 @@ namespace Gecode {
   }
 
   void
-  extensional(Space* home, const IntVarArgs& x, const TupleSet& tupleSet, 
+  extensional(Space* home, const IntVarArgs& x, const TupleSet& t, 
               IntConLevel, PropKind pk) {
     using namespace Int;
-    if (!tupleSet.finalized())
-      const_cast<TupleSet&>(tupleSet).finalize();
-
-    if (tupleSet.arity() != x.size())
+    if (!t.finalized())
+      const_cast<TupleSet&>(t).finalize();
+    if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (home->failed()) return;
 
@@ -81,18 +80,16 @@ namespace Gecode {
 
     // All variables in the correct domain
     for (int i = xv.size(); i--; ) {
-      GECODE_ME_FAIL(home, xv[i].gq(home, tupleSet.min()));
-      GECODE_ME_FAIL(home, xv[i].lq(home, tupleSet.max()));
+      GECODE_ME_FAIL(home, xv[i].gq(home, t.min()));
+      GECODE_ME_FAIL(home, xv[i].lq(home, t.max()));
     }
 
     switch (pk) {
     case PK_SPEED:
-      GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::
-                           post(home,xv,tupleSet)));
+      GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::post(home,xv,t)));
       break;
     default:
-      GECODE_ES_FAIL(home,(Extensional::Basic<IntView>::
-                           post(home,xv,tupleSet)));
+      GECODE_ES_FAIL(home,(Extensional::Basic<IntView>::post(home,xv,t)));
       break;
     }
   }
