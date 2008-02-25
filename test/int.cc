@@ -610,7 +610,7 @@ if (!(T)) {                                                     \
         {        
           TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
-          while (!s->failed() && !s->assigned() && !s->b.assigned())
+          while (!s->failed() && (!s->assigned() || !s->b.assigned()))
             if (!s->prune(a)) {
               problem = "No fixpoint";
               delete s;
