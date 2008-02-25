@@ -43,7 +43,7 @@ namespace Gecode {
 
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
-         IntConLevel, PropKind pk) {
+         IntConLevel icl, PropKind pk) {
     if (home->failed()) return;
 
     int n=x.size();
@@ -52,12 +52,12 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,c,ICL_DEF,pk);
+    Linear::post(home,t,n,r,c,icl,pk);
   }
 
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
-         IntConLevel, PropKind pk) {
+         IntConLevel icl, PropKind pk) {
     if (home->failed()) return;
 
     int n=x.size();
@@ -66,13 +66,13 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,y,0,ICL_DEF,pk);
+    Linear::post(home,t,n,r,y,0,icl,pk);
   }
 
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
-         IntConLevel, PropKind pk) {
+         IntConLevel icl, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) 
@@ -84,13 +84,13 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,c,ICL_DEF,pk);
+    Linear::post(home,t,n,r,c,icl,pk);
   }
 
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
-         IntConLevel, PropKind pk) {
+         IntConLevel icl, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) 
@@ -102,52 +102,71 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,y,0,ICL_DEF,pk);
+    Linear::post(home,t,n,r,y,0,icl,pk);
   }
 
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    IntVar z(home,0,x.size());
-    linear(home,x,IRT_EQ,z,icl,pk); rel(home,z,r,c,b,icl,pk);
+    if (home->failed()) return;
+
+    int n=x.size();
+    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    for (int i=n; i--; ) {
+      t[i].a=1; t[i].x=x[i];
+    }
+
+    Linear::post(home,t,n,r,c,b,icl,pk);
   }
 
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    IntVar z(home,0,x.size());
-    linear(home,x,IRT_EQ,z,icl,pk); rel(home,z,r,y,b,icl,pk);
+    if (home->failed()) return;
+
+    int n=x.size();
+    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    for (int i=n; i--; ) {
+      t[i].a=1; t[i].x=x[i];
+    }
+
+    Linear::post(home,t,n,r,y,0,b,icl,pk);
   }
 
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    int min = 0;
-    int max = 0;
-    for (int i=0; i<a.size(); i++)
-      if (a[i] < 0)
-        min += a[i];
-      else
-        max += a[i];
-    IntVar z(home,min,max);
-    linear(home,a,x,IRT_EQ,z,icl,pk); rel(home,z,r,c,b,icl,pk);
+    if (a.size() != x.size())
+      throw ArgumentSizeMismatch("Int::linear");
+    if (home->failed()) return;
+
+    int n=x.size();
+    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    for (int i=n; i--; ) {
+      t[i].a=a[i]; t[i].x=x[i];
+    }
+
+    Linear::post(home,t,n,r,c,b,icl,pk);
   }
 
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    int min = 0;
-    int max = 0;
-    for (int i=0; i<a.size(); i++)
-      if (a[i] < 0)
-        min += a[i];
-      else
-        max += a[i];
-    IntVar z(home,min,max);
-    linear(home,a,x,IRT_EQ,z,icl,pk); rel(home,z,r,y,b,icl,pk);
+    if (a.size() != x.size())
+      throw ArgumentSizeMismatch("Int::linear");
+    if (home->failed()) return;
+
+    int n=x.size();
+    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    for (int i=n; i--; ) {
+      t[i].a=a[i]; t[i].x=x[i];
+    }
+
+    Linear::post(home,t,n,r,y,0,b,icl,pk);
   }
+
 
   namespace {
     using namespace Int;

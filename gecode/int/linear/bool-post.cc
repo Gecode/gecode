@@ -405,6 +405,28 @@ namespace Gecode { namespace Int { namespace Linear {
     post_all(home,t,n,r,x,c,pk);
   }
 
+  void
+  post(Space* home, 
+       Term<BoolView>* t, int n, IntRelType r, IntView x, int c, BoolView b,
+       IntConLevel icl, PropKind pk) {
+    int l, u;
+    estimate(t,n,0,l,u);
+    IntVar z(home,l,u); IntView zv(z);
+    post_all(home,t,n,IRT_EQ,zv,0,pk);
+    rel(home,z,r,x,b,icl,pk);    
+  }
+  
+  void
+  post(Space* home, 
+       Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
+       IntConLevel icl, PropKind pk) {
+    int l, u;
+    estimate(t,n,0,l,u);
+    IntVar z(home,l,u); IntView zv(z);
+    post_all(home,t,n,IRT_EQ,zv,0,pk);
+    rel(home,z,r,c,b,icl,pk);
+  }
+
 }}}
 
 // STATISTICS: int-post

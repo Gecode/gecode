@@ -1166,6 +1166,31 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /**
+   * \brief Base-class for reified Boolean linear propagators
+   *
+   */
+  template <class XV, class YV, class BV>
+  class ReLinBoolView : public LinBoolView<XV,YV> {
+  protected:
+    using LinBoolView<XV,YV>::x;
+    using LinBoolView<XV,YV>::y;
+    using LinBoolView<XV,YV>::c;
+    /// Control variable
+    BV b;
+    /// Constructor for cloning \a p
+    ReLinBoolView(Space* home, bool share, ReLinBoolView& p);
+    /// Constructor for creation
+    ReLinBoolView(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+                               const Support::Symbol& name) const;
+  public:
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+
+  /**
    * \brief %Propagator for equality to Boolean sum (cardinality)
    *
    * Requires \code #include "gecode/int/linear.hh" \endcode
@@ -1195,7 +1220,7 @@ namespace Gecode { namespace Int { namespace Linear {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = y+c\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
 
@@ -1229,7 +1254,7 @@ namespace Gecode { namespace Int { namespace Linear {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \neq y\f$
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq y+c\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
 
@@ -1263,8 +1288,78 @@ namespace Gecode { namespace Int { namespace Linear {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \geq y\f$
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq y+c\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
+  };
+
+  /**
+   * \brief %Propagator for reified equality to Boolean sum (cardinality)
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class XV, class YV, class BV>
+  class ReEqBoolView : public ReLinBoolView<XV,YV,BV> {
+  protected:
+    using ReLinBoolView<XV,YV,BV>::x;
+    using ReLinBoolView<XV,YV,BV>::y;
+    using ReLinBoolView<XV,YV,BV>::c;
+    using ReLinBoolView<XV,YV,BV>::b;
+
+    /// Constructor for cloning \a p
+    ReEqBoolView(Space* home, bool share, ReEqBoolView& p);
+    /// Constructor for creation
+    ReEqBoolView(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+  public:
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
+    static Support::Symbol ati(void);
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = y+c\right)\Leftrightarrow b\f$
+    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+  };
+
+  /**
+   * \brief %Propagator for reified greater or equal to Boolean sum (cardinality)
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class XV, class YV, class BV>
+  class ReGqBoolView : public ReLinBoolView<XV,YV,BV> {
+  protected:
+    using ReLinBoolView<XV,YV,BV>::x;
+    using ReLinBoolView<XV,YV,BV>::y;
+    using ReLinBoolView<XV,YV,BV>::c;
+    using ReLinBoolView<XV,YV,BV>::b;
+
+    /// Constructor for cloning \a p
+    ReGqBoolView(Space* home, bool share, ReGqBoolView& p);
+    /// Constructor for creation
+    ReGqBoolView(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+  public:
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
+    static Support::Symbol ati(void);
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq y+c\right)\Leftrightarrow b\f$
+    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
   };
 
 }}}
@@ -1653,6 +1748,37 @@ namespace Gecode { namespace Int { namespace Linear {
        IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
   /**
+   * \brief Post propagator for reified linear constraint over Booleans
+   * \param t array of linear terms over Booleans
+   * \param n size of array
+   * \param r type of relation
+   * \param c result of linear constraint
+   * \param b Boolean control varaible
+   *
+   * All variants for linear constraints share the following properties:
+   *  - Variables occuring multiply in the term array are replaced
+   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *    \f$(a+b)x\f$.
+   *  - If in the above simplification the value for \f$(a+b)\f$ (or for
+   *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
+   *    defined in Limits::Int, an exception of type
+   *    Int::NumericalOverflow is thrown.
+   *  - Assume linear terms for the constraint
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
+   *    for integers as defined in Limits::Int, an exception of
+   *    type Int::NumericalOverflow is thrown.
+   *  - In all other cases, the created propagators are accurate (that
+   *    is, they will not silently overflow during propagation).
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  GECODE_INT_EXPORT void
+  post(Space* home, Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
+       IntConLevel=ICL_DEF, PropKind=PK_DEF);
+
+  /**
    * \brief Post propagator for linear constraint over Booleans
    * \param t array of linear terms over Booleans
    * \param n size of array
@@ -1682,6 +1808,38 @@ namespace Gecode { namespace Int { namespace Linear {
   GECODE_INT_EXPORT void
   post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
        IntConLevel=ICL_DEF, PropKind=PK_DEF);
+
+  /**
+   * \brief Post propagator for reified linear constraint over Booleans
+   * \param t array of linear terms over Booleans
+   * \param n size of array
+   * \param r type of relation
+   * \param y variable right hand side of linear constraint
+   * \param c constant right hand side of linear constraint
+   * \param b Boolean control variable
+   *
+   * All variants for linear constraints share the following properties:
+   *  - Variables occuring multiply in the term array are replaced
+   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *    \f$(a+b)x\f$.
+   *  - If in the above simplification the value for \f$(a+b)\f$ (or for
+   *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
+   *    defined in Limits::Int, an exception of type
+   *    Int::NumericalOverflow is thrown.
+   *  - Assume linear terms for the constraint
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
+   *    for integers as defined in Limits::Int, an exception of
+   *    type Int::NumericalOverflow is thrown.
+   *  - In all other cases, the created propagators are accurate (that
+   *    is, they will not silently overflow during propagation).
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  GECODE_INT_EXPORT void
+  post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c,
+       BoolView b, IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
 }}}
 
