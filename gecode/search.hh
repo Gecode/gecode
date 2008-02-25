@@ -210,7 +210,7 @@ namespace Gecode {
       /// Stop object for stopping search
       Stop* stop;
       /// Default options
-      GECODE_SEARCH_EXPORT static const Options default;
+      GECODE_SEARCH_EXPORT static const Options def;
       /// Initialize with default values
       Options(void);
     };
@@ -422,14 +422,14 @@ namespace Gecode {
   class DFS : public Search::DFS {
   public:
     /// Initialize search engine for space \a s with options \a o
-    DFS(T* s, const Search::Options& o=Search::Options::default);
+    DFS(T* s, const Search::Options& o=Search::Options::def);
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
   template <class T>
-  T* dfs(T* s, const Search::Options& o=Search::Options::default);
+  T* dfs(T* s, const Search::Options& o=Search::Options::def);
 
 
   namespace Search {
@@ -525,7 +525,7 @@ namespace Gecode {
   public:
     /// Initialize engine with \a s as root node and maximal discrepancy \a d
     LDS(T* s, unsigned int d,
-        const Search::Options& o=Search::Options::default);
+        const Search::Options& o=Search::Options::def);
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
@@ -536,7 +536,7 @@ namespace Gecode {
    */
   template <class T>
   T* lds(T* s, unsigned int d,
-         const Search::Options& o=Search::Options::default);
+         const Search::Options& o=Search::Options::def);
 
 
 
@@ -650,7 +650,7 @@ namespace Gecode {
   class BAB : public Search::BAB {
   public:
     /// Initialize engine for space \a s and options \a o
-    BAB(T* s, const Search::Options& o=Search::Options::default);
+    BAB(T* s, const Search::Options& o=Search::Options::def);
     /// Return next better solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
@@ -668,7 +668,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template <class T>
-  T* bab(T* s, const Search::Options& o=Search::Options::default);
+  T* bab(T* s, const Search::Options& o=Search::Options::def);
 
 
 
@@ -692,7 +692,7 @@ namespace Gecode {
     Space* best;
   public:
     /// Initialize engine for space \a s and options \a o
-    Restart(T* s, const Search::Options& o=Search::Options::default);
+    Restart(T* s, const Search::Options& o=Search::Options::def);
     /// Destructor
     ~Restart(void);
     /// Return next better solution (NULL, if none exists or search has been stopped)
@@ -711,7 +711,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template <class T>
-  T* restart(T* s, const Search::Options& o=Search::Options::default);
+  T* restart(T* s, const Search::Options& o=Search::Options::def);
 
 }
 

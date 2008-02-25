@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace Search {
 
-  const Options Options::default;
+  const Options Options::def;
 
 }}
 
