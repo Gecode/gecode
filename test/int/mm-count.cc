@@ -194,6 +194,79 @@ namespace Test { namespace Int {
        }
      };
 
+     Gecode::IntArgs ints(4, 1,0,3,2);
+   
+     /// Test number of several equal integers equal to integer
+     class IntArrayInt : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       IntArrayInt(Gecode::IntRelType irt0)
+         : Test("MiniModel::"+expand(irt0)+"::IntArray::Int",5,-2,2), 
+           irt(irt0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int m = 0;
+         for (int i=0; i<4; i++)
+           if (x[i] == ints[i])
+             m++;
+         return cmp(m,irt,2);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::IntVarArgs y(4);
+         for (int i=0; i<4; i++)
+           y[i]=x[i];
+         switch (irt) {
+         case Gecode::IRT_EQ:
+           Gecode::exactly(home,y,ints,2); break;
+         case Gecode::IRT_LQ:
+           Gecode::atmost(home,y,ints,2); break;
+         case Gecode::IRT_GQ:
+           Gecode::atleast(home,y,ints,2); break;
+         default: GECODE_NEVER;
+         }
+       }
+     };
+   
+     /// Test number of several equal integers equal to integer variable
+     class IntArrayVar : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       IntArrayVar(Gecode::IntRelType irt0)
+         : Test("MiniModel::"+expand(irt0)+"::IntArray::Var",5,-2,2), 
+           irt(irt0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int m = 0;
+         for (int i=0; i<4; i++)
+           if (x[i] == ints[i])
+             m++;
+         return cmp(m,irt,x[4]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::IntVarArgs y(4);
+         for (int i=0; i<4; i++)
+           y[i]=x[i];
+         switch (irt) {
+         case Gecode::IRT_EQ:
+           Gecode::exactly(home,y,ints,x[4]); break;
+         case Gecode::IRT_LQ:
+           Gecode::atmost(home,y,ints,x[4]); break;
+         case Gecode::IRT_GQ:
+           Gecode::atleast(home,y,ints,x[4]); break;
+         default: GECODE_NEVER;
+         }
+       }
+     };
+   
+
      namespace {
        /// Help class to create and register tests
        class Create {
@@ -208,6 +281,8 @@ namespace Test { namespace Int {
                (void) new IntVar(irts.irt());
                (void) new VarVar(irts.irt());
                (void) new VarInt(irts.irt());
+               (void) new IntArrayInt(irts.irt());
+               (void) new IntArrayVar(irts.irt());
              }
          }
        };
