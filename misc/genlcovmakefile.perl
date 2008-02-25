@@ -104,7 +104,7 @@ print "LCOVOUTDIR = /srv/gecode/httpd/html/Internal/gcov-trunk\n\n";
 print "all: tests examples\n";
 print "\tlcov --directory \$(PWD) --base-directory \$(PWD) --capture \\\n";
 print "\t     --output-file testsandexamples.info\n";
-print "\tgenhtml testsandexamples.info -o \$(LCOVOUTDIR)\n\n";
+print "\tgenhtml -t \"Gecode tests and examples\" testsandexamples.info -o \$(LCOVOUTDIR) -p \$(PWD)\n\n";
 
 print "tests: \\\n";
 for (my $tcount = 0; $tcount <= $targets; $tcount++) {
