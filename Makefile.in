@@ -775,7 +775,8 @@ endif
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear scheduling minimodel gcc sorted circuit unshare
+	rel linear scheduling gcc sorted circuit unshare \
+	mm-arithmetic mm-bool mm-lin
 INTTESTSRC0 = test/int.cc $(INTTESTSRC00:%=test/int/%.cc)
 SETTESTSRC00 = \
 	dom rel rel-op rel-op-const convex sequence int select distinct projection 
