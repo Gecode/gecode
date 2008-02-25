@@ -1683,7 +1683,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Space* home, Term<IntView>* t, int n, IntRelType r, int c, 
-       IntConLevel=ICL_DEF);
+       IntConLevel=ICL_DEF, PropKind pk=PK_DEF);
 
   /**
    * \brief Post reified propagator for linear constraint
@@ -1715,7 +1715,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Space* home, Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
-       IntConLevel=ICL_DEF);
+       IntConLevel=ICL_DEF, PropKind pk=PK_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
