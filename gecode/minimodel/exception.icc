@@ -45,14 +45,6 @@ namespace Gecode { namespace MiniModel {
    */
 
   //@{
-
-  /// %Exception: Reification not supported
-  class GECODE_VTABLE_EXPORT ReificationNotSupported : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ReificationNotSupported(const char* l);
-  };
-
   /// %Exception: Too few arguments available in argument array
   class GECODE_VTABLE_EXPORT TooFewArguments : public Exception  {
   public:
@@ -73,12 +65,7 @@ namespace Gecode { namespace MiniModel {
     /// Initialize with location \a l
     ArgumentOutOfRange(const char* l);
   };
-
   //@}
-
-  inline
-  ReificationNotSupported::ReificationNotSupported(const char* l)
-    : Exception(l,"Reification not supported") {}
 
   inline
   TooFewArguments::TooFewArguments(const char* l)

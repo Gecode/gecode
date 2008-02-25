@@ -168,26 +168,19 @@ namespace Gecode { namespace MiniModel {
   template <class Var>
   inline void
   LinExpr<Var>::post(Space* home, IntRelType irt, 
-                     IntConLevel icl, PropKind) const {
+                     IntConLevel icl, PropKind pk) const {
     GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n);
     (void) ax->fill(ts,0,sign);
-    Int::Linear::post(home, ts, n, irt, sign*-c, icl);
+    Int::Linear::post(home, ts, n, irt, sign*-c, icl, pk);
   }
 
-  template <>
+  template <class Var>
   inline void
-  LinExpr<IntVar>::post(Space* home, IntRelType irt, const BoolVar& b,
-                        IntConLevel, PropKind) const {
-    GECODE_AUTOARRAY(Int::Linear::Term<Int::IntView>, ts, n);
+  LinExpr<Var>::post(Space* home, IntRelType irt, const BoolVar& b,
+                     IntConLevel icl, PropKind pk) const {
+    GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n);
     (void) ax->fill(ts,0,sign);
-    Int::Linear::post(home, ts, n, irt, sign*-c, b);
-  }
-
-  template <>
-  inline void
-  LinExpr<BoolVar>::post(Space*, IntRelType, const BoolVar&,
-                         IntConLevel, PropKind) const {
-    throw ReificationNotSupported("LinExpr::BoolVar");
+    Int::Linear::post(home, ts, n, irt, sign*-c, b, icl, pk);
   }
 
   template <>

@@ -80,7 +80,7 @@ namespace Gecode {
 
     template<class Var>
     inline void
-    LinRel<Var>::post(Space* home, bool t, 
+    LinRel<Var>::post(Space* home, bool t,
                       IntConLevel icl, PropKind pk) const {
       if (t) {
         e.post(home,irt,icl,pk);

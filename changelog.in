@@ -70,6 +70,13 @@ Date:    Even later
 Lots of nice gimmicks for Christmas!
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Support reified linear expressions with Boolean variables.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor
