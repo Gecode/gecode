@@ -1002,6 +1002,16 @@ namespace Gecode {
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
     rel(home,x,r,y,icl,pk);
   }
+  /** \brief Post propagator for lexical order between \a x and \a y.
+   *
+   * - Throws an exception of type Int::ArgumentSizeMismatch, if
+   *   \a x and \a y are of different size.
+   */
+  inline void
+  lex(Space* home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
+    rel(home,x,r,y,icl,pk);
+  }
 
   //@}
 

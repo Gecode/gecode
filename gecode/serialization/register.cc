@@ -7971,6 +7971,24 @@ public:
           return;
         }
 #endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
+          Gecode::VarArgArray<Gecode::BoolVar> x2(a2.size());
+          for (int i=a2.size(); i--;)
+            x2[i] = Gecode::BoolVar(vm.var(a2[i]->toVar()));
+          Gecode::lex(home, x0,x1,x2);
+          return;
+        }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::lex");
       }
       break;
@@ -7991,6 +8009,26 @@ public:
           Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
           for (int i=a2.size(); i--;)
             x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
+          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
+          Gecode::lex(home, x0,x1,x2,x3);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
+          Gecode::VarArgArray<Gecode::BoolVar> x2(a2.size());
+          for (int i=a2.size(); i--;)
+            x2[i] = Gecode::BoolVar(vm.var(a2[i]->toVar()));
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
           Gecode::lex(home, x0,x1,x2,x3);
           return;
@@ -8017,6 +8055,28 @@ public:
           Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
           for (int i=a2.size(); i--;)
             x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
+          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
+          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
+          Gecode::lex(home, x0,x1,x2,x3,x4);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
+          Gecode::VarArgArray<Gecode::BoolVar> x2(a2.size());
+          for (int i=a2.size(); i--;)
+            x2[i] = Gecode::BoolVar(vm.var(a2[i]->toVar()));
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
           Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
           Gecode::lex(home, x0,x1,x2,x3,x4);
