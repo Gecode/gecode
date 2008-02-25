@@ -817,8 +817,7 @@ namespace Gecode {
   inline void
   atmost(Space* home, const IntVarArgs& x, int n, int m,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,n,IRT_LQ,m,icl);
+    count(home,x,n,IRT_LQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
    *
@@ -827,8 +826,7 @@ namespace Gecode {
   inline void
   atmost(Space* home, const IntVarArgs& x, IntVar y, int m,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_LQ,m,icl);
+    count(home,x,y,IRT_LQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
    *
@@ -840,8 +838,7 @@ namespace Gecode {
   inline void
   atmost(Space* home, const IntVarArgs& x, const IntArgs& y, int m,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_LQ,m,icl);
+    count(home,x,y,IRT_LQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
    *
@@ -850,8 +847,7 @@ namespace Gecode {
   inline void
   atmost(Space* home, const IntVarArgs& x, int n, IntVar z,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,n,IRT_LQ,z,icl);
+    count(home,x,n,IRT_LQ,z,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
    *
@@ -860,8 +856,7 @@ namespace Gecode {
   inline void
   atmost(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_LQ,z,icl);
+    count(home,x,y,IRT_LQ,z,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
    *
@@ -873,8 +868,7 @@ namespace Gecode {
   inline void
   atmost(Space* home, const IntVarArgs& x, const IntArgs& y, IntVar z,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_LQ,z,icl);
+    count(home,x,y,IRT_LQ,z,icl,pk);
   }
 
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
@@ -884,8 +878,7 @@ namespace Gecode {
   inline void
   atleast(Space* home, const IntVarArgs& x, int n, int m,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,n,IRT_GQ,m,icl);
+    count(home,x,n,IRT_GQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
    *
@@ -894,8 +887,7 @@ namespace Gecode {
   inline void
   atleast(Space* home, const IntVarArgs& x, IntVar y, int m,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_GQ,m,icl);
+    count(home,x,y,IRT_GQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
    *
@@ -907,8 +899,7 @@ namespace Gecode {
   inline void
   atleast(Space* home, const IntVarArgs& x, const IntArgs& y, int m,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_GQ,m,icl);
+    count(home,x,y,IRT_GQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
    *
@@ -917,8 +908,7 @@ namespace Gecode {
   inline void
   atleast(Space* home, const IntVarArgs& x, int n, IntVar z,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,n,IRT_GQ,z,icl);
+    count(home,x,n,IRT_GQ,z,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
    *
@@ -927,8 +917,7 @@ namespace Gecode {
   inline void
   atleast(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_GQ,z,icl);
+    count(home,x,y,IRT_GQ,z,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
    *
@@ -940,8 +929,7 @@ namespace Gecode {
   inline void
   atleast(Space* home, const IntVarArgs& x, const IntArgs& y, IntVar z,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_GQ,z,icl);
+    count(home,x,y,IRT_GQ,z,icl,pk);
   }
 
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
@@ -951,8 +939,7 @@ namespace Gecode {
   inline void
   exactly(Space* home, const IntVarArgs& x, int n, int m,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,n,IRT_EQ,m,icl);
+    count(home,x,n,IRT_EQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
    *
@@ -961,8 +948,7 @@ namespace Gecode {
   inline void
   exactly(Space* home, const IntVarArgs& x, IntVar y, int m,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_EQ,m,icl);
+    count(home,x,y,IRT_EQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
    *
@@ -974,8 +960,7 @@ namespace Gecode {
   inline void
   exactly(Space* home, const IntVarArgs& x, const IntArgs& y, int m,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_EQ,m,icl);
+    count(home,x,y,IRT_EQ,m,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
    *
@@ -984,8 +969,7 @@ namespace Gecode {
   inline void
   exactly(Space* home, const IntVarArgs& x, int n, IntVar z,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,n,IRT_EQ,z,icl);
+    count(home,x,n,IRT_EQ,z,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
    *
@@ -994,8 +978,7 @@ namespace Gecode {
   inline void
   exactly(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_EQ,z,icl);
+    count(home,x,y,IRT_EQ,z,icl,pk);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
    *
@@ -1007,8 +990,7 @@ namespace Gecode {
   inline void
   exactly(Space* home, const IntVarArgs& x, const IntArgs& y, IntVar z,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    count(home,x,y,IRT_EQ,z,icl);
+    count(home,x,y,IRT_EQ,z,icl,pk);
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
    *
@@ -1018,8 +1000,7 @@ namespace Gecode {
   inline void
   lex(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) pk;
-    rel(home,x,r,y,icl);
+    rel(home,x,r,y,icl,pk);
   }
 
   //@}
