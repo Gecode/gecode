@@ -164,6 +164,8 @@ namespace Test {
       virtual Assignment* assignment(void) const;
       /// Check for solution
       virtual bool solution(const Assignment&) const = 0;
+      /// Whether to ignore assignment for reification
+      virtual bool ignore(const Assignment&) const;
       /// Post constraint
       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
       /// Post reified constraint

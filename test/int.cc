@@ -376,6 +376,11 @@ if (!(T)) {                                                     \
   }                                                             \
   test = (T);
 
+  bool
+  Test::ignore(const Assignment&) const {
+    return false;
+  }
+
   void 
   Test::post(Gecode::Space*, Gecode::IntVarArray&, 
              Gecode::BoolVar) {}
@@ -531,7 +536,7 @@ if (!(T)) {                                                     \
         delete s;
       }
 
-      if (reified) {
+      if (reified && !ignore(a)) {
         START_TEST("Assignment reified (rewrite after post)");
         {      
           TestSpace* s = new TestSpace(arity,dom,true,this);
