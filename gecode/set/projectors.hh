@@ -160,19 +160,26 @@ namespace Gecode {
     GECODE_SET_EXPORT ~SetExpr(void);
   };
 
-  ///\name Specifying finite set projectors
-  //@{
+}
 
-  /// Return set expression for the complement of \a s
-  SetExpr operator-(const SetExpr& s);
-  /// Return set expression for the union of \a s and \a t
-  SetExpr operator||(const SetExpr& s, const SetExpr& t);
-  /// Return set expression for the intersection of \a s and \a t
-  SetExpr operator&&(const SetExpr&, const SetExpr&);
-  /// Return set expression for the difference of \a s and \a t
-  SetExpr operator-(const SetExpr&, const SetExpr&);
+///\name Specifying finite set projectors
+//@{
 
-  ///@}
+/// Return set expression for the complement of \a s
+Gecode::SetExpr operator-(const Gecode::SetExpr& s);
+/// Return set expression for the union of \a s and \a t
+Gecode::SetExpr operator||(const Gecode::SetExpr& s,
+                           const Gecode::SetExpr& t);
+/// Return set expression for the intersection of \a s and \a t
+Gecode::SetExpr operator&&(const Gecode::SetExpr& s,
+                           const Gecode::SetExpr& t);
+/// Return set expression for the difference of \a s and \a t
+Gecode::SetExpr operator-(const Gecode::SetExpr& s,
+                          const Gecode::SetExpr& t);
+
+///@}
+
+namespace Gecode {
 
   /**
    * \brief Finite set projector specification
@@ -300,19 +307,28 @@ namespace Gecode {
     
   };
 
-  /// Return formula \f$f\land g\f$ \relates Formula
-  Formula operator&(const Formula& f, const Formula& g);
-  /// Return formula \f$f\lor g\f$ \relates Formula
-  Formula operator|(const Formula& f, const Formula& g);
-  /// Return formula \f$\lnot f\f$ \relates Formula
-  Formula operator-(const Formula& f);
-  /// Return formula \f$f\rightarrow f\f$ \relates Formula
-  Formula operator>>(const Formula& f, const Formula& g);
-  /// Return formula \f$f\leftrightarrow g\f$ \relates Formula
-  Formula operator==(const Formula& f, const Formula& g);
+}
 
-  //@}
+///\name Operations on formulas for specifying set constraints
+//@{
 
+/// Return formula \f$f\land g\f$ \relates Formula
+Gecode::Formula operator&(const Gecode::Formula& f, const Gecode::Formula& g);
+/// Return formula \f$f\lor g\f$ \relates Formula
+Gecode::Formula operator|(const Gecode::Formula& f, const Gecode::Formula& g);
+/// Return formula \f$\lnot f\f$ \relates Formula
+Gecode::Formula operator-(const Gecode::Formula& f);
+/// Return formula \f$f\rightarrow f\f$ \relates Formula
+Gecode::Formula operator>>(const Gecode::Formula& f,
+                           const Gecode::Formula& g);
+/// Return formula \f$f\leftrightarrow g\f$ \relates Formula
+Gecode::Formula operator==(const Gecode::Formula& f,
+                           const Gecode::Formula& g);
+
+//@}
+
+namespace Gecode {
+  
   ///\name Posting projection propagators
   //@{
 

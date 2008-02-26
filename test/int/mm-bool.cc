@@ -84,6 +84,7 @@ namespace Test { namespace Int {
      /// Executes Boolean instruction for constructing Boolean expressions
      Gecode::MiniModel::BoolExpr 
      eval(const BoolInstr* pc, Gecode::MiniModel::BoolExpr reg[]) {
+       using namespace Gecode;
        while (true) {
          switch (pc->o) {
          case BO_NOT: reg[pc->y] = !reg[pc->x]; break;

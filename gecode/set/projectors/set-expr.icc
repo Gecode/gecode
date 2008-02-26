@@ -99,23 +99,27 @@ namespace Gecode {
   forceinline
   SetExpr::SetExpr(void) : ax(NULL), sign(1) {}
 
-  inline SetExpr
-  operator-(const SetExpr& s) { return SetExpr(s, -1); }
+}
 
-  inline SetExpr
-  operator||(const SetExpr& s, const SetExpr& t) {
-    return SetExpr(s, 1, SetExpr::REL_UNION, t, 1);
-  }
+inline Gecode::SetExpr
+operator-(const Gecode::SetExpr& s) { return Gecode::SetExpr(s, -1); }
 
-  inline SetExpr
-  operator&&(const SetExpr& s, const SetExpr& t) {
-    return SetExpr(s, 1, SetExpr::REL_INTER, t, 1);
-  }
+inline Gecode::SetExpr
+operator||(const Gecode::SetExpr& s, const Gecode::SetExpr& t) {
+  return Gecode::SetExpr(s, 1, Gecode::SetExpr::REL_UNION, t, 1);
+}
 
-  inline SetExpr
-  operator-(const SetExpr& s, const SetExpr& t) {
-    return SetExpr(s, 1, SetExpr::REL_INTER, t, -1);
-  }
+inline Gecode::SetExpr
+operator&&(const Gecode::SetExpr& s, const Gecode::SetExpr& t) {
+  return Gecode::SetExpr(s, 1, Gecode::SetExpr::REL_INTER, t, 1);
+}
+
+inline Gecode::SetExpr
+operator-(const Gecode::SetExpr& s, const Gecode::SetExpr& t) {
+  return Gecode::SetExpr(s, 1, Gecode::SetExpr::REL_INTER, t, -1);
+}
+
+namespace Gecode {
 
   /**
    * \brief Range iterator for set expressions

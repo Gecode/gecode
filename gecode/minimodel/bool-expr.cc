@@ -316,7 +316,6 @@ namespace Gecode { namespace MiniModel {
     return *this;
   }
 
-  forceinline
   BoolExpr::~BoolExpr(void) {
     if (n->decrement())
       delete n;
