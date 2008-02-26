@@ -63,7 +63,7 @@ inline Gecode::MiniModel::BoolExpr
 operator&&(const Gecode::MiniModel::BoolExpr& l,
            const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
-                                     Gecode::MiniModel::BoolExpr::BT_AND,
+                                     Gecode::MiniModel::BoolExpr::NT_AND,
                                      r);
 }
 
@@ -71,7 +71,7 @@ inline Gecode::MiniModel::BoolExpr
 operator||(const Gecode::MiniModel::BoolExpr& l,
            const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
-                                     Gecode::MiniModel::BoolExpr::BT_OR,
+                                     Gecode::MiniModel::BoolExpr::NT_OR,
                                      r);
 }
 
@@ -79,7 +79,7 @@ inline Gecode::MiniModel::BoolExpr
 operator^(const Gecode::MiniModel::BoolExpr& l,
           const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
-                                     Gecode::MiniModel::BoolExpr::BT_XOR,
+                                     Gecode::MiniModel::BoolExpr::NT_XOR,
                                      r);
 }
 
@@ -92,7 +92,7 @@ operator~(const Gecode::MiniModel::LinRel<Var>& rl) {
 inline Gecode::MiniModel::BoolExpr
 operator!(const Gecode::MiniModel::BoolExpr& e) {
   return Gecode::MiniModel::BoolExpr(e,
-                                     Gecode::MiniModel::BoolExpr::BT_NOT);
+                                     Gecode::MiniModel::BoolExpr::NT_NOT);
 }
 
 namespace Gecode {
@@ -101,7 +101,7 @@ namespace Gecode {
   eqv(const MiniModel::BoolExpr& l,
       const MiniModel::BoolExpr& r) {
     return MiniModel::BoolExpr(l,
-                               MiniModel::BoolExpr::BT_EQV,
+                               MiniModel::BoolExpr::NT_EQV,
                                r);
   }
 
@@ -109,7 +109,7 @@ namespace Gecode {
   imp(const MiniModel::BoolExpr& l,
       const MiniModel::BoolExpr& r) {
     return MiniModel::BoolExpr(l,
-                               MiniModel::BoolExpr::BT_IMP,
+                               MiniModel::BoolExpr::NT_IMP,
                                r);
   }
 

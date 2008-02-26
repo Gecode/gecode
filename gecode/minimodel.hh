@@ -85,56 +85,56 @@ namespace Gecode {
     /// Linear expressions
     template <class Var>
     class LinExpr {
+    public:
+      /// Type of linear expression
+      enum NodeType {
+        NT_VAR, ///< Linear term with variable
+        NT_ADD, ///< Addition of linear terms
+        NT_SUB, ///< Subtraction of linear terms
+        NT_MUL  ///< Multiplication by coefficient
+      };
     private:
       typedef typename VarViewTraits<Var>::View View;
       /// Nodes for linear expressions
       class Node {
-      private:
+      public:
         /// Nodes are reference counted
         unsigned int use;
-        /// Left and right subtrees
-        Node *left, *right;
-        /// Left and right signs for entire subtress
-        int signLeft, signRight;
-        /// Coefficient
-        int a;
-        /// Variable
+        /// Variables in tree
+        unsigned int n;
+        /// Type of expression
+        NodeType t;
+        /// Subexpressions
+        Node *l, *r;
+        /// Coefficient and offset
+        int a, c;
+        /// Variable (potentially)
         Var x;
-      public:
-        /// Construct node for \a a multiplied with \a x
-        Node(int a, const Var& x);
-        /// Construct node from nodes \a n0 and \a n1 with signs \a s0 and \a s1
-        Node(Node* n0, int s0, Node* n1, int s1);
-
-        /// Increment reference count
-        void increment(void);
+        /// Default constructor
+        Node(void);
+        /// Generate linear terms from expression
+        int fill(Int::Linear::Term<View> t[], int i, int m, 
+                 int c_i, int& c_o) const;
         /// Decrement reference count and possibly free memory
         bool decrement(void);
-        
-        /// Fill in array of linear terms based on this node
-        int fill(Int::Linear::Term<View> t[], int i, int s) const;
-        
         /// Memory management
         static void* operator new(size_t size);
         /// Memory management
         static void  operator delete(void* p,size_t size);
       };
-      Node* ax;       ///< Node for expression
+      Node* n;       
     public:
-      unsigned int n; ///< Number of variables in sub terms
-      int c;          ///< Constant for expression
-      int sign;       ///< Sign for expression
       /// Default constructor
       LinExpr(void);
+      /// Create expression
+      LinExpr(const Var& x, int a=1);
       /// Copy constructor
       LinExpr(const LinExpr& e);
-      /// Create expression \f$a\cdot x+c\f$
-      LinExpr(const Var& x, int a=1, int c=0);
-      /// Create expression \f$e_0+s\cdot e_1\f$ (where \a s is the sign)
-      LinExpr(const LinExpr& e0, const LinExpr& e1, int s);
-      /// Create expression \f$s\cdot e+c\f$ (where \a s is the sign)
-      LinExpr(const LinExpr& e, int c, int s);
-      /// Create expression \f$a\cdot e\f$
+      /// Create expression for type and subexpressions
+      LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1);
+      /// Create expression for type and subexpression
+      LinExpr(const LinExpr& e0, NodeType t, int c);
+      /// Create expression for multiplication
       LinExpr(int a, const LinExpr& e);
       /// Assignment operator
       const LinExpr& operator=(const LinExpr& e);
@@ -452,15 +452,15 @@ namespace Gecode {
     public:
       /// Type of Boolean expression
       enum NodeType {
-        BT_VAR,       ///< Variable
-        BT_NOT,       ///< Negation
-        BT_AND,       ///< Conjunction
-        BT_OR,        ///< Disjunction
-        BT_IMP,       ///< Implication
-        BT_XOR,       ///< Exclusive or
-        BT_EQV,       ///< Equivalence
-        BT_RLIN_INT,  ///< Reified linear relation (integer variables)
-        BT_RLIN_BOOL  ///< Reified linear relation (Boolean variables)
+        NT_VAR,       ///< Variable
+        NT_NOT,       ///< Negation
+        NT_AND,       ///< Conjunction
+        NT_OR,        ///< Disjunction
+        NT_IMP,       ///< Implication
+        NT_XOR,       ///< Exclusive or
+        NT_EQV,       ///< Equivalence
+        NT_RLIN_INT,  ///< Reified linear relation (integer variables)
+        NT_RLIN_BOOL  ///< Reified linear relation (Boolean variables)
       };
       /// Node for Boolean expression
       class Node {

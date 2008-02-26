@@ -81,7 +81,7 @@ namespace Test { namespace Int {
        GECODE_NEVER;
      }
 
-     /// Executes Boolean instruction for constructing Booleaqn Expressions
+     /// Executes Boolean instruction for constructing Boolean expressions
      Gecode::MiniModel::BoolExpr 
      eval(const BoolInstr* pc, Gecode::MiniModel::BoolExpr reg[]) {
        while (true) {

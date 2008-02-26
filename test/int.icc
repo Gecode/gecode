@@ -227,6 +227,10 @@ namespace Test { namespace Int {
   inline
   IntRelTypes::IntRelTypes(void) 
     : i(sizeof(irts)/sizeof(Gecode::IntRelType)-1) {}
+  inline void
+  IntRelTypes::reset(void) {
+    i = sizeof(irts)/sizeof(Gecode::IntRelType)-1;
+  }
   inline bool 
   IntRelTypes::operator()(void) const {
     return i>=0;

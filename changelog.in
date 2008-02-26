@@ -72,9 +72,10 @@ Lots of nice gimmicks for Christmas!
 [ENTRY]
 Module: minimodel
 What:   bug
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
-Added missing copy constructor for linear expressions.
+Reimplemented linear expressions from scratch, they were just
+hopelessly screwed.
 
 [ENTRY]
 Module: minimodel

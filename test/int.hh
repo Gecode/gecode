@@ -222,6 +222,8 @@ namespace Test {
     public:
       /// Initialize iterator
       IntRelTypes(void);
+      /// Reset iterator
+      void reset(void);
       /// Test whether iterator is done
       bool operator()(void) const;
       /// Increment to next relation type

@@ -42,6 +42,11 @@ namespace Gecode { namespace MiniModel {
    *
    */
   template <class Var>
+  forceinline
+  LinExpr<Var>::Node::Node(void) : use(1) {
+  }
+  
+  template <class Var>
   forceinline void*
   LinExpr<Var>::Node::operator new(size_t size) {
     return Memory::malloc(size);
@@ -53,56 +58,56 @@ namespace Gecode { namespace MiniModel {
     Memory::free(p);
   }
 
-
-  template <class Var>
-  forceinline void
-  LinExpr<Var>::Node::increment(void) {
-    ++use;
-  }
-
   template <class Var>
   bool
   LinExpr<Var>::Node::decrement(void) {
     if (--use == 0) {
-      if (left != NULL) {
-        if (left->decrement())
-          delete left;
-        if (right->decrement())
-          delete right;
-      }
+      if ((l != NULL) && l->decrement())
+        delete l;
+      if ((r != NULL) && r->decrement())
+        delete r;
       return true;
     }
     return false;
   }
   
   template <class Var>
-  forceinline
-  LinExpr<Var>::Node::Node(int a, const Var& x) :
-    use(1),
-    left(NULL), right(NULL), signLeft(0), signRight(0),
-    a(a), x(x) {}
-
-  template <class Var>
-  forceinline
-  LinExpr<Var>::Node::Node(Node* l, int sL, Node* r, int sR) :
-    use(1),
-    left(l), right(r), signLeft(sL), signRight(sR) {
-    left->increment();
-    right->increment();
-  }
-
-  template <class Var>
   int
   LinExpr<Var>::Node::fill(Int::Linear::Term<View> t[], 
-                           int i, int m) const {
-    if (left != NULL) {
-      return right->fill(t, left->fill(t, i, signLeft*m), signRight*m);
-    } else {
-      t[i].a=m*a; t[i].x=x;
-      return i+1;
+                           int i, int m, int c_i, int& c_o) const {
+    switch (this->t) {
+    case NT_VAR:
+      c_o = c_i;
+      if (a != 0) {
+        t[i].a=m*a; t[i].x=x;
+        return i+1;
+      } else {
+        return i;
+      }
+    case NT_ADD:
+      if (l == NULL) {
+        return r->fill(t,i,m,c_i+m*c,c_o);
+      } else {
+        int c_m = 0;
+        i = l->fill(t,i,m,c_i,c_m);
+        return r->fill(t,i,m,c_m,c_o);
+      }
+    case NT_SUB:
+      if (l == NULL) {
+        return r->fill(t,i,-m,c_i+m*c,c_o);
+      } else {
+        int c_m = 0;
+        i = l->fill(t,i,m,c_i,c_m);
+        return r->fill(t,i,-m,c_m,c_o);
+      }
+    case NT_MUL:
+      return l->fill(t,i,a*m,c_i,c_o);
+    default:
+      GECODE_NEVER;
     }
+    GECODE_NEVER;
+    return 0;
   }
-
 
 
   /*
@@ -111,56 +116,72 @@ namespace Gecode { namespace MiniModel {
    */
 
   template <class Var>
-  forceinline
-  LinExpr<Var>::LinExpr(void)
-    : ax(NULL), n(0) {}
-
+  inline
+  LinExpr<Var>::LinExpr(void) :
+    n(new Node) {
+    n->n = 0;
+    n->t = NT_VAR;
+    n->l = n->r = NULL;
+    n->a = 0;
+  }
+  
   template <class Var>
   inline
-  LinExpr<Var>::LinExpr(const Var& x, int a, int c0) :
-    ax(new Node(a, x)), n(1), c(c0), sign(1) {
+  LinExpr<Var>::LinExpr(const Var& x, int a) :
+    n(new Node) {
+    n->n = 1;
+    n->t = NT_VAR;
+    n->l = n->r = NULL;
+    n->a = a;
+    n->x = x;
   }
-
+  
   template <class Var>
   inline
-  LinExpr<Var>::LinExpr(const LinExpr<Var>& t1, const LinExpr<Var>& t2, 
-                        int m) :
-    ax(new Node(t1.ax, t1.sign, t2.ax, t2.sign*m)),
-    n(t1.n+t2.n),
-    c(t1.c+m*t2.c), sign(1) {}
-
-  template <class Var>
-  forceinline
-  LinExpr<Var>::LinExpr(const LinExpr<Var>& t, int c0, int sign) :
-    ax(t.ax), n(t.n), c(sign*t.c+c0), sign(t.sign*sign) {
-    ax->increment();
+  LinExpr<Var>::LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1) :
+    n(new Node) {
+    n->n = e0.n->n+e1.n->n;
+    n->t = t;
+    n->l = e0.n; n->l->use++;
+    n->r = e1.n; n->r->use++;
   }
-
+  
   template <class Var>
-  forceinline
-  LinExpr<Var>::LinExpr(int a, const LinExpr<Var>& t) :
-    ax(t.ax), n(t.n), c(a*t.c), sign(a*t.sign) {
-    ax->increment();
+  inline
+  LinExpr<Var>::LinExpr(const LinExpr& e, NodeType t, int c) :
+    n(new Node) {
+    n->n = e.n->n;
+    n->t = t;
+    n->l = NULL;
+    n->r = e.n; n->r->use++;
+    n->c = c;
   }
-
+  
+  template <class Var>
+  inline
+  LinExpr<Var>::LinExpr(int a, const LinExpr& e) :
+    n(new Node) {
+    n->n = e.n->n;
+    n->t = NT_MUL;
+    n->l = e.n; n->l->use++;
+    n->r = NULL;
+    n->a = a;
+  }
+  
   template <class Var>
   inline
   LinExpr<Var>::LinExpr(const LinExpr<Var>& e) 
-    : ax(e.ax), n(e.n), c(e.c), sign(e.sign) {
-    ax->increment();
+    : n(e.n) {
+    n->use++;
   }
 
   template <class Var>
   inline const LinExpr<Var>&
-  LinExpr<Var>::operator=(const LinExpr<Var>& t) {
-    if (this != &t) {
-      if ((ax != NULL) && ax->decrement())
-        delete ax;
-      n    = t.n;
-      ax   = t.ax;
-      c    = t.c;
-      sign = t.sign;
-      ax->increment();
+  LinExpr<Var>::operator=(const LinExpr<Var>& e) {
+    if (this != &e) {
+      if (n->decrement())
+        delete n;
+      n = e.n; n->use++;
     }
     return *this;
   }
@@ -168,50 +189,54 @@ namespace Gecode { namespace MiniModel {
   template <class Var>
   forceinline
   LinExpr<Var>::~LinExpr(void) {
-    if ((ax != NULL) && ax->decrement())
-      delete ax;
+    if (n->decrement())
+      delete n;
   }
 
   template <class Var>
   inline void
   LinExpr<Var>::post(Space* home, IntRelType irt, 
                      IntConLevel icl, PropKind pk) const {
-    GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n);
-    (void) ax->fill(ts,0,sign);
-    Int::Linear::post(home, ts, n, irt, sign*-c, icl, pk);
+    GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n->n);
+    int c_o = 0;
+    int i = n->fill(ts,0,1,0,c_o);
+    Int::Linear::post(home, ts, i, irt, -c_o, icl, pk);
   }
 
   template <class Var>
   inline void
   LinExpr<Var>::post(Space* home, IntRelType irt, const BoolVar& b,
                      IntConLevel icl, PropKind pk) const {
-    GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n);
-    (void) ax->fill(ts,0,sign);
-    Int::Linear::post(home, ts, n, irt, sign*-c, b, icl, pk);
+    GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n->n);
+    int c_o = 0;
+    int i = n->fill(ts,0,1,0,c_o);
+    Int::Linear::post(home, ts, i, irt, -c_o, icl, pk);
   }
 
   template <>
   inline IntVar
   LinExpr<IntVar>::post(Space* home, IntConLevel icl, PropKind pk) const {
-    GECODE_AUTOARRAY(Int::Linear::Term<Int::IntView>, ts, n+1);
-    (void) ax->fill(ts,0,sign);
+    GECODE_AUTOARRAY(Int::Linear::Term<Int::IntView>, ts, n->n+1);
+    int c_o = 0;
+    int i = n->fill(ts,0,1,0,c_o);
     int min, max;
-    Int::Linear::estimate(&ts[0],n,sign*c,min,max);
+    Int::Linear::estimate(&ts[0],i,c_o,min,max);
     IntVar x(home, min, max);
-    ts[n].x = x; ts[n].a = -1;
-    Int::Linear::post(home, ts, n+1, IRT_EQ, sign*-c, icl, pk);
+    ts[i].x = x; ts[i].a = -1;
+    Int::Linear::post(home, ts, i+1, IRT_EQ, -c_o, icl, pk);
     return x;
   }
 
   template <>
   inline IntVar
   LinExpr<BoolVar>::post(Space* home, IntConLevel icl, PropKind pk) const {
-    GECODE_AUTOARRAY(Int::Linear::Term<Int::BoolView>, ts, n);
-    (void) ax->fill(ts,0,sign);
+    GECODE_AUTOARRAY(Int::Linear::Term<Int::BoolView>, ts, n->n+1);
+    int c_o = 0;
+    int i = n->fill(ts,0,1,0,c_o);
     int min, max;
-    Int::Linear::estimate(&ts[0],n,sign*c,min,max);
+    Int::Linear::estimate(&ts[0],i,c_o,min,max);
     IntVar x(home, min, max);
-    Int::Linear::post(home, ts, n, IRT_EQ, x, sign*-c, icl, pk);
+    Int::Linear::post(home, ts, i, IRT_EQ, x, -c_o, icl, pk);
     return x;
   }
 
@@ -219,37 +244,37 @@ namespace Gecode { namespace MiniModel {
 
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
 operator+(int c,
-          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(t,c,1);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(e,Gecode::MiniModel::LinExpr<Gecode::IntVar>::NT_ADD,c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
-operator+(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t,
+operator+(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e,
           int c) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(t,c,1);
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(e,Gecode::MiniModel::LinExpr<Gecode::IntVar>::NT_ADD,c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
-operator+(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t1,
-          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t2) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(t1,t2,1);
+operator+(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e1,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e2) {
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(e1,Gecode::MiniModel::LinExpr<Gecode::IntVar>::NT_ADD,e2);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
 operator-(int c,
-          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(t, c, -1);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(e,Gecode::MiniModel::LinExpr<Gecode::IntVar>::NT_SUB,c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
-operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t,
+operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e,
           int c) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(t, -c, 1);
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(e,Gecode::MiniModel::LinExpr<Gecode::IntVar>::NT_ADD,-c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
-operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t1,
-          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t2) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(t1, t2, -1);
+operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e1,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e2) {
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(e1,Gecode::MiniModel::LinExpr<Gecode::IntVar>::NT_SUB,e2);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
-operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(t,0,-1);
+operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(e,Gecode::MiniModel::LinExpr<Gecode::IntVar>::NT_SUB,0);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
 operator*(int a, const Gecode::IntVar& x) {
@@ -260,49 +285,48 @@ operator*(const Gecode::IntVar& x, int a) {
   return Gecode::MiniModel::LinExpr<Gecode::IntVar>(x,a);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
-operator*(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t, int a) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(a,t);
+operator*(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e, int a) {
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(a,e);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::IntVar>
-operator*(int a, const Gecode::MiniModel::LinExpr<Gecode::IntVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(a,t);
+operator*(int a, const Gecode::MiniModel::LinExpr<Gecode::IntVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::IntVar>(a,e);
 }
-
 
 
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
 operator+(int c,
-          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(t,c,1);
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(e,Gecode::MiniModel::LinExpr<Gecode::BoolVar>::NT_ADD,c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
-operator+(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t,
+operator+(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e,
           int c) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(t,c,1);
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(e,Gecode::MiniModel::LinExpr<Gecode::BoolVar>::NT_ADD,c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
-operator+(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t1,
-          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t2) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(t1,t2,1);
+operator+(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e1,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e2) {
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(e1,Gecode::MiniModel::LinExpr<Gecode::BoolVar>::NT_ADD,e2);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
 operator-(int c,
-          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(t, c, -1);
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(e,Gecode::MiniModel::LinExpr<Gecode::BoolVar>::NT_SUB,c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
-operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t,
+operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e,
           int c) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(t, -c, 1);
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(e,Gecode::MiniModel::LinExpr<Gecode::BoolVar>::NT_ADD,-c);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
-operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t1,
-          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t2) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(t1, t2, -1);
+operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e1,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e2) {
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(e1,Gecode::MiniModel::LinExpr<Gecode::BoolVar>::NT_SUB,e2);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
-operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(t,0,-1);
+operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(e,Gecode::MiniModel::LinExpr<Gecode::BoolVar>::NT_SUB,0);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
 operator*(int a, const Gecode::BoolVar& x) {
@@ -313,14 +337,13 @@ operator*(const Gecode::BoolVar& x, int a) {
   return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(x,a);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
-operator*(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t, int a) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(a,t);
+operator*(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e, int a) {
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(a,e);
 }
 inline Gecode::MiniModel::LinExpr<Gecode::BoolVar>
-operator*(int a, const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& t) {
-  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(a,t);
+operator*(int a, const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e) {
+  return Gecode::MiniModel::LinExpr<Gecode::BoolVar>(a,e);
 }
-
 
 
 namespace Gecode {
