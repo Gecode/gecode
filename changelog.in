@@ -74,6 +74,13 @@ Module: minimodel
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Added missing copy constructor for linear expressions.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Added work-around for compiler bug in MSVC.
 
 [ENTRY]

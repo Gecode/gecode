@@ -144,6 +144,13 @@ namespace Gecode { namespace MiniModel {
   }
 
   template <class Var>
+  inline
+  LinExpr<Var>::LinExpr(const LinExpr<Var>& e) 
+    : ax(e.ax), n(e.n), c(e.c), sign(e.sign) {
+    ax->increment();
+  }
+
+  template <class Var>
   inline const LinExpr<Var>&
   LinExpr<Var>::operator=(const LinExpr<Var>& t) {
     if (this != &t) {
