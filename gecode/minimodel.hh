@@ -452,14 +452,15 @@ namespace Gecode {
     public:
       /// Type of Boolean expression
       enum NodeType {
-        BT_VAR, ///< Variable
-        BT_NOT, ///< Negation
-        BT_AND, ///< Conjunction
-        BT_OR,  ///< Disjunction
-        BT_IMP, ///< Implication
-        BT_XOR, ///< Exclusive or
-        BT_EQV, ///< Equivalence
-        BT_RLIN ///< Reified linear relation
+        BT_VAR,       ///< Variable
+        BT_NOT,       ///< Negation
+        BT_AND,       ///< Conjunction
+        BT_OR,        ///< Disjunction
+        BT_IMP,       ///< Implication
+        BT_XOR,       ///< Exclusive or
+        BT_EQV,       ///< Equivalence
+        BT_RLIN_INT,  ///< Reified linear relation (integer variables)
+        BT_RLIN_BOOL  ///< Reified linear relation (Boolean variables)
       };
       /// Node for Boolean expression
       class Node {
@@ -475,7 +476,9 @@ namespace Gecode {
         /// Possibly a variable
         BoolVar x;
         /// Possibly a reified linear relation over integer variables
-        LinRel<IntVar> rl;
+        LinRel<IntVar> rl_int;
+        /// Possibly a reified linear relation over Boolean variables
+        LinRel<BoolVar> rl_bool;
 
         /// Default constructor
         Node(void);
@@ -511,21 +514,30 @@ namespace Gecode {
       /// Copy constructor
       BoolExpr(const BoolExpr& e);
       /// Construct expression for type and subexpresssions
+      GECODE_MINIMODEL_EXPORT 
       BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r);
       /// Construct expression for variable
+      GECODE_MINIMODEL_EXPORT 
       BoolExpr(const BoolVar& x);
       /// Construct expression for negation
+      GECODE_MINIMODEL_EXPORT 
       BoolExpr(const BoolExpr& e, NodeType t);
       /// Construct expression for reified linear relation
+      GECODE_MINIMODEL_EXPORT 
       BoolExpr(const LinRel<IntVar>& rl);
+      /// Construct expression for reified linear relation
+      GECODE_MINIMODEL_EXPORT 
+      BoolExpr(const LinRel<BoolVar>& rl);
       /// Post propagators for expression
       BoolVar post(Space* home, IntConLevel icl, PropKind pk) const;
       /// Post propagators for relation
       void post(Space* home, bool t, IntConLevel icl, PropKind pk) const;
 
       /// Assignment operator
+      GECODE_MINIMODEL_EXPORT 
       const BoolExpr& operator=(const BoolExpr& e);
       /// Destructor
+      GECODE_MINIMODEL_EXPORT 
       ~BoolExpr(void);
     };
 
@@ -580,9 +592,10 @@ Gecode::MiniModel::BoolExpr
 operator^(const Gecode::MiniModel::BoolExpr&,
           const Gecode::MiniModel::BoolExpr&);
 
-/// Reification of linear expression
+/// Reification of linear relations
+template <class Var>
 Gecode::MiniModel::BoolExpr
-operator~(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
+operator~(const Gecode::MiniModel::LinRel<Var>&);
 
 namespace Gecode {
 

@@ -39,186 +39,290 @@
 
 #include "gecode/minimodel.hh"
 
-namespace Gecode {
+namespace Gecode { namespace MiniModel {
 
-  namespace MiniModel {
-
-    bool
-    BoolExpr::Node::decrement(void) {
-      if (--use == 0) {
-        if ((l != NULL) && l->decrement())
-          delete l;
-        if ((r != NULL) && r->decrement())
-          delete r;
-        return true;
-      }
-      return false;
+  /*
+   * Operations for nodes
+   *
+   */
+  forceinline void*
+  BoolExpr::Node::operator new(size_t size) {
+    return Memory::malloc(size);
+  }
+  
+  forceinline void
+  BoolExpr::Node::operator delete(void* p, size_t) {
+    Memory::free(p);
+  }
+  
+  forceinline
+  BoolExpr::Node::Node(void) : use(1) {};
+  
+  bool
+  BoolExpr::Node::decrement(void) {
+    if (--use == 0) {
+      if ((l != NULL) && l->decrement())
+        delete l;
+      if ((r != NULL) && r->decrement())
+        delete r;
+      return true;
     }
-
-    BoolVar
-    BoolExpr::Node::post(Space* home, IntConLevel icl, PropKind pk) const {
-      if (t == BT_VAR)
-        return x;
-      BoolVar b(home,0,1);
-      post(home,b,icl,pk);
-      return b;
+    return false;
+  }
+  
+  BoolVar
+  BoolExpr::Node::post(Space* home, IntConLevel icl, PropKind pk) const {
+    if (t == BT_VAR)
+      return x;
+    BoolVar b(home, 0, 1);
+    post(home, b, icl, pk);
+    return b;
+  }
+  
+  int
+  BoolExpr::Node::post(Space* home, NodeType t, 
+                       BoolVarArgs& b, int i, 
+                       IntConLevel icl, PropKind pk) const {
+    if (this->t != t) {
+      b[i] = post(home, icl, pk);
+      return i+1;
+    } else {
+      return l->post(home, t, b, r->post(home, t, b, i, icl, pk), icl, pk);
     }
-
-    int
-    BoolExpr::Node::post(Space* home, NodeType t,
-                         BoolVarArgs& b, int i, 
-                         IntConLevel icl, PropKind pk) const {
-      if (this->t != t) {
-        b[i] = post(home,icl,pk);
-        return i+1;
+  }
+  
+  void
+  BoolExpr::Node::post(Space* home, BoolVar b, 
+                       IntConLevel icl, PropKind pk) const {
+    assert(t != BT_VAR);
+    switch (t) {
+    case BT_NOT:
+      rel(home, l->post(home, icl, pk), IRT_NQ, b, icl, pk);
+      break;
+    case BT_AND:
+      if (same > 2) {
+        BoolVarArgs ba(same);
+        (void) post(home, BT_AND, ba, 0, icl, pk);
+        rel(home, BOT_AND, ba, b, icl, pk);
       } else {
-        return l->post(home,t,b,r->post(home,t,b,i,icl,pk),icl,pk);
+        rel(home, 
+            l->post(home, icl, pk), BOT_AND, r->post(home, icl, pk), b, 
+            icl, pk);
       }
+      break;
+    case BT_OR:
+      if (same > 2) {
+        BoolVarArgs ba(same);
+        (void) post(home, BT_OR, ba, 0, icl, pk);
+        rel(home, BOT_OR, ba, b, icl, pk);
+      } else {
+        rel(home, 
+            l->post(home, icl, pk), BOT_OR, r->post(home, icl, pk), b, 
+            icl, pk);
+      }
+      break;
+    case BT_IMP:
+      rel(home, 
+          l->post(home, icl, pk), BOT_IMP, r->post(home, icl, pk), b, 
+          icl, pk);
+      break;
+    case BT_XOR:
+      rel(home, 
+          l->post(home, icl, pk), BOT_XOR, r->post(home, icl, pk), b, 
+          icl, pk);
+      break;
+    case BT_EQV:
+      rel(home, 
+          l->post(home, icl, pk), BOT_EQV, r->post(home, icl, pk), b, 
+          icl, pk);
+      break;
+    case BT_RLIN_INT:
+      rl_int.post(home, b, icl, pk);
+      break;
+    case BT_RLIN_BOOL:
+      rl_bool.post(home, b, icl, pk);
+      break;
+    default: GECODE_NEVER;
     }
-
-    void
-    BoolExpr::Node::post(Space* home, BoolVar b,
-                         IntConLevel icl, PropKind pk) const {
-      assert(t != BT_VAR);
+  }
+  
+  void
+  BoolExpr::Node::post(Space* home, bool b, 
+                       IntConLevel icl, PropKind pk) const {
+    if (b) {
       switch (t) {
-      case BT_NOT:
-        rel(home,l->post(home,icl,pk),IRT_NQ,b,icl,pk);
+      case BT_VAR:
+        rel(home, x, IRT_EQ, 1);
         break;
-      case BT_AND:
-        if (same > 2) {
-          BoolVarArgs ba(same);
-          (void) post(home,BT_AND,ba,0,icl,pk);
-          rel(home,BOT_AND,ba,b,icl,pk);
-        } else {
-          rel(home,l->post(home,icl,pk),BOT_AND,r->post(home,icl,pk),b,icl,pk);
-        }
+      case BT_NOT:
+        l->post(home, false, icl, pk);
         break;
       case BT_OR:
         if (same > 2) {
           BoolVarArgs ba(same);
-          (void) post(home,BT_OR,ba,0,icl,pk);
-          rel(home,BOT_OR,ba,b,icl,pk);
+          (void) post(home, BT_OR, ba, 0, icl, pk);
+          rel(home, BOT_OR, ba, 1, icl, pk);
         } else {
-          rel(home,l->post(home,icl,pk),BOT_OR,r->post(home,icl,pk),b,icl,pk);
+          rel(home, 
+              l->post(home, icl, pk), BOT_OR, r->post(home, icl, pk), 1, 
+              icl, pk);
+        }
+        break;
+      case BT_AND:
+        l->post(home, true, icl, pk); 
+        r->post(home, true, icl, pk);
+        break;
+      case BT_EQV:
+        if ((l->t == BT_VAR) && (r->t != BT_VAR)) {
+          r->post(home, l->x, icl, pk);
+        } else if ((l->t != BT_VAR) && (r->t == BT_VAR)) {
+          l->post(home, r->x, icl, pk);
+        } else if ((l->t != BT_VAR) && (r->t != BT_VAR)) {
+          BoolVar b(home, 0, 1);
+          l->post(home, b, icl, pk);
+          r->post(home, b, icl, pk);
+        } else {
+          BoolVar b(home, 1, 1);
+          post(home, b, icl, pk);
+        }
+        break;
+      case BT_RLIN_INT:
+        rl_int.post(home, true, icl, pk);
+        break;
+      case BT_RLIN_BOOL:
+        rl_bool.post(home, true, icl, pk);
+        break;
+      default:
+        {
+          BoolVar b(home, 1, 1);
+          post(home, b, icl, pk);
+        }
+        break;
+      }
+    } else {
+      switch (t) {
+      case BT_VAR:
+        rel(home, x, IRT_EQ, 0, icl, pk);
+        break;
+      case BT_NOT:
+        l->post(home, true, icl, pk);
+        break;
+      case BT_OR:
+        l->post(home, false, icl, pk); 
+        r->post(home, false, icl, pk);
+        break;
+      case BT_AND:
+        if (same > 2) {
+          BoolVarArgs ba(same);
+          (void) post(home, BT_AND, ba, 0, icl, pk);
+          rel(home, BOT_AND, ba, 0, icl, pk);
+        } else {
+          rel(home, 
+              l->post(home, icl, pk), BOT_AND, r->post(home, icl, pk), 0, 
+              icl, pk);
         }
         break;
       case BT_IMP:
-        rel(home,l->post(home,icl,pk),BOT_IMP,r->post(home,icl,pk),b,icl,pk);
+        l->post(home, true, icl, pk);
+        r->post(home, false, icl, pk);
         break;
       case BT_XOR:
-        rel(home,l->post(home,icl,pk),BOT_XOR,r->post(home,icl,pk),b,icl,pk);
+        if ((l->t == BT_VAR) && (r->t != BT_VAR)) {
+          r->post(home, l->x, icl, pk);
+        } else if ((l->t != BT_VAR) && (r->t == BT_VAR)) {
+          l->post(home, r->x, icl, pk);
+        } else if ((l->t != BT_VAR) && (r->t != BT_VAR)) {
+          BoolVar b(home, 0, 1);
+          l->post(home, b, icl, pk);
+          r->post(home, b, icl, pk);
+        } else {
+          BoolVar b(home, 0, 0);
+          post(home, b, icl, pk);
+        }
         break;
-      case BT_EQV:
-        rel(home,l->post(home,icl,pk),BOT_EQV,r->post(home,icl,pk),b,icl,pk);
+      case BT_RLIN_INT:
+        rl_int.post(home, false, icl, pk);
+        break;
+      case BT_RLIN_BOOL:
+        rl_bool.post(home, false, icl, pk);
         break;
       default:
-        GECODE_NEVER;
-      case BT_RLIN:
-        rl.post(home,b,icl,pk);
+        {
+          BoolVar b(home, 0, 0);
+          post(home, b, icl, pk);
+        }
         break;
       }
     }
-
-    void
-    BoolExpr::Node::post(Space* home, bool b, 
-                         IntConLevel icl, PropKind pk) const {
-      if (b) {
-        switch (t) {
-        case BT_VAR:
-          rel(home, x, IRT_EQ, 1);
-          break;
-        case BT_NOT:
-          l->post(home,false,icl,pk);
-          break;
-        case BT_OR:
-          if (same > 2) {
-            BoolVarArgs ba(same);
-            (void) post(home,BT_OR,ba,0,icl,pk);
-            rel(home,BOT_OR,ba,1,icl,pk);
-          } else {
-            rel(home,l->post(home,icl,pk),BOT_OR,r->post(home,icl,pk),1,icl,pk);
-          }
-          break;
-        case BT_AND:
-          l->post(home,true,icl,pk); r->post(home,true,icl,pk);
-          break;
-        case BT_EQV:
-          if ((l->t == BT_VAR) && (r->t != BT_VAR)) {
-            r->post(home,l->x,icl,pk);
-          } else if ((l->t != BT_VAR) && (r->t == BT_VAR)) {
-            l->post(home,r->x,icl,pk);
-          } else if ((l->t != BT_VAR) && (r->t != BT_VAR)) {
-            BoolVar b(home,0,1);
-            l->post(home,b,icl,pk);
-            r->post(home,b,icl,pk);
-          } else {
-            BoolVar b(home,1,1);
-            post(home,b,icl,pk);
-          }
-          break;
-        case BT_RLIN:
-          rl.post(home,true,icl,pk);
-          break;
-        default:
-          {
-            BoolVar b(home,1,1);
-            post(home,b,icl,pk);
-          }
-          break;
-        }
-      } else {
-        switch (t) {
-        case BT_VAR:
-          rel(home, x, IRT_EQ, 0,icl,pk);
-          break;
-        case BT_NOT:
-          l->post(home,true,icl,pk);
-          break;
-        case BT_OR:
-          l->post(home,false,icl,pk); r->post(home,false,icl,pk);
-          break;
-        case BT_AND:
-          if (same > 2) {
-            BoolVarArgs ba(same);
-            (void) post(home,BT_AND,ba,0,icl,pk);
-            rel(home, BOT_AND, ba, 0,icl,pk);
-          } else {
-            rel(home, l->post(home,icl,pk), BOT_AND, r->post(home,icl,pk), 0,icl,pk);
-          }
-          break;
-        case BT_IMP:
-          l->post(home,true,icl,pk);
-          r->post(home,false,icl,pk);
-          break;
-        case BT_XOR:
-          if ((l->t == BT_VAR) && (r->t != BT_VAR)) {
-            r->post(home,l->x,icl,pk);
-          } else if ((l->t != BT_VAR) && (r->t == BT_VAR)) {
-            l->post(home,r->x,icl,pk);
-          } else if ((l->t != BT_VAR) && (r->t != BT_VAR)) {
-            BoolVar b(home,0,1);
-            l->post(home,b,icl,pk);
-            r->post(home,b,icl,pk);
-          } else {
-            BoolVar b(home,0,0);
-            post(home,b,icl,pk);
-          }
-          break;
-        case BT_RLIN:
-          rl.post(home,false,icl,pk);
-          break;
-        default:
-          {
-            BoolVar b(home,0,0);
-            post(home,b,icl,pk);
-          }
-          break;
-        }
-      }
-    }
-
   }
 
-}
+  BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
+    n->same = 1;
+    n->t    = BT_VAR;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->x    = x;
+  }
+
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
+    : n(new Node) {
+    unsigned int ls = ((l.n->t == t) || (l.n->t == BT_VAR)) ? l.n->same : 1;
+    unsigned int rs = ((r.n->t == t) || (r.n->t == BT_VAR)) ? r.n->same : 1;
+    n->same = ls+rs;
+    n->t    = t;
+    n->l    = l.n;
+    n->l->use++;
+    n->r    = r.n;
+    n->r->use++;
+  }
+
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t)
+    : n(new Node) {
+    (void) t;
+    assert(t == BT_NOT);
+    n->same = 1;
+    n->t    = BT_NOT;
+    n->l    = l.n;
+    n->l->use++;
+    n->r    = NULL;
+  }
+
+  BoolExpr::BoolExpr(const LinRel<IntVar>& rl)
+    : n(new Node) {
+    n->same   = 1;
+    n->t      = BT_RLIN_INT;
+    n->l      = NULL;
+    n->r      = NULL;
+    n->rl_int = rl;
+  }
+
+  BoolExpr::BoolExpr(const LinRel<BoolVar>& rl)
+    : n(new Node) {
+    n->same    = 1;
+    n->t       = BT_RLIN_BOOL;
+    n->l       = NULL;
+    n->r       = NULL;
+    n->rl_bool = rl;
+  }
+
+  const BoolExpr&
+  BoolExpr::operator=(const BoolExpr& e) {
+    if (this != &e) {
+      if (n->decrement())
+        delete n;
+      n = e.n;
+      n->use++;
+    }
+    return *this;
+  }
+
+  forceinline
+  BoolExpr::~BoolExpr(void) {
+    if (n->decrement())
+      delete n;
+  }
+
+
+}}
 
 // STATISTICS: minimodel-any

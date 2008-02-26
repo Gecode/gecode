@@ -38,23 +38,6 @@
 namespace Gecode { namespace MiniModel {
 
   /*
-   * Operations for nodes
-   *
-   */
-  forceinline void*
-  BoolExpr::Node::operator new(size_t size) {
-    return Memory::malloc(size);
-  }
-
-  forceinline void
-  BoolExpr::Node::operator delete(void* p, size_t) {
-    Memory::free(p);
-  }
-
-  forceinline
-  BoolExpr::Node::Node(void) : use(1) {};
-
-  /*
    * Operations for expressions
    *
    */
@@ -62,68 +45,6 @@ namespace Gecode { namespace MiniModel {
   forceinline
   BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
     n->use++;
-  }
-
-  inline
-  BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
-    n->same = 1;
-    n->t    = BT_VAR;
-    n->l    = NULL;
-    n->r    = NULL;
-    n->x    = x;
-  }
-
-  inline
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
-    : n(new Node) {
-    unsigned int ls = ((l.n->t == t) || (l.n->t == BT_VAR)) ? l.n->same : 1;
-    unsigned int rs = ((r.n->t == t) || (r.n->t == BT_VAR)) ? r.n->same : 1;
-    n->same = ls+rs;
-    n->t    = t;
-    n->l    = l.n;
-    n->l->use++;
-    n->r    = r.n;
-    n->r->use++;
-  }
-
-  inline
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t)
-    : n(new Node) {
-    (void)t;
-    assert(t == BT_NOT);
-    n->same = 1;
-    n->t    = BT_NOT;
-    n->l    = l.n;
-    n->l->use++;
-    n->r    = NULL;
-  }
-
-  inline
-  BoolExpr::BoolExpr(const LinRel<IntVar>& rl)
-    : n(new Node) {
-    n->same = 1;
-    n->t    = BT_RLIN;
-    n->l    = NULL;
-    n->r    = NULL;
-    n->rl   = rl;
-  }
-
-
-  inline const BoolExpr&
-  BoolExpr::operator=(const BoolExpr& e) {
-    if (this != &e) {
-      if (n->decrement())
-        delete n;
-      n = e.n;
-      n->use++;
-    }
-    return *this;
-  }
-
-  forceinline
-  BoolExpr::~BoolExpr(void) {
-    if (n->decrement())
-      delete n;
   }
 
   forceinline BoolVar
@@ -162,8 +83,9 @@ operator^(const Gecode::MiniModel::BoolExpr& l,
                                      r);
 }
 
+template <class Var>
 inline Gecode::MiniModel::BoolExpr
-operator~(const Gecode::MiniModel::LinRel<Gecode::IntVar>& rl) {
+operator~(const Gecode::MiniModel::LinRel<Var>& rl) {
   return Gecode::MiniModel::BoolExpr(rl);
 }
 

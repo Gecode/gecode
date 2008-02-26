@@ -71,6 +71,13 @@ Lots of nice gimmicks for Christmas!
 
 [ENTRY]
 Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Added work-around for compiler bug in MSVC.
+
+[ENTRY]
+Module: minimodel
 What:   new
 Rank:   minor
 [DESCRIPTION]
