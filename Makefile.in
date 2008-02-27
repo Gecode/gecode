@@ -798,7 +798,8 @@ endif
 
 BRANCHTESTSRC0 = \
 	test/branch.cc test/branch/int.cc test/branch/bool.cc \
-	test/branch/set.cc test/branch/cpltset.cc
+	test/branch/set.cc test/branch/cpltset.cc \
+	test/assign.cc test/assign/int.cc test/assign/bool.cc
 
 SEARCHTESTSRC0 = \
 	test/search.cc
@@ -811,12 +812,13 @@ TESTSRC = \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0)
 
 TESTHDR0 = \
-	test.hh test.icc int.hh int.icc set.hh cpltset.hh branch.hh
+	test.hh test.icc int.hh int.icc set.hh cpltset.hh \
+	branch.hh assign.hh
 TESTHDR = $(TESTHDR0:%=test/%)
 TESTOBJ	= $(TESTSRC:%.cc=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
-TESTBUILDDIRS = test test/int test/set test/branch test/cpltset
+TESTBUILDDIRS = test test/int test/set test/branch test/cpltset test/assign
 
 BUILDDIRS = \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \
