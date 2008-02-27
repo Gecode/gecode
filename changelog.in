@@ -65,9 +65,19 @@
 
 [RELEASE]
 Version: 2.1.0
-Date:    Even later
+Date:    2008-02-29
 [DESCRIPTION]
-Lots of nice gimmicks for Christmas!
+This release makes two essential contributions: a partly
+reimplemented kernel that is faster, is simpler, and uses less
+memory and lots of small and not so small fixes. This release is
+the first release where really everything that we can test
+(rather than everything that we initially believed to matter) has
+been systematically tested. So, better switch now to 2.1.0!
+
+Apart from that, the value range for variables has been increased
+(basically, 32 bits minus three values, so that is 32 bits), and
+the usual small additions.
+
 
 [ENTRY]
 Module: minimodel
@@ -311,7 +321,7 @@ Rank:   major
 [DESCRIPTION]
 Only stable and non-failed spaces can be cloned, otherwise
 Space::clone raises an exception. This makes cloning and
-propagation fully orthogonal. To emulate the old behaviour, just
+propagation fully orthogonal. To emulate the old behavior, just
 execute Space::status before Space::clone.
 
 [ENTRY]
