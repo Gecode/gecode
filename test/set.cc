@@ -176,6 +176,7 @@ namespace Test { namespace Set {
       return new SetTestSpace(share,*this);
     }
 
+    /// Make a copy of the SetTestSpace using the reflection API
     SetTestSpace* cloneWithReflection(void) {
       SetTestSpace* c = new SetTestSpace(x.size(), d, withInt, reified, test);
       Gecode::Reflection::VarMap vm;

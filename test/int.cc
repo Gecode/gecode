@@ -126,11 +126,7 @@ namespace Test { namespace Int {
       return new TestSpace(share,*this);
     }
 
-    virtual void getVars(Gecode::Reflection::VarMap& m, bool registerOnly) {
-      m.putArray(this,x,"x",registerOnly);
-      m.put(this,b,"b",registerOnly);
-    }
-
+    /// Make a copy of the TestSpace using the reflection API
     TestSpace* cloneWithReflection(void) {
       TestSpace* c = new TestSpace(x.size(), d, reified, test);
       Gecode::Reflection::VarMap vm;
