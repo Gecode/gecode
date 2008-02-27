@@ -726,6 +726,7 @@ namespace Gecode {
 
   class SetVar;
 
+  /** \brief Traits class for variable implementations and variables */
   template <>
   class VarImpVarTraits<Set::SetVarImp> {
   public:

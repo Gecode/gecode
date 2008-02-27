@@ -480,6 +480,7 @@ namespace Gecode {
   
   class IntVar;
   
+  /** \brief Traits class for variable implementations and variables */
   template <>
   class VarImpVarTraits<Int::IntVarImp> {
   public:
@@ -732,6 +733,7 @@ namespace Gecode { namespace Int {
 #include "gecode/int/var-imp/bool.icc"
 
 namespace Gecode {
+  /** \brief Traits class for variable implementations and variables */
   template <>
   class VarImpVarTraits<Int::BoolVarImp> {
   public:

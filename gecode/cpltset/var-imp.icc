@@ -472,4 +472,16 @@ namespace Gecode { namespace CpltSet {
 
 #include "gecode/cpltset/var-imp/cpltset.icc"
 
+namespace Gecode {
+
+  class CpltSetVar;
+
+  /** \brief Traits class for variable implementations and variables */
+  template <>
+  class VarImpVarTraits<CpltSet::CpltSetVarImp> {
+  public:
+    typedef CpltSetVar Var;
+  };
+}
+
 // STATISTICS: cpltset-var
