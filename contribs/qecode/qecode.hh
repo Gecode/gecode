@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef __QECODE_HH__
 #define __QECODE_HH__
 
-#include "gecode/config.hh"
+#include "gecode/kernel.hh"
 
 #if !defined(GECODE_STATIC_LIBS) && \
 (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
@@ -38,7 +38,7 @@ THE SOFTWARE.
 
 #else
 
-#ifdef GCC_HASCLASSVISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 
 #define QECODE_VTABLE_EXPORT __attribute__ ((visibility("default")))
 #define QECODE_EXPORT __attribute__ ((visibility("default")))

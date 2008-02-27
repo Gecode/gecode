@@ -56,7 +56,7 @@ public :
   QECODE_EXPORT IntWarningProp (Space* home,bool share, IntWarningProp& p);
   QECODE_EXPORT ~IntWarningProp (void);
   QECODE_EXPORT virtual PropCost cost(void) const;
-  QECODE_EXPORT virtual ExecStatus propagate(Space * home);
+  QECODE_EXPORT virtual ExecStatus propagate(Space * home,ModEventDelta med);
   QECODE_EXPORT virtual Actor* copy(Space* home,bool share);
   QECODE_EXPORT static ExecStatus warning(Space* home, int v, IntView vv, Warner* f);
   QECODE_EXPORT static void IntWarning(Space* home, int v, IntVar iv, Warner* f);
@@ -73,7 +73,7 @@ public :
     QECODE_EXPORT BoolWarningProp (Space* home,bool share, BoolWarningProp& p);
     QECODE_EXPORT ~BoolWarningProp (void);
     QECODE_EXPORT virtual PropCost cost(void) const;
-    QECODE_EXPORT virtual ExecStatus propagate(Space * home);
+    QECODE_EXPORT virtual ExecStatus propagate(Space * home,ModEventDelta med);
     QECODE_EXPORT virtual Actor* copy(Space* home,bool share);
     QECODE_EXPORT static ExecStatus warning(Space* home, int v, BoolView vv, Warner* f);
     QECODE_EXPORT static void BoolWarning(Space* home, int v, BoolVar iv, Warner* f);

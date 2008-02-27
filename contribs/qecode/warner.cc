@@ -47,7 +47,7 @@ IntWarningProp::~IntWarningProp(void) {}
 
 PropCost IntWarningProp::cost(void) const {return PC_CRAZY_HI;}
 
-ExecStatus IntWarningProp::propagate(Space * home) {
+ExecStatus IntWarningProp::propagate(Space * home,ModEventDelta med) {
   toWarn->warn(var);
   return ES_NOFIX;
 }
@@ -80,7 +80,7 @@ BoolWarningProp::~BoolWarningProp(void) {}
 
 PropCost BoolWarningProp::cost(void) const {return PC_CRAZY_HI;}
 
-ExecStatus BoolWarningProp::propagate(Space * home) {
+ExecStatus BoolWarningProp::propagate(Space * home,ModEventDelta med) {
     toWarn->warn(var);
     return ES_NOFIX;
 }
