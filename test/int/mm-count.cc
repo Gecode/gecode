@@ -294,4 +294,4 @@ namespace Test { namespace Int {
 
 }}
 
-// STATISTICS: test-int
+// STATISTICS: test-minimodel

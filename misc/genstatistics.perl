@@ -87,7 +87,7 @@ while ($file = @ARGV[$i++]) {
 	     "serialization", "iter","support","example","test");
 
 @catorder = ("core","var","prop","branch","post","search",
-	     "int","set","cpltset","stress","any","other");
+	     "int","set","cpltset","minimodel","stress","any","other");
 $i = 0;
 
 $modclear{"kernel"} = "Kernel";
@@ -116,6 +116,7 @@ $catclear{"int"} = "Finite domain integers";
 $catclear{"set"} = "Finite integer sets";
 $catclear{"cpltset"} =
   "Finite integer sets with complete domain representation";
+$catclear{"minimodel"} = "Minimal modelling support";
 $catclear{"stress"} = "System stress";
 
 print <<EOF
