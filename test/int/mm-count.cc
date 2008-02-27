@@ -41,11 +41,10 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for minimal modelling constraints
    namespace MiniModel {
-   
-     std::string
-     expand(Gecode::IntRelType irt) {
+
+     /// Expand relation to abbreviation
+     std::string expand(Gecode::IntRelType irt) {
        switch (irt) {
        case Gecode::IRT_EQ: return "Exactly";
        case Gecode::IRT_LQ: return "AtMost";

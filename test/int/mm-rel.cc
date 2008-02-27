@@ -41,7 +41,6 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for minimal modelling constraints
    namespace MiniModel {
    
      /**

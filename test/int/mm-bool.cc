@@ -41,7 +41,6 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for minimal modelling constraints
    namespace MiniModel {
 
      /// Boolean opcode
@@ -102,7 +101,7 @@ namespace Test { namespace Int {
      }
 
      /**
-      * \defgroup TaskTestIntMiniModelBool Minimal modelling constraints (Boolean conbstraints)
+      * \defgroup TaskTestIntMiniModelBool Minimal modelling constraints (Boolean constraints)
       * \ingroup TaskTestInt
       */
      //@{

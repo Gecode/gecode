@@ -41,7 +41,6 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for minimal modelling constraints
    namespace MiniModel {
    
      /// Linear opcode
@@ -66,6 +65,7 @@ namespace Test { namespace Int {
        int c; ///< Numerical constant
      };
 
+     /// Evaluate linear instructions
      template <class Expr>
      Expr
      eval(const LinInstr* pc, Expr reg[]) {

@@ -39,9 +39,14 @@
 
 #include "gecode/minimodel.hh"
 
+/**
+ * \namespace Test::Int::MiniModel
+ * \brief Tests for minimal modelling constraints
+ */
+
+
 namespace Test { namespace Int {
 
-   /// Tests for minimal modelling constraints
    namespace MiniModel {
    
      /**
