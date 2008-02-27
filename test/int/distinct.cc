@@ -52,15 +52,17 @@ namespace Test { namespace Int {
      /// Simple test for distinct constraint
      template <bool useCount>
      class Distinct : public Test {
+     private:
+       Gecode::IntSet d;
      public:
        /// Create and register test
-       Distinct(const Gecode::IntSet& d, Gecode::IntConLevel icl)
+       Distinct(const Gecode::IntSet& d0, Gecode::IntConLevel icl)
          : Test(std::string(useCount ? "Count::Distinct" : "Distinct")+
-                "::Sparse::"+str(icl),6,d,false,icl) {}
+                "::Sparse::"+str(icl),6,d0,false,icl), d(d0) {}
        /// Create and register test
        Distinct(int min, int max, Gecode::IntConLevel icl)
          : Test(std::string(useCount ? "Count::Distinct" : "Distinct")+
-                "::Dense::"+str(icl),6,min,max,false,icl) {}
+                "::Dense::"+str(icl),6,min,max,false,icl), d(min,max) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
@@ -74,9 +76,11 @@ namespace Test { namespace Int {
          if (!useCount) {
            Gecode::distinct(home, x, icl);
          } else {
-           Gecode::IntArgs ia(10);
-           for (int i=0; i<10; i++)
-             ia[i] = i-5;
+           Gecode::IntSetRanges dr(d);
+           int i = 0;
+           Gecode::IntArgs ia(Gecode::Iter::Ranges::size(dr));
+           for (Gecode::IntSetValues dr2(d); dr2(); ++dr2)
+             ia[i++] = dr2.val();
            Gecode::count(home, x, Gecode::IntSet(0,1), ia, icl);
          }
        }
