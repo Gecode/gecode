@@ -179,13 +179,17 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  /// \brief Debugging: print a fixed cardinality
-  forceinline std::ostream&
-  operator<<(std::ostream& os, OccurBndsView& xs) {
-    os << xs.card() << "("<< xs.counter() <<")[";
-    os << xs.min() << "," << xs.max() << "]";
-    return os;
-  }
+}}}
+
+/// \brief Debugging: print a fixed cardinality
+inline std::ostream&
+operator<<(std::ostream& os, Gecode::Int::GCC::OccurBndsView& xs) {
+  os << xs.card() << "("<< xs.counter() <<")[";
+  os << xs.min() << "," << xs.max() << "]";
+  return os;
+}
+
+namespace Gecode { namespace Int { namespace GCC {
 
   forceinline void
   OccurBndsView::update(Space*, bool, OccurBndsView& oc) {
@@ -778,30 +782,32 @@ namespace Gecode { namespace Int { namespace GCC {
     ///@}
   };
 
+}}
 
-  /// \brief Debugging: print a cardinality variable
-  inline std::ostream&
-  operator<<(std::ostream& os, GCC::CardView& v) {
-    os << "("<<v.card() << ","<< v.counter() <<",";
-    if (v.min() == v.max()) {
-      os << v.min() <<" ";
+/// \brief Debugging: print a cardinality variable
+inline std::ostream&
+operator<<(std::ostream& os, Gecode::Int::GCC::CardView& v) {
+  os << "("<<v.card() << ","<< v.counter() <<",";
+  if (v.min() == v.max()) {
+    os << v.min() <<" ";
+  } else {
+    if (v.range()){
+      os << "["<<v.min() <<".."<<v.max()<<"] ";
     } else {
-      if (v.range()){
-        os << "["<<v.min() <<".."<<v.max()<<"] ";
-      } else {
-        os << "{";
-        ViewValues<GCC::CardView> iter(v);
-        while(iter()){
-          os << iter.val() <<",";
-          ++iter;
-        }
-        os << "}";
+      os << "{";
+      Gecode::Int::ViewValues<Gecode::Int::GCC::CardView> iter(v);
+      while(iter()){
+        os << iter.val() <<",";
+        ++iter;
       }
+      os << "}";
     }
-    os << ")";
-    return os;
   }
+  os << ")";
+  return os;
+}
 
+namespace Gecode { namespace Int {
 
   forceinline
   ViewRanges<GCC::CardView>::ViewRanges(void) :

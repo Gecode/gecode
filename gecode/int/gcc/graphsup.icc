@@ -434,28 +434,32 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   };
 
-  /// Debugging: print a variable node
-  inline std::ostream&
-  operator<<(std::ostream& os, VarNode* v) {
-    os << v->var<<":{";
-    for (Edge* e = v->first(); e != NULL; e = e->next()) {
-      os << e->getVal()->val<<",";
-    }
-    os << "}(";
-    os << v->xindex << ") ";
-    return os;
-  }
+}}}
 
-  /// Debugging: print a value node
-  inline std::ostream&
-  operator<<(std::ostream& os, ValNode* v) {
-    os << v->val<<":{";
-    for (Edge* e = v->first(); e != NULL; e = e->vnext()) {
-      os << e->getVar()->var<<",";
-    }
-    os << "} ";
-    return os;
+/// Debugging: print a variable node
+inline std::ostream&
+operator<<(std::ostream& os, Gecode::Int::GCC::VarNode* v) {
+  os << v->var<<":{";
+  for (Gecode::Int::GCC::Edge* e = v->first(); e != NULL; e = e->next()) {
+    os << e->getVal()->val<<",";
   }
+  os << "}(";
+  os << v->xindex << ") ";
+  return os;
+}
+
+/// Debugging: print a value node
+inline std::ostream&
+operator<<(std::ostream& os, Gecode::Int::GCC::ValNode* v) {
+  os << v->val<<":{";
+  for (Gecode::Int::GCC::Edge* e = v->first(); e != NULL; e = e->vnext()) {
+    os << e->getVar()->var<<",";
+  }
+  os << "} ";
+  return os;
+}
+
+namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Variable-value-graph used during propagation
@@ -998,18 +1002,21 @@ namespace Gecode { namespace Int { namespace GCC {
     return is_sink;
   }
 
-  /// Edge
-  /// Debugging: print an edge
-  inline std::ostream&
-  operator<<(std::ostream& os, Edge* e){
-    if (e== NULL) {
-      os << "(N)";
-    } else {
-      os << "e("<<e->getVar()->var<<","<<e->getVal()->val<<")";
-    }
-    return os;
-  }
+}}}
 
+/// Edge
+/// Debugging: print an edge
+inline std::ostream&
+operator<<(std::ostream& os, Gecode::Int::GCC::Edge* e){
+  if (e== NULL) {
+    os << "(N)";
+  } else {
+    os << "e("<<e->getVar()->var<<","<<e->getVal()->val<<")";
+  }
+  return os;
+}
+
+namespace Gecode { namespace Int { namespace GCC {
 
   forceinline void
   Edge::unlink(void){

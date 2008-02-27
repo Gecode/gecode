@@ -50,14 +50,17 @@ namespace Test { namespace Int {
       */
      //@{
      /// Simple test for distinct constraint
+     template <bool useCount>
      class Distinct : public Test {
      public:
        /// Create and register test
        Distinct(const Gecode::IntSet& d, Gecode::IntConLevel icl)
-         : Test("Distinct::Sparse::"+str(icl),6,d,false,icl) {}
+         : Test(std::string(useCount ? "Count::Distinct" : "Distinct")+
+                "::Sparse::"+str(icl),6,d,false,icl) {}
        /// Create and register test
        Distinct(int min, int max, Gecode::IntConLevel icl)
-         : Test("Distinct::Dense::"+str(icl),6,min,max,false,icl) {}
+         : Test(std::string(useCount ? "Count::Distinct" : "Distinct")+
+                "::Dense::"+str(icl),6,min,max,false,icl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
@@ -68,7 +71,14 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::distinct(home, x, icl);
+         if (!useCount) {
+           Gecode::distinct(home, x, icl);
+         } else {
+           Gecode::IntArgs ia(10);
+           for (int i=0; i<10; i++)
+             ia[i] = i-5;
+           Gecode::count(home, x, Gecode::IntSet(0,1), ia, icl);
+         }
        }
      };
      
@@ -194,12 +204,19 @@ namespace Test { namespace Int {
      const int v[7] = {-1001,-1000,-10,0,10,1000,1001};
      Gecode::IntSet d(v,7);
    
-     Distinct dom_d(-3,3,Gecode::ICL_DOM);
-     Distinct bnd_d(-3,3,Gecode::ICL_BND);
-     Distinct val_d(-3,3,Gecode::ICL_VAL);
-     Distinct dom_s(d,Gecode::ICL_DOM);
-     Distinct bnd_s(d,Gecode::ICL_BND);
-     Distinct val_s(d,Gecode::ICL_VAL);
+     Distinct<false> dom_d(-3,3,Gecode::ICL_DOM);
+     Distinct<false> bnd_d(-3,3,Gecode::ICL_BND);
+     Distinct<false> val_d(-3,3,Gecode::ICL_VAL);
+     Distinct<false> dom_s(d,Gecode::ICL_DOM);
+     Distinct<false> bnd_s(d,Gecode::ICL_BND);
+     Distinct<false> val_s(d,Gecode::ICL_VAL);
+
+     Distinct<true> count_dom_d(-3,3,Gecode::ICL_DOM);
+     Distinct<true> count_bnd_d(-3,3,Gecode::ICL_BND);
+     Distinct<true> count_val_d(-3,3,Gecode::ICL_VAL);
+     Distinct<true> count_dom_s(d,Gecode::ICL_DOM);
+     Distinct<true> count_bnd_s(d,Gecode::ICL_BND);
+     Distinct<true> count_val_s(d,Gecode::ICL_VAL);
    
      Offset dom_od(-3,3,Gecode::ICL_DOM);
      Offset bnd_od(-3,3,Gecode::ICL_BND);

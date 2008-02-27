@@ -87,6 +87,8 @@ namespace Gecode { namespace Int { namespace GCC {
       hall[i].t = pred;
       hall[i].d = ups->sumup(hall[pred].bounds, hall[i].bounds - 1);
     }
+    hall[bsize].h = bsize-1;
+    hall[bsize].t = bsize-1;
 
     int n          = x.size();
 
@@ -120,6 +122,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (z >= bsize) {
           z--;
         }
+        assert(z < bsize);
         hall[z].t = j;
       }
       pathset_t(hall, succ, z, z); // path compression

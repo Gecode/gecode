@@ -64,6 +64,8 @@ namespace Test { namespace Int {
            n[i]=0;
          for (int i=x.size(); i--; )
            n[x[i]-1]++;
+         if (n[2] > 0)
+           return false;
          for (int i=4; i--;)
            if (n[i]>2)
              return false;
@@ -78,7 +80,41 @@ namespace Test { namespace Int {
          for (int i=0; i<4; i++) {
            values[i] = i+1; cards[i] = fixed;
          }
+         cards[2] = IntSet(0,0);
          count(home, x, cards, values, icl);
+       }
+     };
+
+     /// Test for integer cardinality with min and max for all variables
+     class IntAllMinMaxDef : public Test {
+     public:
+       /// Create and register test
+       IntAllMinMaxDef(Gecode::IntConLevel icl)
+         : Test("GCC::Int::All::MinMaxDef::"+str(icl),4,0,3,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n[4];
+         for (int i=4; i--; )
+           n[i]=0;
+         for (int i=x.size(); i--; )
+           n[x[i]]++;
+         if (n[2] > 0)
+           return false;
+         for (int i=4; i--;)
+           if (n[i]>2)
+             return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         IntSet fixed(0,2);
+         IntSetArgs cards(4);
+         for (int i=0; i<4; i++) {
+           cards[i] = fixed;
+         }
+         cards[2] = IntSet(0,0);
+         count(home, x, cards, icl);
        }
      };
      
@@ -107,12 +143,14 @@ namespace Test { namespace Int {
      };
      
      
-     /// Test for integer cardinality with for some variables
+     /// Test for integer cardinality for some variables
+     template <bool hole>
      class IntSome : public Test {
      public:
        /// Create and register test
        IntSome(Gecode::IntConLevel icl)
-         : Test("GCC::Int::Some::"+str(icl),4,1,4,false,icl) {}
+         : Test(std::string("GCC::Int::Some::")+
+                (hole ? "::Hole" : "::Full")+str(icl),4,1,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[4];
@@ -128,7 +166,13 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          IntArgs values(2, 1,2);
-         Gecode::IntSet fixed(0,2);
+         Gecode::IntSet fixed;
+         if (!hole) {
+           fixed = IntSet(0,2);
+         } else {
+           int ish[] = {0,2};
+           fixed = IntSet(ish,2);
+         }
          Gecode::IntSetArgs cards(2);
          cards[0]=fixed; cards[1]=fixed;
          count(home, x, cards, values, icl);
@@ -230,8 +274,10 @@ namespace Test { namespace Int {
        Create(void) {
          for (IntConLevels icls; icls(); ++icls) {
            (void) new IntAllMinMax(icls.icl());
+           (void) new IntAllMinMaxDef(icls.icl());
            (void) new IntAllMax(icls.icl());
-           (void) new IntSome(icls.icl());
+           (void) new IntSome<false>(icls.icl());
+           (void) new IntSome<true>(icls.icl());
            (void) new VarAll(icls.icl());
            (void) new VarSome(icls.icl());
          }
