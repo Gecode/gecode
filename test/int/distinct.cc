@@ -73,13 +73,13 @@ namespace Test { namespace Int {
      };
      
      /// Simple test for distinct constraint with offsets
-     class DistinctOffset : public Test {
+     class Offset : public Test {
      public:
        /// Create and register test
-       DistinctOffset(const Gecode::IntSet& d, Gecode::IntConLevel icl)
+       Offset(const Gecode::IntSet& d, Gecode::IntConLevel icl)
          : Test("Distinct::Offset::Sparse::"+str(icl),6,d,false,icl) {}
        /// Create and register test
-       DistinctOffset(int min, int max, Gecode::IntConLevel icl)
+       Offset(int min, int max, Gecode::IntConLevel icl)
          : Test("Distinct::Offset::Dense::"+str(icl),6,min,max,false,icl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -99,10 +99,10 @@ namespace Test { namespace Int {
      };
    
      /// Randomized test for distinct constraint
-     class DistinctRandom : public Test {
+     class Random : public Test {
      public:
        /// Create and register test
-       DistinctRandom(int n, int min, int max, Gecode::IntConLevel icl)
+       Random(int n, int min, int max, Gecode::IntConLevel icl)
          : Test("Distinct::Random::"+str(icl),n,min,max,false,icl) {
          testsearch = false;
        }
@@ -124,6 +124,73 @@ namespace Test { namespace Int {
        }
      };
      
+     /// Testing pathological cases
+     class Pathological : public Base {
+     protected:
+       /// Number of variables
+       int n;
+       /// Consistency level
+       Gecode::IntConLevel icl;
+       /// Test space
+       class TestSpace : public Gecode::Space {
+       public:
+         /// Constructor
+         TestSpace(void) {}
+         /// Constructor for cloning \a s
+         TestSpace(bool share, TestSpace& s) 
+           : Gecode::Space(share,s) {}
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(bool share) {
+           return new TestSpace(share,*this);
+         }
+       };
+     public:
+       /// Create and register test
+       Pathological(int n0, Gecode::IntConLevel icl0)
+         : Base("Int::Distinct::Pathological::"+
+                Test::str(n0)+"::"+Test::str(icl0)), n(n0), icl(icl0) {}
+       /// Perform test
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace* s = new TestSpace;
+           IntVarArgs x(n);
+           for (int i=0; i<n; i++)
+             x[i].init(s,0,i);
+           distinct(s,x,icl);
+           if (s->status() == SS_FAILED) {
+             delete s; return false;
+           }
+           for (int i=0; i<n; i++)
+             if (!x[i].assigned() || (x[i].val() != i)) {
+               delete s; return false;
+             }
+           delete s;
+         }
+         {
+           TestSpace* s = new TestSpace;
+           IntVarArgs x(2*n);
+           for (int i=0; i<n; i++) {
+             int v[] = {0,i};
+             IntSet d(v,2);
+             x[i].init(s,d);
+           }
+           for (int i=n; i<2*n; i++)
+             x[i].init(s,n-1,i);
+           distinct(s,x,icl);
+           if (s->status() == SS_FAILED) {
+             delete s; return false;
+           }
+           for (int i=0; i<n; i++)
+             if (!x[i].assigned() || (x[i].val() != i)) {
+               delete s; return false;
+             }
+           delete s;
+         }
+         return true;
+       }
+     };
+
      const int v[7] = {-1001,-1000,-10,0,10,1000,1001};
      Gecode::IntSet d(v,7);
    
@@ -134,16 +201,24 @@ namespace Test { namespace Int {
      Distinct bnd_s(d,Gecode::ICL_BND);
      Distinct val_s(d,Gecode::ICL_VAL);
    
-     DistinctOffset dom_od(-3,3,Gecode::ICL_DOM);
-     DistinctOffset bnd_od(-3,3,Gecode::ICL_BND);
-     DistinctOffset val_od(-3,3,Gecode::ICL_VAL);
-     DistinctOffset dom_os(d,Gecode::ICL_DOM);
-     DistinctOffset bnd_os(d,Gecode::ICL_BND);
-     DistinctOffset val_os(d,Gecode::ICL_VAL);
+     Offset dom_od(-3,3,Gecode::ICL_DOM);
+     Offset bnd_od(-3,3,Gecode::ICL_BND);
+     Offset val_od(-3,3,Gecode::ICL_VAL);
+     Offset dom_os(d,Gecode::ICL_DOM);
+     Offset bnd_os(d,Gecode::ICL_BND);
+     Offset val_os(d,Gecode::ICL_VAL);
    
-     DistinctRandom dom_r(20,-50,50,Gecode::ICL_DOM);
-     DistinctRandom bnd_r(50,-500,500,Gecode::ICL_BND);
-     DistinctRandom val_r(50,-500,500,Gecode::ICL_VAL);
+     Random dom_r(20,-50,50,Gecode::ICL_DOM);
+     Random bnd_r(50,-500,500,Gecode::ICL_BND);
+     Random val_r(50,-500,500,Gecode::ICL_VAL);
+
+     Pathological p_16_v(16,Gecode::ICL_VAL);
+     Pathological p_16_b(16,Gecode::ICL_BND);
+     Pathological p_16_d(16,Gecode::ICL_DOM);
+
+     Pathological p_32_v(32,Gecode::ICL_VAL);
+     Pathological p_32_b(32,Gecode::ICL_BND);
+     Pathological p_32_d(32,Gecode::ICL_DOM);
      //@}
    
    }
