@@ -1321,7 +1321,7 @@ namespace Gecode {
     *
     * Posts the constraint that
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=j\}=c_j\f$ and
-    * \f$ \bigcup_i x_i \subseteq \{0,\ldots,|c|-1\}\f$
+    * \f$ \bigcup_i \{x_i\} \subseteq \{0,\ldots,|c|-1\}\f$
     * (no other value occurs).
     * 
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
@@ -1338,7 +1338,7 @@ namespace Gecode {
     *
     * Posts the constraint that
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=j\}\in c_j\f$ and
-    * \f$ \bigcup_i x_i \subseteq \{0,\ldots,|c|-1\}\f$
+    * \f$ \bigcup_i \{x_i\} \subseteq \{0,\ldots,|c|-1\}\f$
     * (no other value occurs).
     * 
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
@@ -1355,7 +1355,8 @@ namespace Gecode {
     *
     * Posts the constraint that
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}=c_j\f$ and 
-    * \f$ \bigcup_i x_i \subseteq \bigcup_j v_j\f$ (no other value occurs).
+    * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
+    * (no other value occurs).
     * 
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain-consistency (\a icl = ICL_DOM).
@@ -1375,7 +1376,8 @@ namespace Gecode {
     *
     * Posts the constraint that
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}\in c_j\f$ and
-    * \f$ \bigcup_i x_i \subseteq \bigcup_j v_j\f$ (no other value occurs).
+    * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
+    * (no other value occurs).
     * 
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain-consistency (\a icl = ICL_DOM).
@@ -1394,8 +1396,9 @@ namespace Gecode {
   /** \brief Posts a global count (cardinality) constraint
     *
     * Posts the constraint that
-    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}=c\f$ and
-    * \f$ \bigcup_i x_i \subseteq \bigcup_j v_j\f$ (no other value occurs).
+    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}\in c\f$ and
+    * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
+    * (no other value occurs).
     * 
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain-consistency (\a icl = ICL_DOM).
