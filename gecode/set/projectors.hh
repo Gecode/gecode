@@ -333,6 +333,17 @@ namespace Gecode {
   //@{
 
   /**
+   * \brief Post projection propagators for nary constraint
+   *
+   * Post projection propagators for nary constraint on variables
+   * \a x, specified by \a ps. If \a negated is true, the
+   * negation of the specified constraint is propagated.
+   */
+  GECODE_SET_EXPORT void
+  projector(Space* home, const SetVarArgs& xa,
+            ProjectorSet& ps, bool negated=false);
+
+  /**
    * \brief Post projection propagators for binary constraint
    *
    * Post projection propagators for binary constraint on variables
@@ -407,6 +418,15 @@ namespace Gecode {
   //@}
 
 }
+
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::SetExprCode& sec);
+
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Projector& p);
+
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::ProjectorSet& ps);
 
 #include "gecode/set/projectors/set-expr.icc"
 #include "gecode/set/projectors/projector.icc"

@@ -138,4 +138,10 @@ namespace Gecode {
 
 }
 
+std::ostream&
+operator<<(std::ostream& os, const Gecode::Projector& p) {
+  return os << p.getGlb() << " <= x[" << p.getIdx() << "] <= " << p.getLub()
+            << std::endl;
+}
+
 // STATISTICS: set-prop

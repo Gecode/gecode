@@ -58,6 +58,24 @@ namespace Gecode {
     
   }
 
+  void projector(Space* home, const SetVarArgs& xa,
+                 ProjectorSet& ps, bool negated) {
+    if (home->failed()) return;
+    ViewArray<SetView> x(home, xa.size());
+    for (int i=x.size(); i--;)
+      x[i] = xa[i];
+    if (negated) {
+      GECODE_ES_FAIL(home,
+                     (Projection::NaryProjection<true>::post(home, 
+                                                             x, ps)));
+    } else {
+      GECODE_ES_FAIL(home,
+                     (Projection::NaryProjection<false>::post(home, 
+                                                              x, ps)));
+    }
+    
+  }
+
   void projector(Space* home, const SetVar& xa, const SetVar& ya,
                  const BoolVar& bv, ProjectorSet& ps) {
     if (home->failed()) return;

@@ -80,4 +80,12 @@ namespace Gecode {
 
 }
 
+std::ostream&
+operator<<(std::ostream& os, const Gecode::ProjectorSet& ps) {
+  for (int i=0; i<ps.size(); i++) {
+    os << ps[i] << std::endl;
+  }
+  return os;
+}
+
 // STATISTICS: set-prop
