@@ -513,7 +513,8 @@ RECURSIVE              = YES
 EXCLUDE                = \
 	contribs gecode/support/buddy \
 	gecode/serialization/boost.icc \
-	gecode/serialization/boost.cc
+	gecode/serialization/boost.cc \
+	gecode/gist.hh gecode/gist
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
