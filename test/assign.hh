@@ -90,4 +90,4 @@ namespace Test {
 
 #endif
 
-// STATISTICS: test-assign
+// STATISTICS: test-branch

@@ -66,5 +66,5 @@ namespace Test { namespace Assign {
 
 }}
 
-// STATISTICS: test-assign
+// STATISTICS: test-branch
 
