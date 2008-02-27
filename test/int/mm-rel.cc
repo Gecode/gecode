@@ -112,7 +112,7 @@ namespace Test { namespace Int {
        }
      };
 
-     namespace {
+     namespace RelCreator {
        /// Help class to create and register tests
        class Create {
        public:

@@ -321,7 +321,7 @@ namespace Test { namespace Int {
        }
      };
 
-     namespace {
+     namespace LinCreator {
 
        const LinInstr li000[] = {
          {LO_AEE,0,1,0, 0},{LO_AEC,0,0,0,-2},{LO_AEE,0,2,0, 0},

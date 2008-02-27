@@ -162,7 +162,7 @@ namespace Test { namespace Int {
        }
      };
 
-     namespace {
+     namespace BoolCreator {
 
        const BoolInstr bi000[] = {
          {BO_AND,0,1,0},{BO_AND,2,3,1},{BO_AND,0,1,0},
