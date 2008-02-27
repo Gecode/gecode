@@ -129,63 +129,76 @@ namespace Test { namespace Int {
        /// Create and register test
        LinRelInt(const LinInstr* l_lis0, const LinInstr* r_lis0, 
                  Gecode::IntRelType irt0, const std::string& s) 
-         : Test("MiniModel::LinRel::Int::"+s,3,-3,3,false), 
+         : Test("MiniModel::LinRel::Int::"+s+"::"+str(irt0),3,-3,3,true), 
            l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int reg[3] = {x[0],x[1],x[2]};
-         return cmp(eval(l_lis,reg),irt,eval(r_lis,reg));
+         int l_reg[3] = {x[0],x[1],x[2]};
+         int r_reg[3] = {x[0],x[1],x[2]};
+         return cmp(eval(l_lis,l_reg),irt,eval(r_lis,r_reg));
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::MiniModel::LinExpr<IntVar> reg[3] = {x[0],x[1],x[2]};
+         Gecode::MiniModel::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::MiniModel::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
-           Gecode::post(home, eval(l_lis,reg) == eval(r_lis,reg)); break;
+           Gecode::post(home, tt(0 == eval(l_lis,l_reg) - eval(r_lis,r_reg))); 
+           break;
          case IRT_NQ:
-           Gecode::post(home, eval(l_lis,reg) != eval(r_lis,reg)); break;
+           Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0); 
+           break;
          case IRT_LQ:
-           Gecode::post(home, eval(l_lis,reg) <= eval(r_lis,reg)); break;
+           Gecode::post(home, ff(eval(l_lis,l_reg) > eval(r_lis,r_reg))); 
+           break;
          case IRT_LE:
-           Gecode::post(home, eval(l_lis,reg) < eval(r_lis,reg)); break;
+           Gecode::post(home, tt(eval(l_lis,l_reg) < eval(r_lis,r_reg))); 
+           break;
          case IRT_GQ:
-           Gecode::post(home, eval(l_lis,reg) >= eval(r_lis,reg)); break;
+           Gecode::post(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg)); 
+           break;
          case IRT_GR:
-           Gecode::post(home, eval(l_lis,reg) > eval(r_lis,reg)); break;
+           Gecode::post(home, ff(eval(l_lis,l_reg) <= eval(r_lis,r_reg))); 
+           break;
          default: GECODE_NEVER;
          }
        }
        /// Post constraint on \a x for \a bb
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
-         /*
          using namespace Gecode;
-         Gecode::MiniModel::LinExpr<IntVar> reg[3] = {x[0],x[1],x[2]};
-         BoolVar c;
+         Gecode::MiniModel::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::MiniModel::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)==eval(r_lis,reg))); 
+           rel(home, Gecode::post(home, 
+                                  ~(eval(l_lis,l_reg)==eval(r_lis,r_reg))),
+               IRT_EQ, b); 
            break;
          case IRT_NQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)!=eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        tt(eqv(~(eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b)));
            break;
          case IRT_LQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)<=eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        ff(~(eval(l_lis,l_reg)<=eval(r_lis,r_reg))^b)); 
            break;
          case IRT_LE:
-           c = Gecode::post(home, ~(eval(l_lis,reg)<eval(r_lis,reg))); 
+           rel(home, Gecode::post(home, 
+                                  ~(eval(l_lis,l_reg)<eval(r_lis,r_reg))),
+               IRT_EQ, b); 
            break;
          case IRT_GQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)>=eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        tt(eqv(~(eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b)));
            break;
          case IRT_GR:
-           c = Gecode::post(home, ~(eval(l_lis,reg)>eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        ff(~(eval(l_lis,l_reg)>eval(r_lis,r_reg))^b)); 
            break;
          default: GECODE_NEVER;
          }
-         rel(home, c, IRT_EQ, b);
-         */
        }
      };
 
@@ -216,7 +229,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear relations over integer variables
+     /// Test linear relations over Boolean variables
      class LinRelBool : public Test {
      protected:
        /// Linear instruction sequence for left hand side
@@ -229,72 +242,84 @@ namespace Test { namespace Int {
        /// Create and register test
        LinRelBool(const LinInstr* l_lis0, const LinInstr* r_lis0, 
                   Gecode::IntRelType irt0, const std::string& s) 
-         : Test("MiniModel::LinRel::Bool::"+s,3,-3,3,false), 
+         : Test("MiniModel::LinRel::Bool::"+s+"::"+str(irt0),3,0,1,true), 
            l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i=3; i--; )
-           if ((x[i] < 0) || (x[i] > 1))
-             return false;
-         int reg[3] = {x[0],x[1],x[2]};
-         return cmp(eval(l_lis,reg),irt,eval(r_lis,reg));
+         int l_reg[3] = {x[0],x[1],x[2]};
+         int r_reg[3] = {x[0],x[1],x[2]};
+         return cmp(eval(l_lis,l_reg),irt,eval(r_lis,r_reg));
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         using namespace Gecode;
-         Gecode::MiniModel::LinExpr<BoolVar> reg[3] = {
-           channel(home,x[0]),channel(home,x[1]),channel(home,x[2])
-         };
+         BoolVarArgs y(3);
+         y[0] = channel(home,x[0]); y[1] = channel(home,x[1]); 
+         y[2] = channel(home,x[2]);
+         Gecode::MiniModel::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::MiniModel::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
-           Gecode::post(home, eval(l_lis,reg) == eval(r_lis,reg)); break;
+           Gecode::post(home, tt(eval(l_lis,l_reg) - eval(r_lis,r_reg) == 0)); 
+           break;
          case IRT_NQ:
-           Gecode::post(home, eval(l_lis,reg) != eval(r_lis,reg)); break;
+           Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0); 
+           break;
          case IRT_LQ:
-           Gecode::post(home, eval(l_lis,reg) <= eval(r_lis,reg)); break;
+           Gecode::post(home, ff(eval(l_lis,l_reg) > eval(r_lis,r_reg))); 
+           break;
          case IRT_LE:
-           Gecode::post(home, eval(l_lis,reg) < eval(r_lis,reg)); break;
+           Gecode::post(home, tt(eval(l_lis,l_reg) < eval(r_lis,r_reg))); 
+           break;
          case IRT_GQ:
-           Gecode::post(home, eval(l_lis,reg) >= eval(r_lis,reg)); break;
+           Gecode::post(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg)); 
+           break;
          case IRT_GR:
-           Gecode::post(home, eval(l_lis,reg) > eval(r_lis,reg)); break;
+           Gecode::post(home, ff(eval(l_lis,l_reg) <= eval(r_lis,r_reg))); 
+           break;
          default: GECODE_NEVER;
          }
        }
        /// Post constraint on \a x for \a bb
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
-         /*
          using namespace Gecode;
-         Gecode::MiniModel::LinExpr<IntVar> reg[3] = {x[0],x[1],x[2]};
-         BoolVar c;
+         BoolVarArgs y(3);
+         y[0] = channel(home,x[0]); y[1] = channel(home,x[1]); 
+         y[2] = channel(home,x[2]);
+         Gecode::MiniModel::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::MiniModel::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)==eval(r_lis,reg))); 
+           rel(home, Gecode::post(home, 
+                                  ~(eval(l_lis,l_reg)==eval(r_lis,r_reg))),
+               IRT_EQ, b); 
            break;
          case IRT_NQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)!=eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        tt(eqv(~(eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b)));
            break;
          case IRT_LQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)<=eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        ff(~(eval(l_lis,l_reg)<=eval(r_lis,r_reg))^b)); 
            break;
          case IRT_LE:
-           c = Gecode::post(home, ~(eval(l_lis,reg)<eval(r_lis,reg))); 
+           rel(home, Gecode::post(home, 
+                                  ~(eval(l_lis,l_reg)<eval(r_lis,r_reg))),
+               IRT_EQ, b); 
            break;
          case IRT_GQ:
-           c = Gecode::post(home, ~(eval(l_lis,reg)>=eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        tt(eqv(~(eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b)));
            break;
          case IRT_GR:
-           c = Gecode::post(home, ~(eval(l_lis,reg)>eval(r_lis,reg))); 
+           Gecode::post(home, 
+                        ff(~(eval(l_lis,l_reg)>eval(r_lis,r_reg))^b)); 
            break;
          default: GECODE_NEVER;
          }
-         rel(home, c, IRT_EQ, b);
-         */
        }
      };
-
 
      namespace {
 
@@ -1974,7 +1999,8 @@ namespace Test { namespace Int {
        public:
          /// Perform creation and registration
          Create(void) {
-           for (int i=0; i<200; i++) {
+           int n = sizeof(li)/sizeof(LinInstr*);
+           for (int i=0; i<n; i++) {
              std::string s = Test::str(i);
              if (i < 10) {
                s = "00" + s;
@@ -1985,14 +2011,15 @@ namespace Test { namespace Int {
              (void) new LinExprBool(li[i],s);
            }
            IntRelTypes irts;
-           for (int i=0; i<200; i += 2) {
+           for (int i=0; i<n/2; i++) {
              std::string s = Test::str(i);
              if (i < 10) {
                s = "00" + s;
              } else if (i < 100) {
                s = "0" + s;
              }
-             (void) new LinRelInt(li[200+i],li[200+i+1],irts.irt(),s);
+             (void) new LinRelInt(li[2*i],li[2*i+1],irts.irt(),s);
+             (void) new LinRelBool(li[2*i],li[2*i+1],irts.irt(),s);
              ++irts;
              if (!irts())
                irts.reset();

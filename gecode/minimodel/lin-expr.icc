@@ -210,7 +210,7 @@ namespace Gecode { namespace MiniModel {
     GECODE_AUTOARRAY(Int::Linear::Term<View>, ts, n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
-    Int::Linear::post(home, ts, i, irt, -c_o, icl, pk);
+    Int::Linear::post(home, ts, i, irt, -c_o, b, icl, pk);
   }
 
   template <>
