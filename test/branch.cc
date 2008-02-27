@@ -352,6 +352,7 @@ namespace Test { namespace Branch {
     }
     if (results.size() > 1) 
       goto failed;
+    delete root;
     return true;
   failed:
     std::cout   << "FAILURE" << std::endl;
@@ -363,6 +364,7 @@ namespace Test { namespace Branch {
       std::cout << std::endl;
     }
     
+    delete root;
     return results.size() == 1;
   }
 
@@ -411,6 +413,7 @@ namespace Test { namespace Branch {
     }
     if (results.size() > 1) 
       goto failed;
+    delete root;
     return true;
   failed:
     std::cout   << "FAILURE" << std::endl;
@@ -422,6 +425,7 @@ namespace Test { namespace Branch {
       std::cout << std::endl;
     }
     
+    delete root;
     return results.size() == 1;
   }
 
@@ -471,6 +475,7 @@ namespace Test { namespace Branch {
     }
     if (results.size() > 1) 
       goto failed;
+    delete root;
     return true;
   failed:
     std::cout   << "FAILURE" << std::endl;
@@ -482,6 +487,7 @@ namespace Test { namespace Branch {
       std::cout << std::endl;
     }
     
+    delete root;
     return results.size() == 1;
   }
 #endif
@@ -535,6 +541,7 @@ namespace Test { namespace Branch {
     }
     if (results.size() > 1) 
       goto failed;
+    delete root;
     return true;
   failed:
     std::cout   << "FAILURE" << std::endl;
@@ -546,6 +553,7 @@ namespace Test { namespace Branch {
       std::cout << std::endl;
     }
     
+    delete root;
     return results.size() == 1;
   }
 #endif
