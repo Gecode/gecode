@@ -75,7 +75,8 @@ the first release where really everything that we can test
 been systematically tested. So, better switch now to 2.1.0!
 
 Apart from that, the value range for variables has been increased
-(basically, 32 bits minus three values, so that is 32 bits), and
+(basically, 32 bits minus three values, so that is 32 bits), the reflection 
+API is now fully functional and no longer considered experimental, and we have
 the usual small additions.
 
 
@@ -442,8 +443,8 @@ What:   new
 Rank:   major
 [DESCRIPTION]
 The %Gecode Interactive Search Tool (Gist), a Qt-based graphical search 
-engine, is now part of the main %Gecode distribution.
-
+engine, is now part of the main %Gecode distribution. It is currently included
+as an experimental beta preview and may not be completely stable yet.
 
 
 [RELEASE]
