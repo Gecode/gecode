@@ -1245,8 +1245,6 @@ namespace Gecode {
      * \ingroup TaskActor
      */
     bool stable(void) const;
-    /// Perform single propagation step, if possible
-    GECODE_KERNEL_EXPORT void step(void);
     /**
      * \brief Return number of propagators
      *

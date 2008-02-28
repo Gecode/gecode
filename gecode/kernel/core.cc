@@ -313,59 +313,6 @@ namespace Gecode {
     return SS_SOLVED;
   }
 
-  void
-  Space::step(void) {
-    if (stable())
-      return;
-    assert(!stable() && (pc.p.active >= &pc.p.queue[0]));
-    Propagator* p;
-    // There is at least one propagator in the queue
-    do {
-      assert(pc.p.active >= &pc.p.queue[0]);
-      // First propagator or link back to queue
-      ActorLink* fst = pc.p.active->next();
-      if (pc.p.active != fst) {
-        p = Propagator::cast(fst);
-        break;
-      }
-      pc.p.active--;
-    } while (true);
-    // Keep old modification event delta
-    ModEventDelta med_o = p->u.med;
-    // Clear med but leave propagator in queue
-    p->u.med = 0;
-    switch (p->propagate(this,med_o)) {
-    case ES_FAILED:
-      fail(); 
-      return;
-    case ES_NOFIX:
-      // Find next, if possible
-      if (p->u.med != 0)
-        break;
-      // Fall through
-    case ES_FIX:
-      // Clear med and put into idle queue
-      p->u.med = 0; p->unlink(); a_actors.head(p);
-      break;
-    case __ES_SUBSUMED:
-      p->unlink(); reuse(p,p->u.size);
-      break;
-    case __ES_PARTIAL:
-      // Schedule propagator with specified propagator events
-      enqueue(p);
-      break;
-    default:
-      GECODE_NEVER;
-    }
-    // There might be a propagator in the queue
-    do {
-      assert(pc.p.active >= &pc.p.queue[0]);
-      // First propagator or link back to queue
-      if (pc.p.active != pc.p.active->next())
-        break;
-    } while (--pc.p.active >= &pc.p.queue[0]);
-    return;
-  }
 
   void
   Space::commit(const BranchingDesc* d, unsigned int a) {
