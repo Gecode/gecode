@@ -77,4 +77,4 @@
 /* Whether Gist is available */
 #undef GECODE_HAS_GIST
 
-s// STATISTICS: support-any
+// STATISTICS: support-any
