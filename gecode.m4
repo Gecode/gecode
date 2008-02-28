@@ -931,15 +931,5 @@ AC_DEFUN([AC_GECODE_GIST],
   else
     AC_MSG_RESULT(no)
   fi
-  AC_ARG_ENABLE([gist-experimental],
-    AC_HELP_STRING([--enable-gist-experimental],
-      [enable Gecode Interactive Search Tool experimental features@<:@default=no@:>@]))
-  AC_MSG_CHECKING(whether to enable Gist experimental features)
-  if test "${enable_gist_experimental:-no}" = "yes"; then
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(GECODE_GIST_EXPERIMENTAL)
-  else
-    AC_MSG_RESULT(no)
-  fi
   AC_SUBST(enable_gist, ${enable_gist})
 ])

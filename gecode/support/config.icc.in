@@ -77,7 +77,4 @@
 /* Whether Gist is available */
 #undef GECODE_HAS_GIST
 
-/* Whether to compile Gist experimental features */
-#undef GECODE_GIST_EXPERIMENTAL
-
-// STATISTICS: support-any
+s// STATISTICS: support-any
