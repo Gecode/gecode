@@ -1237,7 +1237,7 @@ DIST_FILES= \
 	changelog.in LICENSE \
 	doxygen.conf.in doxygen.hh.in install-sh misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
-	misc/gecode-serialization.pc.in \
+	misc/gecode-serialization.pc.in misc/gecode-gist.pc.in \
 	gecode/support/config.icc.in \
 	gecode/int/var-imp/int.vis \
 	gecode/int/var-imp/bool.vis \
@@ -1376,8 +1376,16 @@ doc-apple: doc
 # Installation
 #
 
+ifeq "@enable_gist@" "yes"
+GIST_PKGCONFIGFILE = gecode-gist.pc
+else
+GIST_PKGCONFIGFILE = 
+endif
+
 ifeq "@HAS_PKGCONFIG@" "yes"
-PKGCONFIGFILES = gecode.pc gecode-search.pc gecode-minimodel.pc gecode-serialization.pc
+PKGCONFIGFILES = \
+	gecode.pc gecode-search.pc gecode-minimodel.pc \
+	gecode-serialization.pc $(GIST_PKGCONFIGFILE)
 else
 PKGCONFIGFILES =
 endif

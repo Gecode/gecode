@@ -245,4 +245,5 @@ AC_CONFIG_FILES([misc/gecode.pc])
 AC_CONFIG_FILES([misc/gecode-search.pc])
 AC_CONFIG_FILES([misc/gecode-serialization.pc])
 AC_CONFIG_FILES([misc/gecode-minimodel.pc])
+AC_CONFIG_FILES([misc/gecode-gist.pc])
 AC_OUTPUT
