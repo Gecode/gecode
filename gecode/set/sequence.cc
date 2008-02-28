@@ -45,9 +45,9 @@ namespace Gecode {
 
   void
   sequence(Space* home, const SetVarArgs& xa) {
-    if (home->failed()) return;
     if (xa.size()==0)
       throw ArgumentEmpty("Set::seq");
+    if (home->failed()) return;
     ViewArray<SetView> x(home,xa);
     GECODE_ES_FAIL(home,Sequence::Seq::post(home, x));
   }

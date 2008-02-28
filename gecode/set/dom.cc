@@ -60,8 +60,8 @@ namespace Gecode {
 
   void
   dom(Space* home, SetVar s, SetRelType r, const IntSet& is) {
-    if (home->failed()) return;
     Set::Limits::check(is, "Set::dom");
+    if (home->failed()) return;
 
     Set::SetView _s(s);
 
@@ -158,8 +158,8 @@ namespace Gecode {
 
   void
   dom(Space* home, SetVar s, SetRelType r, const IntSet& is, BoolVar b) {
-    if (home->failed()) return;
     Set::Limits::check(is, "Set::dom");
+    if (home->failed()) return;
     switch(r) {
     case SRT_EQ:
       {

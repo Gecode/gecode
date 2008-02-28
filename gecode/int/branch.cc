@@ -44,38 +44,52 @@ namespace Gecode {
   void
   branch(Space* home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals) {
-    if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (vars) {
     case INT_VAR_NONE:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByNone>(home,xv,vals); break;
     case INT_VAR_MIN_MIN:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByMinMin>(home,xv,vals); break;
     case INT_VAR_MIN_MAX:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByMinMax>(home,xv,vals); break;
     case INT_VAR_MAX_MIN:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByMaxMin>(home,xv,vals); break;
     case INT_VAR_MAX_MAX:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByMaxMax>(home,xv,vals); break;
     case INT_VAR_SIZE_MIN:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::BySizeMin>(home,xv,vals); break;
     case INT_VAR_SIZE_MAX:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::BySizeMax>(home,xv,vals); break;
     case INT_VAR_DEGREE_MIN:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByDegreeMin>(home,xv,vals); break;
     case INT_VAR_DEGREE_MAX:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByDegreeMax>(home,xv,vals); break;
     case INT_VAR_SIZE_DEGREE_MIN:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::BySizeDegreeMin>(home,xv,vals); break;
     case INT_VAR_SIZE_DEGREE_MAX:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::BySizeDegreeMax>(home,xv,vals); break;
     case INT_VAR_REGRET_MIN_MIN:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByRegretMinMin>(home,xv,vals); break;
     case INT_VAR_REGRET_MIN_MAX:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByRegretMinMax>(home,xv,vals); break;
     case INT_VAR_REGRET_MAX_MIN:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByRegretMaxMin>(home,xv,vals); break;
     case INT_VAR_REGRET_MAX_MAX:
+      if (home->failed()) return;
       Branch::create<IntView,Branch::ByRegretMaxMax>(home,xv,vals); break;
     default:
       throw UnknownBranching("Int::branch");
@@ -85,7 +99,6 @@ namespace Gecode {
   void
   branch(Space* home, const BoolVarArgs& x, 
          IntVarBranch vars, IntValBranch vals) {
-    if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
     switch (vars) {
     case INT_VAR_NONE:
@@ -103,6 +116,7 @@ namespace Gecode {
       case INT_VAL_MIN:
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
+        if (home->failed()) return;
         (void) new (home) 
           ViewValBranching<BoolView,Branch::NoValue,
                            Branch::ByNone<BoolView>,
@@ -110,6 +124,7 @@ namespace Gecode {
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
+        if (home->failed()) return;
         (void) new (home) 
           ViewValBranching<BoolView,Branch::NoValue,
                            Branch::ByNone<BoolView>,
@@ -125,6 +140,7 @@ namespace Gecode {
       case INT_VAL_MIN:
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
+        if (home->failed()) return;
         (void) new (home) 
           ViewValBranching<BoolView,Branch::NoValue,
                            Branch::ByDegreeMinNoTies<BoolView>,
@@ -132,6 +148,7 @@ namespace Gecode {
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
+        if (home->failed()) return;
         (void) new (home) 
           ViewValBranching<BoolView,Branch::NoValue,
                            Branch::ByDegreeMinNoTies<BoolView>,
@@ -147,6 +164,7 @@ namespace Gecode {
       case INT_VAL_MIN:
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
+        if (home->failed()) return;
         (void) new (home) 
           ViewValBranching<BoolView,Branch::NoValue,
                            Branch::ByDegreeMaxNoTies<BoolView>,
@@ -154,6 +172,7 @@ namespace Gecode {
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
+        if (home->failed()) return;
         (void) new (home) 
           ViewValBranching<BoolView,Branch::NoValue,
                            Branch::ByDegreeMaxNoTies<BoolView>,
@@ -170,20 +189,22 @@ namespace Gecode {
 
   void
   assign(Space* home, const IntVarArgs& x, IntAssign vals) {
-    if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (vals) {
     case INT_ASSIGN_MIN:
+      if (home->failed()) return;
       (void) new (home) 
         ViewValAssignment<IntView,int,
                           Branch::ValMin<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MED:
+      if (home->failed()) return;
       (void) new (home) 
         ViewValAssignment<IntView,int,
                           Branch::ValMed<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
+      if (home->failed()) return;
       (void) new (home) 
         ViewValAssignment<IntView,int,
                           Branch::ValMax<IntView> >(home,xv);
@@ -195,16 +216,17 @@ namespace Gecode {
 
   void
   assign(Space* home, const BoolVarArgs& x, IntAssign vals) {
-    if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
     switch (vals) {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED:
+      if (home->failed()) return;
       (void) new (home) 
         ViewValAssignment<BoolView,Branch::NoValue,
                           Branch::ValZeroOne<BoolView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
+      if (home->failed()) return;
       (void) new (home) 
         ViewValAssignment<BoolView,Branch::NoValue,
                           Branch::ValOneZero<BoolView> >(home,xv);

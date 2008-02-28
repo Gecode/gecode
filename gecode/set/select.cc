@@ -98,9 +98,9 @@ namespace Gecode {
 
   void
   selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z) {
-    if (home->failed()) return;
     for (int i=s.size(); i--;)
       Set::Limits::check(s[i], "Set::selectSet");
+    if (home->failed()) return;
     SetView zv(z);
     SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
