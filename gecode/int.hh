@@ -1602,7 +1602,7 @@ namespace Gecode {
     /// Create reflection specification for the TupleSet
     GECODE_INT_EXPORT Reflection::Arg* spec(Reflection::VarMap& vm) const;
   };
-
+ 
   /** \brief Post propagator for \f$x\in T\f$.
    *
    * \li Supports implementations optimized for memory (\a pk = \a
@@ -1622,7 +1622,19 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   extensional(Space* home, const IntVarArgs& x, const TupleSet& t, 
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  //@}
+
+  /** \brief Post propagator for \f$x\in T\f$.
+   *
+   * \li Supports implementations optimized for memory (\a pk = \a
+   *     PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
+   * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
+   */
+  GECODE_INT_EXPORT void
+  extensional(Space* home, const BoolVarArgs& x, const TupleSet& t, 
+              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+ //@}
 }
 
 #include "gecode/int/extensional/dfa.icc"

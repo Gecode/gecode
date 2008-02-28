@@ -1547,7 +1547,7 @@ distclean: veryclean
 	$(RMF) config.log config.status Makefile.dep
 	$(RMF) $(SERREGSRC)
 
-depend: $(VARIMP:%=$(top_srcdir)/%) $(SERREGSRC)
+depend: $(VARIMP:%=$(top_srcdir)/%) $(SERREGSRC:%=$(top_srcdir)/%)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \

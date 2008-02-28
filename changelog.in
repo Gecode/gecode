@@ -81,6 +81,15 @@ the usual small additions.
 
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added interface to extensional constraints defined by TupleSets with
+BoolVars.
+
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   major

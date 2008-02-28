@@ -94,11 +94,43 @@ namespace Gecode {
     }
   }
 
+  void
+  extensional(Space* home, const BoolVarArgs& x, const TupleSet& t, 
+              IntConLevel, PropKind pk) {
+    using namespace Int;
+    if (!t.finalized())
+      const_cast<TupleSet&>(t).finalize();
+    if (t.arity() != x.size())
+      throw ArgumentSizeMismatch("Int::extensional");
+    if (home->failed()) return;
+
+    // Construct view array
+    ViewArray<BoolView> xv(home,x);
+
+    // All variables in the correct domain
+    for (int i = xv.size(); i--; ) {
+      GECODE_ME_FAIL(home, xv[i].gq(home, t.min()));
+      GECODE_ME_FAIL(home, xv[i].lq(home, t.max()));
+    }
+
+    switch (pk) {
+    case PK_SPEED:
+      GECODE_ES_FAIL(home,(Extensional::Incremental<BoolView>::post(home,xv,t)));
+      break;
+    default:
+      GECODE_ES_FAIL(home,(Extensional::Basic<BoolView>::post(home,xv,t)));
+      break;
+    }
+  }
+
   GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::IntView>);
   GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::BoolView>);
 
   GECODE_REGISTER1(Int::Extensional::Basic<Int::IntView>);
   GECODE_REGISTER1(Int::Extensional::Incremental<Int::IntView>);
+
+  GECODE_REGISTER1(Int::Extensional::Basic<Int::BoolView>);
+  GECODE_REGISTER1(Int::Extensional::Incremental<Int::BoolView>);
 
 }
 

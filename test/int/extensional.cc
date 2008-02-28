@@ -362,6 +362,50 @@ namespace Test { namespace Int {
      };
 
 
+
+     /// Test with bool tuple set
+     class TupleSetBool : public Test {
+       mutable Gecode::TupleSet t;
+     public:
+       /// Create and register test
+       TupleSetBool(Gecode::PropKind pk, double prob)
+         : Test("Extensional::TupleSet::Bool::"+str(pk),
+                5,0,1,false,Gecode::ICL_DOM,pk) {
+         using namespace Gecode;
+         
+         CpltAssignment ass(5, IntSet(0, 1));
+         while (ass()) {
+           if (Base::rand(100) <= prob*100) {
+             IntArgs tuple(5);
+             for (int i = 5; i--; ) tuple[i] = ass[i];
+             t.add(tuple);
+           }   
+           ++ass;
+         }
+         t.finalize();
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         using namespace Gecode;
+         for (int i = 0; i < t.tuples(); ++i) {
+           TupleSet::Tuple l = t[i];
+           bool same = true;
+           for (int j = 0; j < t.arity() && same; ++j)
+             if (l[j] != x[j]) same = false;
+           if (same) return true;
+         }
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVarArgs y(x.size());
+         for (int i = x.size(); i--; ) y[i] = channel(home, x[i]);
+         extensional(home, y, t, ICL_DEF, pk);
+       }
+     };
+
+
      RegSimpleA ra;
      RegSimpleB rb;
    
@@ -381,6 +425,9 @@ namespace Test { namespace Int {
 
      TupleSetB tsbm(Gecode::PK_MEMORY);
      TupleSetB tsbs(Gecode::PK_SPEED);
+
+     TupleSetBool tsboolm(Gecode::PK_MEMORY, 0.3);
+     TupleSetBool tsbools(Gecode::PK_SPEED, 0.3);
      //@}
 
    }
