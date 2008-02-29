@@ -88,7 +88,6 @@ Rank:   minor
 Added interface to extensional constraints defined by TupleSets with
 BoolVars.
 
-
 [ENTRY]
 Module: minimodel
 What:   bug
@@ -284,7 +283,7 @@ tutorial-style section on reflection has been added to the documentation.
 [ENTRY]
 Module: set
 What:   change
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 The limits for set variables have been moved from Limits::Set to
 Set::Limits.
@@ -297,7 +296,7 @@ to 2^30-2, its maximum cardinality therefore is 2^31-3.
 [ENTRY]
 Module: int
 What:   change
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 The limits for set variables have been moved from Limits::Set to
 Set::Limits.
