@@ -777,10 +777,9 @@ AC_DEFUN([AC_GECODE_UNIVERSAL],
       AC_GECODE_ADD_TO_DLLFLAGS([-Wl,-syslibroot,${with_sdk}])
     fi
   fi
-  AC_ARG_WITH([macosx-version-min])
   AC_ARG_WITH([macosx-version-min],
     AC_HELP_STRING([--with-macosx-version-min],
-	[minimum supported version of Mac OS X]))
+	[minimum version of Mac OS X to support]))
   if test "${host_os}" = "darwin"; then
     if test "${with_macosx_version_min:-no}" != "no"; then
       AC_GECODE_CHECK_COMPILERFLAG(
@@ -788,6 +787,25 @@ AC_DEFUN([AC_GECODE_UNIVERSAL],
       AC_GECODE_ADD_TO_DLLFLAGS(
         [-mmacosx-version-min=${with_macosx_version_min}])
     fi
+  fi
+  AC_ARG_WITH([architectures],
+    AC_HELP_STRING([--with-archiectures],
+	[architectures to compile for on Mac OS X]))
+  AC_MSG_CHECKING(Whether to build for different architectures)
+  if test "${host_os}" = "darwin"; then
+    if test "${with_architectures:-no}" != "no"; then
+      archflags="";
+      for a in `echo ${with_architectures} | sed -e "s/,/ /g"`; do
+	archflags="${archflags} -arch $a";
+      done
+      AC_GECODE_CHECK_COMPILERFLAG([${archflags}])
+      AC_GECODE_ADD_TO_DLLFLAGS([${archflags}])
+      AC_MSG_RESULT(yes)
+    else
+      AC_MSG_RESULT(no)
+    fi
+  else
+    AC_MSG_RESULT(no)
   fi
 ])
 
