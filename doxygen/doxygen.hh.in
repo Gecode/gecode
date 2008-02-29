@@ -75,25 +75,8 @@
  *
  * Defines search engines. All search engines (but Gecode::LDS, where
  * it is not needed) support recomputation. The behaviour of recomputation
- * can be controlled by two parameters:
- *  - \a c_d as minimal recomputation distance: this guarantees that
- *    a path between two nodes in the search tree for which copies are
- *    stored has at least length \a c_d. That is, in order to recompute
- *    a node in the search tree, \a c_d recomputation steps are needed.
- *    The minimal recomputation distance yields a guarantee on saving
- *    memory compared to full copying: it stores \a c_d times less nodes
- *    than full copying.
- *  - \a a_d as adaptive recomputation distance: when a node needs to be
- *    recomputed and the path is longer than \a a_d, an intermediate copy
- *    is created (approximately in the middle of the path) to speed up
- *    future recomputation. Note that small values of \a a_d can increase
- *    the memory consumption considerably.
- *
- * Full copying corresponds to a maximal recomputation distance \a c_d of 1.
- *
- * All recomputation performed is based on batch recomputation: batch
- * recomputation performs propagation only once for an entire path
- * used in recomputation.
+ * is controlled by a passing a search option object (see the class 
+ * Gecode::Search::Options).
  *
  * Requires \code #include "gecode/search.hh" \endcode
  * \ingroup TaskModel

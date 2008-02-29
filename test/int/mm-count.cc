@@ -41,7 +41,8 @@
 
 namespace Test { namespace Int {
 
-   namespace MiniModel {
+  /// Tests for minimal modelling constraints (counting)
+   namespace MiniModelCount {
 
      /// Expand relation to abbreviation
      std::string expand(Gecode::IntRelType irt) {
@@ -265,29 +266,26 @@ namespace Test { namespace Int {
        }
      };
    
-
-     namespace CountCreator {
-       /// Help class to create and register tests
-       class Create {
-       public:
-         /// Perform creation and registration
-         Create(void) {
-           for (IntRelTypes irts; irts(); ++irts) 
-             if ((irts.irt() == Gecode::IRT_EQ) ||
-                 (irts.irt() == Gecode::IRT_LQ) ||
-                 (irts.irt() == Gecode::IRT_GQ)) {
-               (void) new IntInt(irts.irt());
-               (void) new IntVar(irts.irt());
-               (void) new VarVar(irts.irt());
-               (void) new VarInt(irts.irt());
-               (void) new IntArrayInt(irts.irt());
-               (void) new IntArrayVar(irts.irt());
-             }
-         }
-       };
-       
-       Create c;
-     }
+     /// Help class to create and register tests
+     class Create {
+     public:
+       /// Perform creation and registration
+       Create(void) {
+         for (IntRelTypes irts; irts(); ++irts) 
+           if ((irts.irt() == Gecode::IRT_EQ) ||
+               (irts.irt() == Gecode::IRT_LQ) ||
+               (irts.irt() == Gecode::IRT_GQ)) {
+             (void) new IntInt(irts.irt());
+             (void) new IntVar(irts.irt());
+             (void) new VarVar(irts.irt());
+             (void) new VarInt(irts.irt());
+             (void) new IntArrayInt(irts.irt());
+             (void) new IntArrayVar(irts.irt());
+           }
+       }
+     };
+     
+     Create c;
      //@}
    
    }

@@ -1057,9 +1057,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
     channel(home,x1,x0,icl,pk);
   }
-
-  /*
-   * \brief Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
+  /** \brief Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
    *
    * Throws an exception of type Int::ArgumentSame, if \a x
    * contains the same unassigned variable multiply.
@@ -1735,7 +1733,7 @@ namespace Gecode {
    *  - Assume the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the maximal
-   *    available precision (at least \f$2^48\f$), an exception of
+   *    available precision (at least \f$2^{48}\f$), an exception of
    *    type Int::OutOfLimits is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).

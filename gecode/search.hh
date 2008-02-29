@@ -200,6 +200,26 @@ namespace Gecode {
      *
      * Defines options for search engines. Not all search engines might
      * honor all option values.
+     *
+     *  - \a c_d as minimal recomputation distance: this guarantees that
+     *    a path between two nodes in the search tree for which copies are
+     *    stored has at least length \a c_d. That is, in order to recompute
+     *    a node in the search tree, \a c_d recomputation steps are needed.
+     *    The minimal recomputation distance yields a guarantee on saving
+     *    memory compared to full copying: it stores \a c_d times less nodes
+     *    than full copying.
+     *  - \a a_d as adaptive recomputation distance: when a node needs to be
+     *    recomputed and the path is longer than \a a_d, an intermediate copy
+     *    is created (approximately in the middle of the path) to speed up
+     *    future recomputation. Note that small values of \a a_d can increase
+     *    the memory consumption considerably.
+     *
+     * Full copying corresponds to a maximal recomputation distance 
+     * \a c_d of 1.
+     *
+     * All recomputation performed is based on batch recomputation: batch
+     * recomputation performs propagation only once for an entire path
+     * used in recomputation.
      */
     class Options {
     public:

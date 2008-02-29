@@ -41,6 +41,7 @@
 
 namespace Test { namespace Int {
 
+   /// Tests for minimal modelling constraints (simple relations)
    namespace MiniModel {
    
      /**
@@ -112,22 +113,20 @@ namespace Test { namespace Int {
        }
      };
 
-     namespace RelCreator {
-       /// Help class to create and register tests
-       class Create {
-       public:
-         /// Perform creation and registration
-         Create(void) {
-           using namespace Gecode;
-           for (IntRelTypes irts; irts(); ++irts) {
-             (void) new IntLex(irts.irt());
-             (void) new BoolLex(irts.irt());
-           }      
-         }
-       };
-       
-       Create c;
-     }
+     /// Help class to create and register tests
+     class Create {
+     public:
+       /// Perform creation and registration
+       Create(void) {
+         using namespace Gecode;
+         for (IntRelTypes irts; irts(); ++irts) {
+           (void) new IntLex(irts.irt());
+           (void) new BoolLex(irts.irt());
+         }      
+       }
+     };
+     
+     Create c;
      //@}
 
    }

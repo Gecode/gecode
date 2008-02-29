@@ -186,11 +186,11 @@ namespace Gecode {
  * \defgroup TaskModelMiniModelLin Linear expressions and relations
  *
  * Linear expressions can be freely composed of sums and differences of
- * integer variables (Gecode::IntVar) possibly with integer coefficients
- * and integer constants.
+ * integer variables (Gecode::IntVar) or Boolean variables (Gecode::BoolVar)
+ * possibly with integer coefficients and integer constants.
  *
- * Note that integer variables are automatically available as linear
- * expressions.
+ * Note that both integer and Boolean variables are automatically available 
+ * as linear expressions.
  *
  * Linear relations are obtained from linear expressions with the normal
  * relation operators.
@@ -799,7 +799,7 @@ namespace Gecode {
     BoolVar b(home,0,1); channel(home,b,x);
     return b;
   }
-  /// Return integer variable equal to \f$x\f$
+  /// Return integer variable equal to \f$b\f$
   inline IntVar
   channel(Space* home, BoolVar b, 
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
