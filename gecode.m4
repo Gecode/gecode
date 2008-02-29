@@ -777,20 +777,18 @@ AC_DEFUN([AC_GECODE_UNIVERSAL],
       AC_GECODE_ADD_TO_DLLFLAGS([-Wl,-syslibroot,${with_sdk}])
     fi
   fi
-  AC_ARG_ENABLE([universal],
-    AC_HELP_STRING([--enable-universal],
-	[build universal binaries on Mac OS X @<:@default=no@:>@]))
+  AC_ARG_WITH([macosx-version-min])
+  AC_ARG_WITH([macosx-version-min],
+    AC_HELP_STRING([--with-macosx-version-min],
+	[minimum supported version of Mac OS X]))
   if test "${host_os}" = "darwin"; then
-    AC_MSG_CHECKING(whether to build universal binaries on Mac OS X)
-    if test "${enable_universal:-no}" = "yes"; then
-      AC_MSG_RESULT(yes)
-      AC_GECODE_CHECK_COMPILERFLAG([-arch i386 -arch ppc])
-      AC_GECODE_ADD_TO_DLLFLAGS([-arch i386 -arch ppc])
-    else
-      AC_MSG_RESULT(no)
+    if test "${with_macosx_version_min:-no}" != "no"; then
+      AC_GECODE_CHECK_COMPILERFLAG(
+        [-mmacosx-version-min=${with_macosx_version_min}])
+      AC_GECODE_ADD_TO_DLLFLAGS(
+        [-mmacosx-version-min=${with_macosx_version_min}])
     fi
   fi
-
 ])
 
 dnl Macro:

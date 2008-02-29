@@ -889,12 +889,12 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * You can compile as <b>"universal binary" on a Mac OS
  * machine</b>. Configure with
  *
- * <code>./configure --enable-universal</code>
+ * <code>./configure --with-architectures=i386,ppc</code>
  *
  * For building universal binaries on a PowerPC machine, you have to supply
  * the path to the universal SDK (which is the default on Intel based Macs):
  * 
- * <code>./configure --enable-universal</code>
+ * <code>./configure --with-architectures=i386,ppc</code>
  * <code>&nbsp;&nbsp;&nbsp;--with-sdk=/Developer/SDKs/MacOSX10.4u.sdk</code>
  *
  * \subsection CompConfUsr Passing options for compilation
