@@ -133,7 +133,7 @@ Fixed multiplication propagator for x*y=x.
 
 [ENTRY]
 Module: search
-What:   changed
+What:   change
 Rank:   major
 [DESCRIPTION]
 All search engines now take an option value for configuration
