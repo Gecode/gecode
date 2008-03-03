@@ -54,13 +54,51 @@
 
 namespace boost { namespace serialization {
 
+  /// The different types of arguments
+  enum argtype {
+    BOOST_INT_ARG,           ///< Integer argument
+    BOOST_VAR_ARG,           ///< Variable argument
+    BOOST_ARRAY_ARG,         ///< Array argument
+    BOOST_INT_ARRAY_ARG,     ///< Integer array argument
+    BOOST_STRING_ARG,        ///< String argument
+    BOOST_PAIR_ARG,          ///< Pair argument
+    BOOST_SHARED_OBJECT_ARG, ///< Shared object argument
+    BOOST_SHARED_REF_ARG     ///< Reference to shared object argument
+  };
+
   template<class Archive>
   inline void save_construct_data(
       Archive & ar, const Gecode::Reflection::Arg* t,
       const unsigned int /*file_version*/
   ){
       // save data required to construct instance
-      ar << t->t;
+      if (t->isInt()) {
+        int out = static_cast<int>(BOOST_INT_ARG);
+        ar << out;
+      } else if (t->isVar()) {
+        int out = static_cast<int>(BOOST_VAR_ARG);
+        ar << out;
+      } else if (t->isArray()) {
+        int out = static_cast<int>(BOOST_ARRAY_ARG);
+        ar << out;
+      } else if (t->isIntArray()) {
+        int out = static_cast<int>(BOOST_INT_ARRAY_ARG);
+        ar << out;
+      } else if (t->isString()) {
+        int out = static_cast<int>(BOOST_STRING_ARG);
+        ar << out;
+      } else if (t->isPair()) {
+        int out = static_cast<int>(BOOST_PAIR_ARG);
+        ar << out;
+      } else if (t->isSharedObject()) {
+        int out = static_cast<int>(BOOST_SHARED_OBJECT_ARG);
+        ar << out;
+      } else if (t->isSharedReference()) {
+        int out = static_cast<int>(BOOST_SHARED_REF_ARG);
+        ar << out;
+      } else {
+        GECODE_NEVER;
+      }
   }
   
   template<class Archive>
@@ -72,9 +110,34 @@ namespace boost { namespace serialization {
       int m;
       ar >> m;
       // invoke inplace constructor to initialize instance of my_class
-      ::new(t)
-        Gecode::Reflection::Arg(
-          static_cast<Gecode::Reflection::Arg::argtype>(m));
+      switch (m) {
+      case BOOST_INT_ARG:
+        t->initInt(0);
+        break;
+      case BOOST_VAR_ARG:
+        t->initVar(0);
+        break;
+      case BOOST_ARRAY_ARG:
+        t->initArray(0);
+        break;
+      case BOOST_INT_ARRAY_ARG:
+        t->initIntArray(0);
+        break;
+      case BOOST_STRING_ARG:
+        t->initString("");
+        break;
+      case BOOST_PAIR_ARG:
+        t->initPair(NULL, NULL);
+        break;
+      case BOOST_SHARED_OBJECT_ARG:
+        t->initSharedObject(NULL);
+        break;
+      case BOOST_SHARED_REF_ARG:
+        t->initSharedReference(0);
+        break;
+      default:
+        GECODE_NEVER;
+      }
   }
 
   
@@ -84,69 +147,46 @@ namespace boost { namespace serialization {
     unsigned int /*file_version*/
   ){
     using namespace Gecode::Reflection;
-    switch (arg.t) {
-      case Arg::INT_ARG:
-      {
-        int m; ar >> m;
-        arg.initInt(m);
-      }
-      break;
-      case Arg::VAR_ARG:
-      {
-        int m; ar >> m;
-        arg.initVar(m);
-      }
-      break;
-      case Arg::ARRAY_ARG:
-      {
-        int m; ar >> m;
-        arg.initArray(m);
-        ArrayArg* array = arg.toArray();
-        for (int i=0; i<m; i++) {
-          Arg* k;
-          ar >> k;
-          (*array)[i] = k;
-        }        
-      }
-      break;
-      case Arg::INT_ARRAY_ARG:
-      {
-        int m; ar >> m;
-        arg.initArray(m);
-        IntArrayArg* array = arg.toIntArray();
-        for (int i=0; i<m; i++) {
-          int k;
-          ar >> k;
-          (*array)[i] = k;
-        }        
-      }
-      break;
-      case Arg::STRING_ARG:
-      {
-        std::string s;
-        ar >> s;
-        arg.initString(s.c_str());
-      }
-      break;
-      case Arg::PAIR_ARG:
-      {
-        Arg* a; ar >> a;
-        Arg* b; ar >> b;
-        arg.initPair(a,b);
-      }
-      break;
-      case Arg::SHARED_OBJECT_ARG:
-      {
-        Arg* a; ar >> a;
-        arg.initSharedObject(a);
-      }
-      break;
-      case Arg::SHARED_REF_ARG:
-      {
-        int m; ar >> m;
-        arg.initSharedReference(m);
-      }
-      break;
+    if (arg.isInt()) {
+      int m; ar >> m;
+      arg.initInt(m);
+    } else if (arg.isVar()) {
+      int m; ar >> m;
+      arg.initVar(m);
+    } else if (arg.isArray()) {
+      int m; ar >> m;
+      arg.initArray(m);
+      ArrayArg* array = arg.toArray();
+      for (int i=0; i<m; i++) {
+        Arg* k;
+        ar >> k;
+        (*array)[i] = k;
+      }        
+    } else if (arg.isIntArray()) {
+      int m; ar >> m;
+      arg.initArray(m);
+      IntArrayArg* array = arg.toIntArray();
+      for (int i=0; i<m; i++) {
+        int k;
+        ar >> k;
+        (*array)[i] = k;
+      }        
+    } else if (arg.isString()) {
+      std::string s;
+      ar >> s;
+      arg.initString(s.c_str());
+    } else if (arg.isPair()) {
+      Arg* a; ar >> a;
+      Arg* b; ar >> b;
+      arg.initPair(a,b);
+    } else if (arg.isSharedObject()) {
+      Arg* a; ar >> a;
+      arg.initSharedObject(a);
+    } else if (arg.isSharedReference()) {
+      int m; ar >> m;
+      arg.initSharedReference(m);
+    } else {
+      GECODE_NEVER;
     }
   }
   
@@ -158,69 +198,46 @@ namespace boost { namespace serialization {
     const unsigned int /*file_version*/
   ) {
     using namespace Gecode::Reflection;
-    switch (arg.t) {
-      case Arg::INT_ARG:
-      {
-        int m = arg.toInt();
-        ar << m;
-      }
-      break;
-      case Arg::VAR_ARG:
-      {
-        int m = arg.toVar();
-        ar << m;
-      }
-      break;
-      case Arg::ARRAY_ARG:
-      {
-        const ArrayArg* array = arg.toArray();
-        int s = array->size();
-        ar << s;
-        for (int i=0; i<s; i++) {
-          const Arg* a = (*array)[i];
-          ar << *a;
-        }        
-      }
-      break;
-      case Arg::INT_ARRAY_ARG:
-      {
-        const IntArrayArg* array = arg.toIntArray();
-        int s = array->size();
-        ar << s;
-        for (int i=0; i<s; i++) {
-          int a = (*array)[i];
-          ar << a;
-        }        
-      }
-      break;
-      case Arg::STRING_ARG:
-      {
-        std::stringstream oss;
-        oss << arg.toString();
-        std::string s = oss.str();
-        ar << s;
-      }
-      break;
-      case Arg::PAIR_ARG:
-      {
-        const Arg* a = arg.first();
+    if (arg.isInt()) {
+      int m = arg.toInt();
+      ar << m;
+    } else if (arg.isVar()) {
+      int m = arg.toVar();
+      ar << m;
+    } else if (arg.isArray()) {
+      const ArrayArg* array = arg.toArray();
+      int s = array->size();
+      ar << s;
+      for (int i=0; i<s; i++) {
+        const Arg* a = (*array)[i];
         ar << *a;
-        const Arg* b = arg.second();
-        ar << *b;
-      }
-      break;
-      case Arg::SHARED_OBJECT_ARG:
-      {
-        const Arg* a = arg.toSharedObject();
-        ar << *a;
-      }
-      break;
-      case Arg::SHARED_REF_ARG:
-      {
-        int m = arg.toSharedReference();
-        ar << m;
-      }
-      break;
+      }        
+    } else if (arg.isIntArray()) {
+      const IntArrayArg* array = arg.toIntArray();
+      int s = array->size();
+      ar << s;
+      for (int i=0; i<s; i++) {
+        int a = (*array)[i];
+        ar << a;
+      }        
+    } else if (arg.isString()) {
+      std::stringstream oss;
+      oss << arg.toString();
+      std::string s = oss.str();
+      ar << s;
+    } else if (arg.isPair()) {
+      const Arg* a = arg.first();
+      ar << *a;
+      const Arg* b = arg.second();
+      ar << *b;
+    } else if (arg.isSharedObject()) {
+      const Arg* a = arg.toSharedObject();
+      ar << *a;
+    } else if (arg.isSharedReference()) {
+      int m = arg.toSharedReference();
+      ar << m;
+    } else {
+      GECODE_NEVER;
     }
   }
   
@@ -305,7 +322,7 @@ namespace boost { namespace serialization {
   ){
     // save data required to construct instance
     std::stringstream oss;
-    oss << t->name();
+    oss << t->ati();
     std::string n = oss.str();
     ar << n;
   }
