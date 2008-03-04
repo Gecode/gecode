@@ -89,7 +89,9 @@
 
 namespace Gecode { 
   /**
-   * \brief Bdd variable as complete domain representation for finite integer sets
+   * \brief Finite set variable with complete domain representation
+   *
+   * \ingroup TaskModelCpltSetVars
    *
    */  
   class CpltSetVar : public VarBase<CpltSet::CpltSetVarImp> {
@@ -318,7 +320,11 @@ namespace Gecode {
 
   };
 
-  /// Range iterator for the greatest lower bound of a bdd variable
+  /**
+   * \brief Range iterator for the greatest lower bound of a bdd variable
+   *
+   * \ingroup TaskModelCpltSetVars
+   */
   class CpltSetVarGlbRanges {
   private:
     Set::GlbRanges<CpltSet::CpltSetVarImp*> iter;
@@ -331,7 +337,11 @@ namespace Gecode {
     int max(void) const;
   };
 
-  /// Value iterator for the greatest lower bound of a bdd variable
+  /**
+   * \brief Value iterator for the greatest lower bound of a bdd variable
+   *
+   * \ingroup TaskModelCpltSetVars
+   */
   class CpltSetVarGlbValues {
   private:
     CpltSet::GlbValues<CpltSet::CpltSetVarImp*> iter;
@@ -343,7 +353,11 @@ namespace Gecode {
     int val(void) const;
   };
 
-  /// Range iterator for the least upper bound of a bdd variable
+  /**
+   * \brief Range iterator for the least upper bound of a bdd variable
+   *
+   * \ingroup TaskModelCpltSetVars
+   */
   class CpltSetVarLubRanges {
   private:
     Set::LubRanges<CpltSet::CpltSetVarImp*> iter;
@@ -356,7 +370,11 @@ namespace Gecode {
     int max(void) const;
   };
 
-  /// Value iterator for the least upper bound of a bdd variable
+  /**
+   * \brief Value iterator for the least upper bound of a bdd variable
+   *
+   * \ingroup TaskModelCpltSetVars
+   */
   class CpltSetVarLubValues {
   private:
     CpltSet::LubValues<CpltSet::CpltSetVarImp*> iter;
@@ -368,7 +386,11 @@ namespace Gecode {
     int val(void) const;
   };
 
-  /// Range iterator for the unknown set of a bdd variable
+  /**
+   * \brief Range iterator for the unknown set of a bdd variable
+   *
+   * \ingroup TaskModelCpltSetVars
+   */
   class CpltSetVarUnknownRanges {
   private:
     Set::UnknownRanges<CpltSet::CpltSetVarImp*> iter;
