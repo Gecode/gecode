@@ -717,27 +717,6 @@ namespace Gecode { namespace Reflection {
     _args->n++;
   }
 
-  ActorSpec&
-  ActorSpec::operator<<(Arg* arg) {
-    add(arg);
-    return (*this);
-  }
-  
-  ActorSpec&
-  ActorSpec::operator<<(int i) {
-    return (*this) << Arg::newInt(i);
-  }
-
-  ActorSpec&
-  ActorSpec::operator<<(unsigned int i) {
-    return (*this) << Arg::newInt(static_cast<int>(i));
-  }
-
-  ActorSpec&
-  ActorSpec::operator<<(double i) {
-    return (*this) << Arg::newInt(static_cast<int>(i));
-  }
-
   void
   ActorSpec::queue(int q) {
     if (_args == NULL)

@@ -395,18 +395,58 @@ namespace Gecode { namespace Reflection {
     //@{
     /// Add \a arg to the specification (as last argument)
     void add(Arg* arg);
-
-    /// Add \a a to specification
-    ActorSpec& operator<<(Arg* a);
-    /// Add \a i to specification
-    ActorSpec& operator<<(int i);
-    /// Add \a i to specification
-    ActorSpec& operator<<(unsigned int i);
-    /// Add \a d to specification, where \a d is cast into an integer
-    ActorSpec& operator<<(double d);
     //@}
   };
-  
+
+}}
+
+/** \brief Add \a a to specification
+ *  \relates Gecode::Reflection::ActorSpec
+ */
+Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, Gecode::Reflection::Arg* arg);
+
+
+/** \brief Add \a i to specification
+ *  \relates Gecode::Reflection::ActorSpec
+ */
+Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, int i);
+
+/** \brief Add \a i to specification
+ *  \relates Gecode::Reflection::ActorSpec
+ */
+Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, unsigned int i);
+
+/** \brief Add \a d to specification, where \a d is cast into an integer
+ *  \relates Gecode::Reflection::ActorSpec
+ */
+Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, double i);
+
+/* Implementation of ActorSpec operators */
+
+forceinline Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, Gecode::Reflection::Arg* arg) {
+  s.add(arg);
+  return s;
+}
+forceinline Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, int i) {
+  return s << Gecode::Reflection::Arg::newInt(i);
+}
+forceinline Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, unsigned int i) {
+  return s << Gecode::Reflection::Arg::newInt(static_cast<int>(i));
+}
+forceinline Gecode::Reflection::ActorSpec
+operator<<(Gecode::Reflection::ActorSpec s, double i) {
+  return s << Gecode::Reflection::Arg::newInt(static_cast<int>(i));
+}
+
+namespace Gecode { namespace Reflection {
+
   /**
     * \brief %Branching specification
     *
