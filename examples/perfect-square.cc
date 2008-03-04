@@ -272,6 +272,8 @@ main(int argc, char* argv[]) {
   opt.propagation(PerfectSquare::PROP_REIFIED);
   opt.propagation(PerfectSquare::PROP_REIFIED,     "reified");
   opt.propagation(PerfectSquare::PROP_CUMULATIVES, "cumulatives");
+  opt.a_d(5);
+  opt.c_d(20);
   opt.parse(argc,argv);
   if (opt.size() >= n_specs) {
     std::cerr << "Error: size must be between 0 and " << n_specs - 1
