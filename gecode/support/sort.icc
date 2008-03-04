@@ -118,7 +118,7 @@ namespace Gecode { namespace Support {
     Type* j = r;
     Type v = *r;
     while (true) {
-      while (lt(*(++i),v));
+      while (lt(*(++i),v)) {}
       while (lt(v,*(--j))) if (j == l) break;
         if (i >= j) break;
         std::swap(*i,*j);

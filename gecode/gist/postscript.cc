@@ -502,7 +502,7 @@ namespace Gecode { namespace Gist {
     std::list<Path*> p;
     PostscriptCursor cursor(tree, p);
     PreorderNodeVisitor<PostscriptCursor> visitor(cursor);
-    while (visitor.next());
+    while (visitor.next()) {}
     
     for (std::list<Path*>::iterator i=p.begin(); i != p.end(); ++i) {
         b.merge((*i)->bb());

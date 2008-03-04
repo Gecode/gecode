@@ -166,7 +166,7 @@ namespace Gecode { namespace Gist {
   VisualNode::hideFailed(void) {
     HideFailedCursor c(this);
     PreorderNodeVisitor<HideFailedCursor> v(c);
-    while (v.next());
+    while (v.next()) {}
     dirtyUp();
   }
   
@@ -174,7 +174,7 @@ namespace Gecode { namespace Gist {
   VisualNode::unhideAll(void) {
     UnhideAllCursor c(this);
     PreorderNodeVisitor<UnhideAllCursor> v(c);
-    while (v.next());
+    while (v.next()) {}
     dirtyUp();
   }
   

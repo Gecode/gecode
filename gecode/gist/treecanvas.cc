@@ -311,10 +311,10 @@ namespace Gecode { namespace Gist {
     int min, max;
     AnalysisCursor ac(root, min, max);
     PostorderNodeVisitor<AnalysisCursor> va(ac);
-    while (va.next());
+    while (va.next()) {}
     DistributeCursor dc(root, min, max);
     PreorderNodeVisitor<DistributeCursor> vd(dc);
-    while (vd.next());
+    while (vd.next()) {}
     if (!heatView)
       toggleHeatView();
     QWidget::update();    
@@ -559,7 +559,7 @@ namespace Gecode { namespace Gist {
       QRect clip(0,0,0,0);
       DrawingCursor dc(root, painter, heatView, clip);
       PreorderNodeVisitor<DrawingCursor> v(dc);
-      while (v.next());      
+      while (v.next()) {}
     }
   }
 
@@ -653,7 +653,7 @@ namespace Gecode { namespace Gist {
                static_cast<int>(origClip.height()/scale));
     DrawingCursor dc(root, painter, heatView, clip);
     PreorderNodeVisitor<DrawingCursor> v(dc);
-    while (v.next());    
+    while (v.next()) {}
   }
 
   void
