@@ -125,7 +125,10 @@ namespace Gecode { namespace Gist {
         else
           painter.setPen(Qt::black);
       }
-      painter.drawLine(myx,myy,parentX,parentY);
+      QPainterPath path;
+      path.moveTo(myx,myy);
+      path.lineTo(parentX,parentY);
+      painter.drawPath(path);
     }
 
     // draw shadow
