@@ -328,11 +328,8 @@ for ($f=0; $f<$n_files; $f++) {
     }
   }
 
-  print STDERR "bits for $f, where max is $me_max_n[$f]:\n";
-
   for ($b=1; (1 << $b) < $me_max_n[$f]; $b++) {}
   $bits[$f] = $b;
-  print STDERR "\t$b\n";
 }
 
 if ($gen_typeicc) {

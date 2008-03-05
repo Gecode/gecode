@@ -52,7 +52,8 @@ public:
   /// Model variants
   enum {
     MODEL_NONE,   ///< Use simple relation constraint
-    MODEL_MATCHING ///< Use matching constraints
+    MODEL_MATCHING, ///< Use matching constraints
+    MODEL_SEQ ///< Use sequence constraints
   };
 
   /// Order of the Steiner problem
@@ -94,7 +95,8 @@ public:
           rel(this, y, SRT_SUP, y1);
           rel(this, y, SRT_SUP, y2);
           rel(this, y, SRT_SUP, y3);
-        } else {
+                    
+        } else  if (opt.model() == MODEL_MATCHING) {
           /* Smart alternative:
            * Using matching constraints
            */
@@ -106,6 +108,25 @@ public:
           IntVarArgs yargs(3);
           yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
           match(this, y,yargs);
+        } else if (opt.model() == MODEL_SEQ) {
+          SetVar tmp20(this,IntSet::empty,1,n);
+          SetVar tmp21(this,IntSet::empty,1,n);
+          SetVar tmp22(this,IntSet::empty,1,n);
+          SetVar tmp23(this,IntSet::empty,1,n);
+          SetVar tmp24(this,IntSet::empty,1,n);
+          SetVar tmp25(this,IntSet::empty,1,n);
+          rel(this, tmp20, SRT_EQ, x1);
+          rel(this, tmp21, SRT_EQ, x2);
+          rel(this, tmp22, SRT_EQ, x3);
+          rel(this, tmp23, SRT_EQ, y1);
+          rel(this, tmp24, SRT_EQ, y2);
+          rel(this, tmp25, SRT_EQ, y3);
+          SetVarArgs xargs(3);
+          xargs[0] = tmp20; xargs[1] = tmp21; xargs[2] = tmp22;
+          SetVarArgs yargs(3);
+          yargs[0] = tmp23; yargs[1] = tmp24; yargs[2] = tmp25;
+          sequentialUnion(this,xargs,x);
+          sequentialUnion(this,yargs,y);          
         }
         
         /* Breaking symmetries */
@@ -158,6 +179,7 @@ main(int argc, char* argv[]) {
   opt.model(Steiner::MODEL_NONE);
   opt.model(Steiner::MODEL_NONE, "rel", "Use simple relation constraints");
   opt.model(Steiner::MODEL_MATCHING, "matching", "Use matching constraints");
+  opt.model(Steiner::MODEL_SEQ, "sequence", "Use sequence constraints");
   opt.size(9);
   opt.iterations(20);
   opt.parse(argc,argv);
