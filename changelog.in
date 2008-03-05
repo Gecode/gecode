@@ -70,6 +70,14 @@ Date: 2008-03-06
 This is a bugfix release.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+The generated med_updated function was incorrect, resulting in potential
+crashes of programs that use SetVars.
+
+[ENTRY]
 Module: cpltset
 What:   documentation
 Rank:   minor

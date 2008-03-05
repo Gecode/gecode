@@ -328,8 +328,11 @@ for ($f=0; $f<$n_files; $f++) {
     }
   }
 
+  print STDERR "bits for $f, where max is $me_max_n[$f]:\n";
+
   for ($b=1; (1 << $b) < $me_max_n[$f]; $b++) {}
   $bits[$f] = $b;
+  print STDERR "\t$b\n";
 }
 
 if ($gen_typeicc) {
@@ -611,7 +614,7 @@ if ($gen_typeicc) {
             print "        Gecode::ModEvent me_n = me_c >> (me_o << 2);\n";
             print "        if (me_n == 0)\n";
             print "          return false;\n";
-            print "        med ^= me_n << med_fst;\n";
+            print "        med ^= (me_n << med_fst) & med_mask;\n";
             print "        break;\n";
           } else {
             print "        static const Gecode::ModEventDelta me_c[$me_max[$f]] = {\n";

@@ -532,7 +532,7 @@ namespace Gecode { namespace Int {
         Gecode::ModEvent me_n = me_c >> (me_o << 2);
         if (me_n == 0)
           return false;
-        med ^= me_n << med_fst;
+        med ^= (me_n << med_fst) & med_mask;
         break;
       }
     case ME_INT_DOM:
