@@ -491,14 +491,12 @@ namespace Gecode {
   DFA::DFAI::copy(void) const {
     DFAI* d = new DFAI(n_trans);
     d->n_states  = n_states;
+    d->n_symbols = n_symbols;
     d->n_trans   = n_trans;
     d->final_fst = final_fst;
     d->final_lst = final_lst;
-    d->n_log     = n_log;
-    d->table = static_cast<HashEntry*>
-      (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
     memcpy(&d->trans[0], &trans[0], sizeof(Transition)*n_trans);
-    memcpy(&d->table[0], &table[0], sizeof(HashEntry)*(1<<n_log));
+    d->fill();
     return d;
   }
 
