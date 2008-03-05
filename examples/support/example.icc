@@ -112,7 +112,10 @@ namespace {
       }
       os << o_sec << ".";
       os.width(3); os.fill('0');
-      os << o_msec << " (" << t << " msec)";
+      os << o_msec
+         << " ("
+         << std::showpoint << std::fixed
+         << std::setprecision(6) << t << " ms)";
     }
   };
   
