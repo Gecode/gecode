@@ -712,7 +712,7 @@ namespace Gecode { namespace Reflection {
     /// Default constructor
     Var(void);
     /// Construct from \a v
-    template <class V> Var(const V& v);
+    template <class V> explicit Var(const V& v);
     /// Construct from \a var with variable type identifier \a vti
     Var(VarImpBase* var, const Support::Symbol& vti);
     /// Update during cloning

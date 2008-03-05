@@ -69,6 +69,35 @@ Date: later
 [DESCRIPTION]
 Fixes
 
+[ENTRY]
+Module: cpltset
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+The CpltSet variables are now in the correct documentation group.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed redraw artefacts on Windows.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed boost serialization.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Made the constructor of Reflection::Var explicit, otherwise overloading for
+output stream operators does not work as expected.
+
 [RELEASE]
 Version: 2.1.0
 Date:    2008-02-29

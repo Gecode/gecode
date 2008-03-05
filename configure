@@ -1373,7 +1373,8 @@ Optional Packages:
   --with-macosx-version-min
                           minimum version of Mac OS X to support
   --with-archiectures     architectures to compile for on Mac OS X
-  --with-boost            path to the boost library (used for serialization)
+  --with-boost-include    path to the boost header files (used for
+                          serialization)
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -6301,15 +6302,15 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 
-# Check whether --with-boost was given.
-if test "${with_boost+set}" = set; then
-  withval=$with_boost;
+# Check whether --with-boost-include was given.
+if test "${with_boost_include+set}" = set; then
+  withval=$with_boost_include;
 fi
 
-  if test "${with_boost:-no}" != "no"; then
-      BOOST_CPPFLAGS=-I${with_boost}/include/boost-1_33_1
+  if test "${with_boost_include:-no}" != "no"; then
+      BOOST_CPPFLAGS=-I${with_boost_include}
 
-      BOOST_LINK="-L${with_boost}/lib -lboost_serialization"
+      BOOST_LINK="-L${with_boost_include}/../../lib -lboost_serialization"
 
       cat >>confdefs.h <<\_ACEOF
 #define GECODE_HAS_BOOST_SERIALIZATION 1

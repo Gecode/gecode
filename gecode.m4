@@ -850,12 +850,12 @@ dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
   [dnl build with support for the boost serialization library
-  AC_ARG_WITH([boost],
-    AC_HELP_STRING([--with-boost],
-	[path to the boost library (used for serialization)]))
-  if test "${with_boost:-no}" != "no"; then
-      AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost}/include/boost-1_33_1])
-      AC_SUBST(BOOST_LINK,["-L${with_boost}/lib -lboost_serialization"])
+  AC_ARG_WITH([boost-include],
+    AC_HELP_STRING([--with-boost-include],
+	[path to the boost header files (used for serialization)]))
+  if test "${with_boost_include:-no}" != "no"; then
+      AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost_include}])
+      AC_SUBST(BOOST_LINK,["-L${with_boost_include}/../../lib -lboost_serialization"])
       AC_DEFINE(GECODE_HAS_BOOST_SERIALIZATION)
   fi
 ])
