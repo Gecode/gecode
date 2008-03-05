@@ -902,18 +902,23 @@ AC_DEFUN([AC_GECODE_QT],
     cd ${ac_gecode_qt_tmpdir}
     echo "QT += script" > a.pro
     qmake
-    if test -f Makefile.Debug; then
-      if test "${enable_debug:-no}" = "no"; then
-	ac_gecode_qt_makefile=Makefile.Release
-      else
-	ac_gecode_qt_makefile=Makefile.Debug
-      fi
+    if test -d a.xcodeproj; then
+      ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
+    elif test -f Makefile.Debug; then
+        if test "${enable_debug:-no}" = "no"; then
+          ac_gecode_qt_makefile=Makefile.Release
+        else
+          ac_gecode_qt_makefile=Makefile.Debug
+        fi
     else
       ac_gecode_qt_makefile=Makefile
     fi
     ac_gecode_qt_defines=`grep ${ac_gecode_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
     ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
     ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+    if test -d a.xcodeproj; then
+      ac_gecode_qt_libs="-framework QtScript -framework QtGui -framework QtCore"
+    fi
     cd ..
     rm -r ${ac_gecode_qt_tmpdir}
     AC_SUBST(QTINCLUDES, ${ac_gecode_qt_inc})
