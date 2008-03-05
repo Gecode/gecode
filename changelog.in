@@ -65,9 +65,9 @@
 
 [RELEASE]
 Version: 2.1.1
-Date: later
+Date: 2008-03-06
 [DESCRIPTION]
-Fixes
+This is a bugfix release.
 
 [ENTRY]
 Module: cpltset
