@@ -608,10 +608,10 @@ if ($gen_typeicc) {
 	    }
             print "\n        );\n";
             print "        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n";
-            print "        Gecode::ModEvent me_n = me_c >> (me_o << 2);\n";
+            print "        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & med_mask;\n";
             print "        if (me_n == 0)\n";
             print "          return false;\n";
-            print "        med ^= (me_n << med_fst) & med_mask;\n";
+            print "        med ^= me_n << med_fst;\n";
             print "        break;\n";
           } else {
             print "        static const Gecode::ModEventDelta me_c[$me_max[$f]] = {\n";
