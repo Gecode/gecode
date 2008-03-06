@@ -70,6 +70,13 @@ Date: 2008-03-06
 This is a bugfix release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Non-shared copying of dfa was broken (matters only for parallel execution).
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   major
@@ -105,6 +112,7 @@ Rank:   minor
 [DESCRIPTION]
 Made the constructor of Reflection::Var explicit, otherwise overloading for
 output stream operators does not work as expected.
+
 
 [RELEASE]
 Version: 2.1.0
