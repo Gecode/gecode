@@ -33,8 +33,8 @@ THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-    int N = 20; // Initial number of matches
-    
+    for (int N = 10; N<=22;N++)  // Initial number of matches
+    {
     int* scopeSize = new int[N+2];
     for (int i=0;i<N+2;i++) 
         scopeSize[i] = 2;
@@ -65,9 +65,9 @@ int main() {
     unsigned long int propsteps=0;
     
     bool outcome  = s.solve(nodes,propsteps);
-    
+    cout << "For " << N << " matches : "<<endl;
     cout << "  outcome: " << ( outcome ? "TRUE" : "FALSE") << endl;
-    cout << "  nodes visited: " << nodes << " " << propsteps << endl;
-    
-    return outcome ? 10:20;
+    cout << "  nodes visited: " << nodes << endl;
+    }
+    return 0;
 }

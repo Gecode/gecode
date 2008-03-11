@@ -35,3 +35,17 @@ int SmallestDomainFirst::score(QSpace* qs, int var) {
             break;
     }
 }
+
+int LargestDomainFirst::score(QSpace* qs, int var) {
+    switch (qs->type_of_v[var]) {
+        case VTYPE_BOOL : 
+            return -2;
+            break;
+        case VTYPE_INT :
+            return (0-(static_cast<IntVar*>(qs->v[var])->size()));
+            break;
+        default :
+            return 1;
+            break;
+    }
+}

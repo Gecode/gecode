@@ -22,8 +22,8 @@ THE SOFTWARE.
 *****************************************************************************/
 
 
-#ifndef VALUEHEUR
-#define VALUEHEUR
+#ifndef __QECODE_VALUEHEUR__
+#define __QECODE_VALUEHEUR__
 #include "qecode.hh"
 #include "implicative.hh"
 using namespace Gecode;
@@ -64,7 +64,7 @@ protected :
     }
 
     BoolVar* getBoolVar(Implicative* imp,int scope,int var) {
-        if (imp->type_of_v[var] != VTYPE_INT) {cout<< "valueHeuristic getBoolVar : Variable "<<var<<" is not bool"<<endl; abort();}
+        if (imp->type_of_v[var] != VTYPE_BOOL) {cout<< "valueHeuristic getBoolVar : Variable "<<var<<" is not bool"<<endl; abort();}
         if (scope<imp->nbSpaces) {
             if (imp->ruleDefined[scope]) 
                 return (static_cast<BoolVar*>(imp->rules[scope]->v[var]));

@@ -1,5 +1,5 @@
 /*****************************************************************[SDFVariableHeuristic.hh]
-Copyright (c) 2007, Universite d'Orleans - Jeremie Vautard, Marco Benedetti,
+Copyright (c) 2008, Universite d'Orleans - Jeremie Vautard, Marco Benedetti,
 Arnaud Lallouet.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,5 +31,10 @@ public:
   QECODE_EXPORT virtual int score(QSpace* qs,int var);
 };
 
+/** A score attribuer for performing largest domain first search. */
+class QECODE_VTABLE_EXPORT LargestDomainFirst : public VariableHeuristic {
+public:
+    QECODE_EXPORT virtual int score(QSpace* qs,int var);
+};
 
 #endif

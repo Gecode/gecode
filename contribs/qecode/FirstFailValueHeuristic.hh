@@ -29,7 +29,10 @@ THE SOFTWARE.
 
 
 class QECODE_VTABLE_EXPORT FirstFailValue : public valueHeuristic {
+private:
+    valueHeuristic* by_default;
 public:
+    QECODE_EXPORT FirstFailValue(valueHeuristic* def) {by_default=def;}
     QECODE_EXPORT virtual int** subSet(Implicative* home,int var,int* nbRanges);
     QECODE_EXPORT virtual ~FirstFailValue() {}
 };

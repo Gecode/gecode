@@ -60,15 +60,10 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
         int ret=qs->status(curvar,propsteps);
         int fret=qs->finalStatus(propsteps);                                     //
         
-#ifdef QDEBUG        
-        cout<<"Solver : finalstatus appelé, résultat = "<<fret<<endl;
-        qs->print();
-#endif
+//   LEAF OBSERVER (fret==1)
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : backtracking"<<endl;                          //
-#endif
+//   BACKTRACK OBSERVER
         return (fret==1)?true:false;                                             //
     }                                                                            //
     ///////////////////////////////////////////////////////////////////////////////
@@ -76,25 +71,18 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
     // Step 2 : if we must branch on a variable, first we check the status of  ////
     // the problem (it could be given at this moment) /////////////////////////////
     int ret = qs->status(curvar,propsteps);                                      //
-#ifdef QDEBUG        
-    cout<<"Solver : status appelé, résultat = "<<ret<<endl;
-    qs->print();
-#endif
+
     if (ret==1) { // If the answer is TRUE...                                    //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : backtracking"<<endl;
-#endif
+   //   BACKTRACK OBSERVER ( depth)
         return true;                                                             //
     }                                                                            //
                                                                                  //
     if (ret==0) { // If the answer is FALSE...                                   //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : backtracking"<<endl;
-#endif
+    //   BACKTRACK OBSERVER ( depth)
         return false;                                                            //
     }                                                                            //
     ///////////////////////////////////////////////////////////////////////////////
@@ -112,16 +100,12 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
             subspace->assign_bool(branchon,tab,*nbRanges);                       //
             break;
     }
-#ifdef QDEBUG        
-    cout<<"Solver : first branch : v"<<branchon<<" = "<<the_set<<endl;
-#endif
+// CHOICE POINT OBSERVER ( depth, branchon, true, tab, *nbRanges)
     if ( rSolve(subspace,nodes, propsteps,branchon) ^ qs->quantification(branchon)) {
         delete subspace;                                                         //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : Backtrack"<<endl;
-#endif
+// BACKTRACK OBSERVER (depth)
         delete [] tab[0];
         delete [] tab[1];
         delete [] tab;
@@ -138,16 +122,12 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
             break;
     }
 
-#ifdef QDEBUG        
-    cout<<"Solver : second branch : v"<<branchon<<" != "<<the_set<<endl;
-#endif
+    // CHOICE POINT OBSERVER ( depth, branchon, true, tab, *nbRanges)
     if ( rSolve(subspace,nodes, propsteps, branchon) ^ qs->quantification(branchon)) {
         delete subspace;                                                         //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : Backtrack"<<endl;
-#endif
+   // BACKTRACK OBSERVER (depth)
         delete [] tab[0];
         delete [] tab[1];
         delete [] tab;
@@ -156,9 +136,7 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
     delete subspace;                                                             //
     qs->backtrack();                                                             //
     bh->backtrack(qs);                                                           //
-#ifdef QDEBUG        
-    cout<<"Solver : Backtrack"<<endl;
-#endif
+    // BACKTRACK OBSERVER (depth)
     delete [] tab[0];
     delete [] tab[1];
     delete [] tab;

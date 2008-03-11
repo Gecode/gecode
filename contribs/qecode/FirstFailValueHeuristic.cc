@@ -29,14 +29,7 @@ int** FirstFailValue::subSet(Implicative* home,int var,int* nbRanges) {
             IntVar* curVar = getIntVar(home,whichSpaceOwns(home,var),var);
             for (int scope=whichSpaceOwns(home,var)+1;scope<nbSpaces(home);scope++) {
                 if (!scopeDefined(home,scope)) {
-                    int zeValue = getIntVar(home,whichSpaceOwns(home,var),var)->min();
-                    *nbRanges = 1;
-                    int** ret = new int*[2];
-                    ret[0]=new int[1];
-                    ret[1]=new int[1];
-                    ret[0][0]=zeValue;
-                    ret[1][0]=zeValue;
-                    return ret;
+                    return by_default->subSet(home,var,nbRanges);
                 }
                 
                 IntVarValues it(*curVar);
@@ -55,25 +48,11 @@ int** FirstFailValue::subSet(Implicative* home,int var,int* nbRanges) {
                 }
             }
             
-            int zeValue = getIntVar(home,whichSpaceOwns(home,var),var)->min();
-            *nbRanges = 1;
-            int** ret = new int*[2];
-            ret[0]=new int[1];
-            ret[1]=new int[1];
-            ret[0][0]=zeValue;
-            ret[1][0]=zeValue;
-            return ret;
+            return by_default->subSet(home,var,nbRanges);
         }
             break;
         case VTYPE_BOOL: {
-            int zeValue = getBoolVar(home,whichSpaceOwns(home,var),var)->min();
-            *nbRanges = 1;
-            int** ret = new int*[2];
-            ret[0]=new int[1];
-            ret[1]=new int[1];
-            ret[0][0]=zeValue;
-            ret[1][0]=zeValue;
-            return ret;
+            return by_default->subSet(home,var,nbRanges);
         }
     break;
             
