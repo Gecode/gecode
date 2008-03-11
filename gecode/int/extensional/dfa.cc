@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     forceinline bool
     operator()(const DFA::Transition& x, const DFA::Transition& y) {
       return ((x.symbol < y.symbol) ||
-              (x.symbol == y.symbol) && (x.i_state < y.i_state));
+              ((x.symbol == y.symbol) && (x.i_state < y.i_state)));
     }
     forceinline static void
     sort(DFA::Transition t[], int n) {
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     forceinline bool
     operator()(const StateGroup& x, const StateGroup& y) {
       return ((x.group < y.group) ||
-              (x.group == y.group) && (x.state < y.state));
+              ((x.group == y.group) && (x.state < y.state)));
     }
     static void
     sort(StateGroup sg[], int n) {

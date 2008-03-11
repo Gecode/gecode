@@ -233,11 +233,12 @@ namespace Gecode { namespace Int { namespace Rel {
                   ViewArray<ViewTuple<View,2> >& xy, bool strict){
     if (xy.size() == 0)
       return strict ? ES_FAILED : ES_OK;
-    if (xy.size() == 1)
+    if (xy.size() == 1) {
       if (strict)
         return Le<View>::post(home,xy[0][0],xy[0][1]);
       else
         return Lq<View>::post(home,xy[0][0],xy[0][1]);
+    }
     (void) new (home) Lex<View>(home,xy,strict);
     return ES_OK;
   }

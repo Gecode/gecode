@@ -94,6 +94,42 @@ namespace Test { namespace Int {
                      (REG(-1) + REG(0) + REG(1) + REG(2)));
          }
      };
+
+     /// Test with simple regular expression
+     class RegSimpleC : public Test {
+     public:
+       /// Create and register test
+       RegSimpleC(void) : Test("Extensional::Reg::Simple::C",6,0,1) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int pos = 0;
+         int s = x.size();
+
+         while (pos < s && x[pos] == 0) ++pos;
+         if (pos + 4 > s) return false;
+
+         for (int i = 0; i < 2; ++i, ++pos)
+           if (x[pos] != 1) return false;
+         if (pos + 2 > s) return false;
+
+         for (int i = 0; i < 1; ++i, ++pos)
+           if (x[pos] != 0) return false;
+         while (pos < s && x[pos] == 0) ++pos;
+         if (pos + 1 > s) return false;
+
+         for (int i = 0; i < 1; ++i, ++pos)
+           if (x[pos] != 1) return false;
+         while (pos < s) if (x[pos++] != 0) return false;
+         return true;
+
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         extensional(home, x,
+                     *REG(0) + REG(1)(2,2) + +REG(0) + REG(1)(1,1) + *REG(0));
+       }
+     };
      
      /// Test with regular expression for distinct constraint
      class RegDistinct : public Test {
@@ -408,6 +444,7 @@ namespace Test { namespace Int {
 
      RegSimpleA ra;
      RegSimpleB rb;
+     RegSimpleC rc;
    
      RegDistinct rd;
    

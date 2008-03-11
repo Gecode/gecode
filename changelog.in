@@ -74,7 +74,7 @@ Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added reified propagators for realtions over Boolean variables.
+Added reified propagators for relations over Boolean variables.
 
 
 [RELEASE]
