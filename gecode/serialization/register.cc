@@ -948,6 +948,20 @@ public:
         }
 #endif
 #if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
+        {
+          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
+          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
+          Gecode::rel(home, x0,x1,x2,x3);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -974,6 +988,20 @@ public:
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
           int x2 = static_cast<int>(spec[2]->toInt());
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
+          Gecode::rel(home, x0,x1,x2,x3);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]))
+        {
+          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          int x2 = static_cast<int>(spec[2]->toInt());
+          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
@@ -1320,6 +1348,22 @@ public:
         }
 #endif
 #if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
+        {
+          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
+          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
+          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
+          Gecode::rel(home, x0,x1,x2,x3,x4);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1350,6 +1394,22 @@ public:
           int x2 = static_cast<int>(spec[2]->toInt());
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
           Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
+          Gecode::rel(home, x0,x1,x2,x3,x4);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]))
+        {
+          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          int x2 = static_cast<int>(spec[2]->toInt());
+          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
+          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
@@ -1607,6 +1667,42 @@ public:
             isEnum_PropKind(spec[5]))
         {
           Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          int x2 = static_cast<int>(spec[2]->toInt());
+          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
+          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
+          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
+          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]) &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
+        {
+          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
+          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
+          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
+          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
+          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
+          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntRelType(spec[1]) &&
+            spec[2]->isInt() &&
+            isVar<Gecode::BoolVar>(vm, spec[3]) &&
+            isEnum_IntConLevel(spec[4]) &&
+            isEnum_PropKind(spec[5]))
+        {
+          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
           Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
           int x2 = static_cast<int>(spec[2]->toInt());
           Gecode::BoolVar x3(vm.var(spec[3]->toVar()));

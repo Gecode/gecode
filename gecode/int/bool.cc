@@ -113,6 +113,146 @@ namespace Gecode {
   }
 
   void
+  rel(Space* home, BoolVar x0, IntRelType r, int n, IntConLevel, PropKind) {
+    using namespace Int;
+    if (home->failed()) return;
+    BoolView x(x0);
+    if (n == 0) {
+      switch (r) {
+      case IRT_LQ:
+      case IRT_EQ:
+        GECODE_ME_FAIL(home,x.zero(home)); break;
+      case IRT_NQ:
+      case IRT_GR:
+        GECODE_ME_FAIL(home,x.one(home)); break;
+      case IRT_LE:
+        home->fail(); break;
+      case IRT_GQ:
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else if (n == 1) {
+      switch (r) {
+      case IRT_GQ:
+      case IRT_EQ:
+        GECODE_ME_FAIL(home,x.one(home)); break;
+      case IRT_NQ:
+      case IRT_LE:
+        GECODE_ME_FAIL(home,x.zero(home)); break;
+      case IRT_GR:
+        home->fail(); break;
+      case IRT_LQ:
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else {
+      throw NotZeroOne("Int::rel");
+    }
+  }
+
+  void
+  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
+      IntConLevel, PropKind) {
+    using namespace Int;
+    if (home->failed()) return;
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,BoolView>
+                           ::post(home,x0,x1,b)));
+      break;
+    case IRT_NQ: 
+      {
+        NegBoolView n(b);
+        GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,NegBoolView>
+                             ::post(home,x0,x1,n)));
+      }
+      break;
+    case IRT_GQ:
+      std::swap(x0,x1);
+    case IRT_LQ:
+      {
+        NegBoolView n0(x0);
+        GECODE_ES_FAIL(home,(Bool::Or<NegBoolView,BoolView,BoolView>
+                             ::post(home,n0,x1,b))); 
+      }
+      break;
+    case IRT_GR:
+      std::swap(x0,x1);
+    case IRT_LE:
+      {
+        NegBoolView n1(x1), n(b);
+        GECODE_ES_FAIL(home,(Bool::Or<BoolView,NegBoolView,NegBoolView>
+                             ::post(home,x0,n1,n))); 
+      }
+      break;
+    default:
+      throw UnknownRelation("Int::rel");
+    }
+  }
+
+  void
+  rel(Space* home, BoolVar x0, IntRelType r, int n, BoolVar b,
+      IntConLevel, PropKind) {
+    using namespace Int;
+    if (home->failed()) return;
+    BoolView x(x0);
+    BoolView y(b);
+    if (n == 0) {
+      switch (r) {
+      case IRT_LQ:
+      case IRT_EQ:
+        {
+          NegBoolView n(y);
+          GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
+                               ::post(home,x,n)));
+        }
+        break;
+      case IRT_NQ:
+      case IRT_GR:
+        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
+                             ::post(home,x,y)));
+        break;
+      case IRT_LE:
+        GECODE_ME_FAIL(home,y.zero(home)); 
+        break;
+      case IRT_GQ:
+        GECODE_ME_FAIL(home,y.one(home)); 
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else if (n == 1) {
+      switch (r) {
+      case IRT_GQ:
+      case IRT_EQ:
+        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
+                             ::post(home,x,y)));
+        break;
+      case IRT_NQ:
+      case IRT_LE:
+        {
+          NegBoolView n(y);
+          GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
+                               ::post(home,x,n)));
+        }
+        break;
+      case IRT_GR:
+        GECODE_ME_FAIL(home,y.zero(home)); 
+        break;
+      case IRT_LQ:
+        GECODE_ME_FAIL(home,y.one(home)); 
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else {
+      throw NotZeroOne("Int::rel");
+    }
+  }
+
+  void
   rel(Space* home, const BoolVarArgs& x, IntRelType r, BoolVar y, 
       IntConLevel, PropKind) {
     using namespace Int;
@@ -155,46 +295,6 @@ namespace Gecode {
       break;
     default:
       throw UnknownRelation("Int::rel");
-    }
-  }
-
-  void
-  rel(Space* home, BoolVar x0, IntRelType r, int n, IntConLevel, PropKind) {
-    using namespace Int;
-    if (home->failed()) return;
-    BoolView x(x0);
-    if (n == 0) {
-      switch (r) {
-      case IRT_LQ:
-      case IRT_EQ:
-        GECODE_ME_FAIL(home,x.zero(home)); break;
-      case IRT_NQ:
-      case IRT_GR:
-        GECODE_ME_FAIL(home,x.one(home)); break;
-      case IRT_LE:
-        home->fail(); break;
-      case IRT_GQ:
-        break;
-      default:
-        throw UnknownRelation("Int::rel");
-      }
-    } else if (n == 1) {
-      switch (r) {
-      case IRT_GQ:
-      case IRT_EQ:
-        GECODE_ME_FAIL(home,x.one(home)); break;
-      case IRT_NQ:
-      case IRT_LE:
-        GECODE_ME_FAIL(home,x.zero(home)); break;
-      case IRT_GR:
-        home->fail(); break;
-      case IRT_LQ:
-        break;
-      default:
-        throw UnknownRelation("Int::rel");
-      }
-    } else {
-      throw NotZeroOne("Int::rel");
     }
   }
 
@@ -624,6 +724,7 @@ namespace Gecode {
     GECODE_REGISTER3(Bool::Or<NegBoolView, BoolView, BoolView>);
     GECODE_REGISTER3(Bool::Or<NegBoolView, NegBoolView, NegBoolView>);
     GECODE_REGISTER3(Bool::Or<BoolView, BoolView, BoolView>);
+    GECODE_REGISTER3(Bool::Or<BoolView, NegBoolView, NegBoolView>);
     
     GECODE_REGISTER1(Bool::OrTrueSubsumed<NegBoolView>);
     GECODE_REGISTER1(Bool::OrTrueSubsumed<BoolView>);

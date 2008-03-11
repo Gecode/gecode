@@ -843,6 +843,10 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /// Post propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
+  GECODE_INT_EXPORT void
+  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /// Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   rel(Space* home, const BoolVarArgs& x, IntRelType r, BoolVar y,
@@ -855,6 +859,15 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space* home, BoolVar x, IntRelType r, int n,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /**
+   * \brief Propagates \f$(x \sim_r n)\Leftrightarrow b\f$
+   *
+   * Throws an exception of type Int::NotZeroOne, if \a n is neither
+   * 0 or 1.
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, BoolVar x, IntRelType r, int n, BoolVar b,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /**
    * \brief Propagates \f$ x_i \sim_r n \f$ for all \f$0\leq i<|x|\f$
