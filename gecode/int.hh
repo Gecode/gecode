@@ -1751,7 +1751,6 @@ namespace Gecode {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    */
-
   //@{
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
   GECODE_INT_EXPORT void
@@ -1898,6 +1897,7 @@ namespace Gecode {
 
   /**
    * \defgroup TaskModelIntUnshare Unsharing variables
+   * \ingroup TaskModelInt
    *
    * Unsharing replaces multiple occurences of the same variable by
    * fresh yet equal (enforced through propagators for equality)
@@ -1934,7 +1934,6 @@ namespace Gecode {
    * \defgroup TaskModelIntBranch Branching
    * \ingroup TaskModelInt
    */
-
   //@{
   /// Which variable to select for branching
   enum IntVarBranch {
