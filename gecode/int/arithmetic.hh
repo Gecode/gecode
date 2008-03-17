@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -242,7 +242,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
@@ -384,7 +384,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
   };
