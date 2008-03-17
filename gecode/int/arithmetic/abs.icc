@@ -212,40 +212,37 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   ExecStatus
   AbsDom<View>::propagate(Space* home, ModEventDelta med) {
-
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_bnd<View,Rel::EqDom>(home, this, x0, x1)));
       return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
     }
 
-    Iter::Ranges::Singleton positive(0, Limits::max);
-    Iter::Ranges::Singleton negative(Limits::min, 0);
+    {
+      ViewRanges<View> i(x0), j(x0);
 
-    IntVarRanges xr1(x0);
-    IntVarRanges xr2(x0);
+      using namespace Iter::Ranges;
+      Positive<ViewRanges<View> > p(i);
+      Negative<ViewRanges<View> > n(j);
 
-    Iter::Ranges::Inter<Iter::Ranges::Singleton,
-      IntVarRanges> posInter(positive, xr1);
-    Iter::Ranges::Inter<Iter::Ranges::Singleton,
-      IntVarRanges> negInter(negative, xr2);
-    Iter::Ranges::Minus<Iter::Ranges::Inter<Iter::Ranges::Singleton,
-      IntVarRanges> > mneg(negInter);
-    Iter::Ranges::Union<Iter::Ranges::Inter<Iter::Ranges::Singleton,
-      IntVarRanges>,
-      Iter::Ranges::Minus<Iter::Ranges::Inter<
-      Iter::Ranges::Singleton,
-      IntVarRanges> > >
-      u(posInter, mneg);
+      Minus<Negative<ViewRanges<View> > > m(n);
 
-    GECODE_ME_CHECK(x1.inter_r(home, u));
+      Union<Positive<ViewRanges<View> >,
+        Minus<Negative<ViewRanges<View> > > > u(p,m);
+      
+      GECODE_ME_CHECK(x1.inter_r(home,u,false));
 
-    IntVarRanges x1r1(x1);
-    IntVarRanges x1r2(x1);
+    }
 
-    Iter::Ranges::Minus<IntVarRanges> x1m(x1r2);
-    Iter::Ranges::Union<IntVarRanges,
-      Iter::Ranges::Minus<IntVarRanges> > u2(x1r1,x1m);
-    GECODE_ME_CHECK(x0.inter_r(home, u2));
+    {
+      ViewRanges<View> i(x1), j(x1);
+
+      using namespace Iter::Ranges;
+      Minus<ViewRanges<View> > m(j);
+
+      Union<ViewRanges<View>,Minus<ViewRanges<View> > > u(i,m);
+      
+      GECODE_ME_CHECK(x0.inter_r(home,u,false));
+    }
 
     if (x1.assigned())
       return ES_SUBSUMED(this,home);
