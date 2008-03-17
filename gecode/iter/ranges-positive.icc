@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Christian Schulte, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,94 +35,103 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+#include <algorithm>
+
+namespace Gecode { namespace Iter { namespace Ranges {
 
   /**
-   * \brief Value iterator for pointwise minus of a value iterator
+   * \brief Range iterator for positive part of a range iterator
    *
-   * This iterator in effect changes the order of how values
-   * are iterated: the first values of the input iterator defines
-   * the last value of the Minus iterator. Upon initialization
-   * all values of the input iterator are stored in an array
-   * which later allows iteration in inverse direction.
+   * If \a strict is true, zero is excluded.
    *
-   * \ingroup FuncIterValues
+   * \ingroup FuncIterRanges
    */
-
-  template <class I>
-  class Minus  {
+  template <class I, bool strict=false>
+  class Positive  {
   private:
-    /// %Values stored
-    SharedArray<int> v;
-    /// Current value position
-    int c;
+    /// Input iterator
+    I i;
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    Minus(void);
-    /// Initialize with values from \a i
-    Minus(I& i);
-    /// Initialize with values from \a i
+    Positive(void);
+    /// Initialize with ranges from \a i
+    Positive(I& i);
+    /// Initialize with ranges from \a i
     void init(I& i);
     //@}
 
     /// \name Iteration control
     //@{
-    /// Test whether iterator is still at a value or done
+    /// Test whether iterator is still at a range or done
     bool operator()(void) const;
-    /// Move iterator to next value (if possible)
+    /// Move iterator to next range (if possible)
     void operator++(void);
     //@}
 
-    /// \name Value access
+    /// \name Range access
     //@{
-    /// Return current value
-    int val(void) const;
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
     //@}
   };
 
 
-  template <class I>
+  template <class I, bool strict>
   forceinline
-  Minus<I>::Minus(void) {}
+  Positive<I,strict>::Positive(void) {}
 
-  template <class I>
-  inline void
-  Minus<I>::init(I& i) {
-    Support::DynamicArray<int> d;
-    int n=0;
-    while (i()) {
-      d[n] = -i.val();
-      ++n; ++i;
+  template <class I, bool strict>
+  forceinline void
+  Positive<I,strict>::init(I& i0) {
+    i=i0;
+    if (strict) {
+      while (i() && (i.max() < 0)) ++i;
+    } else {
+      while (i() && (i.max() <= 0)) ++i;
     }
-    v.init(n);
-    for (int j=n; j--; )
-      v[j]=d[j];
-    c = n-1;
   }
 
-  template <class I>
+  template <class I, bool strict>
   forceinline
-  Minus<I>::Minus(I& i) {
+  Positive<I,strict>::Positive(I& i) {
     init(i);
   }
 
-  template <class I>
+  template <class I, bool strict>
   forceinline void
-  Minus<I>::operator++(void) {
-    c--;
+  Positive<I,strict>::operator++(void) {
+    ++i;
   }
-  template <class I>
+  template <class I, bool strict>
   forceinline bool
-  Minus<I>::operator()(void) const {
-    return c >= 0;
+  Positive<I,strict>::operator()(void) const {
+    return i();
   }
 
-  template <class I>
+  template <class I, bool strict>
   forceinline int
-  Minus<I>::val(void) const {
-    return v[c];
+  Positive<I,strict>::min(void) const {
+    if (strict) {
+      return std::max(i.min(),1);
+    } else {
+      return std::max(i.min(),0);
+    }
+  }
+  template <class I, bool strict>
+  forceinline int
+  Positive<I,strict>::max(void) const {
+    return i.max();
+  }
+  template <class I, bool strict>
+  forceinline unsigned int
+  Positive<I,strict>::width(void) const {
+    return static_cast<unsigned int>(max()-min()+1);
   }
 
 }}}
