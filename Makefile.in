@@ -562,7 +562,7 @@ ITERHDR0 =							\
 	values-array values-minus values-offset values-ranges 	\
 	values-positive values-negative				\
 	values-singleton values-unique values-inter 		\
-	values-union						\
+	values-union values-map					\
 	virtual-ranges virtual-ranges-union			\
 	virtual-ranges-inter virtual-ranges-compl
 ITERHDR = gecode/iter.hh \

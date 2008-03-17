@@ -1692,7 +1692,8 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
    *
-   * Only bounds-consistency is supported.
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
   abs(Space* home, IntVar x0, IntVar x1,
@@ -1708,7 +1709,8 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$x_0\cdot x_0=x_1\f$
    *
-   * Only bounds-consistency is supported.
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
   sqr(Space* home, IntVar x0, IntVar x1,

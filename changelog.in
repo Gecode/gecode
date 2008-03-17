@@ -74,6 +74,20 @@ Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
+Added domain consistent squaring propagator (sqr).
+
+[ENTRY]
+Module: int
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Added documentation for domain consistent absolute value (abs) propagator.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
 Added reified propagators for relations over Boolean variables.
 
 

@@ -222,14 +222,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides multiplication for positive views only.
    */
   template <class VA, class VB>
-  class SqrPlus : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
+  class SqrPlusBnd : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
   protected:
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x0;
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x1;
     /// Constructor for posting
-    SqrPlus(Space* home, VA x0, VB x1);
+    SqrPlusBnd(Space* home, VA x0, VB x1);
     /// Constructor for cloning \a p
-    SqrPlus(Space* home, bool share, SqrPlus<VA,VB>& p);
+    SqrPlusBnd(Space* home, bool share, SqrPlusBnd<VA,VB>& p);
   public:
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static ExecStatus post(Space* home, VA x0, VB x1);
@@ -254,21 +254,101 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Sqr : public BinaryPropagator<View,PC_INT_BND> {
+  class SqrBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Sqr(Space* home, bool share, Sqr<View>& p);
+    SqrBnd(Space* home, bool share, SqrBnd<View>& p);
     /// Constructor for posting
-    Sqr(Space* home, View x0, View x1);
+    SqrBnd(Space* home, View x0, View x1);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    /// Cost function (defined as PC_BINARY_HI)
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Post propagator \f$x_0\cdot x_0=x_1\f$
+    static ExecStatus post(Space* home, View x0, View x1);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+
+
+  /**
+   * \brief Domain consistent positive square propagator
+   *
+   * This propagator provides multiplication for positive views only.
+   */
+  template <class VA, class VB>
+  class SqrPlusDom : public MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM> {
+  protected:
+    using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x0;
+    using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x1;
+    /// Constructor for posting
+    SqrPlusDom(Space* home, VA x0, VB x1);
+    /// Constructor for cloning \a p
+    SqrPlusDom(Space* home, bool share, SqrPlusDom<VA,VB>& p);
+  public:
+    /// Post propagator \f$x_0\cdot x_0=x_1\f$
+    static ExecStatus post(Space* home, VA x0, VB x1);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If in stage for bounds propagation, the cost is
+     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     */
+    virtual PropCost cost(ModEventDelta med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief Domain consistent square propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class SqrDom : public BinaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<View,PC_INT_DOM>::x0;
+    using BinaryPropagator<View,PC_INT_DOM>::x1;
+
+    /// Constructor for cloning \a p
+    SqrDom(Space* home, bool share, SqrDom<View>& p);
+    /// Constructor for posting
+    SqrDom(Space* home, View x0, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If in stage for bounds propagation, the cost is
+     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     */
     virtual PropCost cost(ModEventDelta med) const;
     /// Post propagator for specification
     static void post(Space* home, Reflection::VarMap& vars,

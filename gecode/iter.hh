@@ -74,6 +74,7 @@ namespace Gecode {
 
 #include "gecode/iter/values-array.icc"
 #include "gecode/iter/values-inter.icc"
+#include "gecode/iter/values-map.icc"
 #include "gecode/iter/values-minus.icc"
 #include "gecode/iter/values-negative.icc"
 #include "gecode/iter/values-offset.icc"
