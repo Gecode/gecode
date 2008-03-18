@@ -50,7 +50,7 @@
 namespace Gecode { namespace Int { namespace Count {
 
   /**
-   * Relations for domain-consistent counting
+   * Relations for domain consistent counting
    *
    */
   //@{

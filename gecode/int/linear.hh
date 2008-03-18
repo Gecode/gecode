@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent binary linear equality
+   * \brief %Propagator for bounds consistent binary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for reified bounds-consistent binary linear equality
+   * \brief %Propagator for reified bounds consistent binary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent binary linear disequality
+   * \brief %Propagator for bounds consistent binary linear disequality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent binary linear less or equal
+   * \brief %Propagator for bounds consistent binary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
@@ -292,7 +292,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent binary linear greater or equal
+   * \brief %Propagator for bounds consistent binary linear greater or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
@@ -334,7 +334,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for reified bounds-consistent binary linear less or equal
+   * \brief %Propagator for reified bounds consistent binary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
@@ -422,7 +422,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent ternary linear equality
+   * \brief %Propagator for bounds consistent ternary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A, \a B,
@@ -465,7 +465,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent ternary linear disquality
+   * \brief %Propagator for bounds consistent ternary linear disquality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A, \a B,
@@ -508,7 +508,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent ternary linear less or equal
+   * \brief %Propagator for bounds consistent ternary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a A, \a B,
@@ -639,7 +639,7 @@ namespace Gecode { namespace Int { namespace Linear {
                 Val& c, Val& sl, Val& su);
 
   /**
-   * \brief %Propagator for bounds-consistent n-ary linear equality
+   * \brief %Propagator for bounds consistent n-ary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
@@ -680,7 +680,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for domain-consistent n-ary linear equality
+   * \brief %Propagator for domain consistent n-ary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a View
@@ -722,7 +722,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for reified bounds-consistent n-ary linear equality
+   * \brief %Propagator for reified bounds consistent n-ary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
@@ -764,7 +764,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent n-ary linear disequality
+   * \brief %Propagator for bounds consistent n-ary linear disequality
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
@@ -805,7 +805,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for bounds-consistent n-ary linear less or equal
+   * \brief %Propagator for bounds consistent n-ary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
@@ -846,7 +846,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for reified bounds-consistent n-ary linear less or equal
+   * \brief %Propagator for reified bounds consistent n-ary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
@@ -1694,7 +1694,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param b Boolean control view
    *
    * All variants for linear constraints share the following properties:
-   *  - Only bounds-consistency is supported.
+   *  - Only bounds consistency is supported.
    *  - Variables occuring multiply in the term array are replaced
    *    by a single occurence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.

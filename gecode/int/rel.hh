@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Rel {
    */
 
   /**
-   * \brief Binary domain-consistent equality propagator
+   * \brief Binary domain consistent equality propagator
    *
    * Uses staging by first performing bounds propagation and only
    * then domain propagation.
@@ -99,12 +99,12 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post domain-consistent propagator \f$ x_0 = x_1\f$
+    /// Post domain consistent propagator \f$ x_0 = x_1\f$
     static  ExecStatus post(Space* home, View0 x0, View1 x1);
   };
 
   /**
-   * \brief Binary bounds-consistent equality propagator
+   * \brief Binary bounds consistent equality propagator
    *
    * Requires \code #include "gecode/int/rel.hh" \endcode
    * \ingroup FuncIntProp
@@ -135,12 +135,12 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post bounds-consistent propagator \f$ x_0 = x_1\f$
+    /// Post bounds consistent propagator \f$ x_0 = x_1\f$
     static  ExecStatus post(Space* home, View0 x0, View1 x1);
   };
 
   /**
-   * \brief n-ary domain-consistent equality propagator
+   * \brief n-ary domain consistent equality propagator
    *
    * Uses staging by first performing bounds propagation and only
    * then domain propagation.
@@ -178,12 +178,12 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post domain-consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
+    /// Post domain consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
     static  ExecStatus post(Space* home, ViewArray<View>& x);
   };
 
   /**
-   * \brief n-ary bounds-consistent equality propagator
+   * \brief n-ary bounds consistent equality propagator
    *
    * Requires \code #include "gecode/int/rel.hh" \endcode
    * \ingroup FuncIntProp
@@ -217,12 +217,12 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post bounds-consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
+    /// Post bounds consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
     static  ExecStatus post(Space* home, ViewArray<View>& x);
   };
 
   /**
-   * \brief Reified binary domain-consistent equality propagator
+   * \brief Reified binary domain consistent equality propagator
    *
    * Requires \code #include "gecode/int/rel.hh" \endcode
    * \ingroup FuncIntProp
@@ -251,12 +251,12 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post domain-consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
+    /// Post domain consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
   };
 
   /**
-   * \brief Reified binary bounds-consistent equality propagator
+   * \brief Reified binary bounds consistent equality propagator
    *
    * Requires \code #include "gecode/int/rel.hh" \endcode
    * \ingroup FuncIntProp
@@ -285,12 +285,12 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post bounds-consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
+    /// Post bounds consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
   };
 
   /**
-   * \brief Reified domain-consistent equality with integer propagator
+   * \brief Reified domain consistent equality with integer propagator
    *
    * Requires \code #include "gecode/int/rel.hh" \endcode
    * \ingroup FuncIntProp
@@ -320,12 +320,12 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post domain-consistent propagator \f$ (x = c)\Leftrightarrow b\f$
+    /// Post domain consistent propagator \f$ (x = c)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x, int c, CtrlView b);
   };
 
   /**
-   * \brief Reified bounds-consistent equality with integer propagator
+   * \brief Reified bounds consistent equality with integer propagator
    *
    * Requires \code #include "gecode/int/rel.hh" \endcode
    * \ingroup FuncIntProp
@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace Rel {
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post bounds-consistent propagator \f$ (x = c)\Leftrightarrow b\f$
+    /// Post bounds consistent propagator \f$ (x = c)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x, int c, CtrlView b);
   };
 

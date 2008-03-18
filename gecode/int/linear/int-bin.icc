@@ -146,7 +146,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   /*
-   * Binary bounds-consistent linear equality
+   * Binary bounds consistent linear equality
    *
    */
 
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
-   * Reified binary bounds-consistent linear equality
+   * Reified binary bounds consistent linear equality
    *
    */
 
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
-   * Binary domain-consistent linear disequality
+   * Binary domain consistent linear disequality
    *
    */
   template <class Val, class A, class B>
@@ -392,7 +392,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
-   * Binary domain-consistent less equal
+   * Binary domain consistent less equal
    *
    */
 
@@ -461,7 +461,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
-   * Binary domain-consistent greater equal
+   * Binary domain consistent greater equal
    *
    */
 
@@ -530,7 +530,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
-   * Reified binary domain-consistent less equal
+   * Reified binary domain consistent less equal
    *
    */
 

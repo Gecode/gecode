@@ -118,9 +118,9 @@ namespace Gecode { namespace Int { namespace Circuit {
   };
 
   /**
-   * \brief "Domain-consistent" circuit propagator
+   * \brief "Domain consistent" circuit propagator
    *
-   * Propagates domain-consistent distinct, checks that
+   * Propagates domain consistent distinct, checks that
    * the induced variable value graph is stronlgy connected, and
    * prunes too shot cycles.
    *

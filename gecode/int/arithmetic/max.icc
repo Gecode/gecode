@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
-   * Ternary bounds-consistent maximum
+   * Ternary bounds consistent maximum
    *
    */
 
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   /*
-   * Nary bounds-consistent maximum
+   * Nary bounds consistent maximum
    *
    */
 

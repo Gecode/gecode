@@ -338,7 +338,7 @@ namespace Gecode { namespace Int { namespace Element {
 
 
   /*
-   * Bounds-consistent propagator
+   * Bounds consistent propagator
    *
    */
 

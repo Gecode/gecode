@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 
   /*
-   * Ternary domain-consistent distinct
+   * Ternary domain consistent distinct
    *
    */
 

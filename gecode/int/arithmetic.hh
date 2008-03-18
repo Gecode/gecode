@@ -53,7 +53,7 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /**
-   * \brief Bounds-consistent absolute value propagator
+   * \brief Bounds consistent absolute value propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home, ModEventDelta med);
-    /// Post bounds-consistent propagator \f$ |x_0|=x_1\f$
+    /// Post bounds consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
     /// Post propagator for specification
     static void post(Space* home, Reflection::VarMap& vars,
@@ -94,17 +94,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
-   * \brief Perform bounds-consistent absolute value propagation
+   * \brief Perform bounds consistent absolute value propagation
    *
    * This is actually the propagation algorithm for AbsBnd.
    * It is available as separate function as it is reused for
-   * domain-consistent distinct propagators.
+   * domain consistent distinct propagators.
    */
   template <class View>
   ExecStatus prop_bnd(Space* home, Propagator* p, ViewArray<View>&);
 
   /**
-   * \brief Domain-consistent absolute value propagator
+   * \brief Domain consistent absolute value propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home, ModEventDelta med);
-    /// Post domain-consistent propagator \f$ |x_0|=x_1\f$
+    /// Post domain consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
     /// Post propagator for specification
     static void post(Space* home, Reflection::VarMap& vars,
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
-   * \brief Bounds-consistent ternary maximum propagator
+   * \brief Bounds consistent ternary maximum propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
-   * \brief Bounds-consistent n-ary maximum propagator
+   * \brief Bounds consistent n-ary maximum propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /**
-   * \brief Bounds-consistent positive square propagator
+   * \brief Bounds consistent positive square propagator
    *
    * This propagator provides multiplication for positive views only.
    */
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
-   * \brief Bounds-consistent square propagator
+   * \brief Bounds consistent square propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
@@ -365,7 +365,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /**
-   * \brief Bounds-consistent square root propagator
+   * \brief Bounds consistent square root propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
@@ -441,7 +441,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /**
-   * \brief Bounds-consistent propagator for \f$x_0\times x_1=x_0\f$
+   * \brief Bounds consistent propagator for \f$x_0\times x_1=x_0\f$
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
@@ -476,7 +476,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /**
-   * \brief Bounds-consistent positive multiplication propagator
+   * \brief Bounds consistent positive multiplication propagator
    *
    * This propagator provides multiplication for positive views only.
    */
@@ -509,7 +509,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
-   * \brief Bounds-consistent multiplication propagator
+   * \brief Bounds consistent multiplication propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    *

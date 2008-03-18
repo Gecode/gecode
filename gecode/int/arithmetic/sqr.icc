@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
-   * Positive bounds-consistent squaring
+   * Positive bounds consistent squaring
    *
    */
   template <class VA, class VB>
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /*
-   * Bounds-consistent squaring
+   * Bounds consistent squaring
    *
    */
 

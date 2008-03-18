@@ -742,7 +742,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$|x|\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   abs(Space* home, IntVar x, 
@@ -750,7 +750,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$\min(x,y)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   min(Space* home, IntVar x, IntVar y, 
@@ -758,7 +758,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$\min(x)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   min(Space* home, const IntVarArgs& x, 
@@ -766,7 +766,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$\max(x,y)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   max(Space* home, IntVar x, IntVar y, 
@@ -774,7 +774,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$\max(x)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   max(Space* home, const IntVarArgs& x, 
@@ -782,7 +782,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$x\cdot y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   mult(Space* home, IntVar x, IntVar y, 
@@ -790,7 +790,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$x^2\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   sqr(Space* home, IntVar x, 
@@ -798,7 +798,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   sqrt(Space* home, IntVar x, 
@@ -806,7 +806,7 @@ namespace Gecode {
   /** \brief Return variable constrained to \f$x+y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   plus(Space* home, IntVar x, IntVar y, 
@@ -814,7 +814,7 @@ namespace Gecode {
   /** Return variable constrained to \f$x-y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain-consistency (\a icl = ICL_DOM).
+   * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_MINIMODEL_EXPORT IntVar
   minus(Space* home, IntVar x, IntVar y, 
@@ -865,7 +865,7 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, int n, int m,
@@ -874,7 +874,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, IntVar y, int m,
@@ -883,7 +883,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
@@ -895,7 +895,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, int n, IntVar z,
@@ -904,7 +904,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
@@ -913,7 +913,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
@@ -926,7 +926,7 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, int n, int m,
@@ -935,7 +935,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, IntVar y, int m,
@@ -944,7 +944,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
@@ -956,7 +956,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, int n, IntVar z,
@@ -965,7 +965,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
@@ -974,7 +974,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
@@ -987,7 +987,7 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, int n, int m,
@@ -996,7 +996,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, IntVar y, int m,
@@ -1005,7 +1005,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
@@ -1017,7 +1017,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, int n, IntVar z,
@@ -1026,7 +1026,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
@@ -1035,7 +1035,7 @@ namespace Gecode {
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
    *
-   * Supports domain-consistent propagation only.
+   * Supports domain consistent propagation only.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.

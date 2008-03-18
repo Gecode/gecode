@@ -132,7 +132,7 @@ namespace Test {
       Gecode::IntConLevel icl;
       /// Propagation kind
       Gecode::PropKind pk;
-      /// Whether to test for domain-consistency
+      /// Whether to test for domain consistency
       bool testdomcon;
       /// Whether to perform search test
       bool testsearch;

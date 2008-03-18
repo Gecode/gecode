@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
-   * Bounds-consistent square root
+   * Bounds consistent square root
    *
    */
 

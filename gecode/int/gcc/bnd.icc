@@ -592,7 +592,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /**
-   * \brief Sharing test for the bounds-consistent global cardinality
+   * \brief Sharing test for the bounds consistent global cardinality
    * propagator.
    *
    * Due to parametrization on the problem views, \a View1 and the

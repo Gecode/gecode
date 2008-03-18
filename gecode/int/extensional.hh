@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   class State;
 
   /**
-   * \brief Domain-consistent layered graph (regular) propagator
+   * \brief Domain consistent layered graph (regular) propagator
    *
    * The algorithm for the regular propagator is based on:
    *   Gilles Pesant, A Regular Language Membership Constraint
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   typedef BitSet* Domain;
 
   /**
-   * \brief Base for domain-consistent extensional propagation
+   * \brief Base for domain consistent extensional propagation
    *
    * This class contains support for implementing domain consistent
    * extensional propagation algorithms that use positive tuple sets and
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 namespace Gecode { namespace Int { namespace Extensional {
 
   /**
-   * \brief Domain-consistent extensional propagator
+   * \brief Domain consistent extensional propagator
    *
    * This propagator implements a basic extensional propagation
    * algorithm. It is based on GAC2001, and as such it does not fully
@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 namespace Gecode { namespace Int { namespace Extensional {
   /**
-   * \brief Domain-consistent extensional propagator
+   * \brief Domain consistent extensional propagator
    *
    * This propagator implements an incremental propagation algorithm
    * where supports are maintained explicitly.

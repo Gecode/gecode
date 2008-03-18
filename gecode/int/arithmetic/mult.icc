@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /*
-   * Positive bounds-consistent multiplication
+   * Positive bounds consistent multiplication
    *
    */
   template <class Val, class VA, class VB, class VC>
@@ -333,7 +333,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   /*
-   * Bounds-consistent multiplication
+   * Bounds consistent multiplication
    *
    */
 
