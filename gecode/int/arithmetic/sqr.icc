@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
 
   /// Mapping integer to square
-  class ValMapSqr {
+  class ValuesMapSqr {
   public:
     /// Perform mapping
     forceinline int val(int n) const {
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /// Mapping integer to square root
-  class ValMapSqrt {
+  class ValuesMapSqrt {
   public:
     /// Perform mapping
     forceinline int val(int n) const {
@@ -317,13 +317,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     
     {
       ViewValues<VA> v0(x0);
-      Iter::Values::Map<ViewValues<VA>,ValMapSqr> s0(v0);
+      Iter::Values::Map<ViewValues<VA>,ValuesMapSqr> s0(v0);
       GECODE_ME_CHECK(x1.inter_v(home,s0,false));
     }
 
     {
       ViewValues<VB> v1(x1);
-      Iter::Values::Map<ViewValues<VB>,ValMapSqrt> s1(v1);
+      Iter::Values::Map<ViewValues<VB>,ValuesMapSqrt> s1(v1);
       GECODE_ME_CHECK(x0.inter_v(home,s1,false));
     }
 
@@ -438,20 +438,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       Negative<ViewValues<View> > n(j);
       Minus<Negative<ViewValues<View> > > m(n);
       
-      Map<Positive<ViewValues<View> >,ValMapSqr,true> sp(p);
-      Map<Minus<Negative<ViewValues<View> > >,ValMapSqr,true> sm(m);
-      Union<Map<Positive<ViewValues<View> >,ValMapSqr,true>,
-        Map<Minus<Negative<ViewValues<View> > >,ValMapSqr,true> > u(sp,sm);
+      Map<Positive<ViewValues<View> >,ValuesMapSqr,true> sp(p);
+      Map<Minus<Negative<ViewValues<View> > >,ValuesMapSqr,true> sm(m);
+      Union<Map<Positive<ViewValues<View> >,ValuesMapSqr,true>,
+        Map<Minus<Negative<ViewValues<View> > >,ValuesMapSqr,true> > u(sp,sm);
       GECODE_ME_CHECK(x1.inter_v(home,u,false));
     }
 
     {
       ViewValues<View> i(x1), j(x1);
       using namespace Iter::Values;
-      Map<ViewValues<View>,ValMapSqrt,true> si(i), sj(j);
-      Minus<Map<ViewValues<View>,ValMapSqrt,true> > mi(si);
-      Union<Minus<Map<ViewValues<View>,ValMapSqrt,true> >,
-        Map<ViewValues<View>,ValMapSqrt,true> > u(mi,sj);
+      Map<ViewValues<View>,ValuesMapSqrt,true> si(i), sj(j);
+      Minus<Map<ViewValues<View>,ValuesMapSqrt,true> > mi(si);
+      Union<Minus<Map<ViewValues<View>,ValuesMapSqrt,true> >,
+        Map<ViewValues<View>,ValuesMapSqrt,true> > u(mi,sj);
       GECODE_ME_CHECK(x0.inter_v(home,u,false));
     }
 

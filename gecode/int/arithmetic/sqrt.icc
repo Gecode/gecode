@@ -40,57 +40,51 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
-   * Positive bounds-consistent squaring
+   * Bounds-consistent square root
    *
    */
   template <class View>
   forceinline
-  Sqrt<View>::Sqrt(Space* home, View x0, View x1)
+  SqrtBnd<View>::SqrtBnd(Space* home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template <class View>
   forceinline ExecStatus
-  Sqrt<View>::post(Space* home, View x0, View x1) {
+  SqrtBnd<View>::post(Space* home, View x0, View x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     if (same(x0,x1)) {
       GECODE_ME_CHECK(x1.lq(home,1));
     } else {
       GECODE_ME_CHECK(x1.gq(home,0));
-      (void) new (home) Sqrt<View>(home,x0,x1);
+      (void) new (home) SqrtBnd<View>(home,x0,x1);
     }
     return ES_OK;
   }
 
   template <class View>
   forceinline void
-  Sqrt<View>::post(Space* home, Reflection::VarMap& vars,
+  SqrtBnd<View>::post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
      spec.checkArity(2);
      View x0(home, vars, spec[0]);
      View x1(home, vars, spec[1]);
-     (void) new (home) Sqrt<View>(home,x0,x1);
+     (void) new (home) SqrtBnd<View>(home,x0,x1);
   }
 
   template <class View>
   forceinline
-  Sqrt<View>::Sqrt(Space* home, bool share, Sqrt<View>& p)
+  SqrtBnd<View>::SqrtBnd(Space* home, bool share, SqrtBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
   Actor*
-  Sqrt<View>::copy(Space* home, bool share) {
-    return new (home) Sqrt<View>(home,share,*this);
-  }
-
-  template <class View>
-  PropCost
-  Sqrt<View>::cost(ModEventDelta) const {
-    return PC_BINARY_HI;
+  SqrtBnd<View>::copy(Space* home, bool share) {
+    return new (home) SqrtBnd<View>(home,share,*this);
   }
 
   template <class View>
   ExecStatus
-  Sqrt<View>::propagate(Space* home, ModEventDelta) {
+  SqrtBnd<View>::propagate(Space* home, ModEventDelta) {
     bool mod;
     do {
       mod = false;
@@ -121,14 +115,154 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Support::Symbol
-  Sqrt<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::Sqrt");
+  SqrtBnd<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::SqrtBnd");
   }
 
   template <class View>
   Reflection::ActorSpec
-  Sqrt<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  SqrtBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
+  }
+
+
+  /*
+   * Domain consistent square root
+   *
+   */
+  /// Mapping ranges to squares
+  class RangesMapSqr {
+  public:
+    /// Perform mapping of minimum
+    forceinline int min(int n) const {
+      return n*n;
+    }
+    /// Perform mapping of maximum
+    forceinline int max(int n) const {
+      return (n+1)*(n+1)-1;
+    }
+  };
+
+  /// Mapping integer to square root
+  class RangesMapSqrt {
+  public:
+    /// Perform mapping of minimum
+    forceinline int min(int n) const {
+      return static_cast<int>(floor(::sqrt(static_cast<double>(n))));
+    }
+    /// Perform mapping of maximum
+    forceinline int max(int n) const {
+      return static_cast<int>(floor(::sqrt(static_cast<double>(n))));
+    } 
+ };
+
+  template <class View>
+  forceinline
+  SqrtDom<View>::SqrtDom(Space* home, View x0, View x1)
+    : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
+
+  template <class View>
+  forceinline ExecStatus
+  SqrtDom<View>::post(Space* home, View x0, View x1) {
+    GECODE_ME_CHECK(x0.gq(home,0));
+    if (same(x0,x1)) {
+      GECODE_ME_CHECK(x1.lq(home,1));
+    } else {
+      GECODE_ME_CHECK(x1.gq(home,0));
+      (void) new (home) SqrtDom<View>(home,x0,x1);
+    }
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  SqrtDom<View>::post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+     spec.checkArity(2);
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
+     (void) new (home) SqrtDom<View>(home,x0,x1);
+  }
+
+  template <class View>
+  forceinline
+  SqrtDom<View>::SqrtDom(Space* home, bool share, SqrtDom<View>& p)
+    : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  SqrtDom<View>::copy(Space* home, bool share) {
+    return new (home) SqrtDom<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  SqrtDom<View>::cost(ModEventDelta med) const {
+    if (View::me(med) == ME_INT_VAL)
+      return PC_UNARY_LO;
+    if (View::me(med) == ME_INT_DOM)
+      return PC_BINARY_HI;
+    return PC_BINARY_LO;
+  }
+
+  template <class View>
+  ExecStatus
+  SqrtDom<View>::propagate(Space* home, ModEventDelta med) {
+    if (View::me(med) != ME_INT_DOM) {
+      bool mod;
+      do {
+        mod = false;
+        {
+          ModEvent me = x1.lq(home,floor(::sqrt(static_cast<double>(x0.max()))));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x1.gq(home,ceil(::sqrt(static_cast<double>(x0.min()))-1.0));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          double next = static_cast<double>(x1.max()+1);
+          ModEvent me = x0.le(home,next*next);
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x0.gq(home,x1.min()*x1.min());
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+      } while (mod);
+      return x1.assigned() ? ES_SUBSUMED(this,home) 
+        : ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+    }
+
+    {
+      ViewRanges<View> r(x0);
+      Iter::Ranges::Map<ViewRanges<View>,RangesMapSqrt,false> m(r);
+      GECODE_ME_CHECK(x1.inter_r(home,m,false));
+    }
+
+    {
+      ViewRanges<View> r(x1);
+      Iter::Ranges::Map<ViewRanges<View>,RangesMapSqr,true> m(r);
+      GECODE_ME_CHECK(x0.inter_r(home,m,false));
+    }
+
+    return x1.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
+  }
+
+  template <class View>
+  Support::Symbol
+  SqrtDom<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::SqrtDom");
+  }
+
+  template <class View>
+  Reflection::ActorSpec
+  SqrtDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
+    return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
 

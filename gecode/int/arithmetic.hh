@@ -371,26 +371,65 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Sqrt : public BinaryPropagator<View,PC_INT_BND> {
+  class SqrtBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Sqrt(Space* home, bool share, Sqrt<View>& p);
+    SqrtBnd(Space* home, bool share, SqrtBnd<View>& p);
     /// Constructor for posting
-    Sqrt(Space* home, View x0, View x1);
+    SqrtBnd(Space* home, View x0, View x1);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    /// Cost function (defined as PC_BINARY_HI)
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Post propagator \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
+    static ExecStatus post(Space* home, View x0, View x1);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief Domain consistent square root propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class SqrtDom : public BinaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<View,PC_INT_DOM>::x0;
+    using BinaryPropagator<View,PC_INT_DOM>::x1;
+
+    /// Constructor for cloning \a p
+    SqrtDom(Space* home, bool share, SqrtDom<View>& p);
+    /// Constructor for posting
+    SqrtDom(Space* home, View x0, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If in stage for bounds propagation, the cost is
+     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     */
     virtual PropCost cost(ModEventDelta med) const;
     /// Post propagator for specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
-    /// Post propagator \f$x_0\cdot x_0=x_1\f$
+    /// Post propagator \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
     static ExecStatus post(Space* home, View x0, View x1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,

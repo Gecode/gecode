@@ -74,6 +74,13 @@ Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
+Added domain consistent square root propagator (sqrt).
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
 Added domain consistent squaring propagator (sqr).
 
 [ENTRY]

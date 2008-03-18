@@ -109,9 +109,13 @@ namespace Gecode {
   }
 
   void
-  sqrt(Space* home, IntVar x0, IntVar x1, IntConLevel, PropKind) {
+  sqrt(Space* home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
     if (home->failed()) return;
-    GECODE_ES_FAIL(home,Arithmetic::Sqrt<IntView>::post(home,x0,x1));
+    if (icl == ICL_DOM) {
+      GECODE_ES_FAIL(home,Arithmetic::SqrtDom<IntView>::post(home,x0,x1));
+    } else {
+      GECODE_ES_FAIL(home,Arithmetic::SqrtBnd<IntView>::post(home,x0,x1));
+    }
   }
 
   namespace {
@@ -135,7 +139,8 @@ namespace Gecode {
     GECODE_REGISTER1(Arithmetic::SqrDom<IntView>);
     GECODE_REGISTER2(Arithmetic::SqrPlusDom<IntView,IntView>);
     GECODE_REGISTER2(Arithmetic::SqrPlusDom<MinusView,IntView>);
-    GECODE_REGISTER1(Arithmetic::Sqrt<IntView>);
+    GECODE_REGISTER1(Arithmetic::SqrtBnd<IntView>);
+    GECODE_REGISTER1(Arithmetic::SqrtDom<IntView>);
   }
 }
 

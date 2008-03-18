@@ -775,7 +775,11 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT IntVar
   sqr(Space* home, IntVar x, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
+  /** \brief Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   sqrt(Space* home, IntVar x, 
        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
