@@ -270,7 +270,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   MaxDom<View>::MaxDom(Space* home, View x0, View x1, View x2)
-    : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
+    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
+  (home,x0,x1,x2) {}
 
   template <class View>
   ExecStatus
@@ -299,13 +300,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   MaxDom<View>::MaxDom(Space* home, bool share, MaxDom<View>& p)
-    : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
+  (home,share,p) {}
 
   template <class View>
   forceinline
   MaxDom<View>::MaxDom(Space* home, bool share, Propagator& p,
-                 View x0, View x1, View x2)
-    : TernaryPropagator<View,PC_INT_DOM>(home,share,p,x0,x1,x2) {}
+                       View x0, View x1, View x2)
+    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
+  (home,share,p,x0,x1,x2) {}
 
   template <class View>
   Actor*
@@ -347,7 +350,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   Reflection::ActorSpec
   MaxDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
-    return TernaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
+    return MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,
+      View,PC_INT_BND>::spec(home, m, ati());
   }
 
   /*
@@ -358,7 +362,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   NaryMaxDom<View>::NaryMaxDom(Space* home, ViewArray<View>& x, View y)
-    : NaryOnePropagator<View,PC_INT_DOM>(home,x,y) {}
+    : MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>(home,x,y) {}
 
   template <class View>
   ExecStatus
@@ -392,7 +396,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   NaryMaxDom<View>::NaryMaxDom(Space* home, bool share, NaryMaxDom<View>& p)
-    : NaryOnePropagator<View,PC_INT_DOM>(home,share,p) {}
+    : MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
   Actor*
@@ -440,7 +444,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   Reflection::ActorSpec
   NaryMaxDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
-    return NaryOnePropagator<View,PC_INT_DOM>::spec(home, m, ati());
+    return MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>
+      ::spec(home, m, ati());
   }
 
 }}}
