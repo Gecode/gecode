@@ -44,6 +44,36 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
   template <class VA, class VB>
+  forceinline ExecStatus
+  prop_sqr_plus_bnd(Space* home, VA x0, VB x1) {
+    bool mod;
+    do {
+      mod = false;
+      {
+        ModEvent me = x0.lq(home,floor(::sqrt(static_cast<double>(x1.max()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x0.gq(home,ceil(::sqrt(static_cast<double>(x1.min()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x1.lq(home,x0.max()*x0.max());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x1.gq(home,x0.min()*x0.min());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+    } while (mod);
+    return ES_OK;
+  }
+
+  template <class VA, class VB>
   forceinline
   SqrPlusBnd<VA,VB>::SqrPlusBnd(Space* home, VA x0, VB x1)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,x0,x1) {}
@@ -79,30 +109,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   ExecStatus
   SqrPlusBnd<VA,VB>::propagate(Space* home, ModEventDelta) {
-    bool mod;
-    do {
-      mod = false;
-      {
-        ModEvent me = x0.lq(home,floor(::sqrt(static_cast<double>(x1.max()))));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x0.gq(home,ceil(::sqrt(static_cast<double>(x1.min()))));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x1.lq(home,x0.max()*x0.max());
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x1.gq(home,x0.min()*x0.min());
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-    } while (mod);
+    GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     return x0.assigned() ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
@@ -284,32 +291,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   SqrPlusDom<VA,VB>::propagate(Space* home, ModEventDelta med) {
     if (VA::me(med) != ME_INT_DOM) {
-      bool mod;
-      do {
-        mod = false;
-        {
-          ModEvent me = 
-            x0.lq(home,floor(::sqrt(static_cast<double>(x1.max()))));
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = 
-            x0.gq(home,ceil(::sqrt(static_cast<double>(x1.min()))));
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = x1.lq(home,x0.max()*x0.max());
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = x1.gq(home,x0.min()*x0.min());
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-      } while (mod);
+      GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
       return x0.assigned() ? 
         ES_SUBSUMED(this,sizeof(*this)) 
         : ES_NOFIX_PARTIAL(this,VA::med(ME_INT_DOM));

@@ -43,6 +43,40 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Bounds-consistent square root
    *
    */
+
+  template <class View>
+  forceinline ExecStatus
+  prop_sqrt_bnd(Space* home, View x0, View x1) {
+    bool mod;
+    do {
+      mod = false;
+      {
+        ModEvent me = 
+          x1.lq(home,floor(::sqrt(static_cast<double>(x0.max()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = 
+          x1.gq(home,ceil(::sqrt(static_cast<double>(x0.min()))-1.0));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+        }
+      {
+        double next = static_cast<double>(x1.max()+1);
+        ModEvent me = x0.le(home,next*next);
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x0.gq(home,x1.min()*x1.min());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+    } while (mod);
+    return ES_OK;
+  }
+
   template <class View>
   forceinline
   SqrtBnd<View>::SqrtBnd(Space* home, View x0, View x1)
@@ -85,31 +119,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   ExecStatus
   SqrtBnd<View>::propagate(Space* home, ModEventDelta) {
-    bool mod;
-    do {
-      mod = false;
-      {
-        ModEvent me = x1.lq(home,floor(::sqrt(static_cast<double>(x0.max()))));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x1.gq(home,ceil(::sqrt(static_cast<double>(x0.min()))-1.0));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-        }
-      {
-        double next = static_cast<double>(x1.max()+1);
-        ModEvent me = x0.le(home,next*next);
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x0.gq(home,x1.min()*x1.min());
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-    } while (mod);
+    GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
     return x1.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
@@ -209,31 +219,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   SqrtDom<View>::propagate(Space* home, ModEventDelta med) {
     if (View::me(med) != ME_INT_DOM) {
-      bool mod;
-      do {
-        mod = false;
-        {
-          ModEvent me = x1.lq(home,floor(::sqrt(static_cast<double>(x0.max()))));
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = x1.gq(home,ceil(::sqrt(static_cast<double>(x0.min()))-1.0));
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          double next = static_cast<double>(x1.max()+1);
-          ModEvent me = x0.le(home,next*next);
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = x0.gq(home,x1.min()*x1.min());
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-      } while (mod);
+      GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
       return x1.assigned() ? ES_SUBSUMED(this,home) 
         : ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
     }
