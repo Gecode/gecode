@@ -1661,30 +1661,36 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ \min\{x_0,x_1\}=x_2\f$
    *
-   * Only bounds-consistency is supported.
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
   min(Space* home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$ \min x=y\f$
    *
-   * Only bounds-consistency is supported.
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   *
+   * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
   min(Space* home, const IntVarArgs& x, IntVar y,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$
    *
-   * Only bounds-consistency is supported. If \a x is empty,
-   * an exception of type Int::TooFewArguments is thrown.
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
   max(Space* home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   /** \brief Post propagator for \f$ \max x=y\f$
    *
-   * Only bounds-consistency is supported. If \a x is empty,
-   * an exception of type Int::TooFewArguments is thrown.
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   *
+   * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
   max(Space* home, const IntVarArgs& x, IntVar y,
@@ -1701,7 +1707,8 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$
    *
-   * Only bounds-consistency is supported.
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
   mult(Space* home, IntVar x0, IntVar x1, IntVar x2,

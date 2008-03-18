@@ -747,23 +747,43 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT IntVar
   abs(Space* home, IntVar x, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$\min(x,y)\f$
+  /** \brief Return variable constrained to \f$\min(x,y)\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   min(Space* home, IntVar x, IntVar y, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$\min(x)\f$
+  /** \brief Return variable constrained to \f$\min(x)\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   min(Space* home, const IntVarArgs& x, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$\max(x,y)\f$
+  /** \brief Return variable constrained to \f$\max(x,y)\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   max(Space* home, IntVar x, IntVar y, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$\max(x)\f$
+  /** \brief Return variable constrained to \f$\max(x)\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   max(Space* home, const IntVarArgs& x, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$x\cdot y\f$
+  /** \brief Return variable constrained to \f$x\cdot y\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   mult(Space* home, IntVar x, IntVar y, 
        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
