@@ -42,44 +42,57 @@ namespace Gecode {
   using namespace Int;
 
   void
-  abs(Space* home, IntVar x0, IntVar x1, IntConLevel cl, PropKind) {
+  abs(Space* home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
     if (home->failed()) return;
-    switch (cl) {
-    case ICL_DOM:
+    if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::AbsDom<IntView>::post(home,x0,x1));
-      break;
-    default:
+    } else {
       GECODE_ES_FAIL(home,Arithmetic::AbsBnd<IntView>::post(home,x0,x1));
-      break;
     }
   }
 
 
   void
-  max(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropKind) {
+  max(Space* home, IntVar x0, IntVar x1, IntVar x2, 
+      IntConLevel icl, PropKind) {
     if (home->failed()) return;
-    GECODE_ES_FAIL(home,Arithmetic::Max<IntView>::post(home,x0,x1,x2));
+    if (icl == ICL_DOM) {
+      GECODE_ES_FAIL(home,Arithmetic::MaxDom<IntView>::post(home,x0,x1,x2));
+    } else {
+      GECODE_ES_FAIL(home,Arithmetic::MaxBnd<IntView>::post(home,x0,x1,x2));
+    }
   }
 
   void
-  max(Space* home, const IntVarArgs& x, IntVar y, IntConLevel, PropKind) {
+  max(Space* home, const IntVarArgs& x, IntVar y,
+      IntConLevel icl, PropKind) {
     if (x.size() == 0)
       throw TooFewArguments("Int::max");
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(home,Arithmetic::NaryMax<IntView>::post(home,xv,y));
+    if (icl == ICL_DOM) {
+      GECODE_ES_FAIL(home,Arithmetic::NaryMaxDom<IntView>::post(home,xv,y));
+    } else {
+      GECODE_ES_FAIL(home,Arithmetic::NaryMaxBnd<IntView>::post(home,xv,y));
+    }
   }
 
 
   void
-  min(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropKind) {
+  min(Space* home, IntVar x0, IntVar x1, IntVar x2, 
+      IntConLevel icl, PropKind) {
     if (home->failed()) return;
     MinusView m0(x0); MinusView m1(x1); MinusView m2(x2);
-    GECODE_ES_FAIL(home,Arithmetic::Max<MinusView>::post(home,m0,m1,m2));
+    if (icl == ICL_DOM) {
+      GECODE_ES_FAIL(home,Arithmetic::MaxDom<MinusView>::post(home,m0,m1,m2));
+    } else {
+      GECODE_ES_FAIL(home,Arithmetic::MaxBnd<MinusView>::post(home,m0,m1,m2));
+    }
   }
 
   void
-  min(Space* home, const IntVarArgs& x, IntVar y, IntConLevel, PropKind) {
+  min(Space* home, const IntVarArgs& x, IntVar y, 
+      IntConLevel icl, PropKind) {
     if (x.size() == 0)
       throw TooFewArguments("Int::min");
     if (home->failed()) return;
@@ -87,7 +100,11 @@ namespace Gecode {
     for (int i=x.size(); i--; )
       m[i].init(x[i]);
     MinusView my(y);
-    GECODE_ES_FAIL(home,Arithmetic::NaryMax<MinusView>::post(home,m,my));
+    if (icl == ICL_DOM) {
+      GECODE_ES_FAIL(home,Arithmetic::NaryMaxDom<MinusView>::post(home,m,my));
+    } else {
+      GECODE_ES_FAIL(home,Arithmetic::NaryMaxBnd<MinusView>::post(home,m,my));
+    }
   }
 
 
@@ -121,8 +138,16 @@ namespace Gecode {
   namespace {
     GECODE_REGISTER1(Arithmetic::AbsBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::AbsDom<IntView>);
-    GECODE_REGISTER1(Arithmetic::Max<IntView>);
-    GECODE_REGISTER1(Arithmetic::Max<MinusView>);
+
+    GECODE_REGISTER1(Arithmetic::MaxBnd<IntView>);
+    GECODE_REGISTER1(Arithmetic::MaxDom<IntView>);
+    GECODE_REGISTER1(Arithmetic::MaxBnd<MinusView>);
+    GECODE_REGISTER1(Arithmetic::MaxDom<MinusView>);
+    GECODE_REGISTER1(Arithmetic::NaryMaxBnd<IntView>);
+    GECODE_REGISTER1(Arithmetic::NaryMaxDom<IntView>);
+    GECODE_REGISTER1(Arithmetic::NaryMaxBnd<MinusView>);
+    GECODE_REGISTER1(Arithmetic::NaryMaxDom<MinusView>);
+
     GECODE_REGISTER1(Arithmetic::Mult<IntView>);
     GECODE_REGISTER1(Arithmetic::MultZeroOne<IntView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<double,IntView,IntView,IntView>);
@@ -131,14 +156,14 @@ namespace Gecode {
     GECODE_REGISTER4(Arithmetic::MultPlus<int,IntView,IntView,IntView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<int,MinusView,IntView,MinusView>);
     GECODE_REGISTER4(Arithmetic::MultPlus<int,MinusView,MinusView,IntView>);
-    GECODE_REGISTER1(Arithmetic::NaryMax<IntView>);
-    GECODE_REGISTER1(Arithmetic::NaryMax<MinusView>);
+
     GECODE_REGISTER1(Arithmetic::SqrBnd<IntView>);
     GECODE_REGISTER2(Arithmetic::SqrPlusBnd<IntView,IntView>);
     GECODE_REGISTER2(Arithmetic::SqrPlusBnd<MinusView,IntView>);
     GECODE_REGISTER1(Arithmetic::SqrDom<IntView>);
     GECODE_REGISTER2(Arithmetic::SqrPlusDom<IntView,IntView>);
     GECODE_REGISTER2(Arithmetic::SqrPlusDom<MinusView,IntView>);
+
     GECODE_REGISTER1(Arithmetic::SqrtBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::SqrtDom<IntView>);
   }

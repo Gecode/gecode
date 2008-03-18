@@ -154,6 +154,13 @@ namespace Gecode { namespace Int { namespace Rel {
     : MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>(home,share,p) {}
 
   template <class View0, class View1>
+  forceinline
+  EqDom<View0,View1>::EqDom(Space* home, bool share, Propagator& p,
+                            View0 x0, View1 x1)
+    : MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>(home,share,p,
+                                                             x0,x1) {}
+
+  template <class View0, class View1>
   Actor*
   EqDom<View0,View1>::copy(Space* home, bool share) {
     return new (home) EqDom<View0,View1>(home,share,*this);

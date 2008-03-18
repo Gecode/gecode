@@ -74,6 +74,13 @@ Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
+Added domain consistent minimum (min) and maximum (max) propagators.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
 Added domain consistent square root propagator (sqrt).
 
 [ENTRY]

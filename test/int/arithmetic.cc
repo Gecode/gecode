@@ -261,15 +261,16 @@ namespace Test { namespace Int {
      class MinXYZ : public Test {
      public:
        /// Create and register test
-       MinXYZ(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Min::Bin::XYZ::"+s,3,d) {}
+       MinXYZ(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Min::Bin::XYZ::"+str(icl)+"::"+s,3,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[2];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[1], x[2]);
+         Gecode::min(home, x[0], x[1], x[2], icl);
        }
      };
    
@@ -277,15 +278,16 @@ namespace Test { namespace Int {
      class MinXXY : public Test {
      public:
        /// Create and register test
-       MinXXY(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Min::Bin::XYX::"+s,2,d) {}
+       MinXXY(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Min::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[0]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[0], x[1]);
+         Gecode::min(home, x[0], x[0], x[1], icl);
        }
      };
    
@@ -293,15 +295,16 @@ namespace Test { namespace Int {
      class MinXYX : public Test {
      public:
        /// Create and register test
-       MinXYX(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Min::Bin::XYX::"+s,2,d) {}
+       MinXYX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Min::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[1], x[0]);
+         Gecode::min(home, x[0], x[1], x[0], icl);
        }
      };
    
@@ -309,15 +312,16 @@ namespace Test { namespace Int {
      class MinXYY : public Test {
      public:
        /// Create and register test
-       MinXYY(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Min::Bin::XYY::"+s,2,d) {}
+       MinXYY(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Min::Bin::XYY::"+str(icl)+"::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[1], x[1]);
+         Gecode::min(home, x[0], x[1], x[1], icl);
        }
      };
    
@@ -325,15 +329,16 @@ namespace Test { namespace Int {
      class MinXXX : public Test {
      public:
        /// Create and register test
-       MinXXX(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Min::Bin::XXX::"+s,1,d) {}
+       MinXXX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Min::Bin::XXX::"+str(icl)+"::"+s,1,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[0]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[0], x[0]);
+         Gecode::min(home, x[0], x[0], x[0], icl);
        }
      };
    
@@ -341,15 +346,16 @@ namespace Test { namespace Int {
      class MaxXYZ : public Test {
      public:
        /// Create and register test
-       MaxXYZ(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Max::Bin::XYZ::"+s,3,d) {}
+       MaxXYZ(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Max::Bin::XYZ::"+str(icl)+"::"+s,3,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[2];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[1], x[2]);
+         Gecode::max(home, x[0], x[1], x[2], icl);
        }
      };
    
@@ -357,15 +363,16 @@ namespace Test { namespace Int {
      class MaxXXY : public Test {
      public:
        /// Create and register test
-       MaxXXY(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Max::Bin::XXY::"+s,2,d) {}
+       MaxXXY(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Max::Bin::XXY::"+str(icl)+"::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[0]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[0], x[1]);
+         Gecode::max(home, x[0], x[0], x[1], icl);
        }
      };
    
@@ -373,15 +380,16 @@ namespace Test { namespace Int {
      class MaxXYX : public Test {
      public:
        /// Create and register test
-       MaxXYX(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Max::Bin::XYX::"+s,2,d) {}
+       MaxXYX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Max::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[1], x[0]);
+         Gecode::max(home, x[0], x[1], x[0], icl);
        }
      };
    
@@ -389,15 +397,16 @@ namespace Test { namespace Int {
      class MaxXYY : public Test {
      public:
        /// Create and register test
-       MaxXYY(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Max::Bin::XYY::"+s,2,d) {}
+       MaxXYY(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Max::Bin::XYY::"+str(icl)+"::"+s,2,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[1], x[1]);
+         Gecode::max(home, x[0], x[1], x[1], icl);
        }
      };
    
@@ -405,15 +414,16 @@ namespace Test { namespace Int {
      class MaxXXX : public Test {
      public:
        /// Create and register test
-       MaxXXX(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Max::Bin::XXX::"+s,1,d) {}
+       MaxXXX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntConLevel icl)
+         : Test("Arithmetic::Max::Bin::XXX::"+str(icl)+"::"+s,1,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[0]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[0], x[0]);
+         Gecode::max(home, x[0], x[0], x[0], icl);
        }
      };
    
@@ -421,7 +431,8 @@ namespace Test { namespace Int {
      class MinNary : public Test {
      public:
        /// Create and register test
-       MinNary(void) : Test("Arithmetic::Min::Nary",4,-4,4) {}
+       MinNary(Gecode::IntConLevel icl) 
+         : Test("Arithmetic::Min::Nary::"+str(icl),4,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[3];
@@ -430,7 +441,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::min(home, m, x[3]);
+         Gecode::min(home, m, x[3], icl);
        }
      };
    
@@ -438,7 +449,8 @@ namespace Test { namespace Int {
      class MinNaryShared : public Test {
      public:
        /// Create and register test
-       MinNaryShared(void) : Test("Arithmetic::Min::Nary::Shared",3,-4,4) {}
+       MinNaryShared(Gecode::IntConLevel icl) 
+         : Test("Arithmetic::Min::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[1];
@@ -447,7 +459,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::min(home, m, x[1]);
+         Gecode::min(home, m, x[1], icl);
        }
      };
    
@@ -455,7 +467,8 @@ namespace Test { namespace Int {
      class MaxNary : public Test {
      public:
        /// Create and register test
-       MaxNary(void) : Test("Arithmetic::Max::Nary",4,-4,4) {}
+       MaxNary(Gecode::IntConLevel icl) 
+         : Test("Arithmetic::Max::Nary::"+str(icl),4,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[3];
@@ -464,7 +477,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::max(home, m, x[3]);
+         Gecode::max(home, m, x[3], icl);
        }
      };
    
@@ -472,7 +485,8 @@ namespace Test { namespace Int {
      class MaxNaryShared : public Test {
      public:
        /// Create and register test
-       MaxNaryShared(void) : Test("Arithmetic::Max::Nary::Shared",3,-4,4) {}
+       MaxNaryShared(Gecode::IntConLevel icl) 
+         : Test("Arithmetic::Max::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[1];
@@ -481,7 +495,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::max(home, m, x[1]);
+         Gecode::max(home, m, x[1], icl);
        }
      };
    
@@ -566,50 +580,84 @@ namespace Test { namespace Int {
      AbsXX abs_xx_d_b("B",b,Gecode::ICL_DOM);
      AbsXX abs_xx_d_c("C",c,Gecode::ICL_DOM);
    
-     MinXYZ min_xyz_a("A",a);
-     MinXYZ min_xyz_b("B",b);
-     MinXYZ min_xyz_c("C",c);
+     MinXYZ min_xyz_b_a("A",a,Gecode::ICL_BND);
+     MinXYZ min_xyz_b_b("B",b,Gecode::ICL_BND);
+     MinXYZ min_xyz_b_c("C",c,Gecode::ICL_BND);
+     MinXYZ min_xyz_d_a("A",a,Gecode::ICL_DOM);
+     MinXYZ min_xyz_d_b("B",b,Gecode::ICL_DOM);
+     MinXYZ min_xyz_d_c("C",c,Gecode::ICL_DOM);
    
-     MinXXY min_xxy_a("A",a);
-     MinXXY min_xxy_b("B",b);
-     MinXXY min_xxy_c("C",c);
+     MinXXY min_xxy_b_a("A",a,Gecode::ICL_BND);
+     MinXXY min_xxy_b_b("B",b,Gecode::ICL_BND);
+     MinXXY min_xxy_b_c("C",c,Gecode::ICL_BND);
+     MinXXY min_xxy_d_a("A",a,Gecode::ICL_DOM);
+     MinXXY min_xxy_d_b("B",b,Gecode::ICL_DOM);
+     MinXXY min_xxy_d_c("C",c,Gecode::ICL_DOM);
    
-     MinXYX min_xyx_a("A",a);
-     MinXYX min_xyx_b("B",b);
-     MinXYX min_xyx_c("C",c);
+     MinXYX min_xyx_b_a("A",a,Gecode::ICL_BND);
+     MinXYX min_xyx_b_b("B",b,Gecode::ICL_BND);
+     MinXYX min_xyx_b_c("C",c,Gecode::ICL_BND);
+     MinXYX min_xyx_d_a("A",a,Gecode::ICL_DOM);
+     MinXYX min_xyx_d_b("B",b,Gecode::ICL_DOM);
+     MinXYX min_xyx_d_c("C",c,Gecode::ICL_DOM);
    
-     MinXYY min_xyy_a("A",a);
-     MinXYY min_xyy_b("B",b);
-     MinXYY min_xyy_c("C",c);
+     MinXYY min_xyy_b_a("A",a,Gecode::ICL_BND);
+     MinXYY min_xyy_b_b("B",b,Gecode::ICL_BND);
+     MinXYY min_xyy_b_c("C",c,Gecode::ICL_BND);
+     MinXYY min_xyy_d_a("A",a,Gecode::ICL_DOM);
+     MinXYY min_xyy_d_b("B",b,Gecode::ICL_DOM);
+     MinXYY min_xyy_d_c("C",c,Gecode::ICL_DOM);
    
-     MinXXX min_xxx_a("A",a);
-     MinXXX min_xxx_b("B",b);
-     MinXXX min_xxx_c("C",c);
+     MinXXX min_xxx_b_a("A",a,Gecode::ICL_BND);
+     MinXXX min_xxx_b_b("B",b,Gecode::ICL_BND);
+     MinXXX min_xxx_b_c("C",c,Gecode::ICL_BND);
+     MinXXX min_xxx_d_a("A",a,Gecode::ICL_DOM);
+     MinXXX min_xxx_d_b("B",b,Gecode::ICL_DOM);
+     MinXXX min_xxx_d_c("C",c,Gecode::ICL_DOM);
    
-     MaxXYZ max_xyz_a("A",a);
-     MaxXYZ max_xyz_b("B",b);
-     MaxXYZ max_xyz_c("C",c);
+     MaxXYZ max_xyz_b_a("A",a,Gecode::ICL_BND);
+     MaxXYZ max_xyz_b_b("B",b,Gecode::ICL_BND);
+     MaxXYZ max_xyz_b_c("C",c,Gecode::ICL_BND);
+     MaxXYZ max_xyz_d_a("A",a,Gecode::ICL_DOM);
+     MaxXYZ max_xyz_d_b("B",b,Gecode::ICL_DOM);
+     MaxXYZ max_xyz_d_c("C",c,Gecode::ICL_DOM);
    
-     MaxXXY max_xxy_a("A",a);
-     MaxXXY max_xxy_b("B",b);
-     MaxXXY max_xxy_c("C",c);
+     MaxXXY max_xxy_b_a("A",a,Gecode::ICL_BND);
+     MaxXXY max_xxy_b_b("B",b,Gecode::ICL_BND);
+     MaxXXY max_xxy_b_c("C",c,Gecode::ICL_BND);
+     MaxXXY max_xxy_d_a("A",a,Gecode::ICL_DOM);
+     MaxXXY max_xxy_d_b("B",b,Gecode::ICL_DOM);
+     MaxXXY max_xxy_d_c("C",c,Gecode::ICL_DOM);
    
-     MaxXYX max_xyx_a("A",a);
-     MaxXYX max_xyx_b("B",b);
-     MaxXYX max_xyx_c("C",c);
+     MaxXYX max_xyx_b_a("A",a,Gecode::ICL_BND);
+     MaxXYX max_xyx_b_b("B",b,Gecode::ICL_BND);
+     MaxXYX max_xyx_b_c("C",c,Gecode::ICL_BND);
+     MaxXYX max_xyx_d_a("A",a,Gecode::ICL_DOM);
+     MaxXYX max_xyx_d_b("B",b,Gecode::ICL_DOM);
+     MaxXYX max_xyx_d_c("C",c,Gecode::ICL_DOM);
    
-     MaxXYY max_xyy_a("A",a);
-     MaxXYY max_xyy_b("B",b);
-     MaxXYY max_xyy_c("C",c);
+     MaxXYY max_xyy_b_a("A",a,Gecode::ICL_BND);
+     MaxXYY max_xyy_b_b("B",b,Gecode::ICL_BND);
+     MaxXYY max_xyy_b_c("C",c,Gecode::ICL_BND);
+     MaxXYY max_xyy_d_a("A",a,Gecode::ICL_DOM);
+     MaxXYY max_xyy_d_b("B",b,Gecode::ICL_DOM);
+     MaxXYY max_xyy_d_c("C",c,Gecode::ICL_DOM);
    
-     MaxXXX max_xxx_a("A",a);
-     MaxXXX max_xxx_b("B",b);
-     MaxXXX max_xxx_c("C",c);
+     MaxXXX max_xxx_b_a("A",a,Gecode::ICL_BND);
+     MaxXXX max_xxx_b_b("B",b,Gecode::ICL_BND);
+     MaxXXX max_xxx_b_c("C",c,Gecode::ICL_BND);
+     MaxXXX max_xxx_d_a("A",a,Gecode::ICL_DOM);
+     MaxXXX max_xxx_d_b("B",b,Gecode::ICL_DOM);
+     MaxXXX max_xxx_d_c("C",c,Gecode::ICL_DOM);
    
-     MinNary min_nary;
-     MinNaryShared min_s_nary;
-     MaxNary max_nary;
-     MaxNaryShared max_s_nary;
+     MinNary       min_nary_b(Gecode::ICL_BND);
+     MinNary       min_nary_d(Gecode::ICL_DOM);
+     MinNaryShared min_s_nary_b(Gecode::ICL_BND);
+     MinNaryShared min_s_nary_d(Gecode::ICL_DOM);
+     MaxNary       max_nary_b(Gecode::ICL_BND);
+     MaxNary       max_nary_d(Gecode::ICL_DOM);
+     MaxNaryShared max_s_nary_b(Gecode::ICL_BND);
+     MaxNaryShared max_s_nary_d(Gecode::ICL_DOM);
      //@}
    
    }

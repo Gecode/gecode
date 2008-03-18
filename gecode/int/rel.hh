@@ -79,6 +79,8 @@ namespace Gecode { namespace Int { namespace Rel {
   public:
     /// Constructor for posting
     EqDom(Space* home, View0 x0, View1 x1);
+    /// Constructor for rewriting \a p during cloning
+    EqDom(Space* home, bool share, Propagator& p, View0 x0, View1 x1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /**
@@ -93,7 +95,7 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

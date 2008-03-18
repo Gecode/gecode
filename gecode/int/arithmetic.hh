@@ -94,16 +94,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
-   * \brief Perform bounds consistent absolute value propagation
-   *
-   * This is actually the propagation algorithm for AbsBnd.
-   * It is available as separate function as it is reused for
-   * domain consistent distinct propagators.
-   */
-  template <class View>
-  ExecStatus prop_bnd(Space* home, Propagator* p, ViewArray<View>&);
-
-  /**
    * \brief Domain consistent absolute value propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
@@ -144,6 +134,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static Support::Symbol ati(void);
   };
 
+
+
   /**
    * \brief Bounds consistent ternary maximum propagator
    *
@@ -151,19 +143,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Max : public TernaryPropagator<View,PC_INT_BND> {
+  class MaxBnd : public TernaryPropagator<View,PC_INT_BND> {
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
     using TernaryPropagator<View,PC_INT_BND>::x1;
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    Max(Space* home, bool share, Max& p);
+    MaxBnd(Space* home, bool share, MaxBnd& p);
     /// Constructor for posting
-    Max(Space* home, View x0, View x1, View x2);
+    MaxBnd(Space* home, View x0, View x1, View x2);
   public:
     /// Constructor for rewriting \a p during cloning
-    Max(Space* home, bool share, Propagator& p, View x0, View x1, View x2);
+    MaxBnd(Space* home, bool share, Propagator& p, View x0, View x1, View x2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -187,18 +179,101 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class NaryMax : public NaryOnePropagator<View,PC_INT_BND> {
+  class NaryMaxBnd : public NaryOnePropagator<View,PC_INT_BND> {
   protected:
     using NaryOnePropagator<View,PC_INT_BND>::x;
     using NaryOnePropagator<View,PC_INT_BND>::y;
 
     /// Constructor for cloning \a p
-    NaryMax(Space* home, bool share, NaryMax& p);
+    NaryMaxBnd(Space* home, bool share, NaryMaxBnd& p);
     /// Constructor for posting
-    NaryMax(Space* home, ViewArray<View>& x, View y);
+    NaryMaxBnd(Space* home, ViewArray<View>& x, View y);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Post propagator \f$ \max x=y\f$
+    static  ExecStatus post(Space* home, ViewArray<View>& x, View y);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief Domain consistent ternary maximum propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class MaxDom : public TernaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using TernaryPropagator<View,PC_INT_DOM>::x0;
+    using TernaryPropagator<View,PC_INT_DOM>::x1;
+    using TernaryPropagator<View,PC_INT_DOM>::x2;
+
+    /// Constructor for cloning \a p
+    MaxDom(Space* home, bool share, MaxDom& p);
+    /// Constructor for posting
+    MaxDom(Space* home, View x0, View x1, View x2);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    MaxDom(Space* home, bool share, Propagator& p, View x0, View x1, View x2);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If in stage for bounds propagation, the cost is
+     * PC_TERNARY_LO. Otherwise it is PC_TERNARY_HI.
+     */
+    virtual PropCost cost(ModEventDelta med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
+    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief Domain consistent n-ary maximum propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class NaryMaxDom : public NaryOnePropagator<View,PC_INT_DOM> {
+  protected:
+    using NaryOnePropagator<View,PC_INT_DOM>::x;
+    using NaryOnePropagator<View,PC_INT_DOM>::y;
+
+    /// Constructor for cloning \a p
+    NaryMaxDom(Space* home, bool share, NaryMaxDom& p);
+    /// Constructor for posting
+    NaryMaxDom(Space* home, ViewArray<View>& x, View y);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If in stage for bounds propagation, the cost is dynamic
+     * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
+     */
+    virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Post propagator \f$ \max x=y\f$
