@@ -61,6 +61,7 @@ namespace Gecode {
 #include "gecode/iter/ranges-diff.icc"
 #include "gecode/iter/ranges-empty.icc"
 #include "gecode/iter/ranges-inter.icc"
+#include "gecode/iter/ranges-map.icc"
 #include "gecode/iter/ranges-minus.icc"
 #include "gecode/iter/ranges-negative.icc"
 #include "gecode/iter/ranges-offset.icc"
