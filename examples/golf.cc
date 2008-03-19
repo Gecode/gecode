@@ -78,6 +78,10 @@ public:
     MODEL_PLAIN,   ///< A simple model
     MODEL_SYMMETRY ///< Model with symmetry breaking
   };
+  enum {
+    PROP_PLAIN,    ///< Propagation using intersection propagators
+    PROP_DECOMPOSE ///< Propagation using union and complement propagators
+  };
   int groups;          ///< Number of groups in a week
   int playersInGroup;  ///< Number of players in a group
   int weeks;           ///< Number of weeks
@@ -114,11 +118,29 @@ public:
     // No two golfers play in the same group more than once
     for (int w=0; w<weeks; w++) {
       for (int g=0; g<groups; g++) {
-              SetVar v = group(w,g);
-              for (int i=(w+1)*groups; i<weeks*groups; i++) {
-                SetVar atMostOne(this,IntSet::empty,0,players-1,0,1);
-                rel(this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
-              }
+        SetVar v = group(w,g);
+        SetVar vcompl;
+        if (opt.propagation() == PROP_DECOMPOSE) {
+          vcompl = SetVar(this,IntSet::empty,
+                          Set::Limits::min,Set::Limits::max);
+          rel(this, v, SRT_CMPL, vcompl);
+        }
+        for (int i=(w+1)*groups; i<weeks*groups; i++) {
+          if (opt.propagation() == PROP_PLAIN) {
+            SetVar atMostOne(this,IntSet::empty,0,players-1,0,1);
+            rel(this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
+          } else {
+            SetVar atMostOneC(this,IntSet::empty,
+                              Set::Limits::min,
+                              Set::Limits::max,
+                              Set::Limits::card-1,
+                              Set::Limits::card);
+            SetVar groupsSiC(this,IntSet::empty,
+                             Set::Limits::min,Set::Limits::max);
+            rel(this, groupsS[i], SRT_CMPL, groupsSiC);
+            rel(this, vcompl, SOT_UNION, groupsSiC, SRT_EQ, atMostOneC);
+          }
+        }
       }
     }
 
@@ -256,6 +278,10 @@ main(int argc, char* argv[]) {
   opt.model(Golf::MODEL_PLAIN);
   opt.model(Golf::MODEL_PLAIN, "none", "no symmetry breaking");
   opt.model(Golf::MODEL_SYMMETRY, "symmetry", "static symmetry breaking");
+  opt.propagation(Golf::PROP_PLAIN);
+  opt.propagation(Golf::PROP_PLAIN, "plain", "intersection constraints");
+  opt.propagation(Golf::PROP_DECOMPOSE, "decompose",
+                  "union and complement constraints");
   opt.solutions(1);
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
