@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Values {
     /// Input iterator
     I i;
     /// Mapping object
-    typename M m;
+    M m;
   public:
     /// \name Constructors and initialization
     //@{
@@ -93,7 +93,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template <class I, class M, bool strict>
   forceinline
-  Map<I,M,strict>::Map(I& i0, const M& m) : i(i0), m(m0) {}
+  Map<I,M,strict>::Map(I& i0, const M& m0) : i(i0), m(m0) {}
 
   template <class I, class M, bool strict>
   forceinline void
