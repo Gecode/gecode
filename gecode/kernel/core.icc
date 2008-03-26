@@ -479,7 +479,7 @@ namespace Gecode {
     ES_NOFIX            =  0, ///< Propagation has not computed fixpoint
     ES_OK               =  0, ///< Execution is okay
     ES_FIX              =  1, ///< Propagation has computed fixpoint
-    __ES_PARTIAL        =  2, ///< Internal: propagator has computed partial fixpoint, do not use
+    __ES_PARTIAL        =  2  ///< Internal: propagator has computed partial fixpoint, do not use
   };
 
   /**
