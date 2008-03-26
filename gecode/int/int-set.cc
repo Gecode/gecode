@@ -74,23 +74,27 @@ namespace Gecode {
   IntSet::normalize(Range* r, int n) {
     if (n > 0) {
       // Sort ranges
-      MinInc lt_mi;
-      Support::quicksort<Range>(r, n, lt_mi);
-      // Conjoin continuous ranges
-      int min = r[0].min;
-      int max = r[0].max;
-      int i = 1;
-      int j = 0;
-      while (i < n) {
-        if (max+1 < r[i].min) {
-          r[j].min = min; r[j].max = max; j++;
-          min = r[i].min; max = r[i].max; i++;
-        } else {
-          max = std::max(max,r[i].max); i++;
-        }
+      {
+        MinInc lt_mi;
+        Support::quicksort<Range>(r, n, lt_mi);
       }
-      r[j].min = min; r[j].max = max;
-      n=j+1;
+      // Conjoin continuous ranges
+      {
+        int min = r[0].min;
+        int max = r[0].max;
+        int i = 1;
+        int j = 0;
+        while (i < n) {
+          if (max+1 < r[i].min) {
+            r[j].min = min; r[j].max = max; j++;
+            min = r[i].min; max = r[i].max; i++;
+          } else {
+            max = std::max(max,r[i].max); i++;
+          }
+        }
+        r[j].min = min; r[j].max = max;
+        n=j+1;
+      }
       IntSetObject* o = IntSetObject::allocate(n);
       for (int i=n; i--; )
         o->r[i]=r[i];

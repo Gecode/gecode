@@ -60,12 +60,16 @@ namespace Gecode {
     }
   }
 
+#ifndef __INTEL_COMPILER
   template <>
+#endif
   forceinline
   IntSet::IntSet(const IntSet& s) 
     : SharedHandle(s) {}
 
+#ifndef __INTEL_COMPILER
   template <>
+#endif
   forceinline
   IntSet::IntSet(IntSet& s) 
     : SharedHandle(s) {}
