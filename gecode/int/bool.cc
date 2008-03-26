@@ -204,9 +204,9 @@ namespace Gecode {
       case IRT_LQ:
       case IRT_EQ:
         {
-          NegBoolView n(y);
+          NegBoolView z(y);
           GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
-                               ::post(home,x,n)));
+                               ::post(home,x,z)));
         }
         break;
       case IRT_NQ:
@@ -233,9 +233,9 @@ namespace Gecode {
       case IRT_NQ:
       case IRT_LE:
         {
-          NegBoolView n(y);
+          NegBoolView z(y);
           GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
-                               ::post(home,x,n)));
+                               ::post(home,x,z)));
         }
         break;
       case IRT_GR:

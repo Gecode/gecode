@@ -797,22 +797,22 @@ namespace Gecode { namespace Reflection {
 
 /// Register a propagator with zero or one template argument
 #define GECODE_REGISTER1(P) \
-  ::Gecode::Reflection::ActorRegistrar< P > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P > GECODE_FRESH(r)
 /// Register a propagator with two template arguments
 #define GECODE_REGISTER2(P1,P2) \
-  ::Gecode::Reflection::ActorRegistrar< P1,P2 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2 > GECODE_FRESH(r)
 /// Register a propagator with three template arguments
 #define GECODE_REGISTER3(P1,P2,P3) \
-  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3 > GECODE_FRESH(r)
 /// Register a propagator with four template arguments
 #define GECODE_REGISTER4(P1,P2,P3,P4) \
-  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4 > GECODE_FRESH(r)
 /// Register a propagator with five template arguments
 #define GECODE_REGISTER5(P1,P2,P3,P4,P5) \
-  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4,P5 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4,P5 > GECODE_FRESH(r)
 /// Register a propagator with six template arguments
 #define GECODE_REGISTER6(P1,P2,P3,P4,P5,P6) \
-  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4,P5,P6 > GECODE_FRESH(r);
+  ::Gecode::Reflection::ActorRegistrar< P1,P2,P3,P4,P5,P6 > GECODE_FRESH(r)
 
   //@}
 

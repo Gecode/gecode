@@ -131,20 +131,22 @@ namespace Gecode { namespace Set { namespace Rel {
     }
 
     // check lub(x0) subset glb(x1)
-    LubRanges<View0> x0ub(x0);
-    GlbRanges<View1> x1lb(x1);
-    Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> > diff1(x0ub, x1lb);
-    if ( !(diff1()) ) {
-      GECODE_ME_CHECK(b.one_none(home));
-      return ES_SUBSUMED(this,home);
+    {
+      LubRanges<View0> x0ub(x0);
+      GlbRanges<View1> x1lb(x1);
+      Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> > d(x0ub,x1lb);
+      if (!d()) {
+        GECODE_ME_CHECK(b.one_none(home));
+        return ES_SUBSUMED(this,home);
+      }
     }
 
     // check glb(x0) subset lub(x1)
     {
       GlbRanges<View0> x0lb(x0);
       LubRanges<View1> x1ub(x1);
-      Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > diff2(x0lb, x1ub);
-      if ( diff2() ) {
+      Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > d(x0lb,x1ub);
+      if (d()) {
         GECODE_ME_CHECK(b.zero_none(home));
         return ES_SUBSUMED(this,home);
       } else if (x0.assigned() && x1.assigned()) {
@@ -157,8 +159,8 @@ namespace Gecode { namespace Set { namespace Rel {
       LubRanges<View0> x0ub(x0);
       LubRanges<View1> x1ub(x1);
       Iter::Ranges::Inter<LubRanges<View0>,LubRanges<View1> >
-        inter(x0ub, x1ub);
-      if (!inter()) {
+        i(x0ub,x1ub);
+      if (!i()) {
         GECODE_ME_CHECK(b.zero_none(home));
         return ES_SUBSUMED(this,home);
       }

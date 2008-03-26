@@ -577,7 +577,7 @@ namespace Gecode { namespace Int { namespace Distinct {
           *p = e;
           assert(r.min() == e->val(x)->val());
           // This edges must be kept
-          for (unsigned int i=r.width(); i--; ) {
+          for (unsigned int j=r.width(); j--; ) {
             e->free();
             p = e->next_edge_ref();
             e = e->next_edge();

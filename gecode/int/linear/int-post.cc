@@ -374,13 +374,13 @@ namespace Gecode { namespace Int { namespace Linear {
           break;
         case IRT_NQ:
           {
-            NegBoolView n(b);
+            NegBoolView nb(b);
             if (n_p == 1) {
               GECODE_ES_FAIL(home,(Rel::ReEqBndInt<IntView,NegBoolView>::post
-                                   (home,t_p[0].x,c,n)));
+                                   (home,t_p[0].x,c,nb)));
             } else {
               GECODE_ES_FAIL(home,(Rel::ReEqBndInt<IntView,NegBoolView>::post
-                                   (home,t_n[0].x,-c,n)));
+                                   (home,t_n[0].x,-c,nb)));
             }
           }
           break;
@@ -389,9 +389,9 @@ namespace Gecode { namespace Int { namespace Linear {
             GECODE_ES_FAIL(home,(Rel::ReLqInt<IntView,BoolView>::post
                                  (home,t_p[0].x,c,b)));
           } else {
-            NegBoolView n(b);
+            NegBoolView nb(b);
             GECODE_ES_FAIL(home,(Rel::ReLqInt<IntView,NegBoolView>::post
-                                 (home,t_n[0].x,-c-1,n)));
+                                 (home,t_n[0].x,-c-1,nb)));
           }
           break;
         default: GECODE_NEVER;
@@ -417,12 +417,12 @@ namespace Gecode { namespace Int { namespace Linear {
           break;
         case IRT_NQ:
           {
-            NegBoolView n(b);
+            NegBoolView nb(b);
             switch (n_p) {
             case 2:
               GECODE_ES_FAIL(home,
                              (ReEqBin<int,IntView,IntView,NegBoolView>::post
-                              (home,t_p[0].x,t_p[1].x,c,n)));
+                              (home,t_p[0].x,t_p[1].x,c,nb)));
               break;
             case 1:
               GECODE_ES_FAIL(home,

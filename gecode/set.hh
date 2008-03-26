@@ -947,13 +947,13 @@ namespace Gecode {
     SET_VAR_MIN_CARD,           ///< With smallest unknown set
     SET_VAR_MAX_CARD,           ///< With largest unknown set
     SET_VAR_MIN_UNKNOWN_ELEM,   ///< With smallest unknown element
-    SET_VAR_MAX_UNKNOWN_ELEM,   ///< With largest unknown element
+    SET_VAR_MAX_UNKNOWN_ELEM    ///< With largest unknown element
   };
   
   /// Which values to select first for branching
   enum SetValBranch {
     SET_VAL_MIN,                ///< Select smallest value in unknown set
-    SET_VAL_MAX,                ///< Select largest value in unknown set
+    SET_VAL_MAX                 ///< Select largest value in unknown set
   };
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals

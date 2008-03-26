@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     SI_NONE       = 0, ///< State is not reachable
     SI_FROM_START = 1, ///< State is reachable from start state
     SI_TO_FINAL   = 2, ///< Final state is reachable from state
-    SI_FINAL      = 4, ///< State is final
+    SI_FINAL      = 4  ///< State is final
   };
 
 }}}

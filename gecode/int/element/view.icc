@@ -327,8 +327,8 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 1) {
       GECODE_ME_CHECK(x0.eq(home,iv[0].idx));
     } else if (adjust) {
-      IterIdxView<VA> i(&iv[0],&iv[n]);
-      GECODE_ME_CHECK(x0.narrow_v(home,i,false));
+      IterIdxView<VA> v(&iv[0],&iv[n]);
+      GECODE_ME_CHECK(x0.narrow_v(home,v,false));
       assert(x0.size() == static_cast<unsigned int>(n));
     }
     return ES_OK;

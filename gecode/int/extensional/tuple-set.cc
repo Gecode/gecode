@@ -70,6 +70,7 @@ namespace {
    * Assumes that the tuples are sorted in order in memory.
    */
   class TuplePosCompare {
+  private:
     int pos;
   public:
     forceinline
@@ -79,33 +80,6 @@ namespace {
     operator()(const Tuple& a, const Tuple& b) {
       if (a[pos] == b[pos]) return a < b;
       return a[pos] < b[pos];
-    }
-  };
-
-  /**
-   * \brief Tuple compared on position versus a key.
-   *
-   */
-  class TupleKeyCompare {
-    int pos;
-  public:
-    forceinline
-    TupleKeyCompare(int p) : pos(p) {}
-
-    forceinline bool
-    operator()(const Tuple& a, const Tuple& b) {
-      return a[pos] < b[pos];
-    }
-
-
-    forceinline bool
-    operator()(const int& a, const Tuple& b) {
-      return a < b[pos];
-    }
-
-    forceinline bool
-    operator()(const Tuple& a, const int& b) {
-      return a[pos] < b;
     }
   };
 
