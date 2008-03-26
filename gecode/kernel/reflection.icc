@@ -766,25 +766,26 @@ namespace Gecode { namespace Reflection {
   Var::Var(void) {}
     
   template <class VarImp>
+  forceinline
   Var::Var(const VarBase<VarImp>& v) {
     _var = v.var();
     _vti = v.var()->vti;
   }
 
-  inline
+  forceinline
   Var::Var(const Var& v) : _var(v._var), _vti(v._vti) {}
   
-  inline
+  forceinline
   Var::Var(VarImpBase* var, const Support::Symbol& vti)
     : _var(var), _vti(vti) {}
 
-  inline VarImpBase*
+  forceinline VarImpBase*
   Var::varImpBase(void) const {
     return static_cast<VarImpBase*>(_var);    
   }
 
   template <class VarImp>
-  VarImp*
+  inline VarImp*
   Var::var(void) const {
     if (! (VarImp::vti == _vti))
       throw ReflectionException("VTI mismatch");
