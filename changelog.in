@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Cleaned up Reflection::Var type, overloading did not conform to the C++ 
+standard.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

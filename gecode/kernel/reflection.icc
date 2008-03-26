@@ -712,7 +712,9 @@ namespace Gecode { namespace Reflection {
     /// Default constructor
     Var(void);
     /// Construct from \a v
-    template <class V> explicit Var(const V& v);
+    template <class VarImp> explicit Var(const VarBase<VarImp>& v);
+    /// Construct from \a v
+    Var(const Var& v);
     /// Construct from \a var with variable type identifier \a vti
     Var(VarImpBase* var, const Support::Symbol& vti);
     /// Update during cloning
@@ -721,6 +723,8 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT std::ostream& print(std::ostream& os) const;
     /// Reflection
     GECODE_KERNEL_EXPORT Arg* spec(const Space* home, VarMap& vm) const;
+    /// Cast to variable implementation base
+    VarImpBase* varImpBase(void) const;
     /// Cast to concrete variable type
     template <class VarImp>
     VarImp* var(void) const;
@@ -761,15 +765,12 @@ namespace Gecode { namespace Reflection {
   forceinline
   Var::Var(void) {}
     
-  template <class V>
-  Var::Var(const V& v) {
-    typedef typename VarViewTraits<V>::View View;
-    View view(v);
-    _var = view.var();
-    _vti = view.var()->vti;
+  template <class VarImp>
+  Var::Var(const VarBase<VarImp>& v) {
+    _var = v.var();
+    _vti = v.var()->vti;
   }
 
-  template <>
   inline
   Var::Var(const Var& v) : _var(v._var), _vti(v._vti) {}
   
@@ -777,12 +778,11 @@ namespace Gecode { namespace Reflection {
   Var::Var(VarImpBase* var, const Support::Symbol& vti)
     : _var(var), _vti(vti) {}
 
-  template <>
   inline VarImpBase*
-  Var::var(void) const {
-    return static_cast<VarImpBase*>(_var);
+  Var::varImpBase(void) const {
+    return static_cast<VarImpBase*>(_var);    
   }
-  
+
   template <class VarImp>
   VarImp*
   Var::var(void) const {

@@ -126,6 +126,13 @@
 #include "gecode/kernel/var-traits.icc"
 
 /*
+ * Variables and testing for shared variables
+ *
+ */
+
+#include "gecode/kernel/var.icc"
+
+/*
  * Access to the constraint graph
  *
  */
@@ -133,12 +140,11 @@
 #include "gecode/kernel/reflection.icc"
 
 /*
- * Variables, views and testing for shared variables
+ * Views
  *
  */
 
 #include "gecode/kernel/view.icc"
-#include "gecode/kernel/var.icc"
 
 /*
  * Variable and argument arrays
