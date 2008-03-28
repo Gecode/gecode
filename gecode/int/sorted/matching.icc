@@ -54,17 +54,12 @@ namespace Gecode { namespace Int { namespace Sorted {
    *
    */
 
-  template <class View, class Tuple, bool Perm>
+  template <class View>
   inline bool
-  glover(Space*,
-         ViewArray<Tuple>& xz,
-         ViewArray<View>& y,
-         int tau[],
-         int phi[],
-         OfflineMinItem sequence[],
-         int vertices[]) {
+  glover(ViewArray<View>& x, ViewArray<View>& y,
+         int tau[], int phi[], OfflineMinItem sequence[], int vertices[]) {
 
-    int xs = xz.size();
+    int xs = x.size();
     OfflineMin seq(sequence, vertices, xs);
     int s  = 0;
     seq.makeset();
@@ -72,7 +67,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     for (int z = 0; z < xs; z++) {  // forall y nodes
       int maxy = y[z].max();
       // creating the sequence of inserts and extractions from the queue
-      for( ; s <xs && xz[s][0].min() <= maxy; s++) {
+      for( ; s <xs && x[s].min() <= maxy; s++) {
         seq[s].iset = z;
         seq[z].rank++;
       }
@@ -93,7 +88,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         return false;
       // if there is no intersection between the matching candidate
       // and the y node then there exists NO perfect matching
-      if (xz[perm][0].max() < y[j].min())
+      if (x[perm].max() < y[j].min())
         return false;
       phi[j]         = perm;
       seq[perm].iset = -5;           //remove from candidate set
@@ -118,17 +113,13 @@ namespace Gecode { namespace Int { namespace Sorted {
    * \brief Symmetric glover function for the upper domain bounds
    *
    */
-  template <class View, class Tuple, bool Perm>
+  template <class View>
   inline bool
-  revglover(Space*,
-            ViewArray<Tuple>& xz,
-            ViewArray<View>& y,
-            int tau[],
-            int phiprime[],
-            OfflineMinItem sequence[],
+  revglover(ViewArray<View>& x, ViewArray<View>& y,
+            int tau[], int phiprime[], OfflineMinItem sequence[], 
             int vertices[]) {
 
-    int xs = xz.size();
+    int xs = x.size();
     OfflineMin seq(sequence, vertices, xs);
     int s  = xs - 1;
     seq.makeset();
@@ -137,7 +128,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     for (int z = xs; z--; ) {     // forall y nodes
       miny = y[z].min();
       // creating the sequence of inserts and extractions from the queue
-      for ( ; s > -1 && xz[tau[s]][0].max() >= miny; s--) {
+      for ( ; s > -1 && x[tau[s]].max() >= miny; s--) {
         seq[tau[s]].iset = z;
         seq[z].rank++;
       }
@@ -155,7 +146,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         return false;
       // if there is no intersection between the matching candidate
       // and the y node then there exists NO perfect matching
-      if (xz[perm][0].min() > y[j].max())
+      if (x[perm].min() > y[j].max())
         return false;
       phiprime[j]    = perm;
       seq[perm].iset = -5;

@@ -44,18 +44,23 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  views in \a x according to their lower bounds
    */
 
-  template <class View, class Tuple, bool Perm>
+  template <class View, bool Perm>
   inline void
-  sort_sigma(ViewArray<Tuple>& xz, bool) {
-    int xs = xz.size();
-
-    // test for equal bounds
+  sort_sigma(ViewArray<View>& x, ViewArray<View>& z) {
     if (Perm) {
-      TupleMinIncExt<Tuple> min_inc;
-      Support::quicksort<Tuple, TupleMinIncExt<Tuple> >(&xz[0], xs, min_inc);
+      GECODE_AUTOARRAY(ViewPair<View>, xz, x.size());
+      for (int i=x.size(); i--; ) {
+        xz[i].x=x[i]; xz[i].z=z[i];
+      }
+      TupleMinIncExt<View> min_inc;
+      Support::quicksort<ViewPair<View>,TupleMinIncExt<View> >
+        (&xz[0], x.size(), min_inc);
+      for (int i=x.size(); i--; ) {
+        x[i]=xz[i].x; z[i]=xz[i].z;
+      }
     } else {
-      TupleMinInc<Tuple> min_inc;
-      Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
+      TupleMinInc<View> min_inc;
+      Support::quicksort<View,TupleMinInc<View> >(&x[0], x.size(), min_inc);
     }
   }
 
@@ -67,17 +72,15 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  of the views in \a x
    */
 
-  template <class View, class Tuple, bool Perm>
+  template <class View, bool Perm>
   inline void
-  sort_tau(ViewArray<Tuple>& xz, int tau[]) {
-    int xs = xz.size();
-
+  sort_tau(ViewArray<View>& x, ViewArray<View>& z, int tau[]) {
     if (Perm) {
-      TupleMaxIncExt<Tuple> ltmax(xz);
-      Support::quicksort(&(*tau), xs, ltmax);
+      TupleMaxIncExt<View> ltmax(x,z);
+      Support::quicksort(&(*tau), x.size(), ltmax);
     } else {
-      TupleMaxInc<Tuple> ltmax(xz);
-      Support::quicksort(&(*tau), xs, ltmax);
+      TupleMaxInc<View> ltmax(x);
+      Support::quicksort(&(*tau), x.size(), ltmax);
     }
   }
 
@@ -88,11 +91,11 @@ namespace Gecode { namespace Int { namespace Sorted {
    * \f$\forall i\in\{0,\dots, n-1\}: min(y_0) \leq \dots \leq min(y_{n-1}) \wedge
    *  max(y_0) \leq \dots \leq max(y_{n-1})\f$ holds.
    */
-  template <class View, class Tuple>
+  template <class View>
   inline bool
   normalize(Space* home,
             ViewArray<View>& y,
-            ViewArray<Tuple>& xz,
+            ViewArray<View>& x,
             bool& nofix) {
 
     int ys = y.size();
@@ -110,17 +113,17 @@ namespace Gecode { namespace Int { namespace Sorted {
       nofix |= (me_modified(me_ub) && y[i + 1].max() != y[i].max());
     }
 
-    int xs = xz.size();
+    int xs = x.size();
     for (int i = xs; i--; ) {
-      ModEvent me = xz[i][0].gq(home, y[0].min());
+      ModEvent me = x[i].gq(home, y[0].min());
       if (me_failed(me))
         return false;
-      nofix |= (me_modified(me) && xz[i][0].min() != y[0].min());
+      nofix |= (me_modified(me) && x[i].min() != y[0].min());
 
-      me = xz[i][0].lq(home, y[xs - 1].max());
+      me = x[i].lq(home, y[xs - 1].max());
       if (me_failed(me))
         return false;
-      nofix |= (me_modified(me) && xz[i][0].max() != y[xs - 1].max());
+      nofix |= (me_modified(me) && x[i].max() != y[xs - 1].max());
     }
     return true;
   }
@@ -135,25 +138,26 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  that \a y is sorted.
    */
 
-  template<class View, class Tuple, bool Perm>
+  template<class View>
   inline bool
   perm_bc(Space* home, int tau[],
           SccComponent sinfo[],        
           int scclist[],
-          ViewArray<Tuple>& xz,
+          ViewArray<View>& x,
+          ViewArray<View>& z,
           bool& crossingedge,
           bool& nofix) {
 
-    int ps = xz.size();
+    int ps = x.size();
 
     for (int i = 1; i < ps; i++) {
       // if there are "crossed edges"
-      if (xz[i - 1][0].min() < xz[i][0].min()) {
-        if (xz[i - 1][1].min() > xz[i][1].min()) {
-          if (xz[i][1].min() != sinfo[scclist[i]].leftmost) {
+      if (x[i - 1].min() < x[i].min()) {
+        if (z[i - 1].min() > z[i].min()) {
+          if (z[i].min() != sinfo[scclist[i]].leftmost) {
             // edge does not take part in solution
-            if (xz[i][1].assigned()) { // vital edge do not remove it
-              if (xz[i - 1][0].max() < xz[i][0].min()) {
+            if (z[i].assigned()) { // vital edge do not remove it
+              if (x[i - 1].max() < x[i].min()) {
                 // invalid permutation
                 // the upper bound sorting cannot fix this
                 return false;
@@ -162,12 +166,12 @@ namespace Gecode { namespace Int { namespace Sorted {
               crossingedge = true;
               // and the permutation can still be changed
               // fix the permutation, i.e. modify z
-              ModEvent me_z = xz[i][1].gq(home, xz[i - 1][1].min());
+              ModEvent me_z = z[i].gq(home, z[i - 1].min());
               if (me_failed(me_z)) {
                 return false;
               }
               nofix |= ( me_modified(me_z) &&
-                         xz[i - 1][1].min() != xz[i][1].min());
+                         z[i - 1].min() != z[i].min());
             }
           }
         }
@@ -176,23 +180,23 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     // the same check as above for the upper bounds
     for (int i = ps - 1; i--; ) {
-      if (xz[tau[i]][0].max() < xz[tau[i + 1]][0].max()) {
-        if (xz[tau[i]][1].max() > xz[tau[i + 1]][1].max()) {
-          if (xz[tau[i]][1].max() != sinfo[scclist[tau[i]]].rightmost) {
+      if (x[tau[i]].max() < x[tau[i + 1]].max()) {
+        if (z[tau[i]].max() > z[tau[i + 1]].max()) {
+          if (z[tau[i]].max() != sinfo[scclist[tau[i]]].rightmost) {
             // edge does not take part in solution
-            if (xz[tau[i]][1].assigned()) {
-              if (xz[tau[i + 1]][0].min() > xz[tau[i]][0].max()) {
+            if (z[tau[i]].assigned()) {
+              if (x[tau[i + 1]].min() > x[tau[i]].max()) {
                 // invalid permutation
                 return false;
               }
             } else {
               crossingedge = true;
-              ModEvent me_z = xz[tau[i]][1].lq(home, xz[tau[i + 1]][1].max());
+              ModEvent me_z = z[tau[i]].lq(home, z[tau[i + 1]].max());
               if (me_failed(me_z)) {
                 return false;
               }
               nofix |= (me_modified(me_z) &&
-                        xz[tau[i + 1]][1].max() != xz[tau[i]][1].max());
+                        z[tau[i + 1]].max() != z[tau[i]].max());
             }
           }
         }

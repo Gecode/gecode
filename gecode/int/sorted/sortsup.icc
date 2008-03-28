@@ -77,35 +77,32 @@ namespace Gecode { namespace Int { namespace Sorted {
    * to a smaller one, by dropping already matched variables.
    */
 
-  template<class View, class Tuple, bool Perm>
+  template<class View, bool Perm>
   inline bool
-  check_subsumption(Space*,
-                    ViewArray<Tuple>& xz,
-                    ViewArray<View>& y,
-                    bool& subsumed,
-                    int& dropfst) {
+  check_subsumption(ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z,
+                    bool& subsumed, int& dropfst) {
 
     dropfst  = 0;
     subsumed = true;
-    int  xs  = xz.size();
+    int  xs  = x.size();
     for (int i = 0; i < xs ; i++) {
       if (Perm) {
-        subsumed &= (xz[i][0].assigned() &&
-                     xz[i][1].assigned() &&
-                     y[xz[i][1].val()].assigned());
+        subsumed &= (x[i].assigned() &&
+                     z[i].assigned() &&
+                     y[z[i].val()].assigned());
         if (subsumed) {
-          if (xz[i][0].val() != y[xz[i][1].val()].val()) {
+          if (x[i].val() != y[z[i].val()].val()) {
             return false;
           } else {
-            if (xz[i][1].val() == i) {
+            if (z[i].val() == i) {
               dropfst++;
             }
           }
         }
       } else {
-        subsumed &= (xz[i][0].assigned() && y[i].assigned());
+        subsumed &= (x[i].assigned() && y[i].assigned());
         if (subsumed) {
-          if (xz[i][0].val() != y[i].val()) {
+          if (x[i].val() != y[i].val()) {
             return false;
           } else {
             dropfst++;
@@ -264,17 +261,17 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  is larger than the upper domain bound of \f$x_i\f$
    *
    */
-  template <class Tuple>
+  template <class View>
   class TupleMaxInc {
   protected:
-    ViewArray<Tuple> x;
+    ViewArray<View> x;
   public:
-    TupleMaxInc(const ViewArray<Tuple>& x0) : x(x0) {}
+    TupleMaxInc(const ViewArray<View>& x0) : x(x0) {}
     bool operator()(const int i, const int j) {
-      if (x[i][0].max() == x[j][0].max()) {
-        return x[i][0].min() < x[j][0].min();
+      if (x[i].max() == x[j].max()) {
+        return x[i].min() < x[j].min();
       } else {
-        return x[i][0].max() < x[j][0].max();
+        return x[i].max() < x[j].max();
       }
     }
   };
@@ -289,25 +286,27 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  is larger than the upper domain bound of \f$x_i\f$
    *
    */
-  template <class Tuple>
+  template <class View>
   class TupleMaxIncExt {
   protected:
-    ViewArray<Tuple> x;
+    ViewArray<View> x;
+    ViewArray<View> z;
   public:
-    TupleMaxIncExt(const ViewArray<Tuple>& x0) : x(x0) {}
+    TupleMaxIncExt(const ViewArray<View>& x0,
+                   const ViewArray<View>& z0) : x(x0), z(z0) {}
     bool operator()(const int i, const int j) {
-      if (x[i][0].max() == x[j][0].max()) {
-        if (x[i][0].min() == x[j][0].min()) {
-          if (x[i][1].max() == x[j][1].max()) {
-            return x[i][1].min() < x[j][1].min();
+      if (x[i].max() == x[j].max()) {
+        if (x[i].min() == x[j].min()) {
+          if (z[i].max() == z[j].max()) {
+            return z[i].min() < z[j].min();
           } else {
-            return x[i][1].max() < x[j][1].max();
+            return z[i].max() < z[j].max();
           }
         } else {
-          return x[i][0].min() < x[j][0].min();
+          return x[i].min() < x[j].min();
         }
       } else {
-        return x[i][0].max() < x[j][0].max();
+        return x[i].max() < x[j].max();
       }
     }
   };
@@ -325,10 +324,10 @@ namespace Gecode { namespace Int { namespace Sorted {
   class TupleMinInc {
   public:
     bool operator()(const View& x, const View& y) {
-      if (x[0].min() == y[0].min()) {
-        return x[0].max() < y[0].max();
+      if (x.min() == y.min()) {
+        return x.max() < y.max();
       } else {
-        return x[0].min() < y[0].min();
+        return x.min() < y.min();
       }
     }
   };
@@ -345,61 +344,28 @@ namespace Gecode { namespace Int { namespace Sorted {
    */
 
   template <class View>
+  class ViewPair {
+  public:
+    View x;
+    View z;
+  };
+
+  template <class View>
   class TupleMinIncExt {
   public:
-    bool operator()(const View& x, const View& y) {
-      if (x[0].min() == y[0].min()) {
-        if (x[0].max() == y[0].max()) {
-          if (x[1].min() == y[1].min()) {
-            return x[1].max() < y[1].max();
+    bool operator()(const ViewPair<View>& x, const ViewPair<View>& y) {
+      if (x.x.min() == y.x.min()) {
+        if (x.x.max() == y.x.max()) {
+          if (x.z.min() == y.z.min()) {
+            return x.z.max() < y.z.max();
           } else {
-            return x[1].min() < y[1].min();
+            return x.z.min() < y.z.min();
           }
         } else {
-          return x[0].max() < y[0].max();
+          return x.x.max() < y.x.max();
         }
       } else {
-        return x[0].min() < y[0].min();
-      }
-    }
-  };
-
-  /**
-   * \brief View comparison on ViewTuples
-   *
-   * Checks whether the lower domain bound of the second component
-   * of \a x (the lower bound on the permutation variable) is smaller
-   * than the lower domain bound of the second component of \a y.
-   */
-
-  template <class View>
-  class TupleMinIncPerm {
-  public:
-    bool operator()(const View& x, const View& y) {
-      if (x[1].min() == y[1].min()) {
-        return x[1].max() < y[1].max();
-      } else {
-        return x[1].min() < y[1].min();
-      }
-    }
-  };
-
-  /**
-   * \brief View comparison on ViewTuples
-   *
-   * Checks whether the upper domain bound of the second component
-   * of \a x (the upper bound on the permutation variable) is smaller
-   * than the upper domain bound of the second component of \a y.
-   */
-
-  template <class View>
-  class TupleMaxIncPerm {
-  public:
-    bool operator()(const View& x, const View& y) {
-      if (x[1].max() == y[1].max()) {
-        return x[1].min() < y[1].min();
-      } else {
-        return x[1].max() < y[1].max();
+        return x.x.min() < y.x.min();
       }
     }
   };
@@ -411,11 +377,12 @@ namespace Gecode { namespace Int { namespace Sorted {
    * and udpates the other array respectively.
    */
 
-  template<class View, class Tuple, bool Perm>
+  template<class View, bool Perm>
   inline bool
   array_assigned(Space* home,
-                 ViewArray<Tuple>& xz,
+                 ViewArray<View>& x,
                  ViewArray<View>& y,
+                 ViewArray<View>& z,
                  bool& subsumed,
                  bool& match_fixed,
                  bool&,
@@ -426,16 +393,16 @@ namespace Gecode { namespace Int { namespace Sorted {
     bool z_complete = true;
 
     for (int i = y.size(); i--; ) {
-      x_complete &= xz[i][0].assigned();
+      x_complete &= x[i].assigned();
       y_complete &= y[i].assigned();
       if (Perm) {
-        z_complete &= xz[i][1].assigned();
+        z_complete &= z[i].assigned();
       }
     }
 
     if (x_complete) {
-      for (int i = xz.size(); i--; ) {
-        ModEvent me = y[i].eq(home, xz[i][0].val());
+      for (int i = x.size(); i--; ) {
+        ModEvent me = y[i].eq(home, x[i].val());
         if (me_failed(me)) {
           return false;
         }
@@ -453,8 +420,8 @@ namespace Gecode { namespace Int { namespace Sorted {
         y_equality &= (y[i].val() == y[i + 1].val());
       }
       if (y_equality) {
-        for (int i = xz.size(); i--; ) {
-          ModEvent me = xz[i][0].eq(home, y[i].val());
+        for (int i = x.size(); i--; ) {
+          ModEvent me = x[i].eq(home, y[i].val());
           if (me_failed(me)) {
             return false;
           }
@@ -471,8 +438,8 @@ namespace Gecode { namespace Int { namespace Sorted {
     if (Perm) {
       if (z_complete) {
         if (x_complete) {
-          for (int i = xz.size(); i--; ) {
-            ModEvent me = y[xz[i][1].val()].eq(home, xz[i][0].val());
+          for (int i = x.size(); i--; ) {
+            ModEvent me = y[z[i].val()].eq(home, x[i].val());
             if (me_failed(me)) {
               return false;
             }
@@ -481,8 +448,8 @@ namespace Gecode { namespace Int { namespace Sorted {
           return subsumed;
         }
         if (y_complete) {
-          for (int i = xz.size(); i--; ) {
-            ModEvent me = xz[i][0].eq(home, y[xz[i][1].val()].val());
+          for (int i = x.size(); i--; ) {
+            ModEvent me = x[i].eq(home, y[z[i].val()].val());
             if (me_failed(me)) {
               return false;
             }
@@ -493,15 +460,15 @@ namespace Gecode { namespace Int { namespace Sorted {
 
         // validate the permutation
         int sum = 0;
-        for (int i = xz.size(); i--; ) {
-          int pi = xz[i][1].val();
-          if (xz[i][0].max() < y[pi].min() ||
-              xz[i][0].min() > y[pi].max()) {
+        for (int i = x.size(); i--; ) {
+          int pi = z[i].val();
+          if (x[i].max() < y[pi].min() ||
+              x[i].min() > y[pi].max()) {
             return false;
           }
           sum += pi;
         }
-        int n = xz.size();
+        int n = x.size();
         int gauss = ( (n * (n + 1)) / 2);
         // if the sum over all assigned permutation variables is not
         // equal to the gaussian sum - n they are not distinct, hence invalid
@@ -521,49 +488,49 @@ namespace Gecode { namespace Int { namespace Sorted {
    *
    */
 
-  template<class View, class Tuple, bool Perm>
+  template<class View>
   forceinline bool
-  channel(Space* home, ViewArray<Tuple>& xz, ViewArray<View>& y, bool& nofix) {
-    int n = xz.size();
+  channel(Space* home, ViewArray<View>& x, ViewArray<View>& y, 
+          ViewArray<View>& z, bool& nofix) {
+    int n = x.size();
     for (int i = n; i--; ) {
-      if (xz[i][1].assigned()) {
-        // if the permutation variable is determined
-        int v = xz[i][1].val();
-        if (xz[i][0].assigned()) {
+      if (z[i].assigned()) {
+        int v = z[i].val();
+        if (x[i].assigned()) {
           // channel equality from x to y
-          ModEvent me = y[v].eq(home, xz[i][0].val());
+          ModEvent me = y[v].eq(home, x[i].val());
           if (me_failed(me))
             return false;
           nofix |= me_modified(me);
         } else {
           if (y[v].assigned()) {
             // channel equality from y to x
-            ModEvent me = xz[i][0].eq(home, y[v].val());
+            ModEvent me = x[i].eq(home, y[v].val());
             if (me_failed(me))
               return false;
             nofix |= me_modified(me);
           } else {
             // constrain upper bound
-            ModEvent me = xz[i][0].lq(home, y[v].max());
+            ModEvent me = x[i].lq(home, y[v].max());
             if (me_failed(me))
               return false;
             nofix |= me_modified(me);
 
             // constrain lower bound
-            me = xz[i][0].gq(home, y[v].min());
+            me = x[i].gq(home, y[v].min());
             if (me_failed(me))
               return false;
             nofix |= me_modified(me);
 
             // constrain the sorted variable
             // constrain upper bound
-            me = y[v].lq(home, xz[i][0].max());
+            me = y[v].lq(home, x[i].max());
             if (me_failed(me))
               return false;
             nofix |= me_modified(me);
 
             // constrain lower bound
-            me = y[v].gq(home, xz[i][0].min());
+            me = y[v].gq(home, x[i].min());
             if (me_failed(me))
               return false;
             nofix |= me_modified(me);
@@ -571,16 +538,16 @@ namespace Gecode { namespace Int { namespace Sorted {
         }
       } else {
         // if the permutation variable is undetermined
-        int l = xz[i][1].min();
-        int r = xz[i][1].max();
+        int l = z[i].min();
+        int r = z[i].max();
         // upper bound
-        ModEvent me = xz[i][0].lq(home, y[r].max());
+        ModEvent me = x[i].lq(home, y[r].max());
         if (me_failed(me))
           return false;
         nofix |= me_modified(me);
 
         // lower bound
-        me = xz[i][0].gq(home, y[l].min());
+        me = x[i].gq(home, y[l].min());
         if (me_failed(me))
           return false;
         nofix |= me_modified(me);

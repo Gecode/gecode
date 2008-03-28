@@ -40,29 +40,6 @@
 namespace Gecode {
 
   void 
-  sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-         IntConLevel, PropKind) {
-    using namespace Int;
-    if (x.size() != y.size())
-      throw ArgumentSizeMismatch("Int::Sorted");
-    if (x.same(y))
-      throw ArgumentSame("Int::Sorted");
-      
-    if (home->failed()) return;
-
-    // construct single tuple for propagation without permutation variables
-    ViewArray<ViewTuple<IntView,1> > x0(home, x.size());
-    for (int i = x.size(); i--; )
-      x0[i][0] = x[i];
-    ViewArray<IntView> y0(home, y);
-
-    GECODE_ES_FAIL(home,
-                   (Sorted::
-                    Sorted<IntView, ViewTuple<IntView,1>, false>::
-                    post(home, x0, y0)));
-  }
-
-  void 
   sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y, 
          const IntVarArgs& z, IntConLevel, PropKind) {
     using namespace Int;
@@ -73,19 +50,29 @@ namespace Gecode {
     
     if (home->failed()) return;
 
-    ViewArray<ViewTuple<IntView, 2> > xz0(home, x.size());
-
-    // assert that permutation variables encode a permutation
-    ViewArray<IntView> y0(home, y);
-    for (int i = x.size(); i--; ) {
-      xz0[i][0]=x[i]; xz0[i][1] = z[i];
-    }
+    ViewArray<IntView> x0(home,x), y0(home,y), z0(home,z);
 
     GECODE_ES_FAIL(home,
-                   (Sorted::
-                    Sorted<IntView, ViewTuple<IntView,2>, true>::
-                    post(home, xz0, y0)));
+                   (Sorted::Sorted<IntView,true>::post(home,x0,y0,z0)));
   }
+
+  void 
+  sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+         IntConLevel, PropKind) {
+    using namespace Int;
+    if (x.size() != y.size())
+      throw ArgumentSizeMismatch("Int::Sorted");
+    if (x.same(y))
+      throw ArgumentSame("Int::Sorted");
+      
+    if (home->failed()) return;
+
+    ViewArray<IntView> x0(home,x), y0(home,y), z0(home,0);
+
+    GECODE_ES_FAIL(home,
+                   (Sorted::Sorted<IntView,false>::post(home,x0,y0,z0)));
+  }
+
 }
 
 // STATISTICS: int-post
