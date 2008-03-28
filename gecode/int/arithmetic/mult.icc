@@ -228,8 +228,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View, PropCond pc>
   Support::Symbol
   MultZeroOne<View,pc>::ati(void) {
-    return Reflection::mangle<View,pc>
-      ("Gecode::Int::Arithmetic::MultZeroOne");
+    return Reflection::mangle<View>
+      ("Gecode::Int::Arithmetic::MultZeroOne", pc);
   }
 
   template <class View, PropCond pc>

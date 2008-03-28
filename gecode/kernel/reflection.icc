@@ -900,14 +900,38 @@ namespace Reflection {
     return mangled;
   }
   /// Mangle ati with type information
-  template <class View0, bool b>
+  template <class View0>
   Support::Symbol
-  mangle(const Support::Symbol& ati) {
+  mangle(const Support::Symbol& ati, bool b) {
     Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
-    mangled += (b ? "true" : "false");
+    mangled += Support::Symbol(b);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, unsigned int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
     mangled += ">";
     return mangled;
   }
@@ -924,16 +948,44 @@ namespace Reflection {
     return mangled;
   }
   /// Mangle ati with type information
-  template <class View0, class View1, bool b>
+  template <class View0, class View1>
   Support::Symbol
-  mangle(const Support::Symbol& ati) {
+  mangle(const Support::Symbol& ati, bool b) {
     Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
     mangled += ",";
     mangled += TypeOf<View1>::t();
     mangled += ",";
-    mangled += (b ? "true" : "false");
+    mangled += Support::Symbol(b);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, unsigned int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
     mangled += ">";
     return mangled;
   }
@@ -952,9 +1004,9 @@ namespace Reflection {
     return mangled;
   }
   /// Mangle ati with type information
-  template <class View0, class View1, class View2, bool b>
+  template <class View0, class View1, class View2>
   Support::Symbol
-  mangle(const Support::Symbol& ati) {
+  mangle(const Support::Symbol& ati, bool b) {
     Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
@@ -963,7 +1015,39 @@ namespace Reflection {
     mangled += ",";
     mangled += TypeOf<View2>::t();
     mangled += ",";
-    mangled += (b ? "true" : "false");
+    mangled += Support::Symbol(b);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, unsigned int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
     mangled += ">";
     return mangled;
   }
@@ -984,9 +1068,9 @@ namespace Reflection {
     return mangled;
   }
   /// Mangle ati with type information
-  template <class View0, class View1, class View2, class View3, bool b>
+  template <class View0, class View1, class View2, class View3>
   Support::Symbol
-  mangle(const Support::Symbol& ati) {
+  mangle(const Support::Symbol& ati, bool b) {
     Support::Symbol mangled = ati.copy();
     mangled += "<";
     mangled += TypeOf<View0>::t();
@@ -997,7 +1081,43 @@ namespace Reflection {
     mangled += ",";
     mangled += TypeOf<View3>::t();
     mangled += ",";
-    mangled += (b ? "true" : "false");
+    mangled += Support::Symbol(b);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2, class View3>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2, class View3>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, unsigned int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
     mangled += ">";
     return mangled;
   }

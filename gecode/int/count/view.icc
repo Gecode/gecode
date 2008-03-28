@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   Support::Symbol
   EqView<VX,VY,VZ,shr>::ati(void) {
-    return Reflection::mangle<VX,VY,VZ,shr>("Gecode::Int::Count::EqView");
+    return Reflection::mangle<VX,VY,VZ>("Gecode::Int::Count::EqView",shr);
   }
 
   template <class VX, class VY, class VZ, bool shr>
@@ -252,7 +252,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   Support::Symbol
   NqView<VX,VY,VZ,shr>::ati(void) {
-    return Reflection::mangle<VX,VY,VZ,shr>("Gecode::Int::Count::NqView");
+    return Reflection::mangle<VX,VY,VZ>("Gecode::Int::Count::NqView",shr);
   }
 
   template <class VX, class VY, class VZ, bool shr>
@@ -331,7 +331,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   Support::Symbol
   LqView<VX,VY,VZ,shr>::ati(void) {
-    return Reflection::mangle<VX,VY,VZ,shr>("Gecode::Int::Count::LqView");
+    return Reflection::mangle<VX,VY,VZ>("Gecode::Int::Count::LqView",shr);
   }
 
   template <class VX, class VY, class VZ, bool shr>
@@ -406,7 +406,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   Support::Symbol
   GqView<VX,VY,VZ,shr>::ati(void) {
-    return Reflection::mangle<VX,VY,VZ,shr>("Gecode::Int::Count::GqView");
+    return Reflection::mangle<VX,VY,VZ>("Gecode::Int::Count::GqView", shr);
   }
 
   template <class VX, class VY, class VZ, bool shr>

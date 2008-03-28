@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, bool shared>
   Support::Symbol
   Dom<View,shared>::ati(void) {
-    return Reflection::mangle<View,shared>("Gecode::Int::Channel::Dom");
+    return Reflection::mangle<View>("Gecode::Int::Channel::Dom",shared);
   }
 
   template <class View, bool shared>

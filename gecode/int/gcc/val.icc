@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   Support::Symbol
   Val<View, Card, isView>::ati(void) {
-    return Reflection::mangle<View,Card,isView>("Gecode::Int::GCC::Val");
+    return Reflection::mangle<View,Card>("Gecode::Int::GCC::Val",isView);
   }
 
   template <class View, class Card, bool isView>
