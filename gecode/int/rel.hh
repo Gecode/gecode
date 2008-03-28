@@ -581,69 +581,37 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Lex : public NaryPropagator<ViewTuple<View,2>,PC_INT_BND> {
+  class Lex : public Propagator {
   protected:
-    using NaryPropagator<ViewTuple<View,2>,PC_INT_BND>::x;
-
+    /// View arrays
+    ViewArray<View> x, y;
     /// Determines whether propagator is strict or not
     bool strict;
     /// Constructor for cloning \a p
     Lex(Space* home, bool share, Lex& p);
     /// Constructor for posting
-    Lex(Space* home, ViewArray<ViewTuple<View,2> >& xy, bool strict);
+    Lex(Space* home, ViewArray<View>& x, ViewArray<View>& y, bool strict);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
-    /// Post propagator for lexical order on \a xy
-    static  ExecStatus post(Space* home,
-                            ViewArray<ViewTuple<View,2> >& xy, bool strict);
+    /// Post propagator for lexical order between \a x and \a y
+    static ExecStatus post(Space* home, ViewArray<View>& x, ViewArray<View>& y,
+                           bool strict);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
-
-
-  /**
-   * \brief %Propagator for n-ary disequlaity
-   *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View>
-  class NaryNq : public BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM> {
-  protected:
-    using BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::x0;
-    using BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::x1;
-    /// Views not yet subscribed to
-    ViewArray<ViewTuple<View,2> > x;
-    /// Constructor for posting
-    NaryNq(Space* home,  ViewArray<ViewTuple<View,2> >& x);
-    /// Constructor for cloning \a p
-    NaryNq(Space* home, bool share, NaryNq& p);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Mangled propagator name
-    static Support::Symbol ati(void);
-    /// Post propagator for \f$\exists i\in\{0,\ldots,|x|-1\}:\;x_i\neq y_i\f$
-    static  ExecStatus post(Space* home, ViewArray<ViewTuple<View,2> >& x);
-  };
-
 
 }}}
 

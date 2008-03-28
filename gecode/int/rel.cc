@@ -36,6 +36,7 @@
  */
 
 #include "gecode/int/rel.hh"
+#include "gecode/int/bool.hh"
 
 #include <algorithm>
 
@@ -317,38 +318,26 @@ namespace Gecode {
     switch (r) {
     case IRT_GR: 
       {
-        ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=y[i]; xy[i][1]=x[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,true));
+        ViewArray<IntView> xv(home,x), yv(home,y);
+        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,yv,xv,true));
       }
       break;
     case IRT_LE: 
       {
-        ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=x[i]; xy[i][1]=y[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,true));
+        ViewArray<IntView> xv(home,x), yv(home,y);
+        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xv,yv,true));
       }
       break;
     case IRT_GQ: 
       {
-        ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=y[i]; xy[i][1]=x[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,false));
+        ViewArray<IntView> xv(home,x), yv(home,y);
+        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,yv,xv,false));
       }
       break;
     case IRT_LQ: 
       {
-        ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=x[i]; xy[i][1]=y[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,false));
+        ViewArray<IntView> xv(home,x), yv(home,y);
+        GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xv,yv,false));
       }
       break;
     case IRT_EQ:
@@ -365,11 +354,14 @@ namespace Gecode {
       break;
     case IRT_NQ: 
       {
-        ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=x[i]; xy[i][1]=y[i];
+        ViewArray<BoolView> b(home,x.size());
+        for (int i=x.size(); i--; ) {
+          BoolVar bi(home,0,1); b[i]=bi;
+          NegBoolView n(b[i]);
+          GECODE_ES_FAIL(home,(Rel::ReEqDom<IntView,NegBoolView>
+                               ::post(home,x[i],y[i],n)));
         }
-        GECODE_ES_FAIL(home,Rel::NaryNq<IntView>::post(home,xy));
+        GECODE_ES_FAIL(home,Bool::NaryOrTrue<BoolView>::post(home,b));
       }
       break;
     default:
@@ -402,9 +394,6 @@ namespace Gecode {
     GECODE_REGISTER2(Rel::ReEqBndInt<IntView,BoolView>);
     GECODE_REGISTER2(Rel::ReEqBnd<IntView,NegBoolView>);
     GECODE_REGISTER2(Rel::ReEqBnd<IntView,BoolView>);
-
-    GECODE_REGISTER1(Rel::NaryNq<BoolView>);
-    GECODE_REGISTER1(Rel::NaryNq<IntView>);
 
     GECODE_REGISTER1(Rel::Nq<BoolView>);
     GECODE_REGISTER1(Rel::Nq<IntView>);

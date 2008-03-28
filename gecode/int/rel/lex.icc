@@ -39,15 +39,20 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   inline
-  Lex<View>::Lex(Space* home,
-                 ViewArray<ViewTuple<View,2> >& xy, bool s)
-    : NaryPropagator<ViewTuple<View,2>,PC_INT_BND>(home,xy), strict(s) {}
+  Lex<View>::Lex(Space* home,                             
+                 ViewArray<View>& x0, ViewArray<View>& y0, bool s)
+    : Propagator(home), x(x0), y(y0), strict(s) {
+    x.subscribe(home, this, PC_INT_BND);
+    y.subscribe(home, this, PC_INT_BND);
+  }
 
   template <class View>
   forceinline
   Lex<View>::Lex(Space* home, bool share, Lex<View>& p)
-    : NaryPropagator<ViewTuple<View,2>,PC_INT_BND>(home,share,p),
-      strict(p.strict) {}
+    : Propagator(home,share,p), strict(p.strict) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
 
   template <class View>
   Actor*
@@ -64,18 +69,25 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   Reflection::ActorSpec
   Lex<View>::spec(const Space* home, Reflection::VarMap& m) const {
-    return NaryPropagator<ViewTuple<View,2>,PC_INT_BND>
-      ::spec(home, m, ati()) << strict;
+    Reflection::ActorSpec s(ati());
+    return s << x.spec(home,m) << y.spec(home,m) << strict;
   }
 
   template <class View>
   void
   Lex<View>::post(Space* home, Reflection::VarMap& vars,
-  const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<ViewTuple<View,2> > x(home, vars, spec[0]);
-    bool strict = spec[1]->toInt();
-    (void) new (home) Lex<View>(home, x, strict);
+                  const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
+    ViewArray<View> x(home, vars, spec[0]);
+    ViewArray<View> y(home, vars, spec[1]);
+    bool s = spec[2]->toInt();
+    (void) new (home) Lex<View>(home,x,y,s);
+  }
+
+  template <class View>
+  PropCost
+  Lex<View>::cost(ModEventDelta) const {
+    return cost_lo(x.size(), PC_LINEAR_LO);
   }
 
   template <class View>
@@ -89,10 +101,10 @@ namespace Gecode { namespace Int { namespace Rel {
       int i = 0;
       int n = x.size();
 
-      while ((i < n) && (x[i][0].min() == x[i][1].max())) {
+      while ((i < n) && (x[i].min() == y[i].max())) {
         // case: =, >=
-        GECODE_ME_CHECK(x[i][0].lq(home,x[i][1].max()));
-        GECODE_ME_CHECK(x[i][1].gq(home,x[i][0].min()));
+        GECODE_ME_CHECK(x[i].lq(home,y[i].max()));
+        GECODE_ME_CHECK(y[i].gq(home,x[i].min()));
         i++;
       }
 
@@ -100,17 +112,17 @@ namespace Gecode { namespace Int { namespace Rel {
         return strict ? ES_FAILED : ES_SUBSUMED(this,sizeof(*this));
 
       // Possible cases left: <, <=, > (yields failure), ?
-      GECODE_ME_CHECK(x[i][0].lq(home,x[i][1].max()));
-      GECODE_ME_CHECK(x[i][1].gq(home,x[i][0].min()));
+      GECODE_ME_CHECK(x[i].lq(home,y[i].max()));
+      GECODE_ME_CHECK(y[i].gq(home,x[i].min()));
 
-      if (x[i][0].max() < x[i][1].min()) // case: < (after tell)
+      if (x[i].max() < y[i].min()) // case: < (after tell)
         return ES_SUBSUMED(this,home);
 
-      // x[i][0] can never be equal to x[i][1] (otherwise: >=)
-      assert(!(x[i][0].assigned() && x[i][1].assigned() &&
-               x[i][0].val() == x[i][1].val()));
+      // x[i] can never be equal to y[i] (otherwise: >=)
+      assert(!(x[i].assigned() && y[i].assigned() &&
+               x[i].val() == y[i].val()));
       // Remove all elements between 0...i-1 as they are assigned and equal
-      x.drop_fst(i);
+      x.drop_fst(i); y.drop_fst(i);
       // After this, execution continues at [1]
     }
 
@@ -124,10 +136,10 @@ namespace Gecode { namespace Int { namespace Rel {
       int n = x.size();
 
       while ((i < n) &&
-             (x[i][0].min() == x[i][1].max()) &&
-             (x[i][0].max() == x[i][1].min())) { // case: =
-        assert(x[i][0].assigned() && x[i][1].assigned() &&
-               (x[i][0].val() == x[i][1].val()));
+             (x[i].min() == y[i].max()) &&
+             (x[i].max() == y[i].min())) { // case: =
+        assert(x[i].assigned() && y[i].assigned() &&
+               (x[i].val() == y[i].val()));
         i++;
       }
 
@@ -138,19 +150,20 @@ namespace Gecode { namespace Int { namespace Rel {
           goto rewrite_lq;
       }
 
-      if (x[i][0].max() < x[i][1].min()) // case: <
+      if (x[i].max() < y[i].min()) // case: <
         goto rewrite_lq;
 
-      if (x[i][0].min() > x[i][1].max()) // case: >
+      if (x[i].min() > y[i].max()) // case: >
         goto rewrite_le;
 
       if (i > 1) {
         // Remove equal elements [1...i-1], keep element [0]
         x[i-1]=x[0]; x.drop_fst(i-1);
+        y[i-1]=y[0]; y.drop_fst(i-1);
       }
     }
 
-    if (x[1][0].max() <= x[1][1].min()) {
+    if (x[1].max() <= y[1].min()) {
       // case: <= (invariant: not =, <)
       /*
        * State 3
@@ -160,7 +173,7 @@ namespace Gecode { namespace Int { namespace Rel {
       int i = 2;
       int n = x.size();
 
-      while ((i < n) && (x[i][0].max() == x[i][1].min())) // case: <=, =
+      while ((i < n) && (x[i].max() == y[i].min())) // case: <=, =
         i++;
 
       if (i == n) { // case: $
@@ -170,21 +183,23 @@ namespace Gecode { namespace Int { namespace Rel {
           goto rewrite_lq;
       }
 
-      if (x[i][0].max() < x[i][1].min()) // case: <
+      if (x[i].max() < y[i].min()) // case: <
         goto rewrite_lq;
 
-      if (x[i][0].min() > x[i][1].max()) { // case: >
+      if (x[i].min() > y[i].max()) { // case: >
         // Eliminate [i]...[n-1]
-        for (int j=i; j<n; j++)
+        for (int j=i; j<n; j++) {
           x[j].cancel(home,this,PC_INT_BND);
-        x.size(i);
+          y[j].cancel(home,this,PC_INT_BND);
+        }
+        x.size(i); y.size(i);
         strict = true;
       }
 
       return ES_FIX;
     }
 
-    if (x[1][0].min() >= x[1][1].max()) {
+    if (x[1].min() >= y[1].max()) {
       // case: >= (invariant: not =, >)
       /*
        * State 4
@@ -194,7 +209,7 @@ namespace Gecode { namespace Int { namespace Rel {
       int i = 2;
       int n = x.size();
 
-      while ((i < n) && (x[i][0].min() == x[i][1].max()))
+      while ((i < n) && (x[i].min() == y[i].max()))
         // case: >=, =
         i++;
 
@@ -205,14 +220,16 @@ namespace Gecode { namespace Int { namespace Rel {
           return ES_FIX;
       }
 
-      if (x[i][0].min() > x[i][1].max()) // case: >
+      if (x[i].min() > y[i].max()) // case: >
         goto rewrite_le;
 
-      if (x[i][0].max() < x[i][1].min()) { // case: <
+      if (x[i].max() < y[i].min()) { // case: <
         // Eliminate [i]...[n-1]
-        for (int j=i; j<n; j++)
+        for (int j=i; j<n; j++) {
           x[j].cancel(home,this,PC_INT_BND);
-        x.size(i);
+          y[j].cancel(home,this,PC_INT_BND);
+        }
+        x.size(i); y.size(i);
         strict = false;
       }
 
@@ -222,28 +239,37 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_FIX;
 
   rewrite_le:
-    GECODE_REWRITE(this,Le<View>::post(home,x[0][0],x[0][1]));
+    GECODE_REWRITE(this,Le<View>::post(home,x[0],y[0]));
   rewrite_lq:
-    GECODE_REWRITE(this,Lq<View>::post(home,x[0][0],x[0][1]));
+    GECODE_REWRITE(this,Lq<View>::post(home,x[0],y[0]));
   }
 
   template <class View>
   ExecStatus
-  Lex<View>::post(Space* home,
-                  ViewArray<ViewTuple<View,2> >& xy, bool strict){
-    if (xy.size() == 0)
+  Lex<View>::post(Space* home, 
+                  ViewArray<View>& x, ViewArray<View>& y, bool strict){
+    if (x.size() == 0)
       return strict ? ES_FAILED : ES_OK;
-    if (xy.size() == 1) {
+    if (x.size() == 1) {
       if (strict)
-        return Le<View>::post(home,xy[0][0],xy[0][1]);
+        return Le<View>::post(home,x[0],y[0]);
       else
-        return Lq<View>::post(home,xy[0][0],xy[0][1]);
+        return Lq<View>::post(home,x[0],y[0]);
     }
-    (void) new (home) Lex<View>(home,xy,strict);
+    (void) new (home) Lex<View>(home,x,y,strict);
     return ES_OK;
+  }
+
+  template <class View>
+  size_t
+  Lex<View>::dispose(Space* home) {
+    assert(!home->failed());
+    x.cancel(home,this,PC_INT_BND);
+    y.cancel(home,this,PC_INT_BND);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 }}}
 
 // STATISTICS: int-prop
-
