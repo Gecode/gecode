@@ -74,6 +74,9 @@ namespace Gecode { namespace Int { namespace Sorted {
     int reachable;
     /// Constructor for posting
     Sorted(Space*, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
+    /// Constructor for posting from reflection
+    Sorted(Space*, ViewArray<View>& x, ViewArray<View>& y,
+           ViewArray<View>& z, ViewArray<View>& w, int reachable);
     /// Constructor for cloning
     Sorted(Space* home, bool share, Sorted<View,Perm>& p);
 
@@ -82,6 +85,14 @@ namespace Gecode { namespace Int { namespace Sorted {
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Post propagator according to specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol ati(void);
     /// Cost function returning PC_LINEAR_HI
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
