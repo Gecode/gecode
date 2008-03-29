@@ -36,19 +36,33 @@ QSolver::QSolver(QSpace* qs, VariableHeuristic* ev, valueHeuristic* ve) {
     nbRanges = new int;
 }
 
+void QSolver::attachLeafObserver(LeafObserver* o) {
+    obs_leaf.push_back(o);
+}
+
+void QSolver::attachBTObserver(BacktrackObserver* o) {
+    obs_bt.push_back(o);
+}
+
+void QSolver::attachCPObserver(ChoicePointObserver* o) {
+    obs_cp.push_back(o);
+}
+
+void QSolver::attachSubsumedObserver(SubsumedObserver* o) {
+    obs_sub.push_back(o);
+}
 
 bool QSolver::solve(unsigned long int& nodes, unsigned long int& propsteps) {
     int ret = sp->status(0,propsteps);
-    return rSolve(sp,nodes,propsteps,0);
+    return rSolve(sp,nodes,propsteps,0,0);
 }
 
 
-bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& propsteps, int curvar) {
+bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& propsteps, int curvar, int depth) {
     unsigned int rien=0;
     nodes++;
-    
-//    if (debug) cout<<"Solver : Rsolve appelé..."<<endl;
-    
+    ImplicativeState st(static_cast<Implicative*>(qs));   
+        
     // Step 0 : we ask to the branching heuristic /////////////////////////////////
     // for the next variable to branch on. ////////////////////////////////////////
     int branchon = bh->nextVar(qs);                                              //
@@ -61,8 +75,23 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
         int fret=qs->finalStatus(propsteps);                                     //
         
 //   LEAF OBSERVER (fret==1)
+        {
+            for ( vector<LeafObserver*>::reverse_iterator i = obs_leaf.rbegin();
+                  i != obs_leaf.rend();
+                  ++i )
+            {
+                (*i)->observeLeaf(st,fret==1);
+            }
+        }
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
+        for ( vector<BacktrackObserver*>::reverse_iterator i = obs_bt.rbegin();
+            i != obs_bt.rend();
+            ++i )
+        {
+            (*i)->observeBacktrack(st,depth);
+        }
+
 //   BACKTRACK OBSERVER
         return (fret==1)?true:false;                                             //
     }                                                                            //
@@ -75,14 +104,44 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
     if (ret==1) { // If the answer is TRUE...                                    //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
+
+//   LEAF OBSERVER (true)
+        for ( vector<LeafObserver*>::reverse_iterator i = obs_leaf.rbegin();
+            i != obs_leaf.rend();
+            ++i )
+        {
+            (*i)->observeLeaf(st,true);
+        }
+
    //   BACKTRACK OBSERVER ( depth)
+        for ( vector<BacktrackObserver*>::reverse_iterator i = obs_bt.rbegin();
+            i != obs_bt.rend();
+            ++i )
+        {
+            (*i)->observeBacktrack(st,depth);
+        }
         return true;                                                             //
     }                                                                            //
                                                                                  //
     if (ret==0) { // If the answer is FALSE...                                   //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
+
+//   LEAF OBSERVER (false)
+        for ( vector<LeafObserver*>::reverse_iterator i = obs_leaf.rbegin();
+            i != obs_leaf.rend();
+            ++i )
+        {
+            (*i)->observeLeaf(st,false);
+        }
+
     //   BACKTRACK OBSERVER ( depth)
+        for ( vector<BacktrackObserver*>::reverse_iterator i = obs_bt.rbegin();
+            i != obs_bt.rend();
+            ++i )
+        {
+            (*i)->observeBacktrack(st,depth);
+        }
         return false;                                                            //
     }                                                                            //
     ///////////////////////////////////////////////////////////////////////////////
@@ -100,15 +159,29 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
             subspace->assign_bool(branchon,tab,*nbRanges);                       //
             break;
     }
-// CHOICE POINT OBSERVER ( depth, branchon, true, tab, *nbRanges)
-    if ( rSolve(subspace,nodes, propsteps,branchon) ^ qs->quantification(branchon)) {
+// CHOICE POINT OBSERVER ( depth, curvar, branchon, true, tab, *nbRanges)
+       for ( vector<ChoicePointObserver*>::reverse_iterator i = obs_cp.rbegin();
+            i != obs_cp.rend();
+            ++i )
+        {
+            (*i)->observeChoicePoint(st,depth, curvar, branchon, true, tab, *nbRanges);
+        }
+
+    if ( rSolve(subspace,nodes, propsteps,branchon,depth+1) ^ qs->quantification(branchon)) {
         delete subspace;                                                         //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
-// BACKTRACK OBSERVER (depth)
+
         delete [] tab[0];
         delete [] tab[1];
         delete [] tab;
+// BACKTRACK OBSERVER (depth)
+        for ( vector<BacktrackObserver*>::reverse_iterator i = obs_bt.rbegin();
+            i != obs_bt.rend();
+            ++i )
+        {
+            (*i)->observeBacktrack(st,depth);
+        }
         return (!qs->quantification(branchon));                                  //
     }                                                                            //
     delete subspace;                                                             //
@@ -122,21 +195,33 @@ bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& pr
             break;
     }
 
-    // CHOICE POINT OBSERVER ( depth, branchon, true, tab, *nbRanges)
-    if ( rSolve(subspace,nodes, propsteps, branchon) ^ qs->quantification(branchon)) {
+    // CHOICE POINT OBSERVER ( depth, curvar, branchon, false, tab, *nbRanges)
+       for ( vector<ChoicePointObserver*>::reverse_iterator i = obs_cp.rbegin();
+            i != obs_cp.rend();
+            ++i )
+        {
+            (*i)->observeChoicePoint(st,depth, curvar, branchon, false, tab, *nbRanges);
+        }
+
+    if ( rSolve(subspace,nodes, propsteps, branchon,depth+1) ^ qs->quantification(branchon)) {
         delete subspace;                                                         //
         qs->backtrack();                                                         //
         bh->backtrack(qs);                                                       //
-   // BACKTRACK OBSERVER (depth)
         delete [] tab[0];
         delete [] tab[1];
         delete [] tab;
+// BACKTRACK OBSERVER (depth)
+        for ( vector<BacktrackObserver*>::reverse_iterator i = obs_bt.rbegin();
+            i != obs_bt.rend();
+            ++i )
+        {
+            (*i)->observeBacktrack(st,depth);
+        }
         return (!qs->quantification(branchon));                                  //
     }                                                                            //
     delete subspace;                                                             //
     qs->backtrack();                                                             //
     bh->backtrack(qs);                                                           //
-    // BACKTRACK OBSERVER (depth)
     delete [] tab[0];
     delete [] tab[1];
     delete [] tab;

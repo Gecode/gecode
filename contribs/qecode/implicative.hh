@@ -34,9 +34,10 @@ using namespace Gecode;
 using namespace std;
 using namespace Gecode::Int;
 
-
+	
 class QECODE_VTABLE_EXPORT Implicative : public QSpace {
     friend class valueHeuristic;
+    friend class ImplicativeState;
 
 protected : 
   bool* q;                ///< Quantification of the variables (true for universal, false for existential)

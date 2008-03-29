@@ -27,10 +27,12 @@ THE SOFTWARE.
 #include "qecode.hh"
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 #include "gecode/minimodel.hh"
 
 #include "qecore.hh"
 #include "valueHeuristic.hh"
+#include "solving-observers.hh"
 
 using namespace Gecode;
 using namespace std;
@@ -43,6 +45,7 @@ using namespace Gecode::Int;
 class QECODE_VTABLE_EXPORT QSolver {
     
 private : 
+    
     bool debug;
     int n;
     QSpace* sp;
@@ -50,7 +53,11 @@ private :
     BranchingHeuristic* bh;
     VariableHeuristic* eval;
     valueHeuristic* valEval;
-    bool rSolve(QSpace* qs,unsigned long int& nodes, unsigned long int& propsteps, int curvar);
+    bool rSolve(QSpace* qs,unsigned long int& nodes, unsigned long int& propsteps, int curvar, int depth);
+    vector<LeafObserver*> obs_leaf;
+    vector<BacktrackObserver*> obs_bt;
+    vector<ChoicePointObserver*> obs_cp;
+    vector<SubsumedObserver*> obs_sub;
 public :
         
         /** \brief  Constructor for a quantified space solver.
@@ -66,6 +73,12 @@ public :
         *  @param nodes The integer referenced will be increased by the number of nodes of the search tree explored.
         *  @param propsteps The integer references will be increased by the total number of propagation steps (in the Gecode sense) performed during search.
         */
+    
+    QECODE_EXPORT void attachLeafObserver(LeafObserver* o);
+    QECODE_EXPORT void attachBTObserver(BacktrackObserver* o);
+    QECODE_EXPORT void attachCPObserver(ChoicePointObserver* o);
+    QECODE_EXPORT void attachSubsumedObserver(SubsumedObserver* o);
+    
     QECODE_EXPORT bool solve(unsigned long int& nodes, unsigned long int& propsteps);
 };
 

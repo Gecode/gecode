@@ -24,10 +24,26 @@ THE SOFTWARE.
 #include "implicative.hh"
 #include "SDFVariableHeuristic.hh"
 #include "NaiveValueHeuristics.hh"
+#include "solving-observers.hh"
+#include <iostream>
 
-
+using namespace std;
 // This is a set of tiny problems which are used to dtect errors in QeCode. 
 // This set is likely to progressively enlarge...
+class titest : public LeafObserver {
+public : 
+    virtual void observeLeaf(ImplicativeState imp,bool truthValue) {
+        cout << "Leaf " << (truthValue?"True":"False") << " !" << endl;
+        cout << "---------------------------------------------"<<endl<<"Implicative state datas : "<<endl;
+        cout << "Nb vars : " << imp.nbVars() << endl;
+        cout << "Nb scopes : " << imp.nbScopes() << endl;
+        cout << "Nb vars by scope : " << endl;
+        for (int i=0;i<imp.nbScopes();i++) cout << "  scope "<<i<<" : "<<imp.nbVarsByScope(i)<<endl;
+        cout << "Scopes defined : -- ";
+        for (int i=0;i<imp.nbScopes();i++) cout << imp.scopeDefined(i) << " -- ";
+        cout<<endl;
+    }
+};
 
 int main() {
     unsigned long int nodes;
@@ -38,11 +54,13 @@ int main() {
     // Ax in 1..3 []  -> x=1
     int sc1[] = {1};
     Implicative test1(1,QECODE_UNIVERSAL,sc1);
+    titest ploplop;
     test1.QIntVar(0,1,3);
     test1.nextScope();
     post(test1.space(),test1.var(0) == 1);
     test1.makeStructure();
     QSolver s1(&test1,&heur,&vHeur);
+    s1.attachLeafObserver(&ploplop);
     nodes=0;
     steps=0;
     bool ret1=s1.solve(nodes,steps);
