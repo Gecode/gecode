@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
       {
         ModEvent me = 
-          x1.gq(home,ceil(::sqrt(static_cast<double>(x0.min()))-1.0));
+          x1.gq(home,floor(::sqrt(static_cast<double>(x0.min()))));
         if (me_failed(me)) return ES_FAILED;
         mod |= me_modified(me);
         }
