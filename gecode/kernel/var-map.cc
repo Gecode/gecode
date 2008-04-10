@@ -206,7 +206,7 @@ namespace Gecode { namespace Reflection {
     vo->vars[newIndex] = x;
     if (hasName(x)) {
       spec->name(name(x));
-    } else if (spec->hasName()) {
+    } else if (spec != NULL && spec->hasName()) {
       vo->nameToVar.put(spec->name(), x);
       vo->varToName.put(x, spec->name());
     }
