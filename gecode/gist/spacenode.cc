@@ -35,7 +35,7 @@
  */
 
 #include "gecode/gist/spacenode.hh"
-#include "gecode/dds.hh"
+#include "gecode/search.hh"
 #include <stack>
 
 namespace Gecode { namespace Gist {

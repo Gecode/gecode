@@ -118,7 +118,7 @@ namespace Serialization {
 }
 }
 
-#ifdef GECODE_HAS_BOOST_SERIALIZATION
+#ifdef GECODE_HAS_BOOST
 
 namespace Gecode {
   /**

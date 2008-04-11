@@ -190,10 +190,10 @@ VARIMPHDR = \
 VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cc
 
 KERNELSRC0 = \
-	core reflection var-map var-type memory-manager
+	core reflection var-map var-type memory-manager decomposing_branching
 
 KERNELHDR0 = \
-	array shared-array branching core exception \
+	array shared-array branching core decomposing_branching exception \
 	macros memory-manager modevent \
 	propagator advisor view var var-traits var-map reflection
 
@@ -223,9 +223,9 @@ EXTRA_HEADERS   = gecode/support/config.icc
 #
 
 SEARCHSRC0 = \
-	dfs.cc lds.cc bab.cc stop.cc options.cc
+	dfs.cc lds.cc bab.cc dds.cc stop.cc options.cc
 SEARCHHDR0 = \
-	bab.icc dfs.icc lds.icc restart.icc \
+	bab.icc dfs.icc lds.icc restart.icc dds.icc  \
 	reco-stack.icc statistics.icc \
 	engine-ctrl.icc stop.icc options.icc
 
@@ -635,37 +635,6 @@ export GISTSONAME	=
 endif
 
 #
-# DDS
-#
-
-DDSSRC0 = branching dds
-DDSHDR0 = branching dds
-
-DDSSRC = $(DDSSRC0:%=gecode/dds/%.cc)
-DDSHDR = gecode/dds.hh $(DDSHDR0:%=gecode/dds/%.icc)
-
-DDSOBJ	= $(DDSSRC:%.cc=%$(OBJSUFFIX))
-DDSSBJ	= $(DDSSRC:%.cc=%$(SBJSUFFIX))
-
-ifeq "@enable_dds@" "yes"
-export DDSDLL = $(LIBPREFIX)@DDS@$(DLLSUFFIX)
-export DDSSTATICLIB = $(LIBPREFIX)@DDS@$(STATICLIBSUFFIX)
-export DDSLIB = $(LIBPREFIX)@DDS@$(LIBSUFFIX)
-export LINKDDS = $(LINKPREFIX)@DDS@$(LINKSUFFIX)
-ifeq "@need_soname@" "yes"
-export DDSSONAME = @WLSONAME@$(LIBPREFIX)@DDS@$(SOSUFFIX)
-else
-export DDSSONAME =
-endif
-else
-export DDSDLL =
-export DDSSTATICLIB =
-export DDSLIB =
-export LINKDDS =
-export DDSSONAME =
-endif
-
-#
 # EXAMPLES
 #
 
@@ -746,11 +715,11 @@ ALLSRC = \
 	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) $(JSEXAMPLESRC) \
-	$(EXSUPPORTSRC) $(GISTSRC) $(DDSSRC)
+	$(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SERHDR) \
-	$(ITERHDR) $(GISTHDR) $(DDSHDR)
+	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
 ALLSBJ0 = $(ALLSRC:%.cc=%$(SBJSUFFIX))
@@ -759,28 +728,28 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 export LINKALL = \
 	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKSER) \
         $(LINKCPLTSET) $(LINKSET) $(LINKINT) \
-	$(LINKKERNEL) $(LINKSUPPORT) $(LINKDDS)
+	$(LINKKERNEL) $(LINKSUPPORT)
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(CPLTSETDLL) $(MMDLL) $(SERDLL) $(GISTDLL) $(DDSDLL)
+	$(CPLTSETDLL) $(MMDLL) $(SERDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(CPLTSETLIB) $(MMLIB) $(SERLIB) $(GISTLIB) $(DDSDLL)
+	$(CPLTSETLIB) $(MMLIB) $(SERLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB) $(DDSSTATICLIB)
+	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB) $(DDSSTATICLIB)
+	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -974,10 +943,10 @@ gecode/support/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/%.c
 	@COMPILESBJ@$@ @CCIN@$<
 
 gecode/kernel/%$(OBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/kernel/%$(SBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/search/%$(OBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
@@ -1029,15 +998,6 @@ gecode/serialization/moc_%$(OBJSUFFIX): gecode/serialization/moc_%.cc
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/serialization/moc_%.cc: $(top_srcdir)/gecode/serialization/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/serialization $< -o $@
-
-gecode/dds/%$(OBJSUFFIX): $(top_srcdir)/gecode/dds/%.cc
-	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_DDS_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/dds/%$(SBJSUFFIX): $(top_srcdir)/gecode/dds/%.cc
-	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_DDS_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
@@ -1142,16 +1102,9 @@ $(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL
 		@LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(DDSDLL): $(DDSOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL)
-	$(CXX) $(DLLFLAGS) $(DDSOBJ) $(DDSSONAME) \
-		@DLLPATH@ $(LINKSEARCH) $(LINKKERNEL) $(LINKSUPPORT) \
-		$(BOOST_LINK) \
-		@LINKOUTPUT@$(DDSDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKDDS) $(LINKINT) $(LINKQT) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1167,10 +1120,6 @@ $(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) \
 		@LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS) 
-$(DDSDLL) $(DDSLIB): $(DDSOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL)
-	$(CXX) $(DLLFLAGS) $(DDSOBJ) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) \
-		@LINKOUTPUT@$(DDSDLL) $(GLDFLAGS) 
 $(INTDLL) $(INTLIB): $(INTOBJ) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(INTOBJ) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) \
@@ -1193,7 +1142,7 @@ $(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(
 		$(BOOST_LINK) $(LINKQT) @LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKDDS) $(LINKINT) $(LINKQT) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
 endif
 
@@ -1209,9 +1158,6 @@ $(KERNELSTATICLIB): $(KERNELOBJ)
 	$(RANLIB) $@
 $(SEARCHSTATICLIB): $(SEARCHOBJ)
 	$(AR) $(ARFLAGS) $@ $(SEARCHOBJ)
-	$(RANLIB) $@
-$(DDSSTATICLIB): $(DDSOBJ)
-	$(AR) $(ARFLAGS) $@ $(DDSOBJ)
 	$(RANLIB) $@
 $(INTSTATICLIB): $(INTOBJ)
 	$(AR) $(ARFLAGS) $@ $(INTOBJ)

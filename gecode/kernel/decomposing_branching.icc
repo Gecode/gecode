@@ -24,7 +24,53 @@
  *
  */
 
+#include <vector>
+
 namespace Gecode {
+
+  /**
+   * \brief Branching for decomposition during search
+   *
+   * This branching analyzes the constraint graph and decomposes the search
+   * if the graph contains more than one connected component.
+   *
+   * Otherwise, the branching behaves like a normal ViewValBranching.
+   *
+   */    
+  template <class View, class Val, class ViewSel, class ValSel>
+  class DecomposingViewValBranching : public Branching {
+  protected:
+    ViewArray<View> x;
+    mutable int start;
+    mutable bool selectFirst;
+
+    DecomposingViewValBranching(Space* home, bool share,
+                                DecomposingViewValBranching& b);
+
+  public:
+    DecomposingViewValBranching(Space* home, ViewArray<View>& x);
+    virtual bool status(const Space* home) const;
+    virtual const BranchingDesc* description(const Space* home) const;
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+                              unsigned int a);
+    virtual Actor* copy(Space* home, bool share);
+    
+    /// Return specification for this branching given a variable map \a m
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    // /// Return specification for a branch
+    // virtual Reflection::BranchingSpec
+    // branchingSpec(const Space* home, 
+    //               Reflection::VarMap& m,
+    //               const BranchingDesc* d) const;
+    /// Actor type identifier of this branching
+    static Support::Symbol ati(void);
+    /// Post branching according to specification
+    static void post(Space* home, Reflection::VarMap& m,
+                     const Reflection::ActorSpec& spec);
+    
+  };
+
   namespace Decomposition {
   
     /// Branching description for decomposition
@@ -55,7 +101,7 @@ namespace Gecode {
     };
 
     /// A branching description for singleton components
-    class GECODE_DDS_EXPORT SingletonDescBase : public BranchingDesc {
+    class GECODE_KERNEL_EXPORT SingletonDescBase : public BranchingDesc {
     private:
       /// Size of the domain of the singleton component
       unsigned int _size;
@@ -71,7 +117,7 @@ namespace Gecode {
 
     /// Wrapper class for PosValDesc that stores an additional component size
     template <class Val, int alt>
-    class GECODE_DDS_EXPORT SingletonDesc : public SingletonDescBase {
+    class GECODE_KERNEL_EXPORT SingletonDesc : public SingletonDescBase {
     private:
       PosValDesc<Val,alt>* _pvd;
     public:
@@ -144,7 +190,7 @@ namespace Gecode {
     }
 
     /// Compute connected components of the constraint graph
-    GECODE_DDS_EXPORT int
+    GECODE_KERNEL_EXPORT int
     connectedComponents(const Space* home, Reflection::VarMap& vars,
                         std::vector<int>& label);
 
@@ -155,34 +201,34 @@ namespace Gecode {
    *
    */
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   forceinline
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
   ::DecomposingViewValBranching(Space* home, ViewArray<View>& x0)
     : Branching(home), x(x0), start(0), selectFirst(false) {}
 
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   forceinline
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
   ::DecomposingViewValBranching(Space* home, bool share, 
                                 DecomposingViewValBranching& b)
     : Branching(home,share,b), start(b.start), selectFirst(b.selectFirst) {
     x.update(home,share,b.x);
   }
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   Actor*
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
   ::copy(Space* home, bool share) {
     return new (home)
-      DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>(home,
+      DecomposingViewValBranching<View,Val,ViewSel,ValSel>(home,
         share,*this);
   }
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   bool
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
   ::status(const Space*) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
@@ -192,9 +238,9 @@ namespace Gecode {
     return false;
   }
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   const BranchingDesc*
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
   ::description(const Space* home) const {
 
     assert(!x[start].assigned());
@@ -203,9 +249,11 @@ namespace Gecode {
       selectFirst = false;
       ValSel  vl; // For value selection
       if (x.size() == 1) {
-        DomSize ds;
-        return new Decomposition::SingletonDesc<Val,2>(this,vl.val(home,x[0]),
-                                                       0,ds(x[0]));
+        DomainSize<View> ds;
+        return
+          new Decomposition::SingletonDesc<Val,2>(
+            this,vl.val(home,x[0]),
+            0, DomainSize<View>::size(x[0]));
       } else {
         return new PosValDesc<Val,2>(this,0,vl.val(home,x[0]),0);
       }
@@ -269,12 +317,14 @@ namespace Gecode {
     } else if (x[start].degree() == 0) {
       assert(x.size() - start == 1);
       ValSel  vl; // For value selection
-      DomSize ds;
-      return new Decomposition::SingletonDesc<Val,2>(this,
-                                                     vl.val(home,x[start]),
-                                                     start, ds(x[start]));
+      return
+        new Decomposition::SingletonDesc<Val,2>(
+          this,
+          vl.val(home,x[start]),
+          start,
+          DomainSize<View>::size(x[start]));
     }
-
+    
     if (start+1 < x.size() && componentNumber > 1) {
         // do decomposing branching
 
@@ -340,9 +390,9 @@ namespace Gecode {
 
   }
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   ExecStatus
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
 
     const Decomposition::DecompDesc* dd =
@@ -412,27 +462,27 @@ namespace Gecode {
     }
   }
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   Support::Symbol
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>::ati(void) {
-    return Reflection::mangle<View,Val,DomSize,ViewSel,ValSel>(
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>::ati(void) {
+    return Reflection::mangle<View,Val,ViewSel,ValSel>(
       "Gecode::DecomposingViewValBranching");
   }
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   void
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
     ::post(Space* home, Reflection::VarMap& vars,
            const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
     (void) new (home) 
-      DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>(home, x);
+      DecomposingViewValBranching<View,Val,ViewSel,ValSel>(home, x);
   }
 
-  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  template <class View, class Val, class ViewSel, class ValSel>
   Reflection::ActorSpec
-  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
   ::spec(const Space* home,
          Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());

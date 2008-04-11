@@ -36,7 +36,7 @@
  */
 
 #include "gecode/support.hh"
-#ifdef GECODE_HAS_BOOST_SERIALIZATION
+#ifdef GECODE_HAS_BOOST
 
 #include <fstream>
 
@@ -73,6 +73,6 @@ namespace Gecode {
 
 }
 
-#endif // GECODE_HAS_BOOST_SERIALIZATION
+#endif // GECODE_HAS_BOOST
 
 // STATISTICS: serialization-any

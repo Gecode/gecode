@@ -24,7 +24,7 @@
  *
  */
 
-#include "gecode/dds.hh"
+#include "gecode/search.hh"
 
 namespace Gecode { namespace Search {
 

@@ -122,7 +122,7 @@ dnl check platform specific behaviour of arithmetic
 AC_GECODE_CHECK_ARITH
 
 dnl check whether we compile with boost support
-AC_GECODE_BOOST_SERIALIZATION
+AC_GECODE_BOOST
 
 case $ac_gecode_compiler_vendor in
 gnu)
@@ -224,9 +224,6 @@ AC_GECODE_ENABLE_MODULE(serialization, yes,
 
 AC_GECODE_ENABLE_MODULE(search, yes,
         [build search engines])
-
-AC_GECODE_ENABLE_MODULE(dds, yes,
-        [build decomposition during search engine])
 
 dnl Configure contributions
 AC_CONFIG_SUBDIRS()

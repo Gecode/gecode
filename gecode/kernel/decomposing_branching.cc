@@ -24,10 +24,13 @@
  *
  */
 
-#include "gecode/dds.hh"
+#include "gecode/kernel.hh"
+
+#ifdef GECODE_HAS_BOOST
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/connected_components.hpp>
+#endif
 
 namespace Gecode { namespace Decomposition {
 
@@ -39,6 +42,7 @@ namespace Gecode { namespace Decomposition {
                                        unsigned int size)
    : BranchingDesc(b, alt), _size(size) {}
 
+#ifdef GECODE_HAS_BOOST
   void
   findVars(boost::adjacency_list<boost::setS, boost::vecS, 
                                  boost::undirectedS>& g,
@@ -77,6 +81,14 @@ namespace Gecode { namespace Decomposition {
 
     return labelNumber;
   }
+#else
+  int
+  connectedComponents(const Space*, Reflection::VarMap&,
+                      std::vector<int>&) {
+    throw Gecode::Exception("DecomposingViewValBranching",
+      "DDS not supported");
+  }
+#endif
 
   void
   DecompDesc::significantVars(int alt, std::vector<int>& sv) const {
