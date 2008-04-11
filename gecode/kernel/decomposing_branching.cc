@@ -26,11 +26,7 @@
 
 #include "gecode/kernel.hh"
 
-#ifdef GECODE_HAS_BOOST
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/graphviz.hpp>
-#include <boost/graph/connected_components.hpp>
-#endif
+#include <queue>
 
 namespace Gecode { namespace Decomposition {
 
@@ -42,15 +38,22 @@ namespace Gecode { namespace Decomposition {
                                        unsigned int size)
    : BranchingDesc(b, alt), _size(size) {}
 
-#ifdef GECODE_HAS_BOOST
+  class Node {
+  public:
+    int component;
+    std::vector<int> out;
+    Node(void) : component(-1) {}
+  };
+
+  typedef std::vector<Node> graph;
+  
   void
-  findVars(boost::adjacency_list<boost::setS, boost::vecS, 
-                                 boost::undirectedS>& g,
-           int p,
-           Reflection::VarMap& vars, Reflection::Arg* s) {
+  findVars(graph& g, int p, Reflection::VarMap& vars, Reflection::Arg* s) {
     if (s->isVar()) {
-      if (!vars.spec(s->toVar()).assigned())
-        boost::add_edge(s->toVar(), p, g);
+      if (!vars.spec(s->toVar()).assigned()) {
+        g[s->toVar()].out.push_back(p);
+        g[p].out.push_back(s->toVar());
+      }
     } else if (s->isArray()) {
       Reflection::ArrayArg* a = s->toArray();
       for (int j=a->size(); j--;)
@@ -58,37 +61,52 @@ namespace Gecode { namespace Decomposition {
     } else if (s->isPair()) {
       findVars(g, p, vars, s->first());
       findVars(g, p, vars, s->second());
-    }
+    }    
   }
 
-  int
-  connectedComponents(const Space* home, Reflection::VarMap& vars,
-                      std::vector<int>& label) {
-    using namespace boost;
-    adjacency_list<setS, vecS, undirectedS> g(vars.size());
-    int propIndex = vars.size();
+  int connectedComponents(const Space* home, Reflection::VarMap& vars,
+                          std::vector<int>& label) {
+    std::vector<Reflection::ActorSpec> as;
     for (Reflection::ActorSpecIter si(home,vars); si(); ++si) {      
-      Reflection::ActorSpec as = si.actor();
-      if (!as.isBranching()) {
-        for (int i=as.noOfArgs(); i--;)
-          findVars(g, propIndex, vars, as[i]);
-        propIndex++;
+      Reflection::ActorSpec asi = si.actor();
+      if (!asi.isBranching())
+        as.push_back(asi);
+    }
+    int noOfVars = vars.size();
+    graph g(noOfVars);
+    for (unsigned int i=0; i<as.size(); i++) {
+      Reflection::ActorSpec asi = as[i];
+      Node newNode;
+      g.push_back(newNode);
+      for (int j=asi.noOfArgs(); j--;)
+        findVars(g,noOfVars+i,vars,asi[j]);
+    }
+
+    int curComponent = 0;
+    for (int i=0; i<vars.size(); i++) {
+      if (g[i].component == -1) {
+        std::queue<int> q;
+        q.push(i);
+        while (!q.empty()) {
+          int cur = q.front();
+          q.pop();
+          g[cur].component = curComponent;
+          for (int j=g[cur].out.size(); j--;) {
+            assert(g[g[cur].out[j]].component == -1 ||
+                   g[g[cur].out[j]].component == curComponent);
+            if (g[g[cur].out[j]].component == -1)
+              q.push(g[cur].out[j]);
+          }
+        }
+        curComponent++;
       }
     }
-    
-    label = std::vector<int>(num_vertices(g));
-    int labelNumber = connected_components(g, &label[0]);
-
-    return labelNumber;
+    label = std::vector<int>(vars.size());
+    for (int i=vars.size(); i--;) {
+      label[i] = g[i].component;
+    }
+    return curComponent;
   }
-#else
-  int
-  connectedComponents(const Space*, Reflection::VarMap&,
-                      std::vector<int>&) {
-    throw Gecode::Exception("DecomposingViewValBranching",
-      "DDS not supported");
-  }
-#endif
 
   void
   DecompDesc::significantVars(int alt, std::vector<int>& sv) const {
