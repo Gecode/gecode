@@ -26,10 +26,68 @@
 
 namespace Gecode {
   namespace Decomposition {
+  
+    /// Branching description for decomposition
+    class GECODE_VTABLE_EXPORT DecompDesc : public BranchingDesc {
+    protected:
+      /// The significant variables in the components
+      const std::vector<int> label;
+      /// Start index
+      const int start;
+      /// Selected variables
+      const std::vector<int> select;
 
+    public:
+      /// Constructor
+      DecompDesc(const Branching* b, int start,
+                 const std::vector<int>& l,
+                 const std::vector<int>& select);
+      /// Return the stored label
+      const std::vector<int>& getComponentLabel(void) const;
+      /// Return the selected view index for component \a alt
+      int getSelection(unsigned int alt) const;
+      /// Return the start index
+      int getStart(void) const;
+      /// Return the significant variables for alternative \a alt in \a sv
+      void significantVars(int alt, std::vector<int>& sv) const;
+      /// Return size
+      virtual size_t size(void) const;
+    };
+
+    /// A branching description for singleton components
+    class GECODE_DDS_EXPORT SingletonDescBase : public BranchingDesc {
+    private:
+      /// Size of the domain of the singleton component
+      unsigned int _size;
+    public:
+      /// Constructor
+      SingletonDescBase(const Branching* b, unsigned int alt,
+                        unsigned int size);
+      /// Return size of the domain of the singleton component
+      unsigned int domainSize(void) const;
+      /// Return size
+      virtual size_t size(void) const;
+    };
+
+    /// Wrapper class for PosValDesc that stores an additional component size
+    template <class Val, int alt>
+    class GECODE_DDS_EXPORT SingletonDesc : public SingletonDescBase {
+    private:
+      PosValDesc<Val,alt>* _pvd;
+    public:
+      /// Constructor
+      SingletonDesc(const Branching* b, Val v, int start, unsigned int size);
+      /// Destructor
+      ~SingletonDesc(void);
+      /// Acces embedded PosValDesc
+      PosValDesc<Val,alt>* pvd(void) const;
+      /// Return size
+      virtual size_t size(void) const;
+    };
+  
     inline
     DecompDesc::DecompDesc(const Branching* b, int start0,
-                           const ConstraintGraph::ComponentLabel& l, 
+                           const std::vector<int>& l, 
                            const std::vector<int>& select_)
     : BranchingDesc(b,select_.size()), label(l), start(start0), 
       select(select_) {}
@@ -45,7 +103,7 @@ namespace Gecode {
     DecompDesc::getStart(void) const { return start; }
 
     forceinline
-    const ConstraintGraph::ComponentLabel&
+    const std::vector<int>&
     DecompDesc::getComponentLabel(void) const {
       return label;
     }
@@ -56,37 +114,39 @@ namespace Gecode {
       return select[alt];
     }
 
-    forceinline unsigned int
-    SingletonDescBase::domainSize(void) const { return _size; }
+    forceinline
+    size_t
+    SingletonDescBase::size(void) const {
+      return sizeof(SingletonDescBase);
+    }
 
     template <class Val, int alt>
-    inline
     SingletonDesc<Val,alt>::SingletonDesc(const Branching* b, Val v,
                                           int start,
                                           unsigned int size)
-      : PosValDesc<Val,alt>(b, 0, v, start) {
-        SingletonDescBase::_size = size;
-      }
-
-    /// Compute the constraint graph of \a s given the root set of variables \a vars
-    template <class View>
-    ConstraintGraph*
-    graph(const Space* s, const ViewArray<View>& vars, unsigned int start) {
-      Reflection::VarMap vm;
-      for (int i=start; i<vars.size(); i++) {
-        vm.put(vars[i].var(), NULL);
-      }
-      ConstraintGraph* g = new ConstraintGraph(vm.size());
-      int oldSize = vm.size();
-      int propIndex = 0;
-      for (Reflection::ActorSpecIter si(s,vm); si(); ++si) {
-        for(int i=oldSize; i<vm.size(); i++) {
-          g->addEdge(i,propIndex);
-        }
-        propIndex++;
-      }
-      return g;
+      : SingletonDescBase(b,alt,size),
+        _pvd(new PosValDesc<Val,alt>(b, 0, v, start)) 
+    {}
+    
+    template <class Val, int alt>
+    SingletonDesc<Val,alt>::~SingletonDesc(void) {
+      delete _pvd;
     }
+
+    template <class Val, int alt>
+    PosValDesc<Val,alt>*
+    SingletonDesc<Val,alt>::pvd(void) const { return _pvd; }
+
+    template <class Val, int alt>
+    inline size_t
+    SingletonDesc<Val,alt>::size(void) const {
+      return sizeof(SingletonDesc<Val,alt>);
+    }
+
+    /// Compute connected components of the constraint graph
+    GECODE_DDS_EXPORT int
+    connectedComponents(const Space* home, Reflection::VarMap& vars,
+                        std::vector<int>& label);
 
   }
 
@@ -152,20 +212,60 @@ namespace Gecode {
     }
 
     int componentNumber = 1;
-    Decomposition::ConstraintGraph::ComponentLabel label;
+    std::vector<int> label;
 
     if (x.size()-start > 1) {
 
-      // get constraint graph for the variable set x
-      Decomposition::ConstraintGraph * cg =
-        Decomposition::graph<View>(home, x, start);
-
-      // check for components
-      componentNumber = cg->getComponentLabel(label);
-      delete cg;  // garbage collection
+      // Compute connected components in the constraint graph
+      Reflection::VarMap vm;
+      typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+      typedef typename VarImpVarTraits<VarImp>::Var Var;
+      for (int i=start; i<x.size(); i++) {
+        Var v(x[i]);
+        vm.put(home, v, "", false);
+      }
+      componentNumber = Decomposition::connectedComponents(home, vm, label);
 
       // merge singlets together (just optimizing)
-      componentNumber = mergeAssigned(label, componentNumber);
+      {
+        std::vector<int> compSize(componentNumber,0);  // init component sizes
+        // remove temporary variables and propagators nodes from labeling
+        // resizing the labeling to the variables in context
+        label.resize(x.size()-start);
+
+        // check current labeling
+        // and remember the label of the last unassigned variable
+        // ( == mergeLabel)
+        int mergeLabel = 0;
+        for (int i=0; i<x.size()-start; i++) {
+          compSize[label[i]]++;
+          if (!x[start+i].assigned())
+            mergeLabel = label[i];
+        }
+
+        // count how many colors are really available
+        int colors = 0;
+        for (std::vector<int>::size_type i = 0; i < compSize.size(); i++) {
+          if (compSize[i] > 0 ) {
+            colors++;
+          }
+        }
+
+        // recoloring and color decreasing due to merging of
+        // assigned variables
+        for (int i=0; i<x.size()-start; i++) {
+          if (compSize[label[i]] == 1 && x[i+start].assigned()) {
+            label[i] = mergeLabel;
+            colors--;
+          }
+          // invert all indices and substract 1 as a preprocessing for 
+          // viewSelection
+          label[i] = -label[i] - 1;
+        }
+
+        // add 1 if 'mergeLabel' is assigned singlet too
+        componentNumber = std::max(colors,1);
+      }
     } else if (x[start].degree() == 0) {
       assert(x.size() - start == 1);
       ValSel  vl; // For value selection
@@ -213,7 +313,6 @@ namespace Gecode {
       }
       // create decomposition description
       return new Decomposition::DecompDesc(this, start, label, selected);;
-
     } else {
       // do normal branching
 
@@ -250,7 +349,13 @@ namespace Gecode {
       dynamic_cast<const Decomposition::DecompDesc*>(d);
     if( dd == NULL) { // --> normal handling of PosValDescriptions
       
-      const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
+      const PosValDesc<Val,2>* pvd;
+      if (const Decomposition::SingletonDesc<Val,2>* sd =
+          dynamic_cast<const Decomposition::SingletonDesc<Val,2>*>(d)) {
+        pvd = sd->pvd();
+      } else {
+        pvd = static_cast<const PosValDesc<Val,2>*>(d); 
+      }
       // Eliminate views from x[0] ... x[start-1]
       x.drop_fst(pvd->start()); start = 0;
       ValSel vs;
@@ -262,8 +367,7 @@ namespace Gecode {
       x.drop_fst(dd->getStart()); start = 0;
       
         // component labeling and label of alternative a
-      Decomposition::ConstraintGraph::ComponentLabel myComponent = 
-        dd->getComponentLabel();
+      std::vector<int> myComponent = dd->getComponentLabel();
 
       // move selected position to the front
       {
@@ -308,49 +412,33 @@ namespace Gecode {
     }
   }
 
+  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  Support::Symbol
+  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>::ati(void) {
+    return Reflection::mangle<View,Val,DomSize,ViewSel,ValSel>(
+      "Gecode::DecomposingViewValBranching");
+  }
 
   template <class View, class Val, class DomSize, class ViewSel, class ValSel>
-  int
+  void
   DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
-  ::mergeAssigned(Decomposition::ConstraintGraph::ComponentLabel & label,
-                  int labelNumber) 
-    const {
-
-    std::vector<int> compSize(labelNumber,0);  // init component sizes
-    // remove temporary variables and propagators nodes from labeling
-    // resizing the labeling to the variables in context
-    label.resize(x.size()-start);
-
-    // check current labeling
-    // and remember the label of the last unassigned variable ( == mergeLabel)
-    int mergeLabel = 0;
-    for (int i=0; i<x.size()-start; i++) {
-      compSize[label[i]]++;
-      if (!x[start+i].assigned())
-        mergeLabel = label[i];
-    }
-
-    // count how many colors are really available
-    int colors = 0;
-    for (std::vector<int>::size_type i = 0; i < compSize.size(); i++) {
-      if (compSize[i] > 0 ) {
-        colors++;
-      }
-    }
-
-    // recoloring and color decreasing due to merging of assigned variables
-    for (int i=0; i<x.size()-start; i++) {
-      if (compSize[label[i]] == 1 && x[i+start].assigned()) {
-        label[i] = mergeLabel;
-        colors--;
-      }
-      // invert all indices and substract 1 as a preprocessing for viewSelection
-      label[i] = -label[i] - 1;
-    }
-
-    // add 1 if 'mergeLabel' is assigned singlet too
-    return std::max(colors,1);
+    ::post(Space* home, Reflection::VarMap& vars,
+           const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) 
+      DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>(home, x);
   }
+
+  template <class View, class Val, class DomSize, class ViewSel, class ValSel>
+  Reflection::ActorSpec
+  DecomposingViewValBranching<View,Val,DomSize,ViewSel,ValSel>
+  ::spec(const Space* home,
+         Reflection::VarMap& m) const {
+    Reflection::ActorSpec s(ati());
+    return s << x.spec(home, m);
+  }
+
 }
 
 // STATISTICS: dds-any

@@ -131,15 +131,16 @@ namespace Gecode { namespace Reflection {
     //@{
     /// Insert specification for variable \a v with name \a n
     template <class Var> void
-    put(Space* home, const Var& v, const Support::Symbol& n,
+    put(const Space* home, const Var& v, const Support::Symbol& n,
         bool registerOnly = false);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArgArray<Var>& v,
+    putArray(const Space* home, const VarArgArray<Var>& v,
              const Support::Symbol& n, bool registerOnly = false);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArray<Var>& v, const Support::Symbol& n,
+    putArray(const Space* home, const VarArray<Var>& v,
+             const Support::Symbol& n,
              bool registerOnly = false);
 
     //@}
@@ -179,9 +180,10 @@ namespace Gecode { namespace Reflection {
 
   template <> void
   inline
-  VarMap::put(Space* home, const Reflection::Var& x,
+  VarMap::put(const Space* home, const Reflection::Var& x,
               const Support::Symbol& n, bool registerOnly) {
-    name(x.varImpBase(), n);
+    if (! (n == ""))
+      name(x.varImpBase(), n);
     if (!registerOnly) {
       Reflection::Arg* a = x.spec(home, *this);
       delete a;
@@ -189,10 +191,11 @@ namespace Gecode { namespace Reflection {
   }
 
   template <class V> void
-  VarMap::put(Space* home, const V& x, const Support::Symbol& n,
+  VarMap::put(const Space* home, const V& x, const Support::Symbol& n,
               bool registerOnly) {
     typename VarViewTraits<V>::View v(x);
-    name(v.var(), n);
+    if (! (n == ""))
+      name(v.var(), n);
     if (!registerOnly) {
       Reflection::Arg* a = v.spec(home, *this);
       delete a;
@@ -200,7 +203,7 @@ namespace Gecode { namespace Reflection {
   }
 
   template <class Var> void
-  VarMap::putArray(Space* home, const VarArgArray<Var>& x,
+  VarMap::putArray(const Space* home, const VarArgArray<Var>& x,
                    const Support::Symbol& n, bool registerOnly) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
@@ -211,7 +214,7 @@ namespace Gecode { namespace Reflection {
     }
   }
   template <class Var> void
-  VarMap::putArray(Space* home, const VarArray<Var>& x,
+  VarMap::putArray(const Space* home, const VarArray<Var>& x,
                    const Support::Symbol& n, bool registerOnly) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;

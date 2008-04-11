@@ -5533,6 +5533,7 @@ gecode/gist/postscript$(OBJSUFFIX) gecode/gist/postscript$(SBJSUFFIX): \
 gecode/gist/shapelist$(OBJSUFFIX) gecode/gist/shapelist$(SBJSUFFIX): \
 	./gecode/gist/shapelist.hh 
 gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
+	./gecode/dds.hh ./gecode/dds/branching.icc ./gecode/dds/dds.icc \
 	./gecode/gist/better.hh ./gecode/gist/node.hh ./gecode/gist/spacenode.hh \
 	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
@@ -5540,12 +5541,15 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
-	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
-	./gecode/support/config.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
-	./gecode/support/exception.icc ./gecode/support/macros.icc ./gecode/support/map.icc \
-	./gecode/support/marked-pointer.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
-	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
+	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
+	./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc ./gecode/search/options.icc \
+	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
+	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/support/cast.icc ./gecode/support/config.icc ./gecode/support/dynamic-array.icc \
+	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/macros.icc \
+	./gecode/support/map.icc ./gecode/support/marked-pointer.icc ./gecode/support/memory.icc \
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/gist/textoutput$(OBJSUFFIX) gecode/gist/textoutput$(SBJSUFFIX): \
 	./gecode/gist/textoutput.hh 
 gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
@@ -5904,59 +5908,39 @@ gecode/gist/visualisation/setvaritem$(OBJSUFFIX) gecode/gist/visualisation/setva
 	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/dds/branching$(OBJSUFFIX) gecode/dds/branching$(SBJSUFFIX): \
-	./gecode/dds.hh ./gecode/dds/branching.icc ./gecode/dds/constraintgraph.icc \
-	./gecode/dds/dds.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
-	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
-	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
-	./gecode/search/options.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
-	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/macros.icc ./gecode/support/map.icc ./gecode/support/marked-pointer.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc 
-gecode/dds/constraintgraph$(OBJSUFFIX) gecode/dds/constraintgraph$(SBJSUFFIX): \
-	./gecode/dds.hh ./gecode/dds/branching.icc ./gecode/dds/constraintgraph.icc \
-	./gecode/dds/dds.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
-	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
-	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
-	./gecode/search/options.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
-	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/macros.icc ./gecode/support/map.icc ./gecode/support/marked-pointer.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc 
+	./gecode/dds.hh ./gecode/dds/branching.icc ./gecode/dds/dds.icc \
+	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
+	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
+	./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
+	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
+	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
+	./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc ./gecode/search/options.icc \
+	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
+	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/support/cast.icc ./gecode/support/config.icc ./gecode/support/dynamic-array.icc \
+	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/macros.icc \
+	./gecode/support/map.icc ./gecode/support/marked-pointer.icc ./gecode/support/memory.icc \
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/dds/dds$(OBJSUFFIX) gecode/dds/dds$(SBJSUFFIX): \
-	./gecode/dds.hh ./gecode/dds/branching.icc ./gecode/dds/constraintgraph.icc \
-	./gecode/dds/dds.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
-	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
-	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
-	./gecode/search/options.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
-	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
-	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/macros.icc ./gecode/support/map.icc ./gecode/support/marked-pointer.icc \
-	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
-	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
-	./gecode/support/symbol.icc 
+	./gecode/dds.hh ./gecode/dds/branching.icc ./gecode/dds/dds.icc \
+	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
+	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
+	./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
+	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
+	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
+	./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc ./gecode/search/options.icc \
+	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
+	./gecode/search/stop.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
+	./gecode/support/cast.icc ./gecode/support/config.icc ./gecode/support/dynamic-array.icc \
+	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/macros.icc \
+	./gecode/support/map.icc ./gecode/support/marked-pointer.icc ./gecode/support/memory.icc \
+	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/serialization/register$(OBJSUFFIX) gecode/serialization/register$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \

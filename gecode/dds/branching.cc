@@ -25,8 +25,58 @@
  */
 
 #include "gecode/dds.hh"
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graphviz.hpp>
+#include <boost/graph/connected_components.hpp>
 
 namespace Gecode { namespace Decomposition {
+
+  unsigned int
+  SingletonDescBase::domainSize(void) const { return _size; }
+
+  SingletonDescBase::SingletonDescBase(const Branching* b, 
+                                       unsigned int alt,
+                                       unsigned int size)
+   : BranchingDesc(b, alt), _size(size) {}
+
+  void
+  findVars(boost::adjacency_list<boost::setS, boost::vecS, 
+                                 boost::undirectedS>& g,
+           int p,
+           Reflection::VarMap& vars, Reflection::Arg* s) {
+    if (s->isVar()) {
+      if (!vars.spec(s->toVar()).assigned())
+        boost::add_edge(s->toVar(), p, g);
+    } else if (s->isArray()) {
+      Reflection::ArrayArg* a = s->toArray();
+      for (int j=a->size(); j--;)
+        findVars(g, p, vars, (*a)[j]);
+    } else if (s->isPair()) {
+      findVars(g, p, vars, s->first());
+      findVars(g, p, vars, s->second());
+    }
+  }
+
+  int
+  connectedComponents(const Space* home, Reflection::VarMap& vars,
+                      std::vector<int>& label) {
+    using namespace boost;
+    adjacency_list<setS, vecS, undirectedS> g(vars.size());
+    int propIndex = vars.size();
+    for (Reflection::ActorSpecIter si(home,vars); si(); ++si) {      
+      Reflection::ActorSpec as = si.actor();
+      if (!as.isBranching()) {
+        for (int i=as.noOfArgs(); i--;)
+          findVars(g, propIndex, vars, as[i]);
+        propIndex++;
+      }
+    }
+    
+    label = std::vector<int>(num_vertices(g));
+    int labelNumber = connected_components(g, &label[0]);
+
+    return labelNumber;
+  }
 
   void
   DecompDesc::significantVars(int alt, std::vector<int>& sv) const {

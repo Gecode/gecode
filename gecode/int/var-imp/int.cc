@@ -370,7 +370,8 @@ namespace Gecode { namespace Int {
     }
     Reflection::IntArrayArg* args = Reflection::Arg::newIntArray(count*2);
 
-    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, args);
+    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, args, 
+                                                        assigned());
 
     count = 0;
     p=NULL;

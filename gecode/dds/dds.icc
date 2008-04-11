@@ -95,14 +95,13 @@ namespace Gecode {
               EngineCtrl::push(c,desc);
               commit++;
               cur->commit(desc,0);
-              if (const Decomposition::SingletonDescBase* sd=
-                  dynamic_cast<const Decomposition::SingletonDescBase*>(desc)) 
-                {
-                if (sd->domainSize() >= 0) {
-                  significantVars.resize(1);
-                  significantVars[0] = sd->domainSize();
-                  return EXS_SINGLETON_BRANCH;
-                }
+              if (const Decomposition::SingletonDesc<int,2>* sd=
+                  dynamic_cast<const Decomposition::SingletonDesc<int,2>*>(
+                    desc)) 
+              {
+                significantVars.resize(1);
+                significantVars[0] = sd->domainSize();
+                return EXS_SINGLETON_BRANCH;
               } else if (const Decomposition::DecompDesc* dd=
                   dynamic_cast<const Decomposition::DecompDesc*>(desc)) {
                 dd->significantVars(0, significantVars);

@@ -50,91 +50,9 @@
 
 #endif
 
-#include <boost/graph/adjacency_list.hpp>
 #include <vector>
 
-namespace Gecode {
-
-  namespace Decomposition {
-    
-    /**
-     * \brief Constraint graph supporting connected component analysis
-     *
-     */
-    class ConstraintGraph {
-    protected:
-      /// The actual graph implementation
-      boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS> g;
-    public:
-      /// Construct graph of initial size \a n
-      ConstraintGraph(int n);
-
-      /// Add an edge between nodes \a i and \a j
-      void addEdge(int i, int j);
-      
-      /// Output dot representation of the graph on \a out
-      GECODE_DDS_EXPORT void printDot(std::ostream & out = std::cout);
-
-      /// A type that describes a component
-      typedef std::vector<int> ComponentLabel;
-
-      /** 
-       * \brief Perform connected component analysis
-       *
-       * Fills each \a label[i] with the component index for the node i
-       * and return the overall number of components
-       */
-      GECODE_DDS_EXPORT int getComponentLabel(ComponentLabel &label);
-    };
-
-    /// Branching description for decomposition
-    class DecompDesc : public BranchingDesc {
-    protected:
-      /// The significant variables in the components
-      const ConstraintGraph::ComponentLabel label;
-      /// Start index
-      const int start;
-      /// Selected variables
-      const std::vector<int> select;
-
-    public:
-      /// Constructor
-      DecompDesc(const Branching* b, int start,
-                 const ConstraintGraph::ComponentLabel& l,
-                 const std::vector<int>& select);
-      /// Return the stored label
-      const ConstraintGraph::ComponentLabel& getComponentLabel(void) const;
-      /// Return the selected view index for component \a alt
-      int getSelection(unsigned int alt) const;
-      /// Return the start index
-      int getStart(void) const;
-      /// Return the significant variables for alternative \a alt in \a sv
-      void significantVars(int alt, std::vector<int>& sv) const;
-      /// Return size
-      virtual size_t size(void) const;
-    };
-
-    /// A branching description for singleton components
-    class SingletonDescBase {
-    protected:
-      /// Size of the domain of the singleton component
-      unsigned int _size;
-    public:
-      /// Return size of the domain of the singleton component
-      unsigned int domainSize(void) const;
-    };
-
-    /// Wrapper class for PosValDesc that stores an additional component size
-    template <class Val, int alt>
-    class SingletonDesc
-    : public PosValDesc<Val,alt>, public SingletonDescBase {
-    public:
-      /// Constructor
-      SingletonDesc(const Branching* b, Val v, int start, unsigned int size);
-    };
-  }
-
-  namespace Search {
+namespace Gecode { namespace Search {
 
     /// Engine for decomposition during search
     class DDSEngine : public EngineCtrl {
@@ -182,9 +100,7 @@ namespace Gecode {
      * \brief Dynamic Decomposition Depth-first search engine
      *
      * This class implements dynamic decomposition depth-first exploration for
-     * spaces. In order to use depth-first search on subclasses of DDSSpace, 
-     * additional functionality providing the necessary typecasts is available
-     * in Gecode::DDS.
+     * spaces.
      */
     class GECODE_DDS_EXPORT DDS {
     protected:
@@ -193,7 +109,7 @@ namespace Gecode {
     public:
       /**
        * \brief Initialize search engine
-       * \param s root node (subclass of Space)
+       * \param s root node
        * \param c_d minimal recomputation distance
        * \param a_d adaptive recomputation distance
        * \param st %Stop-object
@@ -217,8 +133,7 @@ namespace Gecode {
   /**
    * \brief Dynamic Decomposition Depth-first search engine
    *
-   * This class supports dynamic decomposition depth-first search for
-   * subclasses \a T of DDSSpace.
+   * This class supports dynamic decomposition depth-first search.
    * \ingroup TaskIntSearch
    */
   template <class T>
@@ -231,7 +146,7 @@ namespace Gecode {
   public:
     /**
      * \brief Initialize search engine
-     * \param s root node (subclass of DDSSpace)
+     * \param s root node
      * \param c_d minimal recomputation distance
      * \param a_d adaptive recomputation distance
      * \param st %Stop-object
@@ -251,7 +166,7 @@ namespace Gecode {
 
   /**
    * \brief Perform counting dynamic decomposition depth-first search
-   * \param s root node (subclass \a T of DDSSpace)
+   * \param s root node
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance
    * \ingroup TaskIntSearch
@@ -262,7 +177,16 @@ namespace Gecode {
                unsigned int a_d=Search::Config::a_d,
                Search::Statistics* stat=NULL,
                Search::Stop* st=NULL);
-    
+
+  /**
+   * \brief Branching for decomposition during search
+   *
+   * This branching analyzes the constraint graph and decomposes the search
+   * if the graph contains more than one connected component.
+   *
+   * Otherwise, the branching behaves like a normal ViewValBranching.
+   *
+   */    
   template <class View, class Val, class DomSize, class ViewSel, class ValSel>
   class DecomposingViewValBranching : public Branching {
   protected:
@@ -273,10 +197,6 @@ namespace Gecode {
     DecomposingViewValBranching(Space* home, bool share,
                                 DecomposingViewValBranching& b);
 
-    // merges all singlet cluster into the last non-singlet cluster
-    // and returns the new label number
-    int mergeAssigned(Decomposition::ConstraintGraph::ComponentLabel & label,
-                      int labelNumber) const;
   public:
     DecomposingViewValBranching(Space* home, ViewArray<View>& x);
     virtual bool status(const Space* home) const;
@@ -284,11 +204,25 @@ namespace Gecode {
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a);
     virtual Actor* copy(Space* home, bool share);
+    
+    /// Return specification for this branching given a variable map \a m
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    // /// Return specification for a branch
+    // virtual Reflection::BranchingSpec
+    // branchingSpec(const Space* home, 
+    //               Reflection::VarMap& m,
+    //               const BranchingDesc* d) const;
+    /// Actor type identifier of this branching
+    static Support::Symbol ati(void);
+    /// Post branching according to specification
+    static void post(Space* home, Reflection::VarMap& m,
+                     const Reflection::ActorSpec& spec);
+    
   };
  
 }
 
-#include "gecode/dds/constraintgraph.icc"
 #include "gecode/dds/branching.icc"
 #include "gecode/dds/dds.icc"
 
