@@ -33,10 +33,14 @@ namespace Gecode { namespace Decomposition {
   unsigned int
   SingletonDescBase::domainSize(void) const { return _size; }
 
+  unsigned int
+  SingletonDescBase::idx(void) const { return _idx; }
+
   SingletonDescBase::SingletonDescBase(const Branching* b, 
                                        unsigned int alt,
+                                       unsigned int idx,
                                        unsigned int size)
-   : BranchingDesc(b, alt), _size(size) {}
+   : BranchingDesc(b, alt), _idx(idx), _size(size) {}
 
   class Node {
   public:
@@ -64,16 +68,23 @@ namespace Gecode { namespace Decomposition {
     }    
   }
 
-  int connectedComponents(const Space* home, Reflection::VarMap& vars,
-                          std::vector<int>& label) {
+  void connectedComponents(const Space* home, Reflection::VarMap& vars,
+                           std::vector<int>& label,
+                           std::vector<int>& separators) {
+    int noOfVars = vars.size();
     std::vector<Reflection::ActorSpec> as;
     for (Reflection::ActorSpecIter si(home,vars); si(); ++si) {      
       Reflection::ActorSpec asi = si.actor();
       if (!asi.isBranching())
         as.push_back(asi);
     }
-    int noOfVars = vars.size();
-    graph g(noOfVars);
+    graph g(vars.size());
+    for (int i=noOfVars; i--;) {
+      if (vars.spec(i).assigned()) {
+        g[i].component = 0;
+        label.push_back(i);
+      }
+    }
     for (unsigned int i=0; i<as.size(); i++) {
       Reflection::ActorSpec asi = as[i];
       Node newNode;
@@ -81,6 +92,10 @@ namespace Gecode { namespace Decomposition {
       for (int j=asi.noOfArgs(); j--;)
         findVars(g,noOfVars+i,vars,asi[j]);
     }
+
+    label = std::vector<int>(0);
+    separators = std::vector<int>(0);
+    separators.push_back(0);
 
     int curComponent = 0;
     for (int i=0; i<vars.size(); i++) {
@@ -91,6 +106,8 @@ namespace Gecode { namespace Decomposition {
           int cur = q.front();
           q.pop();
           g[cur].component = curComponent;
+          if (cur<noOfVars)
+            label.push_back(cur);
           for (int j=g[cur].out.size(); j--;) {
             assert(g[g[cur].out[j]].component == -1 ||
                    g[g[cur].out[j]].component == curComponent);
@@ -99,26 +116,20 @@ namespace Gecode { namespace Decomposition {
           }
         }
         curComponent++;
+        if (separators[separators.size()-1] != static_cast<int>(label.size()))
+          separators.push_back(label.size());
       }
     }
-    label = std::vector<int>(vars.size());
-    for (int i=vars.size(); i--;) {
-      label[i] = g[i].component;
-    }
-    return curComponent;
+    if (separators.size() == 1)
+      separators.push_back(label.size());
   }
 
   void
   DecompDesc::significantVars(int alt, std::vector<int>& sv) const {
     assert(alt >= 0 && (unsigned int)alt < alternatives());
-      int count = 0;
-      for (std::vector<int>::const_iterator it=label.begin(); 
-           it!=label.end(); it++) {
-        if (*it==alt) count++;
-      }
-      sv.resize(count);
-      for (int i=label.size()-1; i>=0; i--)
-        if (label[i]==alt) sv[--count]=i;
+    sv.resize(select[alt+1]-select[alt]);
+    for (int i=select[alt+1]-select[alt]; i--;)
+      sv[i] = label[i+select[alt]].second;
   }
 
 }}
