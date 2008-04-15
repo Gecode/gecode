@@ -94,21 +94,27 @@ namespace Gecode {
               const BranchingDesc* desc = rcs.push(cur,c);
               EngineCtrl::push(c,desc);
               commit++;
-              cur->commit(desc,0);
               if (const Decomposition::SingletonDesc<int,2>* sd=
                   dynamic_cast<const Decomposition::SingletonDesc<int,2>*>(
                     desc)) 
               {
+                sol = cur;
+                rcs.closeBranch<Decomposition::SingletonDescBase, 
+                                true>(*this);
+                cur = NULL;
+                EngineCtrl::current(NULL);
                 significantVars.resize(2);
                 significantVars[0] = sd->domainSize();
                 significantVars[1] = sd->idx();
                 return EXS_SINGLETON_BRANCH;
               } else if (const Decomposition::DecompDesc* dd=
                   dynamic_cast<const Decomposition::DecompDesc*>(desc)) {
+                cur->commit(desc,0);
                 dd->significantVars(0, significantVars);
                 // decomp++;
                 return EXS_START_DECOMP;
               }
+              cur->commit(desc,0);
             }
             break;
           default: GECODE_NEVER;
@@ -137,13 +143,6 @@ namespace Gecode {
     forceinline void
     DDSEngine::closeComponent(void) {
       rcs.closeBranch<Decomposition::DecompDesc,false>(*this);
-      cur = NULL;
-      EngineCtrl::current(NULL);
-    }
-
-    forceinline void
-    DDSEngine::closeSingletonBranch(void) {
-      rcs.closeBranch<Decomposition::SingletonDescBase, true>(*this);
       cur = NULL;
       EngineCtrl::current(NULL);
     }
@@ -210,12 +209,6 @@ namespace Gecode {
     Search::DDS::closeComponent();
   }
 
-  template <class T>
-  forceinline void
-  DDS<T>::closeSingletonBranch(void) {
-    Search::DDS::closeSingletonBranch();
-  }
-
   template <class Int, class T>
   Int
   countDDS(T* s, unsigned int c_d, unsigned int a_d, Search::Statistics* stat, 
@@ -234,8 +227,8 @@ namespace Gecode {
         countStack.top() = countStack.top() + 1;
         break;
       case Search::DDSEngine::EXS_SINGLETON_BRANCH:
+        delete sol;
         countStack.top() = countStack.top() + significantVars[0];
-        d.closeSingletonBranch();
         break;
       case Search::DDSEngine::EXS_START_DECOMP:
         countStack.push(1); // new decomposition node

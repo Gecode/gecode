@@ -779,8 +779,6 @@ namespace Gecode {
                             std::vector<int>& significantVars);
       /// Close current decomposition component
       void closeComponent(void);
-      /// Close a singleton branch
-      void closeSingletonBranch(void);
       /// Return stack size used by engine
       size_t stacksize(void) const;
       /// Destructor
@@ -812,8 +810,6 @@ namespace Gecode {
                                     std::vector<int>& significantVars);
       /// Close current decomposition component
       void closeComponent(void);
-      /// Close a singleton branch
-      void closeSingletonBranch(void);
       /// Return statistics
       Statistics statistics(void) const;
       /// Check whether engine has been stopped
@@ -851,8 +847,6 @@ namespace Gecode {
                                           std::vector<int>& significantVars);
     /// Close current decomposition component
     void closeComponent(void);
-    /// Close current decomposition component
-    void closeSingletonBranch(void);
   };
 
   /**
