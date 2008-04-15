@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: David Rijsman
+[DESCRIPTION]
+Cumulatives did not do all the pruning it should do.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
