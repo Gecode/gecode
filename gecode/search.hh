@@ -339,7 +339,8 @@ namespace Gecode {
       const BranchingDesc* push(Space* s, Space* c);
       /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
       template <class DescType>
-      const BranchingDesc* nextDesc(EngineCtrl& s, int& closedDescs);
+      const BranchingDesc* nextDesc(EngineCtrl& s, int& alt,
+                                    int& closedDescs);
       /// Generate path for next node with BranchingDesc type DescType
       template <class DescType, bool inclusive>
       void closeBranch(EngineCtrl& s);

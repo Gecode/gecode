@@ -98,7 +98,7 @@ namespace Gecode { namespace Search {
 
   template <class DescType>
   forceinline const BranchingDesc*
-  ReCoStack::nextDesc(EngineCtrl& stat, int& closedDescs) {
+  ReCoStack::nextDesc(EngineCtrl& stat, int& alt, int& closedDescs) {
     closedDescs = 0;
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -108,6 +108,7 @@ namespace Gecode { namespace Search {
         ds.pop().dispose();
       } else {
         ds.top().next();
+        alt = ds.top().alt();
         return ds.top().desc();
       }
     return NULL;
