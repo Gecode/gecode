@@ -99,8 +99,9 @@ namespace Gecode {
                   dynamic_cast<const Decomposition::SingletonDesc<int,2>*>(
                     desc)) 
               {
-                significantVars.resize(1);
+                significantVars.resize(2);
                 significantVars[0] = sd->domainSize();
+                significantVars[1] = sd->idx();
                 return EXS_SINGLETON_BRANCH;
               } else if (const Decomposition::DecompDesc* dd=
                   dynamic_cast<const Decomposition::DecompDesc*>(desc)) {
