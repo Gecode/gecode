@@ -199,12 +199,6 @@ namespace Gecode {
       select(select_) {}
 
     forceinline
-    size_t
-    DecompDesc::size(void) const {
-      return sizeof(DecompDesc);
-    }
-
-    forceinline
     int
     DecompDesc::getStart(void) const { return start; }
 
@@ -218,12 +212,6 @@ namespace Gecode {
     int 
     DecompDesc::getSelection(unsigned int alt) const {
       return select[alt];
-    }
-
-    forceinline
-    size_t
-    SingletonDescBase::size(void) const {
-      return sizeof(SingletonDescBase);
     }
 
     template <class Val, int alt>
@@ -245,7 +233,7 @@ namespace Gecode {
     SingletonDesc<Val,alt>::pvd(void) const { return _pvd; }
 
     template <class Val, int alt>
-    inline size_t
+    size_t
     SingletonDesc<Val,alt>::size(void) const {
       return sizeof(SingletonDesc<Val,alt>);
     }

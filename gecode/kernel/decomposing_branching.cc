@@ -30,6 +30,11 @@
 
 namespace Gecode { namespace Decomposition {
 
+  size_t
+  SingletonDescBase::size(void) const {
+    return sizeof(SingletonDescBase);
+  }
+
   unsigned int
   SingletonDescBase::domainSize(void) const { return _size; }
 
@@ -41,6 +46,11 @@ namespace Gecode { namespace Decomposition {
                                        unsigned int idx,
                                        unsigned int size)
    : BranchingDesc(b, alt), _idx(idx), _size(size) {}
+
+  size_t
+  DecompDesc::size(void) const {
+    return sizeof(DecompDesc);
+  }
 
   class Node {
   public:
