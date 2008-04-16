@@ -58,11 +58,9 @@ namespace Gecode { namespace Decomposition {
     std::vector<int> out;
     Node(void) : component(-1) {}
   };
-
-  typedef std::vector<Node> graph;
   
   void
-  findVars(graph& g, int p, Reflection::VarMap& vars, Reflection::Arg* s) {
+  findVars(Node* g, int p, Reflection::VarMap& vars, Reflection::Arg* s) {
     if (s->isVar()) {
       if (!vars.spec(s->toVar()).assigned()) {
         g[s->toVar()].out.push_back(p);
@@ -88,7 +86,10 @@ namespace Gecode { namespace Decomposition {
       if (!asi.isBranching())
         as.push_back(asi);
     }
-    graph g(vars.size());
+    int graphSize = vars.size()+as.size();
+    GECODE_AUTOARRAY(Node, g, graphSize);
+    for (int i=graphSize; i--;)
+      new (&g[i]) Node();
     for (int i=noOfVars; i--;) {
       if (vars.spec(i).assigned()) {
         g[i].component = 0;
@@ -97,8 +98,6 @@ namespace Gecode { namespace Decomposition {
     }
     for (unsigned int i=0; i<as.size(); i++) {
       Reflection::ActorSpec asi = as[i];
-      Node newNode;
-      g.push_back(newNode);
       for (int j=asi.noOfArgs(); j--;)
         findVars(g,noOfVars+i,vars,asi[j]);
     }
