@@ -181,7 +181,7 @@
  *
  */
 
-#include "gecode/kernel/decomposing_branching.icc"
+#include "gecode/kernel/decomposing-branching.icc"
 
 /*
  * Automatically generated variable implementations
