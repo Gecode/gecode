@@ -150,13 +150,14 @@ namespace Gecode {
       /// Return the start index
       int getStart(void) const;
       /// Return the significant variables for alternative \a alt in \a sv
-      void significantVars(int alt, std::vector<int>& sv) const;
+      GECODE_KERNEL_EXPORT void
+      significantVars(int alt, std::vector<int>& sv) const;
       /// Return size
-      virtual size_t size(void) const;
+      GECODE_KERNEL_EXPORT virtual size_t size(void) const;
     };
 
     /// A branching description for singleton components
-    class GECODE_KERNEL_EXPORT SingletonDescBase : public BranchingDesc {
+    class GECODE_VTABLE_EXPORT SingletonDescBase : public BranchingDesc {
     private:
       /// Index of the singleton view
       unsigned int _idx;
@@ -171,12 +172,12 @@ namespace Gecode {
       /// Return size of the domain of the singleton component
       unsigned int domainSize(void) const;
       /// Return size
-      virtual size_t size(void) const;
+      GECODE_KERNEL_EXPORT virtual size_t size(void) const;
     };
 
     /// Wrapper class for PosValDesc that stores an additional component size
     template <class Val, int alt>
-    class GECODE_KERNEL_EXPORT SingletonDesc : public SingletonDescBase {
+    class GECODE_VTABLE_EXPORT SingletonDesc : public SingletonDescBase {
     private:
       PosValDesc<Val,alt>* _pvd;
     public:
@@ -191,6 +192,21 @@ namespace Gecode {
       virtual size_t size(void) const;
     };
   
+    forceinline
+    unsigned int
+    SingletonDescBase::domainSize(void) const { return _size; }
+
+    forceinline
+    unsigned int
+    SingletonDescBase::idx(void) const { return _idx; }
+
+    forceinline
+    SingletonDescBase::SingletonDescBase(const Branching* b, 
+                                         unsigned int alt,
+                                         unsigned int idx,
+                                         unsigned int size)
+     : BranchingDesc(b, alt), _idx(idx), _size(size) {}
+
     inline
     DecompDesc::DecompDesc(const Branching* b, int start0,
                            const std::vector<std::pair<int,int> >& l, 
