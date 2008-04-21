@@ -608,7 +608,7 @@ if ($gen_typeicc) {
 	    }
             print "\n        );\n";
             print "        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n";
-            print "        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & med_mask;\n";
+            print "        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);\n";
             print "        if (me_n == 0)\n";
             print "          return false;\n";
             print "        med ^= me_n << med_fst;\n";
