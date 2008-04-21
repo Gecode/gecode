@@ -129,6 +129,258 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return (x.min() <= 0) && (x.max() >= 0);
   }
 
+  /// Support value iterator
+  template<class View>
+  class SupportValues {
+  private:
+    /// Number of bits per unsigned integer
+    static const unsigned int bpui = sizeof(unsigned int) * 8;
+    /// Range and position information
+    class RangePos {
+    public:
+      int min;          ///< Minimum of range
+      int max;          ///< Maximum of range
+      unsigned int pos; ///< Starting position of range
+    };
+    /// Value iterator for unsupported values
+    class Unsupported {
+    private:
+      /// Current range
+      RangePos* rp;
+      /// Current value
+      int v;
+      /// Access to other information
+      SupportValues& sv;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Initialize with values from \a sv
+      Unsupported(SupportValues& sv0);
+      //@}
+      
+      /// \name Iteration control
+      //@{
+      /// Test whether iterator is still at a value or done
+      bool operator()(void) const;
+      /// Move iterator to next value (if possible)
+      void operator++(void);
+      //@}
+      
+      /// \name Value access
+      //@{
+      /// Return current value
+      int val(void) const;
+      //@}
+    };
+    
+    /// The view
+    View x;
+    /// Array of bits
+    unsigned int* bits;
+    /// Start of range and position information
+    RangePos* rp_fst;
+    /// End of range and position information
+    RangePos* rp_lst;
+    /// Current range
+    RangePos* rp;
+    /// Current value
+    int v;
+
+    /// Set bit at position \a i
+    void set(unsigned int i);
+    /// Test whether bit is set at position \a i
+    bool bit(unsigned int i) const;
+    /// Mark \a n as supported and return whether value can be supported
+    bool _support(int n);
+  public:
+    /// Initialize for view \a x
+    SupportValues(View x);
+    /// Destructor
+    ~SupportValues(void);
+    
+    /// \name Iteration control
+    //@{
+    /// Reset iterator
+    void reset(void);
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
+    void operator++(void);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return current value
+    int val(void) const;
+    //@}
+    
+    /// \name Support control
+    //@{
+    /// Mark current (iterator) value as supported
+    void support(void);
+    /// Mark \a n as supported if possible
+    bool support(int n);
+    /// Mark \a n as supported if possible
+    bool support(double n);
+    /// Remove all unsupported values
+    ModEvent tell(Space* home);
+    //@}
+  };
+
+  template<class View>
+  forceinline void
+  SupportValues<View>::set(unsigned int i) {
+    unsigned int p = i / bpui;
+    bits[p] |= 1 << (i-p*bpui);
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::bit(unsigned int i) const {
+    unsigned int p = i / bpui;
+    return (bits[p] & (1 << (i-p*bpui))) != 0;
+  }
+  
+  template<class View>
+  SupportValues<View>::SupportValues(View x0) : x(x0) {
+    bits = Memory::bmalloc<unsigned int>((x.size() / bpui) + 1);
+    for (unsigned int i = (x.size() / bpui) + 1; i--; )
+      bits[i] = 0;
+    unsigned int n = 0;
+    for (ViewRanges<View> r(x); r(); ++r)
+      n++;
+    rp_fst = Memory::bmalloc<RangePos>(n+1);
+    rp_lst = rp_fst + n;
+    unsigned int p = 0;
+    int i = 0;
+    for (ViewRanges<View> r(x); r(); ++r) {
+      rp_fst[i].min = r.min();
+      rp_fst[i].max = r.max();
+      rp_fst[i].pos = p;
+      p += r.width(); i++;
+    }
+    rp_fst[i].min = rp_fst[i].max = 0;
+    rp_fst[i].pos = p;
+    rp = rp_fst; v = rp->min;
+  }
+  
+  template<class View>
+  SupportValues<View>::~SupportValues(void) {
+    Memory::free(bits);
+    Memory::free(rp_fst);
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::reset(void) {
+    rp=rp_fst; v=rp->min;
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::operator++(void) {
+    v++;
+    if (v > rp->max) {
+      rp++; v=rp->min;
+    }
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::operator()(void) const {
+    return rp < rp_lst;
+  }
+  
+  template<class View>
+  forceinline int
+  SupportValues<View>::val(void) const {
+    return v;
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::support(void) {
+    set(rp->pos + static_cast<unsigned int>(v-rp->min));
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::_support(int n) {
+    RangePos* l = rp_fst;
+    RangePos* r = rp_lst-1;
+    while (true) {
+      if (l > r) return false;
+      RangePos* m = l + (r-l)/2;
+      if ((n >= m->min) && (n <= m->max)) {
+        set(m->pos + static_cast<unsigned int>(n-m->min));
+        return true;
+      }
+      if (l == r) return false;
+      if (n < m->min) 
+        r=m-1;
+      else
+        l=m+1;
+    }
+    GECODE_NEVER;
+    return false;
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::support(int n) {
+    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
+      return false;
+    return _support(n);
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::support(double n) {
+    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
+      return false;
+    return _support(static_cast<int>(n));
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::Unsupported::operator++(void) {
+    while (true) {
+      if (++v > rp->max) {
+        if (++rp >= sv.rp_lst)
+          return; 
+        v=rp->min;
+      }
+      if (!sv.bit(rp->pos + static_cast<unsigned int>(v-rp->min)))
+        return;
+    }
+  }
+
+  template<class View>
+  forceinline
+  SupportValues<View>::Unsupported::Unsupported(SupportValues& sv0) 
+    : rp(sv0.rp_fst), v(rp->min-1), sv(sv0) {
+    operator++();
+  }
+
+  template<class View>
+  forceinline bool
+  SupportValues<View>::Unsupported::operator()(void) const {
+    return rp < sv.rp_lst;
+  }
+
+  template<class View>
+  forceinline int
+  SupportValues<View>::Unsupported::val(void) const {
+    return v;
+  }
+    
+  template<class View>
+  forceinline ModEvent
+  SupportValues<View>::tell(Space* home) {
+    Unsupported u(*this);
+    return x.minus_v(home,u,false);
+  }
+
 
   /*
    * Propagator for x * y = x
@@ -144,9 +396,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline RelTest
   MultZeroOne<View,pc>::equal(View x, int n) {
     if (pc == PC_INT_DOM) {
-      return rtest_eq_bnd(x,n);
-    } else {
       return rtest_eq_dom(x,n);
+    } else {
+      return rtest_eq_bnd(x,n);
     }
   }
 
@@ -534,6 +786,28 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
   template <class Val, class VA, class VB, class VC>
+  forceinline ExecStatus
+  prop_mult_dom(Space* home, Propagator* p, VA x0, VB x1, VC x2) {
+    SupportValues<VA> s0(x0);
+    SupportValues<VB> s1(x1);
+    SupportValues<VC> s2(x2);
+    while (s0()) {
+      while (s1()) {
+        if (s2.support(m<Val>(s0.val(),s1.val()))) {
+          s0.support(); s1.support();
+        }
+        ++s1;
+      }
+      s1.reset(); ++s0;
+    }
+    GECODE_ME_CHECK(s0.tell(home));
+    GECODE_ME_CHECK(s1.tell(home));
+    GECODE_ME_CHECK(s2.tell(home));
+    return x0.assigned() && x1.assigned() ?
+      ES_SUBSUMED(p,sizeof(*p)) : ES_FIX;
+  }
+
+  template <class Val, class VA, class VB, class VC>
   forceinline
   MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space* home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
@@ -560,8 +834,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   ExecStatus
-  MultPlusDom<Val,VA,VB,VC>::propagate(Space* home, ModEventDelta) {
-    return prop_mult_plus_bnd<Val,VA,VB,VC>(home,this,x0,x1,x2);
+  MultPlusDom<Val,VA,VB,VC>::propagate(Space* home, ModEventDelta med) {
+    if (VA::me(med) != ME_INT_DOM) {
+      GECODE_ES_CHECK((prop_mult_plus_bnd<Val,VA,VB,VC>(home,this,x0,x1,x2)));
+      return ES_FIX_PARTIAL(this,VA::med(ME_INT_DOM));
+    }
+    return prop_mult_dom<Val,VA,VB,VC>(home,this,x0,x1,x2);
   }
 
   template <class Val, class VA, class VB, class VC>
@@ -634,99 +912,102 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  MultDom<View>::propagate(Space* home, ModEventDelta) {
-    if (pos(x0)) {
-      if (pos(x1) || pos(x2)) goto rewrite_ppp;
-      if (neg(x1) || neg(x2)) goto rewrite_pnn;
-      goto prop_pxx;
-    }
-    if (neg(x0)) {
-      if (neg(x1) || pos(x2)) goto rewrite_nnp;
-      if (pos(x1) || neg(x2)) goto rewrite_npn;
-      goto prop_nxx;
-    }
-    if (pos(x1)) {
+  MultDom<View>::propagate(Space* home, ModEventDelta med) {
+    if (View::me(med) != ME_INT_DOM) {
+      if (pos(x0)) {
+        if (pos(x1) || pos(x2)) goto rewrite_ppp;
+        if (neg(x1) || neg(x2)) goto rewrite_pnn;
+        goto prop_pxx;
+      }
+      if (neg(x0)) {
+        if (neg(x1) || pos(x2)) goto rewrite_nnp;
+        if (pos(x1) || neg(x2)) goto rewrite_npn;
+        goto prop_nxx;
+      }
+      if (pos(x1)) {
+        if (pos(x2)) goto rewrite_ppp;
+        if (neg(x2)) goto rewrite_npn;
+        goto prop_xpx;
+      }
+      if (neg(x1)) {
+        if (pos(x2)) goto rewrite_nnp;
+        if (neg(x2)) goto rewrite_pnn;
+        goto prop_xnx;
+      }
+
+      assert(any(x0) && any(x1));
+      GECODE_ME_CHECK(x2.lq(home,std::max(m<double>(x0.max(),x1.max()),
+                                          m<double>(x0.min(),x1.min()))));
+      GECODE_ME_CHECK(x2.gq(home,std::min(m<double>(x0.min(),x1.max()),
+                                          m<double>(x0.max(),x1.min()))));
+
+      if (x0.assigned()) {
+        assert((x0.val() == 0) && (x2.val() == 0));
+        return ES_SUBSUMED(this,home);
+      }
+
+      if (x1.assigned()) {
+        assert((x1.val() == 0) && (x2.val() == 0));
+        return ES_SUBSUMED(this,home);
+      }
+
+      return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+      
+    prop_xpx:
+      std::swap(x0,x1);
+    prop_pxx:
+      assert(pos(x0) && any(x1) && any(x2));
+      
+      GECODE_ME_CHECK(x2.lq(home,m<double>(x0.max(),x1.max())));
+      GECODE_ME_CHECK(x2.gq(home,m<double>(x0.max(),x1.min())));
+      
       if (pos(x2)) goto rewrite_ppp;
-      if (neg(x2)) goto rewrite_npn;
-      goto prop_xpx;
-    }
-    if (neg(x1)) {
-      if (pos(x2)) goto rewrite_nnp;
       if (neg(x2)) goto rewrite_pnn;
-      goto prop_xnx;
+      
+      GECODE_ME_CHECK(x1.lq(home,f_d(x2.max(),x0.min())));
+      GECODE_ME_CHECK(x1.gq(home,c_d(x2.min(),x0.min())));
+      
+      if (x0.assigned() && x1.assigned()) {
+        GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
+        return ES_SUBSUMED(this,sizeof(*this));
+      }
+      
+      return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+      
+    prop_xnx:
+      std::swap(x0,x1);
+    prop_nxx:
+      assert(neg(x0) && any(x1) && any(x2));
+      
+      GECODE_ME_CHECK(x2.lq(home,m<double>(x0.min(),x1.min())));
+      GECODE_ME_CHECK(x2.gq(home,m<double>(x0.min(),x1.max())));
+      
+      if (pos(x2)) goto rewrite_nnp;
+      if (neg(x2)) goto rewrite_npn;
+      
+      GECODE_ME_CHECK(x1.lq(home,f_d(x2.min(),x0.max())));
+      GECODE_ME_CHECK(x1.gq(home,c_d(x2.max(),x0.max())));
+      
+      if (x0.assigned() && x1.assigned()) {
+        GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
+        return ES_SUBSUMED(this,sizeof(*this));
+      }
+      
+      return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+      
+    rewrite_ppp:
+      GECODE_REWRITE(this,(MultPlusDom<double,IntView,IntView,IntView>
+                           ::post(home,x0,x1,x2)));
+    rewrite_nnp:
+      GECODE_REWRITE(this,(MultPlusDom<double,MinusView,MinusView,IntView>
+                           ::post(home,x0,x1,x2)));
+    rewrite_pnn:
+      std::swap(x0,x1);
+    rewrite_npn:
+      GECODE_REWRITE(this,(MultPlusDom<double,MinusView,IntView,MinusView>
+                           ::post(home,x0,x1,x2)));
     }
-
-    assert(any(x0) && any(x1));
-    GECODE_ME_CHECK(x2.lq(home,std::max(m<double>(x0.max(),x1.max()),
-                                        m<double>(x0.min(),x1.min()))));
-    GECODE_ME_CHECK(x2.gq(home,std::min(m<double>(x0.min(),x1.max()),
-                                        m<double>(x0.max(),x1.min()))));
-
-    if (x0.assigned()) {
-      assert((x0.val() == 0) && (x2.val() == 0));
-      return ES_SUBSUMED(this,home);
-    }
-
-    if (x1.assigned()) {
-      assert((x1.val() == 0) && (x2.val() == 0));
-      return ES_SUBSUMED(this,home);
-    }
-
-    return ES_NOFIX;
-
-  prop_xpx:
-    std::swap(x0,x1);
-  prop_pxx:
-    assert(pos(x0) && any(x1) && any(x2));
-
-    GECODE_ME_CHECK(x2.lq(home,m<double>(x0.max(),x1.max())));
-    GECODE_ME_CHECK(x2.gq(home,m<double>(x0.max(),x1.min())));
-
-    if (pos(x2)) goto rewrite_ppp;
-    if (neg(x2)) goto rewrite_pnn;
-
-    GECODE_ME_CHECK(x1.lq(home,f_d(x2.max(),x0.min())));
-    GECODE_ME_CHECK(x1.gq(home,c_d(x2.min(),x0.min())));
-
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
-      return ES_SUBSUMED(this,sizeof(*this));
-    }
-
-    return ES_NOFIX;
-
-  prop_xnx:
-    std::swap(x0,x1);
-  prop_nxx:
-    assert(neg(x0) && any(x1) && any(x2));
-
-    GECODE_ME_CHECK(x2.lq(home,m<double>(x0.min(),x1.min())));
-    GECODE_ME_CHECK(x2.gq(home,m<double>(x0.min(),x1.max())));
-
-    if (pos(x2)) goto rewrite_nnp;
-    if (neg(x2)) goto rewrite_npn;
-
-    GECODE_ME_CHECK(x1.lq(home,f_d(x2.min(),x0.max())));
-    GECODE_ME_CHECK(x1.gq(home,c_d(x2.max(),x0.max())));
-
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
-      return ES_SUBSUMED(this,sizeof(*this));
-    }
-
-    return ES_NOFIX;
-
-  rewrite_ppp:
-    GECODE_REWRITE(this,(MultPlusDom<double,IntView,IntView,IntView>
-                         ::post(home,x0,x1,x2)));
-  rewrite_nnp:
-    GECODE_REWRITE(this,(MultPlusDom<double,MinusView,MinusView,IntView>
-                         ::post(home,x0,x1,x2)));
-  rewrite_pnn:
-    std::swap(x0,x1);
-  rewrite_npn:
-    GECODE_REWRITE(this,(MultPlusDom<double,MinusView,IntView,MinusView>
-                         ::post(home,x0,x1,x2)));
+    return prop_mult_dom<double,View,View,View>(home,this,x0,x1,x2);
   }
 
   template <class View>
