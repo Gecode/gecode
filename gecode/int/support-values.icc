@@ -52,6 +52,13 @@ namespace Gecode { namespace Int {
   }
   
   template<class View>
+  forceinline void
+  SupportValues<View>::reset(void) {
+    rp = rp_fst; v = rp->min;
+    max = rp->min + static_cast<int>((rp+1)->pos - rp->pos) - 1;
+  }
+  
+  template<class View>
   inline
   SupportValues<View>::SupportValues(View x0) : x(x0) {
     bits = Memory::bmalloc<unsigned int>((x.size() / bpui) + 1);
@@ -66,13 +73,11 @@ namespace Gecode { namespace Int {
     int i = 0;
     for (ViewRanges<View> r(x); r(); ++r) {
       rp_fst[i].min = r.min();
-      rp_fst[i].max = r.max();
       rp_fst[i].pos = p;
       p += r.width(); i++;
     }
-    rp_fst[i].min = rp_fst[i].max = 0;
-    rp_fst[i].pos = p;
-    rp = rp_fst; v = rp->min;
+    rp_fst[i].pos=p;
+    reset();
   }
   
   template<class View>
@@ -84,17 +89,12 @@ namespace Gecode { namespace Int {
   
   template<class View>
   forceinline void
-  SupportValues<View>::reset(void) {
-    rp=rp_fst; v=rp->min;
-  }
-  
-  template<class View>
-  forceinline void
   SupportValues<View>::operator++(void) {
-    v++;
-    if (v > rp->max) {
-      rp++; v=rp->min;
-    }
+    if (++v > max)
+      if (++rp < rp_lst) {
+        v = rp->min;
+        max = rp->min + static_cast<int>((rp+1)->pos - rp->pos) - 1;
+      }
   }
   
   template<class View>
@@ -123,7 +123,8 @@ namespace Gecode { namespace Int {
     while (true) {
       if (l > r) return false;
       RangePos* m = l + (r-l)/2;
-      if ((n >= m->min) && (n <= m->max)) {
+      int max = m->min + static_cast<int>((m+1)->pos - m->pos) - 1;
+      if ((n >= m->min) && (n <= max)) {
         set(m->pos + static_cast<unsigned int>(n-m->min));
         return true;
       }
@@ -140,7 +141,7 @@ namespace Gecode { namespace Int {
   template<class View>
   forceinline bool
   SupportValues<View>::support(int n) {
-    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
+    if ((n < x.min()) || (n > x.max()))
       return false;
     return _support(n);
   }
@@ -148,30 +149,33 @@ namespace Gecode { namespace Int {
   template<class View>
   forceinline bool
   SupportValues<View>::support(double n) {
-    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
+    if ((n < x.min()) || (n > x.max()))
       return false;
     return _support(static_cast<int>(n));
   }
   
   template<class View>
   forceinline void
-  SupportValues<View>::Unsupported::operator++(void) {
-    while (true) {
-      if (++v > rp->max) {
-        if (++rp >= sv.rp_lst)
-          return; 
-        v=rp->min;
-      }
-      if (!sv.bit(rp->pos + static_cast<unsigned int>(v-rp->min)))
-        return;
-    }
+  SupportValues<View>::Unsupported::find(void) {
+    // Skip all supported positions
+    while ((p < sv.x.size()) && sv.bit(p))
+      p++;
+    // Move to matching range
+    while (p >= (rp+1)->pos)
+      rp++;
   }
 
   template<class View>
   forceinline
   SupportValues<View>::Unsupported::Unsupported(SupportValues& sv0) 
-    : rp(sv0.rp_fst), v(rp->min-1), sv(sv0) {
-    operator++();
+    : rp(sv0.rp_fst), p(0), sv(sv0) {
+    find();
+  }
+
+  template<class View>
+  forceinline void
+  SupportValues<View>::Unsupported::operator++(void) {
+    p++; find();
   }
 
   template<class View>
@@ -183,7 +187,7 @@ namespace Gecode { namespace Int {
   template<class View>
   forceinline int
   SupportValues<View>::Unsupported::val(void) const {
-    return v;
+    return rp->min+(p-rp->pos);
   }
     
   template<class View>
