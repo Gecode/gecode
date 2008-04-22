@@ -38,6 +38,8 @@
 #include <cmath>
 #include <climits>
 
+#include "gecode/int/support-values.hh"
+
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
@@ -127,258 +129,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline bool
   any(const View& x) {
     return (x.min() <= 0) && (x.max() >= 0);
-  }
-
-  /// Support value iterator
-  template<class View>
-  class SupportValues {
-  private:
-    /// Number of bits per unsigned integer
-    static const unsigned int bpui = sizeof(unsigned int) * 8;
-    /// Range and position information
-    class RangePos {
-    public:
-      int min;          ///< Minimum of range
-      int max;          ///< Maximum of range
-      unsigned int pos; ///< Starting position of range
-    };
-    /// Value iterator for unsupported values
-    class Unsupported {
-    private:
-      /// Current range
-      RangePos* rp;
-      /// Current value
-      int v;
-      /// Access to other information
-      SupportValues& sv;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Initialize with values from \a sv
-      Unsupported(SupportValues& sv0);
-      //@}
-      
-      /// \name Iteration control
-      //@{
-      /// Test whether iterator is still at a value or done
-      bool operator()(void) const;
-      /// Move iterator to next value (if possible)
-      void operator++(void);
-      //@}
-      
-      /// \name Value access
-      //@{
-      /// Return current value
-      int val(void) const;
-      //@}
-    };
-    
-    /// The view
-    View x;
-    /// Array of bits
-    unsigned int* bits;
-    /// Start of range and position information
-    RangePos* rp_fst;
-    /// End of range and position information
-    RangePos* rp_lst;
-    /// Current range
-    RangePos* rp;
-    /// Current value
-    int v;
-
-    /// Set bit at position \a i
-    void set(unsigned int i);
-    /// Test whether bit is set at position \a i
-    bool bit(unsigned int i) const;
-    /// Mark \a n as supported and return whether value can be supported
-    bool _support(int n);
-  public:
-    /// Initialize for view \a x
-    SupportValues(View x);
-    /// Destructor
-    ~SupportValues(void);
-    
-    /// \name Iteration control
-    //@{
-    /// Reset iterator
-    void reset(void);
-    /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator++(void);
-    //@}
-    
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-    
-    /// \name Support control
-    //@{
-    /// Mark current (iterator) value as supported
-    void support(void);
-    /// Mark \a n as supported if possible
-    bool support(int n);
-    /// Mark \a n as supported if possible
-    bool support(double n);
-    /// Remove all unsupported values
-    ModEvent tell(Space* home);
-    //@}
-  };
-
-  template<class View>
-  forceinline void
-  SupportValues<View>::set(unsigned int i) {
-    unsigned int p = i / bpui;
-    bits[p] |= 1 << (i-p*bpui);
-  }
-  
-  template<class View>
-  forceinline bool
-  SupportValues<View>::bit(unsigned int i) const {
-    unsigned int p = i / bpui;
-    return (bits[p] & (1 << (i-p*bpui))) != 0;
-  }
-  
-  template<class View>
-  SupportValues<View>::SupportValues(View x0) : x(x0) {
-    bits = Memory::bmalloc<unsigned int>((x.size() / bpui) + 1);
-    for (unsigned int i = (x.size() / bpui) + 1; i--; )
-      bits[i] = 0;
-    unsigned int n = 0;
-    for (ViewRanges<View> r(x); r(); ++r)
-      n++;
-    rp_fst = Memory::bmalloc<RangePos>(n+1);
-    rp_lst = rp_fst + n;
-    unsigned int p = 0;
-    int i = 0;
-    for (ViewRanges<View> r(x); r(); ++r) {
-      rp_fst[i].min = r.min();
-      rp_fst[i].max = r.max();
-      rp_fst[i].pos = p;
-      p += r.width(); i++;
-    }
-    rp_fst[i].min = rp_fst[i].max = 0;
-    rp_fst[i].pos = p;
-    rp = rp_fst; v = rp->min;
-  }
-  
-  template<class View>
-  SupportValues<View>::~SupportValues(void) {
-    Memory::free(bits);
-    Memory::free(rp_fst);
-  }
-  
-  template<class View>
-  forceinline void
-  SupportValues<View>::reset(void) {
-    rp=rp_fst; v=rp->min;
-  }
-  
-  template<class View>
-  forceinline void
-  SupportValues<View>::operator++(void) {
-    v++;
-    if (v > rp->max) {
-      rp++; v=rp->min;
-    }
-  }
-  
-  template<class View>
-  forceinline bool
-  SupportValues<View>::operator()(void) const {
-    return rp < rp_lst;
-  }
-  
-  template<class View>
-  forceinline int
-  SupportValues<View>::val(void) const {
-    return v;
-  }
-  
-  template<class View>
-  forceinline void
-  SupportValues<View>::support(void) {
-    set(rp->pos + static_cast<unsigned int>(v-rp->min));
-  }
-  
-  template<class View>
-  forceinline bool
-  SupportValues<View>::_support(int n) {
-    RangePos* l = rp_fst;
-    RangePos* r = rp_lst-1;
-    while (true) {
-      if (l > r) return false;
-      RangePos* m = l + (r-l)/2;
-      if ((n >= m->min) && (n <= m->max)) {
-        set(m->pos + static_cast<unsigned int>(n-m->min));
-        return true;
-      }
-      if (l == r) return false;
-      if (n < m->min) 
-        r=m-1;
-      else
-        l=m+1;
-    }
-    GECODE_NEVER;
-    return false;
-  }
-  
-  template<class View>
-  forceinline bool
-  SupportValues<View>::support(int n) {
-    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
-      return false;
-    return _support(n);
-  }
-  
-  template<class View>
-  forceinline bool
-  SupportValues<View>::support(double n) {
-    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
-      return false;
-    return _support(static_cast<int>(n));
-  }
-  
-  template<class View>
-  forceinline void
-  SupportValues<View>::Unsupported::operator++(void) {
-    while (true) {
-      if (++v > rp->max) {
-        if (++rp >= sv.rp_lst)
-          return; 
-        v=rp->min;
-      }
-      if (!sv.bit(rp->pos + static_cast<unsigned int>(v-rp->min)))
-        return;
-    }
-  }
-
-  template<class View>
-  forceinline
-  SupportValues<View>::Unsupported::Unsupported(SupportValues& sv0) 
-    : rp(sv0.rp_fst), v(rp->min-1), sv(sv0) {
-    operator++();
-  }
-
-  template<class View>
-  forceinline bool
-  SupportValues<View>::Unsupported::operator()(void) const {
-    return rp < sv.rp_lst;
-  }
-
-  template<class View>
-  forceinline int
-  SupportValues<View>::Unsupported::val(void) const {
-    return v;
-  }
-    
-  template<class View>
-  forceinline ModEvent
-  SupportValues<View>::tell(Space* home) {
-    Unsupported u(*this);
-    return x.minus_v(home,u,false);
   }
 
 
@@ -785,12 +535,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Positive domain consistent multiplication
    *
    */
-  template <class Val, class VA, class VB, class VC>
+  template <class Val, class View>
   forceinline ExecStatus
-  prop_mult_dom(Space* home, Propagator* p, VA x0, VB x1, VC x2) {
-    SupportValues<VA> s0(x0);
-    SupportValues<VB> s1(x1);
-    SupportValues<VC> s2(x2);
+  prop_mult_dom(Space* home, Propagator* p, View x0, View x1, View x2) {
+    SupportValues<View> s0(x0), s1(x1), s2(x2);
     while (s0()) {
       while (s1()) {
         if (s2.support(m<Val>(s0.val(),s1.val()))) {
@@ -803,8 +551,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(s0.tell(home));
     GECODE_ME_CHECK(s1.tell(home));
     GECODE_ME_CHECK(s2.tell(home));
-    return x0.assigned() && x1.assigned() ?
-      ES_SUBSUMED(p,sizeof(*p)) : ES_FIX;
+    return x0.assigned() && x1.assigned() ? ES_SUBSUMED(p,sizeof(*p)) : ES_FIX;
   }
 
   template <class Val, class VA, class VB, class VC>
@@ -839,7 +586,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ES_CHECK((prop_mult_plus_bnd<Val,VA,VB,VC>(home,this,x0,x1,x2)));
       return ES_FIX_PARTIAL(this,VA::med(ME_INT_DOM));
     }
-    return prop_mult_dom<Val,VA,VB,VC>(home,this,x0,x1,x2);
+    IntView y0(x0.var()), y1(x1.var()), y2(x2.var());
+    return prop_mult_dom<Val,IntView>(home,this,y0,y1,y2);
   }
 
   template <class Val, class VA, class VB, class VC>
@@ -1007,7 +755,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_REWRITE(this,(MultPlusDom<double,MinusView,IntView,MinusView>
                            ::post(home,x0,x1,x2)));
     }
-    return prop_mult_dom<double,View,View,View>(home,this,x0,x1,x2);
+    return prop_mult_dom<double,View>(home,this,x0,x1,x2);
   }
 
   template <class View>

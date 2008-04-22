@@ -1,0 +1,199 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2008
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+namespace Gecode { namespace Int {
+
+  template<class View>
+  forceinline void
+  SupportValues<View>::set(unsigned int i) {
+    unsigned int p = i / bpui;
+    bits[p] |= 1 << (i-p*bpui);
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::bit(unsigned int i) const {
+    unsigned int p = i / bpui;
+    return (bits[p] & (1 << (i-p*bpui))) != 0;
+  }
+  
+  template<class View>
+  inline
+  SupportValues<View>::SupportValues(View x0) : x(x0) {
+    bits = Memory::bmalloc<unsigned int>((x.size() / bpui) + 1);
+    for (unsigned int i = (x.size() / bpui) + 1; i--; )
+      bits[i] = 0;
+    unsigned int n = 0;
+    for (ViewRanges<View> r(x); r(); ++r)
+      n++;
+    rp_fst = Memory::bmalloc<RangePos>(n+1);
+    rp_lst = rp_fst + n;
+    unsigned int p = 0;
+    int i = 0;
+    for (ViewRanges<View> r(x); r(); ++r) {
+      rp_fst[i].min = r.min();
+      rp_fst[i].max = r.max();
+      rp_fst[i].pos = p;
+      p += r.width(); i++;
+    }
+    rp_fst[i].min = rp_fst[i].max = 0;
+    rp_fst[i].pos = p;
+    rp = rp_fst; v = rp->min;
+  }
+  
+  template<class View>
+  inline
+  SupportValues<View>::~SupportValues(void) {
+    Memory::free(bits);
+    Memory::free(rp_fst);
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::reset(void) {
+    rp=rp_fst; v=rp->min;
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::operator++(void) {
+    v++;
+    if (v > rp->max) {
+      rp++; v=rp->min;
+    }
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::operator()(void) const {
+    return rp < rp_lst;
+  }
+  
+  template<class View>
+  forceinline int
+  SupportValues<View>::val(void) const {
+    return v;
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::support(void) {
+    set(rp->pos + static_cast<unsigned int>(v-rp->min));
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::_support(int n) {
+    RangePos* l = rp_fst;
+    RangePos* r = rp_lst-1;
+    while (true) {
+      if (l > r) return false;
+      RangePos* m = l + (r-l)/2;
+      if ((n >= m->min) && (n <= m->max)) {
+        set(m->pos + static_cast<unsigned int>(n-m->min));
+        return true;
+      }
+      if (l == r) return false;
+      if (n < m->min) 
+        r=m-1;
+      else
+        l=m+1;
+    }
+    GECODE_NEVER;
+    return false;
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::support(int n) {
+    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
+      return false;
+    return _support(n);
+  }
+  
+  template<class View>
+  forceinline bool
+  SupportValues<View>::support(double n) {
+    if ((n < rp_fst->min) || (n > (rp_lst-1)->max))
+      return false;
+    return _support(static_cast<int>(n));
+  }
+  
+  template<class View>
+  forceinline void
+  SupportValues<View>::Unsupported::operator++(void) {
+    while (true) {
+      if (++v > rp->max) {
+        if (++rp >= sv.rp_lst)
+          return; 
+        v=rp->min;
+      }
+      if (!sv.bit(rp->pos + static_cast<unsigned int>(v-rp->min)))
+        return;
+    }
+  }
+
+  template<class View>
+  forceinline
+  SupportValues<View>::Unsupported::Unsupported(SupportValues& sv0) 
+    : rp(sv0.rp_fst), v(rp->min-1), sv(sv0) {
+    operator++();
+  }
+
+  template<class View>
+  forceinline bool
+  SupportValues<View>::Unsupported::operator()(void) const {
+    return rp < sv.rp_lst;
+  }
+
+  template<class View>
+  forceinline int
+  SupportValues<View>::Unsupported::val(void) const {
+    return v;
+  }
+    
+  template<class View>
+  inline ModEvent
+  SupportValues<View>::tell(Space* home) {
+    Unsupported u(*this);
+    return x.minus_v(home,u,false);
+  }
+
+}}
+
+// STATISTICS: int-prop
+
