@@ -340,10 +340,11 @@ namespace Gecode {
   Reflection::BranchingSpec
   ViewValBranching<View,Val,ViewSel,ValSel>::branchingSpec(const Space* home, 
     Reflection::VarMap& m, const BranchingDesc* d) const {
-    Reflection::BranchingSpec bs(d);
     const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
-    ValSel vs;
-    vs.branchingSpec(home, m, bs, 2, x[pvd->start()+pvd->pos()], pvd->val());
+    Reflection::BranchingSpec bs(3);
+    bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);
+    bs[1] = Reflection::Arg::newString(ValSel::type());
+    bs[2] = Reflection::Arg::newInt(pvd->val());
     return bs;
   }
 
@@ -435,10 +436,11 @@ namespace Gecode {
   Reflection::BranchingSpec
   ViewValAssignment<View,Val,ValSel>::branchingSpec(const Space* home, 
     Reflection::VarMap& m, const BranchingDesc* d) const {
-    Reflection::BranchingSpec bs(d);
-    const PosValDesc<Val,1>* pvd = static_cast<const PosValDesc<Val,1>*>(d);
-    ValSel vs;
-    vs.branchingSpec(home, m, bs, 1, x[pvd->start()+pvd->pos()], pvd->val());
+    const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
+    Reflection::BranchingSpec bs(3);
+    bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);
+    bs[1] = Reflection::Arg::newString(ValSel::type());
+    bs[2] = Reflection::Arg::newInt(pvd->val());
     return bs;
   }
 

@@ -493,29 +493,29 @@ namespace Gecode {
   ::branchingSpec(const Space* home,
                   Reflection::VarMap& m,
                   const BranchingDesc* d) const {
-    Reflection::BranchingSpec bs(d);
     const PosValDesc<Val,2>* pvd = dynamic_cast<const PosValDesc<Val,2>*>(d);
     if (pvd) {
-      ValSel vs;
-      vs.branchingSpec(home, m, bs, 2, x[pvd->start()+pvd->pos()].view, 
-                       pvd->val());
+      Reflection::BranchingSpec bs(3);
+      bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);
+      bs[1] = Reflection::Arg::newString(ValSel::type());
+      bs[2] = Reflection::Arg::newInt(pvd->val());
+      return bs;
     } else {
       const Decomposition::DecompDesc* dd =
         dynamic_cast<const Decomposition::DecompDesc*>(d);
       assert(dd);
+      Reflection::BranchingSpec bs(dd->alternatives());
       for (unsigned int i=0; i<dd->alternatives(); i++) {
         int compSize = dd->getSelection(i+1)-dd->getSelection(i);
-        Reflection::ArrayArg* arg = Reflection::Arg::newArray(2*compSize-1);
+        Reflection::ArrayArg* arg = Reflection::Arg::newArray(compSize);
         int k=0;
-        for (int j=dd->getSelection(i); j<dd->getSelection(i+1); j++) {
-          (*arg)[k++] = Reflection::Arg::newInt((*dd)[j]);
-          if (j<dd->getSelection(i+1)-1)
-            (*arg)[k++] = Reflection::Arg::newString(",");
+        for (int j=0; j<compSize; j++) {
+          (*arg)[k++] = x[(*dd)[j+dd->getSelection(i)]].spec(home, m);
         }
         bs[i] = arg;
       }
+      return bs;
     }
-    return bs;
   }
 
   template <class View, class Val, class ViewSel, class ValSel>

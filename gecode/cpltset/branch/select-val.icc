@@ -58,35 +58,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     return Support::Symbol("CpltSet::Branch::ValMinUnknown");
   }
 
-  template<bool exclude>
-  forceinline void
-  ValMinUnknown<exclude>::branchingSpec(const Space* home,
-                                        Reflection::VarMap& m,
-                                        Reflection::BranchingSpec& bs,
-                                        int alt, CpltSetView x, int n) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    std::stringstream s;
-    s << n;
-    if (exclude) {
-      (*a0)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());
-    } else {
-      (*a0)[0] = Reflection::Arg::newString((s.str()+" in ").c_str());      
-    }
-    (*a0)[1] = x.spec(home, m);
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      if (exclude) {
-        (*a1)[0] = Reflection::Arg::newString((s.str()+" in ").c_str());
-      } else {
-        (*a1)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());      
-      }
-      (*a1)[1] = x.spec(home, m);
-      bs[1] = a1;
-    }
-  }
-
   template <bool exclude>
   forceinline int
   ValMaxUnknown<exclude>::val(const Space*, CpltSetView x) const {
@@ -112,34 +83,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     return Support::Symbol("CpltSet::Branch::ValMaxUnknown");
   }
 
-  template<bool exclude>
-  forceinline void
-  ValMaxUnknown<exclude>::branchingSpec(const Space* home,
-                                        Reflection::VarMap& m,
-                                        Reflection::BranchingSpec& bs,
-                                        int alt, CpltSetView x, int n) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    std::stringstream s;
-    s << n;
-    if (exclude) {
-      (*a0)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());
-    } else {
-      (*a0)[0] = Reflection::Arg::newString((s.str()+" in ").c_str());      
-    }
-    (*a0)[1] = x.spec(home, m);
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      if (exclude) {
-        (*a1)[0] = Reflection::Arg::newString((s.str()+" in ").c_str());
-      } else {
-        (*a1)[0] = Reflection::Arg::newString((s.str()+" not in ").c_str());      
-      }
-      (*a1)[1] = x.spec(home, m);
-      bs[1] = a1;
-    }
-  }
 
   template <class SelView>
   static void

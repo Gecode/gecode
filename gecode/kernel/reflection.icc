@@ -168,6 +168,8 @@ namespace Gecode { namespace Reflection {
     const char*  toString(void) const;
     /// Create new string argument
     static Arg*  newString(const char* s);
+    /// Create new string argument
+    static Arg*  newString(const Support::Symbol& s);
     /// Initialize this as a string argument
     void         initString(const char* s);
     
@@ -471,14 +473,9 @@ namespace Gecode { namespace Reflection {
   public:
     /// Default constructor
     BranchingSpec(void);
-    /** \brief Construct spec for branching description \a d
-     *
-     * This constructor is used by a Branching to create a BranchingSpec.
-     * As a user of the reflection API, you have to query use the function
-     * Gecode::Space::branchingSpec instead.
-     *
+    /** \brief Construct spec with \a n fields
      */
-    BranchingSpec(const BranchingDesc* d);
+    BranchingSpec(unsigned int n);
     /// Copy constructor
     BranchingSpec(const BranchingSpec& s);
     /// Assignment operator
@@ -488,10 +485,8 @@ namespace Gecode { namespace Reflection {
     
     ///\name Branching information
     //@{
-    /// Check if specification was created by \a b
-    bool createdBy(const ActorSpec& b) const;
-    /// Return number of alternatives
-    unsigned int alternatives(void) const;
+    /// Return number of fields
+    unsigned int size(void) const;
     /// Return specification of alternative \a i
     Arg* operator[](int i) const;
     

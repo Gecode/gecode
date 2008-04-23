@@ -52,27 +52,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMin<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValMin");
   }
-  template <class View>
-  forceinline void
-  ValMin<View>::branchingSpec(const Space* home,
-                              Reflection::VarMap& m,
-                              Reflection::BranchingSpec& bs,
-                              int alt, View x, int n) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    std::stringstream s;
-    s << n;
-    (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      (*a1)[0] = x.spec(home, m);
-      (*a1)[1] = 
-        Reflection::Arg::newString((std::string(">")+s.str()).c_str());
-      bs[1] = a1;
-    }
-  }
 
   template<class View>
   forceinline int
@@ -89,28 +68,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMed<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValMed");
   }
-  template <class View>
-  forceinline void
-  ValMed<View>::branchingSpec(const Space* home,
-                              Reflection::VarMap& m,
-                              Reflection::BranchingSpec& bs,
-                              int alt, View x, int n) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    std::stringstream s;
-    s << n;
-    (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      (*a1)[0] = x.spec(home, m);
-      (*a1)[1] = 
-        Reflection::Arg::newString((std::string("!=")+s.str()).c_str());
-      bs[1] = a1;
-    }
-  }
-
 
   template<class View>
   forceinline int
@@ -127,28 +84,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMax<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValMax");
   }
-  template <class View>
-  forceinline void
-  ValMax<View>::branchingSpec(const Space* home,
-                              Reflection::VarMap& m,
-                              Reflection::BranchingSpec& bs,
-                              int alt, View x, int n) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    std::stringstream s;
-    s << n;
-    (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      (*a1)[0] = x.spec(home, m);
-      (*a1)[1] = 
-        Reflection::Arg::newString((std::string("<")+s.str()).c_str());
-      bs[1] = a1;
-    }
-  }
-
 
   template<class View>
   forceinline int
@@ -165,29 +100,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSplitMin<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValSplitMin");
   }
-  template <class View>
-  forceinline void
-  ValSplitMin<View>::branchingSpec(const Space* home,
-                                   Reflection::VarMap& m,
-                                   Reflection::BranchingSpec& bs,
-                                   int alt, View x, int n) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    std::stringstream s;
-    s << n;
-    (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = 
-      Reflection::Arg::newString((std::string("<=")+s.str()).c_str());
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      (*a1)[0] = x.spec(home, m);
-      (*a1)[1] = 
-        Reflection::Arg::newString((std::string(">")+s.str()).c_str());
-      bs[1] = a1;
-    }
-  }
-
 
   template<class View>
   forceinline int
@@ -204,28 +116,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSplitMax<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValSplitMax");
   }
-  template <class View>
-  forceinline void
-  ValSplitMax<View>::branchingSpec(const Space* home,
-                                   Reflection::VarMap& m,
-                                   Reflection::BranchingSpec& bs,
-                                   int alt, View x, int n) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    std::stringstream s;
-    s << n;
-    (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newString((std::string(">")+s.str()).c_str());
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      (*a1)[0] = x.spec(home, m);
-      (*a1)[1] = 
-        Reflection::Arg::newString((std::string("<=")+s.str()).c_str());
-      bs[1] = a1;
-    }
-  }
-
 
   template<template <class,class,class,class> class B, class View,
            template <class> class SelView>
@@ -262,6 +152,11 @@ namespace Gecode { namespace Int { namespace Branch {
     return Support::Symbol("Gecode::Int::Branch::NoValue");
   }
 
+  inline
+  NoValue::operator int(void) {
+    return 0;
+  }
+
   template<class View>
   forceinline NoValue
   ValZeroOne<View>::val(const Space*, View) const {
@@ -277,25 +172,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValZeroOne<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValZeroOne");
   }
-  template <class View>
-  forceinline void
-  ValZeroOne<View>::branchingSpec(const Space* home,
-                                  Reflection::VarMap& m,
-                                  Reflection::BranchingSpec& bs,
-                                  int alt, View x, NoValue) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newString("= 0");
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      (*a1)[0] = x.spec(home, m);
-      (*a1)[1] = Reflection::Arg::newString("= 1");
-      bs[1] = a1;
-    }
-  }
-
 
 
   template<class View>
@@ -313,25 +189,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValOneZero<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValOneZero");
   }
-  template <class View>
-  forceinline void
-  ValOneZero<View>::branchingSpec(const Space* home,
-                                  Reflection::VarMap& m,
-                                  Reflection::BranchingSpec& bs,
-                                  int alt, View x, NoValue) const {
-    assert(alt <= 2);
-    Reflection::ArrayArg* a0 = Reflection::Arg::newArray(2);
-    (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newString("= 1");
-    bs[0] = a0;
-    if (alt == 2) {
-      Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
-      (*a1)[0] = x.spec(home, m);
-      (*a1)[1] = Reflection::Arg::newString("= 0");
-      bs[1] = a1;
-    }
-  }
-
 
 }}}
 

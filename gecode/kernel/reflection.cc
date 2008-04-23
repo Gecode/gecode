@@ -296,6 +296,12 @@ namespace Gecode { namespace Reflection {
     ret->arg1.s = strdup(s);
     return ret;    
   }
+  Arg*
+  Arg::newString(const Support::Symbol& s) {
+    Arg* ret = new Arg(STRING_ARG);
+    ret->arg1.s = strdup(s.toString().c_str());
+    return ret;    
+  }
   void
   Arg::initString(const char* s) {
     t = STRING_ARG;
@@ -766,19 +772,17 @@ namespace Gecode { namespace Reflection {
     unsigned int   n;
     /// The arguments of this branch
     Arg** a;
-    /// The id of the corresponding branching
-    unsigned int id;
     /// Reference counter
     int r;
     /// Construct arguments for \a id with \a a alternatives
-    Arguments(unsigned int id, unsigned int a);
+    Arguments(unsigned int n);
     /// Destructor
     ~Arguments(void);
   };
 
   inline
-  BranchingSpec::Arguments::Arguments(unsigned int id0, unsigned int n0)
-   : n(n0), id(id0), r(1) {
+  BranchingSpec::Arguments::Arguments(unsigned int n0)
+   : n(n0), r(1) {
      a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
      for (unsigned int i=n; i--;)
        a[i] = NULL;
@@ -793,8 +797,8 @@ namespace Gecode { namespace Reflection {
   
   BranchingSpec::BranchingSpec(void) : _args(NULL) {}
   
-  BranchingSpec::BranchingSpec(const BranchingDesc* d) {
-    _args = new Arguments(d->id(), d->alternatives());
+  BranchingSpec::BranchingSpec(unsigned int n) {
+    _args = new Arguments(n);
   }
 
   BranchingSpec::BranchingSpec(const BranchingSpec& s) : _args(s._args) {
@@ -833,15 +837,8 @@ namespace Gecode { namespace Reflection {
       delete _args;
   }
   
-  bool
-  BranchingSpec::createdBy(const ActorSpec& b) const {
-    if (!b.isBranching())
-      throw ReflectionException("ActorSpec does not belong to a Branching");
-    return _args != NULL && _args->id == b.branchingId();
-  }
-
   unsigned int
-  BranchingSpec::alternatives(void) const {
+  BranchingSpec::size(void) const {
     return _args == NULL ? 0 : _args->n;
   }
   
