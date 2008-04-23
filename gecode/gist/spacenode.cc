@@ -38,6 +38,10 @@
 #include "gecode/search.hh"
 #include <stack>
 
+#ifdef GECODE_HAS_DDS
+#include "gecode/dds.hh"
+#endif
+
 namespace Gecode { namespace Gist {
   
   // TODO nikopp: doxygen comments
@@ -448,6 +452,7 @@ namespace Gecode { namespace Gist {
       case SS_BRANCH:
         desc.branch = workingSpace->description();
         kids = desc.branch->alternatives();
+#ifdef GECODE_HAS_DDS
         if (dynamic_cast<const Decomposition::SingletonDescBase*>(
               desc.branch)) {
           status = SINGLETON;
@@ -466,8 +471,11 @@ namespace Gecode { namespace Gist {
           status = DECOMPOSE;
           _hasSolvedChildren = true;
         } else {
+#endif
           status = BRANCH;
+#ifdef GECODE_HAS_DDS
         }
+#endif
         stats.choices++;
         stats.undetermined += kids;
         // stats.newOpen();

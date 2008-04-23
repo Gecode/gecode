@@ -24,16 +24,17 @@
  *
  */
 
-#include "gecode/search.hh"
+#include "gecode/dds.hh"
+#include "gecode/int/branch.hh"
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace Decomposition {
 
   /*
    * Control for DDS
    *
    */
 
-  DDS::DDS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st,
+  DDS::DDS(Space* s, unsigned int c_d, unsigned int a_d, Search::Stop* st,
            size_t sz)
     : e(c_d,a_d,st,sz) {
     unsigned long int p = 0;
@@ -62,13 +63,27 @@ namespace Gecode { namespace Search {
     return e.stopped();
   }
 
-  Statistics
+  Search::Statistics
   DDS::statistics(void) const {
-    Statistics s = e;
+    Search::Statistics s = e;
     s.memory += e.stacksize();
     return s;
   }
 
-}}
+}
+
+  void
+  decomposingBranch(Space* home, const IntVarArgs& x,
+                    IntVarBranch vars, IntValBranch vals) {
+    Int::Branch::createBranch<DecomposingViewValBranching>(home,x,vars,vals);
+  }
+  
+  void
+  decomposingBranch(Space* home, const BoolVarArgs& x,
+                    IntVarBranch vars, IntValBranch vals) {
+    Int::Branch::createBranch<DecomposingViewValBranching>(home,x,vars,vals);
+  }
+
+}
 
 // STATISTICS: dds-any

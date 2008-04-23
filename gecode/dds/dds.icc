@@ -27,7 +27,7 @@
 #include <stack>
 
 namespace Gecode {
-  namespace Search {
+  namespace Decomposition {
   
     /*
      * DDS engine
@@ -35,8 +35,8 @@ namespace Gecode {
      */
     forceinline
     DDSEngine::DDSEngine(unsigned int c_d0, unsigned int a_d0,
-                         Stop* st, size_t sz)
-      : EngineCtrl(st,sz), rcs(a_d0), cur(NULL), c_d(c_d0), d(0) {}
+                         Search::Stop* st, size_t sz)
+      : Search::EngineCtrl(st,sz), rcs(a_d0), cur(NULL), c_d(c_d0), d(0) {}
 
 
     forceinline void
@@ -165,10 +165,11 @@ namespace Gecode {
   template <class T>
   forceinline
   DDS<T>::DDS(T* s, unsigned int c_d, unsigned int a_d, Search::Stop* st)
-    : Search::DDS(s,c_d,a_d,st,sizeof(T)), closedDecomps(-1), sol(NULL) {}
+    : Decomposition::DDS(s,c_d,a_d,st,sizeof(T)), closedDecomps(-1),
+      sol(NULL) {}
 
   template <class T>
-  forceinline Search::DDSEngine::ExploreStatus
+  forceinline Decomposition::DDSEngine::ExploreStatus
   DDS<T>::next(T*& s, std::vector<int>& sv) {
     switch (closedDecomps) {
     case -1:
@@ -176,13 +177,13 @@ namespace Gecode {
         closedDecomps = 0;
         Space* result;
         status =
-          Search::DDS::next(result, closedDecomps, significantVars);
+          Decomposition::DDS::next(result, closedDecomps, significantVars);
         sol = static_cast<T*>(result);
 
         if (closedDecomps > 0) {
           closedDecomps--;
           s = NULL;
-          return Search::DDSEngine::EXS_END_DECOMP;
+          return Decomposition::DDSEngine::EXS_END_DECOMP;
         }
         closedDecomps--;
         s = sol;
@@ -200,7 +201,7 @@ namespace Gecode {
       {
         closedDecomps--;
         s = NULL;
-        return Search::DDSEngine::EXS_END_DECOMP;
+        return Decomposition::DDSEngine::EXS_END_DECOMP;
       }
     }
   }
@@ -208,7 +209,7 @@ namespace Gecode {
   template <class T>
   forceinline void
   DDS<T>::closeComponent(void) {
-    Search::DDS::closeComponent();
+    Decomposition::DDS::closeComponent();
   }
 
   template <class Int, class T>
@@ -221,22 +222,22 @@ namespace Gecode {
     std::vector<int> significantVars;
     T* sol;
     while (true) {
-      Search::DDSEngine::ExploreStatus status =
+      Decomposition::DDSEngine::ExploreStatus status =
         d.next(sol, significantVars);
       switch (status) {
-      case Search::DDSEngine::EXS_SOLUTION:
+      case Decomposition::DDSEngine::EXS_SOLUTION:
         delete sol;
         countStack.top() = countStack.top() + 1;
         break;
-      case Search::DDSEngine::EXS_SINGLETON_BRANCH:
+      case Decomposition::DDSEngine::EXS_SINGLETON_BRANCH:
         delete sol;
         countStack.top() = countStack.top() + significantVars[0];
         break;
-      case Search::DDSEngine::EXS_START_DECOMP:
+      case Decomposition::DDSEngine::EXS_START_DECOMP:
         countStack.push(1); // new decomposition node
         countStack.push(0); // first component
         break;
-      case Search::DDSEngine::EXS_NEXT_DECOMP:
+      case Decomposition::DDSEngine::EXS_NEXT_DECOMP:
         {
           Int tmp = countStack.top();
           if (tmp == 0) {
@@ -250,7 +251,7 @@ namespace Gecode {
           }
         }
         break;
-      case Search::DDSEngine::EXS_END_DECOMP:
+      case Decomposition::DDSEngine::EXS_END_DECOMP:
         {
           Int tmp = countStack.top();
           countStack.pop();
@@ -259,7 +260,7 @@ namespace Gecode {
           countStack.top() += tmp;
         }
         break;
-      case Search::DDSEngine::EXS_DONE:
+      case Decomposition::DDSEngine::EXS_DONE:
         if (stat!=NULL)
           *stat = d.statistics();
         return countStack.top();

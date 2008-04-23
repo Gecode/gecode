@@ -449,7 +449,7 @@ namespace Gecode {
 
     const Decomposition::DecompDesc* dd =
       dynamic_cast<const Decomposition::DecompDesc*>(d);
-    if (dd == NULL) { // --> normal handling of PosValDescriptions
+    if( dd == NULL) { // --> normal handling of PosValDescriptions
       
       const PosValDesc<Val,2>* pvd;
       if (const Decomposition::SingletonDesc<Val,2>* sd =

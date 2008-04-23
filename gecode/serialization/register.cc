@@ -8036,57 +8036,6 @@ public:
   }
 };
 
-class Register_decomposingBranch {
-public:
-  /// Identifier for this post function
-  static Gecode::Support::Symbol ati(void) {
-    return "Gecode::Post::decomposingBranch";
-  }
-  
-  /// Post constraint described by \a spec
-  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
-                   const Gecode::Reflection::ActorSpec& spec) {
-    switch(spec.noOfArgs()) {
-    case 3:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntVarBranch(spec[1]) &&
-            isEnum_IntValBranch(spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVarBranch x1 = toEnum_IntVarBranch(spec[1]);
-          Gecode::IntValBranch x2 = toEnum_IntValBranch(spec[2]);
-          Gecode::decomposingBranch(home, x0,x1,x2);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntVarBranch(spec[1]) &&
-            isEnum_IntValBranch(spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVarBranch x1 = toEnum_IntVarBranch(spec[1]);
-          Gecode::IntValBranch x2 = toEnum_IntValBranch(spec[2]);
-          Gecode::decomposingBranch(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::decomposingBranch");
-      }
-      break;
-    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::decomposingBranch");
-    }
-  }
-};
-
 class Register_lex {
 public:
   /// Identifier for this post function
@@ -8274,7 +8223,6 @@ class PostRegistrar {
   GECODE_REGISTER1(Register_atleast);
   GECODE_REGISTER1(Register_convexHull);
   GECODE_REGISTER1(Register_sqr);
-  GECODE_REGISTER1(Register_decomposingBranch);
   GECODE_REGISTER1(Register_lex);
 };
 

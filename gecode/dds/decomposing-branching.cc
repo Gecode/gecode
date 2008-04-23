@@ -24,7 +24,7 @@
  *
  */
 
-#include "gecode/kernel.hh"
+#include "gecode/dds.hh"
 
 #include <queue>
 
