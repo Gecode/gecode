@@ -49,9 +49,10 @@ namespace Gecode {
   //@{
   /// Status returned by member functions of view selection class
   enum ViewSelStatus {
-    VSS_NONE,   ///< Current view is not better
-    VSS_SELECT, ///< Current view is better
-    VSS_COMMIT  ///< Current view is known to be a best one
+    VSS_BEST,   ///< Current view is a best one
+    VSS_BETTER, ///< Current view is better
+    VSS_TIE,    ///< Current view is as good as
+    VSS_WORSE   ///< Current view is worse
   };
 
   /**
@@ -65,12 +66,12 @@ namespace Gecode {
    * The class \a ViewSel must implement two member functions:
    *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
    *    Initializes view selection with the \a View \a x. If \a x
-   *    is known to be a best one, VSS_COMMIT should be returned.
-   *    Otherwise, either VSS_NONE or VSS_SELECT should be returned.
+   *    is known to be a best one, VSS_BEST should be returned.
+   *    Otherwise, VSS_BETTER should be returned.
    *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)
-   *    If \a x is not better than the previously selected view,
-   *    return VSS_NONE. If it is better, return VSS_SELECT. If
-   *    it is a best view, return VSS_COMMIT.
+   *    If \a x is better than the previously selected view,
+   *    return VSS_BETTER. If it is a best view, return VSS_BEST. If it 
+   *    is worse, return VSS_WORSE. If it is equally good, return VSS_TIE.
    *
    * The class \a ValSel must implement two member functions:
    *  - \a Val val(const Space* \a home, View \a x) const
@@ -287,14 +288,14 @@ namespace Gecode {
     ValSel  vl; // For value selection
     int i = start;
     int b = i++;
-    if (vs.init(home,x[b]) != VSS_COMMIT)
+    if (vs.init(home,x[b]) != VSS_BEST)
       for (; i < x.size(); i++)
         if (!x[i].assigned())
           switch (vs.select(home,x[i])) {
-          case VSS_SELECT: b=i; break;
-          case VSS_COMMIT: b=i; goto create;
-          case VSS_NONE:   break;
-          default:         GECODE_NEVER;
+          case VSS_BETTER:              b=i; break;
+          case VSS_BEST:                b=i; goto create;
+          case VSS_TIE: case VSS_WORSE: break;
+          default:                      GECODE_NEVER;
           }
   create:
     return new PosValDesc<Val,2>(this,b-start,vl.val(home,x[b]),start);

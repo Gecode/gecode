@@ -45,12 +45,12 @@ namespace Gecode { namespace Set { namespace Branch {
 
   forceinline ViewSelStatus
   ByNone::init(const Space*, SetView) {
-    return VSS_COMMIT;
+    return VSS_BEST;
   }
   forceinline ViewSelStatus
   ByNone::select(const Space*, SetView) {
     GECODE_NEVER;
-    return VSS_NONE;
+    return VSS_TIE;
   }
   inline Support::Symbol
   ByNone::type(void) {
@@ -60,16 +60,19 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline ViewSelStatus
   ByMinCard::init(const Space*, SetView x) { 
     minCard = x.unknownSize();
-    return (minCard == 1) ? VSS_COMMIT : VSS_SELECT;
+    return (minCard == 1) ? VSS_BEST : VSS_BETTER;
   }
   forceinline ViewSelStatus
   ByMinCard::select(const Space*, SetView x) {
     unsigned int us = x.unknownSize();
     if (us < minCard) {
       minCard = us;
-      return (minCard == 1) ? VSS_COMMIT : VSS_SELECT;
+      return (minCard == 1) ? VSS_BEST : VSS_BETTER;
+    } else if (us > minCard) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   inline Support::Symbol
   ByMinCard::type(void) {
@@ -79,15 +82,18 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline ViewSelStatus
   ByMaxCard::init(const Space*, SetView x) { 
     maxCard = x.unknownSize();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   forceinline ViewSelStatus
   ByMaxCard::select(const Space*, SetView x) {
     unsigned int us = x.unknownSize();
     if (us > maxCard) {
-      maxCard = us; return VSS_SELECT;
+      maxCard = us; return VSS_BETTER;
+    } else if (us < maxCard) {
+      return VSS_BETTER;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   inline Support::Symbol
   ByMaxCard::type(void) {
@@ -98,16 +104,19 @@ namespace Gecode { namespace Set { namespace Branch {
   ByMinUnknown::init(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);
     minUnknown = unknown.min();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   forceinline ViewSelStatus
   ByMinUnknown::select(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);
     int um = unknown.min();
     if (um < minUnknown) {
-      minUnknown = um; return VSS_SELECT;
+      minUnknown = um; return VSS_BETTER;
+    } else if (um > minUnknown) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   inline Support::Symbol
   ByMinUnknown::type(void) {
@@ -121,7 +130,7 @@ namespace Gecode { namespace Set { namespace Branch {
       maxUnknown = unknown.max();
       ++unknown;
     } while(unknown());
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   forceinline ViewSelStatus
   ByMaxUnknown::select(const Space*, SetView x) {
@@ -133,9 +142,12 @@ namespace Gecode { namespace Set { namespace Branch {
       ++unknown;
     } while(unknown());
     if (um > maxUnknown) {
-      maxUnknown = um; return VSS_SELECT;
+      maxUnknown = um; return VSS_BETTER;
+    } else if (um < maxUnknown) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   inline Support::Symbol
   ByMaxUnknown::type(void) {

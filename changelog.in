@@ -70,6 +70,17 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+View and value branchings have been substantially changed. In particular:
+ - A view selector must return also information that can be used for
+   tie breaking.
+
+MORE TO COME.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

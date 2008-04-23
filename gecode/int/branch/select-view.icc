@@ -41,13 +41,13 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline ViewSelStatus
   ByNone<View>::init(const Space*, View) {
-    return VSS_COMMIT;
+    return VSS_BEST;
   }
   template<class View>
   forceinline ViewSelStatus
   ByNone<View>::select(const Space*, View) {
     GECODE_NEVER;
-    return VSS_NONE;
+    return VSS_TIE;
   }
   template<class View>
   inline Support::Symbol
@@ -60,15 +60,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByMinMin<View>::init(const Space*, View x) {
     min = x.min();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByMinMin<View>::select(const Space*, View x) {
     if (x.min() < min) {
-      min = x.min(); return VSS_SELECT;
+      min = x.min(); return VSS_BETTER;
+    } else if (x.min() > min) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -81,15 +84,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByMinMax<View>::init(const Space*, View x) {
     min = x.min();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByMinMax<View>::select(const Space*, View x) {
     if (x.min() > min) {
-      min = x.min(); return VSS_SELECT;
+      min = x.min(); return VSS_BETTER;
+    } else if (x.min() < min) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -102,15 +108,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByMaxMin<View>::init(const Space*, View x) {
     max = x.max();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByMaxMin<View>::select(const Space*, View x) {
     if (x.max() < max) {
-      max = x.max(); return VSS_SELECT;
+      max = x.max(); return VSS_BETTER;
+    } else if (x.max() > max) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -123,15 +132,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByMaxMax<View>::init(const Space*, View x) {
     max = x.max();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByMaxMax<View>::select(const Space*, View x) {
     if (x.max() > max) {
-      max = x.max(); return VSS_SELECT;
+      max = x.max(); return VSS_BETTER;
+    } else if (x.max() < max) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -144,16 +156,19 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   BySizeMin<View>::init(const Space*, View x) {
     size = x.size();
-    return (size == 2) ? VSS_COMMIT : VSS_SELECT;
+    return (size == 2) ? VSS_BEST : VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   BySizeMin<View>::select(const Space*, View x) {
     if (x.size() < size) {
       size = x.size();
-      return (size == 2) ? VSS_COMMIT : VSS_SELECT;
+      return (size == 2) ? VSS_BEST : VSS_BETTER;
+    } else if (x.size() > size) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -166,15 +181,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   BySizeMax<View>::init(const Space*, View x) {
     size = x.size();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   BySizeMax<View>::select(const Space*, View x) {
     if (x.size() > size) {
-      size = x.size(); return VSS_SELECT;
+      size = x.size(); return VSS_BETTER;
+    } else if (x.size() < size) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -187,7 +205,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByDegreeMin<View>::init(const Space*, View x) {
     degree = x.degree(); size = x.size();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
@@ -195,12 +213,15 @@ namespace Gecode { namespace Int { namespace Branch {
     if (x.degree() < degree) {
       degree = x.degree();
       size   = x.size();
-      return VSS_SELECT;
+      return VSS_BETTER;
     } else if ((x.degree() == degree) && (x.size() < size)) {
       size = x.size();
-      return VSS_SELECT;
+      return VSS_BETTER;
+    } else if ((x.degree() == degree) && (x.size() == size)) {
+      return VSS_TIE;
+    } else {
+      return VSS_WORSE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -213,7 +234,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByDegreeMax<View>::init(const Space*, View x) {
     degree = x.degree(); size = x.size();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
@@ -221,12 +242,15 @@ namespace Gecode { namespace Int { namespace Branch {
     if (x.degree() > degree) {
       degree = x.degree();
       size   = x.size();
-      return VSS_SELECT;
+      return VSS_BETTER;
     } else if ((x.degree() == degree) && (x.size() < size)) {
       size = x.size();
-      return VSS_SELECT;
+      return VSS_BETTER;
+    } else if ((x.degree() == degree) && (x.size() == size)) {
+      return VSS_TIE;
+    } else {
+      return VSS_WORSE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -240,16 +264,19 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByDegreeMinNoTies<View>::init(const Space*, View x) {
     degree = x.degree();
-    return (degree == 0) ? VSS_COMMIT : VSS_SELECT;
+    return (degree == 0) ? VSS_BEST : VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByDegreeMinNoTies<View>::select(const Space*, View x) {
     if (x.degree() < degree) {
       degree = x.degree();
-      return (degree == 0) ? VSS_COMMIT : VSS_SELECT;
+      return (degree == 0) ? VSS_BEST : VSS_BETTER;
+    } else if (x.degree() > degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -262,15 +289,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByDegreeMaxNoTies<View>::init(const Space*, View x) {
     degree = x.degree();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByDegreeMaxNoTies<View>::select(const Space*, View x) {
     if (x.degree() > degree) {
-      degree = x.degree(); return VSS_SELECT;
+      degree = x.degree(); return VSS_BETTER;
+    } else if (x.degree() < degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -285,7 +315,7 @@ namespace Gecode { namespace Int { namespace Branch {
   BySizeDegreeMin<View>::init(const Space*, View x) {
     sizedegree = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
@@ -293,10 +323,12 @@ namespace Gecode { namespace Int { namespace Branch {
     double sd = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     if (sd < sizedegree) {
-      sizedegree = sd;
-      return VSS_SELECT;
+      sizedegree = sd; return VSS_BETTER;
+    } else if (sd < sizedegree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -310,7 +342,7 @@ namespace Gecode { namespace Int { namespace Branch {
   BySizeDegreeMax<View>::init(const Space*, View x) {
     sizedegree = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
@@ -318,10 +350,12 @@ namespace Gecode { namespace Int { namespace Branch {
     double sd = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     if (sd > sizedegree) {
-      sizedegree = sd; 
-      return VSS_SELECT;
+      sizedegree = sd; return VSS_BETTER;
+    } else if (sd < sizedegree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -334,16 +368,19 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByRegretMinMin<View>::init(const Space*, View x) {
     regret = x.regret_min();
-    return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+    return (regret == 1) ? VSS_BEST : VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByRegretMinMin<View>::select(const Space*, View x) {
     if (x.regret_min() < regret) {
       regret = x.regret_min();
-      return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+      return (regret == 1) ? VSS_BEST : VSS_BETTER;
+    } else if (x.regret_min() > regret) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -356,15 +393,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByRegretMinMax<View>::init(const Space*, View x) {
     regret = x.regret_min();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByRegretMinMax<View>::select(const Space*, View x) {
     if (x.regret_min() > regret) {
-      regret = x.regret_min(); return VSS_SELECT;
+      regret = x.regret_min(); return VSS_BETTER;
+    } else if (x.regret_min() < regret) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -377,16 +417,19 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByRegretMaxMin<View>::init(const Space*, View x) {
     regret = x.regret_max();
-    return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+    return (regret == 1) ? VSS_BEST : VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByRegretMaxMin<View>::select(const Space*, View x) {
     if (x.regret_max() < regret) {
       regret = x.regret_max();
-      return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+      return (regret == 1) ? VSS_BEST : VSS_BETTER;
+    } else if (x.regret_max() > regret) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -399,15 +442,18 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ViewSelStatus
   ByRegretMaxMax<View>::init(const Space*, View x) {
     regret = x.regret_max();
-    return VSS_SELECT;
+    return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
   ByRegretMaxMax<View>::select(const Space*, View x) {
     if (x.regret_max() > regret) {
-      regret = x.regret_max(); return VSS_SELECT;
+      regret = x.regret_max(); return VSS_BETTER;
+    } else if (x.regret_max() < regret) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
     }
-    return VSS_NONE;
   }
   template<class View>
   inline Support::Symbol
@@ -418,4 +464,3 @@ namespace Gecode { namespace Int { namespace Branch {
 }}}
 
 // STATISTICS: int-branch
-

@@ -371,10 +371,10 @@ namespace Gecode {
         ViewSelStatus vss = vs.init(home,x[start+label[0]].view);
         int lastSelect = 0;
         unsigned int i = 0;
-        while (vss != VSS_COMMIT && i<label.size()) {
+        while ((vss != VSS_BEST) && (i<label.size())) {
           if (!x[start+label[i]].view.assigned()) {
             vss = vs.select(home,x[start+label[i]].view);
-            if (vss != VSS_NONE)
+            if (vss == VSS_BETTER)
               lastSelect = i;
           }
           i++;
@@ -420,19 +420,20 @@ namespace Gecode {
       ValSel  vl; // For value selection
       int i = start;
       int b = i++;
-      if (vs.init(home,x[b].view) != VSS_COMMIT)
-         for (; i < x.size(); i++) {
-            if (!x[i].view.assigned()) {
-              switch (vs.select(home,x[i].view)) {
-              case VSS_SELECT:
-                b=i; break;
-              case VSS_COMMIT:
-                b=i;
-                return new 
-                  PosValDesc<Val,2>(this,b-start,vl.val(home,x[b].view),
-                                    start);
-              case VSS_NONE:   break;
-              default:         GECODE_NEVER;
+      if (vs.init(home,x[b].view) != VSS_BEST)
+        for (; i < x.size(); i++) {
+          if (!x[i].view.assigned()) {
+            switch (vs.select(home,x[i].view)) {
+            case VSS_BETTER:
+              b=i; break;
+            case VSS_BEST:
+              b=i;
+              return new 
+                PosValDesc<Val,2>(this,b-start,vl.val(home,x[b].view),
+                                  start);
+            case VSS_TIE:   break;
+            case VSS_WORSE:   break;
+            default:         GECODE_NEVER;
               }
             }
          }
@@ -448,7 +449,7 @@ namespace Gecode {
 
     const Decomposition::DecompDesc* dd =
       dynamic_cast<const Decomposition::DecompDesc*>(d);
-    if( dd == NULL) { // --> normal handling of PosValDescriptions
+    if (dd == NULL) { // --> normal handling of PosValDescriptions
       
       const PosValDesc<Val,2>* pvd;
       if (const Decomposition::SingletonDesc<Val,2>* sd =

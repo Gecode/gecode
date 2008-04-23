@@ -164,7 +164,7 @@ namespace Test {
       virtual Reflection::BranchingSpec branchingSpec(Space*, 
                                                       Reflection::VarMap&,
                                                       const BranchingDesc* d) {
-        Reflection::BranchingSpec bs(d);
+        Reflection::BranchingSpec bs(0);
         return bs;
       }
       /// Post branching according to specification
