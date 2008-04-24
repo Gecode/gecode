@@ -132,28 +132,30 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT DecompDesc : public BranchingDesc {
     protected:
       /// The significant variables in the components
-      const std::vector<std::pair<int,int> > label;
+      int* label;
       /// Start index
-      const int start;
+      const int _start;
       /// Selected variables
-      const std::vector<int> select;
+      int* select;
 
     public:
       /// Constructor
       DecompDesc(const Branching* b, int start,
                  const std::vector<std::pair<int,int> >& l,
                  const std::vector<int>& select);
+      /// Destructor
+      GECODE_DDS_EXPORT ~DecompDesc(void);
       /// Return the stored label
       int operator[](int i) const;
       /// Return the selected view index for component \a alt
       int getSelection(unsigned int alt) const;
       /// Return the start index
-      int getStart(void) const;
+      int start(void) const;
       /// Return the significant variables for alternative \a alt in \a sv
-      GECODE_KERNEL_EXPORT void
+      GECODE_DDS_EXPORT void
       significantVars(int alt, std::vector<int>& sv) const;
       /// Return size
-      GECODE_KERNEL_EXPORT virtual size_t size(void) const;
+      GECODE_DDS_EXPORT virtual size_t size(void) const;
     };
 
     /// A branching description for singleton components
@@ -172,7 +174,7 @@ namespace Gecode {
       /// Return size of the domain of the singleton component
       unsigned int domainSize(void) const;
       /// Return size
-      GECODE_KERNEL_EXPORT virtual size_t size(void) const;
+      GECODE_DDS_EXPORT virtual size_t size(void) const;
     };
 
     /// Wrapper class for PosValDesc that stores an additional component size
@@ -208,20 +210,29 @@ namespace Gecode {
      : BranchingDesc(b, alt), _idx(idx), _size(size) {}
 
     inline
-    DecompDesc::DecompDesc(const Branching* b, int start0,
+    DecompDesc::DecompDesc(const Branching* b, int start,
                            const std::vector<std::pair<int,int> >& l, 
                            const std::vector<int>& select_)
-    : BranchingDesc(b,select_.size()-1), label(l), start(start0), 
-      select(select_) {}
+    : BranchingDesc(b,select_.size()-1), _start(start) {
+      label = static_cast<int*>(Memory::malloc(l.size()*sizeof(int)*2));
+      select = static_cast<int*>(Memory::malloc(select_.size()*sizeof(int)));
+      for (int i=l.size(); i--;) {
+        label[i*2]   = l[i].first;
+        label[i*2+1] = l[i].second;
+      }
+      for (int i=select_.size(); i--;) {
+        select[i] = select_[i];
+      }
+    }
 
     forceinline
     int
-    DecompDesc::getStart(void) const { return start; }
+    DecompDesc::start(void) const { return _start; }
 
     forceinline
     int
     DecompDesc::operator[](int i) const {
-      return label[i].first;
+      return label[i*2];
     }
   
     forceinline
@@ -465,7 +476,7 @@ namespace Gecode {
           ? ES_FAILED : ES_OK;
     } else {
       // Eliminate views from x[0] ... x[start-1]
-      x.drop_fst(dd->getStart()); start = 0;
+      x.drop_fst(dd->start()); start = 0;
       
       // Collect selected component at beginning of x array
       int compSize = dd->getSelection(a+1)-dd->getSelection(a);

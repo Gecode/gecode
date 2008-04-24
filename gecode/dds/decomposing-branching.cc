@@ -45,7 +45,12 @@ namespace Gecode { namespace Decomposition {
     assert(alt >= 0 && (unsigned int)alt < alternatives());
     sv.resize(select[alt+1]-select[alt]);
     for (int i=select[alt+1]-select[alt]; i--;)
-      sv[i] = label[i+select[alt]].second;
+      sv[i] = label[(i+select[alt])*2+1];
+  }
+
+  DecompDesc::~DecompDesc(void) {
+    Memory::free(select);
+    Memory::free(label);
   }
 
   class Node {
