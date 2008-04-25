@@ -240,7 +240,7 @@ namespace Gecode {
     };
 
     /// Compute connected components of the constraint graph
-    GECODE_KERNEL_EXPORT void
+    GECODE_DDS_EXPORT void
     connectedComponents(const Space* home, Reflection::VarMap& vars,
                         Partition& p);
 
