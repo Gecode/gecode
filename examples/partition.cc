@@ -36,6 +36,7 @@
  */
 
 #include "examples/support.hh"
+#include "gecode/minimodel.hh"
 
 /**
  * \brief %Example: partition numbers into two groups
@@ -65,22 +66,21 @@ public:
       xy[i] = x[i]; xy[n+i] = y[i];
     }
     distinct(this, xy, opt.icl());
+
     IntArgs c(2*n);
     for (int i = n; i--; ) {
       c[i] = 1; c[n+i] = -1;
     }
-    linear(this, c, xy, IRT_EQ,0);
+    linear(this, c, xy, IRT_EQ, 0);
 
     // Array of products
-    IntVarArray sxy(this,2*n,1,4*n*n);
-    IntVarArgs sx(n);
-    IntVarArgs sy(n);
+    IntVarArgs sxy(2*n), sx(n), sy(n);
 
     for (int i = n; i--; ) {
-      mult(this,x[i],x[i],sxy[i]);   sx[i] = sxy[i];
-      mult(this,y[i],y[i],sxy[n+i]); sy[i] = sxy[n+i];
+      sx[i] = sxy[i] =   sqr(this, x[i]);
+      sy[i] = sxy[n+i] = sqr(this, y[i]); 
     }
-    linear(this, c,sxy,IRT_EQ,0);
+    linear(this, c, sxy, IRT_EQ, 0);
 
     // Redundant
     linear(this, x, IRT_EQ, 2*n*(2*n+1)/4);
@@ -130,7 +130,7 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("Partition");
   opt.size(32);
-  opt.icl(ICL_DOM);
+  opt.icl(ICL_BND);
   opt.parse(argc,argv);
   Example::run<Partition,DFS,SizeOptions>(opt);
   return 0;
