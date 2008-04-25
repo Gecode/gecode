@@ -27,8 +27,23 @@
 #include "gecode/dds.hh"
 
 #include <queue>
+#include <vector>
 
 namespace Gecode { namespace Decomposition {
+
+  void
+  Partition::init(int noOfElements, int noOfComponents) {
+    elements = 
+      static_cast<int*>(Memory::malloc(sizeof(int)*noOfElements));
+    separators =
+      static_cast<int*>(Memory::malloc(sizeof(int)*noOfComponents));
+    _size = noOfComponents;
+  }
+
+  Partition::~Partition(void) {
+    Memory::free(elements);
+    Memory::free(separators);
+  }
 
   size_t
   SingletonDescBase::size(void) const {
@@ -40,17 +55,18 @@ namespace Gecode { namespace Decomposition {
     return sizeof(DecompDesc);
   }
 
-  void
-  DecompDesc::significantVars(int alt, std::vector<int>& sv) const {
+  std::vector<int>
+  DecompDesc::significantVars(int alt) const {
     assert(alt >= 0 && (unsigned int)alt < alternatives());
-    sv.resize(select[alt+1]-select[alt]);
-    for (int i=select[alt+1]-select[alt]; i--;)
-      sv[i] = label[(i+select[alt])*2+1];
+    std::vector<int> sv(component[alt+1]-component[alt]);
+    for (int i=component[alt+1]-component[alt]; i--;)
+      sv[i] = element[(i+component[alt])*2+1];
+    return sv;
   }
 
   DecompDesc::~DecompDesc(void) {
-    Memory::free(select);
-    Memory::free(label);
+    Memory::free(component);
+    Memory::free(element);
   }
 
   class Node {
@@ -78,8 +94,7 @@ namespace Gecode { namespace Decomposition {
   }
 
   void connectedComponents(const Space* home, Reflection::VarMap& vars,
-                           std::vector<int>& label,
-                           std::vector<int>& separators) {
+                           Partition& p) {
     int noOfVars = vars.size();
     std::vector<Reflection::ActorSpec> as;
     for (Reflection::ActorSpecIter si(home,vars); si(); ++si) {      
@@ -87,6 +102,7 @@ namespace Gecode { namespace Decomposition {
       if (!asi.isBranching())
         as.push_back(asi);
     }
+    std::vector<int> label;
     int graphSize = vars.size()+as.size();
     GECODE_AUTOARRAY(Node, g, graphSize);
     for (int i=graphSize; i--;)
@@ -103,8 +119,7 @@ namespace Gecode { namespace Decomposition {
         findVars(g,noOfVars+i,vars,asi[j]);
     }
 
-    label = std::vector<int>(0);
-    separators = std::vector<int>(0);
+    std::vector<int> separators;
     separators.push_back(0);
 
     int curComponent = 0;
@@ -132,6 +147,12 @@ namespace Gecode { namespace Decomposition {
     }
     if (separators.size() == 1)
       separators.push_back(label.size());
+    
+    p.init(label.size(), separators.size());
+    for (int i=label.size(); i--;)
+      p[i] = label[i];
+    for (int i=separators.size(); i--;)
+      p.component(i) = separators[i];
   }
 
 }}

@@ -110,7 +110,7 @@ namespace Gecode {
               } else if (const Decomposition::DecompDesc* dd=
                   dynamic_cast<const Decomposition::DecompDesc*>(desc)) {
                 cur->commit(desc,0);
-                dd->significantVars(0, significantVars);
+                significantVars = dd->significantVars(0);
                 // decomp++;
                 return EXS_START_DECOMP;
               }
@@ -128,7 +128,7 @@ namespace Gecode {
           EngineCtrl::current(cur);
           if (const Decomposition::DecompDesc* dd=
                 dynamic_cast<const Decomposition::DecompDesc*>(nextDesc)) {
-            dd->significantVars(alt, significantVars);
+            significantVars = dd->significantVars(alt);
             return EXS_NEXT_DECOMP;
           }
           if (closedDecomps > 0) {
