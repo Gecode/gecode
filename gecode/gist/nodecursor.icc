@@ -76,10 +76,11 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline bool
-  LayoutCursor::mayMoveDownwards(void) {
+  HideFailedCursor::mayMoveDownwards(void) {
+    VisualNode* n = node();
     return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           node()->isDirty() /*&&
-           (! n->isHidden() )*/;
+           (n->hasSolvedChildren() || n->getNoOfOpenChildren() > 0) &&
+           (! n->isHidden());
   }
 
 }}

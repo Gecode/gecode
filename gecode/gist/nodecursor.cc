@@ -35,59 +35,12 @@
  */
 
 #include "gecode/gist/nodecursor.hh"
-#include "gecode/gist/shapelist.hh"
 
 namespace Gecode { namespace Gist {
+  
+  HideFailedCursor::HideFailedCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
     
-  LayoutCursor::LayoutCursor(VisualNode* theNode)
-   : NodeCursor<VisualNode>(theNode) {}
-      
-  void
-  LayoutCursor::processCurrentNode() {
-    VisualNode* currentNode = node();
-    if (currentNode->isDirty()) {
-      Extent extent(20);
-      int numberOfChildren = currentNode->getNumberOfChildren();
-      Shape* shape;
-      if (numberOfChildren == -1) {
-        shape = new Shape(extent);
-      } else if (currentNode->isHidden()) {
-        shape = new Shape(&VisualNode::unitShape);
-      } else if (numberOfChildren == 0) {
-        shape = new Shape(extent);
-      } else {
-        ShapeList childShapes(numberOfChildren, 10);
-        for (int i=0; i<numberOfChildren; i++) {
-          childShapes[i]=currentNode->getChild(i)->getShape();
-        }
-
-        Shape* subtreeShape = 
-          childShapes.getMergedShape(currentNode->getStatus() == STEP);
-        subtreeShape->extend(- extent.l, - extent.r);
-        shape = new Shape(extent, subtreeShape);
-        delete subtreeShape;
-        for (int i=0; i<numberOfChildren; i++) {
-          currentNode->getChild(i)->setOffset(childShapes.getOffsetOfChild(i));
-        }
-      }
-      currentNode->setShape(shape);
-      currentNode->setBoundingBox(shape->getBoundingBox());
-      currentNode->setDirty(false);
-    }
-    if (currentNode->getNumberOfChildren() >= 1)
-      currentNode->setChildrenLayoutDone(true);
-  }
-  
-  HideFailedCursor::HideFailedCursor(VisualNode* root) : NodeCursor<VisualNode>(root) {}
-  
-  bool
-  HideFailedCursor::mayMoveDownwards(void) {
-    VisualNode* n = node();
-    return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           (n->hasSolvedChildren() || n->getNoOfOpenChildren() > 0) &&
-           (! n->isHidden());
-  }
-  
   void
   HideFailedCursor::processCurrentNode(void) {
     VisualNode* n = node();
@@ -101,7 +54,8 @@ namespace Gecode { namespace Gist {
     }
   }
 
-  UnhideAllCursor::UnhideAllCursor(VisualNode* root) : NodeCursor<VisualNode>(root) {}
+  UnhideAllCursor::UnhideAllCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
   
   void
   UnhideAllCursor::processCurrentNode(void) {

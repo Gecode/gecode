@@ -36,13 +36,10 @@
 
 #include "gecode/gist/visualnode.hh"
 
-#include "gecode/gist/nodecursor.hh"
+#include "gecode/gist/layoutcursor.hh"
 #include "gecode/gist/nodevisitor.hh"
 
 namespace Gecode { namespace Gist {
-
-  const Shape VisualNode::singletonShape(Extent(20));
-  const Shape VisualNode::unitShape(Extent(20), &singletonShape);
 
   VisualNode::VisualNode(int alternative, BestNode* b)
   : SpaceNode(alternative, b), offset(0), dirty(true), 
@@ -79,14 +76,15 @@ namespace Gecode { namespace Gist {
   VisualNode::layout(void) {
     LayoutCursor l(this);
     PostorderNodeVisitor<LayoutCursor> p(l);
-    int nodesLayouted = 1;
-    clock_t t0 = clock();
-    while (p.next()) { nodesLayouted++; }
-    double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
-    double nps = static_cast<double>(nodesLayouted) / 
-      (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
-    std::cout << "Layout done. " << nodesLayouted << " nodes in "
-      << t << " ms. " << nps << " nodes/s." << std::endl;
+    // int nodesLayouted = 1;
+    // clock_t t0 = clock();
+    while (p.next()) {}
+    // while (p.next()) { nodesLayouted++; }
+    // double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+    // double nps = static_cast<double>(nodesLayouted) / 
+    //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
+    // std::cout << "Layout done. " << nodesLayouted << " nodes in "
+    //   << t << " ms. " << nps << " nodes/s." << std::endl;
   }
     
   void

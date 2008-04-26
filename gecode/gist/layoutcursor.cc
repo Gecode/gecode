@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2008-04-26 14:10:40 +0200 (Sa, 26 Apr 2008) $ by $Author: tack $
+ *     $Revision: 6788 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,14 +34,42 @@
  *
  */
 
-#include "gecode/gist/shapelist.hh"
-#include "gecode/support.hh"
-#include <iostream>
-#include <cassert>
+#include "gecode/gist/layoutcursor.hh"
 #include <vector>
 
 namespace Gecode { namespace Gist {
-  
+
+  /// \brief Container for shapes
+  class ShapeList {
+  private:
+    /// The number of shapes
+    int numberOfShapes;
+    /// The shapes
+    Shape** shapes;
+    /// The minimal distance necessary between two nodes
+    int minimalSeparation;
+    /// Offsets computed
+    int* offsets;
+    /// Compute distance needed between \a shape1 and \a shape2
+    int getAlpha(Shape* shape1, Shape* shape2);
+    /// Merge \a shape1 and \a shape2 with distance \a alpha
+    static Shape* merge(Shape* shape1, Shape* shape2, int alpha);
+  public:
+    /// Constructor
+    ShapeList(int length, int minSeparation);
+    /// Destructor
+    ~ShapeList(void);
+    /// Return the merged shape
+    Shape* getMergedShape(bool left = false);
+    /// Return offset computed for child \a i
+    int getOffsetOfChild(int i);
+    /// Return shape no \a i
+    Shape*& operator[](int i);
+  };
+
+  const Shape Shape::singletonShape(Extent(20));
+  const Shape Shape::unitShape(Extent(20), &singletonShape);
+
   Shape::Shape(Extent e, const Shape* subShape) {
     _depth = subShape->depth() + 1;
     shape = Memory::bmalloc<Extent>(_depth);
@@ -112,6 +140,17 @@ namespace Gecode { namespace Gist {
     return BoundingBox(left, right, depth);    
   }
   
+  forceinline Shape*&
+  ShapeList::operator[](int i) {
+    assert(i < numberOfShapes);
+    return shapes[i];
+  }
+  
+  forceinline int
+  ShapeList::getOffsetOfChild(int i) {
+    assert(i < numberOfShapes);
+    return offsets[i];
+  }
   
   int
   ShapeList::getAlpha(Shape* shape1, Shape* shape2) {
@@ -292,7 +331,47 @@ namespace Gecode { namespace Gist {
     Memory::free(offsets);
     Memory::free(shapes);
   }
-  
+
+  LayoutCursor::LayoutCursor(VisualNode* theNode)
+   : NodeCursor<VisualNode>(theNode) {}
+      
+  void
+  LayoutCursor::processCurrentNode() {
+    VisualNode* currentNode = node();
+    if (currentNode->isDirty()) {
+      Extent extent(20);
+      int numberOfChildren = currentNode->getNumberOfChildren();
+      Shape* shape;
+      if (numberOfChildren == -1) {
+        shape = new Shape(extent);
+      } else if (currentNode->isHidden()) {
+        shape = new Shape(&Shape::unitShape);
+      } else if (numberOfChildren == 0) {
+        shape = new Shape(extent);
+      } else {
+        ShapeList childShapes(numberOfChildren, 10);
+        for (int i=0; i<numberOfChildren; i++) {
+          childShapes[i]=currentNode->getChild(i)->getShape();
+        }
+
+        Shape* subtreeShape = 
+          childShapes.getMergedShape(currentNode->getStatus() == STEP);
+        subtreeShape->extend(- extent.l, - extent.r);
+        shape = new Shape(extent, subtreeShape);
+        delete subtreeShape;
+        for (int i=0; i<numberOfChildren; i++) {
+          currentNode->getChild(i)->setOffset(childShapes.getOffsetOfChild(i));
+        }
+      }
+      delete currentNode->getShape();
+      currentNode->setShape(shape);
+      currentNode->setBoundingBox(shape->getBoundingBox());
+      currentNode->setDirty(false);
+    }
+    if (currentNode->getNumberOfChildren() >= 1)
+      currentNode->setChildrenLayoutDone(true);
+  }
+    
 }}
 
 // STATISTICS: gist-any

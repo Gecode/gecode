@@ -36,6 +36,10 @@
 
 namespace Gecode { namespace Gist {
 
+  forceinline
+  BoundingBox::BoundingBox(int l, int r, int d)
+   : left(l), right(r), depth(d) {}
+
   forceinline bool
   VisualNode::isHidden(void) { return hidden; }
 
@@ -85,7 +89,7 @@ namespace Gecode { namespace Gist {
   VisualNode::getShape(void) { return shape; }
   
   forceinline void
-  VisualNode::setShape(Shape* s) { delete shape; shape = s; }
+  VisualNode::setShape(Shape* s) { shape = s; }
   
   forceinline void
   VisualNode::setBoundingBox(BoundingBox b) { box = b; }

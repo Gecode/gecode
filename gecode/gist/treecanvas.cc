@@ -42,7 +42,7 @@
 #include "gecode/gist/treecanvas.hh"
 
 #include "gecode/gist/nodevisitor.hh"
-#include "gecode/gist/shapelist.hh"
+#include "gecode/gist/layoutcursor.hh"
 #include "gecode/gist/visualnode.hh"
 #include "gecode/gist/postscript.hh"
 #include "gecode/gist/drawingcursor.hh"

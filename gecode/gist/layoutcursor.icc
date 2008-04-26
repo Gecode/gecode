@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date: 2008-04-26 09:09:46 +0200 (Sa, 26 Apr 2008) $ by $Author: tack $
- *     $Revision: 6787 $
+ *     $Date: 2008-04-26 14:10:40 +0200 (Sa, 26 Apr 2008) $ by $Author: tack $
+ *     $Revision: 6788 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,11 +35,7 @@
  */
 
 namespace Gecode { namespace Gist {
-  
-  forceinline
-  BoundingBox::BoundingBox(int l, int r, int d)
-   : left(l), right(r), depth(d) {}
-  
+
   forceinline
   Extent::Extent(void) : l(-1), r(-1) {}
 
@@ -93,16 +89,11 @@ namespace Gecode { namespace Gist {
     return shape[i];
   }
 
-  forceinline Shape*&
-  ShapeList::operator[](int i) {
-    assert(i < numberOfShapes);
-    return shapes[i];
-  }
-  
-  forceinline int
-  ShapeList::getOffsetOfChild(int i) {
-    assert(i < numberOfShapes);
-    return offsets[i];
+  forceinline bool
+  LayoutCursor::mayMoveDownwards(void) {
+    return NodeCursor<VisualNode>::mayMoveDownwards() &&
+           node()->isDirty() /*&&
+           (! n->isHidden() )*/;
   }
 
 }}

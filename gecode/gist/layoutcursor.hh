@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-11-26 15:48:52 +0100 (Mo, 26 Nov 2007) $ by $Author: tack $
+ *     $Revision: 5437 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,28 +34,14 @@
  *
  */
 
-#ifndef GECODE_GIST_SHAPELIST_HH
-#define GECODE_GIST_SHAPELIST_HH
+#ifndef GECODE_GIST_LAYOUTCURSOR_HH
+#define GECODE_GIST_LAYOUTCURSOR_HH
 
-#include "gecode/support.hh"
+#include "gecode/gist/nodecursor.hh"
+#include "gecode/gist/visualnode.hh"
 
 namespace Gecode { namespace Gist {
-
-  /// \brief Bounding box
-  class BoundingBox {
-  public:
-    /// Left coordinate
-    int left;
-    /// Right coordinate 
-    int right;
-    /// Depth
-    int depth;
-    /// Constructor
-    BoundingBox(int l, int r, int d);
-    /// Default constructor
-    BoundingBox(void) {}
-  };
-
+  
   /// \brief Extent, representing shape of a tree at one depth level
   class Extent {
   public:
@@ -96,6 +82,9 @@ namespace Gecode { namespace Gist {
     Shape(const Shape* subShape);
     // Destructor
     ~Shape(void);
+
+    static const Shape singletonShape;
+    static const Shape unitShape;
     
     /// Return depth of the shape
     int depth(void) const;
@@ -112,38 +101,25 @@ namespace Gecode { namespace Gist {
     /// Return bounding box
     BoundingBox getBoundingBox(void);
   };
-
-  /// \brief Container for shapes
-  class ShapeList {
-  private:
-    /// The number of shapes
-    int numberOfShapes;
-    /// The shapes
-    Shape** shapes;
-    /// The minimal distance necessary between two nodes
-    int minimalSeparation;
-    /// Offsets computed
-    int* offsets;
-    /// Compute distance needed between \a shape1 and \a shape2
-    int getAlpha(Shape* shape1, Shape* shape2);
-    /// Merge \a shape1 and \a shape2 with distance \a alpha
-    static Shape* merge(Shape* shape1, Shape* shape2, int alpha);
+  
+  /// \brief A cursor that computes a tree layout for VisualNodes
+  class LayoutCursor : public NodeCursor<VisualNode> {
   public:
     /// Constructor
-    ShapeList(int length, int minSeparation);
-    /// Destructor
-    ~ShapeList(void);
-    /// Return the merged shape
-    Shape* getMergedShape(bool left = false);
-    /// Return offset computed for child \a i
-    int getOffsetOfChild(int i);
-    /// Return shape no \a i
-    Shape*& operator[](int i);
+    LayoutCursor(VisualNode* theNode);
+
+    /// \name Cursor interface
+    //@{
+    /// Test if the cursor may move to the first child node
+    bool mayMoveDownwards(void);
+    /// Compute layout for current node
+    void processCurrentNode(void);
+    //@}
   };
-  
+
 }}
 
-#include "gecode/gist/shapelist.icc"
+#include "gecode/gist/layoutcursor.icc"
 
 #endif
 

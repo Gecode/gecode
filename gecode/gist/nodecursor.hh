@@ -72,21 +72,6 @@ namespace Gecode { namespace Gist {
     //@}
   };
 
-  /// \brief A cursor that computes a tree layout for VisualNodes
-  class LayoutCursor : public NodeCursor<VisualNode> {
-  public:
-    /// Constructor
-    LayoutCursor(VisualNode* theNode);
-
-    /// \name Cursor interface
-    //@{
-    /// Test if the cursor may move to the first child node
-    bool mayMoveDownwards(void);
-    /// Compute layout for current node
-    void processCurrentNode(void);
-    //@}
-  };
-
   /// \brief A cursor that marks failed subtrees as hidden
   class HideFailedCursor : public NodeCursor<VisualNode> {
   public:
