@@ -606,9 +606,11 @@ DDSBUILDDIRS	= dds
 
 GISTHDR0 = \
 	better.hh drawingcursor.hh \
-	gist.icc node.hh nodecursor.hh nodecursor.icc nodevisitor.hh \
-	nodevisitor.icc postscript.hh shapelist.hh \
-	spacenode.hh textoutput.hh treecanvas.hh visualnode.hh \
+	gist.icc node.hh node.icc \
+	nodecursor.hh nodecursor.icc nodevisitor.hh \
+	nodevisitor.icc postscript.hh shapelist.hh shapelist.icc \
+	spacenode.hh textoutput.hh treecanvas.hh \
+	visualnode.hh visualnode.icc \
 	mainwindow.hh \
 	analysiscursor.hh \
 	addchild.hh addvisualisationdialog.hh reflectionhelpers.hh \

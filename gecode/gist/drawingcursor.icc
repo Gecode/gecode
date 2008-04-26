@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2008-02-19 11:05:15 +0100 (Di, 19 Feb 2008) $ by $Author: tack $
+ *     $Revision: 6231 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,58 +34,37 @@
  *
  */
 
-#ifndef GECODE_GIST_NODE_HH
-#define GECODE_GIST_NODE_HH
-
-#include "gecode/support.hh"
-
 namespace Gecode { namespace Gist {
 
-  /// \brief Base class for nodes of the search tree
-  class Node {
-  protected:
-    /// The parent of this node, or NULL for the root
-    Node* parent;
-    /// The children of this node
-    Node** children;
-    /// The number of children of this node
-    int noOfChildren;
-    /// The alternative number this node represents
-    int alternative;
-  public:
-    /// Default constructor
-    Node(void);
-    /// Destructor
-    virtual ~Node(void);
-    
-    /// Return the parent
-    Node* getParent(void);
-    /// Return child no \a n
-    Node* getChild(int n);
-    
-    /// Check if this node is the root of a tree
-    bool isRoot(void);
-    /// Compute the depth of this node
-    int getDepth(void);
-    
-    /// Set the number of children to \a n
-    void setNumberOfChildren(int n);
-    /// Set child number \a n to be \a child
-    void setChild(int n, Node* child);
+  inline void
+  DrawingCursor::moveUpwards(void) { 
+    x -= node()->getOffset();
+    y -= 38;
+    NodeCursor<VisualNode>::moveUpwards();
+  }
 
-    /// Add new child node
-    void addChild(Node* child);
+  inline bool
+  DrawingCursor::mayMoveDownwards(void) {
+    return NodeCursor<VisualNode>::mayMoveDownwards() &&
+           !node()->isHidden() &&
+           node()->childrenLayoutIsDone() &&
+           !isClipped();
+  }
 
-    /// Return the number of children
-    int getNumberOfChildren(void);
-    /// Return which alternative this node represents
-    int getAlternative(void);
-  };
+  inline void
+  DrawingCursor::moveDownwards(void) {
+    NodeCursor<VisualNode>::moveDownwards();
+    x += node()->getOffset();
+    y += 38;
+  }
+
+  inline void
+  DrawingCursor::moveSidewards(void) {
+    x -= node()->getOffset();
+    NodeCursor<VisualNode>::moveSidewards();
+    x += node()->getOffset();
+  }
+
 
 }}
-
-#include "gecode/gist/node.icc"
-
-#endif
-
 // STATISTICS: gist-any

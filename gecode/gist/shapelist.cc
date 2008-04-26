@@ -42,55 +42,6 @@
 
 namespace Gecode { namespace Gist {
   
-  BoundingBox::BoundingBox(int l, int r, int d) : left(l), right(r), depth(d) {}
-  
-  Extent::Extent(void) : l(-1), r(-1) {}
-
-  Extent::Extent(int l0, int r0) : l(l0), r(r0) {}
-
-  Extent::Extent(int width) {
-    int halfWidth = width / 2;
-    l = 0 - halfWidth;
-    r = 0 + halfWidth;
-  }
-  
-  void
-  Extent::extend(int deltaL, int deltaR) {
-    l += deltaL; r += deltaR;
-  }
-  
-  void
-  Extent::move(int delta) {
-    l += delta; r += delta;
-  }
-  
-  Shape::Shape(Extent e)
-   : shape(Memory::bmalloc<Extent>(1)), _depth(1) {
-    shape[0] = e;
-  }
-
-  Shape::Shape(int d) {
-    shape = Memory::bmalloc<Extent>(d);
-    _depth = d;
-  }
-
-  Shape::~Shape(void) {
-    Memory::free(shape);
-  }
-  
-  int
-  Shape::depth(void) const { return _depth; }
-  
-  const Extent&
-  Shape::operator[](int i) const {
-    return shape[i];
-  }
-
-  Extent&
-  Shape::operator[](int i) {
-    return shape[i];
-  }
-
   Shape::Shape(Extent e, const Shape* subShape) {
     _depth = subShape->depth() + 1;
     shape = Memory::bmalloc<Extent>(_depth);
@@ -340,18 +291,6 @@ namespace Gecode { namespace Gist {
   ShapeList::~ShapeList(void) {
     Memory::free(offsets);
     Memory::free(shapes);
-  }
-
-  Shape*&
-  ShapeList::operator[](int i) {
-    assert(i < numberOfShapes);
-    return shapes[i];
-  }
-  
-  int
-  ShapeList::getOffsetOfChild(int i) {
-    assert(i < numberOfShapes);
-    return offsets[i];
   }
   
 }}

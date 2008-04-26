@@ -37,6 +37,8 @@
 #ifndef GECODE_GIST_SHAPELIST_HH
 #define GECODE_GIST_SHAPELIST_HH
 
+#include "gecode/support.hh"
+
 namespace Gecode { namespace Gist {
 
   /// \brief Bounding box
@@ -140,6 +142,8 @@ namespace Gecode { namespace Gist {
   };
   
 }}
+
+#include "gecode/gist/shapelist.icc"
 
 #endif
 

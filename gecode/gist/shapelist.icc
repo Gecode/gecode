@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2008-04-26 09:09:46 +0200 (Sa, 26 Apr 2008) $ by $Author: tack $
+ *     $Revision: 6787 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,58 +34,77 @@
  *
  */
 
-#ifndef GECODE_GIST_NODE_HH
-#define GECODE_GIST_NODE_HH
-
-#include "gecode/support.hh"
-
 namespace Gecode { namespace Gist {
+  
+  forceinline
+  BoundingBox::BoundingBox(int l, int r, int d)
+   : left(l), right(r), depth(d) {}
+  
+  forceinline
+  Extent::Extent(void) : l(-1), r(-1) {}
 
-  /// \brief Base class for nodes of the search tree
-  class Node {
-  protected:
-    /// The parent of this node, or NULL for the root
-    Node* parent;
-    /// The children of this node
-    Node** children;
-    /// The number of children of this node
-    int noOfChildren;
-    /// The alternative number this node represents
-    int alternative;
-  public:
-    /// Default constructor
-    Node(void);
-    /// Destructor
-    virtual ~Node(void);
-    
-    /// Return the parent
-    Node* getParent(void);
-    /// Return child no \a n
-    Node* getChild(int n);
-    
-    /// Check if this node is the root of a tree
-    bool isRoot(void);
-    /// Compute the depth of this node
-    int getDepth(void);
-    
-    /// Set the number of children to \a n
-    void setNumberOfChildren(int n);
-    /// Set child number \a n to be \a child
-    void setChild(int n, Node* child);
+  forceinline
+  Extent::Extent(int l0, int r0) : l(l0), r(r0) {}
 
-    /// Add new child node
-    void addChild(Node* child);
+  inline
+  Extent::Extent(int width) {
+    int halfWidth = width / 2;
+    l = 0 - halfWidth;
+    r = 0 + halfWidth;
+  }
+  
+  inline void
+  Extent::extend(int deltaL, int deltaR) {
+    l += deltaL; r += deltaR;
+  }
+  
+  inline void
+  Extent::move(int delta) {
+    l += delta; r += delta;
+  }
+  
+  inline
+  Shape::Shape(Extent e)
+   : shape(Memory::bmalloc<Extent>(1)), _depth(1) {
+    shape[0] = e;
+  }
 
-    /// Return the number of children
-    int getNumberOfChildren(void);
-    /// Return which alternative this node represents
-    int getAlternative(void);
-  };
+  inline
+  Shape::Shape(int d) {
+    shape = Memory::bmalloc<Extent>(d);
+    _depth = d;
+  }
+
+  forceinline
+  Shape::~Shape(void) {
+    Memory::free(shape);
+  }
+  
+  forceinline int
+  Shape::depth(void) const { return _depth; }
+  
+  forceinline const Extent&
+  Shape::operator[](int i) const {
+    return shape[i];
+  }
+
+  forceinline Extent&
+  Shape::operator[](int i) {
+    return shape[i];
+  }
+
+  forceinline Shape*&
+  ShapeList::operator[](int i) {
+    assert(i < numberOfShapes);
+    return shapes[i];
+  }
+  
+  forceinline int
+  ShapeList::getOffsetOfChild(int i) {
+    assert(i < numberOfShapes);
+    return offsets[i];
+  }
 
 }}
-
-#include "gecode/gist/node.icc"
-
-#endif
 
 // STATISTICS: gist-any

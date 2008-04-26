@@ -64,12 +64,6 @@ namespace Gecode { namespace Gist {
     delete shape;
   }
 
-  bool
-  VisualNode::isHidden(void) { return hidden; }
-
-  void
-  VisualNode::setHidden(bool h) { hidden = h; }
-
   void
   VisualNode::dirtyUp(void) {
     VisualNode* cur = this;
@@ -85,48 +79,16 @@ namespace Gecode { namespace Gist {
   VisualNode::layout(void) {
     LayoutCursor l(this);
     PostorderNodeVisitor<LayoutCursor> p(l);
-    while (p.next()) {}
+    int nodesLayouted = 1;
+    clock_t t0 = clock();
+    while (p.next()) { nodesLayouted++; }
+    double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+    double nps = static_cast<double>(nodesLayouted) / 
+      (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
+    std::cout << "Layout done. " << nodesLayouted << " nodes in "
+      << t << " ms. " << nps << " nodes/s." << std::endl;
   }
-  
-  int
-  VisualNode::getOffset(void) { return offset; }
-  
-  void
-  VisualNode::setOffset(int n) { offset = n; }
-  
-  bool
-  VisualNode::isDirty(void) { return dirty; }
-
-  void
-  VisualNode::setDirty(bool d) { dirty = d; }
-
-  bool
-  VisualNode::childrenLayoutIsDone(void) { return childrenLayoutDone; }
-
-  void
-  VisualNode::setChildrenLayoutDone(bool d) { childrenLayoutDone = d; }
-
-  bool
-  VisualNode::isMarked(void) { return marked; }
-
-  void
-  VisualNode::setMarked(bool m) { marked = m; }
-  
-  unsigned char
-  VisualNode::getHeat(void) const { return heat; }
-
-  void
-  VisualNode::setHeat(unsigned char h) { heat = h; }
-  
-  bool
-  VisualNode::isOnPath(void) { return onPath; }
-  
-  bool
-  VisualNode::isLastOnPath(void) { return lastOnPath; }
-  
-  int
-  VisualNode::getPathAlternative(void) { return pathAlternative; }
-  
+    
   void
   VisualNode::setPathInfos(bool onPath0, int pathAlternative0, bool lastOnPath0) {
     assert(pathAlternative0 <= noOfChildren);
@@ -178,19 +140,7 @@ namespace Gecode { namespace Gist {
     dirtyUp();
   }
   
-    
-  Shape*
-  VisualNode::getShape(void) { return shape; }
-  
-  void
-  VisualNode::setShape(Shape* s) { delete shape; shape = s; }
-  
-  void
-  VisualNode::setBoundingBox(BoundingBox b) { box = b; }
-
-  BoundingBox
-  VisualNode::getBoundingBox(void) { return box; }
-  
+      
   VisualNode*
   VisualNode::createChild(int alternative) {
     return new VisualNode(alternative, curBest);
@@ -200,16 +150,6 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::changedStatus() { dirtyUp(); }
   
-  VisualNode*
-  VisualNode::getParent() {
-    return static_cast<VisualNode*>(SpaceNode::getParent());
-  }
-
-  VisualNode*
-  VisualNode::getChild(int i) {
-    return static_cast<VisualNode*>(SpaceNode::getChild(i));
-  }
-
   bool
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
     if (x < box.left ||

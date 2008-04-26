@@ -40,29 +40,12 @@
 
 namespace Gecode { namespace Gist {
   
-  Node::Node(void) : parent(NULL), children(NULL), noOfChildren(-1) {}
-
   Node::~Node(void) {
     if (noOfChildren != -1)
       for (int i=noOfChildren; i--;)
         delete children[i];
     Memory::free(children);
   }
-
-  Node*
-  Node::getParent(void) { return parent; }
-
-  Node*
-  Node::getChild(int n) {
-    assert(n < noOfChildren);
-    return children[n];
-  }
-    
-  bool
-  Node::isRoot(void) { return parent == NULL; }
-
-  int
-  Node::getDepth(void) { return isRoot() ? 1 : parent->getDepth() + 1; }
     
   void
   Node::setNumberOfChildren(int n) {
@@ -99,15 +82,6 @@ namespace Gecode { namespace Gist {
     children[noOfChildren-1] = child;
   }
 
-  int
-  Node::getNumberOfChildren(void) {
-    return noOfChildren;
-  }
-  
-  int
-  Node::getAlternative(void) {
-    return alternative;
-  }
 }}
 
 // STATISTICS: gist-any

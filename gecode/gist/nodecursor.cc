@@ -41,14 +41,7 @@ namespace Gecode { namespace Gist {
     
   LayoutCursor::LayoutCursor(VisualNode* theNode)
    : NodeCursor<VisualNode>(theNode) {}
-    
-  bool
-  LayoutCursor::mayMoveDownwards(void) {
-    return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           node()->isDirty() /*&&
-           (! n->isHidden() )*/;
-  }
-  
+      
   void
   LayoutCursor::processCurrentNode() {
     VisualNode* currentNode = node();

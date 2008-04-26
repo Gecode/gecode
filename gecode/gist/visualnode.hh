@@ -160,6 +160,8 @@ namespace Gecode { namespace Gist {
 
 }}
 
+#include "gecode/gist/visualnode.icc"
+
 #endif
 
 // STATISTICS: gist-any

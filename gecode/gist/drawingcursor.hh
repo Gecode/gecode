@@ -96,6 +96,8 @@ namespace Gecode { namespace Gist {
 
 }}
 
+#include "gecode/gist/drawingcursor.icc"
+
 #endif
 
 // STATISTICS: gist-any

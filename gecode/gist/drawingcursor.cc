@@ -60,35 +60,6 @@ namespace Gecode { namespace Gist {
     : NodeCursor<VisualNode>(root), painter(painter0), 
       clippingRect(clippingRect0), x(0), y(0), heatView(heat) {}
 
-  void
-  DrawingCursor::moveUpwards(void) { 
-    x -= node()->getOffset();
-    y -= 38;
-    NodeCursor<VisualNode>::moveUpwards();
-  }
-
-  bool
-  DrawingCursor::mayMoveDownwards(void) {
-    return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           !node()->isHidden() &&
-           node()->childrenLayoutIsDone() &&
-           !isClipped();
-  }
-
-  void
-  DrawingCursor::moveDownwards(void) {
-    NodeCursor<VisualNode>::moveDownwards();
-    x += node()->getOffset();
-    y += 38;
-  }
-
-  void
-  DrawingCursor::moveSidewards(void) {
-    x -= node()->getOffset();
-    NodeCursor<VisualNode>::moveSidewards();
-    x += node()->getOffset();
-  }
-
   bool
   DrawingCursor::isClipped(void) {
     if (clippingRect.width() == 0 && clippingRect.x() == 0
