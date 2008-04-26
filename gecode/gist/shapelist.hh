@@ -37,9 +37,6 @@
 #ifndef GECODE_GIST_SHAPELIST_HH
 #define GECODE_GIST_SHAPELIST_HH
 
-#include <vector>
-#include <iostream>
-
 namespace Gecode { namespace Gist {
 
   /// \brief Bounding box
@@ -80,44 +77,51 @@ namespace Gecode { namespace Gist {
   /// \brief The shape of a subtree
   class Shape {
   private:
-    /// The shape is a vector of extents, one for each depth level
-    std::vector<Extent> shape;
+    /// The shape is an array of extents, one for each depth level
+    Extent* shape;
+    /// The depth of this shape
+    int _depth;
     /// Copy construtor
     Shape(const Shape&);
   public:
-    /// Default constructor
-    Shape(void);
+    /// Constructor shape of depth \a d
+    Shape(int d);
     /// Construct with single extent \a e
     Shape(Extent e);
     /// Construct with \e for the root and \a subShape for the children
     Shape(Extent e, const Shape* subShape);
     /// Construct from \a subShape
     Shape(const Shape* subShape);
+    // Destructor
+    ~Shape(void);
     
     /// Return depth of the shape
     int depth(void) const;
-    /// Add \a to the shape
-    void add(Extent e);
     /// Return extent at depth \a i
-    Extent get(int i);
+    const Extent& operator[](int i) const;
+    /// Return extent at depth \a i
+    Extent& operator[](int i);
     /// Extend the shape by \a deltaL and \a deltaR
     void extend(int deltaL, int deltaR);
     /// Move the shape by \a delta
     void move(int delta);
     /// Return if extent exists at \a depth, if yes return it in \a extent
     bool getExtentAtDepth(int depth, Extent& extent);
+    /// Return bounding box
     BoundingBox getBoundingBox(void);
   };
 
   /// \brief Container for shapes
   class ShapeList {
   private:
+    /// The number of shapes
+    int numberOfShapes;
     /// The shapes
-    std::vector<Shape*> shapes;
+    Shape** shapes;
     /// The minimal distance necessary between two nodes
     int minimalSeparation;
     /// Offsets computed
-    std::vector<int> offsets;
+    int* offsets;
     /// Compute distance needed between \a shape1 and \a shape2
     int getAlpha(Shape* shape1, Shape* shape2);
     /// Merge \a shape1 and \a shape2 with distance \a alpha
@@ -125,6 +129,8 @@ namespace Gecode { namespace Gist {
   public:
     /// Constructor
     ShapeList(int length, int minSeparation);
+    /// Destructor
+    ~ShapeList(void);
     /// Return the merged shape
     Shape* getMergedShape(bool left = false);
     /// Return offset computed for child \a i

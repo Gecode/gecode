@@ -40,7 +40,6 @@
 #include "gecode/gist/spacenode.hh"
 #include "gecode/gist/shapelist.hh"
 #include "gecode/kernel.hh"
-#include <vector>
 #include <string>
 
 namespace Gecode { namespace Gist {

@@ -34,23 +34,29 @@
  *
  */
 
+#include "gecode/support.hh"
 #include "gecode/gist/node.hh"
 #include <cassert>
 
 namespace Gecode { namespace Gist {
   
-  Node::Node(void) : parent(NULL), children(0), noOfChildren(-1) {}
+  Node::Node(void) : parent(NULL), children(NULL), noOfChildren(-1) {}
 
   Node::~Node(void) {
-    for (std::vector<Node*>::iterator i=children.begin(); i != children.end(); ++i)
-      delete *i;
+    if (noOfChildren != -1)
+      for (int i=noOfChildren; i--;)
+        delete children[i];
+    Memory::free(children);
   }
 
   Node*
   Node::getParent(void) { return parent; }
 
   Node*
-  Node::getChild(int n) { return children[n]; }
+  Node::getChild(int n) {
+    assert(n < noOfChildren);
+    return children[n];
+  }
     
   bool
   Node::isRoot(void) { return parent == NULL; }
@@ -62,7 +68,7 @@ namespace Gecode { namespace Gist {
   Node::setNumberOfChildren(int n) {
     assert(noOfChildren == -1);
     noOfChildren = n;
-    children.resize(n);
+    children = Memory::bmalloc<Node*>(n);
     for (int i=n; i--;)
       children[i] = NULL;
   }
@@ -77,12 +83,19 @@ namespace Gecode { namespace Gist {
 
   void
   Node::addChild(Node* child) {
-    if(noOfChildren == -1)
-      setNumberOfChildren(0);
-
     child->parent = this;
-    child->alternative = noOfChildren;
-    children.resize(++noOfChildren);
+    child->alternative = noOfChildren == -1 ? 0 : noOfChildren;
+
+    if(noOfChildren == -1) {
+      setNumberOfChildren(1);
+    } else {
+      Node** newChildren = Memory::bmalloc<Node*>(noOfChildren+1);
+      for (int i=noOfChildren; i--;)
+        newChildren[i] = children[i];
+      Memory::free(children);
+      children = newChildren;
+      noOfChildren++;
+    }
     children[noOfChildren-1] = child;
   }
 
