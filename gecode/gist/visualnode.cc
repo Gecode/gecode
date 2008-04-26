@@ -166,7 +166,7 @@ namespace Gecode { namespace Gist {
   VisualNode*
   VisualNode::findNode(int x, int y) {
     VisualNode* cur = this;
-    int depth = y / 38;
+    int depth = y / Layout::dist_y;
 
     while (depth > 0 && cur != NULL) {
      if (cur->isHidden()) {
@@ -184,7 +184,7 @@ namespace Gecode { namespace Gist {
         }
       }
       depth--;
-      y -= 38;
+      y -= Layout::dist_y;
     }
    
     if(cur == this && !cur->containsCoordinateAtDepth(x, 0)) {
@@ -200,7 +200,7 @@ namespace Gecode { namespace Gist {
     Space* ws = getSpace();
     (void) ws->status();
     assert(ws->status() == SS_BRANCH);
-    const BranchingDesc* d = ws->description();
+    // const BranchingDesc* d = ws->description();
     Reflection::VarMap vm;
     ws->getVars(vm, false);
     std::string tt;

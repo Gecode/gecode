@@ -39,7 +39,7 @@ namespace Gecode { namespace Gist {
   inline void
   DrawingCursor::moveUpwards(void) { 
     x -= node()->getOffset();
-    y -= 38;
+    y -= Layout::dist_y;
     NodeCursor<VisualNode>::moveUpwards();
   }
 
@@ -55,7 +55,7 @@ namespace Gecode { namespace Gist {
   DrawingCursor::moveDownwards(void) {
     NodeCursor<VisualNode>::moveDownwards();
     x += node()->getOffset();
-    y += 38;
+    y += Layout::dist_y;
   }
 
   inline void

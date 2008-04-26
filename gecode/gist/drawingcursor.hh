@@ -38,6 +38,7 @@
 #define GECODE_GIST_QT_DRAWINGCURSOR_HH
 
 #include "gecode/gist/nodecursor.hh"
+#include "gecode/gist/layoutcursor.hh"
 #include <QtGui>
 
 namespace Gecode { namespace Gist {

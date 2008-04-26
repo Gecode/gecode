@@ -42,6 +42,15 @@
 
 namespace Gecode { namespace Gist {
   
+  /// \brief Layout parameters
+  class Layout {
+  public:
+    static const int dist_y = 38;
+    static const int extent = 20;
+    static const int minimalSeparation = 10;
+  };
+  
+  
   /// \brief Extent, representing shape of a tree at one depth level
   class Extent {
   public:

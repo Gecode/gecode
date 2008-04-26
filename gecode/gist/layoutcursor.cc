@@ -46,8 +46,6 @@ namespace Gecode { namespace Gist {
     int numberOfShapes;
     /// The shapes
     Shape** shapes;
-    /// The minimal distance necessary between two nodes
-    int minimalSeparation;
     /// Offsets computed
     int* offsets;
     /// Compute distance needed between \a shape1 and \a shape2
@@ -56,7 +54,7 @@ namespace Gecode { namespace Gist {
     static Shape* merge(Shape* shape1, Shape* shape2, int alpha);
   public:
     /// Constructor
-    ShapeList(int length, int minSeparation);
+    ShapeList(int length);
     /// Destructor
     ~ShapeList(void);
     /// Return the merged shape
@@ -67,8 +65,8 @@ namespace Gecode { namespace Gist {
     Shape*& operator[](int i);
   };
 
-  const Shape Shape::singletonShape(Extent(20));
-  const Shape Shape::unitShape(Extent(20), &singletonShape);
+  const Shape Shape::singletonShape(Extent(Layout::extent));
+  const Shape Shape::unitShape(Extent(Layout::extent), &singletonShape);
 
   Shape::Shape(Extent e, const Shape* subShape) {
     _depth = subShape->depth() + 1;
@@ -154,7 +152,7 @@ namespace Gecode { namespace Gist {
   
   int
   ShapeList::getAlpha(Shape* shape1, Shape* shape2) {
-    int alpha = minimalSeparation;
+    int alpha = Layout::minimalSeparation;
     int extentR = 0;
     int extentL = 0;
     int depth1 = shape1->depth();
@@ -162,7 +160,7 @@ namespace Gecode { namespace Gist {
     for (int i=0; i<depth1 && i<depth2; i++) {
       extentR += (*shape1)[i].r;
       extentL += (*shape2)[i].l;
-      alpha = std::max(alpha, extentR - extentL + minimalSeparation);
+      alpha = std::max(alpha, extentR - extentL + Layout::minimalSeparation);
     }
     return alpha;
   }
@@ -321,10 +319,9 @@ namespace Gecode { namespace Gist {
     }
   }
 
-  ShapeList::ShapeList(int length, int minSeparation)
+  ShapeList::ShapeList(int length)
     : numberOfShapes(length),
       shapes(Memory::bmalloc<Shape*>(length)), 
-      minimalSeparation(minSeparation),
       offsets(Memory::bmalloc<int>(length)) {}
 
   ShapeList::~ShapeList(void) {
@@ -339,7 +336,7 @@ namespace Gecode { namespace Gist {
   LayoutCursor::processCurrentNode() {
     VisualNode* currentNode = node();
     if (currentNode->isDirty()) {
-      Extent extent(20);
+      Extent extent(Layout::extent);
       int numberOfChildren = currentNode->getNumberOfChildren();
       Shape* shape;
       if (numberOfChildren == -1) {
@@ -349,7 +346,7 @@ namespace Gecode { namespace Gist {
       } else if (numberOfChildren == 0) {
         shape = new Shape(extent);
       } else {
-        ShapeList childShapes(numberOfChildren, 10);
+        ShapeList childShapes(numberOfChildren);
         for (int i=0; i<numberOfChildren; i++) {
           childShapes[i]=currentNode->getChild(i)->getShape();
         }
@@ -360,7 +357,8 @@ namespace Gecode { namespace Gist {
         shape = new Shape(extent, subtreeShape);
         delete subtreeShape;
         for (int i=0; i<numberOfChildren; i++) {
-          currentNode->getChild(i)->setOffset(childShapes.getOffsetOfChild(i));
+          currentNode->getChild(i)->
+            setOffset(childShapes.getOffsetOfChild(i));
         }
       }
       delete currentNode->getShape();

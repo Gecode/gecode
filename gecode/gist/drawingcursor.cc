@@ -54,6 +54,15 @@ namespace Gecode { namespace Gist {
   /// Blue color for expanded choice nodes
   const QColor DrawingCursor::lightBlue(0, 92, 161, 120);
   
+  const int nodeWidth = 20;
+  const int halfNodeWidth = nodeWidth / 2;
+  const int quarterNodeWidth = halfNodeWidth / 2;
+  const int failedWidth = 14;
+  const int halfFailedWidth = failedWidth / 2;
+  const int shadowOffset = 3;
+  const int dSolvedOffset = nodeWidth / 6;
+  const int dSolvedHalfWidth = (nodeWidth-2*dSolvedOffset) / 2;
+  
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                                bool heat,
                                const QRect& clippingRect0)
@@ -69,14 +78,14 @@ namespace Gecode { namespace Gist {
     return (x + b.left > clippingRect.x() + clippingRect.width() ||
             x + b.right < clippingRect.x() || 
             y > clippingRect.y() + clippingRect.height() ||
-            y + (b.depth+1) * 38 < clippingRect.y());
+            y + (b.depth+1) * Layout::dist_y < clippingRect.y());
   }
   
   void
   DrawingCursor::processCurrentNode(void) {
     Gist::VisualNode* n = node();
     int parentX = x - (n->getOffset());
-    int parentY = y - 38 + 20;
+    int parentY = y - Layout::dist_y + nodeWidth;
 
     int myx = x;
     int myy = y;
@@ -103,14 +112,15 @@ namespace Gecode { namespace Gist {
     }
 
     // draw shadow
-    int shadowOffset = 3;
     if (n->isMarked()) {
       painter.setBrush(Qt::gray);
       painter.setPen(Qt::NoPen);
       if (n->isHidden()) {
         QPoint points[3] = {QPoint(myx+shadowOffset,myy+shadowOffset),
-                            QPoint(myx+20+shadowOffset,myy+60+shadowOffset),
-                            QPoint(myx-20+shadowOffset,myy+60+shadowOffset),
+                            QPoint(myx+nodeWidth+shadowOffset,
+                                   myy+3*nodeWidth+shadowOffset),
+                            QPoint(myx-nodeWidth+shadowOffset,
+                                   myy+3*nodeWidth+shadowOffset),
                            };
         painter.drawConvexPolygon(points, 3);
         
@@ -118,37 +128,47 @@ namespace Gecode { namespace Gist {
         switch (n->getStatus()) {
         case Gist::STEP:
         case Gist::SPECIAL:
-                painter.drawEllipse(myx-5+shadowOffset, myy+shadowOffset, 10, 20);
+                painter.drawEllipse(myx-quarterNodeWidth+shadowOffset, 
+                                    myy+shadowOffset, halfNodeWidth, 
+                                    nodeWidth);
                 break;
         case Gist::SINGLETON:
           {
             QPoint points[3] = {QPoint(myx+shadowOffset,myy+shadowOffset),
-                                QPoint(myx+10+shadowOffset,myy+20+shadowOffset),
-                            QPoint(myx-10+shadowOffset,myy+20+shadowOffset),
-                           };
+                                QPoint(myx+halfNodeWidth+shadowOffset,
+                                       myy+nodeWidth+shadowOffset),
+                                QPoint(myx-halfNodeWidth+shadowOffset,
+                                       myy+nodeWidth+shadowOffset),
+                               };
             painter.drawConvexPolygon(points, 3);
           }
           break;
         case Gist::SOLVED:
           {
             QPoint points[4] = {QPoint(myx+shadowOffset,myy+shadowOffset),
-                                QPoint(myx+10+shadowOffset,myy+10+shadowOffset),
-                                QPoint(myx+shadowOffset,myy+20+shadowOffset),
-                                QPoint(myx-10+shadowOffset,myy+10+shadowOffset)
+                                QPoint(myx+halfNodeWidth+shadowOffset,
+                                       myy+halfNodeWidth+shadowOffset),
+                                QPoint(myx+shadowOffset,
+                                       myy+nodeWidth+shadowOffset),
+                                QPoint(myx-halfNodeWidth+shadowOffset,
+                                       myy+halfNodeWidth+shadowOffset)
                                };
             painter.drawConvexPolygon(points, 4);
           }
           break;
         case Gist::FAILED:
-          painter.drawRect(myx-7+shadowOffset, myy+shadowOffset, 14, 14);
+          painter.drawRect(myx-halfFailedWidth+shadowOffset,
+                           myy+shadowOffset, failedWidth, failedWidth);
           break;
         case Gist::BRANCH:
         case Gist::DECOMPOSE:
-          painter.drawEllipse(myx-10+shadowOffset, myy+shadowOffset, 20, 20);
+          painter.drawEllipse(myx-halfNodeWidth+shadowOffset, 
+                              myy+shadowOffset, nodeWidth, nodeWidth);
           break;
         case Gist::COMPONENT_IGNORED:
         case Gist::UNDETERMINED:
-          painter.drawEllipse(myx-10+shadowOffset, myy+shadowOffset, 20, 20);
+          painter.drawEllipse(myx-halfNodeWidth+shadowOffset, 
+                              myy+shadowOffset, nodeWidth, nodeWidth);
           break;
         }
       }        
@@ -158,8 +178,8 @@ namespace Gecode { namespace Gist {
     if (n->isHidden()) {
       painter.setBrush(QBrush(red));
       QPoint points[3] = {QPoint(myx,myy),
-                          QPoint(myx+20,myy+60),
-                          QPoint(myx-20,myy+60),
+                          QPoint(myx+nodeWidth,myy+3*nodeWidth),
+                          QPoint(myx-nodeWidth,myy+3*nodeWidth),
                          };
       painter.drawConvexPolygon(points, 3);
     } else {
@@ -167,7 +187,8 @@ namespace Gecode { namespace Gist {
       case Gist::STEP:
       case Gist::SPECIAL:
         painter.setBrush(Qt::yellow);
-        painter.drawEllipse(myx-5, myy+10, 10, 10);
+        painter.drawEllipse(myx-quarterNodeWidth, myy+halfNodeWidth,
+                           halfNodeWidth, halfNodeWidth);
         if (heatView) {
           if (n->isOnPath())
             painter.setPen(Qt::green);
@@ -179,7 +200,7 @@ namespace Gecode { namespace Gist {
           else
             painter.setPen(Qt::black);
         }
-        painter.drawLine(myx, myy, myx, myy+10);
+        painter.drawLine(myx, myy, myx, myy+halfNodeWidth);
         break;
       case Gist::SOLVED:
         {
@@ -191,9 +212,9 @@ namespace Gecode { namespace Gist {
             painter.setBrush(QBrush(green));
           }
           QPoint points[4] = {QPoint(myx,myy),
-                              QPoint(myx+10,myy+10),
-                              QPoint(myx,myy+20),
-                              QPoint(myx-10,myy+10)
+                              QPoint(myx+halfNodeWidth,myy+halfNodeWidth),
+                              QPoint(myx,myy+nodeWidth),
+                              QPoint(myx-halfNodeWidth,myy+halfNodeWidth)
                              };
           painter.drawConvexPolygon(points, 4);
         }
@@ -203,27 +224,31 @@ namespace Gecode { namespace Gist {
           painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
         else
           painter.setBrush(QBrush(red));
-        painter.drawRect(myx-7, myy, 14, 14);
+        painter.drawRect(myx-halfFailedWidth, myy, failedWidth, failedWidth);
         break;
       case Gist::DECOMPOSE:
         painter.setBrush(QBrush(blue));
-        painter.drawEllipse(myx-10, myy, 20, 20);
+        painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         if (n->isOpen()) {
           painter.setBrush(Qt::white);
-          painter.drawRect(myx-5, myy+5, 10, 10);
+          painter.drawRect(myx-quarterNodeWidth, myy+quarterNodeWidth,
+                           halfNodeWidth, halfNodeWidth);
         }
         else if (n->hasSolvedChildren()) {
           painter.setBrush(QBrush(green));
-          QPoint points[4] = {QPoint(myx,myy+3),
-                              QPoint(myx+7,myy+10),
-                              QPoint(myx,myy+17),
-                              QPoint(myx-7,myy+10)
+          QPoint points[4] = {QPoint(myx,myy+dSolvedOffset),
+                              QPoint(myx+dSolvedHalfWidth,
+                                     myy+dSolvedOffset+dSolvedHalfWidth),
+                              QPoint(myx,myy+nodeWidth-dSolvedOffset),
+                              QPoint(myx-dSolvedHalfWidth,
+                                     myy+dSolvedOffset+dSolvedHalfWidth)
                              };
           painter.drawConvexPolygon(points, 4);
         }
         else {
           painter.setBrush(QBrush(red));
-          painter.drawRect(myx-5, myy+5, 10, 10);
+          painter.drawRect(myx-quarterNodeWidth, myy+quarterNodeWidth,
+                           halfNodeWidth, halfNodeWidth);
         }
         break;
       case Gist::BRANCH:
@@ -231,27 +256,28 @@ namespace Gecode { namespace Gist {
           painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
         else
           painter.setBrush(QBrush(blue));
-        painter.drawEllipse(myx-10, myy, 20, 20);
+        painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         break;
       case Gist::SINGLETON:
         {
           painter.setBrush(QBrush(green));
           QPoint points[3] = {QPoint(myx,myy),
-                              QPoint(myx+10,myy+20),
-                          QPoint(myx-10,myy+20),
-                         };
+                              QPoint(myx+halfNodeWidth,myy+nodeWidth),
+                              QPoint(myx-halfNodeWidth,myy+nodeWidth),
+                             };
           painter.drawConvexPolygon(points, 3);
         }
         break;
       case Gist::COMPONENT_IGNORED:
         painter.setBrush(Qt::white);
-        painter.drawEllipse(myx-10, myy, 20, 20);
+        painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         painter.setBrush(QBrush(red));
-        painter.drawRect(myx-5, myy+5, 10, 10);			  
+        painter.drawRect(myx-quarterNodeWidth, myy+quarterNodeWidth,
+                         halfNodeWidth, halfNodeWidth);
         break;
       case Gist::UNDETERMINED:
         painter.setBrush(Qt::white);
-        painter.drawEllipse(myx-10, myy, 20, 20);
+        painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         break;
       }
     	
