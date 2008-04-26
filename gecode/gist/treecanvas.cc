@@ -746,6 +746,8 @@ namespace Gecode { namespace Gist {
     if (autoZoom) {
       zoomToFit();
     }
+    emit autoZoomChanged(b);
+    scaleBar->setEnabled(!b);
   }
 
   bool
@@ -841,7 +843,10 @@ namespace Gecode { namespace Gist {
 
     scrollArea->setWidget(canvas);
 
+    QCheckBox* autoZoomButton = new QCheckBox("");
+
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
+    canvas->scaleBar = scaleBar;
     scaleBar->setObjectName("scaleBar");
     scaleBar->setMinimum(1);
     scaleBar->setMaximum(400);
@@ -998,11 +1003,19 @@ namespace Gecode { namespace Gist {
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
     connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
+
+    connect(autoZoomButton, SIGNAL(toggled(bool)), canvas,
+            SLOT(setAutoZoom(bool)));
+
+    connect(canvas, SIGNAL(autoZoomChanged(bool)),
+            autoZoomButton, SLOT(setChecked(bool)));
+
     connect(&canvas->searcher, SIGNAL(scaleChanged(int)),
             scaleBar, SLOT(setValue(int)));
     
-    layout->addWidget(scrollArea, 0,0);
-    layout->addWidget(scaleBar, 0,1);
+    layout->addWidget(scrollArea, 0,0,-1,1);
+    layout->addWidget(scaleBar, 1,1);
+    layout->addWidget(autoZoomButton, 0,1);
     
     setLayout(layout);
 
