@@ -864,6 +864,7 @@ BUILDDIRS = \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(CPLTSETBUILDDIRS:%=gecode/%) \
 	$(SERBUILDDIRS:%=gecode/%) \
+	$(DDSBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS) \
 	$(GISTBUILDDIRS:%=gecode/%)
 
