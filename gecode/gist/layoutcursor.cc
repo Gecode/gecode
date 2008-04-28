@@ -35,7 +35,6 @@
  */
 
 #include "gecode/gist/layoutcursor.hh"
-#include <vector>
 
 namespace Gecode { namespace Gist {
 
@@ -65,8 +64,10 @@ namespace Gecode { namespace Gist {
     Shape*& operator[](int i);
   };
 
-  const Shape Shape::singletonShape(Extent(Layout::extent));
-  const Shape Shape::unitShape(Extent(Layout::extent), &singletonShape);
+  /// Shape of a single node
+  const Shape singletonShape(Extent(Layout::extent));
+  /// Shape of hidden nodes
+  const Shape hiddenShape(Extent(Layout::extent), &singletonShape);
 
   Shape::Shape(Extent e, const Shape* subShape) {
     _depth = subShape->depth() + 1;
@@ -87,18 +88,6 @@ namespace Gecode { namespace Gist {
     }    
   }
     
-  void
-  Shape::extend(int deltaL, int deltaR) {
-    if (_depth > 0)
-      shape[0].extend(deltaL, deltaR);
-  }
-  
-  void
-  Shape::move(int delta) {
-    if (_depth > 0)
-      shape[0].move(delta);    
-  }
-
   bool
   Shape::getExtentAtDepth(int depth, Extent& extent) {
     int currentDepth = 0;
@@ -172,15 +161,14 @@ namespace Gecode { namespace Gist {
     } else if (shape2->depth() == 0) {
       return new Shape(shape1);
     } else {
-      std::vector<Extent> resultExtent;
+      Shape* result = new Shape(std::max(shape1->depth(),shape2->depth()));
+      int extentCount = 0;
         
       // Extend the topmost right extent by alpha.  This, in effect,
       // moves the second shape to the right by alpha units.
       int topmostL = (*shape1)[0].l;
-      int topmostR = (*shape2)[0].r;
-      Extent topmostExtent(topmostL, topmostR);
-      topmostExtent.extend(0, alpha);
-      resultExtent.push_back(topmostExtent);
+      int topmostR = (*shape2)[0].r;      
+      (*result)[extentCount++] = Extent(topmostL, topmostR+alpha);
         
       // Now, since extents are given in relative units, in order to
       // compute the extents of the merged shape, we can just collect the
@@ -196,9 +184,8 @@ namespace Gecode { namespace Gist {
         Extent currentExtent1 = (*shape1)[i];
         Extent currentExtent2 = (*shape2)[i];
         int newExtentL = currentExtent1.l;
-        int newExtentR = currentExtent2.r;
-        Extent newExtent(newExtentL, newExtentR);
-        resultExtent.push_back(newExtent);
+        int newExtentR = currentExtent2.r;        
+        (*result)[extentCount++] = Extent(newExtentL, newExtentR);
         backoffTo1 += currentExtent1.r - currentExtent2.r;
         backoffTo2 += currentExtent2.l - currentExtent1.l;
       }
@@ -209,12 +196,10 @@ namespace Gecode { namespace Gist {
         Extent currentExtent1 = (*shape1)[i];
         ++i;
         int newExtentL = currentExtent1.l;
-        int newExtentR = currentExtent1.r;
-        Extent newExtent(newExtentL, newExtentR);
-        newExtent.extend(0, backoffTo1);
-        resultExtent.push_back(newExtent);
+        int newExtentR = currentExtent1.r;        
+        (*result)[extentCount++] = Extent(newExtentL, newExtentR+backoffTo1);
         for (; i<shape1->depth(); i++) {
-          resultExtent.push_back((*shape1)[i]);
+          (*result)[extentCount++] = (*shape1)[i];
         }
       }
         
@@ -225,19 +210,14 @@ namespace Gecode { namespace Gist {
         ++i;
         int newExtentL = currentExtent2.l;
         int newExtentR = currentExtent2.r;
-        Extent newExtent(newExtentL, newExtentR);
-        newExtent.extend(backoffTo2, 0);
-        resultExtent.push_back(newExtent);
+        (*result)[extentCount++] = Extent(newExtentL+backoffTo2, newExtentR);
         for (; i<shape2->depth(); i++) {
-          resultExtent.push_back((*shape2)[i]);
+          (*result)[extentCount++] = (*shape2)[i];
         }
       }
       
-      Shape* result = new Shape(resultExtent.size());
-      for (int i=resultExtent.size(); i--;)
-        (*result)[i] = resultExtent[i];
+      assert(extentCount == std::max(shape1->depth(), shape2->depth()));
       return result;
-      ;
     }
     
   }
@@ -301,7 +281,7 @@ namespace Gecode { namespace Gist {
       // such that it is the center of the axis of the leftmost shape in
       // the list and the axis of the rightmost shape.
       int halfWidth = left ? 0 : width / 2;
-      mergedShape->move(- halfWidth);
+      (*mergedShape)[0].move(- halfWidth);
         
       // Finally, for the offset lists.  Now that the axis of the merged
       // shape is at the center of the two extreme axes, the first shape
@@ -342,7 +322,7 @@ namespace Gecode { namespace Gist {
       if (numberOfChildren == -1) {
         shape = new Shape(extent);
       } else if (currentNode->isHidden()) {
-        shape = new Shape(&Shape::unitShape);
+        shape = new Shape(&hiddenShape);
       } else if (numberOfChildren == 0) {
         shape = new Shape(extent);
       } else {
@@ -353,7 +333,7 @@ namespace Gecode { namespace Gist {
 
         Shape* subtreeShape = 
           childShapes.getMergedShape(currentNode->getStatus() == STEP);
-        subtreeShape->extend(- extent.l, - extent.r);
+        (*subtreeShape)[0].extend(- extent.l, - extent.r);
         shape = new Shape(extent, subtreeShape);
         delete subtreeShape;
         for (int i=0; i<numberOfChildren; i++) {

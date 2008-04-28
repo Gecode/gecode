@@ -5551,20 +5551,21 @@ examples/support/example$(OBJSUFFIX) examples/support/example$(SBJSUFFIX): \
 	./gecode/support/symbol.icc 
 gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/gist/better.hh ./gecode/gist/drawingcursor.hh ./gecode/gist/drawingcursor.icc \
-	./gecode/gist/node.hh ./gecode/gist/node.icc ./gecode/gist/nodecursor.hh \
-	./gecode/gist/nodecursor.icc ./gecode/gist/spacenode.hh ./gecode/gist/visualnode.hh \
-	./gecode/gist/visualnode.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
-	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/config.icc ./gecode/support/dynamic-array.icc \
-	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/macros.icc \
-	./gecode/support/map.icc ./gecode/support/marked-pointer.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
+	./gecode/gist/layoutcursor.hh ./gecode/gist/layoutcursor.icc ./gecode/gist/node.hh \
+	./gecode/gist/node.icc ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.icc \
+	./gecode/gist/spacenode.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.icc \
+	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
+	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
+	./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
+	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
+	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
+	./gecode/support/config.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
+	./gecode/support/exception.icc ./gecode/support/macros.icc ./gecode/support/map.icc \
+	./gecode/support/marked-pointer.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/gist.icc \
 	./gecode/gist/mainwindow.hh ./gecode/gist/node.hh ./gecode/gist/node.icc \
@@ -5721,21 +5722,22 @@ gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/drawingcursor.hh \
 	./gecode/gist/drawingcursor.icc ./gecode/gist/gecodelogo.icc ./gecode/gist/gist.icc \
-	./gecode/gist/mainwindow.hh ./gecode/gist/node.hh ./gecode/gist/node.icc \
-	./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.icc ./gecode/gist/preferences.hh \
-	./gecode/gist/spacenode.hh ./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh \
-	./gecode/gist/visualnode.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
-	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
-	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
-	./gecode/support/cast.icc ./gecode/support/config.icc ./gecode/support/dynamic-array.icc \
-	./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc ./gecode/support/macros.icc \
-	./gecode/support/map.icc ./gecode/support/marked-pointer.icc ./gecode/support/memory.icc \
-	./gecode/support/random.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
+	./gecode/gist/layoutcursor.hh ./gecode/gist/layoutcursor.icc ./gecode/gist/mainwindow.hh \
+	./gecode/gist/node.hh ./gecode/gist/node.icc ./gecode/gist/nodecursor.hh \
+	./gecode/gist/nodecursor.icc ./gecode/gist/preferences.hh ./gecode/gist/spacenode.hh \
+	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.icc \
+	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
+	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
+	./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
+	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
+	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
+	./gecode/support/config.icc ./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc \
+	./gecode/support/exception.icc ./gecode/support/macros.icc ./gecode/support/map.icc \
+	./gecode/support/marked-pointer.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
+	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
+	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
 gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/gist/preferences.hh 
 gecode/gist/addchild$(OBJSUFFIX) gecode/gist/addchild$(SBJSUFFIX): \
