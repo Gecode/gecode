@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2008-02-06 18:48:22 +0100 (Mi, 06 Feb 2008) $ by $Author: schulte $
+ *     $Revision: 6102 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,46 +34,36 @@
  *
  */
 
-#ifndef GECODE_GIST_ANALYSISCURSOR_HH
-#define GECODE_GIST_ANALYSISCURSOR_HH
-
-#include "gecode/gist/nodecursor.hh"
-
 namespace Gecode { namespace Gist {
 
-  /// \brief A cursor that analyses the tree
-  class AnalysisCursor : public NodeCursor<VisualNode> {
-  private:
-    int& minHeat;
-    int& maxHeat;
-    
-    void processTopDown(void);
-  public:
-    /// Constructor
-    AnalysisCursor(VisualNode* root, int& min, int& max);
+  forceinline void
+  AnalysisCursor::moveDownwards(void) {
+    NodeCursor<VisualNode>::moveDownwards();
+    processTopDown();
+  }
 
-    ///\name Cursor interface
-    //@{
-    void moveDownwards(void);
-    void moveSidewards(void);
-    void processCurrentNode(void);
-    //@}
-  };
+  forceinline void
+  AnalysisCursor::moveSidewards(void) {
+    NodeCursor<VisualNode>::moveSidewards();
+    processTopDown();
+  }
 
-  class DistributeCursor : public NodeCursor<VisualNode> {
-  private:
-    int minHeat;
-    int maxHeat;
-  public:
-    /// Constructor
-    DistributeCursor(VisualNode* root, int min, int max);
-    void processCurrentNode(void);
-  };
+  inline void
+  AnalysisCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    if (n->getStatus() == UNDETERMINED)
+      return;
+    VisualNode* p = n->getParent();
+    if (p == NULL) {
+      n->setHeat(0);
+    } else {
+      int h = p->getHeat() - n->getHeat();
+      n->setHeat(h);
+      maxHeat = std::max(maxHeat, h);
+      minHeat = std::min(minHeat, h);
+    }
+  }
 
 }}
-
-#include "gecode/gist/analysiscursor.icc"
-
-#endif
 
 // STATISTICS: gist-any

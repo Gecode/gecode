@@ -612,7 +612,7 @@ GISTHDR0 = \
 	spacenode.hh textoutput.hh treecanvas.hh \
 	visualnode.hh visualnode.icc \
 	mainwindow.hh \
-	analysiscursor.hh \
+	analysiscursor.hh analysiscursor.icc \
 	addchild.hh addvisualisationdialog.hh reflectionhelpers.hh \
 	ui_addchild.hh ui_addvisualisationdialog.hh\
 	config.hh \
