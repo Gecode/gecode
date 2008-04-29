@@ -49,6 +49,7 @@
 #include "gecode/gist/analysiscursor.hh"
 #include "gecode/gist/addchild.hh"
 #include "gecode/gist/addvisualisationdialog.hh"
+#include "gecode/gist/zoomToFitIcon.icc"
 
 namespace Gecode { namespace Gist {
 
@@ -844,7 +845,12 @@ namespace Gecode { namespace Gist {
 
     scrollArea->setWidget(canvas);
 
-    QCheckBox* autoZoomButton = new QCheckBox("");
+    QPixmap myPic;
+    myPic.loadFromData(zoomToFitIcon, sizeof(zoomToFitIcon));
+
+    QToolButton* autoZoomButton = new QToolButton();
+    autoZoomButton->setCheckable(true);
+    autoZoomButton->setIcon(myPic);
 
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
     canvas->scaleBar = scaleBar;
@@ -1015,8 +1021,8 @@ namespace Gecode { namespace Gist {
             scaleBar, SLOT(setValue(int)));
     
     layout->addWidget(scrollArea, 0,0,-1,1);
-    layout->addWidget(scaleBar, 1,1);
-    layout->addWidget(autoZoomButton, 0,1);
+    layout->addWidget(scaleBar, 1,1, Qt::AlignHCenter);
+    layout->addWidget(autoZoomButton, 0,1, Qt::AlignHCenter);
     
     setLayout(layout);
 
@@ -1170,4 +1176,3 @@ namespace Gecode { namespace Gist {
 }}
 
 // STATISTICS: gist-any
-
