@@ -211,6 +211,7 @@ namespace Gecode { namespace Gist {
     PreferencesDialog pd(this);
     c.setAutoHideFailed(pd.hideFailed);
     c.setAutoZoom(pd.zoom);    
+    c.setRefresh(pd.refresh);
   }
 
   void

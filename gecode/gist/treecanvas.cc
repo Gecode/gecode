@@ -52,6 +52,10 @@
 
 namespace Gecode { namespace Gist {
 
+  const int minScale = 10;
+  const int maxScale = 400;
+  const int defScale = 100;
+
   Inspector::~Inspector(void) {}
     
   TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, Better* b,
@@ -68,7 +72,7 @@ namespace Gecode { namespace Gist {
       root->setMarked(true);
       currentNode = root;
       pathHead = root;
-      scale = 1.0;
+      scale = defScale / 100.0;
 
       setAutoFillBackground(true);
 
@@ -90,10 +94,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::scaleTree(int scale0) {
     QMutexLocker locker(&layoutMutex);
     BoundingBox bb;
-    if (scale0<1)
-      scale0 = 1;
-    if (scale0>400)
-      scale0 = 400;
+    scale0 = std::min(std::max(scale0, minScale), maxScale);
     scale = (static_cast<double>(scale0)) / 100.0;
     bb = root->getBoundingBox();
     int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
@@ -848,9 +849,9 @@ namespace Gecode { namespace Gist {
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
     canvas->scaleBar = scaleBar;
     scaleBar->setObjectName("scaleBar");
-    scaleBar->setMinimum(1);
-    scaleBar->setMaximum(400);
-    scaleBar->setValue(100);
+    scaleBar->setMinimum(minScale);
+    scaleBar->setMaximum(maxScale);
+    scaleBar->setValue(defScale);
     
     inspectCN = new QAction("Inspect", this);
     inspectCN->setShortcut(QKeySequence("Return"));
