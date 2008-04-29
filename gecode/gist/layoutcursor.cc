@@ -67,7 +67,7 @@ namespace Gecode { namespace Gist {
   };
 
   /// Shape of a single node
-  const Shape singletonShape(Extent(Layout::extent));
+  const Shape singletonShape(Extent(Layout::extent*1.5));
   /// Shape of hidden nodes
   const Shape hiddenShape(Extent(Layout::extent), &singletonShape);
 
@@ -152,7 +152,7 @@ namespace Gecode { namespace Gist {
       extentL += shape2[i].l;
       alpha = std::max(alpha, extentR - extentL + Layout::minimalSeparation);
     }
-    return alpha;
+    return std::min(static_cast<int>(alpha*1.05), alpha+4*Layout::extent);
   }
   
   void

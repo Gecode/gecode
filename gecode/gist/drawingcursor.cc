@@ -62,6 +62,7 @@ namespace Gecode { namespace Gist {
   const int shadowOffset = 3;
   const int dSolvedOffset = nodeWidth / 6;
   const int dSolvedHalfWidth = (nodeWidth-2*dSolvedOffset) / 2;
+  const int hiddenDepth = Layout::dist_y + failedWidth;
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
                                bool heat,
@@ -118,9 +119,9 @@ namespace Gecode { namespace Gist {
       if (n->isHidden()) {
         QPoint points[3] = {QPoint(myx+shadowOffset,myy+shadowOffset),
                             QPoint(myx+nodeWidth+shadowOffset,
-                                   myy+3*nodeWidth+shadowOffset),
+                                   myy+hiddenDepth+shadowOffset),
                             QPoint(myx-nodeWidth+shadowOffset,
-                                   myy+3*nodeWidth+shadowOffset),
+                                   myy+hiddenDepth+shadowOffset),
                            };
         painter.drawConvexPolygon(points, 3);
         
@@ -178,8 +179,8 @@ namespace Gecode { namespace Gist {
     if (n->isHidden()) {
       painter.setBrush(QBrush(red));
       QPoint points[3] = {QPoint(myx,myy),
-                          QPoint(myx+nodeWidth,myy+3*nodeWidth),
-                          QPoint(myx-nodeWidth,myy+3*nodeWidth),
+                          QPoint(myx+nodeWidth,myy+hiddenDepth),
+                          QPoint(myx-nodeWidth,myy+hiddenDepth),
                          };
       painter.drawConvexPolygon(points, 3);
     } else {
