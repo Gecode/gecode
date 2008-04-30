@@ -207,11 +207,9 @@ namespace Gecode { namespace Gist {
     connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
     
+    preferences(true);
+    c.reset->trigger();
     show();
-    PreferencesDialog pd(this);
-    c.setAutoHideFailed(pd.hideFailed);
-    c.setAutoZoom(pd.zoom);    
-    c.setRefresh(pd.refresh);
   }
 
   void
@@ -241,9 +239,9 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  GistMainWindow::preferences(void) {
+  GistMainWindow::preferences(bool setup) {
     PreferencesDialog pd(this);
-    if (pd.exec() == QDialog::Accepted) {
+    if (setup || pd.exec() == QDialog::Accepted) {
       c.setAutoHideFailed(pd.hideFailed);
       c.setAutoZoom(pd.zoom);
       c.setRefresh(pd.refresh);
