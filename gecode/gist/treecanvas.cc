@@ -286,7 +286,7 @@ namespace Gecode { namespace Gist {
       double offset = static_cast<double>(targetZoom - metaZoomCurrent) / 6.0;
       metaZoomCurrent += offset;
       scaleBar->setValue(static_cast<int>(metaZoomCurrent));
-      if (static_cast<int>(metaZoomCurrent) == targetZoom) {
+      if (static_cast<int>(metaZoomCurrent+.5) == targetZoom) {
         killTimer(zoomTimerId);
         zoomTimerId = 0;
       }
