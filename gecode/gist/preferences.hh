@@ -50,6 +50,7 @@ namespace Gecode { namespace Gist {
   protected:
     QCheckBox* hideCheck;
     QCheckBox* zoomCheck;
+    QCheckBox* smoothCheck;
     QSpinBox*  refreshBox;
   protected Q_SLOTS:
     /// Write settings
@@ -66,6 +67,8 @@ namespace Gecode { namespace Gist {
     bool zoom;
     /// How often to refresh the display during search
     int refresh;
+    /// Whether to use smooth scrolling and zooming
+    bool smoothScrollAndZoom;
     
   };
   

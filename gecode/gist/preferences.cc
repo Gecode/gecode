@@ -43,6 +43,8 @@ namespace Gecode { namespace Gist {
     hideFailed = settings.value("search/hideFailed", true).toBool();
     zoom = settings.value("search/zoom", false).toBool();
     refresh = settings.value("search/refresh", 500).toInt();
+    smoothScrollAndZoom =
+      settings.value("smoothScrollAndZoom", true).toBool();
     
     hideCheck =
       new QCheckBox(tr("Hide failed subtrees automatically"));
@@ -50,6 +52,9 @@ namespace Gecode { namespace Gist {
     zoomCheck =
       new QCheckBox(tr("Zoom to fit automatically"));
     zoomCheck->setChecked(zoom);
+    smoothCheck =
+      new QCheckBox(tr("Smooth scrolling and zooming"));
+    smoothCheck->setChecked(smoothScrollAndZoom);
     
     QPushButton* defButton = new QPushButton(tr("Defaults"));
     QPushButton* cancelButton = new QPushButton(tr("Cancel"));
@@ -76,6 +81,7 @@ namespace Gecode { namespace Gist {
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(hideCheck);
     layout->addWidget(zoomCheck);
+    layout->addWidget(smoothCheck);
     layout->addLayout(refreshLayout);
     layout->addLayout(buttonLayout);
     setLayout(layout);
@@ -87,10 +93,12 @@ namespace Gecode { namespace Gist {
     hideFailed = hideCheck->isChecked();
     zoom = zoomCheck->isChecked();
     refresh = refreshBox->value();
+    smoothScrollAndZoom = smoothCheck->isChecked();
     QSettings settings("gecode.org", "Gist");
     settings.setValue("search/hideFailed", hideFailed);
     settings.setValue("search/zoom", zoom);
     settings.setValue("search/refresh", refresh);
+    settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
     
     accept();
   }
@@ -103,6 +111,7 @@ namespace Gecode { namespace Gist {
     hideCheck->setChecked(hideFailed);
     zoomCheck->setChecked(zoom);
     refreshBox->setValue(refresh);
+    smoothCheck->setChecked(smoothScrollAndZoom);
   }
   
 }}
