@@ -579,6 +579,23 @@ namespace Gecode { namespace Gist {
     setCurrentNode(root);
     centerCurrentNode();
   }
+
+  void
+  TreeCanvasImpl::navNextSol(bool back) {
+    QMutexLocker locker(&mutex);
+    NextSolCursor nsc(currentNode, back);
+    PreorderNodeVisitor<NextSolCursor> nsv(nsc);
+    while (nsv.next()) {}
+    if (nsv.getCursor().node() != root) {
+      setCurrentNode(nsv.getCursor().node());
+      centerCurrentNode();
+    }
+  }
+
+  void
+  TreeCanvasImpl::navPrevSol(void) {
+    navNextSol(true);
+  }
   
   void
   TreeCanvasImpl::markCurrentNode(int pit) {
@@ -970,6 +987,16 @@ namespace Gecode { namespace Gist {
     connect(navRoot, SIGNAL(triggered()), canvas, 
                       SLOT(navRoot()));
 
+    navNextSol = new QAction("To next solution", this);
+    navNextSol->setShortcut(QKeySequence("Shift+Right"));
+    connect(navNextSol, SIGNAL(triggered()), canvas, 
+                      SLOT(navNextSol()));
+
+    navPrevSol = new QAction("To previous solution", this);
+    navPrevSol->setShortcut(QKeySequence("Shift+Left"));
+    connect(navPrevSol, SIGNAL(triggered()), canvas, 
+                      SLOT(navPrevSol()));
+
     searchNext = new QAction("Next solution", this);
     searchNext->setShortcut(QKeySequence("N"));
     connect(searchNext, SIGNAL(triggered()), canvas, SLOT(searchOne()));
@@ -1038,6 +1065,8 @@ namespace Gecode { namespace Gist {
     addAction(navLeft);
     addAction(navRight);
     addAction(navRoot);
+    addAction(navNextSol);
+    addAction(navPrevSol);
 
     addAction(searchNext);
     addAction(searchAll);
@@ -1131,6 +1160,8 @@ namespace Gecode { namespace Gist {
       navLeft->setEnabled(false);
       navRight->setEnabled(false);
       navRoot->setEnabled(false);
+      navNextSol->setEnabled(false);
+      navPrevSol->setEnabled(false);
 
       searchNext->setEnabled(false);
       searchAll->setEnabled(false);
@@ -1155,6 +1186,8 @@ namespace Gecode { namespace Gist {
       navLeft->setEnabled(true);
       navRight->setEnabled(true);
       navRoot->setEnabled(true);
+      navNextSol->setEnabled(true);
+      navPrevSol->setEnabled(true);
 
       zoomToFit->setEnabled(true);
       centerCN->setEnabled(true);

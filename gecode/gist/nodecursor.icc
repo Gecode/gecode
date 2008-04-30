@@ -45,6 +45,14 @@ namespace Gecode { namespace Gist {
   NodeCursor<Node>::node(void) { return _node; }
 
   template <class Node>
+  forceinline Node*
+  NodeCursor<Node>::startNode(void) { return _startNode; }
+
+  template <class Node>
+  forceinline void
+  NodeCursor<Node>::node(Node* n) { _node = n; }
+
+  template <class Node>
   forceinline bool
   NodeCursor<Node>::mayMoveUpwards(void) { return _node != _startNode && !_node->isRoot(); }
 

@@ -151,6 +151,8 @@ namespace Gecode { namespace Gist {
     nodeMenu->addAction(c.navLeft);
     nodeMenu->addAction(c.navRight);
     nodeMenu->addAction(c.navRoot);
+    nodeMenu->addAction(c.navNextSol);
+    nodeMenu->addAction(c.navPrevSol);
     nodeMenu->addSeparator();
     nodeMenu->addAction(c.toggleHidden);
     nodeMenu->addAction(c.hideFailed);

@@ -49,6 +49,11 @@ namespace Gecode { namespace Gist {
     Node* _startNode;
     /// The current node
     Node* _node;
+  protected:
+    /// Set current node to \a n
+    void node(Node* n);
+    /// Return start node
+    Node* startNode(void);
   public:
     /// Construct cursor, initially set to \a theNode
     NodeCursor(Node* theNode);
@@ -95,6 +100,35 @@ namespace Gecode { namespace Gist {
     //@{
     /// Process node
     void processCurrentNode(void);
+    //@}
+  };
+  
+  /// \brief A cursor that finds the next solution
+  class NextSolCursor : public NodeCursor<VisualNode> {
+  private:
+    /// The root node
+    VisualNode* root;
+    /// Whether to search backwards
+    bool back;
+    /// Whether the current node is not a solution
+    bool notOnSol(void);
+  public:
+    /// Constructor
+    NextSolCursor(VisualNode* theNode, bool backwards);
+    /// \name Cursor interface
+    //@{
+    /// Do nothing
+    void processCurrentNode(void);
+    /// Test if the cursor may move to the parent node
+    bool mayMoveUpwards(void);
+    /// Test if cursor may move to the first child node
+    bool mayMoveDownwards(void);
+    /// Move cursor to the first child node
+    void moveDownwards(void);
+    /// Test if cursor may move to the first sibling
+    bool mayMoveSidewards(void);
+    /// Move cursor to the first sibling
+    void moveSidewards(void);    
     //@}
   };
   

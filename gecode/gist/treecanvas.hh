@@ -130,6 +130,10 @@ namespace Gecode {  namespace Gist {
     void navRight(void);
     /// Move selection to the root node
     void navRoot(void);
+    /// Move selection to next solution (in DFS order)
+    void navNextSol(bool back = false);
+    /// Move selection to previous solution (in DFS order)
+    void navPrevSol(void);
     /// Recall selection of point in time \a pit
     void markCurrentNode(int pit);
     
@@ -293,6 +297,8 @@ namespace Gecode {  namespace Gist {
     QAction* navLeft;
     QAction* navRight;
     QAction* navRoot;
+    QAction* navNextSol;
+    QAction* navPrevSol;
 
     QAction* searchNext;
     QAction* searchAll;
