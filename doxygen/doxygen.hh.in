@@ -840,8 +840,9 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * To setup %Gecode for your particular system, you may need to add one or
  * more of the following options to <code>configure</code>:
  *
- *  - When using the Microsoft Visual C++ compiler, add
- *    <code>CC=cl CXX=cl</code> to your
+ *  - When using the GNU compiler gcc on Windows instead of the Microsoft
+ *    compiler, add
+ *    <code>CC=gcc CXX=g++</code> to your
  *    invocation of <code>configure</code>
  *  - To install %Gecode somewhere else than the default
  *    <code>/usr/local</code>, use the <code>--prefix=[...]</code> switch
@@ -853,9 +854,9 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * \subsection CompConfExamples Example configurations
  *
- * To compile %Gecode on a <b>Windows machine using the Microsoft compiler</b>, use
+ * To compile %Gecode on a <b>Windows machine using the GNU compiler</b>, use
  *
- * <code>./configure CC=cl CXX=cl</code>
+ * <code>./configure CC=gcc CXX=g++</code>
  *
  * To compile only the %Gecode library <b>without examples</b> on a Unix machine, use
  *

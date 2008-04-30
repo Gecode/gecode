@@ -55,14 +55,22 @@ AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 : ${DLLFLAGS=""}   dnl we do not want autoconf's default
 : ${GLDFLAGS=""}   dnl we do not want autoconf's default
 
+dnl include Gecode specific macros
+m4_include([gecode.m4])
+
+dnl determine the operating system
+AC_GECODE_GET_OS
+
+if test "${CXX}x" = "x" -a "${CC}x" = "x" -a "${host_os}" = "windows"; then
+  CC=cl
+  CXX=cl
+fi
+
 AC_PROG_CXX
 AC_PROG_CC
 AC_LANG(C++)
 
 AC_PROG_RANLIB
-
-dnl include Gecode specific macros
-m4_include([gecode.m4])
 
 dnl check whether we have pkgconfig and should generate config files for it
 AC_GECODE_PKGCONFIG
@@ -88,9 +96,6 @@ AC_CHECK_PROG(PROG_PERL, perl, [ok])
  if test "${PROG_PERL}x" = "x"; then
     AC_MSG_ERROR([In order to compile Gecode, you need perl.])
  fi
-
-dnl determine the operating system
-AC_GECODE_GET_OS
 
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)

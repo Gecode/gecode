@@ -70,6 +70,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The configure script now always uses the Microsoft compiler on Windows. Use
+the CC and CXX environment variables to override this if you want to use
+gcc.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
