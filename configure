@@ -1364,7 +1364,7 @@ Optional Features:
                           variable types [default=yes]
   --enable-serialization  build serialization library [default=yes]
   --enable-dds            build decomposition during search library
-                          [default=yes]
+                          [default=no]
   --enable-search         build search engines [default=yes]
 
 Optional Packages:
@@ -10190,7 +10190,7 @@ fi
 
 	 { echo "$as_me:$LINENO: checking whether to build dds" >&5
 echo $ECHO_N "checking whether to build dds... $ECHO_C" >&6; }
-	 if test "${enable_dds:-yes}" = "yes"; then
+	 if test "${enable_dds:-no}" = "yes"; then
 	    enable_dds="yes";
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }

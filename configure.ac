@@ -231,7 +231,7 @@ AC_GECODE_ENABLE_MODULE(serialization, yes,
 	[build serialization library],
 	[AC_DEFINE(GECODE_HAS_SERIALIZATION)])
 
-AC_GECODE_ENABLE_MODULE(dds, yes,
+AC_GECODE_ENABLE_MODULE(dds, no,
 	[build decomposition during search library],
 	[AC_DEFINE(GECODE_HAS_DDS)])
 
