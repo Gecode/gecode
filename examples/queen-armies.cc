@@ -160,12 +160,13 @@ public:
    * \relates QueenArmies
    */
   class QueenBranch : Branching {
+  private:
     /// Cache of last computed decision
     mutable int pos;
-    // Construct branching
+    /// Construct branching
     QueenBranch(Space* home)
       : Branching(home), pos(-1) {}
-    // Constructor for cloning
+    /// Constructor for cloning
     QueenBranch(Space* home, bool share, QueenBranch& b)
       : Branching(home, share, b), pos(b.pos) {}
 
@@ -193,7 +194,7 @@ public:
     /// Return branching description
     virtual BranchingDesc* description(const Space*) const {
       assert(pos != -1);
-      return new PosValDesc<bool,2>(this, pos, true);
+      return new PosValDesc<bool,2>(this, pos, 0, true);
     }
     /** \brief Perform commit for branching description \a d and
      * alternative \a a.
@@ -201,7 +202,8 @@ public:
     virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
                               unsigned int a) {
       QueenArmies *q = static_cast<QueenArmies*>(home);
-      const PosValDesc<bool,2> *pvd = static_cast<const PosValDesc<bool,2>*>(d);
+      const PosValDesc<bool,2>* pvd = 
+        static_cast<const PosValDesc<bool,2>*>(d);
       bool val = a == 0 ? pvd->val() : !pvd->val();
       return me_failed(Int::BoolView(q->w[pvd->pos()]).eq(q, val))
         ? ES_FAILED

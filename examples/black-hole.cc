@@ -129,7 +129,7 @@ public:
   /// Return branching description
   virtual BranchingDesc* description(const Space*) const {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
-    return new PosValDesc<int,2>(this, pos, val);
+    return new PosValDesc<int,2>(this, pos, 0, val);
   }
   /// Perform commit for branching description \a d and alternative \a a. 
   virtual ExecStatus commit(Space* home, const BranchingDesc* d, 

@@ -331,7 +331,7 @@ namespace Gecode {
                                           unsigned int idx,
                                           unsigned int size)
       : SingletonDescBase(b,alt,idx,size),
-        _pvd(new PosValDesc<Val,alt>(b, 0, v, start)) 
+        _pvd(new PosValDesc<Val,alt>(b, 0, start, v)) 
     {}
     
     template <class Val, int alt>
@@ -414,7 +414,7 @@ namespace Gecode {
             0, x[0].idx, DomainSize<typename ValSel::View>::size(x[0].view));
       } else {
         return new PosValDesc<typename ValSel::Val,2>
-          (this,0,vl.val(home,x[0].view),0);
+          (this,0,0,vl.val(home,x[0].view));
       }
     }
 
@@ -518,7 +518,7 @@ namespace Gecode {
             b=i;
             return new 
               PosValDesc<typename ValSel::Val,2>
-              (this,b-start,vl.val(home,x[b].view),start);
+              (this,b-start,start,vl.val(home,x[b].view));
           case VSS_TIE:   break;
           case VSS_WORSE:   break;
           default:         GECODE_NEVER;
@@ -526,7 +526,7 @@ namespace Gecode {
           }
        }
     return new PosValDesc<typename ValSel::Val,2>
-      (this,b-start,vl.val(home,x[b].view),start);
+      (this,b-start,start,vl.val(home,x[b].view));
   }
 
   template <class ViewSel, class ValSel>
