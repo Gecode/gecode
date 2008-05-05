@@ -129,18 +129,18 @@ public:
   /// Return branching description
   virtual BranchingDesc* description(const Space*) const {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
-    return new PosValDesc<int,2>(this, pos, 0, val);
+    return new PosValDesc<int,2>(this, pos, val);
   }
   /// Perform commit for branching description \a d and alternative \a a. 
   virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
                             unsigned int a) {
-    const PosValDesc<int,2> *desc = static_cast<const PosValDesc<int,2>*>(d);
+    const PosValDesc<int,2>* desc = static_cast<const PosValDesc<int,2>*>(d);
     pos = val = -1;
     if (a)
-      return me_failed(x[desc->pos()].nq(home, desc->val())) 
+      return me_failed(x[desc->pos().pos].nq(home, desc->val())) 
         ? ES_FAILED : ES_OK;
     else 
-      return me_failed(x[desc->pos()].eq(home, desc->val())) 
+      return me_failed(x[desc->pos().pos].eq(home, desc->val())) 
         ? ES_FAILED : ES_OK;
   }
   /// Copy branching
