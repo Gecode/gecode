@@ -56,61 +56,6 @@ namespace Gecode {
   };
 
   /**
-   * \brief Generic branching by view selection
-   *
-   * Implements view-based branching for an array of views (of type
-   * \a ViewSel::View). The behaviour is defined by the class \a ViewSel 
-   * (which view is selected for branching). Note that this class
-   * just serves as a baseclass for branchings using view selection.
-   *
-   * The class \a ViewSel must implement two member functions:
-   *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
-   *    Initializes view selection with the \a View \a x. If \a x
-   *    is known to be a best one, VSS_BEST should be returned.
-   *    Otherwise, VSS_BETTER should be returned.
-   *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)
-   *    If \a x is better than the previously selected view,
-   *    return VSS_BETTER. If it is a best view, return VSS_BEST. If it 
-   *    is worse, return VSS_WORSE. If it is equally good, return VSS_TIE.
-   *
-   */
-  template <class ViewSel>
-  class ViewBranching : public Branching {
-  protected:
-    /// Views to branch on
-    ViewArray<typename ViewSel::View> x; 
-    /// Unassigned views start at x[start]
-    mutable int start;  
-    /// Constructor for cloning \a b
-    ViewBranching(Space* home, bool share, ViewBranching& b);
-  public:
-    /// Constructor for creation
-    ViewBranching(Space* home, ViewArray<typename ViewSel::View>& x);
-    /// Check status of branching, return true if alternatives left
-    virtual bool status(const Space* home) const;
-    /// Return branching description (of type Gecode::PosDesc)
-    virtual const BranchingDesc* description(const Space* home) const;
-    /// Perform commit for branching description \a d and alternative \a a
-    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
-                              unsigned int a);
-    /// Return specification for this branching given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
-                                       Reflection::VarMap& m) const;
-    /// Return specification for a branch
-    virtual Reflection::BranchingSpec
-    branchingSpec(const Space* home, 
-                  Reflection::VarMap& m,
-                  const BranchingDesc* d) const;
-    /// Actor type identifier of this branching
-    static Support::Symbol ati(void);
-    /// Post branching according to specification
-    static void post(Space* home, Reflection::VarMap& m,
-                     const Reflection::ActorSpec& spec);
-    /// Perform cloning
-    virtual Actor* copy(Space* home, bool share);
-  };
-
-  /**
    * \brief Generic branching by view and value selection
    *
    * Implements view-based branching for an array of views (of type
