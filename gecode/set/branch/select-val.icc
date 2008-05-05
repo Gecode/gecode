@@ -81,10 +81,10 @@ namespace Gecode { namespace Set { namespace Branch {
   create(Space* home, ViewArray<SetView>& x, SetValBranch vals) {
     switch (vals) {
     case SET_VAL_MIN:
-      (void) new (home) ViewValBranching<SetView,int,SelView,ValMin>(home,x);
+      (void) new (home) ViewValBranching<SelView,ValMin>(home,x);
       break;
     case SET_VAL_MAX:
-      (void) new (home) ViewValBranching<SetView,int,SelView,ValMax>(home,x);
+      (void) new (home) ViewValBranching<SelView,ValMax>(home,x);
       break;
     default:
       throw UnknownBranching("Set::branch");

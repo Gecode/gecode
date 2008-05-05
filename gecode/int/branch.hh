@@ -630,12 +630,12 @@ namespace Gecode { namespace Int { namespace Branch {
     static Support::Symbol type(void);
   };
 
-  template <template <class,class,class,class> class B>
+  template <template <class,class> class ViewValBranching>
   void
   createBranch(Space* home, const IntVarArgs& x,
                IntVarBranch vars, IntValBranch vals);
 
-  template <template <class,class,class,class> class B>
+  template <template <class,class> class ViewValBranching>
   void
   createBranch(Space* home, const BoolVarArgs& x, 
                IntVarBranch vars, IntValBranch vals);

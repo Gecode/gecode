@@ -89,16 +89,20 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   create(Space* home, ViewArray<CpltSetView>& x, CpltSetValBranch vals) {
     switch (vals) {
     case CPLTSET_VAL_MIN_UNKNOWN:
-      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<false> >(home,x);
+      (void) new (home) ViewValBranching<SelView,ValMinUnknown<false> >
+        (home,x);
       break;
     case CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST:
-      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<true> >(home,x);
+      (void) new (home) ViewValBranching<SelView,ValMinUnknown<true> >
+        (home,x);
       break;
     case CPLTSET_VAL_MAX_UNKNOWN:
-      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<false> >(home,x);
+      (void) new (home) ViewValBranching<SelView,ValMaxUnknown<false> >
+        (home,x);
       break;
     case CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST:
-      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<true> >(home,x);
+      (void) new (home) ViewValBranching<SelView,ValMaxUnknown<true> >
+        (home,x);
       break;
     default:
       throw UnknownBranching("CpltSet::branch");

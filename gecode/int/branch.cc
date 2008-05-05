@@ -60,20 +60,17 @@ namespace Gecode {
     case INT_ASSIGN_MIN:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<IntView,int,
-                          Branch::ValMin<IntView> >(home,xv);
+        ViewValAssignment<Branch::ValMin<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MED:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<IntView,int,
-                          Branch::ValMed<IntView> >(home,xv);
+        ViewValAssignment<Branch::ValMed<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<IntView,int,
-                          Branch::ValMax<IntView> >(home,xv);
+        ViewValAssignment<Branch::ValMax<IntView> >(home,xv);
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -88,14 +85,12 @@ namespace Gecode {
     case INT_ASSIGN_MED:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<BoolView,Branch::NoValue,
-                          Branch::ValZeroOne<BoolView> >(home,xv);
+        ViewValAssignment<Branch::ValZeroOne<BoolView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<BoolView,Branch::NoValue,
-                          Branch::ValOneZero<BoolView> >(home,xv);
+        ViewValAssignment<Branch::ValOneZero<BoolView> >(home,xv);
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -104,58 +99,58 @@ namespace Gecode {
 
   namespace Int { namespace Branch {
 
-    template<class View, class Val, template <class> class SelView>
+    template<class View, template <class> class SelView>
     /// Register reflection for branchings
     class Creator {
     public:
-      Reflection::ActorRegistrar<ViewValBranching<View,Val,SelView<View>,
+      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
         Branch::ValMin<View> > > r1;
-      Reflection::ActorRegistrar<ViewValBranching<View,Val,SelView<View>,
-        ValMed<View> > > r2;
-      Reflection::ActorRegistrar<ViewValBranching<View,Val,SelView<View>,
-        ValMax<View> > > r3;
-      Reflection::ActorRegistrar<ViewValBranching<View,Val,SelView<View>,
-        ValSplitMin<View> > > r4;
-      Reflection::ActorRegistrar<ViewValBranching<View,Val,SelView<View>,
-        ValSplitMax<View> > > r5;
+      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
+        Branch::ValMed<View> > > r2;
+      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
+        Branch::ValMax<View> > > r3;
+      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
+        Branch::ValSplitMin<View> > > r4;
+      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
+        Branch::ValSplitMax<View> > > r5;
     };
 
-    Creator<IntView,int,BySizeMin> c1;
-    Creator<IntView,int,BySizeMax> c2;
-    Creator<IntView,int,ByMinMin> c3;
-    Creator<IntView,int,ByMinMax> c4;
-    Creator<IntView,int,ByMaxMin> c5;
-    Creator<IntView,int,ByMaxMax> c6;
-    Creator<IntView,int,ByNone> c7;
-    Creator<IntView,int,ByRegretMinMin> c8;
-    Creator<IntView,int,ByRegretMinMax> c9;
-    Creator<IntView,int,ByRegretMaxMin> c10;
-    Creator<IntView,int,ByRegretMaxMax> c11;
-    Creator<IntView,int,ByDegreeMin> c12;
-    Creator<IntView,int,ByDegreeMax> c13;
+    Creator<IntView,BySizeMin> c1;
+    Creator<IntView,BySizeMax> c2;
+    Creator<IntView,ByMinMin> c3;
+    Creator<IntView,ByMinMax> c4;
+    Creator<IntView,ByMaxMin> c5;
+    Creator<IntView,ByMaxMax> c6;
+    Creator<IntView,ByNone> c7;
+    Creator<IntView,ByRegretMinMin> c8;
+    Creator<IntView,ByRegretMinMax> c9;
+    Creator<IntView,ByRegretMaxMin> c10;
+    Creator<IntView,ByRegretMaxMax> c11;
+    Creator<IntView,ByDegreeMin> c12;
+    Creator<IntView,ByDegreeMax> c13;
 
-    Reflection::ActorRegistrar<ViewValBranching<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValBranching<
       ByDegreeMaxNoTies<BoolView>,ValOneZero<BoolView> > > r1;
-    Reflection::ActorRegistrar<ViewValBranching<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValBranching<
       ByDegreeMaxNoTies<BoolView>,ValZeroOne<BoolView> > > r2;
-    Reflection::ActorRegistrar<ViewValBranching<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValBranching<
       ByDegreeMinNoTies<BoolView>,ValOneZero<BoolView> > > r3;
-    Reflection::ActorRegistrar<ViewValBranching<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValBranching<
       ByDegreeMinNoTies<BoolView>,ValZeroOne<BoolView> > > r4;
-    Reflection::ActorRegistrar<ViewValBranching<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValBranching<
       ByNone<BoolView>,ValOneZero<BoolView> > > r5;
-    Reflection::ActorRegistrar<ViewValBranching<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValBranching<
       ByNone<BoolView>,ValZeroOne<BoolView> > > r6;
 
-    Reflection::ActorRegistrar<ViewValAssignment<IntView,int,
+    Reflection::ActorRegistrar<ViewValAssignment<
       ValMax<IntView> > > r7;
-    Reflection::ActorRegistrar<ViewValAssignment<IntView,int,
+    Reflection::ActorRegistrar<ViewValAssignment<
       ValMed<IntView> > > r8;
-    Reflection::ActorRegistrar<ViewValAssignment<IntView,int,
+    Reflection::ActorRegistrar<ViewValAssignment<
       ValMin<IntView> > > r9;
-    Reflection::ActorRegistrar<ViewValAssignment<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValAssignment<
       ValOneZero<BoolView> > > r10;
-    Reflection::ActorRegistrar<ViewValAssignment<BoolView,NoValue,
+    Reflection::ActorRegistrar<ViewValAssignment<
       ValZeroOne<BoolView> > > r11;
 
   }}
