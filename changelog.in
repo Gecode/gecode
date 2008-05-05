@@ -95,6 +95,14 @@ View and value branchings have been substantially changed. In particular:
 MORE TO COME.
 
 [ENTRY]
+Module: kernel
+What:   removed
+Rank:   major
+[DESCRIPTION]
+View and value assignments have been removed as they now can be
+expressed by view and value branchings.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

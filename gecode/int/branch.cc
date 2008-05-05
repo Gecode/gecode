@@ -61,18 +61,18 @@ namespace Gecode {
     switch (vals) {
     case INT_ASSIGN_MIN:
       if (home->failed()) return;
-      (void) new (home) 
-        ViewValAssignment<Branch::AssignValMin<IntView> >(home,xv);
+      (void) new (home) ViewValBranching
+        <Branch::ByNone<IntView>,Branch::AssignValMin<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MED:
       if (home->failed()) return;
-      (void) new (home) 
-        ViewValAssignment<Branch::AssignValMed<IntView> >(home,xv);
+      (void) new (home) ViewValBranching
+        <Branch::ByNone<IntView>,Branch::AssignValMed<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
       if (home->failed()) return;
-      (void) new (home) 
-        ViewValAssignment<Branch::AssignValMax<IntView> >(home,xv);
+      (void) new (home) ViewValBranching
+        <Branch::ByNone<IntView>,Branch::AssignValMax<IntView> >(home,xv);
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -87,13 +87,15 @@ namespace Gecode {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED:
       if (home->failed()) return;
-      (void) new (home) 
-        ViewValAssignment<Branch::AssignValZeroOne<BoolView> >(home,xv);
+      (void) new (home) ViewValBranching
+        <Branch::ByNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
+        (home,xv);
       break;
     case INT_ASSIGN_MAX:
       if (home->failed()) return;
-      (void) new (home) 
-        ViewValAssignment<Branch::AssignValOneZero<BoolView> >(home,xv);
+      (void) new (home) ViewValBranching
+        <Branch::ByNone<BoolView>,Branch::AssignValOneZero<BoolView> >
+        (home,xv);
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -145,16 +147,16 @@ namespace Gecode {
     Reflection::ActorRegistrar<ViewValBranching<
       ByNone<BoolView>,ValZeroOne<BoolView> > > r6;
 
-    Reflection::ActorRegistrar<ViewValAssignment<
-      AssignValMax<IntView> > > r7;
-    Reflection::ActorRegistrar<ViewValAssignment<
-      AssignValMed<IntView> > > r8;
-    Reflection::ActorRegistrar<ViewValAssignment<
-      AssignValMin<IntView> > > r9;
-    Reflection::ActorRegistrar<ViewValAssignment<
-      AssignValOneZero<BoolView> > > r10;
-    Reflection::ActorRegistrar<ViewValAssignment<
-      AssignValZeroOne<BoolView> > > r11;
+    Reflection::ActorRegistrar<ViewValBranching<
+      ByNone<IntView>,AssignValMax<IntView> > > r7;
+    Reflection::ActorRegistrar<ViewValBranching<
+      ByNone<IntView>,AssignValMed<IntView> > > r8;
+    Reflection::ActorRegistrar<ViewValBranching<
+      ByNone<IntView>,AssignValMin<IntView> > > r9;
+    Reflection::ActorRegistrar<ViewValBranching<
+      ByNone<BoolView>,AssignValOneZero<BoolView> > > r10;
+    Reflection::ActorRegistrar<ViewValBranching<
+      ByNone<BoolView>,AssignValZeroOne<BoolView> > > r11;
 
   }}
 
