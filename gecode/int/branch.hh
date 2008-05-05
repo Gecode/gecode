@@ -62,6 +62,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMin {
   public:
+    /// View type
+    typedef View View;
+    /// Value type
+    typedef int Val;
     /// Return minimum value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
@@ -84,6 +88,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMed {
   public:
+    /// View type
+    typedef View View;
+    /// Value type
+    typedef int Val;
     /// Return maximum value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
@@ -106,6 +114,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMax {
   public:
+    /// View type
+    typedef View View;
+    /// Value type
+    typedef int Val;
     /// Return median value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
@@ -128,6 +140,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSplitMin {
   public:
+    /// View type
+    typedef View View;
+    /// Value type
+    typedef int Val;
     /// Return minimum value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
@@ -150,6 +166,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSplitMax {
   public:
+    /// View type
+    typedef View View;
+    /// Value type
+    typedef int Val;
     /// Return minimum value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x>n\f$ (\a a = 0) or \f$x\leq n\f$ (\a a = 1)
@@ -186,6 +206,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValZeroOne {
   public:
+    /// View type
+    typedef View View;
+    /// Value type
+    typedef NoValue Val;
     /// Return no value of view \a x
     NoValue val(const Space* home, View x) const;
     /// Tell \f$x=0\f$ (\a a = 0) or \f$x=1\f$ (\a a = 1)
@@ -208,6 +232,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValOneZero {
   public:
+    /// View type
+    typedef View View;
+    /// Value type
+    typedef NoValue Val;
     /// Return no value of view \a x
     NoValue val(const Space* home, View x) const;
     /// Tell \f$x=1\f$ (\a a = 0) or \f$x=0\f$ (\a a = 1)
@@ -235,6 +263,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ByNone {
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -255,6 +285,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest minimum
     int min;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -275,6 +307,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest minimum
     int min;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -295,6 +329,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest maximum
     int max;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -315,6 +351,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest maximum
     int max;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -335,6 +373,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest size
     unsigned int size;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -355,6 +395,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest size
     unsigned int size;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -377,6 +419,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest size for degree
     unsigned int size;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -399,6 +443,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest size for degree
     unsigned int size;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -419,6 +465,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest degree
     unsigned int degree;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -439,6 +487,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest degree
     unsigned int degree;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -460,6 +510,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest size/degree
     double sizedegree;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -480,6 +532,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest size/degree
     double sizedegree;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -500,6 +554,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest regret
     unsigned int regret;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -520,6 +576,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest regret
     unsigned int regret;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -540,6 +598,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest regret
     unsigned int regret;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -560,6 +620,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest regret
     unsigned int regret;
   public:
+    /// View type
+    typedef View View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x

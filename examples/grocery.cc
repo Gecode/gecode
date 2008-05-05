@@ -62,13 +62,17 @@ protected:
   static const int s = 711;
 public:
   /// The actual model
-  Grocery(const Options&) : x(this,4,0,s) {
+  Grocery(const Options& opt) : x(this,4,0,s) {
 
     // The sum of all variables is s
-    post(this, x[0]+x[1]+x[2]+x[3] == s);
+    post(this, x[0]+x[1]+x[2]+x[3] == s, opt.icl());
 
     // The product of all variables is s (corrected by scale factor)
-    rel(this, mult(this, mult(this, x[0], x[1]), mult(this, x[2], x[3])), 
+    rel(this, 
+        mult(this, 
+             mult(this, x[0], x[1], opt.icl()), 
+             mult(this, x[2], x[3], opt.icl()),
+             opt.icl()), 
         IRT_EQ, s*100*100*100);
 
     // Break symmetries: order the variables
@@ -76,7 +80,7 @@ public:
     rel(this, x[1], IRT_LQ, x[2]);
     rel(this, x[2], IRT_LQ, x[3]);
 
-    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MAX);
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

@@ -81,16 +81,16 @@ namespace Gecode {
    *
    * For examples, see \link int/branch.hh integer branchings \endlink.
    */
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   class ViewValBranching : public Branching {
   protected:
-    ViewArray<View> x;  ///< Views to branch on
+    ViewArray<typename ViewSel::View> x; ///< Views to branch on
     mutable int start;  ///< Unassigned views start at x[start]
     /// Constructor for cloning \a b
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
     /// Constructor for creation
-    ViewValBranching(Space* home, ViewArray<View>& x);
+    ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x);
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space* home) const;
     /// Return branching description (of type Gecode::PosValDesc)
@@ -132,16 +132,16 @@ namespace Gecode {
    *
    * For examples, see \link int/branch.hh integer branchings \endlink.
    */
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   class ViewValAssignment : public Branching {
   protected:
-    ViewArray<View> x;  ///< Views to branch on
+    ViewArray<typename ValSel::View> x;  ///< Views to branch on
     mutable int start;  ///< Unassigned views start at x[start]
     /// Constructor for cloning \a b
     ViewValAssignment(Space* home, bool share, ViewValAssignment& b);
   public:
     /// Constructor for creation
-    ViewValAssignment(Space* home, ViewArray<View>& x);
+    ViewValAssignment(Space* home, ViewArray<typename ValSel::View>& x);
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space* home) const;
     /// Return branching description (of type Gecode::PosValDesc)
@@ -151,7 +151,7 @@ namespace Gecode {
                               unsigned int a);
     /// Return specification for this assignment given a variable map \a m
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
     branchingSpec(const Space* home, 
@@ -245,31 +245,31 @@ namespace Gecode {
    *
    */
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   forceinline
-  ViewValBranching<View,Val,ViewSel,ValSel>
-  ::ViewValBranching(Space* home, ViewArray<View>& x0)
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
+  ::ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x0)
     : Branching(home), x(x0), start(0) {}
 
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   forceinline
-  ViewValBranching<View,Val,ViewSel,ValSel>
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
   ::ViewValBranching(Space* home, bool share, ViewValBranching& b)
     : Branching(home,share,b), start(b.start) {
     x.update(home,share,b.x);
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   Actor*
-  ViewValBranching<View,Val,ViewSel,ValSel>::copy(Space* home, bool share) {
+  ViewValBranching<_View,_Val,ViewSel,ValSel>::copy(Space* home, bool share) {
     return new (home)
-      ViewValBranching<View,Val,ViewSel,ValSel>(home,share,*this);
+      ViewValBranching<_View,_Val,ViewSel,ValSel>(home,share,*this);
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   bool
-  ViewValBranching<View,Val,ViewSel,ValSel>
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
   ::status(const Space*) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
@@ -279,9 +279,9 @@ namespace Gecode {
     return false;
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   const BranchingDesc*
-  ViewValBranching<View,Val,ViewSel,ValSel>
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
   ::description(const Space* home) const {
     assert(!x[start].assigned());
     ViewSel vs; // For view selection
@@ -298,14 +298,15 @@ namespace Gecode {
           default:                      GECODE_NEVER;
           }
   create:
-    return new PosValDesc<Val,2>(this,b-start,vl.val(home,x[b]),start);
+    return new PosValDesc<typename ValSel::Val,2>(this,b-start,vl.val(home,x[b]),start);
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   ExecStatus
-  ViewValBranching<View,Val,ViewSel,ValSel>
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
-    const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
+    const PosValDesc<typename ValSel::Val,2>* pvd 
+      = static_cast<const PosValDesc<typename ValSel::Val,2>*>(d);
     // Eliminate views from x[0] ... x[d->start()-1]
     x.drop_fst(pvd->start()); start = 0;
     ValSel vs;
@@ -313,35 +314,37 @@ namespace Gecode {
       ? ES_FAILED : ES_OK;
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   Support::Symbol
-  ViewValBranching<View,Val,ViewSel,ValSel>::ati(void) {
-    return Reflection::mangle<View,Val,ViewSel,ValSel>("Gecode::ViewValBranching");
+  ViewValBranching<_View,_Val,ViewSel,ValSel>::ati(void) {
+    return Reflection::mangle<_View,_Val,ViewSel,ValSel>("Gecode::ViewValBranching");
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   void
-  ViewValBranching<View,Val,ViewSel,ValSel>
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
     ::post(Space* home, Reflection::VarMap& vars,
            const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) ViewValBranching<View,Val,ViewSel,ValSel>(home, x);
+    ViewArray<typename ViewSel::View> x(home, vars, spec[0]);
+    (void) new (home) ViewValBranching<_View,_Val,ViewSel,ValSel>(home, x);
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   Reflection::ActorSpec
-  ViewValBranching<View,Val,ViewSel,ValSel>::spec(const Space* home,
-    Reflection::VarMap& m) const {
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
+  ::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
   }
 
-  template <class View, class Val, class ViewSel, class ValSel>
+  template <class _View, class _Val, class ViewSel, class ValSel>
   Reflection::BranchingSpec
-  ViewValBranching<View,Val,ViewSel,ValSel>::branchingSpec(const Space* home, 
-    Reflection::VarMap& m, const BranchingDesc* d) const {
-    const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
+  ViewValBranching<_View,_Val,ViewSel,ValSel>
+  ::branchingSpec(const Space* home, 
+                  Reflection::VarMap& m, const BranchingDesc* d) const {
+    const PosValDesc<typename ValSel::Val,2>* pvd 
+      = static_cast<const PosValDesc<typename ValSel::Val,2>*>(d);
     Reflection::BranchingSpec bs(3);
     bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);
     bs[1] = Reflection::Arg::newString(ValSel::type());
@@ -354,31 +357,31 @@ namespace Gecode {
    *
    */
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   forceinline
-  ViewValAssignment<View,Val,ValSel>
-  ::ViewValAssignment(Space* home, ViewArray<View>& x0)
+  ViewValAssignment<_View,_Val,ValSel>
+  ::ViewValAssignment(Space* home, ViewArray<typename ValSel::View>& x0)
     : Branching(home), x(x0), start(0) {}
 
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   forceinline
-  ViewValAssignment<View,Val,ValSel>
+  ViewValAssignment<_View,_Val,ValSel>
   ::ViewValAssignment(Space* home, bool share, ViewValAssignment& b)
     : Branching(home,share,b), start(b.start) {
     x.update(home,share,b.x);
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   Actor*
-  ViewValAssignment<View,Val,ValSel>::copy(Space* home, bool share) {
+  ViewValAssignment<_View,_Val,ValSel>::copy(Space* home, bool share) {
     return new (home)
-      ViewValAssignment<View,Val,ValSel>(home,share,*this);
+      ViewValAssignment<_View,_Val,ValSel>(home,share,*this);
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   bool
-  ViewValAssignment<View,Val,ValSel>
+  ViewValAssignment<_View,_Val,ValSel>
   ::status(const Space*) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
@@ -388,20 +391,21 @@ namespace Gecode {
     return false;
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   const BranchingDesc*
-  ViewValAssignment<View,Val,ValSel>
+  ViewValAssignment<_View,_Val,ValSel>
   ::description(const Space* home) const {
     assert(!x[start].assigned());
     ValSel vl; // For value selection
-    return new PosValDesc<Val,1>(this,0,vl.val(home,x[start]),start);
+    return new PosValDesc<typename ValSel::Val,1>(this,0,vl.val(home,x[start]),start);
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   ExecStatus
-  ViewValAssignment<View,Val,ValSel>
+  ViewValAssignment<_View,_Val,ValSel>
   ::commit(Space* home, const BranchingDesc* d, unsigned int) {
-    const PosValDesc<Val,1>* pvd = static_cast<const PosValDesc<Val,1>*>(d);
+    const PosValDesc<typename ValSel::Val,1>* pvd 
+      = static_cast<const PosValDesc<typename ValSel::Val,1>*>(d);
     // Eliminate views from x[0] ... x[d->start()-1]
     x.drop_fst(pvd->start()); start = 0;
     ValSel vs;
@@ -409,35 +413,37 @@ namespace Gecode {
       ? ES_FAILED : ES_OK;
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   Support::Symbol
-  ViewValAssignment<View,Val,ValSel>::ati(void) {
-    return Reflection::mangle<View,Val,ValSel>("Gecode::ViewValAssignment");
+  ViewValAssignment<_View,_Val,ValSel>::ati(void) {
+    return Reflection::mangle<_View,_Val,ValSel>("Gecode::ViewValAssignment");
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   void
-  ViewValAssignment<View,Val,ValSel>
+  ViewValAssignment<_View,_Val,ValSel>
     ::post(Space* home, Reflection::VarMap& vars,
            const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) ViewValAssignment<View,Val,ValSel>(home, x);
+    ViewArray<typename ValSel::View> x(home, vars, spec[0]);
+    (void) new (home) ViewValAssignment<_View,_Val,ValSel>(home, x);
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   Reflection::ActorSpec
-  ViewValAssignment<View,Val,ValSel>::spec(const Space* home,
-    Reflection::VarMap& m) const {
+  ViewValAssignment<_View,_Val,ValSel>
+  ::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
   }
 
-  template <class View, class Val, class ValSel>
+  template <class _View, class _Val, class ValSel>
   Reflection::BranchingSpec
-  ViewValAssignment<View,Val,ValSel>::branchingSpec(const Space* home, 
-    Reflection::VarMap& m, const BranchingDesc* d) const {
-    const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
+  ViewValAssignment<_View,_Val,ValSel>
+  ::branchingSpec(const Space* home, 
+                  Reflection::VarMap& m, const BranchingDesc* d) const {
+    const PosValDesc<typename ValSel::Val,2>* pvd 
+      = static_cast<const PosValDesc<typename ValSel::Val,2>*>(d);
     Reflection::BranchingSpec bs(3);
     bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);
     bs[1] = Reflection::Arg::newString(ValSel::type());

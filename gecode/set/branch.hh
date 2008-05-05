@@ -68,6 +68,10 @@ namespace Gecode { namespace Set { namespace Branch {
    */
   class ValMin {
   public:
+    /// View type
+    typedef SetView View;
+    /// Value type
+    typedef int Val;
     /// Return minimum value of view \a x
     int val(const Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -89,6 +93,10 @@ namespace Gecode { namespace Set { namespace Branch {
    */
   class ValMax {
   public:
+    /// View type
+    typedef SetView View;
+    /// Value type
+    typedef int Val;
     /// Return maximum value of view \a x
     int val(const Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -119,6 +127,8 @@ namespace Gecode { namespace Set { namespace Branch {
    */
   class ByNone {
   public:
+    /// View type
+    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -138,6 +148,8 @@ namespace Gecode { namespace Set { namespace Branch {
     /// So-far smallest cardinality
     unsigned int minCard;
   public:
+    /// View type
+    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -157,6 +169,8 @@ namespace Gecode { namespace Set { namespace Branch {
     /// So-far greatest cardinality
     unsigned int maxCard;
   public:
+    /// View type
+    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -176,6 +190,8 @@ namespace Gecode { namespace Set { namespace Branch {
     /// So-far smallest element
     int minUnknown;
   public:
+    /// View type
+    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -195,6 +211,8 @@ namespace Gecode { namespace Set { namespace Branch {
     /// So-far greatest element
     int maxUnknown;
   public:
+    /// View type
+    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
