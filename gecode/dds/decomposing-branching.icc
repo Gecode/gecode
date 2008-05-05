@@ -409,11 +409,11 @@ namespace Gecode {
       ValSel  vl; // For value selection
       if (x.size() == 1) {
         return
-          new Decomposition::SingletonDesc<typename ValSel::Val,2>(
+          new Decomposition::SingletonDesc<typename ValSel::Val,ValSel::alternatives>(
             this,vl.val(home,x[0].view),
             0, x[0].idx, DomainSize<typename ValSel::View>::size(x[0].view));
       } else {
-        return new PosValDesc<typename ValSel::Val,2>
+        return new PosValDesc<typename ValSel::Val,ValSel::alternatives>
           (this,0,0,vl.val(home,x[0].view));
       }
     }
@@ -494,7 +494,7 @@ namespace Gecode {
       assert(x.size() - start == 1);
       ValSel  vl; // For value selection
       return
-        new Decomposition::SingletonDesc<typename ValSel::Val,2>(
+        new Decomposition::SingletonDesc<typename ValSel::Val,ValSel::alternatives>(
           this,
           vl.val(home,x[start].view),
           start,
@@ -517,7 +517,7 @@ namespace Gecode {
           case VSS_BEST:
             b=i;
             return new 
-              PosValDesc<typename ValSel::Val,2>
+              PosValDesc<typename ValSel::Val,ValSel::alternatives>
               (this,b-start,start,vl.val(home,x[b].view));
           case VSS_TIE:   break;
           case VSS_WORSE:   break;
@@ -525,7 +525,7 @@ namespace Gecode {
             }
           }
        }
-    return new PosValDesc<typename ValSel::Val,2>
+    return new PosValDesc<typename ValSel::Val,ValSel::alternatives>
       (this,b-start,start,vl.val(home,x[b].view));
   }
 
@@ -538,12 +538,12 @@ namespace Gecode {
       dynamic_cast<const Decomposition::DecompDesc*>(d);
     if( dd == NULL) { // --> normal handling of PosValDescriptions
       
-      const PosValDesc<typename ValSel::Val,2>* pvd;
-      if (const Decomposition::SingletonDesc<typename ValSel::Val,2>* sd =
-          dynamic_cast<const Decomposition::SingletonDesc<typename ValSel::Val,2>*>(d)) {
+      const PosValDesc<typename ValSel::Val,ValSel::alternatives>* pvd;
+      if (const Decomposition::SingletonDesc<typename ValSel::Val,ValSel::alternatives>* sd =
+          dynamic_cast<const Decomposition::SingletonDesc<typename ValSel::Val,ValSel::alternatives>*>(d)) {
         pvd = sd->pvd();
       } else {
-        pvd = static_cast<const PosValDesc<typename ValSel::Val,2>*>(d); 
+        pvd = static_cast<const PosValDesc<typename ValSel::Val,ValSel::alternatives>*>(d); 
       }
       // Eliminate views from x[0] ... x[start-1]
       x.drop_fst(pvd->start()); start = 0;
@@ -582,8 +582,8 @@ namespace Gecode {
   ::branchingSpec(const Space* home,
                   Reflection::VarMap& m,
                   const BranchingDesc* d) const {
-    const PosValDesc<typename ValSel::Val,2>* pvd 
-      = dynamic_cast<const PosValDesc<typename ValSel::Val,2>*>(d);
+    const PosValDesc<typename ValSel::Val,ValSel::alternatives>* pvd 
+      = dynamic_cast<const PosValDesc<typename ValSel::Val,ValSel::alternatives>*>(d);
     if (pvd) {
       Reflection::BranchingSpec bs(3);
       bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);

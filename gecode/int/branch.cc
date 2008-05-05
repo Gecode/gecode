@@ -39,38 +39,40 @@
 
 namespace Gecode {
 
-  using namespace Int;
-
   void
   branch(Space* home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals) {
+    using namespace Int;
     Branch::createBranch<ViewValBranching>(home,x,vars,vals);
   }
 
   void
   branch(Space* home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals) {
+    using namespace Int;
     Branch::createBranch<ViewValBranching>(home,x,vars,vals);
   }
 
+
   void
   assign(Space* home, const IntVarArgs& x, IntAssign vals) {
+    using namespace Int;
     ViewArray<IntView> xv(home,x);
     switch (vals) {
     case INT_ASSIGN_MIN:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<Branch::ValMin<IntView> >(home,xv);
+        ViewValAssignment<Branch::AssignValMin<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MED:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<Branch::ValMed<IntView> >(home,xv);
+        ViewValAssignment<Branch::AssignValMed<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<Branch::ValMax<IntView> >(home,xv);
+        ViewValAssignment<Branch::AssignValMax<IntView> >(home,xv);
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -79,18 +81,19 @@ namespace Gecode {
 
   void
   assign(Space* home, const BoolVarArgs& x, IntAssign vals) {
+    using namespace Int;
     ViewArray<BoolView> xv(home,x);
     switch (vals) {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<Branch::ValZeroOne<BoolView> >(home,xv);
+        ViewValAssignment<Branch::AssignValZeroOne<BoolView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
       if (home->failed()) return;
       (void) new (home) 
-        ViewValAssignment<Branch::ValOneZero<BoolView> >(home,xv);
+        ViewValAssignment<Branch::AssignValOneZero<BoolView> >(home,xv);
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -143,15 +146,15 @@ namespace Gecode {
       ByNone<BoolView>,ValZeroOne<BoolView> > > r6;
 
     Reflection::ActorRegistrar<ViewValAssignment<
-      ValMax<IntView> > > r7;
+      AssignValMax<IntView> > > r7;
     Reflection::ActorRegistrar<ViewValAssignment<
-      ValMed<IntView> > > r8;
+      AssignValMed<IntView> > > r8;
     Reflection::ActorRegistrar<ViewValAssignment<
-      ValMin<IntView> > > r9;
+      AssignValMin<IntView> > > r9;
     Reflection::ActorRegistrar<ViewValAssignment<
-      ValOneZero<BoolView> > > r10;
+      AssignValOneZero<BoolView> > > r10;
     Reflection::ActorRegistrar<ViewValAssignment<
-      ValZeroOne<BoolView> > > r11;
+      AssignValZeroOne<BoolView> > > r11;
 
   }}
 

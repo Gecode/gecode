@@ -62,6 +62,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template <bool exclude>
   class ValMinUnknown {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef CpltSetView View;
     /// Value type
@@ -88,6 +90,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template <bool exclude>
   class ValMaxUnknown {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef CpltSetView View;
     /// Value type

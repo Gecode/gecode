@@ -87,7 +87,8 @@ View and value branchings have been substantially changed. In particular:
  - A view selector must return also information that can be used for
    tie breaking.
  - A view selector must define its view type.
- - A value selector must define both its view and value type.
+ - A value selector must define its number of alternatives, its view, 
+   and value type.
  - ViewValBranching now only takes a view and value selector as
    template arguments.
 

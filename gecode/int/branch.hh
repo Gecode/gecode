@@ -62,6 +62,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMin {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef View View;
     /// Value type
@@ -88,6 +90,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMed {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef View View;
     /// Value type
@@ -114,6 +118,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMax {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef View View;
     /// Value type
@@ -140,6 +146,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSplitMin {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef View View;
     /// Value type
@@ -166,6 +174,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSplitMax {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef View View;
     /// Value type
@@ -206,6 +216,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValZeroOne {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef View View;
     /// Value type
@@ -232,6 +244,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValOneZero {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef View View;
     /// Value type
@@ -246,6 +260,46 @@ namespace Gecode { namespace Int { namespace Branch {
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                        int alt, View x, NoValue n) const;
+  };
+
+
+  /// Class for assigning minimum value
+  template<class View>
+  class AssignValMin : public ValMin<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+  };
+
+  /// Class for assigning maximum value
+  template<class View>
+  class AssignValMed : public ValMed<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+  };
+
+  /// Class for assigning median value
+  template<class View>
+  class AssignValMax : public ValMax<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+  };
+  /// Class for assigning zero
+  template<class View>
+  class AssignValZeroOne : public ValZeroOne<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+  };
+
+  /// Class for assigning one
+  template<class View>
+  class AssignValOneZero : public ValOneZero<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
   };
 
 

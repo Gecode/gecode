@@ -385,7 +385,7 @@ namespace Gecode {
           default:                      GECODE_NEVER;
           }
   create:
-    return new PosValDesc<typename ValSel::Val,2>
+    return new PosValDesc<typename ValSel::Val,ValSel::alternatives>
       (this,b-start,start,vl.val(home,x[b]));
   }
 
@@ -393,8 +393,8 @@ namespace Gecode {
   ExecStatus
   ViewValBranching<ViewSel,ValSel>
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
-    const PosValDesc<typename ValSel::Val,2>* pvd 
-      = static_cast<const PosValDesc<typename ValSel::Val,2>*>(d);
+    const PosValDesc<typename ValSel::Val,ValSel::alternatives>* pvd 
+      = static_cast<const PosValDesc<typename ValSel::Val,ValSel::alternatives>*>(d);
     // Eliminate views from x[0] ... x[d->start()-1]
     x.drop_fst(pvd->start()); start = 0;
     ValSel vs;
@@ -431,8 +431,8 @@ namespace Gecode {
   ViewValBranching<ViewSel,ValSel>
   ::branchingSpec(const Space* home, 
                   Reflection::VarMap& m, const BranchingDesc* d) const {
-    const PosValDesc<typename ValSel::Val,2>* pvd 
-      = static_cast<const PosValDesc<typename ValSel::Val,2>*>(d);
+    const PosValDesc<typename ValSel::Val,ValSel::alternatives>* pvd 
+      = static_cast<const PosValDesc<typename ValSel::Val,ValSel::alternatives>*>(d);
     Reflection::BranchingSpec bs(3);
     bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);
     bs[1] = Reflection::Arg::newString(ValSel::type());
@@ -531,8 +531,8 @@ namespace Gecode {
   ViewValAssignment<ValSel>
   ::branchingSpec(const Space* home, 
                   Reflection::VarMap& m, const BranchingDesc* d) const {
-    const PosValDesc<typename ValSel::Val,2>* pvd 
-      = static_cast<const PosValDesc<typename ValSel::Val,2>*>(d);
+    const PosValDesc<typename ValSel::Val,ValSel::alternatives>* pvd 
+      = static_cast<const PosValDesc<typename ValSel::Val,ValSel::alternatives>*>(d);
     Reflection::BranchingSpec bs(3);
     bs[0] = x[pvd->start()+pvd->pos()].spec(home, m);
     bs[1] = Reflection::Arg::newString(ValSel::type());

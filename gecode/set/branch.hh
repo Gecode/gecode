@@ -68,6 +68,8 @@ namespace Gecode { namespace Set { namespace Branch {
    */
   class ValMin {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef SetView View;
     /// Value type
@@ -93,6 +95,8 @@ namespace Gecode { namespace Set { namespace Branch {
    */
   class ValMax {
   public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
     /// View type
     typedef SetView View;
     /// Value type
