@@ -59,8 +59,8 @@ namespace Gecode {
    * \brief Generic branching
    *
    * Implements view-based branching for an array of views (of type
-   * \a View) and value (of type \a Val). The behaviour is defined by
-   * the class \a ViewSel (which view is selected for branching)
+   * \a ViewSel::View) and value (of type \a ValSel::Val). The behaviour is 
+   * defined by the class \a ViewSel (which view is selected for branching)
    * and the class \a ValSel (which value is selected for branching).
    *
    * The class \a ViewSel must implement two member functions:
