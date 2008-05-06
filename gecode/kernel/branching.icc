@@ -69,6 +69,49 @@ namespace Gecode {
   };
 
   /**
+   * \brief Generic branching by view selection
+   *
+   * Implements a baseclass for view-based branching for an array of views
+   * (of type \a ViewSel::View). The behaviour is 
+   * defined by the class \a ViewSel (which view is selected for branching).
+   *
+   * The class \a ViewSel must implement two member functions:
+   *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
+   *    Initializes view selection with the \a View \a x. If \a x
+   *    is known to be a best one, VSS_BEST should be returned.
+   *    Otherwise, VSS_BETTER should be returned.
+   *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)
+   *    If \a x is better than the previously selected view,
+   *    return VSS_BETTER. If it is a best view, return VSS_BEST. If it 
+   *    is worse, return VSS_WORSE. If it is equally good, return VSS_TIE.
+   *
+   */
+  template <class ViewSel>
+  class ViewBranching : public Branching {
+  protected:
+    /// Views to branch on
+    mutable ViewArray<typename ViewSel::View> x; 
+    /// Unassigned views start at x[start]
+    mutable int start;  
+    /// Return position information
+    Pos pos(const Space* home) const;
+    /**
+     * \brief Return view according to position information \a p
+     *
+     * If used during a commit, \a c must be true (eliminates views).
+     */
+    typename ViewSel::View view(const Pos& p, bool c=false) const;
+    /// Constructor for cloning \a b
+    ViewBranching(Space* home, bool share, ViewBranching& b);
+  public:
+    /// Constructor for creation
+    ViewBranching(Space* home, ViewArray<typename ViewSel::View>& x);
+    /// Check status of branching, return true if alternatives left
+    virtual bool status(const Space* home) const;
+  };
+
+
+  /**
    * \brief Generic branching by view and value selection
    *
    * Implements view-based branching for an array of views (of type
@@ -95,28 +138,14 @@ namespace Gecode {
    * For examples, see \link int/branch.hh integer branchings \endlink.
    */
   template <class ViewSel, class ValSel>
-  class ViewValBranching : public Branching {
-  private:
-    /// Views to branch on
-    mutable ViewArray<typename ViewSel::View> x; 
-    /// Unassigned views start at x[start]
-    mutable int start;  
+  class ViewValBranching : public ViewBranching<ViewSel> {
   protected:
-    /// Return position information
-    Pos pos(const Space* home) const;
-    /**
-     * \brief Return view according to position information \a p
-     *
-     * If used during a commit, \a c must be true (eliminates views).
-     */
-    typename ViewSel::View view(const Pos& p, bool c=false) const;
+    using ViewBranching<ViewSel>::x;
     /// Constructor for cloning \a b
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
     /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x);
-    /// Check status of branching, return true if alternatives left
-    virtual bool status(const Space* home) const;
     /// Return branching description (of type Gecode::PosValDesc)
     virtual const BranchingDesc* description(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
@@ -239,36 +268,28 @@ namespace Gecode {
 
 
   /*
-   * Generic branching based on variable/value selection
+   * Generic branching based on view selection
    *
    */
 
-  template <class ViewSel, class ValSel>
+  template <class ViewSel>
   forceinline
-  ViewValBranching<ViewSel,ValSel>
-  ::ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x0)
+  ViewBranching<ViewSel>::ViewBranching(Space* home, 
+                                        ViewArray<typename ViewSel::View>& x0)
     : Branching(home), x(x0), start(0) {}
 
 
-  template <class ViewSel, class ValSel>
+  template <class ViewSel>
   forceinline
-  ViewValBranching<ViewSel,ValSel>
-  ::ViewValBranching(Space* home, bool share, ViewValBranching& b)
+  ViewBranching<ViewSel>::ViewBranching(Space* home, bool share, 
+                                        ViewBranching& b)
     : Branching(home,share,b), start(b.start) {
     x.update(home,share,b.x);
   }
 
-  template <class ViewSel, class ValSel>
-  Actor*
-  ViewValBranching<ViewSel,ValSel>::copy(Space* home, bool share) {
-    return new (home)
-      ViewValBranching<ViewSel,ValSel>(home,share,*this);
-  }
-
-  template <class ViewSel, class ValSel>
+  template <class ViewSel>
   bool
-  ViewValBranching<ViewSel,ValSel>
-  ::status(const Space*) const {
+  ViewBranching<ViewSel>::status(const Space*) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
         start = i;
@@ -277,9 +298,9 @@ namespace Gecode {
     return false;
   }
 
-  template <class ViewSel, class ValSel>
+  template <class ViewSel>
   forceinline Pos
-  ViewValBranching<ViewSel,ValSel>::pos(const Space* home) const {
+  ViewBranching<ViewSel>::pos(const Space* home) const {
     assert(!x[start].assigned());
     ViewSel vs; // For view selection
     int i = start;
@@ -298,9 +319,9 @@ namespace Gecode {
     return p;
   }
 
-  template <class ViewSel, class ValSel>
+  template <class ViewSel>
   forceinline typename ViewSel::View
-  ViewValBranching<ViewSel,ValSel>::view(const Pos& p, bool c) const {
+  ViewBranching<ViewSel>::view(const Pos& p, bool c) const {
     if (c) {
       // Eliminate views from x[0] ... x[d->start()-1]
       x.drop_fst(p.start); start = 0;
@@ -310,10 +331,35 @@ namespace Gecode {
     }
   }
 
+
+  /*
+   * Generic branching based on variable/value selection
+   *
+   */
+
+  template <class ViewSel, class ValSel>
+  forceinline
+  ViewValBranching<ViewSel,ValSel>::
+  ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x)
+    : ViewBranching<ViewSel>(home,x) {}
+
+
+  template <class ViewSel, class ValSel>
+  forceinline
+  ViewValBranching<ViewSel,ValSel>::
+  ViewValBranching(Space* home, bool share, ViewValBranching& b)
+    : ViewBranching<ViewSel>(home,share,b) {}
+
+  template <class ViewSel, class ValSel>
+  Actor*
+  ViewValBranching<ViewSel,ValSel>::copy(Space* home, bool share) {
+    return new (home)
+      ViewValBranching<ViewSel,ValSel>(home,share,*this);
+  }
+
   template <class ViewSel, class ValSel>
   const BranchingDesc*
   ViewValBranching<ViewSel,ValSel>::description(const Space* home) const {
-    assert(!x[start].assigned());
     Pos p = pos(home);
     ValSel vl; // For value selection
     return new PosValDesc<typename ValSel::Val,ValSel::alternatives>
