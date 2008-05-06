@@ -71,22 +71,6 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class V>
   forceinline int
-  ValMax<V>::val(const Space*, V x) const {
-    return x.max();
-  }
-  template<class V>
-  forceinline ModEvent
-  ValMax<V>::tell(Space* home, unsigned int a, V x, int n) {
-    return (a == 0) ? x.eq(home,n) : x.le(home,n);
-  }
-  template<class V>
-  inline Support::Symbol
-  ValMax<V>::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ValMax");
-  }
-
-  template<class V>
-  forceinline int
   ValSplitMin<V>::val(const Space*, V x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
@@ -101,29 +85,13 @@ namespace Gecode { namespace Int { namespace Branch {
     return Support::Symbol("Gecode::Int::Branch::ValSplitMin");
   }
 
-  template<class V>
-  forceinline int
-  ValSplitMax<V>::val(const Space*, V x) const {
-    return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
-  }
-  template<class V>
-  forceinline ModEvent
-  ValSplitMax<V>::tell(Space* home, unsigned int a, V x, int n) {
-    return (a == 0) ? x.gr(home,n) : x.lq(home,n);
-  }
-  template<class V>
-  inline Support::Symbol
-  ValSplitMax<V>::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ValSplitMax");
-  }
-
 
   inline Support::Symbol
   NoValue::type(void) {
     return Support::Symbol("Gecode::Int::Branch::NoValue");
   }
 
-  inline
+  forceinline
   NoValue::operator int(void) {
     return 0;
   }
@@ -142,23 +110,6 @@ namespace Gecode { namespace Int { namespace Branch {
   inline Support::Symbol
   ValZeroOne<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValZeroOne");
-  }
-
-
-  template<class V>
-  forceinline NoValue
-  ValOneZero<V>::val(const Space*, V) const {
-    NoValue n; return n;
-  }
-  template<class V>
-  forceinline ModEvent
-  ValOneZero<V>::tell(Space* home, unsigned int a, V x, NoValue) {
-    return (a == 0) ? x.one(home) : x.zero(home);
-  }
-  template<class V>
-  inline Support::Symbol
-  ValOneZero<V>::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ValOneZero");
   }
 
 }}}

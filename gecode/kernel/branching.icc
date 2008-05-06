@@ -345,9 +345,9 @@ namespace Gecode {
   ViewValBranching<ViewSel,ValSel>::description(const Space* home) const {
     Pos p = ViewBranching<ViewSel>::pos(home);
     ValSel vl; // For value selection
+    ValSel::View v(ViewBranching<ViewSel>::view(p).var());
     return new PosValDesc<typename ValSel::Val>
-      (this,ValSel::alternatives,p,
-       vl.val(home,ViewValBranching<ViewSel,ValSel>::view(p)));
+      (this,ValSel::alternatives,p,vl.val(home,v));
   }
 
   template <class ViewSel, class ValSel>
@@ -357,8 +357,8 @@ namespace Gecode {
     const PosValDesc<typename ValSel::Val>* pvd 
       = static_cast<const PosValDesc<typename ValSel::Val>*>(d);
     ValSel vs;
-    return me_failed(vs.tell(home,a,view(pvd->pos(),true),pvd->val()))
-      ? ES_FAILED : ES_OK;
+    ValSel::View v(ViewBranching<ViewSel>::view(pvd->pos(),true).var());
+    return me_failed(vs.tell(home,a,v,pvd->val())) ? ES_FAILED : ES_OK;
   }
 
   template <class ViewSel, class ValSel>

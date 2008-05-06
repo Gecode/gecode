@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief Class for selecting maximum value
+   * \brief Class for selecting median value
    *
    * Requires
    * \code #include "gecode/int/branch.hh" \endcode
@@ -97,34 +97,6 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Value type
     typedef int Val;
     /// Return maximum value of view \a x
-    int val(const Space* home, V x) const;
-    /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, V x, int n);
-    /// Type of this value selection (for reflection)
-    static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space* home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, V x, int n) const;
-  };
-
-  /**
-   * \brief Class for selecting median value
-   *
-   * Requires
-   * \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelVal
-   */
-  template<class V>
-  class ValMax {
-  public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
-    /// View type
-    typedef V View;
-    /// Value type
-    typedef int Val;
-    /// Return median value of view \a x
     int val(const Space* home, V x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, V x, int n);
@@ -164,33 +136,6 @@ namespace Gecode { namespace Int { namespace Branch {
                        int alt, V x, int n) const;
   };
 
-  /**
-   * \brief Class for splitting domain (upper half first)
-   *
-   * Requires
-   * \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelVal
-   */
-  template<class V>
-  class ValSplitMax {
-  public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
-    /// View type
-    typedef V View;
-    /// Value type
-    typedef int Val;
-    /// Return minimum value of view \a x
-    int val(const Space* home, V x) const;
-    /// Tell \f$x>n\f$ (\a a = 0) or \f$x\leq n\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, V x, int n);
-    /// Type of this value selection (for reflection)
-    static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space* home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, V x, int n) const;
-  };
 
   /// Create branchings for a given view selection strategy \a SelView
   template<class View, class SelView>
@@ -225,34 +170,6 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Return no value of view \a x
     NoValue val(const Space* home, V x) const;
     /// Tell \f$x=0\f$ (\a a = 0) or \f$x=1\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, V x, NoValue n);
-    /// Type of this value selection (for reflection)
-    static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space* home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, V x, NoValue n) const;
-  };
-
-  /**
-   * \brief Class for trying one and then zero
-   *
-   * Requires
-   * \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelVal
-   */
-  template<class V>
-  class ValOneZero {
-  public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
-    /// View type
-    typedef V View;
-    /// Value type
-    typedef NoValue Val;
-    /// Return no value of view \a x
-    NoValue val(const Space* home, V x) const;
-    /// Tell \f$x=1\f$ (\a a = 0) or \f$x=0\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, V x, NoValue n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
@@ -329,24 +246,9 @@ namespace Gecode { namespace Int { namespace Branch {
     static const unsigned int alternatives = 1;
   };
 
-  /// Class for assigning median value
-  template<class V>
-  class AssignValMax : public ValMax<V> {
-  public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 1;
-  };
   /// Class for assigning zero
   template<class V>
   class AssignValZeroOne : public ValZeroOne<V> {
-  public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 1;
-  };
-
-  /// Class for assigning one
-  template<class V>
-  class AssignValOneZero : public ValOneZero<V> {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;

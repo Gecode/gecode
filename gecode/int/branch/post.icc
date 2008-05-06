@@ -49,13 +49,13 @@ namespace Gecode { namespace Int { namespace Branch {
       (void) new (home) ValBranch<SelView,ValMed<IntView> >(home,x);
       break;
     case INT_VAL_MAX:
-      (void) new (home) ValBranch<SelView,ValMax<IntView> >(home,x);
+      (void) new (home) ValBranch<SelView,ValMin<MinusView> >(home,x);
       break;
     case INT_VAL_SPLIT_MIN:
       (void) new (home) ValBranch<SelView,ValSplitMin<IntView> >(home,x);
       break;
     case INT_VAL_SPLIT_MAX:
-      (void) new (home) ValBranch<SelView,ValSplitMax<IntView> >(home,x);
+      (void) new (home) ValBranch<SelView,ValSplitMin<MinusView> >(home,x);
       break;
     case INT_VALUES_MIN:
       (void) new (home) ViewValuesBranching<SelView,IntView>(home,x);
@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VALUES_MAX:
         (void) new (home) 
           ValBranch<ByNone<BoolView>,
-          ValOneZero<BoolView> >(home,xv);
+          ValZeroOne<NegBoolView> >(home,xv);
         break;
       default:
         throw UnknownBranching("Int::branch");
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VALUES_MAX:
         (void) new (home) 
           ValBranch<ByDegreeMinNoTies<BoolView>,
-            ValOneZero<BoolView> >(home,xv);
+            ValZeroOne<NegBoolView> >(home,xv);
         break;
       default:
         throw UnknownBranching("Int::branch");
@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VALUES_MAX:
         (void) new (home) 
           ValBranch<ByDegreeMaxNoTies<BoolView>,
-            ValOneZero<BoolView> >(home,xv);
+            ValZeroOne<NegBoolView> >(home,xv);
         break;
       default:
         throw UnknownBranching("Int::branch");
