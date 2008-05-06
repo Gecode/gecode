@@ -1039,6 +1039,7 @@ gecode/serialization/moc_%$(OBJSUFFIX): gecode/serialization/moc_%.cc
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
+.PRECIOUS: gecode/serialization/moc_%.cc
 gecode/serialization/moc_%.cc: $(top_srcdir)/gecode/serialization/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/serialization $< -o $@
 
@@ -1071,6 +1072,7 @@ gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cc
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
+.PRECIOUS: gecode/gist/moc_%.cc
 gecode/gist/moc_%.cc: $(top_srcdir)/gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
@@ -1088,6 +1090,7 @@ gecode/gist/visualisation/moc_%$(OBJSUFFIX): gecode/gist/visualisation/moc_%.cc
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
+.PRECIOUS: gecode/gist/visualisation/moc_%.cc
 gecode/gist/visualisation/moc_%.cc: $(top_srcdir)/gecode/gist/visualisation/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist/visualisation $< -o $@
 
