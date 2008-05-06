@@ -58,7 +58,7 @@ namespace Gecode { namespace Gist {
   {}
 
   VisualNode::~VisualNode(void) {
-    delete shape;
+    Shape::deallocate(shape);
   }
 
   void

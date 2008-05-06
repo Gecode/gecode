@@ -67,27 +67,40 @@ namespace Gecode { namespace Gist {
   };
 
   /// Shape of a single node
-  const Shape singletonShape(Extent(Layout::extent*1.5));
+  const Shape* singletonShape;
   /// Shape of hidden nodes
-  const Shape hiddenShape(Extent(Layout::extent), &singletonShape);
-
-  Shape::Shape(Extent e, const Shape* subShape) {
-    _depth = subShape->depth() + 1;
-    shape = Memory::bmalloc<Extent>(_depth);
-    shape[0] = e;
-
-    for (int i=0; i<subShape->depth(); i++) {
-      shape[i+1] = (*subShape)[i];
+  const Shape* hiddenShape;
+  
+  /// Allocate shapes statically
+  class ShapeAllocator {
+  public:
+    /// Constructor
+    ShapeAllocator(void) {
+      singletonShape = Shape::allocate(Extent(Layout::extent*1.5));
+      hiddenShape = Shape::allocate(Extent(Layout::extent), singletonShape);
     }
-    
+  };
+
+  /// Allocate shapes statically
+  ShapeAllocator shapeAllocator;
+
+  Shape*
+  Shape::allocate(Extent e, const Shape* subShape) {
+    Shape* shape = Shape::allocate(subShape->depth() + 1);
+    (*shape)[0] = e;
+    for (int i=subShape->depth(); i--;) {
+      (*shape)[i+1] = (*subShape)[i];
+    }
+    return shape;
   }
   
-  Shape::Shape(const Shape* subShape) {
-    _depth = subShape->depth();
-    shape = Memory::bmalloc<Extent>(_depth);
-    for (int i=0; i<subShape->depth(); i++) {
-      shape[i] = (*subShape)[i];
+  Shape*
+  Shape::allocate(const Shape* subShape) {
+    Shape* shape = Shape::allocate(subShape->depth());
+    for (int i=subShape->depth(); i--;) {
+      (*shape)[i] = (*subShape)[i];
     }    
+    return shape;
   }
     
   bool
@@ -226,7 +239,7 @@ namespace Gecode { namespace Gist {
   ShapeList::getMergedShape(Extent extent, bool left) {
     if (numberOfShapes == 1) {
       offsets[0] = 0;
-      Shape* result = new Shape(extent, shapes[0]);
+      Shape* result = Shape::allocate(extent, shapes[0]);
       (*result)[1].extend(- extent.l, - extent.r);
       return result;
     } else {
@@ -253,7 +266,7 @@ namespace Gecode { namespace Gist {
 
       // After merging, we can pick the result of either merging left or right
       // Here we chose the result of merging right
-      Shape* mergedShape = new Shape(maxDepth+1);
+      Shape* mergedShape = Shape::allocate(maxDepth+1);
       (*mergedShape)[0] = extent;
       int rdepth = shapes[numberOfShapes - 1]->depth();
       for (int i=rdepth; i--;)
@@ -335,9 +348,9 @@ namespace Gecode { namespace Gist {
       int numberOfChildren = currentNode->getNumberOfChildren();
       Shape* shape;
       if (currentNode->isHidden()) {
-        shape = new Shape(&hiddenShape);
+        shape = Shape::allocate(hiddenShape);
       } else if (numberOfChildren < 1) {
-        shape = new Shape(extent);
+        shape = Shape::allocate(extent);
       } else {
         ShapeList childShapes(numberOfChildren);
         for (int i=numberOfChildren; i--;) {
@@ -351,7 +364,7 @@ namespace Gecode { namespace Gist {
             setOffset(childShapes.getOffsetOfChild(i));
         }
       }
-      delete currentNode->getShape();
+      Shape::deallocate(currentNode->getShape());
       currentNode->setShape(shape);
       currentNode->setBoundingBox(shape->getBoundingBox());
       currentNode->setDirty(false);
