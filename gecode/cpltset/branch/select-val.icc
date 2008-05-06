@@ -85,7 +85,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 
   template <class SelView>
-  static void
+  void
   create(Space* home, ViewArray<CpltSetView>& x, CpltSetValBranch vals) {
     switch (vals) {
     case CPLTSET_VAL_MIN_UNKNOWN:

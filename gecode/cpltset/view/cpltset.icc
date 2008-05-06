@@ -48,7 +48,11 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetView::CpltSetView(const CpltSetVar& y)
-    : VarViewBase<CpltSetVarImp>(y.var()) { }
+    : VarViewBase<CpltSetVarImp>(y.var()) {}
+
+  forceinline
+  CpltSetView::CpltSetView(CpltSetVarImp* x)
+    : VarViewBase<CpltSetVarImp>(x) {}
 
   /*
    * Set information
