@@ -79,12 +79,6 @@ namespace Gecode { namespace Gist {
   forceinline bool
   VisualNode::isOnPath(void) { return onPath; }
 
-  forceinline bool
-  VisualNode::isLastOnPath(void) { return lastOnPath; }
-
-  forceinline int
-  VisualNode::getPathAlternative(void) { return pathAlternative; }
-
   forceinline Shape*
   VisualNode::getShape(void) { return shape; }
   
