@@ -2006,9 +2006,11 @@ namespace Gecode {
   enum IntValBranch {
     INT_VAL_MIN,       ///< Select smallest value
     INT_VAL_MED,       ///< Select median value
-    INT_VAL_MAX,       ///< Select maximal value
+    INT_VAL_MAX,       ///< Select largest value
     INT_VAL_SPLIT_MIN, ///< Select lower half of domain
-    INT_VAL_SPLIT_MAX  ///< Select upper half of domain
+    INT_VAL_SPLIT_MAX, ///< Select upper half of domain
+    INT_VALUES_MIN,    ///< Try all values starting from smallest
+    INT_VALUES_MAX     ///< Try all values starting from largest
   };
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals

@@ -117,34 +117,6 @@ namespace Gecode { namespace Int { namespace Branch {
     return Support::Symbol("Gecode::Int::Branch::ValSplitMax");
   }
 
-  template<template <class,class> class ViewValBranching, class SelView>
-  void
-  create(Space* home, ViewArray<IntView>& x, IntValBranch vals) {
-    switch (vals) {
-    case INT_VAL_MIN:
-      (void) new (home) 
-        ViewValBranching<SelView,ValMin<IntView> >(home,x);
-      break;
-    case INT_VAL_MED:
-      (void) new (home) 
-        ViewValBranching<SelView,ValMed<IntView> >(home,x);
-      break;
-    case INT_VAL_MAX:
-      (void) new (home) 
-        ViewValBranching<SelView,ValMax<IntView> >(home,x);
-      break;
-    case INT_VAL_SPLIT_MIN:
-      (void) new (home)
-        ViewValBranching<SelView,ValSplitMin<IntView> >(home,x);
-      break;
-    case INT_VAL_SPLIT_MAX:
-      (void) new (home)
-        ViewValBranching<SelView,ValSplitMax<IntView> >(home,x);
-      break;
-    default:
-      throw UnknownBranching("Int::branch");
-    }
-  }
 
   inline Support::Symbol
   NoValue::type(void) {

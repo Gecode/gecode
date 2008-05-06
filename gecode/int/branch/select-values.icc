@@ -1,0 +1,197 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2008
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Branch {
+
+  /**
+   * \brief %Branching descriptions storing position and values
+   *
+   * The maximal number of alternatives is defined by \a alt.
+   */
+  template<class View>
+  class PosValuesDesc : public PosDesc {
+  private:
+    /// Information about position and minimum
+    class PosMin {
+    public:
+      /// Start position of range
+      unsigned int pos;
+      /// Minmum of range
+      int min;
+    };
+    /// Number of ranges
+    unsigned int n;
+    /// Values to assign to
+    PosMin* pm;
+  public:
+    /// Initialize description for branching \a b, position \a p, and view \a x
+    PosValuesDesc(const Branching* b, const Pos& p, View x);
+    /// Return value to branch with for alternative \a a
+    int val(unsigned int a) const;
+    /// Report size occupied
+    virtual size_t size(void) const;
+    /// Deallocate
+    virtual ~PosValuesDesc(void);
+  };
+
+
+  template<class View>
+  forceinline
+  PosValuesDesc<View>::PosValuesDesc(const Branching* b, const Pos& p, View x) 
+    : PosDesc(b,x.size(),p), n(0) {
+    for (ViewRanges<View> r(x); r(); ++r)
+      n++;
+    pm = static_cast<PosMin*>(Memory::malloc((n+1)*sizeof(PosMin)));
+    unsigned int w=0;
+    int i=0;
+    for (ViewRanges<View> r(x); r(); ++r) {
+      pm[i].min = r.min();
+      pm[i].pos = w;
+      w += r.width(); i++;
+    }
+    pm[i].pos = w;
+  }
+  
+  template<class View>
+  forceinline int
+  PosValuesDesc<View>::val(unsigned int a) const {
+    PosMin* l = &pm[0];
+    PosMin* r = &pm[n-1];
+    while (true) {
+      PosMin* m = l + (r-l)/2;
+      if (a < m->pos) {
+        r=m-1;
+      } else if (a >= (m+1)->pos) {
+        l=m+1;
+      } else {
+        return m->min + static_cast<int>(a - m->pos);
+      }
+    }
+    GECODE_NEVER;
+    return 0;
+  }
+  
+  template<class View>
+  size_t
+  PosValuesDesc<View>::size(void) const {
+    return sizeof(PosValuesDesc<View>)+(n+1)*sizeof(PosMin);
+  }
+  
+  template<class View>
+  PosValuesDesc<View>::~PosValuesDesc(void) {
+    Memory::free(pm);
+  }
+  
+
+  template <class ViewSel>
+  forceinline
+  ViewValuesBranching<ViewSel>::
+  ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x)
+    : ViewBranching<ViewSel>(home,x) {}
+
+
+  template <class ViewSel>
+  forceinline
+  ViewValuesBranching<ViewSel>::
+  ViewValuesBranching(Space* home, bool share, ViewValuesBranching& b)
+    : ViewBranching<ViewSel>(home,share,b) {}
+
+  template <class ViewSel>
+  Actor*
+  ViewValuesBranching<ViewSel>::copy(Space* home, bool share) {
+    return new (home)
+      ViewValuesBranching<ViewSel>(home,share,*this);
+  }
+
+  template <class ViewSel>
+  const BranchingDesc*
+  ViewValuesBranching<ViewSel>::description(const Space* home) const {
+    Pos p = ViewBranching<ViewSel>::pos(home);
+    return new PosValuesDesc<typename ViewSel::View>(this,p,view(p));
+  }
+
+  template <class ViewSel>
+  ExecStatus
+  ViewValuesBranching<ViewSel>
+  ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
+    const PosValuesDesc<typename ViewSel::View>* pvd 
+      = static_cast<const PosValuesDesc<typename ViewSel::View>*>(d);
+    return me_failed(view(pvd->pos(),true).eq(home,pvd->val(a)))
+      ? ES_FAILED : ES_OK;
+  }
+
+  template <class ViewSel>
+  Support::Symbol
+  ViewValuesBranching<ViewSel>::ati(void) {
+    return Reflection::mangle<ViewSel>("Gecode::Int::ViewValuesBranching");
+  }
+
+  template <class ViewSel>
+  void
+  ViewValuesBranching<ViewSel>::post(Space* home, Reflection::VarMap& vars,
+                                     const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
+    ViewArray<typename ViewSel::View> x(home, vars, spec[0]);
+    (void) new (home) ViewValuesBranching<ViewSel>(home, x);
+  }
+
+  template <class ViewSel>
+  Reflection::ActorSpec
+  ViewValuesBranching<ViewSel>
+  ::spec(const Space* home, Reflection::VarMap& m) const {
+    Reflection::ActorSpec s(ati());
+    return s << x.spec(home, m);
+  }
+
+  template <class ViewSel>
+  Reflection::BranchingSpec
+  ViewValuesBranching<ViewSel>
+  ::branchingSpec(const Space* home, 
+                  Reflection::VarMap& m, const BranchingDesc* d) const {
+    const PosValuesDesc<typename ViewSel::View>* pvd 
+      = static_cast<const PosValuesDesc<typename ViewSel::View>*>(d);
+    Reflection::BranchingSpec bs(1);
+    bs[0] = view(pvd->pos()).spec(home, m);
+    //    bs[1] = Reflection::Arg::newString(ValSel::type());
+    //    bs[2] = Reflection::Arg::newInt(pvd->val());
+    return bs;
+  }
+
+
+}}}
+
+// STATISTICS: int-branch

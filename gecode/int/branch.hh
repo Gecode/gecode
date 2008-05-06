@@ -312,86 +312,6 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual Actor* copy(Space* home, bool share);
   };
 
-  /**
-   * \brief %Branching descriptions storing position and values
-   *
-   * The maximal number of alternatives is defined by \a alt.
-   */
-  template<class View>
-  class PosValuesDesc : public PosDesc {
-  private:
-    /// Information about position and minimum
-    class PosMin {
-    public:
-      /// Start position of range
-      unsigned int pos;
-      /// Minmum of range
-      int min;
-    };
-    /// Number of ranges
-    unsigned int n;
-    /// Values to assign to
-    PosMin* pm;
-  public:
-    /// Initialize description for branching \a b, position \a p, and view \a x
-    PosValuesDesc(const Branching* b, const Pos& p, View x);
-    /// Return value to branch with for alternative \a a
-    int val(unsigned int a) const;
-    /// Report size occupied
-    virtual size_t size(void) const;
-    /// Deallocate
-    virtual ~PosValuesDesc(void);
-  };
-
-  template<class View>
-  inline
-  PosValuesDesc<View>::PosValuesDesc(const Branching* b, const Pos& p, View x) 
-    : PosDesc(b,x.size(),p), n(0) {
-    for (ViewRanges<IntView> r(x); r(); ++r)
-      n++;
-    pm = static_cast<PosMin*>(Memory::malloc((n+1)*sizeof(PosMin)));
-    unsigned int w=0;
-    int i=0;
-    for (ViewRanges<IntView> r(x); r(); ++r) {
-      pm[i].min = r.min();
-      pm[i].pos = w;
-      w += r.width(); i++;
-    }
-    pm[i].pos = w;
-  }
-  
-  template<class View>
-  forceinline int
-  PosValuesDesc<View>::val(unsigned int a) const {
-    PosMin* l = &pm[0];
-    PosMin* r = &pm[n-1];
-    while (true) {
-      PosMin* m = l + (r-l)/2;
-      if (a < m->pos) {
-        r=m-1;
-      } else if (a >= (m+1)->pos) {
-        l=m+1;
-      } else {
-        return m->min + static_cast<int>(a - m->pos);
-      }
-    }
-    GECODE_NEVER;
-    return 0;
-  }
-  
-  template<class View>
-  size_t
-  PosValuesDesc<View>::size(void) const {
-    return sizeof(PosValuesDesc<View>)+(n+1)*sizeof(PosMin);
-  }
-  
-  template<class View>
-  PosValuesDesc<View>::~PosValuesDesc(void) {
-    Memory::free(pm);
-  }
-  
-
-
 
   /// Class for assigning minimum value
   template<class V>
@@ -827,6 +747,7 @@ namespace Gecode { namespace Int { namespace Branch {
 }}}
 
 #include "gecode/int/branch/select-val.icc"
+#include "gecode/int/branch/select-values.icc"
 #include "gecode/int/branch/select-view.icc"
 #include "gecode/int/branch/create-branch.icc"
 

@@ -274,7 +274,7 @@ INTHDR0 = \
 	arithmetic/sqr.icc arithmetic/sqrt.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
 	branch/create-branch.icc branch/select-val.icc \
-	branch/select-view.icc \
+	branch/select-values.icc branch/select-view.icc \
 	count/view.icc count/int.icc count/rel.icc \
 	cumulatives/val.icc \
 	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \

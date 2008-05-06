@@ -37,6 +37,41 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
+  template<template <class,class> class ViewValBranching, class SelView>
+  void
+  create(Space* home, ViewArray<IntView>& x, IntValBranch vals) {
+    switch (vals) {
+    case INT_VAL_MIN:
+      (void) new (home) 
+        ViewValBranching<SelView,ValMin<IntView> >(home,x);
+      break;
+    case INT_VAL_MED:
+      (void) new (home) 
+        ViewValBranching<SelView,ValMed<IntView> >(home,x);
+      break;
+    case INT_VAL_MAX:
+      (void) new (home) 
+        ViewValBranching<SelView,ValMax<IntView> >(home,x);
+      break;
+    case INT_VAL_SPLIT_MIN:
+      (void) new (home)
+        ViewValBranching<SelView,ValSplitMin<IntView> >(home,x);
+      break;
+    case INT_VAL_SPLIT_MAX:
+      (void) new (home)
+        ViewValBranching<SelView,ValSplitMax<IntView> >(home,x);
+      break;
+    case INT_VALUES_MIN:
+      (void) new (home) ViewValuesBranching<SelView>(home,x);
+      break;
+    case INT_VALUES_MAX:
+      (void) new (home) ViewValuesBranching<SelView>(home,x);
+      break;
+    default:
+      throw UnknownBranching("Int::branch");
+    }
+  }
+
   template <template <class,class> class ViewValBranching>
   void
   createBranch(Space* home, const IntVarArgs& x,
@@ -45,63 +80,63 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewArray<IntView> xv(home,x);
     switch (vars) {
     case INT_VAR_NONE:
-      Branch::create<ViewValBranching,Branch::ByNone<IntView> >
+      create<ViewValBranching,ByNone<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_MIN_MIN:
-      Branch::create<ViewValBranching,Branch::ByMinMin<IntView> >
+      create<ViewValBranching,ByMinMin<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_MIN_MAX:
-      Branch::create<ViewValBranching,Branch::ByMinMax<IntView> >
+      create<ViewValBranching,ByMinMax<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_MAX_MIN:
-      Branch::create<ViewValBranching,Branch::ByMaxMin<IntView> >
+      create<ViewValBranching,ByMaxMin<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_MAX_MAX:
-      Branch::create<ViewValBranching,Branch::ByMaxMax<IntView> >
+      create<ViewValBranching,ByMaxMax<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_SIZE_MIN:
-      Branch::create<ViewValBranching,Branch::BySizeMin<IntView> >
+      create<ViewValBranching,BySizeMin<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_SIZE_MAX:
-      Branch::create<ViewValBranching,Branch::BySizeMax<IntView> >
+      create<ViewValBranching,BySizeMax<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_DEGREE_MIN:
-      Branch::create<ViewValBranching,Branch::ByDegreeMin<IntView> >
+      create<ViewValBranching,ByDegreeMin<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_DEGREE_MAX:
-      Branch::create<ViewValBranching,Branch::ByDegreeMax<IntView> >
+      create<ViewValBranching,ByDegreeMax<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
-      Branch::create<ViewValBranching,Branch::BySizeDegreeMin<IntView> >
+      create<ViewValBranching,BySizeDegreeMin<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
-      Branch::create<ViewValBranching,Branch::BySizeDegreeMax<IntView> >
+      create<ViewValBranching,BySizeDegreeMax<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_REGRET_MIN_MIN:
-      Branch::create<ViewValBranching,Branch::ByRegretMinMin<IntView> >
+      create<ViewValBranching,ByRegretMinMin<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_REGRET_MIN_MAX:
-      Branch::create<ViewValBranching,Branch::ByRegretMinMax<IntView> >
+      create<ViewValBranching,ByRegretMinMax<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_REGRET_MAX_MIN:
-      Branch::create<ViewValBranching,Branch::ByRegretMaxMin<IntView> >
+      create<ViewValBranching,ByRegretMaxMin<IntView> >
         (home,xv,vals); 
       break;
     case INT_VAR_REGRET_MAX_MAX:
-      Branch::create<ViewValBranching,Branch::ByRegretMaxMax<IntView> >
+      create<ViewValBranching,ByRegretMaxMax<IntView> >
         (home,xv,vals); 
       break;
     default:
@@ -132,14 +167,14 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
         (void) new (home) 
-          ViewValBranching<Branch::ByNone<BoolView>,
-          Branch::ValZeroOne<BoolView> >(home,xv);
+          ViewValBranching<ByNone<BoolView>,
+          ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
         (void) new (home) 
-          ViewValBranching<Branch::ByNone<BoolView>,
-          Branch::ValOneZero<BoolView> >(home,xv);
+          ViewValBranching<ByNone<BoolView>,
+          ValOneZero<BoolView> >(home,xv);
         break;
       default:
         throw UnknownBranching("Int::branch");
@@ -152,14 +187,14 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
         (void) new (home) 
-          ViewValBranching<Branch::ByDegreeMinNoTies<BoolView>,
-            Branch::ValZeroOne<BoolView> >(home,xv);
+          ViewValBranching<ByDegreeMinNoTies<BoolView>,
+            ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
         (void) new (home) 
-          ViewValBranching<Branch::ByDegreeMinNoTies<BoolView>,
-            Branch::ValOneZero<BoolView> >(home,xv);
+          ViewValBranching<ByDegreeMinNoTies<BoolView>,
+            ValOneZero<BoolView> >(home,xv);
         break;
       default:
         throw UnknownBranching("Int::branch");
@@ -172,14 +207,14 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
         (void) new (home) 
-          ViewValBranching<Branch::ByDegreeMaxNoTies<BoolView>,
-            Branch::ValZeroOne<BoolView> >(home,xv);
+          ViewValBranching<ByDegreeMaxNoTies<BoolView>,
+            ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
         (void) new (home) 
-          ViewValBranching<Branch::ByDegreeMaxNoTies<BoolView>,
-            Branch::ValOneZero<BoolView> >(home,xv);
+          ViewValBranching<ByDegreeMaxNoTies<BoolView>,
+            ValOneZero<BoolView> >(home,xv);
         break;
       default:
         throw UnknownBranching("Int::branch");
