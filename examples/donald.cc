@@ -70,7 +70,7 @@ public:
 
     distinct(this, le, opt.icl());
 
-    branch(this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(this, le, INT_VAR_SIZE_MIN, INT_VALUES_MAX);
   }
   /// Constructor for cloning \a s
   Donald(bool share, Donald& s) : Example(share,s) {

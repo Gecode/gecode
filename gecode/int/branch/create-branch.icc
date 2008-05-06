@@ -62,10 +62,10 @@ namespace Gecode { namespace Int { namespace Branch {
         ViewValBranching<SelView,ValSplitMax<IntView> >(home,x);
       break;
     case INT_VALUES_MIN:
-      (void) new (home) ViewValuesBranching<SelView>(home,x);
+      (void) new (home) ViewValuesBranching<SelView,IntView>(home,x);
       break;
     case INT_VALUES_MAX:
-      (void) new (home) ViewValuesBranching<SelView>(home,x);
+      (void) new (home) ViewValuesBranching<SelView,MinusView>(home,x);
       break;
     default:
       throw UnknownBranching("Int::branch");

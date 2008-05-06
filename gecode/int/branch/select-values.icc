@@ -117,69 +117,72 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   forceinline
-  ViewValuesBranching<ViewSel>::
+  ViewValuesBranching<ViewSel,View>::
   ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x)
     : ViewBranching<ViewSel>(home,x) {}
 
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   forceinline
-  ViewValuesBranching<ViewSel>::
+  ViewValuesBranching<ViewSel,View>::
   ViewValuesBranching(Space* home, bool share, ViewValuesBranching& b)
     : ViewBranching<ViewSel>(home,share,b) {}
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   Actor*
-  ViewValuesBranching<ViewSel>::copy(Space* home, bool share) {
+  ViewValuesBranching<ViewSel,View>::copy(Space* home, bool share) {
     return new (home)
-      ViewValuesBranching<ViewSel>(home,share,*this);
+      ViewValuesBranching<ViewSel,View>(home,share,*this);
   }
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   const BranchingDesc*
-  ViewValuesBranching<ViewSel>::description(const Space* home) const {
+  ViewValuesBranching<ViewSel,View>::description(const Space* home) const {
     Pos p = ViewBranching<ViewSel>::pos(home);
-    return new PosValuesDesc<typename ViewSel::View>(this,p,view(p));
+    View v(view(p).var());
+    return new PosValuesDesc<View>(this,p,v);
   }
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   ExecStatus
-  ViewValuesBranching<ViewSel>
+  ViewValuesBranching<ViewSel,View>
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
-    const PosValuesDesc<typename ViewSel::View>* pvd 
-      = static_cast<const PosValuesDesc<typename ViewSel::View>*>(d);
-    return me_failed(view(pvd->pos(),true).eq(home,pvd->val(a)))
-      ? ES_FAILED : ES_OK;
+    const PosValuesDesc<View>* pvd 
+      = static_cast<const PosValuesDesc<View>*>(d);
+    View v(view(pvd->pos(),true).var());
+    return me_failed(v.eq(home,pvd->val(a))) ? ES_FAILED : ES_OK;
   }
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   Support::Symbol
-  ViewValuesBranching<ViewSel>::ati(void) {
-    return Reflection::mangle<ViewSel>("Gecode::Int::ViewValuesBranching");
+  ViewValuesBranching<ViewSel,View>::ati(void) {
+    return Reflection::mangle<ViewSel,View>
+      ("Gecode::Int::ViewValuesBranching");
   }
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   void
-  ViewValuesBranching<ViewSel>::post(Space* home, Reflection::VarMap& vars,
-                                     const Reflection::ActorSpec& spec) {
+  ViewValuesBranching<ViewSel,View>::post
+  (Space* home, Reflection::VarMap& vars,
+   const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<typename ViewSel::View> x(home, vars, spec[0]);
     (void) new (home) ViewValuesBranching<ViewSel>(home, x);
   }
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   Reflection::ActorSpec
-  ViewValuesBranching<ViewSel>
+  ViewValuesBranching<ViewSel,View>
   ::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
   }
 
-  template <class ViewSel>
+  template <class ViewSel, class View>
   Reflection::BranchingSpec
-  ViewValuesBranching<ViewSel>
+  ViewValuesBranching<ViewSel,View>
   ::branchingSpec(const Space* home, 
                   Reflection::VarMap& m, const BranchingDesc* d) const {
     const PosValuesDesc<typename ViewSel::View>* pvd 

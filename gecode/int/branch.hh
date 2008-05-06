@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Branch {
    *    is worse, return VSS_WORSE. If it is equally good, return VSS_TIE.
    *
    */
-  template <class ViewSel>
+  template <class ViewSel, class View>
   class ViewValuesBranching : public ViewBranching<ViewSel> {
   protected:
     using ViewBranching<ViewSel>::x;
