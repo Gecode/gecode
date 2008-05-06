@@ -56,14 +56,16 @@ namespace Gecode {
   };
 
   /// Position information
-  class PosInfo {
+  class Pos {
   public:
     /// Position of view
     const int pos;
     /// Start position in view array
     const int start;
     /// Create position information
-    PosInfo(int p, int s=0);
+    Pos(int p, int s=0);
+    /// Return sum of start and position
+    operator int(void);
   };
 
   /**
@@ -101,13 +103,13 @@ namespace Gecode {
     mutable int start;  
   protected:
     /// Return position information
-    PosInfo posinfo(const Space* home) const;
+    Pos pos(const Space* home) const;
     /**
      * \brief Return view according to position information \a p
      *
      * If used during a commit, \a c must be true (eliminates views).
      */
-    typename ViewSel::View view(const PosInfo& p, bool c=false) const;
+    typename ViewSel::View view(const Pos& p, bool c=false) const;
     /// Constructor for cloning \a b
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
@@ -147,12 +149,12 @@ namespace Gecode {
   class PosDesc : public BranchingDesc {
   private:
     /// Position information
-    const PosInfo _pos;
+    const Pos _pos;
   public:
     /// Initialize description for branching \a b and position \a p
-    PosDesc(const Branching* b, const PosInfo& p);
+    PosDesc(const Branching* b, const Pos& p);
     /// Return position in array
-    PosInfo pos(void) const;
+    Pos pos(void) const;
     /// Report size occupied
     virtual size_t size(void) const;
   };
@@ -169,7 +171,7 @@ namespace Gecode {
     const Val _val;
   public:
     /// Initialize description for branching \a b, position \a p, and value \a n
-    PosValDesc(const Branching* b, const PosInfo& p, const Val& n);
+    PosValDesc(const Branching* b, const Pos& p, const Val& n);
     /// Return value to branch with
     Val val(void) const;
     /// Report size occupied
@@ -185,7 +187,11 @@ namespace Gecode {
    *
    */
   forceinline
-  PosInfo::PosInfo(int p, int s) : pos(p), start(s) {}
+  Pos::Pos(int p, int s) : pos(p), start(s) {}
+  forceinline
+  Pos::operator int(void) {
+    return pos+start;
+  }
 
   /*
    * Branching descriptions with position
@@ -193,11 +199,11 @@ namespace Gecode {
    */
   template <unsigned int alt>
   forceinline
-  PosDesc<alt>::PosDesc(const Branching* b, const PosInfo& p)
+  PosDesc<alt>::PosDesc(const Branching* b, const Pos& p)
     : BranchingDesc(b,alt), _pos(p) {}
 
   template <unsigned int alt>
-  forceinline PosInfo
+  forceinline Pos
   PosDesc<alt>::pos(void) const {
     return _pos;
   }
@@ -215,7 +221,7 @@ namespace Gecode {
    */
   template <class Val, unsigned int alt>
   forceinline
-  PosValDesc<Val,alt>::PosValDesc(const Branching* b, const PosInfo& p,
+  PosValDesc<Val,alt>::PosValDesc(const Branching* b, const Pos& p,
                                   const Val& n)
     : PosDesc<alt>(b,p), _val(n) {}
 
@@ -272,8 +278,8 @@ namespace Gecode {
   }
 
   template <class ViewSel, class ValSel>
-  forceinline PosInfo
-  ViewValBranching<ViewSel,ValSel>::posinfo(const Space* home) const {
+  forceinline Pos
+  ViewValBranching<ViewSel,ValSel>::pos(const Space* home) const {
     assert(!x[start].assigned());
     ViewSel vs; // For view selection
     int i = start;
@@ -288,13 +294,13 @@ namespace Gecode {
           default:                      GECODE_NEVER;
           }
   create:
-    PosInfo p(b-start,start);
+    Pos p(b-start,start);
     return p;
   }
 
   template <class ViewSel, class ValSel>
   forceinline typename ViewSel::View
-  ViewValBranching<ViewSel,ValSel>::view(const PosInfo& p, bool c) const {
+  ViewValBranching<ViewSel,ValSel>::view(const Pos& p, bool c) const {
     if (c) {
       // Eliminate views from x[0] ... x[d->start()-1]
       x.drop_fst(p.start); start = 0;
@@ -308,7 +314,7 @@ namespace Gecode {
   const BranchingDesc*
   ViewValBranching<ViewSel,ValSel>::description(const Space* home) const {
     assert(!x[start].assigned());
-    PosInfo p = posinfo(home);
+    Pos p = pos(home);
     ValSel vl; // For value selection
     return new PosValDesc<typename ValSel::Val,ValSel::alternatives>
       (this,p,vl.val(home,view(p)));

@@ -137,10 +137,10 @@ public:
     const PosValDesc<int,2>* desc = static_cast<const PosValDesc<int,2>*>(d);
     pos = val = -1;
     if (a)
-      return me_failed(x[desc->pos().pos].nq(home, desc->val())) 
+      return me_failed(x[desc->pos()].nq(home, desc->val())) 
         ? ES_FAILED : ES_OK;
     else 
-      return me_failed(x[desc->pos().pos].eq(home, desc->val())) 
+      return me_failed(x[desc->pos()].eq(home, desc->val())) 
         ? ES_FAILED : ES_OK;
   }
   /// Copy branching
