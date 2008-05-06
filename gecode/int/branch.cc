@@ -42,13 +42,13 @@ namespace Gecode {
   void
   branch(Space* home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals) {
-    Int::Branch::post<ViewValBranching>(home,x,vars,vals);
+    Int::Branch::post(home,x,vars,vals);
   }
 
   void
   branch(Space* home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals) {
-    Int::Branch::post<ViewValBranching>(home,x,vars,vals);
+    Int::Branch::post(home,x,vars,vals);
   }
 
 
