@@ -190,7 +190,7 @@ VARIMPHDR = \
 VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cc
 
 KERNELSRC0 = \
-	core reflection var-map var-type memory-manager
+	core reflection var-map var-type memory-manager branching
 
 KERNELHDR0 = \
 	array shared-array branching core exception \

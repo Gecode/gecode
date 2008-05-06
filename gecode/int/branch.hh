@@ -263,6 +263,84 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
 
+  /**
+   * \brief Branching by view and values selection
+   *
+   * Implements view-based branching for an array of views (of type
+   * \a ViewSel::View) and the full set of values. The behaviour is 
+   * defined by the class \a ViewSel (which view is selected for branching).
+   *
+   * The class \a ViewSel must implement two member functions:
+   *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
+   *    Initializes view selection with the \a View \a x. If \a x
+   *    is known to be a best one, VSS_BEST should be returned.
+   *    Otherwise, VSS_BETTER should be returned.
+   *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)
+   *    If \a x is better than the previously selected view,
+   *    return VSS_BETTER. If it is a best view, return VSS_BEST. If it 
+   *    is worse, return VSS_WORSE. If it is equally good, return VSS_TIE.
+   *
+   */
+  template <class ViewSel>
+  class ViewValuesBranching : public ViewBranching<ViewSel> {
+  protected:
+    using ViewBranching<ViewSel>::x;
+    /// Constructor for cloning \a b
+    ViewValuesBranching(Space* home, bool share, ViewValBranching& b);
+  public:
+    /// Constructor for creation
+    ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x);
+    /// Return branching description (of type PosValuesDesc)
+    virtual const BranchingDesc* description(const Space* home) const;
+    /// Perform commit for branching description \a d and alternative \a a
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+                              unsigned int a);
+    /// Return specification for this branching given a variable map \a m
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Return specification for a branch
+    virtual Reflection::BranchingSpec
+    branchingSpec(const Space* home, 
+                  Reflection::VarMap& m,
+                  const BranchingDesc* d) const;
+    /// Actor type identifier of this branching
+    static Support::Symbol ati(void);
+    /// Post branching according to specification
+    static void post(Space* home, Reflection::VarMap& m,
+                     const Reflection::ActorSpec& spec);
+    /// Perform cloning
+    virtual Actor* copy(Space* home, bool share);
+  };
+
+  /**
+   * \brief %Branching descriptions storing position and values
+   *
+   * The maximal number of alternatives is defined by \a alt.
+   */
+  class PosValuesDesc : public PosDesc {
+  private:
+    /// Information about position and minimum
+    class PosMin {
+    public:
+      /// Start position of range
+      unsigned int pos;
+      /// Minmum of range
+      int min;
+    };
+    /// Number of ranges
+    unsigned int n;
+    /// Values to assign to
+    PosMin* pm;
+  public:
+    /// Initialize description for branching \a b, position \a p, and value \a n
+    PosValuesDesc(const Branching* b, const Pos& p, IntView x);
+    /// Return value to branch with
+    int val(unsigned int a) const;
+    /// Report size occupied
+    virtual size_t size(void) const;
+  };
+
+  
   /// Class for assigning minimum value
   template<class V>
   class AssignValMin : public ValMin<V> {
