@@ -42,35 +42,31 @@ namespace Gecode {
   void
   branch(Space* home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals) {
-    using namespace Int;
-    Branch::createBranch<ViewValBranching>(home,x,vars,vals);
+    Int::Branch::post<ViewValBranching>(home,x,vars,vals);
   }
 
   void
   branch(Space* home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals) {
-    using namespace Int;
-    Branch::createBranch<ViewValBranching>(home,x,vars,vals);
+    Int::Branch::post<ViewValBranching>(home,x,vars,vals);
   }
 
 
   void
   assign(Space* home, const IntVarArgs& x, IntAssign vals) {
     using namespace Int;
+    if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (vals) {
     case INT_ASSIGN_MIN:
-      if (home->failed()) return;
       (void) new (home) ViewValBranching
         <Branch::ByNone<IntView>,Branch::AssignValMin<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MED:
-      if (home->failed()) return;
       (void) new (home) ViewValBranching
         <Branch::ByNone<IntView>,Branch::AssignValMed<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
-      if (home->failed()) return;
       (void) new (home) ViewValBranching
         <Branch::ByNone<IntView>,Branch::AssignValMax<IntView> >(home,xv);
       break;
@@ -82,17 +78,16 @@ namespace Gecode {
   void
   assign(Space* home, const BoolVarArgs& x, IntAssign vals) {
     using namespace Int;
+    if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
     switch (vals) {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED:
-      if (home->failed()) return;
       (void) new (home) ViewValBranching
         <Branch::ByNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
         (home,xv);
       break;
     case INT_ASSIGN_MAX:
-      if (home->failed()) return;
       (void) new (home) ViewValBranching
         <Branch::ByNone<BoolView>,Branch::AssignValOneZero<BoolView> >
         (home,xv);

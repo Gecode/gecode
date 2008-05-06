@@ -37,29 +37,25 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  template<template <class,class> class ViewValBranching, class SelView>
+  template <template <class,class> class ValBranch, 
+            class SelView>
   void
-  create(Space* home, ViewArray<IntView>& x, IntValBranch vals) {
+  post(Space* home, ViewArray<IntView>& x, IntValBranch vals) {
     switch (vals) {
     case INT_VAL_MIN:
-      (void) new (home) 
-        ViewValBranching<SelView,ValMin<IntView> >(home,x);
+      (void) new (home) ValBranch<SelView,ValMin<IntView> >(home,x);
       break;
     case INT_VAL_MED:
-      (void) new (home) 
-        ViewValBranching<SelView,ValMed<IntView> >(home,x);
+      (void) new (home) ValBranch<SelView,ValMed<IntView> >(home,x);
       break;
     case INT_VAL_MAX:
-      (void) new (home) 
-        ViewValBranching<SelView,ValMax<IntView> >(home,x);
+      (void) new (home) ValBranch<SelView,ValMax<IntView> >(home,x);
       break;
     case INT_VAL_SPLIT_MIN:
-      (void) new (home)
-        ViewValBranching<SelView,ValSplitMin<IntView> >(home,x);
+      (void) new (home) ValBranch<SelView,ValSplitMin<IntView> >(home,x);
       break;
     case INT_VAL_SPLIT_MAX:
-      (void) new (home)
-        ViewValBranching<SelView,ValSplitMax<IntView> >(home,x);
+      (void) new (home) ValBranch<SelView,ValSplitMax<IntView> >(home,x);
       break;
     case INT_VALUES_MIN:
       (void) new (home) ViewValuesBranching<SelView,IntView>(home,x);
@@ -72,82 +68,67 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
-  template <template <class,class> class ViewValBranching>
+  template <template <class,class> class ValBranch>
   void
-  createBranch(Space* home, const IntVarArgs& x,
-               IntVarBranch vars, IntValBranch vals) {
+  post(Space* home, const IntVarArgs& x,
+       IntVarBranch vars, IntValBranch vals) {
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (vars) {
     case INT_VAR_NONE:
-      create<ViewValBranching,ByNone<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByNone<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_MIN_MIN:
-      create<ViewValBranching,ByMinMin<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByMinMin<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_MIN_MAX:
-      create<ViewValBranching,ByMinMax<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByMinMax<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_MAX_MIN:
-      create<ViewValBranching,ByMaxMin<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByMaxMin<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_MAX_MAX:
-      create<ViewValBranching,ByMaxMax<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByMaxMax<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_SIZE_MIN:
-      create<ViewValBranching,BySizeMin<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,BySizeMin<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_SIZE_MAX:
-      create<ViewValBranching,BySizeMax<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,BySizeMax<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_DEGREE_MIN:
-      create<ViewValBranching,ByDegreeMin<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByDegreeMin<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_DEGREE_MAX:
-      create<ViewValBranching,ByDegreeMax<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByDegreeMax<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
-      create<ViewValBranching,BySizeDegreeMin<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,BySizeDegreeMin<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
-      create<ViewValBranching,BySizeDegreeMax<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,BySizeDegreeMax<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_REGRET_MIN_MIN:
-      create<ViewValBranching,ByRegretMinMin<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByRegretMinMin<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_REGRET_MIN_MAX:
-      create<ViewValBranching,ByRegretMinMax<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByRegretMinMax<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_REGRET_MAX_MIN:
-      create<ViewValBranching,ByRegretMaxMin<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByRegretMaxMin<IntView> >(home,xv,vals); 
       break;
     case INT_VAR_REGRET_MAX_MAX:
-      create<ViewValBranching,ByRegretMaxMax<IntView> >
-        (home,xv,vals); 
+      post<ValBranch,ByRegretMaxMax<IntView> >(home,xv,vals); 
       break;
     default:
       throw UnknownBranching("Int::branch");
     }
   }
   
-  template <template <class,class> class ViewValBranching>
+  template <template <class,class> class ValBranch>
   void
-  createBranch(Space* home, const BoolVarArgs& x, 
-               IntVarBranch vars, IntValBranch vals) {
+  post(Space* home, const BoolVarArgs& x, 
+       IntVarBranch vars, IntValBranch vals) {
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
     switch (vars) {
@@ -166,14 +147,16 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_MIN:
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
+      case INT_VALUES_MIN:
         (void) new (home) 
-          ViewValBranching<ByNone<BoolView>,
+          ValBranch<ByNone<BoolView>,
           ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
+      case INT_VALUES_MAX:
         (void) new (home) 
-          ViewValBranching<ByNone<BoolView>,
+          ValBranch<ByNone<BoolView>,
           ValOneZero<BoolView> >(home,xv);
         break;
       default:
@@ -186,14 +169,16 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_MIN:
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
+      case INT_VALUES_MIN:
         (void) new (home) 
-          ViewValBranching<ByDegreeMinNoTies<BoolView>,
+          ValBranch<ByDegreeMinNoTies<BoolView>,
             ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
+      case INT_VALUES_MAX:
         (void) new (home) 
-          ViewValBranching<ByDegreeMinNoTies<BoolView>,
+          ValBranch<ByDegreeMinNoTies<BoolView>,
             ValOneZero<BoolView> >(home,xv);
         break;
       default:
@@ -206,14 +191,16 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_MIN:
       case INT_VAL_MED:
       case INT_VAL_SPLIT_MIN:
+      case INT_VALUES_MIN:
         (void) new (home) 
-          ViewValBranching<ByDegreeMaxNoTies<BoolView>,
+          ValBranch<ByDegreeMaxNoTies<BoolView>,
             ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
+      case INT_VALUES_MAX:
         (void) new (home) 
-          ViewValBranching<ByDegreeMaxNoTies<BoolView>,
+          ValBranch<ByDegreeMaxNoTies<BoolView>,
             ValOneZero<BoolView> >(home,xv);
         break;
       default:
