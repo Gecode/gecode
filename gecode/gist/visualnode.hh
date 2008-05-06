@@ -144,6 +144,8 @@ namespace Gecode { namespace Gist {
     Shape* getShape(void);
     /// Set the shape of this node
     void setShape(Shape* s);
+    /// Compute the shape according to the shapes of the children
+    void computeShape(void);
     /// Set the bounding box
     void setBoundingBox(BoundingBox b);
     /// Return the bounding box
@@ -159,6 +161,7 @@ namespace Gecode { namespace Gist {
     /// Find a node in this subtree at coordinates \a x, \a y
     VisualNode* findNode(int x, int y);    
     
+    /// Return string that is used as a tool tip
     std::string toolTip(void);
   };
 
