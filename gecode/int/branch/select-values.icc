@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Branch {
   const BranchingDesc*
   ViewValuesBranching<ViewSel,View>::description(const Space* home) const {
     Pos p = ViewBranching<ViewSel>::pos(home);
-    View v(view(p).var());
+    View v(ViewBranching<ViewSel>::view(p).var());
     return new PosValuesDesc<View>(this,p,v);
   }
 
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
     const PosValuesDesc<View>* pvd 
       = static_cast<const PosValuesDesc<View>*>(d);
-    View v(view(pvd->pos(),true).var());
+    View v(ViewBranching<ViewSel>::view(pvd->pos(),true).var());
     return me_failed(v.eq(home,pvd->val(a))) ? ES_FAILED : ES_OK;
   }
 
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Branch {
    const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<typename ViewSel::View> x(home, vars, spec[0]);
-    (void) new (home) ViewValuesBranching<ViewSel>(home, x);
+    (void) new (home) ViewValuesBranching<ViewSel,View>(home, x);
   }
 
   template <class ViewSel, class View>
