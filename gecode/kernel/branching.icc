@@ -170,7 +170,7 @@ namespace Gecode {
 
 
   /// %Branching descriptions storing position
-  class PosDesc : public BranchingDesc {
+  class GECODE_VTABLE_EXPORT PosDesc : public BranchingDesc {
   private:
     /// Position information
     const Pos _pos;
@@ -185,7 +185,7 @@ namespace Gecode {
 
   /// %Branching descriptions storing position and value
   template <class Val>
-  class PosValDesc : public PosDesc {
+  class GECODE_VTABLE_EXPORT PosValDesc : public PosDesc {
   private:
     /// Value to assign to
     const Val _val;

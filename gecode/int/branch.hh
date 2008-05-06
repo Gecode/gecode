@@ -286,7 +286,7 @@ namespace Gecode { namespace Int { namespace Branch {
   protected:
     using ViewBranching<ViewSel>::x;
     /// Constructor for cloning \a b
-    ViewValuesBranching(Space* home, bool share, ViewValBranching& b);
+    ViewValuesBranching(Space* home, bool share, ViewValuesBranching& b);
   public:
     /// Constructor for creation
     ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x);
