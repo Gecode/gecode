@@ -103,8 +103,10 @@ namespace Gecode { namespace Gist {
     scale0 = std::min(std::max(scale0, minScale), maxScale);
     scale = (static_cast<double>(scale0)) / 100.0;
     bb = root->getBoundingBox();
-    int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-    int h = static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*scale);
+    int w = 
+      static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
+    int h = 
+      static_cast<int>(2*Layout::extent+root->depth()*Layout::dist_y*scale);
     if (heatView)
       w = std::max(w, 300);
     resize(w,h);
@@ -122,7 +124,7 @@ namespace Gecode { namespace Gist {
 
       int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
       int h = 
-        static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*scale);
+        static_cast<int>(2*Layout::extent+root->depth()*Layout::dist_y*scale);
       xtrans = -bb.left+(Layout::extent / 2);
       resize(w,h);
     }
@@ -168,8 +170,8 @@ namespace Gecode { namespace Gist {
     BoundingBox bb = t->root->getBoundingBox();
 
     int w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
-    int h = 
-      static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*t->scale);
+    int h = static_cast<int>(2*Layout::extent+
+                             t->root->depth()*Layout::dist_y*t->scale);
     t->xtrans = -bb.left+(Layout::extent / 2);
 
     if (t->autoZoom) {
@@ -179,8 +181,8 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->width()) / (bb.right - bb.left + 
                                              Layout::extent);
         double newYScale =
-          static_cast<double>(p->height()) / (bb.depth * Layout::dist_y + 
-                                              2*Layout::extent);
+          static_cast<double>(p->height()) /
+          (t->root->depth() * Layout::dist_y + 2*Layout::extent);
 
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
         if (scale0<1)
@@ -190,8 +192,8 @@ namespace Gecode { namespace Gist {
         t->scale = (static_cast<double>(scale0)) / 100.0;
 
         w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
-        h = 
-          static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*t->scale);
+        h = static_cast<int>(2*Layout::extent+
+                             t->root->depth()*Layout::dist_y*t->scale);
 
         emit scaleChanged(scale0);
       }
@@ -325,7 +327,7 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->width()) / (bb.right - bb.left + 
                                              Layout::extent);
         double newYScale =
-          static_cast<double>(p->height()) / (bb.depth * Layout::dist_y +
+          static_cast<double>(p->height()) / (root->depth() * Layout::dist_y +
                                               2*Layout::extent);
         if (!smoothScrollAndZoom) {
           scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
@@ -636,8 +638,9 @@ namespace Gecode { namespace Gist {
         static_cast<double>(pageRect.width()) / (bb.right - bb.left + 
                                                  Layout::extent);
       double newYScale =
-        static_cast<double>(pageRect.height()) / (bb.depth * Layout::dist_y + 
-                                                  2*Layout::extent);
+        static_cast<double>(pageRect.height()) /
+                            (root->depth() * Layout::dist_y + 
+                             2*Layout::extent);
       double printScale = std::min(newXScale, newYScale)*100;
       if (printScale<1.0)
         printScale = 1.0;

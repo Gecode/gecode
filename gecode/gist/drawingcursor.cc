@@ -79,7 +79,7 @@ namespace Gecode { namespace Gist {
     return (x + b.left > clippingRect.x() + clippingRect.width() ||
             x + b.right < clippingRect.x() || 
             y > clippingRect.y() + clippingRect.height() ||
-            y + (b.depth+1) * Layout::dist_y < clippingRect.y());
+            y + (node()->depth()+1) * Layout::dist_y < clippingRect.y());
   }
   
   void

@@ -37,8 +37,8 @@
 namespace Gecode { namespace Gist {
 
   forceinline
-  BoundingBox::BoundingBox(int l, int r, int d)
-   : left(l), right(r), depth(d) {}
+  BoundingBox::BoundingBox(int l, int r)
+   : left(l), right(r) {}
 
   forceinline bool
   VisualNode::isHidden(void) { return hidden; }
@@ -87,6 +87,9 @@ namespace Gecode { namespace Gist {
 
   forceinline BoundingBox
   VisualNode::getBoundingBox(void) { return box; }
+
+  forceinline int
+  VisualNode::depth(void) { return shape->depth(); }
   
   forceinline VisualNode*
   VisualNode::getParent() {
