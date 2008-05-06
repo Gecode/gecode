@@ -37,83 +37,83 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  template<class View>
+  template<class V>
   forceinline int
-  ValMin<View>::val(const Space*, View x) const {
+  ValMin<V>::val(const Space*, V x) const {
     return x.min();
   }
-  template<class View>
+  template<class V>
   forceinline ModEvent
-  ValMin<View>::tell(Space* home, unsigned int a, View x, int n) {
+  ValMin<V>::tell(Space* home, unsigned int a, V x, int n) {
     return (a == 0) ? x.eq(home,n) : x.gr(home,n);
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ValMin<View>::type(void) {
+  ValMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValMin");
   }
 
-  template<class View>
+  template<class V>
   forceinline int
-  ValMed<View>::val(const Space*, View x) const {
+  ValMed<V>::val(const Space*, V x) const {
     return x.med();
   }
-  template<class View>
+  template<class V>
   forceinline ModEvent
-  ValMed<View>::tell(Space* home, unsigned int a, View x, int n) {
+  ValMed<V>::tell(Space* home, unsigned int a, V x, int n) {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ValMed<View>::type(void) {
+  ValMed<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValMed");
   }
 
-  template<class View>
+  template<class V>
   forceinline int
-  ValMax<View>::val(const Space*, View x) const {
+  ValMax<V>::val(const Space*, V x) const {
     return x.max();
   }
-  template<class View>
+  template<class V>
   forceinline ModEvent
-  ValMax<View>::tell(Space* home, unsigned int a, View x, int n) {
+  ValMax<V>::tell(Space* home, unsigned int a, V x, int n) {
     return (a == 0) ? x.eq(home,n) : x.le(home,n);
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ValMax<View>::type(void) {
+  ValMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValMax");
   }
 
-  template<class View>
+  template<class V>
   forceinline int
-  ValSplitMin<View>::val(const Space*, View x) const {
+  ValSplitMin<V>::val(const Space*, V x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
-  template<class View>
+  template<class V>
   forceinline ModEvent
-  ValSplitMin<View>::tell(Space* home, unsigned int a, View x, int n) {
+  ValSplitMin<V>::tell(Space* home, unsigned int a, V x, int n) {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ValSplitMin<View>::type(void) {
+  ValSplitMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValSplitMin");
   }
 
-  template<class View>
+  template<class V>
   forceinline int
-  ValSplitMax<View>::val(const Space*, View x) const {
+  ValSplitMax<V>::val(const Space*, V x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
-  template<class View>
+  template<class V>
   forceinline ModEvent
-  ValSplitMax<View>::tell(Space* home, unsigned int a, View x, int n) {
+  ValSplitMax<V>::tell(Space* home, unsigned int a, V x, int n) {
     return (a == 0) ? x.gr(home,n) : x.lq(home,n);
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ValSplitMax<View>::type(void) {
+  ValSplitMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValSplitMax");
   }
 
@@ -156,36 +156,36 @@ namespace Gecode { namespace Int { namespace Branch {
     return 0;
   }
 
-  template<class View>
+  template<class V>
   forceinline NoValue
-  ValZeroOne<View>::val(const Space*, View) const {
+  ValZeroOne<V>::val(const Space*, V) const {
     NoValue n; return n;
   }
-  template<class View>
+  template<class V>
   forceinline ModEvent
-  ValZeroOne<View>::tell(Space* home, unsigned int a, View x, NoValue) {
+  ValZeroOne<V>::tell(Space* home, unsigned int a, V x, NoValue) {
     return (a == 0) ? x.zero(home) : x.one(home);
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ValZeroOne<View>::type(void) {
+  ValZeroOne<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValZeroOne");
   }
 
 
-  template<class View>
+  template<class V>
   forceinline NoValue
-  ValOneZero<View>::val(const Space*, View) const {
+  ValOneZero<V>::val(const Space*, V) const {
     NoValue n; return n;
   }
-  template<class View>
+  template<class V>
   forceinline ModEvent
-  ValOneZero<View>::tell(Space* home, unsigned int a, View x, NoValue) {
+  ValOneZero<V>::tell(Space* home, unsigned int a, V x, NoValue) {
     return (a == 0) ? x.one(home) : x.zero(home);
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ValOneZero<View>::type(void) {
+  ValOneZero<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ValOneZero");
   }
 

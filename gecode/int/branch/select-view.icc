@@ -38,33 +38,33 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   // Select first variable
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByNone<View>::init(const Space*, View) {
+  ByNone<V>::init(const Space*, V) {
     return VSS_BEST;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByNone<View>::select(const Space*, View) {
+  ByNone<V>::select(const Space*, V) {
     GECODE_NEVER;
     return VSS_TIE;
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByNone<View>::type(void) {
+  ByNone<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByNone");
   }
 
   // Select variable with smallest min
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMinMin<View>::init(const Space*, View x) {
+  ByMinMin<V>::init(const Space*, V x) {
     min = x.min();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMinMin<View>::select(const Space*, View x) {
+  ByMinMin<V>::select(const Space*, V x) {
     if (x.min() < min) {
       min = x.min(); return VSS_BETTER;
     } else if (x.min() > min) {
@@ -73,22 +73,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByMinMin<View>::type(void) {
+  ByMinMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByMinMin");
   }
 
   // Select variable with largest min
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMinMax<View>::init(const Space*, View x) {
+  ByMinMax<V>::init(const Space*, V x) {
     min = x.min();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMinMax<View>::select(const Space*, View x) {
+  ByMinMax<V>::select(const Space*, V x) {
     if (x.min() > min) {
       min = x.min(); return VSS_BETTER;
     } else if (x.min() < min) {
@@ -97,22 +97,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByMinMax<View>::type(void) {
+  ByMinMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByMinMax");
   }
 
   // Select variable with smallest max
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMaxMin<View>::init(const Space*, View x) {
+  ByMaxMin<V>::init(const Space*, V x) {
     max = x.max();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMaxMin<View>::select(const Space*, View x) {
+  ByMaxMin<V>::select(const Space*, V x) {
     if (x.max() < max) {
       max = x.max(); return VSS_BETTER;
     } else if (x.max() > max) {
@@ -121,22 +121,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByMaxMin<View>::type(void) {
+  ByMaxMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByMaxMin");
   }
 
   // Select variable with largest max
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMaxMax<View>::init(const Space*, View x) {
+  ByMaxMax<V>::init(const Space*, V x) {
     max = x.max();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByMaxMax<View>::select(const Space*, View x) {
+  ByMaxMax<V>::select(const Space*, V x) {
     if (x.max() > max) {
       max = x.max(); return VSS_BETTER;
     } else if (x.max() < max) {
@@ -145,22 +145,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByMaxMax<View>::type(void) {
+  ByMaxMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByMaxMax");
   }
 
   // Select variable with smallest size
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeMin<View>::init(const Space*, View x) {
+  BySizeMin<V>::init(const Space*, V x) {
     size = x.size();
     return (size == 2) ? VSS_BEST : VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeMin<View>::select(const Space*, View x) {
+  BySizeMin<V>::select(const Space*, V x) {
     if (x.size() < size) {
       size = x.size();
       return (size == 2) ? VSS_BEST : VSS_BETTER;
@@ -170,22 +170,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  BySizeMin<View>::type(void) {
+  BySizeMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::BySizeMin");
   }
 
   // Select variable with largest size
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeMax<View>::init(const Space*, View x) {
+  BySizeMax<V>::init(const Space*, V x) {
     size = x.size();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeMax<View>::select(const Space*, View x) {
+  BySizeMax<V>::select(const Space*, V x) {
     if (x.size() > size) {
       size = x.size(); return VSS_BETTER;
     } else if (x.size() < size) {
@@ -194,22 +194,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  BySizeMax<View>::type(void) {
+  BySizeMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::BySizeMax");
   }
 
   // Select variable with smallest degree (and smallest size in case of ties)
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMin<View>::init(const Space*, View x) {
+  ByDegreeMin<V>::init(const Space*, V x) {
     degree = x.degree(); size = x.size();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMin<View>::select(const Space*, View x) {
+  ByDegreeMin<V>::select(const Space*, V x) {
     if (x.degree() < degree) {
       degree = x.degree();
       size   = x.size();
@@ -223,22 +223,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_WORSE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByDegreeMin<View>::type(void) {
+  ByDegreeMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByDegreeMin");
   }
 
   // Select variable with smallest degree (and smallest size in case of ties)
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMax<View>::init(const Space*, View x) {
+  ByDegreeMax<V>::init(const Space*, V x) {
     degree = x.degree(); size = x.size();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMax<View>::select(const Space*, View x) {
+  ByDegreeMax<V>::select(const Space*, V x) {
     if (x.degree() > degree) {
       degree = x.degree();
       size   = x.size();
@@ -252,23 +252,23 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_WORSE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByDegreeMax<View>::type(void) {
+  ByDegreeMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByDegreeMax");
   }
 
 
   // Select variable with smallest degree
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMinNoTies<View>::init(const Space*, View x) {
+  ByDegreeMinNoTies<V>::init(const Space*, V x) {
     degree = x.degree();
     return (degree == 0) ? VSS_BEST : VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMinNoTies<View>::select(const Space*, View x) {
+  ByDegreeMinNoTies<V>::select(const Space*, V x) {
     if (x.degree() < degree) {
       degree = x.degree();
       return (degree == 0) ? VSS_BEST : VSS_BETTER;
@@ -278,22 +278,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByDegreeMinNoTies<View>::type(void) {
+  ByDegreeMinNoTies<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByDegreeMinNoTies");
   }
 
   // Select variable with smallest degree
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMaxNoTies<View>::init(const Space*, View x) {
+  ByDegreeMaxNoTies<V>::init(const Space*, V x) {
     degree = x.degree();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByDegreeMaxNoTies<View>::select(const Space*, View x) {
+  ByDegreeMaxNoTies<V>::select(const Space*, V x) {
     if (x.degree() > degree) {
       degree = x.degree(); return VSS_BETTER;
     } else if (x.degree() < degree) {
@@ -302,24 +302,24 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByDegreeMaxNoTies<View>::type(void) {
+  ByDegreeMaxNoTies<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByDegreeMaxNoTies");
   }
 
 
   // Select variable with smallest size/degree
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeDegreeMin<View>::init(const Space*, View x) {
+  BySizeDegreeMin<V>::init(const Space*, V x) {
     sizedegree = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeDegreeMin<View>::select(const Space*, View x) {
+  BySizeDegreeMin<V>::select(const Space*, V x) {
     double sd = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     if (sd < sizedegree) {
@@ -330,23 +330,23 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  BySizeDegreeMin<View>::type(void) {
+  BySizeDegreeMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::BySizeDegreeMin");
   }
 
   // Select variable with largest size/degree
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeDegreeMax<View>::init(const Space*, View x) {
+  BySizeDegreeMax<V>::init(const Space*, V x) {
     sizedegree = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  BySizeDegreeMax<View>::select(const Space*, View x) {
+  BySizeDegreeMax<V>::select(const Space*, V x) {
     double sd = 
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     if (sd > sizedegree) {
@@ -357,22 +357,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  BySizeDegreeMax<View>::type(void) {
+  BySizeDegreeMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::BySizeDegreeMax");
   }
 
   // Select variable with smallest min-regret
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMinMin<View>::init(const Space*, View x) {
+  ByRegretMinMin<V>::init(const Space*, V x) {
     regret = x.regret_min();
     return (regret == 1) ? VSS_BEST : VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMinMin<View>::select(const Space*, View x) {
+  ByRegretMinMin<V>::select(const Space*, V x) {
     if (x.regret_min() < regret) {
       regret = x.regret_min();
       return (regret == 1) ? VSS_BEST : VSS_BETTER;
@@ -382,22 +382,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByRegretMinMin<View>::type(void) {
+  ByRegretMinMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByRegretMinMin");
   }
 
   // Select variable with largest min-regret
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMinMax<View>::init(const Space*, View x) {
+  ByRegretMinMax<V>::init(const Space*, V x) {
     regret = x.regret_min();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMinMax<View>::select(const Space*, View x) {
+  ByRegretMinMax<V>::select(const Space*, V x) {
     if (x.regret_min() > regret) {
       regret = x.regret_min(); return VSS_BETTER;
     } else if (x.regret_min() < regret) {
@@ -406,22 +406,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByRegretMinMax<View>::type(void) {
+  ByRegretMinMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByRegretMinMax");
   }
 
   // Select variable with smallest max-regret
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMaxMin<View>::init(const Space*, View x) {
+  ByRegretMaxMin<V>::init(const Space*, V x) {
     regret = x.regret_max();
     return (regret == 1) ? VSS_BEST : VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMaxMin<View>::select(const Space*, View x) {
+  ByRegretMaxMin<V>::select(const Space*, V x) {
     if (x.regret_max() < regret) {
       regret = x.regret_max();
       return (regret == 1) ? VSS_BEST : VSS_BETTER;
@@ -431,22 +431,22 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByRegretMaxMin<View>::type(void) {
+  ByRegretMaxMin<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByRegretMaxMin");
   }
 
   // Select variable with smallest min-regret
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMaxMax<View>::init(const Space*, View x) {
+  ByRegretMaxMax<V>::init(const Space*, V x) {
     regret = x.regret_max();
     return VSS_BETTER;
   }
-  template<class View>
+  template<class V>
   forceinline ViewSelStatus
-  ByRegretMaxMax<View>::select(const Space*, View x) {
+  ByRegretMaxMax<V>::select(const Space*, V x) {
     if (x.regret_max() > regret) {
       regret = x.regret_max(); return VSS_BETTER;
     } else if (x.regret_max() < regret) {
@@ -455,9 +455,9 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  template<class View>
+  template<class V>
   inline Support::Symbol
-  ByRegretMaxMax<View>::type(void) {
+  ByRegretMaxMax<V>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByRegretMaxMax");
   }
 

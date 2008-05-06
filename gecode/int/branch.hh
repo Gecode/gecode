@@ -59,25 +59,25 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class View>
+  template<class V>
   class ValMin {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// View type
-    typedef View View;
+    typedef V View;
     /// Value type
     typedef int Val;
     /// Return minimum value of view \a x
-    int val(const Space* home, View x) const;
+    int val(const Space* home, V x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, View x, int n);
+    ModEvent tell(Space* home, unsigned int a, V x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
+                       int alt, V x, int n) const;
   };
 
   /**
@@ -87,25 +87,25 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class View>
+  template<class V>
   class ValMed {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// View type
-    typedef View View;
+    typedef V View;
     /// Value type
     typedef int Val;
     /// Return maximum value of view \a x
-    int val(const Space* home, View x) const;
+    int val(const Space* home, V x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, View x, int n);
+    ModEvent tell(Space* home, unsigned int a, V x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
+                       int alt, V x, int n) const;
   };
 
   /**
@@ -115,25 +115,25 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class View>
+  template<class V>
   class ValMax {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// View type
-    typedef View View;
+    typedef V View;
     /// Value type
     typedef int Val;
     /// Return median value of view \a x
-    int val(const Space* home, View x) const;
+    int val(const Space* home, V x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, View x, int n);
+    ModEvent tell(Space* home, unsigned int a, V x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
+                       int alt, V x, int n) const;
   };
 
   /**
@@ -143,25 +143,25 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class View>
+  template<class V>
   class ValSplitMin {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// View type
-    typedef View View;
+    typedef V View;
     /// Value type
     typedef int Val;
     /// Return minimum value of view \a x
-    int val(const Space* home, View x) const;
+    int val(const Space* home, V x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, View x, int n);
+    ModEvent tell(Space* home, unsigned int a, V x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
+                       int alt, V x, int n) const;
   };
 
   /**
@@ -171,25 +171,25 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class View>
+  template<class V>
   class ValSplitMax {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// View type
-    typedef View View;
+    typedef V View;
     /// Value type
     typedef int Val;
     /// Return minimum value of view \a x
-    int val(const Space* home, View x) const;
+    int val(const Space* home, V x) const;
     /// Tell \f$x>n\f$ (\a a = 0) or \f$x\leq n\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, View x, int n);
+    ModEvent tell(Space* home, unsigned int a, V x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
+                       int alt, V x, int n) const;
   };
 
   /// Create branchings for a given view selection strategy \a SelView
@@ -213,25 +213,25 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class View>
+  template<class V>
   class ValZeroOne {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// View type
-    typedef View View;
+    typedef V View;
     /// Value type
     typedef NoValue Val;
     /// Return no value of view \a x
-    NoValue val(const Space* home, View x) const;
+    NoValue val(const Space* home, V x) const;
     /// Tell \f$x=0\f$ (\a a = 0) or \f$x=1\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, View x, NoValue n);
+    ModEvent tell(Space* home, unsigned int a, V x, NoValue n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, NoValue n) const;
+                       int alt, V x, NoValue n) const;
   };
 
   /**
@@ -241,62 +241,62 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class View>
+  template<class V>
   class ValOneZero {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// View type
-    typedef View View;
+    typedef V View;
     /// Value type
     typedef NoValue Val;
     /// Return no value of view \a x
-    NoValue val(const Space* home, View x) const;
+    NoValue val(const Space* home, V x) const;
     /// Tell \f$x=1\f$ (\a a = 0) or \f$x=0\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, View x, NoValue n);
+    ModEvent tell(Space* home, unsigned int a, V x, NoValue n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Specification of a branch (for reflection)
     void branchingSpec(const Space* home,
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, NoValue n) const;
+                       int alt, V x, NoValue n) const;
   };
 
 
   /// Class for assigning minimum value
-  template<class View>
-  class AssignValMin : public ValMin<View> {
+  template<class V>
+  class AssignValMin : public ValMin<V> {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
   };
 
   /// Class for assigning maximum value
-  template<class View>
-  class AssignValMed : public ValMed<View> {
+  template<class V>
+  class AssignValMed : public ValMed<V> {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
   };
 
   /// Class for assigning median value
-  template<class View>
-  class AssignValMax : public ValMax<View> {
+  template<class V>
+  class AssignValMax : public ValMax<V> {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
   };
   /// Class for assigning zero
-  template<class View>
-  class AssignValZeroOne : public ValZeroOne<View> {
+  template<class V>
+  class AssignValZeroOne : public ValZeroOne<V> {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
   };
 
   /// Class for assigning one
-  template<class View>
-  class AssignValOneZero : public ValOneZero<View> {
+  template<class V>
+  class AssignValOneZero : public ValOneZero<V> {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
@@ -314,15 +314,15 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByNone {
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -333,18 +333,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByMinMin {
   protected:
     /// So-far smallest minimum
     int min;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -355,18 +355,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByMinMax {
   protected:
     /// So-far largest minimum
     int min;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -377,18 +377,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByMaxMin {
   protected:
     /// So-far smallest maximum
     int max;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -399,18 +399,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByMaxMax {
   protected:
     /// So-far largest maximum
     int max;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -421,18 +421,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class BySizeMin {
   protected:
     /// So-far smallest size
     unsigned int size;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -443,18 +443,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class BySizeMax {
   protected:
     /// So-far largest size
     unsigned int size;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -465,7 +465,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByDegreeMin {
   protected:
     /// So-far smallest degree
@@ -474,11 +474,11 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int size;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -489,7 +489,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByDegreeMax {
   protected:
     /// So-far largest degree
@@ -498,11 +498,11 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int size;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -513,18 +513,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByDegreeMinNoTies {
   protected:
     /// So-far smallest degree
     unsigned int degree;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -535,18 +535,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByDegreeMaxNoTies {
   protected:
     /// So-far largest degree
     unsigned int degree;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -558,18 +558,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class BySizeDegreeMin {
   protected:
     /// So-far smallest size/degree
     double sizedegree;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -580,18 +580,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class BySizeDegreeMax {
   protected:
     /// So-far largest size/degree
     double sizedegree;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -602,18 +602,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByRegretMinMin {
   protected:
     /// So-far smallest regret
     unsigned int regret;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -624,18 +624,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByRegretMinMax {
   protected:
     /// So-far largest regret
     unsigned int regret;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -646,18 +646,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByRegretMaxMin {
   protected:
     /// So-far smallest regret
     unsigned int regret;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -668,18 +668,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
+  template<class V>
   class ByRegretMaxMax {
   protected:
     /// So-far largest regret
     unsigned int regret;
   public:
     /// View type
-    typedef View View;
+    typedef V View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, V x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, V x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
