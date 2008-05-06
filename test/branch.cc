@@ -182,7 +182,9 @@ namespace Test { namespace Branch {
     Gecode::INT_VAL_MED,
     Gecode::INT_VAL_MAX,
     Gecode::INT_VAL_SPLIT_MIN,
-    Gecode::INT_VAL_SPLIT_MAX
+    Gecode::INT_VAL_SPLIT_MAX,
+    Gecode::INT_VALUES_MIN,
+    Gecode::INT_VALUES_MAX
   };
   /// Number of integer value selections
   const int n_int_val_branch =
@@ -193,7 +195,9 @@ namespace Test { namespace Branch {
     "INT_VAL_MED",
     "INT_VAL_MAX",
     "INT_VAL_SPLIT_MIN",
-    "INT_VAL_SPLIT_MAX"
+    "INT_VAL_SPLIT_MAX",
+    "INT_VALUES_MIN",
+    "INT_VALUES_MIN"
   };
   //@}
 

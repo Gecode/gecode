@@ -35,7 +35,6 @@
  *
  */
 
-#include "gecode/int.hh"
 #include "gecode/minimodel.hh"
 #include "gecode/search.hh"
 
@@ -71,106 +70,6 @@ namespace Test {
       WM_FAIL_IMMEDIATE, ///< Model that fails immediately
       WM_FAIL_SEARCH,    ///< Model without solutions
       WM_SOLUTIONS       ///< Model with solutions
-    };
-
-    /// %Branching description storing position and values
-    class PosValuesDesc : public BranchingDesc {
-    protected:
-      /// Position of view
-      int _pos;
-      /// Values to assign to
-      int* _values;
-    public:
-      /// Initialize description for branching \a b, position \a p, and view \a x
-      PosValuesDesc(const Branching* b, int p, IntView x)
-        : BranchingDesc(b,x.size()), 
-          _pos(p), 
-          _values(static_cast<int*>(Memory::malloc(sizeof(int)*x.size()))) {
-        ViewValues<IntView> v(x);
-        int i=0;
-        while (v()) {
-          _values[i]=v.val(); ++i; ++v;
-        }
-      }
-      /// Return position in array
-      int pos(void) const {
-        return _pos;
-      }
-      /// Return value to branch with for alternative \a a
-      int val(unsigned int a) const {
-        return _values[a];
-      }
-      /// Report size occupied
-      virtual size_t size(void) const {
-        return 0;
-      }
-      /// Destructor
-      virtual ~PosValuesDesc(void) {
-        Memory::free(_values);
-      }
-    };
-
-
-    /// Class for nary branchings
-    class NaryBranching : public Branching {
-    protected:
-      /// Views to branch on
-      ViewArray<IntView> x; 
-      /// Constructor for cloning \a b
-      NaryBranching(Space* home, bool share, NaryBranching& b) 
-        : Branching(home,share,b) {
-        x.update(home,share,b.x);
-      }
-    public:
-      /// Constructor for creation
-      NaryBranching(Space* home, ViewArray<IntView>& x0) 
-        : Branching(home), x(x0) {}
-      /// Perform cloning
-      virtual Actor* copy(Space* home, bool share) {
-        return new (home) NaryBranching(home,share,*this);
-      }
-      /// Check status of branching, return true if alternatives left
-      virtual bool status(const Space*) const {
-        for (int i=0; i<x.size(); i++)
-          if (!x[i].assigned())
-            return true;
-        return false;
-      }
-      /// Return branching description
-      virtual const BranchingDesc* description(const Space*) const {
-        int i=0; 
-        while (x[i].assigned()) 
-          i++;
-        return new PosValuesDesc(this,i,x[i]);
-      }
-      /// Perform commit for branching description \a d and alternative \a a
-      virtual ExecStatus commit(Space* home, const BranchingDesc* d,
-                                unsigned int a) {
-        const PosValuesDesc* pvd = static_cast<const PosValuesDesc*>(d);
-        return me_failed(x[pvd->pos()].eq(home,pvd->val(a)))
-          ? ES_FAILED : ES_OK;
-      }
-      /// Actor type identifier of this branching
-      static Support::Symbol ati(void) {
-        return "Test::Search::NaryBranching";
-      }
-      /// Return specification for this branching given a variable map \a m
-      virtual Reflection::ActorSpec spec(Space* home, Reflection::VarMap& m) {
-        Reflection::ActorSpec s(ati());
-        return s << x.spec(home, m);
-      }
-
-      /// Return specification for a branch
-      virtual Reflection::BranchingSpec branchingSpec(Space*, 
-                                                      Reflection::VarMap&,
-                                                      const BranchingDesc* d) {
-        Reflection::BranchingSpec bs(0);
-        return bs;
-      }
-      /// Post branching according to specification
-      static void post(Space*, Reflection::VarMap&,
-                       const Reflection::ActorSpec&) {
-      }
     };
 
     /// Space with information
@@ -243,11 +142,8 @@ namespace Test {
           Gecode::branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
           break;
         case HTB_NARY:
-          {
-            ViewArray<IntView> xv(this,x);
-            new (this) NaryBranching(this, xv);
-            break;
-          }
+          Gecode::branch(this, x, INT_VAR_NONE, INT_VALUES_MIN);
+          break;
         }
       }
       /// Constructor for space creation
