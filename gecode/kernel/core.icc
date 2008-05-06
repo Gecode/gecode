@@ -728,17 +728,17 @@ namespace Gecode {
      * uses advisors. The advise function must return an execution
      * status as follows:
      *  - ES_FAILED: the advisor has detected failure
-     *  - ES_NOFIX: the advisor's propagator (that is, this propagator) 
+     *  - ES_FIX: the advisor's propagator (that is, this propagator) 
      *    does not need to be run
-     *  - ES_FIX: the advisor's propagator (that is, this propagator)
+     *  - ES_NOFIX: the advisor's propagator (that is, this propagator)
      *    must be run
      *
      * Apart from the above values, an advisor can return
      * the result from calling the function
-     *  - ES_SUBSUMED_NOFIX: the advisor is subsumed, the advisor's
-     *    propagator does not need to be run
      *  - ES_SUBSUMED_FIX: the advisor is subsumed, the advisor's
      *    propagator does not need to be run
+     *  - ES_SUBSUMED_NOFIX: the advisor is subsumed, the advisor's
+     *    propagator must be run
      * For more details, see the function documentation.
      *
      * The delta \a d describes how the variable has been changed
