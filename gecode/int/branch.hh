@@ -412,61 +412,13 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with smallest degree (and smallest size in case of ties)
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class V>
-  class ByDegreeMin {
-  protected:
-    /// So-far smallest degree
-    unsigned int degree;
-    /// So-far smallest size for degree
-    unsigned int size;
-  public:
-    /// View type
-    typedef V View;
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, V x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, V x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
-   * \brief View selection class for view with largest degree (and smallest size in case of ties)
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class V>
-  class ByDegreeMax {
-  protected:
-    /// So-far largest degree
-    unsigned int degree;
-    /// So-far smallest size for degree
-    unsigned int size;
-  public:
-    /// View type
-    typedef V View;
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, V x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, V x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for view with smallest degree
    *
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
   template<class V>
-  class ByDegreeMinNoTies {
+  class ByDegreeMin {
   protected:
     /// So-far smallest degree
     unsigned int degree;
@@ -488,7 +440,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \ingroup FuncIntSelView
    */
   template<class V>
-  class ByDegreeMaxNoTies {
+  class ByDegreeMax {
   protected:
     /// So-far largest degree
     unsigned int degree;

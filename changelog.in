@@ -70,6 +70,17 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The variable selection INT_VAR_DEGREE_MIN and INT_VAR_DEGREE_MAX
+do not have tiebreaking with smallest domain size built. The old
+behaviour can be reclaimed by explicit tiebreaking, for example
+replace INT_VAR_DEGREE_MAX by
+tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN).
+
+[ENTRY]
 Module: kernel
 What:   documentation
 Rank:   minor

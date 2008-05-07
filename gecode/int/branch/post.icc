@@ -170,14 +170,14 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_SPLIT_MIN:
       case INT_VALUES_MIN:
         (void) new (home) 
-          ViewValBranching<ByDegreeMinNoTies<BoolView>,
+          ViewValBranching<ByDegreeMin<BoolView>,
             ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
       case INT_VALUES_MAX:
         (void) new (home) 
-          ViewValBranching<ByDegreeMinNoTies<BoolView>,
+          ViewValBranching<ByDegreeMin<BoolView>,
             ValZeroOne<NegBoolView> >(home,xv);
         break;
       default:
@@ -192,14 +192,14 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAL_SPLIT_MIN:
       case INT_VALUES_MIN:
         (void) new (home) 
-          ViewValBranching<ByDegreeMaxNoTies<BoolView>,
+          ViewValBranching<ByDegreeMax<BoolView>,
             ValZeroOne<BoolView> >(home,xv);
         break;
       case INT_VAL_MAX:
       case INT_VAL_SPLIT_MAX:
       case INT_VALUES_MAX:
         (void) new (home) 
-          ViewValBranching<ByDegreeMaxNoTies<BoolView>,
+          ViewValBranching<ByDegreeMax<BoolView>,
           ValZeroOne<NegBoolView> >(home,xv);
         break;
       default:
