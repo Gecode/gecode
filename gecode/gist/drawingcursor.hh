@@ -50,6 +50,8 @@ namespace Gecode { namespace Gist {
     QPainter& painter;
     /// The clipping area
     QRect clippingRect;
+    /// The best solution (for branch-and-bound)
+    BestNode* curBest;
     /// The current coordinates
     int x, y;
     
@@ -76,7 +78,8 @@ namespace Gecode { namespace Gist {
     static const QColor lightBlue;
     
     /// Constructor
-    DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
+    DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
+                  QPainter& painter0,
                   bool heat,
                   const QRect& clippingRect0);
 

@@ -122,9 +122,6 @@ namespace Gecode { namespace Gist {
     /// Current status of the node
     NodeStatus status;
 
-  protected:
-    /// Reference to currently best node (for branch-and-bound)
-    BestNode* curBest;
   private:
     /// Reference to best space when the node was created
     SpaceNode* ownBest;
@@ -137,28 +134,25 @@ namespace Gecode { namespace Gist {
     bool _hasSolvedChildren;
     
     /// Recompute workingSpace from a copy higher up, return distance to copy
-    int recompute(void);
+    int recompute(BestNode* curBest);
     /// Acquire working space, either from parent or by recomputation
-    void acquireSpace(void);
+    void acquireSpace(BestNode* curBest);
 
     /// Book-keeping of open children
     void closeChild(bool hadFailures, bool hadSolutions);
   public:
     /// Construct node for alternative \a alt
-    SpaceNode(int alt, BestNode* cb = NULL);
+    SpaceNode(int alt);
     /// Construct root node from Space \a root and branch-and-bound object \a better
-    SpaceNode(Space* root, Better* b);
+    SpaceNode(Space* root);
     /// Destructor
     virtual ~SpaceNode(void);
 
-    /// Return the branch-and-bound wrapper
-    Better* getBetterWrapper(void) const;
-
     /// Return working space.  Receiver must delete the space.
-    Space* getSpace(void);
+    Space* getSpace(BestNode* curBest);
 
     /// Return whether this node is the currently best solution
-    bool isCurrentBest(void);
+    bool isCurrentBest(BestNode* curBest);
 
     /** \brief Compute and return the number of children
       *
@@ -170,7 +164,8 @@ namespace Gecode { namespace Gist {
       * Otherwise, the status is SS_BRANCH, and as many new children will
       * be created as the branch has alternatives, and the number returned.
       */
-    int getNumberOfChildNodes(Statistics& stats = Statistics::dummy);
+    int getNumberOfChildNodes(BestNode* curBest,
+                              Statistics& stats = Statistics::dummy);
     
     /// Return current status of the node
     NodeStatus getStatus(void);

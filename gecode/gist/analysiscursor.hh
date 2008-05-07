@@ -44,13 +44,14 @@ namespace Gecode { namespace Gist {
   /// \brief A cursor that analyses the tree
   class AnalysisCursor : public NodeCursor<VisualNode> {
   private:
+    BestNode* curBest;
     int& minHeat;
     int& maxHeat;
     
     void processTopDown(void);
   public:
     /// Constructor
-    AnalysisCursor(VisualNode* root, int& min, int& max);
+    AnalysisCursor(VisualNode* root, BestNode* curBest0, int& min, int& max);
 
     ///\name Cursor interface
     //@{

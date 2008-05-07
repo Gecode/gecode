@@ -45,7 +45,7 @@ namespace Gecode { namespace Gist {
     VisualNode* n = node();
     if (n->getStatus() == UNDETERMINED)
       return;
-    Space* s = n->getSpace();
+    Space* s = n->getSpace(curBest);
     Reflection::VarMap vm;
     s->getVars(vm, false);
     int h = 0;
@@ -60,8 +60,10 @@ namespace Gecode { namespace Gist {
     delete s;    
   }
 
-  AnalysisCursor::AnalysisCursor(VisualNode* root, int& min, int& max)
-  : NodeCursor<VisualNode>(root), minHeat(min), maxHeat(max) {
+  AnalysisCursor::AnalysisCursor(VisualNode* root, BestNode* curBest0,
+                                 int& min, int& max)
+  : NodeCursor<VisualNode>(root), curBest(curBest0),
+    minHeat(min), maxHeat(max) {
     minHeat = Gecode::Int::Limits::max;
     maxHeat = 0;
     processTopDown();

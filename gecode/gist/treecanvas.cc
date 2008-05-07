@@ -73,7 +73,8 @@ namespace Gecode { namespace Gist {
     , metaScrollXCurrent(0.0), metaScrollYCurrent(0.0)
     , scrollTimerId(0) {
       QMutexLocker locker(&mutex);
-      root = new VisualNode(rootSpace, b);
+      curBest = (b != NULL ? new BestNode(NULL, b) : NULL);
+      root = new VisualNode(rootSpace);
       root->layout();
       root->setMarked(true);
       currentNode = root;
@@ -222,7 +223,7 @@ namespace Gecode { namespace Gist {
         }
         VisualNode* n = stck.top(); stck.pop();
         if (n->isOpen()) {
-          int kids = n->getNumberOfChildNodes(t->stats);
+          int kids = n->getNumberOfChildNodes(t->curBest, t->stats);
           if (!a && n->getStatus() == SOLVED) {
             sol = n;
             break;
@@ -381,7 +382,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::analyzeTree(void) {
     QMutexLocker locker(&mutex);
     int min, max;
-    AnalysisCursor ac(root, min, max);
+    AnalysisCursor ac(root, curBest, min, max);
     PostorderNodeVisitor<AnalysisCursor> va(ac);
     while (va.next()) {}
     DistributeCursor dc(root, min, max);
@@ -419,9 +420,10 @@ namespace Gecode { namespace Gist {
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
         {
-          (void) currentNode->getNumberOfChildNodes(stats);
+          (void) currentNode->getNumberOfChildNodes(curBest,stats);
           emit statusChanged(stats,true);
-          emit currentNodeChanged(currentNode->getSpace(), currentNode->getStatus());
+          emit currentNodeChanged(currentNode->getSpace(curBest), 
+                                  currentNode->getStatus());
         }
         break;
     case FAILED:
@@ -432,7 +434,7 @@ namespace Gecode { namespace Gist {
     case COMPONENT_IGNORED:
     case SINGLETON:
     case SOLVED:
-      Space* curSpace = currentNode->getSpace();
+      Space* curSpace = currentNode->getSpace(curBest);
       Reflection::VarMap vm;
       curSpace->getVars(vm, false);
       emit inspect(vm, nextPit);
@@ -456,10 +458,14 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::reset(void) {
     QMutexLocker locker(&mutex);
-    Space* rootSpace = root->getSpace();
-    Better* b = root->getBetterWrapper();
+    Space* rootSpace = root->getSpace(curBest);
+    if (curBest != NULL) {
+      Better* b = curBest->b;
+      delete curBest;
+      curBest = new BestNode(NULL, b);
+    }
     delete root;
-    root = new VisualNode(rootSpace, b);
+    root = new VisualNode(rootSpace);
     root->setMarked(true);
     currentNode = root;
     pathHead = root;
@@ -565,7 +571,7 @@ namespace Gecode { namespace Gist {
     VisualNode* p = currentNode->getParent();
     if (p != NULL) {
       int alt = currentNode->getAlternative();
-      if (alt + 1 < p->getNumberOfChildNodes()) {
+      if (alt + 1 < p->getNumberOfChildNodes(curBest)) {
         VisualNode* n = p->getChild(alt+1);
         setCurrentNode(n);
         centerCurrentNode();
@@ -653,7 +659,7 @@ namespace Gecode { namespace Gist {
       painter.scale(printScale,printScale);
       painter.translate(xtrans, 0);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(root, painter, heatView, clip);
+      DrawingCursor dc(root, curBest, painter, heatView, clip);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next()) {}
     }
@@ -704,7 +710,8 @@ namespace Gecode { namespace Gist {
       if (n != NULL && !n->isHidden() &&
           (n->getStatus() == BRANCH || n->getStatus() == DECOMPOSE)) {
         QHelpEvent* he = static_cast<QHelpEvent*>(event);
-        QToolTip::showText(he->globalPos(), QString(n->toolTip().c_str()));
+        QToolTip::showText(he->globalPos(), 
+                           QString(n->toolTip(curBest).c_str()));
       } else {
         QToolTip::hideText();
       }
@@ -748,7 +755,7 @@ namespace Gecode { namespace Gist {
                static_cast<int>(origClip.y()/scale),
                static_cast<int>(origClip.width()/scale), 
                static_cast<int>(origClip.height()/scale));
-    DrawingCursor dc(root, painter, heatView, clip);
+    DrawingCursor dc(root, curBest, painter, heatView, clip);
     PreorderNodeVisitor<DrawingCursor> v(dc);
 
     while (v.next()) {}
@@ -805,7 +812,7 @@ namespace Gecode { namespace Gist {
       currentNode->setMarked(true);
       NodeStatus status = n->getStatus();
       if(status != UNDETERMINED) {
-        emit currentNodeChanged(n->getSpace(), status);
+        emit currentNodeChanged(n->getSpace(curBest), status);
       } else {
         emit currentNodeChanged(NULL, status);
       }
@@ -871,7 +878,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm) {
     QMutexLocker locker(&mutex);
     if(root != NULL) {
-      Space* space = root->getSpace();
+      Space* space = root->getSpace(curBest);
       space->getVars(vm, false);
       delete space;
     }
@@ -885,7 +892,7 @@ namespace Gecode { namespace Gist {
     
     if(cv != NULL) {
       Reflection::VarMap vm;
-      Space* rootSpace = root->getSpace();
+      Space* rootSpace = root->getSpace(curBest);
       rootSpace->getVars(vm, false);
       delete rootSpace;
 
