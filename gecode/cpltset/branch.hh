@@ -56,7 +56,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief Class for selecting minimum value of unknown ranges
    *
    * All value selection classes require 
-   * \code #include "gecode/set/branch.hh" \endcode
+   * \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
@@ -78,7 +78,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief Class for selecting maximum value of unknown ranges
    *
    * All value selection classes require 
-   * \code #include "gecode/set/branch.hh" \endcode
+   * \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
@@ -109,7 +109,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for first view
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByNone : public ViewSelBase<CpltSetView> {
@@ -125,7 +125,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with smallest cardinality of lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByMinCard : public ViewSelBase<CpltSetView> {
@@ -144,7 +144,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with greatest cardinality of lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByMaxCard : public ViewSelBase<CpltSetView> {
@@ -182,7 +182,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with greatest element in lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByMaxUnknown : public ViewSelBase<CpltSetView> {
