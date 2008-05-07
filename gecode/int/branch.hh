@@ -224,19 +224,6 @@ namespace Gecode { namespace Int { namespace Branch {
    */
 
   /**
-   * \brief View selection class for first variable
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class View>
-  class ByNone : public ViewSelByNoneBase<View> {
-  public:
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for view with smallest min
    *
    * Requires \code #include "gecode/int/branch.hh" \endcode

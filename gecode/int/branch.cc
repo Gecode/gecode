@@ -60,15 +60,15 @@ namespace Gecode {
     switch (vals) {
     case INT_ASSIGN_MIN:
       (void) new (home) ViewValBranching
-        <Branch::ByNone<IntView>,Branch::AssignValMin<IntView> >(home,xv);
+        <ViewSelByNone<IntView>,Branch::AssignValMin<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MED:
       (void) new (home) ViewValBranching
-        <Branch::ByNone<IntView>,Branch::AssignValMed<IntView> >(home,xv);
+        <ViewSelByNone<IntView>,Branch::AssignValMed<IntView> >(home,xv);
       break;
     case INT_ASSIGN_MAX:
       (void) new (home) ViewValBranching
-        <Branch::ByNone<IntView>,Branch::AssignValMin<MinusView> >(home,xv);
+        <ViewSelByNone<IntView>,Branch::AssignValMin<MinusView> >(home,xv);
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -84,12 +84,12 @@ namespace Gecode {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED:
       (void) new (home) ViewValBranching
-        <Branch::ByNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
+        <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
         (home,xv);
       break;
     case INT_ASSIGN_MAX:
       (void) new (home) ViewValBranching
-        <Branch::ByNone<BoolView>,Branch::AssignValZeroOne<NegBoolView> >
+        <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<NegBoolView> >
         (home,xv);
       break;
     default:

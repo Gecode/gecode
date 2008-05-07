@@ -37,11 +37,6 @@
 
 namespace Gecode { namespace CpltSet { namespace Branch {
 
-  inline Support::Symbol
-  ByNone::type(void) {
-    return Support::Symbol("CpltSet::Branch::ByNone");
-  }
-
   forceinline ViewSelStatus
   ByMinCard::init(const Space*, CpltSetView x) { 
     minCard = x.unknownSize();

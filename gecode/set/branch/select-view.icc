@@ -43,11 +43,6 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
-  inline Support::Symbol
-  ByNone::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::ByNone");
-  }
-
   forceinline ViewSelStatus
   ByMinCard::init(const Space*, SetView x) { 
     minCard = x.unknownSize();

@@ -127,12 +127,14 @@ namespace Gecode {
    * \brief Select first not assigned view
    */
   template <class View>
-  class ViewSelByNoneBase : public ViewSelBase<View> {
+  class ViewSelByNone : public ViewSelBase<View> {
   public:
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
   };
 
 
@@ -363,14 +365,20 @@ namespace Gecode {
 
   template<class View>
   forceinline ViewSelStatus
-  ViewSelByNoneBase<View>::init(const Space*, View) {
+  ViewSelByNone<View>::init(const Space*, View) {
     return VSS_BEST;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelByNoneBase<View>::select(const Space*, View) {
+  ViewSelByNone<View>::select(const Space*, View) {
     return VSS_BEST;
   }
+  template<class View>
+  inline Support::Symbol
+  ViewSelByNone<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSelByNone");
+  }
+
 
 
 

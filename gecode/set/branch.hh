@@ -117,11 +117,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByNone : public ViewSelByNoneBase<SetView> {
-  public:
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
+  typedef ViewSelByNone<SetView> ByNone;
 
   /**
    * \brief View selection class for view with smallest cardinality of lub-glb
