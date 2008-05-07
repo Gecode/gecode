@@ -37,17 +37,6 @@
 
 namespace Gecode { namespace CpltSet { namespace Branch {
 
-  forceinline ViewSelStatus
-  ByNone::init(const Space*, CpltSetView) {
-    return VSS_BEST;
-  }
-
-  forceinline ViewSelStatus
-  ByNone::select(const Space*, CpltSetView) {
-    GECODE_NEVER;
-    return VSS_TIE;
-  }
-
   inline Support::Symbol
   ByNone::type(void) {
     return Support::Symbol("CpltSet::Branch::ByNone");

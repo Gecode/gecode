@@ -123,6 +123,18 @@ namespace Gecode {
     typedef _View View;
   };
 
+  /**
+   * \brief Select first not assigned view
+   */
+  template <class View>
+  class ViewSelByNoneBase : public ViewSelBase<View> {
+  public:
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+  };
+
 
   /**
    * \brief Generic branching by view and value selection
@@ -343,6 +355,23 @@ namespace Gecode {
       return x[p.start+p.pos];
     }
   }
+
+
+  /*
+   * Select first view
+   */
+
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByNoneBase<View>::init(const Space*, View) {
+    return VSS_BEST;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByNoneBase<View>::select(const Space*, View) {
+    return VSS_BEST;
+  }
+
 
 
   /*

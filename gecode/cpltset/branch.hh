@@ -112,12 +112,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  class ByNone : public ViewSelBase<CpltSetView> {
+  class ByNone : public ViewSelByNoneBase<CpltSetView> {
   public:
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space*, CpltSetView);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, CpltSetView);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };

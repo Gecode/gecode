@@ -230,12 +230,8 @@ namespace Gecode { namespace Int { namespace Branch {
    * \ingroup FuncIntSelView
    */
   template<class View>
-  class ByNone : public ViewSelBase<View> {
+  class ByNone : public ViewSelByNoneBase<View> {
   public:
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };

@@ -43,15 +43,6 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
-  forceinline ViewSelStatus
-  ByNone::init(const Space*, SetView) {
-    return VSS_BEST;
-  }
-  forceinline ViewSelStatus
-  ByNone::select(const Space*, SetView) {
-    GECODE_NEVER;
-    return VSS_TIE;
-  }
   inline Support::Symbol
   ByNone::type(void) {
     return Support::Symbol("Gecode::Set::Branch::ByNone");

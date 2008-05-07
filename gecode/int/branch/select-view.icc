@@ -39,17 +39,6 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select first variable
   template<class View>
-  forceinline ViewSelStatus
-  ByNone<View>::init(const Space*, View) {
-    return VSS_BEST;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ByNone<View>::select(const Space*, View) {
-    GECODE_NEVER;
-    return VSS_TIE;
-  }
-  template<class View>
   inline Support::Symbol
   ByNone<View>::type(void) {
     return Support::Symbol("Gecode::Int::Branch::ByNone");

@@ -117,12 +117,8 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByNone : public ViewSelBase<SetView> {
+  class ByNone : public ViewSelByNoneBase<SetView> {
   public:
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, SetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
