@@ -136,6 +136,39 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
+  /**
+   * \brief View selection class for view with smallest degree
+   */
+  template<class View>
+  class ViewSelByDegreeMin : public ViewSelBase<View> {
+  protected:
+    /// So-far smallest degree
+    unsigned int degree;
+  public:
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+  /**
+   * \brief View selection class for view with largest degree
+   */
+  template<class View>
+  class ViewSelByDegreeMax : public ViewSelBase<View> {
+  protected:
+    /// So-far largest degree
+    unsigned int degree;
+  public:
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
 
 
   /**
@@ -376,7 +409,57 @@ namespace Gecode {
   template<class View>
   inline Support::Symbol
   ViewSelByNone<View>::type(void) {
-    return Support::Symbol("Gecode::ViewSelByNone");
+    return Support::Symbol("Gecode::ViewSel::ByNone");
+  }
+
+
+  // Select variable with smallest degree
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMin<View>::init(const Space*, View x) {
+    degree = x.degree();
+    return (degree == 0) ? VSS_BEST : VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMin<View>::select(const Space*, View x) {
+    if (x.degree() < degree) {
+      degree = x.degree();
+      return (degree == 0) ? VSS_BEST : VSS_BETTER;
+    } else if (x.degree() > degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class View>
+  inline Support::Symbol
+  ViewSelByDegreeMin<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSel::ByDegreeMin");
+  }
+
+  // Select variable with smallest degree
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMax<View>::init(const Space*, View x) {
+    degree = x.degree();
+    return VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMax<View>::select(const Space*, View x) {
+    if (x.degree() > degree) {
+      degree = x.degree(); return VSS_BETTER;
+    } else if (x.degree() < degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class View>
+  inline Support::Symbol
+  ViewSelByDegreeMax<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSel::ByDegreeMax");
   }
 
 
