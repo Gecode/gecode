@@ -41,14 +41,14 @@ namespace Gecode {
 
   void
   branch(Space* home, const IntVarArgs& x,
-         IntVarBranch vars, IntValBranch vals) {
-    Int::Branch::post(home,x,vars,vals);
+         const TieBreakIntVarBranch& vars, IntValBranch vals) {
+    Int::Branch::post(home,x,vars.a,vals);
   }
 
   void
   branch(Space* home, const BoolVarArgs& x,
-         IntVarBranch vars, IntValBranch vals) {
-    Int::Branch::post(home,x,vars,vals);
+         const TieBreakIntVarBranch& vars, IntValBranch vals) {
+    Int::Branch::post(home,x,vars.a,vals);
   }
 
 

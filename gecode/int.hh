@@ -1953,25 +1953,23 @@ namespace Gecode {
   //@{
   /// Which variable to select for branching
   enum IntVarBranch {
-    INT_VAR_NONE,            ///< First unassigned
-    INT_VAR_MIN_MIN,         ///< With smallest min
-    INT_VAR_MIN_MAX,         ///< With largest min
-    INT_VAR_MAX_MIN,         ///< With smallest max
-    INT_VAR_MAX_MAX,         ///< With largest max
-    INT_VAR_SIZE_MIN,        ///< With smallest domain size
-    INT_VAR_SIZE_MAX,        ///< With largest domain size
+    INT_VAR_NONE,     ///< First unassigned
+    INT_VAR_MIN_MIN,  ///< With smallest min
+    INT_VAR_MIN_MAX,  ///< With largest min
+    INT_VAR_MAX_MIN,  ///< With smallest max
+    INT_VAR_MAX_MAX,  ///< With largest max
+    INT_VAR_SIZE_MIN, ///< With smallest domain size
+    INT_VAR_SIZE_MAX, ///< With largest domain size
     /** \brief With smallest degree
      *
      * The degree of a variable is defined as the number of dependant
-     * propagators. In case of ties, choose the variable with smallest
-     * domain.
+     * propagators.
      */
     INT_VAR_DEGREE_MIN,
     /** \brief With largest degree
      *
      * The degree of a variable is defined as the number of dependant
-     * propagators. In case of ties, choose the variable with smallest
-     * domain.
+     * propagators.
      */
     INT_VAR_DEGREE_MAX,
     INT_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
@@ -2002,6 +2000,16 @@ namespace Gecode {
     INT_VAR_REGRET_MAX_MAX
   };
 
+  /// Combine variable selection criteria for tie-breaking
+  class TieBreakIntVarBranch;
+
+  /// Combine variable selection criteria \a a and \a b for tie-breaking
+  TieBreakIntVarBranch 
+  tiebreak(IntVarBranch a, IntVarBranch b);
+  /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
+  TieBreakIntVarBranch
+  tiebreak(IntVarBranch a, IntVarBranch b, IntVarBranch c);
+
   /// Which values to select first for branching
   enum IntValBranch {
     INT_VAL_MIN,       ///< Select smallest value
@@ -2013,16 +2021,33 @@ namespace Gecode {
     INT_VALUES_MAX     ///< Try all values starting from largest
   };
 
-  /// Branch over \a x with variable selection \a vars and value selection \a vals
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
+   *
+   * Note that a value of type IntVarBranch can be passed for \a vars,
+   * as it will be automatically converted into the right type.
+   *
+   */
   GECODE_INT_EXPORT void
   branch(Space* home, const IntVarArgs& x, 
-         IntVarBranch vars, IntValBranch vals);
-  /// Branch over \a x with variable selection \a vars and value selection \a vals
+         const TieBreakIntVarBranch& vars, IntValBranch vals);
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
+   *
+   * Note that a value of type IntVarBranch can be passed for \a vars,
+   * as it will be automatically converted into the right type.
+   *
+   */
   GECODE_INT_EXPORT void
   branch(Space* home, const BoolVarArgs& x, 
-         IntVarBranch vars, IntValBranch vals);
-
+         const TieBreakIntVarBranch& vars, IntValBranch vals);
   //@}
+
+}
+
+#include "gecode/int/branch.icc"
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelIntAssign Assigning
