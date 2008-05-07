@@ -75,7 +75,10 @@ namespace Gecode {
    * (of type \a ViewSel::View). The behaviour is 
    * defined by the class \a ViewSel (which view is selected for branching).
    *
-   * The class \a ViewSel must implement two member functions:
+   * The class \a ViewSel must provide the following members:
+   *  - A type definition for the type \a View.
+   *  
+   * The class \a ViewSel must implement member functions:
    *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
    *    Initializes view selection with the \a View \a x. If \a x
    *    is known to be a best one, VSS_BEST should be returned.
@@ -110,6 +113,16 @@ namespace Gecode {
     virtual bool status(const Space* home) const;
   };
 
+  /**
+   * \brief Base class for view selection
+   */
+  template <class _View>
+  class ViewSelBase {
+  public:
+    /// View type
+    typedef _View View;
+  };
+
 
   /**
    * \brief Generic branching by view and value selection
@@ -119,17 +132,18 @@ namespace Gecode {
    * defined by the class \a ViewSel (which view is selected for branching)
    * and the class \a ValSel (which value is selected for branching).
    *
-   * The class \a ViewSel must implement two member functions:
-   *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
-   *    Initializes view selection with the \a View \a x. If \a x
-   *    is known to be a best one, VSS_BEST should be returned.
-   *    Otherwise, VSS_BETTER should be returned.
-   *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)
-   *    If \a x is better than the previously selected view,
-   *    return VSS_BETTER. If it is a best view, return VSS_BEST. If it 
-   *    is worse, return VSS_WORSE. If it is equally good, return VSS_TIE.
+   * The class \a ViewSel must be as described for ViewBranching.
    *
-   * The class \a ValSel must implement two member functions:
+   * The class \a ValSel must provide the following members:
+   *  - A type definition \a View defining the type. Note that the type
+   *    defined by ViewSel::View can be different from ValSel::View, provided
+   *    they share the same variable implementation type and only have
+   *    a unary constructor taking a variable implementation as argument.
+   *  - A type definition \a Val for the value to be selected.
+   *  - A member static const unsigned int alternatives defining how many 
+   *    alternatives a branching should provide.
+   *
+   * The class \a ValSel must implement the following member functions:
    *  - \a Val val(const Space* \a home, View \a x) const
    *    returns the value (most likely determined by \a x) to branch with.
    *  - Gecode::ModEvent tell(Space* \a home, unsigned int \a a, \a View \a x, \a Val \a n)
@@ -166,6 +180,22 @@ namespace Gecode {
                      const Reflection::ActorSpec& spec);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
+  };
+
+  /**
+   * \brief Base class for value selection
+   *
+   * Defines the branching to be binary.
+   */
+  template <class _View, class _Val>
+  class ValSelBase {
+  public:
+    /// View type
+    typedef _View View;
+    /// Value type
+    typedef _Val Val;
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
   };
 
 

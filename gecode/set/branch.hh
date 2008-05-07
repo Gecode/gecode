@@ -66,14 +66,8 @@ namespace Gecode { namespace Set { namespace Branch {
    * \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelVal
    */
-  class ValMin {
+  class ValMin : public ValSelBase<SetView,int> {
   public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
-    /// View type
-    typedef SetView View;
-    /// Value type
-    typedef int Val;
     /// Return minimum value of view \a x
     int val(const Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -93,14 +87,8 @@ namespace Gecode { namespace Set { namespace Branch {
    * \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelVal
    */
-  class ValMax {
+  class ValMax : public ValSelBase<SetView,int> {
   public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
-    /// View type
-    typedef SetView View;
-    /// Value type
-    typedef int Val;
     /// Return maximum value of view \a x
     int val(const Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -129,10 +117,8 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByNone {
+  class ByNone : public ViewSelBase<SetView> {
   public:
-    /// View type
-    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -147,13 +133,11 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByMinCard {
+  class ByMinCard : public ViewSelBase<SetView> {
   private:
     /// So-far smallest cardinality
     unsigned int minCard;
   public:
-    /// View type
-    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -168,13 +152,11 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByMaxCard {
+  class ByMaxCard : public ViewSelBase<SetView> {
   private:
     /// So-far greatest cardinality
     unsigned int maxCard;
   public:
-    /// View type
-    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -189,13 +171,11 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByMinUnknown {
+  class ByMinUnknown : public ViewSelBase<SetView> {
   private:
     /// So-far smallest element
     int minUnknown;
   public:
-    /// View type
-    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -210,13 +190,11 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByMaxUnknown {
+  class ByMaxUnknown : public ViewSelBase<SetView> {
   private:
     /// So-far greatest element
     int maxUnknown;
   public:
-    /// View type
-    typedef SetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x

@@ -60,14 +60,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
-  class ValMinUnknown {
+  class ValMinUnknown : public ValSelBase<CpltSetView,int> {
   public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
-    /// View type
-    typedef CpltSetView View;
-    /// Value type
-    typedef int Val;
     /// Return minimum value of view \a x
     int val(const Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -88,14 +82,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
-  class ValMaxUnknown {
+  class ValMaxUnknown : public ValSelBase<CpltSetView,int> {
   public:
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
-    /// View type
-    typedef CpltSetView View;
-    /// Value type
-    typedef int Val;
     /// Return minimum value of view \a x
     int val(const Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -124,10 +112,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  class ByNone {
+  class ByNone : public ViewSelBase<CpltSetView> {
   public:
-    /// View type
-    typedef CpltSetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView);
     /// Possibly select better view \a x
@@ -142,13 +128,11 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  class ByMinCard {
+  class ByMinCard : public ViewSelBase<CpltSetView> {
   private:
     /// So-far smallest cardinality
     unsigned int minCard;
   public:
-    /// View type
-    typedef CpltSetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
@@ -163,13 +147,11 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  class ByMaxCard {
+  class ByMaxCard : public ViewSelBase<CpltSetView> {
   private:
     /// So-far greatest cardinality
     unsigned int maxCard;
   public:
-    /// View type
-    typedef CpltSetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
@@ -184,13 +166,11 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  class ByMinUnknown {
+  class ByMinUnknown : public ViewSelBase<CpltSetView> {
   private:
     /// So-far smallest element
     int minUnknown;
   public:
-    /// View type
-    typedef CpltSetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
@@ -205,13 +185,11 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  class ByMaxUnknown {
+  class ByMaxUnknown : public ViewSelBase<CpltSetView> {
   private:
     /// So-far greatest element
     int maxUnknown;
   public:
-    /// View type
-    typedef CpltSetView View;
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
