@@ -85,6 +85,7 @@ namespace {
 }
 
 
+
 /** \brief Custom branching for black hole patience. 
  *
  * This class implements a custom branching for BlackHole that
@@ -98,6 +99,23 @@ class BlackHoleBranch : Branching {
   ViewArray<Int::IntView> x;
   /// Cache of last computed decision
   mutable int pos, val;
+  /// Branching description
+  class Description : public BranchingDesc {
+  public:
+    /// Position of variable
+    int pos;
+    /// Value of variable
+    int val;
+    /** Initialize description for branching \a b, number of
+     *  alternatives \a a, position \a pos0, and value \a val0.
+     */
+    Description(const Branching* b, unsigned int a, int pos0, int val0)
+      : BranchingDesc(b,a), pos(pos0), val(val0) {}
+    /// Report size occupied
+    virtual size_t size(void) const {
+      return sizeof(Description);
+    }
+  };
  
   /// Construct branching
   BlackHoleBranch(Space* home, ViewArray<Int::IntView>& xv) 
@@ -129,18 +147,19 @@ public:
   /// Return branching description
   virtual BranchingDesc* description(const Space*) const {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
-    return new PosValDesc<int>(this, 2, pos, val);
+    return new Description(this, 2, pos, val);
   }
   /// Perform commit for branching description \a d and alternative \a a. 
   virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
                             unsigned int a) {
-    const PosValDesc<int>* desc = static_cast<const PosValDesc<int>*>(d);
+    const Description* desc = 
+      static_cast<const Description*>(d);
     pos = val = -1;
     if (a)
-      return me_failed(x[desc->pos()].nq(home, desc->val())) 
+      return me_failed(x[desc->pos].nq(home, desc->val)) 
         ? ES_FAILED : ES_OK;
     else 
-      return me_failed(x[desc->pos()].eq(home, desc->val())) 
+      return me_failed(x[desc->pos].eq(home, desc->val)) 
         ? ES_FAILED : ES_OK;
   }
   /// Copy branching
@@ -335,13 +354,16 @@ public:
       if ((i+1) % 3 == 0) 
         os << std::endl;
       else
-        os << "\t";
+        os << "  \t";
     }
     os << std::endl << std::endl;
     
     os << "Solution:" << std::endl;
     for (int i = 0; i < 52; ++i) {
-      os << card(x[i].min()) << " ";
+      if (x[i].assigned())
+        os << card(x[i].val()) << " ";
+      else
+        os << "   ";
       if ((i + 1) % 13 == 0)
         os << std::endl;
     }

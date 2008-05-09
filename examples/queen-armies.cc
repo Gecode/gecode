@@ -163,6 +163,24 @@ public:
   private:
     /// Cache of last computed decision
     mutable int pos;
+    /// Branching description
+    class Description : public BranchingDesc {
+    public:
+      /// Position of variable
+      int pos;
+      /// Value of variable
+      bool val;
+      /** Initialize description for branching \a b, number of
+       *  alternatives \a a, position \a pos0, and value \a val0.
+       */
+      Description(const Branching* b, unsigned int a, int pos0, bool val0)
+        : BranchingDesc(b,a), pos(pos0), val(val0) {}
+      /// Report size occupied
+      virtual size_t size(void) const {
+        return sizeof(Description);
+      }
+    };
+
     /// Construct branching
     QueenBranch(Space* home)
       : Branching(home), pos(-1) {}
@@ -194,7 +212,7 @@ public:
     /// Return branching description
     virtual BranchingDesc* description(const Space*) const {
       assert(pos != -1);
-      return new PosValDesc<bool>(this, 2, pos, true);
+      return new Description(this, 2, pos, true);
     }
     /** \brief Perform commit for branching description \a d and
      * alternative \a a.
@@ -202,9 +220,9 @@ public:
     virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
                               unsigned int a) {
       QueenArmies* q = static_cast<QueenArmies*>(home);
-      const PosValDesc<bool>* pvd = static_cast<const PosValDesc<bool>*>(d);
-      bool val = a == 0 ? pvd->val() : !pvd->val();
-      return me_failed(Int::BoolView(q->w[pvd->pos()]).eq(q, val))
+      const Description* pvd = static_cast<const Description*>(d);
+      bool val = a == 0 ? pvd->val : !pvd->val;
+      return me_failed(Int::BoolView(q->w[pvd->pos]).eq(q, val))
         ? ES_FAILED
         : ES_OK;
     }
