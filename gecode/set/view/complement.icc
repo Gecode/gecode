@@ -357,21 +357,6 @@ namespace Gecode { namespace Set {
     return view.glbAny(d);
   }
 
-  /*
-   * Specialization for double negation
-   *
-   */
-
-  template <class View>
-  forceinline
-  ComplementView<ComplementView<View> >::ComplementView(void) {}
-
-  template <class View>
-  forceinline
-  ComplementView<ComplementView<View> >::
-  ComplementView(ComplementView<View>& s0)
-    : View(s0.base()) {}
-
 
   /**
    * \brief %Range iterator for least upper bound of complement set views

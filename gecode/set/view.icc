@@ -1188,58 +1188,6 @@ namespace Gecode {
     typedef typename ViewVarImpTraits<View>::VarImp VarImp;
   };
 
-  namespace Set {
-
-    /**
-     * \brief Complement set view specialized for complement set views
-     *
-     * A complement set view \f$s\f$ for a complement set view for a set
-     * view \f$t\f$ provides operations such that \f$s\f$ behaves like
-     * \f$\{t\}\f$. This eliminates double negation.
-     * \ingroup TaskActorSetView
-     */
-    template <class View>
-    class ComplementView<ComplementView<View> > : public View {
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ComplementView(void);
-      /// Initialize with set view x
-      ComplementView(ComplementView<View>& x);
-      //@}
-    };
-
-  }
-
-  /** \name View comparison
-   *  \relates Gecode::Set::ComplementView
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  template <class View>
-  bool same(const Set::ComplementView<Set::ComplementView<View> >& x, 
-            const Set::ComplementView<Set::ComplementView<View> >& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  template <class View>
-  bool before(const Set::ComplementView<Set::ComplementView<View> >& x, 
-              const Set::ComplementView<Set::ComplementView<View> >& y);
-  //@}
-
-
-  /**
-   * \brief Traits class for views and variable implementations
-   *
-   * This class specializes the ViewVarImpTraits for double-negated
-   * ComplementView.
-   * \ingroup TaskActorSetView
-   */
-  template <class View>
-  class ViewVarImpTraits<Set::ComplementView<Set::ComplementView<View> > > {
-  public:
-    /// The variable type of a ComplementView
-    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
-  };
 
   namespace Set {
 
