@@ -194,9 +194,8 @@ namespace Gecode { namespace Set { namespace Select {
         // inter = glb(x0) & complement(lub(candidate))
         GlbRanges<SView> x0lb(x0);
         LubRanges<SView> candub(candidate);
-        RangesCompl<LubRanges<SView> > candubc(candub);
-        Iter::Ranges::Inter<GlbRanges<SView>,
-          RangesCompl<LubRanges<SView> > > inter(x0lb, candubc);
+        Iter::Ranges::Diff<GlbRanges<SView>,LubRanges<SView> >
+          inter(x0lb, candub);
 
         // exclude inconsistent x_i
         // an x_i is inconsistent if
