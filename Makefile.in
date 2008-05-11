@@ -273,7 +273,9 @@ INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	arithmetic/sqr.icc arithmetic/sqrt.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
-	branch/post.icc branch/select-val.icc \
+	branch/post-val-int.icc branch/post-val-bool.icc \
+	branch/post-view-int.icc branch/post-view-bool.icc \
+	branch/select-val.icc \
 	branch/select-values.icc branch/select-view.icc \
 	count/view.icc count/int.icc count/rel.icc \
 	cumulatives/val.icc \

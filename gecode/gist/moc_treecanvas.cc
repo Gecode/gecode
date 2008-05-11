@@ -1,8 +1,8 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'treecanvas.hh'
 **
-** Created: Wed May 7 09:06:23 2008
-**      by: The Qt Meta Object Compiler version 59 (Qt 4.3.4)
+** Created: Sun May 11 18:27:15 2008
+**      by: The Qt Meta Object Compiler version 59 (Qt 4.4.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -11,11 +11,12 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'treecanvas.hh' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 59
-#error "This file was generated using the moc from 4.3.4. It"
+#error "This file was generated using the moc from 4.4.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
+QT_BEGIN_MOC_NAMESPACE
 static const uint qt_meta_data_Gecode__Gist__SearcherThread[] = {
 
  // content:
@@ -392,3 +393,4 @@ void Gecode::Gist::TreeCanvas::statusChanged(const Statistics & _t1, bool _t2)
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
+QT_END_MOC_NAMESPACE
