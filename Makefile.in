@@ -195,7 +195,7 @@ KERNELSRC0 = \
 KERNELHDR0 = \
 	array shared-array branching core exception \
 	macros memory-manager modevent \
-	propagator advisor view var var-traits var-map reflection
+	propagator advisor view var var-traits var-map reflection branch
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
@@ -300,7 +300,7 @@ INTHDR0 = \
 	view/bool.icc view/constint.icc view/zero.icc view/int.icc \
 	view/minus.icc \
 	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
-	arithmetic.hh array.icc bool.hh branch.hh branch.icc \
+	arithmetic.hh array.icc bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \
 	element.hh exception.icc  gcc.hh linear.hh \
 	propagator.icc extensional.hh rel.hh \

@@ -2000,16 +2000,6 @@ namespace Gecode {
     INT_VAR_REGRET_MAX_MAX
   };
 
-  /// Combine variable selection criteria for tie-breaking
-  class TieBreakIntVarBranch;
-
-  /// Combine variable selection criteria \a a and \a b for tie-breaking
-  TieBreakIntVarBranch 
-  tiebreak(IntVarBranch a, IntVarBranch b);
-  /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
-  TieBreakIntVarBranch
-  tiebreak(IntVarBranch a, IntVarBranch b, IntVarBranch c);
-
   /// Which values to select first for branching
   enum IntValBranch {
     INT_VAL_MIN,       ///< Select smallest value
@@ -2030,7 +2020,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Space* home, const IntVarArgs& x, 
-         const TieBreakIntVarBranch& vars, IntValBranch vals);
+         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *
@@ -2040,14 +2030,8 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Space* home, const BoolVarArgs& x, 
-         const TieBreakIntVarBranch& vars, IntValBranch vals);
+         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
   //@}
-
-}
-
-#include "gecode/int/branch.icc"
-
-namespace Gecode {
 
   /**
    * \defgroup TaskModelIntAssign Assigning
