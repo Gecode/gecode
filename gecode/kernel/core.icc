@@ -1655,7 +1655,7 @@ namespace Gecode {
 
   forceinline ExecStatus
   ES_NOFIX_PARTIAL(Propagator* p, ModEventDelta med) {
-    p->u.med ^= AllVarConf::med_combine(p->u.med,med); 
+    p->u.med = AllVarConf::med_combine(p->u.med,med); 
     return __ES_PARTIAL;
   }
 
