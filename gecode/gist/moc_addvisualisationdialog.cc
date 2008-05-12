@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'addvisualisationdialog.hh'
 **
-** Created: Sun May 11 18:27:15 2008
+** Created: Mon May 12 11:35:02 2008
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.0)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -168,6 +168,26 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
+  /**
+   * \brief View selection class for tie breaking
+   */
+  template<class A, class B>
+  class ViewSelTieBreak {
+  protected:
+    /// First selection
+    A a;
+    /// Second selection
+    B b;
+  public:
+    /// View type
+    typedef typename A::View View;
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, typename A::View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, typename A::View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
 
 
 
@@ -460,6 +480,41 @@ namespace Gecode {
   inline Support::Symbol
   ViewSelByDegreeMax<View>::type(void) {
     return Support::Symbol("Gecode::ViewSel::ByDegreeMax");
+  }
+
+  // Select variable with tie breaking
+  template<class A, class B>
+  forceinline ViewSelStatus
+  ViewSelTieBreak<A,B>::init(const Space* home, typename A::View x) {
+    ViewSelStatus sa = a.init(home,x);
+    ViewSelStatus sb = b.init(home,x);
+    if ((sa == VSS_BEST) && (sb == VSS_BEST))
+      return VSS_BEST;
+    else
+      return VSS_BETTER;
+  }
+  template<class A, class B>
+  forceinline ViewSelStatus
+  ViewSelTieBreak<A,B>::select(const Space* home, typename A::View x) {
+    switch (a.select(home,x)) {
+    case VSS_BEST:   return b.init(home,x);
+    case VSS_BETTER: (void) b.init(home,x); return VSS_BETTER;
+    case VSS_WORSE:  return VSS_WORSE;
+    case VSS_TIE:
+      switch (b.select(home,x)) {
+      case VSS_BEST:   return VSS_BETTER;
+      case VSS_BETTER: return VSS_BETTER;
+      case VSS_TIE:    return VSS_TIE;
+      case VSS_WORSE:  return VSS_WORSE;
+      }
+    default: GECODE_NEVER;
+      return VSS_WORSE;
+    }
+  }
+  template<class A, class B>
+  inline Support::Symbol
+  ViewSelTieBreak<A,B>::type(void) {
+    return Reflection::mangle<A,B>("Gecode::ViewSel::TieBreak");
   }
 
 
