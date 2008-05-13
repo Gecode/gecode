@@ -174,8 +174,8 @@
 
 #include "gecode/kernel/propagator.icc"
 #include "gecode/kernel/advisor.icc"
-#include "gecode/kernel/branching.icc"
 #include "gecode/kernel/branch.icc"
+#include "gecode/kernel/branching.icc"
 
 /*
  * Automatically generated variable implementations

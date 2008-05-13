@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class SelView>
   void
   post(Space* home, ViewArray<BoolView>& x, const SelView& v, 
-       IntValBranch vals) {
+       IntValBranch vals, const ValBranchOptions& o_vals) {
     switch (vals) {
     case INT_VAL_MIN:
     case INT_VAL_MED:

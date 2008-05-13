@@ -469,11 +469,15 @@ namespace Gecode { namespace Int { namespace Branch {
 
   GECODE_INT_EXPORT void
   post(Space* home, ViewArray<IntView>& x,
-       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
+       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
+       const TieBreakVarBranchOptions& o_vars,
+       const ValBranchOptions& o_vals);
 
   GECODE_INT_EXPORT void
   post(Space* home, ViewArray<BoolView>& x,
-       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
+       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
+       const TieBreakVarBranchOptions& o_vars,
+       const ValBranchOptions& o_vals);
 
 }}}
 

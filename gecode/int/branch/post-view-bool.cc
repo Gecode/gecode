@@ -42,7 +42,8 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   Gecode::ViewSelVirtualBase<BoolView>*
-  post(Gecode::Space* home, IntVarBranch vars) {
+  post(Gecode::Space* home, IntVarBranch vars,
+       const Gecode::VarBranchOptions& o_vars) {
     switch (vars) {
      case INT_VAR_NONE:
        return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >();
@@ -83,81 +84,82 @@ namespace Gecode { namespace Int { namespace Branch {
   void
   post(Gecode::Space* home, Gecode::ViewArray<BoolView>& x,
        IntVarBranch vars, Gecode::ViewSelVirtualBase<BoolView>* tb[n],
-       IntValBranch vals) {
+       IntValBranch vals,
+       const Gecode::ValBranchOptions& o_vals) {
     switch (vars) {
     case INT_VAR_NONE: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MIN_MIN: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MIN_MAX: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MIN: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MAX: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MIN: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MAX: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_DEGREE_MIN: {
         ViewSelTieBreak<ViewSelByDegreeMin<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByDegreeMin<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByDegreeMin<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_DEGREE_MAX: {
         ViewSelTieBreak<ViewSelByDegreeMax<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByDegreeMax<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByDegreeMax<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MIN: {
         ViewSelTieBreak<ViewSelByDegreeMax<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByDegreeMax<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByDegreeMax<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MAX: {
         ViewSelTieBreak<ViewSelByDegreeMin<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByDegreeMin<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByDegreeMin<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MIN: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MAX: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MIN: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MAX: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals);
+        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
       }
       break;
     default:
@@ -168,84 +170,86 @@ namespace Gecode { namespace Int { namespace Branch {
   void
   post(Gecode::Space* home, Gecode::ViewArray<BoolView>& x,
        const Gecode::TieBreakVarBranch<IntVarBranch>& vars,
-       IntValBranch vals) {
+       IntValBranch vals,
+       const Gecode::TieBreakVarBranchOptions& o_vars,
+       const Gecode::ValBranchOptions& o_vals) {
     if ((vars.b == INT_VAR_NONE) && 
         (vars.c == INT_VAR_NONE) && 
         (vars.d == INT_VAR_NONE)) {
       switch (vars.a) {
     case INT_VAR_NONE: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MIN_MIN: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MIN_MAX: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MIN: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MAX: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MIN: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MAX: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_DEGREE_MIN: {
-        ViewSelByDegreeMin<BoolView> v;
-        post<ViewSelByDegreeMin<BoolView> >(home,x,v,vals);
+        ViewSelByDegreeMin<BoolView> v; // v(o_vars.a)
+        post<ViewSelByDegreeMin<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_DEGREE_MAX: {
-        ViewSelByDegreeMax<BoolView> v;
-        post<ViewSelByDegreeMax<BoolView> >(home,x,v,vals);
+        ViewSelByDegreeMax<BoolView> v; // v(o_vars.a)
+        post<ViewSelByDegreeMax<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MIN: {
-        ViewSelByDegreeMax<BoolView> v;
-        post<ViewSelByDegreeMax<BoolView> >(home,x,v,vals);
+        ViewSelByDegreeMax<BoolView> v; // v(o_vars.a)
+        post<ViewSelByDegreeMax<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MAX: {
-        ViewSelByDegreeMin<BoolView> v;
-        post<ViewSelByDegreeMin<BoolView> >(home,x,v,vals);
+        ViewSelByDegreeMin<BoolView> v; // v(o_vars.a)
+        post<ViewSelByDegreeMin<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MIN: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MAX: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MIN: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MAX: {
-        ViewSelByNone<BoolView> v;
-        post<ViewSelByNone<BoolView> >(home,x,v,vals);
+        ViewSelByNone<BoolView> v; // v(o_vars.a)
+        post<ViewSelByNone<BoolView> >(home,x,v,vals,o_vals);
       }
       break;
       default:
@@ -254,19 +258,22 @@ namespace Gecode { namespace Int { namespace Branch {
     } else if ((vars.c == INT_VAR_NONE) && 
                (vars.d == INT_VAR_NONE)) {
       Gecode::ViewSelVirtualBase<BoolView>* tb[1] = {
-        post(home,vars.b)
+        post(home,vars.b,o_vars.b)
       };
-      post<1>(home,x,vars.a,tb,vals);
+      post<1>(home,x,vars.a,tb,vals,o_vals);
     } else if (vars.d == INT_VAR_NONE) {
       Gecode::ViewSelVirtualBase<BoolView>* tb[2] = {
-        post(home,vars.b),post(home,vars.c)
+        post(home,vars.b,o_vars.b),
+        post(home,vars.c,o_vars.c)
       };
-      post<2>(home,x,vars.a,tb,vals);
+      post<2>(home,x,vars.a,tb,vals,o_vals);
     } else {
       Gecode::ViewSelVirtualBase<BoolView>* tb[3] = {
-        post(home,vars.b),post(home,vars.c),post(home,vars.d)
+        post(home,vars.b,o_vars.b),
+        post(home,vars.c,o_vars.c),
+        post(home,vars.d,o_vars.d)
       };
-      post<3>(home,x,vars.a,tb,vals);
+      post<3>(home,x,vars.a,tb,vals,o_vals);
     }
   }
 

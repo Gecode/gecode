@@ -45,7 +45,7 @@ namespace Gecode {
          const TieBreakVarBranchOptions& o_vars,
          const ValBranchOptions& o_vals) {
     ViewArray<Int::IntView> xv(home,x);
-    Int::Branch::post(home,xv,vars,vals);
+    Int::Branch::post(home,xv,vars,vals,o_vars,o_vals);
   }
 
   void
@@ -54,7 +54,7 @@ namespace Gecode {
          const TieBreakVarBranchOptions& o_vars,
          const ValBranchOptions& o_vals) {
     ViewArray<Int::BoolView> xv(home,x);
-    Int::Branch::post(home,xv,vars,vals);
+    Int::Branch::post(home,xv,vars,vals,o_vars,o_vals);
   }
 
 
