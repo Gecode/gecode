@@ -563,7 +563,7 @@ namespace Gecode {
     static const Actor* cast(const ActorLink* al);
   public:
     /// Create copy
-    virtual Actor* copy(Space*,bool) = 0;
+    virtual Actor* copy(Space* home, bool share) = 0;
 
     /// \name Memory management
     //@{

@@ -128,6 +128,10 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
+    /// Updating during cloning
+    void update(Space* home, bool share, ViewSelBase& vs);
+    /// Delete view selection
+    void dispose(Space* home);
   };
 
   /**
@@ -186,6 +190,10 @@ namespace Gecode {
     virtual ViewSelStatus init(const Space* home, View x) = 0;
     /// Possibly select better view \a x
     virtual ViewSelStatus select(const Space* home, View x) = 0;
+    /// Create copy
+    virtual ViewSelVirtualBase<View>* copy(Space* home, bool share) = 0;
+    /// Delete view selection
+    virtual void dispose(Space* home) = 0;
     /// \name Memory management
     //@{
     /// Allocate memory from space
@@ -201,13 +209,22 @@ namespace Gecode {
    */
   template <class ViewSel>
   class ViewSelVirtual : public ViewSelVirtualBase<typename ViewSel::View> {
-  public:
+  protected:
     /// Static view selection object
     ViewSel viewsel;
+  public:
+    /// Default constructor
+    ViewSelVirtual(void);
+    /// Constructor for cloning \a vsv
+    ViewSelVirtual(Space* home, bool share, ViewSelVirtual& vsv);
     /// Intialize with view \a x
     virtual ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
     virtual ViewSelStatus select(const Space* home, typename ViewSel::View x);
+    /// Create copy
+    virtual ViewSelVirtualBase<typename ViewSel::View>* copy(Space* home, bool share);
+    /// Delete view selection
+    virtual void dispose(Space* home);
   };
   /**
    * \brief View selection class for tie breaking
@@ -224,15 +241,15 @@ namespace Gecode {
     typedef typename ViewSel::View View;
     /// Default constructor
     ViewSelTieBreak(void);
-    /// Copy constructor
-    ViewSelTieBreak(const ViewSelTieBreak<ViewSel,n>& vstb);
     /// Initialize with tiebreakers
     ViewSelTieBreak(ViewSelVirtualBase<typename ViewSel::View>* vsv[n]);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, typename ViewSel::View x);
-    /// Dispose
+    /// Updating during cloning
+    void update(Space* home, bool share, ViewSelTieBreak& vs);
+    /// Delete view selection
     void dispose(Space* home);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
@@ -323,6 +340,10 @@ namespace Gecode {
     typedef _Val Val;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
+    /// Updating during cloning
+    void update(Space* home, bool share, ValSelBase& vs);
+    /// Delete value selection
+    void dispose(Space* home);
   };
 
 
@@ -430,8 +451,9 @@ namespace Gecode {
   forceinline
   ViewBranching<ViewSel>::ViewBranching(Space* home, bool share, 
                                         ViewBranching& b)
-    : Branching(home,share,b), start(b.start), viewsel(b.viewsel) {
+    : Branching(home,share,b), start(b.start) {
     x.update(home,share,b.x);
+    viewsel.update(home,share,b.viewsel);
   }
 
   template <class ViewSel>
@@ -480,16 +502,21 @@ namespace Gecode {
   template <class ViewSel>
   forceinline size_t
   ViewBranching<ViewSel>::dispose(Space* home) {
-    viewsel.~ViewSel();
+    viewsel.dispose(home);
     (void) Branching::dispose(home);
     return sizeof(ViewBranching<ViewSel>);
   }
 
 
-  /*
-   * Select first view
-   */
+  // Selection base class
+  template<class View>
+  forceinline void 
+  ViewSelBase<View>::update(Space*, bool, ViewSelBase<View>&) {}
+  template<class View>
+  forceinline void
+  ViewSelBase<View>::dispose(Space*) {}
 
+  // Select first view
   template<class View>
   forceinline ViewSelStatus
   ViewSelByNone<View>::init(const Space*, View) {
@@ -571,6 +598,14 @@ namespace Gecode {
   }
 
   template <class ViewSel>
+  forceinline
+  ViewSelVirtual<ViewSel>::ViewSelVirtual(void) {}
+  template <class ViewSel>
+  forceinline
+  ViewSelVirtual<ViewSel>::ViewSelVirtual(Space* home, bool share, 
+                                          ViewSelVirtual<ViewSel>& vsv) 
+    : viewsel(vsv.viewsel) {}
+  template <class ViewSel>
   ViewSelStatus
   ViewSelVirtual<ViewSel>::init(const Space* home, typename ViewSel::View x) {
     return viewsel.init(home,x);
@@ -580,21 +615,20 @@ namespace Gecode {
   ViewSelVirtual<ViewSel>::select(const Space* home, typename ViewSel::View x) {
     return viewsel.select(home,x);
   }
+  template <class ViewSel>
+  ViewSelVirtualBase<typename ViewSel::View>*
+  ViewSelVirtual<ViewSel>::copy(Space* home, bool share) {
+    return new (home) ViewSelVirtual<ViewSel>(home,share,*this);
+  }
+  template <class ViewSel>
+  void
+  ViewSelVirtual<ViewSel>::dispose(Space* home) {}
+
 
   // Select variable with tie breaking
   template<class ViewSel, int n>
   forceinline
-  ViewSelTieBreak<ViewSel,n>::ViewSelTieBreak(void) {
-    for (int i=0; i<n; i++)
-      b[i]=NULL;    
-  }
-  template<class ViewSel, int n>
-  forceinline
-  ViewSelTieBreak<ViewSel,n>::
-  ViewSelTieBreak(const ViewSelTieBreak<ViewSel,n>& vstb) {
-    for (int i=0; i<n; i++)
-      b[i]=vstb.b[i];
-  }
+  ViewSelTieBreak<ViewSel,n>::ViewSelTieBreak(void) {}
   template<class ViewSel, int n>
   forceinline
   ViewSelTieBreak<ViewSel,n>::
@@ -652,7 +686,17 @@ namespace Gecode {
   }
   template<class ViewSel, int n>
   forceinline void
-  ViewSelTieBreak<ViewSel,n>::dispose(Space*) {
+  ViewSelTieBreak<ViewSel,n>::update(Space* home, bool share, 
+                                     ViewSelTieBreak<ViewSel,n>& vstb) {
+    for (int i=0; i<n; i++)
+      b[i] = vstb.b[i]->copy(home,share);
+  } 
+  template<class ViewSel, int n>
+  forceinline void
+  ViewSelTieBreak<ViewSel,n>::dispose(Space* home) {
+    a.dispose(home);
+    for (int i=0; i<n; i++)
+      b[i]->dispose(home);
   } 
 
 
@@ -686,7 +730,9 @@ namespace Gecode {
   forceinline
   ViewValBranching<ViewSel,ValSel>::
   ViewValBranching(Space* home, bool share, ViewValBranching& b)
-    : ViewBranching<ViewSel>(home,share,b), valsel(b.valsel) {}
+    : ViewBranching<ViewSel>(home,share,b) {
+    valsel.update(home,share,b.valsel);
+  }
   
   template <class ViewSel, class ValSel>
   Actor*
@@ -755,10 +801,18 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   forceinline size_t
   ViewValBranching<ViewSel,ValSel>::dispose(Space* home) {
-    valsel.~ValSel();
+    valsel.dispose(home);
     (void) ViewBranching::dispose(home);
     return sizeof(ViewValBranching<ViewSel,ValSel>);
   }
+
+  // Value selection base class
+  template<class View, class Val>
+  forceinline void 
+  ValSelBase<View,Val>::update(Space*, bool, ValSelBase<View,Val>&) {}
+  template<class View, class Val>
+  forceinline void
+  ValSelBase<View,Val>::dispose(Space*) {}
 
 }
 
