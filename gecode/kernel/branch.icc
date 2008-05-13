@@ -37,6 +37,29 @@
 
 namespace Gecode {
   
+  /// Variable branch options
+  class VarBranchOptions {
+  public:
+    /// Seed for random variable selection
+    unsigned int seed;
+    /// Default options
+    GECODE_KERNEL_EXPORT static const VarBranchOptions def;
+    /// Initialize with default values
+    VarBranchOptions(void);
+  };
+
+  /// Value branch options
+  class ValBranchOptions {
+  public:
+    /// Seed for random value selection
+    unsigned int seed;
+    /// Default options
+    GECODE_KERNEL_EXPORT static const ValBranchOptions def;
+    /// Initialize with default values
+    ValBranchOptions(void);
+  };
+
+
   /// Combine variable selection criteria for tie-breaking
   template <class VarBranch>
   class TieBreakVarBranch {
@@ -64,6 +87,50 @@ namespace Gecode {
   tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
 
 
+
+  /// Combine variable branch options for tie-breaking
+  class TieBreakVarBranchOptions {
+  public:
+    /// Options for branching criteria to try in order
+    VarBranchOptions a, b, c, d;
+    /// Default options
+    GECODE_KERNEL_EXPORT static const TieBreakVarBranchOptions def;
+    /// Initialize with variable selection criteria
+    TieBreakVarBranchOptions(const VarBranchOptions& a0 
+                             = VarBranchOptions::def,
+                             const VarBranchOptions& b0 
+                             = VarBranchOptions::def,
+                             const VarBranchOptions& c0 
+                             = VarBranchOptions::def,
+                             const VarBranchOptions& d0 
+                             = VarBranchOptions::def);
+  };
+
+  /// Combine variable branch options \a a and \a b for tie-breaking
+  TieBreakVarBranchOptions
+  tiebreak(VarBranchOptions a, VarBranchOptions b);
+  /// Combine variable branch options \a a, \a b, and \a c for tie-breaking
+  TieBreakVarBranchOptions
+  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c);
+  /// Combine variable branch options \a a, \a b, \a c, and \a d for tie-breaking
+  TieBreakVarBranchOptions
+  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c, 
+           VarBranchOptions d);
+
+
+
+  // Variable branch options
+  forceinline
+  VarBranchOptions::VarBranchOptions(void) : seed(0) {}
+
+  // Value branch options
+  forceinline
+  ValBranchOptions::ValBranchOptions(void) : seed(0) {}
+
+
+  /*
+   * Combine variable selection criteria for tie-breaking
+   */
   template <class VarBranch>
   forceinline
   TieBreakVarBranch<VarBranch>::TieBreakVarBranch(VarBranch a0,
@@ -93,6 +160,35 @@ namespace Gecode {
     return abcd;
   }
 
+  /*
+   * Combine branch options for tie-breaking
+   */
+  forceinline
+  TieBreakVarBranchOptions::TieBreakVarBranchOptions(const VarBranchOptions& a0,
+                                                     const VarBranchOptions& b0,
+                                                     const VarBranchOptions& c0,
+                                                     const VarBranchOptions& d0)
+    : a(a0), b(b0), c(c0), d(d0) {}
+
+  forceinline TieBreakVarBranchOptions
+  tiebreak(VarBranchOptions a, VarBranchOptions b) {
+    TieBreakVarBranchOptions ab(a,b);
+    return ab;
+  }
+
+  forceinline TieBreakVarBranchOptions
+  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c) {
+    TieBreakVarBranchOptions abc(a,b,c);
+    return abc;
+  }
+
+  forceinline TieBreakVarBranchOptions
+  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c, 
+           VarBranchOptions d) {
+    TieBreakVarBranchOptions abcd(a,b,c,d);
+    return abcd;
+  }
+  
 }
 
 // STATISTICS: int-post

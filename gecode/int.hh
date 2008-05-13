@@ -2020,7 +2020,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Space* home, const IntVarArgs& x, 
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
+         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
+         const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *
@@ -2030,7 +2032,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Space* home, const BoolVarArgs& x, 
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
+         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
+         const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}
 
   /**
