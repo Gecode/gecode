@@ -1953,7 +1953,7 @@ namespace Gecode {
   //@{
   /// Which variable to select for branching
   enum IntVarBranch {
-    INT_VAR_NONE,     ///< First unassigned
+    INT_VAR_NONE = 0, ///< First unassigned
     INT_VAR_MIN_MIN,  ///< With smallest min
     INT_VAR_MIN_MAX,  ///< With largest min
     INT_VAR_MAX_MIN,  ///< With smallest max

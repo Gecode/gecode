@@ -943,7 +943,7 @@ namespace Gecode {
   
   /// Which variable to select for branching
   enum SetVarBranch {
-    SET_VAR_NONE,               ///< First unassigned
+    SET_VAR_NONE = 0,           ///< First unassigned
     SET_VAR_MIN_CARD,           ///< With smallest unknown set
     SET_VAR_MAX_CARD,           ///< With largest unknown set
     SET_VAR_MIN_UNKNOWN_ELEM,   ///< With smallest unknown element

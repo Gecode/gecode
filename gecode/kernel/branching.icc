@@ -222,10 +222,18 @@ namespace Gecode {
   public:
     /// View type
     typedef typename ViewSel::View View;
+    /// Default constructor
+    ViewSelTieBreak(void);
+    /// Copy constructor
+    ViewSelTieBreak(const ViewSelTieBreak<ViewSel,n>& vstb);
+    /// Initialize with tiebreakers
+    ViewSelTieBreak(ViewSelVirtual<typename ViewSel::View> vsv[n]);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, typename ViewSel::View x);
+    /// Dispose
+    void dispose(Space* home);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -572,6 +580,23 @@ namespace Gecode {
 
   // Select variable with tie breaking
   template<class ViewSel, int n>
+  forceinline
+  ViewSelTieBreak<ViewSel,n>::ViewSelTieBreak(void) {}
+  template<class ViewSel, int n>
+  forceinline
+  ViewSelTieBreak<ViewSel,n>::
+  ViewSelTieBreak(const ViewSelTieBreak<ViewSel,n>& vstb) {
+    for (int i=0; i<n; i++)
+      b[i]=vstb.b[i];
+  }
+  template<class ViewSel, int n>
+  forceinline
+  ViewSelTieBreak<ViewSel,n>::
+  ViewSelTieBreak(ViewSelVirtual<typename ViewSel::View> vsv[n]) {
+    for (int i=0; i<n; i++)
+      b[i]=vsv[i];
+  }
+  template<class ViewSel, int n>
   forceinline ViewSelStatus
   ViewSelTieBreak<ViewSel,n>::init(const Space* home, 
                                    typename ViewSel::View x) {
@@ -601,15 +626,15 @@ namespace Gecode {
     case VSS_WORSE:
       return VSS_WORSE;
     case VSS_TIE:
-      /*
-      switch (b.select(home,x)) {
-      case VSS_BEST:   return VSS_BETTER;
-      case VSS_BETTER: return VSS_BETTER;
-      case VSS_TIE:    return VSS_TIE;
-      case VSS_WORSE:  return VSS_WORSE;
-      }
-      */
-      return VSS_WORSE;
+      for (int i=0; i<n; i++)
+        switch (b[i].select(home,x)) {
+        case VSS_BEST:   return VSS_BETTER;
+        case VSS_BETTER: return VSS_BETTER;
+        case VSS_TIE:    break;
+        case VSS_WORSE:  return VSS_WORSE;
+        default: GECODE_NEVER;
+        }
+      return VSS_TIE;
     default: GECODE_NEVER;
       return VSS_WORSE;
     }
@@ -619,7 +644,10 @@ namespace Gecode {
   ViewSelTieBreak<ViewSel,n>::type(void) {
     return Reflection::mangle("Gecode::ViewSel::TieBreak");
   }
-
+  template<class ViewSel, int n>
+  forceinline void
+  ViewSelTieBreak<ViewSel,n>::dispose(Space*) {
+  } 
 
 
 

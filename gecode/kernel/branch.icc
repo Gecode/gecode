@@ -42,11 +42,12 @@ namespace Gecode {
   class TieBreakVarBranch {
   public:
     /// Branching criteria to try in order
-    VarBranch a, b, c;
+    VarBranch a, b, c, d;
     /// Initialize with variable selection criteria
-    TieBreakVarBranch(VarBranch a0,
+    TieBreakVarBranch(VarBranch a0 = static_cast<VarBranch>(0),
                       VarBranch b0 = static_cast<VarBranch>(0),
-                      VarBranch c0 = static_cast<VarBranch>(0));
+                      VarBranch c0 = static_cast<VarBranch>(0),
+                      VarBranch d0 = static_cast<VarBranch>(0));
   };
 
   /// Combine variable selection criteria \a a and \a b for tie-breaking
@@ -57,14 +58,19 @@ namespace Gecode {
   template <class VarBranch>
   TieBreakVarBranch<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c);
+  /// Combine variable selection criteria \a a, \a b, \a c, and \a d for tie-breaking
+  template <class VarBranch>
+  TieBreakVarBranch<VarBranch>
+  tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
 
 
   template <class VarBranch>
   forceinline
   TieBreakVarBranch<VarBranch>::TieBreakVarBranch(VarBranch a0,
                                                   VarBranch b0,
-                                                  VarBranch c0)
-    : a(a0), b(b0), c(c0) {}
+                                                  VarBranch c0,
+                                                  VarBranch d0)
+    : a(a0), b(b0), c(c0), d(d0) {}
 
   template <class VarBranch>
   forceinline TieBreakVarBranch<VarBranch>
@@ -78,6 +84,13 @@ namespace Gecode {
   tiebreak(VarBranch a, VarBranch b, VarBranch c) {
     TieBreakVarBranch<VarBranch> abc(a,b,c);
     return abc;
+  }
+
+  template <class VarBranch>
+  forceinline TieBreakVarBranch<VarBranch>
+  tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
+    TieBreakVarBranch<VarBranch> abcd(a,b,c,d);
+    return abcd;
   }
 
 }

@@ -768,7 +768,7 @@ namespace Gecode {
   
   /// Which variable to select for branching
   enum CpltSetVarBranch {
-    CPLTSET_VAR_NONE,             ///< First unassigned
+    CPLTSET_VAR_NONE = 0,         ///< First unassigned
     CPLTSET_VAR_MIN_CARD,         ///< With smallest unknown set
     CPLTSET_VAR_MAX_CARD,         ///< With largest unknown set
     CPLTSET_VAR_MIN_UNKNOWN_ELEM, ///< With smallest unknown element
