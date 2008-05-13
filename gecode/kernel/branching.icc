@@ -192,8 +192,8 @@ namespace Gecode {
     virtual ViewSelStatus select(const Space* home, View x) = 0;
     /// Create copy
     virtual ViewSelVirtualBase<View>* copy(Space* home, bool share) = 0;
-    /// Delete view selection
-    virtual void dispose(Space* home) = 0;
+    /// Delete view selection and return its size
+    virtual size_t dispose(Space* home) = 0;
     /// \name Memory management
     //@{
     /// Allocate memory from space
@@ -223,8 +223,8 @@ namespace Gecode {
     virtual ViewSelStatus select(const Space* home, typename ViewSel::View x);
     /// Create copy
     virtual ViewSelVirtualBase<typename ViewSel::View>* copy(Space* home, bool share);
-    /// Delete view selection
-    virtual void dispose(Space* home);
+    /// Delete view selection and returns its size
+    virtual size_t dispose(Space* home);
   };
   /**
    * \brief View selection class for tie breaking
@@ -621,8 +621,11 @@ namespace Gecode {
     return new (home) ViewSelVirtual<ViewSel>(home,share,*this);
   }
   template <class ViewSel>
-  void
-  ViewSelVirtual<ViewSel>::dispose(Space* home) {}
+  size_t
+  ViewSelVirtual<ViewSel>::dispose(Space* home) {
+    viewsel.dispose(home);
+    return sizeof(ViewSelVirtual<ViewSel>);
+  }
 
 
   // Select variable with tie breaking
@@ -696,7 +699,7 @@ namespace Gecode {
   ViewSelTieBreak<ViewSel,n>::dispose(Space* home) {
     a.dispose(home);
     for (int i=0; i<n; i++)
-      b[i]->dispose(home);
+      home->reuse(b[i],b[i]->dispose(home));
   } 
 
 
