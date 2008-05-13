@@ -96,6 +96,8 @@ namespace Gecode {
     mutable ViewArray<typename ViewSel::View> x; 
     /// Unassigned views start at x[start]
     mutable int start;  
+    /// View selection object
+    mutable ViewSel viewsel;
     /// Return position information
     Pos pos(const Space* home) const;
     /**
@@ -109,8 +111,13 @@ namespace Gecode {
   public:
     /// Constructor for creation
     ViewBranching(Space* home, ViewArray<typename ViewSel::View>& x);
+    /// Constructor for creation
+    ViewBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+                  const ViewSel& vi_s);
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space* home) const;
+    /// Delete branching and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -221,12 +228,18 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   class ViewValBranching : public ViewBranching<ViewSel> {
   protected:
+    using ViewBranching<ViewSel>::viewsel;
     using ViewBranching<ViewSel>::x;
+    /// Value selection object
+    mutable ValSel valsel;
     /// Constructor for cloning \a b
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
     /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x);
+    /// Constructor for creation
+    ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+                     const ViewSel& vi_s, const ValSel& va_s);
     /// Return branching description (of type Gecode::PosValDesc)
     virtual const BranchingDesc* description(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
@@ -247,6 +260,8 @@ namespace Gecode {
                      const Reflection::ActorSpec& spec);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Delete branching and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -358,12 +373,19 @@ namespace Gecode {
                                         ViewArray<typename ViewSel::View>& x0)
     : Branching(home), x(x0), start(0) {}
 
+  template <class ViewSel>
+  forceinline
+  ViewBranching<ViewSel>::ViewBranching(Space* home,
+                                        ViewArray<typename ViewSel::View>& x0,
+                                        const ViewSel& vi_s)
+    : Branching(home), x(x0), start(0), viewsel(vi_s) {}
+
 
   template <class ViewSel>
   forceinline
   ViewBranching<ViewSel>::ViewBranching(Space* home, bool share, 
                                         ViewBranching& b)
-    : Branching(home,share,b), start(b.start) {
+    : Branching(home,share,b), start(b.start), viewsel(b.viewsel) {
     x.update(home,share,b.x);
   }
 
@@ -382,13 +404,12 @@ namespace Gecode {
   forceinline Pos
   ViewBranching<ViewSel>::pos(const Space* home) const {
     assert(!x[start].assigned());
-    ViewSel vs; // For view selection
     int i = start;
     int b = i++;
-    if (vs.init(home,x[b]) != VSS_BEST)
+    if (viewsel.init(home,x[b]) != VSS_BEST)
       for (; i < x.size(); i++)
         if (!x[i].assigned())
-          switch (vs.select(home,x[i])) {
+          switch (viewsel.select(home,x[i])) {
           case VSS_BETTER:              b=i; break;
           case VSS_BEST:                b=i; goto create;
           case VSS_TIE: case VSS_WORSE: break;
@@ -409,6 +430,14 @@ namespace Gecode {
     } else {
       return x[p.start+p.pos];
     }
+  }
+
+  template <class ViewSel>
+  forceinline size_t
+  ViewBranching<ViewSel>::dispose(Space* home) {
+    viewsel.~ViewSel();
+    (void) Branching::dispose(home);
+    return sizeof(ViewBranching<ViewSel>);
   }
 
 
@@ -531,13 +560,20 @@ namespace Gecode {
   ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x)
     : ViewBranching<ViewSel>(home,x) {}
 
+  template <class ViewSel, class ValSel>
+  forceinline
+  ViewValBranching<ViewSel,ValSel>::
+  ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+                   const ViewSel& vi_s, const ValSel& va_s)
+    : ViewBranching<ViewSel>(home,x,vi_s), valsel(va_s) {}
+
 
   template <class ViewSel, class ValSel>
   forceinline
   ViewValBranching<ViewSel,ValSel>::
   ViewValBranching(Space* home, bool share, ViewValBranching& b)
-    : ViewBranching<ViewSel>(home,share,b) {}
-
+    : ViewBranching<ViewSel>(home,share,b), valsel(b.valsel) {}
+  
   template <class ViewSel, class ValSel>
   Actor*
   ViewValBranching<ViewSel,ValSel>::copy(Space* home, bool share) {
@@ -549,10 +585,9 @@ namespace Gecode {
   const BranchingDesc*
   ViewValBranching<ViewSel,ValSel>::description(const Space* home) const {
     Pos p = ViewBranching<ViewSel>::pos(home);
-    ValSel vl; // For value selection
     typename ValSel::View v(ViewBranching<ViewSel>::view(p).var());
     return new PosValDesc<typename ValSel::Val>
-      (this,ValSel::alternatives,p,vl.val(home,v));
+      (this,ValSel::alternatives,p,valsel.val(home,v));
   }
 
   template <class ViewSel, class ValSel>
@@ -561,9 +596,8 @@ namespace Gecode {
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
     const PosValDesc<typename ValSel::Val>* pvd 
       = static_cast<const PosValDesc<typename ValSel::Val>*>(d);
-    ValSel vs;
     typename ValSel::View v(ViewBranching<ViewSel>::view(pvd->pos(),true).var());
-    return me_failed(vs.tell(home,a,v,pvd->val())) ? ES_FAILED : ES_OK;
+    return me_failed(valsel.tell(home,a,v,pvd->val())) ? ES_FAILED : ES_OK;
   }
 
   template <class ViewSel, class ValSel>
@@ -599,9 +633,17 @@ namespace Gecode {
       = static_cast<const PosValDesc<typename ValSel::Val>*>(d);
     Reflection::BranchingSpec bs(3);
     bs[0] = view(pvd->pos()).spec(home, m);
-    bs[1] = Reflection::Arg::newString(ValSel::type());
+    bs[1] = Reflection::Arg::newString(valsel.type());
     bs[2] = Reflection::Arg::newInt(pvd->val());
     return bs;
+  }
+
+  template <class ViewSel, class ValSel>
+  forceinline size_t
+  ViewValBranching<ViewSel,ValSel>::dispose(Space* home) {
+    valsel.~ValSel();
+    (void) ViewBranching::dispose(home);
+    return sizeof(ViewValBranching<ViewSel,ValSel>);
   }
 
 }
