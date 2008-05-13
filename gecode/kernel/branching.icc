@@ -175,23 +175,57 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
+
+  /**
+   * \brief Virtualized view selection base class
+   */
+  template <class View>
+  class ViewSelVirtualBase {
+  public:
+    /// Intialize with view \a x
+    virtual ViewSelStatus init(const Space* home, View x) = 0;
+    /// Possibly select better view \a x
+    virtual ViewSelStatus select(const Space* home, View x) = 0;
+    /// \name Memory management
+    //@{
+    /// Allocate memory from space
+    static void* operator new(size_t s, Space* home);
+    /// No-op for exceptions
+    static void  operator delete(void* p, Space* home);
+    /// Needed for exceptions
+    static void  operator delete(void*);
+    //@}
+  };
+  /**
+   * \brief Virtualized view selection
+   */
+  template <class ViewSel>
+  class ViewSelVirtual : public ViewSelVirtualBase<typename ViewSel::View> {
+  public:
+    /// Static view selection object
+    ViewSel viewsel;
+    /// Intialize with view \a x
+    virtual ViewSelStatus init(const Space* home, typename ViewSel::View x);
+    /// Possibly select better view \a x
+    virtual ViewSelStatus select(const Space* home, typename ViewSel::View x);
+  };
   /**
    * \brief View selection class for tie breaking
    */
-  template<class A, class B>
+  template<class ViewSel, int n>
   class ViewSelTieBreak {
   protected:
     /// First selection
-    A a;
-    /// Second selection
-    B b;
+    ViewSel a;
+    /// Tie breakers
+    ViewSelVirtual<typename ViewSel::View> b[n];
   public:
     /// View type
-    typedef typename A::View View;
+    typedef typename ViewSel::View View;
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, typename A::View x);
+    ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, typename A::View x);
+    ViewSelStatus select(const Space* home, typename ViewSel::View x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -511,39 +545,79 @@ namespace Gecode {
     return Support::Symbol("Gecode::ViewSel::ByDegreeMax");
   }
 
-  // Select variable with tie breaking
-  template<class A, class B>
-  forceinline ViewSelStatus
-  ViewSelTieBreak<A,B>::init(const Space* home, typename A::View x) {
-    ViewSelStatus sa = a.init(home,x);
-    ViewSelStatus sb = b.init(home,x);
-    if ((sa == VSS_BEST) && (sb == VSS_BEST))
-      return VSS_BEST;
-    else
-      return VSS_BETTER;
+
+  // Virtualized view selection
+  template <class View>
+  forceinline void
+  ViewSelVirtualBase<View>::operator delete(void*) {}
+  template <class View>
+  forceinline void
+  ViewSelVirtualBase<View>::operator delete(void*, Space*) {}
+  template <class View>
+  forceinline void*
+  ViewSelVirtualBase<View>::operator new(size_t s, Space* home) {
+    return home->alloc(s);
   }
-  template<class A, class B>
+
+  template <class ViewSel>
+  ViewSelStatus
+  ViewSelVirtual<ViewSel>::init(const Space* home, typename ViewSel::View x) {
+    return viewsel.init(home,x);
+  }
+  template <class ViewSel>
+  ViewSelStatus
+  ViewSelVirtual<ViewSel>::select(const Space* home, typename ViewSel::View x) {
+    return viewsel.select(home,x);
+  }
+
+  // Select variable with tie breaking
+  template<class ViewSel, int n>
   forceinline ViewSelStatus
-  ViewSelTieBreak<A,B>::select(const Space* home, typename A::View x) {
+  ViewSelTieBreak<ViewSel,n>::init(const Space* home, 
+                                   typename ViewSel::View x) {
+    ViewSelStatus s = a.init(home,x);
+    for (int i=0; i<n; i++)
+      if (b[i].init(home,x) != VSS_BEST)
+        s = VSS_BETTER;
+    return s;
+  }
+  template<class ViewSel, int n>
+  forceinline ViewSelStatus
+  ViewSelTieBreak<ViewSel,n>::select(const Space* home,
+                                     typename ViewSel::View x) {
     switch (a.select(home,x)) {
-    case VSS_BEST:   return b.init(home,x);
-    case VSS_BETTER: (void) b.init(home,x); return VSS_BETTER;
-    case VSS_WORSE:  return VSS_WORSE;
+    case VSS_BEST:
+      {
+        ViewSelStatus s = VSS_BEST;
+        for (int i=0; i<n; i++)
+          if (b[i].init(home,x) != VSS_BEST)
+            s = VSS_BETTER;
+        return s;
+      }
+    case VSS_BETTER: 
+      for (int i=0; i<n; i++)
+        (void) b[i].init(home,x);
+      return VSS_BETTER;
+    case VSS_WORSE:
+      return VSS_WORSE;
     case VSS_TIE:
+      /*
       switch (b.select(home,x)) {
       case VSS_BEST:   return VSS_BETTER;
       case VSS_BETTER: return VSS_BETTER;
       case VSS_TIE:    return VSS_TIE;
       case VSS_WORSE:  return VSS_WORSE;
       }
+      */
+      return VSS_WORSE;
     default: GECODE_NEVER;
       return VSS_WORSE;
     }
   }
-  template<class A, class B>
+  template<class ViewSel, int n>
   inline Support::Symbol
-  ViewSelTieBreak<A,B>::type(void) {
-    return Reflection::mangle<A,B>("Gecode::ViewSel::TieBreak");
+  ViewSelTieBreak<ViewSel,n>::type(void) {
+    return Reflection::mangle("Gecode::ViewSel::TieBreak");
   }
 
 
