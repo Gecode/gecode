@@ -218,7 +218,7 @@ namespace Gecode {
     /// First selection
     ViewSel a;
     /// Tie breakers
-    ViewSelVirtual<typename ViewSel::View> b[n];
+    ViewSelVirtualBase<typename ViewSel::View>* b[n];
   public:
     /// View type
     typedef typename ViewSel::View View;
@@ -227,7 +227,7 @@ namespace Gecode {
     /// Copy constructor
     ViewSelTieBreak(const ViewSelTieBreak<ViewSel,n>& vstb);
     /// Initialize with tiebreakers
-    ViewSelTieBreak(ViewSelVirtual<typename ViewSel::View> vsv[n]);
+    ViewSelTieBreak(ViewSelVirtualBase<typename ViewSel::View>* vsv[n]);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
@@ -279,6 +279,9 @@ namespace Gecode {
   public:
     /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x);
+    /// Constructor for creation
+    ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+                     const ViewSel& vi_s);
     /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
                      const ViewSel& vi_s, const ValSel& va_s);
@@ -581,7 +584,10 @@ namespace Gecode {
   // Select variable with tie breaking
   template<class ViewSel, int n>
   forceinline
-  ViewSelTieBreak<ViewSel,n>::ViewSelTieBreak(void) {}
+  ViewSelTieBreak<ViewSel,n>::ViewSelTieBreak(void) {
+    for (int i=0; i<n; i++)
+      b[i]=NULL;    
+  }
   template<class ViewSel, int n>
   forceinline
   ViewSelTieBreak<ViewSel,n>::
@@ -592,7 +598,7 @@ namespace Gecode {
   template<class ViewSel, int n>
   forceinline
   ViewSelTieBreak<ViewSel,n>::
-  ViewSelTieBreak(ViewSelVirtual<typename ViewSel::View> vsv[n]) {
+  ViewSelTieBreak(ViewSelVirtualBase<typename ViewSel::View>* vsv[n]) {
     for (int i=0; i<n; i++)
       b[i]=vsv[i];
   }
@@ -602,7 +608,7 @@ namespace Gecode {
                                    typename ViewSel::View x) {
     ViewSelStatus s = a.init(home,x);
     for (int i=0; i<n; i++)
-      if (b[i].init(home,x) != VSS_BEST)
+      if (b[i]->init(home,x) != VSS_BEST)
         s = VSS_BETTER;
     return s;
   }
@@ -615,19 +621,19 @@ namespace Gecode {
       {
         ViewSelStatus s = VSS_BEST;
         for (int i=0; i<n; i++)
-          if (b[i].init(home,x) != VSS_BEST)
+          if (b[i]->init(home,x) != VSS_BEST)
             s = VSS_BETTER;
         return s;
       }
     case VSS_BETTER: 
       for (int i=0; i<n; i++)
-        (void) b[i].init(home,x);
+        (void) b[i]->init(home,x);
       return VSS_BETTER;
     case VSS_WORSE:
       return VSS_WORSE;
     case VSS_TIE:
       for (int i=0; i<n; i++)
-        switch (b[i].select(home,x)) {
+        switch (b[i]->select(home,x)) {
         case VSS_BEST:   return VSS_BETTER;
         case VSS_BETTER: return VSS_BETTER;
         case VSS_TIE:    break;
@@ -642,7 +648,7 @@ namespace Gecode {
   template<class ViewSel, int n>
   inline Support::Symbol
   ViewSelTieBreak<ViewSel,n>::type(void) {
-    return Reflection::mangle("Gecode::ViewSel::TieBreak");
+    return Reflection::mangle<ViewSel>("Gecode::ViewSel::TieBreak");
   }
   template<class ViewSel, int n>
   forceinline void
@@ -666,9 +672,15 @@ namespace Gecode {
   forceinline
   ViewValBranching<ViewSel,ValSel>::
   ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+                   const ViewSel& vi_s)
+    : ViewBranching<ViewSel>(home,x,vi_s) {}
+
+  template <class ViewSel, class ValSel>
+  forceinline
+  ViewValBranching<ViewSel,ValSel>::
+  ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
                    const ViewSel& vi_s, const ValSel& va_s)
     : ViewBranching<ViewSel>(home,x,vi_s), valsel(va_s) {}
-
 
   template <class ViewSel, class ValSel>
   forceinline

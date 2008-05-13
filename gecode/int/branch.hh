@@ -170,6 +170,9 @@ namespace Gecode { namespace Int { namespace Branch {
   public:
     /// Constructor for creation
     ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x);
+    /// Constructor for creation
+    ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+                        const ViewSel& vi_s);
     /// Return branching description (of type PosValuesDesc)
     virtual const BranchingDesc* description(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
@@ -464,13 +467,13 @@ namespace Gecode { namespace Int { namespace Branch {
     static Support::Symbol type(void);
   };
 
-  void
-  post(Space* home, const IntVarArgs& x, 
-       IntVarBranch vars, IntValBranch vals);
+  GECODE_INT_EXPORT void
+  post(Space* home, ViewArray<IntView>& x,
+       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
 
-  void
-  post(Space* home, const BoolVarArgs& x, 
-       IntVarBranch vars, IntValBranch vals);
+  GECODE_INT_EXPORT void
+  post(Space* home, ViewArray<BoolView>& x,
+       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals);
 
 }}}
 
@@ -479,8 +482,6 @@ namespace Gecode { namespace Int { namespace Branch {
 #include "gecode/int/branch/select-view.icc"
 #include "gecode/int/branch/post-val-int.icc"
 #include "gecode/int/branch/post-val-bool.icc"
-#include "gecode/int/branch/post-view-int.icc"
-#include "gecode/int/branch/post-view-bool.icc"
 
 #endif
 

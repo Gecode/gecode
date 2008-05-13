@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
 [General]
 # Type of view
-View:		IntView
+View:		BoolView
 # Type of variable branching selection
 VarBranch:	IntVarBranch
 # Type of value branch selection
@@ -58,47 +58,47 @@ Include:	"gecode/int/branch.hh"
 # Value for branching selection, mark as special
 Value:		INT_VAR_NONE = NONE
 # Corresponding type
-Type:		ViewSelByNone<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_MIN_MIN
-Type:		ByMinMin<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_MIN_MAX
-Type:		ByMinMax<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_MAX_MIN
-Type:		ByMaxMin<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_MAX_MAX
-Type:		ByMaxMax<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_MIN
-Type:		BySizeMin<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_MAX
-Type:		BySizeMax<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MIN
-Type:		ViewSelByDegreeMin<IntView>
+Type:		ViewSelByDegreeMin<BoolView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MAX
-Type:		ViewSelByDegreeMax<IntView>
+Type:		ViewSelByDegreeMax<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
-Type:		BySizeDegreeMin<IntView>
+Type:		ViewSelByDegreeMax<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MAX
-Type:		BySizeDegreeMax<IntView>
+Type:		ViewSelByDegreeMin<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
-Type:		ByRegretMinMin<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MAX
-Type:		ByRegretMinMax<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MIN
-Type:		ByRegretMaxMin<IntView>
+Type:		ViewSelByNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MAX
-Type:		ByRegretMaxMax<IntView>
+Type:		ViewSelByNone<BoolView>
 [End]

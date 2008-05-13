@@ -92,7 +92,7 @@ while ($l = <FILE>) {
  LINE:
   next if ($l =~ /^\#/);
   last if ($l =~ /^\[End\]/io);
-  
+
   if ($l =~ /^\[General\]/io) {
     while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
@@ -102,21 +102,20 @@ while ($l = <FILE>) {
 	$varbranch = $1;
       } elsif ($l =~ /^ValBranch:\s*(\w+)/io) {
 	$valbranch = $1;
-      } elsif ($l =~ /^Inline:\s*true/io) {
-	$inline = 1;
+      } elsif ($l =~ /^Exception:\s*(.+)/io) {
+	$exception = $1;
+      } elsif ($l =~ /^Include:\s*(.+)/io) {
+	$hasinclude = 1;
+	$include = $1;
       }
     }
     goto LINE;
   } elsif ($l =~ /^\[VarBranch\]/io) {
-    
     while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
-      if ($l =~ /^Value:\s*(\w+)\s*=\s*(\w+)/io) {
+      if ($l =~ /^Value:\s*(\w+)\s*=\s*NONE/io) {
 	# Found a special variable branching
-	$lhs = $1; $rhs = $2;
-	if (!$rhs eq "NONE") {
-	  die "Unknown special variable branching: $rhs\n";
-	}
+	$lhs = $1;
 	$vb[$n] = $lhs;
 	$number{$lhs} = $n;
 	$none = $n;
@@ -127,12 +126,8 @@ while ($l = <FILE>) {
       } elsif ($l =~ /^Type:\s*(.+)/io) {
 	# Found a normal variable branching
 	$type[$n] = $1;
-      } elsif ($l =~ /^NoTies:\s*(.+)/io) {
-	# Found tie breaking information information
-	$nt[$n] = $1;
       }
     }
-    $last = $n;
     $n++;
     goto LINE;
   } elsif ($l =~ /^\[Header\]/io) {
@@ -148,64 +143,83 @@ while ($l = <FILE>) {
     }
     goto LINE;
   }
-  
 }
 close FILE;
 
-for ($i=0; $i<=$last; $i++) {
-  for ($j=0; $j<=$last; $j++) {
-    $ties[$i][$j] = 1;
-  }
+if ($hasinclude) {
+print "#include $include\n";
 }
-for ($i=0; $i<=$last; $i++) {
-  $ties[$i][$i] = 0;
-}
-for ($i=0; $i<=$last; $i++) {
-  if ($i == $none) {
-    for ($j=0; $j<=$last; $j++) {
-      $ties[$i][$j] = 0;
-    }
-  } else {
-    foreach $k (split(/,/,$nt[$i])) {
-      $j = $number{$k};
-      $ties[$i][$j] = 0;
-    }
-  }
-}
-
 print $hdr;
-print "#define GECODE_VBTB(a,b) \\\n";
-print "  (((b) * ($vb[$last]+1)) + (a))\n\n";
-if ($inline) {
-  print "  inline void\n";
-} else {
-  print "  void\n";
+print "  Gecode::ViewSelVirtualBase<$view>*\n";
+print "  post(Gecode::Space* home, $varbranch vars) {\n";
+print "    switch (vars) {\n";
+for ($i=0; $i<$n; $i++) {
+  print "     case $vb[$i]:\n";
+  $l =  "       return new (home) ViewSelVirtual<$type[$i]>();\n";
+  $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
+  print $l;
 }
-print "  post(Space* home, Gecode::ViewArray<$view> x,\n";
-print "       const TieBreakVarBranch<$varbranch>\& vars,\n";
-print "       $valbranch vals) {\n";
-print "     switch (GECODE_VBTB(vars.a,vars.b)) {\n";
-for ($i=0; $i<=$last; $i++) {
-  print "     case GECODE_VBTB($vb[$i],$vb[$none]):\n";
-  $l =  "       post<$type[$i]>(home,x,vals);";
-  $l =~ s|>>|> >|og;
-  print "$l\n";
-  print "       break;\n";
-}
-for ($i=0; $i<=$last; $i++) {
-  next unless ($i != $none);
-  for ($j=0; $j<=$last; $j++) {
-    next unless ($j != $none) && $ties[$i][$j];
-    print "     case GECODE_VBTB($vb[$i],$vb[$j]):\n";
-    $l =  "       post<ViewSelTieBreak<$type[$i],$type[$j]>>(home,x,vals);";
-    $l =~ s|>>|> >|og;
-    $l =~ s|>>|> >|og;
-    print "$l\n";
-    print "       break;\n";
-  }
-}
-print "     default: GECODE_NEVER;\n";
-print "     }\n";
+print "    default:\n";
+print "      throw $exception;\n";
+print "    }\n";
 print "  }\n\n";
-print "#undef GECODE_VBTB\n\n";
+print "  template<int n>\n";
+print "  void\n";
+print "  post(Gecode::Space* home, Gecode::ViewArray<$view>\& x,\n";
+print "       $varbranch vars, Gecode::ViewSelVirtualBase<$view>* tb[n],\n";
+print "       $valbranch vals) {\n";
+print "    switch (vars) {\n";
+for ($i=0; $i<$n; $i++) {
+  print "    case $vb[$i]: {\n";
+  print "        ViewSelTieBreak<$type[$i],n> v(tb);\n";
+  $l =  "        post<ViewSelTieBreak<$type[$i],n>>(home,x,v,vals);\n";
+  $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
+  print $l;
+  print "      }\n";
+  print "      break;\n";
+}
+print "    default:\n";
+print "      throw $exception;\n";
+print "    }\n";
+print "  }\n\n";
+print "  void\n";
+print "  post(Gecode::Space* home, Gecode::ViewArray<$view>\& x,\n";
+print "       const Gecode::TieBreakVarBranch<$varbranch>\& vars,\n";
+print "       $valbranch vals) {\n";
+print "    if ((vars.b == $vb[$none]) && \n";
+print "        (vars.c == $vb[$none]) && \n";
+print "        (vars.d == $vb[$none])) {\n";
+print "      switch (vars.a) {\n";
+for ($i=0; $i<$n; $i++) {
+  print "    case $vb[$i]: {\n";
+  $l =  "        $type[$i] v;\n";
+  $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
+  print $l;
+  $l =  "        post<$type[$i]>(home,x,v,vals);\n";
+  $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
+  print $l;
+  print "      }\n";
+  print "      break;\n";
+}
+print "      default:\n";
+print "        throw $exception;\n";
+print "      }\n";
+print "    } else if ((vars.c == $vb[$none]) && \n";
+print "               (vars.d == $vb[$none])) {\n";
+print "      Gecode::ViewSelVirtualBase<$view>* tb[1] = {\n";
+print "        post(home,vars.b)\n";
+print "      };\n";
+print "      post<1>(home,x,vars.a,tb,vals);\n";
+print "    } else if (vars.d == $vb[$none]) {\n";
+print "      Gecode::ViewSelVirtualBase<$view>* tb[2] = {\n";
+print "        post(home,vars.b),post(home,vars.c)\n";
+print "      };\n";
+print "      post<2>(home,x,vars.a,tb,vals);\n";
+print "    } else {\n";
+print "      Gecode::ViewSelVirtualBase<$view>* tb[3] = {\n";
+print "        post(home,vars.b),post(home,vars.c),post(home,vars.d)\n";
+print "      };\n";
+print "      post<3>(home,x,vars.a,tb,vals);\n";
+print "    }\n";
+print "  }\n\n";
 print $ftr;

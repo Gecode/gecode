@@ -274,7 +274,6 @@ INTHDR0 = \
 	arithmetic/sqr.icc arithmetic/sqrt.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
 	branch/post-val-int.icc branch/post-val-bool.icc \
-	branch/post-view-int.icc branch/post-view-bool.icc \
 	branch/select-val.icc \
 	branch/select-values.icc branch/select-view.icc \
 	count/view.icc count/int.icc count/rel.icc \
@@ -311,7 +310,9 @@ INTHDR0 = \
 	channel/base.icc channel/link-single.icc channel/link-multi.icc \
 	circuit.hh circuit/base.icc circuit/val.icc circuit/dom.icc
 
-INTSRC		= $(INTSRC0:%=gecode/int/%)
+INTSRC		= $(INTSRC0:%=gecode/int/%) \
+	$(top_srcdir)/gecode/int/branch/post-view-int.cc \
+	$(top_srcdir)/gecode/int/branch/post-view-bool.cc
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
 INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
 
@@ -947,6 +948,18 @@ $(top_srcdir)/gecode/kernel/var-type.cc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -typecc $< > $@
 $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
+
+#
+# Generated branchings
+#
+$(top_srcdir)/gecode/int/branch/post-view-int.cc: \
+	$(top_srcdir)/gecode/int/branch/post-view-int.bs \
+	$(top_srcdir)/misc/genbranch.perl
+	perl $(top_srcdir)/misc/genbranch.perl $< > $@
+$(top_srcdir)/gecode/int/branch/post-view-bool.cc: \
+	$(top_srcdir)/gecode/int/branch/post-view-bool.bs \
+	$(top_srcdir)/misc/genbranch.perl
+	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 
 #
 # Registry of post functions
