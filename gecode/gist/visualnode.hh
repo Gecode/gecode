@@ -101,6 +101,9 @@ namespace Gecode { namespace Gist {
     // Destruct
     static void deallocate(Shape*);
 
+    /// Static shape for hidden nodes
+    static Shape* hidden;
+
     /// Return depth of the shape
     int depth(void) const;
     /// Return extent at depth \a i

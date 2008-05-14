@@ -41,6 +41,22 @@
 
 namespace Gecode { namespace Gist {
 
+  Shape* Shape::hidden;
+  
+  /// Allocate shapes statically
+  class ShapeAllocator {
+    const Shape* singletonShape;
+  public:
+    /// Constructor
+    ShapeAllocator(void) {
+      singletonShape = Shape::allocate(Extent(Layout::extent*1.5));
+      Shape::hidden = Shape::allocate(Extent(Layout::extent), singletonShape);
+    }
+  };
+
+  /// Allocate shapes statically
+  ShapeAllocator shapeAllocator;
+
   VisualNode::VisualNode(void)
   : offset(0)
   , shape(NULL), box(0,0)

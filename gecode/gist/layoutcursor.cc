@@ -38,24 +38,6 @@
 
 namespace Gecode { namespace Gist {
 
-  /// Shape of a single node
-  const Shape* singletonShape;
-  /// Shape of hidden nodes
-  const Shape* hiddenShape;
-  
-  /// Allocate shapes statically
-  class ShapeAllocator {
-  public:
-    /// Constructor
-    ShapeAllocator(void) {
-      singletonShape = Shape::allocate(Extent(Layout::extent*1.5));
-      hiddenShape = Shape::allocate(Extent(Layout::extent), singletonShape);
-    }
-  };
-
-  /// Allocate shapes statically
-  ShapeAllocator shapeAllocator;
-
   Shape*
   Shape::allocate(Extent e, const Shape* subShape) {
     Shape* shape = Shape::allocate(subShape->depth() + 1);
@@ -122,7 +104,7 @@ namespace Gecode { namespace Gist {
       Extent extent(Layout::extent);
       int numberOfChildren = currentNode->getNumberOfChildren();
       if (currentNode->isHidden()) {
-        currentNode->setShape(Shape::allocate(hiddenShape));
+        currentNode->setShape(Shape::allocate(Shape::hidden));
       } else if (numberOfChildren < 1) {
         currentNode->setShape(Shape::allocate(Extent(Layout::extent)));
       } else {
