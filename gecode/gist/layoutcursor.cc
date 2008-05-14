@@ -104,9 +104,9 @@ namespace Gecode { namespace Gist {
       Extent extent(Layout::extent);
       int numberOfChildren = currentNode->getNumberOfChildren();
       if (currentNode->isHidden()) {
-        currentNode->setShape(Shape::allocate(Shape::hidden));
+        currentNode->setShape(Shape::hidden);
       } else if (numberOfChildren < 1) {
-        currentNode->setShape(Shape::allocate(Extent(Layout::extent)));
+        currentNode->setShape(Shape::leaf);
       } else {
         currentNode->computeShape();
       }

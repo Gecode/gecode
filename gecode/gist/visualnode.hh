@@ -101,6 +101,8 @@ namespace Gecode { namespace Gist {
     // Destruct
     static void deallocate(Shape*);
 
+    /// Static shape for leaf nodes
+    static Shape* leaf;
     /// Static shape for hidden nodes
     static Shape* hidden;
 

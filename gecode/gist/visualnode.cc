@@ -41,16 +41,16 @@
 
 namespace Gecode { namespace Gist {
 
+  Shape* Shape::leaf;
   Shape* Shape::hidden;
   
   /// Allocate shapes statically
   class ShapeAllocator {
-    const Shape* singletonShape;
   public:
     /// Constructor
     ShapeAllocator(void) {
-      singletonShape = Shape::allocate(Extent(Layout::extent*1.5));
-      Shape::hidden = Shape::allocate(Extent(Layout::extent), singletonShape);
+      Shape::leaf = Shape::allocate(Extent(Layout::extent));
+      Shape::hidden = Shape::allocate(Extent(Layout::extent), Shape::leaf);
     }
   };
 
@@ -455,7 +455,7 @@ namespace Gecode { namespace Gist {
   VisualNode::size(void) const {
     size_t s = sizeof(*this);
     s += sizeof(Node*)*getNumberOfChildren();
-    if (shape) {
+    if (shape && shape != Shape::leaf && shape != Shape::hidden) {
       s += sizeof(Shape)+sizeof(Extent)*(shape->depth()-1);
     }
     if (copy)

@@ -89,7 +89,7 @@ namespace Gecode { namespace Gist {
 
   forceinline void
   Shape::deallocate(Shape* shape) {
-    if (shape != hidden)
+    if (shape != hidden && shape != leaf)
       Memory::free(shape);
   }
   
