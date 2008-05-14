@@ -64,6 +64,8 @@ Gecode::IntValBranch toEnum_IntValBranch(Gecode::Reflection::Arg* a) {
     return Gecode::INT_VAL_MED;
   if (!strcmp(av, "INT_VAL_MAX"))
     return Gecode::INT_VAL_MAX;
+  if (!strcmp(av, "INT_VAL_RND"))
+    return Gecode::INT_VAL_RND;
   if (!strcmp(av, "INT_VAL_SPLIT_MIN"))
     return Gecode::INT_VAL_SPLIT_MIN;
   if (!strcmp(av, "INT_VAL_SPLIT_MAX"))
@@ -83,6 +85,8 @@ bool isEnum_IntValBranch(Gecode::Reflection::Arg* a) {
   if (!strcmp(av, "INT_VAL_MED"))
     return true;
   if (!strcmp(av, "INT_VAL_MAX"))
+    return true;
+  if (!strcmp(av, "INT_VAL_RND"))
     return true;
   if (!strcmp(av, "INT_VAL_SPLIT_MIN"))
     return true;

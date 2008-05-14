@@ -63,6 +63,13 @@ namespace Gecode { namespace Int { namespace Branch {
           (home,x,v,a);
       }
       break;
+    case INT_VAL_RND:
+      {
+        ValRnd<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValRnd<IntView> >
+          (home,x,v,a);
+      }
+      break;
     case INT_VAL_SPLIT_MIN:
       {
         ValSplitMin<IntView> a(home,o_vals);

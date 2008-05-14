@@ -61,6 +61,13 @@ namespace Gecode { namespace Int { namespace Branch {
           (home,x,v,a);
       }
       break;
+    case INT_VAL_RND:
+      {
+        ValRnd<BoolView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValRnd<BoolView> >
+          (home,x,v,a);
+      }
+      break;
     default:
       throw UnknownBranching("Int::branch");
     }

@@ -2005,6 +2005,7 @@ namespace Gecode {
     INT_VAL_MIN,       ///< Select smallest value
     INT_VAL_MED,       ///< Select median value
     INT_VAL_MAX,       ///< Select largest value
+    INT_VAL_RND,       ///< Select random value
     INT_VAL_SPLIT_MIN, ///< Select lower half of domain
     INT_VAL_SPLIT_MAX, ///< Select upper half of domain
     INT_VALUES_MIN,    ///< Try all values starting from smallest

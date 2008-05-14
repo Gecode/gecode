@@ -369,6 +369,9 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
   };
 
+  /// Emty value selection description
+  class EmptyValSelDesc {};
+
   /**
    * \brief Base class for value selection
    *
@@ -381,8 +384,12 @@ namespace Gecode {
     typedef _View View;
     /// Value type
     typedef _Val Val;
+    /// Description type
+    typedef EmptyValSelDesc Desc;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
+    /// Description
+    Desc desc;
     /// Default constructor
     ValSelBase(void);
     /// Constructor for initialization
@@ -412,12 +419,17 @@ namespace Gecode {
   template <class ValSel>
   class GECODE_VTABLE_EXPORT PosValDesc : public PosDesc {
   private:
+    /// Description to be stored
+    const typename ValSel::Desc _desc;
     /// Value to assign to
     const typename ValSel::Val _val;
   public:
-    /// Initialize description for branching \a b, position \a p, and value \a n
-    PosValDesc(const Branching* b, const Pos& p, 
+    /// Initialize description for branching \a b, position \a p, description \a d, and value \a n
+    PosValDesc(const Branching* b, const Pos& p,
+               const typename ValSel::Desc& d,
                const typename ValSel::Val& n);
+    /// Return stored description
+    typename ValSel::Desc desc(void) const;
     /// Return value to branch with
     typename ValSel::Val val(void) const;
     /// Report size occupied
@@ -457,8 +469,15 @@ namespace Gecode {
   template <class ValSel>
   forceinline
   PosValDesc<ValSel>::PosValDesc(const Branching* b, const Pos& p,
+                                 const typename ValSel::Desc& d,
                                  const typename ValSel::Val& n)
-    : PosDesc(b,ValSel::alternatives,p), _val(n) {}
+    : PosDesc(b,ValSel::alternatives,p), _desc(d), _val(n) {}
+
+  template <class ValSel>
+  forceinline typename ValSel::Desc
+  PosValDesc<ValSel>::desc(void) const {
+    return _desc;
+  }
 
   template <class ValSel>
   forceinline typename ValSel::Val
@@ -871,7 +890,7 @@ namespace Gecode {
   ViewValBranching<ViewSel,ValSel>::description(const Space* home) const {
     Pos p = ViewBranching<ViewSel>::pos(home);
     typename ValSel::View v(ViewBranching<ViewSel>::view(p).var());
-    return new PosValDesc<ValSel>(this,p,valsel.val(home,v));
+    return new PosValDesc<ValSel>(this,p,valsel.desc,valsel.val(home,v));
   }
 
   template <class ViewSel, class ValSel>
@@ -882,6 +901,7 @@ namespace Gecode {
       = static_cast<const PosValDesc<ValSel>*>(d);
     typename ValSel::View 
       v(ViewBranching<ViewSel>::view(pvd->pos(),true).var());
+    valsel.desc = pvd->desc();
     return me_failed(valsel.tell(home,a,v,pvd->val())) ? ES_FAILED : ES_OK;
   }
 

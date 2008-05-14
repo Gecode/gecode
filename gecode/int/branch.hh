@@ -105,6 +105,46 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
+   * \brief Class for random value selection
+   *
+   * Requires
+   * \code #include "gecode/int/branch.hh" \endcode
+   * \ingroup FuncIntSelVal
+   */
+  template<class _View>
+  class ValRnd {
+  public:
+    /// View type
+    typedef _View View;
+    /// Value type
+    typedef int Val;
+    /// Description type
+    typedef Support::RandomGenerator Desc;
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
+    /// Description
+    Desc desc;
+    /// Default constructor
+    ValRnd(void);
+    /// Constructor for initialization
+    ValRnd(Space* home, const ValBranchOptions& vbo);
+    /// Return minimum value of view \a x
+    int val(const Space* home, _View x);
+    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
+    ModEvent tell(Space* home, unsigned int a, _View x, int n);
+    /// Updating during cloning
+    void update(Space* home, bool share, ValRnd& vs);
+    /// Delete value selection
+    void dispose(Space* home);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
+    /// Specification of a branch (for reflection)
+    void branchingSpec(const Space* home,
+                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
+                       int alt, _View x, int n) const;
+  };
+
+  /**
    * \brief Class for splitting domain (lower half first)
    *
    * Requires
@@ -129,6 +169,8 @@ namespace Gecode { namespace Int { namespace Branch {
                        Reflection::VarMap& m, Reflection::BranchingSpec& bs,
                        int alt, View x, int n) const;
   };
+
+
 
 
   /// For Boolean branchings not needing a value

@@ -85,6 +85,42 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
+  ValRnd<View>::ValRnd(void) {}
+  template<class View>
+  forceinline
+  ValRnd<View>::ValRnd(Space* home, const ValBranchOptions& vbo) 
+    : desc(vbo.seed) {}
+  template<class View>
+  forceinline int
+  ValRnd<View>::val(const Space*, View x) {
+    unsigned int p = desc(x.size());
+    int n = x.min();
+    for (ViewRanges<View> i(x); p >= i.width(); ++i) {
+      n = i.min(); p -= i.width();
+    }
+    return n + p;
+  }
+  template<class View>
+  forceinline ModEvent
+  ValRnd<View>::tell(Space* home, unsigned int a, View x, int n) {
+    return (a == 0) ? x.eq(home,n) : x.nq(home,n);
+  }
+  template<class View>
+  forceinline void 
+  ValRnd<View>::update(Space*, bool, ValRnd<View>& vr) {
+    desc = vr.desc;
+  }
+  template<class View>
+  forceinline void
+  ValRnd<View>::dispose(Space*) {}
+  template<class View>
+  inline Support::Symbol
+  ValRnd<View>::type(void) {
+    return Support::Symbol("Gecode::Int::Branch::ValRnd");
+  }
+
+  template<class View>
+  forceinline
   ValSplitMin<View>::ValSplitMin(void) {}
   template<class View>
   forceinline
