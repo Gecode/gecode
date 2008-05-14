@@ -409,16 +409,17 @@ namespace Gecode {
   };
 
   /// %Branching descriptions storing position and value
-  template <class Val>
+  template <class ValSel>
   class GECODE_VTABLE_EXPORT PosValDesc : public PosDesc {
   private:
     /// Value to assign to
-    const Val _val;
+    const typename ValSel::Val _val;
   public:
-    /// Initialize description for branching \a b, number of alternatives \a a, position \a p, and value \a n
-    PosValDesc(const Branching* b, unsigned int a, const Pos& p, const Val& n);
+    /// Initialize description for branching \a b, position \a p, and value \a n
+    PosValDesc(const Branching* b, const Pos& p, 
+               const typename ValSel::Val& n);
     /// Return value to branch with
-    Val val(void) const;
+    typename ValSel::Val val(void) const;
     /// Report size occupied
     virtual size_t size(void) const;
   };
@@ -453,22 +454,22 @@ namespace Gecode {
    * Branching descriptions with position and value
    *
    */
-  template <class Val>
+  template <class ValSel>
   forceinline
-  PosValDesc<Val>::PosValDesc(const Branching* b, unsigned int a, const Pos& p,
-                              const Val& n)
-    : PosDesc(b,a,p), _val(n) {}
+  PosValDesc<ValSel>::PosValDesc(const Branching* b, const Pos& p,
+                                 const typename ValSel::Val& n)
+    : PosDesc(b,ValSel::alternatives,p), _val(n) {}
 
-  template <class Val>
-  forceinline Val
-  PosValDesc<Val>::val(void) const {
+  template <class ValSel>
+  forceinline typename ValSel::Val
+  PosValDesc<ValSel>::val(void) const {
     return _val;
   }
 
-  template <class Val>
+  template <class ValSel>
   size_t
-  PosValDesc<Val>::size(void) const {
-    return sizeof(PosValDesc<Val>);
+  PosValDesc<ValSel>::size(void) const {
+    return sizeof(PosValDesc<ValSel>);
   }
 
 
@@ -870,17 +871,17 @@ namespace Gecode {
   ViewValBranching<ViewSel,ValSel>::description(const Space* home) const {
     Pos p = ViewBranching<ViewSel>::pos(home);
     typename ValSel::View v(ViewBranching<ViewSel>::view(p).var());
-    return new PosValDesc<typename ValSel::Val>
-      (this,ValSel::alternatives,p,valsel.val(home,v));
+    return new PosValDesc<ValSel>(this,p,valsel.val(home,v));
   }
 
   template <class ViewSel, class ValSel>
   ExecStatus
   ViewValBranching<ViewSel,ValSel>
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
-    const PosValDesc<typename ValSel::Val>* pvd 
-      = static_cast<const PosValDesc<typename ValSel::Val>*>(d);
-    typename ValSel::View v(ViewBranching<ViewSel>::view(pvd->pos(),true).var());
+    const PosValDesc<ValSel>* pvd 
+      = static_cast<const PosValDesc<ValSel>*>(d);
+    typename ValSel::View 
+      v(ViewBranching<ViewSel>::view(pvd->pos(),true).var());
     return me_failed(valsel.tell(home,a,v,pvd->val())) ? ES_FAILED : ES_OK;
   }
 
@@ -913,8 +914,8 @@ namespace Gecode {
   ViewValBranching<ViewSel,ValSel>
   ::branchingSpec(const Space* home, 
                   Reflection::VarMap& m, const BranchingDesc* d) const {
-    const PosValDesc<typename ValSel::Val>* pvd 
-      = static_cast<const PosValDesc<typename ValSel::Val>*>(d);
+    const PosValDesc<ValSel>* pvd 
+      = static_cast<const PosValDesc<ValSel>*>(d);
     Reflection::BranchingSpec bs(3);
     bs[0] = view(pvd->pos()).spec(home, m);
     bs[1] = Reflection::Arg::newString(valsel.type());
