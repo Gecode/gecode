@@ -36,6 +36,7 @@
 
 #include "gecode/support.hh"
 #include "gecode/gist/node.hh"
+#include "gecode/gist/visualnode.hh"
 #include <cassert>
 
 namespace Gecode { namespace Gist {
@@ -43,7 +44,7 @@ namespace Gecode { namespace Gist {
   Node::~Node(void) {
     if (noOfChildren != -1)
       for (int i=noOfChildren; i--;)
-        delete children[i];
+        delete static_cast<VisualNode*>(children[i]);
     Memory::free(children);
   }
     

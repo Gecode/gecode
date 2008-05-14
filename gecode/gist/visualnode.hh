@@ -112,6 +112,7 @@ namespace Gecode { namespace Gist {
     /// Return bounding box
     BoundingBox getBoundingBox(void);
   };
+  
   /// \brief Node class that supports visual layout
   class VisualNode : public SpaceNode {
   protected:
@@ -143,7 +144,7 @@ namespace Gecode { namespace Gist {
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root);
     /// Destructor
-    virtual ~VisualNode(void);
+    ~VisualNode(void);
     
     /// Return if node is hidden
     bool isHidden(void);
@@ -204,10 +205,8 @@ namespace Gecode { namespace Gist {
     BoundingBox getBoundingBox(void);
     /// Return depth of the subtree of this node
     int depth(void);
-    /// Create a child for alternative \a alternative
-    virtual VisualNode* createChild(int alternative);
     /// Signal that the status has changed
-    virtual void changedStatus();
+    void changedStatus();
     /// Return the parent
     VisualNode* getParent(void);
     /// Return child \a i
@@ -217,6 +216,9 @@ namespace Gecode { namespace Gist {
     
     /// Return string that is used as a tool tip
     std::string toolTip(BestNode* curBest);
+    
+    /// Return size information
+    size_t size(void) const;
   };
 
 }}

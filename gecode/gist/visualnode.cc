@@ -139,12 +139,6 @@ namespace Gecode { namespace Gist {
     dirtyUp();
   }
   
-      
-  VisualNode*
-  VisualNode::createChild(int alternative) {
-    return new VisualNode(alternative);
-  }
-
 
   void
   VisualNode::changedStatus() { dirtyUp(); }
@@ -436,6 +430,26 @@ namespace Gecode { namespace Gist {
       }
       setShape(mergedShape);
     }    
+  }
+
+  size_t
+  VisualNode::size(void) const {
+    size_t s = sizeof(*this);
+    s += sizeof(Node*)*getNumberOfChildren();
+    if (shape) {
+      s += sizeof(Shape)+sizeof(Extent)*(shape->depth()-1);
+    }
+    if (copy)
+      s += copy->allocated();
+    if (workingSpace)
+      s += workingSpace->allocated();
+    if (status == SPECIAL)
+      s += sizeof(SpecialDesc);
+    else if (status == STEP)
+      s += sizeof(StepDesc);
+    else
+      s += (desc.branch != NULL ? desc.branch->size() : 0);
+    return s;
   }
   
 }}

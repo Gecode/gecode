@@ -49,18 +49,18 @@ namespace Gecode { namespace Gist {
   }
     
   forceinline bool
-  Node::isRoot(void) { return parent == NULL; }
+  Node::isRoot(void) const { return parent == NULL; }
 
   forceinline int
-  Node::getDepth(void) { return isRoot() ? 1 : parent->getDepth() + 1; }
+  Node::getDepth(void) const { return isRoot() ? 1 : parent->getDepth() + 1; }
   
   forceinline int
-  Node::getNumberOfChildren(void) {
+  Node::getNumberOfChildren(void) const {
     return noOfChildren;
   }
   
   forceinline int
-  Node::getAlternative(void) {
+  Node::getAlternative(void) const {
     return alternative;
   }
   

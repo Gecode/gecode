@@ -73,7 +73,7 @@ namespace Gecode { namespace Gist {
   template <class Node>
   forceinline bool
   NodeCursor<Node>::mayMoveSidewards(void) {
-    return (!_node->isRoot()) &&
+    return (!_node->isRoot()) && (_node != _startNode) &&
       (_node->getAlternative() < _node->getParent()->getNumberOfChildren() - 1);
   }
 

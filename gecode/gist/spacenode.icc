@@ -128,11 +128,6 @@ namespace Gecode { namespace Gist {
   SpaceNode::hasWorkingSpace(void) {
     return workingSpace != NULL;
   }
-
-  forceinline SpaceNode*
-  SpaceNode::createChild(int alternative) {
-    return new SpaceNode(alternative);
-  }
   
 }}
 

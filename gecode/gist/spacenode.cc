@@ -35,6 +35,7 @@
  */
 
 #include "gecode/gist/spacenode.hh"
+#include "gecode/gist/visualnode.hh"
 #include "gecode/search.hh"
 #include <stack>
 
@@ -418,11 +419,10 @@ namespace Gecode { namespace Gist {
         // stats.newDepth(getDepth() + 1);
         break;
       }
-      changedStatus();
+      static_cast<VisualNode*>(this)->changedStatus();
       setNumberOfChildren(kids);
       for (int i=kids; i--;) {
-        SpaceNode* child = createChild(i);
-        setChild(i, child);
+        setChild(i, new VisualNode(i));
       }
     }
     return kids;
@@ -437,9 +437,6 @@ namespace Gecode { namespace Gist {
       noOfOpenChildren += (static_cast<SpaceNode*>(getChild(i))->isOpen());
     return noOfOpenChildren;
   }
-
-  void
-  SpaceNode::changedStatus() {}
   
 }}
 
