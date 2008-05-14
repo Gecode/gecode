@@ -62,13 +62,11 @@ namespace Gecode { namespace Gist {
     assert(noOfChildren > n);
     children[n] = child;
     child->parent = this;
-    child->alternative = n;
   }
 
   void
   Node::addChild(Node* child) {
     child->parent = this;
-    child->alternative = noOfChildren == -1 ? 0 : noOfChildren;
 
     if(noOfChildren == -1) {
       setNumberOfChildren(1);

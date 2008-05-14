@@ -155,8 +155,8 @@ namespace Gecode { namespace Gist {
     /// Book-keeping of open children
     void closeChild(bool hadFailures, bool hadSolutions);
   public:
-    /// Construct node for alternative \a alt
-    SpaceNode(int alt);
+    /// Construct node
+    SpaceNode(void);
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root);
     /// Destructor
@@ -192,8 +192,6 @@ namespace Gecode { namespace Gist {
     /// Return the StepDesc
     StepDesc* getStepDesc(void);
     
-    /// Return alternative number of this node
-    int getAlternative(void);
     /// Return whether this node still has open children
     bool isOpen(void);
     /// Return whether the subtree of this node has any failed children
@@ -215,6 +213,8 @@ namespace Gecode { namespace Gist {
     SpaceNode* getParent(void);
     /// Return child \a i
     SpaceNode* getChild(int i);
+    /// Return alternative number of this node
+    int getAlternative(void);
   };
 
 }}

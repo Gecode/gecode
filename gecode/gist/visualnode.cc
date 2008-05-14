@@ -41,8 +41,8 @@
 
 namespace Gecode { namespace Gist {
 
-  VisualNode::VisualNode(int alternative)
-  : SpaceNode(alternative), offset(0)
+  VisualNode::VisualNode(void)
+  : offset(0)
   , shape(NULL), box(0,0)
   {
     setDirty(true);

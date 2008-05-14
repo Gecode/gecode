@@ -77,10 +77,9 @@ namespace Gecode { namespace Gist {
   }
   
   forceinline
-  SpaceNode::SpaceNode(int alt)
+  SpaceNode::SpaceNode(void)
   : copy(NULL), workingSpace(NULL), ownBest(NULL) {
     desc.branch = NULL;
-    alternative = alt;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);
     setHasFailedChildren(false);
@@ -123,11 +122,6 @@ namespace Gecode { namespace Gist {
   SpaceNode::getStepDesc(void) {
     return (isStepNode() ? desc.step : NULL);
   }
-
-  forceinline int
-  SpaceNode::getAlternative(void) {
-    return alternative;
-  }
     
   forceinline bool
   SpaceNode::isOpen(void) {
@@ -158,6 +152,17 @@ namespace Gecode { namespace Gist {
   forceinline bool
   SpaceNode::hasWorkingSpace(void) {
     return workingSpace != NULL;
+  }
+
+  forceinline int
+  SpaceNode::getAlternative(void) {
+    SpaceNode* p = getParent();
+    if (p) {
+      for (int i=p->getNumberOfChildren(); i--;)
+        if (p->getChild(i) == this)
+          return i;
+    }
+    return -1;
   }
   
 }}

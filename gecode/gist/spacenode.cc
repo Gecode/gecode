@@ -122,15 +122,16 @@ namespace Gecode { namespace Gist {
       
       while (curNode->copy == NULL) {
         SpaceNode* parent = curNode->getParent();
+        int alternative = curNode->getAlternative();
 
         if(curNode->getStatus() == STEP) {
-          Branch b(curNode->alternative, curNode->desc.step, BK_STEP);
+          Branch b(alternative, curNode->desc.step, BK_STEP);
           stck.push(b);
           if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
              lastFixpoint = parent;
           }
       } else if(curNode->getStatus() == SPECIAL) {
-          Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_IN);
+          Branch b(alternative, curNode->desc.special, BK_SPECIAL_IN);
           stck.push(b);
           if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
             lastFixpoint = parent;
@@ -138,10 +139,10 @@ namespace Gecode { namespace Gist {
           specialNodeOnPath = true;
           // TODO nikopp: if the root node is failed, it neither has a copy nor a parent and we are not allowed to do the following
         } else if(parent->getStatus() == SPECIAL || parent->getStatus() == STEP) {
-           Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_OUT);
+           Branch b(alternative, curNode->desc.special, BK_SPECIAL_OUT);
           stck.push(b);
         } else {
-          Branch b(curNode->alternative, parent->desc.branch,
+          Branch b(alternative, parent->desc.branch,
                    curBest == NULL ? NULL : curNode->ownBest);
           stck.push(b);
         }
@@ -217,7 +218,7 @@ namespace Gecode { namespace Gist {
         workingSpace = p->workingSpace;
         p->workingSpace = NULL;
         if (p->desc.branch != NULL)
-          workingSpace->commit(p->desc.branch, alternative);
+          workingSpace->commit(p->desc.branch, getAlternative());
       
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
@@ -245,7 +246,7 @@ namespace Gecode { namespace Gist {
         p->copy = NULL;
     
         if(p->desc.branch != NULL)
-          copy->commit(p->desc.branch, alternative);
+          copy->commit(p->desc.branch, getAlternative());
 
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
@@ -422,7 +423,7 @@ namespace Gecode { namespace Gist {
       static_cast<VisualNode*>(this)->changedStatus();
       setNumberOfChildren(kids);
       for (int i=kids; i--;) {
-        setChild(i, new VisualNode(i));
+        setChild(i, new VisualNode());
       }
     }
     return kids;

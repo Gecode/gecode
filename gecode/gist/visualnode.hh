@@ -139,7 +139,7 @@ namespace Gecode { namespace Gist {
     bool containsCoordinateAtDepth(int x, int depth);
   public:
     /// Constructor
-    VisualNode(int alternative);
+    VisualNode(void);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root);
     /// Destructor
