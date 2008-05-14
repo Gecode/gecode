@@ -63,9 +63,7 @@ namespace Gecode {
     /// Start position in view array
     const int start;
     /// Create position information
-    Pos(int p, int s=0);
-    /// Return sum of start and position
-    operator int(void);
+    Pos(int p, int s);
   };
 
   /**
@@ -402,10 +400,7 @@ namespace Gecode {
    */
   forceinline
   Pos::Pos(int p, int s) : pos(p), start(s) {}
-  forceinline
-  Pos::operator int(void) {
-    return pos+start;
-  }
+
 
   /*
    * Branching descriptions with position
