@@ -151,6 +151,7 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
+
   /**
    * \brief View selection class for view with smallest degree
    */
@@ -171,6 +172,7 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
+
   /**
    * \brief View selection class for view with largest degree
    */
@@ -216,6 +218,7 @@ namespace Gecode {
     static void  operator delete(void*);
     //@}
   };
+
   /**
    * \brief Virtualized view selection
    */
@@ -240,30 +243,60 @@ namespace Gecode {
     /// Delete view selection and returns its size
     virtual size_t dispose(Space* home);
   };
+
   /**
-   * \brief View selection class for tie breaking
+   * \brief View selection class for static tie breaking
    */
-  template<class ViewSel, int n>
-  class ViewSelTieBreak {
+  template<class A, class B>
+  class ViewSelTieBreakStatic {
   protected:
-    /// First selection
-    ViewSel a;
-    /// Tie breakers
-    ViewSelVirtualBase<typename ViewSel::View>* b[n];
+    /// First selection class
+    A a;
+    /// Second selection class
+    B b;
   public:
     /// View type
-    typedef typename ViewSel::View View;
+    typedef typename A::View View;
     /// Default constructor
-    ViewSelTieBreak(void);
+    ViewSelTieBreakStatic(void);
     /// Constructor for initialization
-    ViewSelTieBreak(Space* home, ViewSel& a,
-                    ViewSelVirtualBase<typename ViewSel::View>* vsv[n]);
+    ViewSelTieBreakStatic(Space* home, A& a, B& b);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, typename ViewSel::View x);
+    ViewSelStatus init(const Space* home, typename A::View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, typename ViewSel::View x);
+    ViewSelStatus select(const Space* home, typename A::View x);
     /// Updating during cloning
-    void update(Space* home, bool share, ViewSelTieBreak& vs);
+    void update(Space* home, bool share, ViewSelTieBreakStatic& vs);
+    /// Delete view selection
+    void dispose(Space* home);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for dynamic tie breaking
+   */
+  template<class _View>
+  class ViewSelTieBreakDynamic {
+  protected:
+    /// Number of tie breakers
+    int n;
+    /// Tie breakers
+    ViewSelVirtualBase<_View>** tb;
+  public:
+    /// View type
+    typedef _View View;
+    /// Default constructor
+    ViewSelTieBreakDynamic(void);
+    /// Constructor for initialization
+    ViewSelTieBreakDynamic(Space* home, ViewSelVirtualBase<_View>** vsv,
+                           int n);
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, _View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, _View x);
+    /// Updating during cloning
+    void update(Space* home, bool share, ViewSelTieBreakDynamic& vs);
     /// Delete view selection
     void dispose(Space* home);
     /// Type of this view selection (for reflection)
@@ -668,51 +701,107 @@ namespace Gecode {
   }
 
 
-  // Select variable with tie breaking
-  template<class ViewSel, int n>
+  // Select variable with static tie breaking
+  template<class A, class B>
   forceinline
-  ViewSelTieBreak<ViewSel,n>::ViewSelTieBreak(void) {}
-  template<class ViewSel, int n>
+  ViewSelTieBreakStatic<A,B>::ViewSelTieBreakStatic(void) {}
+  template<class A, class B>
   forceinline
-  ViewSelTieBreak<ViewSel,n>::
-  ViewSelTieBreak(Space* home, ViewSel& a0,
-                  ViewSelVirtualBase<typename ViewSel::View>* vsv[n]) 
-    : a(a0) {
-    for (int i=0; i<n; i++)
-      b[i]=vsv[i];
-  }
-  template<class ViewSel, int n>
+  ViewSelTieBreakStatic<A,B>::
+  ViewSelTieBreakStatic(Space* home, A& a0, B& b0)
+    : a(a0), b(b0) {}
+  template<class A, class B>
   forceinline ViewSelStatus
-  ViewSelTieBreak<ViewSel,n>::init(const Space* home, 
-                                   typename ViewSel::View x) {
+  ViewSelTieBreakStatic<A,B>::init(const Space* home, typename A::View x) {
     ViewSelStatus s = a.init(home,x);
-    for (int i=0; i<n; i++)
-      if (b[i]->init(home,x) != VSS_BEST)
-        s = VSS_BETTER;
-    return s;
+    return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : s;
   }
-  template<class ViewSel, int n>
+  template<class A, class B>
   forceinline ViewSelStatus
-  ViewSelTieBreak<ViewSel,n>::select(const Space* home,
-                                     typename ViewSel::View x) {
+  ViewSelTieBreakStatic<A,B>::select(const Space* home, typename A::View x) {
     switch (a.select(home,x)) {
     case VSS_BEST:
-      {
-        ViewSelStatus s = VSS_BEST;
-        for (int i=0; i<n; i++)
-          if (b[i]->init(home,x) != VSS_BEST)
-            s = VSS_BETTER;
-        return s;
-      }
+      return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : VSS_BEST;
     case VSS_BETTER: 
-      for (int i=0; i<n; i++)
-        (void) b[i]->init(home,x);
+      (void) b.init(home,x);
       return VSS_BETTER;
     case VSS_WORSE:
       return VSS_WORSE;
     case VSS_TIE:
-      for (int i=0; i<n; i++)
-        switch (b[i]->select(home,x)) {
+      switch (b.select(home,x)) {
+      case VSS_BEST:   return VSS_BETTER;
+      case VSS_BETTER: return VSS_BETTER;
+      case VSS_TIE:    return VSS_TIE;
+      case VSS_WORSE:  return VSS_WORSE;
+      default: GECODE_NEVER;
+      }
+    default: GECODE_NEVER;
+      return VSS_WORSE;
+    }
+  }
+  template<class A, class B>
+  inline Support::Symbol
+  ViewSelTieBreakStatic<A,B>::type(void) {
+    return Reflection::mangle<A,B>("Gecode::ViewSel::TieBreakStatic");
+  }
+  template<class A, class B>
+  forceinline void
+  ViewSelTieBreakStatic<A,B>::update(Space* home, bool share, 
+                                     ViewSelTieBreakStatic<A,B>& vstb) {
+    a.update(home,share,vstb.a);
+    b.update(home,share,vstb.b);
+  } 
+  template<class A, class B>
+  forceinline void
+  ViewSelTieBreakStatic<A,B>::dispose(Space* home) {
+    a.dispose(home);
+    b.dispose(home);
+  } 
+
+  // Select variable with dynamic tie breaking
+  template<class View>
+  forceinline
+  ViewSelTieBreakDynamic<View>::ViewSelTieBreakDynamic(void) {}
+  template<class View>
+  forceinline
+  ViewSelTieBreakDynamic<View>::
+  ViewSelTieBreakDynamic(Space* home, ViewSelVirtualBase<View>** vsv, int n0) 
+    : n(n0), tb(static_cast<ViewSelVirtualBase<View>**>
+                (home->alloc(sizeof(ViewSelVirtualBase<View>*)*n))) {
+    for (int i=0; i<n; i++)
+      tb[i]=vsv[i];
+    assert(n > 0);
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelTieBreakDynamic<View>::init(const Space* home, View x) {
+    ViewSelStatus s = VSS_BEST;
+    for (int i=0; i<n; i++)
+      if (tb[i]->init(home,x) != VSS_BEST)
+        s = VSS_BETTER;
+    return s;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelTieBreakDynamic<View>::select(const Space* home, View x) {
+    switch (tb[0]->select(home,x)) {
+    case VSS_BEST:
+      {
+        ViewSelStatus s = VSS_BEST;
+        for (int i=1; i<n; i++)
+          if (tb[i]->init(home,x) != VSS_BEST)
+            s = VSS_BETTER;
+        return s;
+      }
+    case VSS_BETTER: 
+      for (int i=1; i<n; i++)
+        (void) tb[i]->init(home,x);
+      return VSS_BETTER;
+    case VSS_WORSE:
+      return VSS_WORSE;
+    case VSS_TIE:
+      for (int i=1; i<n; i++)
+        switch (tb[i]->select(home,x)) {
         case VSS_BEST:   return VSS_BETTER;
         case VSS_BETTER: return VSS_BETTER;
         case VSS_TIE:    break;
@@ -724,24 +813,27 @@ namespace Gecode {
       return VSS_WORSE;
     }
   }
-  template<class ViewSel, int n>
+  template<class View>
   inline Support::Symbol
-  ViewSelTieBreak<ViewSel,n>::type(void) {
-    return Reflection::mangle<ViewSel>("Gecode::ViewSel::TieBreak");
+  ViewSelTieBreakDynamic<View>::type(void) {
+    return Reflection::mangle<View>("Gecode::ViewSel::TieBreakDynamic");
   }
-  template<class ViewSel, int n>
+  template<class View>
   forceinline void
-  ViewSelTieBreak<ViewSel,n>::update(Space* home, bool share, 
-                                     ViewSelTieBreak<ViewSel,n>& vstb) {
+  ViewSelTieBreakDynamic<View>::update(Space* home, bool share, 
+                                       ViewSelTieBreakDynamic<View>& vstb) {
+    n = vstb.n;
+    tb = static_cast<ViewSelVirtualBase<View>**>
+      (home->alloc(sizeof(ViewSelVirtualBase<View>*)*n));
     for (int i=0; i<n; i++)
-      b[i] = vstb.b[i]->copy(home,share);
+      tb[i] = vstb.tb[i]->copy(home,share);
   } 
-  template<class ViewSel, int n>
+  template<class View>
   forceinline void
-  ViewSelTieBreak<ViewSel,n>::dispose(Space* home) {
-    a.dispose(home);
+  ViewSelTieBreakDynamic<View>::dispose(Space* home) {
     for (int i=0; i<n; i++)
-      home->reuse(b[i],b[i]->dispose(home));
+      home->reuse(tb[i],tb[i]->dispose(home));
+    home->reuse(tb,sizeof(ViewSelVirtualBase<View>*)*n);
   } 
 
 
