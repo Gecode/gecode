@@ -55,6 +55,9 @@ namespace Gecode { namespace Gist {
     SPECIAL,      ///< Node representing user controlled exploration
     STEP          ///< Node representing one propagation step
   };
+  
+  static const unsigned int FIRSTBIT = 5; //< First free bit in status word
+  static const unsigned int STATUSMASK = (1<<(FIRSTBIT-1))-1; //< Mask for accessing status
 
   // TODO nikopp: doxygen comments
   class StepDesc {
@@ -118,20 +121,31 @@ namespace Gecode { namespace Gist {
       /// Step description
       StepDesc* step;
     } desc;
+
+    /// Status of the node
+    unsigned int nstatus;
     
-    /// Current status of the node
-    NodeStatus status;
+    /// Flags for SpaceNodes
+    enum SpaceNodeFlags {
+      HASOPENCHILDREN = FIRSTBIT,
+      HASFAILEDCHILDREN,
+      HASSOLVEDCHILDREN
+    };
+    /// Last bit used for SpaceNode flags
+    static const int LASTBIT = HASSOLVEDCHILDREN;
 
   private:
     /// Reference to best space when the node was created
     SpaceNode* ownBest;
-    
-    /// Number of children that are not fully explored
-    bool _hasOpenChildren;
-    /// Whether the subtree of this node is known to contain failure
-    bool _hasFailedChildren;
-    /// Whether the subtree of this node is known to contain solutions
-    bool _hasSolvedChildren;
+
+    /// Set whether the node has children that are not fully explored
+    void setHasOpenChildren(bool b);
+    /// Set whether the subtree of this node is known to contain failure
+    void setHasFailedChildren(bool b);
+    /// Set whether the subtree of this node is known to contain solutions
+    void setHasSolvedChildren(bool b);
+    /// Set status to \a s
+    void setStatus(NodeStatus s);
     
     /// Recompute workingSpace from a copy higher up, return distance to copy
     int recompute(BestNode* curBest);
@@ -168,9 +182,7 @@ namespace Gecode { namespace Gist {
                               Statistics& stats = Statistics::dummy);
     
     /// Return current status of the node
-    NodeStatus getStatus(void);
-    /// Change the status of the to \a s
-    void setStatus(NodeStatus s);
+    NodeStatus getStatus(void) const;
     /// Return whether this node represents a propagation step
     bool isStepNode(void);
     /// Change the SpecialDesc to \a d
@@ -188,6 +200,8 @@ namespace Gecode { namespace Gist {
     bool hasFailedChildren(void);
     /// Return whether the subtree of this node has any solved children
     bool hasSolvedChildren(void);
+    /// Return whether the subtree of this node has any solved children
+    bool hasOpenChildren(void);
     /// Return number of open children
     int getNoOfOpenChildren(void);
     /// Set number of open children to \a n

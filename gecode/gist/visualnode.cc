@@ -42,20 +42,28 @@
 namespace Gecode { namespace Gist {
 
   VisualNode::VisualNode(int alternative)
-  : SpaceNode(alternative), offset(0), dirty(true), 
-    childrenLayoutDone(false), hidden(false), marked(false)
-  , onPath(false)
-  , heat(0)
+  : SpaceNode(alternative), offset(0)
   , shape(NULL), box(0,0)
-  {}
+  {
+    setDirty(true);
+    setChildrenLayoutDone(false);
+    setHidden(false);
+    setMarked(false);
+    setOnPath(false);
+    setHeat(0);
+  }
 
   VisualNode::VisualNode(Space* root)
-  : SpaceNode(root), offset(0), dirty(true), childrenLayoutDone(false), 
-    hidden(false), marked(false)
-  , onPath(false)
-  , heat(0)
+  : SpaceNode(root), offset(0)
   , shape(NULL), box(0,0)
-  {}
+  {
+    setDirty(true);
+    setChildrenLayoutDone(false);
+    setHidden(false);
+    setMarked(false);
+    setOnPath(false);    
+    setHeat(0);
+  }
 
   VisualNode::~VisualNode(void) {
     Shape::deallocate(shape);
@@ -64,8 +72,8 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::dirtyUp(void) {
     VisualNode* cur = this;
-    while (!cur->dirty) {
-      cur->dirty = true;
+    while (!cur->isDirty()) {
+      cur->setDirty(true);
       if (! cur->isRoot()) {
         cur = cur->getParent();
       }
@@ -85,11 +93,6 @@ namespace Gecode { namespace Gist {
     //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
     // std::cout << "Layout done. " << nodesLayouted << " nodes in "
     //   << t << " ms. " << nps << " nodes/s." << std::endl;
-  }
-    
-  void
-  VisualNode::setOnPath(bool onPath0) {
-    onPath = onPath0;
   }
   
   void VisualNode::pathUp(void) {
@@ -119,7 +122,7 @@ namespace Gecode { namespace Gist {
 
   void
   VisualNode::toggleHidden(void) {
-    hidden = !hidden;
+    setHidden(!isHidden());
     dirtyUp();
   }
   
@@ -443,9 +446,9 @@ namespace Gecode { namespace Gist {
       s += copy->allocated();
     if (workingSpace)
       s += workingSpace->allocated();
-    if (status == SPECIAL)
+    if (getStatus() == SPECIAL)
       s += sizeof(SpecialDesc);
-    else if (status == STEP)
+    else if (getStatus() == STEP)
       s += sizeof(StepDesc);
     else
       s += (desc.branch != NULL ? desc.branch->size() : 0);

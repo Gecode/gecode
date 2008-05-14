@@ -118,19 +118,18 @@ namespace Gecode { namespace Gist {
   protected:
     /// Relative offset from the parent node
     int offset;
-    /// Whether the node needs re-layout
-    bool dirty;
-    /// Whether the layout of the node's children is completed
-    bool childrenLayoutDone;
-    /// Whether the node is hidden
-    bool hidden;
-    /// Whether the node is marked
-    bool marked;
-    /// Whether the node is on the selected path
-    bool onPath;
-
-    /// Heat value 
-    unsigned char heat;
+    
+    /// Flags for VisualNodes
+    enum VisualNodeFlags {
+      DIRTY = SpaceNode::LASTBIT+1,
+      CHILDRENLAYOUTDONE,
+      HIDDEN,
+      MARKED,
+      ONPATH
+    };
+    
+    static const unsigned int HEATMASK = ((1<<7)-1) << ONPATH;
+    static const unsigned int HEATSHIFT = ONPATH;
 
     /// Shape of this node
     Shape* shape;
