@@ -446,16 +446,16 @@ namespace Gecode { namespace Gist {
     case SINGLETON:
     case SOLVED:
       {
-        // SizeCursor sc(currentNode);
-        // PreorderNodeVisitor<SizeCursor> pnv(sc);
-        // int nodes = 1;
-        // while (pnv.next()) { nodes++; }
-        // std::cout << "sizeof(VisualNode): " << sizeof(VisualNode)
-        //           << std::endl;
-        // std::cout << "Size: " << (pnv.getCursor().s)/1024 << std::endl;
-        // std::cout << "Nodes: " << nodes << std::endl;
-        // std::cout << "Size / node: " << (pnv.getCursor().s)/nodes
-        //           << std::endl;
+        SizeCursor sc(currentNode);
+        PreorderNodeVisitor<SizeCursor> pnv(sc);
+        int nodes = 1;
+        while (pnv.next()) { nodes++; }
+        std::cout << "sizeof(VisualNode): " << sizeof(VisualNode)
+                  << std::endl;
+        std::cout << "Size: " << (pnv.getCursor().s)/1024 << std::endl;
+        std::cout << "Nodes: " << nodes << std::endl;
+        std::cout << "Size / node: " << (pnv.getCursor().s)/nodes
+                  << std::endl;
     
         Space* curSpace = currentNode->getSpace(curBest);
         Reflection::VarMap vm;

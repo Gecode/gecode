@@ -377,6 +377,11 @@ namespace Gecode { namespace Gist {
             delete copy;
             copy = NULL;
           }
+          if (ownBest == NULL) {
+            // do not store working spaces in solutions, except if we do BAB
+            delete workingSpace;
+            workingSpace = NULL;
+          }
           setHasOpenChildren(false);
           setHasSolvedChildren(true);
           setHasFailedChildren(false);
