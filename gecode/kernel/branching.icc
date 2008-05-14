@@ -110,10 +110,8 @@ namespace Gecode {
     ViewBranching(Space* home, bool share, ViewBranching& b);
   public:
     /// Constructor for creation
-    ViewBranching(Space* home, ViewArray<typename ViewSel::View>& x);
-    /// Constructor for creation
     ViewBranching(Space* home, ViewArray<typename ViewSel::View>& x,
-                  const ViewSel& vi_s);
+                  ViewSel& vi_s);
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space* home) const;
     /// Delete branching and return its size
@@ -128,6 +126,10 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
+    /// Default constructor
+    ViewSelBase(void);
+    /// Constructor for initialization
+    ViewSelBase(Space* home, const VarBranchOptions& vbo);
     /// Updating during cloning
     void update(Space* home, bool share, ViewSelBase& vs);
     /// Delete view selection
@@ -140,6 +142,10 @@ namespace Gecode {
   template <class View>
   class ViewSelByNone : public ViewSelBase<View> {
   public:
+    /// Default constructor
+    ViewSelByNone(void);
+    /// Constructor for initialization
+    ViewSelByNone(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -156,6 +162,10 @@ namespace Gecode {
     /// So-far smallest degree
     unsigned int degree;
   public:
+    /// Default constructor
+    ViewSelByDegreeMin(void);
+    /// Constructor for initialization
+    ViewSelByDegreeMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -172,6 +182,10 @@ namespace Gecode {
     /// So-far largest degree
     unsigned int degree;
   public:
+    /// Default constructor
+    ViewSelByDegreeMax(void);
+    /// Constructor for initialization
+    ViewSelByDegreeMax(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -215,6 +229,8 @@ namespace Gecode {
   public:
     /// Default constructor
     ViewSelVirtual(void);
+    /// Constructor for initialization
+    ViewSelVirtual(Space* home, const VarBranchOptions& vbo);
     /// Constructor for cloning \a vsv
     ViewSelVirtual(Space* home, bool share, ViewSelVirtual& vsv);
     /// Intialize with view \a x
@@ -241,8 +257,9 @@ namespace Gecode {
     typedef typename ViewSel::View View;
     /// Default constructor
     ViewSelTieBreak(void);
-    /// Initialize with tiebreakers
-    ViewSelTieBreak(ViewSelVirtualBase<typename ViewSel::View>* vsv[n]);
+    /// Constructor for initialization
+    ViewSelTieBreak(Space* home, ViewSel& a,
+                    ViewSelVirtualBase<typename ViewSel::View>* vsv[n]);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
@@ -295,13 +312,8 @@ namespace Gecode {
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
     /// Constructor for creation
-    ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x);
-    /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
-                     const ViewSel& vi_s);
-    /// Constructor for creation
-    ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
-                     const ViewSel& vi_s, const ValSel& va_s);
+                     ViewSel& vi_s, ValSel& va_s);
     /// Return branching description (of type Gecode::PosValDesc)
     virtual const BranchingDesc* description(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
@@ -340,6 +352,10 @@ namespace Gecode {
     typedef _Val Val;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
+    /// Default constructor
+    ValSelBase(void);
+    /// Constructor for initialization
+    ValSelBase(Space* home, const ValBranchOptions& vbo);
     /// Updating during cloning
     void update(Space* home, bool share, ValSelBase& vs);
     /// Delete value selection
@@ -435,15 +451,9 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline
-  ViewBranching<ViewSel>::ViewBranching(Space* home, 
-                                        ViewArray<typename ViewSel::View>& x0)
-    : Branching(home), x(x0), start(0) {}
-
-  template <class ViewSel>
-  forceinline
   ViewBranching<ViewSel>::ViewBranching(Space* home,
                                         ViewArray<typename ViewSel::View>& x0,
-                                        const ViewSel& vi_s)
+                                        ViewSel& vi_s)
     : Branching(home), x(x0), start(0), viewsel(vi_s) {}
 
 
@@ -510,6 +520,12 @@ namespace Gecode {
 
   // Selection base class
   template<class View>
+  forceinline
+  ViewSelBase<View>::ViewSelBase(void) {}
+  template<class View>
+  forceinline
+  ViewSelBase<View>::ViewSelBase(Space*, const VarBranchOptions&) {}
+  template<class View>
   forceinline void 
   ViewSelBase<View>::update(Space*, bool, ViewSelBase<View>&) {}
   template<class View>
@@ -517,6 +533,13 @@ namespace Gecode {
   ViewSelBase<View>::dispose(Space*) {}
 
   // Select first view
+  template<class View>
+  forceinline
+  ViewSelByNone<View>::ViewSelByNone(void) {}
+  template<class View>
+  forceinline
+  ViewSelByNone<View>::ViewSelByNone(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelByNone<View>::init(const Space*, View) {
@@ -535,6 +558,14 @@ namespace Gecode {
 
 
   // Select variable with smallest degree
+  template<class View>
+  forceinline
+  ViewSelByDegreeMin<View>::ViewSelByDegreeMin(void) {}
+  template<class View>
+  forceinline
+  ViewSelByDegreeMin<View>::ViewSelByDegreeMin(Space* home, 
+                                               const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelByDegreeMin<View>::init(const Space*, View x) {
@@ -560,6 +591,14 @@ namespace Gecode {
   }
 
   // Select variable with smallest degree
+  template<class View>
+  forceinline
+  ViewSelByDegreeMax<View>::ViewSelByDegreeMax(void) {}
+  template<class View>
+  forceinline
+  ViewSelByDegreeMax<View>::ViewSelByDegreeMax(Space* home, 
+                                               const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelByDegreeMax<View>::init(const Space*, View x) {
@@ -600,11 +639,17 @@ namespace Gecode {
   template <class ViewSel>
   forceinline
   ViewSelVirtual<ViewSel>::ViewSelVirtual(void) {}
+  template<class ViewSel>
+  forceinline
+  ViewSelVirtual<ViewSel>::ViewSelVirtual(Space* home, 
+                                          const VarBranchOptions& vbo)
+    : viewsel(home,vbo) {}
   template <class ViewSel>
   forceinline
   ViewSelVirtual<ViewSel>::ViewSelVirtual(Space* home, bool share, 
-                                          ViewSelVirtual<ViewSel>& vsv) 
-    : viewsel(vsv.viewsel) {}
+                                          ViewSelVirtual<ViewSel>& vsv) {
+    viewsel.update(home,share,vsv.viewsel);
+  }
   template <class ViewSel>
   ViewSelStatus
   ViewSelVirtual<ViewSel>::init(const Space* home, typename ViewSel::View x) {
@@ -635,7 +680,9 @@ namespace Gecode {
   template<class ViewSel, int n>
   forceinline
   ViewSelTieBreak<ViewSel,n>::
-  ViewSelTieBreak(ViewSelVirtualBase<typename ViewSel::View>* vsv[n]) {
+  ViewSelTieBreak(Space* home, ViewSel& a0,
+                  ViewSelVirtualBase<typename ViewSel::View>* vsv[n]) 
+    : a(a0) {
     for (int i=0; i<n; i++)
       b[i]=vsv[i];
   }
@@ -712,21 +759,8 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   forceinline
   ViewValBranching<ViewSel,ValSel>::
-  ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x)
-    : ViewBranching<ViewSel>(home,x) {}
-
-  template <class ViewSel, class ValSel>
-  forceinline
-  ViewValBranching<ViewSel,ValSel>::
   ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
-                   const ViewSel& vi_s)
-    : ViewBranching<ViewSel>(home,x,vi_s) {}
-
-  template <class ViewSel, class ValSel>
-  forceinline
-  ViewValBranching<ViewSel,ValSel>::
-  ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
-                   const ViewSel& vi_s, const ValSel& va_s)
+                   ViewSel& vi_s, ValSel& va_s)
     : ViewBranching<ViewSel>(home,x,vi_s), valsel(va_s) {}
 
   template <class ViewSel, class ValSel>
@@ -810,6 +844,12 @@ namespace Gecode {
   }
 
   // Value selection base class
+  template<class View, class Val>
+  forceinline
+  ValSelBase<View,Val>::ValSelBase(void) {}
+  template<class View, class Val>
+  forceinline 
+  ValSelBase<View,Val>::ValSelBase(Space*, const ValBranchOptions&) {}
   template<class View, class Val>
   forceinline void 
   ValSelBase<View,Val>::update(Space*, bool, ValSelBase<View,Val>&) {}

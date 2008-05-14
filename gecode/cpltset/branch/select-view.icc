@@ -37,6 +37,11 @@
 
 namespace Gecode { namespace CpltSet { namespace Branch {
 
+  forceinline
+  ByMinCard::ByMinCard(void) {}
+  forceinline
+  ByMinCard::ByMinCard(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMinCard::init(const Space*, CpltSetView x) { 
     minCard = x.unknownSize();
@@ -59,6 +64,13 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     return Support::Symbol("CpltSet::Branch::ByMinCard");
   }
 
+
+
+  forceinline
+  ByMaxCard::ByMaxCard(void) {}
+  forceinline
+  ByMaxCard::ByMaxCard(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMaxCard::init(const Space*, CpltSetView x) { 
     maxCard = x.unknownSize();
@@ -80,6 +92,13 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     return Support::Symbol("CpltSet::Branch::ByMaxCard");
   }
 
+
+
+  forceinline
+  ByMinUnknown::ByMinUnknown(void) {}
+  forceinline
+  ByMinUnknown::ByMinUnknown(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMinUnknown::init(const Space*, CpltSetView x) {
     Set::UnknownRanges<CpltSetView> unknown(x);
@@ -103,6 +122,12 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     return Support::Symbol("CpltSet::Branch::ByMinUnknown");
   }
 
+
+  forceinline
+  ByMaxUnknown::ByMaxUnknown(void) {}
+  forceinline
+  ByMaxUnknown::ByMaxUnknown(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMaxUnknown::init (const Space*, CpltSetView x) {
     Set::UnknownRanges<CpltSetView> unknown(x);

@@ -43,6 +43,11 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
+  forceinline
+  ByMinCard::ByMinCard(void) {}
+  forceinline
+  ByMinCard::ByMinCard(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMinCard::init(const Space*, SetView x) { 
     minCard = x.unknownSize();
@@ -65,6 +70,11 @@ namespace Gecode { namespace Set { namespace Branch {
     return Support::Symbol("Gecode::Set::Branch::ByMinCard");
   }
 
+  forceinline
+  ByMaxCard::ByMaxCard(void) {}
+  forceinline
+  ByMaxCard::ByMaxCard(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMaxCard::init(const Space*, SetView x) { 
     maxCard = x.unknownSize();
@@ -86,6 +96,11 @@ namespace Gecode { namespace Set { namespace Branch {
     return Support::Symbol("Gecode::Set::Branch::ByMaxCard");
   }
 
+  forceinline
+  ByMinUnknown::ByMinUnknown(void) {}
+  forceinline
+  ByMinUnknown::ByMinUnknown(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMinUnknown::init(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);
@@ -109,6 +124,11 @@ namespace Gecode { namespace Set { namespace Branch {
     return Support::Symbol("Gecode::Set::Branch::ByMinUnknown");
   }
 
+  forceinline
+  ByMaxUnknown::ByMaxUnknown(void) {}
+  forceinline
+  ByMaxUnknown::ByMaxUnknown(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
   ByMaxUnknown::init(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);

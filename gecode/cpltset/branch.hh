@@ -60,8 +60,12 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
-  class ValMinUnknown : public ValSelBase<CpltSetView,int> {
+  class ValMin : public ValSelBase<CpltSetView,int> {
   public:
+    /// Default constructor
+    ValMin(void);
+    /// Constructor for initialization
+    ValMin(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
     int val(const Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -82,8 +86,12 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
-  class ValMaxUnknown : public ValSelBase<CpltSetView,int> {
+  class ValMax : public ValSelBase<CpltSetView,int> {
   public:
+    /// Default constructor
+    ValMax(void);
+    /// Constructor for initialization
+    ValMax(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
     int val(const Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
@@ -125,6 +133,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// So-far smallest cardinality
     unsigned int minCard;
   public:
+    /// Default constructor
+    ByMinCard(void);
+    /// Constructor for initialization
+    ByMinCard(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
@@ -144,6 +156,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// So-far greatest cardinality
     unsigned int maxCard;
   public:
+    /// Default constructor
+    ByMaxCard(void);
+    /// Constructor for initialization
+    ByMaxCard(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
@@ -163,6 +179,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// So-far smallest element
     int minUnknown;
   public:
+    /// Default constructor
+    ByMinUnknown(void);
+    /// Constructor for initialization
+    ByMinUnknown(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
@@ -182,6 +202,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// So-far greatest element
     int maxUnknown;
   public:
+    /// Default constructor
+    ByMaxUnknown(void);
+    /// Constructor for initialization
+    ByMaxUnknown(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x

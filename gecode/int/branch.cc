@@ -59,22 +59,36 @@ namespace Gecode {
 
 
   void
-  assign(Space* home, const IntVarArgs& x, IntAssign vals) {
+  assign(Space* home, const IntVarArgs& x, IntAssign vals,
+         const ValBranchOptions& o_vals) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
+    ViewSelByNone<IntView> v(home,VarBranchOptions::def);
     switch (vals) {
     case INT_ASSIGN_MIN:
-      (void) new (home) ViewValBranching
-        <ViewSelByNone<IntView>,Branch::AssignValMin<IntView> >(home,xv);
+      {
+        Branch::AssignValMin<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelByNone<IntView>,Branch::AssignValMin<IntView> >
+          (home,xv,v,a);
+      }
       break;
     case INT_ASSIGN_MED:
-      (void) new (home) ViewValBranching
-        <ViewSelByNone<IntView>,Branch::AssignValMed<IntView> >(home,xv);
+      {
+        Branch::AssignValMed<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelByNone<IntView>,Branch::AssignValMed<IntView> >
+          (home,xv,v,a);
+      }
       break;
     case INT_ASSIGN_MAX:
-      (void) new (home) ViewValBranching
-        <ViewSelByNone<IntView>,Branch::AssignValMin<MinusView> >(home,xv);
+      {
+        Branch::AssignValMin<MinusView> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelByNone<IntView>,Branch::AssignValMin<MinusView> >
+          (home,xv,v,a);
+      }
       break;
     default:
       throw UnknownBranching("Int::assign");
@@ -82,21 +96,27 @@ namespace Gecode {
   }
 
   void
-  assign(Space* home, const BoolVarArgs& x, IntAssign vals) {
+  assign(Space* home, const BoolVarArgs& x, IntAssign vals,
+         const ValBranchOptions& o_vals) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
+    ViewSelByNone<BoolView> v(home,VarBranchOptions::def);
     switch (vals) {
     case INT_ASSIGN_MIN:
-    case INT_ASSIGN_MED:
-      (void) new (home) ViewValBranching
-        <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
-        (home,xv);
+    case INT_ASSIGN_MED: {
+        Branch::AssignValZeroOne<BoolView> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
+          (home,xv,v,a);
+      }
       break;
-    case INT_ASSIGN_MAX:
-      (void) new (home) ViewValBranching
-        <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<NegBoolView> >
-        (home,xv);
+    case INT_ASSIGN_MAX: {
+        Branch::AssignValZeroOne<NegBoolView> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<NegBoolView> >
+          (home,xv,v,a);
+      }
       break;
     default:
       throw UnknownBranching("Int::assign");

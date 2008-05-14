@@ -39,28 +39,43 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template <class SelView>
   void
-  post(Space* home, ViewArray<IntView>& x, const SelView& v, 
+  post(Space* home, ViewArray<IntView>& x, SelView& v, 
        IntValBranch vals, const ValBranchOptions& o_vals) {
     switch (vals) {
     case INT_VAL_MIN:
-      (void) new (home) ViewValBranching<SelView,ValMin<IntView> >
-        (home,x,v);
+      {
+        ValMin<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMin<IntView> >
+          (home,x,v,a);
+      }
       break;
     case INT_VAL_MED:
-      (void) new (home) ViewValBranching<SelView,ValMed<IntView> >
-        (home,x,v);
+      {
+        ValMed<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMed<IntView> >
+          (home,x,v,a);
+      }
       break;
     case INT_VAL_MAX:
-      (void) new (home) ViewValBranching<SelView,ValMin<MinusView> >
-        (home,x,v);
+      {
+        ValMin<MinusView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMin<MinusView> >
+          (home,x,v,a);
+      }
       break;
     case INT_VAL_SPLIT_MIN:
-      (void) new (home) ViewValBranching<SelView,ValSplitMin<IntView> >
-        (home,x,v);
+      {
+        ValSplitMin<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValSplitMin<IntView> >
+          (home,x,v,a);
+      }
       break;
     case INT_VAL_SPLIT_MAX:
-      (void) new (home) ViewValBranching<SelView,ValSplitMin<MinusView> >
-        (home,x,v);
+      {
+        ValSplitMin<MinusView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValSplitMin<MinusView> >
+          (home,x,v,a);
+      }
       break;
     case INT_VALUES_MIN:
       (void) new (home) ViewValuesBranching<SelView,IntView>

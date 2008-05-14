@@ -38,6 +38,13 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
+  forceinline
+  ValMin<View>::ValMin(void) {}
+  template<class View>
+  forceinline
+  ValMin<View>::ValMin(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<View,int>(home,vbo) {}
+  template<class View>
   forceinline int
   ValMin<View>::val(const Space*, View x) const {
     return x.min();
@@ -54,6 +61,13 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   template<class View>
+  forceinline
+  ValMed<View>::ValMed(void) {}
+  template<class View>
+  forceinline
+  ValMed<View>::ValMed(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<View,int>(home,vbo) {}
+  template<class View>
   forceinline int
   ValMed<View>::val(const Space*, View x) const {
     return x.med();
@@ -69,6 +83,13 @@ namespace Gecode { namespace Int { namespace Branch {
     return Support::Symbol("Gecode::Int::Branch::ValMed");
   }
 
+  template<class View>
+  forceinline
+  ValSplitMin<View>::ValSplitMin(void) {}
+  template<class View>
+  forceinline
+  ValSplitMin<View>::ValSplitMin(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<View,int>(home,vbo) {}
   template<class View>
   forceinline int
   ValSplitMin<View>::val(const Space*, View x) const {
@@ -97,6 +118,13 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   template<class View>
+  forceinline
+  ValZeroOne<View>::ValZeroOne(void) {}
+  template<class View>
+  forceinline
+  ValZeroOne<View>::ValZeroOne(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<View,NoValue>(home,vbo) {}
+  template<class View>
   forceinline NoValue
   ValZeroOne<View>::val(const Space*, View) const {
     NoValue n; return n;
@@ -112,6 +140,33 @@ namespace Gecode { namespace Int { namespace Branch {
     return Support::Symbol("Gecode::Int::Branch::ValZeroOne");
   }
 
+  template<class View>
+  forceinline
+  AssignValMin<View>::AssignValMin(void) {}
+  template<class View>
+  forceinline
+  AssignValMin<View>::AssignValMin(Space* home, const ValBranchOptions& vbo)
+    : ValMin<View>(home,vbo) {}
+
+  template<class View>
+  forceinline
+  AssignValMed<View>::AssignValMed(void) {}
+  template<class View>
+  forceinline
+  AssignValMed<View>::AssignValMed(Space* home, const ValBranchOptions& vbo)
+    : ValMed<View>(home,vbo) {}
+
+  template<class View>
+  forceinline
+  AssignValZeroOne<View>::AssignValZeroOne(void) {}
+  template<class View>
+  forceinline
+  AssignValZeroOne<View>::AssignValZeroOne(Space* home, 
+                                           const ValBranchOptions& vbo)
+    : ValZeroOne<View>(home,vbo) {}
+
+
+  
 }}}
 
 

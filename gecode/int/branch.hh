@@ -62,6 +62,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMin : public ValSelBase<View,int> {
   public:
+    /// Default constructor
+    ValMin(void);
+    /// Constructor for initialization
+    ValMin(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
@@ -84,6 +88,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValMed : public ValSelBase<View,int> {
   public:
+    /// Default constructor
+    ValMed(void);
+    /// Constructor for initialization
+    ValMed(Space* home, const ValBranchOptions& vbo);
     /// Return maximum value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
@@ -106,6 +114,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSplitMin : public ValSelBase<View,int> {
   public:
+    /// Default constructor
+    ValSplitMin(void);
+    /// Constructor for initialization
+    ValSplitMin(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
     int val(const Space* home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
@@ -118,11 +130,6 @@ namespace Gecode { namespace Int { namespace Branch {
                        int alt, View x, int n) const;
   };
 
-
-  /// Create branchings for a given view selection strategy \a SelView
-  template<class View, class SelView>
-  static void
-  create(Space* home, ViewArray<View>&, IntValBranch);
 
   /// For Boolean branchings not needing a value
   class NoValue {
@@ -143,6 +150,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValZeroOne : public ValSelBase<View,NoValue> {
   public:
+    /// Default constructor
+    ValZeroOne(void);
+    /// Constructor for initialization
+    ValZeroOne(Space* home, const ValBranchOptions& vbo);
     /// Return no value of view \a x
     NoValue val(const Space* home, View x) const;
     /// Tell \f$x=0\f$ (\a a = 0) or \f$x=1\f$ (\a a = 1)
@@ -169,10 +180,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewValuesBranching(Space* home, bool share, ViewValuesBranching& b);
   public:
     /// Constructor for creation
-    ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x);
-    /// Constructor for creation
     ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x,
-                        const ViewSel& vi_s);
+                        ViewSel& vi_s);
     /// Return branching description (of type PosValuesDesc)
     virtual const BranchingDesc* description(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
@@ -202,6 +211,10 @@ namespace Gecode { namespace Int { namespace Branch {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValMin(void);
+    /// Constructor for initialization
+    AssignValMin(Space* home, const ValBranchOptions& vbo);
   };
 
   /// Class for assigning maximum value
@@ -210,6 +223,10 @@ namespace Gecode { namespace Int { namespace Branch {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValMed(void);
+    /// Constructor for initialization
+    AssignValMed(Space* home, const ValBranchOptions& vbo);
   };
 
   /// Class for assigning zero
@@ -218,6 +235,10 @@ namespace Gecode { namespace Int { namespace Branch {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValZeroOne(void);
+    /// Constructor for initialization
+    AssignValZeroOne(Space* home, const ValBranchOptions& vbo);
   };
 
 
@@ -238,6 +259,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest minimum
     int min;
   public:
+    /// Default constructor
+    ByMinMin(void);
+    /// Constructor for initialization
+    ByMinMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -258,6 +283,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest minimum
     int min;
   public:
+    /// Default constructor
+    ByMinMax(void);
+    /// Constructor for initialization
+    ByMinMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -278,6 +307,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest maximum
     int max;
   public:
+    /// Default constructor
+    ByMaxMin(void);
+    /// Constructor for initialization
+    ByMaxMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -298,6 +331,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest maximum
     int max;
   public:
+    /// Default constructor
+    ByMaxMax(void);
+    /// Constructor for initialization
+    ByMaxMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -318,6 +355,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest size
     unsigned int size;
   public:
+    /// Default constructor
+    BySizeMin(void);
+    /// Constructor for initialization
+    BySizeMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -338,6 +379,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest size
     unsigned int size;
   public:
+    /// Default constructor
+    BySizeMax(void);
+    /// Constructor for initialization
+    BySizeMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -359,6 +404,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest size/degree
     double sizedegree;
   public:
+    /// Default constructor
+    BySizeDegreeMin(void);
+    /// Constructor for initialization
+    BySizeDegreeMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -379,6 +428,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest size/degree
     double sizedegree;
   public:
+    /// Default constructor
+    BySizeDegreeMax(void);
+    /// Constructor for initialization
+    BySizeDegreeMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -399,6 +452,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest regret
     unsigned int regret;
   public:
+    /// Default constructor
+    ByRegretMinMin(void);
+    /// Constructor for initialization
+    ByRegretMinMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -419,6 +476,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest regret
     unsigned int regret;
   public:
+    /// Default constructor
+    ByRegretMinMax(void);
+    /// Constructor for initialization
+    ByRegretMinMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -439,6 +500,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far smallest regret
     unsigned int regret;
   public:
+    /// Default constructor
+    ByRegretMaxMin(void);
+    /// Constructor for initialization
+    ByRegretMaxMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -459,6 +524,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// So-far largest regret
     unsigned int regret;
   public:
+    /// Default constructor
+    ByRegretMaxMax(void);
+    /// Constructor for initialization
+    ByRegretMaxMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x

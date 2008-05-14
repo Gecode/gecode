@@ -39,6 +39,13 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min
   template<class View>
+  forceinline
+  ByMinMin<View>::ByMinMin(void) {}
+  template<class View>
+  forceinline
+  ByMinMin<View>::ByMinMin(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
   forceinline ViewSelStatus
   ByMinMin<View>::init(const Space*, View x) {
     min = x.min();
@@ -62,6 +69,13 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   // Select variable with largest min
+  template<class View>
+  forceinline
+  ByMinMax<View>::ByMinMax(void) {}
+  template<class View>
+  forceinline
+  ByMinMax<View>::ByMinMax(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   ByMinMax<View>::init(const Space*, View x) {
@@ -87,6 +101,13 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest max
   template<class View>
+  forceinline
+  ByMaxMin<View>::ByMaxMin(void) {}
+  template<class View>
+  forceinline
+  ByMaxMin<View>::ByMaxMin(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
   forceinline ViewSelStatus
   ByMaxMin<View>::init(const Space*, View x) {
     max = x.max();
@@ -111,6 +132,13 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest max
   template<class View>
+  forceinline
+  ByMaxMax<View>::ByMaxMax(void) {}
+  template<class View>
+  forceinline
+  ByMaxMax<View>::ByMaxMax(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
   forceinline ViewSelStatus
   ByMaxMax<View>::init(const Space*, View x) {
     max = x.max();
@@ -134,6 +162,13 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   // Select variable with smallest size
+  template<class View>
+  forceinline
+  BySizeMin<View>::BySizeMin(void) {}
+  template<class View>
+  forceinline
+  BySizeMin<View>::BySizeMin(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   BySizeMin<View>::init(const Space*, View x) {
@@ -160,6 +195,13 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest size
   template<class View>
+  forceinline
+  BySizeMax<View>::BySizeMax(void) {}
+  template<class View>
+  forceinline
+  BySizeMax<View>::BySizeMax(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
   forceinline ViewSelStatus
   BySizeMax<View>::init(const Space*, View x) {
     size = x.size();
@@ -184,6 +226,14 @@ namespace Gecode { namespace Int { namespace Branch {
 
 
   // Select variable with smallest size/degree
+  template<class View>
+  forceinline
+  BySizeDegreeMin<View>::BySizeDegreeMin(void) {}
+  template<class View>
+  forceinline
+  BySizeDegreeMin<View>::BySizeDegreeMin(Space* home, 
+                                         const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   BySizeDegreeMin<View>::init(const Space*, View x) {
@@ -212,6 +262,14 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest size/degree
   template<class View>
+  forceinline
+  BySizeDegreeMax<View>::BySizeDegreeMax(void) {}
+  template<class View>
+  forceinline
+  BySizeDegreeMax<View>::BySizeDegreeMax(Space* home, 
+                                         const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
   forceinline ViewSelStatus
   BySizeDegreeMax<View>::init(const Space*, View x) {
     sizedegree = 
@@ -239,6 +297,14 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min-regret
   template<class View>
+  forceinline
+  ByRegretMinMin<View>::ByRegretMinMin(void) {}
+  template<class View>
+  forceinline
+  ByRegretMinMin<View>::ByRegretMinMin(Space* home, 
+                                       const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
   forceinline ViewSelStatus
   ByRegretMinMin<View>::init(const Space*, View x) {
     regret = x.regret_min();
@@ -264,6 +330,14 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest min-regret
   template<class View>
+  forceinline
+  ByRegretMinMax<View>::ByRegretMinMax(void) {}
+  template<class View>
+  forceinline
+  ByRegretMinMax<View>::ByRegretMinMax(Space* home, 
+                                       const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
   forceinline ViewSelStatus
   ByRegretMinMax<View>::init(const Space*, View x) {
     regret = x.regret_min();
@@ -287,6 +361,14 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   // Select variable with smallest max-regret
+  template<class View>
+  forceinline
+  ByRegretMaxMin<View>::ByRegretMaxMin(void) {}
+  template<class View>
+  forceinline
+  ByRegretMaxMin<View>::ByRegretMaxMin(Space* home, 
+                                       const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   ByRegretMaxMin<View>::init(const Space*, View x) {
@@ -312,6 +394,14 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   // Select variable with smallest min-regret
+  template<class View>
+  forceinline
+  ByRegretMaxMax<View>::ByRegretMaxMax(void) {}
+  template<class View>
+  forceinline
+  ByRegretMaxMax<View>::ByRegretMaxMax(Space* home, 
+                                       const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
   ByRegretMaxMax<View>::init(const Space*, View x) {

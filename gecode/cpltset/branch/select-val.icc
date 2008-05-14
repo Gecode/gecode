@@ -37,30 +37,42 @@
 
 namespace Gecode { namespace CpltSet { namespace Branch {
 
+  template<bool exclude>
+  forceinline
+  ValMin<exclude>::ValMin(void) {}
+  template<bool exclude>
+  forceinline
+  ValMin<exclude>::ValMin(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<CpltSetView,int>(home,vbo) {}
   template <bool exclude>
   forceinline int
-  ValMinUnknown<exclude>::val(const Space*, CpltSetView x) const {
+  ValMin<exclude>::val(const Space*, CpltSetView x) const {
     UnknownValues<CpltSetView> unknown(x);
-    int v = unknown.val();
-    return v;
+    return unknown.val();
   }
-
   template <bool exclude>
   forceinline ModEvent
-  ValMinUnknown<exclude>::tell(Space* home, unsigned int a,
+  ValMin<exclude>::tell(Space* home, unsigned int a,
                                CpltSetView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
   }
-
   template<bool exclude>
   inline Support::Symbol
-  ValMinUnknown<exclude>::type(void) {
-    return Support::Symbol("CpltSet::Branch::ValMinUnknown");
+  ValMin<exclude>::type(void) {
+    return Support::Symbol("CpltSet::Branch::ValMin");
   }
 
+
+  template<bool exclude>
+  forceinline
+  ValMax<exclude>::ValMax(void) {}
+  template<bool exclude>
+  forceinline
+  ValMax<exclude>::ValMax(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<CpltSetView,int>(home,vbo) {}
   template <bool exclude>
   forceinline int
-  ValMaxUnknown<exclude>::val(const Space*, CpltSetView x) const {
+  ValMax<exclude>::val(const Space*, CpltSetView x) const {
     int maxElem = 0;
     Set::UnknownRanges<CpltSetView> unknown(x);
     while (unknown()) {
@@ -69,40 +81,50 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     }
     return maxElem;
   }
-
   template <bool exclude>
   forceinline ModEvent
-  ValMaxUnknown<exclude>::tell(Space* home, unsigned int a,
-                               CpltSetView x, int v) {
+  ValMax<exclude>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
   }
-
   template<bool exclude>
   inline Support::Symbol
-  ValMaxUnknown<exclude>::type(void) {
-    return Support::Symbol("CpltSet::Branch::ValMaxUnknown");
+  ValMax<exclude>::type(void) {
+    return Support::Symbol("CpltSet::Branch::ValMax");
   }
 
 
   template <class SelView>
   void
   create(Space* home, ViewArray<CpltSetView>& x, CpltSetValBranch vals) {
+    SelView v(home,VarBranchOptions::def);
     switch (vals) {
     case CPLTSET_VAL_MIN_UNKNOWN:
-      (void) new (home) ViewValBranching<SelView,ValMinUnknown<false> >
-        (home,x);
+      {
+        ValMin<false> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMin<false> >
+          (home,x,v,a);
+      }
       break;
     case CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST:
-      (void) new (home) ViewValBranching<SelView,ValMinUnknown<true> >
-        (home,x);
+      {
+        ValMin<true> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMin<true> >
+          (home,x,v,a);
+      }
       break;
     case CPLTSET_VAL_MAX_UNKNOWN:
-      (void) new (home) ViewValBranching<SelView,ValMaxUnknown<false> >
-        (home,x);
+      {
+        ValMax<false> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMax<false> >
+          (home,x,v,a);
+      }
       break;
     case CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST:
-      (void) new (home) ViewValBranching<SelView,ValMaxUnknown<true> >
-        (home,x);
+      {
+        ValMax<true> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMax<true> >
+          (home,x,v,a);
+      }
       break;
     default:
       throw UnknownBranching("CpltSet::branch");

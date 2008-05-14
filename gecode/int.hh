@@ -2051,10 +2051,12 @@ namespace Gecode {
 
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space* home, const IntVarArgs& x, IntAssign vals);
+  assign(Space* home, const IntVarArgs& x, IntAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space* home, const BoolVarArgs& x, IntAssign vals);
+  assign(Space* home, const BoolVarArgs& x, IntAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
 
   //@}
 

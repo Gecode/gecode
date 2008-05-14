@@ -43,6 +43,11 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
+  forceinline
+  ValMin::ValMin(void) {}
+  forceinline
+  ValMin::ValMin(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<SetView,int>(home,vbo) {}
   forceinline int
   ValMin::val(const Space*, SetView x) const {
     UnknownRanges<SetView> unknown(x);
@@ -57,6 +62,11 @@ namespace Gecode { namespace Set { namespace Branch {
     return Support::Symbol("Gecode::Set::Branch::ValMin");
   }
 
+  forceinline
+  ValMax::ValMax(void) {}
+  forceinline
+  ValMax::ValMax(Space* home, const ValBranchOptions& vbo)
+    : ValSelBase<SetView,int>(home,vbo) {}
   forceinline int
   ValMax::val(const Space*, SetView x) const {
     int maxElem = 0;
@@ -79,12 +89,19 @@ namespace Gecode { namespace Set { namespace Branch {
   template <class SelView>
   static void
   create(Space* home, ViewArray<SetView>& x, SetValBranch vals) {
+    SelView v(home,VarBranchOptions::def);
     switch (vals) {
-    case SET_VAL_MIN:
-      (void) new (home) ViewValBranching<SelView,ValMin>(home,x);
+    case SET_VAL_MIN: 
+      {
+        ValMin a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMin>(home,x,v,a);
+      }
       break;
     case SET_VAL_MAX:
-      (void) new (home) ViewValBranching<SelView,ValMax>(home,x);
+      {
+        ValMax a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMax>(home,x,v,a);
+      }
       break;
     default:
       throw UnknownBranching("Set::branch");
