@@ -35,17 +35,15 @@
 #
 #
 
-use File::Basename;
-
 $file = $ARGV[0];
-
-my ($filename, $directory, $suffix) = fileparse($file);
 
 print <<EOF
 /*
  *  CAUTION:
  *    This file has been automatically generated. Do not edit,
- *    edit the specification file "$file" instead.
+ *    edit the specification file
+ *      $file
+ *    instead.
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -172,6 +170,7 @@ print "       $valbranch vals,\n";
 print "       const Gecode::ValBranchOptions& o_vals) {\n";
 print "    switch (vars) {\n";
 for ($i=0; $i<$n; $i++) {
+  next unless $i != $none;
   print "    case $vb[$i]: {\n";
   print "        ViewSelTieBreak<$type[$i],n> v(tb);\n";
   $l =  "        post<ViewSelTieBreak<$type[$i],n>>(home,x,v,vals,o_vals);\n";
@@ -190,9 +189,10 @@ print "       const Gecode::TieBreakVarBranch<$varbranch>\& vars,\n";
 print "       $valbranch vals,\n";
 print "       const Gecode::TieBreakVarBranchOptions& o_vars,\n";
 print "       const Gecode::ValBranchOptions& o_vals) {\n";
-print "    if ((vars.b == $vb[$none]) && \n";
-print "        (vars.c == $vb[$none]) && \n";
-print "        (vars.d == $vb[$none])) {\n";
+print "    if ((vars.a == $vb[$none]) ||\n";
+print "        ((vars.b == $vb[$none]) && \n";
+print "         (vars.c == $vb[$none]) && \n";
+print "         (vars.d == $vb[$none]))) {\n";
 print "      switch (vars.a) {\n";
 for ($i=0; $i<$n; $i++) {
   print "    case $vb[$i]: {\n";

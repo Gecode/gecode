@@ -1,7 +1,9 @@
 /*
  *  CAUTION:
  *    This file has been automatically generated. Do not edit,
- *    edit the specification file "gecode/int/branch/post-view-bool.bs" instead.
+ *    edit the specification file
+ *      gecode/int/branch/post-view-bool.bs
+ *    instead.
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -87,11 +89,6 @@ namespace Gecode { namespace Int { namespace Branch {
        IntValBranch vals,
        const Gecode::ValBranchOptions& o_vals) {
     switch (vars) {
-    case INT_VAR_NONE: {
-        ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
-        post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
-      }
-      break;
     case INT_VAR_MIN_MIN: {
         ViewSelTieBreak<ViewSelByNone<BoolView>,n> v(tb);
         post<ViewSelTieBreak<ViewSelByNone<BoolView>,n> >(home,x,v,vals,o_vals);
@@ -173,9 +170,10 @@ namespace Gecode { namespace Int { namespace Branch {
        IntValBranch vals,
        const Gecode::TieBreakVarBranchOptions& o_vars,
        const Gecode::ValBranchOptions& o_vals) {
-    if ((vars.b == INT_VAR_NONE) && 
-        (vars.c == INT_VAR_NONE) && 
-        (vars.d == INT_VAR_NONE)) {
+    if ((vars.a == INT_VAR_NONE) ||
+        ((vars.b == INT_VAR_NONE) && 
+         (vars.c == INT_VAR_NONE) && 
+         (vars.d == INT_VAR_NONE))) {
       switch (vars.a) {
     case INT_VAR_NONE: {
         ViewSelByNone<BoolView> v; // v(o_vars.a)
