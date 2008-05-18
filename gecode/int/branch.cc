@@ -64,13 +64,13 @@ namespace Gecode {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
-    ViewSelByNone<IntView> v(home,VarBranchOptions::def);
+    ViewSelNone<IntView> v(home,VarBranchOptions::def);
     switch (vals) {
     case INT_ASSIGN_MIN:
       {
         Branch::AssignValMin<IntView> a(home,o_vals);
         (void) new (home) ViewValBranching
-          <ViewSelByNone<IntView>,Branch::AssignValMin<IntView> >
+          <ViewSelNone<IntView>,Branch::AssignValMin<IntView> >
           (home,xv,v,a);
       }
       break;
@@ -78,7 +78,7 @@ namespace Gecode {
       {
         Branch::AssignValMed<IntView> a(home,o_vals);
         (void) new (home) ViewValBranching
-          <ViewSelByNone<IntView>,Branch::AssignValMed<IntView> >
+          <ViewSelNone<IntView>,Branch::AssignValMed<IntView> >
           (home,xv,v,a);
       }
       break;
@@ -86,7 +86,7 @@ namespace Gecode {
       {
         Branch::AssignValMin<MinusView> a(home,o_vals);
         (void) new (home) ViewValBranching
-          <ViewSelByNone<IntView>,Branch::AssignValMin<MinusView> >
+          <ViewSelNone<IntView>,Branch::AssignValMin<MinusView> >
           (home,xv,v,a);
       }
       break;
@@ -101,20 +101,20 @@ namespace Gecode {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
-    ViewSelByNone<BoolView> v(home,VarBranchOptions::def);
+    ViewSelNone<BoolView> v(home,VarBranchOptions::def);
     switch (vals) {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED: {
         Branch::AssignValZeroOne<BoolView> a(home,o_vals);
         (void) new (home) ViewValBranching
-          <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
+          <ViewSelNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
           (home,xv,v,a);
       }
       break;
     case INT_ASSIGN_MAX: {
         Branch::AssignValZeroOne<NegBoolView> a(home,o_vals);
         (void) new (home) ViewValBranching
-          <ViewSelByNone<BoolView>,Branch::AssignValZeroOne<NegBoolView> >
+          <ViewSelNone<BoolView>,Branch::AssignValZeroOne<NegBoolView> >
           (home,xv,v,a);
       }
       break;
@@ -123,70 +123,6 @@ namespace Gecode {
     }
   }
 
-  /*
-
-  namespace Int { namespace Branch {
-
-    template<class View, template <class> class SelView>
-    /// Register reflection for branchings
-    class Creator {
-    public:
-      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
-        Branch::ValMin<View> > > r1;
-      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
-        Branch::ValMed<View> > > r2;
-      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
-        Branch::ValMax<View> > > r3;
-      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
-        Branch::ValSplitMin<View> > > r4;
-      Reflection::ActorRegistrar<ViewValBranching<SelView<View>,
-        Branch::ValSplitMax<View> > > r5;
-    };
-
-    Creator<IntView,BySizeMin> c1;
-    Creator<IntView,BySizeMax> c2;
-    Creator<IntView,ByMinMin> c3;
-    Creator<IntView,ByMinMax> c4;
-    Creator<IntView,ByMaxMin> c5;
-    Creator<IntView,ByMaxMax> c6;
-    Creator<IntView,ByNone> c7;
-    Creator<IntView,ByRegretMinMin> c8;
-    Creator<IntView,ByRegretMinMax> c9;
-    Creator<IntView,ByRegretMaxMin> c10;
-    Creator<IntView,ByRegretMaxMax> c11;
-    Creator<IntView,ByDegreeMin> c12;
-    Creator<IntView,ByDegreeMax> c13;
-
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByDegreeMaxNoTies<BoolView>,ValOneZero<BoolView> > > r1;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByDegreeMaxNoTies<BoolView>,ValZeroOne<BoolView> > > r2;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByDegreeMinNoTies<BoolView>,ValOneZero<BoolView> > > r3;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByDegreeMinNoTies<BoolView>,ValZeroOne<BoolView> > > r4;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByNone<BoolView>,ValOneZero<BoolView> > > r5;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByNone<BoolView>,ValZeroOne<BoolView> > > r6;
-
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByNone<IntView>,AssignValMax<IntView> > > r7;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByNone<IntView>,AssignValMed<IntView> > > r8;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByNone<IntView>,AssignValMin<IntView> > > r9;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByNone<BoolView>,AssignValOneZero<BoolView> > > r10;
-    Reflection::ActorRegistrar<ViewValBranching<
-      ByNone<BoolView>,AssignValZeroOne<BoolView> > > r11;
-
-  }}
-
-  */
-
 }
 
-
 // STATISTICS: int-post
-

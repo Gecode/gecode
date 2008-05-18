@@ -125,7 +125,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  typedef ViewSelByNone<SetView> ByNone;
+  typedef ViewSelNone<SetView> ByNone;
 
   /**
    * \brief View selection class for view with smallest cardinality of lub-glb

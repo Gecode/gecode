@@ -58,50 +58,50 @@ Include:	"gecode/int/branch.hh"
 # Value for branching selection, mark as special
 Value:		INT_VAR_NONE = NONE
 # Corresponding type
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_RND
 Type:		ViewSelRnd<BoolView>
 [VarBranch]
 Value:		INT_VAR_MIN_MIN
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_MIN_MAX
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_MAX_MIN
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_MAX_MAX
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_MIN
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_MAX
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MIN
-Type:		ViewSelByDegreeMin<BoolView>
+Type:		ViewSelDegreeMin<BoolView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MAX
-Type:		ViewSelByDegreeMax<BoolView>
+Type:		ViewSelDegreeMax<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
-Type:		ViewSelByDegreeMax<BoolView>
+Type:		ViewSelDegreeMax<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MAX
-Type:		ViewSelByDegreeMin<BoolView>
+Type:		ViewSelDegreeMin<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MAX
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MIN
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MAX
-Type:		ViewSelByNone<BoolView>
+Type:		ViewSelNone<BoolView>
 [End]

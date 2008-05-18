@@ -58,7 +58,7 @@ Include:	"gecode/int/branch.hh"
 # Value for branching selection, mark as special
 Value:		INT_VAR_NONE = NONE
 # Corresponding type
-Type:		ViewSelByNone<IntView>
+Type:		ViewSelNone<IntView>
 [VarBranch]
 Value:		INT_VAR_RND
 Type:		ViewSelRnd<IntView>
@@ -82,10 +82,10 @@ Value:		INT_VAR_SIZE_MAX
 Type:		BySizeMax<IntView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MIN
-Type:		ViewSelByDegreeMin<IntView>
+Type:		ViewSelDegreeMin<IntView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MAX
-Type:		ViewSelByDegreeMax<IntView>
+Type:		ViewSelDegreeMax<IntView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
 Type:		BySizeDegreeMin<IntView>

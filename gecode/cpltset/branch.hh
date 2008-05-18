@@ -120,7 +120,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  typedef ViewSelByNone<CpltSetView> ByNone;
+  typedef ViewSelNone<CpltSetView> ByNone;
 
   /**
    * \brief View selection class for view with smallest cardinality of lub-glb

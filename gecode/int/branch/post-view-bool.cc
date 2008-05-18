@@ -48,37 +48,37 @@ namespace Gecode { namespace Int { namespace Branch {
              const Gecode::VarBranchOptions& o_vars) {
     switch (vars) {
      case INT_VAR_NONE:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_RND:
        return new (home) ViewSelVirtual<ViewSelRnd<BoolView> >(home,o_vars);
      case INT_VAR_MIN_MIN:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_MIN_MAX:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_MAX_MIN:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_MAX_MAX:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_SIZE_MIN:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_SIZE_MAX:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_DEGREE_MIN:
-       return new (home) ViewSelVirtual<ViewSelByDegreeMin<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
      case INT_VAR_DEGREE_MAX:
-       return new (home) ViewSelVirtual<ViewSelByDegreeMax<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
      case INT_VAR_SIZE_DEGREE_MIN:
-       return new (home) ViewSelVirtual<ViewSelByDegreeMax<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
      case INT_VAR_SIZE_DEGREE_MAX:
-       return new (home) ViewSelVirtual<ViewSelByDegreeMin<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
      case INT_VAR_REGRET_MIN_MIN:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_REGRET_MIN_MAX:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_REGRET_MAX_MIN:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
      case INT_VAR_REGRET_MAX_MAX:
-       return new (home) ViewSelVirtual<ViewSelByNone<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
     default:
       throw UnknownBranching("Int::branch");
     }
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Branch {
       switch (vars.a) {
       case INT_VAR_NONE:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
@@ -109,85 +109,85 @@ namespace Gecode { namespace Int { namespace Branch {
         break;
       case INT_VAR_MIN_MIN:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_MIN_MAX:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_MAX_MIN:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_MAX_MAX:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_MIN:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_MAX:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_DEGREE_MIN:
         {
-          ViewSelByDegreeMin<BoolView> v(home,o_vars.a);
+          ViewSelDegreeMin<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_DEGREE_MAX:
         {
-          ViewSelByDegreeMax<BoolView> v(home,o_vars.a);
+          ViewSelDegreeMax<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_DEGREE_MIN:
         {
-          ViewSelByDegreeMax<BoolView> v(home,o_vars.a);
+          ViewSelDegreeMax<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_DEGREE_MAX:
         {
-          ViewSelByDegreeMin<BoolView> v(home,o_vars.a);
+          ViewSelDegreeMin<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MIN_MIN:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MIN_MAX:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MAX_MIN:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MAX_MAX:
         {
-          ViewSelByNone<BoolView> v(home,o_vars.a);
+          ViewSelNone<BoolView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
@@ -214,112 +214,112 @@ namespace Gecode { namespace Int { namespace Branch {
         break;
       case INT_VAR_MIN_MIN:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_MIN_MAX:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_MAX_MIN:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_MAX_MAX:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_MIN:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_MAX:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_DEGREE_MIN:
         {
-          ViewSelByDegreeMin<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByDegreeMin<BoolView>,
+          ViewSelDegreeMin<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_DEGREE_MAX:
         {
-          ViewSelByDegreeMax<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByDegreeMax<BoolView>,
+          ViewSelDegreeMax<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_DEGREE_MIN:
         {
-          ViewSelByDegreeMax<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByDegreeMax<BoolView>,
+          ViewSelDegreeMax<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_DEGREE_MAX:
         {
-          ViewSelByDegreeMin<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByDegreeMin<BoolView>,
+          ViewSelDegreeMin<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MIN_MIN:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MIN_MAX:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MAX_MIN:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_REGRET_MAX_MAX:
         {
-          ViewSelByNone<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelByNone<BoolView>,
+          ViewSelNone<BoolView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelNone<BoolView>,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
