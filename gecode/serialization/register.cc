@@ -188,6 +188,8 @@ Gecode::IntVarBranch toEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
   const char* av = a->toString();
   if (!strcmp(av, "INT_VAR_NONE"))
     return Gecode::INT_VAR_NONE;
+  if (!strcmp(av, "INT_VAR_RND"))
+    return Gecode::INT_VAR_RND;
   if (!strcmp(av, "INT_VAR_MIN_MIN"))
     return Gecode::INT_VAR_MIN_MIN;
   if (!strcmp(av, "INT_VAR_MIN_MAX"))
@@ -223,6 +225,8 @@ bool isEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
     return false;
   const char* av = a->toString();
   if (!strcmp(av, "INT_VAR_NONE"))
+    return true;
+  if (!strcmp(av, "INT_VAR_RND"))
     return true;
   if (!strcmp(av, "INT_VAR_MIN_MIN"))
     return true;

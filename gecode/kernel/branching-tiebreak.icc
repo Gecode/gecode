@@ -81,8 +81,9 @@ namespace Gecode {
     virtual ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
     virtual ViewSelStatus select(const Space* home, typename ViewSel::View x);
-    /// Create copy
-    virtual ViewSelVirtualBase<typename ViewSel::View>* copy(Space* home, bool share);
+    /// Create copy during cloning
+    virtual ViewSelVirtualBase<typename ViewSel::View>* 
+    copy(Space* home, bool share);
     /// Delete view selection and returns its size
     virtual size_t dispose(Space* home);
   };

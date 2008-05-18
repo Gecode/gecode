@@ -49,6 +49,8 @@ namespace Gecode { namespace Int { namespace Branch {
     switch (vars) {
      case INT_VAR_NONE:
        return new (home) ViewSelVirtual<ViewSelByNone<IntView> >(home,o_vars);
+     case INT_VAR_RND:
+       return new (home) ViewSelVirtual<ViewSelRnd<IntView> >(home,o_vars);
      case INT_VAR_MIN_MIN:
        return new (home) ViewSelVirtual<ByMinMin<IntView> >(home,o_vars);
      case INT_VAR_MIN_MAX:
@@ -96,6 +98,12 @@ namespace Gecode { namespace Int { namespace Branch {
       case INT_VAR_NONE:
         {
           ViewSelByNone<IntView> v(home,o_vars.a);
+          post(home,x,v,vals,o_vals);
+        }
+        break;
+      case INT_VAR_RND:
+        {
+          ViewSelRnd<IntView> v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
@@ -196,6 +204,14 @@ namespace Gecode { namespace Int { namespace Branch {
         tb[n++] = virtualize(home,vars.d,o_vars.d);
       ViewSelTieBreakDynamic<IntView> vbcd(home,tb,n);
       switch (vars.a) {
+      case INT_VAR_RND:
+        {
+          ViewSelRnd<IntView> va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelRnd<IntView>,
+            ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+          post(home,x,v,vals,o_vals);
+        }
+        break;
       case INT_VAR_MIN_MIN:
         {
           ByMinMin<IntView> va(home,o_vars.a);

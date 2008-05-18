@@ -124,6 +124,41 @@ namespace Gecode {
     static Support::Symbol type(void);
   };
 
+  /**
+   * \brief View selection class for random selection
+   */
+  template<class _View>
+  class ViewSelRnd {
+  protected:
+    /// Random number generator
+    Support::RandomGenerator r;
+    /// Number of views considered so far
+    unsigned int n;
+  public:
+    /// View type
+    typedef _View View;
+    /// View selection description
+    typedef Support::RandomGenerator Desc;
+    /// Default constructor
+    ViewSelRnd(void);
+    /// Constructor for initialization
+    ViewSelRnd(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, _View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, _View x);
+    /// Return description
+    Support::RandomGenerator description(const Space* home) const;
+    /// Commit to description
+    void commit(Space* home, const Support::RandomGenerator& d, unsigned a);
+    /// Updating during cloning
+    void update(Space* home, bool share, ViewSelRnd& vs);
+    /// Delete view selection
+    void dispose(Space* home);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
 
   // Selection base class
   template<class View>
@@ -235,6 +270,53 @@ namespace Gecode {
   inline Support::Symbol
   ViewSelByDegreeMax<View>::type(void) {
     return Support::Symbol("Gecode::ViewSel::ByDegreeMax");
+  }
+
+
+  // Select variable by random
+  template<class View>
+  forceinline
+  ViewSelRnd<View>::ViewSelRnd(void) {}
+  template<class View>
+  forceinline
+  ViewSelRnd<View>::ViewSelRnd(Space* home, const VarBranchOptions& vbo)
+    : r(vbo.seed) {}
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelRnd<View>::init(const Space*, View x) {
+    n=1;
+    return VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelRnd<View>::select(const Space*, View x) {
+    n++;
+    return (r(n) == (n-1)) ? VSS_BETTER : VSS_WORSE;
+  }
+  template<class View>
+  forceinline Support::RandomGenerator
+  ViewSelRnd<View>::description(const Space*) const {
+    return r;
+  }
+  template<class View>
+  forceinline void
+  ViewSelRnd<View>::commit(Space*, const Support::RandomGenerator& d, 
+                           unsigned int) {
+    r = d;
+  }
+  template<class View>
+  forceinline void 
+  ViewSelRnd<View>::update(Space*, bool, ViewSelRnd<View>& vs) {
+    r = vs.r;
+  }
+  template<class View>
+  forceinline void
+  ViewSelRnd<View>::dispose(Space*) {
+  }
+  template<class View>
+  inline Support::Symbol
+  ViewSelRnd<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSel::Rnd");
   }
 
 }

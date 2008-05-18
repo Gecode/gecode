@@ -60,6 +60,9 @@ Value:		INT_VAR_NONE = NONE
 # Corresponding type
 Type:		ViewSelByNone<BoolView>
 [VarBranch]
+Value:		INT_VAR_RND
+Type:		ViewSelRnd<BoolView>
+[VarBranch]
 Value:		INT_VAR_MIN_MIN
 Type:		ViewSelByNone<BoolView>
 [VarBranch]
