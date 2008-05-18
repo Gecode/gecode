@@ -38,7 +38,11 @@
 namespace Gecode {
 
   /// Emty view selection description
-  class EmptyViewSelDesc {};
+  class EmptyViewSelDesc {
+  public:
+    /// Report size occupied
+    size_t size(void) const;
+  };
 
   /**
    * \brief Base class for view selection
@@ -159,6 +163,12 @@ namespace Gecode {
     static Support::Symbol type(void);
   };
 
+
+  // Empty view selection description
+  forceinline size_t
+  EmptyViewSelDesc::size(void) const {
+    return sizeof(EmptyViewSelDesc);
+  }
 
   // Selection base class
   template<class View>

@@ -258,7 +258,7 @@ namespace Gecode {
   template <class ViewSel>
   forceinline size_t
   PosDesc<ViewSel>::size(void) const {
-    return sizeof(PosDesc<ViewSel>);
+    return sizeof(PosDesc<ViewSel>) + _viewdesc.size();
   }
 
 
@@ -290,7 +290,7 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   forceinline size_t
   PosValDesc<ViewSel, ValSel>::size(void) const {
-    return sizeof(PosValDesc<ViewSel,ValSel>);
+    return sizeof(PosValDesc<ViewSel,ValSel>) + _valdesc.size();
   }
 
 

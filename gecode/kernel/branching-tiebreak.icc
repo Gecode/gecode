@@ -59,6 +59,8 @@ namespace Gecode {
       typename B::Desc b;
       /// Constructor
       Desc(const typename A::Desc& a, const typename B::Desc& b);
+      /// Report size occupied
+      size_t size(void) const;
     };
     /// Default constructor
     ViewSelTieBreakStatic(void);
@@ -87,6 +89,8 @@ namespace Gecode {
   public:
     /// Create copy
     virtual DescVirtualBase* copy(void) const = 0;
+    /// Report size required
+    virtual size_t size(void) const = 0;
     /// Destructor
     GECODE_KERNEL_EXPORT virtual ~DescVirtualBase(void);
     /// \name Memory management
@@ -139,6 +143,8 @@ namespace Gecode {
     DescVirtual(const Desc& d);
     /// Create copy
     virtual DescVirtualBase* copy(void) const;
+    /// Report size required
+    virtual size_t size(void) const;
     /// Destructor
     virtual ~DescVirtual(void);
   };
@@ -200,6 +206,8 @@ namespace Gecode {
       /// Perform commit
       void commit(Space* home, unsigned int a, 
                   ViewSelVirtualBase<_View>** tb)  const;
+      /// Report size occupied
+      size_t size(void) const;
       /// Destructor
       ~Desc(void);
     };
@@ -226,6 +234,17 @@ namespace Gecode {
 
 
   // Select variable with static tie breaking
+  template<class A, class B>
+  forceinline
+  ViewSelTieBreakStatic<A,B>::Desc::Desc(const typename A::Desc& a0,
+                                         const typename B::Desc& b0) 
+    : a(a0), b(b0) {}
+  template<class A, class B>
+  forceinline size_t
+  ViewSelTieBreakStatic<A,B>::Desc::size(void) const {
+    return a.size() + b.size();
+  }
+
   template<class A, class B>
   forceinline
   ViewSelTieBreakStatic<A,B>::ViewSelTieBreakStatic(void) {}
@@ -263,11 +282,6 @@ namespace Gecode {
       return VSS_WORSE;
     }
   }
-  template<class A, class B>
-  forceinline
-  ViewSelTieBreakStatic<A,B>::Desc::Desc(const typename A::Desc& a0,
-                                         const typename B::Desc& b0) 
-    : a(a0), b(b0) {}
   template<class A, class B>
   forceinline typename ViewSelTieBreakStatic<A,B>::Desc
   ViewSelTieBreakStatic<A,B>::description(const Space* home) const {
@@ -337,6 +351,11 @@ namespace Gecode {
   forceinline DescVirtualBase*
   DescVirtual<Desc>::copy(void) const {
     return new DescVirtual<Desc>(desc);
+  }
+  template <class Desc>
+  forceinline size_t
+  DescVirtual<Desc>::size(void) const {
+    return sizeof(DescVirtual<Desc>);
   }
   template <class Desc>
   DescVirtual<Desc>::~DescVirtual(void) {}
@@ -422,6 +441,15 @@ namespace Gecode {
   (Space* home, unsigned int a, ViewSelVirtualBase<View>** tb)  const {
     for (int i=n; i--; )
       tb[i]->commit(home, d[i], a);
+  }
+  template<class View>
+  forceinline size_t
+  ViewSelTieBreakDynamic<View>::Desc::size(void) const {
+    size_t s = (sizeof(ViewSelTieBreakDynamic<View>::Desc) +
+                n * sizeof(DescVirtualBase*));
+    for (int i=n; i--; )
+      s += d[i]->size();
+    return s;
   }
   template<class View>
   forceinline

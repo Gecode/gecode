@@ -64,6 +64,8 @@ namespace Gecode { namespace Support {
     unsigned int seed(void) const;
     /// Returns a random integer from the interval [0..n)
     unsigned int operator()(unsigned int n);
+    /// Report size occupied
+    size_t size(void) const;
   };
 
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
@@ -100,6 +102,11 @@ namespace Gecode { namespace Support {
     double d = static_cast<double>(((x1<<16) | x2) % max) / max;
     unsigned int val = static_cast<unsigned int>(n * d);
     return (val < n) ? val : (n-1);
+  }
+  template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
+  forceinline size_t
+  LinearCongruentialGenerator<m,a,q,r>::size(void) const {
+    return sizeof(LinearCongruentialGenerator<m,a,q,r>);
   }
 
 

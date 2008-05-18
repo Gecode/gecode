@@ -38,7 +38,11 @@
 namespace Gecode {
 
   /// Emty value selection description
-  class EmptyValSelDesc {};
+  class EmptyValSelDesc {
+  public:
+    /// Report size occupied
+    size_t size(void) const;
+  };
 
   /**
    * \brief Base class for value selection
@@ -72,6 +76,12 @@ namespace Gecode {
     void dispose(Space* home);
   };
 
+
+  // Empty value selection description
+  forceinline size_t
+  EmptyValSelDesc::size(void) const {
+    return sizeof(EmptyValSelDesc);
+  }
 
   // Value selection base class
   template<class View, class Val>
