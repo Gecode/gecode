@@ -38,6 +38,24 @@
 namespace Gecode {
 
   /**
+   * \brief Virtualized description baseclass
+   */
+  class DescVirtualBase {
+  public:
+    /// Create copy
+    virtual DescVirtualBase* copy(void) const = 0;
+    /// Destructor
+    GECODE_KERNEL_EXPORT virtual ~DescVirtualBase(void);
+    /// \name Memory management
+    //@{
+    /// Allocate memory
+    static void* operator new(size_t s);
+    /// Delete memory
+    static void  operator delete(void*);
+    //@}
+  };
+
+  /**
    * \brief Virtualized view selection base class
    */
   template <class View>
@@ -47,6 +65,10 @@ namespace Gecode {
     virtual ViewSelStatus init(const Space* home, View x) = 0;
     /// Possibly select better view \a x
     virtual ViewSelStatus select(const Space* home, View x) = 0;
+    /// Return description
+    virtual DescVirtualBase* description(const Space* home) const = 0;
+    /// Commit to description
+    virtual void commit(Space* home, const DescVirtualBase* d, unsigned a) = 0;
     /// Create copy
     virtual ViewSelVirtualBase<View>* copy(Space* home, bool share) = 0;
     /// Delete view selection and return its size
@@ -63,6 +85,22 @@ namespace Gecode {
   };
 
   /**
+   * \brief Virtualized description
+   */
+  template <class Desc>
+  class DescVirtual : public DescVirtualBase {
+  public:
+    /// Static description object
+    Desc desc;
+    /// Constructor for initialization
+    DescVirtual(const Desc& d);
+    /// Create copy
+    virtual DescVirtualBase* copy(void) const;
+    /// Destructor
+    virtual ~DescVirtual(void);
+  };
+
+  /**
    * \brief Virtualized view selection
    */
   template <class ViewSel>
@@ -71,8 +109,6 @@ namespace Gecode {
     /// Static view selection object
     ViewSel viewsel;
   public:
-    /// Default constructor
-    ViewSelVirtual(void);
     /// Constructor for initialization
     ViewSelVirtual(Space* home, const VarBranchOptions& vbo);
     /// Constructor for cloning \a vsv
@@ -81,6 +117,10 @@ namespace Gecode {
     virtual ViewSelStatus init(const Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
     virtual ViewSelStatus select(const Space* home, typename ViewSel::View x);
+    /// Return description
+    virtual DescVirtualBase* description(const Space* home) const;
+    /// Commit to description
+    virtual void commit(Space* home, const DescVirtualBase* d, unsigned a);
     /// Create copy during cloning
     virtual ViewSelVirtualBase<typename ViewSel::View>* 
     copy(Space* home, bool share);
@@ -144,8 +184,48 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
-    /// View selection description
-    typedef EmptyViewSelDesc Desc;
+    /// Description for tie breakers
+    class Desc {
+    public:
+      /// Number of descriptions
+      int n;
+      /// Descriptions
+      DescVirtualBase** d;
+      /// Constructor
+      Desc(const Space* home, ViewSelVirtualBase<_View>** tb, int n0)
+        : n(n0), d(Memory::bmalloc<DescVirtualBase*>(n)) {
+        for (int i=n; i--; )
+          d[i] = tb[i]->description(home);
+      }
+      /// Copy constructor
+      Desc(const Desc& de)
+        : n(de.n), d(Memory::bmalloc<DescVirtualBase*>(n)) {
+        for (int i=n; i--; )
+          d[i] = de.d[i]->copy();        
+      }
+      /// Assignment operator
+      const Desc& operator=(const Desc& de) {
+        if (&de != this) {
+          assert(de.n == n);
+          for (int i=n; i--; ) {
+            delete d[i];
+            d[i] = de.d[i]->copy();
+          }
+        }
+        return *this;
+      }
+      /// Perform commit
+      void commit(Space* home, unsigned int a, ViewSelVirtualBase<_View>** tb)  const {
+        for (int i=n; i--; )
+          tb[i]->commit(home, d[i], a);
+      }
+      /// Destructor
+      ~Desc(void) {
+        for (int i=n; i--; )
+          delete d[i];
+        Memory::free(d);
+      }
+    };
     /// Default constructor
     ViewSelTieBreakDynamic(void);
     /// Constructor for initialization
@@ -156,9 +236,9 @@ namespace Gecode {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, _View x);
     /// Return description
-    EmptyViewSelDesc description(const Space* home) const;
+    Desc description(const Space* home) const;
     /// Commit to description
-    void commit(Space* home, const EmptyViewSelDesc& d, unsigned a);
+    void commit(Space* home, const Desc& d, unsigned a);
     /// Updating during cloning
     void update(Space* home, bool share, ViewSelTieBreakDynamic& vs);
     /// Delete view selection
@@ -181,9 +261,33 @@ namespace Gecode {
     return home->alloc(s);
   }
 
-  template <class ViewSel>
+  // Virtualized description
+  forceinline void
+  DescVirtualBase::operator delete(void* p) {
+    Memory::free(p);
+  }
+  forceinline void*
+  DescVirtualBase::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
   forceinline
-  ViewSelVirtual<ViewSel>::ViewSelVirtual(void) {}
+  DescVirtualBase::~DescVirtualBase(void) {
+  }
+
+
+  template <class Desc>
+  forceinline
+  DescVirtual<Desc>::DescVirtual(const Desc& d)
+    : desc(d) {}
+  template <class Desc>
+  forceinline DescVirtualBase*
+  DescVirtual<Desc>::copy(void) const {
+    return new DescVirtual<Desc>(desc);
+  }
+  template <class Desc>
+  DescVirtual<Desc>::~DescVirtual(void) {}
+
+
   template<class ViewSel>
   forceinline
   ViewSelVirtual<ViewSel>::ViewSelVirtual(Space* home, 
@@ -204,6 +308,19 @@ namespace Gecode {
   ViewSelStatus
   ViewSelVirtual<ViewSel>::select(const Space* home, typename ViewSel::View x) {
     return viewsel.select(home,x);
+  }
+  template <class ViewSel>
+  DescVirtualBase*
+  ViewSelVirtual<ViewSel>::description(const Space* home) const {
+    return new DescVirtual<typename ViewSel::Desc>(viewsel.description(home));
+  }
+  template <class ViewSel>
+  void
+  ViewSelVirtual<ViewSel>::commit(Space* home, const DescVirtualBase* _d,
+                                  unsigned int a) {
+    const DescVirtual<typename ViewSel::Desc>* d =
+      static_cast<const DescVirtual<typename ViewSel::Desc>*>(_d);
+    viewsel.commit(home, d->desc, a);
   }
   template <class ViewSel>
   ViewSelVirtualBase<typename ViewSel::View>*
@@ -350,14 +467,16 @@ namespace Gecode {
     }
   }
   template<class View>
-  forceinline EmptyViewSelDesc
-  ViewSelTieBreakDynamic<View>::description(const Space*) const {
-    EmptyViewSelDesc d; return d;
+  forceinline typename ViewSelTieBreakDynamic<View>::Desc
+  ViewSelTieBreakDynamic<View>::description(const Space* home) const {
+    Desc d(home,tb,n);
+    return d;
   }
   template<class View>
   forceinline void
-  ViewSelTieBreakDynamic<View>::commit(Space*, const EmptyViewSelDesc&, 
-                                       unsigned int) {
+  ViewSelTieBreakDynamic<View>::commit(Space* home, const typename ViewSelTieBreakDynamic<View>::Desc& d, 
+                                       unsigned int a) {
+    d.commit(home,a,tb);
   }
   template<class View>
   inline Support::Symbol
