@@ -1,0 +1,242 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2008
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+namespace Gecode {
+
+  /// Emty view selection description
+  class EmptyViewSelDesc {};
+
+  /**
+   * \brief Base class for view selection
+   */
+  template <class _View>
+  class ViewSelBase {
+  public:
+    /// View type
+    typedef _View View;
+    /// View selection description
+    typedef EmptyViewSelDesc Desc;
+    /// Default constructor
+    ViewSelBase(void);
+    /// Constructor for initialization
+    ViewSelBase(Space* home, const VarBranchOptions& vbo);
+    /// Return description
+    EmptyViewSelDesc description(const Space* home) const;
+    /// Commit to description
+    void commit(Space* home, const EmptyViewSelDesc& d, unsigned a);
+    /// Updating during cloning
+    void update(Space* home, bool share, ViewSelBase& vs);
+    /// Delete view selection
+    void dispose(Space* home);
+  };
+
+  /**
+   * \brief Select first not assigned view
+   */
+  template <class View>
+  class ViewSelByNone : public ViewSelBase<View> {
+  public:
+    /// Default constructor
+    ViewSelByNone(void);
+    /// Constructor for initialization
+    ViewSelByNone(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with smallest degree
+   */
+  template<class View>
+  class ViewSelByDegreeMin : public ViewSelBase<View> {
+  protected:
+    /// So-far smallest degree
+    unsigned int degree;
+  public:
+    /// Default constructor
+    ViewSelByDegreeMin(void);
+    /// Constructor for initialization
+    ViewSelByDegreeMin(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest degree
+   */
+  template<class View>
+  class ViewSelByDegreeMax : public ViewSelBase<View> {
+  protected:
+    /// So-far largest degree
+    unsigned int degree;
+  public:
+    /// Default constructor
+    ViewSelByDegreeMax(void);
+    /// Constructor for initialization
+    ViewSelByDegreeMax(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+
+  // Selection base class
+  template<class View>
+  forceinline
+  ViewSelBase<View>::ViewSelBase(void) {}
+  template<class View>
+  forceinline
+  ViewSelBase<View>::ViewSelBase(Space*, const VarBranchOptions&) {}
+  template<class View>
+  forceinline EmptyViewSelDesc
+  ViewSelBase<View>::description(const Space*) const {
+    EmptyViewSelDesc d; return d;
+  }
+  template<class View>
+  forceinline void
+  ViewSelBase<View>::commit(Space*, const EmptyViewSelDesc&, unsigned int) {}
+  template<class View>
+  forceinline void 
+  ViewSelBase<View>::update(Space*, bool, ViewSelBase<View>&) {}
+  template<class View>
+  forceinline void
+  ViewSelBase<View>::dispose(Space*) {}
+
+  // Select first view
+  template<class View>
+  forceinline
+  ViewSelByNone<View>::ViewSelByNone(void) {}
+  template<class View>
+  forceinline
+  ViewSelByNone<View>::ViewSelByNone(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByNone<View>::init(const Space*, View) {
+    return VSS_BEST;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByNone<View>::select(const Space*, View) {
+    return VSS_BEST;
+  }
+  template<class View>
+  inline Support::Symbol
+  ViewSelByNone<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSel::ByNone");
+  }
+
+
+  // Select variable with smallest degree
+  template<class View>
+  forceinline
+  ViewSelByDegreeMin<View>::ViewSelByDegreeMin(void) {}
+  template<class View>
+  forceinline
+  ViewSelByDegreeMin<View>::ViewSelByDegreeMin(Space* home, 
+                                               const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMin<View>::init(const Space*, View x) {
+    degree = x.degree();
+    return (degree == 0) ? VSS_BEST : VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMin<View>::select(const Space*, View x) {
+    if (x.degree() < degree) {
+      degree = x.degree();
+      return (degree == 0) ? VSS_BEST : VSS_BETTER;
+    } else if (x.degree() > degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class View>
+  inline Support::Symbol
+  ViewSelByDegreeMin<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSel::ByDegreeMin");
+  }
+
+  // Select variable with smallest degree
+  template<class View>
+  forceinline
+  ViewSelByDegreeMax<View>::ViewSelByDegreeMax(void) {}
+  template<class View>
+  forceinline
+  ViewSelByDegreeMax<View>::ViewSelByDegreeMax(Space* home, 
+                                               const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMax<View>::init(const Space*, View x) {
+    degree = x.degree();
+    return VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelByDegreeMax<View>::select(const Space*, View x) {
+    if (x.degree() > degree) {
+      degree = x.degree(); return VSS_BETTER;
+    } else if (x.degree() < degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class View>
+  inline Support::Symbol
+  ViewSelByDegreeMax<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSel::ByDegreeMax");
+  }
+
+}
+
+// STATISTICS: kernel-branch

@@ -193,9 +193,11 @@ KERNELSRC0 = \
 	core reflection var-map var-type memory-manager branch
 
 KERNELHDR0 = \
-	array shared-array branching core exception \
+	array shared-array core exception \
 	macros memory-manager modevent \
-	propagator advisor view var var-traits var-map reflection branch
+	propagator advisor view var var-traits var-map reflection \
+	branch branching branching-view branching-tiebreak \
+	branching-val
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \

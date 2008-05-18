@@ -176,6 +176,9 @@
 #include "gecode/kernel/advisor.icc"
 #include "gecode/kernel/branch.icc"
 #include "gecode/kernel/branching.icc"
+#include "gecode/kernel/branching-view.icc"
+#include "gecode/kernel/branching-tiebreak.icc"
+#include "gecode/kernel/branching-val.icc"
 
 /*
  * Automatically generated variable implementations
