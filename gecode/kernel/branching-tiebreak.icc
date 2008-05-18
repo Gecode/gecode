@@ -38,6 +38,49 @@
 namespace Gecode {
 
   /**
+   * \brief View selection class for static tie breaking
+   */
+  template<class A, class B>
+  class ViewSelTieBreakStatic {
+  protected:
+    /// First selection class
+    A a;
+    /// Second selection class
+    B b;
+  public:
+    /// View type
+    typedef typename A::View View;
+    /// View selection description
+    class Desc {
+    public:
+      /// First description
+      typename A::Desc a;
+      /// Second description
+      typename B::Desc b;
+      /// Constructor
+      Desc(const typename A::Desc& a, const typename B::Desc& b);
+    };
+    /// Default constructor
+    ViewSelTieBreakStatic(void);
+    /// Constructor for initialization
+    ViewSelTieBreakStatic(Space* home, A& a, B& b);
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, typename A::View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, typename A::View x);
+    /// Return description
+    Desc description(const Space* home) const;
+    /// Commit to description
+    void commit(Space* home, const Desc& d, unsigned a);
+    /// Updating during cloning
+    void update(Space* home, bool share, ViewSelTieBreakStatic& vs);
+    /// Delete view selection
+    void dispose(Space* home);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
    * \brief Virtualized description baseclass
    */
   class DescVirtualBase {
@@ -129,49 +172,6 @@ namespace Gecode {
   };
 
   /**
-   * \brief View selection class for static tie breaking
-   */
-  template<class A, class B>
-  class ViewSelTieBreakStatic {
-  protected:
-    /// First selection class
-    A a;
-    /// Second selection class
-    B b;
-  public:
-    /// View type
-    typedef typename A::View View;
-    /// View selection description
-    class Desc {
-    public:
-      /// First description
-      typename A::Desc a;
-      /// Second description
-      typename B::Desc b;
-      /// Constructor
-      Desc(const typename A::Desc& a, const typename B::Desc& b);
-    };
-    /// Default constructor
-    ViewSelTieBreakStatic(void);
-    /// Constructor for initialization
-    ViewSelTieBreakStatic(Space* home, A& a, B& b);
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, typename A::View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, typename A::View x);
-    /// Return description
-    Desc description(const Space* home) const;
-    /// Commit to description
-    void commit(Space* home, const Desc& d, unsigned a);
-    /// Updating during cloning
-    void update(Space* home, bool share, ViewSelTieBreakStatic& vs);
-    /// Delete view selection
-    void dispose(Space* home);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for dynamic tie breaking
    */
   template<class _View>
@@ -192,39 +192,16 @@ namespace Gecode {
       /// Descriptions
       DescVirtualBase** d;
       /// Constructor
-      Desc(const Space* home, ViewSelVirtualBase<_View>** tb, int n0)
-        : n(n0), d(Memory::bmalloc<DescVirtualBase*>(n)) {
-        for (int i=n; i--; )
-          d[i] = tb[i]->description(home);
-      }
+      Desc(const Space* home, ViewSelVirtualBase<_View>** tb, int n0);
       /// Copy constructor
-      Desc(const Desc& de)
-        : n(de.n), d(Memory::bmalloc<DescVirtualBase*>(n)) {
-        for (int i=n; i--; )
-          d[i] = de.d[i]->copy();        
-      }
+      Desc(const Desc& de);
       /// Assignment operator
-      const Desc& operator=(const Desc& de) {
-        if (&de != this) {
-          assert(de.n == n);
-          for (int i=n; i--; ) {
-            delete d[i];
-            d[i] = de.d[i]->copy();
-          }
-        }
-        return *this;
-      }
+      const Desc& operator=(const Desc& de);
       /// Perform commit
-      void commit(Space* home, unsigned int a, ViewSelVirtualBase<_View>** tb)  const {
-        for (int i=n; i--; )
-          tb[i]->commit(home, d[i], a);
-      }
+      void commit(Space* home, unsigned int a, 
+                  ViewSelVirtualBase<_View>** tb)  const;
       /// Destructor
-      ~Desc(void) {
-        for (int i=n; i--; )
-          delete d[i];
-        Memory::free(d);
-      }
+      ~Desc(void);
     };
     /// Default constructor
     ViewSelTieBreakDynamic(void);
@@ -246,6 +223,83 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
+
+
+  // Select variable with static tie breaking
+  template<class A, class B>
+  forceinline
+  ViewSelTieBreakStatic<A,B>::ViewSelTieBreakStatic(void) {}
+  template<class A, class B>
+  forceinline
+  ViewSelTieBreakStatic<A,B>::
+  ViewSelTieBreakStatic(Space* home, A& a0, B& b0)
+    : a(a0), b(b0) {}
+  template<class A, class B>
+  forceinline ViewSelStatus
+  ViewSelTieBreakStatic<A,B>::init(const Space* home, typename A::View x) {
+    ViewSelStatus s = a.init(home,x);
+    return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : s;
+  }
+  template<class A, class B>
+  forceinline ViewSelStatus
+  ViewSelTieBreakStatic<A,B>::select(const Space* home, typename A::View x) {
+    switch (a.select(home,x)) {
+    case VSS_BEST:
+      return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : VSS_BEST;
+    case VSS_BETTER: 
+      (void) b.init(home,x);
+      return VSS_BETTER;
+    case VSS_WORSE:
+      return VSS_WORSE;
+    case VSS_TIE:
+      switch (b.select(home,x)) {
+      case VSS_BEST:   return VSS_BETTER;
+      case VSS_BETTER: return VSS_BETTER;
+      case VSS_TIE:    return VSS_TIE;
+      case VSS_WORSE:  return VSS_WORSE;
+      default: GECODE_NEVER;
+      }
+    default: GECODE_NEVER;
+      return VSS_WORSE;
+    }
+  }
+  template<class A, class B>
+  forceinline
+  ViewSelTieBreakStatic<A,B>::Desc::Desc(const typename A::Desc& a0,
+                                         const typename B::Desc& b0) 
+    : a(a0), b(b0) {}
+  template<class A, class B>
+  forceinline typename ViewSelTieBreakStatic<A,B>::Desc
+  ViewSelTieBreakStatic<A,B>::description(const Space* home) const {
+    typename ViewSelTieBreakStatic<A,B>::Desc d(a.description(home),
+                                                b.description(home));
+    return d;
+  }
+  template<class A, class B>
+  forceinline void
+  ViewSelTieBreakStatic<A,B>::commit(Space* home, const Desc& d, 
+                                      unsigned int al) {
+    a.commit(home, d.a, al);
+    b.commit(home, d.b, al);
+  }
+  template<class A, class B>
+  inline Support::Symbol
+  ViewSelTieBreakStatic<A,B>::type(void) {
+    return Reflection::mangle<A,B>("Gecode::ViewSel::TieBreakStatic");
+  }
+  template<class A, class B>
+  forceinline void
+  ViewSelTieBreakStatic<A,B>::update(Space* home, bool share, 
+                                     ViewSelTieBreakStatic<A,B>& vstb) {
+    a.update(home,share,vstb.a);
+    b.update(home,share,vstb.b);
+  } 
+  template<class A, class B>
+  forceinline void
+  ViewSelTieBreakStatic<A,B>::dispose(Space* home) {
+    a.dispose(home);
+    b.dispose(home);
+  } 
 
 
   // Virtualized view selection
@@ -335,81 +389,48 @@ namespace Gecode {
   }
 
 
-  // Select variable with static tie breaking
-  template<class A, class B>
+  // Description for dynamic tie breaking
+  template<class View>
   forceinline
-  ViewSelTieBreakStatic<A,B>::ViewSelTieBreakStatic(void) {}
-  template<class A, class B>
-  forceinline
-  ViewSelTieBreakStatic<A,B>::
-  ViewSelTieBreakStatic(Space* home, A& a0, B& b0)
-    : a(a0), b(b0) {}
-  template<class A, class B>
-  forceinline ViewSelStatus
-  ViewSelTieBreakStatic<A,B>::init(const Space* home, typename A::View x) {
-    ViewSelStatus s = a.init(home,x);
-    return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : s;
+  ViewSelTieBreakDynamic<View>::Desc::Desc
+  (const Space* home, ViewSelVirtualBase<View>** tb, int n0)
+    : n(n0), d(Memory::bmalloc<DescVirtualBase*>(n)) {
+    for (int i=n; i--; )
+      d[i] = tb[i]->description(home);
   }
-  template<class A, class B>
-  forceinline ViewSelStatus
-  ViewSelTieBreakStatic<A,B>::select(const Space* home, typename A::View x) {
-    switch (a.select(home,x)) {
-    case VSS_BEST:
-      return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : VSS_BEST;
-    case VSS_BETTER: 
-      (void) b.init(home,x);
-      return VSS_BETTER;
-    case VSS_WORSE:
-      return VSS_WORSE;
-    case VSS_TIE:
-      switch (b.select(home,x)) {
-      case VSS_BEST:   return VSS_BETTER;
-      case VSS_BETTER: return VSS_BETTER;
-      case VSS_TIE:    return VSS_TIE;
-      case VSS_WORSE:  return VSS_WORSE;
-      default: GECODE_NEVER;
+  template<class View>
+  forceinline
+  ViewSelTieBreakDynamic<View>::Desc::Desc(const Desc& de)
+    : n(de.n), d(Memory::bmalloc<DescVirtualBase*>(n)) {
+    for (int i=n; i--; )
+      d[i] = de.d[i]->copy();        
+  }
+  template<class View>
+  forceinline const typename ViewSelTieBreakDynamic<View>::Desc& 
+  ViewSelTieBreakDynamic<View>::Desc::operator=(const Desc& de) {
+    if (&de != this) {
+      assert(de.n == n);
+      for (int i=n; i--; ) {
+        delete d[i]; d[i] = de.d[i]->copy();
       }
-    default: GECODE_NEVER;
-      return VSS_WORSE;
     }
+    return *this;
   }
-  template<class A, class B>
+  template<class View>
+  forceinline void
+  ViewSelTieBreakDynamic<View>::Desc::commit
+  (Space* home, unsigned int a, ViewSelVirtualBase<View>** tb)  const {
+    for (int i=n; i--; )
+      tb[i]->commit(home, d[i], a);
+  }
+  template<class View>
   forceinline
-  ViewSelTieBreakStatic<A,B>::Desc::Desc(const typename A::Desc& a0,
-                                         const typename B::Desc& b0) 
-    : a(a0), b(b0) {}
-  template<class A, class B>
-  forceinline typename ViewSelTieBreakStatic<A,B>::Desc
-  ViewSelTieBreakStatic<A,B>::description(const Space* home) const {
-    typename ViewSelTieBreakStatic<A,B>::Desc d(a.description(home),
-                                                b.description(home));
-    return d;
+  ViewSelTieBreakDynamic<View>::Desc::~Desc(void) {
+    for (int i=n; i--; )
+      delete d[i];
+    Memory::free(d);
   }
-  template<class A, class B>
-  forceinline void
-  ViewSelTieBreakStatic<A,B>::commit(Space* home, const Desc& d, 
-                                      unsigned int al) {
-    a.commit(home, d.a, al);
-    b.commit(home, d.b, al);
-  }
-  template<class A, class B>
-  inline Support::Symbol
-  ViewSelTieBreakStatic<A,B>::type(void) {
-    return Reflection::mangle<A,B>("Gecode::ViewSel::TieBreakStatic");
-  }
-  template<class A, class B>
-  forceinline void
-  ViewSelTieBreakStatic<A,B>::update(Space* home, bool share, 
-                                     ViewSelTieBreakStatic<A,B>& vstb) {
-    a.update(home,share,vstb.a);
-    b.update(home,share,vstb.b);
-  } 
-  template<class A, class B>
-  forceinline void
-  ViewSelTieBreakStatic<A,B>::dispose(Space* home) {
-    a.dispose(home);
-    b.dispose(home);
-  } 
+
 
   // Select variable with dynamic tie breaking
   template<class View>
