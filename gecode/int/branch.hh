@@ -113,6 +113,9 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   template<class _View>
   class ValRnd {
+  protected:
+    /// Random number generator
+    Support::RandomGenerator r;
   public:
     /// View type
     typedef _View View;
@@ -122,8 +125,6 @@ namespace Gecode { namespace Int { namespace Branch {
     typedef Support::RandomGenerator Desc;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
-    /// Description
-    Desc desc;
     /// Default constructor
     ValRnd(void);
     /// Constructor for initialization
@@ -132,6 +133,10 @@ namespace Gecode { namespace Int { namespace Branch {
     int val(const Space* home, _View x);
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, _View x, int n);
+    /// Return description
+    Support::RandomGenerator description(const Space* home) const;
+    /// Commit to description
+    void commit(Space* home, const Support::RandomGenerator& d, unsigned a);
     /// Updating during cloning
     void update(Space* home, bool share, ValRnd& vs);
     /// Delete value selection

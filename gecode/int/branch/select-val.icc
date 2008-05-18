@@ -89,11 +89,11 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline
   ValRnd<View>::ValRnd(Space* home, const ValBranchOptions& vbo) 
-    : desc(vbo.seed) {}
+    : r(vbo.seed) {}
   template<class View>
   forceinline int
   ValRnd<View>::val(const Space*, View x) {
-    unsigned int p = desc(x.size());
+    unsigned int p = r(x.size());
     int n = x.min();
     for (ViewRanges<View> i(x); p >= i.width(); ++i) {
       n = i.min(); p -= i.width();
@@ -106,9 +106,20 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
   template<class View>
+  forceinline Support::RandomGenerator
+  ValRnd<View>::description(const Space*) const {
+    return r;
+  }
+  template<class View>
+  forceinline void 
+  ValRnd<View>::commit(Space*, const Support::RandomGenerator& d, 
+                       unsigned int) {
+    r = d;
+  }
+  template<class View>
   forceinline void 
   ValRnd<View>::update(Space*, bool, ValRnd<View>& vr) {
-    desc = vr.desc;
+    r = vr.r;
   }
   template<class View>
   forceinline void
