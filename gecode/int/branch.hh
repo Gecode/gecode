@@ -319,30 +319,6 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest min
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class View>
-  class ByMinMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest minimum
-    int min;
-  public:
-    /// Default constructor
-    ByMinMax(void);
-    /// Constructor for initialization
-    ByMinMax(Space* home, const VarBranchOptions& vbo);    
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for view with smallest max
    *
    * Requires \code #include "gecode/int/branch.hh" \endcode
@@ -367,30 +343,6 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest max
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class View>
-  class ByMaxMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest maximum
-    int max;
-  public:
-    /// Default constructor
-    ByMaxMax(void);
-    /// Constructor for initialization
-    ByMaxMax(Space* home, const VarBranchOptions& vbo);    
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for view with smallest size
    *
    * Requires \code #include "gecode/int/branch.hh" \endcode
@@ -406,30 +358,6 @@ namespace Gecode { namespace Int { namespace Branch {
     BySizeMin(void);
     /// Constructor for initialization
     BySizeMin(Space* home, const VarBranchOptions& vbo);    
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
-   * \brief View selection class for view with largest size
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class View>
-  class BySizeMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest size
-    unsigned int size;
-  public:
-    /// Default constructor
-    BySizeMax(void);
-    /// Constructor for initialization
-    BySizeMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x
@@ -464,30 +392,6 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest size divided by degree.
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class View>
-  class BySizeDegreeMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest size/degree
-    double sizedegree;
-  public:
-    /// Default constructor
-    BySizeDegreeMax(void);
-    /// Constructor for initialization
-    BySizeDegreeMax(Space* home, const VarBranchOptions& vbo);    
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for view with smallest min-regret
    *
    * Requires \code #include "gecode/int/branch.hh" \endcode
@@ -512,30 +416,6 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest min-regret
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class View>
-  class ByRegretMinMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest regret
-    unsigned int regret;
-  public:
-    /// Default constructor
-    ByRegretMinMax(void);
-    /// Constructor for initialization
-    ByRegretMinMax(Space* home, const VarBranchOptions& vbo);    
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for view with smallest max-regret
    *
    * Requires \code #include "gecode/int/branch.hh" \endcode
@@ -551,30 +431,6 @@ namespace Gecode { namespace Int { namespace Branch {
     ByRegretMaxMin(void);
     /// Constructor for initialization
     ByRegretMaxMin(Space* home, const VarBranchOptions& vbo);    
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
-   * \brief View selection class for view with largest max-regret
-   *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
-   * \ingroup FuncIntSelView
-   */
-  template<class View>
-  class ByRegretMaxMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest regret
-    unsigned int regret;
-  public:
-    /// Default constructor
-    ByRegretMaxMax(void);
-    /// Constructor for initialization
-    ByRegretMaxMax(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, View x);
     /// Possibly select better view \a x

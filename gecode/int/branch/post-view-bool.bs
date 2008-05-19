@@ -85,10 +85,10 @@ Value:		INT_VAR_DEGREE_MIN
 Type:		ViewSelDegreeMin<BoolView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MAX
-Type:		ViewSelDegreeMax<BoolView>
+Type:		ViewSelInvert<ViewSelDegreeMin<BoolView> >
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
-Type:		ViewSelDegreeMax<BoolView>
+Type:		ViewSelInvert<ViewSelDegreeMin<BoolView> >
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MAX
 Type:		ViewSelDegreeMin<BoolView>

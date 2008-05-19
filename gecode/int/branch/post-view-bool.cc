@@ -66,9 +66,9 @@ namespace Gecode { namespace Int { namespace Branch {
      case INT_VAR_DEGREE_MIN:
        return new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
      case INT_VAR_DEGREE_MAX:
-       return new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<BoolView> > >(home,o_vars);
      case INT_VAR_SIZE_DEGREE_MIN:
-       return new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
+       return new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<BoolView> > >(home,o_vars);
      case INT_VAR_SIZE_DEGREE_MAX:
        return new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
      case INT_VAR_REGRET_MIN_MIN:
@@ -151,13 +151,13 @@ namespace Gecode { namespace Int { namespace Branch {
         break;
       case INT_VAR_DEGREE_MAX:
         {
-          ViewSelDegreeMax<BoolView> v(home,o_vars.a);
+          ViewSelInvert<ViewSelDegreeMin<BoolView> > v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_DEGREE_MIN:
         {
-          ViewSelDegreeMax<BoolView> v(home,o_vars.a);
+          ViewSelInvert<ViewSelDegreeMin<BoolView> > v(home,o_vars.a);
           post(home,x,v,vals,o_vals);
         }
         break;
@@ -270,16 +270,16 @@ namespace Gecode { namespace Int { namespace Branch {
         break;
       case INT_VAR_DEGREE_MAX:
         {
-          ViewSelDegreeMax<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+          ViewSelInvert<ViewSelDegreeMin<BoolView> > va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelInvert<ViewSelDegreeMin<BoolView> >,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
         break;
       case INT_VAR_SIZE_DEGREE_MIN:
         {
-          ViewSelDegreeMax<BoolView> va(home,o_vars.a);
-          ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+          ViewSelInvert<ViewSelDegreeMin<BoolView> > va(home,o_vars.a);
+          ViewSelTieBreakStatic<ViewSelInvert<ViewSelDegreeMin<BoolView> >,
             ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
           post(home,x,v,vals,o_vals);
         }
