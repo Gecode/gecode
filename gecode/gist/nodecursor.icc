@@ -38,19 +38,19 @@ namespace Gecode { namespace Gist {
 
   template <class Node>
   forceinline
-  NodeCursor<Node>::NodeCursor(Node* theNode) : _startNode(theNode), _node(theNode), _alternative(-1) {}
+  NodeCursor<Node>::NodeCursor(Node* theNode) : _startNode(theNode), _node(theNode), _alternative(theNode->getAlternative()) {}
 
   template <class Node>
   forceinline Node*
   NodeCursor<Node>::node(void) { return _node; }
 
   template <class Node>
-  forceinline int
+  forceinline unsigned int
   NodeCursor<Node>::alternative(void) { return _alternative; }
 
   template <class Node>
   forceinline void
-  NodeCursor<Node>::alternative(int a) { _alternative=a; }
+  NodeCursor<Node>::alternative(unsigned int a) { _alternative=a; }
 
   template <class Node>
   forceinline Node*
@@ -71,7 +71,7 @@ namespace Gecode { namespace Gist {
   NodeCursor<Node>::moveUpwards(void) {
     _node = static_cast<Node*>(_node->getParent());
     if (_node->isRoot()) {
-      _alternative = -1;
+      _alternative = 0;
     } else {
       Node* p = static_cast<Node*>(_node->getParent());
       for (int i=p->getNumberOfChildren(); i--;) {

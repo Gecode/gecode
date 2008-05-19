@@ -42,43 +42,105 @@
 namespace Gecode { namespace Gist {
   
   Node::~Node(void) {
-    if (noOfChildren != -1)
-      for (int i=noOfChildren; i--;)
-        delete static_cast<VisualNode*>(children[i]);
-    Memory::free(children);
+    switch (getTag()) {
+    case UNDET:
+    case LEAF:
+      return;
+    case TWO_CHILDREN:
+      delete static_cast<VisualNode*>(getPtr());
+      if (Support::marked(c.secondChild))
+        delete static_cast<VisualNode*>(Support::unmark(c.secondChild));
+      break;
+    case MORE_CHILDREN:
+      for (int i=c.noOfChildren; i--;)
+        delete static_cast<VisualNode**>(childrenOrFirstChild)[i];
+      Memory::free(static_cast<Node**>(childrenOrFirstChild));
+    }
   }
     
   void
-  Node::setNumberOfChildren(int n) {
-    assert(noOfChildren == -1);
-    noOfChildren = n;
-    children = Memory::bmalloc<Node*>(n);
-    for (int i=n; i--;)
-      children[i] = NULL;
+  Node::setNumberOfChildren(unsigned int n) {
+    assert(getTag() == UNDET);
+    switch (n) {
+    case 0:
+      setTag(LEAF);
+      break;
+    case 1:
+      setTag(TWO_CHILDREN);
+      c.secondChild = NULL;
+      break;
+    case 2:
+      setTag(TWO_CHILDREN);
+      c.secondChild = static_cast<Node*>(Support::mark(NULL));
+      break;
+    default:
+      c.noOfChildren = n;
+      childrenOrFirstChild = Memory::bmalloc<Node*>(n);
+      Node** children = static_cast<Node**>(childrenOrFirstChild);
+      setTag(MORE_CHILDREN);
+      for (unsigned int i=n; i--;)
+        children[i] = NULL;      
+    }
   }
 
   void
-  Node::setChild(int n, Node* child) {
-    assert(noOfChildren > n);
-    children[n] = child;
+  Node::setChild(unsigned int n, Node* child) {
+    assert(getNumberOfChildren() > n);
+    if (getTag() == TWO_CHILDREN) {
+      if (n == 0) {
+        unsigned int tag = getTag();
+        childrenOrFirstChild = child;
+        setTag(tag);
+      } else {
+        c.secondChild = static_cast<Node*>(Support::mark(child));
+      }
+    } else {
+      static_cast<Node**>(childrenOrFirstChild)[n] = child;
+    }
     child->parent = this;
   }
 
   void
   Node::addChild(Node* child) {
     child->parent = this;
-
-    if(noOfChildren == -1) {
+    
+    unsigned int noOfChildren;
+    switch (getTag()) {
+    case UNDET:
       setNumberOfChildren(1);
-    } else {
-      Node** newChildren = Memory::bmalloc<Node*>(noOfChildren+1);
-      for (int i=noOfChildren; i--;)
-        newChildren[i] = children[i];
-      Memory::free(children);
-      children = newChildren;
-      noOfChildren++;
+      noOfChildren = 1;
+      break;
+    case LEAF:
+      setTag(TWO_CHILDREN);
+      c.secondChild = NULL;
+      noOfChildren = 1;
+      break;
+    case TWO_CHILDREN:
+      if (Support::marked(c.secondChild)) {
+        Node** newChildren = Memory::bmalloc<Node*>(c.noOfChildren+1);
+        newChildren[0] = static_cast<Node*>(getPtr());
+        newChildren[1] = static_cast<Node*>(Support::unmark(c.secondChild));
+        noOfChildren = 3;
+      } else {
+        c.secondChild = static_cast<Node*>(Support::mark(NULL));
+        noOfChildren = 2;
+      }
+      break;
+    case MORE_CHILDREN:
+      {
+        Node** newChildren = Memory::bmalloc<Node*>(c.noOfChildren+1);
+        Node** children = static_cast<Node**>(getPtr());
+        for (int i=noOfChildren; i--;)
+          newChildren[i] = children[i];
+        Memory::free(children);
+        childrenOrFirstChild = newChildren;
+        setTag(MORE_CHILDREN);
+        c.noOfChildren++;
+        noOfChildren = c.noOfChildren;
+      }
+      break;
     }
-    children[noOfChildren-1] = child;
+    setChild(noOfChildren-1, child);
   }
 
 }}

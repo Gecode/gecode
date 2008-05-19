@@ -50,7 +50,7 @@ namespace Gecode { namespace Gist {
     /// The current node
     Node* _node;
     /// The current alternative
-    int _alternative;
+    unsigned int _alternative;
   protected:
     /// Set current node to \a n
     void node(Node* n);
@@ -62,9 +62,9 @@ namespace Gecode { namespace Gist {
     /// Return current node
     Node* node(void);
     /// Return current alternative
-    int alternative(void);
-    /// Return current alternative
-    void alternative(int a);
+    unsigned int alternative(void);
+    /// Set current alternative
+    void alternative(unsigned int a);
     
     /// \name Cursor interface
     //@{

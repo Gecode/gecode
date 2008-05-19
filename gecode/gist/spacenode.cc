@@ -266,7 +266,7 @@ namespace Gecode { namespace Gist {
     if (getStatus() == DECOMPOSE) {
       setHasSolvedChildren(hasSolvedChildren() && hadSolutions);
       if (!hasSolvedChildren()) {
-        for (int i=0; i<getNumberOfChildren(); i++) {
+        for (unsigned int i=0; i<getNumberOfChildren(); i++) {
           SpaceNode* c = static_cast<SpaceNode*>(getChild(i));
           if (c->isOpen()) {
             c->setStatus(COMPONENT_IGNORED);
@@ -288,7 +288,7 @@ namespace Gecode { namespace Gist {
 
     if (allClosed) {
       setHasOpenChildren(false);
-      for (int i=0; i<getNumberOfChildren(); i++)
+      for (unsigned int i=0; i<getNumberOfChildren(); i++)
         setHasSolvedChildren(hasSolvedChildren() ||
           static_cast<SpaceNode*>(getChild(i))->hasSolvedChildren());
       SpaceNode* p = static_cast<SpaceNode*>(getParent());
@@ -342,8 +342,8 @@ namespace Gecode { namespace Gist {
 
   int
   SpaceNode::getNumberOfChildNodes(BestNode* curBest, Statistics& stats) {
-    int kids = getNumberOfChildren();
-    if (kids == -1) {
+    int kids;
+    if (isUndetermined()) {
       stats.undetermined--;
       acquireSpace(curBest);
       switch (workingSpace->status()) {
@@ -430,6 +430,8 @@ namespace Gecode { namespace Gist {
       for (int i=kids; i--;) {
         setChild(i, new VisualNode());
       }
+    } else {
+      kids = getNumberOfChildren();
     }
     return kids;
   }
@@ -439,7 +441,7 @@ namespace Gecode { namespace Gist {
     if (!hasOpenChildren())
       return 0;
     int noOfOpenChildren = 0;
-    for (int i=noOfChildren; i--;)
+    for (int i=getNumberOfChildren(); i--;)
       noOfOpenChildren += (static_cast<SpaceNode*>(getChild(i))->isOpen());
     return noOfOpenChildren;
   }

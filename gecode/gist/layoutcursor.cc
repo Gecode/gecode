@@ -102,7 +102,7 @@ namespace Gecode { namespace Gist {
     VisualNode* currentNode = node();
     if (currentNode->isDirty()) {
       Extent extent(Layout::extent);
-      int numberOfChildren = currentNode->getNumberOfChildren();
+      unsigned int numberOfChildren = currentNode->getNumberOfChildren();
       if (currentNode->isHidden()) {
         currentNode->setShape(Shape::hidden);
       } else if (numberOfChildren < 1) {

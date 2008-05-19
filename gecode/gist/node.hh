@@ -43,13 +43,39 @@ namespace Gecode { namespace Gist {
 
   /// \brief Base class for nodes of the search tree
   class Node {
-  protected:
+  private:
     /// The parent of this node, or NULL for the root
-    Node* parent;
-    /// The children of this node
-    Node** children;
-    /// The number of children of this node
-    int noOfChildren;
+    Node* parent;    
+
+    /// Tags that are used to encode the number of children
+    enum {
+      UNDET, //< Number of children not determined
+      LEAF,  //< Leaf node
+      TWO_CHILDREN, //< Node with at most two children
+      MORE_CHILDREN //< Node with more than two children
+    };
+
+    /// The children, or in case there are at most two, the first child
+    void* childrenOrFirstChild;
+    
+    union {
+      /// The second child or NULL, in case of at most two children
+      Node* secondChild;
+      /// The number of children, in case it is greater than 2
+      unsigned int noOfChildren;
+    } c;
+
+    /// Read the tag of childrenOrFirstChild
+    unsigned int getTag(void) const;
+    /// Set the tag of childrenOrFirstChild
+    void setTag(unsigned int tag);
+    /// Return childrenOrFirstChild without tag
+    void* getPtr(void) const;
+
+  protected:
+    /// Return whether this node is undetermined
+    bool isUndetermined(void) const;
+
   public:
     /// Default constructor
     Node(void);
@@ -59,23 +85,21 @@ namespace Gecode { namespace Gist {
     /// Return the parent
     Node* getParent(void);
     /// Return child no \a n
-    Node* getChild(int n);
+    Node* getChild(unsigned int n);
     
     /// Check if this node is the root of a tree
     bool isRoot(void) const;
-    /// Compute the depth of this node
-    int getDepth(void) const;
-    
+
     /// Set the number of children to \a n
-    void setNumberOfChildren(int n);
+    void setNumberOfChildren(unsigned int n);
     /// Set child number \a n to be \a child
-    void setChild(int n, Node* child);
+    void setChild(unsigned int n, Node* child);
 
     /// Add new child node
     void addChild(Node* child);
 
     /// Return the number of children
-    int getNumberOfChildren(void) const;
+    unsigned int getNumberOfChildren(void) const;
   };
 
 }}
