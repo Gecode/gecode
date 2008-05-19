@@ -964,8 +964,16 @@ namespace Gecode {
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_SET_EXPORT void
+  branch(Space* home, const SetVarArgs& x,
+         SetVarBranch vars, SetValBranch vals,
+         const VarBranchOptions& o_vars = VarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
+  GECODE_SET_EXPORT void
   branch(Space* home, const SetVarArgs& x, 
-         SetVarBranch vars, SetValBranch vals);
+         const TieBreakVarBranch<SetVarBranch>& vars, SetValBranch vals,
+         const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}
 
 }

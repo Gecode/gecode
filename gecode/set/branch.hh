@@ -111,10 +111,6 @@ namespace Gecode { namespace Set { namespace Branch {
                        int alt, SetView x, int n) const;
   };
 
-  /// Create branchings for a given view selection strategy \a SelView
-  template <class SelView>
-  static void
-  create(Space* home, ViewArray<SetView>&, SetValBranch);
 
   /*
    * View selection classes
@@ -122,74 +118,20 @@ namespace Gecode { namespace Set { namespace Branch {
    */
 
   /**
-   * \brief View selection class for first view
-   *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelView
-   */
-  typedef ViewSelNone<SetView> ByNone;
-
-  /**
-   * \brief View selection class for view with smallest cardinality of lub-glb
-   *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelView
-   */
-  class ByMinCard : public ViewSelBase<SetView> {
-  private:
-    /// So-far smallest cardinality
-    unsigned int minCard;
-  public:
-    /// Default constructor
-    ByMinCard(void);
-    /// Constructor for initialization
-    ByMinCard(Space* home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, SetView x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
-   * \brief View selection class for view with greatest cardinality of lub-glb
-   *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelView
-   */
-  class ByMaxCard : public ViewSelBase<SetView> {
-  private:
-    /// So-far greatest cardinality
-    unsigned int maxCard;
-  public:
-    /// Default constructor
-    ByMaxCard(void);
-    /// Constructor for initialization
-    ByMaxCard(Space* home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, SetView x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief View selection class for view with smallest element in lub-glb
    *
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByMinUnknown : public ViewSelBase<SetView> {
+  class ByMinMin : public ViewSelBase<SetView> {
   private:
     /// So-far smallest element
-    int minUnknown;
+    int min;
   public:
     /// Default constructor
-    ByMinUnknown(void);
+    ByMinMin(void);
     /// Constructor for initialization
-    ByMinUnknown(Space* home, const VarBranchOptions& vbo);
+    ByMinMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -204,15 +146,38 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
-  class ByMaxUnknown : public ViewSelBase<SetView> {
+  class ByMaxMax : public ViewSelBase<SetView> {
   private:
     /// So-far greatest element
-    int maxUnknown;
+    int max;
   public:
     /// Default constructor
-    ByMaxUnknown(void);
+    ByMaxMax(void);
     /// Constructor for initialization
-    ByMaxUnknown(Space* home, const VarBranchOptions& vbo);
+    ByMaxMax(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, SetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with smallest cardinality of lub-glb
+   *
+   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * \ingroup FuncSetSelView
+   */
+  class BySizeMin : public ViewSelBase<SetView> {
+  private:
+    /// So-far smallest size
+    unsigned int min;
+  public:
+    /// Default constructor
+    BySizeMin(void);
+    /// Constructor for initialization
+    BySizeMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
@@ -225,6 +190,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
 #include "gecode/set/branch/select-val.icc"
 #include "gecode/set/branch/select-view.icc"
+#include "gecode/set/branch/post-val.icc"
 
 #endif
 // STATISTICS: set-branch

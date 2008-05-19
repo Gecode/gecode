@@ -1,17 +1,21 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
- *  Main authors:
- *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *  CAUTION:
+ *    This file has been automatically generated. Do not edit,
+ *    edit the specification file
+ *      gecode/cpltset/branch/post-view.bs
+ *    instead.
+ *
+ *  This file contains generated code fragments which are
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Patrick Pekczynski, 2006
+ *     Christian Schulte, 2008
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
- *  This file is part of Gecode, the generic constraint
- *  development environment:
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
  *     http://www.gecode.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
@@ -37,32 +41,228 @@
 
 #include "gecode/cpltset/branch.hh"
 
-namespace Gecode {
-
-  using namespace CpltSet;
+namespace Gecode { namespace CpltSet { namespace Branch { 
 
   void
-  branch(Space* home, const CpltSetVarArgs& xa,
-         CpltSetVarBranch vars, CpltSetValBranch vals) {
-    if (home->failed()) 
-      return;
-    ViewArray<CpltSetView> x(home,xa);
+  virtualize(Gecode::Space* home, CpltSetVarBranch vars,
+             const Gecode::VarBranchOptions& o_vars,
+             Gecode::ViewSelVirtualBase<CpltSetView>*& v) {
+    switch (vars) {
+     case CPLTSET_VAR_NONE:
+       v = new (home) ViewSelVirtual<ViewSelNone<CpltSetView> >(home,o_vars);
+       break;
+     case CPLTSET_VAR_RND:
+       v = new (home) ViewSelVirtual<ViewSelRnd<CpltSetView> >(home,o_vars);
+       break;
+     case CPLTSET_VAR_DEGREE_MIN:
+       v = new (home) ViewSelVirtual<ViewSelDegreeMin<CpltSetView> >(home,o_vars);
+       break;
+     case CPLTSET_VAR_DEGREE_MAX:
+       v = new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<CpltSetView> > >(home,o_vars);
+       break;
+     case CPLTSET_VAR_MIN_MIN:
+       v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
+       break;
+     case CPLTSET_VAR_MIN_MAX:
+       v = new (home) ViewSelVirtual<ViewSelInvert<ByMinMin> >(home,o_vars);
+       break;
+     case CPLTSET_VAR_MAX_MAX:
+       v = new (home) ViewSelVirtual<ViewSelInvert<ByMaxMax> >(home,o_vars);
+       break;
+     case CPLTSET_VAR_MAX_MIN:
+       v = new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
+       break;
+     case CPLTSET_VAR_SIZE_MIN:
+       v = new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
+       break;
+     case CPLTSET_VAR_SIZE_MAX:
+       v = new (home) ViewSelVirtual<ViewSelInvert<BySizeMin> >(home,o_vars);
+       break;
+    default:
+      throw UnknownBranching("CpltSet::branch");
+    }
+  }
+
+}}}
+
+namespace Gecode { 
+
+  void
+  branch(Gecode::Space* home, const CpltSetVarArgs& x,
+         CpltSetVarBranch vars, CpltSetValBranch vals,
+         const Gecode::VarBranchOptions& o_vars,
+         const Gecode::ValBranchOptions& o_vals) {
+    using namespace Gecode;
+    using namespace Gecode::CpltSet;
+    using namespace Gecode::CpltSet::Branch;
+
+
+    if (home->failed()) return;
+    ViewArray<CpltSetView> xv(home,x);
     switch (vars) {
     case CPLTSET_VAR_NONE:
-      Branch::create<Branch::ByNone>(home,x,vals); break;
-    case CPLTSET_VAR_SIZE_MIN:
-      Branch::create<Branch::ByMinCard>(home,x,vals); break;
-    case CPLTSET_VAR_SIZE_MAX:
-      Branch::create<Branch::ByMaxCard>(home,x,vals); break;
+      {
+        ViewSelNone<CpltSetView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_RND:
+      {
+        ViewSelRnd<CpltSetView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_DEGREE_MIN:
+      {
+        ViewSelDegreeMin<CpltSetView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_DEGREE_MAX:
+      {
+        ViewSelInvert<ViewSelDegreeMin<CpltSetView> > v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
     case CPLTSET_VAR_MIN_MIN:
-      Branch::create<Branch::ByMinUnknown>(home,x,vals); break;
+      {
+        ByMinMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MIN_MAX:
+      {
+        ViewSelInvert<ByMinMin> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
     case CPLTSET_VAR_MAX_MAX:
-      Branch::create<Branch::ByMaxUnknown>(home,x,vals); break;
+      {
+        ViewSelInvert<ByMaxMax> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MAX_MIN:
+      {
+        ByMaxMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_SIZE_MIN:
+      {
+        BySizeMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_SIZE_MAX:
+      {
+        ViewSelInvert<BySizeMin> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
     default:
-      throw CpltSet::UnknownBranching("CpltSet::branch");
+      throw UnknownBranching("CpltSet::branch");
+    }
+  }
+
+  void
+  branch(Gecode::Space* home, const CpltSetVarArgs& x,
+         const Gecode::TieBreakVarBranch<CpltSetVarBranch>& vars,
+         CpltSetValBranch vals,
+         const Gecode::TieBreakVarBranchOptions& o_vars,
+         const Gecode::ValBranchOptions& o_vals) {
+    using namespace Gecode;
+    using namespace Gecode::CpltSet;
+    using namespace Gecode::CpltSet::Branch;
+
+
+    if (home->failed()) return;
+    if ((vars.a == CPLTSET_VAR_NONE) || (vars.a == CPLTSET_VAR_RND) ||
+        ((vars.b == CPLTSET_VAR_NONE) && (vars.c == CPLTSET_VAR_NONE) && (vars.d == CPLTSET_VAR_NONE))) {
+      branch(home,x,vars.a,vals,o_vars.a,o_vals);
+      return;
+    }
+    ViewArray<CpltSetView> xv(home,x);
+    Gecode::ViewSelVirtualBase<CpltSetView>* tb[3];
+    int n=0;
+    virtualize(home,vars.b,o_vars.b,tb[n++]);
+    if (vars.c != CPLTSET_VAR_NONE)
+      virtualize(home,vars.c,o_vars.c,tb[n++]);
+    if (vars.d != CPLTSET_VAR_NONE)
+      virtualize(home,vars.d,o_vars.d,tb[n++]);
+    ViewSelTieBreakDynamic<CpltSetView> vbcd(home,tb,n);
+    switch (vars.a) {
+    case CPLTSET_VAR_DEGREE_MIN:
+      {
+        ViewSelDegreeMin<CpltSetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMin<CpltSetView>,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_DEGREE_MAX:
+      {
+        ViewSelInvert<ViewSelDegreeMin<CpltSetView> > va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ViewSelDegreeMin<CpltSetView> >,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MIN_MIN:
+      {
+        ByMinMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMinMin,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MIN_MAX:
+      {
+        ViewSelInvert<ByMinMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ByMinMin>,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MAX_MAX:
+      {
+        ViewSelInvert<ByMaxMax> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ByMaxMax>,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MAX_MIN:
+      {
+        ByMaxMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMaxMax,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_SIZE_MIN:
+      {
+        BySizeMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeMin,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_SIZE_MAX:
+      {
+        ViewSelInvert<BySizeMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<BySizeMin>,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    default:
+      throw UnknownBranching("CpltSet::branch");
     }
   }
 
 }
 
-// STATISTICS: cpltset-post
+
+// STATISTICS: cpltset-branch
+

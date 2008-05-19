@@ -346,7 +346,7 @@ INTBUILDDIRS	= \
 #
 
 SETSRC0 =								 \
-	branch.cc cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
+	cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
 	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
 	int.cc								 \
 	select.cc select/disjoint.cc sequence.cc			 \
@@ -382,6 +382,7 @@ SETHDR0 =								     \
 	sequence/common.icc convex/conv.icc convex/hull.icc convex.hh	     \
 	propagator.icc rel-op.hh					     \
 	branch.hh branch/select-val.icc branch/select-view.icc		     \
+	branch/post-val.icc \
 	projectors.hh projectors-compiler.hh				     \
 	projectors/projector.icc					     \
 	projectors/projector-set.icc projectors/set-expr.icc		     \
@@ -389,7 +390,8 @@ SETHDR0 =								     \
 	projectors/propagator/card.icc projectors/propagator/re-nary.icc     \
 	projectors/formula.icc
 
-SETSRC		= $(SETSRC0:%=gecode/set/%)
+SETSRC		= $(SETSRC0:%=gecode/set/%) \
+	$(top_srcdir)/gecode/set/branch.cc
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
 SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
 
@@ -422,7 +424,7 @@ SETBUILDDIRS	=						\
 #
 
 CPLTSETSRC0 =	\
-	branch.cc array.cc support.cc             			  \
+	array.cc support.cc             			          \
 	bddmanager.cc 							  \
 	var-imp/cpltset.cc var/cpltset.cc  view/print.cc                  \
 	constraints/singleton.cc 					  \
@@ -439,11 +441,14 @@ CPLTSETHDR0 =		                \
 	propagators/unary.icc propagators/binary.icc \
 	propagators/nary.icc propagators/naryone.icc propagators/narytwo.icc \
 	propagators/singleton.icc \
-	branch.hh branch/select-val.icc branch/select-view.icc	
+	branch.hh branch/select-val.icc branch/select-view.icc	\
+	branch/post-val.icc
 
-CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/cpltset/%)
-CPLTSETHDR		= gecode/cpltset.hh $(CPLTSETHDR0:%=gecode/cpltset/%)
-CPLTSETOBJ		= $(CPLTSETSRC:%.cc=%$(OBJSUFFIX))
+
+CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/cpltset/%) \
+	$(top_srcdir)/gecode/cpltset/branch.cc
+CPLTSETHDR	= gecode/cpltset.hh $(CPLTSETHDR0:%=gecode/cpltset/%)
+CPLTSETOBJ	= $(CPLTSETSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_cpltset_vars@" "yes"
 export CPLTSETDLL		= $(LIBPREFIX)@CPLTSET@$(DLLSUFFIX)
@@ -960,6 +965,14 @@ $(top_srcdir)/gecode/int/branch/post-view-int.cc: \
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 $(top_srcdir)/gecode/int/branch/post-view-bool.cc: \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.bs \
+	$(top_srcdir)/misc/genbranch.perl
+	perl $(top_srcdir)/misc/genbranch.perl $< > $@
+$(top_srcdir)/gecode/set/branch.cc: \
+	$(top_srcdir)/gecode/set/branch/post-view.bs \
+	$(top_srcdir)/misc/genbranch.perl
+	perl $(top_srcdir)/misc/genbranch.perl $< > $@
+$(top_srcdir)/gecode/cpltset/branch.cc: \
+	$(top_srcdir)/gecode/cpltset/branch/post-view.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 

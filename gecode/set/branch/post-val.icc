@@ -43,54 +43,38 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
-  template <bool inc>
-  forceinline
-  ValMin<inc>::ValMin(void) {}
-  template <bool inc>
-  forceinline
-  ValMin<inc>::ValMin(Space* home, const ValBranchOptions& vbo)
-    : ValSelBase<SetView,int>(home,vbo) {}
-  template <bool inc>
-  forceinline int
-  ValMin<inc>::val(const Space*, SetView x) const {
-    UnknownRanges<SetView> u(x);
-    return u.min();
-  }
-  template <bool inc>
-  forceinline ModEvent
-  ValMin<inc>::tell(Space* home, unsigned int a, SetView x, int v) {
-    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
-  }
-  template <bool inc>
-  inline Support::Symbol
-  ValMin<inc>::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::ValMin");
-  }
-
-  template <bool inc>
-  forceinline
-  ValMax<inc>::ValMax(void) {}
-  template <bool inc>
-  forceinline
-  ValMax<inc>::ValMax(Space* home, const ValBranchOptions& vbo)
-    : ValSelBase<SetView,int>(home,vbo) {}
-  template <bool inc>
-  forceinline int
-  ValMax<inc>::val(const Space*, SetView x) const {
-    int max = 0;
-    for (UnknownRanges<SetView> u(x); u(); ++u)
-      max = u.max();
-    return max;
-  }
-  template <bool inc>
-  forceinline ModEvent
-  ValMax<inc>::tell(Space* home, unsigned int a, SetView x, int v) {
-    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
-  }
-  template <bool inc>
-  inline Support::Symbol
-  ValMax<inc>::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::ValMax");
+  template <class SelView>
+  void
+  post(Space* home, ViewArray<SetView>& x, SelView& v,
+       SetValBranch vals, const ValBranchOptions& o_vals) {
+    switch (vals) {
+    case SET_VAL_MIN_INC: 
+      {
+        ValMin<true> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMin<true> >(home,x,v,a);
+      }
+      break;
+    case SET_VAL_MIN_EXC: 
+      {
+        ValMin<false> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMin<false> >(home,x,v,a);
+      }
+      break;
+    case SET_VAL_MAX_INC:
+      {
+        ValMax<true> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMax<true> >(home,x,v,a);
+      }
+      break;
+    case SET_VAL_MAX_EXC:
+      {
+        ValMax<false> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMax<false> >(home,x,v,a);
+      }
+      break;
+    default:
+      throw UnknownBranching("Set::branch");
+    }
   }
 
 }}}

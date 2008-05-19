@@ -38,125 +38,90 @@
 namespace Gecode { namespace CpltSet { namespace Branch {
 
   forceinline
-  ByMinCard::ByMinCard(void) {}
+  BySizeMin::BySizeMin(void) {}
   forceinline
-  ByMinCard::ByMinCard(Space* home, const VarBranchOptions& vbo)
+  BySizeMin::BySizeMin(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  ByMinCard::init(const Space*, CpltSetView x) { 
-    minCard = x.unknownSize();
-    return (minCard == 1) ? VSS_BEST : VSS_BETTER;
+  BySizeMin::init(const Space*, CpltSetView x) { 
+    min = x.unknownSize();
+    return (min == 1) ? VSS_BEST : VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByMinCard::select(const Space*, CpltSetView x) {
+  BySizeMin::select(const Space*, CpltSetView x) {
     unsigned int us = x.unknownSize();
-    if (us < minCard) {
-      minCard = us;
-      return (minCard == 1) ? VSS_BEST : VSS_BETTER;
-    } else if (us > minCard) {
+    if (us < min) {
+      min = us;
+      return (min == 1) ? VSS_BEST : VSS_BETTER;
+    } else if (us > min) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
   inline Support::Symbol
-  ByMinCard::type(void) {
-    return Support::Symbol("CpltSet::Branch::ByMinCard");
+  BySizeMin::type(void) {
+    return Support::Symbol("CpltSet::Branch::BySizeMin");
   }
 
 
 
   forceinline
-  ByMaxCard::ByMaxCard(void) {}
+  ByMinMin::ByMinMin(void) {}
   forceinline
-  ByMaxCard::ByMaxCard(Space* home, const VarBranchOptions& vbo)
+  ByMinMin::ByMinMin(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  ByMaxCard::init(const Space*, CpltSetView x) { 
-    maxCard = x.unknownSize();
+  ByMinMin::init(const Space*, CpltSetView x) {
+    Set::UnknownRanges<CpltSetView> u(x);
+    min = u.min();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByMaxCard::select(const Space*, CpltSetView x) {
-    unsigned int us = x.unknownSize();
-    if (us > maxCard) {
-      maxCard = us; return VSS_BETTER;
-    } else if (us < maxCard) {
+  ByMinMin::select(const Space*, CpltSetView x) {
+    Set::UnknownRanges<CpltSetView> u(x);
+    int um = u.min();
+    if (um < min) {
+      min = um; return VSS_BETTER;
+    } else if (um > min) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
   inline Support::Symbol
-  ByMaxCard::type(void) {
-    return Support::Symbol("CpltSet::Branch::ByMaxCard");
+  ByMinMin::type(void) {
+    return Support::Symbol("CpltSet::Branch::ByMinMin");
   }
 
 
-
   forceinline
-  ByMinUnknown::ByMinUnknown(void) {}
+  ByMaxMax::ByMaxMax(void) {}
   forceinline
-  ByMinUnknown::ByMinUnknown(Space* home, const VarBranchOptions& vbo)
+  ByMaxMax::ByMaxMax(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  ByMinUnknown::init(const Space*, CpltSetView x) {
-    Set::UnknownRanges<CpltSetView> unknown(x);
-    minUnknown = unknown.min();
+  ByMaxMax::init (const Space*, CpltSetView x) {
+    for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
+      max = u.max();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByMinUnknown::select(const Space*, CpltSetView x) {
-    Set::UnknownRanges<CpltSetView> unknown(x);
-    int um = unknown.min();
-    if (um < minUnknown) {
-      minUnknown = um; return VSS_BETTER;
-    } else if (um > minUnknown) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-  inline Support::Symbol
-  ByMinUnknown::type(void) {
-    return Support::Symbol("CpltSet::Branch::ByMinUnknown");
-  }
-
-
-  forceinline
-  ByMaxUnknown::ByMaxUnknown(void) {}
-  forceinline
-  ByMaxUnknown::ByMaxUnknown(Space* home, const VarBranchOptions& vbo)
-    : ViewSelBase<CpltSetView>(home,vbo) {}
-  forceinline ViewSelStatus
-  ByMaxUnknown::init (const Space*, CpltSetView x) {
-    Set::UnknownRanges<CpltSetView> unknown(x);
-    do {
-      maxUnknown = unknown.max();
-      ++unknown;
-    } while (unknown());
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMaxUnknown::select(const Space*, CpltSetView x) {
-    Set::UnknownRanges<CpltSetView> unknown(x);
+  ByMaxMax::select(const Space*, CpltSetView x) {
     int um = 0;
-    assert(unknown());
-    do {
-      um = unknown.max();
-      ++unknown;
-    } while (unknown());
-    if (um > maxUnknown) {
-      maxUnknown = um; return VSS_BETTER;
-    } else if (um < maxUnknown) {
+    for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
+      max = u.max();
+    if (um > max) {
+      max = um; return VSS_BETTER;
+    } else if (um < max) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
   inline Support::Symbol
-  ByMaxUnknown::type(void) {
-    return Support::Symbol("CpltSet::Branch::ByMaxUnknown");
+  ByMaxMax::type(void) {
+    return Support::Symbol("CpltSet::Branch::ByMaxMax");
   }
 
 }}}

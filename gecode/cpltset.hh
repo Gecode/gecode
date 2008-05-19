@@ -787,10 +787,19 @@ namespace Gecode {
     CPLTSET_VAL_MAX_EXC  ///< Exclude largest element
   };
 
-  /// Branch on \a x with variable selection \a vars and value selection \a vals
+  /// Branch over \a x with variable selection \a vars and value selection \a vals
+  GECODE_CPLTSET_EXPORT void
+  branch(Space* home, const CpltSetVarArgs& x,
+         CpltSetVarBranch vars, CpltSetValBranch vals,
+         const VarBranchOptions& o_vars = VarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_CPLTSET_EXPORT void
   branch(Space* home, const CpltSetVarArgs& x, 
-         CpltSetVarBranch vars, CpltSetValBranch vals);
+         const TieBreakVarBranch<CpltSetVarBranch>& vars, 
+         CpltSetValBranch vals,
+         const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}
 
 }
