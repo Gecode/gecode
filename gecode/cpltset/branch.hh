@@ -59,7 +59,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelVal
    */
-  template <bool exclude>
+  template <bool inc>
   class ValMin : public ValSelBase<CpltSetView,int> {
   public:
     /// Default constructor
@@ -85,7 +85,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelVal
    */
-  template <bool exclude>
+  template <bool inc>
   class ValMax : public ValSelBase<CpltSetView,int> {
   public:
     /// Default constructor

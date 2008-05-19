@@ -37,58 +37,55 @@
 
 namespace Gecode { namespace CpltSet { namespace Branch {
 
-  template<bool exclude>
+  template<bool inc>
   forceinline
-  ValMin<exclude>::ValMin(void) {}
-  template<bool exclude>
+  ValMin<inc>::ValMin(void) {}
+  template<bool inc>
   forceinline
-  ValMin<exclude>::ValMin(Space* home, const ValBranchOptions& vbo)
+  ValMin<inc>::ValMin(Space* home, const ValBranchOptions& vbo)
     : ValSelBase<CpltSetView,int>(home,vbo) {}
-  template <bool exclude>
+  template <bool inc>
   forceinline int
-  ValMin<exclude>::val(const Space*, CpltSetView x) const {
-    UnknownValues<CpltSetView> unknown(x);
-    return unknown.val();
+  ValMin<inc>::val(const Space*, CpltSetView x) const {
+    UnknownValues<CpltSetView> u(x);
+    return u.val();
   }
-  template <bool exclude>
+  template <bool inc>
   forceinline ModEvent
-  ValMin<exclude>::tell(Space* home, unsigned int a,
+  ValMin<inc>::tell(Space* home, unsigned int a,
                                CpltSetView x, int v) {
-    return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
+    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
-  template<bool exclude>
+  template<bool inc>
   inline Support::Symbol
-  ValMin<exclude>::type(void) {
+  ValMin<inc>::type(void) {
     return Support::Symbol("CpltSet::Branch::ValMin");
   }
 
 
-  template<bool exclude>
+  template<bool inc>
   forceinline
-  ValMax<exclude>::ValMax(void) {}
-  template<bool exclude>
+  ValMax<inc>::ValMax(void) {}
+  template<bool inc>
   forceinline
-  ValMax<exclude>::ValMax(Space* home, const ValBranchOptions& vbo)
+  ValMax<inc>::ValMax(Space* home, const ValBranchOptions& vbo)
     : ValSelBase<CpltSetView,int>(home,vbo) {}
-  template <bool exclude>
+  template <bool inc>
   forceinline int
-  ValMax<exclude>::val(const Space*, CpltSetView x) const {
-    int maxElem = 0;
-    Set::UnknownRanges<CpltSetView> unknown(x);
-    while (unknown()) {
-      maxElem = unknown.max();
-      ++unknown;
-    }
-    return maxElem;
+  ValMax<inc>::val(const Space*, CpltSetView x) const {
+    int max = 0;
+    for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
+      max = u.max();
+    return max;
   }
-  template <bool exclude>
+  template <bool inc>
   forceinline ModEvent
-  ValMax<exclude>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
-    return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
+  ValMax<inc>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
+    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
-  template<bool exclude>
+  template<bool inc>
   inline Support::Symbol
-  ValMax<exclude>::type(void) {
+  ValMax<inc>::type(void) {
     return Support::Symbol("CpltSet::Branch::ValMax");
   }
 
@@ -100,29 +97,29 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     switch (vals) {
     case CPLTSET_VAL_MIN_INC:
       {
-        ValMin<false> a(home,ValBranchOptions::def);
-        (void) new (home) ViewValBranching<SelView,ValMin<false> >
-          (home,x,v,a);
-      }
-      break;
-    case CPLTSET_VAL_MIN_EXC:
-      {
         ValMin<true> a(home,ValBranchOptions::def);
         (void) new (home) ViewValBranching<SelView,ValMin<true> >
           (home,x,v,a);
       }
       break;
+    case CPLTSET_VAL_MIN_EXC:
+      {
+        ValMin<false> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMin<false> >
+          (home,x,v,a);
+      }
+      break;
     case CPLTSET_VAL_MAX_INC:
       {
-        ValMax<false> a(home,ValBranchOptions::def);
-        (void) new (home) ViewValBranching<SelView,ValMax<false> >
+        ValMax<true> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMax<true> >
           (home,x,v,a);
       }
       break;
     case CPLTSET_VAL_MAX_EXC:
       {
-        ValMax<true> a(home,ValBranchOptions::def);
-        (void) new (home) ViewValBranching<SelView,ValMax<true> >
+        ValMax<false> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMax<false> >
           (home,x,v,a);
       }
       break;

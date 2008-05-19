@@ -43,46 +43,53 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
+  template <bool inc>
   forceinline
-  ValMin::ValMin(void) {}
+  ValMin<inc>::ValMin(void) {}
+  template <bool inc>
   forceinline
-  ValMin::ValMin(Space* home, const ValBranchOptions& vbo)
+  ValMin<inc>::ValMin(Space* home, const ValBranchOptions& vbo)
     : ValSelBase<SetView,int>(home,vbo) {}
+  template <bool inc>
   forceinline int
-  ValMin::val(const Space*, SetView x) const {
-    UnknownRanges<SetView> unknown(x);
-    return unknown.min();
+  ValMin<inc>::val(const Space*, SetView x) const {
+    UnknownRanges<SetView> u(x);
+    return u.min();
   }
+  template <bool inc>
   forceinline ModEvent
-  ValMin::tell(Space* home, unsigned int a, SetView x, int v) {
-    return (a == 0) ? x.include(home,v) : x.exclude(home,v);
+  ValMin<inc>::tell(Space* home, unsigned int a, SetView x, int v) {
+    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
+  template <bool inc>
   inline Support::Symbol
-  ValMin::type(void) {
+  ValMin<inc>::type(void) {
     return Support::Symbol("Gecode::Set::Branch::ValMin");
   }
 
+  template <bool inc>
   forceinline
-  ValMax::ValMax(void) {}
+  ValMax<inc>::ValMax(void) {}
+  template <bool inc>
   forceinline
-  ValMax::ValMax(Space* home, const ValBranchOptions& vbo)
+  ValMax<inc>::ValMax(Space* home, const ValBranchOptions& vbo)
     : ValSelBase<SetView,int>(home,vbo) {}
+  template <bool inc>
   forceinline int
-  ValMax::val(const Space*, SetView x) const {
-    int maxElem = 0;
-    UnknownRanges<SetView> unknown(x);
-    while (unknown()) {
-      maxElem = unknown.max();
-      ++unknown;
-    }
-    return maxElem;
+  ValMax<inc>::val(const Space*, SetView x) const {
+    int max = 0;
+    for (UnknownRanges<SetView> u(x); u(); ++u)
+      max = u.max();
+    return max;
   }
+  template <bool inc>
   forceinline ModEvent
-  ValMax::tell(Space* home, unsigned int a, SetView x, int v) {
-    return (a == 0) ? x.include(home,v) : x.exclude(home,v);
+  ValMax<inc>::tell(Space* home, unsigned int a, SetView x, int v) {
+    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
+  template <bool inc>
   inline Support::Symbol
-  ValMax::type(void) {
+  ValMax<inc>::type(void) {
     return Support::Symbol("Gecode::Set::Branch::ValMax");
   }
 
@@ -92,17 +99,27 @@ namespace Gecode { namespace Set { namespace Branch {
     SelView v(home,VarBranchOptions::def);
     switch (vals) {
     case SET_VAL_MIN_INC: 
+      {
+        ValMin<true> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMin<true> >(home,x,v,a);
+      }
+      break;
     case SET_VAL_MIN_EXC: 
       {
-        ValMin a(home,ValBranchOptions::def);
-        (void) new (home) ViewValBranching<SelView,ValMin>(home,x,v,a);
+        ValMin<false> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMin<false> >(home,x,v,a);
       }
       break;
     case SET_VAL_MAX_INC:
+      {
+        ValMax<true> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMax<true> >(home,x,v,a);
+      }
+      break;
     case SET_VAL_MAX_EXC:
       {
-        ValMax a(home,ValBranchOptions::def);
-        (void) new (home) ViewValBranching<SelView,ValMax>(home,x,v,a);
+        ValMax<false> a(home,ValBranchOptions::def);
+        (void) new (home) ViewValBranching<SelView,ValMax<false> >(home,x,v,a);
       }
       break;
     default:
