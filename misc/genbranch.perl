@@ -171,6 +171,7 @@ print "             const Gecode::VarBranchOptions& o_vars,\n";
 print "             Gecode::ViewSelVirtualBase<$view>*& v) {\n";
 print "    switch (vars) {\n";
 for ($i=0; $i<$n; $i++) {
+  next unless ($i != $none);
   print "     case $vb[$i]:\n";
   $l =  "       v = new (home) ViewSelVirtual<$type[$i]>(home,o_vars);\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
@@ -252,11 +253,13 @@ print "    }\n";
 print "    ViewArray<$view> xv(home,x);\n";
 print "    Gecode::ViewSelVirtualBase<$view>* tb[3];\n";
 print "    int n=0;\n";
-print "    virtualize(home,vars.b,o_vars.b,tb[n++]);\n";
+print "    if (vars.b != $vb[$none])\n";
+print "      virtualize(home,vars.b,o_vars.b,tb[n++]);\n";
 print "    if (vars.c != $vb[$none])\n";
 print "      virtualize(home,vars.c,o_vars.c,tb[n++]);\n";
 print "    if (vars.d != $vb[$none])\n";
 print "      virtualize(home,vars.d,o_vars.d,tb[n++]);\n";
+print "    assert(n > 0);\n";
 print "    ViewSelTieBreakDynamic<$view> vbcd(home,tb,n);\n";
 print "    switch (vars.a) {\n";
 for ($i=0; $i<$n; $i++) {

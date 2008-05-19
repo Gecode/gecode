@@ -49,9 +49,6 @@ namespace Gecode { namespace Set { namespace Branch {
              const Gecode::VarBranchOptions& o_vars,
              Gecode::ViewSelVirtualBase<SetView>*& v) {
     switch (vars) {
-     case SET_VAR_NONE:
-       v = new (home) ViewSelVirtual<ViewSelNone<SetView> >(home,o_vars);
-       break;
      case SET_VAR_RND:
        v = new (home) ViewSelVirtual<ViewSelRnd<SetView> >(home,o_vars);
        break;
@@ -186,11 +183,13 @@ namespace Gecode {
     ViewArray<SetView> xv(home,x);
     Gecode::ViewSelVirtualBase<SetView>* tb[3];
     int n=0;
-    virtualize(home,vars.b,o_vars.b,tb[n++]);
+    if (vars.b != SET_VAR_NONE)
+      virtualize(home,vars.b,o_vars.b,tb[n++]);
     if (vars.c != SET_VAR_NONE)
       virtualize(home,vars.c,o_vars.c,tb[n++]);
     if (vars.d != SET_VAR_NONE)
       virtualize(home,vars.d,o_vars.d,tb[n++]);
+    assert(n > 0);
     ViewSelTieBreakDynamic<SetView> vbcd(home,tb,n);
     switch (vars.a) {
     case SET_VAR_DEGREE_MIN:

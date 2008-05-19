@@ -77,11 +77,11 @@ Type:		ByMinMin
 Value:		CPLTSET_VAR_MIN_MAX
 Type:		ViewSelInvert<ByMinMin>
 [VarBranch]
-Value:		CPLTSET_VAR_MAX_MAX
-Type:		ViewSelInvert<ByMaxMax>
-[VarBranch]
 Value:		CPLTSET_VAR_MAX_MIN
 Type:		ByMaxMax
+[VarBranch]
+Value:		CPLTSET_VAR_MAX_MAX
+Type:		ViewSelInvert<ByMaxMax>
 [VarBranch]
 Value:		CPLTSET_VAR_SIZE_MIN
 Type:		BySizeMin

@@ -320,9 +320,10 @@ namespace Test { namespace Branch {
   public:
     std::string var, val;
     unsigned int a_d, c_d;
-    RunInfo(const std::string& varname, const std::string& valname,
+    RunInfo(const std::string& vara, const std::string& varb, 
+            const std::string& valname,
             const Gecode::Search::Options& o)
-      : var(varname), val(valname), a_d(o.a_d), c_d(o.c_d) {}
+      : var(vara + "::" + varb), val(valname), a_d(o.a_d), c_d(o.c_d) {}
     void print(std::ostream& o) const {
       o << "(" << var << ", " << val << ", " << a_d << ", " << c_d << ")";
     }
@@ -377,15 +378,20 @@ namespace Test { namespace Branch {
     post(root, root->x);
     results.clear();
 
-    for (int var = n_int_var_branch; var--; ) {
-      for (int val = n_int_val_branch; val--; ) {
-        IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
-        branch(c, c->x, int_var_branch[var], int_val_branch[val]);
-        Gecode::Search::Options o;
-        results[solutions(c,o)].push_back
-          (RunInfo(int_var_branch_name[var], 
-                   int_val_branch_name[val],
-                   o));
+    for (int vara = n_int_var_branch; vara--; ) {
+      for (int varb = n_int_var_branch; varb--; ) {
+        for (int val = n_int_val_branch; val--; ) {
+          IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
+          branch(c, c->x, 
+                 tiebreak(int_var_branch[vara],int_var_branch[varb]),
+                 int_val_branch[val]);
+          Gecode::Search::Options o;
+          results[solutions(c,o)].push_back
+            (RunInfo(int_var_branch_name[vara],
+                     int_var_branch_name[varb], 
+                     int_val_branch_name[val],
+                     o));
+        }
       }
     }
     if (results.size() > 1) 
@@ -425,15 +431,20 @@ namespace Test { namespace Branch {
     post(root, root->x);
     results.clear();
 
-    for (int var = n_int_var_branch; var--; ) {
-      for (int val = n_int_val_branch; val--; ) {
-        BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
-        branch(c, c->x, int_var_branch[var], int_val_branch[val]);
-        Gecode::Search::Options o;
-        results[solutions(c,o)].push_back
-          (RunInfo(int_var_branch_name[var], 
-                   int_val_branch_name[val],
-                   o));
+    for (int vara = n_int_var_branch; vara--; ) {
+      for (int varb = n_int_var_branch; varb--; ) {
+        for (int val = n_int_val_branch; val--; ) {
+          BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
+          branch(c, c->x, 
+                 tiebreak(int_var_branch[vara], int_var_branch[varb]), 
+                 int_val_branch[val]);
+          Gecode::Search::Options o;
+          results[solutions(c,o)].push_back
+            (RunInfo(int_var_branch_name[vara], 
+                     int_var_branch_name[varb],
+                     int_val_branch_name[val],
+                     o));
+        }
       }
     }
     if (results.size() > 1) 
@@ -475,15 +486,20 @@ namespace Test { namespace Branch {
     root->status();
     results.clear();
 
-    for (int var = n_set_var_branch; var--; ) {
-      for (int val = n_set_val_branch; val--; ) {
-        SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
-        branch(c, c->x, set_var_branch[var], set_val_branch[val]);
-        Gecode::Search::Options o;
-        results[solutions(c,o)].push_back
-          (RunInfo(set_var_branch_name[var], 
-                   set_val_branch_name[val],
-                   o));
+    for (int vara = n_set_var_branch; vara--; ) {
+      for (int varb = n_set_var_branch; varb--; ) {
+        for (int val = n_set_val_branch; val--; ) {
+          SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
+          branch(c, c->x, 
+                 tiebreak(set_var_branch[vara], set_var_branch[varb]), 
+                 set_val_branch[val]);
+          Gecode::Search::Options o;
+          results[solutions(c,o)].push_back
+            (RunInfo(set_var_branch_name[vara], 
+                     set_var_branch_name[varb], 
+                     set_val_branch_name[val],
+                     o));
+        }
       }
     }
     if (results.size() > 1) 
@@ -527,16 +543,21 @@ namespace Test { namespace Branch {
     root->status();
     results.clear();
 
-    for (int var = n_cpltset_var_branch; var--; ) {
-      for (int val = n_cpltset_val_branch; val--; ) {
-        CpltSetTestSpace* c = 
-          static_cast<CpltSetTestSpace*>(root->clone(false));
-        branch(c, c->x, cpltset_var_branch[var], cpltset_val_branch[val]);
-        Gecode::Search::Options o;
-        results[solutions(c,o)].push_back
-          (RunInfo(cpltset_var_branch_name[var], 
-                   cpltset_val_branch_name[val],
-                   o));
+    for (int vara = n_cpltset_var_branch; vara--; ) {
+      for (int varb = n_cpltset_var_branch; varb--; ) {
+        for (int val = n_cpltset_val_branch; val--; ) {
+          CpltSetTestSpace* c = 
+            static_cast<CpltSetTestSpace*>(root->clone(false));
+          branch(c, c->x, 
+                 tiebreak(cpltset_var_branch[vara], cpltset_var_branch[varb]), 
+                 cpltset_val_branch[val]);
+          Gecode::Search::Options o;
+          results[solutions(c,o)].push_back
+            (RunInfo(cpltset_var_branch_name[vara], 
+                     cpltset_var_branch_name[varb], 
+                     cpltset_val_branch_name[val],
+                     o));
+        }
       }
     }
     if (results.size() > 1) 

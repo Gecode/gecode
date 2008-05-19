@@ -49,9 +49,6 @@ namespace Gecode { namespace Int { namespace Branch {
              const Gecode::VarBranchOptions& o_vars,
              Gecode::ViewSelVirtualBase<IntView>*& v) {
     switch (vars) {
-     case INT_VAR_NONE:
-       v = new (home) ViewSelVirtual<ViewSelNone<IntView> >(home,o_vars);
-       break;
      case INT_VAR_RND:
        v = new (home) ViewSelVirtual<ViewSelRnd<IntView> >(home,o_vars);
        break;
@@ -240,11 +237,13 @@ namespace Gecode {
     ViewArray<IntView> xv(home,x);
     Gecode::ViewSelVirtualBase<IntView>* tb[3];
     int n=0;
-    virtualize(home,vars.b,o_vars.b,tb[n++]);
+    if (vars.b != INT_VAR_NONE)
+      virtualize(home,vars.b,o_vars.b,tb[n++]);
     if (vars.c != INT_VAR_NONE)
       virtualize(home,vars.c,o_vars.c,tb[n++]);
     if (vars.d != INT_VAR_NONE)
       virtualize(home,vars.d,o_vars.d,tb[n++]);
+    assert(n > 0);
     ViewSelTieBreakDynamic<IntView> vbcd(home,tb,n);
     switch (vars.a) {
     case INT_VAR_MIN_MIN:

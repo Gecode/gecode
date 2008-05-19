@@ -49,9 +49,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
              const Gecode::VarBranchOptions& o_vars,
              Gecode::ViewSelVirtualBase<CpltSetView>*& v) {
     switch (vars) {
-     case CPLTSET_VAR_NONE:
-       v = new (home) ViewSelVirtual<ViewSelNone<CpltSetView> >(home,o_vars);
-       break;
      case CPLTSET_VAR_RND:
        v = new (home) ViewSelVirtual<ViewSelRnd<CpltSetView> >(home,o_vars);
        break;
@@ -67,11 +64,11 @@ namespace Gecode { namespace CpltSet { namespace Branch {
      case CPLTSET_VAR_MIN_MAX:
        v = new (home) ViewSelVirtual<ViewSelInvert<ByMinMin> >(home,o_vars);
        break;
-     case CPLTSET_VAR_MAX_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByMaxMax> >(home,o_vars);
-       break;
      case CPLTSET_VAR_MAX_MIN:
        v = new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
+       break;
+     case CPLTSET_VAR_MAX_MAX:
+       v = new (home) ViewSelVirtual<ViewSelInvert<ByMaxMax> >(home,o_vars);
        break;
      case CPLTSET_VAR_SIZE_MIN:
        v = new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
@@ -137,15 +134,15 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals);
       }
       break;
-    case CPLTSET_VAR_MAX_MAX:
-      {
-        ViewSelInvert<ByMaxMax> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
-      }
-      break;
     case CPLTSET_VAR_MAX_MIN:
       {
         ByMaxMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MAX_MAX:
+      {
+        ViewSelInvert<ByMaxMax> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -186,11 +183,13 @@ namespace Gecode {
     ViewArray<CpltSetView> xv(home,x);
     Gecode::ViewSelVirtualBase<CpltSetView>* tb[3];
     int n=0;
-    virtualize(home,vars.b,o_vars.b,tb[n++]);
+    if (vars.b != CPLTSET_VAR_NONE)
+      virtualize(home,vars.b,o_vars.b,tb[n++]);
     if (vars.c != CPLTSET_VAR_NONE)
       virtualize(home,vars.c,o_vars.c,tb[n++]);
     if (vars.d != CPLTSET_VAR_NONE)
       virtualize(home,vars.d,o_vars.d,tb[n++]);
+    assert(n > 0);
     ViewSelTieBreakDynamic<CpltSetView> vbcd(home,tb,n);
     switch (vars.a) {
     case CPLTSET_VAR_DEGREE_MIN:
@@ -225,18 +224,18 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals);
       }
       break;
-    case CPLTSET_VAR_MAX_MAX:
-      {
-        ViewSelInvert<ByMaxMax> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByMaxMax>,
-          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
-      }
-      break;
     case CPLTSET_VAR_MAX_MIN:
       {
         ByMaxMax va(home,o_vars.a);
         ViewSelTieBreakStatic<ByMaxMax,
+          ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case CPLTSET_VAR_MAX_MAX:
+      {
+        ViewSelInvert<ByMaxMax> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ByMaxMax>,
           ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
