@@ -140,14 +140,15 @@ namespace Test { namespace Branch {
   /// Integer variable selections
   const Gecode::IntVarBranch int_var_branch[] = {
     Gecode::INT_VAR_NONE,
-    Gecode::INT_VAR_MIN_MIN,       
+    Gecode::INT_VAR_RND,
+    Gecode::INT_VAR_DEGREE_MIN,
+    Gecode::INT_VAR_DEGREE_MAX,
+    Gecode::INT_VAR_MIN_MIN,
     Gecode::INT_VAR_MIN_MAX,
     Gecode::INT_VAR_MAX_MIN,
     Gecode::INT_VAR_MAX_MAX,
     Gecode::INT_VAR_SIZE_MIN,
     Gecode::INT_VAR_SIZE_MAX,
-    Gecode::INT_VAR_DEGREE_MIN,
-    Gecode::INT_VAR_DEGREE_MAX,
     Gecode::INT_VAR_SIZE_DEGREE_MIN,
     Gecode::INT_VAR_SIZE_DEGREE_MAX,
     Gecode::INT_VAR_REGRET_MIN_MIN,
@@ -161,14 +162,15 @@ namespace Test { namespace Branch {
   /// Names for integer variable selections
   const char* int_var_branch_name[] = {
     "INT_VAR_NONE",
-    "INT_VAR_MIN_MIN",       
+    "INT_VAR_RND",
+    "INT_VAR_DEGREE_MIN",
+    "INT_VAR_DEGREE_MAX",
+    "INT_VAR_MIN_MIN",
     "INT_VAR_MIN_MAX",
     "INT_VAR_MAX_MIN",
     "INT_VAR_MAX_MAX",
     "INT_VAR_SIZE_MIN",
     "INT_VAR_SIZE_MAX",
-    "INT_VAR_DEGREE_MIN",
-    "INT_VAR_DEGREE_MAX",
     "INT_VAR_SIZE_DEGREE_MIN",
     "INT_VAR_SIZE_DEGREE_MAX",
     "INT_VAR_REGRET_MIN_MIN",
@@ -181,6 +183,7 @@ namespace Test { namespace Branch {
     Gecode::INT_VAL_MIN,
     Gecode::INT_VAL_MED,
     Gecode::INT_VAL_MAX,
+    Gecode::INT_VAL_RND,
     Gecode::INT_VAL_SPLIT_MIN,
     Gecode::INT_VAL_SPLIT_MAX,
     Gecode::INT_VALUES_MIN,
@@ -194,10 +197,11 @@ namespace Test { namespace Branch {
     "INT_VAL_MIN",
     "INT_VAL_MED",
     "INT_VAL_MAX",
+    "INT_VAL_RND",
     "INT_VAL_SPLIT_MIN",
     "INT_VAL_SPLIT_MAX",
     "INT_VALUES_MIN",
-    "INT_VALUES_MIN"
+    "INT_VALUES_MAX"
   };
   //@}
 
@@ -210,10 +214,15 @@ namespace Test { namespace Branch {
   /// Set variable selections
   const Gecode::SetVarBranch set_var_branch[] = {
     Gecode::SET_VAR_NONE,
-    Gecode::SET_VAR_MIN_CARD,
-    Gecode::SET_VAR_MAX_CARD,
-    Gecode::SET_VAR_MIN_UNKNOWN_ELEM,
-    Gecode::SET_VAR_MAX_UNKNOWN_ELEM
+    Gecode::SET_VAR_RND,
+    Gecode::SET_VAR_DEGREE_MIN,
+    Gecode::SET_VAR_DEGREE_MAX,
+    Gecode::SET_VAR_MIN_MIN,
+    Gecode::SET_VAR_MIN_MAX,
+    Gecode::SET_VAR_MAX_MIN,
+    Gecode::SET_VAR_MAX_MAX,
+    Gecode::SET_VAR_SIZE_MIN,
+    Gecode::SET_VAR_SIZE_MAX
   };
   /// Number of set variable selections
   const int n_set_var_branch = 
@@ -221,23 +230,32 @@ namespace Test { namespace Branch {
   /// Names for set variable selections
   const char* set_var_branch_name[] = {
     "SET_VAR_NONE",
-    "SET_VAR_MIN_CARD",
-    "SET_VAR_MAX_CARD",
-    "SET_VAR_MIN_UNKNOWN_ELEM",
-    "SET_VAR_MAX_UNKNOWN_ELEM"
+    "SET_VAR_RND",
+    "SET_VAR_DEGREE_MIN",
+    "SET_VAR_DEGREE_MAX",
+    "SET_VAR_MIN_MIN",
+    "SET_VAR_MIN_MAX",
+    "SET_VAR_MAX_MIN",
+    "SET_VAR_MAX_MAX",
+    "SET_VAR_SIZE_MIN",
+    "SET_VAR_SIZE_MAX"
   };
   /// Set value selections
   const Gecode::SetValBranch set_val_branch[] = {
-    Gecode::SET_VAL_MIN,
-    Gecode::SET_VAL_MAX
+    Gecode::SET_VAL_MIN_INC,
+    Gecode::SET_VAL_MIN_EXC,
+    Gecode::SET_VAL_MAX_INC,
+    Gecode::SET_VAL_MAX_EXC
   };
   /// Number of set value selections
   const int n_set_val_branch =
     sizeof(set_val_branch)/sizeof(Gecode::SetValBranch);
   /// Names for set value selections
   const char* set_val_branch_name[] = {
-    "SET_VAL_MIN",
-    "SET_VAL_MAX"
+    "SET_VAL_MIN_INC",
+    "SET_VAL_MIN_EXC",
+    "SET_VAL_MAX_INC",
+    "SET_VAL_MAX_EXC"
   };
   //@}
 #endif
@@ -251,10 +269,15 @@ namespace Test { namespace Branch {
   /// CpltSet variable selections
   const Gecode::CpltSetVarBranch cpltset_var_branch[] = {
     Gecode::CPLTSET_VAR_NONE,
-    Gecode::CPLTSET_VAR_MIN_CARD,
-    Gecode::CPLTSET_VAR_MAX_CARD,
-    Gecode::CPLTSET_VAR_MIN_UNKNOWN_ELEM,
-    Gecode::CPLTSET_VAR_MAX_UNKNOWN_ELEM
+    Gecode::CPLTSET_VAR_RND,
+    Gecode::CPLTSET_VAR_DEGREE_MIN,
+    Gecode::CPLTSET_VAR_DEGREE_MAX,
+    Gecode::CPLTSET_VAR_MIN_MIN,
+    Gecode::CPLTSET_VAR_MIN_MAX,
+    Gecode::CPLTSET_VAR_MAX_MIN,
+    Gecode::CPLTSET_VAR_MAX_MAX,
+    Gecode::CPLTSET_VAR_SIZE_MIN,
+    Gecode::CPLTSET_VAR_SIZE_MAX
   };
   /// Number of CpltSet variable selections
   const int n_cpltset_var_branch = 
@@ -262,27 +285,32 @@ namespace Test { namespace Branch {
   /// Names for CpltSet variable selections
   const char* cpltset_var_branch_name[] = {
     "CPLTSET_VAR_NONE",
-    "CPLTSET_VAR_MIN_CARD",
-    "CPLTSET_VAR_MAX_CARD",
-    "CPLTSET_VAR_MIN_UNKNOWN_ELEM",
-    "CPLTSET_VAR_MAX_UNKNOWN_ELEM"
+    "CPLTSET_VAR_RND",
+    "CPLTSET_VAR_DEGREE_MIN",
+    "CPLTSET_VAR_DEGREE_MAX",
+    "CPLTSET_VAR_MIN_MIN",
+    "CPLTSET_VAR_MIN_MAX",
+    "CPLTSET_VAR_MAX_MIN",
+    "CPLTSET_VAR_MAX_MAX",
+    "CPLTSET_VAR_SIZE_MIN",
+    "CPLTSET_VAR_SIZE_MAX"
   };
   /// Set value selections
   const Gecode::CpltSetValBranch cpltset_val_branch[] = {
-    Gecode::CPLTSET_VAL_MIN_UNKNOWN,
-    Gecode::CPLTSET_VAL_MAX_UNKNOWN,
-    Gecode::CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST,
-    Gecode::CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST
+    Gecode::CPLTSET_VAL_MIN_INC,
+    Gecode::CPLTSET_VAL_MIN_EXC,
+    Gecode::CPLTSET_VAL_MAX_INC,
+    Gecode::CPLTSET_VAL_MAX_EXC
   };
   /// Number of set value selections
   const int n_cpltset_val_branch =
     sizeof(cpltset_val_branch)/sizeof(Gecode::CpltSetValBranch);
   /// Names for set value selections
   const char* cpltset_val_branch_name[] = {
-    "CPLTSET_VAL_MIN_UNKNOWN",
-    "CPLTSET_VAL_MAX_UNKNOWN",
-    "CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST",
-    "CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST"
+    "CPLTSET_VAL_MIN_INC",
+    "CPLTSET_VAL_MIN_EXC",
+    "CPLTSET_VAL_MAX_INC",
+    "CPLTSET_VAL_MAX_EXC"
   };
   //@}
 #endif
