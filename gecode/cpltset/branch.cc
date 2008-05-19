@@ -43,6 +43,7 @@
 
 namespace Gecode { namespace CpltSet { namespace Branch { 
 
+  /// Create virtual view selector for tie-breaking
   void
   virtualize(Gecode::Space* home, CpltSetVarBranch vars,
              const Gecode::VarBranchOptions& o_vars,

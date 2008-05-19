@@ -38,6 +38,12 @@
 namespace Gecode {
 
   /**
+   * \defgroup TaskBranchTieBreak Generic view tie-breaking for branching based on view and value selection
+   *
+   * \ingroup TaskBranchViewVal
+   */
+  //@{
+  /**
    * \brief View selection class for static tie breaking
    */
   template<class A, class B>
@@ -231,6 +237,7 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
+  //@}
 
 
   // Select variable with static tie breaking

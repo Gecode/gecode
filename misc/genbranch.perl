@@ -164,6 +164,7 @@ foreach $ns (split('::',$lns)) {
   print "namespace $ns { ";
 }
 print "\n\n";
+print "  /// Create virtual view selector for tie-breaking\n";
 print "  void\n";
 print "  virtualize(Gecode::Space* home, $varbranch vars,\n";
 print "             const Gecode::VarBranchOptions& o_vars,\n";

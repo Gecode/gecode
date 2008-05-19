@@ -37,6 +37,12 @@
 
 namespace Gecode {
 
+  /**
+   * \defgroup TaskBranchValSel Generic value selection for branching based on view and value selection
+   *
+   * \ingroup TaskBranchViewVal
+   */
+  //@{
   /// Emty value selection description
   class EmptyValSelDesc {
   public:
@@ -75,6 +81,7 @@ namespace Gecode {
     /// Delete value selection
     void dispose(Space* home);
   };
+  //@}
 
 
   // Empty value selection description

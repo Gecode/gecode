@@ -43,6 +43,7 @@
 
 namespace Gecode { namespace Int { namespace Branch { 
 
+  /// Create virtual view selector for tie-breaking
   void
   virtualize(Gecode::Space* home, IntVarBranch vars,
              const Gecode::VarBranchOptions& o_vars,

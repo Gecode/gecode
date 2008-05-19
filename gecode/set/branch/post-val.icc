@@ -43,6 +43,7 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
+  /// Post branching according to \a v and \a vals
   template <class SelView>
   void
   post(Space* home, ViewArray<SetView>& x, SelView& v,

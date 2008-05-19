@@ -37,6 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
+  /// Post branching according to \a v and \a vals
   template <class SelView>
   void
   post(Space* home, ViewArray<IntView>& x, SelView& v, 
@@ -99,4 +100,4 @@ namespace Gecode { namespace Int { namespace Branch {
       
 }}}
 
-// STATISTICS: int-post
+// STATISTICS: int-branch

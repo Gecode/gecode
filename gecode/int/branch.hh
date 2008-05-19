@@ -217,7 +217,6 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief Branching by view and values selection
    *
-   * For an explanation of \a ViewSel see the class Gecode::ViewBranching.
    */
   template <class ViewSel, class View>
   class ViewValuesBranching : public ViewBranching<ViewSel> {

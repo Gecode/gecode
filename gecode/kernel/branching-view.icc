@@ -37,6 +37,12 @@
 
 namespace Gecode {
 
+  /**
+   * \defgroup TaskBranchViewSel Generic view selection for branching based on view and value selection
+   *
+   * \ingroup TaskBranchViewVal
+   */
+  //@{
   /// Emty view selection description
   class EmptyViewSelDesc {
   public:
@@ -177,7 +183,7 @@ namespace Gecode {
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
-
+  //@}
 
   // Empty view selection description
   forceinline size_t
