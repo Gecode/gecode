@@ -35,17 +35,15 @@
 
 [Header]
 
-namespace Gecode { namespace Int { namespace Branch {
-
 [Footer]
 
-}}}
-
-// STATISTICS: int-post
+// STATISTICS: int-branch
 
 [General]
 # Type of view
 View:		BoolView
+# Type of variable argument
+VarArgs:	BoolVarArgs
 # Type of variable branching selection
 VarBranch:	IntVarBranch
 # Type of value branch selection
@@ -54,13 +52,17 @@ ValBranch:	IntValBranch
 Exception:	UnknownBranching("Int::branch")
 # Header file to include
 Include:	"gecode/int/branch.hh"
+# Local namespace
+LNS:		Gecode::Int::Branch
+# Global namespace
+GNS:		Gecode
 [VarBranch]
 # Value for branching selection, mark as special
 Value:		INT_VAR_NONE = NONE
 # Corresponding type
 Type:		ViewSelNone<BoolView>
 [VarBranch]
-Value:		INT_VAR_RND
+Value:		INT_VAR_RND = COMPLETE
 Type:		ViewSelRnd<BoolView>
 [VarBranch]
 Value:		INT_VAR_MIN_MIN

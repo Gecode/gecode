@@ -2003,25 +2003,25 @@ namespace Gecode {
     INT_VALUES_MAX     ///< Try all values starting from largest
   };
 
-  /**
-   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
-   *
-   * Note that a value of type IntVarBranch can be passed for \a vars,
-   * as it will be automatically converted into the right type.
-   *
-   */
+  /// Branch over \a x with variable selection \a vars and value selection \a vals
+  GECODE_INT_EXPORT void
+  branch(Space* home, const IntVarArgs& x,
+         IntVarBranch vars, IntValBranch vals,
+         const VarBranchOptions& o_vars = VarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
   branch(Space* home, const IntVarArgs& x, 
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /**
-   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
-   *
-   * Note that a value of type IntVarBranch can be passed for \a vars,
-   * as it will be automatically converted into the right type.
-   *
-   */
+  /// Branch over \a x with variable selection \a vars and value selection \a vals
+  GECODE_INT_EXPORT void
+  branch(Space* home, const BoolVarArgs& x, 
+         IntVarBranch vars, IntValBranch vals,
+         const VarBranchOptions& o_vars = VarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
   branch(Space* home, const BoolVarArgs& x, 
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,

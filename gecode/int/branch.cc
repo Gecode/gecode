@@ -40,25 +40,6 @@
 namespace Gecode {
 
   void
-  branch(Space* home, const IntVarArgs& x,
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-         const TieBreakVarBranchOptions& o_vars,
-         const ValBranchOptions& o_vals) {
-    ViewArray<Int::IntView> xv(home,x);
-    Int::Branch::post(home,xv,vars,vals,o_vars,o_vals);
-  }
-
-  void
-  branch(Space* home, const BoolVarArgs& x,
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-         const TieBreakVarBranchOptions& o_vars,
-         const ValBranchOptions& o_vals) {
-    ViewArray<Int::BoolView> xv(home,x);
-    Int::Branch::post(home,xv,vars,vals,o_vars,o_vals);
-  }
-
-
-  void
   assign(Space* home, const IntVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals) {
     using namespace Int;

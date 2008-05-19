@@ -78,7 +78,7 @@ namespace Gecode {
   class ViewSelInvert {
   protected:
     /// View selection to be inverted
-    typename ViewSel viewsel;
+    ViewSel viewsel;
   public:
     /// View type
     typedef typename ViewSel::View View;

@@ -7580,6 +7580,36 @@ public:
     switch(spec.noOfArgs()) {
     case 3:
       {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
+            isEnum_IntVarBranch(spec[1]) &&
+            isEnum_IntValBranch(spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
+          Gecode::IntVarBranch x1 = toEnum_IntVarBranch(spec[1]);
+          Gecode::IntValBranch x2 = toEnum_IntValBranch(spec[2]);
+          Gecode::branch(home, x0,x1,x2);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
+            isEnum_IntVarBranch(spec[1]) &&
+            isEnum_IntValBranch(spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
+          Gecode::IntVarBranch x1 = toEnum_IntVarBranch(spec[1]);
+          Gecode::IntValBranch x2 = toEnum_IntValBranch(spec[2]);
+          Gecode::branch(home, x0,x1,x2);
+          return;
+        }
+#endif
 #if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
             isEnum_SetVarBranch(spec[1]) &&

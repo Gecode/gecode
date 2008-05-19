@@ -439,18 +439,6 @@ namespace Gecode { namespace Int { namespace Branch {
     static Support::Symbol type(void);
   };
 
-  GECODE_INT_EXPORT void
-  post(Space* home, ViewArray<IntView>& x,
-       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-       const TieBreakVarBranchOptions& o_vars,
-       const ValBranchOptions& o_vals);
-
-  GECODE_INT_EXPORT void
-  post(Space* home, ViewArray<BoolView>& x,
-       const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-       const TieBreakVarBranchOptions& o_vars,
-       const ValBranchOptions& o_vals);
-
 }}}
 
 #include "gecode/int/branch/select-val.icc"

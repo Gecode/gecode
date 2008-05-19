@@ -96,10 +96,16 @@ while ($l = <FILE>) {
       next if ($l =~ /^\#/);
       if ($l =~ /^View:\s*(\w+)/io) {
 	$view = $1;
+      } elsif ($l =~ /^VarArgs:\s*(\w+)/io) {
+	$varargs = $1;
       } elsif ($l =~ /^VarBranch:\s*(\w+)/io) {
 	$varbranch = $1;
       } elsif ($l =~ /^ValBranch:\s*(\w+)/io) {
 	$valbranch = $1;
+      } elsif ($l =~ /^GNS:\s*(.+)/io) {
+	$gns = $1;
+      } elsif ($l =~ /^LNS:\s*(.+)/io) {
+	$lns = $1;
       } elsif ($l =~ /^Exception:\s*(.+)/io) {
 	$exception = $1;
       } elsif ($l =~ /^Include:\s*(.+)/io) {
@@ -117,6 +123,12 @@ while ($l = <FILE>) {
 	$vb[$n] = $lhs;
 	$number{$lhs} = $n;
 	$none = $n;
+      } elsif ($l =~ /^Value:\s*(\w+)\s*=\s*COMPLETE/io) {
+	# Found a special variable branching
+	$lhs = $1;
+	$vb[$n] = $lhs;
+	$number{$lhs} = $n;
+	$complete[$n] = 1;
       } elsif ($l =~ /^Value:\s*(\w+)/io) {
 	# Found a normal variable branching
 	$vb[$n] = $1;
@@ -148,6 +160,10 @@ if ($hasinclude) {
 print "#include $include\n";
 }
 print $hdr;
+foreach $ns (split('::',$lns)) {
+  print "namespace $ns { ";
+}
+print "\n\n";
 print "  Gecode::ViewSelVirtualBase<$view>*\n";
 print "  virtualize(Gecode::Space* home, $varbranch vars,\n";
 print "             const Gecode::VarBranchOptions& o_vars) {\n";
@@ -162,54 +178,101 @@ print "    default:\n";
 print "      throw $exception;\n";
 print "    }\n";
 print "  }\n\n";
+foreach $ns (split('::',$lns)) {
+  print "}";
+}
+print "\n\n";
+foreach $ns (split('::',$gns)) {
+  print "namespace $ns { ";
+}
+print "\n\n";
 print "  void\n";
-print "  post(Gecode::Space* home, Gecode::ViewArray<$view>\& x,\n";
-print "       const Gecode::TieBreakVarBranch<$varbranch>\& vars,\n";
-print "       $valbranch vals,\n";
-print "       const Gecode::TieBreakVarBranchOptions& o_vars,\n";
-print "       const Gecode::ValBranchOptions& o_vals) {\n";
-print "    if ((vars.a == $vb[$none]) ||\n";
-print "        ((vars.b == $vb[$none]) && \n";
-print "         (vars.c == $vb[$none]) && \n";
-print "         (vars.d == $vb[$none]))) {\n";
-print "      switch (vars.a) {\n";
+print "  branch(Gecode::Space* home, const $varargs\& x,\n";
+print "         $varbranch vars, $valbranch vals,\n";
+print "         const Gecode::VarBranchOptions& o_vars,\n";
+print "         const Gecode::ValBranchOptions& o_vals) {\n";
+$ans = "";
+foreach $ns (split('::',$lns)) {
+  if ($ans eq "") {
+    $ans = $ns;
+  } else {
+    $ans = "${ans}\:\:$ns";
+  }
+  print "    using namespace $ans;\n";
+}
+print "\n\n";
+print "    if (home->failed()) return;\n";
+print "    ViewArray<$view> xv(home,x);\n";
+print "    switch (vars) {\n";
 for ($i=0; $i<$n; $i++) {
-  print "      case $vb[$i]:\n";
-  print "        {\n";
-  $l =  "          $type[$i] v(home,o_vars.a);\n";
+  print "    case $vb[$i]:\n";
+  print "      {\n";
+  $l =  "        $type[$i] v(home,o_vars);\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
-  print "          post(home,x,v,vals,o_vals);\n";
-  print "        }\n";
-  print "        break;\n";
+  print "        post(home,xv,v,vals,o_vals);\n";
+  print "      }\n";
+  print "      break;\n";
 }
-print "      default:\n";
-print "        throw $exception;\n";
-print "      }\n";
-print "    } else {\n";
-print "      Gecode::ViewSelVirtualBase<$view>* tb[3];\n";
-print "      int n=0;\n";
-print "      tb[n++] = virtualize(home,vars.b,o_vars.b);\n";
-print "      if (vars.c != $vb[$none])\n";
-print "        tb[n++] = virtualize(home,vars.c,o_vars.c);\n";
-print "      if (vars.d != $vb[$none])\n";
-print "        tb[n++] = virtualize(home,vars.d,o_vars.d);\n";
-print "      ViewSelTieBreakDynamic<$view> vbcd(home,tb,n);\n";
-print "      switch (vars.a) {\n";
-for ($i=0; $i<$n; $i++) {
-  next unless $i != $none;
-  print "      case $vb[$i]:\n";
-  print "        {\n";
-  print "          $type[$i] va(home,o_vars.a);\n";
-  print "          ViewSelTieBreakStatic<$type[$i],\n";
-  print "            ViewSelTieBreakDynamic<$view> > v(home,va,vbcd);\n";
-  print "          post(home,x,v,vals,o_vals);\n";
-  print "        }\n";
-  print "        break;\n";
-}
-print "      default:\n";
-print "        throw $exception;\n";
-print "      }\n";
+print "    default:\n";
+print "      throw $exception;\n";
 print "    }\n";
 print "  }\n\n";
+print "  void\n";
+print "  branch(Gecode::Space* home, const $varargs\& x,\n";
+print "         const Gecode::TieBreakVarBranch<$varbranch>\& vars,\n";
+print "         $valbranch vals,\n";
+print "         const Gecode::TieBreakVarBranchOptions& o_vars,\n";
+print "         const Gecode::ValBranchOptions& o_vals) {\n";
+$ans = "";
+foreach $ns (split('::',$lns)) {
+  if ($ans eq "") {
+    $ans = $ns;
+  } else {
+    $ans = "${ans}\:\:$ns";
+  }
+  print "    using namespace $ans;\n";
+}
+print "\n\n";
+print "    if (home->failed()) return;\n";
+$c = "";
+for ($i=0; $i<$n; $i++) {
+  if ($complete[$i]) {
+    $c = "$c || (vars.a == $vb[$i])";
+  }
+}
+print "    if ((vars.a == $vb[$none])$c ||\n";
+print "        ((vars.b == $vb[$none]) && (vars.c == $vb[$none]) && (vars.d == $vb[$none]))) {\n";
+print "      branch(home,x,vars.a,vals,o_vars.a,o_vals);\n";
+print "      return;\n";
+print "    }\n";
+print "    ViewArray<$view> xv(home,x);\n";
+print "    Gecode::ViewSelVirtualBase<$view>* tb[3];\n";
+print "    int n=0;\n";
+print "    tb[n++] = virtualize(home,vars.b,o_vars.b);\n";
+print "    if (vars.c != $vb[$none])\n";
+print "      tb[n++] = virtualize(home,vars.c,o_vars.c);\n";
+print "    if (vars.d != $vb[$none])\n";
+print "      tb[n++] = virtualize(home,vars.d,o_vars.d);\n";
+print "    ViewSelTieBreakDynamic<$view> vbcd(home,tb,n);\n";
+print "    switch (vars.a) {\n";
+for ($i=0; $i<$n; $i++) {
+  next unless ($i != $none) && !$complete[$i];
+  print "    case $vb[$i]:\n";
+  print "      {\n";
+  print "        $type[$i] va(home,o_vars.a);\n";
+  print "        ViewSelTieBreakStatic<$type[$i],\n";
+  print "          ViewSelTieBreakDynamic<$view> > v(home,va,vbcd);\n";
+  print "        post(home,xv,v,vals,o_vals);\n";
+  print "      }\n";
+  print "      break;\n";
+}
+print "    default:\n";
+print "      throw $exception;\n";
+print "    }\n";
+print "  }\n\n";
+foreach $ns (split('::',$gns)) {
+  print "}";
+}
+print "\n\n";
 print $ftr;
