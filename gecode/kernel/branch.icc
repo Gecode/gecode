@@ -35,6 +35,8 @@
  *
  */
 
+#include <ctime>
+
 namespace Gecode {
   
   /// Variable branch options
@@ -46,6 +48,8 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static const VarBranchOptions def;
     /// Initialize with default values
     VarBranchOptions(void);
+    /// Return object with time-based seed value
+    static VarBranchOptions time(void);
   };
 
   /// Value branch options
@@ -57,6 +61,8 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static const ValBranchOptions def;
     /// Initialize with default values
     ValBranchOptions(void);
+    /// Return object with time-based seed value
+    static ValBranchOptions time(void);
   };
 
 
@@ -122,10 +128,18 @@ namespace Gecode {
   // Variable branch options
   forceinline
   VarBranchOptions::VarBranchOptions(void) : seed(0) {}
+  forceinline VarBranchOptions
+  VarBranchOptions::time(void) {
+    VarBranchOptions o; o.seed=::time(NULL); return o;
+  }
 
   // Value branch options
   forceinline
   ValBranchOptions::ValBranchOptions(void) : seed(0) {}
+  forceinline ValBranchOptions
+  ValBranchOptions::time(void) {
+    ValBranchOptions o; o.seed=::time(NULL); return o;
+  }
 
 
   /*
