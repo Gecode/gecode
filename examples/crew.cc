@@ -147,7 +147,7 @@ public:
     }
     rel(this, flight[noOfFlights-2], SRT_DISJ, flight[noOfFlights-1]);
 
-    branch(this, flight, SET_VAR_NONE, SET_VAL_MIN);
+    branch(this, flight, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Print solution

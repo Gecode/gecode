@@ -147,7 +147,7 @@ public:
       }
     }
 
-    branch(this, triples, SET_VAR_NONE, SET_VAL_MIN);
+    branch(this, triples, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Print solution

@@ -132,19 +132,27 @@ bool isEnum_SetOpType(Gecode::Reflection::Arg* a) {
 Gecode::SetValBranch toEnum_SetValBranch(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
-  if (!strcmp(av, "SET_VAL_MIN"))
-    return Gecode::SET_VAL_MIN;
-  if (!strcmp(av, "SET_VAL_MAX"))
-    return Gecode::SET_VAL_MAX;
+  if (!strcmp(av, "SET_VAL_MIN_INC"))
+    return Gecode::SET_VAL_MIN_INC;
+  if (!strcmp(av, "SET_VAL_MIN_EXC"))
+    return Gecode::SET_VAL_MIN_EXC;
+  if (!strcmp(av, "SET_VAL_MAX_INC"))
+    return Gecode::SET_VAL_MAX_INC;
+  if (!strcmp(av, "SET_VAL_MAX_EXC"))
+    return Gecode::SET_VAL_MAX_EXC;
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_SetValBranch(Gecode::Reflection::Arg* a) {
   if (!a->isString())
     return false;
   const char* av = a->toString();
-  if (!strcmp(av, "SET_VAL_MIN"))
+  if (!strcmp(av, "SET_VAL_MIN_INC"))
     return true;
-  if (!strcmp(av, "SET_VAL_MAX"))
+  if (!strcmp(av, "SET_VAL_MIN_EXC"))
+    return true;
+  if (!strcmp(av, "SET_VAL_MAX_INC"))
+    return true;
+  if (!strcmp(av, "SET_VAL_MAX_EXC"))
     return true;
   return false;
 }
@@ -155,14 +163,24 @@ Gecode::SetVarBranch toEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
   const char* av = a->toString();
   if (!strcmp(av, "SET_VAR_NONE"))
     return Gecode::SET_VAR_NONE;
-  if (!strcmp(av, "SET_VAR_MIN_CARD"))
-    return Gecode::SET_VAR_MIN_CARD;
-  if (!strcmp(av, "SET_VAR_MAX_CARD"))
-    return Gecode::SET_VAR_MAX_CARD;
-  if (!strcmp(av, "SET_VAR_MIN_UNKNOWN_ELEM"))
-    return Gecode::SET_VAR_MIN_UNKNOWN_ELEM;
-  if (!strcmp(av, "SET_VAR_MAX_UNKNOWN_ELEM"))
-    return Gecode::SET_VAR_MAX_UNKNOWN_ELEM;
+  if (!strcmp(av, "SET_VAR_RND"))
+    return Gecode::SET_VAR_RND;
+  if (!strcmp(av, "SET_VAR_DEGREE_MIN"))
+    return Gecode::SET_VAR_DEGREE_MIN;
+  if (!strcmp(av, "SET_VAR_DEGREE_MAX"))
+    return Gecode::SET_VAR_DEGREE_MAX;
+  if (!strcmp(av, "SET_VAR_MIN_MIN"))
+    return Gecode::SET_VAR_MIN_MIN;
+  if (!strcmp(av, "SET_VAR_MIN_MAX"))
+    return Gecode::SET_VAR_MIN_MAX;
+  if (!strcmp(av, "SET_VAR_MAX_MIN"))
+    return Gecode::SET_VAR_MAX_MIN;
+  if (!strcmp(av, "SET_VAR_MAX_MAX"))
+    return Gecode::SET_VAR_MAX_MAX;
+  if (!strcmp(av, "SET_VAR_SIZE_MIN"))
+    return Gecode::SET_VAR_SIZE_MIN;
+  if (!strcmp(av, "SET_VAR_SIZE_MAX"))
+    return Gecode::SET_VAR_SIZE_MAX;
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
@@ -171,13 +189,23 @@ bool isEnum_SetVarBranch(Gecode::Reflection::Arg* a) {
   const char* av = a->toString();
   if (!strcmp(av, "SET_VAR_NONE"))
     return true;
-  if (!strcmp(av, "SET_VAR_MIN_CARD"))
+  if (!strcmp(av, "SET_VAR_RND"))
     return true;
-  if (!strcmp(av, "SET_VAR_MAX_CARD"))
+  if (!strcmp(av, "SET_VAR_DEGREE_MIN"))
     return true;
-  if (!strcmp(av, "SET_VAR_MIN_UNKNOWN_ELEM"))
+  if (!strcmp(av, "SET_VAR_DEGREE_MAX"))
     return true;
-  if (!strcmp(av, "SET_VAR_MAX_UNKNOWN_ELEM"))
+  if (!strcmp(av, "SET_VAR_MIN_MIN"))
+    return true;
+  if (!strcmp(av, "SET_VAR_MIN_MAX"))
+    return true;
+  if (!strcmp(av, "SET_VAR_MAX_MIN"))
+    return true;
+  if (!strcmp(av, "SET_VAR_MAX_MAX"))
+    return true;
+  if (!strcmp(av, "SET_VAR_SIZE_MIN"))
+    return true;
+  if (!strcmp(av, "SET_VAR_SIZE_MAX"))
     return true;
   return false;
 }
@@ -190,6 +218,10 @@ Gecode::IntVarBranch toEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
     return Gecode::INT_VAR_NONE;
   if (!strcmp(av, "INT_VAR_RND"))
     return Gecode::INT_VAR_RND;
+  if (!strcmp(av, "INT_VAR_DEGREE_MIN"))
+    return Gecode::INT_VAR_DEGREE_MIN;
+  if (!strcmp(av, "INT_VAR_DEGREE_MAX"))
+    return Gecode::INT_VAR_DEGREE_MAX;
   if (!strcmp(av, "INT_VAR_MIN_MIN"))
     return Gecode::INT_VAR_MIN_MIN;
   if (!strcmp(av, "INT_VAR_MIN_MAX"))
@@ -202,10 +234,6 @@ Gecode::IntVarBranch toEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
     return Gecode::INT_VAR_SIZE_MIN;
   if (!strcmp(av, "INT_VAR_SIZE_MAX"))
     return Gecode::INT_VAR_SIZE_MAX;
-  if (!strcmp(av, "INT_VAR_DEGREE_MIN"))
-    return Gecode::INT_VAR_DEGREE_MIN;
-  if (!strcmp(av, "INT_VAR_DEGREE_MAX"))
-    return Gecode::INT_VAR_DEGREE_MAX;
   if (!strcmp(av, "INT_VAR_SIZE_DEGREE_MIN"))
     return Gecode::INT_VAR_SIZE_DEGREE_MIN;
   if (!strcmp(av, "INT_VAR_SIZE_DEGREE_MAX"))
@@ -228,6 +256,10 @@ bool isEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
     return true;
   if (!strcmp(av, "INT_VAR_RND"))
     return true;
+  if (!strcmp(av, "INT_VAR_DEGREE_MIN"))
+    return true;
+  if (!strcmp(av, "INT_VAR_DEGREE_MAX"))
+    return true;
   if (!strcmp(av, "INT_VAR_MIN_MIN"))
     return true;
   if (!strcmp(av, "INT_VAR_MIN_MAX"))
@@ -239,10 +271,6 @@ bool isEnum_IntVarBranch(Gecode::Reflection::Arg* a) {
   if (!strcmp(av, "INT_VAR_SIZE_MIN"))
     return true;
   if (!strcmp(av, "INT_VAR_SIZE_MAX"))
-    return true;
-  if (!strcmp(av, "INT_VAR_DEGREE_MIN"))
-    return true;
-  if (!strcmp(av, "INT_VAR_DEGREE_MAX"))
     return true;
   if (!strcmp(av, "INT_VAR_SIZE_DEGREE_MIN"))
     return true;

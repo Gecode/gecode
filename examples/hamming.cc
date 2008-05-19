@@ -89,7 +89,7 @@ public:
       }
     }
 
-    branch(this, xs, SET_VAR_NONE, SET_VAL_MIN);
+    branch(this, xs, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Print solution

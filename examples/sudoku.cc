@@ -296,7 +296,7 @@ public:
         if (int idx = sudokuField(examples[opt.size()], nn, i, j))
           dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
-    branch(this, y, SET_VAR_NONE, SET_VAL_MIN);
+    branch(this, y, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Constructor for cloning \a s
@@ -414,7 +414,7 @@ public:
         exactly(this, y[i], block[j], 1);
       }
 
-    branch(this, y, CPLTSET_VAR_MIN_CARD, CPLTSET_VAL_MIN_UNKNOWN);
+    branch(this, y, CPLTSET_VAR_SIZE_MIN, CPLTSET_VAL_MIN_INC);
   }
 
   /// Constructor for cloning \a s

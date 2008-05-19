@@ -213,15 +213,12 @@ public:
 
       // Symmetry breaking: order players
       // For all p<groups : groupsSInv[w*players+p] <= p
-      for (int w=0; w<weeks; w++) {
-        for (int p=0; p<groups; p++) {
+      for (int w=0; w<weeks; w++)
+        for (int p=0; p<groups; p++)
           rel(this, groupsSInv[w*players+p], IRT_LQ, p);
-        }
-      }
-
     }
 
-    branch(this, groupsS, SET_VAR_MIN_UNKNOWN_ELEM, SET_VAL_MIN);
+    branch(this, groupsS, SET_VAR_MIN_MIN, SET_VAL_MIN_INC);
   }
 
   /// Print solution

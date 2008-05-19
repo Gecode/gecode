@@ -940,20 +940,26 @@ namespace Gecode {
    */
 
   //@{
-  
   /// Which variable to select for branching
   enum SetVarBranch {
-    SET_VAR_NONE = 0,           ///< First unassigned
-    SET_VAR_MIN_CARD,           ///< With smallest unknown set
-    SET_VAR_MAX_CARD,           ///< With largest unknown set
-    SET_VAR_MIN_UNKNOWN_ELEM,   ///< With smallest unknown element
-    SET_VAR_MAX_UNKNOWN_ELEM    ///< With largest unknown element
+    SET_VAR_NONE = 0,   ///< First unassigned
+    SET_VAR_RND,        ///< Random (uniform, for tie breaking)
+    SET_VAR_DEGREE_MIN, ///< With smallest degree
+    SET_VAR_DEGREE_MAX, ///< With largest degree
+    SET_VAR_MIN_MIN,    ///< With smallest minimum unknown element
+    SET_VAR_MIN_MAX,    ///< With largest minimum unknown element
+    SET_VAR_MAX_MIN,    ///< With smallest maximum unknown element
+    SET_VAR_MAX_MAX,    ///< With largest maximum unknown element
+    SET_VAR_SIZE_MIN,   ///< With smallest unknown set
+    SET_VAR_SIZE_MAX    ///< With largest unknown set
   };
   
   /// Which values to select first for branching
   enum SetValBranch {
-    SET_VAL_MIN,                ///< Select smallest value in unknown set
-    SET_VAL_MAX                 ///< Select largest value in unknown set
+    SET_VAL_MIN_INC, ///< Include smallest element
+    SET_VAL_MIN_EXC, ///< Exclude smallest element
+    SET_VAL_MAX_INC, ///< Include largest element
+    SET_VAL_MAX_EXC  ///< Exclude largest element
   };
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals

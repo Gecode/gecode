@@ -70,6 +70,38 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   major
+[DESCRIPTION]
+The values for variable and value selection for branching have
+been made consistent and extended. The following values have 
+been renamed:
+ - SET_VAR_MIN_CARD -> SET_VAR_SIZE_MIN
+ - SET_VAR_MAX_CARD -> SET_VAR_SIZE_MAX
+ - SET_VAR_MIN_UNKNOWN_ELEM -> SET_VAR_MIN_MIN
+ - SET_VAR_MAX_UNKNOWN_ELEM -> SET_VAR_MAX_MAX
+ - SET_VAL_MIN -> SET_VAL_MIN_INC
+ - SET_VAL_MAX -> SET_VAL_MAX_INC
+
+[ENTRY]
+Module: cpltset
+What:   change
+Rank:   major
+[DESCRIPTION]
+The values for variable and value selection for branching have
+been made consistent and extended. The following values have 
+been renamed:
+ - CPLTSET_VAR_MIN_CARD -> CPLTSET_VAR_SIZE_MIN
+ - CPLTSET_VAR_MAX_CARD -> CPLTSET_VAR_SIZE_MAX
+ - CPLTSET_VAR_MIN_UNKNOWN_ELEM -> CPLTSET_VAR_MIN_MIN
+ - CPLTSET_VAR_MAX_UNKNOWN_ELEM -> CPLTSET_VAR_MAX_MAX
+ - CPLTSET_VAL_MIN_UNKNOWN -> CPLTSET_VAL_MIN_INC
+ - CPLTSET_VAL_MAX_UNKNOWN -> CPLTSET_VAL_MAX_INC
+ - CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MIN_EXC
+ - CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MAX_EXC
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

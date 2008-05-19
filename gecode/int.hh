@@ -1953,26 +1953,16 @@ namespace Gecode {
   //@{
   /// Which variable to select for branching
   enum IntVarBranch {
-    INT_VAR_NONE = 0, ///< First unassigned
-    INT_VAR_RND,      ///< Random (uniform, for tie breaking)
-    INT_VAR_MIN_MIN,  ///< With smallest min
-    INT_VAR_MIN_MAX,  ///< With largest min
-    INT_VAR_MAX_MIN,  ///< With smallest max
-    INT_VAR_MAX_MAX,  ///< With largest max
-    INT_VAR_SIZE_MIN, ///< With smallest domain size
-    INT_VAR_SIZE_MAX, ///< With largest domain size
-    /** \brief With smallest degree
-     *
-     * The degree of a variable is defined as the number of dependant
-     * propagators.
-     */
-    INT_VAR_DEGREE_MIN,
-    /** \brief With largest degree
-     *
-     * The degree of a variable is defined as the number of dependant
-     * propagators.
-     */
-    INT_VAR_DEGREE_MAX,
+    INT_VAR_NONE = 0,        ///< First unassigned
+    INT_VAR_RND,             ///< Random (uniform, for tie breaking)
+    INT_VAR_DEGREE_MIN,      ///< With smallest degree
+    INT_VAR_DEGREE_MAX,      ///< With largest degree
+    INT_VAR_MIN_MIN,         ///< With smallest min
+    INT_VAR_MIN_MAX,         ///< With largest min
+    INT_VAR_MAX_MIN,         ///< With smallest max
+    INT_VAR_MAX_MAX,         ///< With largest max
+    INT_VAR_SIZE_MIN,        ///< With smallest domain size
+    INT_VAR_SIZE_MAX,        ///< With largest domain size
     INT_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
     INT_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
     /** \brief With smallest min-regret

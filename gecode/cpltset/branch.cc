@@ -50,13 +50,13 @@ namespace Gecode {
     switch (vars) {
     case CPLTSET_VAR_NONE:
       Branch::create<Branch::ByNone>(home,x,vals); break;
-    case CPLTSET_VAR_MIN_CARD:
+    case CPLTSET_VAR_SIZE_MIN:
       Branch::create<Branch::ByMinCard>(home,x,vals); break;
-    case CPLTSET_VAR_MAX_CARD:
+    case CPLTSET_VAR_SIZE_MAX:
       Branch::create<Branch::ByMaxCard>(home,x,vals); break;
-    case CPLTSET_VAR_MIN_UNKNOWN_ELEM:
+    case CPLTSET_VAR_MIN_MIN:
       Branch::create<Branch::ByMinUnknown>(home,x,vals); break;
-    case CPLTSET_VAR_MAX_UNKNOWN_ELEM:
+    case CPLTSET_VAR_MAX_MAX:
       Branch::create<Branch::ByMaxUnknown>(home,x,vals); break;
     default:
       throw CpltSet::UnknownBranching("CpltSet::branch");

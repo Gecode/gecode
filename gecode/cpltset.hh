@@ -765,22 +765,26 @@ namespace Gecode {
    * \ingroup TaskModelCpltSet
    */
   //@{
-  
   /// Which variable to select for branching
   enum CpltSetVarBranch {
-    CPLTSET_VAR_NONE = 0,         ///< First unassigned
-    CPLTSET_VAR_MIN_CARD,         ///< With smallest unknown set
-    CPLTSET_VAR_MAX_CARD,         ///< With largest unknown set
-    CPLTSET_VAR_MIN_UNKNOWN_ELEM, ///< With smallest unknown element
-    CPLTSET_VAR_MAX_UNKNOWN_ELEM  ///< With largest unknown element 
+    CPLTSET_VAR_NONE = 0,   ///< First unassigned
+    CPLTSET_VAR_RND,        ///< Random (uniform, for tie breaking)
+    CPLTSET_VAR_DEGREE_MIN, ///< With smallest degree
+    CPLTSET_VAR_DEGREE_MAX, ///< With largest degree
+    CPLTSET_VAR_MIN_MIN,    ///< With smallest minimum unknown element
+    CPLTSET_VAR_MIN_MAX,    ///< With largest minimum unknown element
+    CPLTSET_VAR_MAX_MIN,    ///< With smallest maximum unknown element
+    CPLTSET_VAR_MAX_MAX,    ///< With largest maximum unknown element
+    CPLTSET_VAR_SIZE_MIN,   ///< With smallest unknown set
+    CPLTSET_VAR_SIZE_MAX    ///< With largest unknown set
   };
   
-  /// Which values to select first for branching 
-  enum CpltSetValBranch { 
-    CPLTSET_VAL_MIN_UNKNOWN,          ///< Select smallest element in unknown set and try to include it
-    CPLTSET_VAL_MAX_UNKNOWN,          ///< Select largest  element in unknown set and try to include it
-    CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST, ///< Select smallest element in unknown set and try to exclude it
-    CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST  ///< Select largest  element in unknown set and try to exclude it
+  /// Which values to select first for branching
+  enum CpltSetValBranch {
+    CPLTSET_VAL_MIN_INC, ///< Include smallest element
+    CPLTSET_VAL_MIN_EXC, ///< Exclude smallest element
+    CPLTSET_VAL_MAX_INC, ///< Include largest element
+    CPLTSET_VAL_MAX_EXC  ///< Exclude largest element
   };
 
   /// Branch on \a x with variable selection \a vars and value selection \a vals
