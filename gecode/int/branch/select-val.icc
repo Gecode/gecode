@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ValRnd<View>::ValRnd(void) {}
   template<class View>
   forceinline
-  ValRnd<View>::ValRnd(Space* home, const ValBranchOptions& vbo) 
+  ValRnd<View>::ValRnd(Space*, const ValBranchOptions& vbo) 
     : r(vbo.seed) {}
   template<class View>
   forceinline int

@@ -258,7 +258,7 @@ namespace Gecode {
   template<class A, class B>
   forceinline
   ViewSelTieBreakStatic<A,B>::
-  ViewSelTieBreakStatic(Space* home, A& a0, B& b0)
+  ViewSelTieBreakStatic(Space*, A& a0, B& b0)
     : a(a0), b(b0) {}
   template<class A, class B>
   forceinline ViewSelStatus

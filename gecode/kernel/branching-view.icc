@@ -332,17 +332,17 @@ namespace Gecode {
   ViewSelRnd<View>::ViewSelRnd(void) {}
   template<class View>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space* home, const VarBranchOptions& vbo)
+  ViewSelRnd<View>::ViewSelRnd(Space*, const VarBranchOptions& vbo)
     : r(vbo.seed) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelRnd<View>::init(const Space*, View x) {
+  ViewSelRnd<View>::init(const Space*, View) {
     n=1;
     return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelRnd<View>::select(const Space*, View x) {
+  ViewSelRnd<View>::select(const Space*, View) {
     n++;
     return (r(n) == (n-1)) ? VSS_BETTER : VSS_WORSE;
   }
