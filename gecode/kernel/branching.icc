@@ -431,7 +431,7 @@ namespace Gecode {
   forceinline size_t
   ViewValBranching<ViewSel,ValSel>::dispose(Space* home) {
     valsel.dispose(home);
-    (void) ViewBranching::dispose(home);
+    (void) ViewBranching<ViewSel>::dispose(home);
     return sizeof(ViewValBranching<ViewSel,ValSel>);
   }
 

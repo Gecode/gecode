@@ -222,6 +222,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ViewValuesBranching : public ViewBranching<ViewSel> {
   protected:
     using ViewBranching<ViewSel>::x;
+    using ViewBranching<ViewSel>::viewsel;
     /// Constructor for cloning \a b
     ViewValuesBranching(Space* home, bool share, ViewValuesBranching& b);
   public:

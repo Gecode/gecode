@@ -452,7 +452,7 @@ namespace Gecode {
   template<class View>
   forceinline size_t
   ViewSelTieBreakDynamic<View>::Desc::size(void) const {
-    size_t s = (sizeof(ViewSelTieBreakDynamic<View>::Desc) +
+    size_t s = (sizeof(typename ViewSelTieBreakDynamic<View>::Desc) +
                 n * sizeof(DescVirtualBase*));
     for (int i=n; i--; )
       s += d[i]->size();
