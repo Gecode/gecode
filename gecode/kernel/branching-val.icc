@@ -66,8 +66,6 @@ namespace Gecode {
     typedef EmptyValSelDesc Desc;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
-    /// Description
-    Desc desc;
     /// Default constructor
     ValSelBase(void);
     /// Constructor for initialization
