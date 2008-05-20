@@ -166,7 +166,7 @@ namespace Gecode {
     /// Return position in array
     Pos pos(void) const;
     /// Return view selection description
-    typename ViewSel::Desc viewdesc(void) const;
+    const typename ViewSel::Desc& viewdesc(void) const;
     /// Report size occupied
     virtual size_t size(void) const;
   };
@@ -186,7 +186,7 @@ namespace Gecode {
                const typename ValSel::Desc& vald,
                const typename ValSel::Val& n);
     /// Return stored description
-    typename ValSel::Desc valdesc(void) const;
+    const typename ValSel::Desc& valdesc(void) const;
     /// Return value to branch with
     typename ValSel::Val val(void) const;
     /// Report size occupied
@@ -220,7 +220,7 @@ namespace Gecode {
     return _pos;
   }
   template <class ViewSel>
-  forceinline typename ViewSel::Desc
+  forceinline const typename ViewSel::Desc&
   PosDesc<ViewSel>::viewdesc(void) const {
     return _viewdesc;
   }
@@ -245,7 +245,7 @@ namespace Gecode {
       _valdesc(vald), _val(n) {}
 
   template <class ViewSel, class ValSel>
-  forceinline typename ValSel::Desc
+  forceinline const typename ValSel::Desc&
   PosValDesc<ViewSel,ValSel>::valdesc(void) const {
     return _valdesc;
   }

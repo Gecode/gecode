@@ -299,7 +299,7 @@ namespace Gecode {
   template<class A, class B>
   forceinline void
   ViewSelTieBreakStatic<A,B>::commit(Space* home, const Desc& d, 
-                                      unsigned int al) {
+                                     unsigned int al) {
     a.commit(home, d.a, al);
     b.commit(home, d.b, al);
   }
