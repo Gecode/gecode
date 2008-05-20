@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
     /// Cast to integer (for reflection)
-    operator int(void);
+    operator int(void) const;
   };
 
   /**

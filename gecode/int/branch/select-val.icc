@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   forceinline
-  NoValue::operator int(void) {
+  NoValue::operator int(void) const {
     return 0;
   }
 
