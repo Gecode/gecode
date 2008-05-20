@@ -66,22 +66,22 @@ Value:		INT_VAR_RND = COMPLETE
 Type:		ViewSelRnd<IntView>
 [VarBranch]
 Value:		INT_VAR_MIN_MIN
-Type:		ByMinMin<IntView>
+Type:		ByMinMin
 [VarBranch]
 Value:		INT_VAR_MIN_MAX
-Type:		ViewSelInvert<ByMinMin<IntView> >
+Type:		ViewSelInvert<ByMinMin>
 [VarBranch]
 Value:		INT_VAR_MAX_MIN
-Type:		ByMaxMin<IntView>
+Type:		ByMaxMin
 [VarBranch]
 Value:		INT_VAR_MAX_MAX
-Type:		ViewSelInvert<ByMaxMin<IntView> >
+Type:		ViewSelInvert<ByMaxMin>
 [VarBranch]
 Value:		INT_VAR_SIZE_MIN
-Type:		BySizeMin<IntView>
+Type:		BySizeMin
 [VarBranch]
 Value:		INT_VAR_SIZE_MAX
-Type:		ViewSelInvert<BySizeMin<IntView> >
+Type:		ViewSelInvert<BySizeMin>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MIN
 Type:		ViewSelDegreeMin<IntView>
@@ -90,20 +90,20 @@ Value:		INT_VAR_DEGREE_MAX
 Type:		ViewSelInvert<ViewSelDegreeMin<IntView> >
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
-Type:		BySizeDegreeMin<IntView>
+Type:		BySizeDegreeMin
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MAX
-Type:		ViewSelInvert<BySizeDegreeMin<IntView> >
+Type:		ViewSelInvert<BySizeDegreeMin>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
-Type:		ByRegretMinMin<IntView>
+Type:		ByRegretMinMin
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MAX
-Type:		ViewSelInvert<ByRegretMinMin<IntView> >
+Type:		ViewSelInvert<ByRegretMinMin>
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MIN
-Type:		ByRegretMaxMin<IntView>
+Type:		ByRegretMaxMin
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MAX
-Type:		ViewSelInvert<ByRegretMaxMin<IntView> >
+Type:		ViewSelInvert<ByRegretMaxMin>
 [End]

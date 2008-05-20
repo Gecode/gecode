@@ -300,8 +300,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
-  class ByMinMin : public ViewSelBase<View> {
+  class ByMinMin : public ViewSelBase<IntView> {
   protected:
     /// So-far smallest minimum
     int min;
@@ -311,9 +310,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByMinMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -324,8 +323,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
-  class ByMaxMin : public ViewSelBase<View> {
+  class ByMaxMin : public ViewSelBase<IntView> {
   protected:
     /// So-far smallest maximum
     int max;
@@ -335,9 +333,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByMaxMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -348,8 +346,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
-  class BySizeMin : public ViewSelBase<View> {
+  class BySizeMin : public ViewSelBase<IntView> {
   protected:
     /// So-far smallest size
     unsigned int size;
@@ -359,9 +356,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     BySizeMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -373,8 +370,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
-  class BySizeDegreeMin : public ViewSelBase<View> {
+  class BySizeDegreeMin : public ViewSelBase<IntView> {
   protected:
     /// So-far smallest size/degree
     double sizedegree;
@@ -384,9 +380,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     BySizeDegreeMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -397,8 +393,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
-  class ByRegretMinMin : public ViewSelBase<View> {
+  class ByRegretMinMin : public ViewSelBase<IntView> {
   protected:
     /// So-far smallest regret
     unsigned int regret;
@@ -408,9 +403,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByRegretMinMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -421,8 +416,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelView
    */
-  template<class View>
-  class ByRegretMaxMin : public ViewSelBase<View> {
+  class ByRegretMaxMin : public ViewSelBase<IntView> {
   protected:
     /// So-far smallest regret
     unsigned int regret;
@@ -432,9 +426,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByRegretMaxMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, View x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, View x);
+    ViewSelStatus select(const Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };

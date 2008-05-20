@@ -53,22 +53,22 @@ namespace Gecode { namespace Int { namespace Branch {
        v = new (home) ViewSelVirtual<ViewSelRnd<IntView> >(home,o_vars);
        break;
      case INT_VAR_MIN_MIN:
-       v = new (home) ViewSelVirtual<ByMinMin<IntView> >(home,o_vars);
+       v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
        break;
      case INT_VAR_MIN_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByMinMin<IntView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelInvert<ByMinMin> >(home,o_vars);
        break;
      case INT_VAR_MAX_MIN:
-       v = new (home) ViewSelVirtual<ByMaxMin<IntView> >(home,o_vars);
+       v = new (home) ViewSelVirtual<ByMaxMin>(home,o_vars);
        break;
      case INT_VAR_MAX_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByMaxMin<IntView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelInvert<ByMaxMin> >(home,o_vars);
        break;
      case INT_VAR_SIZE_MIN:
-       v = new (home) ViewSelVirtual<BySizeMin<IntView> >(home,o_vars);
+       v = new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
        break;
      case INT_VAR_SIZE_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<BySizeMin<IntView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelInvert<BySizeMin> >(home,o_vars);
        break;
      case INT_VAR_DEGREE_MIN:
        v = new (home) ViewSelVirtual<ViewSelDegreeMin<IntView> >(home,o_vars);
@@ -77,22 +77,22 @@ namespace Gecode { namespace Int { namespace Branch {
        v = new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<IntView> > >(home,o_vars);
        break;
      case INT_VAR_SIZE_DEGREE_MIN:
-       v = new (home) ViewSelVirtual<BySizeDegreeMin<IntView> >(home,o_vars);
+       v = new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
        break;
      case INT_VAR_SIZE_DEGREE_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<BySizeDegreeMin<IntView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelInvert<BySizeDegreeMin> >(home,o_vars);
        break;
      case INT_VAR_REGRET_MIN_MIN:
-       v = new (home) ViewSelVirtual<ByRegretMinMin<IntView> >(home,o_vars);
+       v = new (home) ViewSelVirtual<ByRegretMinMin>(home,o_vars);
        break;
      case INT_VAR_REGRET_MIN_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByRegretMinMin<IntView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelInvert<ByRegretMinMin> >(home,o_vars);
        break;
      case INT_VAR_REGRET_MAX_MIN:
-       v = new (home) ViewSelVirtual<ByRegretMaxMin<IntView> >(home,o_vars);
+       v = new (home) ViewSelVirtual<ByRegretMaxMin>(home,o_vars);
        break;
      case INT_VAR_REGRET_MAX_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByRegretMaxMin<IntView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelInvert<ByRegretMaxMin> >(home,o_vars);
        break;
     default:
       throw UnknownBranching("Int::branch");
@@ -130,37 +130,37 @@ namespace Gecode {
       break;
     case INT_VAR_MIN_MIN:
       {
-        ByMinMin<IntView> v(home,o_vars);
+        ByMinMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_MIN_MAX:
       {
-        ViewSelInvert<ByMinMin<IntView> > v(home,o_vars);
+        ViewSelInvert<ByMinMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MIN:
       {
-        ByMaxMin<IntView> v(home,o_vars);
+        ByMaxMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MAX:
       {
-        ViewSelInvert<ByMaxMin<IntView> > v(home,o_vars);
+        ViewSelInvert<ByMaxMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MIN:
       {
-        BySizeMin<IntView> v(home,o_vars);
+        BySizeMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MAX:
       {
-        ViewSelInvert<BySizeMin<IntView> > v(home,o_vars);
+        ViewSelInvert<BySizeMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -178,37 +178,37 @@ namespace Gecode {
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
-        BySizeDegreeMin<IntView> v(home,o_vars);
+        BySizeDegreeMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
       {
-        ViewSelInvert<BySizeDegreeMin<IntView> > v(home,o_vars);
+        ViewSelInvert<BySizeDegreeMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MIN:
       {
-        ByRegretMinMin<IntView> v(home,o_vars);
+        ByRegretMinMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MAX:
       {
-        ViewSelInvert<ByRegretMinMin<IntView> > v(home,o_vars);
+        ViewSelInvert<ByRegretMinMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MIN:
       {
-        ByRegretMaxMin<IntView> v(home,o_vars);
+        ByRegretMaxMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MAX:
       {
-        ViewSelInvert<ByRegretMaxMin<IntView> > v(home,o_vars);
+        ViewSelInvert<ByRegretMaxMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -248,48 +248,48 @@ namespace Gecode {
     switch (vars.a) {
     case INT_VAR_MIN_MIN:
       {
-        ByMinMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByMinMin<IntView>,
+        ByMinMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMinMin,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_MIN_MAX:
       {
-        ViewSelInvert<ByMinMin<IntView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByMinMin<IntView> >,
+        ViewSelInvert<ByMinMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ByMinMin>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MIN:
       {
-        ByMaxMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByMaxMin<IntView>,
+        ByMaxMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMaxMin,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_MAX_MAX:
       {
-        ViewSelInvert<ByMaxMin<IntView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByMaxMin<IntView> >,
+        ViewSelInvert<ByMaxMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ByMaxMin>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MIN:
       {
-        BySizeMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeMin<IntView>,
+        BySizeMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeMin,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_MAX:
       {
-        ViewSelInvert<BySizeMin<IntView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<BySizeMin<IntView> >,
+        ViewSelInvert<BySizeMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<BySizeMin>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
@@ -312,48 +312,48 @@ namespace Gecode {
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
-        BySizeDegreeMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeDegreeMin<IntView>,
+        BySizeDegreeMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeDegreeMin,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
       {
-        ViewSelInvert<BySizeDegreeMin<IntView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<BySizeDegreeMin<IntView> >,
+        ViewSelInvert<BySizeDegreeMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<BySizeDegreeMin>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MIN:
       {
-        ByRegretMinMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByRegretMinMin<IntView>,
+        ByRegretMinMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByRegretMinMin,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MIN_MAX:
       {
-        ViewSelInvert<ByRegretMinMin<IntView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByRegretMinMin<IntView> >,
+        ViewSelInvert<ByRegretMinMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ByRegretMinMin>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MIN:
       {
-        ByRegretMaxMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByRegretMaxMin<IntView>,
+        ByRegretMaxMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByRegretMaxMin,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_REGRET_MAX_MAX:
       {
-        ViewSelInvert<ByRegretMaxMin<IntView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByRegretMaxMin<IntView> >,
+        ViewSelInvert<ByRegretMaxMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelInvert<ByRegretMaxMin>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
