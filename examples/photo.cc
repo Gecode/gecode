@@ -141,9 +141,9 @@ public:
   }
 
   /// Add constraint for next better solution
-  void
-  constrain(Space* s) {
-    rel(this, sat, IRT_GR, static_cast<Photo*>(s)->sat.val());
+  virtual void
+  constrain(const Space* s) {
+    rel(this, sat, IRT_GR, static_cast<const Photo*>(s)->sat.val());
   }
 
 };

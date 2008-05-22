@@ -264,9 +264,9 @@ public:
     branch(this, succ,  INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
   /// Add constraint for next better solution
-  void
-  constrain(Space* s) {
-    rel(this, cost, IRT_LE, static_cast<TSP*>(s)->cost.val());
+  virtual void
+  constrain(const Space* s) {
+    rel(this, cost, IRT_LE, static_cast<const TSP*>(s)->cost.val());
   }
   /// Constructor for cloning \a s
   TSP(bool share, TSP& s) : Example(share,s), p(s.p) {

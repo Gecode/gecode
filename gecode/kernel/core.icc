@@ -1132,6 +1132,18 @@ namespace Gecode {
      */
     virtual Space* copy(bool share) = 0;
     /**
+     * \brief Constrain function for best solution search
+     *
+     * Must constrain this space to be better than the so far best
+     * solution \a best.
+     *
+     * If best solution search is used and this method is not redefined,
+     * an exception of type SpaceConstrainUndefined is thrown.
+     *
+     * \ingroup TaskModelScript
+     */
+    GECODE_KERNEL_EXPORT virtual void constrain(const Space* best);
+    /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskModelScript
      */

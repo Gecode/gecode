@@ -147,9 +147,9 @@ public:
   }
 
   /// Add constraint for next better solution
-  void
-  constrain(Space* s) {
-    rel(this, total, IRT_LE, static_cast<Warehouses*>(s)->total.val());
+  virtual void
+  constrain(const Space* s) {
+    rel(this, total, IRT_LE, static_cast<const Warehouses*>(s)->total.val());
   }
   /// Constructor for cloning \a s
   Warehouses(bool share, Warehouses& s) : Example(share,s) {

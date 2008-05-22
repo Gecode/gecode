@@ -118,9 +118,9 @@ public:
   }
 
   /// Add constraint for next better solution
-  void
-  constrain(Space* s) {
-    rel(this, k, IRT_GR, static_cast<IndSet*>(s)->k.val());
+  virtual void
+  constrain(const Space* s) {
+    rel(this, k, IRT_GR, static_cast<const IndSet*>(s)->k.val());
   }
 };
 

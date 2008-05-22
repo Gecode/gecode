@@ -162,9 +162,9 @@ public:
   }
 
   /// Add constraint for next better solution
-  void
-  constrain(Space* s) {
-    rel(this, u, IRT_LE, static_cast<BACP*>(s)->u.val());
+  virtual void
+  constrain(const Space* s) {
+    rel(this, u, IRT_LE, static_cast<const BACP*>(s)->u.val());
   }
 
   /// Print solution

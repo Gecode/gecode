@@ -70,6 +70,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The constrain method used for best solution search must be
+virtual and takes an argument of type const Space* rather than
+Space* as argument.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   major

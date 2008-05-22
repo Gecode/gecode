@@ -105,7 +105,7 @@ namespace Test {
         return new FailImmediate(share,*this);
       }
       /// Add constraint for next better solution
-      void constrain(Space*) {
+      virtual void constrain(const Space*) {
       }
       /// Return number of solutions
       virtual int solutions(void) const {
@@ -168,8 +168,8 @@ namespace Test {
         return new HasSolutions(share,*this);
       }
       /// Add constraint for next better solution
-      void constrain(Space* _s) {
-        HasSolutions* s = static_cast<HasSolutions*>(_s);
+      virtual void constrain(const Space* _s) {
+        const HasSolutions* s = static_cast<const HasSolutions*>(_s);
         switch (htc) {
         case HTC_NONE:
           break;

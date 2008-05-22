@@ -138,9 +138,9 @@ public:
   }
 
   /// Add constraint for next better solution
-  void
-  constrain(Space* s) {
-    rel(this, m[n-1], IRT_LE, static_cast<GolombRuler*>(s)->m[n-1].val());
+  virtual void
+  constrain(const Space* s) {
+    rel(this, m[n-1], IRT_LE, static_cast<const GolombRuler*>(s)->m[n-1].val());
   }
 
   /// Print solution

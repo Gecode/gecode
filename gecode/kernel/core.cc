@@ -469,6 +469,11 @@ namespace Gecode {
     return c;
   }
 
+  void 
+  Space::constrain(const Space*) {
+    throw SpaceConstrainUndefined();
+  }
+
 }
 
 // STATISTICS: kernel-core

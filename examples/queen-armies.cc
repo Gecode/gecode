@@ -133,9 +133,9 @@ public:
     return new QueenArmies(share,*this);
   }
 
-  void
-  constrain(Space* s) {
-    rel(this, q, IRT_GR, static_cast<QueenArmies*>(s)->q.val());
+  virtual void
+  constrain(const Space* s) {
+    rel(this, q, IRT_GR, static_cast<const QueenArmies*>(s)->q.val());
   }
 
 
