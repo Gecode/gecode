@@ -37,7 +37,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   /**
    * \brief Pairs of an index and a variable

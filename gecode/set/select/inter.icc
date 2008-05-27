@@ -37,12 +37,12 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   forceinline
-  SelectIntersection<SView,RView>::
-  SelectIntersection(Space* home, SView y0,
+  ElementIntersection<SView,RView>::
+  ElementIntersection(Space* home, SView y0,
                      IdxViewArray<SView>& iv0,
                      RView y1,
                      const IntSet& theUniverse)
@@ -55,9 +55,9 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   forceinline
-  SelectIntersection<SView,RView>::
-  SelectIntersection(Space* home, bool share,
-                     SelectIntersection<SView,RView>& p)
+  ElementIntersection<SView,RView>::
+  ElementIntersection(Space* home, bool share,
+                     ElementIntersection<SView,RView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -67,19 +67,19 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   PropCost
-  SelectIntersection<SView,RView>::cost(ModEventDelta) const {
+  ElementIntersection<SView,RView>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
   template <class SView, class RView>
   Support::Symbol
-  SelectIntersection<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Gecode::Set::Select::Intersection");
+  ElementIntersection<SView,RView>::ati(void) {
+    return Reflection::mangle<SView,RView>("Gecode::Set::Element::Intersection");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec
-  SelectIntersection<SView,RView>::spec(const Space* home,
+  ElementIntersection<SView,RView>::spec(const Space* home,
                                         Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     int count = 0;
@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   void
-  SelectIntersection<SView,RView>::post(Space* home,
+  ElementIntersection<SView,RView>::post(Space* home,
                                         Reflection::VarMap& vars,
                                         const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
@@ -108,12 +108,12 @@ namespace Gecode { namespace Set { namespace Select {
     SView x0(home, vars, spec[1]);
     IdxViewArray<SView> iv(home, vars, spec[2]);
     RView x1(home, vars, spec[3]);
-    (void) new (home) SelectIntersection(home, x0, iv, x1, universe);
+    (void) new (home) ElementIntersection(home, x0, iv, x1, universe);
   }
 
   template <class SView, class RView>
   size_t
-  SelectIntersection<SView,RView>::dispose(Space* home) {
+  ElementIntersection<SView,RView>::dispose(Space* home) {
     unforce(home);
     if (!home->failed()) {
       x0.cancel(home,this, PC_SET_ANY);
@@ -127,7 +127,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   ExecStatus
-  SelectIntersection<SView,RView>::
+  ElementIntersection<SView,RView>::
   post(Space* home, SView x0, IdxViewArray<SView>& xs,
        RView x1, const IntSet& universe) {
     int n = xs.size();
@@ -136,19 +136,19 @@ namespace Gecode { namespace Set { namespace Select {
     Iter::Ranges::Singleton s(0, n-1);
     GECODE_ME_CHECK(x1.intersectI(home,s));
     (void) new (home)
-      SelectIntersection<SView,RView>(home,x0,xs,x1,universe);
+      ElementIntersection<SView,RView>(home,x0,xs,x1,universe);
     return ES_OK;
   }
 
   template <class SView, class RView>
   Actor*
-  SelectIntersection<SView,RView>::copy(Space* home, bool share) {
-    return new (home) SelectIntersection<SView,RView>(home,share,*this);
+  ElementIntersection<SView,RView>::copy(Space* home, bool share) {
+    return new (home) ElementIntersection<SView,RView>(home,share,*this);
   }
 
   template <class SView, class RView>
   ExecStatus
-  SelectIntersection<SView,RView>::propagate(Space* home, ModEventDelta) {
+  ElementIntersection<SView,RView>::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
     bool loopVar;
@@ -247,7 +247,7 @@ namespace Gecode { namespace Set { namespace Select {
       iv.size(n);
 
       if (x1.cardMax()==0) {
-        // Selector is empty, hence the result must be universe
+        // Elementor is empty, hence the result must be universe
         {
           IntSetRanges uniI(universe);
           GECODE_ME_CHECK(x0.includeI(home,uniI));

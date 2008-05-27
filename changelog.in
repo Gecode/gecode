@@ -70,6 +70,13 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The set selection constraints are now called element.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major

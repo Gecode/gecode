@@ -37,12 +37,12 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   forceinline
-  SelectUnionConst<SView,RView>::
-  SelectUnionConst(Space* home, SView y0,
+  ElementUnionConst<SView,RView>::
+  ElementUnionConst(Space* home, SView y0,
                      SharedArray<IntSet>& iv0,
                      RView y1)
     : Propagator(home), x0(y0), iv(iv0), x1(y1) {
@@ -53,9 +53,9 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   forceinline
-  SelectUnionConst<SView,RView>::
-  SelectUnionConst(Space* home, bool share,
-                     SelectUnionConst<SView,RView>& p)
+  ElementUnionConst<SView,RView>::
+  ElementUnionConst(Space* home, bool share,
+                     ElementUnionConst<SView,RView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -64,19 +64,19 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   PropCost
-  SelectUnionConst<SView,RView>::cost(ModEventDelta) const {
+  ElementUnionConst<SView,RView>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
   template <class SView, class RView>
   Support::Symbol
-  SelectUnionConst<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Gecode::Set::Select::UnionConst");
+  ElementUnionConst<SView,RView>::ati(void) {
+    return Reflection::mangle<SView,RView>("Gecode::Set::Element::UnionConst");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec
-  SelectUnionConst<SView,RView>::spec(const Space* home,
+  ElementUnionConst<SView,RView>::spec(const Space* home,
                                       Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     Reflection::ArrayArg* a = Reflection::Arg::newArray(iv.size());
@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   void
-  SelectUnionConst<SView,RView>::post(Space* home,
+  ElementUnionConst<SView,RView>::post(Space* home,
                                       Reflection::VarMap& vars,
                                       const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
@@ -112,12 +112,12 @@ namespace Gecode { namespace Set { namespace Select {
       new (&iv[i]) IntSet(r);
     }
     RView x1(home, vars, spec[2]);
-    (void) new (home) SelectUnionConst(home, x0, iv, x1);
+    (void) new (home) ElementUnionConst(home, x0, iv, x1);
   }
 
   template <class SView, class RView>
   size_t
-  SelectUnionConst<SView,RView>::dispose(Space* home) {
+  ElementUnionConst<SView,RView>::dispose(Space* home) {
     unforce(home);
     if (!home->failed()) {
       x0.cancel(home,this, PC_SET_ANY);
@@ -130,7 +130,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnionConst<SView,RView>::
+  ElementUnionConst<SView,RView>::
   post(Space* home, SView x0, SharedArray<IntSet>& xs,
        RView x1) {
     int n = xs.size();
@@ -139,19 +139,19 @@ namespace Gecode { namespace Set { namespace Select {
     Iter::Ranges::Singleton s(0, n-1);
     GECODE_ME_CHECK(x1.intersectI(home,s));
     (void) new (home)
-      SelectUnionConst<SView,RView>(home,x0,xs,x1);
+      ElementUnionConst<SView,RView>(home,x0,xs,x1);
     return ES_OK;
   }
 
   template <class SView, class RView>
   Actor*
-  SelectUnionConst<SView,RView>::copy(Space* home, bool share) {
-    return new (home) SelectUnionConst<SView,RView>(home,share,*this);
+  ElementUnionConst<SView,RView>::copy(Space* home, bool share) {
+    return new (home) ElementUnionConst<SView,RView>(home,share,*this);
   }
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnionConst<SView,RView>::propagate(Space* home, ModEventDelta) {
+  ElementUnionConst<SView,RView>::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
     GECODE_AUTOARRAY(bool, stillSelected, n);

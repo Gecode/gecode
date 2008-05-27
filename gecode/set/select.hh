@@ -46,21 +46,21 @@
 #include "gecode/set/rel.hh"
 #include "gecode/set/rel-op.hh"
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   /**
-   * \namespace Gecode::Set::Select
-   * \brief %Set selection propagators
+   * \namespace Gecode::Set::Element
+   * \brief %Set element propagators
    */
 
   /**
-   * \brief %Propagator for selected intersection
+   * \brief %Propagator for element with intersection
    *
    * Requires \code #include "gecode/set/select.hh" \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
-  class SelectIntersection :
+  class ElementIntersection :
     public Propagator {
   protected:
     IntSet universe;
@@ -69,9 +69,9 @@ namespace Gecode { namespace Set { namespace Select {
     RView x1;
 
     /// Constructor for cloning \a p
-    SelectIntersection(Space* home, bool share,SelectIntersection& p);
+    ElementIntersection(Space* home, bool share,ElementIntersection& p);
     /// Constructor for posting
-    SelectIntersection(Space* home,SView,IdxViewArray<SView>&,RView,
+    ElementIntersection(Space* home,SView,IdxViewArray<SView>&,RView,
                        const IntSet& universe);
   public:
     /// Copy propagator during cloning
@@ -99,13 +99,13 @@ namespace Gecode { namespace Set { namespace Select {
   };
 
   /**
-   * \brief %Propagator for selected union
+   * \brief %Propagator for element with union
    *
    * Requires \code #include "gecode/set/select.hh" \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
-  class SelectUnion :
+  class ElementUnion :
     public Propagator {
   protected:
     SView x0;
@@ -113,9 +113,9 @@ namespace Gecode { namespace Set { namespace Select {
     RView x1;
 
     /// Constructor for cloning \a p
-    SelectUnion(Space* home, bool share,SelectUnion& p);
+    ElementUnion(Space* home, bool share,ElementUnion& p);
     /// Constructor for posting
-    SelectUnion(Space* home,SView,IdxViewArray<SView>&,RView);
+    ElementUnion(Space* home,SView,IdxViewArray<SView>&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
@@ -142,13 +142,13 @@ namespace Gecode { namespace Set { namespace Select {
   };
 
   /**
-   * \brief %Propagator for selected union with constant sets
+   * \brief %Propagator for element with union of constant sets
    *
    * Requires \code #include "gecode/set/select.hh" \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
-  class SelectUnionConst :
+  class ElementUnionConst :
     public Propagator {
   protected:
     SView x0;
@@ -156,9 +156,9 @@ namespace Gecode { namespace Set { namespace Select {
     RView x1;
 
     /// Constructor for cloning \a p
-    SelectUnionConst(Space* home, bool share,SelectUnionConst& p);
+    ElementUnionConst(Space* home, bool share,ElementUnionConst& p);
     /// Constructor for posting
-    SelectUnionConst(Space* home,SView,SharedArray<IntSet>&,RView);
+    ElementUnionConst(Space* home,SView,SharedArray<IntSet>&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
@@ -185,21 +185,21 @@ namespace Gecode { namespace Set { namespace Select {
   };
 
   /**
-   * \brief %Propagator for selected disjointness
+   * \brief %Propagator for element with disjointness
    *
    * Requires \code #include "gecode/set/select.hh" \endcode
    * \ingroup FuncSetProp
    */
-  class SelectDisjoint :
+  class ElementDisjoint :
     public Propagator {
   protected:
     IdxViewArray<SetView> iv;
     SetView x1;
 
     /// Constructor for cloning \a p
-    SelectDisjoint(Space* home, bool share,SelectDisjoint& p);
+    ElementDisjoint(Space* home, bool share,ElementDisjoint& p);
     /// Constructor for posting
-    SelectDisjoint(Space* home,IdxViewArray<SetView>&,SetView);
+    ElementDisjoint(Space* home,IdxViewArray<SetView>&,SetView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);

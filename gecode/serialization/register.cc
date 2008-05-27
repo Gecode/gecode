@@ -1867,46 +1867,6 @@ public:
   }
 };
 
-class Register_selectInterIn {
-public:
-  /// Identifier for this post function
-  static Gecode::Support::Symbol ati(void) {
-    return "Gecode::Post::selectInterIn";
-  }
-  
-  /// Post constraint described by \a spec
-  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
-                   const Gecode::Reflection::ActorSpec& spec) {
-    switch(spec.noOfArgs()) {
-    case 4:
-      {
-#if defined(GECODE_HAS_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]) &&
-            spec[3]->isIntArray())
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          Gecode::Reflection::IntArrayArg* a3 = spec[3]->toIntArray();
-          Gecode::Reflection::IntArrayArgRanges ar3(a3);
-          Gecode::IntSet x3(ar3);
-          Gecode::selectInterIn(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInterIn");
-      }
-      break;
-    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInterIn");
-    }
-  }
-};
-
 class Register_sequence {
 public:
   /// Identifier for this post function
@@ -3791,60 +3751,6 @@ public:
   }
 };
 
-class Register_selectUnion {
-public:
-  /// Identifier for this post function
-  static Gecode::Support::Symbol ati(void) {
-    return "Gecode::Post::selectUnion";
-  }
-  
-  /// Post constraint described by \a spec
-  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
-                   const Gecode::Reflection::ActorSpec& spec) {
-    switch(spec.noOfArgs()) {
-    case 3:
-      {
-#if defined(GECODE_HAS_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          Gecode::selectUnion(home, x0,x1,x2);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_SET_VARS)
-        if (isIntSetArgs(spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::IntSetArgs x0(a0.size());
-          for (int i=a0.size(); i--;) {
-            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
-            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
-            x0[i] = Gecode::IntSet(aar0);
-          }
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          Gecode::selectUnion(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
-      }
-      break;
-    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectUnion");
-    }
-  }
-};
-
 class Register_element {
 public:
   /// Identifier for this post function
@@ -3956,6 +3862,39 @@ public:
             x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           int x2 = static_cast<int>(spec[2]->toInt());
+          Gecode::element(home, x0,x1,x2);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          Gecode::element(home, x0,x1,x2);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_SET_VARS)
+        if (isIntSetArgs(spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::IntSetArgs x0(a0.size());
+          for (int i=a0.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
+            x0[i] = Gecode::IntSet(aar0);
+          }
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
           Gecode::element(home, x0,x1,x2);
           return;
         }
@@ -4287,6 +4226,60 @@ public:
       }
       break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::abs");
+    }
+  }
+};
+
+class Register_elementsUnion {
+public:
+  /// Identifier for this post function
+  static Gecode::Support::Symbol ati(void) {
+    return "Gecode::Post::elementsUnion";
+  }
+  
+  /// Post constraint described by \a spec
+  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
+                   const Gecode::Reflection::ActorSpec& spec) {
+    switch(spec.noOfArgs()) {
+    case 3:
+      {
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
+          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          Gecode::elementsUnion(home, x0,x1,x2);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_SET_VARS)
+        if (isIntSetArgs(spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::IntSetArgs x0(a0.size());
+          for (int i=a0.size(); i--;) {
+            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
+            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
+            x0[i] = Gecode::IntSet(aar0);
+          }
+          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          Gecode::elementsUnion(home, x0,x1,x2);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::elementsUnion");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::elementsUnion");
     }
   }
 };
@@ -5037,76 +5030,6 @@ public:
       }
       break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::weights");
-    }
-  }
-};
-
-class Register_selectInter {
-public:
-  /// Identifier for this post function
-  static Gecode::Support::Symbol ati(void) {
-    return "Gecode::Post::selectInter";
-  }
-  
-  /// Post constraint described by \a spec
-  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
-                   const Gecode::Reflection::ActorSpec& spec) {
-    switch(spec.noOfArgs()) {
-    case 3:
-      {
-#if defined(GECODE_HAS_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          Gecode::selectInter(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInter");
-      }
-      break;
-    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectInter");
-    }
-  }
-};
-
-class Register_selectDisjoint {
-public:
-  /// Identifier for this post function
-  static Gecode::Support::Symbol ati(void) {
-    return "Gecode::Post::selectDisjoint";
-  }
-  
-  /// Post constraint described by \a spec
-  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
-                   const Gecode::Reflection::ActorSpec& spec) {
-    switch(spec.noOfArgs()) {
-    case 2:
-      {
-#if defined(GECODE_HAS_SET_VARS)
-        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::selectDisjoint(home, x0,x1);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectDisjoint");
-      }
-      break;
-    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectDisjoint");
     }
   }
 };
@@ -7346,56 +7269,36 @@ public:
   }
 };
 
-class Register_selectSet {
+class Register_elementsDisjoint {
 public:
   /// Identifier for this post function
   static Gecode::Support::Symbol ati(void) {
-    return "Gecode::Post::selectSet";
+    return "Gecode::Post::elementsDisjoint";
   }
   
   /// Post constraint described by \a spec
   static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
     switch(spec.noOfArgs()) {
-    case 3:
+    case 2:
       {
 #if defined(GECODE_HAS_SET_VARS)
         if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]))
+            isVar<Gecode::SetVar>(vm, spec[1]))
         {
           Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
           Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
           for (int i=a0.size(); i--;)
             x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          Gecode::selectSet(home, x0,x1,x2);
+          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
+          Gecode::elementsDisjoint(home, x0,x1);
           return;
         }
 #endif
-#if defined(GECODE_HAS_SET_VARS)
-        if (isIntSetArgs(spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::SetVar>(vm, spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::IntSetArgs x0(a0.size());
-          for (int i=a0.size(); i--;) {
-            Gecode::Reflection::IntArrayArg* aa0 = a0[i]->toIntArray();
-            Gecode::Reflection::IntArrayArgRanges aar0(aa0);
-            x0[i] = Gecode::IntSet(aar0);
-          }
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
-          Gecode::selectSet(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectSet");
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::elementsDisjoint");
       }
       break;
-    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::selectSet");
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::elementsDisjoint");
     }
   }
 };
@@ -7629,6 +7532,37 @@ public:
       }
       break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::branch");
+    }
+  }
+};
+
+class Register_convexHull {
+public:
+  /// Identifier for this post function
+  static Gecode::Support::Symbol ati(void) {
+    return "Gecode::Post::convexHull";
+  }
+  
+  /// Post constraint described by \a spec
+  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
+                   const Gecode::Reflection::ActorSpec& spec) {
+    switch(spec.noOfArgs()) {
+    case 2:
+      {
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]))
+        {
+          Gecode::SetVar x0(vm.var(spec[0]->toVar()));
+          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
+          Gecode::convexHull(home, x0,x1);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::convexHull");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::convexHull");
     }
   }
 };
@@ -7982,33 +7916,62 @@ public:
   }
 };
 
-class Register_convexHull {
+class Register_elementsInter {
 public:
   /// Identifier for this post function
   static Gecode::Support::Symbol ati(void) {
-    return "Gecode::Post::convexHull";
+    return "Gecode::Post::elementsInter";
   }
   
   /// Post constraint described by \a spec
   static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
     switch(spec.noOfArgs()) {
-    case 2:
+    case 3:
       {
 #if defined(GECODE_HAS_SET_VARS)
-        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
-            isVar<Gecode::SetVar>(vm, spec[1]))
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]))
         {
-          Gecode::SetVar x0(vm.var(spec[0]->toVar()));
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
           Gecode::SetVar x1(vm.var(spec[1]->toVar()));
-          Gecode::convexHull(home, x0,x1);
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          Gecode::elementsInter(home, x0,x1,x2);
           return;
         }
 #endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::convexHull");
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::elementsInter");
       }
       break;
-    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::convexHull");
+    case 4:
+      {
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::SetVar>(vm, spec[1]) &&
+            isVar<Gecode::SetVar>(vm, spec[2]) &&
+            spec[3]->isIntArray())
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
+          Gecode::SetVar x1(vm.var(spec[1]->toVar()));
+          Gecode::SetVar x2(vm.var(spec[2]->toVar()));
+          Gecode::Reflection::IntArrayArg* a3 = spec[3]->toIntArray();
+          Gecode::Reflection::IntArrayArgRanges ar3(a3);
+          Gecode::IntSet x3(ar3);
+          Gecode::elementsInter(home, x0,x1,x2,x3);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::elementsInter");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::elementsInter");
     }
   }
 };
@@ -8234,7 +8197,6 @@ public:
 class PostRegistrar {
   GECODE_REGISTER1(Register_rel);
   GECODE_REGISTER1(Register_sqrt);
-  GECODE_REGISTER1(Register_selectInterIn);
   GECODE_REGISTER1(Register_sequence);
   GECODE_REGISTER1(Register_sorted);
   GECODE_REGISTER1(Register_exactly);
@@ -8243,9 +8205,9 @@ class PostRegistrar {
   GECODE_REGISTER1(Register_dom);
   GECODE_REGISTER1(Register_count);
   GECODE_REGISTER1(Register_match);
-  GECODE_REGISTER1(Register_selectUnion);
   GECODE_REGISTER1(Register_element);
   GECODE_REGISTER1(Register_abs);
+  GECODE_REGISTER1(Register_elementsUnion);
   GECODE_REGISTER1(Register_atmost);
   GECODE_REGISTER1(Register_circuit);
   GECODE_REGISTER1(Register_assign);
@@ -8254,18 +8216,17 @@ class PostRegistrar {
   GECODE_REGISTER1(Register_convex);
   GECODE_REGISTER1(Register_unshare);
   GECODE_REGISTER1(Register_weights);
-  GECODE_REGISTER1(Register_selectInter);
-  GECODE_REGISTER1(Register_selectDisjoint);
   GECODE_REGISTER1(Register_linear);
   GECODE_REGISTER1(Register_cumulatives);
   GECODE_REGISTER1(Register_channel);
   GECODE_REGISTER1(Register_cardinality);
-  GECODE_REGISTER1(Register_selectSet);
+  GECODE_REGISTER1(Register_elementsDisjoint);
   GECODE_REGISTER1(Register_min);
   GECODE_REGISTER1(Register_sequentialUnion);
   GECODE_REGISTER1(Register_branch);
-  GECODE_REGISTER1(Register_atleast);
   GECODE_REGISTER1(Register_convexHull);
+  GECODE_REGISTER1(Register_atleast);
+  GECODE_REGISTER1(Register_elementsInter);
   GECODE_REGISTER1(Register_sqr);
   GECODE_REGISTER1(Register_lex);
 };

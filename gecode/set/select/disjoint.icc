@@ -37,10 +37,10 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   forceinline
-  SelectDisjoint::SelectDisjoint(Space* home,
+  ElementDisjoint::ElementDisjoint(Space* home,
                                  IdxViewArray<SetView>& iv0,
                                  SetView y1)
     : Propagator(home), iv(iv0), x1(y1) {
@@ -50,14 +50,14 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   forceinline
-  SelectDisjoint::SelectDisjoint(Space* home, bool share, SelectDisjoint& p)
+  ElementDisjoint::ElementDisjoint(Space* home, bool share, ElementDisjoint& p)
     : Propagator(home,share,p) {
     x1.update(home,share,p.x1);
     iv.update(home,share,p.iv);
   }
 
   forceinline ExecStatus
-  SelectDisjoint::post(Space* home, IdxViewArray<SetView>& xs,
+  ElementDisjoint::post(Space* home, IdxViewArray<SetView>& xs,
                        SetView x1) {
     int n = xs.size();
 
@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace Select {
     Iter::Ranges::Singleton s(0, n-1);
     GECODE_ME_CHECK(x1.intersectI(home,s));
     (void) new (home)
-      SelectDisjoint(home,xs,x1);
+      ElementDisjoint(home,xs,x1);
     return ES_OK;
   }
 

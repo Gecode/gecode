@@ -37,12 +37,12 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   forceinline
-  SelectUnion<SView,RView>::
-  SelectUnion(Space* home, SView y0,
+  ElementUnion<SView,RView>::
+  ElementUnion(Space* home, SView y0,
                      IdxViewArray<SView>& iv0,
                      RView y1)
     : Propagator(home), x0(y0), iv(iv0), x1(y1) {
@@ -54,9 +54,9 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   forceinline
-  SelectUnion<SView,RView>::
-  SelectUnion(Space* home, bool share,
-                     SelectUnion<SView,RView>& p)
+  ElementUnion<SView,RView>::
+  ElementUnion(Space* home, bool share,
+                     ElementUnion<SView,RView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -65,19 +65,19 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   PropCost
-  SelectUnion<SView,RView>::cost(ModEventDelta) const {
+  ElementUnion<SView,RView>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
   template <class SView, class RView>
   Support::Symbol
-  SelectUnion<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Gecode::Set::Select::Union");
+  ElementUnion<SView,RView>::ati(void) {
+    return Reflection::mangle<SView,RView>("Gecode::Set::Element::Union");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec
-  SelectUnion<SView,RView>::spec(const Space* home,
+  ElementUnion<SView,RView>::spec(const Space* home,
                                  Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x0.spec(home, m)
@@ -87,19 +87,19 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   void
-  SelectUnion<SView,RView>::post(Space* home,
+  ElementUnion<SView,RView>::post(Space* home,
                                  Reflection::VarMap& vars,
                                  const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     SView x0(home, vars, spec[0]);
     IdxViewArray<SView> iv(home, vars, spec[1]);
     RView x1(home, vars, spec[2]);
-    (void) new (home) SelectUnion(home, x0, iv, x1);
+    (void) new (home) ElementUnion(home, x0, iv, x1);
   }
 
   template <class SView, class RView>
   size_t
-  SelectUnion<SView,RView>::dispose(Space* home) {
+  ElementUnion<SView,RView>::dispose(Space* home) {
     unforce(home);
     if (!home->failed()) {
       x0.cancel(home,this, PC_SET_ANY);
@@ -112,7 +112,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnion<SView,RView>::
+  ElementUnion<SView,RView>::
   post(Space* home, SView x0, IdxViewArray<SView>& xs,
        RView x1) {
     int n = xs.size();
@@ -121,19 +121,19 @@ namespace Gecode { namespace Set { namespace Select {
     Iter::Ranges::Singleton s(0, n-1);
     GECODE_ME_CHECK(x1.intersectI(home,s));
     (void) new (home)
-      SelectUnion<SView,RView>(home,x0,xs,x1);
+      ElementUnion<SView,RView>(home,x0,xs,x1);
     return ES_OK;
   }
 
   template <class SView, class RView>
   Actor*
-  SelectUnion<SView,RView>::copy(Space* home, bool share) {
-    return new (home) SelectUnion<SView,RView>(home,share,*this);
+  ElementUnion<SView,RView>::copy(Space* home, bool share) {
+    return new (home) ElementUnion<SView,RView>(home,share,*this);
   }
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnion<SView,RView>::propagate(Space* home, ModEventDelta) {
+  ElementUnion<SView,RView>::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
     bool loopVar;
