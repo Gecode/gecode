@@ -41,8 +41,10 @@
 
 namespace Gecode { namespace Gist {
 
+  class VisualNode;
+
   /// \brief Base class for nodes of the search tree
-  class Node {
+  class Node : public Support::BlockClient<VisualNode> {
   private:
     /// The parent of this node, or NULL for the root
     Node* parent;    
@@ -77,6 +79,8 @@ namespace Gecode { namespace Gist {
     bool isUndetermined(void) const;
 
   public:
+    typedef Support::BlockAllocator<VisualNode> NodeAllocator;
+    
     /// Default constructor
     Node(void);
     /// Destructor

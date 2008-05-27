@@ -178,7 +178,8 @@ namespace Gecode { namespace Gist {
       * Otherwise, the status is SS_BRANCH, and as many new children will
       * be created as the branch has alternatives, and the number returned.
       */
-    int getNumberOfChildNodes(BestNode* curBest,
+    int getNumberOfChildNodes(NodeAllocator& na,
+                              BestNode* curBest,
                               Statistics& stats = Statistics::dummy);
     
     /// Return current status of the node
