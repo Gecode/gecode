@@ -618,7 +618,7 @@ GISTHDR0 = \
 	better.hh drawingcursor.hh \
 	gist.icc node.hh node.icc \
 	nodecursor.hh nodecursor.icc nodevisitor.hh \
-	nodevisitor.icc postscript.hh layoutcursor.hh layoutcursor.icc \
+	nodevisitor.icc layoutcursor.hh layoutcursor.icc \
 	spacenode.hh spacenode.icc textoutput.hh treecanvas.hh zoomToFitIcon.icc \
 	visualnode.hh visualnode.icc \
 	mainwindow.hh \
@@ -633,7 +633,7 @@ GISTHDR0 = \
 
 GISTSRC0 = \
 	drawingcursor.cc gist.cc node.cc nodecursor.cc \
-	postscript.cc layoutcursor.cc spacenode.cc \
+	layoutcursor.cc spacenode.cc \
 	textoutput.cc treecanvas.cc visualnode.cc \
 	mainwindow.cc preferences.cc \
 	addchild.cc addvisualisationdialog.cc reflectionhelpers.cc \

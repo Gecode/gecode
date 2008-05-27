@@ -133,7 +133,9 @@ namespace Gecode { namespace Gist {
 
     QMenu* fileMenu = menuBar->addMenu(tr("&File"));
     fileMenu->addAction(c.print);
-    fileMenu->addAction(c.exportPostscript);
+#if QT_VERSION >= 0x040400
+    fileMenu->addAction(c.exportPDF);
+#endif
     QAction* quitAction = fileMenu->addAction(tr("Quit"));
     quitAction->setShortcut(QKeySequence("Ctrl+Q"));
     connect(quitAction, SIGNAL(triggered()),
