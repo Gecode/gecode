@@ -42,7 +42,7 @@
 
 #include "gecode/set.hh"
 
-#include "gecode/set/select/idxarray.hh"
+#include "gecode/set/element/idxarray.hh"
 #include "gecode/set/rel.hh"
 #include "gecode/set/rel-op.hh"
 
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with intersection
    *
-   * Requires \code #include "gecode/set/select.hh" \endcode
+   * Requires \code #include "gecode/set/element.hh" \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
@@ -101,7 +101,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with union
    *
-   * Requires \code #include "gecode/set/select.hh" \endcode
+   * Requires \code #include "gecode/set/element.hh" \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
@@ -144,7 +144,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with union of constant sets
    *
-   * Requires \code #include "gecode/set/select.hh" \endcode
+   * Requires \code #include "gecode/set/element.hh" \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with disjointness
    *
-   * Requires \code #include "gecode/set/select.hh" \endcode
+   * Requires \code #include "gecode/set/element.hh" \endcode
    * \ingroup FuncSetProp
    */
   class ElementDisjoint :
@@ -222,10 +222,10 @@ namespace Gecode { namespace Set { namespace Element {
 
 }}}
 
-#include "gecode/set/select/inter.icc"
-#include "gecode/set/select/union.icc"
-#include "gecode/set/select/unionConst.icc"
-#include "gecode/set/select/disjoint.icc"
+#include "gecode/set/element/inter.icc"
+#include "gecode/set/element/union.icc"
+#include "gecode/set/element/unionConst.icc"
+#include "gecode/set/element/disjoint.icc"
 
 #endif
 

@@ -349,7 +349,7 @@ SETSRC0 =								 \
 	cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
 	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
 	int.cc								 \
-	select.cc select/disjoint.cc sequence.cc			 \
+	element.cc element/disjoint.cc sequence.cc			 \
 	distinct.cc distinct/atmostOne.cc				 \
 	sequence/seq.cc sequence/seq-u.cc array.cc var-imp/set.cc	 \
 	var-imp/integerset.cc var/set.cc view/print.cc			 \
@@ -361,12 +361,13 @@ SETSRC0 =								 \
 	projectors/formula.cc
 SETHDR0 =								     \
 	limits.icc \
-	view.icc exception.icc int.hh select.hh var-imp.icc int/card.icc     \
+	view.icc exception.icc int.hh element.hh var-imp.icc                 \
+	int/card.icc     						     \
 	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
-	int/channel-bool.icc select/idxarray.hh			             \
-	select/idxarray.icc select/inter.icc select/union.icc                \
-	select/unionConst.icc                                                \
-	select/disjoint.icc array.icc					     \
+	int/channel-bool.icc element/idxarray.hh			     \
+	element/idxarray.icc element/inter.icc element/union.icc             \
+	element/unionConst.icc                                               \
+	element/disjoint.icc array.icc					     \
 	var-imp/set.icc var-imp/integerset.icc	     			     \
 	var-imp/delta.icc var-imp/iter.icc 				     \
 	var/set.icc							     \
@@ -416,7 +417,7 @@ export POSTSET          =
 endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
-	set/select set/sequence set/var set/var-imp set/view 	\
+	set/element set/sequence set/var set/var-imp set/view 	\
 	set/projectors set/projectors/propagator
 
 #

@@ -37,7 +37,7 @@
  *
  */
 
-#include "gecode/set/select.hh"
+#include "gecode/set/element.hh"
 
 namespace Gecode {
 
