@@ -46,7 +46,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 class SetVarItem : public VarItem {
   
 public:
-  typedef QPair<int,int> ItemData;
+  typedef int ItemData;
   static ItemData initData(QVector<Reflection::VarSpec*> specs);
 
   SetVarItem(Reflection::VarSpec* spec, const ItemData& data,
@@ -64,6 +64,7 @@ protected:
   QGraphicsTextItem* cardText;
   int initMin; ///< Initial domain minimum
   int initMax; ///< Initial domain maximum
+  int offset; ///< Offset of first item
   int arraylength;
   QStack<QBitArray> updates; ///< Collected updates
   QStack<int> bound_updates;

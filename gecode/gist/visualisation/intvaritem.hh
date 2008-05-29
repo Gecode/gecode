@@ -46,7 +46,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 class IntVarItem : public VarItem {
   
 public:
-  typedef QPair<int,int> ItemData;
+  typedef int ItemData;
   static ItemData initData(QVector<Reflection::VarSpec*> specs);
 
   IntVarItem(Reflection::VarSpec* spec, const ItemData& data,

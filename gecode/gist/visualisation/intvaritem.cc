@@ -42,13 +42,12 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
   IntVarItem::ItemData
   IntVarItem::initData(QVector<Reflection::VarSpec*> specs) {
-    ItemData data(Int::Limits::max, Int::Limits::min);
+    ItemData data(Int::Limits::max);
     for (int i=0; i<specs.size(); i++) {
       if (! (specs[i]->vti() == Int::IntVarImpConf::vti))
-        return ItemData(0,0);
+        return ItemData(0);
       Reflection::IntArrayArg* dom = specs[i]->dom()->toIntArray();
-      data.first = std::min(data.first, (*dom)[0]);
-      data.second = std::max(data.second, (*dom)[dom->size()-1]);
+      data = std::min(data, (*dom)[0]);
     }
     return data;
   }
@@ -66,7 +65,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       initMin = (*dom)[0];
       initMax = (*dom)[domSize-1];
 
-      offset = initMin - data.first;
+      offset = initMin - data;
 
       arraylength = 2*(initMax - initMin + 1);
 

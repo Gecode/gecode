@@ -46,7 +46,14 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
   SetVarItem::ItemData
   SetVarItem::initData(QVector<Reflection::VarSpec*> specs) {
-    ItemData data;
+    ItemData data(Set::Limits::max);
+    for (int i=0; i<specs.size(); i++) {
+      if (! (specs[i]->vti() == Set::SetVarImpConf::vti))
+        return ItemData(0);
+      Reflection::IntArrayArg* dom = 
+        specs[i]->dom()->second()->first()->toIntArray();
+      data = std::min(data, (*dom)[0]);
+    }
     return data;
   }
 
@@ -75,6 +82,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       initMax = std::max(initMax, (*lower_bound_dom)[lb_domSize-1]);
     }
     arraylength = 2*(initMax - initMin + 1);
+    offset = initMin - data;
 
     QBitArray array(arraylength, false);
     updates.push(array);
@@ -129,9 +137,10 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       //centre the number in the square
       number->moveBy((item->boundingRect().width() - number->boundingRect().width())/2,
                      (item->boundingRect().height() - number->boundingRect().height())/2);
-      if(j>0) {
+      if (j == 0)
+        item->moveBy(offset*largestBound.width(),0);
+      else
         item->moveBy(childrenBoundingRect().width(),0);
-      }
       domainItems[j] = item;
     }
     
