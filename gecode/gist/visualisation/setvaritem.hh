@@ -37,8 +37,7 @@
 #ifndef GECODE_GIST_VISUALISATION_SETVARITEM_HH
 #define GECODE_GIST_VISUALISATION_SETVARITEM_HH
 
-#include <QtCore/QStack>
-#include <QtCore/QBitArray>
+#include <QtCore>
 
 #include "gecode/gist/visualisation/varitem.hh"
 
@@ -47,7 +46,11 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 class SetVarItem : public VarItem {
   
 public:
-  SetVarItem(Reflection::VarSpec* spec, QGraphicsItem *parent = 0);
+  typedef QPair<int,int> ItemData;
+  static ItemData initData(QVector<Reflection::VarSpec*> specs);
+
+  SetVarItem(Reflection::VarSpec* spec, const ItemData& data,
+             QGraphicsItem *parent = 0);
 
   void display(Reflection::VarSpec* spec);
   void displayOld(int pit); ///< Use to show the variable at point in time \a pit

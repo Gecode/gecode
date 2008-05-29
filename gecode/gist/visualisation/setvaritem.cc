@@ -44,7 +44,14 @@
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-  SetVarItem::SetVarItem(Reflection::VarSpec* spec, QGraphicsItem *parent)
+  SetVarItem::ItemData
+  SetVarItem::initData(QVector<Reflection::VarSpec*> specs) {
+    ItemData data;
+    return data;
+  }
+
+  SetVarItem::SetVarItem(Reflection::VarSpec* spec, const ItemData& data, 
+                         QGraphicsItem *parent)
   : VarItem(spec, parent)
 { 
   // this item is supposed to display a SetVar

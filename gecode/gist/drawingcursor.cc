@@ -66,11 +66,10 @@ namespace Gecode { namespace Gist {
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
                                QPainter& painter0,
-                               bool heat,
                                const QRect& clippingRect0)
     : NodeCursor<VisualNode>(root), painter(painter0), 
       clippingRect(clippingRect0), curBest(curBest0),
-      x(0), y(0), heatView(heat) {}
+      x(0), y(0) {}
 
   bool
   DrawingCursor::isClipped(void) {
@@ -93,21 +92,11 @@ namespace Gecode { namespace Gist {
     int myx = x;
     int myy = y;
 
-    // Calculate HSV hue level from heat
-    int heat = (240 + static_cast<int>(((n->getHeat() / 256.0) * 180.0))) % 360;
-
-    if (! n->isRoot()) {
-      if (heatView) {
-        if (n->isOnPath())
-          painter.setPen(Qt::green);
-        else
-          painter.setPen(Qt::gray);        
-      } else {
-        if (n->isOnPath())
-          painter.setPen(Qt::red);
-        else
-          painter.setPen(Qt::black);
-      }
+    if (n != startNode()) {
+      if (n->isOnPath())
+        painter.setPen(Qt::red);
+      else
+        painter.setPen(Qt::black);
       QPainterPath path;
       path.moveTo(myx,myy);
       path.lineTo(parentX,parentY);
@@ -192,24 +181,15 @@ namespace Gecode { namespace Gist {
         painter.setBrush(Qt::yellow);
         painter.drawEllipse(myx-quarterNodeWidth, myy+halfNodeWidth,
                            halfNodeWidth, halfNodeWidth);
-        if (heatView) {
-          if (n->isOnPath())
-            painter.setPen(Qt::green);
-          else
-            painter.setPen(Qt::gray);        
-        } else {
-          if (n->isOnPath())
-            painter.setPen(Qt::red);
-          else
-            painter.setPen(Qt::black);
-        }
+        if (n->isOnPath())
+          painter.setPen(Qt::red);
+        else
+          painter.setPen(Qt::black);
         painter.drawLine(myx, myy, myx, myy+halfNodeWidth);
         break;
       case Gist::SOLVED:
         {
-          if (heatView) {
-            painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-          } else if (n->isCurrentBest(curBest)) {
+          if (n->isCurrentBest(curBest)) {
             painter.setBrush(QBrush(orange));
           } else {
             painter.setBrush(QBrush(green));
@@ -223,10 +203,7 @@ namespace Gecode { namespace Gist {
         }
         break;
       case Gist::FAILED:
-        if (heatView)
-          painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-        else
-          painter.setBrush(QBrush(red));
+        painter.setBrush(QBrush(red));
         painter.drawRect(myx-halfFailedWidth, myy, failedWidth, failedWidth);
         break;
       case Gist::DECOMPOSE:
@@ -255,10 +232,7 @@ namespace Gecode { namespace Gist {
         }
         break;
       case Gist::BRANCH:
-        if (heatView)
-          painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-        else
-          painter.setBrush(QBrush(blue));
+        painter.setBrush(QBrush(blue));
         painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         break;
       case Gist::SINGLETON:
