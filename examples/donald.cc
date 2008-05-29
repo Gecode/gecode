@@ -53,6 +53,11 @@ private:
   /// Array of letters
   IntVarArray le;
 public:
+  /// Model variants
+  enum {
+    MODEL_SINGLE, ///< Use single linear equation
+    MODEL_CARRY   ///< Use carries
+  };
   /// Actual model
   Donald(const Options& opt) :
     le(this,nl,0,9) {
@@ -63,12 +68,29 @@ public:
     rel(this, g, IRT_NQ, 0);
     rel(this, r, IRT_NQ, 0);
 
-    post(this,    100000*d+10000*o+1000*n+100*a+10*l+d
-                + 100000*g+10000*e+1000*r+100*a+10*l+d
-               == 100000*r+10000*o+1000*b+100*e+10*r+t,
-         opt.icl());
-
     distinct(this, le, opt.icl());
+
+    switch (opt.model()) {
+    case MODEL_SINGLE:
+      post(this,    100000*d+10000*o+1000*n+100*a+10*l+d
+                  + 100000*g+10000*e+1000*r+100*a+10*l+d
+                 == 100000*r+10000*o+1000*b+100*e+10*r+t,
+           opt.icl());
+      break;
+    case MODEL_CARRY:
+      {
+        IntVar c0(this,0,1), c1(this,0,1), c2(this,0,1), 
+          c3(this,0,1), c4(this,0,1);
+        post(this,    d+d == t+10*c0, opt.icl());
+        post(this, c0+l+l == r+10*c1, opt.icl());
+        post(this, c1+a+a == e+10*c2, opt.icl());
+        post(this, c2+n+r == b+10*c3, opt.icl());
+        post(this, c3+o+e == o+10*c4, opt.icl());
+        post(this, c4+d+g == r,       opt.icl());
+      }
+      break;
+    default: GECODE_NEVER;
+    }
 
     branch(this, le, INT_VAR_SIZE_MIN, INT_VAL_MAX);
   }
@@ -96,6 +118,9 @@ public:
 int
 main(int argc, char* argv[]) {
   Options opt("Donald+Gerald=Robert");
+  opt.model(Donald::MODEL_SINGLE);
+  opt.model(Donald::MODEL_SINGLE, "single", "use single linear equation");
+  opt.model(Donald::MODEL_CARRY, "carry", "use carry");
   opt.solutions(0);
   opt.iterations(1500);
   opt.parse(argc,argv);
