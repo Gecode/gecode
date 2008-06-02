@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The Makefile has a new target, check, which performs a minimal integrity check 
+using some tests from the test suite.
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor
