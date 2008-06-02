@@ -73,11 +73,11 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelTieBreakStatic(Space* home, A& a, B& b);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, typename A::View x);
+    ViewSelStatus init(Space* home, typename A::View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, typename A::View x);
+    ViewSelStatus select(Space* home, typename A::View x);
     /// Return description
-    Desc description(const Space* home) const;
+    Desc description(Space* home);
     /// Commit to description
     void commit(Space* home, const Desc& d, unsigned a);
     /// Updating during cloning
@@ -115,11 +115,11 @@ namespace Gecode {
   class ViewSelVirtualBase {
   public:
     /// Intialize with view \a x
-    virtual ViewSelStatus init(const Space* home, View x) = 0;
+    virtual ViewSelStatus init(Space* home, View x) = 0;
     /// Possibly select better view \a x
-    virtual ViewSelStatus select(const Space* home, View x) = 0;
+    virtual ViewSelStatus select(Space* home, View x) = 0;
     /// Return description
-    virtual DescVirtualBase* description(const Space* home) const = 0;
+    virtual DescVirtualBase* description(Space* home) = 0;
     /// Commit to description
     virtual void commit(Space* home, const DescVirtualBase* d, unsigned a) = 0;
     /// Create copy
@@ -169,11 +169,11 @@ namespace Gecode {
     /// Constructor for cloning \a vsv
     ViewSelVirtual(Space* home, bool share, ViewSelVirtual& vsv);
     /// Intialize with view \a x
-    virtual ViewSelStatus init(const Space* home, typename ViewSel::View x);
+    virtual ViewSelStatus init(Space* home, typename ViewSel::View x);
     /// Possibly select better view \a x
-    virtual ViewSelStatus select(const Space* home, typename ViewSel::View x);
+    virtual ViewSelStatus select(Space* home, typename ViewSel::View x);
     /// Return description
-    virtual DescVirtualBase* description(const Space* home) const;
+    virtual DescVirtualBase* description(Space* home);
     /// Commit to description
     virtual void commit(Space* home, const DescVirtualBase* d, unsigned a);
     /// Create copy during cloning
@@ -204,7 +204,7 @@ namespace Gecode {
       /// Descriptions
       DescVirtualBase** d;
       /// Constructor
-      Desc(const Space* home, ViewSelVirtualBase<_View>** tb, int n0);
+      Desc(Space* home, ViewSelVirtualBase<_View>** tb, int n0);
       /// Copy constructor
       Desc(const Desc& de);
       /// Assignment operator
@@ -223,11 +223,11 @@ namespace Gecode {
     ViewSelTieBreakDynamic(Space* home, ViewSelVirtualBase<_View>** vsv,
                            int n);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, _View x);
+    ViewSelStatus init(Space* home, _View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, _View x);
+    ViewSelStatus select(Space* home, _View x);
     /// Return description
-    Desc description(const Space* home) const;
+    Desc description(Space* home);
     /// Commit to description
     void commit(Space* home, const Desc& d, unsigned a);
     /// Updating during cloning
@@ -262,13 +262,13 @@ namespace Gecode {
     : a(a0), b(b0) {}
   template<class A, class B>
   forceinline ViewSelStatus
-  ViewSelTieBreakStatic<A,B>::init(const Space* home, typename A::View x) {
+  ViewSelTieBreakStatic<A,B>::init(Space* home, typename A::View x) {
     ViewSelStatus s = a.init(home,x);
     return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : s;
   }
   template<class A, class B>
   forceinline ViewSelStatus
-  ViewSelTieBreakStatic<A,B>::select(const Space* home, typename A::View x) {
+  ViewSelTieBreakStatic<A,B>::select(Space* home, typename A::View x) {
     switch (a.select(home,x)) {
     case VSS_BEST:
       return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : VSS_BEST;
@@ -291,7 +291,7 @@ namespace Gecode {
   }
   template<class A, class B>
   forceinline typename ViewSelTieBreakStatic<A,B>::Desc
-  ViewSelTieBreakStatic<A,B>::description(const Space* home) const {
+  ViewSelTieBreakStatic<A,B>::description(Space* home) {
     typename ViewSelTieBreakStatic<A,B>::Desc d(a.description(home),
                                                 b.description(home));
     return d;
@@ -381,17 +381,17 @@ namespace Gecode {
   }
   template <class ViewSel>
   ViewSelStatus
-  ViewSelVirtual<ViewSel>::init(const Space* home, typename ViewSel::View x) {
+  ViewSelVirtual<ViewSel>::init(Space* home, typename ViewSel::View x) {
     return viewsel.init(home,x);
   }
   template <class ViewSel>
   ViewSelStatus
-  ViewSelVirtual<ViewSel>::select(const Space* home, typename ViewSel::View x) {
+  ViewSelVirtual<ViewSel>::select(Space* home, typename ViewSel::View x) {
     return viewsel.select(home,x);
   }
   template <class ViewSel>
   DescVirtualBase*
-  ViewSelVirtual<ViewSel>::description(const Space* home) const {
+  ViewSelVirtual<ViewSel>::description(Space* home) {
     return new DescVirtual<typename ViewSel::Desc>(viewsel.description(home));
   }
   template <class ViewSel>
@@ -419,7 +419,7 @@ namespace Gecode {
   template<class View>
   forceinline
   ViewSelTieBreakDynamic<View>::Desc::Desc
-  (const Space* home, ViewSelVirtualBase<View>** tb, int n0)
+  (Space* home, ViewSelVirtualBase<View>** tb, int n0)
     : n(n0), d(Memory::bmalloc<DescVirtualBase*>(n)) {
     for (int i=n; i--; )
       d[i] = tb[i]->description(home);
@@ -483,7 +483,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelTieBreakDynamic<View>::init(const Space* home, View x) {
+  ViewSelTieBreakDynamic<View>::init(Space* home, View x) {
     ViewSelStatus s = VSS_BEST;
     for (int i=0; i<n; i++)
       if (tb[i]->init(home,x) != VSS_BEST)
@@ -492,7 +492,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelTieBreakDynamic<View>::select(const Space* home, View x) {
+  ViewSelTieBreakDynamic<View>::select(Space* home, View x) {
     switch (tb[0]->select(home,x)) {
     case VSS_BEST:
       {
@@ -524,7 +524,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline typename ViewSelTieBreakDynamic<View>::Desc
-  ViewSelTieBreakDynamic<View>::description(const Space* home) const {
+  ViewSelTieBreakDynamic<View>::description(Space* home) {
     Desc d(home,tb,n);
     return d;
   }

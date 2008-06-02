@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The description() member function of a space is not any longer
+const: it can be called at most once.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

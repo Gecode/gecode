@@ -145,7 +145,7 @@ public:
     return false;
   }
   /// Return branching description
-  virtual BranchingDesc* description(const Space*) const {
+  virtual BranchingDesc* description(Space*) {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
     return new Description(this, 2, pos, val);
   }

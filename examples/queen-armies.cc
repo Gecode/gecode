@@ -210,7 +210,7 @@ public:
       return true;
     }
     /// Return branching description
-    virtual BranchingDesc* description(const Space*) const {
+    virtual BranchingDesc* description(Space*) {
       assert(pos != -1);
       return new Description(this, 2, pos, true);
     }

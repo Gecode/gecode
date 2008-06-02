@@ -49,12 +49,12 @@ namespace Gecode { namespace Set { namespace Branch {
   BySizeMin::BySizeMin(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
-  BySizeMin::init(const Space*, SetView x) { 
+  BySizeMin::init(Space*, SetView x) { 
     min = x.unknownSize();
     return (min == 1) ? VSS_BEST : VSS_BETTER;
   }
   forceinline ViewSelStatus
-  BySizeMin::select(const Space*, SetView x) {
+  BySizeMin::select(Space*, SetView x) {
     unsigned int us = x.unknownSize();
     if (us < min) {
       min = us;
@@ -76,13 +76,13 @@ namespace Gecode { namespace Set { namespace Branch {
   ByMinMin::ByMinMin(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
-  ByMinMin::init(const Space*, SetView x) {
+  ByMinMin::init(Space*, SetView x) {
     UnknownRanges<SetView> u(x);
     min = u.min();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByMinMin::select(const Space*, SetView x) {
+  ByMinMin::select(Space*, SetView x) {
     UnknownRanges<SetView> u(x);
     int um = u.min();
     if (um < min) {
@@ -104,13 +104,13 @@ namespace Gecode { namespace Set { namespace Branch {
   ByMaxMax::ByMaxMax(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
-  ByMaxMax::init(const Space*, SetView x) {
+  ByMaxMax::init(Space*, SetView x) {
     for (UnknownRanges<SetView> u(x); u(); ++u)
       max = u.max();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByMaxMax::select(const Space*, SetView x) {
+  ByMaxMax::select(Space*, SetView x) {
     int um = 0;
     for (UnknownRanges<SetView> u(x); u(); ++u)
       um = u.max();

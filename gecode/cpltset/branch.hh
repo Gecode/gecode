@@ -67,7 +67,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Constructor for initialization
     ValMin(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
-    int val(const Space*, CpltSetView x) const;
+    int val(Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, CpltSetView x, int v);
     /// Type of this value selection (for reflection)
@@ -93,7 +93,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Constructor for initialization
     ValMax(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
-    int val(const Space*, CpltSetView x) const;
+    int val(Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, CpltSetView x, int v);
     /// Type of this value selection (for reflection)
@@ -125,9 +125,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Constructor for initialization
     BySizeMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, CpltSetView x);
+    ViewSelStatus init(Space*, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, CpltSetView x);
+    ViewSelStatus select(Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -148,9 +148,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Constructor for initialization
     ByMinMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, CpltSetView x);
+    ViewSelStatus init(Space*, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, CpltSetView x);
+    ViewSelStatus select(Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -171,9 +171,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Constructor for initialization
     ByMaxMax(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, CpltSetView x);
+    ViewSelStatus init(Space*, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, CpltSetView x);
+    ViewSelStatus select(Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };

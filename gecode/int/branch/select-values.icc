@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template <class ViewSel, class View>
   const BranchingDesc*
-  ViewValuesBranching<ViewSel,View>::description(const Space* home) const {
+  ViewValuesBranching<ViewSel,View>::description(Space* home) {
     Pos p = ViewBranching<ViewSel>::pos(home);
     View v(ViewBranching<ViewSel>::view(p).var());
     return new PosValuesDesc<ViewSel,View>(this,p,viewsel.description(home),v);
@@ -192,7 +192,7 @@ namespace Gecode { namespace Int { namespace Branch {
     const PosValuesDesc<ViewSel,View>* pvd 
       = static_cast<const PosValuesDesc<ViewSel,View>*>(d);
     Reflection::BranchingSpec bs(1);
-    bs[0] = view(pvd->pos()).spec(home, m);
+    //    bs[0] = view(pvd->pos()).spec(home, m);
     //    bs[1] = Reflection::Arg::newString(ValSel::type());
     //    bs[2] = Reflection::Arg::newInt(pvd->val());
     return bs;

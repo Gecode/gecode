@@ -959,13 +959,11 @@ namespace Gecode {
     /**
      * \brief Return branching description
      *
-     * Note that this method can rely on the fact that it is called
-     * immediately after a previous call to status. Hence, it is safe
-     * to remember computation from status in order to speed up
-     * description.
-     *
+     * Note that this method relies on the fact that it is called
+     * immediately after a previous call to status. Moreover, the
+     * member function can only be called once.
      */
-    virtual const BranchingDesc* description(const Space* home) const = 0;
+    virtual const BranchingDesc* description(Space* home) = 0;
     /**
      * \brief Commit for branching description \a d and alternative \a a
      *
@@ -1180,15 +1178,21 @@ namespace Gecode {
      * Space::status on the same space has been called and in between
      * no non-const member function has been called on this space.
      *
+     * Moreover, the member function can only be called at most once
+     * (otherwise, it might generate conflicting descriptions).
+     *
      * Note that the above invariant only pertains to calls of member
      * functions of the same space. If the invariant is violated, the
      * system is likely to crash (hopefully it does). In particular, if
      * applied to a space with no current branching, the system will
      * crash.
      *
+     * Throws an exception of type SpaceNotStable when applied to a not
+     * yet stable space.
+     *
      * \ingroup TaskSearch
      */
-    const BranchingDesc* description(void) const;
+    const BranchingDesc* description(void);
 
     /**
      * \brief Clone space
@@ -1942,11 +1946,6 @@ namespace Gecode {
       pc.p.active = c;
   }
 
-  forceinline const BranchingDesc*
-  Space::description(void) const {
-    return b_status->description(this);
-  }
-
   forceinline void
   Space::fail(void) {
     pc.p.active = NULL;
@@ -1960,6 +1959,13 @@ namespace Gecode {
   forceinline bool
   Space::stable(void) const {
     return pc.p.active < &pc.p.queue[0];
+  }
+
+  forceinline const BranchingDesc*
+  Space::description(void) {
+    if (!stable())
+      throw SpaceNotStable("Space::description");
+    return b_status->description(this);
   }
 
 

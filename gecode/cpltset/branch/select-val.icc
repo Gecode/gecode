@@ -46,7 +46,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     : ValSelBase<CpltSetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMin<inc>::val(const Space*, CpltSetView x) const {
+  ValMin<inc>::val(Space*, CpltSetView x) const {
     UnknownValues<CpltSetView> u(x);
     return u.val();
   }
@@ -72,7 +72,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     : ValSelBase<CpltSetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMax<inc>::val(const Space*, CpltSetView x) const {
+  ValMax<inc>::val(Space*, CpltSetView x) const {
     int max = 0;
     for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
       max = u.max();

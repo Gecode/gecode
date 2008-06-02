@@ -78,19 +78,19 @@ namespace Gecode {
   class ViewBranching : public Branching {
   protected:
     /// Views to branch on
-    mutable ViewArray<typename ViewSel::View> x; 
+    ViewArray<typename ViewSel::View> x; 
     /// Unassigned views start at x[start]
     mutable int start;  
     /// View selection object
-    mutable ViewSel viewsel;
+    ViewSel viewsel;
     /// Return position information
-    Pos pos(const Space* home) const;
+    Pos pos(Space* home);
     /**
      * \brief Return view according to position information \a p
      *
      * If used during a commit, \a c must be true (eliminates views).
      */
-    typename ViewSel::View view(const Pos& p, bool c=false) const;
+    typename ViewSel::View view(const Pos& p, bool c=false);
     /// Constructor for cloning \a b
     ViewBranching(Space* home, bool share, ViewBranching& b);
   public:
@@ -119,7 +119,7 @@ namespace Gecode {
     using ViewBranching<ViewSel>::viewsel;
     using ViewBranching<ViewSel>::x;
     /// Value selection object
-    mutable ValSel valsel;
+    ValSel valsel;
     /// Constructor for cloning \a b
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
@@ -127,7 +127,7 @@ namespace Gecode {
     ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
                      ViewSel& vi_s, ValSel& va_s);
     /// Return branching description (of type Gecode::PosValDesc)
-    virtual const BranchingDesc* description(const Space* home) const;
+    virtual const BranchingDesc* description(Space* home);
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a);
@@ -298,7 +298,7 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline Pos
-  ViewBranching<ViewSel>::pos(const Space* home) const {
+  ViewBranching<ViewSel>::pos(Space* home) {
     assert(!x[start].assigned());
     int i = start;
     int b = i++;
@@ -318,7 +318,7 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline typename ViewSel::View
-  ViewBranching<ViewSel>::view(const Pos& p, bool c) const {
+  ViewBranching<ViewSel>::view(const Pos& p, bool c) {
     if (c) {
       // Eliminate views from x[0] ... x[d->start()-1]
       x.drop_fst(p.start); start = 0;
@@ -367,7 +367,7 @@ namespace Gecode {
 
   template <class ViewSel, class ValSel>
   const BranchingDesc*
-  ViewValBranching<ViewSel,ValSel>::description(const Space* home) const {
+  ViewValBranching<ViewSel,ValSel>::description(Space* home) {
     Pos p = ViewBranching<ViewSel>::pos(home);
     typename ValSel::View v(ViewBranching<ViewSel>::view(p).var());
     return new PosValDesc<ViewSel,ValSel>
@@ -421,7 +421,7 @@ namespace Gecode {
     const PosValDesc<ViewSel,ValSel>* pvd 
       = static_cast<const PosValDesc<ViewSel,ValSel>*>(d);
     Reflection::BranchingSpec bs(3);
-    bs[0] = view(pvd->pos()).spec(home, m);
+    //    bs[0] = view(pvd->pos()).spec(home, m);
     bs[1] = Reflection::Arg::newString(valsel.type());
     bs[2] = Reflection::Arg::newInt(pvd->val());
     return bs;

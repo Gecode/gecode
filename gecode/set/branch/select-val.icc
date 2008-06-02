@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Branch {
     : ValSelBase<SetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMin<inc>::val(const Space*, SetView x) const {
+  ValMin<inc>::val(Space*, SetView x) const {
     UnknownRanges<SetView> u(x);
     return u.min();
   }
@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Branch {
     : ValSelBase<SetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMax<inc>::val(const Space*, SetView x) const {
+  ValMax<inc>::val(Space*, SetView x) const {
     int max = 0;
     for (UnknownRanges<SetView> u(x); u(); ++u)
       max = u.max();

@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ValMin(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
-    int val(const Space* home, View x) const;
+    int val(Space* home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ValMed(Space* home, const ValBranchOptions& vbo);
     /// Return maximum value of view \a x
-    int val(const Space* home, View x) const;
+    int val(Space* home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
@@ -130,11 +130,11 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ValRnd(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
-    int val(const Space* home, _View x);
+    int val(Space* home, _View x);
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, _View x, int n);
     /// Return description
-    Support::RandomGenerator description(const Space* home) const;
+    Support::RandomGenerator description(Space* home);
     /// Commit to description
     void commit(Space* home, const Support::RandomGenerator& d, unsigned a);
     /// Updating during cloning
@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ValSplitMin(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
-    int val(const Space* home, View x) const;
+    int val(Space* home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
@@ -202,7 +202,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ValZeroOne(Space* home, const ValBranchOptions& vbo);
     /// Return no value of view \a x
-    NoValue val(const Space* home, View x) const;
+    NoValue val(Space* home, View x) const;
     /// Tell \f$x=0\f$ (\a a = 0) or \f$x=1\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, NoValue n);
     /// Type of this value selection (for reflection)
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x,
                         ViewSel& vi_s);
     /// Return branching description (of type PosValuesDesc)
-    virtual const BranchingDesc* description(const Space* home) const;
+    virtual const BranchingDesc* description(Space* home);
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
                               unsigned int a);
@@ -310,9 +310,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByMinMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, IntView x);
+    ViewSelStatus init(Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, IntView x);
+    ViewSelStatus select(Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -333,9 +333,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByMaxMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, IntView x);
+    ViewSelStatus init(Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, IntView x);
+    ViewSelStatus select(Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -356,9 +356,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     BySizeMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, IntView x);
+    ViewSelStatus init(Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, IntView x);
+    ViewSelStatus select(Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -380,9 +380,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     BySizeDegreeMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, IntView x);
+    ViewSelStatus init(Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, IntView x);
+    ViewSelStatus select(Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -403,9 +403,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByRegretMinMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, IntView x);
+    ViewSelStatus init(Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, IntView x);
+    ViewSelStatus select(Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -426,9 +426,9 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for initialization
     ByRegretMaxMin(Space* home, const VarBranchOptions& vbo);    
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, IntView x);
+    ViewSelStatus init(Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, IntView x);
+    ViewSelStatus select(Space* home, IntView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };

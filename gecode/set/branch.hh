@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValMin(Space* home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
-    int val(const Space* home, SetView x) const;
+    int val(Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, SetView x, int v);
     /// Type of this value selection (for reflection)
@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValMax(Space* home, const ValBranchOptions& vbo);
     /// Return maximum value of view \a x
-    int val(const Space* home, SetView x) const;
+    int val(Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, SetView x, int v);
     /// Type of this value selection (for reflection)
@@ -133,9 +133,9 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ByMinMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, SetView x);
+    ViewSelStatus init(Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, SetView x);
+    ViewSelStatus select(Space* home, SetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -156,9 +156,9 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ByMaxMax(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, SetView x);
+    ViewSelStatus init(Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, SetView x);
+    ViewSelStatus select(Space* home, SetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -179,9 +179,9 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     BySizeMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(const Space* home, SetView x);
+    ViewSelStatus init(Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space* home, SetView x);
+    ViewSelStatus select(Space* home, SetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };

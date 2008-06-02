@@ -43,12 +43,12 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   BySizeMin::BySizeMin(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  BySizeMin::init(const Space*, CpltSetView x) { 
+  BySizeMin::init(Space*, CpltSetView x) { 
     min = x.unknownSize();
     return (min == 1) ? VSS_BEST : VSS_BETTER;
   }
   forceinline ViewSelStatus
-  BySizeMin::select(const Space*, CpltSetView x) {
+  BySizeMin::select(Space*, CpltSetView x) {
     unsigned int us = x.unknownSize();
     if (us < min) {
       min = us;
@@ -72,13 +72,13 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   ByMinMin::ByMinMin(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  ByMinMin::init(const Space*, CpltSetView x) {
+  ByMinMin::init(Space*, CpltSetView x) {
     Set::UnknownRanges<CpltSetView> u(x);
     min = u.min();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByMinMin::select(const Space*, CpltSetView x) {
+  ByMinMin::select(Space*, CpltSetView x) {
     Set::UnknownRanges<CpltSetView> u(x);
     int um = u.min();
     if (um < min) {
@@ -101,13 +101,13 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   ByMaxMax::ByMaxMax(Space* home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  ByMaxMax::init (const Space*, CpltSetView x) {
+  ByMaxMax::init (Space*, CpltSetView x) {
     for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
       max = u.max();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByMaxMax::select(const Space*, CpltSetView x) {
+  ByMaxMax::select(Space*, CpltSetView x) {
     int um = 0;
     for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
       max = u.max();

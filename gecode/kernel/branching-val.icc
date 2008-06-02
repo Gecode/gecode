@@ -71,7 +71,7 @@ namespace Gecode {
     /// Constructor for initialization
     ValSelBase(Space* home, const ValBranchOptions& vbo);
     /// Return description
-    EmptyValSelDesc description(const Space* home) const;
+    EmptyValSelDesc description(Space* home);
     /// Commit to description
     void commit(Space* home, const EmptyValSelDesc& d, unsigned a);
     /// Updating during cloning
@@ -97,7 +97,7 @@ namespace Gecode {
   ValSelBase<View,Val>::ValSelBase(Space*, const ValBranchOptions&) {}
   template<class View, class Val>
   forceinline EmptyValSelDesc
-  ValSelBase<View,Val>::description(const Space*) const {
+  ValSelBase<View,Val>::description(Space*) {
     EmptyValSelDesc d; return d;
   }
   template<class View, class Val>

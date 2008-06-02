@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSelBase<View,int>(home,vbo) {}
   template<class View>
   forceinline int
-  ValMin<View>::val(const Space*, View x) const {
+  ValMin<View>::val(Space*, View x) const {
     return x.min();
   }
   template<class View>
@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSelBase<View,int>(home,vbo) {}
   template<class View>
   forceinline int
-  ValMed<View>::val(const Space*, View x) const {
+  ValMed<View>::val(Space*, View x) const {
     return x.med();
   }
   template<class View>
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : r(vbo.seed) {}
   template<class View>
   forceinline int
-  ValRnd<View>::val(const Space*, View x) {
+  ValRnd<View>::val(Space*, View x) {
     unsigned int p = r(x.size());
     int n = x.min();
     for (ViewRanges<View> i(x); p >= i.width(); ++i) {
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template<class View>
   forceinline Support::RandomGenerator
-  ValRnd<View>::description(const Space*) const {
+  ValRnd<View>::description(Space*) {
     return r;
   }
   template<class View>
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSelBase<View,int>(home,vbo) {}
   template<class View>
   forceinline int
-  ValSplitMin<View>::val(const Space*, View x) const {
+  ValSplitMin<View>::val(Space*, View x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
   template<class View>
@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSelBase<View,NoValue>(home,vbo) {}
   template<class View>
   forceinline NoValue
-  ValZeroOne<View>::val(const Space*, View) const {
+  ValZeroOne<View>::val(Space*, View) const {
     NoValue n; return n;
   }
   template<class View>
