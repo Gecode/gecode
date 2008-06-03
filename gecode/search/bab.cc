@@ -50,90 +50,65 @@ namespace Gecode { namespace Search {
    *
    */
 
-  BabEngine::ExploreStatus
-  BabEngine::explore(Space*& s1, Space*& s2) {
+  Space*
+  BabEngine::explore(void) {
     start();
-    /*
-     * Upon entry, cur can be either NULL or set to the initial
-     * space. For the initial case, es is also ES_CONSTRAIN.
-     *
-     * Otherwise (that is, cur == NULL), the actions depend on
-     * es. In case es is ES_CONSTRAIN, a space on stack has been
-     * constrained. Whether this is succesful recomputation finds
-     * out. In any case, the stack is not allowed to be moved to
-     * the next node.
-     *
-     * In case es is ES_SOLUTION, the stack must be moved to the next
-     * node and recomputation is to be performed.
-     */
     while (true) {
-      assert((es == ES_SOLUTION) || (cur == NULL));
-      if (stop(stacksize())) {
-        s1 = NULL;
-        return ES_SOLUTION;
-      }
-      if (cur == NULL) {
-        if (es == ES_CONSTRAIN) {
-          es = ES_SOLUTION;
-          goto same;
-        }
-        do {
-          if (!rcs.next(*this)) {
-            s1 = NULL;
-            return ES_SOLUTION;
-          }
-          {
-            int l = rcs.lc(s1);
-            if (l < mark) {
-              es = ES_CONSTRAIN;
-              mark = l;
-              s2 = best;
-              return ES_CONSTRAIN;
-            }
-          }
-        same:
-          cur = rcs.recompute<true>(d,*this);
-        } while (cur == NULL);
-        EngineCtrl::current(cur);
-      }
-      switch (cur->status(propagate)) {
-      case SS_FAILED:
-        fail++;
-        delete cur;
-        cur = NULL;
-        EngineCtrl::current(NULL);
-        break;
-      case SS_SOLVED:
-        delete best;
-        best = cur;
-        mark = rcs.entries();
-        s1 = best->clone();
-        clone++;
-        cur = NULL;
-        EngineCtrl::current(NULL);
-        return ES_SOLUTION;
-      case SS_BRANCH:
-        {
-          Space* c;
-          if ((d == 0) || (d >= c_d)) {
-            c = cur->clone();
-            clone++;
-            d = 1;
-          } else {
-            c = NULL;
-            d++;
-          }
-          const BranchingDesc* desc = rcs.push(cur,c);
-          EngineCtrl::push(c,desc);
-          cur->commit(desc,0);
-          commit++;
+      while (cur) {
+        if (stop(stacksize()))
+          return NULL;
+        switch (cur->status(propagate)) {
+        case SS_FAILED:
+          fail++;
+          delete cur;
+          cur = NULL;
+          EngineCtrl::current(NULL);
           break;
+        case SS_SOLVED:
+          delete best;
+          best = cur;
+          cur = NULL;
+          mark = rcs.entries();
+          clone++;
+          EngineCtrl::current(NULL);
+          return best->clone();
+        case SS_BRANCH:
+          {
+            Space* c;
+            if ((d == 0) || (d >= c_d)) {
+              c = cur->clone();
+              clone++;
+              d = 1;
+            } else {
+              c = NULL;
+              d++;
+            }
+            const BranchingDesc* desc = rcs.push(cur,c);
+            EngineCtrl::push(c,desc);
+            cur->commit(desc,0);
+            commit++;
+            break;
+          }
+        default:
+          GECODE_NEVER;
         }
-      default:
-        GECODE_NEVER;
       }
+      // Recompute and add constraint if necessary
+      do {
+        if (!rcs.next(*this))
+          return NULL;
+        Space* c;
+        int l = rcs.lc(c);
+        if (l < mark) {
+          mark = l;
+          c->constrain(best);
+        }
+        cur = rcs.recompute<true>(d,*this);
+      } while (cur == NULL);
+      EngineCtrl::current(cur);
     }
-    return ES_SOLUTION;
+    GECODE_NEVER;
+    return NULL;
   }
 
 

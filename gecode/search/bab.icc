@@ -52,7 +52,7 @@ namespace Gecode {
     BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
                          Stop* st, size_t sz)
       : EngineCtrl(st,sz), rcs(a_d), cur(NULL),
-        mark(0), es(ES_SOLUTION), best(NULL),
+        mark(0), best(NULL),
         c_d(c_d0), d(0) {}
 
 
@@ -87,10 +87,7 @@ namespace Gecode {
   template <class T>
   forceinline T*
   BAB<T>::next(void) {
-    Space *s1, *s2;
-    while (e.explore(s1,s2) == Search::BabEngine::ES_CONSTRAIN)
-      dynamic_cast<T*>(s1)->constrain(dynamic_cast<T*>(s2));
-    return dynamic_cast<T*>(s1);
+    return dynamic_cast<T*>(e.explore());
   }
 
 

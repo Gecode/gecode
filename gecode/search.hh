@@ -332,6 +332,8 @@ namespace Gecode {
       Support::DynamicStack<ReCoNode> ds;
       /// Adaptive recomputation distance
       const unsigned int a_d;
+      /// Unused default argument
+      GECODE_SEARCH_EXPORT static int unused;
     public:
       /// Initialize with adaptive recomputation distance \a a_d
       ReCoStack(unsigned int a_d);
@@ -355,7 +357,7 @@ namespace Gecode {
       /**
        * \brief Recompute space according to path with copying distance \a d
        *
-       * The template parameter \a constrained describes whether the stack
+       * The template parameter \a constrain describes whether the stack
        * might contain spaces not propagated (from constraining during
        * branch-and-bound).
        */
@@ -580,12 +582,6 @@ namespace Gecode {
      * \brief Implementation of depth-first branch-and-bound search engines
      */
     class BabEngine : public EngineCtrl {
-    public:
-      /// Status of the explore function
-      enum ExploreStatus {
-        ES_SOLUTION,
-        ES_CONSTRAIN
-      };
     private:
       /// Recomputation stack of nodes
       ReCoStack          rcs;
@@ -593,8 +589,6 @@ namespace Gecode {
       Space*             cur;
       /// Number of entries not yet constrained to be better
       int                mark;
-      /// Record which current operation is in progress
-      ExploreStatus      es;
       /// Best solution found so far
       Space*             best;
       /// Copying recomputation distance
@@ -612,19 +606,8 @@ namespace Gecode {
       BabEngine(unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
       /// Initialize engine to start at space \a s
       void init(Space* s);
-      /**
-       * \brief %Search for next better solution
-       *
-       * If \c ES_SOLUTION is returned, a next better solution has been found.
-       * This solution is available from \a s1.
-       *
-       * If \c ES_CONSTRAIN is returned, the engine requires that the
-       * space \a s1 is constrained to be better by the so-far best
-       * solution \a s2.
-       *
-       */
-      GECODE_SEARCH_EXPORT
-      ExploreStatus explore(Space*& s1, Space*& s2);
+      /// %Search for next better solution
+      GECODE_SEARCH_EXPORT Space* explore(void);
       /// Return stack size used by engine
       size_t stacksize(void) const;
       /// Destructor
