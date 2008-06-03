@@ -90,14 +90,14 @@ const int cost_matrix[n_stores][n_suppliers] = {
  * \ingroup ExProblem
  *
  */
-class Warehouses : public Example {
+class Warehouses : public MinimizeExample {
 protected:
   /// Map store to the supplier
   IntVarArray supplier;
   /// Is a supplier open (warehouse needed)
   BoolVarArray open;
   /// Cost of a store
-  IntVarArray cost;
+  IntVarArray scost;
   /// Total cost
   IntVar total;
 public:
@@ -105,7 +105,7 @@ public:
   Warehouses(const Options&)
     : supplier(this, n_stores, 0, n_suppliers-1),
       open(this, n_suppliers, 0, 1),
-      cost(this, n_stores, 0, Int::Limits::max),
+      scost(this, n_stores, 0, Int::Limits::max),
       total(this, 0, Int::Limits::max) {
     // Compute total cost
     {
@@ -118,7 +118,7 @@ public:
       // Total cost of stores
       IntVarArgs tc(n_stores+1);
       for (int i=0; i<n_stores; i++)
-        tc[i]=cost[i];
+        tc[i]=scost[i];
       tc[n_stores] = oc;
       linear(this, tc, IRT_EQ, total);
     }
@@ -128,7 +128,7 @@ public:
       IntArgs c(n_suppliers);
       for (int j=0; j<n_suppliers; j++)
         c[j] = cost_matrix[i][j];
-      element(this, c, supplier[i], cost[i]);
+      element(this, c, supplier[i], scost[i]);
     }
 
     // Do not exceed capacity
@@ -143,19 +143,17 @@ public:
       rel(this, BOT_OR, store_by_supplier, open[i]);
     }
 
-    branch(this, cost, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
+    branch(this, scost, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
   }
-
-  /// Add constraint for next better solution
-  virtual void
-  constrain(const Space* s) {
-    rel(this, total, IRT_LE, static_cast<const Warehouses*>(s)->total.val());
+  /// Return solution cost
+  virtual IntVar cost(void) const {
+    return total;
   }
   /// Constructor for cloning \a s
-  Warehouses(bool share, Warehouses& s) : Example(share,s) {
+  Warehouses(bool share, Warehouses& s) : MinimizeExample(share,s) {
     supplier.update(this, share, s.supplier);
     open.update(this, share, s.open);
-    cost.update(this, share, s.cost);
+    scost.update(this, share, s.scost);
     total.update(this, share, s.total);
   }
 
@@ -168,7 +166,7 @@ public:
   virtual void
   print(std::ostream& os) {
     os << "\tSupplier: " << supplier << std::endl
-       << "\tCost: " << cost << std::endl
+       << "\tCost: " << scost << std::endl
        << "\tTotal cost: " << total << std::endl
        << std::endl;
   }
@@ -183,7 +181,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(10);
   opt.parse(argc,argv);
-  Example::run<Warehouses,BAB,Options>(opt);
+  MinimizeExample::run<Warehouses,BAB,Options>(opt);
   return 0;
 }
 

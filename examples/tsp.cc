@@ -216,20 +216,20 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class TSP : public Example {
+class TSP : public MinimizeExample {
 protected:
   /// Problem instance to be solved
   Problem     p;
   /// Successor edges
   IntVarArray succ;
   /// Total cost of travel
-  IntVar      cost;
+  IntVar      total;
 public:
   /// Actual model
   TSP(const SizeOptions& opt) 
     : p(ps[opt.size()]),
       succ(this, p.size(), 0, p.size()-1),
-      cost(this, 0, p.max()) {
+      total(this, 0, p.max()) {
 
     // Cost of each edge
     IntVarArgs costs(p.size());
@@ -249,7 +249,7 @@ public:
     }
 
     // Cost ist sume of all costs
-    linear(this, costs, IRT_EQ, cost);
+    linear(this, costs, IRT_EQ, total);
 
     // Enforce that the succesors yield a tour
     circuit(this, succ, opt.icl());
@@ -263,15 +263,14 @@ public:
     // Then fix the remaining successors
     branch(this, succ,  INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
-  /// Add constraint for next better solution
-  virtual void
-  constrain(const Space* s) {
-    rel(this, cost, IRT_LE, static_cast<const TSP*>(s)->cost.val());
+  /// Return solution cost
+  virtual IntVar cost(void) const {
+    return total;
   }
   /// Constructor for cloning \a s
-  TSP(bool share, TSP& s) : Example(share,s), p(s.p) {
+  TSP(bool share, TSP& s) : MinimizeExample(share,s), p(s.p) {
     succ.update(this, share, s.succ);
-    cost.update(this, share, s.cost);
+    total.update(this, share, s.total);
   }
   /// Copy during cloning
   virtual Space*
@@ -288,7 +287,7 @@ public:
       i=succ[i].val();
     } while (i != 0);
     os << 0 << std::endl;
-    os << "\tCost: " << cost << std::endl;
+    os << "\tCost: " << total << std::endl;
   }
 };
 
@@ -310,7 +309,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  Example::run<TSP,BAB,SizeOptions>(opt);
+  MinimizeExample::run<TSP,BAB,SizeOptions>(opt);
   return 0;
 }
 

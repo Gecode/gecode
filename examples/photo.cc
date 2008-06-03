@@ -74,7 +74,7 @@ const PhotoSpec p_large(9,17, l_prefs);
  * \ingroup ExProblem
  *
  */
-class Photo : public Example {
+class Photo : public MaximizeExample {
 protected:
   /// Photo specification
   const PhotoSpec& spec;
@@ -122,30 +122,25 @@ public:
 
   /// Constructor for cloning \a s
   Photo(bool share, Photo& s) :
-    Example(share,s), spec(s.spec) {
+    MaximizeExample(share,s), spec(s.spec) {
     pos.update(this, share, s.pos);
     sat.update(this, share, s.sat);
   }
-
   /// Copy during cloning
   virtual Space*
   copy(bool share) {
     return new Photo(share,*this);
   }
-
   /// Print solution
   virtual void
   print(std::ostream& os) {
     os << "\tpos[] = " << pos << std::endl
        << "\tsat: " << sat << std::endl;
   }
-
-  /// Add constraint for next better solution
-  virtual void
-  constrain(const Space* s) {
-    rel(this, sat, IRT_GR, static_cast<const Photo*>(s)->sat.val());
+  /// Return solution cost
+  virtual IntVar cost(void) const {
+    return sat;
   }
-
 };
 
 /** \brief Main-function
@@ -162,7 +157,7 @@ main(int argc, char* argv[]) {
   opt.branching(Photo::BRANCH_NONE, "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
-  Example::run<Photo,BAB,SizeOptions>(opt);
+  MaximizeExample::run<Photo,BAB,SizeOptions>(opt);
   return 0;
 }
 

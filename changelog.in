@@ -83,8 +83,11 @@ Module: minimodel
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added MinimizeSpace and MaximizeSpace classes for cost-based optimization 
-(requires implementing a cost function returning an integer cost variable).
+Added MinimizeSpace and MaximizeSpace classes for cost-based
+optimization (requires implementing a cost function returning an
+integer cost variable). Optimization can now be implemented by
+inheriting from these classes rather than from Space and by
+implementing a cost function.
 
 [ENTRY]
 Module: kernel

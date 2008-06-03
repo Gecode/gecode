@@ -66,7 +66,7 @@ IntSet *A;
  * \ingroup ExProblem
  *
  */
-class QueenArmies : public Example {
+class QueenArmies : public MaximizeExample {
 public:
   const int n;
   SetVar U, ///< Set of un-attacked squares
@@ -119,26 +119,23 @@ public:
   }
   /// Constructor for cloning
   QueenArmies(bool share, QueenArmies& s)
-    : Example(share,s), n(s.n)
-  {
+    : MaximizeExample(share,s), n(s.n) {
     U.update(this, share, s.U);
     W.update(this, share, s.W);
     w.update(this, share, s.w);
     b.update(this, share, s.b);
     q.update(this, share, s.q);
   }
-
+  /// Return copy during cloning
   virtual Space*
   copy(bool share) {
     return new QueenArmies(share,*this);
   }
-
-  virtual void
-  constrain(const Space* s) {
-    rel(this, q, IRT_GR, static_cast<const QueenArmies*>(s)->q.val());
+  /// Return solution cost
+  virtual IntVar cost(void) const {
+    return q;
   }
-
-
+  /// Print solution
   virtual void
   print(std::ostream& os) {
     os << '\t';
@@ -296,7 +293,7 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  Example::run<QueenArmies,BAB,SizeOptions>(opt);
+  MaximizeExample::run<QueenArmies,BAB,SizeOptions>(opt);
   return 0;
 }
 

@@ -78,7 +78,7 @@ const Graph g_40_20(40, 20, e_40_20);
  * \ingroup ExProblem
  *
  */
-class IndSet : public Example {
+class IndSet : public MaximizeExample {
 protected:
   /// Graph used
   const Graph& g;
@@ -100,7 +100,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  IndSet(bool share, IndSet& s) : Example(share,s), g(s.g) {
+  IndSet(bool share, IndSet& s) : MaximizeExample(share,s), g(s.g) {
     v.update(this, share, s.v);
     k.update(this, share, s.k);
   }
@@ -109,18 +109,15 @@ public:
   copy(bool share) {
     return new IndSet(share,*this);
   }
-
   /// Print solution
   virtual void
   print(std::ostream& os) {
     os << "\tk = " << k << std::endl
        << "\tv[] = " << v << std::endl;
   }
-
-  /// Add constraint for next better solution
-  virtual void
-  constrain(const Space* s) {
-    rel(this, k, IRT_GR, static_cast<const IndSet*>(s)->k.val());
+  /// Return solution cost
+  virtual IntVar cost(void) const {
+    return k;
   }
 };
 
@@ -135,7 +132,7 @@ main(int argc, char* argv[]) {
   opt.size(1);
   opt.iterations(2000);
   opt.parse(argc,argv);
-  Example::run<IndSet,BAB,SizeOptions>(opt);
+  MaximizeExample::run<IndSet,BAB,SizeOptions>(opt);
   return 0;
 }
 

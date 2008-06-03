@@ -85,7 +85,7 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class BACP : public Example {
+class BACP : public MinimizeExample {
 protected:
   /// The curriculum to be scheduled
   const Curriculum curr;
@@ -150,7 +150,7 @@ public:
   }
 
   /// Constructor for copying \a bacp
-  BACP(bool share, BACP& bacp) : Example(share,bacp),
+  BACP(bool share, BACP& bacp) : MinimizeExample(share,bacp),
     curr(bacp.curr) {
     u.update(this, share, bacp.u);
     x.update(this, share, bacp.x);
@@ -160,13 +160,10 @@ public:
   copy(bool share) {
     return new BACP(share,*this);
   }
-
-  /// Add constraint for next better solution
-  virtual void
-  constrain(const Space* s) {
-    rel(this, u, IRT_LE, static_cast<const BACP*>(s)->u.val());
+  /// Return solution cost
+  virtual IntVar cost(void) const {
+    return u;
   }
-
   /// Print solution
   virtual void
   print(std::ostream& os) {
@@ -202,7 +199,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<BACP,BAB,SizeOptions>(opt);
+  MinimizeExample::run<BACP,BAB,SizeOptions>(opt);
   return 0;
 }
 
