@@ -511,8 +511,10 @@ namespace Gecode {
     case VSS_TIE:
       for (int i=1; i<n; i++)
         switch (tb[i]->select(home,x)) {
-        case VSS_BEST:   return VSS_BETTER;
-        case VSS_BETTER: return VSS_BETTER;
+        case VSS_BEST: case VSS_BETTER:
+          for (int j=i+1; j<n; j++)
+            (void) tb[j]->init(home,x);
+          return VSS_BETTER;
         case VSS_TIE:    break;
         case VSS_WORSE:  return VSS_WORSE;
         default: GECODE_NEVER;
