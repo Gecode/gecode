@@ -51,7 +51,13 @@ namespace Gecode {
   template <class T>
   forceinline T*
   LDS<T>::next(void) {
-    return dynamic_cast<T*>(Search::LDS::next());
+    Space* s = Search::LDS::next();
+    if (s == NULL)
+      return NULL;
+    T* t = dynamic_cast<T*>(s);
+    if (t == NULL)
+      throw DynamicCastFailed("LDS");
+    return t;
   }
 
 
@@ -65,7 +71,7 @@ namespace Gecode {
   T*
   lds(T* s, unsigned int d, const Search::Options& o) {
     LDS<T> lds(s,d,o);
-    return dynamic_cast<T*>(lds.next());
+    return lds.next();
   }
 
 }

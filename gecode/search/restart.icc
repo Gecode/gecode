@@ -72,7 +72,12 @@ namespace Gecode {
     Space* b = this->e.explore();
     delete best;
     best = (b != NULL) ? b->clone() : NULL;
-    return dynamic_cast<T*>(b);
+    if (b == NULL)
+      return NULL;
+    T* dcb = dynamic_cast<T*>(b);
+    if (dcb == NULL)
+      throw DynamicCastFailed("Restart");
+    return dcb;
   }
 
 

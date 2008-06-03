@@ -67,15 +67,25 @@ namespace Gecode {
     /// Initialize
     MemoryExhausted(void);
   };
+  /// %Exception: dynamic cast failed
+  class GECODE_VTABLE_EXPORT DynamicCastFailed : public Exception {
+  public:
+    /// Initialize with location \a l
+    DynamicCastFailed(const char* l);
+  };
   //@}
 
   /*
-   * Classes for exceptions raised by support
+   * Classes for exceptions
    *
    */
   inline
   MemoryExhausted::MemoryExhausted(void)
     : Exception("Memory","Heap memory exhausted") {}
+
+  inline
+  DynamicCastFailed::DynamicCastFailed(const char* l)
+    : Exception(l,"Attempt to perform dynamic_cast failed") {}
 
 }
 
