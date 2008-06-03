@@ -1194,9 +1194,9 @@ namespace Gecode { namespace MiniModel {
     Slice col(int c);
   };
 }}
+//@}
 
 #include "gecode/minimodel/matrix.icc"
-//@}
 
 namespace Gecode {
 
