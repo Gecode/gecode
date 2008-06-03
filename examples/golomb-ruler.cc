@@ -54,7 +54,7 @@
  * \ingroup ExProblem
  *
  */
-class GolombRuler : public Example {
+class GolombRuler : public MinimizeExample {
 protected:
   /// Number of marks
   const int n;
@@ -137,10 +137,9 @@ public:
     branch(this, m, INT_VAR_NONE, INT_VAL_MIN);
   }
 
-  /// Add constraint for next better solution
-  virtual void
-  constrain(const Space* s) {
-    rel(this, m[n-1], IRT_LE, static_cast<const GolombRuler*>(s)->m[n-1].val());
+  /// Return cost
+  virtual IntVar cost(void) const {
+    return m[n-1];
   }
 
   /// Print solution
@@ -151,7 +150,7 @@ public:
 
   /// Constructor for cloning \a s
   GolombRuler(bool share, GolombRuler& s)
-    : Example(share,s), n(s.n) {
+    : MinimizeExample(share,s), n(s.n) {
     m.update(this, share, s.m);
   }
   /// Copy during cloning
@@ -186,11 +185,11 @@ main(int argc, char* argv[]) {
   if (opt.size() > 0)
     switch (opt.search()) {
     case GolombRuler::SEARCH_DFS:
-      Example::run<GolombRuler,DFS,SizeOptions>(opt); break;
+      MinimizeExample::run<GolombRuler,DFS,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_BAB:
-      Example::run<GolombRuler,BAB,SizeOptions>(opt); break;
+      MinimizeExample::run<GolombRuler,BAB,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_RESTART:
-      Example::run<GolombRuler,Restart,SizeOptions>(opt); break;
+      MinimizeExample::run<GolombRuler,Restart,SizeOptions>(opt); break;
     }
   return 0;
 }

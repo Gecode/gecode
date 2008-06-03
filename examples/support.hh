@@ -41,6 +41,7 @@
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
 #include "gecode/search.hh"
+#include "gecode/minimodel.hh"
 
 #ifdef GECODE_HAS_GIST
 #include "gecode/gist.hh"
@@ -308,28 +309,38 @@ public:
 
 
 /**
- * \brief Base-class for %Gecode examples
+ * \brief Parametric base-class for %Gecode examples
  *
  * All examples must inherit from this class
  *  - adds printing to examples
  *  - run allows to execute examples
- *
  */
-class Example : public Space {
+template <class BaseSpace>
+class ExampleBase : public BaseSpace {
 public:
   /// Default constructor
-  Example(void) {}
+  ExampleBase(void) {}
   /// Constructor used for cloning
-  Example(bool share, Example& e) : Space(share,e) {}
+  ExampleBase(bool share, ExampleBase& e) : BaseSpace(share,e) {}
   /// Print a solution to \a os
-  virtual void print(std::ostream& os) { (void)os; }
+  virtual void print(std::ostream& os) { (void) os; }
   /// Run example with search engine \a Engine and options \a opt
   template <class Script, template<class> class Engine, class Options>
   static void run(const Options& opt);
  private:
   /// Catch wrong definitions of copy constructor
-  explicit Example(Example& e);
+  explicit ExampleBase(ExampleBase& e);
 };
+
+/// Base-class for %Gecode examples
+typedef ExampleBase<Space> Example;
+
+/// Base-class for %Gecode examples for finding solution of lowest cost
+typedef ExampleBase<MinimizeSpace> MinimizeExample;
+
+/// Base-class for %Gecode examples for finding solution of highest cost
+typedef ExampleBase<MaximizeSpace> MaximizeExample;
+
 
 #include "examples/support/example.icc"
 

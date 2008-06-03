@@ -65,6 +65,13 @@ namespace Gecode { namespace MiniModel {
     /// Initialize with location \a l
     ArgumentOutOfRange(const char* l);
   };
+
+  /// %Exception: unassigned cost variable
+  class GECODE_VTABLE_EXPORT UnassignedCostVar : public Exception  {
+  public:
+    /// Initialize with location \a l
+    UnassignedCostVar(const char* l);
+  };
   //@}
 
   inline
@@ -78,6 +85,10 @@ namespace Gecode { namespace MiniModel {
   inline
   ArgumentOutOfRange::ArgumentOutOfRange(const char* l)
     : Exception(l,"Argument out of range") {}
+
+  inline
+  UnassignedCostVar::UnassignedCostVar(const char* l)
+    : Exception(l,"Unassigned cost variable") {}
 
 }}
 

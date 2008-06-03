@@ -38,13 +38,23 @@
 namespace Gecode { namespace MiniModel {
 
   template <IntRelType irt>
+  forceinline
+  OptimizeSpace<irt>::OptimizeSpace(void) {}
+
+  template <IntRelType irt>
+  forceinline
+  OptimizeSpace<irt>::OptimizeSpace(bool share, OptimizeSpace& s) 
+    : Space(share,s) {}
+
+  template <IntRelType irt>
   void
   OptimizeSpace<irt>::constrain(const Space* _best) {
-    const Optimize<irt>* best = dynamic_cast<const Optimize<irt>*>(_best);
+    const OptimizeSpace<irt>* best = 
+      dynamic_cast<const OptimizeSpace<irt>*>(_best);
     if (best == NULL)
       throw DynamicCastFailed("OptimizeSpace::constrain");
     if (!best->cost().assigned())
-      throw MiniModel::UnassignedCostVar();
+      throw MiniModel::UnassignedCostVar("OptimizeSpace::constrain");
     rel(this, cost(), irt, best->cost().val());
   }
 

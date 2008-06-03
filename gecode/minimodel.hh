@@ -1215,6 +1215,10 @@ namespace Gecode {
     template <IntRelType irt>
     class OptimizeSpace : public Space {
     public:
+      /// Default constructor
+      OptimizeSpace(void);
+      /// Constructor for cloning
+      OptimizeSpace(bool share, OptimizeSpace& s);
       /// Member function constraining according to cost
       virtual void constrain(const Space* home);
       /**
@@ -1233,7 +1237,7 @@ namespace Gecode {
   typedef MiniModel::OptimizeSpace<IRT_LE> MinimizeSpace;
 
   /// Class for maximizing cost
-  typedef MiniModel::OptimizeSpace<IRT_LE> MinimizeSpace;
+  typedef MiniModel::OptimizeSpace<IRT_GR> MaximizeSpace;
 //@}
 }
 

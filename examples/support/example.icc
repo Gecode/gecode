@@ -183,9 +183,10 @@ public:
 
 #endif
 
+template <class Space>
 template <class Script, template<class> class Engine, class Options>
 void
-Example::run(const Options& o) {
+ExampleBase<Space>::run(const Options& o) {
   using namespace std;
   try {
     switch (o.mode()) {
@@ -206,7 +207,7 @@ Example::run(const Options& o) {
         Engine<Script> e(s,so);
         delete s;
         do {
-          Example* ex = e.next();
+          Script* ex = e.next();
           if (ex == NULL)
             break;
           ex->print(std::cout);
@@ -247,7 +248,7 @@ Example::run(const Options& o) {
         Engine<Script> e(s,so);
         delete s;
         do {
-          Example* ex = e.next();
+          Script* ex = e.next();
           if (ex == NULL)
             break;
           delete ex;
@@ -283,7 +284,7 @@ Example::run(const Options& o) {
             Engine<Script> e(s,so);
             delete s;
             do {
-              Example* ex = e.next();
+              Script* ex = e.next();
               if (ex == NULL)
                 break;
               delete ex;
