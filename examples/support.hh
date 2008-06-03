@@ -143,14 +143,6 @@ public:
 };
 
 
-/** \brief Modes for singleton arc consistency
- */
-enum SAC {
-  SAC_NONE, ///< No SAC
-  SAC_ONE,  ///< Run SAC once for all variables
-  SAC_FULL  ///< Run SAC until fixpoint
-};
-
 /**
  * \brief Options for examples
  *
@@ -168,7 +160,6 @@ protected:
   StringOption _pk;          ///< Propagation kind
   StringOption _icl;         ///< Integer consistency level
   StringOption _branching;   ///< Branching options
-  StringOption _sac;         ///< Run SAC on root node
   //@}
 
   /// \name Search options
@@ -233,13 +224,6 @@ public:
   void branching(int v, const char* o, const char* h = NULL);
   /// Return branching value
   int branching(void) const;
-
-  /// Set defualt SAC mode
-  void sac(int v);
-  /// Add SAC option value for value \a v, string \a p, and help \a h
-  void sac(int v, const char* p, const char* h = NULL);
-  /// Return SAC mode
-  int sac(void) const;
   //@}
 
   /// \name Search options
@@ -336,31 +320,12 @@ public:
   /// Default constructor
   Example(void) {}
   /// Constructor used for cloning
-  Example(bool share, Example& e) : Space(share,e) {
-    /// Update SAC variables
-    _sac_bva.update(this, share, e._sac_bva);
-    _sac_iva.update(this, share, e._sac_iva);
-  }
+  Example(bool share, Example& e) : Space(share,e) {}
   /// Print a solution to \a os
   virtual void print(std::ostream& os) { (void)os; }
   /// Run example with search engine \a Engine and options \a opt
   template <class Script, template<class> class Engine, class Options>
   static void run(const Options& opt);
- private:
-  /// BoolVars for SAC
-  BoolVarArray _sac_bva;
-  /// IntVars for SAC
-  IntVarArray _sac_iva;
- protected:
-  /// Collect variables for SAC processing
-  void sac_collect_vars(void);
-  /// Remove variables after SAC processing
-  void sac_remove_vars(void);
-  /** \brief Run one round of singleton arc consistency.
-   *
-   * Returns true if a variable ahs been modified.
-   */
-  bool sac(unsigned long int& p);
  private:
   /// Catch wrong definitions of copy constructor
   explicit Example(Example& e);
