@@ -225,7 +225,7 @@ EXTRA_HEADERS   = gecode/support/config.icc
 #
 
 SEARCHSRC0 = \
-	dfs.cc lds.cc bab.cc stop.cc options.cc
+	dfs.cc lds.cc bab.cc stop.cc options.cc reco-stack.cc
 SEARCHHDR0 = \
 	bab.icc dfs.icc lds.icc restart.icc  \
 	reco-stack.icc statistics.icc \

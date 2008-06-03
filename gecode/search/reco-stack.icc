@@ -151,11 +151,10 @@ namespace Gecode { namespace Search {
   }
 
   forceinline int
-  ReCoStack::lc(Space*& s) const {
+  ReCoStack::lc(void) const {
     int l = ds.entries()-1;
     while (ds[l].space() == NULL)
       l--;
-    s = ds[l].space();
     return l;
   }
 
@@ -184,9 +183,10 @@ namespace Gecode { namespace Search {
       ds.pop().dispose();
   }
 
-  template <bool constrained>
+  template <bool constrain>
   forceinline Space*
-  ReCoStack::recompute(unsigned int& d, EngineCtrl& stat) {
+  ReCoStack::recompute(unsigned int& d, EngineCtrl& stat,
+                       const Space* best, int& mark) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -195,6 +195,11 @@ namespace Gecode { namespace Search {
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
       s->commit(ds.top().desc(),ds.top().alt());
+      assert(ds.entries()-1 == lc());
+      if (constrain && (mark > ds.entries()-1)) {
+        mark = ds.entries()-1;
+        s->constrain(best);
+      }
       ds.top().space(NULL);
       stat.lao(s);
       d = 0;
@@ -202,12 +207,16 @@ namespace Gecode { namespace Search {
       return s;
     }
     // General case for recomputation
-    Space* s;             // Last clone
-    int l = lc(s);        // Position of last clone
-    int n = ds.entries(); // Number of stack entries
-    d = static_cast<unsigned int>(n - l); // New distance, if no adaptive recomputation
+    int l = lc();             // Position of last clone
+    int n = ds.entries();     // Number of stack entries
+    // New distance, if no adaptive recomputation
+    d = static_cast<unsigned int>(n - l); 
 
-    if (constrained) {
+    Space* s = ds[l].space(); // Last clone
+
+    if (constrain && (l < mark)) {
+      mark = l;
+      s->constrain(best);
       // The space on the stack could be failed now as an additional
       // constraint might have been added.
       if (s->status(stat.propagate) == SS_FAILED) {
@@ -245,7 +254,7 @@ namespace Gecode { namespace Search {
         // Propagate to fixpoint
         SpaceStatus ss = s->status(stat.propagate);
         // Again, the space might already propagate to failure
-        if (constrained &&  (ss == SS_FAILED)) {
+        if (constrain &&  (ss == SS_FAILED)) {
           // s must be deleted as it is not on the stack
           delete s;
           stat.commit += (i-l);

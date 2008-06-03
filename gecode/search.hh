@@ -349,7 +349,7 @@ namespace Gecode {
       /// Generate path for next node and return whether a next node exists
       bool next(EngineCtrl& s);
       /// Return position on stack of last copy
-      int lc(Space*& s) const;
+      int lc(void) const;
       /// Unwind the stack up to position \a l (after failure)
       void unwind(int l);
       /// Commit space \a s as described by stack entry at position \a i
@@ -357,12 +357,12 @@ namespace Gecode {
       /**
        * \brief Recompute space according to path with copying distance \a d
        *
-       * The template parameter \a constrain describes whether the stack
-       * might contain spaces not propagated (from constraining during
-       * branch-and-bound).
+       * The template parameter \a constrain describ whether spaces
+       * on the stack might need to be constrained.
        */
-      template <bool constrained>
-      Space* recompute(unsigned int& d, EngineCtrl& s);
+      template <bool constrain>
+      Space* recompute(unsigned int& d, EngineCtrl& s,
+                       const Space* best=NULL, int& mark=unused);
       /// Return number of entries on stack
       int entries(void) const;
       /// Return stack size used

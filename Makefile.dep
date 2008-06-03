@@ -252,6 +252,24 @@ gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
 	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
 	./gecode/support/symbol.icc 
+gecode/search/reco-stack$(OBJSUFFIX) gecode/search/reco-stack$(SBJSUFFIX): \
+	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
+	./gecode/kernel/branch.icc ./gecode/kernel/branching-tiebreak.icc ./gecode/kernel/branching-val.icc \
+	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
+	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
+	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
+	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
+	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
+	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
+	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
+	./gecode/search/options.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
+	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support.hh \
+	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
+	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
+	./gecode/support/macros.icc ./gecode/support/map.icc ./gecode/support/marked-pointer.icc \
+	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
+	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
+	./gecode/support/symbol.icc 
 gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
