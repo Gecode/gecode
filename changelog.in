@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added MinimizeSpace and MaximizeSpace classes for cost-based optimization 
+(requires implementing a cost function returning an integer cost variable).
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

@@ -1198,6 +1198,47 @@ namespace Gecode { namespace MiniModel {
 #include "gecode/minimodel/matrix.icc"
 //@}
 
+namespace Gecode {
+
+/**
+ * \defgroup TaskModelMiniModelOptimize Support for optimization
+ *
+ * Provides for minimizing or maximizing the cost value as defined by
+ * a cost-member function of a space.
+ *
+ * \ingroup TaskModelMiniModel
+ */
+//@{
+  namespace MiniModel {
+
+    /// Baseclass for cost-based optimization
+    template <IntRelType irt>
+    class OptimizeSpace : public Space {
+    public:
+      /// Member function constraining according to cost
+      virtual void constrain(const Space* home);
+      /**
+       * \brief Return variable with current cost
+       *
+       * If applied to a solution, the cost variable must be assigned.
+       * If not, an exception of type MiniModel::UnassignedCostVar
+       * is raised.
+       */
+      virtual IntVar cost(void) const = 0;
+    };
+
+  }
+
+  /// Class for minimizing cost
+  typedef MiniModel::OptimizeSpace<IRT_LE> MinimizeSpace;
+
+  /// Class for maximizing cost
+  typedef MiniModel::OptimizeSpace<IRT_LE> MinimizeSpace;
+//@}
+}
+
+#include "gecode/minimodel/optimize.icc"
+
 #endif
 
 // IFDEF: GECODE_HAS_INT_VARS
