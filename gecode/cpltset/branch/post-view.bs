@@ -69,23 +69,23 @@ Value:		CPLTSET_VAR_DEGREE_MIN
 Type:		ViewSelDegreeMin<CpltSetView>
 [VarBranch]
 Value:		CPLTSET_VAR_DEGREE_MAX
-Type:		ViewSelInvert<ViewSelDegreeMin<CpltSetView> >
+Type:		ViewSelDegreeMax<CpltSetView>
 [VarBranch]
 Value:		CPLTSET_VAR_MIN_MIN
 Type:		ByMinMin
 [VarBranch]
 Value:		CPLTSET_VAR_MIN_MAX
-Type:		ViewSelInvert<ByMinMin>
+Type:		ByMinMax
 [VarBranch]
 Value:		CPLTSET_VAR_MAX_MIN
-Type:		ByMaxMax
+Type:		ByMaxMin
 [VarBranch]
 Value:		CPLTSET_VAR_MAX_MAX
-Type:		ViewSelInvert<ByMaxMax>
+Type:		ByMaxMax
 [VarBranch]
 Value:		CPLTSET_VAR_SIZE_MIN
 Type:		BySizeMin
 [VarBranch]
 Value:		CPLTSET_VAR_SIZE_MAX
-Type:		ViewSelInvert<BySizeMin>
+Type:		BySizeMax
 [End]

@@ -75,42 +75,6 @@ namespace Gecode {
   };
 
   /**
-   * \brief Invert view selection
-   *
-   * Note that information about VSS_BEST is lost as it is mapped to
-   * VSS_WORSE.
-   */
-  template <class ViewSel>
-  class ViewSelInvert {
-  protected:
-    /// View selection to be inverted
-    ViewSel viewsel;
-  public:
-    /// View type
-    typedef typename ViewSel::View View;
-    /// View selection description
-    typedef typename ViewSel::Desc Desc;
-    /// Default constructor
-    ViewSelInvert(void);
-    /// Constructor for initialization
-    ViewSelInvert(Space* home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space* home, typename ViewSel::View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space* home, typename ViewSel::View x);
-    /// Return description
-    typename ViewSel::Desc description(Space* home);
-    /// Commit to description
-    void commit(Space* home, const typename ViewSel::Desc& d, unsigned a);
-    /// Updating during cloning
-    void update(Space* home, bool share, ViewSelInvert& vs);
-    /// Delete view selection
-    void dispose(Space* home);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
    * \brief Select first not assigned view
    */
   template <class View>
@@ -141,6 +105,27 @@ namespace Gecode {
     ViewSelDegreeMin(void);
     /// Constructor for initialization
     ViewSelDegreeMin(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest degree
+   */
+  template<class View>
+  class ViewSelDegreeMax : public ViewSelBase<View> {
+  protected:
+    /// So-far largest degree
+    unsigned int degree;
+  public:
+    /// Default constructor
+    ViewSelDegreeMax(void);
+    /// Constructor for initialization
+    ViewSelDegreeMax(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space* home, View x);
     /// Possibly select better view \a x
@@ -213,60 +198,6 @@ namespace Gecode {
   forceinline void
   ViewSelBase<View>::dispose(Space*) {}
 
-  // Selection invertion class
-  template<class ViewSel>
-  forceinline
-  ViewSelInvert<ViewSel>::ViewSelInvert(void) {}
-  template<class ViewSel>
-  forceinline
-  ViewSelInvert<ViewSel>::ViewSelInvert(Space* home, 
-                                        const VarBranchOptions& vbo)
-    : viewsel(home,vbo) {}
-  template<class ViewSel>
-  forceinline ViewSelStatus
-  ViewSelInvert<ViewSel>::init(Space* home, typename ViewSel::View x) {
-    (void) viewsel.init(home,x);
-    return VSS_BETTER;
-  }
-  template<class ViewSel>
-  forceinline ViewSelStatus
-  ViewSelInvert<ViewSel>::select(Space* home, typename ViewSel::View x) {
-    switch (viewsel.select(home,x)) {
-    case VSS_BETTER: return VSS_WORSE;
-    case VSS_TIE:    return VSS_TIE;
-    case VSS_WORSE:  return VSS_BETTER;
-    case VSS_BEST:   return VSS_WORSE;
-    }
-    GECODE_NEVER;
-    return VSS_WORSE;
-  }
-  template<class ViewSel>
-  forceinline typename ViewSel::Desc
-  ViewSelInvert<ViewSel>::description(Space* home) {
-    return viewsel.description(home);
-  }
-  template<class ViewSel>
-  forceinline void
-  ViewSelInvert<ViewSel>::commit(Space* home, const typename ViewSel::Desc& d, 
-                                 unsigned int a) {
-    viewsel.commit(home,d,a);
-  }
-  template<class ViewSel>
-  forceinline void 
-  ViewSelInvert<ViewSel>::update(Space* home, bool share, 
-                                 ViewSelInvert<ViewSel>& vs) {
-    viewsel.update(home,share,vs.viewsel);
-  }
-  template<class ViewSel>
-  forceinline void
-  ViewSelInvert<ViewSel>::dispose(Space* home) {
-    viewsel.dispose(home);
-  }
-  template<class ViewSel>
-  inline Support::Symbol
-  ViewSelInvert<ViewSel>::type(void) {
-    return Reflection::mangle<ViewSel>("Gecode::ViewSel::Invert");
-  }
 
   // Select first view
   template<class View>
@@ -324,6 +255,39 @@ namespace Gecode {
   inline Support::Symbol
   ViewSelDegreeMin<View>::type(void) {
     return Support::Symbol("Gecode::ViewSel::DegreeMin");
+  }
+
+  // Select variable with largest degree
+  template<class View>
+  forceinline
+  ViewSelDegreeMax<View>::ViewSelDegreeMax(void) {}
+  template<class View>
+  forceinline
+  ViewSelDegreeMax<View>::ViewSelDegreeMax(Space* home, 
+                                           const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo) {}
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelDegreeMax<View>::init(Space*, View x) {
+    degree = x.degree();
+    return VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelDegreeMax<View>::select(Space*, View x) {
+    if (x.degree() > degree) {
+      degree = x.degree();
+      return VSS_BETTER;
+    } else if (x.degree() < degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class View>
+  inline Support::Symbol
+  ViewSelDegreeMax<View>::type(void) {
+    return Support::Symbol("Gecode::ViewSel::DegreeMax");
   }
 
   // Select variable by random

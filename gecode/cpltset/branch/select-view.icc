@@ -44,16 +44,16 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
   BySizeMin::init(Space*, CpltSetView x) { 
-    min = x.unknownSize();
-    return (min == 1) ? VSS_BEST : VSS_BETTER;
+    size = x.unknownSize();
+    return (size == 1) ? VSS_BEST : VSS_BETTER;
   }
   forceinline ViewSelStatus
   BySizeMin::select(Space*, CpltSetView x) {
     unsigned int us = x.unknownSize();
-    if (us < min) {
-      min = us;
-      return (min == 1) ? VSS_BEST : VSS_BETTER;
-    } else if (us > min) {
+    if (us < size) {
+      size = us;
+      return (size == 1) ? VSS_BEST : VSS_BETTER;
+    } else if (us > size) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
@@ -61,7 +61,34 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   inline Support::Symbol
   BySizeMin::type(void) {
-    return Support::Symbol("CpltSet::Branch::BySizeMin");
+    return Support::Symbol("Gecode::CpltSet::Branch::BySizeMin");
+  }
+
+  forceinline
+  BySizeMax::BySizeMax(void) {}
+  forceinline
+  BySizeMax::BySizeMax(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<CpltSetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  BySizeMax::init(Space*, CpltSetView x) { 
+    size = x.unknownSize();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  BySizeMax::select(Space*, CpltSetView x) {
+    unsigned int us = x.unknownSize();
+    if (us > size) {
+      size = us;
+      return VSS_BETTER;
+    } else if (us < size) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  BySizeMax::type(void) {
+    return Support::Symbol("Gecode::CpltSet::Branch::BySizeMax");
   }
 
 
@@ -91,9 +118,67 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   inline Support::Symbol
   ByMinMin::type(void) {
-    return Support::Symbol("CpltSet::Branch::ByMinMin");
+    return Support::Symbol("Gecode::CpltSet::Branch::ByMinMin");
   }
 
+
+  forceinline
+  ByMinMax::ByMinMax(void) {}
+  forceinline
+  ByMinMax::ByMinMax(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<CpltSetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  ByMinMax::init(Space*, CpltSetView x) {
+    Set::UnknownRanges<CpltSetView> u(x);
+    min = u.min();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  ByMinMax::select(Space*, CpltSetView x) {
+    Set::UnknownRanges<CpltSetView> u(x);
+    int um = u.min();
+    if (um > min) {
+      min = um; return VSS_BETTER;
+    } else if (um < min) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  ByMinMax::type(void) {
+    return Support::Symbol("Gecode::CpltSet::Branch::ByMinMax");
+  }
+
+
+  forceinline
+  ByMaxMin::ByMaxMin(void) {}
+  forceinline
+  ByMaxMin::ByMaxMin(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<CpltSetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  ByMaxMin::init (Space*, CpltSetView x) {
+    for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
+      max = u.max();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  ByMaxMin::select(Space*, CpltSetView x) {
+    int um = 0;
+    for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
+      max = u.max();
+    if (um < max) {
+      max = um; return VSS_BETTER;
+    } else if (um > max) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  ByMaxMin::type(void) {
+    return Support::Symbol("Gecode::CpltSet::Branch::ByMaxMin");
+  }
 
   forceinline
   ByMaxMax::ByMaxMax(void) {}
@@ -121,7 +206,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   inline Support::Symbol
   ByMaxMax::type(void) {
-    return Support::Symbol("CpltSet::Branch::ByMaxMax");
+    return Support::Symbol("Gecode::CpltSet::Branch::ByMaxMax");
   }
 
 }}}

@@ -50,16 +50,16 @@ namespace Gecode { namespace Set { namespace Branch {
     : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
   BySizeMin::init(Space*, SetView x) { 
-    min = x.unknownSize();
-    return (min == 1) ? VSS_BEST : VSS_BETTER;
+    size = x.unknownSize();
+    return (size == 1) ? VSS_BEST : VSS_BETTER;
   }
   forceinline ViewSelStatus
   BySizeMin::select(Space*, SetView x) {
     unsigned int us = x.unknownSize();
-    if (us < min) {
-      min = us;
-      return (min == 1) ? VSS_BEST : VSS_BETTER;
-    } else if (us > min) {
+    if (us < size) {
+      size = us;
+      return (size == 1) ? VSS_BEST : VSS_BETTER;
+    } else if (us > size) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
@@ -68,6 +68,33 @@ namespace Gecode { namespace Set { namespace Branch {
   inline Support::Symbol
   BySizeMin::type(void) {
     return Support::Symbol("Gecode::Set::Branch::BySizeMin");
+  }
+
+  forceinline
+  BySizeMax::BySizeMax(void) {}
+  forceinline
+  BySizeMax::BySizeMax(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  BySizeMax::init(Space*, SetView x) { 
+    size = x.unknownSize();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  BySizeMax::select(Space*, SetView x) {
+    unsigned int us = x.unknownSize();
+    if (us > size) {
+      size = us;
+      return VSS_BETTER;
+    } else if (us < size) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  BySizeMax::type(void) {
+    return Support::Symbol("Gecode::Set::Branch::BySizeMax");
   }
 
   forceinline
@@ -84,10 +111,9 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline ViewSelStatus
   ByMinMin::select(Space*, SetView x) {
     UnknownRanges<SetView> u(x);
-    int um = u.min();
-    if (um < min) {
-      min = um; return VSS_BETTER;
-    } else if (um > min) {
+    if (u.min() < min) {
+      min = u.min(); return VSS_BETTER;
+    } else if (u.min() > min) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
@@ -96,6 +122,62 @@ namespace Gecode { namespace Set { namespace Branch {
   inline Support::Symbol
   ByMinMin::type(void) {
     return Support::Symbol("Gecode::Set::Branch::ByMinMin");
+  }
+
+  forceinline
+  ByMinMax::ByMinMax(void) {}
+  forceinline
+  ByMinMax::ByMinMax(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  ByMinMax::init(Space*, SetView x) {
+    UnknownRanges<SetView> u(x);
+    min = u.min();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  ByMinMax::select(Space*, SetView x) {
+    UnknownRanges<SetView> u(x);
+    if (u.min() > min) {
+      min = u.min(); return VSS_BETTER;
+    } else if (u.min() < min) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  ByMinMax::type(void) {
+    return Support::Symbol("Gecode::Set::Branch::ByMinMax");
+  }
+
+  forceinline
+  ByMaxMin::ByMaxMin(void) {}
+  forceinline
+  ByMaxMin::ByMaxMin(Space* home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  ByMaxMin::init(Space*, SetView x) {
+    for (UnknownRanges<SetView> u(x); u(); ++u)
+      max = u.max();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  ByMaxMin::select(Space*, SetView x) {
+    int um = 0;
+    for (UnknownRanges<SetView> u(x); u(); ++u)
+      um = u.max();
+    if (um < max) {
+      max = um; return VSS_BETTER;
+    } else if (um > max) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  ByMaxMin::type(void) {
+    return Support::Symbol("Gecode::Set::Branch::ByMaxMin");
   }
 
   forceinline

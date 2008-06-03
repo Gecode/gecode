@@ -56,25 +56,25 @@ namespace Gecode { namespace CpltSet { namespace Branch {
        v = new (home) ViewSelVirtual<ViewSelDegreeMin<CpltSetView> >(home,o_vars);
        break;
      case CPLTSET_VAR_DEGREE_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<CpltSetView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelDegreeMax<CpltSetView> >(home,o_vars);
        break;
      case CPLTSET_VAR_MIN_MIN:
        v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
        break;
      case CPLTSET_VAR_MIN_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByMinMin> >(home,o_vars);
+       v = new (home) ViewSelVirtual<ByMinMax>(home,o_vars);
        break;
      case CPLTSET_VAR_MAX_MIN:
-       v = new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
+       v = new (home) ViewSelVirtual<ByMaxMin>(home,o_vars);
        break;
      case CPLTSET_VAR_MAX_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByMaxMax> >(home,o_vars);
+       v = new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
        break;
      case CPLTSET_VAR_SIZE_MIN:
        v = new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
        break;
      case CPLTSET_VAR_SIZE_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<BySizeMin> >(home,o_vars);
+       v = new (home) ViewSelVirtual<BySizeMax>(home,o_vars);
        break;
     default:
       throw UnknownBranching("CpltSet::branch");
@@ -118,7 +118,7 @@ namespace Gecode {
       break;
     case CPLTSET_VAR_DEGREE_MAX:
       {
-        ViewSelInvert<ViewSelDegreeMin<CpltSetView> > v(home,o_vars);
+        ViewSelDegreeMax<CpltSetView> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -130,19 +130,19 @@ namespace Gecode {
       break;
     case CPLTSET_VAR_MIN_MAX:
       {
-        ViewSelInvert<ByMinMin> v(home,o_vars);
+        ByMinMax v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case CPLTSET_VAR_MAX_MIN:
       {
-        ByMaxMax v(home,o_vars);
+        ByMaxMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case CPLTSET_VAR_MAX_MAX:
       {
-        ViewSelInvert<ByMaxMax> v(home,o_vars);
+        ByMaxMax v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -154,7 +154,7 @@ namespace Gecode {
       break;
     case CPLTSET_VAR_SIZE_MAX:
       {
-        ViewSelInvert<BySizeMin> v(home,o_vars);
+        BySizeMax v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -202,8 +202,8 @@ namespace Gecode {
       break;
     case CPLTSET_VAR_DEGREE_MAX:
       {
-        ViewSelInvert<ViewSelDegreeMin<CpltSetView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ViewSelDegreeMin<CpltSetView> >,
+        ViewSelDegreeMax<CpltSetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMax<CpltSetView>,
           ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
@@ -218,24 +218,24 @@ namespace Gecode {
       break;
     case CPLTSET_VAR_MIN_MAX:
       {
-        ViewSelInvert<ByMinMin> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByMinMin>,
+        ByMinMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMinMax,
           ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case CPLTSET_VAR_MAX_MIN:
       {
-        ByMaxMax va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByMaxMax,
+        ByMaxMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMaxMin,
           ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case CPLTSET_VAR_MAX_MAX:
       {
-        ViewSelInvert<ByMaxMax> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByMaxMax>,
+        ByMaxMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMaxMax,
           ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
@@ -250,8 +250,8 @@ namespace Gecode {
       break;
     case CPLTSET_VAR_SIZE_MAX:
       {
-        ViewSelInvert<BySizeMin> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<BySizeMin>,
+        BySizeMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeMax,
           ViewSelTieBreakDynamic<CpltSetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }

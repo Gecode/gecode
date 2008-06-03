@@ -56,25 +56,25 @@ namespace Gecode { namespace Set { namespace Branch {
        v = new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
        break;
      case SET_VAR_DEGREE_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<SetView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
        break;
      case SET_VAR_MIN_MIN:
        v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
        break;
      case SET_VAR_MIN_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByMinMin> >(home,o_vars);
-       break;
-     case SET_VAR_MAX_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ByMaxMax> >(home,o_vars);
+       v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
        break;
      case SET_VAR_MAX_MIN:
+       v = new (home) ViewSelVirtual<ByMaxMin>(home,o_vars);
+       break;
+     case SET_VAR_MAX_MAX:
        v = new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
        break;
      case SET_VAR_SIZE_MIN:
        v = new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
        break;
      case SET_VAR_SIZE_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<BySizeMin> >(home,o_vars);
+       v = new (home) ViewSelVirtual<BySizeMax>(home,o_vars);
        break;
     default:
       throw UnknownBranching("Set::branch");
@@ -118,7 +118,7 @@ namespace Gecode {
       break;
     case SET_VAR_DEGREE_MAX:
       {
-        ViewSelInvert<ViewSelDegreeMin<SetView> > v(home,o_vars);
+        ViewSelDegreeMin<SetView> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -130,17 +130,17 @@ namespace Gecode {
       break;
     case SET_VAR_MIN_MAX:
       {
-        ViewSelInvert<ByMinMin> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
-      }
-      break;
-    case SET_VAR_MAX_MAX:
-      {
-        ViewSelInvert<ByMaxMax> v(home,o_vars);
+        ByMinMin v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case SET_VAR_MAX_MIN:
+      {
+        ByMaxMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_MAX_MAX:
       {
         ByMaxMax v(home,o_vars);
         post(home,xv,v,vals,o_vals);
@@ -154,7 +154,7 @@ namespace Gecode {
       break;
     case SET_VAR_SIZE_MAX:
       {
-        ViewSelInvert<BySizeMin> v(home,o_vars);
+        BySizeMax v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -202,8 +202,8 @@ namespace Gecode {
       break;
     case SET_VAR_DEGREE_MAX:
       {
-        ViewSelInvert<ViewSelDegreeMin<SetView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ViewSelDegreeMin<SetView> >,
+        ViewSelDegreeMin<SetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
@@ -218,21 +218,21 @@ namespace Gecode {
       break;
     case SET_VAR_MIN_MAX:
       {
-        ViewSelInvert<ByMinMin> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByMinMin>,
-          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
-      }
-      break;
-    case SET_VAR_MAX_MAX:
-      {
-        ViewSelInvert<ByMaxMax> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ByMaxMax>,
+        ByMinMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMinMin,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case SET_VAR_MAX_MIN:
+      {
+        ByMaxMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByMaxMin,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_MAX_MAX:
       {
         ByMaxMax va(home,o_vars.a);
         ViewSelTieBreakStatic<ByMaxMax,
@@ -250,8 +250,8 @@ namespace Gecode {
       break;
     case SET_VAR_SIZE_MAX:
       {
-        ViewSelInvert<BySizeMin> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<BySizeMin>,
+        BySizeMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeMax,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }

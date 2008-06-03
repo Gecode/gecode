@@ -118,14 +118,14 @@ namespace Gecode { namespace Set { namespace Branch {
    */
 
   /**
-   * \brief View selection class for view with smallest element in lub-glb
+   * \brief View selection class for view with smallest minimum element in lub-glb
    *
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
   class ByMinMin : public ViewSelBase<SetView> {
   private:
-    /// So-far smallest element
+    /// So-far smallest minimum element
     int min;
   public:
     /// Default constructor
@@ -141,14 +141,60 @@ namespace Gecode { namespace Set { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with greatest element in lub-glb
+   * \brief View selection class for view with largest minimum element in lub-glb
+   *
+   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * \ingroup FuncSetSelView
+   */
+  class ByMinMax : public ViewSelBase<SetView> {
+  private:
+    /// So-far largest minimum element
+    int min;
+  public:
+    /// Default constructor
+    ByMinMax(void);
+    /// Constructor for initialization
+    ByMinMax(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, SetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with smallest maximal element in lub-glb
+   *
+   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * \ingroup FuncSetSelView
+   */
+  class ByMaxMin : public ViewSelBase<SetView> {
+  private:
+    /// So-far smallest maximal element
+    int max;
+  public:
+    /// Default constructor
+    ByMaxMin(void);
+    /// Constructor for initialization
+    ByMaxMin(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, SetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest maximal element in lub-glb
    *
    * Requires \code #include "gecode/set/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
   class ByMaxMax : public ViewSelBase<SetView> {
   private:
-    /// So-far greatest element
+    /// So-far smallest maximal element
     int max;
   public:
     /// Default constructor
@@ -172,12 +218,35 @@ namespace Gecode { namespace Set { namespace Branch {
   class BySizeMin : public ViewSelBase<SetView> {
   private:
     /// So-far smallest size
-    unsigned int min;
+    unsigned int size;
   public:
     /// Default constructor
     BySizeMin(void);
     /// Constructor for initialization
     BySizeMin(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, SetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest cardinality of lub-glb
+   *
+   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * \ingroup FuncSetSelView
+   */
+  class BySizeMax : public ViewSelBase<SetView> {
+  private:
+    /// So-far largest size
+    unsigned int size;
+  public:
+    /// Default constructor
+    BySizeMax(void);
+    /// Constructor for initialization
+    BySizeMax(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space* home, SetView x);
     /// Possibly select better view \a x

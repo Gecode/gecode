@@ -74,10 +74,10 @@ namespace Gecode { namespace Int { namespace Branch {
        v = new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
        break;
      case INT_VAR_DEGREE_MAX:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<BoolView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
        break;
      case INT_VAR_SIZE_DEGREE_MIN:
-       v = new (home) ViewSelVirtual<ViewSelInvert<ViewSelDegreeMin<BoolView> > >(home,o_vars);
+       v = new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
        break;
      case INT_VAR_SIZE_DEGREE_MAX:
        v = new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
@@ -172,13 +172,13 @@ namespace Gecode {
       break;
     case INT_VAR_DEGREE_MAX:
       {
-        ViewSelInvert<ViewSelDegreeMin<BoolView> > v(home,o_vars);
+        ViewSelDegreeMax<BoolView> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
-        ViewSelInvert<ViewSelDegreeMin<BoolView> > v(home,o_vars);
+        ViewSelDegreeMax<BoolView> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -304,16 +304,16 @@ namespace Gecode {
       break;
     case INT_VAR_DEGREE_MAX:
       {
-        ViewSelInvert<ViewSelDegreeMin<BoolView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ViewSelDegreeMin<BoolView> >,
+        ViewSelDegreeMax<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
-        ViewSelInvert<ViewSelDegreeMin<BoolView> > va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelInvert<ViewSelDegreeMin<BoolView> >,
+        ViewSelDegreeMax<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }

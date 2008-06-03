@@ -110,6 +110,98 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    */
 
   /**
+   * \brief View selection class for view with smallest minimum element in lub-glb
+   *
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * \ingroup FuncCpltSetSelView
+   */
+  class ByMinMin : public ViewSelBase<CpltSetView> {
+  private:
+    /// So-far smallest minimum element
+    int min;
+  public:
+    /// Default constructor
+    ByMinMin(void);
+    /// Constructor for initialization
+    ByMinMin(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, CpltSetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, CpltSetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest minimum element in lub-glb
+   *
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * \ingroup FuncCpltSetSelView
+   */
+  class ByMinMax : public ViewSelBase<CpltSetView> {
+  private:
+    /// So-far largest minimum element
+    int min;
+  public:
+    /// Default constructor
+    ByMinMax(void);
+    /// Constructor for initialization
+    ByMinMax(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, CpltSetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, CpltSetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with smallest maximal element in lub-glb
+   *
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * \ingroup FuncCpltSetSelView
+   */
+  class ByMaxMin : public ViewSelBase<CpltSetView> {
+  private:
+    /// So-far smallest maximal element
+    int max;
+  public:
+    /// Default constructor
+    ByMaxMin(void);
+    /// Constructor for initialization
+    ByMaxMin(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, CpltSetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, CpltSetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest maximal element in lub-glb
+   *
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * \ingroup FuncCpltSetSelView
+   */
+  class ByMaxMax : public ViewSelBase<CpltSetView> {
+  private:
+    /// So-far smallest maximal element
+    int max;
+  public:
+    /// Default constructor
+    ByMaxMax(void);
+    /// Constructor for initialization
+    ByMaxMax(Space* home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space* home, CpltSetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space* home, CpltSetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
    * \brief View selection class for view with smallest cardinality of lub-glb
    *
    * Requires \code #include "gecode/cpltset/branch.hh" \endcode
@@ -118,62 +210,39 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   class BySizeMin : public ViewSelBase<CpltSetView> {
   private:
     /// So-far smallest size
-    unsigned int min;
+    unsigned int size;
   public:
     /// Default constructor
     BySizeMin(void);
     /// Constructor for initialization
     BySizeMin(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(Space*, CpltSetView x);
+    ViewSelStatus init(Space* home, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(Space*, CpltSetView x);
+    ViewSelStatus select(Space* home, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
 
   /**
-   * \brief View selection class for view with smallest element in lub-glb
+   * \brief View selection class for view with largest cardinality of lub-glb
    *
    * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncCpltSetSelView
    */
-  class ByMinMin : public ViewSelBase<CpltSetView> {
+  class BySizeMax : public ViewSelBase<CpltSetView> {
   private:
-    /// So-far smallest element
-    int min;
+    /// So-far largest size
+    unsigned int size;
   public:
     /// Default constructor
-    ByMinMin(void);
+    BySizeMax(void);
     /// Constructor for initialization
-    ByMinMin(Space* home, const VarBranchOptions& vbo);
+    BySizeMax(Space* home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(Space*, CpltSetView x);
+    ViewSelStatus init(Space* home, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(Space*, CpltSetView x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
-  };
-
-  /**
-   * \brief View selection class for view with greatest element in lub-glb
-   *
-   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
-   * \ingroup FuncCpltSetSelView
-   */
-  class ByMaxMax : public ViewSelBase<CpltSetView> {
-  private:
-    /// So-far greatest element
-    int max;
-  public:
-    /// Default constructor
-    ByMaxMax(void);
-    /// Constructor for initialization
-    ByMaxMax(Space* home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space*, CpltSetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space*, CpltSetView x);
+    ViewSelStatus select(Space* home, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
