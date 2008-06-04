@@ -243,7 +243,7 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
 
 dnl Macro:
 dnl   AC_GECODE_VTI (vartype, help-string, default,
-dnl		     [ACTION-IF-ENABLED])
+dnl		     [ACTION-IF-ENABLED], [ACTION-IF-DISABLED])
 dnl
 dnl Description:
 dnl   Introduce --enable-vartype-vars configure switch. The help-string
@@ -268,6 +268,7 @@ AC_DEFUN([AC_GECODE_VTI],
      AC_GECODE_ADD_VTI(translit($1,`a-z', `A-Z'))
    else
      enable_$1_vars="no";
+     $5
      AC_MSG_RESULT(no)
    fi
    AC_SUBST(enable_$1_vars, ${enable_$1_vars})
