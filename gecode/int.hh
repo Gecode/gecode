@@ -1066,6 +1066,22 @@ namespace Gecode {
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
+  /** \brief Post propagator for \f$ x_i - \mathit{xoff} = j\leftrightarrow y_j - \mathit{yoff} = i\f$ for all \f$0\leq i<|x|\f$
+   *
+   * \li Supports domain (\a icl = ICL_DOM) and value propagation (all other
+   *     values for \a icl).
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a y are of different size.
+   * \li Throws an exception of type Int::ArgumentSame, if \a x or
+   *     \a y contain the same unassigned variable multiply. Note that a
+   *     variable can occur in both \a x and \a y, but not more than
+   *     once in either \a x or \a y.
+   */
+  GECODE_INT_EXPORT void
+  channel(Space* home, const IntVarArgs& x, unsigned int xoff,
+          const IntVarArgs& y, unsigned int yoff,
+          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+
   /// Post propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
   GECODE_INT_EXPORT void
   channel(Space* home, BoolVar x0, IntVar x1,

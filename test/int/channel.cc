@@ -51,10 +51,16 @@ namespace Test { namespace Int {
      //@{
      /// Simple test for channel (testing all variables)
      class ChannelFull : public Test {
+     private:
+       int xoff; //< Offset for the x variables
+       int yoff; //< Offset for the y variables
      public:
        /// Construct and register test
-       ChannelFull(Gecode::IntConLevel icl)
-         : Test("Channel::Full::"+str(icl),8,0,3,false,icl) {}
+       ChannelFull(Gecode::IntConLevel icl,
+                   unsigned int xoff0 = 0, unsigned int yoff0 = 0)
+         : Test("Channel::Full::"+str(icl)+"::"+
+                str(xoff0)+"::"+str(yoff0),8,0,3,false,icl),
+           xoff(xoff0), yoff(yoff0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<4; i++)
@@ -67,9 +73,22 @@ namespace Test { namespace Int {
          using namespace Gecode;
          IntVarArgs xa(4); IntVarArgs ya(4);
          for (int i=4; i--; ) {
-           xa[i] = x[i]; ya[i] = x[4+i];
+           if (xoff != 0) {
+             IntVar xo(home, xoff, 3+xoff);
+             Gecode::post(home, x[i] == xo-xoff);
+             xa[i] = xo;
+           } else {
+             xa[i] = x[i];             
+           }
+           if (yoff != 0) {
+             IntVar yo(home, yoff, 3+yoff);
+             Gecode::post(home, x[4+i] == yo-yoff);
+             ya[i] = yo;
+           } else {
+             ya[i] = x[4+i];             
+           }
          }
-         channel(home, xa, ya, icl);
+         channel(home, xa, xoff, ya, yoff, icl);
        }
      };
      
@@ -188,6 +207,12 @@ namespace Test { namespace Int {
    
      ChannelFull cfd(Gecode::ICL_DOM);
      ChannelFull cfv(Gecode::ICL_VAL);
+
+     ChannelFull cfd11(Gecode::ICL_DOM,1,1);
+     ChannelFull cfv11(Gecode::ICL_VAL,1,1);
+
+     ChannelFull cfd35(Gecode::ICL_DOM,3,5);
+     ChannelFull cfv35(Gecode::ICL_VAL,3,5);
    
      ChannelHalf chd(Gecode::ICL_DOM);
      ChannelHalf chv(Gecode::ICL_VAL);

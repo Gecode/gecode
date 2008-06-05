@@ -140,11 +140,11 @@ namespace Gecode { namespace Int { namespace Channel {
       // Only views with not yet propagated missing values
       if (x[i].dodom()) {
         // Iterate the values in the complement of x[i]
-        ViewRanges<IntView>
+        ViewRanges<View>
           xir(x[i].view);
-        Iter::Ranges::ComplVal<ViewRanges<IntView> >
+        Iter::Ranges::ComplVal<ViewRanges<View> >
           xirc(x[i].min,x[i].max,xir);
-        Iter::Ranges::ToValues<Iter::Ranges::ComplVal<ViewRanges<IntView> > >
+        Iter::Ranges::ToValues<Iter::Ranges::ComplVal<ViewRanges<View> > >
           jv(xirc);
         while (jv()) {
           // j is not in the domain of x[i], so prune i from y[j]
