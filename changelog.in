@@ -64,6 +64,12 @@
 #
 
 [RELEASE]
+Version: 2.1.2
+Date: ?
+[DESCRIPTION]
+This is a bugfix release.
+
+[RELEASE]
 Version: 2.1.1
 Date: 2008-03-06
 [DESCRIPTION]
