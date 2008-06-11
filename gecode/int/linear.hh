@@ -1815,7 +1815,6 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param n size of array
    * \param r type of relation
    * \param y variable right hand side of linear constraint
-   * \param c constant right hand side of linear constraint
    * \param b Boolean control variable
    *
    * All variants for linear constraints share the following properties:
@@ -1838,7 +1837,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c,
+  post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y,
        BoolView b, IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
 }}}

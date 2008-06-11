@@ -130,7 +130,7 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,y,0,b,icl,pk);
+    Linear::post(home,t,n,r,y,b,icl,pk);
   }
 
   void
@@ -164,7 +164,7 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,y,0,b,icl,pk);
+    Linear::post(home,t,n,r,y,b,icl,pk);
   }
 
 

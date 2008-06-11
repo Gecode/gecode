@@ -407,7 +407,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   void
   post(Space* home, 
-       Term<BoolView>* t, int n, IntRelType r, IntView x, int c, BoolView b,
+       Term<BoolView>* t, int n, IntRelType r, IntView x, BoolView b,
        IntConLevel icl, PropKind pk) {
     int l, u;
     estimate(t,n,0,l,u);
