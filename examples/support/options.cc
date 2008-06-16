@@ -150,8 +150,8 @@ Options::Options(const char* n)
     
     _search("-search","search engine variants"),
     _solutions("-solutions","number of solutions (0 = all)",1),
-    _c_d("-c-d","recompution copy distance",Search::Config::c_d),
-    _a_d("-a-d","recompution adaption distance",Search::Config::a_d),
+    _c_d("-c-d","recomputation copy distance",Search::Config::c_d),
+    _a_d("-a-d","recomputation adaption distance",Search::Config::a_d),
     _fail("-fail","failure cutoff (0 = none, solution mode)"),
     _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
 

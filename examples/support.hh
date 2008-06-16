@@ -241,12 +241,12 @@ public:
   /// Return number of solutions to search for
   unsigned int solutions(void) const;
 
-  /// Set default copy recompution distance
+  /// Set default copy recomputation distance
   void c_d(unsigned int d);
   /// Return copy recomputation distance
   unsigned int c_d(void) const;
 
-  /// Set default adaptive recompution distance
+  /// Set default adaptive recomputation distance
   void a_d(unsigned int d);
   /// Return adaptive recomputation distance
   unsigned int a_d(void) const;

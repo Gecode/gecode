@@ -794,7 +794,7 @@ AC_DEFUN([AC_GECODE_UNIVERSAL],
     fi
   fi
   AC_ARG_WITH([architectures],
-    AC_HELP_STRING([--with-archiectures],
+    AC_HELP_STRING([--with-architectures],
 	[architectures to compile for on Mac OS X]))
   AC_MSG_CHECKING(Whether to build for different architectures)
   if test "${host_os}" = "darwin"; then
