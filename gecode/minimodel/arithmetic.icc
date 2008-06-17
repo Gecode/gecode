@@ -35,11 +35,9 @@
  *
  */
 
-#include "gecode/minimodel.hh"
-
 namespace Gecode {
 
-  IntVar
+  inline IntVar
   abs(Space* home, IntVar x, IntConLevel icl, PropKind pk) {
     if ((icl == ICL_DOM) && (x.min() >= 0))
       return x;
@@ -48,56 +46,56 @@ namespace Gecode {
     return y;
   }
 
-  IntVar
+  inline IntVar
   min(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     IntVar z(home, Int::Limits::min, Int::Limits::max);
     min(home, x, y, z, icl, pk);
     return z;
   }
 
-  IntVar
+  inline IntVar
   min(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind pk) {
     IntVar y(home, Int::Limits::min, Int::Limits::max);
     Gecode::min(home, x, y, icl, pk);
     return y;
   }
 
-  IntVar
+  inline IntVar
   max(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     IntVar z(home, Int::Limits::min, Int::Limits::max);
     max(home, x, y, z, icl, pk);
     return z;
   }
 
-  IntVar
+  inline IntVar
   max(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind pk) {
     IntVar y(home, Int::Limits::min, Int::Limits::max);
     Gecode::max(home, x, y, icl, pk);
     return y;
   }
 
-  IntVar
+  inline IntVar
   mult(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     IntVar z(home, Int::Limits::min, Int::Limits::max);
     mult(home, x, y, z, icl, pk);
     return z;
   }
 
-  IntVar
+  inline IntVar
   sqr(Space* home, IntVar x, IntConLevel icl, PropKind pk) {
     IntVar y(home, 0, Int::Limits::max);
     sqr(home, x, y, icl, pk);
     return y;
   }
 
-  IntVar
+  inline IntVar
   sqrt(Space* home, IntVar x, IntConLevel icl, PropKind pk) {
     IntVar y(home, 0, Int::Limits::max);
     sqrt(home, x, y, icl, pk);
     return y;
   }
 
-  IntVar
+  inline IntVar
   plus(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     IntVar z(home, Int::Limits::min, Int::Limits::max);
     IntVarArgs xy(2);
@@ -106,7 +104,7 @@ namespace Gecode {
     return z;
   }
 
-  IntVar
+  inline IntVar
   minus(Space* home, IntVar x, IntVar y, IntConLevel icl, PropKind pk) {
     IntVar z(home, Int::Limits::min, Int::Limits::max);
     IntVarArgs xy(2); IntArgs a(2, 1,-1);
