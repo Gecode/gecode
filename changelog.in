@@ -71,6 +71,15 @@ This is a release.
 
 [ENTRY]
 Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+All functional linear and arithmetic constraints now put sharp
+bounds on the output variable (eases interfacing to modelling
+languages).
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]

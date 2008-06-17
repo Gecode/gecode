@@ -90,6 +90,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x1.lq(home,1));
     } else {
       GECODE_ME_CHECK(x1.gq(home,0));
+      GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
       (void) new (home) SqrtBnd<View>(home,x0,x1);
     }
     return ES_OK;
@@ -179,6 +180,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x1.lq(home,1));
     } else {
       GECODE_ME_CHECK(x1.gq(home,0));
+      GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
       (void) new (home) SqrtDom<View>(home,x0,x1);
     }
     return ES_OK;
