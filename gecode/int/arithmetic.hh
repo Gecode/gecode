@@ -706,6 +706,40 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static Support::Symbol ati(void);
   };
 
+  /**
+   * \brief Bounds consistent division/modulo propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   *
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class DivModBnd : public BinaryPropagator<View,PC_INT_BND> {
+  protected:
+    using BinaryPropagator<View,PC_INT_BND>::x0;
+    using BinaryPropagator<View,PC_INT_BND>::x1;
+    
+    /// Constructor for cloning \a p
+    DivModBnd(Space* home, bool share, DivModBnd<View>& p);
+  public:
+    /// Constructor for posting
+    DivModBnd(Space* home, View x0, View x1);
+    /// Post propagator \f$x_0\mathrm{div} x_1=x_2 \land x_0\mathrm{mod} x_1=x_3\f$
+    static  ExecStatus post(Space* home, View x0, View x1, View x2, View x3);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
 }}}
 
 #include "gecode/int/arithmetic/abs.icc"
@@ -713,6 +747,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 #include "gecode/int/arithmetic/sqr.icc"
 #include "gecode/int/arithmetic/sqrt.icc"
 #include "gecode/int/arithmetic/mult.icc"
+#include "gecode/int/arithmetic/divmod.icc"
 
 #endif
 
