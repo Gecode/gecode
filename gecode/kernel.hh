@@ -107,8 +107,8 @@
  *
  */
 
-
 #include "gecode/kernel/macros.icc"
+
 
 /*
  * Gecode kernel
@@ -118,12 +118,22 @@
 #include "gecode/kernel/core.icc"
 #include "gecode/kernel/modevent.icc"
 
+
+/*
+ * Scratch memory management
+ *
+ */
+
+#include "gecode/kernel/scratch-area.icc"
+
+
 /*
  * Traits linking variables, views, and variable implementations
  *
  */
 
 #include "gecode/kernel/var-traits.icc"
+
 
 /*
  * Variables and testing for shared variables
@@ -132,12 +142,14 @@
 
 #include "gecode/kernel/var.icc"
 
+
 /*
  * Access to the constraint graph
  *
  */
 
 #include "gecode/kernel/reflection.icc"
+
 
 /*
  * Views
@@ -146,12 +158,14 @@
 
 #include "gecode/kernel/view.icc"
 
+
 /*
  * Variable and argument arrays
  *
  */
 
 #include "gecode/kernel/array.icc"
+
 
 /*
  * Access to the constraint graph
@@ -160,12 +174,14 @@
 
 #include "gecode/kernel/var-map.icc"
 
+
 /*
  * Shared arrays
  *
  */
 
 #include "gecode/kernel/shared-array.icc"
+
 
 /*
  * Common propagator and branching patterns
@@ -179,6 +195,7 @@
 #include "gecode/kernel/branching-view.icc"
 #include "gecode/kernel/branching-tiebreak.icc"
 #include "gecode/kernel/branching-val.icc"
+
 
 /*
  * Automatically generated variable implementations

@@ -1011,6 +1011,8 @@ namespace Gecode {
   private:
     /// Performs memory management for space
     MemoryManager mm; 
+    /// Shared scratch area
+    SharedScratchArea* ssa;
     /**
      * \brief Doubly linked list of all actors
      *
@@ -1299,9 +1301,9 @@ namespace Gecode {
      */
     //@{
     /// Allocate memory on space heap
-    void* alloc(size_t);
+    void* alloc(size_t s);
     /// Attempt to reuse memory previously allocated with alloc
-    void  reuse(void*,size_t);
+    void  reuse(void* p, size_t s);
     /// Allocate from freelist-managed memory
     template <size_t> void* fl_alloc(void);
     /**

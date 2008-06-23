@@ -105,7 +105,8 @@ namespace Gecode {
   VarDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void) {
+  Space::Space(void) 
+    : ssa(new SharedScratchArea) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -189,6 +190,9 @@ namespace Gecode {
   }
 
   Space::~Space(void) {
+    // Release scratch area
+    if (ssa->release())
+      delete ssa;
     // Mark space as failed
     fail();
     // Delete actors that must be deleted
@@ -358,7 +362,8 @@ namespace Gecode {
    *
    */
   Space::Space(bool share, Space& s) 
-    : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)) {
+    : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
+      ssa(s.ssa->copy(share)) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;

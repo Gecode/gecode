@@ -125,8 +125,19 @@ namespace Gecode {
 #ifndef GECODE_MEMORY_ALIGNMENT
 #define GECODE_MEMORY_ALIGNMENT 8
 #endif
+      /**
+       * \brief Size of scratch area
+       *
+       * The scratch area can be used in a stack fashion through access
+       * from a space. If the a request exceeds the current free space,
+       * memory will be allocated from the heap.
+       */
+      const size_t scratch_size = 16 * 1024;
     }
   }
+
+  /// Align size \a s to the required alignment
+  void align(size_t& s);
 
   /**
    * \brief Base-class for freelist-managed objects
@@ -225,6 +236,42 @@ namespace Gecode {
     void reuse(void* p, size_t s);
   };
 
+  class ScratchArea;
+
+  /// Shared object for scratch area
+  class SharedScratchArea {
+    friend class ScratchArea;
+  private:
+    /// How many spaces use this scratch area object
+    unsigned int use_cnt;
+    /// Amount of free memory
+    size_t free;
+    /// The actual memory area (allocated from top to bottom)
+    double area[Memory::Config::scratch_size / sizeof(double)];
+  public:
+    /// Initialize
+    SharedScratchArea(void);
+    /// Return copy during cloning
+    SharedScratchArea* copy(bool share);
+    /// Release by one space
+    bool release(void);
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+  };
+
+
+  /*
+   * Alignment
+   *
+   */
+  forceinline void 
+  align(size_t& s) {
+    s += ((GECODE_MEMORY_ALIGNMENT - 
+           (s & (GECODE_MEMORY_ALIGNMENT - 1))) & 
+          (GECODE_MEMORY_ALIGNMENT - 1));
+  }
 
   /*
    * Freelists
@@ -276,9 +323,7 @@ namespace Gecode {
     // Size must be a multiple of four
     assert(sz > 0);
     // Perform alignment
-    sz += (GECODE_MEMORY_ALIGNMENT - 
-           (sz & (GECODE_MEMORY_ALIGNMENT - 1))) & 
-      (GECODE_MEMORY_ALIGNMENT - 1);
+    align(sz);
     // Check whether sufficient memory left
     if (sz > lsz)
       alloc_refill(sz);
@@ -335,9 +380,7 @@ namespace Gecode {
   forceinline
   MemoryManager::MemoryManager(MemoryManager& mm, size_t s_sub)
     : cur_hcsz(mm.cur_hcsz), requested(0), slack(NULL) {
-#if GECODE_MEMORY_ALIGNMENT == 8
-    s_sub += s_sub & 4;
-#endif
+    align(s_sub);
     if ((mm.requested < Memory::Config::hcsz_dec_ratio*mm.cur_hcsz) &&
         (cur_hcsz > Memory::Config::hcsz_min) &&
         (s_sub*2 < cur_hcsz))
@@ -452,6 +495,37 @@ namespace Gecode {
         (Support::ptr_cast<FreeList*>(NULL));
     }
   }
+
+  /*
+   * Scratch area
+   *
+   */
+
+  forceinline void* 
+  SharedScratchArea::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
+  forceinline void
+  SharedScratchArea::operator delete(void* p) {
+    Memory::free(p);
+  }
+  forceinline
+  SharedScratchArea::SharedScratchArea(void)
+    : use_cnt(1), free(Memory::Config::scratch_size) {}
+  forceinline SharedScratchArea*
+  SharedScratchArea::copy(bool share) {
+    if (share) {
+      use_cnt++;
+      return this;
+    } else {
+      return new SharedScratchArea();
+    }
+  }
+  forceinline bool
+  SharedScratchArea::release(void) {
+    return --use_cnt == 0;
+  }
+
 
 }
 
