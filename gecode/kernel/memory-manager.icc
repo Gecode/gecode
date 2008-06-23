@@ -274,11 +274,11 @@ namespace Gecode {
   forceinline void*
   MemoryManager::alloc(size_t sz) {
     // Size must be a multiple of four
-    assert((sz > 0) && ((sz % 4) == 0));
-#if GECODE_MEMORY_ALIGNMENT == 8
-    // Performs alignment to 8 bytes
-    sz += sz & 4;
-#endif
+    assert(sz > 0);
+    // Perform alignment
+    sz += (GECODE_MEMORY_ALIGNMENT - 
+           (sz & (GECODE_MEMORY_ALIGNMENT - 1))) & 
+      (GECODE_MEMORY_ALIGNMENT - 1);
     // Check whether sufficient memory left
     if (sz > lsz)
       alloc_refill(sz);
