@@ -144,8 +144,40 @@ namespace Gecode {
   divmod(Space* home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
          IntConLevel, PropKind) {
     if (home->failed()) return;
+
+    IntVar prod(home, Int::Limits::min, Int::Limits::max);
+    GECODE_ES_FAIL(home, 
+                   Arithmetic::MultBnd<IntView>::post(home,x1,x2,prod));
+    Linear::Term<IntView> t[3];
+    t[0].a = 1; t[0].x = prod;
+    t[1].a = 1; t[1].x = x3;
+    int min, max;
+    Linear::estimate(t,2,0,min,max);
+    IntView x0v(x0);
+    GECODE_ME_FAIL(home, x0v.gq(home,min));
+    GECODE_ME_FAIL(home, x0v.lq(home,max));
+    t[2].a=-1; t[2].x=x0;
+    Linear::post(home,t,3,IRT_EQ,0);
+    if (home->failed()) return;
+    IntView x1v(x1);
     GECODE_ES_FAIL(home,
-      Arithmetic::DivModBnd<IntView>::post(home,x0,x1,x2,x3));
+      Arithmetic::DivMod<IntView>::post(home,x1,x3));
+  }
+
+  void
+  div(Space* home, IntVar x0, IntVar x1, IntVar x2,
+      IntConLevel icl, PropKind pk) {
+    if (home->failed()) return;
+    IntVar _mod(home, Int::Limits::min, Int::Limits::max);
+    divmod(home, x0, x1, x2, _mod, icl, pk);
+  }
+
+  void
+  mod(Space* home, IntVar x0, IntVar x1, IntVar x2,
+      IntConLevel icl, PropKind pk) {
+    if (home->failed()) return;
+    IntVar _div(home, Int::Limits::min, Int::Limits::max);
+    divmod(home, x0, x1, _div, x2, icl, pk);
   }
 
   namespace {
@@ -187,7 +219,7 @@ namespace Gecode {
 
     GECODE_REGISTER1(Arithmetic::SqrtBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::SqrtDom<IntView>);
-    GECODE_REGISTER1(Arithmetic::DivModBnd<IntView>);
+    GECODE_REGISTER1(Arithmetic::DivMod<IntView>);
   }
 }
 

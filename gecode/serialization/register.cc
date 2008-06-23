@@ -4936,6 +4936,79 @@ public:
   }
 };
 
+class Register_div {
+public:
+  /// Identifier for this post function
+  static Gecode::Support::Symbol ati(void) {
+    return "Gecode::Post::div";
+  }
+  
+  /// Post constraint described by \a spec
+  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
+                   const Gecode::Reflection::ActorSpec& spec) {
+    switch(spec.noOfArgs()) {
+    case 3:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
+          Gecode::div(home, x0,x1,x2);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::div");
+      }
+      break;
+    case 4:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
+          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
+          Gecode::div(home, x0,x1,x2,x3);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::div");
+      }
+      break;
+    case 5:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
+          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
+          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
+          Gecode::div(home, x0,x1,x2,x3,x4);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::div");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::div");
+    }
+  }
+};
+
 class Register_convex {
 public:
   /// Identifier for this post function
@@ -8344,6 +8417,79 @@ public:
   }
 };
 
+class Register_mod {
+public:
+  /// Identifier for this post function
+  static Gecode::Support::Symbol ati(void) {
+    return "Gecode::Post::mod";
+  }
+  
+  /// Post constraint described by \a spec
+  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
+                   const Gecode::Reflection::ActorSpec& spec) {
+    switch(spec.noOfArgs()) {
+    case 3:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
+          Gecode::mod(home, x0,x1,x2);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mod");
+      }
+      break;
+    case 4:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
+          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
+          Gecode::mod(home, x0,x1,x2,x3);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mod");
+      }
+      break;
+    case 5:
+      {
+#if defined(GECODE_HAS_INT_VARS)
+        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::IntVar>(vm, spec[2]) &&
+            isEnum_IntConLevel(spec[3]) &&
+            isEnum_PropKind(spec[4]))
+        {
+          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
+          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
+          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
+          Gecode::mod(home, x0,x1,x2,x3,x4);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mod");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mod");
+    }
+  }
+};
+
 class PostRegistrar {
   GECODE_REGISTER1(Register_rel);
   GECODE_REGISTER1(Register_sqrt);
@@ -8364,6 +8510,7 @@ class PostRegistrar {
   GECODE_REGISTER1(Register_assign);
   GECODE_REGISTER1(Register_mult);
   GECODE_REGISTER1(Register_atmostOne);
+  GECODE_REGISTER1(Register_div);
   GECODE_REGISTER1(Register_convex);
   GECODE_REGISTER1(Register_unshare);
   GECODE_REGISTER1(Register_weights);
@@ -8380,6 +8527,7 @@ class PostRegistrar {
   GECODE_REGISTER1(Register_elementsInter);
   GECODE_REGISTER1(Register_sqr);
   GECODE_REGISTER1(Register_lex);
+  GECODE_REGISTER1(Register_mod);
 };
 
 } // end anonymous namespace
