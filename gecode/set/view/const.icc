@@ -263,9 +263,8 @@ namespace Gecode { namespace Set {
   forceinline void
   ConstantView::update(Space* home, bool, ConstantView& p) {
     // dispose old ranges
-    if (size>0) {
-      home->reuse(ranges, 2*size*sizeof(int));
-    }
+    if (size > 0)
+      home->free(ranges, 2*size*sizeof(int));
 
     domSize = p.domSize;
     size = p.size;

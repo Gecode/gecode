@@ -588,7 +588,7 @@ namespace Gecode {
     if (used != n)
       Memory::free(oldx);
     else
-      home->reuse(oldx, n);
+      home->free(oldx, n);
     n = newsize; used = m;
   }
 

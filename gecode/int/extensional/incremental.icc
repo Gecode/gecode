@@ -377,7 +377,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           support_data[i]->dispose(home, lastse);
         }
       }
-      home->reuse(support_data, sizeof(SupportEntry*)*literals);
+      home->free(support_data, sizeof(SupportEntry*)*literals);
     }
     work.~WorkStack();
     (void) ac.dispose(home);

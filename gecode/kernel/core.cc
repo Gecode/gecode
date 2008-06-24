@@ -148,7 +148,7 @@ namespace Gecode {
       assert(n != 0);
       Actor** a = static_cast<Actor**>(alloc(2*n*sizeof(Actor*)));
       memcpy(a, d_fst, n*sizeof(Actor*));
-      reuse(d_fst,n*sizeof(Actor*));
+      free(d_fst,n*sizeof(Actor*));
       d_fst = a;
       d_cur = a+n;
       d_lst = a+2*n;
@@ -274,7 +274,7 @@ namespace Gecode {
         assert(pc.p.active < &pc.p.queue[0]);
         goto stable;
       case __ES_SUBSUMED:
-        p->unlink(); reuse(p,p->u.size);
+        p->unlink(); free(p,p->u.size);
         goto stable_or_unstable;
       case __ES_PARTIAL:
         // Schedule propagator with specified propagator events
@@ -338,7 +338,7 @@ namespace Gecode {
       if (b == b_status)
         b_status = b_commit;
       b->unlink(); 
-      reuse(b,b->dispose(this));
+      free(b,b->dispose(this));
     }
     if (b_commit == Branching::cast(&a_actors))
       throw SpaceNoBranching();

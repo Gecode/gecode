@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         x.cancel(home,this,PC_INT_DOM);
       // take care of last_data
       int literals = ts()->domsize*x.size();    
-      home->reuse(last_data, sizeof(Tuple*)*literals);
+      home->free(last_data, sizeof(Tuple*)*literals);
     }
     (void) tupleSet.~TupleSet();    
     return sizeof(*this);

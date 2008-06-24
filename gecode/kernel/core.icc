@@ -1302,8 +1302,8 @@ namespace Gecode {
     //@{
     /// Allocate memory on space heap
     void* alloc(size_t s);
-    /// Attempt to reuse memory previously allocated with alloc
-    void  reuse(void* p, size_t s);
+    /// Free memory previously allocated with alloc (might be reused later)
+    void free(void* p, size_t s);
     /// Allocate from freelist-managed memory
     template <size_t> void* fl_alloc(void);
     /**
@@ -1365,7 +1365,7 @@ namespace Gecode {
     return mm.alloc(s);
   }
   forceinline void
-  Space::reuse(void* p, size_t s) {
+  Space::free(void* p, size_t s) {
     return mm.reuse(p,s);
   }
   template <size_t s>
@@ -2143,7 +2143,7 @@ namespace Gecode {
       free_and_bits += (m-n) << free_bits;
       // Copy entries
       memcpy(prop, idx[0], n*sizeof(ActorLink*));
-      home->reuse(idx[0], n*sizeof(ActorLink*));
+      home->free(idx[0], n*sizeof(ActorLink*));
       // Update index pointers
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
@@ -2226,7 +2226,7 @@ namespace Gecode {
     ActorLink** p = idx[pc_max+2]; idx[pc_max+2] = NULL;
     home->pc.p.n_sub -= (p-b);
     unsigned int n = (free_and_bits >> VIC::free_bits) + (p-b);
-    home->reuse(p-n,n*sizeof(ActorLink*));
+    home->free(p-n,n*sizeof(ActorLink*));
   }
 
   template <class VIC>
