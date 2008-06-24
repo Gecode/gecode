@@ -79,9 +79,10 @@ namespace Gecode {
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
      *
      * Note that this function implements C++ semantics: the copy constructor
-     * of \a T is run for all \f$\min(n,m)$\f objects and the default
-     * constructor of \a T is run for all remaining \f$\max(n,m)-\min(n,m)$\f
-     * objects.
+     * of \a T is run for all \f$\min(n,m)$\f objects, the default
+     * constructor of \a T is run for all remaining 
+     * \f$\max(n,m)-\min(n,m)$\f objects, and the destrucor of \a T is
+     * run for all \a n objects in \a b.
      *
      * Returns the address of the new block.
      */
@@ -151,44 +152,6 @@ namespace Gecode {
 
     template <class T>
     forceinline T*
-    trealloc(T* b, unsigned int n, unsigned int m) {
-      T* p = static_cast<T*>(Memory::malloc(sizeof(T)*m));
-      for (unsigned int i=std::min(n,m); i--; )
-        (void) new (p+i) T(b[i]);
-      for (unsigned int i=n+1; i<m; i++)
-        (void) new (p+i) T();
-      return p;
-    }
-
-#define GECODE_SUPPORT_TREALLOC(T)                              \
-    template <>                                                 \
-    forceinline T*                                              \
-    trealloc<T>(T* b, unsigned int, unsigned int m) {           \
-      return static_cast<T*>(Memory::realloc(b,m*sizeof(T)));   \
-    }
-
-    GECODE_SUPPORT_TREALLOC(bool)
-    GECODE_SUPPORT_TREALLOC(signed char)
-    GECODE_SUPPORT_TREALLOC(unsigned char)
-    GECODE_SUPPORT_TREALLOC(signed short int)
-    GECODE_SUPPORT_TREALLOC(unsigned short int)
-    GECODE_SUPPORT_TREALLOC(signed int)
-    GECODE_SUPPORT_TREALLOC(unsigned int)
-    GECODE_SUPPORT_TREALLOC(signed long int)
-    GECODE_SUPPORT_TREALLOC(unsigned long int)
-    GECODE_SUPPORT_TREALLOC(float)
-    GECODE_SUPPORT_TREALLOC(double)
-
-    template <class T>
-    forceinline T**
-    trealloc(T** b, unsigned int, unsigned int m) {
-      return static_cast<T**>(Memory::realloc(b,m*sizeof(T*)));
-    }
-
-#undef GECODE_SUPPORT_TREALLOC
-
-    template <class T>
-    forceinline T*
     tcopy(T* d, const T* s, unsigned int n) {
       for (unsigned int i=n; i--; )
         d[i]=s[i];
@@ -222,6 +185,48 @@ namespace Gecode {
     tcopy(T** d, const T** s, unsigned int n) {
       return static_cast<T**>(memcpy(d,s,n*sizeof(T*)));
     }
+
+
+    template <class T>
+    forceinline T*
+    trealloc(T* b, unsigned int n, unsigned int m) {
+      if (n == m)
+        return b;
+      T* p = static_cast<T*>(Memory::malloc(sizeof(T)*m));
+      for (unsigned int i=std::min(n,m); i--; )
+        (void) new (p+i) T(b[i]);
+      for (unsigned int i=n; i<m; i++)
+        (void) new (p+i) T();
+      Memory::tfree<T>(b,n);
+      return p;
+    }
+
+#define GECODE_SUPPORT_TREALLOC(T)                              \
+    template <>                                                 \
+    forceinline T*                                              \
+    trealloc<T>(T* b, unsigned int, unsigned int m) {           \
+      return static_cast<T*>(Memory::realloc(b,m*sizeof(T)));   \
+    }
+
+    GECODE_SUPPORT_TREALLOC(bool)
+    GECODE_SUPPORT_TREALLOC(signed char)
+    GECODE_SUPPORT_TREALLOC(unsigned char)
+    GECODE_SUPPORT_TREALLOC(signed short int)
+    GECODE_SUPPORT_TREALLOC(unsigned short int)
+    GECODE_SUPPORT_TREALLOC(signed int)
+    GECODE_SUPPORT_TREALLOC(unsigned int)
+    GECODE_SUPPORT_TREALLOC(signed long int)
+    GECODE_SUPPORT_TREALLOC(unsigned long int)
+    GECODE_SUPPORT_TREALLOC(float)
+    GECODE_SUPPORT_TREALLOC(double)
+
+    template <class T>
+    forceinline T**
+    trealloc(T** b, unsigned int, unsigned int m) {
+      return static_cast<T**>(Memory::realloc(b,m*sizeof(T*)));
+    }
+
+#undef GECODE_SUPPORT_TREALLOC
 
   }
 
