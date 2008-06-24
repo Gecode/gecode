@@ -420,14 +420,14 @@ namespace Gecode {
   forceinline
   ViewSelTieBreakDynamic<View>::Desc::Desc
   (Space* home, ViewSelVirtualBase<View>** tb, int n0)
-    : n(n0), d(Memory::bmalloc<DescVirtualBase*>(n)) {
+    : n(n0), d(Memory::talloc<DescVirtualBase*>(n)) {
     for (int i=n; i--; )
       d[i] = tb[i]->description(home);
   }
   template<class View>
   forceinline
   ViewSelTieBreakDynamic<View>::Desc::Desc(const Desc& de)
-    : n(de.n), d(Memory::bmalloc<DescVirtualBase*>(n)) {
+    : n(de.n), d(Memory::talloc<DescVirtualBase*>(n)) {
     for (int i=n; i--; )
       d[i] = de.d[i]->copy();        
   }
@@ -463,7 +463,7 @@ namespace Gecode {
   ViewSelTieBreakDynamic<View>::Desc::~Desc(void) {
     for (int i=n; i--; )
       delete d[i];
-    Memory::free(d);
+    Memory::tfree(d,n);
   }
 
 

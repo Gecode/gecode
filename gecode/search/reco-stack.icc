@@ -43,6 +43,9 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
+  ReCoNode::ReCoNode(void) {}
+
+  forceinline
   ReCoNode::ReCoNode(Space* s, Space* c)
     : _space(c), _alt(0), _desc(s->description()) {}
 

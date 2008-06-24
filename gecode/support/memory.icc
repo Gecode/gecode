@@ -46,7 +46,7 @@ namespace Gecode {
     /**
      * \defgroup FuncMemHeap Heap-memory management
      *
-     * All routines throw an exception of MemoryExhausted, if request
+     * All routines throw an exception of MemoryExhausted, if a request
      * cannot be fulfilled.
      * \ingroup FuncMem
      */
@@ -54,26 +54,54 @@ namespace Gecode {
     //@{
     /// Allocate \a s bytes from heap.
     void* malloc(size_t s);
-    /// Try to change memory-block starting at \a p to size \a s
-    void* realloc(void* p, size_t s);
     /// Free memory block starting at \a p
     void  free(void* p);
+    /// Try to change memory block starting at \a p to size \a s
+    void* realloc(void* p, size_t s);
 
-    /// Allocate block of \a n objects of type \a T from heap
+    /**
+     * \brief Allocate block of \a n objects of type \a T from heap
+     *
+     * Note that this function implements C++ semantics: the default
+     * constructor of \a T is run for all \a n objects.
+     */
     template <class T>
-    T* bmalloc(size_t n);
-    /// Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
+    T* talloc(unsigned int n=1);
+    /** 
+     * \brief Delete \a n objects starting at \a b
+     *
+     * Note that this function implements C++ semantics: the destructor
+     * of \a T is run for all \a n objects.
+     */
     template <class T>
-    T* brealloc(T* b, size_t n, size_t m);
-    /// Copy \a n objects starting at \a s to \a d
+    void tfree(T* b, unsigned int n=1);
+    /**
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
+     *
+     * Note that this function implements C++ semantics: the copy constructor
+     * of \a T is run for all \f$\min(n,m)$\f objects and the default
+     * constructor of \a T is run for all remaining \f$\max(n,m)-\min(n,m)$\f
+     * objects.
+     *
+     * Returns the address of the new block.
+     */
     template <class T>
-    T* bcopy(T* d, const T* s, size_t n);
-
+    T* trealloc(T* b, unsigned int n, unsigned int m);
+    /** 
+     * \brief Copy \a n objects starting at \a s to \a d
+     *
+     * Note that this function implements C++ semantics: the assignment
+     * operator of \a T is run for all \a n objects.
+     *
+     * Returns \a d.
+     */
+    template <class T>
+    T* tcopy(T* d, const T* s, unsigned int n);
     //@}
 
 
     /*
-     * Implementations
+     * Wrappers for untyped allocation routines
      *
      */
 
@@ -85,37 +113,76 @@ namespace Gecode {
       throw MemoryExhausted();
     }
 
+    forceinline void
+    free(void* p) {
+      ::free(p);
+    }
+
     forceinline void*
-    realloc(void *p, size_t s) {
+    realloc(void* p, size_t s) {
       p = ::realloc(p,s);
       if (p != NULL || s == 0)
         return p;
       throw MemoryExhausted();
     }
 
+
+    /*
+     * Typed allocation routines
+     *
+     */
+
+    template <class T>
+    forceinline T*
+    talloc(unsigned int n) {
+      T* p = static_cast<T*>(Memory::malloc(sizeof(T)*n));
+      for (unsigned int i=n; i--; )
+        (void) new (p+i) T();
+      return p;
+    }
+
+    template <class T>
     forceinline void
-    free(void* p) {
-      ::free(p);
-    }
-
-
-    template <class T>
-    forceinline T*
-    bmalloc(size_t n) {
-      return static_cast<T*>(Memory::malloc(sizeof(T)*n));
+    tfree(T* b, unsigned int n) {
+      for (unsigned int i=n; i--; )
+        b[i].~T();
+      Memory::free(b);
     }
 
     template <class T>
     forceinline T*
-    brealloc(T* b, size_t, size_t m) {
-      return static_cast<T*>(Memory::realloc(b,m*sizeof(T)));
+    trealloc(T* b, unsigned int n, unsigned int m) {
+      T* p = static_cast<T*>(Memory::malloc(sizeof(T)*m));
+      for (unsigned int i=std::min(n,m); i--; )
+        (void) new (p+i) T(b[i]);
+      for (unsigned int i=n+1; i<m; i++)
+        (void) new (p+i) T();
+      return p;
     }
+
+    /*
+    template <>
+    forceinline char*
+    trealloc(char* b, unsigned int, unsigned int m) {
+      return static_cast<char*>(Memory::realloc(b,m*sizeof(char)));
+    }
+    */
 
     template <class T>
     forceinline T*
-    bcopy(T* d, const T* s, size_t n) {
+    tcopy(T* d, const T* s, unsigned int n) {
+      for (unsigned int i=n; i--; )
+        d[i]=s[i];
+      return d;
+    }
+
+    /*
+    template <class T>
+    forceinline T*
+    tcopy(T* d, const T* s, unsigned int n) {
       return static_cast<T*>(memcpy(d,s,n*sizeof(T)));
     }
+    */
 
   }
 

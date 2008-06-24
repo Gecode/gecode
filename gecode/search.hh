@@ -290,6 +290,8 @@ namespace Gecode {
       /// Braching description
       const BranchingDesc* _desc;
     public:
+      /// Default constructor
+      ReCoNode(void);
       /// Node for space \a s with clone \a c (possibly NULL)
       ReCoNode(Space* s, Space* c);
 
@@ -479,6 +481,8 @@ namespace Gecode {
         /// Next alternative to try
         unsigned int         _alt;
       public:
+        /// Deafult constructor
+        ProbeNode(void);
         /// Initialize with node \a s, description \a d, and alternative \a a
         ProbeNode(Space* s, const BranchingDesc* d, unsigned int a);
         /// Return space

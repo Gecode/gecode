@@ -146,7 +146,7 @@ operator<<(std::ostream& os, const CpltSetView& x) {
   } else {
     bdd dom = x.dom();
     os << "{";
-    char* profile = Memory::bmalloc<char>(x.tableWidth());
+    char* profile = Memory::talloc<char>(x.tableWidth());
     for (int i=x.tableWidth(); i--;)
       profile[i] = -1;
     printBddDom(os, x.offset(), x.initialLubMin(), x.tableWidth(), true, 

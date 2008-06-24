@@ -49,6 +49,9 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
+  ProbeEngine::ProbeNode::ProbeNode(void) {}
+
+  forceinline
   ProbeEngine::ProbeNode
   ::ProbeNode(Space* s, const BranchingDesc* d, unsigned int a)
     : _space(s), _desc(d), _alt(a) {}

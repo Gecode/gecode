@@ -48,6 +48,8 @@ namespace Gecode { namespace Int { namespace Linear {
   private:
     /// Number of bits per unsigned integer
     static const unsigned int bpui = sizeof(unsigned int) * 8;
+    /// Number of unsigned ints
+    unsigned int n;
     /// Array of bits
     unsigned int* bits;
   public:
@@ -168,8 +170,9 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   forceinline void
-  SupportSet::init(unsigned int n) {
-    bits = Memory::bmalloc<unsigned int>((n / bpui) + 1);
+  SupportSet::init(unsigned int n0) {
+    n = n0;
+    bits = Memory::talloc<unsigned int>((n / bpui) + 1);
     for (unsigned int i = (n / bpui) + 1; i--; )
       bits[i] = 0;
   }
@@ -226,7 +229,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   forceinline void
   SupportSet::dispose(void) {
-    Memory::free(bits);
+    Memory::tfree(bits,n);
   }
 
 

@@ -95,7 +95,7 @@ namespace Gecode { namespace Support {
   void
   DynamicStack<T>::resize(void) {
     int nl = (limit * 3) / 2;
-    stack = Memory::brealloc<T>(stack,
+    stack = Memory::trealloc<T>(stack,
                                 static_cast<size_t>(limit),
                                 static_cast<size_t>(nl));
     limit = nl;
@@ -104,12 +104,12 @@ namespace Gecode { namespace Support {
   template <class T>
   forceinline
   DynamicStack<T>::DynamicStack(int n)
-    : limit(n), tos(0), stack(Memory::bmalloc<T>(static_cast<size_t>(n))) {}
+    : limit(n), tos(0), stack(Memory::talloc<T>(static_cast<size_t>(n))) {}
 
   template <class T>
   forceinline
   DynamicStack<T>::~DynamicStack(void) {
-    Memory::free(stack);
+    Memory::tfree(stack,limit);
   }
 
   template <class T>

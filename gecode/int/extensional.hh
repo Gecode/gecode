@@ -331,6 +331,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       WorkType work;
       int var;
       int val;
+      Work(void) {}
       Work(WorkType w0, int var0, int val0)
         : work(w0), var(var0), val(val0) {}
     };

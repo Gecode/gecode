@@ -70,9 +70,9 @@ namespace Gecode {
     /// Default constructor (array of size 0)
     VarArray(void);
     /// Allocate array with \a m variables
-    VarArray(Space*, int m);
+    VarArray(Space* home, int m);
     /// Initialize from variable argument array \a a (copy elements)
-    VarArray(Space*,const VarArgArray<Var>&);
+    VarArray(Space* home, const VarArgArray<Var>&);
     /// Initialize from variable array \a a (share elements)
     VarArray(const VarArray<Var>& a);
     /// Initialize from variable array \a a (share elements)
@@ -990,32 +990,26 @@ namespace Gecode {
   forceinline T*
   ArgArrayBase<T>::allocate(int n) {
     return (n > onstack_size) ?
-      Memory::bmalloc<T>(static_cast<size_t>(n)) : &onstack[0];
+      Memory::talloc<T>(static_cast<unsigned int>(n)) : &onstack[0];
   }
 
   template <class T>
   forceinline
   ArgArrayBase<T>::ArgArrayBase(int n0)
-    : n(n0), a(allocate(n0)) {
-    for (int i=n; i--;)
-      new (&a[i]) T();
-  }
+    : n(n0), a(allocate(n)) {}
 
   template <class T>
   inline
   ArgArrayBase<T>::ArgArrayBase(const ArgArrayBase<T>& aa)
-    : n(aa.n), a(allocate(aa.n)) {
-    for (int i = n; i--; )
-      new (&a[i]) T(aa.a[i]);
+    : n(aa.n), a(allocate(n)) {
+    Memory::tcopy<T>(a,aa.a,n);
   }
 
   template <class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
-    for (int i=n; i--;)
-      a[i].~T();
     if (n > onstack_size)
-      Memory::free(a);
+      Memory::tfree(a,n);
   }
 
   template <class T>
@@ -1023,11 +1017,10 @@ namespace Gecode {
   ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
     if (&aa != this) {
       if (n > onstack_size)
-        Memory::free(a);
+        Memory::tfree(a,n);
       n = aa.n;
       a = allocate(aa.n);
-      for (int i = n; i--; )
-        a[i] = aa.a[i];
+      Memory::tcopy<T>(a,aa.a,n);
     }
     return *this;
   }
@@ -1107,8 +1100,8 @@ namespace Gecode {
   inline
   VarArgArray<T>::VarArgArray(const VarArray<T>& x)
     : ArgArrayBase<T>(x.size()) {
-    for (int i = x.size(); i--; )
-      a[i] = x[i];
+    for (int i=x.size(); i--; )
+      a[i]=x[i];
   }
 
   template <class Var>
