@@ -160,13 +160,32 @@ namespace Gecode {
       return p;
     }
 
-    /*
-    template <>
-    forceinline char*
-    trealloc(char* b, unsigned int, unsigned int m) {
-      return static_cast<char*>(Memory::realloc(b,m*sizeof(char)));
+#define GECODE_SUPPORT_TREALLOC(T)                              \
+    template <>                                                 \
+    forceinline T*                                              \
+    trealloc<T>(T* b, unsigned int, unsigned int m) {           \
+      return static_cast<T*>(Memory::realloc(b,m*sizeof(T)));   \
     }
-    */
+
+    GECODE_SUPPORT_TREALLOC(bool)
+    GECODE_SUPPORT_TREALLOC(signed char)
+    GECODE_SUPPORT_TREALLOC(unsigned char)
+    GECODE_SUPPORT_TREALLOC(signed short int)
+    GECODE_SUPPORT_TREALLOC(unsigned short int)
+    GECODE_SUPPORT_TREALLOC(signed int)
+    GECODE_SUPPORT_TREALLOC(unsigned int)
+    GECODE_SUPPORT_TREALLOC(signed long int)
+    GECODE_SUPPORT_TREALLOC(unsigned long int)
+    GECODE_SUPPORT_TREALLOC(float)
+    GECODE_SUPPORT_TREALLOC(double)
+
+    template <class T>
+    forceinline T**
+    trealloc(T** b, unsigned int, unsigned int m) {
+      return static_cast<T**>(Memory::realloc(b,m*sizeof(T*)));
+    }
+
+#undef GECODE_SUPPORT_TREALLOC
 
     template <class T>
     forceinline T*
@@ -176,13 +195,33 @@ namespace Gecode {
       return d;
     }
 
-    /*
-    template <class T>
-    forceinline T*
-    tcopy(T* d, const T* s, unsigned int n) {
-      return static_cast<T*>(memcpy(d,s,n*sizeof(T)));
+
+#define GECODE_SUPPORT_TCOPY(T)                         \
+    template <>                                         \
+    forceinline T*                                      \
+    tcopy(T* d, const T* s, unsigned int n) {           \
+      return static_cast<T*>(memcpy(d,s,n*sizeof(T)));  \
     }
-    */
+
+    GECODE_SUPPORT_TCOPY(bool)
+    GECODE_SUPPORT_TCOPY(signed char)
+    GECODE_SUPPORT_TCOPY(unsigned char)
+    GECODE_SUPPORT_TCOPY(signed short int)
+    GECODE_SUPPORT_TCOPY(unsigned short int)
+    GECODE_SUPPORT_TCOPY(signed int)
+    GECODE_SUPPORT_TCOPY(unsigned int)
+    GECODE_SUPPORT_TCOPY(signed long int)
+    GECODE_SUPPORT_TCOPY(unsigned long int)
+    GECODE_SUPPORT_TCOPY(float)
+    GECODE_SUPPORT_TCOPY(double)
+
+#undef GECODE_SUPPORT_TCOPY
+
+    template <class T>
+    forceinline T**
+    tcopy(T** d, const T** s, unsigned int n) {
+      return static_cast<T**>(memcpy(d,s,n*sizeof(T*)));
+    }
 
   }
 
