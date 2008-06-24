@@ -1304,6 +1304,38 @@ namespace Gecode {
     void* alloc(size_t s);
     /// Free memory previously allocated with alloc (might be reused later)
     void free(void* p, size_t s);
+    /** 
+     * \brief Allocate block of \a n objects of type \a T from space heap
+     *
+     * Note that this function implements C++ semantics: the default
+     * constructor of \a T is run for all \a n objects.
+     */
+    template <class T>
+    T* talloc(unsigned int n=1);
+    /** 
+     * \brief Delete \a n objects allocated from space heap starting at \a b
+     *
+     * Note that this function implements C++ semantics: the destructor
+     * of \a T is run for all \a n objects.
+     *
+     * Note that the memory is not freed, it is just scheduled for latter
+     * reusal.
+     */
+    template <class T>
+    void tfree(T* b, unsigned int n=1);
+    /**
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
+     *
+     * Note that this function implements C++ semantics: the copy constructor
+     * of \a T is run for all \f$\min(n,m)$\f objects, the default
+     * constructor of \a T is run for all remaining 
+     * \f$\max(n,m)-\min(n,m)$\f objects, and the destrucor of \a T is
+     * run for all \a n objects in \a b.
+     *
+     * Returns the address of the new block.
+     */
+    template <class T>
+    T* trealloc(T* b, unsigned int n, unsigned int m);
     /// Allocate from freelist-managed memory
     template <size_t> void* fl_alloc(void);
     /**
@@ -1378,6 +1410,46 @@ namespace Gecode {
   Space::fl_dispose(FreeList* f, FreeList* l) {
     mm.template fl_dispose<s>(f,l);
   }
+
+  /*
+   * Typed allocation routines
+   *
+   */
+  template <class T>
+  forceinline T*
+  Space::talloc(unsigned int n) {
+    T* p = static_cast<T*>(alloc(sizeof(T)*n));
+    for (unsigned int i=n; i--; )
+      (void) new (p+i) T();
+    return p;
+  }
+
+  template <class T>
+  forceinline void
+  Space::tfree(T* b, unsigned int n) {
+    for (unsigned int i=n; i--; )
+      b[i].~T();
+    free(b);
+  }
+
+  template <class T>
+  forceinline T*
+  Space::trealloc(T* b, unsigned int n, unsigned int m) {
+    if (n < m) {
+      T* p = static_cast<T*>(alloc(sizeof(T)*m));
+      for (unsigned int i=n; i--; )
+        (void) new (p+i) T(b[i]);
+      for (unsigned int i=n; i<m; i++)
+        (void) new (p+i) T();
+      tfree<T>(b,n);
+      return p;
+    } else {
+      tfree<T>(b+m,m-n);
+      return b;
+    }
+  }
+
+
 
 #ifdef GECODE_HAS_VAR_DISPOSE
   template <class VIC>
