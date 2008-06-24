@@ -40,6 +40,357 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
+   * Positive bounds consistent division
+   *
+   */
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  forceinline ExecStatus
+  prop_div_plus_bnd(Space* home, Propagator* p, VA x0, VB x1, VC x2) {
+    assert(pos(x0) && pos(x1) && !neg(x2));
+    bool mod;
+    do {
+      mod = false;
+      {
+        ModEvent me;
+        if (towardsMinInf)
+          me = x2.lq(home,f_d_p<Val>(x0.max(),x1.min()));
+        else
+          me = x2.lq(home,c_d_p<Val>(x0.max(),x1.min()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me;
+        if (towardsMinInf)
+          me = x2.gq(home,f_d_p<Val>(x0.min(),x1.max()));
+        else
+          me = x2.gq(home,c_d_p<Val>(x0.min(),x1.max()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me;
+        if (towardsMinInf)
+          me = x0.le(home,m<Val>(x1.max(),
+                                 static_cast<Val>(x2.max())+
+                                 static_cast<Val>(1)));
+        else
+          me = x0.lq(home,m<Val>(x1.max(),x2.max()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me;
+        if (towardsMinInf)
+          me = x0.gq(home,m<Val>(x1.min(),x2.min()));
+        else
+          me = x0.gr(home,m<Val>(x1.min(),
+                                 static_cast<Val>(x2.min())-
+                                 static_cast<Val>(1)));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        if (x2.min() > 0) {
+          ModEvent me;
+          if (towardsMinInf)
+            me = x1.lq(home,f_d_p<Val>(x0.max(),x2.min()));
+          else if (x2.min() != 1) {
+            me = x1.lq(home,c_d_p<Val>(x0.max(),
+                                       static_cast<Val>(x2.min())-
+                                       static_cast<Val>(1)));
+          } else
+            me = ME_INT_NONE;
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+      }
+      {
+        ModEvent me;
+        if (towardsMinInf)
+          me = x1.gq(home,c_d_p<Val>(x0.min(),
+            static_cast<Val>(x2.max())+static_cast<Val>(1)));
+        else
+          me = x1.gq(home,f_d_p<Val>(x0.min(),
+            static_cast<Val>(x2.max())+static_cast<Val>(1)));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+    } while (mod);
+    return x0.assigned() && x1.assigned() ?
+      ES_SUBSUMED(p,sizeof(*p)) : ES_FIX;
+  }
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  forceinline
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  ::DivPlusBnd(Space* home, VA x0, VB x1, VC x2)
+    : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
+  (home,x0,x1,x2) {}
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  forceinline
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  ::DivPlusBnd(Space* home, bool share, 
+               DivPlusBnd<Val,VA,VB,VC,towardsMinInf>& p)
+    : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
+  (home,share,p) {}
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  Actor*
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>::copy(Space* home, bool share) {
+    return new (home) DivPlusBnd<Val,VA,VB,VC,towardsMinInf>(home,
+                                                             share,*this);
+  }
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  ExecStatus
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  ::propagate(Space* home, ModEventDelta) {
+    return prop_div_plus_bnd<Val,VA,VB,VC,towardsMinInf>(home,this,x0,x1,x2);
+  }
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  forceinline ExecStatus
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  ::post(Space* home, VA x0, VB x1, VC x2) {
+    GECODE_ME_CHECK(x0.gr(home,0));
+    GECODE_ME_CHECK(x1.gr(home,0));
+    if (towardsMinInf) {
+      GECODE_ME_CHECK(x2.gq(home,floor(static_cast<double>(x0.min()) / 
+                                       static_cast<double>(x1.max()))));
+    } else {
+      GECODE_ME_CHECK(x2.gq(home,ceil(static_cast<double>(x0.min()) / 
+                                      static_cast<double>(x1.max()))));      
+    }
+    (void)
+      new (home) DivPlusBnd<double,VA,VB,VC,towardsMinInf>(home,x0,x1,x2);
+    return ES_OK;
+  }
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  forceinline void
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  ::post(Space* home, Reflection::VarMap& vars,
+         const Reflection::ActorSpec& spec) {
+     spec.checkArity(3);
+     VA x0(home, vars, spec[0]);
+     VB x1(home, vars, spec[1]);
+     VC x2(home, vars, spec[2]);
+     (void) new (home) DivPlusBnd<Val,VA,VB,VC,towardsMinInf>(home,x0,x1,x2);
+  }
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  Support::Symbol
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>::ati(void) {
+    return Reflection::mangle<VA,VB,VC,Val>
+      ("Gecode::Int::Arithmetic::DivPlusBnd",towardsMinInf);
+  }
+
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  Reflection::ActorSpec
+  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  ::spec(const Space* home, Reflection::VarMap& m) const {
+    return MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
+      ::spec(home, m, ati());
+  }
+
+
+  /*
+   * Bounds consistent multiplication
+   *
+   */
+  template <class View>
+  forceinline
+  DivBnd<View>::DivBnd(Space* home, View x0, View x1, View x2)
+    : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
+
+  template <class View>
+  forceinline
+  DivBnd<View>::DivBnd(Space* home, bool share, DivBnd<View>& p)
+    : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  DivBnd<View>::copy(Space* home, bool share) {
+    return new (home) DivBnd<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  DivBnd<View>::propagate(Space* home, ModEventDelta) {
+    if (pos(x1)) {
+      if (pos(x2) || pos(x0)) goto rewrite_ppp;
+      if (neg(x2) || neg(x0)) goto rewrite_npn;
+      goto prop_xpx;
+    }
+    if (neg(x1)) {
+      if (neg(x2) || pos(x0)) goto rewrite_pnn;
+      if (pos(x2) || neg(x0)) goto rewrite_nnp;
+      goto prop_xnx;
+    }
+    if (pos(x2)) {
+      if (pos(x0)) goto rewrite_ppp;
+      if (neg(x0)) goto rewrite_nnp;
+      goto prop_xxp;
+    }
+    if (neg(x2)) {
+      if (pos(x0)) goto rewrite_pnn;
+      if (neg(x0)) goto rewrite_npn;
+      goto prop_xxn;
+    }
+    assert(any(x1) && any(x2));
+
+    GECODE_ME_CHECK(x0.le(home,std::max(m<double>(x1.max(),x2.max()+1),
+                                        m<double>(x1.min(),x2.min()-1))));
+    GECODE_ME_CHECK(x0.gq(home,std::min(m<double>(x1.min(),x2.max()+1),
+                                        m<double>(x1.max(),x2.min()-1))));
+
+    return ES_NOFIX;
+
+  prop_xxp:
+    assert(any(x0) && any(x1) && pos(x2));
+
+    GECODE_ME_CHECK(x0.le(home, m<double>(x1.max(),x2.max()+1)));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.min(),x2.max()+1)));
+
+    if (pos(x0)) goto rewrite_ppp;
+    if (neg(x0)) goto rewrite_npn;
+
+    GECODE_ME_CHECK(x1.lq(home,f_d_p<double>(x0.max(),x2.min())));
+    GECODE_ME_CHECK(x1.gq(home,c_d(x0.min(),x2.min())));
+
+    if (x0.assigned() && x1.assigned()) {
+      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
+      return ES_SUBSUMED(this,sizeof(*this));
+    }
+
+    return ES_NOFIX;
+  prop_xpx:
+    assert(any(x0) && pos(x1) && any(x2));
+
+    GECODE_ME_CHECK(x0.le(home, m<double>(x1.max(),x2.max()+1)));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
+
+    if (pos(x0)) goto rewrite_ppp;
+    if (neg(x0)) goto rewrite_npn;
+
+    GECODE_ME_CHECK(x2.lq(home,f_d(x0.max(),x1.min())));
+    GECODE_ME_CHECK(x2.gq(home,f_d(x0.min(),x1.min())));
+
+    if (x0.assigned() && x1.assigned()) {
+      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
+      return ES_SUBSUMED(this,sizeof(*this));
+    }
+
+    return ES_NOFIX;
+
+  prop_xxn:
+    assert(any(x0) && any(x1) && neg(x2));
+
+    GECODE_ME_CHECK(x0.le(home, m<double>(x1.min(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
+
+    if (pos(x0)) goto rewrite_pnn;
+    if (neg(x0)) goto rewrite_npn;
+
+    if (x2.max() != -1)
+      GECODE_ME_CHECK(x1.lq(home,c_d(x0.min(),x2.max()+1)));
+    if (x2.max() != -1)
+      GECODE_ME_CHECK(x1.gq(home,c_d(x0.max(),x2.max()+1)));
+
+    if (x0.assigned() && x1.assigned()) {
+      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
+      return ES_SUBSUMED(this,sizeof(*this));
+    }
+    return ES_NOFIX;
+
+  prop_xnx:
+    assert(any(x0) && neg(x1) && any(x2));
+
+    GECODE_ME_CHECK(x0.le(home, m<double>(x1.min(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.min(),x2.max()+1)));
+
+    if (pos(x0)) goto rewrite_pnn;
+    if (neg(x0)) goto rewrite_nnp;
+
+    GECODE_ME_CHECK(x2.lq(home,f_d(x0.min(),x1.max())));
+    GECODE_ME_CHECK(x2.gq(home,f_d(x0.max(),x1.max())));
+
+    if (x0.assigned() && x1.assigned()) {
+      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
+      return ES_SUBSUMED(this,sizeof(*this));
+    }
+    return ES_NOFIX;
+
+  rewrite_ppp:
+    GECODE_REWRITE(this,(DivPlusBnd<double,IntView,IntView,IntView>
+                         ::post(home,x0,x1,x2)));
+  rewrite_nnp:
+    GECODE_REWRITE(this,(DivPlusBnd<double,MinusView,MinusView,IntView>
+                         ::post(home,x0,x1,x2)));
+  rewrite_pnn:
+    GECODE_REWRITE(this,(DivPlusBnd<double,IntView,MinusView,MinusView,false>
+                         ::post(home,x0,x1,x2)));
+  rewrite_npn:
+    GECODE_REWRITE(this,(DivPlusBnd<double,MinusView,IntView,MinusView,false>
+                         ::post(home,x0,x1,x2)));
+  }
+
+  template <class View>
+  ExecStatus
+  DivBnd<View>::post(Space* home, View x0, View x1, View x2) {
+    GECODE_ME_CHECK(x1.nq(home, 0));
+    if (pos(x0)) {
+      if (pos(x1) || pos(x2)) goto post_ppp;
+      if (neg(x1) || neg(x2)) goto post_pnn;
+    } else if (neg(x0)) {
+      if (neg(x1) || pos(x2)) goto post_nnp;
+      if (pos(x1) || neg(x2)) goto post_npn;
+    } else if (pos(x1)) {
+      if (pos(x2)) goto post_ppp;
+      if (neg(x2)) goto post_npn;
+    } else if (neg(x1)) {
+      if (pos(x2)) goto post_nnp;
+      if (neg(x2)) goto post_pnn;
+    }
+    (void) new (home) DivBnd<View>(home,x0,x1,x2);
+    return ES_OK;
+
+  post_ppp:
+    return DivPlusBnd<double,IntView,IntView,IntView>::post(home,x0,x1,x2);
+  post_nnp:
+    return DivPlusBnd<double,MinusView,MinusView,IntView>::post(home,x0,x1,x2);
+  post_pnn:
+    return DivPlusBnd<double,IntView,MinusView,MinusView,false>::post(home,x0,x1,x2);
+  post_npn:
+    return DivPlusBnd<double,MinusView,IntView,MinusView,false>::post(home,x0,x1,x2);
+  }
+
+  template <class View>
+  forceinline void
+  DivBnd<View>::post(Space* home, Reflection::VarMap& vars,
+                   const Reflection::ActorSpec& spec) {
+     spec.checkArity(3);
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
+     View x2(home, vars, spec[2]);
+     (void) new (home) DivBnd<View>(home,x0,x1,x2);
+  }
+
+  template <class View>
+  Support::Symbol
+  DivBnd<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::DivBnd");
+  }
+
+  template <class View>
+  Reflection::ActorSpec
+  DivBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
+    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
+  }
+
+  /*
    * Propagator for x0 != 0 /\ (x1 != 0 => x0*x1>0) /\ abs(x1)<abs(x0)
    *
    */
