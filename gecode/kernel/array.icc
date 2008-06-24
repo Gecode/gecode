@@ -168,9 +168,9 @@ namespace Gecode {
       : n(a.size()) {
       // This may not be in the icc file (to satisfy the MS compiler)
       if (n>0) {
-        x = static_cast<View*>(home->alloc(sizeof(View)*n));
-        for (int i = n; i--; )
-          x[i] = a[i];
+        x = home->talloc<View>(n);
+        for (int i=n; i--; )
+          x[i]=a[i];
       } else {
         x = NULL;
       }
@@ -538,7 +538,7 @@ namespace Gecode {
   forceinline
   VarArray<Var>::VarArray(Space* home, int n0)
     : used(n0), n(n0) {
-    x = (n>0) ? static_cast<Var*>(home->alloc(sizeof(Var)*n)) : NULL;
+    x = (n>0) ? home->talloc<Var>(n) : NULL;
   }
 
   template <class Var>
@@ -619,7 +619,7 @@ namespace Gecode {
     n = a.used;
     used = n;
     if (n > 0) {
-      x = static_cast<Var*>(home->alloc(sizeof(Var)*n));
+      x = home->talloc<Var>(n);
       for (int i = n; i--; )
         x[i].update(home, share, a.x[i]);
     } else {
@@ -651,14 +651,14 @@ namespace Gecode {
   forceinline
   ViewArray<View>::ViewArray(Space* home, int n0)
     : n(n0) {
-    x = (n>0) ? static_cast<View*>(home->alloc(sizeof(View)*n)) : NULL;
+    x = (n>0) ? home->talloc<View>(n) : NULL;
   }
 
   template <class View>
   ViewArray<View>::ViewArray(Space* home, const ViewArray<View>& a)
     : n(a.size()) {
     if (n>0) {
-      x = static_cast<View*>(home->alloc(sizeof(View)*n));
+      x = home->talloc<View>(n);
       for (int i = n; i--; )
         x[i] = a[i];
     } else {
@@ -676,7 +676,7 @@ namespace Gecode {
     }
     Reflection::ArrayArg* a = spec->toArray();
     n = a->size();
-    x = n>0 ? static_cast<View*>(home->alloc(sizeof(View)*n)) : NULL;
+    x = n>0 ? home->talloc<View>(n) : NULL;
     for (int i=n; i--;)
       x[i] = View(home, vars, (*a)[i]);
   }
@@ -828,7 +828,7 @@ namespace Gecode {
   ViewArray<View>::update(Space* home, bool share, ViewArray<View>& y) {
     n = y.n;
     if (n > 0) {
-      x = static_cast<View*>(home->alloc(sizeof(View)*n));
+      x = home->talloc<View>(n);
       for (int i = n; i--; )
         x[i].update(home, share, y.x[i]);
     } else {
@@ -1171,7 +1171,7 @@ namespace Gecode {
   VarArray<Var>::VarArray(Space* home, const VarArgArray<Var>& a)
     : n(a.size()) {
     if (n>0) {
-      x = static_cast<Var*>(home->alloc(sizeof(Var)*n));
+      x = home->talloc<Var>(n);
       for (int i = n; i--; )
         x[i] = a[i];
     } else {

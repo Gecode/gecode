@@ -1429,7 +1429,7 @@ namespace Gecode {
   Space::tfree(T* b, unsigned int n) {
     for (unsigned int i=n; i--; )
       b[i].~T();
-    free(b);
+    free(b,n*sizeof(T));
   }
 
   template <class T>
