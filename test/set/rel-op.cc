@@ -254,12 +254,14 @@ namespace Test { namespace Set {
               IntSetRanges isr(is);
               Iter::Ranges::Union<IntSetRanges,
                 Iter::Ranges::NaryUnion<CountableSetRanges> > uu(isr, u);
+              bool eq = Iter::Ranges::equal(uu, xnr);
               delete[] isrs;
-              return Iter::Ranges::equal(uu, xnr);              
+              return eq;
             } else {
               Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
+              bool eq = Iter::Ranges::equal(u, xnr);
               delete[] isrs;
-              return Iter::Ranges::equal(u, xnr);
+              return eq;
             }
           }
         case SOT_INTER:
@@ -269,19 +271,21 @@ namespace Test { namespace Set {
               IntSetRanges isr(is);
               Iter::Ranges::Inter<IntSetRanges,
                 Iter::Ranges::NaryInter<CountableSetRanges> > uu(isr, u);
+              bool eq = (realN == 0 ? Iter::Ranges::equal(isr, xnr) :
+                                      Iter::Ranges::equal(uu, xnr));
               delete[] isrs;
-              if (realN == 0)
-                return Iter::Ranges::equal(isr, xnr);
-              else
-                return Iter::Ranges::equal(uu, xnr);              
+              return eq;
             } else {
               if (realN == 0) {
+                bool ret =
+                  Iter::Ranges::size(xnr) ==  Gecode::Set::Limits::card;
                 delete[] isrs;
-                return Iter::Ranges::size(xnr) ==  Gecode::Set::Limits::card;
+                return ret;
               } else {
                 Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
+                bool eq = Iter::Ranges::equal(u, xnr);
                 delete[] isrs;
-                return Iter::Ranges::equal(u, xnr);
+                return eq;
               }
             }
           }

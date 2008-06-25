@@ -79,8 +79,9 @@ namespace Test { namespace Set {
         Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[4]);
+        bool ret = Iter::Ranges::equal(u, z);
         delete[] sel;
-        return Iter::Ranges::equal(u, z);
+        return ret;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
@@ -123,8 +124,9 @@ namespace Test { namespace Set {
         Iter::Ranges::NaryUnion<IntSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[1]);
+        bool ret = Iter::Ranges::equal(u, z);
         delete[] sel;
-        return Iter::Ranges::equal(u, z);
+        return ret;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
@@ -161,8 +163,9 @@ namespace Test { namespace Set {
         Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[4]);
+        bool ret = Iter::Ranges::equal(u, z);
         delete[] sel;
-        return Iter::Ranges::equal(u, z);
+        return ret;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
@@ -200,8 +203,9 @@ namespace Test { namespace Set {
         Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[4]);
+        bool ret = Iter::Ranges::equal(u, z);
         delete[] sel;
-        return Iter::Ranges::equal(u, z);
+        return ret;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
@@ -242,8 +246,9 @@ namespace Test { namespace Set {
           cardsum += Iter::Ranges::size(xicard);
         }
         Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
+        bool ret = Iter::Ranges::size(u) == cardsum;
         delete[] sel;
-        return Iter::Ranges::size(u) == cardsum;
+        return ret;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {

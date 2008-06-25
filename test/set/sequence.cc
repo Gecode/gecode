@@ -106,8 +106,9 @@ namespace Test { namespace Set {
           isrs[i].init(x.lub, x[i]);
         Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
         CountableSetRanges xnr(x.lub, x[n]);
+        bool ret = Iter::Ranges::equal(u, xnr);
         delete[] isrs;
-        return Iter::Ranges::equal(u, xnr);
+        return ret;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
