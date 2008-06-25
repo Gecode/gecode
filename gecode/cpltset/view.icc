@@ -78,8 +78,6 @@ namespace Gecode {
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
       int lubMinN(int n) const;
-      /// Return the n-th largest element of the least upper bound
-      int lubMaxN(int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound
