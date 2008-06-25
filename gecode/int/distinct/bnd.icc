@@ -185,7 +185,10 @@ namespace Gecode { namespace Int { namespace Distinct {
       Support::insertion<View,MinInc<View> >(&x[0], n, min_inc);
     }
 
-    GECODE_AUTOARRAY(int, _maxsorted, n);
+    ScratchArea sa(home);
+
+    int* _maxsorted = sa.talloc<int>(n);
+
     for (int i = n; i--; )
       _maxsorted[i]=i;
 
@@ -195,8 +198,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     // Setup rank and bounds info
-    GECODE_AUTOARRAY(HallInfo, hall, 2*n+2);
-    GECODE_AUTOARRAY(Rank,     rank, n);
+    HallInfo* hall = sa.talloc<HallInfo>(2*n+2);
+    Rank* rank = sa.talloc<Rank>(n);
 
     int nb = 0;
     {

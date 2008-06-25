@@ -132,7 +132,7 @@ namespace Gecode {
        * from a space. If the a request exceeds the current free space,
        * memory will be allocated from the heap.
        */
-      const size_t scratch_size = 16 * 1024;
+      const size_t scratch_size = 32 * 1024;
     }
   }
 
@@ -251,6 +251,8 @@ namespace Gecode {
   public:
     /// Initialize
     SharedScratchArea(void);
+    /// Return memory block if available
+    bool alloc(size_t s, void*& p);
     /// Return copy during cloning
     SharedScratchArea* copy(bool share);
     /// Release by one space
@@ -524,6 +526,15 @@ namespace Gecode {
   forceinline bool
   SharedScratchArea::release(void) {
     return --use_cnt == 0;
+  }
+  forceinline bool
+  SharedScratchArea::alloc(size_t s, void*& p) {
+    align(s);
+    if (s > free)
+      return false;
+    free -= s;
+    p = Support::ptr_cast<char*>(&area[0]) + free;
+    return true;
   }
 
 

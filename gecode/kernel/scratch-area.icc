@@ -123,6 +123,113 @@ namespace Gecode {
   };
   //@}
 
+
+  /*
+   * Implementation
+   *
+   */
+  forceinline
+  ScratchArea::ScratchArea(Space* h) 
+    : home(h), free_reset(home->ssa->free), n_malloc(0) {}
+
+  forceinline void*
+  ScratchArea::alloc(size_t s) {
+    void* p;
+    if (home->ssa->alloc(s,p))
+      return p;
+    p = Memory::malloc(s);
+    switch (++n_malloc) {
+    case 0: 
+      GECODE_NEVER;
+    case 1:
+      at.two.fst = p; break;
+    case 2:
+      at.two.snd = p; break;
+    case 3:
+      {
+        void** b = static_cast<void**>(Memory::malloc(sizeof(void*) * 8));
+        b[0]=at.two.fst; b[1]=at.two.snd; b[2]=p;
+        at.any.l_malloc = 8;
+        at.any.b_malloc = b;
+      }
+      break;
+    default:
+      if (at.any.l_malloc == n_malloc) {
+        unsigned int l = (3 * n_malloc) / 2;
+        at.any.b_malloc = 
+          static_cast<void**>(Memory::realloc(at.any.b_malloc,
+                                              l*sizeof(void*)));
+        at.any.l_malloc = l;
+      }
+      at.any.b_malloc[n_malloc-1] = p;
+      break;
+    }
+    return p;
+  }
+
+  forceinline void
+  ScratchArea::free(void*, size_t) {}
+
+  forceinline
+  ScratchArea::~ScratchArea(void) {
+    home->ssa->free = free_reset;
+    switch (n_malloc) {
+    case 0:
+      break;
+    case 2:
+      Memory::free(at.two.snd);
+      // Fall through
+    case 1:
+      Memory::free(at.two.fst);
+      break;
+    default:
+      for (unsigned int i=n_malloc; i--; )
+        Memory::free(at.any.b_malloc[i]);
+      Memory::free(at.any.b_malloc);
+      break;
+    }
+  }
+  
+
+  /*
+   * Typed allocation routines
+   *
+   */
+  template <class T>
+  forceinline T*
+  ScratchArea::talloc(unsigned int n) {
+    T* p = static_cast<T*>(alloc(sizeof(T)*n));
+    for (unsigned int i=n; i--; )
+      (void) new (p+i) T();
+    return p;
+  }
+
+  template <class T>
+  forceinline void
+  ScratchArea::tfree(T* b, unsigned int n) {
+    for (unsigned int i=n; i--; )
+      b[i].~T();
+    free(b,n*sizeof(T));
+  }
+
+  template <class T>
+  forceinline T*
+  ScratchArea::trealloc(T* b, unsigned int n, unsigned int m) {
+    if (n < m) {
+      T* p = static_cast<T*>(alloc(sizeof(T)*m));
+      for (unsigned int i=n; i--; )
+        (void) new (p+i) T(b[i]);
+      for (unsigned int i=n; i<m; i++)
+        (void) new (p+i) T();
+      tfree<T>(b,n);
+      return p;
+    } else {
+      tfree<T>(b+m,m-n);
+      return b;
+    }
+  }
+
+
 }
 
 // STATISTICS: kernel-other

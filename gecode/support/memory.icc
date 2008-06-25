@@ -56,7 +56,7 @@ namespace Gecode {
     void* malloc(size_t s);
     /// Free memory block starting at \a p
     void  free(void* p);
-    /// Try to change memory block starting at \a p to size \a s
+    /// Change memory block starting at \a p to size \a s
     void* realloc(void* p, size_t s);
 
     /**
