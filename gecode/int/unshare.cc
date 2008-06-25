@@ -111,7 +111,8 @@ namespace Gecode {
       if (n < 2)
         return ES_OK;
 
-      GECODE_AUTOARRAY(Var*,y,n);
+      ScratchArea sa(home);
+      Var** y = sa.talloc<Var*>(n);
       for (int i=n; i--; )
         y[i]=&x[i];
 

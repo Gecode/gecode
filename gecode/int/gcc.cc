@@ -76,10 +76,11 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class View>
-  inline int
-  x_card(ViewArray<View>& x, IntConLevel) {
+  forceinline int
+  x_card(Space* home, ViewArray<View>& x, IntConLevel) {
     int n = x.size();
-    GECODE_AUTOARRAY(ViewRanges<View>, xrange, n);
+    ScratchArea sa(home);
+    ViewRanges<View>* xrange = sa.talloc<ViewRanges<View> >(n);
     for (int i = n; i--; ){
       ViewRanges<View> iter(x[i]);
       xrange[i] = iter;
@@ -149,7 +150,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   post_template(Space* home, ViewArray<IntView>& x, ViewArray<Card>& k,
                 IntConLevel& icl){
-    int  n        = x_card(x, icl);
+    int  n        = x_card(home, x, icl);
     bool rewrite  = false;
     rewrite = check_alldiff<Card,isView>(n, k);
     GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size())));

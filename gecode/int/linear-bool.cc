@@ -47,7 +47,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    ScratchArea sa(home);
+    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -61,7 +62,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    ScratchArea sa(home);
+    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -79,7 +81,8 @@ namespace Gecode {
       return;
 
     int n=x.size();
-    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    ScratchArea sa(home);
+    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -128,7 +131,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    ScratchArea sa(home);
+    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -142,7 +146,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    ScratchArea sa(home);
+    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -159,7 +164,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    ScratchArea sa(home);
+    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -176,7 +182,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    GECODE_AUTOARRAY(Linear::Term<BoolView>, t, n);
+    ScratchArea sa(home);
+    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }

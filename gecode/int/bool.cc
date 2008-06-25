@@ -554,6 +554,7 @@ namespace Gecode {
     using namespace Int;
     if (home->failed()) return;
     int m = x.size();
+    ScratchArea sa(home);
     switch (o) {
     case BOT_AND:
       {
@@ -577,7 +578,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        GECODE_AUTOARRAY(BoolVar,z,m);
+        BoolVar* z = sa.talloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -589,7 +590,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        GECODE_AUTOARRAY(BoolVar,z,m);
+        BoolVar* z = sa.talloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -601,7 +602,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        GECODE_AUTOARRAY(BoolVar,z,m);
+        BoolVar* z = sa.talloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -622,6 +623,7 @@ namespace Gecode {
       throw NotZeroOne("Int::rel");
     if (home->failed()) return;
     int m = x.size();
+    ScratchArea sa(home);
     switch (o) {
     case BOT_AND:
       if (n == 0) {
@@ -652,7 +654,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        GECODE_AUTOARRAY(BoolVar,z,m);
+        BoolVar* z = sa.talloc<BoolVar>(m);
         z[0]=x[0]; z[m-1].init(home,n,n);;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -664,7 +666,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        GECODE_AUTOARRAY(BoolVar,z,m);
+        BoolVar* z = sa.talloc<BoolVar>(m);
         z[0]=x[0]; z[m-1].init(home,n,n);
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -676,7 +678,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        GECODE_AUTOARRAY(BoolVar,z,m);
+        BoolVar* z = sa.talloc<BoolVar>(m);
         z[0]=x[0]; z[m-1].init(home,n,n);
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
