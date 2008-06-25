@@ -79,6 +79,10 @@ namespace Gecode {
         void* snd;
       } two;
     } at;
+    /// Allocate memory from heap
+    GECODE_KERNEL_EXPORT void* heap_alloc(size_t s);
+    /// Free memory previously allocated from heap
+    GECODE_KERNEL_EXPORT void heap_free(void);
   public:
     /// Initialize scratch area from space
     ScratchArea(Space* home);
@@ -146,34 +150,7 @@ namespace Gecode {
     void* p;
     if (home->ssa->alloc(s,p))
       return p;
-    p = Memory::malloc(s);
-    switch (++n_malloc) {
-    case 0: 
-      GECODE_NEVER;
-    case 1:
-      at.two.fst = p; break;
-    case 2:
-      at.two.snd = p; break;
-    case 3:
-      {
-        void** b = static_cast<void**>(Memory::malloc(sizeof(void*) * 8));
-        b[0]=at.two.fst; b[1]=at.two.snd; b[2]=p;
-        at.any.l_malloc = 8;
-        at.any.b_malloc = b;
-      }
-      break;
-    default:
-      if (at.any.l_malloc == n_malloc) {
-        unsigned int l = (3 * n_malloc) / 2;
-        at.any.b_malloc = 
-          static_cast<void**>(Memory::realloc(at.any.b_malloc,
-                                              l*sizeof(void*)));
-        at.any.l_malloc = l;
-      }
-      at.any.b_malloc[n_malloc-1] = p;
-      break;
-    }
-    return p;
+    return heap_alloc(s);
   }
 
   forceinline void
@@ -182,21 +159,8 @@ namespace Gecode {
   forceinline
   ScratchArea::~ScratchArea(void) {
     home->ssa->free = free_reset;
-    switch (n_malloc) {
-    case 0:
-      break;
-    case 2:
-      Memory::free(at.two.snd);
-      // Fall through
-    case 1:
-      Memory::free(at.two.fst);
-      break;
-    default:
-      for (unsigned int i=n_malloc; i--; )
-        Memory::free(at.any.b_malloc[i]);
-      Memory::free(at.any.b_malloc);
-      break;
-    }
+    if (n_malloc > 0)
+      heap_free();
   }
   
 

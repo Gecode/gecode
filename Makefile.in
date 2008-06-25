@@ -190,11 +190,12 @@ VARIMPHDR = \
 VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cc
 
 KERNELSRC0 = \
-	core reflection var-map var-type memory-manager branch
+	core reflection var-map var-type memory-manager branch \
+	scratch-area
 
 KERNELHDR0 = \
 	array shared-array core exception \
-	macros memory-manager modevent \
+	macros memory-manager scratch-area modevent \
 	propagator advisor view var var-traits var-map reflection \
 	branch branching branching-view branching-tiebreak \
 	branching-val
