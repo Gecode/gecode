@@ -120,6 +120,15 @@ namespace Gecode {
     T* trealloc(T* b, unsigned int n, unsigned int m);
     /// Return memory
     ~ScratchArea(void);
+  private:
+    /// Allocate memory from heap (disabled)
+    static void* operator new(size_t s) { (void) s; return NULL; }
+    /// Free memory allocated from heap (disabled)
+    static void  operator delete(void* p) {};
+    /// Copy constructor (disabled)
+    ScratchArea(const ScratchArea&) {}
+    /// Assignment operator (disabled)
+    const ScratchArea& operator=(const ScratchArea&) { return *this; }
   };
   //@}
 
