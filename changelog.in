@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   major
+[DESCRIPTION]
+The ternary intersection propagator was incorrect if any of the sets had a 
+maximum cardinality of Set::Limits::card.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor
