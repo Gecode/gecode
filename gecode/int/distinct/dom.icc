@@ -297,7 +297,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     if (static_cast<unsigned int>(n_view)*4 >= width) {
       // Values are dense: use a mapping
-      GECODE_AUTOARRAY(ValNode<View>*,val2node,width);
+      ScratchArea sa(home);
+      ValNode<View>** val2node = sa.talloc<ValNode<View>* >(width);
 
       for (unsigned int i=width; i--; )
         val2node[i]=NULL;

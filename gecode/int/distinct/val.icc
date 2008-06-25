@@ -47,7 +47,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     assert(x.size() > 1);
     int n = x.size();
 
-    GECODE_AUTOARRAY(int, stack, n);
+    ScratchArea sa(home);
+    int* stack = sa.talloc<int>(n);
     int* c_v = &stack[0];
     // c_n is the current number of values on stack
     int c_n = 0;
