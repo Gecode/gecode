@@ -1048,8 +1048,8 @@ namespace Gecode {
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
    *
-   * - Throws an exception of type Int::ArgumentSizeMismatch, if
-   *   \a x and \a y are of different size.
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \a x and \a y are of different size.
    */
   inline void
   lex(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
@@ -1058,8 +1058,8 @@ namespace Gecode {
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
    *
-   * - Throws an exception of type Int::ArgumentSizeMismatch, if
-   *   \a x and \a y are of different size.
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \a x and \a y are of different size.
    */
   inline void
   lex(Space* home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
@@ -1222,13 +1222,7 @@ namespace Gecode {
       OptimizeSpace(bool share, OptimizeSpace& s);
       /// Member function constraining according to cost
       virtual void constrain(const Space* home);
-      /**
-       * \brief Return variable with current cost
-       *
-       * If applied to a solution, the cost variable must be assigned.
-       * If not, an exception of type MiniModel::UnassignedCostVar
-       * is raised.
-       */
+      /// Return variable with current cost
       virtual IntVar cost(void) const = 0;
     };
 

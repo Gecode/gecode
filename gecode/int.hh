@@ -381,7 +381,13 @@ namespace Gecode {
     int max(void) const;
     /// Return median of domain
     int med(void) const;
-    /// Return assigned value (only if assigned)
+    /**
+     * \brief Return assigned value
+     *
+     * Throws an exception of type Int::ValOfUnassignedVar if variable
+     * is not yet assigned.
+     *
+     */
     int val(void) const;
 
     /// Return size (cardinality) of domain
@@ -508,7 +514,13 @@ namespace Gecode {
     int max(void) const;
     /// Return median of domain
     int med(void) const;
-    /// Return assigned value (only if assigned)
+    /**
+     * \brief Return assigned value
+     *
+     * Throws an exception of type Int::ValOfUnassignedVar if variable
+     * is not yet assigned.
+     *
+     */
     int val(void) const;
 
     /// Return size (cardinality) of domain

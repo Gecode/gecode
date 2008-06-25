@@ -53,8 +53,6 @@ namespace Gecode { namespace MiniModel {
       dynamic_cast<const OptimizeSpace<irt>*>(_best);
     if (best == NULL)
       throw DynamicCastFailed("OptimizeSpace::constrain");
-    if (!best->cost().assigned())
-      throw MiniModel::UnassignedCostVar("OptimizeSpace::constrain");
     rel(this, cost(), irt, best->cost().val());
   }
 

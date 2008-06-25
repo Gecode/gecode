@@ -62,6 +62,8 @@ namespace Gecode {
 
   forceinline int
   BoolVar::val(void) const {
+    if (!varimp->assigned())
+      throw Int::ValOfUnassignedVar("BoolVar::val");
     return varimp->val();
   }
   forceinline int

@@ -73,6 +73,15 @@ This is a release.
 Module: int
 What:   new
 Rank:   minor
+Thanks:	Raphael Reischuk
+[DESCRIPTION]
+The attempt to access the value of an unassigned integer or
+Boolean variable (IntVar or BoolVar) throws an exception now.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
 [DESCRIPTION]
 Added bounds consistent division/modulo propagator.
 
