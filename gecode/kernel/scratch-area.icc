@@ -37,26 +37,91 @@
 
 namespace Gecode {
 
+  /**
+   * \defgroup FuncMemScratch Scratch area memory management
+   *
+   * A scratch area provides a handle to temporary memory owned by
+   * a space. The memory will be managed in a stack fashion, that is,
+   * the memory allocated through a scratch area will be released
+   * only after the scratch area is deleted and all other scratch areas
+   * created later also have been deleted.
+   *
+   * In case a memory request cannot be fulfilled from a space's scratch
+   * area, heap memory is allocated and returned to the operating system
+   * as soon as the scratch area is deleted.
+   *
+   * \ingroup FuncMem
+   */
+  //@{
   /// Handle to scratch area
   class ScratchArea {
   private:
-    /// Location of free memory information to reset
-    size_t* free_loc;
+    /// Location to space
+    Space* home;
     /// Free memory to reset
     size_t free_reset;
     /// Number of memory blocks allocated by malloc
     unsigned int n_malloc;
-    /// Pointer to array of memory blocks allocated by malloc
-    void** b_malloc;
+    /// Either have an array of pointer to blocks or just two entries
+    union {
+      /// Structure for arbitrarily many blocks
+      struct {
+        /// Limit for memory blocks
+        unsigned int l_malloc;
+        /// Pointer to array of memory blocks allocated by malloc
+        void** b_malloc;
+      } any;
+      /// Structure for atmost two blocks
+      struct {
+        /// Pointer to first block
+        void* fst;
+        /// Pointer to second block
+        void* snd;
+      } two;
+    } at;
   public:
     /// Initialize scratch area from space
     ScratchArea(Space* home);
-    /// Allocate memory on scratch area
+    /// Allocate memory from scratch area
     void* alloc(size_t s);
-    /// Return memory allocated
+    /// Free memory previously allocated (noop)
+    void free(void* p, size_t s);
+    /** 
+     * \brief Allocate block of \a n objects of type \a T from scratch area
+     *
+     * Note that this function implements C++ semantics: the default
+     * constructor of \a T is run for all \a n objects.
+     */
+    template <class T>
+    T* talloc(unsigned int n=1);
+    /** 
+     * \brief Delete \a n objects allocated from the scratch area starting at \a b
+     *
+     * Note that this function implements C++ semantics: the destructor
+     * of \a T is run for all \a n objects.
+     *
+     * Note that the memory is not freed, the only effect is running the
+     * destructors.
+     */
+    template <class T>
+    void tfree(T* b, unsigned int n=1);
+    /**
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the scratch area
+     *
+     * Note that this function implements C++ semantics: the copy constructor
+     * of \a T is run for all \f$\min(n,m)$\f objects, the default
+     * constructor of \a T is run for all remaining 
+     * \f$\max(n,m)-\min(n,m)$\f objects, and the destrucor of \a T is
+     * run for all \a n objects in \a b.
+     *
+     * Returns the address of the new block.
+     */
+    template <class T>
+    T* trealloc(T* b, unsigned int n, unsigned int m);
+    /// Return memory
     ~ScratchArea(void);
   };
-
+  //@}
 
 }
 
