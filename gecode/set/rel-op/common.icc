@@ -250,7 +250,8 @@ namespace Set { namespace RelOp {
     //y.cardMin - |U(Xj.ub)| <= Xi.card
 
     {
-      GLBndSet* rightUnion = static_cast<GLBndSet*>(sa.alloc(xsize));
+      GLBndSet* rightUnion =
+        static_cast<GLBndSet*>(sa.alloc(sizeof(GLBndSet)*xsize));
       new (&rightUnion[xsize-1]) GLBndSet(home);
       for (int i=xsize-1;i--;){
         BndSetRanges prev(rightUnion[i+1]);
@@ -402,8 +403,10 @@ namespace Set { namespace RelOp {
                bool& modified, ViewArray<View0>& x, View1& y) {
     int xsize = x.size();
     ScratchArea sa(home);
-    GLBndSet* afterUB = static_cast<GLBndSet*>(sa.alloc(xsize));
-    GLBndSet* afterLB = static_cast<GLBndSet*>(sa.alloc(xsize));
+    GLBndSet* afterUB =
+      static_cast<GLBndSet*>(sa.alloc(sizeof(GLBndSet)*xsize));
+    GLBndSet* afterLB =
+      static_cast<GLBndSet*>(sa.alloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterUB;
@@ -471,7 +474,8 @@ namespace Set { namespace RelOp {
                  GLBndSet& unionOfDets) {
     int xsize = x.size();
     ScratchArea sa(home);
-    GLBndSet* afterLB = static_cast<GLBndSet*>(sa.alloc(xsize));
+    GLBndSet* afterLB =
+      static_cast<GLBndSet*>(sa.alloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterLB;
@@ -516,7 +520,8 @@ namespace Set { namespace RelOp {
                  GLBndSet& unionOfDets) {
     int xsize = x.size();
     ScratchArea sa(home);
-    GLBndSet* afterUB = static_cast<GLBndSet*>(sa.alloc(xsize));
+    GLBndSet* afterUB =
+      static_cast<GLBndSet*>(sa.alloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterUB;

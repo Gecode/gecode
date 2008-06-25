@@ -386,7 +386,8 @@ namespace Gecode { namespace Set { namespace RelOp {
 
       // xi.exclude (Intersection(xj.lb) - y.ub)
       {
-        GLBndSet* rightSet = static_cast<GLBndSet*>(sa.alloc(xsize));
+        GLBndSet* rightSet =
+          static_cast<GLBndSet*>(sa.alloc(sizeof(GLBndSet)*xsize));
         new (&rightSet[xsize-1]) GLBndSet(home);
         rightSet[xsize-1].update(home,intOfDets);
         for (int i=xsize-1;i--;) {

@@ -182,7 +182,8 @@ namespace Gecode { namespace Set { namespace Element {
       GLBndSet sofarBefore(home);
       LUBndSet selectedInter(home, IntSet (Limits::min,
                                    Limits::max));
-      GLBndSet* before = static_cast<GLBndSet*>(sa.alloc(n));
+      GLBndSet* before =
+        static_cast<GLBndSet*>(sa.alloc(sizeof(GLBndSet)*n));
 
       int i = 0;
       
