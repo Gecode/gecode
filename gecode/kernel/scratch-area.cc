@@ -71,7 +71,7 @@ namespace Gecode {
     return p;
   }
 
-  forceinline void
+  void
   ScratchArea::heap_free(void) {
     switch (n_malloc) {
     case 0:

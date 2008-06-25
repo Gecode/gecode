@@ -126,9 +126,9 @@ namespace Gecode {
     ~ScratchArea(void);
   private:
     /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) { (void) s; return NULL; }
+    static void* operator new(size_t s) throw() { (void) s; return NULL; }
     /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) {};
+    static void  operator delete(void* p) { (void) p; };
     /// Copy constructor (disabled)
     ScratchArea(const ScratchArea&) {}
     /// Assignment operator (disabled)
