@@ -221,7 +221,7 @@ namespace Gecode {
         for (int i = n; i--; ) {
           unsigned int off   = x[i].offset();
           unsigned int range = x[i].tableWidth();
-          d0 &= cardcheck(range, off, d, d);
+          d0 &= cardcheck(home, range, off, d, d);
         }
       }
 
@@ -326,7 +326,7 @@ namespace Gecode {
         for (int i = n; i--; ) {
           unsigned int off   = x[i].offset();
           unsigned int range = x[i].tableWidth();
-          d0 &= cardcheck(range, off, d, d);
+          d0 &= cardcheck(home, range, off, d, d);
         }
       }
 

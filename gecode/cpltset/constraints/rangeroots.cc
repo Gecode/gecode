@@ -268,7 +268,7 @@ namespace Gecode {
         vars[i] = allvars[i];
       }
 
-      variableorder(vars, sbv);
+      variableorder(home, vars, sbv);
       roots_post(home, sbv, selview, unionview);
     }
 
@@ -279,7 +279,7 @@ namespace Gecode {
       std::cout << "nvalue_post\n";
       if (home->failed())  return;
       /// TODO: WE HAVE TO ORDER ALL BDD VARS AVAILABLE SO FAR
-      variableorder(seq);
+      variableorder(home, seq);
 
       bdd d0 = bdd_true();
       int n = seq.size();
@@ -316,7 +316,7 @@ namespace Gecode {
         vars[i] = allvars[i];
       }
 
-      variableorder(vars, sbv);
+      variableorder(home, vars, sbv);
       nvalue_post(home, sbv, selview, unionview, usedvalues);
     }
 

@@ -53,7 +53,8 @@ namespace Gecode {
     unsigned int off = bv[0].offset();
     unsigned int range = bv[0].tableWidth();
 
-    bdd c = cardcheck(range, off, static_cast<int> (l), static_cast<int> (u));
+    bdd c = cardcheck(home, range, off,
+                      static_cast<int> (l), static_cast<int> (u));
 
     CpltSetView v(x);
     GECODE_ME_FAIL(home, v.cardinality(home, l, u));

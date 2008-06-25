@@ -85,9 +85,6 @@ namespace Gecode { namespace CpltSet {
   CpltSetView::lubMinN(int n) const { return varimp->lubMinN(n); }
 
   forceinline int
-  CpltSetView::lubMaxN(int n) const { return varimp->lubMaxN(n); }
-
-  forceinline int
   CpltSetView::glbMin(void) const { return varimp->glbMin(); }
 
   forceinline int

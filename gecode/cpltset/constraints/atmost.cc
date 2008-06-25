@@ -74,12 +74,12 @@ namespace Gecode {
       for (int i = 0; i < n; i++) {
         unsigned int xoff = x[i].offset();
         unsigned int xtab = x[i].tableWidth();
-        d0 &= cardcheck(xtab, xoff, c, c);    
+        d0 &= cardcheck(home, xtab, xoff, c, c);    
       }
 
       for (int i = 0; i < n - 1; i++) {
         for (int j = i + 1; j < n; j++) {
-          d0 &= extcardcheck(x[i], x[j], 0, 1);
+          d0 &= extcardcheck(home, x[i], x[j], 0, 1);
         }
       }
       GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
@@ -106,7 +106,7 @@ namespace Gecode {
       unsigned int off = x[2].offset();
       unsigned int tab = x[2].tableWidth();
 
-      c0 = cardcheck(tab, off, 0, c);
+      c0 = cardcheck(home, tab, off, 0, c);
 
       // combination of intersection and cardinality
       d0 &= c0;
@@ -136,7 +136,7 @@ namespace Gecode {
       unsigned int off = x[2].offset();
       unsigned int tab = x[2].tableWidth();
 
-      c0 = cardcheck(tab, off, 0, c);
+      c0 = cardcheck(home, tab, off, 0, c);
 
       // combination of intersection and cardinality
       d0 &= c0;
@@ -213,7 +213,7 @@ namespace Gecode {
 
       // cardinality description for the intersection x \cap y
       bdd d0 = bdd_true();
-      d0 = extcardcheck(x, y, 0, c);
+      d0 = extcardcheck(home, x, y, 0, c);
 
       // extra lexicographic order on bit strings x \sim_{lex} y
       switch (lex) {
@@ -266,8 +266,8 @@ namespace Gecode {
 
       // extra cardinality information on x and y
       if (card > -1) {
-        d0 &= cardcheck(xtab, xoff, card, card);
-        d0 &= cardcheck(ytab, yoff, card, card);
+        d0 &= cardcheck(home, xtab, xoff, card, card);
+        d0 &= cardcheck(home, ytab, yoff, card, card);
       }
 
       if (x.assigned()) {
@@ -294,14 +294,14 @@ namespace Gecode {
 
       // cardinality description for the intersection x \cap y
       bdd d0 = bdd_true();
-      d0 = extcardcheck(x, y, 0, c);
+      d0 = extcardcheck(home, x, y, 0, c);
 
       // dont use additional lexicographic ordering
 
       // extra cardinality information on x and y
       if (card > -1) {
-        d0 &= cardcheck(xtab, xoff, card, card);
-        d0 &= cardcheck(ytab, yoff, card, card);
+        d0 &= cardcheck(home, xtab, xoff, card, card);
+        d0 &= cardcheck(home, ytab, yoff, card, card);
       }
 
       if (x.assigned()) {
@@ -402,7 +402,7 @@ namespace Gecode {
     unsigned int xoff = bv[0].offset();
     int xmin = bv[0].initialLubMin();
     
-    bdd d = cardConst(xtab, xoff, xmin, c, c, si);
+    bdd d = cardConst(home, xtab, xoff, xmin, c, c, si);
     GECODE_ES_FAIL(home,
       UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));
   }
@@ -418,7 +418,7 @@ namespace Gecode {
     unsigned int xoff = bv[0].offset();
     int xmin = bv[0].initialLubMin();
     IntSetRanges ir(is);
-    bdd d = cardConst(xtab, xoff, xmin, 0, c, ir);
+    bdd d = cardConst(home, xtab, xoff, xmin, 0, c, ir);
 
     GECODE_ES_FAIL(home,
       UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));

@@ -74,8 +74,9 @@ namespace Gecode { namespace CpltSet {
   }
 
   bdd 
-  cardeq(int offset, int c, int n, int r) {
-    GECODE_AUTOARRAY(bdd, layer, n);
+  cardeq(Space* home, int offset, int c, int n, int r) {
+    ScratchArea sa(home);
+    bdd* layer = static_cast<bdd*>(sa.alloc(n));
     for (int i = n; i--;) 
       layer[i].init();
 
@@ -110,8 +111,9 @@ namespace Gecode { namespace CpltSet {
   }
 
   bdd 
-  cardlqgq(int offset, int cl, int cr, int n, int r) {
-    GECODE_AUTOARRAY(bdd, layer, n);
+  cardlqgq(Space* home, int offset, int cl, int cr, int n, int r) {
+    ScratchArea sa(home);
+    bdd* layer = static_cast<bdd*>(sa.alloc(n));
     // the use of autoarray now requires explicit initialization
     // otherwise the bdd nodes are not known in the global table
     for (int i = n; i--;) 
@@ -207,7 +209,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   bdd 
-  cardcheck(int xtab, int offset, int cl, int cr) {
+  cardcheck(Space* home, int xtab, int offset, int cl, int cr) {
     if (cr > xtab) { 
       cr = xtab;
     }
@@ -234,7 +236,7 @@ namespace Gecode { namespace CpltSet {
         }
         return full;
       } else {
-        return cardeq(offset, cr, n, r);
+        return cardeq(home, offset, cr, n, r);
       }
     }
 
@@ -244,7 +246,7 @@ namespace Gecode { namespace CpltSet {
         return bdd_true();
       }
     }
-    return cardlqgq(offset, cl, cr, n, r);
+    return cardlqgq(home, offset, cl, cr, n, r);
   }
 
   bdd 

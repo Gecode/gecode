@@ -56,7 +56,7 @@ namespace Gecode { namespace CpltSet {
     } 
 
     unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
+    domain &= cardcheck(home, range, _offset,
                         static_cast<int> (cardMin), 
                         static_cast<int> (cardMax));   
 
@@ -97,7 +97,7 @@ namespace Gecode { namespace CpltSet {
     }
 
     unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
+    domain &= cardcheck(home, range, _offset,
                         static_cast<int> (cardMin), 
                         static_cast<int> (cardMax));   
 
@@ -125,7 +125,7 @@ namespace Gecode { namespace CpltSet {
     } 
 
     unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
+    domain &= cardcheck(home, range, _offset,
                         static_cast<int> (cardMin), 
                         static_cast<int> (cardMax));
 
@@ -170,7 +170,7 @@ namespace Gecode { namespace CpltSet {
     }
 
     unsigned int range = tableWidth();
-    domain &= cardcheck(range, _offset,
+    domain &= cardcheck(home,range, _offset,
                         static_cast<int> (cardMin), 
                         static_cast<int> (cardMax));   
 
@@ -325,7 +325,7 @@ namespace Gecode { namespace CpltSet {
   CpltSetVarImp::cardinality(Space* home, int l, int u) {
     unsigned int maxcard = tableWidth();
     // compute the cardinality formula
-    bdd c = cardcheck(maxcard, _offset, l, u);
+    bdd c = cardcheck(home, maxcard, _offset, l, u);
     return intersect(home, c);
   }
 
@@ -347,33 +347,6 @@ namespace Gecode { namespace CpltSet {
       return false;
     bdd bv = manager.bddpos(_offset+v-min);
     return (manager.cfalse(domain & bv));
-  }
-
-  inline int 
-  CpltSetVarImp::lubMaxN(int n) const {
-    if (manager.ctrue(domain)) 
-      return initialLubMax() - n;
-
-    GECODE_AUTOARRAY(NodeStatus, status, tableWidth());
-    DomBddIterator iter(this);
-
-    if (!iter()) 
-      return MAX_OF_EMPTY;
-    
-    for (int i = 0; iter(); i++, ++iter) {
-      status[i] = iter.status();     
-    }
-    int c = 0;
-    for (int j = tableWidth() - 1; j--; ) {
-      if (status[j] != FIX_NOT_LUB) {
-        if (c == n) { 
-          c = j; 
-          break; 
-        } 
-        c++;
-      }
-    }
-    return initialLubMax() - c;
   }
 
   unsigned int

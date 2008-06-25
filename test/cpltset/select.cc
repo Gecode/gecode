@@ -84,10 +84,11 @@ namespace Test { namespace CpltSet {
           return valid;
         }
 
-        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetRanges* sel = new CountableSetRanges[selected];
         CountableSetValues selector(x.lub, x[selector_pos]);
         for (int i=selected; i--;++selector) {
           if (selector.val()>=selector_pos || selector.val()<0) {
+            delete[] sel;
             return false;
           }
           sel[i].init(x.lub, x[selector.val()]);
@@ -96,6 +97,7 @@ namespace Test { namespace CpltSet {
 
         CountableSetRanges z(x.lub, x[union_pos]);
         bool valid = Iter::Ranges::equal(u,z);
+        delete[] sel;
         return valid;
       }
       /// Post constraint on \a x
@@ -132,7 +134,7 @@ namespace Test { namespace CpltSet {
  
         CountableSetRanges xunion(x.lub, x[union_pos]);
         if (selected==0) {
-          GECODE_AUTOARRAY(CountableSetRanges, sel, selector_pos);
+          CountableSetRanges* sel = new CountableSetRanges[selector_pos];
     
           bool valid = true;
           for (int i = selector_pos; i--; ) {
@@ -143,11 +145,13 @@ namespace Test { namespace CpltSet {
             bool subset = Iter::Ranges::subset(sel[i], t);
 
             if (!non_empty_union) {
+              delete[] sel;
               return true;
             } else {
               valid &= (!non_empty || !subset);
             }
           }
+          delete[] sel;
           return valid;
         }
   
@@ -155,11 +159,12 @@ namespace Test { namespace CpltSet {
           return false;
         }
         // some sets have been selected
-        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetRanges* sel = new CountableSetRanges[selected];
   
         CountableSetValues selector(x.lub, x[selector_pos]);
         for (int i=selected; i--;++selector) {
           if (selector.val()>=selector_pos || selector.val()<0) {
+            delete[] sel;
             return false;
           }
           sel[i].init(x.lub, x[selector.val()]);
@@ -190,6 +195,7 @@ namespace Test { namespace CpltSet {
           }
 
         bool valid = select_valid && Iter::Ranges::subset(u, xunion);
+        delete[] sel;
         return valid;
       }
 

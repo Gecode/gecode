@@ -47,7 +47,7 @@ namespace Gecode {
       for (int i = n; i--; ) {
         view[i] = x[i];
       }
-      variableorder(view);
+      variableorder(home, view);
     }
   }
 

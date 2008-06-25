@@ -277,8 +277,6 @@ namespace Gecode { namespace CpltSet {
     GECODE_CPLTSET_EXPORT unsigned int lubSize(void) const;
     /// Return \a n -th smallest element in the least upper bound
     GECODE_CPLTSET_EXPORT int lubMinN(int n) const;
-    /// Return \a n -th largest element in the least upper bound
-    GECODE_CPLTSET_EXPORT int lubMaxN(int n) const;
 
     /// Return minimum of the difference between the greatest lower and the least upper bound
     GECODE_CPLTSET_EXPORT int unknownMin(void) const;
