@@ -98,7 +98,8 @@ namespace Gecode {
          const IntVarArgs& x, IntRelType r, IntVar y, 
          IntConLevel icl, PropKind) {
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
+    ScratchArea sa(home);
+    Linear::Term<IntView>* t = sa.talloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -142,7 +143,8 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
+    ScratchArea sa(home);
+    Linear::Term<IntView>* t = sa.talloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }

@@ -339,7 +339,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   IntersectionN<View0,View1>::propagate(Space* home, ModEventDelta) {
-
+    ScratchArea sa(home);
     bool repeat = false;
     do {
       repeat = false;
@@ -356,8 +356,8 @@ namespace Gecode { namespace Set { namespace RelOp {
         }
       }
       {
-        GECODE_AUTOARRAY(GlbRanges<View0>,xLBs,xsize);
-        GECODE_AUTOARRAY(LubRanges<View0>,xUBs,xsize);
+        GlbRanges<View0>* xLBs = sa.talloc<GlbRanges<View0> >(xsize);
+        LubRanges<View0>* xUBs = sa.talloc<LubRanges<View0> >(xsize);
         for (int i = xsize; i--; ) {
           GlbRanges<View0> lb(x[i]);
           LubRanges<View0> ub(x[i]);
@@ -386,7 +386,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
       // xi.exclude (Intersection(xj.lb) - y.ub)
       {
-        GECODE_AUTOARRAY(GLBndSet, rightSet, xsize);
+        GLBndSet* rightSet = static_cast<GLBndSet*>(sa.alloc(xsize));
         new (&rightSet[xsize-1]) GLBndSet(home);
         rightSet[xsize-1].update(home,intOfDets);
         for (int i=xsize-1;i--;) {

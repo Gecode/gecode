@@ -245,32 +245,33 @@ public:
 
     const int nn = n*n;
 
-    GECODE_AUTOARRAY(IntSet, row, nn);
-    GECODE_AUTOARRAY(IntSet, col, nn);
-    GECODE_AUTOARRAY(IntSet, block, nn);
+    ScratchArea sa(this);
+    IntSet* row = sa.talloc<IntSet>(nn);
+    IntSet* col = sa.talloc<IntSet>(nn);
+    IntSet* block = sa.talloc<IntSet>(nn);
 
     // Set up the row and column set constants
     for (int i=0; i<nn; i++) {
-      new (&row[i]) IntSet((i*nn)+1, (i+1)*nn);
+      row[i] = IntSet((i*nn)+1, (i+1)*nn);
 
-      GECODE_AUTOARRAY(int, dsc, nn);
+      int* dsc = sa.talloc<int>(nn);
       for (int j=0; j<nn; j++) {
         dsc[j] = (j*nn)+1+i;
       }
-      new (&col[i]) IntSet (dsc, nn);
+      col[i] = IntSet (dsc, nn);
     }
 
     // Set up the block set constants
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        GECODE_AUTOARRAY(int, dsb_arr, nn);
+        int* dsb_arr = sa.talloc<int>(nn);
         
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {
             dsb_arr[ii*n+jj] = j*nn*n+i*n+jj*nn+ii+1;
           }
         }
-        new (&block[i*n+j]) IntSet(dsb_arr, nn);
+        block[i*n+j] = IntSet(dsb_arr, nn);
       }
     }
 
@@ -364,32 +365,33 @@ public:
     for (int i=0; i<nn; i++)
       cardinality(this, y[i], nn);
 
-    GECODE_AUTOARRAY(IntSet, row, nn);
-    GECODE_AUTOARRAY(IntSet, col, nn);
-    GECODE_AUTOARRAY(IntSet, block, nn);
+    ScratchArea sa(this);
+    IntSet* row = sa.talloc<IntSet>(nn);
+    IntSet* col = sa.talloc<IntSet>(nn);
+    IntSet* block = sa.talloc<IntSet>(nn);
 
     // Set up the row and column set constants
     for (int i=0; i<nn; i++) {
-      new (&row[i]) IntSet((i*nn)+1, (i+1)*nn);
+      row[i] = IntSet((i*nn)+1, (i+1)*nn);
 
-      GECODE_AUTOARRAY(int, dsc, nn);
+      int* dsc = sa.talloc<int>(nn);
       for (int j=0; j<nn; j++) {
         dsc[j] = (j*nn)+1+i;
       }
-      new (&col[i]) IntSet (dsc, nn);
+      col[i] = IntSet (dsc, nn);
     }
 
     // Set up the block set constants
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        GECODE_AUTOARRAY(int, dsb_arr, nn);
+        int* dsb_arr = sa.talloc<int>(nn);
         
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {
             dsb_arr[ii*n+jj] = j*nn*n+i*n+jj*nn+ii+1;
           }
         }
-        new (&block[i*n+j]) IntSet(dsb_arr, nn);
+        block[i*n+j] = IntSet(dsb_arr, nn);
       }
     }
 

@@ -194,7 +194,7 @@ namespace Gecode { namespace Gist {
     /// Set the shape of this node
     void setShape(Shape* s);
     /// Compute the shape according to the shapes of the children
-    void computeShape(void);
+    void computeShape(VisualNode* root);
     /// Set the bounding box
     void setBoundingBox(BoundingBox b);
     /// Return the bounding box

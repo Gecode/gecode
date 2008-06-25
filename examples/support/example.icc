@@ -272,7 +272,7 @@ ExampleBase<Space>::run(const Options& o) {
       {
         cout << o.name() << endl;
         Timer t;
-        GECODE_AUTOARRAY(double,ts,o.samples());
+        double* ts = new double[o.samples()];
         for (unsigned int s = o.samples(); s--; ) {
           t.start();
           for (unsigned int k = o.iterations(); k--; ) {
@@ -294,6 +294,7 @@ ExampleBase<Space>::run(const Options& o) {
         }
         double m = am(ts,o.samples());
         double d = dev(ts,o.samples()) * 100.0;
+        delete[] ts;
         cout << "\tRuntime: "
              << setw(20) << right
              << showpoint << fixed

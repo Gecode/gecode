@@ -101,11 +101,12 @@ namespace Test { namespace Set {
               return false;
           }
         }
-        GECODE_AUTOARRAY(CountableSetRanges, isrs, n);
+        CountableSetRanges* isrs = new CountableSetRanges[n];
         for (int i=n; i--; )
           isrs[i].init(x.lub, x[i]);
         Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
         CountableSetRanges xnr(x.lub, x[n]);
+        delete[] isrs;
         return Iter::Ranges::equal(u, xnr);
       }
       /// Post constraint on \a x

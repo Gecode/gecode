@@ -39,6 +39,8 @@
 #include "gecode/gist/layoutcursor.hh"
 #include "gecode/gist/nodevisitor.hh"
 
+#include <utility>
+
 namespace Gecode { namespace Gist {
 
   Shape* Shape::leaf;
@@ -351,7 +353,7 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  VisualNode::computeShape(void) {
+  VisualNode::computeShape(VisualNode* root) {
     Extent extent(Layout::extent);
     int numberOfShapes = getNumberOfChildren();
     if (numberOfShapes == 1) {
@@ -360,14 +362,16 @@ namespace Gecode { namespace Gist {
       (*result)[1].extend(- extent.l, - extent.r);
       setShape(result);
     } else {
-      // alphaL[] and alphaR[] store the necessary distances between the
-      // axes of the shapes in the list: alphaL[i] gives the distance
+      // alpha stores the necessary distances between the
+      // axes of the shapes in the list: alpha[i].first gives the distance
       // between shape[i] and shape[i-1], when shape[i-1] and shape[i]
-      // are merged left-to-right; alphaR[i] gives the distance between
+      // are merged left-to-right; alpha[i].second gives the distance between
       // shape[i] and shape[i+1], when shape[i] and shape[i+1] are merged
       // right-to-left.
-      GECODE_AUTOARRAY(int, alphaL, numberOfShapes);
-      GECODE_AUTOARRAY(int, alphaR, numberOfShapes);
+      assert(root->copy != NULL);
+      ScratchArea sa(root->copy);
+      std::pair<int,int>* alpha =
+        sa.talloc<std::pair<int,int> >(numberOfShapes);
         
       // distance between the leftmost and the rightmost axis in the list
       int width = 0;
@@ -376,7 +380,7 @@ namespace Gecode { namespace Gist {
       for (int i = numberOfShapes; i--;)
         maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
         
-      GECODE_AUTOARRAY(Extent, currentShapeL, maxDepth);
+      Extent* currentShapeL = sa.talloc<Extent>(maxDepth);
       int ldepth = getChild(0)->getShape()->depth();
       for (int i=ldepth; i--;)
         currentShapeL[i] = (*getChild(0)->getShape())[i];
@@ -406,7 +410,7 @@ namespace Gecode { namespace Gist {
         Layouter::merge(&currentShapeL[0], &currentShapeL[0], ldepth,
                         &(*nextShapeL)[0], nextShapeL->depth(), nextAlphaL);
         ldepth = std::max(ldepth,nextShapeL->depth());
-        alphaL[i] = nextAlphaL - width;
+        alpha[i].first = nextAlphaL - width;
         width = nextAlphaL;
             
         // Merge right-to-left.  Here, a correction of nextAlphaR is
@@ -419,7 +423,7 @@ namespace Gecode { namespace Gist {
                         &(*nextShapeR)[0], nextShapeR->depth(),
                         &currentShapeR[0], rdepth, nextAlphaR);
         rdepth = std::max(rdepth,nextShapeR->depth());
-        alphaR[numberOfShapes - i] = nextAlphaR;
+        alpha[numberOfShapes - i].second = nextAlphaR;
       }
 
       // The merged shape has to be adjusted to its topmost extent
@@ -442,7 +446,7 @@ namespace Gecode { namespace Gist {
       int offset = - halfWidth;
       getChild(0)->setOffset(offset);
       for (int i = 1; i < numberOfShapes; i++) {
-        offset += (alphaL[i] + alphaR[i]) / 2;
+        offset += (alpha[i].first + alpha[i].second) / 2;
         getChild(i)->setOffset(offset);
       }
       setShape(mergedShape);

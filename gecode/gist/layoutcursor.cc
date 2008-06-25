@@ -108,7 +108,7 @@ namespace Gecode { namespace Gist {
       } else if (numberOfChildren < 1) {
         currentNode->setShape(Shape::leaf);
       } else {
-        currentNode->computeShape();
+        currentNode->computeShape(startNode());
       }
       currentNode->setDirty(false);
     }

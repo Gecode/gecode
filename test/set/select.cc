@@ -67,16 +67,19 @@ namespace Test { namespace Set {
         CountableSetValues x4v(x.lub, x[4]);
         if (selected==0)
           return !x4v();
-        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetRanges* sel = new CountableSetRanges[selected];
         CountableSetValues selector(x.lub, x[3]);
         for (int i=selected; i--;++selector) {
-          if (selector.val()>=3 || selector.val()<0)
+          if (selector.val()>=3 || selector.val()<0) {
+            delete[] sel;
             return false;
+          }
           sel[i].init(x.lub, x[selector.val()]);
         }
         Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[4]);
+        delete[] sel;
         return Iter::Ranges::equal(u, z);
       }
       /// Post constraint on \a x
@@ -108,16 +111,19 @@ namespace Test { namespace Set {
         if (selected==0)
           return !x4v();
         IntSet iss[] = {i0, i1, i2};
-        GECODE_AUTOARRAY(IntSetRanges, sel, selected);
+        IntSetRanges* sel = new IntSetRanges[selected];
         CountableSetValues selector(x.lub, x[0]);
         for (int i=selected; i--;++selector) {
-          if (selector.val()>=3 || selector.val()<0)
+          if (selector.val()>=3 || selector.val()<0) {
+            delete[] sel;
             return false;
+          }
           sel[i].init(iss[selector.val()]);
         }
         Iter::Ranges::NaryUnion<IntSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[1]);
+        delete[] sel;
         return Iter::Ranges::equal(u, z);
       }
       /// Post constraint on \a x
@@ -143,16 +149,19 @@ namespace Test { namespace Set {
         CountableSetRanges x4r(x.lub, x[4]);
         if (selected==0)
           return Iter::Ranges::size(x4r)==Gecode::Set::Limits::card;
-        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetRanges* sel = new CountableSetRanges[selected];
         CountableSetValues selector(x.lub, x[3]);
         for (int i=selected; i--;++selector) {
-          if (selector.val()>=3 || selector.val()<0)
+          if (selector.val()>=3 || selector.val()<0) {
+            delete[] sel;
             return false;
+          }
           sel[i].init(x.lub, x[selector.val()]);
         }
         Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[4]);
+        delete[] sel;
         return Iter::Ranges::equal(u, z);
       }
       /// Post constraint on \a x
@@ -179,16 +188,19 @@ namespace Test { namespace Set {
         CountableSetRanges x4r(x.lub, x[4]);
         if (selected==0)
           return Iter::Ranges::size(x4r)==4;
-        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetRanges* sel = new CountableSetRanges[selected];
         CountableSetValues selector(x.lub, x[3]);
         for (int i=selected; i--;++selector) {
-          if (selector.val()>=3 || selector.val()<0)
+          if (selector.val()>=3 || selector.val()<0) {
+            delete[] sel;
             return false;
+          }
           sel[i].init(x.lub, x[selector.val()]);
         }
         Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
 
         CountableSetRanges z(x.lub, x[4]);
+        delete[] sel;
         return Iter::Ranges::equal(u, z);
       }
       /// Post constraint on \a x
@@ -217,17 +229,20 @@ namespace Test { namespace Set {
         };
         if (selected <= 1)
           return true;
-        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetRanges* sel = new CountableSetRanges[selected];
         CountableSetValues selector(x.lub, x[3]);
         unsigned int cardsum = 0;
         for (int i=selected; i--;++selector) {
-          if (selector.val()>=3 || selector.val()<0)
+          if (selector.val()>=3 || selector.val()<0) {
+            delete[] sel;
             return false;
+          }
           sel[i].init(x.lub, x[selector.val()]);
           CountableSetRanges xicard(x.lub, x[selector.val()]);
           cardsum += Iter::Ranges::size(xicard);
         }
         Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
+        delete[] sel;
         return Iter::Ranges::size(u) == cardsum;
       }
       /// Post constraint on \a x

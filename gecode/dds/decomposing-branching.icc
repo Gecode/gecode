@@ -556,8 +556,9 @@ namespace Gecode {
       
       // Collect selected component at beginning of x array
       int compSize = dd->componentStart(a+1)-dd->componentStart(a);
-      GECODE_AUTOARRAY(Decomposition::IdxView<typename ViewSel::View>, 
-                       tmp, compSize);
+      ScratchArea sa(home);
+      Decomposition::IdxView<typename ViewSel::View>* tmp =
+        sa.talloc<Decomposition::IdxView<typename ViewSel::View> >(compSize);
       for (int i=compSize; i--; ) {
         tmp[i] = x[(*dd)[i+dd->componentStart(a)]];
       }

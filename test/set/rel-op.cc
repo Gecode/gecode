@@ -191,7 +191,7 @@ namespace Test { namespace Set {
       bool solution(const SetAssignment& x) const {
         int realN = shared == 0 ? n : 3;
 
-        GECODE_AUTOARRAY(CountableSetRanges, isrs, realN);
+        CountableSetRanges* isrs = new CountableSetRanges[realN];
         
         switch (shared) {
         case 0:
@@ -223,10 +223,12 @@ namespace Test { namespace Set {
         switch (sot) {
         case SOT_DUNION:
           {
-            if (shared == 1 && (isrs[0]() || isrs[1]()))
-              return false;
-            if (shared == 3 && (isrs[0]() || isrs[2]()))
-              return false;
+            if (shared == 1 && (isrs[0]() || isrs[1]())) {
+              delete[] isrs; return false;
+            }
+            if (shared == 3 && (isrs[0]() || isrs[2]())) {
+              delete[] isrs; return false;
+            }
             unsigned int cardSum = 0;
             if (shared == 1 || shared == 3) {
               CountableSetRanges x1r(x.lub, x[1]);
@@ -240,8 +242,9 @@ namespace Test { namespace Set {
             if (withConst)
               cardSum += 2;
             CountableSetRanges xnr2(x.lub, x[result]);
-            if (cardSum != Iter::Ranges::size(xnr2))
-              return false;
+            if (cardSum != Iter::Ranges::size(xnr2)) {
+              delete[] isrs; return false;
+            }
           }
           // fall through to union case
         case SOT_UNION:
@@ -251,9 +254,11 @@ namespace Test { namespace Set {
               IntSetRanges isr(is);
               Iter::Ranges::Union<IntSetRanges,
                 Iter::Ranges::NaryUnion<CountableSetRanges> > uu(isr, u);
+              delete[] isrs;
               return Iter::Ranges::equal(uu, xnr);              
             } else {
               Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
+              delete[] isrs;
               return Iter::Ranges::equal(u, xnr);
             }
           }
@@ -264,15 +269,18 @@ namespace Test { namespace Set {
               IntSetRanges isr(is);
               Iter::Ranges::Inter<IntSetRanges,
                 Iter::Ranges::NaryInter<CountableSetRanges> > uu(isr, u);
+              delete[] isrs;
               if (realN == 0)
                 return Iter::Ranges::equal(isr, xnr);
               else
                 return Iter::Ranges::equal(uu, xnr);              
             } else {
               if (realN == 0) {
+                delete[] isrs;
                 return Iter::Ranges::size(xnr) ==  Gecode::Set::Limits::card;
               } else {
                 Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
+                delete[] isrs;
                 return Iter::Ranges::equal(u, xnr);
               }
             }
@@ -354,7 +362,7 @@ namespace Test { namespace Set {
         , is(0,1) {}
       /// Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
-        GECODE_AUTOARRAY(int, isrs, n);
+        int* isrs = new int[n];
         for (int i=0; i<n; i++)
           isrs[i] = x.ints()[i];
         
@@ -366,15 +374,19 @@ namespace Test { namespace Set {
           {
             IntSetRanges issr(iss);
             unsigned int cardSum = Iter::Ranges::size(issr);
-            if (cardSum != static_cast<unsigned int>(n))
+            if (cardSum != static_cast<unsigned int>(n)) {
+              delete[] isrs;
               return false;
+            }
             if (withConst) {
               IntSetRanges isr(is);
               cardSum += Iter::Ranges::size(isr);
             }
             CountableSetRanges xnr2(x.lub, x[0]);
-            if (cardSum != Iter::Ranges::size(xnr2))
+            if (cardSum != Iter::Ranges::size(xnr2)) {
+              delete[] isrs;
               return false;
+            }
           }
           // fall through to union case
         case SOT_UNION:
@@ -383,9 +395,11 @@ namespace Test { namespace Set {
               IntSetRanges issr(iss);
               IntSetRanges isr(is);
               Iter::Ranges::Union<IntSetRanges,IntSetRanges > uu(isr, issr);
+              delete[] isrs;
               return Iter::Ranges::equal(uu, xnr);              
             } else {
               IntSetRanges issr(iss);
+              delete[] isrs;
               return Iter::Ranges::equal(issr, xnr);
             }
           }
@@ -402,26 +416,32 @@ namespace Test { namespace Set {
               if (allEqual) {
                 if (n == 0) {
                   IntSetRanges isr(is);
+                  delete[] isrs;
                   return Iter::Ranges::equal(isr, xnr);
                 } else {
                   Iter::Ranges::Singleton s(isrs[0],isrs[0]);
                   IntSetRanges isr(is);
                   Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton>
                     uu(isr, s);
+                  delete[] isrs;
                   return Iter::Ranges::equal(uu, xnr);
                 }
               } else {
+                delete[] isrs;
                 return Iter::Ranges::size(xnr) == 0;
               }
             } else {
               if (allEqual) {
                 if (n == 0) {
+                  delete[] isrs;
                   return Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
                 } else {
                   Iter::Ranges::Singleton s(isrs[0],isrs[0]);
+                  delete[] isrs;
                   return Iter::Ranges::equal(s, xnr);
                 }
               } else {
+                delete[] isrs;
                 return Iter::Ranges::size(xnr) == 0;
               }
             }

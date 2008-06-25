@@ -91,7 +91,8 @@ namespace Gecode { namespace Set { namespace Sequence {
   SeqU::propagateSeqUnion(Space* home,
                           bool& modified, ViewArray<SetView>& x,
                           SetView& y) {
-    GECODE_AUTOARRAY(GlbRanges<SetView>, XLBs,x.size());
+    ScratchArea sa(home);
+    GlbRanges<SetView>* XLBs = sa.talloc<GlbRanges<SetView> >(x.size());
     for (int i=x.size(); i--; ){
       GlbRanges<SetView> lb(x[i]);
       XLBs[i]=lb;

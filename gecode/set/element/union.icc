@@ -134,6 +134,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   ExecStatus
   ElementUnion<SView,RView>::propagate(Space* home, ModEventDelta) {
+    ScratchArea sa(home);
     int n = iv.size();
 
     bool loopVar;
@@ -160,7 +161,7 @@ namespace Gecode { namespace Set { namespace Element {
       GLBndSet sofarBefore(home);
       LUBndSet selectedInter(home, IntSet (Limits::min,
                                    Limits::max));
-      GECODE_AUTOARRAY(GLBndSet, before, n);
+      GLBndSet* before = static_cast<GLBndSet*>(sa.alloc(n));
 
       int j = 0;
       int i = 0;
