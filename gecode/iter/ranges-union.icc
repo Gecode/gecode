@@ -49,6 +49,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     I i;
     /// Second iterator
     J j;
+  private:
+    IsRangeIter<I> constraintI; IsRangeIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{
@@ -74,7 +76,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <class I>
-  class NaryUnion : public MinMax {
+  class NaryUnion : public MinMax, public IsRangeIter<I> {
   protected:
     /// Order for iterators: by increasing minimum of next range
     class RangeUnionOrder {

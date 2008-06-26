@@ -335,6 +335,7 @@ namespace Gecode {
     void operator++(void);
     int min(void) const;
     int max(void) const;
+    unsigned int width(void) const;
   };
 
   /**
@@ -368,6 +369,7 @@ namespace Gecode {
     void operator++(void);
     int min(void) const;
     int max(void) const;
+    unsigned int width(void) const;
   };
 
   /**
@@ -401,6 +403,7 @@ namespace Gecode {
     void operator++(void);
     int min(void) const;
     int max(void) const;
+    unsigned int width(void) const;
   };
 
 }

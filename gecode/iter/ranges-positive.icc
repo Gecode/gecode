@@ -47,7 +47,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class I, bool strict=false>
-  class Positive  {
+  class Positive : public IsRangeIter<I> {
   private:
     /// Input iterator
     I i;

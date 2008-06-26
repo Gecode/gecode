@@ -47,7 +47,7 @@ namespace Gecode { namespace Iter { namespace Values {
    * \ingroup FuncIterValues
    */
   template <class I>
-  class ToRanges : public Ranges::MinMax {
+  class ToRanges : public Ranges::MinMax, public IsValueIter<I> {
   protected:
     /// Value iterator used
     I i;

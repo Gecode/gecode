@@ -188,31 +188,37 @@ namespace Gecode {
     template <class I>
     forceinline ModEvent
     BoolView::narrow_r(Space* home, I& i, bool depend) {
+      Iter::Ranges::IsRangeIter<I>();
       return varimp->narrow_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
     BoolView::inter_r(Space* home, I& i, bool depend) {
+      Iter::Ranges::IsRangeIter<I>();
       return varimp->inter_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
     BoolView::minus_r(Space* home, I& i, bool depend) {
+      Iter::Ranges::IsRangeIter<I>();
       return varimp->minus_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
     BoolView::narrow_v(Space* home, I& i, bool depend) {
+      Iter::Values::IsValueIter<I>();
       return varimp->narrow_v(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
     BoolView::inter_v(Space* home, I& i, bool depend) {
+      Iter::Values::IsValueIter<I>();
       return varimp->inter_v(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
     BoolView::minus_v(Space* home, I& i, bool depend) {
+      Iter::Values::IsValueIter<I>();
       return varimp->minus_v(home,i,depend);
     }
 

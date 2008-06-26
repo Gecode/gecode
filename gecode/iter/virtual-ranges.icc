@@ -77,7 +77,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
    * \ingroup FuncIterRangesVirt
    */
   template <class I>
-  class RangesTemplate : public Iterator {
+  class RangesTemplate : public Iterator, public IsRangeIter<I> {
   private:
     /// The template-based iterator
     I i;

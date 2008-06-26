@@ -67,6 +67,8 @@ namespace Test { namespace Set {
       template <class I, class J>
       bool
       sol(I& i, J& j) const {
+        Iter::Ranges::IsRangeIter<I>();
+        Iter::Ranges::IsRangeIter<J>();
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(i,j);
         case SRT_NQ: return !Iter::Ranges::equal(i,j);
@@ -162,6 +164,8 @@ namespace Test { namespace Set {
       template <class I, class J>
       bool
       sol(I& i, J& j) const {
+        Iter::Ranges::IsRangeIter<I>();
+        Iter::Ranges::IsRangeIter<J>();
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(i,j);
         case SRT_NQ: return !Iter::Ranges::equal(i,j);
@@ -249,6 +253,8 @@ namespace Test { namespace Set {
       template <class I, class J>
       bool
       sol(I& i, J& j) const {
+        Iter::Ranges::IsRangeIter<I>();
+        Iter::Ranges::IsRangeIter<J>();
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(i,j);
         case SRT_NQ: return !Iter::Ranges::equal(i,j);

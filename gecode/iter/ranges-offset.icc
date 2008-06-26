@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class I>
-  class Offset {
+  class Offset : public IsRangeIter<I> {
   protected:
     /// Input range
     I i;

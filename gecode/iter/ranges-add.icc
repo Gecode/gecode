@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class I>
-  class AddRange : public MinMax {
+  class AddRange : public MinMax, public IsRangeIter<I> {
   protected:
     /// Iterator to which the range is to be added
     I i;

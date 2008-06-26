@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterValues
    */
   template <class I>
-  class ToValues {
+  class ToValues : public IsRangeIter<I> {
   protected:
     /// Range iterator used
     I i;

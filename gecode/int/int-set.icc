@@ -46,6 +46,7 @@ namespace Gecode {
 
   template <class I>
   IntSet::IntSet(I& i) {
+    Iter::Ranges::IsRangeIter<I>();
     Support::DynamicArray<Range> d;
     int n=0;
     while (i()) {

@@ -41,13 +41,34 @@
 namespace Gecode {
   /// Range and value iterators
   namespace Iter {
-     /// Range iterators
-     namespace Ranges {
-       /// Range iterators with virtual member functions
-       namespace Virt {}
-     }
-     /// Value iterators
-     namespace Values {}
+    /// Range iterators
+    namespace Ranges {
+       
+      template <class I> struct IsRangeIter {
+        static void constraints(I* p) {
+          bool b = p->operator()(); (void) b;
+          p->operator++();
+          int min = p->min(); (void) min;
+          int max = p->max(); (void) max;
+          unsigned int width = p->width(); (void) width;
+        }
+        IsRangeIter() { void(*p)(I*) = constraints; (void)p; }
+      };
+       
+      /// Range iterators with virtual member functions
+      namespace Virt {}
+    }
+    /// Value iterators
+    namespace Values {
+      template <class I> struct IsValueIter {
+        static void constraints(I* p) {
+          bool b = p->operator()(); (void) b;
+          p->operator++();
+          int val = p->val(); (void) val;
+        }
+        IsValueIter() { void(*p)(I*) = constraints; (void)p; }
+      };      
+    }
   }
 }
 

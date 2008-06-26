@@ -144,6 +144,9 @@ namespace Gecode {
   forceinline int
   CpltSetVarGlbRanges::max(void) const { return iter.max(); }
 
+  forceinline unsigned int
+  CpltSetVarGlbRanges::width(void) const { return max()-min()+1; }
+
   forceinline
   CpltSetVarGlbValues::CpltSetVarGlbValues(void) {}
 
@@ -179,6 +182,9 @@ namespace Gecode {
   forceinline int
   CpltSetVarLubRanges::max(void) const { return iter.max(); }
 
+  forceinline unsigned int
+  CpltSetVarLubRanges::width(void) const { return max()-min()+1; }
+
   forceinline
   CpltSetVarLubValues::CpltSetVarLubValues(void) {}
 
@@ -213,6 +219,9 @@ namespace Gecode {
 
   forceinline int
   CpltSetVarUnknownRanges::max(void) const { return iter.max(); }
+
+  forceinline unsigned int
+  CpltSetVarUnknownRanges::width(void) const { return max()-min()+1; }
 
 }
 

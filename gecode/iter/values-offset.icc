@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Values {
    * \ingroup FuncIterValues
    */
   template <class I>
-  class Offset {
+  class Offset : public IsValueIter<I> {
   protected:
     /// Input iterator
     I i;

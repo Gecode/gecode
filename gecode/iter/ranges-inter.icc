@@ -51,6 +51,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     I i;
     /// Second iterator
     J j;
+  private:
+    IsRangeIter<I> constraintI; IsRangeIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{
@@ -76,7 +78,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class I>
-  class NaryInter : public MinMax {
+  class NaryInter : public MinMax, public IsRangeIter<I> {
   protected:
     /// Array of iterators
     I* is;

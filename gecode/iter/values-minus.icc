@@ -50,7 +50,7 @@ namespace Gecode { namespace Iter { namespace Values {
    */
 
   template <class I>
-  class Minus  {
+  class Minus : public IsValueIter<I> {
   private:
     /// %Values stored
     SharedArray<int> v;

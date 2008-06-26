@@ -51,6 +51,7 @@ namespace Gecode { namespace Set {
   template <class I>
   static void
   printBound(std::ostream& os, I& r) {
+    Iter::Ranges::IsRangeIter<I>();
     os << '{';
     while (r()) {
       if (r.min() == r.max()) {

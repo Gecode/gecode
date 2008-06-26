@@ -50,7 +50,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class Val, class UnsVal, class I>
-  class ScaleUp {
+  class ScaleUp : public IsRangeIter<I> {
   protected:
     /// Iterator to be scaled
     I i;
@@ -96,7 +96,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class I>
-  class ScaleDown : public MinMax {
+  class ScaleDown : public MinMax, public IsRangeIter<I> {
   protected:
     /// Iterator to be scaled down
     I i;

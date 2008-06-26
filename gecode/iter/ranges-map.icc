@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class I, class M, bool strict=true>
-  class Map {
+  class Map : public IsRangeIter<I> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -83,7 +83,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   /// Specialized mapping of ranges for non-strict maps
   template <class I, class M>
-  class Map<I,M,false> : public MinMax {
+  class Map<I,M,false> : public MinMax, public IsRangeIter<I> {
   protected:
     /// Input range
     I i;
@@ -115,7 +115,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   /// Specialized mapping of ranges for strict maps
   template <class I, class M>
-  class Map<I,M,true> {
+  class Map<I,M,true> : public IsRangeIter<I> {
   protected:
     /// Input range iterator
     I i;

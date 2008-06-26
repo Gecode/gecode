@@ -314,6 +314,7 @@ namespace Test { namespace Set {
     int weightI(const IntArgs& elements,
                 const IntArgs& weights,
                 I& iter) {
+      Iter::Ranges::IsRangeIter<I>();
       int sum = 0;
       int i = 0;
       for (Iter::Ranges::ToValues<I> v(iter); v(); ++v) {

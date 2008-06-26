@@ -48,7 +48,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <class J>
-  class SingletonAppend : public MinMax {
+  class SingletonAppend : public MinMax, public IsRangeIter<J> {
   protected:
     /// Iterator to be appended
     J j;

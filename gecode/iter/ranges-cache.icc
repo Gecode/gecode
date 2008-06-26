@@ -47,7 +47,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template <class I>
-  class Cache  {
+  class Cache : public IsRangeIter<I> {
   protected:
     /// %Ranges stored in cache
     class Range {
@@ -161,7 +161,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <class I>
-  class ValCache  {
+  class ValCache : public Values::IsValueIter<I> {
   protected:
     /// Array for ranges
     SharedArray<int> r;

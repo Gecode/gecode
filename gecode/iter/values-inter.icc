@@ -52,6 +52,8 @@ namespace Gecode { namespace Iter { namespace Values {
     J j;
     /// Find next element from intersection
     void next(void);
+  private:
+    IsValueIter<I> constraintI; IsValueIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{

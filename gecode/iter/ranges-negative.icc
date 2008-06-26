@@ -48,7 +48,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <class I, bool strict=false>
-  class Negative  {
+  class Negative : public IsRangeIter<I> {
   private:
     /// Input iterator
     I i;

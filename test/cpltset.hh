@@ -99,6 +99,7 @@ namespace Test {
 
       template <class I>
       int iter2int(I& r, int) const{
+        Gecode::Iter::Values::IsValueIter<I>();
         if (!r()) {
           return 0;
         }

@@ -50,7 +50,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <int UMIN, int UMAX, class I>
-  class Compl : public MinMax {
+  class Compl : public MinMax, public IsRangeIter<I> {
   protected:
     /// Iterator to compute complement for
     I i;
@@ -86,7 +86,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <class I>
-  class ComplVal : public MinMax {
+  class ComplVal : public MinMax, public IsRangeIter<I> {
   protected:
     /// Values describing the universe set
     int UMIN, UMAX;

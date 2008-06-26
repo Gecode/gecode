@@ -123,28 +123,35 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetView::include (Space* home,int from, int to)
-  { return (varimp->include(home,from,to)); }
+  SetView::include (Space* home,int from, int to) {
+    return (varimp->include(home,from,to));
+  }
 
   forceinline ModEvent
-  SetView::include (Space* home,int n)
-  { return (varimp->include(home,n)); }
+  SetView::include (Space* home,int n) {
+    return (varimp->include(home,n));
+  }
 
   forceinline ModEvent
-  SetView::exclude (Space* home,int n)
-  { return (varimp->exclude(home, n)); }
+  SetView::exclude (Space* home,int n) {
+    return (varimp->exclude(home, n));
+  }
 
   forceinline ModEvent
-  SetView::intersect (Space* home,int from, int to)
-  { return (varimp->intersect(home,from,to)); }
+  SetView::intersect (Space* home,int from, int to) {
+    return (varimp->intersect(home,from,to));
+  }
 
   forceinline ModEvent
-  SetView::intersect (Space* home,int n)
-  { return (varimp->intersect(home,n)); }
+  SetView::intersect (Space* home,int n) {
+    return (varimp->intersect(home,n));
+  }
 
   template <class I> ModEvent
-  SetView::includeI (Space* home, I& iter)
-  { return (varimp->includeI(home, iter)); }
+  SetView::includeI (Space* home, I& iter) {      
+    Iter::Ranges::IsRangeIter<I>();
+    return (varimp->includeI(home, iter));
+  }
 
   forceinline ModEvent
   SetView::exclude (Space* home,int from, int to)
@@ -152,11 +159,13 @@ namespace Gecode { namespace Set {
 
   template <class I> ModEvent
   SetView::excludeI(Space* home, I& iter) {
+    Iter::Ranges::IsRangeIter<I>();
     return varimp->excludeI(home, iter);
   }
 
   template <class I> ModEvent
   SetView::intersectI(Space* home, I& iter) {
+    Iter::Ranges::IsRangeIter<I>();
     return varimp->intersectI(home, iter);
   }
 

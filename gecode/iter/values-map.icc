@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Values {
    * \ingroup FuncIterValues
    */
   template <class I, class M, bool strict=false>
-  class Map  {
+  class Map : public IsValueIter<I> {
   private:
     /// Input iterator
     I i;
