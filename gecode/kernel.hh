@@ -99,6 +99,7 @@
  *
  */
 
+#include "gecode/kernel/memory-config.icc"
 #include "gecode/kernel/memory-manager.icc"
 
 

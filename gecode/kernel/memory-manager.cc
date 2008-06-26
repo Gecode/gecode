@@ -3,12 +3,8 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contributing authors:
- *      <duchier@gecode.org>
- *
  *  Copyright:
  *     Christian Schulte, 2002
- *     Denys Duchier, 2002
  *
  *  Last modified:
  *     $Date$ by $Author$

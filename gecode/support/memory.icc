@@ -41,7 +41,7 @@
 
 namespace Gecode {
 
-  /// Heap and automatic memory management
+  /// Heap memory management
   namespace Memory {
 
     /**

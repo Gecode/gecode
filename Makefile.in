@@ -195,7 +195,7 @@ KERNELSRC0 = \
 
 KERNELHDR0 = \
 	array shared-array core exception \
-	macros memory-manager scratch-area modevent \
+	macros memory-config memory-manager scratch-area modevent \
 	propagator advisor view var var-traits var-map reflection \
 	branch branching branching-view branching-tiebreak \
 	branching-val
