@@ -50,7 +50,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <class I>
-  class Minus : public IsRangeIter<I> {
+  class Minus {
+  private:
+    /// Check that \a I is a range iterator;
+    IsRangeIter<I> _checkI;
   private:
     /// %Range for storage in array
     class Range {

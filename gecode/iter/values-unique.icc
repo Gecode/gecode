@@ -47,7 +47,10 @@ namespace Gecode { namespace Iter { namespace Values {
    * \ingroup FuncIterValues
    */
   template <class I>
-  class Unique : public IsValueIter<I> {
+  class Unique {
+  private:
+    /// Check that \a I is a value iterator;
+    IsValueIter<I> _checkI;    
   protected:
     /// Value iterator used
     I i;

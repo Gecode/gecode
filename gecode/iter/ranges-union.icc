@@ -45,12 +45,16 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I, class J>
   class Union : public MinMax {
+  private:
+    /// Check that \a I is a range iterator;
+    IsRangeIter<I> _checkI;
+    /// Check that \a I is a range iterator;
+    IsRangeIter<J> _checkJ;
+  private:
     /// First iterator
     I i;
     /// Second iterator
     J j;
-  private:
-    IsRangeIter<I> constraintI; IsRangeIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{
@@ -76,7 +80,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template <class I>
-  class NaryUnion : public MinMax, public IsRangeIter<I> {
+  class NaryUnion : public MinMax {
+  private:
+    /// Check that \a I is a range iterator;
+    IsRangeIter<I> _checkI;
   protected:
     /// Order for iterators: by increasing minimum of next range
     class RangeUnionOrder {
