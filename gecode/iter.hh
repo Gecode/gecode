@@ -43,8 +43,9 @@ namespace Gecode {
   namespace Iter {
     /// Range iterators
     namespace Ranges {
-       
+      /// Check that template argument is a range iterator
       template <class I> struct IsRangeIter {
+        /// Checking function
         static void constraints(I* p) {
           bool b = p->operator()(); (void) b;
           p->operator++();
@@ -52,6 +53,7 @@ namespace Gecode {
           int max = p->max(); (void) max;
           unsigned int width = p->width(); (void) width;
         }
+        /// Constructor
         IsRangeIter() { void(*p)(I*) = constraints; (void)p; }
       };
        
@@ -60,12 +62,15 @@ namespace Gecode {
     }
     /// Value iterators
     namespace Values {
+      /// Check that template argument is a value iterator
       template <class I> struct IsValueIter {
+        /// Checking function
         static void constraints(I* p) {
           bool b = p->operator()(); (void) b;
           p->operator++();
           int val = p->val(); (void) val;
         }
+        /// Constructor
         IsValueIter() { void(*p)(I*) = constraints; (void)p; }
       };      
     }
@@ -116,4 +121,3 @@ namespace Gecode {
 #endif
 
 // STATISTICS: iter-any
-
