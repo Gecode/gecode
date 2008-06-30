@@ -217,13 +217,13 @@ namespace Gecode { namespace Int { namespace Distinct {
       /// Initialize graph
       ExecStatus init(Space* home, int n, View* x);
       /// Mark edges in graph
-      void mark(void);
+      void mark(Space* home);
       /// Prune unmarked edges, \a assigned is true if a view got assigned
       ExecStatus tell(Space* home, bool& assigned);
       /// Purge graph if necessary
       void purge(void);
       /// Synchronize graph with new view domains
-      bool sync(void);
+      bool sync(Space* home);
     public:
       /// Stack used during matching
       typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
@@ -240,7 +240,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Initialize view-value graph for views \a x
     ExecStatus init(Space* home, int n, View* x);
     /// Synchronize available view-value graph
-    ExecStatus sync(void);
+    ExecStatus sync(Space* home);
     /// Perform propagation, \a assigned is true if a view gets assigned
     ExecStatus propagate(Space* home, bool& assigned);
   };

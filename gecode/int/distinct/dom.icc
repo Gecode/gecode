@@ -362,7 +362,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
     }
 
-    GECODE_AUTOSTACK(ViewNode<View>*,NULL,m,n_view);
+    GECODE_AUTOSTACK(home,ViewNode<View>*,NULL,m,n_view);
     for (int i = n_view; i--; )
       if (!match(m,view[i]))
         return ES_FAILED;
@@ -371,11 +371,11 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline void
-  DomCtrl<View>::ViewValGraph::mark(void) {
+  DomCtrl<View>::ViewValGraph::mark(Space* home) {
     {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free (unmatched node) by depth-first-search
-      GECODE_AUTOSTACK(ValNode<View>*,NULL,visit,n_val);
+      GECODE_AUTOSTACK(home,ValNode<View>*,NULL,visit,n_val);
       
       // Insert all free nodes: they can be only value nodes as we
       // have a maximum matching covering all view nodes
@@ -419,8 +419,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     {
-      GECODE_AUTOSTACK(Node<View>*,NULL,scc,n_val+n_view);
-      GECODE_AUTOSTACK(Node<View>*,NULL,visit,n_val+n_view);
+      GECODE_AUTOSTACK(home,Node<View>*,NULL,scc,n_val+n_view);
+      GECODE_AUTOSTACK(home,Node<View>*,NULL,visit,n_val+n_view);
 
       count++;
       unsigned int cnt0 = count;
@@ -553,9 +553,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   bool
-  DomCtrl<View>::ViewValGraph::sync(void) {
+  DomCtrl<View>::ViewValGraph::sync(Space* home) {
     // Stack for view nodes to be rematched
-    GECODE_AUTOSTACK(ViewNode<View>*,NULL,re,n_view);
+    GECODE_AUTOSTACK(home,ViewNode<View>*,NULL,re,n_view);
     // Synchronize nodes
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
@@ -597,7 +597,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
       }
     }
-    GECODE_AUTOSTACK(ViewNode<View>*,NULL,m,n_view);
+    GECODE_AUTOSTACK(home,ViewNode<View>*,NULL,m,n_view);
     while (!re.empty())
       if (!match(m,re.pop()))
         return false;
@@ -629,15 +629,15 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline ExecStatus
-  DomCtrl<View>::sync(void) {
+  DomCtrl<View>::sync(Space* home) {
     vvg.purge();
-    return vvg.sync() ? ES_OK : ES_FAILED;
+    return vvg.sync(home) ? ES_OK : ES_FAILED;
   }
 
   template <class View>
   forceinline ExecStatus
   DomCtrl<View>::propagate(Space* home, bool& assigned) {
-    vvg.mark();
+    vvg.mark(home);
     return vvg.tell(home,assigned);
   }
 
@@ -734,7 +734,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       GECODE_REWRITE(this,TerDom<View>::post(home,x[0],x[1],x[2]));
 
     if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync());
+      GECODE_ES_CHECK(dc.sync(home));
     } else {
       GECODE_ES_CHECK(dc.init(home,x.size(),&x[0]));
     }

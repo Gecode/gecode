@@ -115,8 +115,11 @@ namespace Gecode { namespace Support {
  *
  */
 
-#define GECODE_AUTOSTACK(T,S,X,N)                                          \
-  GECODE_AUTOARRAY(T,__GECODE__AS__ ## X ## __LINE__,(N)+1);               \
+#define GECODE_AUTOSTACK(home,T,S,X,N)                                     \
+  ScratchArea __GECODE__AS__SA__ ## X ## __LINE__(home);                   \
+  T* __GECODE__AS__ ## X ## __LINE__ =                                     \
+    static_cast<T*>(__GECODE__AS__SA__ ## X ##                             \
+      __LINE__.alloc(sizeof(T)*((N)+1)));                                  \
   Gecode::Support::SentinelStack<T> X(__GECODE__AS__ ## X ## __LINE__,(S));
 
 // STATISTICS: support-any

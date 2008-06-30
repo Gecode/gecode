@@ -223,8 +223,8 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space* home, ModEventDelta med) {
-    GECODE_AUTOSTACK(int,-1, xa, n);
-    GECODE_AUTOSTACK(int,-1, ya, n);
+    GECODE_AUTOSTACK(home,int,-1, xa, n);
+    GECODE_AUTOSTACK(home,int,-1, ya, n);
 
     DomInfo<View>* x = xy;
     DomInfo<View>* y = xy+n;
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
     // Perform domain consistent propagation for distinct on the x views
     if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync());
+      GECODE_ES_CHECK(dc.sync(home));
     } else {
       ScratchArea sa(home);
       View* xv = sa.talloc<View>(n);

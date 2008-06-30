@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     }
 
     // Stack to remember which nodes have not been processed completely
-    GECODE_AUTOSTACK(int,-1,next,n);
+    GECODE_AUTOSTACK(home,int,-1,next,n);
 
     // Array to remember which mandatory tells need to be done
     TellInfo<View>* eq = sa.talloc<TellInfo<View> >(n);
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       end[i]=-1;
 
     // A stack that records all indices i such that end[i] != -1
-    GECODE_AUTOSTACK(int,-1,tell,n);
+    GECODE_AUTOSTACK(home,int,-1,tell,n);
 
     for (int i=y.size(); i--; ) {
       assert(!y[i].assigned());

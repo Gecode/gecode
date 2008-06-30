@@ -310,7 +310,9 @@ namespace Gecode {
     }
 
     // Do a reachability analysis for all states starting from start state
-    GECODE_AUTOSTACK(int, -1, visit, n_states);
+    int* visitA = Memory::talloc<int>(n_states+1);
+    Gecode::Support::SentinelStack<int> visit(visitA,-1);    
+    // GECODE_AUTOSTACK(home, int, -1, visit, n_states);
     GECODE_AUTOARRAY(int, state, n_states);
     for (int i=n_states; i--; )
       state[i] = SI_NONE;
@@ -373,6 +375,7 @@ namespace Gecode {
           }
       }
     }
+    Memory::tfree<int>(visitA);
 
     // Now all reachable states are known (also the final ones)
     GECODE_AUTOARRAY(int, re, n_states);
