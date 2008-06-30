@@ -52,11 +52,15 @@ namespace Gecode { namespace Support {
   template<class T>
   class SentinelStack {
   private:
+#ifndef NDEBUG
+    unsigned int size;
+    T* bos;
+#endif
     const T sentinel;
     T* tos;
   public:
-    /// Create stack that uses the memory area \a p and sentinel \a s
-    SentinelStack(T* p, T s);
+    /// Create stack that uses the memory area \a p of size \a n and sentinel \a s
+    SentinelStack(T* p, T s, int n);
     /// Check whether stack is empty
     bool empty(void) const;
     /// Return topmost element
@@ -71,8 +75,13 @@ namespace Gecode { namespace Support {
 
   template<class T>
   forceinline
-  SentinelStack<T>::SentinelStack(T* p, T s) 
-    : sentinel(s), tos(p) {
+  SentinelStack<T>::SentinelStack(T* p, T s, int n) 
+    : 
+#ifndef NDEBUG
+    size(n), bos(p),
+#endif
+    sentinel(s), tos(p) {
+    (void) n;
     *(tos++) = sentinel;
   }
   template<class T>
@@ -83,6 +92,7 @@ namespace Gecode { namespace Support {
   template<class T>
   forceinline T
   SentinelStack<T>::top(void) const {
+    assert(*(tos-1) != sentinel);
     return *(tos-1);
   }
   template<class T>
@@ -93,12 +103,18 @@ namespace Gecode { namespace Support {
   template<class T>
   forceinline T
   SentinelStack<T>::pop(void) {
+#ifndef NDEBUG
+    assert(tos-bos > 1);
+#endif
     return *(--tos);
   }
   template<class T>
   forceinline void
   SentinelStack<T>::push(T x) {
     assert(x != sentinel);
+#ifndef NDEBUG
+    assert(tos-bos < size+1);
+#endif
     *(tos++) = x;
   }
 
@@ -117,9 +133,9 @@ namespace Gecode { namespace Support {
 
 #define GECODE_AUTOSTACK(home,T,S,X,N)                                     \
   ScratchArea __GECODE__AS__SA__ ## X ## __LINE__(home);                   \
+  int __GECODE__AS__ ## X ## __LINE__ ## n = (N); \
   T* __GECODE__AS__ ## X ## __LINE__ =                                     \
     static_cast<T*>(__GECODE__AS__SA__ ## X ##                             \
-      __LINE__.alloc(sizeof(T)*((N)+1)));                                  \
-  Gecode::Support::SentinelStack<T> X(__GECODE__AS__ ## X ## __LINE__,(S));
-
+      __LINE__.alloc(sizeof(T)*((__GECODE__AS__ ## X ## __LINE__ ## n)+1)));                                  \
+  Gecode::Support::SentinelStack<T> X(__GECODE__AS__ ## X ## __LINE__,(S),__GECODE__AS__ ## X ## __LINE__ ## n);
 // STATISTICS: support-any

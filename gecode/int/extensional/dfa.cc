@@ -311,7 +311,7 @@ namespace Gecode {
 
     // Do a reachability analysis for all states starting from start state
     int* visitA = Memory::talloc<int>(n_states+1);
-    Gecode::Support::SentinelStack<int> visit(visitA,-1);    
+    Gecode::Support::SentinelStack<int> visit(visitA,-1,n_states);    
     // GECODE_AUTOSTACK(home, int, -1, visit, n_states);
     GECODE_AUTOARRAY(int, state, n_states);
     for (int i=n_states; i--; )
