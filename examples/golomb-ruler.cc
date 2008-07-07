@@ -159,6 +159,11 @@ public:
     return new GolombRuler(share,*this);
   }
 
+  /// Make variables available for visualisation
+  virtual void
+  getVars(Gecode::Reflection::VarMap& vm, bool registerOnly) {
+    vm.putArray(this,m,"m", registerOnly);
+  }
 };
 
 /** \brief Main-function
