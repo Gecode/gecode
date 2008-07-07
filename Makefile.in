@@ -624,7 +624,7 @@ GISTHDR0 = \
 	spacenode.hh spacenode.icc textoutput.hh treecanvas.hh zoomToFitIcon.icc \
 	visualnode.hh visualnode.icc \
 	mainwindow.hh \
-	addchild.hh addvisualisationdialog.hh reflectionhelpers.hh \
+	addchild.hh addvisualisationdialog.hh \
 	ui_addchild.hh ui_addvisualisationdialog.hh\
 	config.hh \
 	visualisation/vararrayview.hh visualisation/vararrayviewt.hh \
@@ -637,7 +637,7 @@ GISTSRC0 = \
 	layoutcursor.cc spacenode.cc \
 	textoutput.cc treecanvas.cc visualnode.cc \
 	mainwindow.cc preferences.cc \
-	addchild.cc addvisualisationdialog.cc reflectionhelpers.cc \
+	addchild.cc addvisualisationdialog.cc \
 	config.cc \
 	visualisation/vararrayview.cc \
 	visualisation/varitem.cc \
