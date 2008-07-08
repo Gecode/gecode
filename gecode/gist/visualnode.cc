@@ -165,12 +165,12 @@ namespace Gecode { namespace Gist {
   bool
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
     if (x < box.left ||
-      x > box.right ||
-      depth > shape->depth()) {
+        x > box.right ||
+        depth > shape->depth()) {
       return false;
     }
     Extent theExtent;
-     if (shape->getExtentAtDepth(depth, theExtent)) {
+    if (shape->getExtentAtDepth(depth, theExtent)) {
       return (theExtent.l <= x && x <= theExtent.r);
     } else {
       return false;
@@ -183,7 +183,7 @@ namespace Gecode { namespace Gist {
     int depth = y / Layout::dist_y;
 
     while (depth > 0 && cur != NULL) {
-     if (cur->isHidden()) {
+      if (cur->isHidden()) {
         break;
       }
       VisualNode* oldCur = cur;
@@ -276,7 +276,7 @@ namespace Gecode { namespace Gist {
       extentL += shape2[i].l;
       alpha = std::max(alpha, extentR - extentL + Layout::minimalSeparation);
     }
-    return std::min(static_cast<int>(alpha*1.05), alpha+4*Layout::extent);
+    return alpha;
   }
   
   void
