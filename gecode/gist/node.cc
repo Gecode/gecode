@@ -53,8 +53,8 @@ namespace Gecode { namespace Gist {
       break;
     case MORE_CHILDREN:
       for (int i=c.noOfChildren; i--;)
-        delete static_cast<VisualNode**>(childrenOrFirstChild)[i];
-      Memory::free(static_cast<Node**>(childrenOrFirstChild));
+        delete static_cast<VisualNode**>(getPtr())[i];
+      Memory::free(static_cast<Node**>(getPtr()));
     }
   }
     
@@ -95,7 +95,7 @@ namespace Gecode { namespace Gist {
         c.secondChild = static_cast<Node*>(Support::mark(child));
       }
     } else {
-      static_cast<Node**>(childrenOrFirstChild)[n] = child;
+      static_cast<Node**>(getPtr())[n] = child;
     }
     child->parent = this;
   }
