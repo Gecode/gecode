@@ -728,16 +728,19 @@ namespace Gecode { namespace Gist {
   
   bool
   TreeCanvasImpl::event(QEvent* event) {
-    if (event->type() == QEvent::ToolTip) {
-      VisualNode* n = eventNode(event);
-      if (n != NULL && !n->isHidden() &&
-          (n->getStatus() == BRANCH || n->getStatus() == DECOMPOSE)) {
-        QHelpEvent* he = static_cast<QHelpEvent*>(event);
-        QToolTip::showText(he->globalPos(), 
-                           QString(n->toolTip(curBest).c_str()));
-      } else {
-        QToolTip::hideText();
+    if (mutex.tryLock()) {
+      if (event->type() == QEvent::ToolTip) {
+        VisualNode* n = eventNode(event);
+        if (n != NULL && !n->isHidden() &&
+            (n->getStatus() == BRANCH || n->getStatus() == DECOMPOSE)) {
+          QHelpEvent* he = static_cast<QHelpEvent*>(event);
+          QToolTip::showText(he->globalPos(), 
+                             QString(n->toolTip(curBest).c_str()));
+        } else {
+          QToolTip::hideText();
+        }
       }
+      mutex.unlock();
     }
     return QWidget::event(event);
   }
@@ -787,6 +790,7 @@ namespace Gecode { namespace Gist {
         if(n == currentNode) {      
           inspectCurrentNode();
           event->accept();
+          mutex.unlock();
           return;
         }
       }
@@ -803,6 +807,7 @@ namespace Gecode { namespace Gist {
         setCurrentNode(n);
         emit contextMenu(event);
         event->accept();
+        mutex.unlock();
         return;
       }
       mutex.unlock();
@@ -837,6 +842,7 @@ namespace Gecode { namespace Gist {
         setCurrentNode(n);
         if (n != NULL) {
           event->accept();
+          mutex.unlock();
           return;
         }
       }
