@@ -143,6 +143,7 @@ namespace Gecode { namespace Gist {
     if (finished)
       centerCurrentNode();
     emit statusChanged(stats, finished);
+    emit currentNodeChanged(currentNode);
   }
 
   void
@@ -398,8 +399,6 @@ namespace Gecode { namespace Gist {
         {
           (void) currentNode->getNumberOfChildNodes(*na, curBest,stats);
           emit statusChanged(stats,true);
-          emit currentNodeChanged(currentNode->getSpace(curBest), 
-                                  currentNode->getStatus());
         }
         break;
     case FAILED:
@@ -467,7 +466,6 @@ namespace Gecode { namespace Gist {
     root->layout();
     
     emit statusChanged(stats, true);
-    emit currentNodeChanged(NULL, UNDETERMINED);
     update();
   }
 
@@ -783,26 +781,31 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::mouseDoubleClickEvent(QMouseEvent* event) {
-    if(event->button() == Qt::LeftButton) {
-      VisualNode* n = eventNode(event);
-      if(n == currentNode) {      
-        inspectCurrentNode();
-        event->accept();
-        return;
+    if (mutex.tryLock()) {
+      if(event->button() == Qt::LeftButton) {
+        VisualNode* n = eventNode(event);
+        if(n == currentNode) {      
+          inspectCurrentNode();
+          event->accept();
+          return;
+        }
       }
+      mutex.unlock();
     }
     event->ignore();
   }
   
   void
   TreeCanvasImpl::contextMenuEvent(QContextMenuEvent* event) {
-    QMutexLocker locker(&mutex);
-    VisualNode* n = eventNode(event);
-    if (n != NULL) {
-      setCurrentNode(n);
-      emit contextMenu(event);
-      event->accept();
-      return;
+    if (mutex.tryLock()) {
+      VisualNode* n = eventNode(event);
+      if (n != NULL) {
+        setCurrentNode(n);
+        emit contextMenu(event);
+        event->accept();
+        return;
+      }
+      mutex.unlock();
     }
     event->ignore();
   }
@@ -821,25 +824,23 @@ namespace Gecode { namespace Gist {
       currentNode = n;
       currentNode->setMarked(true);
       NodeStatus status = n->getStatus();
-      if(status != UNDETERMINED) {
-        emit currentNodeChanged(n->getSpace(curBest), status);
-      } else {
-        emit currentNodeChanged(NULL, status);
-      }
+      emit currentNodeChanged(currentNode);
       QWidget::update();
     }
   }
   
   void
   TreeCanvasImpl::mousePressEvent(QMouseEvent* event) {
-    QMutexLocker locker(&mutex);
-    if (event->button() == Qt::LeftButton) {
-      VisualNode* n = eventNode(event);
-      setCurrentNode(n);
-      if (n != NULL) {
-        event->accept();
-        return;
+    if (mutex.tryLock()) {
+      if (event->button() == Qt::LeftButton) {
+        VisualNode* n = eventNode(event);
+        setCurrentNode(n);
+        if (n != NULL) {
+          event->accept();
+          return;
+        }
       }
+      mutex.unlock();
     }
     event->ignore();
   }
@@ -1216,54 +1217,40 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::on_canvas_currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus status) {
-    switch (status) {
-        case Gecode::Gist::SINGLETON:
-        case Gecode::Gist::SOLVED:
-        case Gecode::Gist::FAILED:
-          navDown->setEnabled(false);
-
-          searchNext->setEnabled(false);
-          searchAll->setEnabled(false);
-          toggleHidden->setEnabled(false);
-          hideFailed->setEnabled(false);
-          unhideAll->setEnabled(false);
-
-          break;
-        case Gecode::Gist::UNDETERMINED:
-          navDown->setEnabled(false);
-
-          searchNext->setEnabled(true);
-          searchAll->setEnabled(true);
-          toggleHidden->setEnabled(false);
-          hideFailed->setEnabled(false);
-          unhideAll->setEnabled(false);
-
-          break;
-        case Gecode::Gist::DECOMPOSE:
-        case Gecode::Gist::COMPONENT_IGNORED:
-        case Gecode::Gist::BRANCH:
-        case Gecode::Gist::SPECIAL:
-          navDown->setEnabled(true);
-
-          searchNext->setEnabled(true);
-          searchAll->setEnabled(true);
-          toggleHidden->setEnabled(true);
-          hideFailed->setEnabled(true);
-          unhideAll->setEnabled(true);
-
-          break;
-        case Gecode::Gist::STEP:
-          navDown->setEnabled(true);
-
-          searchNext->setEnabled(true);
-          searchAll->setEnabled(true);
-          toggleHidden->setEnabled(true);
-          hideFailed->setEnabled(false);
-          unhideAll->setEnabled(true);
-
-          break;
+  TreeCanvas::on_canvas_currentNodeChanged(VisualNode* n) {
+    if (n->isOpen() || n->hasOpenChildren()) {
+      searchNext->setEnabled(true);
+      searchAll->setEnabled(true);
+    } else {
+      searchNext->setEnabled(false);
+      searchAll->setEnabled(false);      
     }
+    if (n->getNumberOfChildren() > 0) {
+      navDown->setEnabled(true);
+      toggleHidden->setEnabled(true);
+      hideFailed->setEnabled(true);
+      unhideAll->setEnabled(true);            
+    } else {
+      navDown->setEnabled(false);
+      toggleHidden->setEnabled(false);
+      hideFailed->setEnabled(false);
+      unhideAll->setEnabled(false);      
+    }
+
+    VisualNode* p = n->getParent();
+    if (p == NULL) {
+      navRoot->setEnabled(false);
+      navUp->setEnabled(false);
+      navRight->setEnabled(false);
+      navLeft->setEnabled(false);
+    } else {
+      navRoot->setEnabled(true);
+      navUp->setEnabled(true);
+      unsigned int alt = n->getAlternative();
+      navRight->setEnabled(alt + 1 < p->getNumberOfChildren());
+      navLeft->setEnabled(alt > 0);
+    }
+
   }
   
   void

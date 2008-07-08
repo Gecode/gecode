@@ -199,7 +199,7 @@ namespace Gecode { namespace Gist {
     bool hasFailedChildren(void);
     /// Return whether the subtree of this node has any solved children
     bool hasSolvedChildren(void);
-    /// Return whether the subtree of this node has any solved children
+    /// Return whether the subtree of this node has any open children
     bool hasOpenChildren(void);
     /// Return number of open children
     int getNoOfOpenChildren(void);

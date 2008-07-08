@@ -173,7 +173,7 @@ namespace Gecode {  namespace Gist {
     /// Status bar update
     void statusChanged(const Statistics&, bool);
     /// The current node has been changed to \a n
-    void currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus);
+    void currentNodeChanged(VisualNode* n);
     /// The node with space \a s is inspected at point in time \a pit
     void inspect(Gecode::Reflection::VarMap& vm, int pit);
     /// The point in time changed to \a pit
@@ -345,7 +345,7 @@ namespace Gecode {  namespace Gist {
 
   private Q_SLOTS:
     void on_canvas_contextMenu(QContextMenuEvent*);
-    void on_canvas_currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus);
+    void on_canvas_currentNodeChanged(VisualNode*);
     void on_canvas_statusChanged(const Statistics&, bool);
   protected:
     /// Close the widget
