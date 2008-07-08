@@ -87,7 +87,7 @@ namespace Gecode { namespace Gist {
       connect(&searcher, SIGNAL(statusChanged(bool)), this, 
               SLOT(statusChanged(bool)));
       
-      qRegisterMetaType<Gecode::Gist::NodeStatus>("Gecode::Gist::NodeStatus");
+      qRegisterMetaType<Statistics>("Statistics");
       update();
   }
   
@@ -142,8 +142,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::statusChanged(bool finished) {
     if (finished)
       centerCurrentNode();
-    emit statusChanged(stats, finished);
-    emit currentNodeChanged(currentNode);
+    emit statusChanged(currentNode, stats, finished);
   }
 
   void
@@ -398,7 +397,7 @@ namespace Gecode { namespace Gist {
     case UNDETERMINED:
         {
           (void) currentNode->getNumberOfChildNodes(*na, curBest,stats);
-          emit statusChanged(stats,true);
+          emit statusChanged(currentNode,stats,true);
         }
         break;
     case FAILED:
@@ -465,7 +464,7 @@ namespace Gecode { namespace Gist {
     stats = Statistics();
     root->layout();
     
-    emit statusChanged(stats, true);
+    emit statusChanged(currentNode, stats, true);
     update();
   }
 
@@ -828,8 +827,7 @@ namespace Gecode { namespace Gist {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
-      NodeStatus status = n->getStatus();
-      emit currentNodeChanged(currentNode);
+      emit statusChanged(currentNode,stats,true);
       QWidget::update();
     }
   }
@@ -1174,10 +1172,11 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::on_canvas_statusChanged(const Statistics& stats,
+  TreeCanvas::on_canvas_statusChanged(VisualNode* n, const Statistics& stats,
                                       bool finished) {
     if (!finished) {
       inspectCN->setEnabled(false);
+      stopCN->setEnabled(true);
       reset->setEnabled(false);
       navUp->setEnabled(false);
       navDown->setEnabled(false);
@@ -1202,13 +1201,54 @@ namespace Gecode { namespace Gist {
       addVisualisation->setEnabled(false);
     } else {
       inspectCN->setEnabled(true);
+      stopCN->setEnabled(false);
       reset->setEnabled(true);
-      navUp->setEnabled(true);
-      navLeft->setEnabled(true);
-      navRight->setEnabled(true);
-      navRoot->setEnabled(true);
-      navNextSol->setEnabled(true);
-      navPrevSol->setEnabled(true);
+
+      if (n->isOpen() || n->hasOpenChildren()) {
+        searchNext->setEnabled(true);
+        searchAll->setEnabled(true);
+      } else {
+        searchNext->setEnabled(false);
+        searchAll->setEnabled(false);      
+      }
+      if (n->getNumberOfChildren() > 0) {
+        navDown->setEnabled(true);
+        toggleHidden->setEnabled(true);
+        hideFailed->setEnabled(true);
+        unhideAll->setEnabled(true);            
+      } else {
+        navDown->setEnabled(false);
+        toggleHidden->setEnabled(false);
+        hideFailed->setEnabled(false);
+        unhideAll->setEnabled(false);      
+      }
+
+      VisualNode* p = n->getParent();
+      if (p == NULL) {
+        navRoot->setEnabled(false);
+        navUp->setEnabled(false);
+        navRight->setEnabled(false);
+        navLeft->setEnabled(false);
+      } else {
+        navRoot->setEnabled(true);
+        navUp->setEnabled(true);
+        unsigned int alt = n->getAlternative();
+        navRight->setEnabled(alt + 1 < p->getNumberOfChildren());
+        navLeft->setEnabled(alt > 0);
+      }
+
+      VisualNode* root = n;
+      while (!root->isRoot())
+        root = root->getParent();
+      NextSolCursor nsc(n, false);
+      PreorderNodeVisitor<NextSolCursor> nsv(nsc);
+      while (nsv.next()) {}
+      navNextSol->setEnabled(nsv.getCursor().node() != root);
+
+      NextSolCursor psc(n, true);
+      PreorderNodeVisitor<NextSolCursor> psv(psc);
+      while (psv.next()) {}
+      navPrevSol->setEnabled(psv.getCursor().node() != root);
 
       zoomToFit->setEnabled(true);
       centerCN->setEnabled(true);
@@ -1220,43 +1260,6 @@ namespace Gecode { namespace Gist {
       addVisualisation->setEnabled(true);
     }
     emit statusChanged(stats,finished);
-  }
-
-  void
-  TreeCanvas::on_canvas_currentNodeChanged(VisualNode* n) {
-    if (n->isOpen() || n->hasOpenChildren()) {
-      searchNext->setEnabled(true);
-      searchAll->setEnabled(true);
-    } else {
-      searchNext->setEnabled(false);
-      searchAll->setEnabled(false);      
-    }
-    if (n->getNumberOfChildren() > 0) {
-      navDown->setEnabled(true);
-      toggleHidden->setEnabled(true);
-      hideFailed->setEnabled(true);
-      unhideAll->setEnabled(true);            
-    } else {
-      navDown->setEnabled(false);
-      toggleHidden->setEnabled(false);
-      hideFailed->setEnabled(false);
-      unhideAll->setEnabled(false);      
-    }
-
-    VisualNode* p = n->getParent();
-    if (p == NULL) {
-      navRoot->setEnabled(false);
-      navUp->setEnabled(false);
-      navRight->setEnabled(false);
-      navLeft->setEnabled(false);
-    } else {
-      navRoot->setEnabled(true);
-      navUp->setEnabled(true);
-      unsigned int alt = n->getAlternative();
-      navRight->setEnabled(alt + 1 < p->getNumberOfChildren());
-      navLeft->setEnabled(alt > 0);
-    }
-
   }
   
   void

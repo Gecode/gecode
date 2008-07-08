@@ -204,6 +204,7 @@ namespace Gecode { namespace Gist {
     statusBar()->addPermanentWidget(stw);
     
     isSearching = false;
+    statusBar()->showMessage("Ready");
     
     connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
