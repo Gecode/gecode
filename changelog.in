@@ -70,7 +70,7 @@ Date: ?
 This release adds many domain consistent propagators for
 arithmetic constraints and fixes a number of bugs. Some of these
 bugs fixed are potentially serious, in particular as they occur
-very seldomly. Please change to 2.2.0 as soon as possible. And,
+very seldom. Please change to 2.2.0 as soon as possible. And,
 of course, the usual small fixes and changes.
 
 [ENTRY]
