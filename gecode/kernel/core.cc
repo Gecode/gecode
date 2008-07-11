@@ -274,6 +274,7 @@ namespace Gecode {
         goto stable_or_unstable;
       case __ES_PARTIAL:
         // Schedule propagator with specified propagator events
+        assert(p->u.med != 0);
         enqueue(p);
         goto unstable;
       default:
