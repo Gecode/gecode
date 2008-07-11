@@ -70,6 +70,13 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added domain consistent multiplication propagator.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   major

@@ -54,8 +54,9 @@ namespace Test { namespace Int {
      class MultXYZ : public Test {
      public:
        /// Create and register test
-       MultXYZ(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Mult::XYZ::"+s,3,d) {}
+       MultXYZ(const std::string& s, const Gecode::IntSet& d,
+               Gecode::IntConLevel icl)
+         : Test("Arithmetic::Mult::XYZ::"+str(icl)+"::"+s,3,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -65,7 +66,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[1], x[2]);
+         Gecode::mult(home, x[0], x[1], x[2], icl);
        }
      };
    
@@ -73,8 +74,9 @@ namespace Test { namespace Int {
      class MultXXY : public Test {
      public:
        /// Create and register test
-       MultXXY(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Mult::XXY::"+s,2,d) {}
+       MultXXY(const std::string& s, const Gecode::IntSet& d,
+               Gecode::IntConLevel icl)
+         : Test("Arithmetic::Mult::XXY::"+str(icl)+"::"+s,2,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -84,7 +86,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[0], x[1]);
+         Gecode::mult(home, x[0], x[0], x[1], icl);
        }
      };
    
@@ -92,8 +94,9 @@ namespace Test { namespace Int {
      class MultXYX : public Test {
      public:
        /// Create and register test
-       MultXYX(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Mult::XYX::"+s,2,d) {}
+       MultXYX(const std::string& s, const Gecode::IntSet& d,
+               Gecode::IntConLevel icl)
+         : Test("Arithmetic::Mult::XYX::"+str(icl)+"::"+s,2,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -103,7 +106,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[1], x[0]);
+         Gecode::mult(home, x[0], x[1], x[0], icl);
        }
      };
    
@@ -111,8 +114,9 @@ namespace Test { namespace Int {
      class MultXYY : public Test {
      public:
        /// Create and register test
-       MultXYY(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Mult::XYY::"+s,2,d) {}
+       MultXYY(const std::string& s, const Gecode::IntSet& d,
+               Gecode::IntConLevel icl)
+         : Test("Arithmetic::Mult::XYY::"+str(icl)+"::"+s,2,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -122,7 +126,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[1], x[1]);
+         Gecode::mult(home, x[0], x[1], x[1], icl);
        }
      };
    
@@ -130,8 +134,9 @@ namespace Test { namespace Int {
      class MultXXX : public Test {
      public:
        /// Create and register test
-       MultXXX(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Mult::XXX::"+s,1,d) {}
+       MultXXX(const std::string& s, const Gecode::IntSet& d,
+               Gecode::IntConLevel icl)
+         : Test("Arithmetic::Mult::XXX::"+str(icl)+"::"+s,1,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -141,7 +146,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[0], x[0]);
+         Gecode::mult(home, x[0], x[0], x[0], icl);
        }
      };
    
@@ -518,25 +523,45 @@ namespace Test { namespace Int {
      Gecode::IntSet b(vb,9);
      Gecode::IntSet c(-8,8);
    
-     MultXYZ mult_xyz_a("A",a);
-     MultXYZ mult_xyz_b("B",b);
-     MultXYZ mult_xyz_c("C",c);
+     MultXYZ mult_xyz_b_a("A",a,Gecode::ICL_BND);
+     MultXYZ mult_xyz_b_b("B",b,Gecode::ICL_BND);
+     MultXYZ mult_xyz_b_c("C",c,Gecode::ICL_BND);
    
-     MultXXY mult_xxy_a("A",a);
-     MultXXY mult_xxy_b("B",b);
-     MultXXY mult_xxy_c("C",c);
+     MultXXY mult_xxy_b_a("A",a,Gecode::ICL_BND);
+     MultXXY mult_xxy_b_b("B",b,Gecode::ICL_BND);
+     MultXXY mult_xxy_b_c("C",c,Gecode::ICL_BND);
    
-     MultXYX mult_xyx_a("A",a);
-     MultXYX mult_xyx_b("B",b);
-     MultXYX mult_xyx_c("C",c);
+     MultXYX mult_xyx_b_a("A",a,Gecode::ICL_BND);
+     MultXYX mult_xyx_b_b("B",b,Gecode::ICL_BND);
+     MultXYX mult_xyx_b_c("C",c,Gecode::ICL_BND);
    
-     MultXYY mult_xyy_a("A",a);
-     MultXYY mult_xyy_b("B",b);
-     MultXYY mult_xyy_c("C",c);
+     MultXYY mult_xyy_b_a("A",a,Gecode::ICL_BND);
+     MultXYY mult_xyy_b_b("B",b,Gecode::ICL_BND);
+     MultXYY mult_xyy_b_c("C",c,Gecode::ICL_BND);
    
-     MultXXX mult_xxx_a("A",a);
-     MultXXX mult_xxx_b("B",b);
-     MultXXX mult_xxx_c("C",c);
+     MultXXX mult_xxx_b_a("A",a,Gecode::ICL_BND);
+     MultXXX mult_xxx_b_b("B",b,Gecode::ICL_BND);
+     MultXXX mult_xxx_b_c("C",c,Gecode::ICL_BND);
+   
+     MultXYZ mult_xyz_d_a("A",a,Gecode::ICL_DOM);
+     MultXYZ mult_xyz_d_b("B",b,Gecode::ICL_DOM);
+     MultXYZ mult_xyz_d_c("C",c,Gecode::ICL_DOM);
+   
+     MultXXY mult_xxy_d_a("A",a,Gecode::ICL_DOM);
+     MultXXY mult_xxy_d_b("B",b,Gecode::ICL_DOM);
+     MultXXY mult_xxy_d_c("C",c,Gecode::ICL_DOM);
+   
+     MultXYX mult_xyx_d_a("A",a,Gecode::ICL_DOM);
+     MultXYX mult_xyx_d_b("B",b,Gecode::ICL_DOM);
+     MultXYX mult_xyx_d_c("C",c,Gecode::ICL_DOM);
+   
+     MultXYY mult_xyy_d_a("A",a,Gecode::ICL_DOM);
+     MultXYY mult_xyy_d_b("B",b,Gecode::ICL_DOM);
+     MultXYY mult_xyy_d_c("C",c,Gecode::ICL_DOM);
+   
+     MultXXX mult_xxx_d_a("A",a,Gecode::ICL_DOM);
+     MultXXX mult_xxx_d_b("B",b,Gecode::ICL_DOM);
+     MultXXX mult_xxx_d_c("C",c,Gecode::ICL_DOM);
    
      SqrXY sqr_xy_b_a("A",a,Gecode::ICL_BND);
      SqrXY sqr_xy_b_b("B",b,Gecode::ICL_BND);
