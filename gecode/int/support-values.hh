@@ -57,7 +57,6 @@ namespace Gecode { namespace Int {
     class RangePos {
     public:
       int min;          ///< Minimum of range
-      int max;          ///< Maximum of range
       unsigned int pos; ///< Starting position of range
     };
     /// Value iterator for unsupported values
@@ -65,10 +64,12 @@ namespace Gecode { namespace Int {
     private:
       /// Current range
       RangePos* rp;
-      /// Current value
-      int v;
+      /// Current position
+      unsigned int p;
       /// Access to other information
       SupportValues& sv;
+      /// Find next unsupported value
+      void find(void);
     public:
       /// \name Constructors and initialization
       //@{
@@ -103,6 +104,8 @@ namespace Gecode { namespace Int {
     RangePos* rp;
     /// Current value
     int v;
+    /// Current maximum of range
+    int max;
 
     /// Set bit at position \a i
     void set(unsigned int i);
