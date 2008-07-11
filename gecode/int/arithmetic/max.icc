@@ -40,59 +40,13 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
-   * Ternary bounds-consistent maximum
+   * Ternary bounds consistent maximum
    *
    */
 
   template <class View>
-  forceinline
-  Max<View>::Max(Space* home, View x0, View x1, View x2)
-    : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
-
-  template <class View>
-  ExecStatus
-  Max<View>::post(Space* home, View x0, View x1, View x2) {
-    if (same(x0,x1))
-      return Rel::EqBnd<View,View>::post(home,x0,x2);
-    if (same(x0,x2))
-      return Rel::Lq<View>::post(home,x1,x2);
-    if (same(x1,x2))
-      return Rel::Lq<View>::post(home,x0,x2);
-    (void) new (home) Max<View>(home,x0,x1,x2);
-    return ES_OK;
-  }
-
-  template <class View>
-  forceinline void
-  Max<View>::post(Space* home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     View x2(home, vars, spec[2]);
-     (void) new (home) Max<View>(home,x0,x1,x2);
-  }
-
-  template <class View>
-  forceinline
-  Max<View>::Max(Space* home, bool share, Max<View>& p)
-    : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
-
-  template <class View>
-  forceinline
-  Max<View>::Max(Space* home, bool share, Propagator& p,
-                 View x0, View x1, View x2)
-    : TernaryPropagator<View,PC_INT_BND>(home,share,p,x0,x1,x2) {}
-
-  template <class View>
-  Actor*
-  Max<View>::copy(Space* home, bool share) {
-    return new (home) Max<View>(home,share,*this);
-  }
-
-  template <class View>
-  ExecStatus
-  Max<View>::propagate(Space* home, ModEventDelta) {
+  forceinline ExecStatus
+  prop_max_bnd(Space* home, View x0, View x1, View x2) {
     bool mod = false;
     do {
       mod = false;
@@ -117,6 +71,59 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         mod |= me_modified(me);
       }
     } while (mod);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  MaxBnd<View>::MaxBnd(Space* home, View x0, View x1, View x2)
+    : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
+
+  template <class View>
+  ExecStatus
+  MaxBnd<View>::post(Space* home, View x0, View x1, View x2) {
+    if (same(x0,x1))
+      return Rel::EqBnd<View,View>::post(home,x0,x2);
+    if (same(x0,x2))
+      return Rel::Lq<View>::post(home,x1,x2);
+    if (same(x1,x2))
+      return Rel::Lq<View>::post(home,x0,x2);
+    (void) new (home) MaxBnd<View>(home,x0,x1,x2);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  MaxBnd<View>::post(Space* home, Reflection::VarMap& vars,
+                  const Reflection::ActorSpec& spec) {
+     spec.checkArity(3);
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
+     View x2(home, vars, spec[2]);
+     (void) new (home) MaxBnd<View>(home,x0,x1,x2);
+  }
+
+  template <class View>
+  forceinline
+  MaxBnd<View>::MaxBnd(Space* home, bool share, MaxBnd<View>& p)
+    : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  forceinline
+  MaxBnd<View>::MaxBnd(Space* home, bool share, Propagator& p,
+                 View x0, View x1, View x2)
+    : TernaryPropagator<View,PC_INT_BND>(home,share,p,x0,x1,x2) {}
+
+  template <class View>
+  Actor*
+  MaxBnd<View>::copy(Space* home, bool share) {
+    return new (home) MaxBnd<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  MaxBnd<View>::propagate(Space* home, ModEventDelta) {
+    GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
     if (x0.max() <= x1.min())
       GECODE_REWRITE(this,(Rel::EqBnd<View,View>::post(home,x1,x2)));
     if (x1.max() <= x0.min())
@@ -127,68 +134,68 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Support::Symbol
-  Max<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::Max");
+  MaxBnd<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::MaxBnd");
   }
 
   template <class View>
   Reflection::ActorSpec
-  Max<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  MaxBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
   /*
-   * Nary bounds-consistent maximum
+   * Nary bounds consistent maximum
    *
    */
 
   template <class View>
   forceinline
-  NaryMax<View>::NaryMax(Space* home, ViewArray<View>& x, View y)
+  NaryMaxBnd<View>::NaryMaxBnd(Space* home, ViewArray<View>& x, View y)
     : NaryOnePropagator<View,PC_INT_BND>(home,x,y) {}
 
   template <class View>
   ExecStatus
-  NaryMax<View>::post(Space* home, ViewArray<View>& x, View y) {
+  NaryMaxBnd<View>::post(Space* home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
     x.unique();
     if (x.size() == 1)
       return Rel::EqBnd<View,View>::post(home,x[0],y);
     if (x.size() == 2)
-      return Max<View>::post(home,x[0],x[1],y);
+      return MaxBnd<View>::post(home,x[0],x[1],y);
     if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
         GECODE_ES_CHECK(Rel::Lq<View>::post(home,x[i],y));
     } else {
-      (void) new (home) NaryMax<View>(home,x,y);
+      (void) new (home) NaryMaxBnd<View>(home,x,y);
     }
     return ES_OK;
   }
 
   template <class View>
   forceinline void
-  NaryMax<View>::post(Space* home, Reflection::VarMap& vars,
+  NaryMaxBnd<View>::post(Space* home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
     View y(home, vars, spec[1]);
-    (void) new (home) NaryMax<View>(home,x,y);
+    (void) new (home) NaryMaxBnd<View>(home,x,y);
   }
 
   template <class View>
   forceinline
-  NaryMax<View>::NaryMax(Space* home, bool share, NaryMax<View>& p)
+  NaryMaxBnd<View>::NaryMaxBnd(Space* home, bool share, NaryMaxBnd<View>& p)
     : NaryOnePropagator<View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
   Actor*
-  NaryMax<View>::copy(Space* home, bool share) {
+  NaryMaxBnd<View>::copy(Space* home, bool share) {
     if (x.size() == 1)
       return new (home) Rel::EqBnd<View,View>(home,share,*this,x[0],y);
     if (x.size() == 2)
-      return new (home) Max<View>(home,share,*this,x[0],x[1],y);
-    return new (home) NaryMax<View>(home,share,*this);
+      return new (home) MaxBnd<View>(home,share,*this,x[0],x[1],y);
+    return new (home) NaryMaxBnd<View>(home,share,*this);
   }
 
   /// Status of propagation for nary max
@@ -199,8 +206,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   template <class View>
-  ExecStatus
-  NaryMax<View>::propagate(Space* home, ModEventDelta) {
+  forceinline ExecStatus
+  prop_nary_max_bnd(Space* home, Propagator* p,
+                    ViewArray<View>& x, View y, PropCond pc) {
   rerun:
     assert(x.size() > 0);
     int maxmax = x[x.size()-1].max();
@@ -221,7 +229,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (me_modified(me) && (x[i].max() != maxmax))
         status |= MPS_NEW_BOUND;
       if (x[i].max() < maxmin) {
-        x.move_lst(i,home,this,PC_INT_BND);
+        x.move_lst(i,home,p,pc);
         status |= MPS_REMOVED;
       } else if (!x[i].assigned())
         status &= ~MPS_ASSIGNED;
@@ -231,20 +239,213 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((status & MPS_REMOVED) != 0)
       goto rerun;
     if (((status & MPS_ASSIGNED) != 0) && y.assigned())
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(p,sizeof(*p));
     return ((status & MPS_NEW_BOUND) != 0) ? ES_NOFIX : ES_FIX;
   }
 
   template <class View>
+  ExecStatus
+  NaryMaxBnd<View>::propagate(Space* home, ModEventDelta) {
+    return prop_nary_max_bnd(home,this,x,y,PC_INT_BND);
+  }
+
+  template <class View>
   Support::Symbol
-  NaryMax<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::NaryMax");
+  NaryMaxBnd<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::NaryMaxBnd");
   }
 
   template <class View>
   Reflection::ActorSpec
-  NaryMax<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  NaryMaxBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
     return NaryOnePropagator<View,PC_INT_BND>::spec(home, m, ati());
+  }
+
+
+  /*
+   * Ternary domain consistent maximum
+   *
+   */
+
+  template <class View>
+  forceinline
+  MaxDom<View>::MaxDom(Space* home, View x0, View x1, View x2)
+    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
+  (home,x0,x1,x2) {}
+
+  template <class View>
+  ExecStatus
+  MaxDom<View>::post(Space* home, View x0, View x1, View x2) {
+    if (same(x0,x1))
+      return Rel::EqDom<View,View>::post(home,x0,x2);
+    if (same(x0,x2))
+      return Rel::Lq<View>::post(home,x1,x2);
+    if (same(x1,x2))
+      return Rel::Lq<View>::post(home,x0,x2);
+    (void) new (home) MaxDom<View>(home,x0,x1,x2);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  MaxDom<View>::post(Space* home, Reflection::VarMap& vars,
+                  const Reflection::ActorSpec& spec) {
+     spec.checkArity(3);
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
+     View x2(home, vars, spec[2]);
+     (void) new (home) MaxDom<View>(home,x0,x1,x2);
+  }
+
+  template <class View>
+  forceinline
+  MaxDom<View>::MaxDom(Space* home, bool share, MaxDom<View>& p)
+    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
+  (home,share,p) {}
+
+  template <class View>
+  forceinline
+  MaxDom<View>::MaxDom(Space* home, bool share, Propagator& p,
+                       View x0, View x1, View x2)
+    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
+  (home,share,p,x0,x1,x2) {}
+
+  template <class View>
+  Actor*
+  MaxDom<View>::copy(Space* home, bool share) {
+    return new (home) MaxDom<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  MaxDom<View>::cost(ModEventDelta med) const {
+    return (View::me(med) == ME_INT_DOM) ? PC_TERNARY_HI : PC_TERNARY_LO;
+  }
+
+  template <class View>
+  ExecStatus
+  MaxDom<View>::propagate(Space* home, ModEventDelta med) {
+    if (View::me(med) != ME_INT_DOM) {
+      GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
+      if (x0.max() <= x1.min())
+        GECODE_REWRITE(this,(Rel::EqDom<View,View>::post(home,x1,x2)));
+      if (x1.max() <= x0.min())
+        GECODE_REWRITE(this,(Rel::EqDom<View,View>::post(home,x0,x2)));
+      return x0.assigned() && x1.assigned() && x2.assigned() ?
+        ES_SUBSUMED(this,sizeof(*this)) : 
+        ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+    }
+    ViewRanges<View> r0(x0), r1(x1);
+    Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
+    GECODE_ME_CHECK(x2.inter_r(home,u,false));
+    return ES_FIX;
+  }
+
+  template <class View>
+  Support::Symbol
+  MaxDom<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::MaxDom");
+  }
+
+  template <class View>
+  Reflection::ActorSpec
+  MaxDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
+    return MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,
+      View,PC_INT_BND>::spec(home, m, ati());
+  }
+
+  /*
+   * Nary domain consistent maximum
+   *
+   */
+
+  template <class View>
+  forceinline
+  NaryMaxDom<View>::NaryMaxDom(Space* home, ViewArray<View>& x, View y)
+    : MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>(home,x,y) {}
+
+  template <class View>
+  ExecStatus
+  NaryMaxDom<View>::post(Space* home, ViewArray<View>& x, View y) {
+    assert(x.size() > 0);
+    x.unique();
+    if (x.size() == 1)
+      return Rel::EqDom<View,View>::post(home,x[0],y);
+    if (x.size() == 2)
+      return MaxDom<View>::post(home,x[0],x[1],y);
+    if (x.same(y)) {
+      // Check whether y occurs in x
+      for (int i=x.size(); i--; )
+        GECODE_ES_CHECK(Rel::Lq<View>::post(home,x[i],y));
+    } else {
+      (void) new (home) NaryMaxDom<View>(home,x,y);
+    }
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  NaryMaxDom<View>::post(Space* home, Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
+    ViewArray<View> x(home, vars, spec[0]);
+    View y(home, vars, spec[1]);
+    (void) new (home) NaryMaxDom<View>(home,x,y);
+  }
+
+  template <class View>
+  forceinline
+  NaryMaxDom<View>::NaryMaxDom(Space* home, bool share, NaryMaxDom<View>& p)
+    : MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  NaryMaxDom<View>::copy(Space* home, bool share) {
+    if (x.size() == 1)
+      return new (home) Rel::EqDom<View,View>(home,share,*this,x[0],y);
+    if (x.size() == 2)
+      return new (home) MaxDom<View>(home,share,*this,x[0],x[1],y);
+    return new (home) NaryMaxDom<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  NaryMaxDom<View>::cost(ModEventDelta med) const {
+    return (View::me(med) == ME_INT_DOM)
+      ? cost_lo(y.size(),PC_LINEAR_HI)
+      : cost_hi(x.size(),PC_LINEAR_LO);
+  }
+
+  template <class View>
+  ExecStatus
+  NaryMaxDom<View>::propagate(Space* home, ModEventDelta med) {
+    if (View::me(med) != ME_INT_DOM) {
+      ExecStatus es = prop_nary_max_bnd(home,this,x,y,PC_INT_DOM);
+      GECODE_ES_CHECK(es);
+      return (es == ES_FIX) ? 
+        ES_FIX_PARTIAL(this,View::med(ME_INT_DOM)) :
+        ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+    }
+    GECODE_AUTOARRAY(ViewRanges<View>, i_x, x.size());
+    for (int i = x.size(); i--; ) {
+      ViewRanges<View> i_xi(x[i]); i_x[i]=i_xi;
+    }
+    Iter::Ranges::NaryUnion<ViewRanges<View> > u(i_x,x.size());
+    GECODE_ME_CHECK(y.inter_r(home,u,false));
+    return ES_FIX;
+  }
+
+  template <class View>
+  Support::Symbol
+  NaryMaxDom<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::NaryMaxDom");
+  }
+
+  template <class View>
+  Reflection::ActorSpec
+  NaryMaxDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
+    return MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>
+      ::spec(home, m, ati());
   }
 
 }}}

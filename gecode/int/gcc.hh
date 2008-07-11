@@ -55,7 +55,7 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   /**
-   * \brief Bounds-consistent global cardinality propagator
+   * \brief Bounds consistent global cardinality propagator
    * \par [Reference]
    *  The algorithm is taken from: \n
      \verbatim
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /**
-   * \brief Domain-consistent global cardinality propagator
+   * \brief Domain consistent global cardinality propagator
    * \par [Reference]
    *  The algorithm is taken from: \n
    * \anchor CardVarNPCompl

@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Element {
 
 
   /**
-   * \brief Bounds-consistent element propagator for array of views
+   * \brief Bounds consistent element propagator for array of views
    *
    * Requires \code #include "gecode/int/element.hh" \endcode
    * \ingroup FuncIntProp
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Element {
   };
 
   /**
-   * \brief Domain-consistent element propagator for array of views
+   * \brief Domain consistent element propagator for array of views
    *
    * The propagator uses staging: first it uses
    * bounds-propagation on the array of views and the uses

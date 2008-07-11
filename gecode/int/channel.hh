@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View> class DomInfo;
 
   /**
-   * \brief Domain-consistent channel propagator
+   * \brief Domain consistent channel propagator
    *
    * If \a shared is true, the same views can be contained in both 
    * \a x and \a y.   

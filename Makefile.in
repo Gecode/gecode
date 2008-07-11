@@ -558,6 +558,7 @@ ITERHDR0 =							\
 	ranges-offset ranges-operations ranges-scale		\
 	ranges-singleton ranges-singleton-append		\
 	ranges-size ranges-union ranges-values			\
+	ranges-negative ranges-positive ranges-map		\
 	values-array values-minus values-offset values-ranges 	\
 	values-positive values-negative				\
 	values-singleton values-unique values-inter 		\

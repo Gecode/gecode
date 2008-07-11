@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, template <class View0,class View1> class Eq>
   ExecStatus
-  prop_bnd(Space* home, Propagator* p, View x0, View x1) {
+  prop_abs_bnd(Space* home, Propagator* p, View x0, View x1) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,(x0.val() < 0) ? -x0.val() : x0.val()));
       return ES_SUBSUMED(p,sizeof(*p));
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   ExecStatus
   AbsBnd<View>::propagate(Space* home, ModEventDelta) {
-    return prop_bnd<View,Rel::EqBnd>(home, this, x0, x1);
+    return prop_abs_bnd<View,Rel::EqBnd>(home, this, x0, x1);
   }
 
   template <class View>
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   AbsDom<View>::propagate(Space* home, ModEventDelta med) {
     if (View::me(med) != ME_INT_DOM) {
-      GECODE_ES_CHECK((prop_bnd<View,Rel::EqDom>(home, this, x0, x1)));
+      GECODE_ES_CHECK((prop_abs_bnd<View,Rel::EqDom>(home, this, x0, x1)));
       return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
     }
 

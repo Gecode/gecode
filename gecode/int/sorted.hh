@@ -49,7 +49,7 @@
 namespace Gecode { namespace Int { namespace Sorted {
 
   /**
-   * \brief Bounds-consistent sortedness propagator
+   * \brief Bounds consistent sortedness propagator
    *
    * The algorithm is taken from: Sven Thiel, Efficient Algorithms 
    * for Constraint Propagation and for Processing Tree Descriptions,

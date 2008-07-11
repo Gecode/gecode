@@ -40,9 +40,39 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
-   * Positive bounds-consistent squaring
+   * Positive bounds consistent squaring
    *
    */
+  template <class VA, class VB>
+  forceinline ExecStatus
+  prop_sqr_plus_bnd(Space* home, VA x0, VB x1) {
+    bool mod;
+    do {
+      mod = false;
+      {
+        ModEvent me = x0.lq(home,floor(::sqrt(static_cast<double>(x1.max()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x0.gq(home,ceil(::sqrt(static_cast<double>(x1.min()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x1.lq(home,x0.max()*x0.max());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+      {
+        ModEvent me = x1.gq(home,x0.min()*x0.min());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
+      }
+    } while (mod);
+    return ES_OK;
+  }
+
   template <class VA, class VB>
   forceinline
   SqrPlusBnd<VA,VB>::SqrPlusBnd(Space* home, VA x0, VB x1)
@@ -79,30 +109,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   ExecStatus
   SqrPlusBnd<VA,VB>::propagate(Space* home, ModEventDelta) {
-    bool mod;
-    do {
-      mod = false;
-      {
-        ModEvent me = x0.lq(home,floor(::sqrt(static_cast<double>(x1.max()))));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x0.gq(home,ceil(::sqrt(static_cast<double>(x1.min()))));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x1.lq(home,x0.max()*x0.max());
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x1.gq(home,x0.min()*x0.min());
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-    } while (mod);
+    GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     return x0.assigned() ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
@@ -122,7 +129,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /*
-   * Bounds-consistent squaring
+   * Bounds consistent squaring
    *
    */
 
@@ -215,7 +222,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
 
   /// Mapping integer to square
-  class ValMapSqr {
+  class ValuesMapSqr {
   public:
     /// Perform mapping
     forceinline int val(int n) const {
@@ -224,7 +231,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /// Mapping integer to square root
-  class ValMapSqrt {
+  class ValuesMapSqrt {
   public:
     /// Perform mapping
     forceinline int val(int n) const {
@@ -284,32 +291,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   SqrPlusDom<VA,VB>::propagate(Space* home, ModEventDelta med) {
     if (VA::me(med) != ME_INT_DOM) {
-      bool mod;
-      do {
-        mod = false;
-        {
-          ModEvent me = 
-            x0.lq(home,floor(::sqrt(static_cast<double>(x1.max()))));
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = 
-            x0.gq(home,ceil(::sqrt(static_cast<double>(x1.min()))));
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = x1.lq(home,x0.max()*x0.max());
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-        {
-          ModEvent me = x1.gq(home,x0.min()*x0.min());
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-      } while (mod);
+      GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
       return x0.assigned() ? 
         ES_SUBSUMED(this,sizeof(*this)) 
         : ES_NOFIX_PARTIAL(this,VA::med(ME_INT_DOM));
@@ -317,13 +299,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     
     {
       ViewValues<VA> v0(x0);
-      Iter::Values::Map<ViewValues<VA>,ValMapSqr> s0(v0);
+      Iter::Values::Map<ViewValues<VA>,ValuesMapSqr> s0(v0);
       GECODE_ME_CHECK(x1.inter_v(home,s0,false));
     }
 
     {
       ViewValues<VB> v1(x1);
-      Iter::Values::Map<ViewValues<VB>,ValMapSqrt> s1(v1);
+      Iter::Values::Map<ViewValues<VB>,ValuesMapSqrt> s1(v1);
       GECODE_ME_CHECK(x0.inter_v(home,s1,false));
     }
 
@@ -438,20 +420,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       Negative<ViewValues<View> > n(j);
       Minus<Negative<ViewValues<View> > > m(n);
       
-      Map<Positive<ViewValues<View> >,ValMapSqr> sp(p);
-      Map<Minus<Negative<ViewValues<View> > >,ValMapSqr> sm(m);
-      Union<Map<Positive<ViewValues<View> >,ValMapSqr>,
-        Map<Minus<Negative<ViewValues<View> > >,ValMapSqr> > u(sp,sm);
+      Map<Positive<ViewValues<View> >,ValuesMapSqr,true> sp(p);
+      Map<Minus<Negative<ViewValues<View> > >,ValuesMapSqr,true> sm(m);
+      Union<Map<Positive<ViewValues<View> >,ValuesMapSqr,true>,
+        Map<Minus<Negative<ViewValues<View> > >,ValuesMapSqr,true> > u(sp,sm);
       GECODE_ME_CHECK(x1.inter_v(home,u,false));
     }
 
     {
       ViewValues<View> i(x1), j(x1);
       using namespace Iter::Values;
-      Map<ViewValues<View>,ValMapSqrt> si(i), sj(j);
-      Minus<Map<ViewValues<View>,ValMapSqrt> > mi(si);
-      Union<Minus<Map<ViewValues<View>,ValMapSqrt> >,
-        Map<ViewValues<View>,ValMapSqrt> > u(mi,sj);
+      Map<ViewValues<View>,ValuesMapSqrt,true> si(i), sj(j);
+      Minus<Map<ViewValues<View>,ValuesMapSqrt,true> > mi(si);
+      Union<Minus<Map<ViewValues<View>,ValuesMapSqrt,true> >,
+        Map<ViewValues<View>,ValuesMapSqrt,true> > u(mi,sj);
       GECODE_ME_CHECK(x0.inter_v(home,u,false));
     }
 
