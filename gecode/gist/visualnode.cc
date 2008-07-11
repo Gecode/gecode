@@ -44,7 +44,7 @@ namespace Gecode { namespace Gist {
   VisualNode::VisualNode(int alternative, BestNode* b)
   : SpaceNode(alternative, b), offset(0), dirty(true), 
     childrenLayoutDone(false), hidden(false), marked(false)
-  , onPath(false), lastOnPath(false), pathAlternative(-1)
+  , onPath(false)
   , heat(0)
   , shape(NULL), box(0,0,0)
   {}
@@ -52,7 +52,7 @@ namespace Gecode { namespace Gist {
   VisualNode::VisualNode(Space* root, Better* b)
   : SpaceNode(root, b), offset(0), dirty(true), childrenLayoutDone(false), 
     hidden(false), marked(false)
-  , onPath(false), lastOnPath(false), pathAlternative(-1)
+  , onPath(false)
   , heat(0)
   , shape(NULL), box(0,0,0)
   {}
@@ -88,32 +88,33 @@ namespace Gecode { namespace Gist {
   }
     
   void
-  VisualNode::setPathInfos(bool onPath0, int pathAlternative0, bool lastOnPath0) {
-    assert(pathAlternative0 <= noOfChildren);
-    assert(!lastOnPath0 || pathAlternative0 == -1);
-
+  VisualNode::setOnPath(bool onPath0) {
     onPath = onPath0;
-    pathAlternative = pathAlternative0;
-    lastOnPath = lastOnPath0;
   }
   
   void VisualNode::pathUp(void) {
-    if(isRoot())
-      return;
-    
-    VisualNode* p = getParent();
-    p->setPathInfos(true, alternative);
-    p->pathUp();
+    VisualNode* cur = this;
+    while (cur) {
+      cur->setOnPath(true);
+      cur = cur->getParent();
+    }
   }
 
   void VisualNode::unPathUp(void) {
-    if(isRoot())
-      return;
-    
-    setPathInfos(false);
+    VisualNode* cur = this;
+    while (!cur->isRoot()) {
+      cur->setOnPath(false);
+      cur = cur->getParent();
+    }
+  }
 
-    VisualNode* p = getParent();
-    p->unPathUp();
+  int
+  VisualNode::getPathAlternative(void) {
+    for (int i=noOfChildren; i--;) {
+      if (getChild(i)->isOnPath())
+        return i;
+    }
+    return -1;
   }
 
   void

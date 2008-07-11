@@ -1,0 +1,144 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2008-04-23 19:23:29 +0200 (Mi, 23 Apr 2008) $ by $Author: tack $
+ *     $Revision: 6775 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+namespace Gecode { namespace Gist {
+    
+  forceinline SpaceNode*
+  SpaceNode::getParent() {
+    return static_cast<SpaceNode*>(Node::getParent());
+  }
+
+  forceinline SpaceNode*
+  SpaceNode::getChild(int i) {
+    return static_cast<SpaceNode*>(Node::getChild(i));
+  }
+    
+  forceinline Better*
+  SpaceNode::getBetterWrapper(void) const {
+    return curBest == NULL ? NULL : curBest->b;
+  }
+    
+  forceinline
+  SpaceNode::SpaceNode(int alt, BestNode* cb)
+  : copy(NULL), workingSpace(NULL), curBest(cb), ownBest(NULL) {
+    desc.branch = NULL;
+    alternative = alt;
+    status = UNDETERMINED;
+    _hasSolvedChildren = false;
+    _hasFailedChildren = false;
+  }
+    
+  forceinline Space*
+  SpaceNode::getSpace(void) {
+    acquireSpace();
+    Space* ret = workingSpace;
+    workingSpace = NULL;
+    return ret;
+  }
+
+  forceinline bool
+  SpaceNode::isCurrentBest(void) {
+    return curBest != NULL && curBest->s == this;
+  }
+  
+  forceinline NodeStatus
+  SpaceNode::getStatus(void) {
+    return status;
+  }
+  
+  forceinline void
+  SpaceNode::setStatus(NodeStatus s) {
+    status = s;
+  }
+    
+  forceinline void
+  SpaceNode::setSpecialDesc(const SpecialDesc* d) {
+    desc.special = d;
+  }
+    
+  forceinline void
+  SpaceNode::setStepDesc(StepDesc* d) {
+    desc.step = d;
+  }
+    
+  forceinline bool
+  SpaceNode::isStepNode(void) {
+    return getStatus() == STEP;
+  }
+
+  forceinline StepDesc*
+  SpaceNode::getStepDesc(void) {
+    return (isStepNode() ? desc.step : NULL);
+  }
+
+  forceinline int
+  SpaceNode::getAlternative(void) {
+    return alternative;
+  }
+    
+  forceinline bool
+  SpaceNode::isOpen(void) {
+    return status == UNDETERMINED || _hasOpenChildren;
+  }
+  
+  forceinline bool
+  SpaceNode::hasFailedChildren(void) {
+    return _hasFailedChildren;
+  }
+  
+  forceinline bool
+  SpaceNode::hasSolvedChildren(void) {
+    return _hasSolvedChildren;
+  }
+        
+  forceinline bool
+  SpaceNode::hasCopy(void) {
+    return copy != NULL;
+  }
+
+  forceinline bool
+  SpaceNode::hasWorkingSpace(void) {
+    return workingSpace != NULL;
+  }
+
+  forceinline SpaceNode*
+  SpaceNode::createChild(int alternative) {
+    return new SpaceNode(alternative, curBest);
+  }
+  
+}}
+
+// STATISTICS: gist-any

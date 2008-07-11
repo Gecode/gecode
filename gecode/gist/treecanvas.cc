@@ -481,7 +481,6 @@ namespace Gecode { namespace Gist {
     pathHead->unPathUp();
     pathHead = currentNode;
 
-    currentNode->setPathInfos(true, -1, true);
     currentNode->pathUp();
     currentNode->dirtyUp();
     update();
@@ -491,12 +490,14 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::inspectPath(void) {
     QMutexLocker locker(&mutex);
     setCurrentNode(root);
-    while(currentNode->isOnPath()) {
+    if (currentNode->isOnPath()) {
       inspectCurrentNode();
-      if(!currentNode->isLastOnPath())
-        setCurrentNode(currentNode->getChild(currentNode->getPathAlternative()));
-      else
-        break;
+      int nextAlt = currentNode->getPathAlternative();
+      while (nextAlt >= 0) {
+        setCurrentNode(currentNode->getChild(nextAlt));
+        inspectCurrentNode();
+        nextAlt = currentNode->getPathAlternative();
+      }
     }
     update();
   }
@@ -527,10 +528,7 @@ namespace Gecode { namespace Gist {
       case DECOMPOSE:
       case BRANCH: 
           {
-            int alt = 0;
-            if(currentNode->isOnPath() && !currentNode->isLastOnPath()) {
-              alt = currentNode->getPathAlternative();
-            }
+            int alt = std::max(0, currentNode->getPathAlternative());
             VisualNode* n = currentNode->getChild(alt);
             setCurrentNode(n);
             centerCurrentNode();
@@ -749,7 +747,18 @@ namespace Gecode { namespace Gist {
                static_cast<int>(origClip.height()/scale));
     DrawingCursor dc(root, painter, heatView, clip);
     PreorderNodeVisitor<DrawingCursor> v(dc);
+
     while (v.next()) {}
+
+    // int nodesLayouted = 1;
+    // clock_t t0 = clock();
+    // while (v.next()) { nodesLayouted++; }
+    // double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+    // double nps = static_cast<double>(nodesLayouted) / 
+    //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
+    // std::cout << "Drawing done. " << nodesLayouted << " nodes in "
+    //   << t << " ms. " << nps << " nodes/s." << std::endl;
+
   }
 
   void

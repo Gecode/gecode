@@ -130,9 +130,7 @@ namespace Gecode { namespace Gist {
     SpaceNode* ownBest;
     
     /// Number of children that are not fully explored
-    int noOfOpenChildren;
-    /// Number of children that are solutions
-    int noOfSolvedChildren;
+    bool _hasOpenChildren;
     /// Whether the subtree of this node is known to contain failure
     bool _hasFailedChildren;
     /// Whether the subtree of this node is known to contain solutions
@@ -140,15 +138,9 @@ namespace Gecode { namespace Gist {
     
     /// Recompute workingSpace from a copy higher up, return distance to copy
     int recompute(void);
-    /// Try to get workingSpace from parent
-    Space* donateSpace(int alt, SpaceNode* ownBest);
-    /// Try to get copy from parent if this node is the last alternative
-    Space* checkLAO(int alt, SpaceNode* ownBest);
-    /// Acquire working space, either through donateSpace or recompute
+    /// Acquire working space, either from parent or by recomputation
     void acquireSpace(void);
 
-    /// Mark all ancestors as having solved children
-    void solveUp(void);
     /// Book-keeping of open children
     void closeChild(bool hadFailures, bool hadSolutions);
   public:
@@ -197,16 +189,12 @@ namespace Gecode { namespace Gist {
     int getAlternative(void);
     /// Return whether this node still has open children
     bool isOpen(void);
-    /// Opens all nodes on the path up to the root
-    void openUp(void);
     /// Return whether the subtree of this node has any failed children
     bool hasFailedChildren(void);
     /// Return whether the subtree of this node has any solved children
     bool hasSolvedChildren(void);
     /// Return number of open children
     int getNoOfOpenChildren(void);
-    /// Return number of solved children
-    int getNoOfSolvedChildren(void);
     /// Set number of open children to \a n
     void setNoOfOpenChildren(int n);
     /// Return whether the node has a copy
@@ -225,6 +213,8 @@ namespace Gecode { namespace Gist {
   };
 
 }}
+
+#include "gecode/gist/spacenode.icc"
 
 #endif
 

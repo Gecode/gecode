@@ -73,13 +73,8 @@ namespace Gecode { namespace Gist {
     bool hidden;
     /// Whether the node is marked
     bool marked;
-    
     /// Whether the node is on the selected path
     bool onPath;
-    /// Whether the node is the head of the selected path
-    bool lastOnPath;
-    /// The alternative that is next on the path
-    int pathAlternative;
 
     /// Heat value 
     unsigned char heat;
@@ -128,12 +123,10 @@ namespace Gecode { namespace Gist {
     void unPathUp(void);
     /// Return whether node is on the path
     bool isOnPath(void);
-    /// Return whether node is the head of the path
-    bool isLastOnPath(void);
     /// Return the alternative of the child that is on the path (-1 if none)
     int getPathAlternative(void);
-    /// Set the path attributes of the node
-    void setPathInfos(bool onPath0, int pathAlternative0 = -1, bool lastOnPath0 = false);
+    /// Set whether node is on the path
+    void setOnPath(bool onPath0);
     
     /// Return heat value
     unsigned char getHeat(void) const;
