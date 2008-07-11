@@ -500,11 +500,12 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_OK;
     if (n == 0)
       return (c == 0) ? ES_FAILED : ES_OK;
-    if (n == 1)
+    if (n == 1) {
       if (c == 1)
         return post_false(home,x[0],y) ? ES_FAILED : ES_OK;
       else 
         return post_true(home,x[0],y) ? ES_FAILED : ES_OK;
+    }
     (void) new (home) NqInt(home,x,y,c);
     return ES_OK;
   }

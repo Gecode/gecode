@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace Channel {
           ModEvent me = y[j].view.nq(home,i);
           if (me_failed(me))
             return ES_FAILED;
-          if (me_modified(me))
+          if (me_modified(me)) {
             if (me == ME_INT_VAL) {
               // Record that y[j] has been assigned and must be propagated
               ya.push(j);
@@ -160,6 +160,7 @@ namespace Gecode { namespace Int { namespace Channel {
               // Obvious as x[i] is different from j
               y[j].removed(i);
             }
+          }
           ++jv;
         }
         // Update which values have been propagated and what are the new bounds

@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Channel {
         ModEvent me = x[k].view.nq(home,j);
         if (me_failed(me))
           return ES_FAILED;
-        if (me_modified(me))
+        if (me_modified(me)) {
           if (me == ME_INT_VAL) {
             // Record that x[k] has been assigned and must be propagated
             xa.push(k);
@@ -148,13 +148,14 @@ namespace Gecode { namespace Int { namespace Channel {
             // that y[j] != k.
             x[k].removed(j);
           }
+        }
       }
       // The same for the other views
       for (int k=i+1; k<n; k++) {
         ModEvent me = x[k].view.nq(home,j);
         if (me_failed(me))
           return ES_FAILED;
-        if (me_modified(me))
+        if (me_modified(me)) {
           if (me == ME_INT_VAL) {
             // Record that x[k] has been assigned and must be propagated
             xa.push(k);
@@ -164,6 +165,7 @@ namespace Gecode { namespace Int { namespace Channel {
             // that y[j] != k.
             x[k].removed(j);
           }
+        }
       }
       x[i].assigned(); n_na--;
     } while (!xa.empty());
