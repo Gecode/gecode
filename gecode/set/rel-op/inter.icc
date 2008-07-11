@@ -90,7 +90,6 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   ExecStatus
   Intersection<View0,View1,View2>::propagate(Space* home, ModEventDelta med) {
-
     // This propagator implements the constraint
     // x2 = x0 \cap x1
 
@@ -184,15 +183,15 @@ namespace Gecode { namespace Set { namespace RelOp {
         GECODE_ES_CHECK(ret);
       }
 
-      if (x2.cardMax() == Set::Limits::card) {
+      if (x2.cardMin() == Set::Limits::card) {
         GECODE_ME_CHECK( x0.cardMin(home, Set::Limits::card) );
         GECODE_ME_CHECK( x1.cardMin(home, Set::Limits::card) );
         return ES_SUBSUMED(this,home);
       }
 
-      if (x0.cardMax() == Set::Limits::card)
+      if (x0.cardMin() == Set::Limits::card)
         GECODE_REWRITE(this,(Rel::Eq<View1,View2>::post(home,x1,x2)));
-      if (x1.cardMax() == Set::Limits::card)
+      if (x1.cardMin() == Set::Limits::card)
         GECODE_REWRITE(this,(Rel::Eq<View0,View2>::post(home,x0,x2)));
 
     } while(modified);
