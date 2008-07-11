@@ -74,23 +74,27 @@ namespace Gecode { namespace Gist {
   /// \brief The shape of a subtree
   class Shape {
   private:
-    /// The shape is an array of extents, one for each depth level
-    Extent* shape;
     /// The depth of this shape
     int _depth;
+    /// The shape is an array of extents, one for each depth level
+    Extent shape[1];
     /// Copy construtor
     Shape(const Shape&);
+    /// Assignment operator
+    Shape& operator=(const Shape&);
+    /// Constructor
+    Shape(void);
   public:
-    /// Constructor shape of depth \a d
-    Shape(int d);
+    /// Construct shape of depth \a d
+    static Shape* allocate(int d);
     /// Construct with single extent \a e
-    Shape(Extent e);
+    static Shape* allocate(Extent e);
     /// Construct with \e for the root and \a subShape for the children
-    Shape(Extent e, const Shape* subShape);
+    static Shape* allocate(Extent e, const Shape* subShape);
     /// Construct from \a subShape
-    Shape(const Shape* subShape);
-    // Destructor
-    ~Shape(void);
+    static Shape* allocate(const Shape* subShape);
+    // Destruct
+    static void deallocate(Shape*);
 
     /// Return depth of the shape
     int depth(void) const;

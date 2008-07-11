@@ -59,36 +59,42 @@ namespace Gecode { namespace Gist {
     l += delta; r += delta;
   }
   
-  inline
-  Shape::Shape(Extent e)
-   : shape(Memory::bmalloc<Extent>(1)), _depth(1) {
-    shape[0] = e;
+  forceinline const Extent&
+  Shape::operator[](int i) const {
+    assert(i < _depth);
+    return shape[i];
   }
 
-  inline
-  Shape::Shape(int d) {
-    shape = Memory::bmalloc<Extent>(d);
-    _depth = d;
+  forceinline Extent&
+  Shape::operator[](int i) {
+    assert(i < _depth);
+    return shape[i];
   }
 
-  forceinline
-  Shape::~Shape(void) {
+  inline Shape*
+  Shape::allocate(int d) {
+    Shape* ret =
+      static_cast<Shape*>(Memory::malloc(sizeof(Shape) + 
+                                         (d-1)*sizeof(Extent)));
+    ret->_depth = d;
+    return ret;
+  }
+
+  inline Shape*
+  Shape::allocate(Extent e) {
+    Shape* ret = Shape::allocate(1);
+    (*ret)[0] = e;
+    return ret;
+  }
+
+  forceinline void
+  Shape::deallocate(Shape* shape) {
     Memory::free(shape);
   }
   
   forceinline int
   Shape::depth(void) const { return _depth; }
   
-  forceinline const Extent&
-  Shape::operator[](int i) const {
-    return shape[i];
-  }
-
-  forceinline Extent&
-  Shape::operator[](int i) {
-    return shape[i];
-  }
-
   forceinline bool
   LayoutCursor::mayMoveDownwards(void) {
     return NodeCursor<VisualNode>::mayMoveDownwards() &&
