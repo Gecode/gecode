@@ -96,6 +96,39 @@ namespace Gecode { namespace Search {
     return sn.desc();
   }
 
+  template <class DescType>
+  forceinline const BranchingDesc*
+  ReCoStack::nextDesc(EngineCtrl& stat, int& closedDescs) {
+    closedDescs = 0;
+    while (!ds.empty())
+      if (ds.top().rightmost()) {
+        stat.pop(ds.top().space(),ds.top().desc());
+        if (dynamic_cast<const DescType*>(ds.top().desc()))
+          closedDescs++;
+        ds.pop().dispose();
+      } else {
+        ds.top().next();
+        return ds.top().desc();
+      }
+    return NULL;
+  }
+
+  template <class DescType, bool inclusive>
+  forceinline void
+  ReCoStack::closeBranch(EngineCtrl& stat) {
+    while (!ds.empty()) {
+      if (dynamic_cast<const DescType*>(ds.top().desc())) {
+        if (inclusive && !ds.empty()) {
+          stat.pop(ds.top().space(),ds.top().desc());
+          ds.pop().dispose();      
+        }
+        break;       
+      }
+      stat.pop(ds.top().space(),ds.top().desc());
+      ds.pop().dispose();
+    }
+  }
+
   forceinline bool
   ReCoStack::next(EngineCtrl& stat) {
     // Generate path for next node and return whether node exists.

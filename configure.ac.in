@@ -225,6 +225,9 @@ AC_GECODE_ENABLE_MODULE(serialization, yes,
 AC_GECODE_ENABLE_MODULE(search, yes,
         [build search engines])
 
+AC_GECODE_ENABLE_MODULE(dds, yes,
+        [build decomposition during search engine])
+
 dnl Configure contributions
 AC_CONFIG_SUBDIRS()
 dnl @SUBDIRS@

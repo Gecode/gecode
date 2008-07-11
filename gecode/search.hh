@@ -337,6 +337,12 @@ namespace Gecode {
       ReCoStack(unsigned int a_d);
       /// Push space \a c (a clone of \a s or NULL)
       const BranchingDesc* push(Space* s, Space* c);
+      /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
+      template <class DescType>
+      const BranchingDesc* nextDesc(EngineCtrl& s, int& closedDescs);
+      /// Generate path for next node with BranchingDesc type DescType
+      template <class DescType, bool inclusive>
+      void closeBranch(EngineCtrl& s);
       /// Generate path for next node and return whether a next node exists
       bool next(EngineCtrl& s);
       /// Return position on stack of last copy
