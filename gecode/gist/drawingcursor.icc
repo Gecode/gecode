@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2008-02-19 11:05:15 +0100 (Di, 19 Feb 2008) $ by $Author: tack $
+ *     $Revision: 6231 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,38 +34,37 @@
  *
  */
 
-#include "gecode/gist/nodecursor.hh"
-
 namespace Gecode { namespace Gist {
-  
-  HideFailedCursor::HideFailedCursor(VisualNode* root)
-   : NodeCursor<VisualNode>(root) {}
-    
-  void
-  HideFailedCursor::processCurrentNode(void) {
-    VisualNode* n = node();
-    if ((n->getStatus() == BRANCH ||
-         ((n->getStatus() == SPECIAL || n->getStatus() == STEP) && n->hasFailedChildren())) &&
-        !n->hasSolvedChildren() &&
-        n->getNoOfOpenChildren() == 0) {
-      n->setHidden(true);
-      n->setChildrenLayoutDone(false);
-      n->dirtyUp();
-    }
+
+  inline void
+  DrawingCursor::moveUpwards(void) { 
+    x -= node()->getOffset();
+    y -= Layout::dist_y;
+    NodeCursor<VisualNode>::moveUpwards();
   }
 
-  UnhideAllCursor::UnhideAllCursor(VisualNode* root)
-   : NodeCursor<VisualNode>(root) {}
-  
-  void
-  UnhideAllCursor::processCurrentNode(void) {
-    VisualNode* n = node();
-    if (n->isHidden()) {
-      n->setHidden(false);
-      n->dirtyUp();
-    }
+  inline bool
+  DrawingCursor::mayMoveDownwards(void) {
+    return NodeCursor<VisualNode>::mayMoveDownwards() &&
+           !node()->isHidden() &&
+           node()->childrenLayoutIsDone() &&
+           !isClipped();
   }
-  
+
+  inline void
+  DrawingCursor::moveDownwards(void) {
+    NodeCursor<VisualNode>::moveDownwards();
+    x += node()->getOffset();
+    y += Layout::dist_y;
+  }
+
+  inline void
+  DrawingCursor::moveSidewards(void) {
+    x -= node()->getOffset();
+    NodeCursor<VisualNode>::moveSidewards();
+    x += node()->getOffset();
+  }
+
+
 }}
-
 // STATISTICS: gist-any

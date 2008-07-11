@@ -42,7 +42,7 @@
 #include "gecode/gist/treecanvas.hh"
 
 #include "gecode/gist/nodevisitor.hh"
-#include "gecode/gist/shapelist.hh"
+#include "gecode/gist/layoutcursor.hh"
 #include "gecode/gist/visualnode.hh"
 #include "gecode/gist/postscript.hh"
 #include "gecode/gist/drawingcursor.hh"
@@ -96,8 +96,8 @@ namespace Gecode { namespace Gist {
       scale0 = 400;
     scale = (static_cast<double>(scale0)) / 100.0;
     bb = root->getBoundingBox();
-    int w = static_cast<int>((bb.right-bb.left+20)*scale);
-    int h = static_cast<int>(40+bb.depth*38*scale);
+    int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
+    int h = static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*scale);
     if (heatView)
       w = std::max(w, 300);
     resize(w,h);
@@ -113,9 +113,10 @@ namespace Gecode { namespace Gist {
       root->layout();
       BoundingBox bb = root->getBoundingBox();
 
-      int w = static_cast<int>((bb.right-bb.left+20)*scale);
-      int h = static_cast<int>(40+bb.depth*38*scale);
-      xtrans = -bb.left+10;
+      int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
+      int h = 
+        static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*scale);
+      xtrans = -bb.left+(Layout::extent / 2);
       resize(w,h);
     }
     if (autoZoom)
@@ -159,17 +160,20 @@ namespace Gecode { namespace Gist {
     t->root->layout();
     BoundingBox bb = t->root->getBoundingBox();
 
-    int w = static_cast<int>((bb.right-bb.left+20)*t->scale);
-    int h = static_cast<int>(40+bb.depth*38*t->scale);
-    t->xtrans = -bb.left+10;
+    int w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
+    int h = 
+      static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*t->scale);
+    t->xtrans = -bb.left+(Layout::extent / 2);
 
     if (t->autoZoom) {
       QWidget* p = t->parentWidget();
       if (p) {
         double newXScale =
-          static_cast<double>(p->width()) / (bb.right - bb.left + 20);
+          static_cast<double>(p->width()) / (bb.right - bb.left + 
+                                             Layout::extent);
         double newYScale =
-          static_cast<double>(p->height()) / (bb.depth * 38 + 40);
+          static_cast<double>(p->height()) / (bb.depth * Layout::dist_y + 
+                                              2*Layout::extent);
 
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
         if (scale0<1)
@@ -178,8 +182,9 @@ namespace Gecode { namespace Gist {
           scale0 = 400;
         t->scale = (static_cast<double>(scale0)) / 100.0;
 
-        w = static_cast<int>((bb.right-bb.left+20)*t->scale);
-        h = static_cast<int>(40+bb.depth*38*t->scale);
+        w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
+        h = 
+          static_cast<int>(2*Layout::extent+bb.depth*Layout::dist_y*t->scale);
 
         emit scaleChanged(scale0);
       }
@@ -277,9 +282,11 @@ namespace Gecode { namespace Gist {
       QWidget* p = parentWidget();
       if (p) {
         double newXScale =
-          static_cast<double>(p->width()) / (bb.right - bb.left + 20);
+          static_cast<double>(p->width()) / (bb.right - bb.left + 
+                                             Layout::extent);
         double newYScale =
-          static_cast<double>(p->height()) / (bb.depth * 38 + 40);
+          static_cast<double>(p->height()) / (bb.depth * Layout::dist_y +
+                                              2*Layout::extent);
         scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
       }
     }
@@ -294,7 +301,7 @@ namespace Gecode { namespace Gist {
     VisualNode* c = currentNode;
     while (c != NULL) {
       x += c->getOffset();
-      y += 38;
+      y += Layout::dist_y;
       c = c->getParent();
     }
     
@@ -548,9 +555,11 @@ namespace Gecode { namespace Gist {
       BoundingBox bb = root->getBoundingBox();
       QRect pageRect = printer.pageRect();
       double newXScale =
-        static_cast<double>(pageRect.width()) / (bb.right - bb.left + 20);
+        static_cast<double>(pageRect.width()) / (bb.right - bb.left + 
+                                                 Layout::extent);
       double newYScale =
-        static_cast<double>(pageRect.height()) / (bb.depth * 38 + 40);
+        static_cast<double>(pageRect.height()) / (bb.depth * Layout::dist_y + 
+                                                  2*Layout::extent);
       double printScale = std::min(newXScale, newYScale)*100;
       if (printScale<1.0)
         printScale = 1.0;
@@ -737,6 +746,8 @@ namespace Gecode { namespace Gist {
     if (autoZoom) {
       zoomToFit();
     }
+    emit autoZoomChanged(b);
+    scaleBar->setEnabled(!b);
   }
 
   bool
@@ -832,7 +843,10 @@ namespace Gecode { namespace Gist {
 
     scrollArea->setWidget(canvas);
 
+    QCheckBox* autoZoomButton = new QCheckBox("");
+
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
+    canvas->scaleBar = scaleBar;
     scaleBar->setObjectName("scaleBar");
     scaleBar->setMinimum(1);
     scaleBar->setMaximum(400);
@@ -989,11 +1003,19 @@ namespace Gecode { namespace Gist {
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
     connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
+
+    connect(autoZoomButton, SIGNAL(toggled(bool)), canvas,
+            SLOT(setAutoZoom(bool)));
+
+    connect(canvas, SIGNAL(autoZoomChanged(bool)),
+            autoZoomButton, SLOT(setChecked(bool)));
+
     connect(&canvas->searcher, SIGNAL(scaleChanged(int)),
             scaleBar, SLOT(setValue(int)));
     
-    layout->addWidget(scrollArea, 0,0);
-    layout->addWidget(scaleBar, 0,1);
+    layout->addWidget(scrollArea, 0,0,-1,1);
+    layout->addWidget(scaleBar, 1,1);
+    layout->addWidget(autoZoomButton, 0,1);
     
     setLayout(layout);
 

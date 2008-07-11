@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2008-04-26 09:09:46 +0200 (Sa, 26 Apr 2008) $ by $Author: tack $
+ *     $Revision: 6787 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,36 +34,34 @@
  *
  */
 
-#include "gecode/gist/nodecursor.hh"
-
 namespace Gecode { namespace Gist {
-  
-  HideFailedCursor::HideFailedCursor(VisualNode* root)
-   : NodeCursor<VisualNode>(root) {}
-    
-  void
-  HideFailedCursor::processCurrentNode(void) {
-    VisualNode* n = node();
-    if ((n->getStatus() == BRANCH ||
-         ((n->getStatus() == SPECIAL || n->getStatus() == STEP) && n->hasFailedChildren())) &&
-        !n->hasSolvedChildren() &&
-        n->getNoOfOpenChildren() == 0) {
-      n->setHidden(true);
-      n->setChildrenLayoutDone(false);
-      n->dirtyUp();
-    }
-  }
 
-  UnhideAllCursor::UnhideAllCursor(VisualNode* root)
-   : NodeCursor<VisualNode>(root) {}
+  forceinline
+  Node::Node(void) : parent(NULL), children(NULL), noOfChildren(-1) {}
+
+  forceinline Node*
+  Node::getParent(void) { return parent; }
+
+  forceinline Node*
+  Node::getChild(int n) {
+    assert(n < noOfChildren);
+    return children[n];
+  }
+    
+  forceinline bool
+  Node::isRoot(void) { return parent == NULL; }
+
+  forceinline int
+  Node::getDepth(void) { return isRoot() ? 1 : parent->getDepth() + 1; }
   
-  void
-  UnhideAllCursor::processCurrentNode(void) {
-    VisualNode* n = node();
-    if (n->isHidden()) {
-      n->setHidden(false);
-      n->dirtyUp();
-    }
+  forceinline int
+  Node::getNumberOfChildren(void) {
+    return noOfChildren;
+  }
+  
+  forceinline int
+  Node::getAlternative(void) {
+    return alternative;
   }
   
 }}

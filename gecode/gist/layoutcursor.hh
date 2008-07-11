@@ -6,8 +6,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-11-26 15:48:52 +0100 (Mo, 26 Nov 2007) $ by $Author: tack $
+ *     $Revision: 5437 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,29 +34,23 @@
  *
  */
 
-#ifndef GECODE_GIST_SHAPELIST_HH
-#define GECODE_GIST_SHAPELIST_HH
+#ifndef GECODE_GIST_LAYOUTCURSOR_HH
+#define GECODE_GIST_LAYOUTCURSOR_HH
 
-#include <vector>
-#include <iostream>
+#include "gecode/gist/nodecursor.hh"
+#include "gecode/gist/visualnode.hh"
 
 namespace Gecode { namespace Gist {
-
-  /// \brief Bounding box
-  class BoundingBox {
+  
+  /// \brief Layout parameters
+  class Layout {
   public:
-    /// Left coordinate
-    int left;
-    /// Right coordinate 
-    int right;
-    /// Depth
-    int depth;
-    /// Constructor
-    BoundingBox(int l, int r, int d);
-    /// Default constructor
-    BoundingBox(void) {}
+    static const int dist_y = 38;
+    static const int extent = 20;
+    static const int minimalSeparation = 10;
   };
-
+  
+  
   /// \brief Extent, representing shape of a tree at one depth level
   class Extent {
   public:
@@ -80,60 +74,61 @@ namespace Gecode { namespace Gist {
   /// \brief The shape of a subtree
   class Shape {
   private:
-    /// The shape is a vector of extents, one for each depth level
-    std::vector<Extent> shape;
+    /// The shape is an array of extents, one for each depth level
+    Extent* shape;
+    /// The depth of this shape
+    int _depth;
     /// Copy construtor
     Shape(const Shape&);
   public:
-    /// Default constructor
-    Shape(void);
+    /// Constructor shape of depth \a d
+    Shape(int d);
     /// Construct with single extent \a e
     Shape(Extent e);
     /// Construct with \e for the root and \a subShape for the children
     Shape(Extent e, const Shape* subShape);
     /// Construct from \a subShape
     Shape(const Shape* subShape);
+    // Destructor
+    ~Shape(void);
+
+    static const Shape singletonShape;
+    static const Shape unitShape;
     
     /// Return depth of the shape
     int depth(void) const;
-    /// Add \a to the shape
-    void add(Extent e);
     /// Return extent at depth \a i
-    Extent get(int i);
+    const Extent& operator[](int i) const;
+    /// Return extent at depth \a i
+    Extent& operator[](int i);
     /// Extend the shape by \a deltaL and \a deltaR
     void extend(int deltaL, int deltaR);
     /// Move the shape by \a delta
     void move(int delta);
     /// Return if extent exists at \a depth, if yes return it in \a extent
     bool getExtentAtDepth(int depth, Extent& extent);
+    /// Return bounding box
     BoundingBox getBoundingBox(void);
   };
-
-  /// \brief Container for shapes
-  class ShapeList {
-  private:
-    /// The shapes
-    std::vector<Shape*> shapes;
-    /// The minimal distance necessary between two nodes
-    int minimalSeparation;
-    /// Offsets computed
-    std::vector<int> offsets;
-    /// Compute distance needed between \a shape1 and \a shape2
-    int getAlpha(Shape* shape1, Shape* shape2);
-    /// Merge \a shape1 and \a shape2 with distance \a alpha
-    static Shape* merge(Shape* shape1, Shape* shape2, int alpha);
+  
+  /// \brief A cursor that computes a tree layout for VisualNodes
+  class LayoutCursor : public NodeCursor<VisualNode> {
   public:
     /// Constructor
-    ShapeList(int length, int minSeparation);
-    /// Return the merged shape
-    Shape* getMergedShape(bool left = false);
-    /// Return offset computed for child \a i
-    int getOffsetOfChild(int i);
-    /// Return shape no \a i
-    Shape*& operator[](int i);
+    LayoutCursor(VisualNode* theNode);
+
+    /// \name Cursor interface
+    //@{
+    /// Test if the cursor may move to the first child node
+    bool mayMoveDownwards(void);
+    /// Compute layout for current node
+    void processCurrentNode(void);
+    //@}
   };
-  
+
 }}
+
+#include "gecode/gist/layoutcursor.icc"
 
 #endif
 

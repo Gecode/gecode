@@ -38,12 +38,27 @@
 #define GECODE_GIST_VISUALNODE_HH
 
 #include "gecode/gist/spacenode.hh"
-#include "gecode/gist/shapelist.hh"
 #include "gecode/kernel.hh"
-#include <vector>
 #include <string>
 
 namespace Gecode { namespace Gist {
+
+  /// \brief Bounding box
+  class BoundingBox {
+  public:
+    /// Left coordinate
+    int left;
+    /// Right coordinate 
+    int right;
+    /// Depth
+    int depth;
+    /// Constructor
+    BoundingBox(int l, int r, int d);
+    /// Default constructor
+    BoundingBox(void) {}
+  };
+
+  class Shape;
 
   /// \brief Node class that supports visual layout
   class VisualNode : public SpaceNode {
@@ -83,11 +98,6 @@ namespace Gecode { namespace Gist {
     /// Destructor
     virtual ~VisualNode(void);
     
-    /// Shape of a single node
-    static const Shape singletonShape;
-    /// Unit shape
-    static const Shape unitShape;
-
     /// Return if node is hidden
     bool isHidden(void);
     /// Set hidden state to \a h
@@ -160,6 +170,8 @@ namespace Gecode { namespace Gist {
   };
 
 }}
+
+#include "gecode/gist/visualnode.icc"
 
 #endif
 

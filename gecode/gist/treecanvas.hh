@@ -164,6 +164,8 @@ namespace Gecode {  namespace Gist {
   Q_SIGNALS:
     /// The scale factor has changed
     void scaleChanged(int);
+    /// The auto-zoom state was changed
+    void autoZoomChanged(bool);
     /// Context menu triggered
     void contextMenu(QContextMenuEvent*);
     /// Status bar update
@@ -193,6 +195,9 @@ namespace Gecode {  namespace Gist {
     QVector<VisualNode*> nodeMap;
     /// The active inspector
     Inspector* inspector;
+    
+    /// The scale bar
+    QWidget* scaleBar;
     
     /// Statistics about the search tree
     Statistics stats;

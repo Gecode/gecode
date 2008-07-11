@@ -37,41 +37,50 @@
 namespace Gecode { namespace Gist {
 
   template <class Node>
+  forceinline
   NodeCursor<Node>::NodeCursor(Node* theNode) : _startNode(theNode), _node(theNode) {}
 
   template <class Node>
-  Node*
+  forceinline Node*
   NodeCursor<Node>::node(void) { return _node; }
 
   template <class Node>
-  bool
+  forceinline bool
   NodeCursor<Node>::mayMoveUpwards(void) { return _node != _startNode && !_node->isRoot(); }
 
   template <class Node>
-  void
+  forceinline void
   NodeCursor<Node>::moveUpwards(void) {
     _node = static_cast<Node*>(_node->getParent());
   }
 
   template <class Node>
-  bool
+  forceinline bool
   NodeCursor<Node>::mayMoveDownwards(void) { return _node->getNumberOfChildren() > 0; }
 
   template <class Node>
-  void
+  forceinline void
   NodeCursor<Node>::moveDownwards(void) { _node = _node->getChild(0); }
 
   template <class Node>
-  bool
+  forceinline bool
   NodeCursor<Node>::mayMoveSidewards(void) {
     return (!_node->isRoot()) &&
       (_node->getAlternative() < _node->getParent()->getNumberOfChildren() - 1);
   }
 
   template <class Node>
-  void
+  forceinline void
   NodeCursor<Node>::moveSidewards(void) {
     _node = static_cast<Node*>(_node->getParent()->getChild(_node->getAlternative()+1));
+  }
+
+  forceinline bool
+  HideFailedCursor::mayMoveDownwards(void) {
+    VisualNode* n = node();
+    return NodeCursor<VisualNode>::mayMoveDownwards() &&
+           (n->hasSolvedChildren() || n->getNoOfOpenChildren() > 0) &&
+           (! n->isHidden());
   }
 
 }}

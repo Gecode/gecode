@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_NODE_HH
 #define GECODE_GIST_NODE_HH
 
-#include <vector>
+#include "gecode/support.hh"
 
 namespace Gecode { namespace Gist {
 
@@ -47,7 +47,7 @@ namespace Gecode { namespace Gist {
     /// The parent of this node, or NULL for the root
     Node* parent;
     /// The children of this node
-    std::vector<Node*> children;
+    Node** children;
     /// The number of children of this node
     int noOfChildren;
     /// The alternative number this node represents
@@ -83,6 +83,8 @@ namespace Gecode { namespace Gist {
   };
 
 }}
+
+#include "gecode/gist/node.icc"
 
 #endif
 
