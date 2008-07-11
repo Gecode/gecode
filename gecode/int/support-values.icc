@@ -161,7 +161,7 @@ namespace Gecode { namespace Int {
     while ((p < sv.x.size()) && sv.bit(p))
       p++;
     // Move to matching range
-    while (p >= (rp+1)->pos)
+    while ((rp <= sv.rp_lst) && (p >= (rp+1)->pos))
       rp++;
   }
 
