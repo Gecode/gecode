@@ -120,13 +120,15 @@ namespace Gecode {
           default: GECODE_NEVER;
           }
         }
+        int alt=-1;
         if (const BranchingDesc* nextDesc =
-              rcs.nextDesc<Decomposition::DecompDesc>(*this, closedDecomps)) {
+              rcs.nextDesc<Decomposition::DecompDesc>(*this, alt,
+                                                      closedDecomps)) {
           cur = static_cast<Space*>(rcs.recompute<false>(d,*this));
           EngineCtrl::current(cur);
           if (const Decomposition::DecompDesc* dd=
                 dynamic_cast<const Decomposition::DecompDesc*>(nextDesc)) {
-            dd->significantVars(1, significantVars);
+            dd->significantVars(alt, significantVars);
             return EXS_NEXT_DECOMP;
           }
           if (closedDecomps > 0) {
