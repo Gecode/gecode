@@ -70,6 +70,15 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: kernel
+What:   documentation
+Rank:   minor
+Thanks:	David Rijsman
+[DESCRIPTION]
+Fixed explanation of ES_FIX and ES_NOFIX for advisors
+(description was mixed up).
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor
