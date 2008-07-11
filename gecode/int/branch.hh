@@ -566,10 +566,21 @@ namespace Gecode { namespace Int { namespace Branch {
     static Support::Symbol type(void);
   };
 
+  template <template <class,class,class,class> class B>
+  void
+  createBranch(Space* home, const IntVarArgs& x,
+               IntVarBranch vars, IntValBranch vals);
+
+  template <template <class,class,class,class> class B>
+  void
+  createBranch(Space* home, const BoolVarArgs& x, 
+               IntVarBranch vars, IntValBranch vals);
+
 }}}
 
 #include "gecode/int/branch/select-val.icc"
 #include "gecode/int/branch/select-view.icc"
+#include "gecode/int/branch/create-branch.icc"
 
 #endif
 

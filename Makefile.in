@@ -190,10 +190,10 @@ VARIMPHDR = \
 VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cc
 
 KERNELSRC0 = \
-	core reflection var-map var-type memory-manager decomposing-branching
+	core reflection var-map var-type memory-manager
 
 KERNELHDR0 = \
-	array shared-array branching core decomposing-branching exception \
+	array shared-array branching core exception \
 	macros memory-manager modevent \
 	propagator advisor view var var-traits var-map reflection
 
@@ -223,9 +223,9 @@ EXTRA_HEADERS   = gecode/support/config.icc
 #
 
 SEARCHSRC0 = \
-	dfs.cc lds.cc bab.cc dds.cc stop.cc options.cc
+	dfs.cc lds.cc bab.cc stop.cc options.cc
 SEARCHHDR0 = \
-	bab.icc dfs.icc lds.icc restart.icc dds.icc  \
+	bab.icc dfs.icc lds.icc restart.icc  \
 	reco-stack.icc statistics.icc \
 	engine-ctrl.icc stop.icc options.icc
 
@@ -273,7 +273,8 @@ INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	arithmetic/sqr.icc arithmetic/sqrt.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
-	branch/select-val.icc branch/select-view.icc \
+	branch/create-branch.icc branch/select-val.icc \
+	branch/select-view.icc \
 	count/view.icc count/int.icc count/rel.icc \
 	cumulatives/val.icc \
 	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \
@@ -568,6 +569,7 @@ ITERHDR0 =							\
 ITERHDR = gecode/iter.hh \
 	$(ITERHDR0:%=gecode/iter/%.icc)
 
+
 #
 # GIST
 #
@@ -714,8 +716,8 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cc=%$(SBJSUFFIX))
 ALLSRC = \
 	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) \
-	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) $(JSEXAMPLESRC) \
-	$(EXSUPPORTSRC) $(GISTSRC)
+	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
+	$(JSEXAMPLESRC) $(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SERHDR) \
@@ -1104,7 +1106,7 @@ $(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1142,7 +1144,11 @@ $(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(
 		$(BOOST_LINK) $(LINKQT) @LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
+<<<<<<< .working
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKQT) \
+=======
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKDDS) $(LINKQT) \
+>>>>>>> .merge-right.r6782
 		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
 endif
 
@@ -1190,7 +1196,7 @@ framework: $(STATICTARGETS)
 	  $(DLLFLAGS) \
 	  -o gecode.framework/Versions/@GECODE_SOVERSION@/gecode $^
 	$(MAKE) doinstallheaders \
-	  prefix=gecode.framework/Versions/@GECODE_SOVERSION@
+	  prefix=gecode.framework/Versions/@GECODE_SOVERSION@ DESTDIR=
 	mv gecode.framework/Versions/@GECODE_SOVERSION@/include/gecode/* \
 	  gecode.framework/Versions/@GECODE_SOVERSION@/include/
 	rmdir gecode.framework/Versions/@GECODE_SOVERSION@/include/gecode

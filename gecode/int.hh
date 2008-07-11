@@ -2020,14 +2020,6 @@ namespace Gecode {
   branch(Space* home, const BoolVarArgs& x, 
          IntVarBranch vars, IntValBranch vals);
 
-  /// Branch over \a x with variable selection \a vars and value selection \a vals, applying decomposition during search if possible
-  GECODE_INT_EXPORT void
-  decomposingBranch(Space* home, const IntVarArgs& x, 
-                    IntVarBranch vars, IntValBranch vals);
-  /// Branch over \a x with variable selection \a vars and value selection \a vals, applying decomposition during search if possible
-  GECODE_INT_EXPORT void
-  decomposingBranch(Space* home, const BoolVarArgs& x, 
-                    IntVarBranch vars, IntValBranch vals);
   //@}
 
   /**

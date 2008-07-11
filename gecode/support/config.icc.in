@@ -68,6 +68,9 @@
 /* Whether serialization support is built */
 #undef GECODE_HAS_SERIALIZATION
 
+/* Whether dds support is built */
+#undef GECODE_HAS_DDS
+
 /* Whether to compile boost dependent parts */
 #undef GECODE_HAS_BOOST
 

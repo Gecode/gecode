@@ -740,130 +740,6 @@ namespace Gecode {
   template <class T>
   T* restart(T* s, const Search::Options& o=Search::Options::def);
 
-  /*
-   * Decomposition during search
-   *
-   */
-  
-  namespace Search {
-    /// Engine for decomposition during search
-    class DDSEngine : public EngineCtrl {
-    private:
-      /// Recomputation stack of nodes
-      ReCoStack          rcs;
-      /// Current space being explored
-      Space*             cur;
-      /// Copying recomputation distance
-      const unsigned int c_d;
-      /// Distance until next clone
-      unsigned int       d;
-    public:
-      /// The possible status of the engine after calling next
-      enum ExploreStatus {
-        EXS_SOLUTION, EXS_START_DECOMP, EXS_NEXT_DECOMP, EXS_END_DECOMP,
-        EXS_SINGLETON_BRANCH, EXS_DONE
-      };
-      /**
-       * \brief Initialize engine
-       * \param c_d minimal recomputation distance
-       * \param a_d adaptive recomputation distance
-       * \param st %Stop-object
-       * \param sz size of one space
-       */
-      DDSEngine(unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
-      /// Initialize engine to start at space \a s
-      void init(Space* s);
-      /// Reset engine to restart at space \a s
-      void reset(Space* s);
-      /// Search for next solution or decomposition
-      ExploreStatus explore(Space*& s, int& closedDecomps, 
-                            std::vector<int>& significantVars);
-      /// Close current decomposition component
-      void closeComponent(void);
-      /// Return stack size used by engine
-      size_t stacksize(void) const;
-      /// Destructor
-      ~DDSEngine(void);
-    };
-
-    /**
-     * \brief Dynamic Decomposition Depth-first search engine
-     *
-     * This class implements dynamic decomposition depth-first exploration for
-     * spaces.
-     */
-    class GECODE_SEARCH_EXPORT DDS {
-    protected:
-      /// Engine used for exploration
-      DDSEngine e;
-    public:
-      /**
-       * \brief Initialize search engine
-       * \param s root node
-       * \param c_d minimal recomputation distance
-       * \param a_d adaptive recomputation distance
-       * \param st %Stop-object
-       * \param sz size of one space
-       */
-      DDS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
-      /// Return next solution (NULL, if none exists or search has been stopped)
-      DDSEngine::ExploreStatus next(Space*& s, int& closedDecomps,
-                                    std::vector<int>& significantVars);
-      /// Close current decomposition component
-      void closeComponent(void);
-      /// Return statistics
-      Statistics statistics(void) const;
-      /// Check whether engine has been stopped
-      bool stopped(void) const;
-    };
-  }
-
-  /**
-   * \brief Dynamic Decomposition Depth-first search engine
-   *
-   * This class supports dynamic decomposition depth-first search.
-   * \ingroup TaskIntSearch
-   */
-  template <class T>
-  class DDS : public Search::DDS {
-  private:
-    int closedDecomps;
-    Search::DDSEngine::ExploreStatus status;
-    std::vector<int> significantVars;
-    T* sol;
-  public:
-    /**
-     * \brief Initialize search engine
-     * \param s root node
-     * \param c_d minimal recomputation distance
-     * \param a_d adaptive recomputation distance
-     * \param st %Stop-object
-     */
-    DDS(T* s,
-        unsigned int c_d=Search::Config::c_d,
-        unsigned int a_d=Search::Config::a_d,
-        Search::Stop* st=NULL);
-    /// Return next solution or decomposition
-    Search::DDSEngine::ExploreStatus next(T*& s,
-                                          std::vector<int>& significantVars);
-    /// Close current decomposition component
-    void closeComponent(void);
-  };
-
-  /**
-   * \brief Perform counting dynamic decomposition depth-first search
-   * \param s root node
-   * \param c_d minimal recomputation distance
-   * \param a_d adaptive recomputation distance
-   * \ingroup TaskIntSearch
-   */
-  template <class Int, class T>
-  Int countDDS(T* s,
-               unsigned int c_d=Search::Config::c_d,
-               unsigned int a_d=Search::Config::a_d,
-               Search::Statistics* stat=NULL,
-               Search::Stop* st=NULL);
-
 }
 
 #include "gecode/search/statistics.icc"
@@ -877,7 +753,6 @@ namespace Gecode {
 #include "gecode/search/lds.icc"
 #include "gecode/search/bab.icc"
 #include "gecode/search/restart.icc"
-#include "gecode/search/dds.icc"
 
 #endif
 
