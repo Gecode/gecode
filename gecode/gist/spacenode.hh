@@ -48,6 +48,9 @@ namespace Gecode { namespace Gist {
     SOLVED,       ///< Node representing a solution
     FAILED,       ///< Node representing failure
     BRANCH,       ///< Node representing a branch
+    DECOMPOSE,    ///< Node representing a decomposing branch
+    SINGLETON,    ///< Node representing a singleton variable decomposition
+    COMPONENT_IGNORED, ///< Node representing an ignored component
     UNDETERMINED, ///< Node that has not been explored yet
     SPECIAL,      ///< Node representing user controlled exploration
     STEP          ///< Node representing one propagation step
@@ -128,6 +131,8 @@ namespace Gecode { namespace Gist {
     
     /// Number of children that are not fully explored
     int noOfOpenChildren;
+    /// Number of children that are solutions
+    int noOfSolvedChildren;
     /// Whether the subtree of this node is known to contain failure
     bool _hasFailedChildren;
     /// Whether the subtree of this node is known to contain solutions
@@ -200,6 +205,8 @@ namespace Gecode { namespace Gist {
     bool hasSolvedChildren(void);
     /// Return number of open children
     int getNoOfOpenChildren(void);
+    /// Return number of solved children
+    int getNoOfSolvedChildren(void);
     /// Set number of open children to \a n
     void setNoOfOpenChildren(int n);
     /// Return whether the node has a copy

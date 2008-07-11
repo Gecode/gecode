@@ -35,6 +35,7 @@
  */
 
 #include "gecode/gist/spacenode.hh"
+#include "gecode/search.hh"
 #include <stack>
 
 namespace Gecode { namespace Gist {
@@ -295,18 +296,45 @@ namespace Gecode { namespace Gist {
   SpaceNode::closeChild(bool hadFailures, bool hadSolutions) {
     noOfOpenChildren--;
     _hasFailedChildren = _hasFailedChildren || hadFailures;
-    _hasSolvedChildren = _hasSolvedChildren || hadSolutions;
-    SpaceNode* p = getParent();
+    if (status == DECOMPOSE) {
+      _hasSolvedChildren = _hasSolvedChildren && hadSolutions;
+      if (!_hasSolvedChildren) {
+        noOfOpenChildren = 0;
+        for (int i=0; i<getNumberOfChildren(); i++) {
+          SpaceNode* c = static_cast<SpaceNode*>(getChild(i));
+          if (c->isOpen()) {
+            c->status = COMPONENT_IGNORED;
+            c->setNumberOfChildren(0);
+          }
+        }
+      }
+    }
+    else
+      _hasSolvedChildren = _hasSolvedChildren || hadSolutions;
+
     if (noOfOpenChildren == 0) {
-      // stats.close();
+      if (status == DECOMPOSE) {
+        noOfSolvedChildren = 1;
+        for (int i=0; i<getNumberOfChildren(); i++)
+          noOfSolvedChildren *= 
+            static_cast<SpaceNode*>(getChild(i))->getNoOfSolvedChildren();
+      } else {
+        noOfSolvedChildren = 0;
+        for (int i=0; i<getNumberOfChildren(); i++)
+          noOfSolvedChildren += 
+            static_cast<SpaceNode*>(getChild(i))->getNoOfSolvedChildren();
+      }
+      _hasSolvedChildren = noOfSolvedChildren > 0;
+      SpaceNode* p = static_cast<SpaceNode*>(getParent());
       if (p != NULL) {
         delete copy;
-        copy = NULL;        
+        copy = NULL;
         p->closeChild(_hasFailedChildren, _hasSolvedChildren);
       }
-    } else if (hadSolutions) {
-        solveUp();
+    } else if (hadSolutions && status != DECOMPOSE) {
+      solveUp();
     }
+
   }
 
   SpaceNode::SpaceNode(int alt, BestNode* cb)
@@ -385,6 +413,7 @@ namespace Gecode { namespace Gist {
           }
           kids = 0;
           _hasSolvedChildren = false;
+          noOfSolvedChildren = 0;
           _hasFailedChildren = true;
           status = FAILED;
           stats.failures++;
@@ -404,6 +433,7 @@ namespace Gecode { namespace Gist {
             copy = NULL;
           }
           _hasSolvedChildren = true;
+          noOfSolvedChildren = 1;
           _hasFailedChildren = false;
           stats.solutions++;
           // stats.newDepth(getDepth());
@@ -418,7 +448,26 @@ namespace Gecode { namespace Gist {
       case SS_BRANCH:
         desc.branch = workingSpace->description();
         kids = desc.branch->alternatives();
-        status = BRANCH;
+        if (dynamic_cast<const Decomposition::SingletonDescBase*>(
+              desc.branch)) {
+          status = SINGLETON;
+          _hasSolvedChildren = true;
+          const Decomposition::SingletonDescBase* sd =
+            static_cast<const Decomposition::SingletonDescBase*>(
+              desc.branch);
+          noOfSolvedChildren = sd->domainSize();
+          _hasFailedChildren = false;
+          kids = 0;
+          SpaceNode* p = static_cast<SpaceNode*>(getParent());
+          if (p != NULL)
+            p->closeChild(false, true);
+        } else if (dynamic_cast<const Decomposition::DecompDesc*>(
+            desc.branch)) {
+          status = DECOMPOSE;
+          _hasSolvedChildren = true;
+        } else {
+          status = BRANCH;
+        }
         stats.choices++;
         stats.undetermined += kids;
         // stats.newOpen();
@@ -501,6 +550,11 @@ namespace Gecode { namespace Gist {
   int
   SpaceNode::getNoOfOpenChildren(void) {
     return noOfOpenChildren;
+  }
+
+  int
+  SpaceNode::getNoOfSolvedChildren(void) {
+    return noOfSolvedChildren;
   }
         
   void

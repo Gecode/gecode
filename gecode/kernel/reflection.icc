@@ -305,7 +305,7 @@ namespace Gecode { namespace Reflection {
     /// Construct empty VarSpec
     VarSpec(void);
     /// Construct specification for a variable
-    VarSpec(Support::Symbol vti, Arg* domain);
+    VarSpec(Support::Symbol vti, Arg* domain, bool assigned=false);
     /// Copy constructor
     VarSpec(const VarSpec& s);
     /// Assignment operator
@@ -320,6 +320,8 @@ namespace Gecode { namespace Reflection {
     bool hasName(void) const;
     /// Get the domain of this variable
     Arg* dom(void) const;
+    /// Return whether variable is assigned
+    bool assigned(void) const;
     // Get the variable type identifier for this variable
     Support::Symbol vti(void) const;
   };
@@ -1122,6 +1124,84 @@ namespace Reflection {
     return mangled;
   }
   
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2, class View3, class View4>
+  Support::Symbol
+  mangle(const Support::Symbol& ati) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ",";
+    mangled += TypeOf<View4>::t();
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2, class View3, class View4>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, bool b) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ",";
+    mangled += TypeOf<View4>::t();
+    mangled += ",";
+    mangled += Support::Symbol(b);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2, class View3, class View4>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ",";
+    mangled += TypeOf<View4>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  template <class View0, class View1, class View2, class View3, class View4>
+  Support::Symbol
+  mangle(const Support::Symbol& ati, unsigned int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += TypeOf<View0>::t();
+    mangled += ",";
+    mangled += TypeOf<View1>::t();
+    mangled += ",";
+    mangled += TypeOf<View2>::t();
+    mangled += ",";
+    mangled += TypeOf<View3>::t();
+    mangled += ",";
+    mangled += TypeOf<View4>::t();
+    mangled += ",";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
   //@}
 
 }}

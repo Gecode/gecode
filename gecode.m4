@@ -504,7 +504,6 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(CPLTSET, "cpltset")
   AC_SUBST(MM,      "minimodel")
   AC_SUBST(SER,     "serialization")
-  AC_SUBST(DDS,     "dds")
   AC_SUBST(GIST,    "gist")])
 
 
@@ -540,7 +539,6 @@ AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "")
    AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "")
-   AC_SUBST(GECODE_BUILD_DDS_FLAG, "")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "")])
 
 AC_DEFUN([AC_GECODE_BUILDFLAGS],
@@ -552,7 +550,6 @@ AC_DEFUN([AC_GECODE_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "-DGECODE_BUILD_CPLTSET")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "-DGECODE_BUILD_MINIMODEL")
    AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "-DGECODE_BUILD_SERIALIZATION")
-   AC_SUBST(GECODE_BUILD_DDS_FLAG, "-DGECODE_BUILD_DDS")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "-DGECODE_BUILD_GIST")])
 
 
@@ -678,7 +675,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(CPLTSET, "CpltSet")
   AC_SUBST(MM,      "Minimodel")
   AC_SUBST(SER,     "Serialization")
-  AC_SUBST(DDS,     "DDS")
   AC_SUBST(GIST,    "Gist")])
 
 dnl Macro:
@@ -842,25 +838,23 @@ AC_DEFUN([AC_GECODE_FRAMEWORK],
 ])
 
 dnl Macro:
-dnl   AC_GECODE_BOOST_SERIALIZATION
+dnl   AC_GECODE_BOOST
 dnl
 dnl Description:
-dnl   Produces the configure switch --with-boost
-dnl   for supplying the path to the boost serialization library.
-dnl   If present, support for boost serialization will be built
-dnl   into Gecode.
+dnl   Produces the configure switch --with-boost-include
+dnl   for supplying the path to the boost library.
 dnl
 dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
-AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
-  [dnl build with support for the boost serialization library
+AC_DEFUN([AC_GECODE_BOOST],
+  [dnl build with support for the boost library
   AC_ARG_WITH([boost-include],
     AC_HELP_STRING([--with-boost-include],
 	[path to the boost header files (used for serialization)]))
   if test "${with_boost_include:-no}" != "no"; then
       AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost_include}])
       AC_SUBST(BOOST_LINK,["-L${with_boost_include}/../../lib -lboost_serialization"])
-      AC_DEFINE(GECODE_HAS_BOOST_SERIALIZATION)
+      AC_DEFINE(GECODE_HAS_BOOST)
   fi
 ])
 

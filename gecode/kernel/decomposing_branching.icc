@@ -1,0 +1,494 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Martin Mann <mmann@informatik.uni-freiburg.de>
+ *     Sebastian Will <will@informatik.uni-freiburg.de>
+ *
+ *  Copyright:
+ *     Guido Tack, 2008
+ *     Martin Mann, 2008
+ *     Sebastian Will, 2008
+ *
+ *  Last modified:
+ *     $Date: 2007-04-05 15:25:13 +0200 (Thu, 05 Apr 2007) $ by $Author: tack $
+ *     $Revision: 4322 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <vector>
+
+namespace Gecode {
+
+  /**
+   * \brief Branching for decomposition during search
+   *
+   * This branching analyzes the constraint graph and decomposes the search
+   * if the graph contains more than one connected component.
+   *
+   * Otherwise, the branching behaves like a normal ViewValBranching.
+   *
+   */    
+  template <class View, class Val, class ViewSel, class ValSel>
+  class DecomposingViewValBranching : public Branching {
+  protected:
+    ViewArray<View> x;
+    mutable int start;
+    mutable bool selectFirst;
+
+    DecomposingViewValBranching(Space* home, bool share,
+                                DecomposingViewValBranching& b);
+
+  public:
+    DecomposingViewValBranching(Space* home, ViewArray<View>& x);
+    virtual bool status(const Space* home) const;
+    virtual const BranchingDesc* description(const Space* home) const;
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+                              unsigned int a);
+    virtual Actor* copy(Space* home, bool share);
+    
+    /// Return specification for this branching given a variable map \a m
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    // /// Return specification for a branch
+    // virtual Reflection::BranchingSpec
+    // branchingSpec(const Space* home, 
+    //               Reflection::VarMap& m,
+    //               const BranchingDesc* d) const;
+    /// Actor type identifier of this branching
+    static Support::Symbol ati(void);
+    /// Post branching according to specification
+    static void post(Space* home, Reflection::VarMap& m,
+                     const Reflection::ActorSpec& spec);
+    
+  };
+
+  namespace Decomposition {
+  
+    /// Branching description for decomposition
+    class GECODE_VTABLE_EXPORT DecompDesc : public BranchingDesc {
+    protected:
+      /// The significant variables in the components
+      const std::vector<int> label;
+      /// Start index
+      const int start;
+      /// Selected variables
+      const std::vector<int> select;
+
+    public:
+      /// Constructor
+      DecompDesc(const Branching* b, int start,
+                 const std::vector<int>& l,
+                 const std::vector<int>& select);
+      /// Return the stored label
+      const std::vector<int>& getComponentLabel(void) const;
+      /// Return the selected view index for component \a alt
+      int getSelection(unsigned int alt) const;
+      /// Return the start index
+      int getStart(void) const;
+      /// Return the significant variables for alternative \a alt in \a sv
+      void significantVars(int alt, std::vector<int>& sv) const;
+      /// Return size
+      virtual size_t size(void) const;
+    };
+
+    /// A branching description for singleton components
+    class GECODE_KERNEL_EXPORT SingletonDescBase : public BranchingDesc {
+    private:
+      /// Size of the domain of the singleton component
+      unsigned int _size;
+    public:
+      /// Constructor
+      SingletonDescBase(const Branching* b, unsigned int alt,
+                        unsigned int size);
+      /// Return size of the domain of the singleton component
+      unsigned int domainSize(void) const;
+      /// Return size
+      virtual size_t size(void) const;
+    };
+
+    /// Wrapper class for PosValDesc that stores an additional component size
+    template <class Val, int alt>
+    class GECODE_KERNEL_EXPORT SingletonDesc : public SingletonDescBase {
+    private:
+      PosValDesc<Val,alt>* _pvd;
+    public:
+      /// Constructor
+      SingletonDesc(const Branching* b, Val v, int start, unsigned int size);
+      /// Destructor
+      ~SingletonDesc(void);
+      /// Acces embedded PosValDesc
+      PosValDesc<Val,alt>* pvd(void) const;
+      /// Return size
+      virtual size_t size(void) const;
+    };
+  
+    inline
+    DecompDesc::DecompDesc(const Branching* b, int start0,
+                           const std::vector<int>& l, 
+                           const std::vector<int>& select_)
+    : BranchingDesc(b,select_.size()), label(l), start(start0), 
+      select(select_) {}
+
+    forceinline
+    size_t
+    DecompDesc::size(void) const {
+      return sizeof(DecompDesc);
+    }
+
+    forceinline
+    int
+    DecompDesc::getStart(void) const { return start; }
+
+    forceinline
+    const std::vector<int>&
+    DecompDesc::getComponentLabel(void) const {
+      return label;
+    }
+  
+    forceinline
+    int 
+    DecompDesc::getSelection(unsigned int alt) const {
+      return select[alt];
+    }
+
+    forceinline
+    size_t
+    SingletonDescBase::size(void) const {
+      return sizeof(SingletonDescBase);
+    }
+
+    template <class Val, int alt>
+    SingletonDesc<Val,alt>::SingletonDesc(const Branching* b, Val v,
+                                          int start,
+                                          unsigned int size)
+      : SingletonDescBase(b,alt,size),
+        _pvd(new PosValDesc<Val,alt>(b, 0, v, start)) 
+    {}
+    
+    template <class Val, int alt>
+    SingletonDesc<Val,alt>::~SingletonDesc(void) {
+      delete _pvd;
+    }
+
+    template <class Val, int alt>
+    PosValDesc<Val,alt>*
+    SingletonDesc<Val,alt>::pvd(void) const { return _pvd; }
+
+    template <class Val, int alt>
+    inline size_t
+    SingletonDesc<Val,alt>::size(void) const {
+      return sizeof(SingletonDesc<Val,alt>);
+    }
+
+    /// Compute connected components of the constraint graph
+    GECODE_KERNEL_EXPORT int
+    connectedComponents(const Space* home, Reflection::VarMap& vars,
+                        std::vector<int>& label);
+
+  }
+
+  /*
+   * Generic branching based on variable/value selection
+   *
+   */
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  forceinline
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+  ::DecomposingViewValBranching(Space* home, ViewArray<View>& x0)
+    : Branching(home), x(x0), start(0), selectFirst(false) {}
+
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  forceinline
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+  ::DecomposingViewValBranching(Space* home, bool share, 
+                                DecomposingViewValBranching& b)
+    : Branching(home,share,b), start(b.start), selectFirst(b.selectFirst) {
+    x.update(home,share,b.x);
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  Actor*
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+  ::copy(Space* home, bool share) {
+    return new (home)
+      DecomposingViewValBranching<View,Val,ViewSel,ValSel>(home,
+        share,*this);
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  bool
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+  ::status(const Space*) const {
+    for (int i=start; i < x.size(); i++)
+      if (!x[i].assigned()) {
+        start = i;
+        return true;
+      }
+    return false;
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  const BranchingDesc*
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+  ::description(const Space* home) const {
+
+    assert(!x[start].assigned());
+
+    if (selectFirst && !x[0].assigned()) {
+      selectFirst = false;
+      ValSel  vl; // For value selection
+      if (x.size() == 1) {
+        DomainSize<View> ds;
+        return
+          new Decomposition::SingletonDesc<Val,2>(
+            this,vl.val(home,x[0]),
+            0, DomainSize<View>::size(x[0]));
+      } else {
+        return new PosValDesc<Val,2>(this,0,vl.val(home,x[0]),0);
+      }
+    }
+
+    int componentNumber = 1;
+    std::vector<int> label;
+
+    if (x.size()-start > 1) {
+
+      // Compute connected components in the constraint graph
+      Reflection::VarMap vm;
+      typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+      typedef typename VarImpVarTraits<VarImp>::Var Var;
+      for (int i=start; i<x.size(); i++) {
+        Var v(x[i]);
+        vm.put(home, v, "", false);
+      }
+      componentNumber = Decomposition::connectedComponents(home, vm, label);
+
+      // merge singlets together (just optimizing)
+      {
+        std::vector<int> compSize(componentNumber,0);  // init component sizes
+        // remove temporary variables and propagators nodes from labeling
+        // resizing the labeling to the variables in context
+        label.resize(x.size()-start);
+
+        // check current labeling
+        // and remember the label of the last unassigned variable
+        // ( == mergeLabel)
+        int mergeLabel = 0;
+        for (int i=0; i<x.size()-start; i++) {
+          compSize[label[i]]++;
+          if (!x[start+i].assigned())
+            mergeLabel = label[i];
+        }
+
+        // count how many colors are really available
+        int colors = 0;
+        for (std::vector<int>::size_type i = 0; i < compSize.size(); i++) {
+          if (compSize[i] > 0 ) {
+            colors++;
+          }
+        }
+
+        // recoloring and color decreasing due to merging of
+        // assigned variables
+        for (int i=0; i<x.size()-start; i++) {
+          if (compSize[label[i]] == 1 && x[i+start].assigned()) {
+            label[i] = mergeLabel;
+            colors--;
+          }
+          // invert all indices and substract 1 as a preprocessing for 
+          // viewSelection
+          label[i] = -label[i] - 1;
+        }
+
+        // add 1 if 'mergeLabel' is assigned singlet too
+        componentNumber = std::max(colors,1);
+      }
+    } else if (x[start].degree() == 0) {
+      assert(x.size() - start == 1);
+      ValSel  vl; // For value selection
+      return
+        new Decomposition::SingletonDesc<Val,2>(
+          this,
+          vl.val(home,x[start]),
+          start,
+          DomainSize<View>::size(x[start]));
+    }
+    
+    if (start+1 < x.size() && componentNumber > 1) {
+        // do decomposing branching
+
+      int firstLabel;
+      std::vector<int> selected = std::vector<int>(componentNumber);
+
+      // calculate component order and view selection for each component
+      for (int comp = 0; comp < componentNumber; comp++) {
+        int firstLabelIdx = -1;
+        ViewSel vs; // For view selection
+        int i = start;
+        while(label[i-start] >= 0) i++;
+        int b = i++;
+        if (vs.init(home,x[b]) != VSS_COMMIT) {
+          for (; firstLabelIdx == -1 && i < x.size(); i++) {
+            if (label[i-start] < 0 && !x[i].assigned()) {
+              switch (vs.select(home,x[i])) {
+              case VSS_SELECT:
+                b=i; break;
+              case VSS_COMMIT:
+                b=i;
+                firstLabelIdx = b; break;
+              case VSS_NONE:   break;
+              default:         GECODE_NEVER;
+              }
+            }
+          }
+        }
+        selected[comp] = ((firstLabelIdx == -1) ? b : firstLabelIdx) - start;
+        firstLabel = label[selected[comp]];
+        //std::cerr <<" s(" <<comp <<") = " <<firstLabel;
+        // recoloring of the current component to the current component number
+        for(unsigned int j = 0; j<label.size(); j++)
+          if (label[j] == firstLabel) 
+            label[j] = comp;
+      }
+      // create decomposition description
+      return new Decomposition::DecompDesc(this, start, label, selected);;
+    } else {
+      // do normal branching
+
+      ViewSel vs; // For view selection
+      ValSel  vl; // For value selection
+      int i = start;
+      int b = i++;
+      if (vs.init(home,x[b]) != VSS_COMMIT)
+         for (; i < x.size(); i++) {
+            if (!x[i].assigned()) {
+              switch (vs.select(home,x[i])) {
+              case VSS_SELECT:
+                b=i; break;
+              case VSS_COMMIT:
+                b=i;
+                return new 
+                  PosValDesc<Val,2>(this,b-start,vl.val(home,x[b]),start);
+              case VSS_NONE:   break;
+              default:         GECODE_NEVER;
+              }
+            }
+         }
+      return new PosValDesc<Val,2>(this,b-start,vl.val(home,x[b]),start);
+    }
+
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  ExecStatus
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+  ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
+
+    const Decomposition::DecompDesc* dd =
+      dynamic_cast<const Decomposition::DecompDesc*>(d);
+    if( dd == NULL) { // --> normal handling of PosValDescriptions
+      
+      const PosValDesc<Val,2>* pvd;
+      if (const Decomposition::SingletonDesc<Val,2>* sd =
+          dynamic_cast<const Decomposition::SingletonDesc<Val,2>*>(d)) {
+        pvd = sd->pvd();
+      } else {
+        pvd = static_cast<const PosValDesc<Val,2>*>(d); 
+      }
+      // Eliminate views from x[0] ... x[start-1]
+      x.drop_fst(pvd->start()); start = 0;
+      ValSel vs;
+      return me_failed(vs.tell(home,a,x[pvd->pos()],pvd->val()))
+          ? ES_FAILED : ES_OK;
+    } else {
+      int oldSize = x.size()-start;
+      // Eliminate views from x[0] ... x[start-1]
+      x.drop_fst(dd->getStart()); start = 0;
+      
+        // component labeling and label of alternative a
+      std::vector<int> myComponent = dd->getComponentLabel();
+
+      // move selected position to the front
+      {
+        int selected = dd->getSelection(a), toOverwrite=0;
+        for (toOverwrite=0; toOverwrite< selected; toOverwrite++) {
+          if (myComponent[toOverwrite] == (int)a)
+            break;
+        }
+        if (toOverwrite < selected) {
+          View tmp = x[toOverwrite];
+          x[toOverwrite] = x[selected];
+          x[selected] = tmp;
+        }
+      }
+      selectFirst = true;
+
+      int lastFillPos = 0;
+        // find first position that can be overwritten
+        for (lastFillPos = 0; lastFillPos<x.size(); lastFillPos++) {
+          if (myComponent[lastFillPos] != (int)a)
+            break;
+        }
+
+        // shift all component elements together
+        for (int i=lastFillPos+1; i<x.size(); i++) {
+          if (myComponent[i] == (int)a) {
+            x[lastFillPos+start] = x[i+start];
+            lastFillPos++;
+          }
+        }
+
+      // Eliminate views from x[lastFillPos] ... x[x.size()-1]
+      x.drop_lst(lastFillPos+start-1);
+      // restrict propagation if neccessary
+      if (oldSize > x.size()) {
+        // DDSSpace* ds = dynamic_cast<DDSSpace*>(home);
+        // if (ds != NULL)
+        //   ds->restrictProp(x, start);
+      }
+      // no graph generation neccessary after decomposition
+      return ES_OK;
+    }
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  Support::Symbol
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>::ati(void) {
+    return Reflection::mangle<View,Val,ViewSel,ValSel>(
+      "Gecode::DecomposingViewValBranching");
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  void
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+    ::post(Space* home, Reflection::VarMap& vars,
+           const Reflection::ActorSpec& spec) {
+    spec.checkArity(1);
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) 
+      DecomposingViewValBranching<View,Val,ViewSel,ValSel>(home, x);
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  Reflection::ActorSpec
+  DecomposingViewValBranching<View,Val,ViewSel,ValSel>
+  ::spec(const Space* home,
+         Reflection::VarMap& m) const {
+    Reflection::ActorSpec s(ati());
+    return s << x.spec(home, m);
+  }
+
+}
+
+// STATISTICS: dds-any

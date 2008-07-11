@@ -485,17 +485,22 @@ namespace Gecode { namespace Reflection {
 
   /// Implementation of a VarSpec, holding all information about a variable
   class VarSpec::Domain {
+  private:
+    /// A representation of the domain of this variable
+    Arg* _dom;
   public:
     /// The variable type identifier for this variable
     Support::Symbol _vti;
     /// The name of this variable
     Support::Symbol _n;
-    /// A representation of the domain of this variable
-    Arg* _dom;
     /// Reference count
     int r;
+    /// Return representation of the domain
+    Arg* dom(void) const;
+    /// Return whether domain is assigned
+    bool assigned(void) const;
     /// Constructor
-    Domain(Support::Symbol vti, Arg* domain);
+    Domain(Support::Symbol vti, Arg* domain, bool assigned);
     /// Destructor
     ~Domain(void);
   };
@@ -506,18 +511,36 @@ namespace Gecode { namespace Reflection {
    */
 
   inline
-  VarSpec::Domain::Domain(Support::Symbol vti, Arg* domain)
-  : _vti(vti), _dom(domain), r(1) {}
+  VarSpec::Domain::Domain(Support::Symbol vti, Arg* domain, bool assigned)
+  : _dom(assigned ? static_cast<Arg*>(Support::mark(domain)) : domain),
+    _vti(vti),
+    r(1) {}
 
   inline
   VarSpec::Domain::~Domain(void) {
-    delete _dom;
+    if (Support::marked(_dom))
+      delete static_cast<Arg*>(Support::unmark(_dom));
+    else
+      delete _dom;
+  }
+
+  inline Arg*
+  VarSpec::Domain::dom(void) const {
+    if (Support::marked(_dom))
+      return static_cast<Arg*>(Support::unmark(_dom));
+    else
+      return _dom;    
+  }
+
+  inline bool
+  VarSpec::Domain::assigned(void) const {
+    return Support::marked(_dom);
   }
 
   VarSpec::VarSpec(void) : _dom(NULL) {}
   
-  VarSpec::VarSpec(Support::Symbol vti, Arg* dom) 
-  : _dom(new Domain(vti,dom)) {}
+  VarSpec::VarSpec(Support::Symbol vti, Arg* dom, bool assigned) 
+  : _dom(new Domain(vti,dom,assigned)) {}
 
   VarSpec::VarSpec(const VarSpec& s) : _dom(s._dom) {
     if (_dom)
@@ -573,7 +596,14 @@ namespace Gecode { namespace Reflection {
   VarSpec::dom(void) const {
     if (_dom == NULL)
       throw ReflectionException("Empty VarSpec");
-    return _dom->_dom;
+    return _dom->dom();
+  }
+
+  bool
+  VarSpec::assigned(void) const {
+    if (_dom == NULL)
+      throw ReflectionException("Empty VarSpec");
+    return _dom->assigned();    
   }
 
   //

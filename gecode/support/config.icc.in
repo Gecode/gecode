@@ -68,8 +68,8 @@
 /* Whether serialization support is built */
 #undef GECODE_HAS_SERIALIZATION
 
-/* Whether to compile with boost serialization support */
-#undef GECODE_HAS_BOOST_SERIALIZATION
+/* Whether to compile boost dependent parts */
+#undef GECODE_HAS_BOOST
 
 /* Whether Qt is available */
 #undef GECODE_HAS_QT

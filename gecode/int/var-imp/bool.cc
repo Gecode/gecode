@@ -67,7 +67,8 @@ namespace Gecode { namespace Int {
     if (specIndex != -1)
       return Reflection::Arg::newVar(specIndex);
     Reflection::VarSpec* spec =
-      new Reflection::VarSpec(vti, Reflection::Arg::newInt(status()));
+      new Reflection::VarSpec(vti, Reflection::Arg::newInt(status()),
+                              assigned());
     return (Reflection::Arg::newVar(m.put(this, spec)));
   }
 

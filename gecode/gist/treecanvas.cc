@@ -356,6 +356,9 @@ namespace Gecode { namespace Gist {
     case STEP:
     case SPECIAL:
     case BRANCH:
+    case DECOMPOSE:
+    case COMPONENT_IGNORED:
+    case SINGLETON:
     case SOLVED:
       Space* curSpace = currentNode->getSpace();
       Reflection::VarMap vm;
@@ -450,6 +453,8 @@ namespace Gecode { namespace Gist {
       case SPECIAL:
         if (currentNode->getNumberOfChildren() < 1)
           break;
+      case COMPONENT_IGNORED:
+      case DECOMPOSE:
       case BRANCH: 
           {
             int alt = 0;
@@ -461,6 +466,7 @@ namespace Gecode { namespace Gist {
             centerCurrentNode();
             break;
           }
+      case SINGLETON:
       case SOLVED:
       case FAILED:
       case UNDETERMINED:
@@ -1067,6 +1073,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::on_canvas_currentNodeChanged(Gecode::Space*, Gecode::Gist::NodeStatus status) {
     switch (status) {
+        case Gecode::Gist::SINGLETON:
         case Gecode::Gist::SOLVED:
         case Gecode::Gist::FAILED:
           navDown->setEnabled(false);
@@ -1088,6 +1095,8 @@ namespace Gecode { namespace Gist {
           unhideAll->setEnabled(false);
 
           break;
+        case Gecode::Gist::DECOMPOSE:
+        case Gecode::Gist::COMPONENT_IGNORED:
         case Gecode::Gist::BRANCH:
         case Gecode::Gist::SPECIAL:
           navDown->setEnabled(true);

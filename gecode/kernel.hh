@@ -177,6 +177,13 @@
 #include "gecode/kernel/branching.icc"
 
 /*
+ * Branching for decomposition during search
+ *
+ */
+
+#include "gecode/kernel/decomposing_branching.icc"
+
+/*
  * Automatically generated variable implementations
  *
  */

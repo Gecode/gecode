@@ -70,6 +70,15 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Decomposition during search (DDS) has been added as a new search engine. DDS 
+is an implementation of And/Or search. It tries to decompose the problem into 
+independent subproblems, potentially reducing the search space dramatically. 
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
