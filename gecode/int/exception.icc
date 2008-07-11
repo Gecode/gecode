@@ -108,6 +108,13 @@ namespace Gecode { namespace Int {
     UnknownBranching(const char* l);
   };
 
+  /// %Exception: Attempt to access value of unassigned variable
+  class GECODE_VTABLE_EXPORT ValOfUnassignedVar : public Exception {
+  public:
+    /// Initialize with location \a l
+    ValOfUnassignedVar(const char* l);
+  };
+
   //@}
 
 
@@ -156,6 +163,10 @@ namespace Gecode { namespace Int {
   inline
   UnknownBranching::UnknownBranching(const char* l)
     : Exception(l,"Unknown branching type") {}
+
+  inline
+  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
+    : Exception(l,"Attempt to access value of unassigned variable") {}
 
 }}
 
