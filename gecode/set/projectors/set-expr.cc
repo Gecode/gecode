@@ -88,12 +88,12 @@ namespace Gecode {
 
   forceinline void*
   SetExpr::Node::operator new(size_t size) {
-    return Memory::malloc(size);
+    return heap.malloc(size);
   }
 
   forceinline void
   SetExpr::Node::operator delete(void* p, size_t) {
-    Memory::free(p);
+    heap.free(p);
   }
 
 

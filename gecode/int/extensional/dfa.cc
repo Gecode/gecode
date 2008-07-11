@@ -310,7 +310,7 @@ namespace Gecode {
     }
 
     // Do a reachability analysis for all states starting from start state
-    int* visitA = Memory::talloc<int>(n_states+1);
+    int* visitA = heap.talloc<int>(n_states+1);
     Gecode::Support::SentinelStack<int> visit(visitA,-1,n_states);    
     // GECODE_AUTOSTACK(home, int, -1, visit, n_states);
     GECODE_AUTOARRAY(int, state, n_states);
@@ -375,7 +375,7 @@ namespace Gecode {
           }
       }
     }
-    Memory::tfree<int>(visitA);
+    heap.tfree<int>(visitA);
 
     // Now all reachable states are known (also the final ones)
     GECODE_AUTOARRAY(int, re, n_states);
@@ -511,7 +511,7 @@ namespace Gecode {
       n_log++;
     // Allocate memory
     table = static_cast<HashEntry*>
-      (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
+      (heap.malloc(sizeof(HashEntry)*(1<<n_log)));
     // Initialize table
     for (int i=(1<<n_log); i--; )
       table[i].fst = table[i].lst = NULL;

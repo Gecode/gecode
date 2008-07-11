@@ -563,7 +563,7 @@ namespace Gecode {
   VarArray<Var>::~VarArray(void) {
     if (n != capacity) {
       // Array was allocated on the heap
-      Memory::tfree<Var>(x, capacity);
+      heap.tfree<Var>(x, capacity);
     }
   }
 
@@ -599,11 +599,11 @@ namespace Gecode {
     if (n == capacity) {
       // Array was space allocated, copy to heap with new size
       Var* oldx = x;
-      x = Memory::tcopy<Var>(Memory::talloc<Var>(newsize), x, n);
+      x = heap.tcopy<Var>(heap.talloc<Var>(newsize), x, n);
       home->free(oldx, capacity);
     } else {
       // Array was heap allocated, just reallocate with new size
-      x = Memory::trealloc<Var>(x, n, newsize);
+      x = heap.trealloc<Var>(x, n, newsize);
     }
     capacity = newsize; n = m;
     // After resizing, the array is always heap allocated
@@ -1008,7 +1008,7 @@ namespace Gecode {
   forceinline T*
   ArgArrayBase<T>::allocate(int n) {
     return (n > onstack_size) ?
-      Memory::talloc<T>(static_cast<unsigned int>(n)) : &onstack[0];
+      heap.talloc<T>(static_cast<unsigned int>(n)) : &onstack[0];
   }
 
   template <class T>
@@ -1020,14 +1020,14 @@ namespace Gecode {
   inline
   ArgArrayBase<T>::ArgArrayBase(const ArgArrayBase<T>& aa)
     : n(aa.n), a(allocate(n)) {
-    Memory::tcopy<T>(a,aa.a,n);
+    heap.tcopy<T>(a,aa.a,n);
   }
 
   template <class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
     if (n > onstack_size)
-      Memory::tfree(a,n);
+      heap.tfree(a,n);
   }
 
   template <class T>
@@ -1035,10 +1035,10 @@ namespace Gecode {
   ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
     if (&aa != this) {
       if (n > onstack_size)
-        Memory::tfree(a,n);
+        heap.tfree(a,n);
       n = aa.n;
       a = allocate(aa.n);
-      Memory::tcopy<T>(a,aa.a,n);
+      heap.tcopy<T>(a,aa.a,n);
     }
     return *this;
   }

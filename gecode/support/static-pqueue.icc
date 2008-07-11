@@ -112,7 +112,7 @@ namespace Gecode { namespace Support {
   PQueue<T,Less>::SharedPQueue::allocate(int n, const Less& l) {
     SharedPQueue* spq
       = static_cast<SharedPQueue*>
-      (Memory::malloc(sizeof(SharedPQueue) + (n-1)*sizeof(T)));
+      (heap.malloc(sizeof(SharedPQueue) + (n-1)*sizeof(T)));
     spq->size = n;
     spq->n    = 0;
     spq->ref  = 1;
@@ -173,7 +173,7 @@ namespace Gecode { namespace Support {
   PQueue<T,Less>::operator =(const PQueue<T,Less>& p) {
     if (this != &p) {
       if ((spq != NULL) && (--spq->ref == 0))
-        Memory::free(spq);
+        heap.free(spq);
       spq = p.spq;
       if (spq != NULL)
         spq->ref++;
@@ -201,7 +201,7 @@ namespace Gecode { namespace Support {
   forceinline
   PQueue<T,Less>::~PQueue(void) {
     if ((spq != NULL) && (--spq->ref == 0))
-      Memory::free(spq);
+      heap.free(spq);
   }
 
   template <class T, class Less>

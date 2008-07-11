@@ -74,7 +74,7 @@ namespace Gecode { namespace Gist {
   inline Shape*
   Shape::allocate(int d) {
     Shape* ret =
-      static_cast<Shape*>(Memory::malloc(sizeof(Shape) + 
+      static_cast<Shape*>(heap.malloc(sizeof(Shape) + 
                                          (d-1)*sizeof(Extent)));
     ret->_depth = d;
     return ret;
@@ -90,7 +90,7 @@ namespace Gecode { namespace Gist {
   forceinline void
   Shape::deallocate(Shape* shape) {
     if (shape != hidden && shape != leaf)
-      Memory::free(shape);
+      heap.free(shape);
   }
   
   forceinline int

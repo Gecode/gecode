@@ -96,7 +96,7 @@ namespace Gecode {
 
   forceinline void*
   REG::Exp::operator new(size_t s) {
-    return Memory::malloc(s);
+    return heap.malloc(s);
   }
   forceinline void
   REG::Exp::operator delete(void*) {
@@ -119,7 +119,7 @@ namespace Gecode {
           todo.push(e->data.kids[0]);
       default: ;
       }
-      Memory::free(e);
+      heap.free(e);
     }
   }
 

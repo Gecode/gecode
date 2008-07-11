@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline void
   SupportSet::init(unsigned int n0) {
     n = n0;
-    bits = Memory::talloc<unsigned int>((n / bpui) + 1);
+    bits = heap.talloc<unsigned int>((n / bpui) + 1);
     for (unsigned int i = (n / bpui) + 1; i--; )
       bits[i] = 0;
   }
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   forceinline void
   SupportSet::dispose(void) {
-    Memory::tfree(bits,n);
+    heap.tfree(bits,n);
   }
 
 

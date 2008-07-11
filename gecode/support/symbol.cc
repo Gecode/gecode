@@ -46,11 +46,11 @@ namespace Gecode { namespace Support {
 
   forceinline void* 
   Symbol::SO::operator new(size_t s) {
-    return Memory::malloc(s);
+    return heap.malloc(s);
   }
   forceinline void
   Symbol::SO::operator delete(void* p) {
-    Memory::free(p);
+    heap.free(p);
   }
   forceinline bool
   Symbol::SO::cancel(void) { return --use_cnt == 0; }
@@ -66,7 +66,7 @@ namespace Gecode { namespace Support {
   forceinline char*
   Symbol::SO::strdup(const char* s) {
     unsigned int n = strlen(s)+1;
-    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
+    char* d = static_cast<char*>(heap.malloc(sizeof(char)*n));
     for (unsigned int i=n; i--; )
       d[i]=s[i];
     return d;
@@ -93,13 +93,13 @@ namespace Gecode { namespace Support {
       return;
     unsigned int n1 = strlen(s);
     unsigned int n2 = strlen(so0->s);
-    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*(n1+n2+1)));
+    char* d = static_cast<char*>(heap.malloc(sizeof(char)*(n1+n2+1)));
     for (unsigned int i=n1; i--; )
       d[i] = s[i];
     for (unsigned int i=n2+1; i--; )
       d[n1+i] = so0->s[i];
     if (own)
-      Memory::free(s);
+      heap.free(s);
     s = d;
     own = true;
   }
@@ -156,7 +156,7 @@ namespace Gecode { namespace Support {
     if (this != &s0) {
       if (so && so->cancel()) {
         if (so->own)
-          Memory::free(so->s);
+          heap.free(so->s);
         delete so;
       }
       so = s0.so;
@@ -231,7 +231,7 @@ namespace Gecode { namespace Support {
   Symbol::~Symbol(void) {
     if ((so != NULL) && so->cancel()) {
       if (so->own)
-        Memory::free(so->s);
+        heap.free(so->s);
       delete so;
     }
   }

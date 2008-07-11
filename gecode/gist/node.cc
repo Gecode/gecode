@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     case MORE_CHILDREN:
       for (int i=c.noOfChildren; i--;)
         delete static_cast<VisualNode**>(getPtr())[i];
-      Memory::free(static_cast<Node**>(getPtr()));
+      heap.free(static_cast<Node**>(getPtr()));
     }
   }
     
@@ -75,7 +75,7 @@ namespace Gecode { namespace Gist {
       break;
     default:
       c.noOfChildren = n;
-      childrenOrFirstChild = Memory::talloc<Node*>(n);
+      childrenOrFirstChild = heap.talloc<Node*>(n);
       Node** children = static_cast<Node**>(childrenOrFirstChild);
       setTag(MORE_CHILDREN);
       for (unsigned int i=n; i--;)
@@ -117,7 +117,7 @@ namespace Gecode { namespace Gist {
       break;
     case TWO_CHILDREN:
       if (Support::marked(c.secondChild)) {
-        Node** newChildren = Memory::talloc<Node*>(c.noOfChildren+1);
+        Node** newChildren = heap.talloc<Node*>(c.noOfChildren+1);
         newChildren[0] = static_cast<Node*>(getPtr());
         newChildren[1] = static_cast<Node*>(Support::unmark(c.secondChild));
         noOfChildren = 3;
@@ -128,11 +128,11 @@ namespace Gecode { namespace Gist {
       break;
     case MORE_CHILDREN:
       {
-        Node** newChildren = Memory::talloc<Node*>(c.noOfChildren+1);
+        Node** newChildren = heap.talloc<Node*>(c.noOfChildren+1);
         Node** children = static_cast<Node**>(getPtr());
         for (int i=noOfChildren; i--;)
           newChildren[i] = children[i];
-        Memory::free(children);
+        heap.free(children);
         childrenOrFirstChild = newChildren;
         setTag(MORE_CHILDREN);
         c.noOfChildren++;

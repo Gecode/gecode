@@ -244,7 +244,7 @@ namespace Gecode {
     size_t allocate = ((sz > cur_hcsz) ?
                        (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
     // Request a chunk of size allocate
-    HeapChunk* hc = static_cast<HeapChunk*>(Memory::malloc(allocate));
+    HeapChunk* hc = static_cast<HeapChunk*>(heap.malloc(allocate));
     start = Support::ptr_cast<char*>(&hc->area[0]);
     lsz   = allocate - overhead;
     // Link heap chunk, where the first heap chunk is kept in place
@@ -293,7 +293,7 @@ namespace Gecode {
     HeapChunk* hc = cur_hc;
     do {
       HeapChunk* t = hc; hc = hc->next;
-      Memory::free(t);
+      heap.free(t);
     } while (hc != NULL);
   }
 
@@ -396,11 +396,11 @@ namespace Gecode {
 
   forceinline void* 
   SharedScratchArea::operator new(size_t s) {
-    return Memory::malloc(s);
+    return heap.malloc(s);
   }
   forceinline void
   SharedScratchArea::operator delete(void* p) {
-    Memory::free(p);
+    heap.free(p);
   }
   forceinline
   SharedScratchArea::SharedScratchArea(void)

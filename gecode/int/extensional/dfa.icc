@@ -81,13 +81,13 @@ namespace Gecode {
   forceinline
   DFA::DFAI::DFAI(unsigned int nt)
     : trans(nt == 0 ? NULL :
-            static_cast<Transition*>(Memory::malloc(sizeof(Transition)*nt))) {}
+            static_cast<Transition*>(heap.malloc(sizeof(Transition)*nt))) {}
   
   forceinline
   DFA::DFAI::~DFAI(void) {
     if (n_trans > 0)
-      Memory::free(trans);
-    Memory::free(table);
+      heap.free(trans);
+    heap.free(table);
   }
 
   forceinline

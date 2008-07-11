@@ -35,61 +35,15 @@
  *
  */
 
-#include "gecode/kernel.hh"
+#include "gecode/support.hh"
 
 namespace Gecode {
 
-  void*
-  ScratchArea::heap_alloc(size_t s) {
-    void* p = heap.malloc(s);
-    switch (++n_malloc) {
-    case 0: 
-      GECODE_NEVER;
-    case 1:
-      at.two.fst = p; break;
-    case 2:
-      at.two.snd = p; break;
-    case 3:
-      {
-        void** b = static_cast<void**>(heap.malloc(sizeof(void*) * 8));
-        b[0]=at.two.fst; b[1]=at.two.snd; b[2]=p;
-        at.any.l_malloc = 8;
-        at.any.b_malloc = b;
-      }
-      break;
-    default:
-      if (at.any.l_malloc == n_malloc) {
-        unsigned int l = (3 * n_malloc) / 2;
-        at.any.b_malloc = 
-          static_cast<void**>(heap.realloc(at.any.b_malloc,
-                                              l*sizeof(void*)));
-        at.any.l_malloc = l;
-      }
-      at.any.b_malloc[n_malloc-1] = p;
-      break;
-    }
-    return p;
-  }
+  forceinline
+  Heap::Heap(void) {}
 
-  void
-  ScratchArea::heap_free(void) {
-    switch (n_malloc) {
-    case 0:
-      GECODE_NEVER;
-    case 2:
-      heap.free(at.two.snd);
-      // Fall through
-    case 1:
-      heap.free(at.two.fst);
-      break;
-    default:
-      for (unsigned int i=n_malloc; i--; )
-        heap.free(at.any.b_malloc[i]);
-      heap.free(at.any.b_malloc);
-      break;
-    }
-  }
+  Heap heap;
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: support-any

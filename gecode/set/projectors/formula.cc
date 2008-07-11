@@ -90,12 +90,12 @@ namespace Gecode {
 
   forceinline void*
   Formula::Node::operator new(size_t size) {
-    return Memory::malloc(size);
+    return heap.malloc(size);
   }
 
   forceinline void
   Formula::Node::operator delete(void* p, size_t) {
-    Memory::free(p);
+    heap.free(p);
   }
 
 

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -41,25 +41,35 @@
 
 namespace Gecode {
 
-  /// Heap memory management
-  namespace Memory {
+  /**
+   * \defgroup FuncMemHeap Heap-memory management
+   *
+   * \ingroup FuncMem
+   */
 
-    /**
-     * \defgroup FuncMemHeap Heap-memory management
-     *
-     * All routines throw an exception of MemoryExhausted, if a request
-     * cannot be fulfilled.
-     * \ingroup FuncMem
-     */
 
+  /**
+   * \brief Heap memory management class
+   *
+   * All routines throw an exception of MemoryExhausted, if a request
+   * cannot be fulfilled.
+   * \ingroup FuncMemHeap
+   */
+  class Heap {
+  public:
+    /// Default constructor (ensuring that only a single instance is created)
+    Heap(void);
+    /// \name Raw allocation routines
     //@{
-    /// Allocate \a s bytes from heap.
+    /// Allocate \a s bytes from heap
     void* malloc(size_t s);
     /// Free memory block starting at \a p
     void  free(void* p);
     /// Change memory block starting at \a p to size \a s
     void* realloc(void* p, size_t s);
-
+    //@}
+    /// \name Typed allocation routines
+    //@{
     /**
      * \brief Allocate block of \a n objects of type \a T from heap
      *
@@ -98,138 +108,152 @@ namespace Gecode {
      * Returns \a d.
      */
     template <class T>
-    T* tcopy(T* d, const T* s, unsigned int n);
+    static T* tcopy(T* d, const T* s, unsigned int n);
     //@}
+  private:
+    /// Allocate memory from heap (disabled)
+    static void* operator new(size_t s) throw() { (void) s; return NULL; }
+    /// Free memory allocated from heap (disabled)
+    static void  operator delete(void* p) { (void) p; };
+    /// Copy constructor (disabled)
+    Heap(const Heap&) {}
+    /// Assignment operator (disabled)
+    const Heap& operator=(const Heap&) { return *this; }
+  };
 
+  /// The single global heap
+  extern GECODE_SUPPORT_EXPORT Heap heap;
 
-    /*
-     * Wrappers for untyped allocation routines
-     *
-     */
-
-    forceinline void*
-    malloc(size_t s) {
-      void* p = ::malloc(s);
-      if (p != NULL)
-        return p;
-      throw MemoryExhausted();
-    }
-
-    forceinline void
-    free(void* p) {
-      ::free(p);
-    }
-
-    forceinline void*
-    realloc(void* p, size_t s) {
-      p = ::realloc(p,s);
-      if (p != NULL || s == 0)
-        return p;
-      throw MemoryExhausted();
-    }
-
-
-    /*
-     * Typed allocation routines
-     *
-     */
-
-    template <class T>
-    forceinline T*
-    talloc(unsigned int n) {
-      T* p = static_cast<T*>(Memory::malloc(sizeof(T)*n));
-      for (unsigned int i=n; i--; )
-        (void) new (p+i) T();
+  /*
+   * Wrappers for raw allocation routines
+   *
+   */
+  forceinline void*
+  Heap::malloc(size_t s) {
+    void* p = ::malloc(s);
+    if (p != NULL)
       return p;
-    }
+    throw MemoryExhausted();
+  }
 
-    template <class T>
-    forceinline void
-    tfree(T* b, unsigned int n) {
-      for (unsigned int i=n; i--; )
-        b[i].~T();
-      Memory::free(b);
-    }
+  forceinline void
+  Heap::free(void* p) {
+    ::free(p);
+  }
 
-    template <class T>
-    forceinline T*
-    tcopy(T* d, const T* s, unsigned int n) {
-      for (unsigned int i=n; i--; )
-        d[i]=s[i];
-      return d;
-    }
+  forceinline void*
+  Heap::realloc(void* p, size_t s) {
+    p = ::realloc(p,s);
+    if (p != NULL || s == 0)
+      return p;
+    throw MemoryExhausted();
+  }
 
 
-#define GECODE_SUPPORT_TCOPY(T)                         \
-    template <>                                         \
-    forceinline T*                                      \
-    tcopy(T* d, const T* s, unsigned int n) {           \
-      return static_cast<T*>(memcpy(d,s,n*sizeof(T)));  \
-    }
+  /*
+   * Typed allocation routines
+   *
+   */
+  template <class T>
+  forceinline T*
+  Heap::talloc(unsigned int n) {
+    T* p = static_cast<T*>(malloc(sizeof(T)*n));
+    for (unsigned int i=n; i--; )
+      (void) new (p+i) T();
+    return p;
+  }
 
-    GECODE_SUPPORT_TCOPY(bool)
-    GECODE_SUPPORT_TCOPY(signed char)
-    GECODE_SUPPORT_TCOPY(unsigned char)
-    GECODE_SUPPORT_TCOPY(signed short int)
-    GECODE_SUPPORT_TCOPY(unsigned short int)
-    GECODE_SUPPORT_TCOPY(signed int)
-    GECODE_SUPPORT_TCOPY(unsigned int)
-    GECODE_SUPPORT_TCOPY(signed long int)
-    GECODE_SUPPORT_TCOPY(unsigned long int)
-    GECODE_SUPPORT_TCOPY(float)
-    GECODE_SUPPORT_TCOPY(double)
+  template <class T>
+  forceinline void
+  Heap::tfree(T* b, unsigned int n) {
+    for (unsigned int i=n; i--; )
+      b[i].~T();
+    free(b);
+  }
+
+  template <class T>
+  forceinline T*
+  Heap::tcopy(T* d, const T* s, unsigned int n) {
+    for (unsigned int i=n; i--; )
+      d[i]=s[i];
+    return d;
+  }
+
+
+#if 0
+#define GECODE_SUPPORT_TCOPY(T)                                 \
+  template <>                                                   \
+  forceinline T*                                                \
+  Heap::tcopy(T* d, const T* s, unsigned int n) {               \
+    return static_cast<T*>(memcpy(d,s,n*sizeof(T)));            \
+  }
+
+  GECODE_SUPPORT_TCOPY(bool)
+  GECODE_SUPPORT_TCOPY(signed char)
+  GECODE_SUPPORT_TCOPY(unsigned char)
+  GECODE_SUPPORT_TCOPY(signed short int)
+  GECODE_SUPPORT_TCOPY(unsigned short int)
+  GECODE_SUPPORT_TCOPY(signed int)
+  GECODE_SUPPORT_TCOPY(unsigned int)
+  GECODE_SUPPORT_TCOPY(signed long int)
+  GECODE_SUPPORT_TCOPY(unsigned long int)
+  GECODE_SUPPORT_TCOPY(float)
+  GECODE_SUPPORT_TCOPY(double)
 
 #undef GECODE_SUPPORT_TCOPY
 
-    template <class T>
-    forceinline T**
-    tcopy(T** d, const T** s, unsigned int n) {
-      return static_cast<T**>(memcpy(d,s,n*sizeof(T*)));
-    }
+  template <class T>
+  forceinline T**
+  Heap::tcopy(T** d, const T** s, unsigned int n) {
+    return static_cast<T**>(memcpy(d,s,n*sizeof(T*)));
+  }
 
+#endif
 
-    template <class T>
-    forceinline T*
-    trealloc(T* b, unsigned int n, unsigned int m) {
-      if (n == m)
-        return b;
-      T* p = static_cast<T*>(Memory::malloc(sizeof(T)*m));
-      for (unsigned int i=std::min(n,m); i--; )
-        (void) new (p+i) T(b[i]);
-      for (unsigned int i=n; i<m; i++)
-        (void) new (p+i) T();
-      Memory::tfree<T>(b,n);
-      return p;
-    }
+  template <class T>
+  forceinline T*
+  Heap::trealloc(T* b, unsigned int n, unsigned int m) {
+    if (n == m)
+      return b;
+    T* p = static_cast<T*>(malloc(sizeof(T)*m));
+    for (unsigned int i=std::min(n,m); i--; )
+      (void) new (p+i) T(b[i]);
+    for (unsigned int i=n; i<m; i++)
+      (void) new (p+i) T();
+    tfree<T>(b,n);
+    return p;
+  }
+
+#if 0
 
 #define GECODE_SUPPORT_TREALLOC(T)                              \
-    template <>                                                 \
-    forceinline T*                                              \
-    trealloc<T>(T* b, unsigned int, unsigned int m) {           \
-      return static_cast<T*>(Memory::realloc(b,m*sizeof(T)));   \
-    }
+  template <>                                                   \
+  forceinline T*                                                \
+  Heap::trealloc<T>(T* b, unsigned int, unsigned int m) {       \
+    return static_cast<T*>(realloc(b,m*sizeof(T)));             \
+  }
 
-    GECODE_SUPPORT_TREALLOC(bool)
-    GECODE_SUPPORT_TREALLOC(signed char)
-    GECODE_SUPPORT_TREALLOC(unsigned char)
-    GECODE_SUPPORT_TREALLOC(signed short int)
-    GECODE_SUPPORT_TREALLOC(unsigned short int)
-    GECODE_SUPPORT_TREALLOC(signed int)
-    GECODE_SUPPORT_TREALLOC(unsigned int)
-    GECODE_SUPPORT_TREALLOC(signed long int)
-    GECODE_SUPPORT_TREALLOC(unsigned long int)
-    GECODE_SUPPORT_TREALLOC(float)
-    GECODE_SUPPORT_TREALLOC(double)
-
-    template <class T>
-    forceinline T**
-    trealloc(T** b, unsigned int, unsigned int m) {
-      return static_cast<T**>(Memory::realloc(b,m*sizeof(T*)));
-    }
+  GECODE_SUPPORT_TREALLOC(bool)
+  GECODE_SUPPORT_TREALLOC(signed char)
+  GECODE_SUPPORT_TREALLOC(unsigned char)
+  GECODE_SUPPORT_TREALLOC(signed short int)
+  GECODE_SUPPORT_TREALLOC(unsigned short int)
+  GECODE_SUPPORT_TREALLOC(signed int)
+  GECODE_SUPPORT_TREALLOC(unsigned int)
+  GECODE_SUPPORT_TREALLOC(signed long int)
+  GECODE_SUPPORT_TREALLOC(unsigned long int)
+  GECODE_SUPPORT_TREALLOC(float)
+  GECODE_SUPPORT_TREALLOC(double)
 
 #undef GECODE_SUPPORT_TREALLOC
 
+  template <class T>
+  forceinline T**
+  Heap::trealloc(T** b, unsigned int, unsigned int m) {
+    return static_cast<T**>(realloc(b,m*sizeof(T*)));
   }
+
+#endif
 
 }
 

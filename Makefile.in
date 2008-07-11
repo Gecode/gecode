@@ -121,10 +121,10 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	exception symbol
+	exception symbol heap
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
-	dynamic-stack exception map memory \
+	dynamic-stack exception map heap \
 	macros random sentinel-stack sort \
 	static-pqueue static-stack symbol \
 	marked-pointer

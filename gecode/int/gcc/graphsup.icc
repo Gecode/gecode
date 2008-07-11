@@ -1302,7 +1302,7 @@ namespace Gecode { namespace Int { namespace GCC {
     _allocated = size;
 
     mem      = static_cast<char*>
-      (Memory::malloc(size));
+      (heap.malloc(size));
     edges    = Support::ptr_cast<Edge*>
       (mem);
     VarNode* vars_ptr = Support::ptr_cast<VarNode*>
@@ -2399,19 +2399,19 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline
   VarValGraph<View, Card, isView>::~VarValGraph(void){
-    Memory::free(mem);
+    heap.free(mem);
   }
 
   template <class View, class Card, bool isView>
   forceinline void*
   VarValGraph<View, Card, isView>::operator new(size_t t){
-    return Memory::malloc(t);
+    return heap.malloc(t);
   }
 
   template <class View, class Card, bool isView>
   forceinline void
   VarValGraph<View, Card, isView>::operator delete(void* p){
-    Memory::free(p);
+    heap.free(p);
   }
 
 

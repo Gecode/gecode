@@ -277,21 +277,21 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   PartialSum<Card>::~PartialSum(void){
     assert(mem != NULL);
-    Memory::free(mem);
+    heap.free(mem);
   }
 
   /// \brief Memory allocation for the partial sum structure
   template <class Card>
   forceinline void*
   PartialSum<Card>::operator new(size_t t){
-    return Memory::malloc(t);
+    return heap.malloc(t);
   }
 
   /// \brief Free memory used by partial sum structure
   template <class Card>
   forceinline void
   PartialSum<Card>::operator delete(void* p){
-      Memory::free(p);
+      heap.free(p);
   }
 
   /**
@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace GCC {
     size_t total    = sum_size + ds_size;
     _allocated = total;
 
-    mem = static_cast<char*>(Memory::malloc(total));
+    mem = static_cast<char*>(heap.malloc(total));
     sum = Support::ptr_cast<int*>(mem);
     ds  = Support::ptr_cast<int*>(mem + sum_size);
 

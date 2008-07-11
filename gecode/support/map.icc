@@ -121,7 +121,7 @@ namespace Gecode { namespace Support {
   
   template <class Key, class Value>
   Map<Key,Value>::Map(void) : n(0), usage(0) {
-    a = static_cast<Pair**>(Memory::malloc(sizeof(Pair*)*modulo()));
+    a = static_cast<Pair**>(heap.malloc(sizeof(Pair*)*modulo()));
     for (int i=modulo(); i--; )
       a[i] = NULL;
   }
@@ -132,7 +132,7 @@ namespace Gecode { namespace Support {
     int oldM = modulo();
     n++;
     Pair** olda = a;
-    a = static_cast<Pair**>(Memory::malloc(sizeof(Pair*)*modulo()));
+    a = static_cast<Pair**>(heap.malloc(sizeof(Pair*)*modulo()));
     for (int i=modulo(); i--; )
       a[i] = NULL;
     for (int i=oldM; i--;) {
@@ -154,7 +154,7 @@ namespace Gecode { namespace Support {
       if (a[i]) actualUsage++;
     assert(actualUsage == usage);
 #endif
-    Memory::free(olda);
+    heap.free(olda);
   }
   
   template <class Key, class Value>
@@ -199,7 +199,7 @@ namespace Gecode { namespace Support {
   Map<Key,Value>::~Map(void) {
     for (int i=modulo(); i--; )
       delete a[i];
-    Memory::free(a);
+    heap.free(a);
   }
 
 }}

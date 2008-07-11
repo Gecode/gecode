@@ -34,15 +34,15 @@ namespace Gecode { namespace Decomposition {
   void
   Partition::init(int noOfElements, int noOfComponents) {
     elements = 
-      static_cast<int*>(Memory::malloc(sizeof(int)*noOfElements));
+      static_cast<int*>(heap.malloc(sizeof(int)*noOfElements));
     separators =
-      static_cast<int*>(Memory::malloc(sizeof(int)*noOfComponents));
+      static_cast<int*>(heap.malloc(sizeof(int)*noOfComponents));
     _size = noOfComponents;
   }
 
   Partition::~Partition(void) {
-    Memory::free(elements);
-    Memory::free(separators);
+    heap.free(elements);
+    heap.free(separators);
   }
 
   size_t
@@ -65,8 +65,8 @@ namespace Gecode { namespace Decomposition {
   }
 
   DecompDesc::~DecompDesc(void) {
-    Memory::free(component);
-    Memory::free(element);
+    heap.free(component);
+    heap.free(element);
   }
 
   class Node {

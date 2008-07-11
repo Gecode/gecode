@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline IdxValMap*
   IdxValMap::allocate(int n) {
     size_t s = sizeof(IdxValMap)+n*sizeof(IdxValLink);
-    IdxValMap* ivm = static_cast<IdxValMap*>(Memory::malloc(s));
+    IdxValMap* ivm = static_cast<IdxValMap*>(heap.malloc(s));
     ivm->_size = s;
     return ivm;
   }
@@ -309,7 +309,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   forceinline void
   IdxValMap::operator delete(void* p,size_t) {
-    Memory::free(p);
+    heap.free(p);
   }
 
 
