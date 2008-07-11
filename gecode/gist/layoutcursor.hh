@@ -92,19 +92,12 @@ namespace Gecode { namespace Gist {
     // Destructor
     ~Shape(void);
 
-    static const Shape singletonShape;
-    static const Shape unitShape;
-    
     /// Return depth of the shape
     int depth(void) const;
     /// Return extent at depth \a i
     const Extent& operator[](int i) const;
     /// Return extent at depth \a i
     Extent& operator[](int i);
-    /// Extend the shape by \a deltaL and \a deltaR
-    void extend(int deltaL, int deltaR);
-    /// Move the shape by \a delta
-    void move(int delta);
     /// Return if extent exists at \a depth, if yes return it in \a extent
     bool getExtentAtDepth(int depth, Extent& extent);
     /// Return bounding box
