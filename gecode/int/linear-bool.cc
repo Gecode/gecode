@@ -101,7 +101,22 @@ namespace Gecode {
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
-
+    int min, max;
+    estimate(t,n,0,min,max);
+    IntView v(y);
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ME_FAIL(home,v.gq(home,min)); GECODE_ME_FAIL(home,v.lq(home,max));
+      break;
+    case IRT_GQ:
+      GECODE_ME_FAIL(home,v.lq(home,max));
+      break;
+    case IRT_LQ:
+      GECODE_ME_FAIL(home,v.gq(home,min));
+      break;
+    default: ;
+    }
+    if (home->failed()) return;
     Linear::post(home,t,n,r,y,0,icl,pk);
   }
 

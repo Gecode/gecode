@@ -82,6 +82,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   ExecStatus
   MaxBnd<View>::post(Space* home, View x0, View x1, View x2) {
+    GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
+    GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     if (same(x0,x1))
       return Rel::EqBnd<View,View>::post(home,x0,x2);
     if (same(x0,x2))
@@ -163,6 +165,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::EqBnd<View,View>::post(home,x[0],y);
     if (x.size() == 2)
       return MaxBnd<View>::post(home,x[0],x[1],y);
+    int l = Int::Limits::min;
+    int u = Int::Limits::min;
+    for (int i=x.size(); i--; ) {
+      l = std::max(l,x[i].min());
+      u = std::max(u,x[i].max());
+    }
+    GECODE_ME_CHECK(y.gq(home,l));
+    GECODE_ME_CHECK(y.lq(home,u));
     if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
@@ -276,6 +286,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   ExecStatus
   MaxDom<View>::post(Space* home, View x0, View x1, View x2) {
+    GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
+    GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     if (same(x0,x1))
       return Rel::EqDom<View,View>::post(home,x0,x2);
     if (same(x0,x2))
@@ -373,6 +385,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::EqDom<View,View>::post(home,x[0],y);
     if (x.size() == 2)
       return MaxDom<View>::post(home,x[0],x[1],y);
+    int l = Int::Limits::min;
+    int u = Int::Limits::min;
+    for (int i=x.size(); i--; ) {
+      l = std::max(l,x[i].min());
+      u = std::max(u,x[i].max());
+    }
+    GECODE_ME_CHECK(y.gq(home,l));
+    GECODE_ME_CHECK(y.lq(home,u));
     if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )

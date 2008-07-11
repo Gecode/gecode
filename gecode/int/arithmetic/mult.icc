@@ -317,11 +317,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlusBnd<Val,VA,VB,VC>::post(Space* home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
-    GECODE_ME_CHECK(x2.gr(home,0));
-    double l = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
-    if (l > INT_MAX) {
+    GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) * 
+                                static_cast<double>(x1.min()))));
+    double u = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
+    if (u > INT_MAX) {
       (void) new (home) MultPlusBnd<double,VA,VB,VC>(home,x0,x1,x2);
     } else {
+      GECODE_ME_CHECK(x2.lq(home,u));
       (void) new (home) MultPlusBnd<int,VA,VB,VC>(home,x0,x1,x2);
     }
     return ES_OK;
@@ -493,6 +495,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (pos(x2)) goto post_nnp;
       if (neg(x2)) goto post_pnn;
     }
+    double a = static_cast<double>(x0.min()) * static_cast<double>(x1.min());
+    double b = static_cast<double>(x0.min()) * static_cast<double>(x1.max());
+    double c = static_cast<double>(x0.max()) * static_cast<double>(x1.min());
+    double d = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
+    GECODE_ME_CHECK(x2.gq(home,std::min(std::min(a,b),std::min(c,d))));
+    GECODE_ME_CHECK(x2.lq(home,std::max(std::max(a,b),std::max(c,d))));
     (void) new (home) MultBnd<View>(home,x0,x1,x2);
     return ES_OK;
 
@@ -595,11 +603,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlusDom<Val,VA,VB,VC>::post(Space* home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
-    GECODE_ME_CHECK(x2.gr(home,0));
-    double l = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
-    if (l > INT_MAX) {
+    GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) * 
+                                static_cast<double>(x1.min()))));
+    double u = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
+    if (u > INT_MAX) {
       (void) new (home) MultPlusDom<double,VA,VB,VC>(home,x0,x1,x2);
     } else {
+      GECODE_ME_CHECK(x2.lq(home,u));
       (void) new (home) MultPlusDom<int,VA,VB,VC>(home,x0,x1,x2);
     }
     return ES_OK;
@@ -780,6 +790,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (pos(x2)) goto post_nnp;
       if (neg(x2)) goto post_pnn;
     }
+    double a = static_cast<double>(x0.min()) * static_cast<double>(x1.min());
+    double b = static_cast<double>(x0.min()) * static_cast<double>(x1.max());
+    double c = static_cast<double>(x0.max()) * static_cast<double>(x1.min());
+    double d = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
+    GECODE_ME_CHECK(x2.gq(home,std::min(std::min(a,b),std::min(c,d))));
+    GECODE_ME_CHECK(x2.lq(home,std::max(std::max(a,b),std::max(c,d))));
     (void) new (home) MultDom<View>(home,x0,x1,x2);
     return ES_OK;
 

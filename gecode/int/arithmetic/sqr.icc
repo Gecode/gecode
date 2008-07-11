@@ -81,6 +81,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   forceinline ExecStatus
   SqrPlusBnd<VA,VB>::post(Space* home, VA x0, VB x1) {
+    GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     (void) new (home) SqrPlusBnd<VA,VB>(home,x0,x1);
     return ES_OK;
   }
@@ -153,6 +154,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return SqrPlusBnd<IntView,IntView>::post(home,x0,x1);
       if (x0.max() <= 0)
         return SqrPlusBnd<MinusView,IntView>::post(home,x0,x1);
+      GECODE_ME_CHECK(x1.lq(home,
+                            std::max(x0.min()*x0.min(),x0.max()*x0.max())));
       (void) new (home) SqrBnd<View>(home,x0,x1);
     }
     return ES_OK;
@@ -252,6 +255,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   forceinline ExecStatus
   SqrPlusDom<VA,VB>::post(Space* home, VA x0, VB x1) {
+    GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     (void) new (home) SqrPlusDom<VA,VB>(home,x0,x1);
     return ES_OK;
   }
@@ -352,6 +356,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return SqrPlusDom<IntView,IntView>::post(home,x0,x1);
       if (x0.max() <= 0)
         return SqrPlusDom<MinusView,IntView>::post(home,x0,x1);
+      GECODE_ME_CHECK(x1.lq(home,
+                            std::max(x0.min()*x0.min(),x0.max()*x0.max())));
       (void) new (home) SqrDom<View>(home,x0,x1);
     }
     return ES_OK;

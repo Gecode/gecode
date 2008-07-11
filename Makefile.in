@@ -472,10 +472,10 @@ CPLTSETBUILDDIRS	=						\
 #
 
 MMSRC0 = \
-	bool-expr.cc arithmetic.cc reg.cc 
+	bool-expr.cc reg.cc 
 MMHDR0 = \
 	lin-expr.icc lin-rel.icc exception.icc matrix.icc \
-	bool-expr.icc bool-rel.icc
+	bool-expr.icc bool-rel.icc arithmetic.icc
 
 MMSRC 		= $(MMSRC0:%=gecode/minimodel/%)
 MMHDR 		= gecode/minimodel.hh $(MMHDR0:%=gecode/minimodel/%)
@@ -1158,11 +1158,7 @@ $(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(
 		$(BOOST_LINK) $(LINKQT) @LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
-<<<<<<< .working
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKQT) \
-=======
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKDDS) $(LINKQT) \
->>>>>>> .merge-right.r6782
 		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
 endif
 

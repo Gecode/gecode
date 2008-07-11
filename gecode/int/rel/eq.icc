@@ -55,6 +55,10 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
     } else if (!same(x0,x1)) {
+      GECODE_ME_CHECK(x0.lq(home,x1.max()));
+      GECODE_ME_CHECK(x1.lq(home,x0.max()));
+      GECODE_ME_CHECK(x0.gq(home,x1.min()));
+      GECODE_ME_CHECK(x1.gq(home,x0.min()));
       (void) new (home) EqBnd<View0,View1>(home,x0,x1);
     }
     return ES_OK;
@@ -142,6 +146,10 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
     } else if (!same(x0,x1)) {
+      GECODE_ME_CHECK(x0.lq(home,x1.max()));
+      GECODE_ME_CHECK(x1.lq(home,x0.max()));
+      GECODE_ME_CHECK(x0.gq(home,x1.min()));
+      GECODE_ME_CHECK(x1.gq(home,x0.min()));
       (void) new (home) EqDom<View0,View1>(home,x0,x1);
     }
     return ES_OK;
@@ -250,10 +258,21 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   NaryEqDom<View>::post(Space* home, ViewArray<View>& x) {
     x.unique();
-    if (x.size() == 2)
+    if (x.size() == 2) {
       return EqDom<View,View>::post(home,x[0],x[1]);
-    else if (x.size() > 2)
+    } else if (x.size() > 2) {
+      int l = x[0].min();
+      int u = x[0].max();
+      for (int i=x.size(); i-- > 1; ) {
+        l = std::max(l,x[i].min());
+        u = std::min(u,x[i].max());
+      }
+      for (int i=x.size(); i--; ) {
+        GECODE_ME_CHECK(x[i].gq(home,l));
+        GECODE_ME_CHECK(x[i].lq(home,u));
+      }
       (void) new (home) NaryEqDom<View>(home,x);
+    }
     return ES_OK;
   }
 
@@ -393,10 +412,21 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   ExecStatus
   NaryEqBnd<View>::post(Space* home, ViewArray<View>& x) {
-    if (x.size() == 2)
+    if (x.size() == 2) {
       return EqBnd<View,View>::post(home,x[0],x[1]);
-    else if (x.size() > 2)
+    } else if (x.size() > 2) {
+      int l = x[0].min();
+      int u = x[0].max();
+      for (int i=x.size(); i-- > 1; ) {
+        l = std::max(l,x[i].min());
+        u = std::min(u,x[i].max());
+      }
+      for (int i=x.size(); i--; ) {
+        GECODE_ME_CHECK(x[i].gq(home,l));
+        GECODE_ME_CHECK(x[i].lq(home,u));
+      }
       (void) new (home) NaryEqBnd<View>(home,x);
+    }
     return ES_OK;
   }
 

@@ -102,6 +102,22 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
+    int min, max;
+    estimate(t,x.size(),0,min,max);
+    IntView v(y);
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ME_FAIL(home,v.gq(home,min)); GECODE_ME_FAIL(home,v.lq(home,max));
+      break;
+    case IRT_GQ:
+      GECODE_ME_FAIL(home,v.lq(home,max));
+      break;
+    case IRT_LQ:
+      GECODE_ME_FAIL(home,v.gq(home,min));
+      break;
+    default: ;
+    }
+    if (home->failed()) return;
     t[x.size()].a=-1; t[x.size()].x=y;
     Linear::post(home,t,x.size()+1,r,0,icl);
   }
@@ -130,6 +146,22 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
+    int min, max;
+    estimate(t,x.size(),0,min,max);
+    IntView v(y);
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ME_FAIL(home,v.gq(home,min)); GECODE_ME_FAIL(home,v.lq(home,max));
+      break;
+    case IRT_GQ:
+      GECODE_ME_FAIL(home,v.lq(home,max));
+      break;
+    case IRT_LQ:
+      GECODE_ME_FAIL(home,v.gq(home,min));
+      break;
+    default: ;
+    }
+    if (home->failed()) return;
     t[x.size()].a=-1; t[x.size()].x=y;
     Linear::post(home,t,x.size()+1,r,0,icl);
   }
