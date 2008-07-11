@@ -673,6 +673,7 @@ PROG_MAKE
 PROG_SED
 PROG_PERL
 CXXCPP
+USERSUFFIX
 BUILDSTATIC
 BUILDDLL
 BUILD_MACOS_FRAMEWORK
@@ -1378,6 +1379,8 @@ Optional Packages:
                           Linux, Darwin, and Windows.
   --with-compiler-vendor  Override compiler test. Valid values are gnu, intel,
                           and microsoft.
+  --with-lib-prefix       add user-defined prefix to library names
+  --with-lib-suffix       add user-defined suffix to library names
   --with-sdk              SDK to use on Mac OS X
   --with-macosx-version-min
                           minimum version of Mac OS X to support
@@ -1884,6 +1887,8 @@ GECODE_SOVERSION=${ac_gecode_soversion}
 
 
 # Test for platform specific behaviour of arithmetic
+
+
 
 
 
@@ -3984,6 +3989,45 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 fi
 { echo "$as_me:$LINENO: result: $ac_cv_cxx_compiler_vendor" >&5
 echo "${ECHO_T}$ac_cv_cxx_compiler_vendor" >&6; }
+
+
+
+# Check whether --with-lib-prefix was given.
+if test "${with_lib_prefix+set}" = set; then
+  withval=$with_lib_prefix;
+fi
+
+  { echo "$as_me:$LINENO: checking for user-defined library name prefix" >&5
+echo $ECHO_N "checking for user-defined library name prefix... $ECHO_C" >&6; }
+  if test "x${withval}" != "x"; then
+    ac_gecode_userprefix=${withval}
+		{ echo "$as_me:$LINENO: result: ${withval}" >&5
+echo "${ECHO_T}${withval}" >&6; }
+  else
+    ac_gecode_userprefix=
+		{ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  fi
+
+# Check whether --with-lib-suffix was given.
+if test "${with_lib_suffix+set}" = set; then
+  withval=$with_lib_suffix;
+fi
+
+  { echo "$as_me:$LINENO: checking for user-defined library name suffix" >&5
+echo $ECHO_N "checking for user-defined library name suffix... $ECHO_C" >&6; }
+  if test "x${withval}" != "x"; then
+    USERSUFFIX=${withval}
+
+		{ echo "$as_me:$LINENO: result: ${withval}" >&5
+echo "${ECHO_T}${withval}" >&6; }
+  else
+    USERSUFFIX=""
+
+		{ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  fi
+
 
 
 # Check whether --with-sdk was given.
@@ -7156,7 +7200,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   LIBEXT="${DLLEXT}"
 
-  LIBPREFIX="libgecode"
+  LIBPREFIX="lib${ac_gecode_userprefix}gecode"
 
   STATICLIBEXT="a"
 
@@ -7184,7 +7228,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     INSTALLLIBS="no"
 
 
-  LINKPREFIX="-lgecode"
+  LINKPREFIX="-l${ac_gecode_userprefix}gecode"
 
   LINKSUFFIX=""
 
@@ -8152,9 +8196,9 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   LIBEXT="lib"
 
-  LIBPREFIX="Gecode"
+  LIBPREFIX="${ac_gecode_userprefix}Gecode"
 
-  LINKPREFIX="Gecode"
+  LINKPREFIX="${ac_gecode_userprefix}Gecode"
 
   LINKSUFFIX=".lib"
 
@@ -9052,7 +9096,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   LIBEXT="${DLLEXT}"
 
-  LIBPREFIX="libgecode"
+  LIBPREFIX="lib${ac_gecode_userprefix}gecode"
 
   STATICLIBEXT="a"
 
@@ -9080,7 +9124,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     INSTALLLIBS="no"
 
 
-  LINKPREFIX="-lgecode"
+  LINKPREFIX="-l${ac_gecode_userprefix}gecode"
 
   LINKSUFFIX=""
 
@@ -9669,9 +9713,9 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   LIBEXT="lib"
 
-  LIBPREFIX="Gecode"
+  LIBPREFIX="${ac_gecode_userprefix}Gecode"
 
-  LINKPREFIX="Gecode"
+  LINKPREFIX="${ac_gecode_userprefix}Gecode"
 
   LINKSUFFIX=".lib"
 
@@ -9912,7 +9956,7 @@ echo $ECHO_N "checking whether to build the set variables library... $ECHO_C" >&
 echo "${ECHO_T}yes" >&6; }
      enable_set_vars="yes";
      enable_int_vars="yes";
-	 LINKSET=${LINKLIBDIR}${LINKPREFIX}${SET}${LINKSUFFIX}
+	 LINKSET=${LINKLIBDIR}${LINKPREFIX}${SET}${USERSUFFIX}${LINKSUFFIX}
 
 
      cat >>confdefs.h <<\_ACEOF
@@ -9949,7 +9993,7 @@ echo $ECHO_N "checking whether to build the cpltset variables library... $ECHO_C
 echo "${ECHO_T}yes" >&6; }
      enable_cpltset_vars="yes";
 
-	LINKCPLTSET=${LINKLIBDIR}${LINKPREFIX}${CPLTSET}${LINKSUFFIX}
+	LINKCPLTSET=${LINKLIBDIR}${LINKPREFIX}${CPLTSET}${USERSUFFIX}${LINKSUFFIX}
 
 
      cat >>confdefs.h <<\_ACEOF
@@ -9981,7 +10025,7 @@ echo $ECHO_N "checking whether to build the int variables library... $ECHO_C" >&
 echo "${ECHO_T}yes" >&6; }
      enable_int_vars="yes";
 
-  	 LINKINT=${LINKLIBDIR}${LINKPREFIX}${INT}${LINKSUFFIX}
+  	 LINKINT=${LINKLIBDIR}${LINKPREFIX}${INT}${USERSUFFIX}${LINKSUFFIX}
 
 
      cat >>confdefs.h <<\_ACEOF
@@ -10988,6 +11032,7 @@ PROG_MAKE!$PROG_MAKE$ac_delim
 PROG_SED!$PROG_SED$ac_delim
 PROG_PERL!$PROG_PERL$ac_delim
 CXXCPP!$CXXCPP$ac_delim
+USERSUFFIX!$USERSUFFIX$ac_delim
 BUILDSTATIC!$BUILDSTATIC$ac_delim
 BUILDDLL!$BUILDDLL$ac_delim
 BUILD_MACOS_FRAMEWORK!$BUILD_MACOS_FRAMEWORK$ac_delim
@@ -11027,7 +11072,6 @@ CCIN!$CCIN$ac_delim
 EXAMPLES_EXTRA_CXXFLAGS!$EXAMPLES_EXTRA_CXXFLAGS$ac_delim
 INSTALLLIBS!$INSTALLLIBS$ac_delim
 LINKPREFIX!$LINKPREFIX$ac_delim
-LINKSUFFIX!$LINKSUFFIX$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -11069,6 +11113,7 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+LINKSUFFIX!$LINKSUFFIX$ac_delim
 LINKOUTPUT!$LINKOUTPUT$ac_delim
 EXEOUTPUT!$EXEOUTPUT$ac_delim
 SUPPORT!$SUPPORT$ac_delim
@@ -11113,7 +11158,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 42; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 43; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

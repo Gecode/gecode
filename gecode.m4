@@ -470,7 +470,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   dnl file extensions
   AC_SUBST(SBJEXT, "s")
   AC_SUBST(LIBEXT, "${DLLEXT}")
-  AC_SUBST(LIBPREFIX, "libgecode")
+  AC_SUBST(LIBPREFIX, "lib${ac_gecode_userprefix}gecode")
   AC_SUBST(STATICLIBEXT, "a")
   AC_SUBST(MINUSLDIR, "-L${libdir}")
   AC_SUBST(LINKLIBDIR, "")
@@ -488,7 +488,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   dnl Do not install stub .lib files (required for msvc)
   AC_SUBST(INSTALLLIBS, "no")
 
-  AC_SUBST(LINKPREFIX, "-lgecode")
+  AC_SUBST(LINKPREFIX, "-l${ac_gecode_userprefix}gecode")
   AC_SUBST(LINKSUFFIX, "")
 
   dnl how to tell the compiler to output an object file
@@ -642,8 +642,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(SOLINKSUFFIX, "")
   AC_SUBST(WLSONAME, "")
   AC_SUBST(LIBEXT, "lib")
-  AC_SUBST(LIBPREFIX, "Gecode")
-  AC_SUBST(LINKPREFIX, "Gecode")
+  AC_SUBST(LIBPREFIX, "${ac_gecode_userprefix}Gecode")
+  AC_SUBST(LINKPREFIX, "${ac_gecode_userprefix}Gecode")
   AC_SUBST(LINKSUFFIX, ".lib")
   AC_SUBST(MINUSLDIR, "")
   AC_SUBST(LINKLIBDIR, "${libdir}/")
@@ -956,4 +956,30 @@ AC_DEFUN([AC_GECODE_GIST],
     AC_MSG_RESULT(no)
   fi
   AC_SUBST(enable_gist, ${enable_gist})
+])
+
+AC_DEFUN([AC_GECODE_USER_SUFFIX],
+  [
+  AC_ARG_WITH([lib-prefix],
+    AC_HELP_STRING([--with-lib-prefix],
+      [add user-defined prefix to library names]))
+  AC_MSG_CHECKING(for user-defined library name prefix)
+  if test "x${withval}" != "x"; then
+    ac_gecode_userprefix=${withval}
+		AC_MSG_RESULT(${withval})
+  else
+    ac_gecode_userprefix=
+		AC_MSG_RESULT(no)
+  fi
+  AC_ARG_WITH([lib-suffix],
+    AC_HELP_STRING([--with-lib-suffix],
+      [add user-defined suffix to library names]))
+  AC_MSG_CHECKING(for user-defined library name suffix)
+  if test "x${withval}" != "x"; then
+    AC_SUBST(USERSUFFIX,${withval})
+		AC_MSG_RESULT(${withval})
+  else
+    AC_SUBST(USERSUFFIX,[""])
+		AC_MSG_RESULT(no)
+  fi
 ])
