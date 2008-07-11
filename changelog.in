@@ -70,6 +70,13 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The set selection constraints are now called element.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

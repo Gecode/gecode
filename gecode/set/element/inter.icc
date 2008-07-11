@@ -5,7 +5,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2004,2006
+ *     Guido Tack, 2004
  *     Christian Schulte, 2004
  *
  *  Last modified:
@@ -37,15 +37,16 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   forceinline
-  SelectUnion<SView,RView>::
-  SelectUnion(Space* home, SView y0,
+  ElementIntersection<SView,RView>::
+  ElementIntersection(Space* home, SView y0,
                      IdxViewArray<SView>& iv0,
-                     RView y1)
-    : Propagator(home), x0(y0), iv(iv0), x1(y1) {
+                     RView y1,
+                     const IntSet& theUniverse)
+    : Propagator(home), universe(theUniverse), x0(y0), iv(iv0), x1(y1) {
     force(home);
     x0.subscribe(home,this, PC_SET_ANY);
     x1.subscribe(home,this, PC_SET_ANY);
@@ -54,86 +55,100 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class SView, class RView>
   forceinline
-  SelectUnion<SView,RView>::
-  SelectUnion(Space* home, bool share,
-                     SelectUnion<SView,RView>& p)
+  ElementIntersection<SView,RView>::
+  ElementIntersection(Space* home, bool share,
+                     ElementIntersection<SView,RView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     iv.update(home,share,p.iv);
+    universe.update(home,share,p.universe);
   }
 
   template <class SView, class RView>
   PropCost
-  SelectUnion<SView,RView>::cost(ModEventDelta) const {
+  ElementIntersection<SView,RView>::cost(ModEventDelta) const {
     return PC_LINEAR_HI;
   }
 
   template <class SView, class RView>
   Support::Symbol
-  SelectUnion<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Gecode::Set::Select::Union");
+  ElementIntersection<SView,RView>::ati(void) {
+    return Reflection::mangle<SView,RView>("Gecode::Set::Element::Intersection");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec
-  SelectUnion<SView,RView>::spec(const Space* home,
-                                 Reflection::VarMap& m) const {
+  ElementIntersection<SView,RView>::spec(const Space* home,
+                                        Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
-    return s << x0.spec(home, m)
+    int count = 0;
+    for (IntSetRanges ur(universe); ur(); ++ur)
+      count++;
+    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
+    count = 0;
+    for (IntSetRanges ur(universe); ur(); ++ur) {
+      (*a)[count++] = ur.min();
+      (*a)[count++] = ur.max();
+    }
+    return s << a
+             << x0.spec(home, m)
              << iv.spec(home, m)
              << x1.spec(home, m);
   }
 
   template <class SView, class RView>
   void
-  SelectUnion<SView,RView>::post(Space* home,
-                                 Reflection::VarMap& vars,
-                                 const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    SView x0(home, vars, spec[0]);
-    IdxViewArray<SView> iv(home, vars, spec[1]);
-    RView x1(home, vars, spec[2]);
-    (void) new (home) SelectUnion(home, x0, iv, x1);
+  ElementIntersection<SView,RView>::post(Space* home,
+                                        Reflection::VarMap& vars,
+                                        const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
+    Reflection::IntArrayArgRanges ur(spec[0]->toIntArray());
+    IntSet universe(ur);
+    SView x0(home, vars, spec[1]);
+    IdxViewArray<SView> iv(home, vars, spec[2]);
+    RView x1(home, vars, spec[3]);
+    (void) new (home) ElementIntersection(home, x0, iv, x1, universe);
   }
 
   template <class SView, class RView>
   size_t
-  SelectUnion<SView,RView>::dispose(Space* home) {
+  ElementIntersection<SView,RView>::dispose(Space* home) {
     unforce(home);
     if (!home->failed()) {
       x0.cancel(home,this, PC_SET_ANY);
       x1.cancel(home,this, PC_SET_ANY);
       iv.cancel(home,this,PC_SET_ANY);
     }
+    universe.~IntSet();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnion<SView,RView>::
+  ElementIntersection<SView,RView>::
   post(Space* home, SView x0, IdxViewArray<SView>& xs,
-       RView x1) {
+       RView x1, const IntSet& universe) {
     int n = xs.size();
 
     // s2 \subseteq {1,...,n}
     Iter::Ranges::Singleton s(0, n-1);
     GECODE_ME_CHECK(x1.intersectI(home,s));
     (void) new (home)
-      SelectUnion<SView,RView>(home,x0,xs,x1);
+      ElementIntersection<SView,RView>(home,x0,xs,x1,universe);
     return ES_OK;
   }
 
   template <class SView, class RView>
   Actor*
-  SelectUnion<SView,RView>::copy(Space* home, bool share) {
-    return new (home) SelectUnion<SView,RView>(home,share,*this);
+  ElementIntersection<SView,RView>::copy(Space* home, bool share) {
+    return new (home) ElementIntersection<SView,RView>(home,share,*this);
   }
 
   template <class SView, class RView>
   ExecStatus
-  SelectUnion<SView,RView>::propagate(Space* home, ModEventDelta) {
+  ElementIntersection<SView,RView>::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
     bool loopVar;
@@ -152,22 +167,16 @@ namespace Gecode { namespace Set { namespace Select {
       Iter::Ranges::ToValues<Iter::Ranges::Cache<GlbRanges<RView> > >
         vx1(x1lbc);
 
-      // In the first iteration, compute in before[i] the union
-      // of all the upper bounds of the x_i. At the same time,
+      // In the first iteration, compute in before[i] the intersection
+      // of all the lower bounds of the x_i. At the same time,
       // exclude inconsistent x_i from x1 and remove them from
       // the list, cancel their dependencies.
 
-      GLBndSet sofarBefore(home);
-      LUBndSet selectedInter(home, IntSet (Limits::min,
-                                   Limits::max));
-      GECODE_AUTOARRAY(GLBndSet, before, n);
+      LUBndSet sofarBefore(home,universe);
+      GECODE_AUTOARRAY(LUBndSet, before, n);
 
       int j = 0;
       int i = 0;
-      
-      unsigned int maxCard = 0;
-      unsigned int minCard = Limits::card;
-      
       while ( vx1ub() ) {
 
         // Remove vars at indices not in the upper bound
@@ -182,32 +191,19 @@ namespace Gecode { namespace Set { namespace Select {
         SView candidate = iv[j].var;
         int candidateInd = iv[j].idx;
 
-        // inter = glb(candidate) & complement(lub(x0))
-        GlbRanges<SView> candlb(candidate);
-        LubRanges<SView> x0ub(x0);
-        Iter::Ranges::Diff<GlbRanges<SView>,
-          LubRanges<SView> > diff(candlb, x0ub);
-
-        bool selectSingleInconsistent = false;
-        if (x1.cardMax() <= 1) {
-          GlbRanges<SView> x0lb(x0);
-          LubRanges<SView> candub(candidate);
-          Iter::Ranges::Diff<GlbRanges<SView>,
-                             LubRanges<SView> > diff2(x0lb, candub);
-          selectSingleInconsistent = diff2() || candidate.cardMax() < x0.cardMin();
-        }
+        // inter = glb(x0) & complement(lub(candidate))
+        GlbRanges<SView> x0lb(x0);
+        LubRanges<SView> candub(candidate);
+        Iter::Ranges::Diff<GlbRanges<SView>,LubRanges<SView> >
+          inter(x0lb, candub);
 
         // exclude inconsistent x_i
         // an x_i is inconsistent if
-        //  * at most one x_i can be selected and there are
-        //    elements in x_0 that can't be in x_i
-        //    (selectSingleInconsistent)
-        //  * its min cardinality is greater than maxCard of x0
-        //  * inter is not empty (there are elements in x_i
-        //    that can't be in x_0)
-        if (selectSingleInconsistent ||
-            candidate.cardMin() > x0.cardMax() ||
-            diff()) {
+        //  * its max cardinality is less than minCard of x0
+        //  * inter is not empty (there are elements in x_0
+        //    that can't be in x_i)
+        if (candidate.cardMax() < x0.cardMin() ||
+            inter()) {
           ModEvent me = (x1.exclude(home,candidateInd));
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
@@ -220,26 +216,22 @@ namespace Gecode { namespace Set { namespace Select {
           // if x_i is consistent, check whether we know
           // that its index is in x1
           if (vx1() && vx1.val()==candidateInd) {
-            // x0 >= candidate, candidate <= x0
-            GlbRanges<SView> candlb(candidate);
-            ModEvent me = x0.includeI(home,candlb);
+            // x0 <= candidate, candidate >= x0
+            GlbRanges<SView> x0lb(x0);
+            ModEvent me = candidate.includeI(home,x0lb);
             loopVar |= me_modified(me);
             GECODE_ME_CHECK(me);
 
-            LubRanges<SView> x0ub(x0);
-            me = candidate.intersectI(home,x0ub);
+            LubRanges<SView> candub(candidate);
+            me = x0.intersectI(home,candub);
             loopVar |= me_modified(me);
             GECODE_ME_CHECK(me);
             ++vx1;
           }
-          new (&before[j]) GLBndSet(home);
+          new (&before[j]) LUBndSet(home);
           before[j].update(home,sofarBefore);
-          LubRanges<SView> cub(candidate);
-          sofarBefore.includeI(home,cub);
           GlbRanges<SView> clb(candidate);
-          selectedInter.intersectI(home,clb);
-          maxCard = std::max(maxCard, candidate.cardMax());
-          minCard = std::min(minCard, candidate.cardMin());
+          sofarBefore.intersectI(home,clb);
         }
 
         ++vx1ub;
@@ -255,72 +247,57 @@ namespace Gecode { namespace Set { namespace Select {
       iv.size(n);
 
       if (x1.cardMax()==0) {
-        // Selector is empty, hence the result must be empty
+        // Elementor is empty, hence the result must be universe
         {
-          GECODE_ME_CHECK(x0.cardMax(home,0));
+          IntSetRanges uniI(universe);
+          GECODE_ME_CHECK(x0.includeI(home,uniI));
+        }
+        {
+          IntSetRanges uniI(universe);
+          GECODE_ME_CHECK(x0.intersectI(home,uniI));
         }
         for (int i=n; i--;)
           before[i].dispose(home);
         return ES_SUBSUMED(this,home);
       }
 
-      if (x1.cardMin() > 0) {
-        // Selector is not empty, hence the intersection of the
-        // possibly selected lower bounds is contained in x0
-        BndSetRanges si(selectedInter);
-        ModEvent me = x0.includeI(home, si);
-        loopVar |= me_modified(me);
-        GECODE_ME_CHECK(me);
-        me = x0.cardMin(home, minCard);
-        loopVar |= me_modified(me);
-        GECODE_ME_CHECK(me);
-      }
-      selectedInter.dispose(home);
-
-      if (x1.cardMax() <= 1) {
-        ModEvent me = x0.cardMax(home, maxCard);
-        loopVar |= me_modified(me);
-        GECODE_ME_CHECK(me);
-      }
-
       {
-        // x0 <= sofarBefore
+        // x0 >= sofarBefore
         BndSetRanges sfB(sofarBefore);
-        ModEvent me = x0.intersectI(home,sfB);
+        ModEvent me = x0.includeI(home,sfB);
         loopVar |= me_modified(me);
         GECODE_ME_CHECK(me);
       }
 
       sofarBefore.dispose(home);
 
-      GLBndSet sofarAfter(home);
+      LUBndSet sofarAfter(home, universe);
 
       // In the second iteration, this time backwards, compute
-      // sofarAfter as the union of all lub(x_j) with j>i
+      // sofarAfter as the intersection of all glb(x_j) with j>i
       for (int i=n; i--;) {
-        // TODO: check for size of universe here?
-        // if (sofarAfter.size() == 0) break;
+        if (sofarAfter.size() == 0) break;
         
         // extra = inter(before[i], sofarAfter) - lub(x0)
         BndSetRanges b(before[i]);
         BndSetRanges s(sofarAfter);
-        GlbRanges<SView> x0lb(x0);
-        Iter::Ranges::Union<BndSetRanges, BndSetRanges> inter(b,s);
-        Iter::Ranges::Diff<GlbRanges<SView>,
-          Iter::Ranges::Union<BndSetRanges,BndSetRanges> > diff(x0lb, inter);
+        LubRanges<SView> x0ub(x0);
+        Iter::Ranges::Inter<BndSetRanges, BndSetRanges> inter(b,s);
+        Iter::Ranges::Diff<Iter::Ranges::Inter<BndSetRanges,
+          BndSetRanges>, LubRanges<SView> > diff(inter, x0ub);
         if (diff()) {
           ModEvent me = (x1.include(home,iv[i].idx));
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
 
           // candidate != extra
-          me = iv[i].var.includeI(home,diff);
+          me = iv[i].var.excludeI(home,diff);
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
         }
 
-        LubRanges<SView> iviub(iv[i].var);
-        sofarAfter.includeI(home,iviub);
+        GlbRanges<SView> ivilb(iv[i].var);
+        sofarAfter.intersectI(home,ivilb);
         before[i].dispose(home);
       }
       sofarAfter.dispose(home);
@@ -335,13 +312,13 @@ namespace Gecode { namespace Set { namespace Select {
         ViewArray<SView> is(home,ubsize);
         for (int i=n; i--;)
           is[i]=iv[i].var;
-        GECODE_REWRITE(this,(RelOp::UnionN<SView, SView>
+        GECODE_REWRITE(this,(RelOp::IntersectionN<SView, SView>
                         ::post(home,is,x0)));
       } else if (ubsize == 2) {
         assert(n==2);
         SView a = iv[0].var;
         SView b = iv[1].var;
-        GECODE_REWRITE(this,(RelOp::Union<SView, SView, SView>
+        GECODE_REWRITE(this,(RelOp::Intersection<SView, SView, SView>
                        ::post(home,a,b,x0)));
       } else if (ubsize == 1) {
         assert(n==1);

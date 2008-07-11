@@ -1741,7 +1741,7 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/support/marked-pointer.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
 	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
-gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
+gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -1769,15 +1769,15 @@ gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
-	./gecode/set/exception.icc ./gecode/set/limits.icc ./gecode/set/propagator.icc \
-	./gecode/set/rel-op.hh ./gecode/set/rel-op/common.icc ./gecode/set/rel-op/inter.icc \
-	./gecode/set/rel-op/partition.icc ./gecode/set/rel-op/post.icc ./gecode/set/rel-op/subofunion.icc \
-	./gecode/set/rel-op/superofinter.icc ./gecode/set/rel-op/union.icc ./gecode/set/rel.hh \
-	./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc ./gecode/set/rel/nosubset.icc \
-	./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc ./gecode/set/rel/re-subset.icc \
-	./gecode/set/rel/subset.icc ./gecode/set/select.hh ./gecode/set/select/disjoint.icc \
-	./gecode/set/select/idxarray.hh ./gecode/set/select/idxarray.icc ./gecode/set/select/inter.icc \
-	./gecode/set/select/union.icc ./gecode/set/select/unionConst.icc ./gecode/set/var-imp.icc \
+	./gecode/set/element.hh ./gecode/set/element/disjoint.icc ./gecode/set/element/idxarray.hh \
+	./gecode/set/element/idxarray.icc ./gecode/set/element/inter.icc ./gecode/set/element/union.icc \
+	./gecode/set/element/unionConst.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
+	./gecode/set/propagator.icc ./gecode/set/rel-op.hh ./gecode/set/rel-op/common.icc \
+	./gecode/set/rel-op/inter.icc ./gecode/set/rel-op/partition.icc ./gecode/set/rel-op/post.icc \
+	./gecode/set/rel-op/subofunion.icc ./gecode/set/rel-op/superofinter.icc ./gecode/set/rel-op/union.icc \
+	./gecode/set/rel.hh ./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc \
+	./gecode/set/rel/nosubset.icc ./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc \
+	./gecode/set/rel/re-subset.icc ./gecode/set/rel/subset.icc ./gecode/set/var-imp.icc \
 	./gecode/set/var-imp/delta.icc ./gecode/set/var-imp/integerset.icc ./gecode/set/var-imp/iter.icc \
 	./gecode/set/var-imp/set.icc ./gecode/set/var/set.icc ./gecode/set/view.icc \
 	./gecode/set/view/complement.icc ./gecode/set/view/const.icc ./gecode/set/view/offset.icc \
@@ -1788,7 +1788,7 @@ gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/support/memory.icc ./gecode/support/random.icc ./gecode/support/sentinel-stack.icc \
 	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
 	./gecode/support/symbol.icc 
-gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
+gecode/set/element/disjoint$(OBJSUFFIX) gecode/set/element/disjoint$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.icc ./gecode/int/exception.icc \
 	./gecode/int/extensional/dfa.icc ./gecode/int/extensional/tuple-set.icc ./gecode/int/int-set.icc \
 	./gecode/int/limits.icc ./gecode/int/propagator.icc ./gecode/int/var-imp.icc \
@@ -1816,15 +1816,15 @@ gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
-	./gecode/set/exception.icc ./gecode/set/limits.icc ./gecode/set/propagator.icc \
-	./gecode/set/rel-op.hh ./gecode/set/rel-op/common.icc ./gecode/set/rel-op/inter.icc \
-	./gecode/set/rel-op/partition.icc ./gecode/set/rel-op/post.icc ./gecode/set/rel-op/subofunion.icc \
-	./gecode/set/rel-op/superofinter.icc ./gecode/set/rel-op/union.icc ./gecode/set/rel.hh \
-	./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc ./gecode/set/rel/nosubset.icc \
-	./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc ./gecode/set/rel/re-subset.icc \
-	./gecode/set/rel/subset.icc ./gecode/set/select.hh ./gecode/set/select/disjoint.icc \
-	./gecode/set/select/idxarray.hh ./gecode/set/select/idxarray.icc ./gecode/set/select/inter.icc \
-	./gecode/set/select/union.icc ./gecode/set/select/unionConst.icc ./gecode/set/var-imp.icc \
+	./gecode/set/element.hh ./gecode/set/element/disjoint.icc ./gecode/set/element/idxarray.hh \
+	./gecode/set/element/idxarray.icc ./gecode/set/element/inter.icc ./gecode/set/element/union.icc \
+	./gecode/set/element/unionConst.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
+	./gecode/set/propagator.icc ./gecode/set/rel-op.hh ./gecode/set/rel-op/common.icc \
+	./gecode/set/rel-op/inter.icc ./gecode/set/rel-op/partition.icc ./gecode/set/rel-op/post.icc \
+	./gecode/set/rel-op/subofunion.icc ./gecode/set/rel-op/superofinter.icc ./gecode/set/rel-op/union.icc \
+	./gecode/set/rel.hh ./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc \
+	./gecode/set/rel/nosubset.icc ./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc \
+	./gecode/set/rel/re-subset.icc ./gecode/set/rel/subset.icc ./gecode/set/var-imp.icc \
 	./gecode/set/var-imp/delta.icc ./gecode/set/var-imp/integerset.icc ./gecode/set/var-imp/iter.icc \
 	./gecode/set/var-imp/set.icc ./gecode/set/var/set.icc ./gecode/set/view.icc \
 	./gecode/set/view/complement.icc ./gecode/set/view/const.icc ./gecode/set/view/offset.icc \

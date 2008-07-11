@@ -37,7 +37,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   /**
    * \brief Pairs of an index and a variable
@@ -107,7 +107,7 @@ namespace Gecode { namespace Set { namespace Select {
 
 }}}
 
-#include "gecode/set/select/idxarray.icc"
+#include "gecode/set/element/idxarray.icc"
 
 // STATISTICS: set-prop
 

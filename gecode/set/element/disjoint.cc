@@ -37,39 +37,39 @@
  *
  */
 
-#include "gecode/set/select.hh"
+#include "gecode/set/element.hh"
 #include "gecode/set/rel.hh"
 #include "gecode/set/rel-op.hh"
 
-namespace Gecode { namespace Set { namespace Select {
+namespace Gecode { namespace Set { namespace Element {
 
   PropCost
-  SelectDisjoint::cost(ModEventDelta) const {
+  ElementDisjoint::cost(ModEventDelta) const {
     return PC_QUADRATIC_LO;
   }
 
   Support::Symbol
-  SelectDisjoint::ati(void) {
-    return Support::Symbol("Gecode::Set::Select::Disjoint");
+  ElementDisjoint::ati(void) {
+    return Support::Symbol("Gecode::Set::Element::Disjoint");
   }
 
   Reflection::ActorSpec
-  SelectDisjoint::spec(const Space* home, Reflection::VarMap& m) const {
+  ElementDisjoint::spec(const Space* home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << iv.spec(home, m) << x1.spec(home, m);
   }
 
   void
-  SelectDisjoint::post(Space* home, Reflection::VarMap& vars,
+  ElementDisjoint::post(Space* home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     IdxViewArray<SetView> iv(home, vars, spec[0]);
     SetView x1(home, vars, spec[1]);
-    (void) new (home) SelectDisjoint(home, iv, x1);
+    (void) new (home) ElementDisjoint(home, iv, x1);
   }
 
   size_t
-  SelectDisjoint::dispose(Space* home) {
+  ElementDisjoint::dispose(Space* home) {
     assert(!home->failed());
     x1.cancel(home,this, PC_SET_ANY);
     iv.cancel(home,this,PC_SET_ANY);
@@ -78,12 +78,12 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   Actor*
-  SelectDisjoint::copy(Space* home, bool share) {
-    return new (home) SelectDisjoint(home,share,*this);
+  ElementDisjoint::copy(Space* home, bool share) {
+    return new (home) ElementDisjoint(home,share,*this);
   }
 
   ExecStatus
-  SelectDisjoint::propagate(Space* home, ModEventDelta) {
+  ElementDisjoint::propagate(Space* home, ModEventDelta) {
     int n = iv.size();
 
     bool fix_flag = false;

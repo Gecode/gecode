@@ -41,11 +41,11 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for selection constraints
-  namespace Select {
+  /// Tests for set element constraints
+  namespace Element {
 
     /**
-      * \defgroup TaskTestSetSelect Selection constraints
+      * \defgroup TaskTestSetElement Element constraints
       * \ingroup TaskTestSet
       */
     //@{
@@ -53,11 +53,11 @@ namespace Test { namespace Set {
     static IntSet ds_12(-1,2);
     static IntSet ds_13(-1,3);
 
-    /// Test for SelectUnion constraint
-    class SelectUnion : public SetTest {
+    /// Test for ElementUnion constraint
+    class ElementUnion : public SetTest {
     public:
       /// Create and register test
-      SelectUnion(const char* t)
+      ElementUnion(const char* t)
         : SetTest(t,5,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -84,20 +84,20 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
-        Gecode::selectUnion(home, xs, x[x.size()-2], x[x.size()-1]);
+        Gecode::elementsUnion(home, xs, x[x.size()-2], x[x.size()-1]);
       }
     };
-    SelectUnion _selectunion("Select::Union");
+    ElementUnion _elementunion("Element::Union");
 
-    /// Test for SelectUnion constraint
-    class SelectUnionConst : public SetTest {
+    /// Test for ElementUnion constraint
+    class ElementUnionConst : public SetTest {
     private:
       const IntSet i0;
       const IntSet i1;
       const IntSet i2;
     public:
       /// Create and register test
-      SelectUnionConst(const char* t)
+      ElementUnionConst(const char* t)
         : SetTest(t,2,ds_13,false), i0(-3,-3), i1(-1,1), i2(0,2) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -124,16 +124,16 @@ namespace Test { namespace Set {
       virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
         IntSetArgs xs(3);
         xs[0] = i0; xs[1] = i1; xs[2] = i2;
-        Gecode::selectUnion(home, xs, x[0], x[1]);
+        Gecode::elementsUnion(home, xs, x[0], x[1]);
       }
     };
-    SelectUnionConst _selectunionconst("Select::UnionConst");
+    ElementUnionConst _elementunionconst("Element::UnionConst");
 
-    /// Test for SelectInter constraint
-    class SelectInter : public SetTest {
+    /// Test for ElementInter constraint
+    class ElementInter : public SetTest {
     public:
       /// Create and register test
-      SelectInter(const char* t)
+      ElementInter(const char* t)
         : SetTest(t,5,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -160,16 +160,16 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
-        Gecode::selectInter(home, xs, x[x.size()-2], x[x.size()-1]);
+        Gecode::elementsInter(home, xs, x[x.size()-2], x[x.size()-1]);
       }
     };
-    SelectInter _selectinter("Select::Inter");
+    ElementInter _elementinter("Element::Inter");
 
-    /// Test for SelectInter constraint
-    class SelectInterIn : public SetTest {
+    /// Test for ElementInter constraint
+    class ElementInterIn : public SetTest {
     public:
       /// Create and register test
-      SelectInterIn(const char* t)
+      ElementInterIn(const char* t)
         : SetTest(t,5,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -196,16 +196,16 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
-        Gecode::selectInterIn(home, xs, x[x.size()-2], x[x.size()-1], ds_12);
+        Gecode::elementsInter(home, xs, x[x.size()-2], x[x.size()-1], ds_12);
       }
     };
-    SelectInterIn _selectinterin("Select::InterIn");
+    ElementInterIn _elementinterin("Element::InterIn");
 
-    /// Test for SelectDisjoint constraint
-    class SelectDisjoint : public SetTest {
+    /// Test for ElementDisjoint constraint
+    class ElementDisjoint : public SetTest {
     public:
       /// Create and register test
-      SelectDisjoint(const char* t)
+      ElementDisjoint(const char* t)
         : SetTest(t,4,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -235,16 +235,16 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-1);
         for (int i=x.size()-1; i--;)
           xs[i]=x[i];
-        Gecode::selectDisjoint(home, xs, x[x.size()-1]);
+        Gecode::elementsDisjoint(home, xs, x[x.size()-1]);
       }
     };
-    SelectDisjoint _selectdisjoint("Select::Disjoint");
+    ElementDisjoint _elementdisjoint("Element::Disjoint");
 
-    /// Test for SelectSet constraint
-    class SelectSet : public SetTest {
+    /// Test for ElementElement constraint
+    class ElementSet : public SetTest {
     public:
       /// Create and register test
-      SelectSet(const char* t)
+      ElementSet(const char* t)
         : SetTest(t,4,ds_12,false,true) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -259,20 +259,20 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-1);
         for (int i=x.size()-1; i--;)
           xs[i]=x[i];
-        Gecode::selectSet(home, xs, y[0], x[x.size()-1]);
+        Gecode::element(home, xs, y[0], x[x.size()-1]);
       }
     };
-    SelectSet _selectset("Select::Set");
+    ElementSet _elementset("Element::Set");
 
-    /// Test for SelectUnion constraint
-    class SelectSetConst : public SetTest {
+    /// Test for ElementUnion constraint
+    class ElementSetConst : public SetTest {
     private:
       const IntSet i0;
       const IntSet i1;
       const IntSet i2;
     public:
       /// Create and register test
-      SelectSetConst(const char* t)
+      ElementSetConst(const char* t)
         : SetTest(t,1,ds_13,false,true), i0(-3,-3), i1(-1,1), i2(0,2) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -287,10 +287,10 @@ namespace Test { namespace Set {
       virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
         IntSetArgs xs(3);
         xs[0] = i0; xs[1] = i1; xs[2] = i2;
-        Gecode::selectSet(home, xs, y[0], x[0]);
+        Gecode::element(home, xs, y[0], x[0]);
       }
     };
-    SelectSetConst _selectsetconst("Select::SetConst");
+    ElementSetConst _elementsetconst("Element::SetConst");
 
     //@}
 
