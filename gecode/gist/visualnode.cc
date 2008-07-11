@@ -129,7 +129,7 @@ namespace Gecode { namespace Gist {
 
   int
   VisualNode::getPathAlternative(void) {
-    for (int i=noOfChildren; i--;) {
+    for (int i=getNumberOfChildren(); i--;) {
       if (getChild(i)->isOnPath())
         return i;
     }
@@ -188,7 +188,7 @@ namespace Gecode { namespace Gist {
       }
       VisualNode* oldCur = cur;
       cur = NULL;
-      for (int i=0; i<oldCur->noOfChildren; i++) {
+      for (unsigned int i=0; i<oldCur->getNumberOfChildren(); i++) {
         VisualNode* nextChild = oldCur->getChild(i);
         int newX = x - nextChild->getOffset();
         if (nextChild->containsCoordinateAtDepth(newX, depth - 1)) {

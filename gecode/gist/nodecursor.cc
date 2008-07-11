@@ -101,9 +101,10 @@ namespace Gecode { namespace Gist {
   bool
   NextSolCursor::mayMoveSidewards(void) {
     if (back) {
-      return notOnSol() && alternative() > 0;
+      return notOnSol() && !node()->isRoot() && alternative() > 0;
     } else {
-      return notOnSol() && NodeCursor<VisualNode>::mayMoveSidewards();
+      return notOnSol() && !node()->isRoot() &&
+             (alternative() < node()->getParent()->getNumberOfChildren() - 1);
     }
   }
 
