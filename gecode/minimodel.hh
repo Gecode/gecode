@@ -739,7 +739,11 @@ namespace Gecode {
    * \ingroup TaskModelMiniModel
    */
   //@{
-  /// Return variable constrained to \f$|x|\f$
+  /** \brief Return variable constrained to \f$|x|\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   abs(Space* home, IntVar x, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
@@ -763,7 +767,11 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT IntVar
   mult(Space* home, IntVar x, IntVar y, 
        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$x^2\f$
+  /** \brief Return variable constrained to \f$x^2\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   sqr(Space* home, IntVar x, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
@@ -771,11 +779,19 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT IntVar
   sqrt(Space* home, IntVar x, 
        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$x+y\f$
+  /** \brief Return variable constrained to \f$x+y\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   plus(Space* home, IntVar x, IntVar y, 
        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  /// Return variable constrained to \f$x-y\f$
+  /** Return variable constrained to \f$x-y\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain-consistency (\a icl = ICL_DOM).
+   */
   GECODE_MINIMODEL_EXPORT IntVar
   minus(Space* home, IntVar x, IntVar y, 
         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
