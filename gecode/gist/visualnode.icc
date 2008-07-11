@@ -158,17 +158,6 @@ namespace Gecode { namespace Gist {
       nstatus &= ~(1<<(MARKED-1));
   }
 
-  forceinline unsigned char
-  VisualNode::getHeat(void) const {
-    return (nstatus & HEATMASK) >> HEATSHIFT;
-  }
-
-  forceinline void
-  VisualNode::setHeat(unsigned char h) {
-    nstatus &= ~( HEATMASK );
-    nstatus |= h<<HEATSHIFT;
-  }
-
   forceinline bool
   VisualNode::isOnPath(void) {
     return nstatus & (1<<(ONPATH-1));

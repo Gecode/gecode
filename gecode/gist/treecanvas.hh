@@ -107,13 +107,7 @@ namespace Gecode {  namespace Gist {
     void centerCurrentNode(void);
     /// Call the inspector for the currently selected node
     void inspectCurrentNode(void);
-    
-    /// Toggle the heat view display
-    void toggleHeatView(void);
-    
-    /// Run the analysis that produces the heat view
-    void analyzeTree(void);
-    
+        
     /// Stop current search
     void stopSearch(void);
     
@@ -218,8 +212,6 @@ namespace Gecode {  namespace Gist {
     double scale;
     /// Offset on the x axis so that the tree is centered
     int xtrans;
-    /// Whether to display the heat view
-    bool heatView;
 
     /// Whether to hide failed subtrees automatically
     bool autoHideFailed;
@@ -317,9 +309,6 @@ namespace Gecode {  namespace Gist {
     QAction* setPath;
     QAction* inspectPath;
     QAction* addVisualisation;
-
-    QAction* toggleHeatView;
-    QAction* analyzeTree;
 
   public:
     /// Constructor

@@ -87,13 +87,15 @@ namespace Gecode { namespace Gist {
         visualisationsListWidget = new QListWidget(AddVisualisationDialogClass);
         visualisationsListWidget->setObjectName(QString::fromUtf8("visualisationsListWidget"));
 
-        gridLayout->addWidget(visualisationsListWidget, 0, 0, 1, 1);
+        gridLayout->addWidget(new QLabel("Visualisation type"), 0, 0, 1, 1);
+        gridLayout->addWidget(visualisationsListWidget, 1, 0, 1, 1);
 
         variablesListWidget = new QListWidget(AddVisualisationDialogClass);
         variablesListWidget->setObjectName(QString::fromUtf8("variablesListWidget"));
         variablesListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
 
-        gridLayout->addWidget(variablesListWidget, 0, 1, 1, 1);
+        gridLayout->addWidget(new QLabel("Variables"), 0, 1, 1, 1);
+        gridLayout->addWidget(variablesListWidget, 1, 1, 1, 1);
 
         hboxLayout = new QHBoxLayout();
         hboxLayout->setSpacing(6);
@@ -114,7 +116,7 @@ namespace Gecode { namespace Gist {
         hboxLayout->addWidget(cancelPushButton);
 
 
-        gridLayout->addLayout(hboxLayout, 2, 0, 1, 2);
+        gridLayout->addLayout(hboxLayout, 3, 0, 1, 2);
 
         hboxLayout1 = new QHBoxLayout();
         hboxLayout1->setSpacing(6);
@@ -130,7 +132,7 @@ namespace Gecode { namespace Gist {
         hboxLayout1->addWidget(nameEdit);
 
 
-        gridLayout->addLayout(hboxLayout1, 1, 0, 1, 2);
+        gridLayout->addLayout(hboxLayout1, 2, 0, 1, 2);
 
 
         retranslateUi(AddVisualisationDialogClass);
@@ -142,7 +144,7 @@ namespace Gecode { namespace Gist {
 
     void retranslateUi(QDialog *AddVisualisationDialogClass)
       {
-        AddVisualisationDialogClass->setWindowTitle(QApplication::translate("AddVisualisationDialogClass", "Add Visualisation Dialog", 0, QApplication::UnicodeUTF8));
+        AddVisualisationDialogClass->setWindowTitle(QApplication::translate("AddVisualisationDialogClass", "Add Visualisation", 0, QApplication::UnicodeUTF8));
         OKpushButton->setText(QApplication::translate("AddVisualisationDialogClass", "OK", 0, QApplication::UnicodeUTF8));
         cancelPushButton->setText(QApplication::translate("AddVisualisationDialogClass", "Cancel", 0, QApplication::UnicodeUTF8));
         nameLabel->setText(QApplication::translate("AddVisualisationDialogClass", "Name", 0, QApplication::UnicodeUTF8));

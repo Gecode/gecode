@@ -66,7 +66,6 @@ namespace Gecode { namespace Gist {
     setHidden(false);
     setMarked(false);
     setOnPath(false);
-    setHeat(0);
   }
 
   VisualNode::VisualNode(Space* root)
@@ -78,7 +77,6 @@ namespace Gecode { namespace Gist {
     setHidden(false);
     setMarked(false);
     setOnPath(false);    
-    setHeat(0);
   }
 
   VisualNode::~VisualNode(void) {

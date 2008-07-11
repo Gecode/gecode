@@ -103,9 +103,11 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
     varItems.resize(numberOfVariables);
 
+    typename VarItem::ItemData data = VarItem::initData(specs);
+
     for (int i = 0; i < numberOfVariables; ++i) {
 
-      VarItem* item = new VarItem(specs[i], this);
+      VarItem* item = new VarItem(specs[i], data, this);
 
       if(i>0)
         item->moveBy(0, childrenBoundingRect().height());

@@ -583,7 +583,6 @@ GISTHDR0 = \
 	spacenode.hh spacenode.icc textoutput.hh treecanvas.hh zoomToFitIcon.icc \
 	visualnode.hh visualnode.icc \
 	mainwindow.hh \
-	analysiscursor.hh analysiscursor.icc \
 	addchild.hh addvisualisationdialog.hh reflectionhelpers.hh \
 	ui_addchild.hh ui_addvisualisationdialog.hh\
 	config.hh \
@@ -599,7 +598,6 @@ GISTSRC0 = \
 	mainwindow.cc preferences.cc \
 	addchild.cc addvisualisationdialog.cc reflectionhelpers.cc \
 	config.cc \
-	analysiscursor.cc \
 	visualisation/vararrayview.cc \
 	visualisation/varitem.cc \
 	visualisation/intvaritem.cc \

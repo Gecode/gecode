@@ -132,9 +132,6 @@ namespace Gecode { namespace Gist {
       MARKED,
       ONPATH
     };
-    
-    static const unsigned int HEATMASK = ((1<<7)-1) << ONPATH;
-    static const unsigned int HEATSHIFT = ONPATH;
 
     /// Shape of this node
     Shape* shape;
@@ -184,12 +181,7 @@ namespace Gecode { namespace Gist {
     int getPathAlternative(void);
     /// Set whether node is on the path
     void setOnPath(bool onPath0);
-    
-    /// Return heat value
-    unsigned char getHeat(void) const;
-    /// Set heat value to \a h
-    void setHeat(unsigned char h);
-    
+        
     /// Toggle whether this node is hidden
     void toggleHidden(void);
     /// Hide all failed subtrees of this node

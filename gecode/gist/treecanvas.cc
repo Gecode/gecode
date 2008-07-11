@@ -45,7 +45,6 @@
 #include "gecode/gist/layoutcursor.hh"
 #include "gecode/gist/visualnode.hh"
 #include "gecode/gist/drawingcursor.hh"
-#include "gecode/gist/analysiscursor.hh"
 #include "gecode/gist/addchild.hh"
 #include "gecode/gist/addvisualisationdialog.hh"
 #include "gecode/gist/zoomToFitIcon.icc"
@@ -63,7 +62,7 @@ namespace Gecode { namespace Gist {
     : QWidget(parent)
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
-    , inspector(NULL), heatView(false)
+    , inspector(NULL)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false), nextPit(0)
     , targetZoom(defScale), metaZoomCurrent(static_cast<double>(defScale))
@@ -108,8 +107,6 @@ namespace Gecode { namespace Gist {
       static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
     int h = 
       static_cast<int>(2*Layout::extent+root->depth()*Layout::dist_y*scale);
-    if (heatView)
-      w = std::max(w, 300);
     resize(w,h);
     emit scaleChanged(scale0);
     QWidget::update();
@@ -137,8 +134,6 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvasImpl::layoutDone(int w, int h) {
-    if (heatView)
-      w = std::max(w, 300);
     resize(w,h);
     QWidget::update();
   }
@@ -376,36 +371,6 @@ namespace Gecode { namespace Gist {
                                targetScrollY);
       scrollTimerId = startTimer(15);
     }
-  }
-
-  void
-  TreeCanvasImpl::analyzeTree(void) {
-    QMutexLocker locker(&mutex);
-    int min, max;
-    AnalysisCursor ac(root, curBest, min, max);
-    PostorderNodeVisitor<AnalysisCursor> va(ac);
-    while (va.next()) {}
-    DistributeCursor dc(root, min, max);
-    PreorderNodeVisitor<DistributeCursor> vd(dc);
-    while (vd.next()) {}
-    if (!heatView)
-      toggleHeatView();
-    QWidget::update();    
-  }
-
-  void
-  TreeCanvasImpl::toggleHeatView(void) {
-    heatView = !heatView;
-    QPalette pal(palette());
-    QScrollArea* sa = 
-      static_cast<QScrollArea*>(parentWidget()->parentWidget());
-    pal.setColor(QPalette::Window, heatView ? Qt::black : Qt::white);
-    setPalette(pal);
-    sa->setPalette(pal);
-    if (heatView) {
-      setMinimumWidth(300);
-    }
-    QWidget::update();
   }
 
   class SizeCursor : public NodeCursor<VisualNode> {
@@ -655,11 +620,11 @@ namespace Gecode { namespace Gist {
       QPrinter printer(QPrinter::ScreenResolution);
       QMutexLocker locker(&mutex);
 
-      BoundingBox bb = root->getBoundingBox();
+      BoundingBox bb = currentNode->getBoundingBox();
       printer.setFullPage(true);
       printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
-                                  root->depth() * Layout::dist_y + 
-                                  2*Layout::extent), QPrinter::Point);
+                                  currentNode->depth() * Layout::dist_y + 
+                                  Layout::extent), QPrinter::Point);
       printer.setOutputFileName(filename);
       QPainter painter(&printer);
 
@@ -674,15 +639,16 @@ namespace Gecode { namespace Gist {
                                                  Layout::extent);
       double newYScale =
         static_cast<double>(pageRect.height()) /
-                            (root->depth() * Layout::dist_y + 
-                             2*Layout::extent);
+                            (currentNode->depth() * Layout::dist_y + 
+                             Layout::extent);
       double printScale = std::min(newXScale, newYScale);
       painter.scale(printScale,printScale);
 
+      int printxtrans = -bb.left+(Layout::extent / 2);
 
-      painter.translate(xtrans, Layout::dist_y);
+      painter.translate(printxtrans, Layout::dist_y / 2);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(root, curBest, painter, heatView, clip);
+      DrawingCursor dc(currentNode, curBest, painter, clip);
       currentNode->setMarked(false);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next()) {}
@@ -718,7 +684,7 @@ namespace Gecode { namespace Gist {
       painter.scale(printScale,printScale);
       painter.translate(xtrans, 0);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(root, curBest, painter, heatView, clip);
+      DrawingCursor dc(root, curBest, painter, clip);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next()) {}
     }
@@ -790,21 +756,6 @@ namespace Gecode { namespace Gist {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    if (heatView) {
-      painter.setPen(Qt::white);
-      painter.drawText(QRect(0,5,40,15), Qt::AlignRight, tr("cold"));
-      painter.setPen(Qt::black);
-      // Draw legend
-      for (int i=0; i<180; i+=10) {
-        int heat = (240 + i) % 360;
-        painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-        painter.drawRect(45+i, 5, 10, 15);
-      }
-      painter.setPen(Qt::white);
-      painter.drawText(QRect(230,5,40,15), Qt::AlignLeft, tr("hot"));
-      painter.setPen(Qt::black);
-    }
-
     BoundingBox bb = root->getBoundingBox();
     QRect origClip = event->rect();
     painter.translate(0, 30);
@@ -814,7 +765,7 @@ namespace Gecode { namespace Gist {
                static_cast<int>(origClip.y()/scale),
                static_cast<int>(origClip.width()/scale), 
                static_cast<int>(origClip.height()/scale));
-    DrawingCursor dc(root, curBest, painter, heatView, clip);
+    DrawingCursor dc(root, curBest, painter, clip);
     PreorderNodeVisitor<DrawingCursor> v(dc);
 
     while (v.next()) {}
@@ -1125,16 +1076,6 @@ namespace Gecode { namespace Gist {
     addVisualisation->setShortcut(QKeySequence("Shift+V"));
     connect(addVisualisation, SIGNAL(triggered()), canvas, SLOT(addVisualisation()));
 
-    toggleHeatView = new QAction("Toggle heat view", this);
-    toggleHeatView->setShortcut(QKeySequence("Y"));
-    connect(toggleHeatView, SIGNAL(triggered()), canvas, 
-            SLOT(toggleHeatView()));
-
-    analyzeTree = new QAction("Analyze tree", this);
-    analyzeTree->setShortcut(QKeySequence("Shift+Y"));
-    connect(analyzeTree, SIGNAL(triggered()), canvas, 
-            SLOT(analyzeTree()));
-
     addAction(inspectCN);
     addAction(stopCN);
     addAction(reset);
@@ -1157,8 +1098,6 @@ namespace Gecode { namespace Gist {
     addAction(print);
 
     addAction(addVisualisation);
-    addAction(toggleHeatView);
-    addAction(analyzeTree);
     
     addAction(setPath);
     addAction(inspectPath);
@@ -1254,9 +1193,6 @@ namespace Gecode { namespace Gist {
       setPath->setEnabled(false);
       inspectPath->setEnabled(false);
       addVisualisation->setEnabled(false);
-
-      toggleHeatView->setEnabled(false);
-      analyzeTree->setEnabled(false);
     } else {
       inspectCN->setEnabled(true);
       reset->setEnabled(true);
@@ -1275,9 +1211,6 @@ namespace Gecode { namespace Gist {
       setPath->setEnabled(true);
       inspectPath->setEnabled(true);
       addVisualisation->setEnabled(true);
-
-      toggleHeatView->setEnabled(true);
-      analyzeTree->setEnabled(true);
     }
     emit statusChanged(stats,finished);
   }

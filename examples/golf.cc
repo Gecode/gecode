@@ -207,7 +207,7 @@ public:
           SetVarArgs thisWeek(groups);
           for (int g=0; g<groups; g++)
             thisWeek[g] = group(w,g);
-          selectSet(this, thisWeek, groupsSInv[w*players+p], thisPlayer);
+          element(this, thisWeek, groupsSInv[w*players+p], thisPlayer);
         }
       }
 

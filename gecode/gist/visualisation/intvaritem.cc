@@ -40,7 +40,20 @@
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
-  IntVarItem::IntVarItem(Reflection::VarSpec* spec, QGraphicsItem *parent)
+  IntVarItem::ItemData
+  IntVarItem::initData(QVector<Reflection::VarSpec*> specs) {
+    ItemData data(Int::Limits::max);
+    for (int i=0; i<specs.size(); i++) {
+      if (! (specs[i]->vti() == Int::IntVarImpConf::vti))
+        return ItemData(0);
+      Reflection::IntArrayArg* dom = specs[i]->dom()->toIntArray();
+      data = std::min(data, (*dom)[0]);
+    }
+    return data;
+  }
+
+  IntVarItem::IntVarItem(Reflection::VarSpec* spec, const ItemData& data, 
+                         QGraphicsItem *parent)
   : VarItem(spec, parent)
   { 
     // this item is supposed to display an IntVar
@@ -51,6 +64,8 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
       initMin = (*dom)[0];
       initMax = (*dom)[domSize-1];
+
+      offset = initMin - data;
 
       arraylength = 2*(initMax - initMin + 1);
 
@@ -87,7 +102,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
     int vectorSize = initMax - initMin +1;
 
-    QGraphicsTextItem largest (QString::number(initMax));
+    QGraphicsTextItem largest(QString::number(initMax));
     QRectF largestBound = largest.boundingRect();
 
     // make it a square
@@ -106,7 +121,9 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       //centre the number in the square
       number->moveBy((item->boundingRect().width() - number->boundingRect().width())/2,
                      (item->boundingRect().height() - number->boundingRect().height())/2);
-      if(j>0)
+      if (j == 0)
+        item->moveBy(offset*largestBound.width(),0);
+      else
         item->moveBy(childrenBoundingRect().width(),0);
       domainItems[j] = item;
     }

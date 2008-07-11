@@ -55,9 +55,6 @@ namespace Gecode { namespace Gist {
     /// The current coordinates
     int x, y;
     
-    /// Whether to draw heat view
-    bool heatView;
-    
     /// Test if current node is clipped
     bool isClipped(void);
   public:
@@ -80,7 +77,6 @@ namespace Gecode { namespace Gist {
     /// Constructor
     DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
                   QPainter& painter0,
-                  bool heat,
                   const QRect& clippingRect0);
 
     ///\name Cursor interface
