@@ -40,6 +40,7 @@
  */
 
 #include "gecode/support.hh"
+#include <sstream>
 
 namespace Gecode { namespace Support {
 
@@ -127,6 +128,20 @@ namespace Gecode { namespace Support {
 
   Symbol::Symbol(const char* s0, bool copy)
     : so(new SO(s0, copy)) {
+    so->subscribe();
+  }
+
+  Symbol::Symbol(int i) {
+    std::stringstream s;
+    s << i;
+    so = new SO(s.str().c_str(), true);
+    so->subscribe();
+  }
+
+  Symbol::Symbol(unsigned int i) {
+    std::stringstream s;
+    s << i;
+    so = new SO(s.str().c_str(), true);
     so->subscribe();
   }
 

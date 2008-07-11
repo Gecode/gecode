@@ -95,6 +95,10 @@ namespace Gecode { namespace Support {
     Symbol(void);
     /// Construct Symbol from \a s0, make a copy if \a copy is true.
     Symbol(const char* s0, bool copy = false);
+    /// Construct Symbol from \a i
+    Symbol(int i);
+    /// Construct Symbol from \a i
+    Symbol(unsigned int i);
     /// Copy constructor
     Symbol(const Symbol& s0);
     /// Assignment operator
