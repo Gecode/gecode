@@ -102,7 +102,7 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
     int min, max;
-    estimate(t,n,0,min,max);
+    estimate(static_cast<Linear::Term<BoolView>*>(t),n,0,min,max);
     IntView v(y);
     switch (r) {
     case IRT_EQ:
