@@ -65,6 +65,56 @@ namespace Gecode { namespace Gist {
       n->dirtyUp();
     }
   }
+
+  NextSolCursor::NextSolCursor(VisualNode* theNode, bool backwards)
+   : NodeCursor<VisualNode>(theNode), back(backwards) {}
+
+  void
+  NextSolCursor::processCurrentNode(void) {}
+
+  bool
+  NextSolCursor::notOnSol(void) {
+    return node() == startNode() || node()->getStatus() != SOLVED;
+  }
+
+  bool
+  NextSolCursor::mayMoveUpwards(void) {
+    return notOnSol() && !node()->isRoot();
+  }
+
+  bool
+  NextSolCursor::mayMoveDownwards(void) {
+    return notOnSol() && !(back && node() == startNode())
+           && node()->hasSolvedChildren()
+           && NodeCursor<VisualNode>::mayMoveDownwards();
+  }
+
+  void
+  NextSolCursor::moveDownwards(void) {
+    NodeCursor<VisualNode>::moveDownwards();
+    if (back) {
+      while (NodeCursor<VisualNode>::mayMoveSidewards())
+        NodeCursor<VisualNode>::moveSidewards();
+    }
+  }
+
+  bool
+  NextSolCursor::mayMoveSidewards(void) {
+    if (back) {
+      return notOnSol() && node()->getAlternative() > 0;
+    } else {
+      return notOnSol() && NodeCursor<VisualNode>::mayMoveSidewards();
+    }
+  }
+
+  void
+  NextSolCursor::moveSidewards(void) {
+    if (back) {
+      node(node()->getParent()->getChild(node()->getAlternative()-1));
+    } else {
+      NodeCursor<VisualNode>::moveSidewards();      
+    }
+  }
   
 }}
 
