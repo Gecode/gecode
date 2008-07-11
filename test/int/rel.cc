@@ -125,7 +125,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        BoolVarXY(Gecode::IntRelType irt0, int n) 
-         : Test("Rel::Bool::Var::XY::"+str(irt0)+"::"+str(n),n+1,0,1), 
+         : Test("Rel::Bool::Var::XY::"+str(irt0)+"::"+str(n),n+1,0,1,
+                n==1), 
            irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -145,6 +146,15 @@ namespace Test { namespace Int {
            y[0]=channel(home,x[0]); y[1]=channel(home,x[1]);
            rel(home, y, irt, channel(home,x[2]));
          }
+       }
+       /// Post reified constraint on \a x for \a b
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                         Gecode::BoolVar b) {
+         assert(x.size() == 2);
+         using namespace Gecode;
+         rel(home, 
+             channel(home,x[0]), irt, channel(home,x[1]), 
+             b);
        }
      };
    
@@ -219,7 +229,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        BoolInt(Gecode::IntRelType irt0, int n, int c0) 
-         : Test("Rel::Bool::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),n,0,1), 
+         : Test("Rel::Bool::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),n,0,1,
+                n==1), 
            irt(irt0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -238,6 +249,13 @@ namespace Test { namespace Int {
            y[0]=channel(home,x[0]); y[1]=channel(home,x[1]);
            rel(home, y, irt, c);
          }
+       }
+       /// Post reified constraint on \a x for \a b
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                         Gecode::BoolVar b) {
+         assert(x.size() == 1);
+         using namespace Gecode;
+         rel(home, channel(home,x[0]), irt, c, b);
        }
      };
    
