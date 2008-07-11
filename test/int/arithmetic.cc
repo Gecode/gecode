@@ -241,7 +241,49 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::divmod(home, x[0], x[1], x[2], x[3]);
+         Gecode::divmod(home, x[0], x[1], x[2], x[3], icl);
+       }
+     };
+
+     /// Test for division constraint
+     class Div : public Test {
+     public:
+       /// Create and register test
+       Div(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Div::"+s,3,d,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] == 0)
+           return false;
+         int divresult = 
+           static_cast<int>(floor(static_cast<double>(x[0])/
+                                  static_cast<double>(x[1])));
+         return x[2] == divresult;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::div(home, x[0], x[1], x[2], icl);
+       }
+     };
+
+     /// Test for modulo constraint
+     class Mod : public Test {
+     public:
+       /// Create and register test
+       Mod(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::Mod::"+s,3,d,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] == 0)
+           return false;
+         int divresult = 
+           static_cast<int>(floor(static_cast<double>(x[0])/
+                                  static_cast<double>(x[1])));
+         return x[0] == x[1]*divresult+x[2];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::mod(home, x[0], x[1], x[2], icl);
        }
      };
    
@@ -612,9 +654,17 @@ namespace Test { namespace Int {
      SqrtXX sqrt_xx_d_b("B",b,Gecode::ICL_DOM);
      SqrtXX sqrt_xx_d_c("C",c,Gecode::ICL_DOM);
    
-     DivMod divmod_a("A",a);
-     DivMod divmod_b("B",b);
-     DivMod divmod_c("C",c);
+     DivMod divmod_a_bnd("A",a);
+     DivMod divmod_b_bnd("B",b);
+     DivMod divmod_c_bnd("C",c);
+
+     Div div_a_bnd("A",a);
+     Div div_b_bnd("B",b);
+     Div div_c_bnd("C",c);
+                        
+     Mod mod_a_bnd("A",a);
+     Mod mod_b_bnd("B",b);
+     Mod mod_c_bnd("C",c);
    
      AbsXY abs_xy_b_a("A",a,Gecode::ICL_BND);
      AbsXY abs_xy_b_b("B",b,Gecode::ICL_BND);

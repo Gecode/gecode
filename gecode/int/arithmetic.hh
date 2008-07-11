@@ -707,25 +707,28 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
-   * \brief Bounds consistent division/modulo propagator
+   * \brief Integer division/modulo propagator
+   *
+   * This propagator implements the relation between divisor and
+   * modulo of an integer division.
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    *
    * \ingroup FuncIntProp
    */
   template <class View>
-  class DivModBnd : public BinaryPropagator<View,PC_INT_BND> {
+  class DivMod : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
     
     /// Constructor for cloning \a p
-    DivModBnd(Space* home, bool share, DivModBnd<View>& p);
+    DivMod(Space* home, bool share, DivMod<View>& p);
   public:
     /// Constructor for posting
-    DivModBnd(Space* home, View x0, View x1);
-    /// Post propagator \f$x_0\mathrm{div} x_1=x_2 \land x_0\mathrm{mod} x_1=x_3\f$
-    static  ExecStatus post(Space* home, View x0, View x1, View x2, View x3);
+    DivMod(Space* home, View x0, View x1);
+    /// Post propagator \f$x_0\neq 0 \land (x_1\neq 0\Rightarrow x_0\times x_1>0) \land \mathrm{abs}(x_1)<\mathrm{abs}(x_0)\f$
+    static  ExecStatus post(Space* home, View x0, View x1);
     /// Post propagator for specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

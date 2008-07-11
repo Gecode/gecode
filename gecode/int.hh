@@ -1761,6 +1761,22 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   divmod(Space* home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+
+  /** \brief Post propagator for \f$x_0\mathrm{div} x_1=x_2\f$
+   *
+   * Supports bounds consistency (\a icl = ICL_BND, default).
+   */
+  GECODE_INT_EXPORT void
+  div(Space* home, IntVar x0, IntVar x1, IntVar x2,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+
+  /** \brief Post propagator for \f$x_0\mathrm{mod} x_1=x_2\f$
+   *
+   * Supports bounds consistency (\a icl = ICL_BND, default).
+   */
+  GECODE_INT_EXPORT void
+  mod(Space* home, IntVar x0, IntVar x1, IntVar x2,
+      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 
   /**
