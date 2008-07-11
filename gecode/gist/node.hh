@@ -56,7 +56,7 @@ namespace Gecode { namespace Gist {
     /// Default constructor
     Node(void);
     /// Destructor
-    virtual ~Node(void);
+    ~Node(void);
     
     /// Return the parent
     Node* getParent(void);
@@ -64,9 +64,9 @@ namespace Gecode { namespace Gist {
     Node* getChild(int n);
     
     /// Check if this node is the root of a tree
-    bool isRoot(void);
+    bool isRoot(void) const;
     /// Compute the depth of this node
-    int getDepth(void);
+    int getDepth(void) const;
     
     /// Set the number of children to \a n
     void setNumberOfChildren(int n);
@@ -77,9 +77,9 @@ namespace Gecode { namespace Gist {
     void addChild(Node* child);
 
     /// Return the number of children
-    int getNumberOfChildren(void);
+    int getNumberOfChildren(void) const;
     /// Return which alternative this node represents
-    int getAlternative(void);
+    int getAlternative(void) const;
   };
 
 }}

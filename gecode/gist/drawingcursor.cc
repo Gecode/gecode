@@ -285,7 +285,17 @@ namespace Gecode { namespace Gist {
       }
     	
     }
-    
+    // // Debug info: show working spaces and copies
+    // if (n->hasCopy()) {
+    //  painter.setBrush(Qt::darkRed);
+    //  painter.drawEllipse(myx, myy, 10, 10);
+    // }
+    // 
+    // if (n->hasWorkingSpace()) {
+    //  painter.setBrush(Qt::darkYellow);
+    //  painter.drawEllipse(myx, myy + 10, 10, 10);
+    // }
+
   }
   
 }}

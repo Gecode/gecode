@@ -104,7 +104,7 @@ namespace Gecode { namespace Gist {
 
   /// \brief A node of a search tree of Gecode spaces
   class SpaceNode : public Node {
-  private:
+  protected:
     /// A copy used for recomputation, or NULL
     Space* copy;
     /// Working space used for computing the status
@@ -146,7 +146,7 @@ namespace Gecode { namespace Gist {
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root);
     /// Destructor
-    virtual ~SpaceNode(void);
+    ~SpaceNode(void);
 
     /// Return working space.  Receiver must delete the space.
     Space* getSpace(BestNode* curBest);
@@ -201,10 +201,6 @@ namespace Gecode { namespace Gist {
     SpaceNode* getParent(void);
     /// Return child \a i
     SpaceNode* getChild(int i);
-    /// Pseudo-constructor to allow creation of nodes of sub-classes from getNoOfChildNodes
-    virtual SpaceNode* createChild(int alternative);
-    /// Called when the status has changed
-    virtual void changedStatus(void);
   };
 
 }}

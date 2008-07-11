@@ -408,6 +408,17 @@ namespace Gecode { namespace Gist {
     QWidget::update();
   }
 
+  class SizeCursor : public NodeCursor<VisualNode> {
+  public:
+    size_t s;
+    SizeCursor(VisualNode* theNode) : NodeCursor<VisualNode>(theNode), s(0) {}
+    void processCurrentNode(void) {
+      size_t ns = node()->size();
+      // std::cout << "p " << ns << " children " << node()->getNumberOfChildren() << std::endl;
+      s += ns;
+    }
+  };
+
   void
   TreeCanvasImpl::inspectCurrentNode(void) {
     QMutexLocker locker(&mutex);
@@ -434,13 +445,26 @@ namespace Gecode { namespace Gist {
     case COMPONENT_IGNORED:
     case SINGLETON:
     case SOLVED:
-      Space* curSpace = currentNode->getSpace(curBest);
-      Reflection::VarMap vm;
-      curSpace->getVars(vm, false);
-      emit inspect(vm, nextPit);
-      saveCurrentNode();
-      if (inspector != NULL) {
-        inspector->inspect(curSpace);
+      {
+        // SizeCursor sc(currentNode);
+        // PreorderNodeVisitor<SizeCursor> pnv(sc);
+        // int nodes = 1;
+        // while (pnv.next()) { nodes++; }
+        // std::cout << "sizeof(VisualNode): " << sizeof(VisualNode)
+        //           << std::endl;
+        // std::cout << "Size: " << (pnv.getCursor().s)/1024 << std::endl;
+        // std::cout << "Nodes: " << nodes << std::endl;
+        // std::cout << "Size / node: " << (pnv.getCursor().s)/nodes
+        //           << std::endl;
+    
+        Space* curSpace = currentNode->getSpace(curBest);
+        Reflection::VarMap vm;
+        curSpace->getVars(vm, false);
+        emit inspect(vm, nextPit);
+        saveCurrentNode();
+        if (inspector != NULL) {
+          inspector->inspect(curSpace);
+        }
       }
       break;
     }
