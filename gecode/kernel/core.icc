@@ -1047,7 +1047,7 @@ namespace Gecode {
          * This maintains the following invariant (but only if the
          * space does not perform propagation):
          *  - If active points to a queue, this queue might contain
-         *    a propagator. However, there will be at least on queue
+         *    a propagator. However, there will be at least one queue
          *    containing a propagator.
          *  - Otherwise, active is smaller than the beginning of
          *    the queues. Then, the space is stable.
