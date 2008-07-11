@@ -140,6 +140,14 @@ namespace Gecode {
     }
   }
 
+  void
+  divmod(Space* home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
+         IntConLevel, PropKind) {
+    if (home->failed()) return;
+    GECODE_ES_FAIL(home,
+      Arithmetic::DivModBnd<IntView>::post(home,x0,x1,x2,x3));
+  }
+
   namespace {
     GECODE_REGISTER1(Arithmetic::AbsBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::AbsDom<IntView>);
@@ -179,6 +187,7 @@ namespace Gecode {
 
     GECODE_REGISTER1(Arithmetic::SqrtBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::SqrtDom<IntView>);
+    GECODE_REGISTER1(Arithmetic::DivModBnd<IntView>);
   }
 }
 

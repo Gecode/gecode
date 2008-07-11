@@ -71,6 +71,13 @@ This is a bugfix release.
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added bounds consistent division/modulo propagator.
+
+[ENTRY]
+Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]

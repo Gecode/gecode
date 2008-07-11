@@ -271,7 +271,7 @@ INTSRC0 = \
 INTHDR0 = \
 	limits.icc support-values.hh support-values.icc \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
-	arithmetic/sqr.icc arithmetic/sqrt.icc \
+	arithmetic/sqr.icc arithmetic/sqrt.icc arithmetic/divmod.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
 	branch/create-branch.icc branch/select-val.icc \
 	branch/select-view.icc \

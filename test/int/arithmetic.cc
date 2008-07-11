@@ -224,6 +224,27 @@ namespace Test { namespace Int {
        }
      };
    
+     /// Test for division/modulo constraint
+     class DivMod : public Test {
+     private:
+       static int abs(int a) { return a<0 ? -a:a; }
+       static int sgn(int a) { return a<0 ? -1:1; }
+     public:
+       /// Create and register test
+       DivMod(const std::string& s, const Gecode::IntSet& d)
+         : Test("Arithmetic::DivMod::"+s,4,d,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == x[1]*x[2]+x[3] &&
+                abs(x[3]) < abs(x[1]) &&
+                (x[3] == 0 || sgn(x[3]) == sgn(x[1]));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::divmod(home, x[0], x[1], x[2], x[3]);
+       }
+     };
+   
      /// Test for absolute value constraint
      class AbsXY : public Test {
      public:
@@ -590,6 +611,10 @@ namespace Test { namespace Int {
      SqrtXX sqrt_xx_d_a("A",a,Gecode::ICL_DOM);
      SqrtXX sqrt_xx_d_b("B",b,Gecode::ICL_DOM);
      SqrtXX sqrt_xx_d_c("C",c,Gecode::ICL_DOM);
+   
+     DivMod divmod_a("A",a);
+     DivMod divmod_b("B",b);
+     DivMod divmod_c("C",c);
    
      AbsXY abs_xy_b_a("A",a,Gecode::ICL_BND);
      AbsXY abs_xy_b_b("B",b,Gecode::ICL_BND);

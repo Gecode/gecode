@@ -1,0 +1,159 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2008
+ *
+ *  Last modified:
+ *     $Date: 2008-06-19 18:47:20 +0200 (Do, 19 Jun 2008) $ by $Author: tack $
+ *     $Revision: 7161 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+#include "gecode/int/linear.hh"
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  /*
+   * Propagator for x * y = x
+   *
+   */
+
+  template <class View>
+  forceinline
+  DivModBnd<View>::DivModBnd(Space* home, View x0, View x1)
+    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+
+  template <class View>
+  forceinline ExecStatus
+  DivModBnd<View>::post(Space* home, View x0, View x1, View x2, View x3) {
+    GECODE_ME_CHECK(x1.nq(home,0));
+    IntVar prod(home, Int::Limits::min, Int::Limits::max);
+    GECODE_ES_CHECK(MultBnd<View>::post(home,x1,x2,prod));
+    IntView prodV(prod);
+
+    GECODE_AUTOARRAY(Linear::Term<View>, t, 3);
+    t[0].a = 1; t[0].x = prodV;
+    t[1].a = 1; t[1].x = x3;
+    int min, max;
+    Linear::estimate(t,2,0,min,max);
+    GECODE_ME_CHECK(x0.gq(home,min));
+    GECODE_ME_CHECK(x0.lq(home,max));
+    t[2].a=-1; t[2].x=x0;
+    Linear::post(home,t,3,IRT_EQ,0);
+    if (home->failed()) return ES_FAILED;
+    (void) new (home) DivModBnd<View>(home,x1,x3);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  DivModBnd<View>::post(Space* home, Reflection::VarMap& vars,
+                        const Reflection::ActorSpec& spec) {
+     spec.checkArity(2);
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
+     (void) new (home) DivModBnd<View>(home,x0,x1);
+  }
+
+  template <class View>
+  forceinline
+  DivModBnd<View>::DivModBnd(Space* home, bool share, 
+                             DivModBnd<View>& p)
+  : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  DivModBnd<View>::copy(Space* home, bool share) {
+    return new (home) DivModBnd<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  DivModBnd<View>::propagate(Space* home, ModEventDelta) {
+    bool signIsSame;
+    do {
+      signIsSame = true;
+      // The sign of x1 and x3 is the same
+      if (x0.min() > 0) {
+        GECODE_ME_CHECK(x1.gq(home, 0));
+      } else if (x0.max() < 0) {
+        GECODE_ME_CHECK(x1.lq(home, 0));
+      } else if (x1.min() > 0) {
+        GECODE_ME_CHECK(x0.gr(home, 0));
+      } else if (x1.max() < 0) {
+        GECODE_ME_CHECK(x0.le(home, 0));
+      } else {
+        signIsSame = false;
+      }
+      
+      // abs(x1) is less than abs(x0)
+      int x0max = std::max(x0.max(),std::max(-x0.max(),
+                           std::max(x0.min(),-x0.min())));
+      GECODE_ME_CHECK(x1.le(home, x0max));
+      GECODE_ME_CHECK(x1.gr(home, -x0max));
+
+      if (x0.min() > 0) {
+        int min = std::min(x1.min() < 0 ? -x1.min():x1.min(),
+                           x1.max() < 0 ? -x1.max():x1.max());
+        GECODE_ME_CHECK(x0.gr(home,min));  
+      } else if (x0.max() < 0) {
+        int min = std::min(x1.min() < 0 ? -x1.min():x1.min(),
+                           x1.max() < 0 ? -x1.max():x1.max());
+        GECODE_ME_CHECK(x0.le(home,-min));
+      }
+    } while (!signIsSame &&
+             (x0.min() > 0 || x0.max() < 0 || x1.min() > 0 || x1.max() < 0));
+
+    if (signIsSame) {
+      int maxx1 = std::max(x1.min() < 0 ? -x1.min():x1.min(),
+                           x1.max() < 0 ? -x1.max():x1.max());
+      int minx0 = std::min(x0.min() < 0 ? -x0.min():x0.min(),
+                           x0.max() < 0 ? -x0.max():x0.max());
+      if (maxx1 < minx0) {
+        return ES_SUBSUMED(this,home);
+      }
+    }
+    return ES_FIX;
+  }
+
+  template <class View>
+  Support::Symbol
+  DivModBnd<View>::ati(void) {
+    return Reflection::mangle<View>("Gecode::Int::Arithmetic::DivModBnd");
+  }
+
+  template <class View>
+  Reflection::ActorSpec
+  DivModBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
+    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
+  }
+
+}}}
+
+// STATISTICS: int-prop
