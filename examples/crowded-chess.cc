@@ -360,10 +360,10 @@ public:
   virtual void
   print(std::ostream& os) {
     MiniModel::Matrix<IntVarArray> m(s, n);
-    char *names = static_cast<char*>(heap.malloc(PMAX));
-    const char *sep   = n < 8 ? "\t\t" : "\t";
+    char names[PMAX];
     names[E] = '.'; names[Q] = 'Q'; names[R] = 'R';
     names[B] = 'B'; names[K] = 'K';
+    const char* sep   = n < 8 ? "\t\t" : "\t";
 
     for (int r = 0; r < n; ++r){
       // Print main board
