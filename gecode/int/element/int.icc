@@ -418,6 +418,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB>
   ExecStatus
   Int<ViewA,ViewB>::propagate(Space* home, ModEventDelta) {
+    bool assigned = x0.assigned() && x1.assigned();
     if (ivm == NULL) {
       ivm = IdxValMap::allocate(x0.size());
       ivm->init(&c[0],x0);
@@ -428,7 +429,9 @@ namespace Gecode { namespace Int { namespace Element {
 
     ExecStatus es = ivm->tell(home,x0,x1);
     if (es == ES_FAILED)
-      return ES_FAILED;
+      return es;
+    if (es == ES_NOFIX)
+      return assigned ? ES_SUBSUMED(this,home) : ES_NOFIX;
 
     return (x0.assigned() || x1.assigned()) ? 
       ES_SUBSUMED(this,home) : es;

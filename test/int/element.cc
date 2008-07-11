@@ -97,8 +97,9 @@ namespace Test { namespace Int {
        Gecode::IntArgs c;
      public:
        /// Create and register test
-       IntIntShared(const std::string& s, const Gecode::IntArgs& c0)
-         : Test("Element::Int::Int::Shared::"+s,1,-4,8), c(c0) {}
+       IntIntShared(const std::string& s, const Gecode::IntArgs& c0,
+                    int minDomain=-4)
+         : Test("Element::Int::Int::Shared::"+s,1,minDomain,8), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[0];
@@ -272,6 +273,7 @@ namespace Test { namespace Int {
          IntArgs ic2(8, -1,1,-1,1,-1,1,0,0);
          IntArgs ic3(1, -1);
          IntArgs ic4(7, 0,-1,2,-2,4,-3,6);
+         IntArgs ic5(6, 0,0,1,2,3,4);
          
          IntArgs bc1(5, 0,1,1,0,1);
          IntArgs bc2(8, 1,1,0,1,0,1,0,0);
@@ -293,6 +295,7 @@ namespace Test { namespace Int {
          (void) new IntIntShared("B",ic2);
          (void) new IntIntShared("C",ic3);
          (void) new IntIntShared("D",ic4);
+         (void) new IntIntShared("E",ic5,1);
          
          (void) new IntBoolVar("A",bc1);
          (void) new IntBoolVar("B",bc2);
