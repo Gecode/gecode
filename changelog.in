@@ -70,6 +70,15 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: example
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Example-based support for SAC (singleton arc consistency) has
+been removed. Might be reintroduced later in a more general
+fashion.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

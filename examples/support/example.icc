@@ -199,11 +199,6 @@ Example::run(const Options& o) {
         unsigned int n_p = s->propagators();
         unsigned int n_b = s->branchings();
         unsigned long int p = 0;
-        if (o.sac() != SAC_NONE) {
-          s->sac_collect_vars();
-          while (s->sac(p) && o.sac() == SAC_FULL) {}
-          s->sac_remove_vars();
-        }
         Search::Options so;
         so.c_d  = o.c_d();
         so.a_d  = o.a_d();
@@ -246,11 +241,6 @@ Example::run(const Options& o) {
         unsigned int n_p = s->propagators();
         unsigned int n_b = s->branchings();
         unsigned long int p = 0;
-        if (o.sac() != SAC_NONE) {
-          s->sac_collect_vars();
-          while (s->sac(p) && o.sac() == SAC_FULL) {}
-          s->sac_remove_vars();
-        }
         Search::Options so;
         so.c_d  = o.c_d();
         so.a_d  = o.a_d();
@@ -287,12 +277,6 @@ Example::run(const Options& o) {
           for (unsigned int k = o.iterations(); k--; ) {
             unsigned int i = o.solutions();
             Script* s = new Script(o);
-            if (o.sac() != SAC_NONE) {
-              unsigned long int p;
-              s->sac_collect_vars();
-              while (s->sac(p) && o.sac() == SAC_FULL) {}
-              s->sac_remove_vars();
-            }
             Search::Options so;
             so.c_d  = o.c_d();
             so.a_d  = o.a_d();
