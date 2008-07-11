@@ -176,7 +176,8 @@ namespace Gecode { namespace Int { namespace Branch {
     std::stringstream s;
     s << n;
     (*a0)[0] = x.spec(home, m);
-    (*a0)[1] = Reflection::Arg::newString((std::string("=")+s.str()).c_str());
+    (*a0)[1] = 
+      Reflection::Arg::newString((std::string("<=")+s.str()).c_str());
     bs[0] = a0;
     if (alt == 2) {
       Reflection::ArrayArg* a1 = Reflection::Arg::newArray(2);
