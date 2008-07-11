@@ -45,6 +45,7 @@ namespace Gecode { namespace Gist {
   forceinline void
   Node::setTag(unsigned int tag) {
     assert(tag <= 3);
+    assert(getTag() == UNDET);
     childrenOrFirstChild = reinterpret_cast<void*>
       ( (reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & ~(3)) | tag);
   }
@@ -71,8 +72,8 @@ namespace Gecode { namespace Gist {
   forceinline Node*
   Node::getChild(unsigned int n) {
     assert(getTag() != UNDET && getTag() != LEAF);
-    assert(n != 1 || Support::marked(c.secondChild));
     if (getTag() == TWO_CHILDREN) {
+      assert(n != 1 || Support::marked(c.secondChild));
       return n == 0 ? static_cast<Node*>(getPtr()) :
         static_cast<Node*>(Support::unmark(c.secondChild));
     }

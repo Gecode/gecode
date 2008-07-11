@@ -59,21 +59,15 @@ namespace Gecode { namespace Gist {
     
   bool
   Shape::getExtentAtDepth(int depth, Extent& extent) {
-    int currentDepth = 0;
-    int extentL = 0;
-    int extentR = 0;
-    for (int i=0; i<_depth && currentDepth <= depth; i++) {
-      Extent currentExtent = shape[i];
-      extentL += currentExtent.l;
-      extentR += currentExtent.r;
-      currentDepth++;
-    }
-    if (currentDepth == depth + 1) {
-      extent = Extent(extentL, extentR);
-      return true;
-    } else {
+    if (depth > _depth)
       return false;
-    }  
+    extent = Extent(0,0);
+    for (int i=0; i <= depth; i++) {
+      Extent currentExtent = shape[i];
+      extent.l += currentExtent.l;
+      extent.r += currentExtent.r;
+    }
+    return true;
   }
   
   BoundingBox
