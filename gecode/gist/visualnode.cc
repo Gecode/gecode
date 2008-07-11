@@ -212,7 +212,7 @@ namespace Gecode { namespace Gist {
     Space* ws = getSpace(curBest);
     (void) ws->status();
     assert(ws->status() == SS_BRANCH);
-    // const BranchingDesc* d = ws->description();
+    const BranchingDesc* d = ws->description();
     Reflection::VarMap vm;
     ws->getVars(vm, false);
     std::string tt;
