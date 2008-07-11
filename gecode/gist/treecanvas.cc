@@ -49,8 +49,13 @@
 #include "gecode/gist/analysiscursor.hh"
 #include "gecode/gist/addchild.hh"
 #include "gecode/gist/addvisualisationdialog.hh"
+#include "gecode/gist/zoomToFitIcon.icc"
 
 namespace Gecode { namespace Gist {
+
+  const int minScale = 10;
+  const int maxScale = 400;
+  const int defScale = 100;
 
   Inspector::~Inspector(void) {}
     
@@ -68,7 +73,7 @@ namespace Gecode { namespace Gist {
       root->setMarked(true);
       currentNode = root;
       pathHead = root;
-      scale = 1.0;
+      scale = defScale / 100.0;
 
       setAutoFillBackground(true);
 
@@ -90,10 +95,7 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::scaleTree(int scale0) {
     QMutexLocker locker(&layoutMutex);
     BoundingBox bb;
-    if (scale0<1)
-      scale0 = 1;
-    if (scale0>400)
-      scale0 = 400;
+    scale0 = std::min(std::max(scale0, minScale), maxScale);
     scale = (static_cast<double>(scale0)) / 100.0;
     bb = root->getBoundingBox();
     int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
@@ -843,14 +845,19 @@ namespace Gecode { namespace Gist {
 
     scrollArea->setWidget(canvas);
 
-    QCheckBox* autoZoomButton = new QCheckBox("");
+    QPixmap myPic;
+    myPic.loadFromData(zoomToFitIcon, sizeof(zoomToFitIcon));
+
+    QToolButton* autoZoomButton = new QToolButton();
+    autoZoomButton->setCheckable(true);
+    autoZoomButton->setIcon(myPic);
 
     QSlider* scaleBar = new QSlider(Qt::Vertical, this);
     canvas->scaleBar = scaleBar;
     scaleBar->setObjectName("scaleBar");
-    scaleBar->setMinimum(1);
-    scaleBar->setMaximum(400);
-    scaleBar->setValue(100);
+    scaleBar->setMinimum(minScale);
+    scaleBar->setMaximum(maxScale);
+    scaleBar->setValue(defScale);
     
     inspectCN = new QAction("Inspect", this);
     inspectCN->setShortcut(QKeySequence("Return"));
@@ -1014,8 +1021,8 @@ namespace Gecode { namespace Gist {
             scaleBar, SLOT(setValue(int)));
     
     layout->addWidget(scrollArea, 0,0,-1,1);
-    layout->addWidget(scaleBar, 1,1);
-    layout->addWidget(autoZoomButton, 0,1);
+    layout->addWidget(scaleBar, 1,1, Qt::AlignHCenter);
+    layout->addWidget(autoZoomButton, 0,1, Qt::AlignHCenter);
     
     setLayout(layout);
 
@@ -1169,4 +1176,3 @@ namespace Gecode { namespace Gist {
 }}
 
 // STATISTICS: gist-any
-

@@ -70,7 +70,7 @@ namespace Gecode { namespace Gist {
   protected Q_SLOTS:
     void statusChanged(const Statistics& stats, bool finished);
     void about(void);
-    void preferences(void);
+    void preferences(bool setup=false);
   public:
     /// Constructor
     GistMainWindow(Space* root, Better* b, Gist::Inspector* gi);

@@ -579,7 +579,7 @@ GISTHDR0 = \
 	gist.icc node.hh node.icc \
 	nodecursor.hh nodecursor.icc nodevisitor.hh \
 	nodevisitor.icc postscript.hh layoutcursor.hh layoutcursor.icc \
-	spacenode.hh textoutput.hh treecanvas.hh \
+	spacenode.hh textoutput.hh treecanvas.hh zoomToFitIcon.icc \
 	visualnode.hh visualnode.icc \
 	mainwindow.hh \
 	analysiscursor.hh analysiscursor.icc \
