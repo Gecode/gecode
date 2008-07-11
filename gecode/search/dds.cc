@@ -11,8 +11,8 @@
  *     Sebastian Will, 2008
  *
  *  Last modified:
- *     $Date: 2007-04-05 15:25:13 +0200 (Thu, 05 Apr 2007) $ by $Author: tack $
- *     $Revision: 4322 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

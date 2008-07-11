@@ -269,7 +269,7 @@ INTSRC0 = \
 	channel.cc channel/link-single.cc channel/link-multi.cc \
 	circuit.cc unshare.cc
 INTHDR0 = \
-	limits.icc \
+	limits.icc support-values.hh support-values.icc \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	arithmetic/sqr.icc arithmetic/sqrt.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
