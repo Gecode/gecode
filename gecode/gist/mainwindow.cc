@@ -245,6 +245,7 @@ namespace Gecode { namespace Gist {
       c.setAutoHideFailed(pd.hideFailed);
       c.setAutoZoom(pd.zoom);
       c.setRefresh(pd.refresh);
+      c.setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
     }
   }
 

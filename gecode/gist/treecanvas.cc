@@ -66,7 +66,12 @@ namespace Gecode { namespace Gist {
     , layoutMutex(QMutex::Recursive)
     , inspector(NULL), heatView(false)
     , autoHideFailed(true), autoZoom(false)
-    , refresh(500), nextPit(0) {
+    , refresh(500), smoothScrollAndZoom(false), nextPit(0)
+    , targetZoom(defScale), metaZoomCurrent(static_cast<double>(defScale))
+    , zoomTimerId(0)
+    , targetScrollX(0), targetScrollY(0)
+    , metaScrollXCurrent(0.0), metaScrollYCurrent(0.0)
+    , scrollTimerId(0) {
       QMutexLocker locker(&mutex);
       root = new VisualNode(rootSpace, b);
       root->layout();
@@ -274,6 +279,39 @@ namespace Gecode { namespace Gist {
     update();
     centerCurrentNode();
   }
+
+  void
+  TreeCanvasImpl::timerEvent(QTimerEvent* e) {
+    if (e->timerId() == zoomTimerId) {
+      double offset = static_cast<double>(targetZoom - metaZoomCurrent) / 6.0;
+      metaZoomCurrent += offset;
+      scaleBar->setValue(static_cast<int>(metaZoomCurrent));
+      if (static_cast<int>(metaZoomCurrent) == targetZoom) {
+        killTimer(zoomTimerId);
+        zoomTimerId = 0;
+      }
+    } else if (e->timerId() == scrollTimerId) {
+      QScrollArea* sa = 
+        static_cast<QScrollArea*>(parentWidget()->parentWidget());
+
+      double xoffset =
+        static_cast<double>(targetScrollX - metaScrollXCurrent) / 6.0;
+      metaScrollXCurrent += xoffset;
+      sa->horizontalScrollBar()
+        ->setValue(static_cast<int>(metaScrollXCurrent));
+      double yoffset =
+        static_cast<double>(targetScrollY - metaScrollYCurrent) / 6.0;
+      metaScrollYCurrent += yoffset;
+      sa->verticalScrollBar()
+        ->setValue(static_cast<int>(metaScrollYCurrent));
+
+      if (static_cast<int>(metaScrollXCurrent+.5) == targetScrollX &&
+          static_cast<int>(metaScrollYCurrent+.5) == targetScrollY) {
+        killTimer(scrollTimerId);
+        scrollTimerId = 0;
+      }      
+    }
+  }
   
   void
   TreeCanvasImpl::zoomToFit(void) {
@@ -289,7 +327,14 @@ namespace Gecode { namespace Gist {
         double newYScale =
           static_cast<double>(p->height()) / (bb.depth * Layout::dist_y +
                                               2*Layout::extent);
-        scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
+        if (!smoothScrollAndZoom) {
+          scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
+        } else {
+          metaZoomCurrent = static_cast<int>(scale*100);
+          targetZoom = static_cast<int>(std::min(newXScale, newYScale)*100);
+          targetZoom = std::min(std::max(targetZoom, minScale), maxScale);
+          zoomTimerId = startTimer(15);
+        }
       }
     }
   }
@@ -308,10 +353,26 @@ namespace Gecode { namespace Gist {
     }
     
     x = static_cast<int>((xtrans+x)*scale); y = static_cast<int>(y*scale);
-    
+
     QScrollArea* sa = 
       static_cast<QScrollArea*>(parentWidget()->parentWidget());
-    sa->ensureVisible(x, y);
+
+    if (!smoothScrollAndZoom) {
+      sa->ensureVisible(x,y);
+    } else {
+      x -= sa->viewport()->width() / 2;
+      y -= sa->viewport()->height() / 2;
+
+      metaScrollXCurrent = sa->horizontalScrollBar()->value();
+      metaScrollYCurrent = sa->verticalScrollBar()->value();
+      targetScrollX = std::max(sa->horizontalScrollBar()->minimum(), x);
+      targetScrollX = std::min(sa->horizontalScrollBar()->maximum(), 
+                               targetScrollX);
+      targetScrollY = std::max(sa->verticalScrollBar()->minimum(), y);
+      targetScrollY = std::min(sa->verticalScrollBar()->maximum(), 
+                               targetScrollY);
+      scrollTimerId = startTimer(15);
+    }
   }
 
   void
@@ -766,6 +827,16 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::setRefresh(int i) {
     refresh = i;
   }
+
+  bool
+  TreeCanvasImpl::getSmoothScrollAndZoom(void) {
+    return smoothScrollAndZoom;
+  }
+
+  void
+  TreeCanvasImpl::setSmoothScrollAndZoom(bool b) {
+    smoothScrollAndZoom = b;
+  }
   
   void
   TreeCanvasImpl::getRootVars(Gecode::Reflection::VarMap& vm) {
@@ -1172,6 +1243,14 @@ namespace Gecode { namespace Gist {
   TreeCanvas::getAutoZoom(void) { return canvas->getAutoZoom(); }
   void
   TreeCanvas::setRefresh(int i) { canvas->setRefresh(i); }
+  bool
+  TreeCanvas::getSmoothScrollAndZoom(void) {
+    return canvas->getSmoothScrollAndZoom();
+  }
+  void
+  TreeCanvas::setSmoothScrollAndZoom(bool b) {
+    canvas->setSmoothScrollAndZoom(b);
+  }
 
 }}
 

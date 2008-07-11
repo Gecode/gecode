@@ -148,6 +148,10 @@ namespace Gecode {  namespace Gist {
     bool getAutoZoom(void);
     /// Set refresh rate
     void setRefresh(int i);
+    /// Return preference wheter to use smooth scrolling and zooming
+    bool getSmoothScrollAndZoom(void);
+    /// Set preference wheter to use smooth scrolling and zooming
+    void setSmoothScrollAndZoom(bool b);
     /// Resize to the outer widget size if auto zoom is enabled
     void resizeToOuter(void);
 
@@ -197,7 +201,7 @@ namespace Gecode {  namespace Gist {
     Inspector* inspector;
     
     /// The scale bar
-    QWidget* scaleBar;
+    QSlider* scaleBar;
     
     /// Statistics about the search tree
     Statistics stats;
@@ -215,6 +219,8 @@ namespace Gecode {  namespace Gist {
     bool autoZoom;
     /// Refresh rate
     int refresh;
+    /// Whether to use smooth scrolling and zooming
+    bool smoothScrollAndZoom;
 
     /// The next point in time
     int nextPit;
@@ -235,6 +241,27 @@ namespace Gecode {  namespace Gist {
     void setCurrentNode(VisualNode* n);
     /// Log the current node as new point in time
     void saveCurrentNode(void);
+
+    /// Target zoom value for smooth zooming
+    int targetZoom;
+    /// Meta current zoom value
+    double metaZoomCurrent;
+    /// Timer id for smooth zooming
+    int zoomTimerId;
+
+    /// Target x coordinate for smooth scrolling
+    int targetScrollX;
+    /// Target y coordinate for smooth scrolling
+    int targetScrollY;
+    /// Meta current x coordinate
+    double metaScrollXCurrent;
+    /// Meta current y coordinate
+    double metaScrollYCurrent;
+    /// Timer id for smooth scrolling
+    int scrollTimerId;
+
+    /// Timer invoked for smooth zooming and scrolling
+    virtual void timerEvent(QTimerEvent* e);
 
   public Q_SLOTS:
     /// Update display
@@ -303,6 +330,10 @@ namespace Gecode {  namespace Gist {
     bool getAutoZoom(void);
     /// Set refresh rate
     void setRefresh(int i);
+    /// Return preference wheter to use smooth scrolling and zooming
+    bool getSmoothScrollAndZoom(void);
+    /// Set preference wheter to use smooth scrolling and zooming
+    void setSmoothScrollAndZoom(bool b);
 
     /// Stop search and wait until finished
     void finish(void);
