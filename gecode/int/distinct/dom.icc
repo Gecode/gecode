@@ -528,6 +528,8 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (!x->edge_fst()->used(x)) {
         GECODE_ME_CHECK(x->view().eq(home,x->edge_fst()->val(x)->val()));
         x->edge_fst()->val(x)->matching(NULL);
+        for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
+          e->unlink();
         view[i] = view[--n_view];
         assigned = true;
       } else {

@@ -70,6 +70,14 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed a bug in the domain consistent distinct propagator that would cause
+a stack overflow under rare circumstances.
+	
+[ENTRY]
 Module: set
 What:   bug
 Rank:   major
