@@ -70,6 +70,15 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+Thanks: Filip Konvicka
+[DESCRIPTION]
+Generated variable stubs were wrong (could only be observed for
+new variable types).
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

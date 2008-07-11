@@ -529,7 +529,7 @@ namespace Gecode { namespace Int {
           ((ME_INT_DOM  ^ ME_INT_BND ) << 12)
         );
         Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
-        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & med_mask;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
         if (me_n == 0)
           return false;
         med ^= me_n << med_fst;
