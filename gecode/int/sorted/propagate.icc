@@ -265,8 +265,8 @@ namespace Gecode { namespace Int { namespace Sorted {
         if (nofix && !match_fixed) {
           // data structures (matching) destroyed by domains with holes
           
-          for (int i = y.size(); i--; )
-            phi[i]=phiprime[i]=0;
+          for (int j = y.size(); j--; )
+            phi[j]=phiprime[j]=0;
 
           if (!glover<View, Tuple, Perm>
               (home, xz, y, tau, phi, sequence, vertices))

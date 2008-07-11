@@ -312,8 +312,8 @@ namespace Gecode { namespace Int { namespace Rel {
         if (x[i].assigned()) {
           int n = x[i].val();
           x.move_lst(i);
-          for (int i = x.size(); i--; )
-            GECODE_ME_CHECK(x[i].eq(home,n));
+          for (int j = x.size(); j--; )
+            GECODE_ME_CHECK(x[j].eq(home,n));
           return ES_SUBSUMED(this,sizeof(*this));
         }
       GECODE_NEVER;
@@ -451,8 +451,8 @@ namespace Gecode { namespace Int { namespace Rel {
         if (x[i].assigned()) {
           int n = x[i].val();
           x.move_lst(i);
-          for (int i = x.size(); i--; )
-            GECODE_ME_CHECK(x[i].eq(home,n));
+          for (int j = x.size(); j--; )
+            GECODE_ME_CHECK(x[j].eq(home,n));
           return ES_SUBSUMED(this,sizeof(*this));
         }
       GECODE_NEVER;

@@ -172,6 +172,12 @@ namespace Gecode {
     /// Initialize with range iterator \a i
     template <class I>
     explicit IntSet(I& i);
+#ifdef __INTEL_COMPILER
+    /// Initialize with range iterator \a i
+    IntSet(const IntSet& s);
+    /// Initialize with range iterator \a i
+    IntSet(IntSet& s);
+#endif
     //@}
 
     /// \name Range length

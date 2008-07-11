@@ -847,6 +847,10 @@ namespace Gecode {
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
+    /// Static cast
+    static Advisor* cast(ActorLink* al);
+    /// Static cast
+    static const Advisor* cast(const ActorLink* al);
   protected:
     /// Return the advisor's propagator
     Propagator* propagator(void) const; 
@@ -1755,6 +1759,16 @@ namespace Gecode {
     return prev() == NULL;
   }
 
+  forceinline Advisor* 
+  Advisor::cast(ActorLink* al) {
+    return static_cast<Advisor*>(al);
+  }
+
+  forceinline const Advisor* 
+  Advisor::cast(const ActorLink* al) {
+    return static_cast<const Advisor*>(al);
+  }
+
   forceinline Propagator* 
   Advisor::propagator(void) const { 
     assert(!disposed());
@@ -1767,7 +1781,7 @@ namespace Gecode {
     assert(!disposed());
     ActorLink::prev(NULL); 
     // Shorten chains of disposed advisors by one, if possible
-    Advisor* n = static_cast<Advisor*>(next());
+    Advisor* n = Advisor::cast(next());
     if ((n != NULL) && n->disposed())
       next(n->next());
   }
@@ -1826,7 +1840,7 @@ namespace Gecode {
       // The propagator in from-space
       Propagator* p_f = static_cast<A*>(c.advisors)->propagator();
       // The propagator in to-space
-      Propagator* p_t = static_cast<Propagator*>(p_f->prev());
+      Propagator* p_t = Propagator::cast(p_f->prev());
       // Advisors in from-space
       ActorLink** a_f = &c.advisors;
       // Advisors in to-space
@@ -2210,7 +2224,7 @@ namespace Gecode {
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
     do {
-      Advisor* a = static_cast<Advisor*>(*la);
+      Advisor* a = Advisor::cast(*la);
       Propagator* p = a->propagator();
       switch (p->advise(home,a,d)) {
       case ES_FIX:

@@ -518,21 +518,23 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /**
-   * \brief Bounds consistent propagator for \f$x_0\times x_1=x_0\f$
+   * \brief Bounds or domain consistent propagator for \f$x_0\times x_1=x_0\f$
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class MultZeroOne : public BinaryPropagator<View,PC_INT_BND> {
+  template <class View, PropCond pc>
+  class MultZeroOne : public BinaryPropagator<View,pc> {
   protected:
-    using BinaryPropagator<View,PC_INT_BND>::x0;
-    using BinaryPropagator<View,PC_INT_BND>::x1;
+    using BinaryPropagator<View,pc>::x0;
+    using BinaryPropagator<View,pc>::x1;
 
     /// Constructor for cloning \a p
-    MultZeroOne(Space* home, bool share, MultZeroOne<View>& p);
+    MultZeroOne(Space* home, bool share, MultZeroOne<View,pc>& p);
     /// Constructor for posting
     MultZeroOne(Space* home, View x0, View x1);
+    /// Test whether \a x is equal to \a n
+    static RelTest equal(View x, int n);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -558,7 +560,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides multiplication for positive views only.
    */
   template <class Val, class VA, class VB, class VC>
-  class MultPlus : 
+  class MultPlusBnd : 
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x0;
@@ -566,9 +568,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x2;
   public:
     /// Constructor for posting
-    MultPlus(Space* home, VA x0, VB x1, VC x2);
+    MultPlusBnd(Space* home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlus(Space* home, bool share, MultPlus<Val,VA,VB,VC>& p);
+    MultPlusBnd(Space* home, bool share, MultPlusBnd<Val,VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
     /// Post propagator for specification
@@ -593,17 +595,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Mult : public TernaryPropagator<View,PC_INT_BND> {
+  class MultBnd : public TernaryPropagator<View,PC_INT_BND> {
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
     using TernaryPropagator<View,PC_INT_BND>::x1;
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    Mult(Space* home, bool share, Mult<View>& p);
+    MultBnd(Space* home, bool share, MultBnd<View>& p);
   public:
     /// Constructor for posting
-    Mult(Space* home, View x0, View x1, View x2);
+    MultBnd(Space* home, View x0, View x1, View x2);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
     /// Post propagator for specification
@@ -613,8 +615,90 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    /// Cost function (defined as PC_TERNARY_HI)
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                        Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+
+
+  /**
+   * \brief Domain consistent positive multiplication propagator
+   *
+   * This propagator provides multiplication for positive views only.
+   */
+  template <class Val, class VA, class VB, class VC>
+  class MultPlusDom : 
+    public MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM> {
+  protected:
+    using MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>::x0;
+    using MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>::x1;
+    using MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>::x2;
+  public:
+    /// Constructor for posting
+    MultPlusDom(Space* home, VA x0, VB x1, VC x2);
+    /// Constructor for cloning \a p
+    MultPlusDom(Space* home, bool share, MultPlusDom<Val,VA,VB,VC>& p);
+    /// Post propagator \f$x_0\cdot x_1=x_2\f$
+    static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If in stage for bounds propagation, the cost is
+     * PC_TERNARY_LO. Otherwise it is PC_TERNARY_HI.
+     */
     virtual PropCost cost(ModEventDelta med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief Domain consistent multiplication propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   *
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class MultDom : public TernaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using TernaryPropagator<View,PC_INT_DOM>::x0;
+    using TernaryPropagator<View,PC_INT_DOM>::x1;
+    using TernaryPropagator<View,PC_INT_DOM>::x2;
+
+    /// Constructor for cloning \a p
+    MultDom(Space* home, bool share, MultDom<View>& p);
+  public:
+    /// Constructor for posting
+    MultDom(Space* home, View x0, View x1, View x2);
+    /// Post propagator \f$x_0\cdot x_1=x_2\f$
+    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If in stage for bounds propagation, the cost is
+     * PC_TERNARY_LO. Otherwise it is PC_TERNARY_HI.
+     */
+    virtual PropCost cost(ModEventDelta med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
                                         Reflection::VarMap& m) const;

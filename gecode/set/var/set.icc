@@ -59,7 +59,7 @@ namespace Gecode {
 
   forceinline
   SetVar::SetVar(const Reflection::Var& x) 
-    : VarBase<Set::SetVarImp>(x) {}
+    : VarBase<Set::SetVarImp>(x.var<Set::SetVarImp>()) {}
 
   forceinline void
   SetVar::init(Space* home) {

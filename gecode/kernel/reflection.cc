@@ -65,7 +65,7 @@ namespace Gecode { namespace Reflection {
   Registry& registry(void) {
     static Registry r;
     return r;
-  };
+  }
   
   VarImpBase*
   Registry::createVar(Space* home, VarSpec& spec) const {

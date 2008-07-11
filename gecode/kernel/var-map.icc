@@ -181,7 +181,7 @@ namespace Gecode { namespace Reflection {
   inline
   VarMap::put(Space* home, const Reflection::Var& x,
               const Support::Symbol& n, bool registerOnly) {
-    name(x.var<VarImpBase>(), n);
+    name(x.varImpBase(), n);
     if (!registerOnly) {
       Reflection::Arg* a = x.spec(home, *this);
       delete a;

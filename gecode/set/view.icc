@@ -799,7 +799,7 @@ namespace Gecode {
     class SingletonView :
       public DerivedViewBase<Gecode::Int::IntView> {
     protected:
-      using DerivedViewBase<Gecode::Int::IntView>::view;;
+      using DerivedViewBase<Gecode::Int::IntView>::view;
 
       /// Convert set variable PropCond \a pc to a PropCond for integer variables
       static PropCond pc_settoint(PropCond pc);

@@ -50,8 +50,6 @@ namespace Gecode {
     VarBase(void);
     /// Initialize with variable implementation \a x
     VarBase(VarImp* x);
-    /// Initialize with reflection variable \a x
-    VarBase(const Reflection::Var& x);
   public:
     /// \name Generic variable information
     //@{
@@ -88,10 +86,6 @@ namespace Gecode {
   forceinline
   VarBase<VarImp>::VarBase(VarImp* x)
     : varimp(x) {}
-  template <class VarImp>
-  forceinline
-  VarBase<VarImp>::VarBase(const Reflection::Var& x)
-    : varimp(x.var<VarImp>()) {}
   template <class VarImp>
   forceinline VarImp*
   VarBase<VarImp>::var(void) const {
