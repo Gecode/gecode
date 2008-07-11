@@ -57,9 +57,6 @@ namespace Gecode { namespace Search {
   void
   DDS::closeComponent(void) { e.closeComponent(); }
 
-  void
-  DDS::closeSingletonBranch(void) { e.closeSingletonBranch(); }
-
   bool
   DDS::stopped(void) const {
     return e.stopped();

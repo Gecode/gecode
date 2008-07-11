@@ -257,7 +257,7 @@ namespace Gecode { namespace Gist {
 
   std::string
   VisualNode::toolTip(void) {
-    if (getStatus() != BRANCH)
+    if (getStatus() != BRANCH && getStatus() != DECOMPOSE)
       return "";
     Space* ws = getSpace();
     (void) ws->status();
@@ -285,6 +285,9 @@ namespace Gecode { namespace Gist {
               std::ostringstream vs; vs << v;
               tt += "_v"+vs.str();
             }
+          } else if (aa[j]->isInt()) {
+            std::ostringstream vs; vs << aa[j]->toInt();
+            tt += vs.str();
           } else {
             tt += "error in BranchingSpec";
           }

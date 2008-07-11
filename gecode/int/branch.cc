@@ -210,7 +210,7 @@ namespace Gecode {
   void
   decomposingBranch(Space* home, const BoolVarArgs& x,
                     IntVarBranch vars, IntValBranch vals) {
-    // createBranch<DecomposingViewValBranching>(home,x,vars,vals);
+    createBranch<DecomposingViewValBranching>(home,x,vars,vals);
   }
 
   void
