@@ -717,13 +717,13 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (es == ES_FIX)
         return ES_FIX_PARTIAL(this,View::med(ME_INT_DOM));
       es = prop_bnd<View>(home,x);
+      GECODE_ES_CHECK(es);
       if (x.size() < 2)
         return ES_SUBSUMED(this,home);
-      GECODE_ES_CHECK(es);
       es = prop_val<View,true>(home,x);
+      GECODE_ES_CHECK(es);
       if (x.size() < 2)
         return ES_SUBSUMED(this,home);
-      GECODE_ES_CHECK(es);
       return ES_FIX_PARTIAL(this,View::med(ME_INT_DOM));
     }
 

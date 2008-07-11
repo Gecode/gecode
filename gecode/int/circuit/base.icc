@@ -238,17 +238,12 @@ namespace Gecode { namespace Int { namespace Circuit {
     }
 
     // Now do the tells based on the end information
-    ExecStatus es = ES_FIX;
     while (!tell.empty()) {
       int i = tell.pop();
       assert(end[i] >= 0);
-      ModEvent me = x[end[i]].nq(home,i);
-      if (me_failed(me))
-        return ES_FAILED;
-      if (me_modified(me))
-        es = ES_NOFIX;
+      GECODE_ME_CHECK(x[end[i]].nq(home,i));
     }
-    return es;
+    return ES_NOFIX;
   }
 
   template <class View>

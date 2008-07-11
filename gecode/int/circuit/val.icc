@@ -91,6 +91,10 @@ namespace Gecode { namespace Int { namespace Circuit {
     ExecStatus esc = connected(home);
     if (esc != ES_FIX)
       return esc;
+    /*
+     * One cannot have a single unassigned view as the views constitute
+     * a permutation.
+     */
     if (y.size() < 2)
       return ES_SUBSUMED(this,home);
     return path(home);
