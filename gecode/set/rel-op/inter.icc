@@ -89,83 +89,127 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  Intersection<View0,View1,View2>::propagate(Space* home, ModEventDelta) {
+  Intersection<View0,View1,View2>::propagate(Space* home, ModEventDelta med) {
 
-    bool x0ass=x0.assigned();
-    bool x1ass=x1.assigned();
-    bool x2ass=x2.assigned();
+    // This propagator implements the constraint
+    // x2 = x0 \cap x1
 
-    {
-      GlbRanges<View2> x2lb(x2);
-      GECODE_ME_CHECK( x0.includeI(home,x2lb) );
-    }
-    {
-      GlbRanges<View2> x2lb(x2);
-      GECODE_ME_CHECK( x1.includeI(home,x2lb) );
-    }
-    {
-      GlbRanges<View0> x0lb(x0);
-      LubRanges<View2> x2ub(x2);
-      Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View2> > m1(x0lb,x2ub);
-      GECODE_ME_CHECK( x1.excludeI(home,m1) );
-    }
-    {
-      GlbRanges<View1> x1lb(x1);
-      LubRanges<View2> x2ub(x2);
+    bool x0ass = x0.assigned();
+    bool x1ass = x1.assigned();
+    bool x2ass = x2.assigned();
 
-      Iter::Ranges::Diff<GlbRanges<View1>,LubRanges<View2> > m2(x1lb,x2ub);
-      GECODE_ME_CHECK( x0.excludeI(home,m2) );
-    }
-    {
-      GlbRanges<View0> x0lb(x0);
-      GlbRanges<View1> x1lb(x1);
-      Iter::Ranges::Inter<GlbRanges<View0>,GlbRanges<View1> > i1(x0lb,x1lb);
-      GECODE_ME_CHECK( x2.includeI(home,i1) );
-    }
-    {
-      LubRanges<View0> x0ub(x0);
-      LubRanges<View1> x1ub(x1);
-      Iter::Ranges::Inter<LubRanges<View0>,LubRanges<View1> > i2(x0ub,x1ub);
-      GECODE_ME_CHECK( x2.intersectI(home,i2) );
-    }
-    unsigned int m, n;
-    {
-      LubRanges<View0> x0ub(x0);
-      LubRanges<View1> x1ub(x1);
-      Iter::Ranges::Union<LubRanges<View0>,LubRanges<View1> > u1(x0ub,x1ub);
-      m = Iter::Ranges::size(u1);
-      n = x0.cardMin()+x1.cardMin();
-      if (n>m)
-        GECODE_ME_CHECK( x2.cardMin(home,n-m) );
-    }
-    unsigned int s2;
-    {
-      LubRanges<View0> x0ub(x0);
-      GlbRanges<View1> x1lb(x1);
-      Iter::Ranges::Diff<GlbRanges<View1>,LubRanges<View0> > d2(x1lb,x0ub);
-      s2 = Iter::Ranges::size(d2);
-      assert (s2 <= x1.cardMax());
-      GECODE_ME_CHECK( x2.cardMax(home,x1.cardMax()-s2) );
-    }
-    {
-      LubRanges<View1> x1ub(x1);
-      GlbRanges<View0> x0lb(x0);
-      Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > d1 (x0lb,x1ub);
-      unsigned int s1 = Iter::Ranges::size(d1);
-      assert (s1 <= x0.cardMax());
-      GECODE_ME_CHECK( x2.cardMax(home,x0.cardMax()-s1) );
-      if (m+x2.cardMax() > x1.cardMin())
-        GECODE_ME_CHECK( x0.cardMax(home,m+x2.cardMax()-x1.cardMin()) );
-      //I might have to recaluclate m here?
-      if (m+x2.cardMax() > x0.cardMin())
-        GECODE_ME_CHECK( x1.cardMax(home,m+x2.cardMax()-x0.cardMin()) );
-      //s1 and s2 could be outdated too...
-      GECODE_ME_CHECK( x0.cardMin(home,s1+x2.cardMin()) );
-      GECODE_ME_CHECK( x1.cardMin(home,s2+x2.cardMin()) );
-    }
-    if ( x0ass + x1ass + x2ass >= 2 ) return ES_SUBSUMED(this,home);
+    ModEvent me0 = View0::me(med);
+    ModEvent me1 = View1::me(med);
+    ModEvent me2 = View2::me(med);
 
-    return ES_NOFIX;
+    bool x0lbmod = false;
+    bool x1lbmod = false;
+    bool modified = false;
+
+    do {
+
+      modified = false;
+      do {
+        // 4) glb(x2) <= glb(x0) \cap glb(x1)
+        {
+          GlbRanges<View0> x0lb(x0);
+          GlbRanges<View1> x1lb(x1);
+          Iter::Ranges::Inter<GlbRanges<View0>, GlbRanges<View1> > 
+            i2(x0lb,x1lb);
+          GECODE_ME_CHECK_MODIFIED(modified, x2.includeI(home,i2) );
+        }
+
+        if (modified || Rel::testSetEventLB(me2) )
+          {
+            modified = false;
+            // 5) x2 <= x0
+            GlbRanges<View2> x2lb1(x2);
+            GECODE_ME_CHECK_MODIFIED(modified, x0.includeI(home,x2lb1) );
+            x0lbmod |= modified;
+
+            // 6) x2 <= x1
+            bool modified2=false;
+            GlbRanges<View2> x2lb2(x2);
+            GECODE_ME_CHECK_MODIFIED(modified2, x1.includeI(home,x2lb2) );
+            x1lbmod |= modified2;
+            modified |= modified2;
+          }
+
+      } while (modified);
+
+      modified = false;
+      do {
+        bool modifiedOld = modified;
+        modified = false;
+
+        if (Rel::testSetEventUB(me2) || Rel::testSetEventLB(me0)
+             || x0lbmod || modifiedOld)
+          {
+            // 1) lub(x2) \ glb(x0) => lub(x1)
+            GlbRanges<View0> x0lb(x0);
+            LubRanges<View2> x2ub(x2);
+            Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View2> >
+              diff(x0lb, x2ub);
+            GECODE_ME_CHECK_MODIFIED(modified, x1.excludeI(home,diff) );
+          }
+
+        if (Rel::testSetEventUB(me2) || Rel::testSetEventLB(me1)
+            || x1lbmod || modifiedOld)
+          {
+            // 2) lub(x2) \ glb(x1) => lub(x0)
+            GlbRanges<View1> x1lb(x1);
+            LubRanges<View2> x2ub(x2);
+            Iter::Ranges::Diff<GlbRanges<View1>, LubRanges<View2> >
+              diff(x1lb, x2ub);
+            GECODE_ME_CHECK_MODIFIED(modified, x0.excludeI(home,diff) );
+          }
+
+         if (Rel::testSetEventUB(me0,me1) || modified)
+          {
+            //            modified = false;
+            // 3) lub(x0) \cap lub(x1) <= lub(x2)
+            LubRanges<View0> x0ub(x0);
+            LubRanges<View1> x1ub(x1);
+            Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1> >
+              i1(x0ub,x1ub);
+            GECODE_ME_CHECK_MODIFIED(modified, x2.intersectI(home,i1) );
+          }
+
+      } while(modified);
+
+      modified = false;
+      {
+        // cardinality
+        ExecStatus ret = interCard(home,modified, x0, x1, x2);
+        GECODE_ES_CHECK(ret);
+      }
+
+      if (x2.cardMax() == Set::Limits::card) {
+        GECODE_ME_CHECK( x0.cardMin(home, Set::Limits::card) );
+        GECODE_ME_CHECK( x1.cardMin(home, Set::Limits::card) );
+        return ES_SUBSUMED(this,home);
+      }
+
+      if (x0.cardMax() == Set::Limits::card)
+        GECODE_REWRITE(this,(Rel::Eq<View1,View2>::post(home,x1,x2)));
+      if (x1.cardMax() == Set::Limits::card)
+        GECODE_REWRITE(this,(Rel::Eq<View0,View2>::post(home,x0,x2)));
+
+    } while(modified);
+
+    if (shared(x0,x1,x2)) {
+      return (x0ass && x1ass && x2ass) ? ES_SUBSUMED(this,home) : ES_NOFIX;
+    } else {
+      if (x0ass && x1ass && x2ass)
+        return ES_SUBSUMED(this,home);
+      if (x0ass != x0.assigned() ||
+          x1ass != x1.assigned() ||
+          x2ass != x2.assigned()) {
+        return ES_NOFIX;
+      } else {
+         return ES_FIX;
+      }
+    }
   }
 
   template <class View0, class View1, class View2>
