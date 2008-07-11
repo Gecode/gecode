@@ -195,7 +195,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Cumulatives(const std::string& s, int nt, bool am, int l)
-         : Test("Cumulatives::"+s,nt*4,1,2), ntasks(nt), at_most(am), limit(l) {
+         : Test("Cumulatives::"+s,nt*4,-1,2), ntasks(nt), at_most(am), limit(l) {
          testsearch = false;
        }
        /// Create first assignment
@@ -262,6 +262,12 @@ namespace Test { namespace Int {
      Cumulatives c3f2("3f2", 3, false, 2);
      Cumulatives c3t3("3t3", 3,  true, 3);
      Cumulatives c3f3("3f3", 3, false, 3);
+     Cumulatives c3t_1("3t-1", 3,  true, -1);
+     Cumulatives c3f_1("3f-1", 3, false, -1);
+     Cumulatives c3t_2("3t-2", 3,  true, -2);
+     Cumulatives c3f_2("3f-2", 3, false, -2);
+     Cumulatives c3t_3("3t-3", 3,  true, -3);
+     Cumulatives c3f_3("3f-3", 3, false, -3);
      //@}
    
    }
