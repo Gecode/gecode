@@ -195,6 +195,8 @@ namespace Gecode {  namespace Gist {
     bool stopSearchFlag;
     /// The root node of the tree
     VisualNode* root;
+    /// The currently best solution (for branch-and-bound)
+    BestNode* curBest;
     /// The currently selected node
     VisualNode* currentNode;
     /// The head of the currently selected path

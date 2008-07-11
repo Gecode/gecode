@@ -64,11 +64,13 @@ namespace Gecode { namespace Gist {
   const int dSolvedHalfWidth = (nodeWidth-2*dSolvedOffset) / 2;
   const int hiddenDepth = Layout::dist_y + failedWidth;
   
-  DrawingCursor::DrawingCursor(Gist::VisualNode* root, QPainter& painter0,
+  DrawingCursor::DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
+                               QPainter& painter0,
                                bool heat,
                                const QRect& clippingRect0)
     : NodeCursor<VisualNode>(root), painter(painter0), 
-      clippingRect(clippingRect0), x(0), y(0), heatView(heat) {}
+      clippingRect(clippingRect0), curBest(curBest0),
+      x(0), y(0), heatView(heat) {}
 
   bool
   DrawingCursor::isClipped(void) {
@@ -207,7 +209,7 @@ namespace Gecode { namespace Gist {
         {
           if (heatView) {
             painter.setBrush(QBrush(QColor::fromHsv(heat,255,255)));
-          } else if (n->isCurrentBest()) {
+          } else if (n->isCurrentBest(curBest)) {
             painter.setBrush(QBrush(orange));
           } else {
             painter.setBrush(QBrush(green));

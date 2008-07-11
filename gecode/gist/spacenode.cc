@@ -101,7 +101,7 @@ namespace Gecode { namespace Gist {
   BestNode::BestNode(SpaceNode* s0, Better* b0) : s(s0), b(b0) {}
   
   int
-  SpaceNode::recompute(void) {
+  SpaceNode::recompute(BestNode* curBest) {
     int rdist = 0;
     
     if (workingSpace == NULL) {
@@ -184,7 +184,7 @@ namespace Gecode { namespace Gist {
         }
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
-          b.ownBest->acquireSpace();
+          b.ownBest->acquireSpace(curBest);
           curBest->b->constrain(curSpace, b.ownBest->workingSpace);
           lastBest = b.ownBest;
         }
@@ -198,7 +198,7 @@ namespace Gecode { namespace Gist {
   }
   
   void
-  SpaceNode::acquireSpace(void) {
+  SpaceNode::acquireSpace(BestNode* curBest) {
     SpaceNode* p = getParent();
 
     if (status == UNDETERMINED && curBest != NULL && ownBest == NULL &&
@@ -215,14 +215,14 @@ namespace Gecode { namespace Gist {
           workingSpace->commit(p->desc.branch, alternative);
       
         if (ownBest != NULL) {
-          ownBest->acquireSpace();
+          ownBest->acquireSpace(curBest);
           curBest->b->constrain(workingSpace, ownBest->workingSpace);
         }
       }
     }
 
     if (workingSpace == NULL) {
-      if (recompute() > Config::mrd && Config::mrd >= 0 &&
+      if (recompute(curBest) > Config::mrd && Config::mrd >= 0 &&
           status != SPECIAL && status != STEP &&
           workingSpace->status() == SS_BRANCH) {
             copy = workingSpace->clone();
@@ -243,7 +243,7 @@ namespace Gecode { namespace Gist {
           copy->commit(p->desc.branch, alternative);
 
         if (ownBest != NULL) {
-          ownBest->acquireSpace();
+          ownBest->acquireSpace(curBest);
           curBest->b->constrain(copy, ownBest->workingSpace);
         }
         if (copy->status() == SS_FAILED) {
@@ -302,8 +302,8 @@ namespace Gecode { namespace Gist {
 
   }
 
-  SpaceNode::SpaceNode(Space* root, Better* b)
-  : workingSpace(root), curBest(NULL), ownBest(NULL) {
+  SpaceNode::SpaceNode(Space* root)
+  : workingSpace(root), ownBest(NULL) {
     desc.branch = NULL;
     if (root == NULL) {
       status = FAILED;
@@ -320,8 +320,6 @@ namespace Gecode { namespace Gist {
     status = UNDETERMINED;
     _hasSolvedChildren = false;
     _hasFailedChildren = false;
-    if (b != NULL)
-      curBest = new BestNode(NULL, b);
   }
 
   SpaceNode::~SpaceNode(void) {
@@ -333,17 +331,15 @@ namespace Gecode { namespace Gist {
       delete desc.branch;
     delete copy;
     delete workingSpace;
-    if (getParent() == NULL)
-      delete curBest;
   }
 
 
   int
-  SpaceNode::getNumberOfChildNodes(Statistics& stats) {
+  SpaceNode::getNumberOfChildNodes(BestNode* curBest, Statistics& stats) {
     int kids = getNumberOfChildren();
     if (kids == -1) {
       stats.undetermined--;
-      acquireSpace();
+      acquireSpace(curBest);
       switch (workingSpace->status()) {
       case SS_FAILED:
         {

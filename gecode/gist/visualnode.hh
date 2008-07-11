@@ -139,9 +139,9 @@ namespace Gecode { namespace Gist {
     bool containsCoordinateAtDepth(int x, int depth);
   public:
     /// Constructor
-    VisualNode(int alternative, BestNode* b);
+    VisualNode(int alternative);
     /// Constructor for root node from \a root and \a b
-    VisualNode(Space* root, Better* b);
+    VisualNode(Space* root);
     /// Destructor
     virtual ~VisualNode(void);
     
@@ -216,7 +216,7 @@ namespace Gecode { namespace Gist {
     VisualNode* findNode(int x, int y);    
     
     /// Return string that is used as a tool tip
-    std::string toolTip(void);
+    std::string toolTip(BestNode* curBest);
   };
 
 }}

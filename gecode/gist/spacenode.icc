@@ -46,14 +46,9 @@ namespace Gecode { namespace Gist {
     return static_cast<SpaceNode*>(Node::getChild(i));
   }
     
-  forceinline Better*
-  SpaceNode::getBetterWrapper(void) const {
-    return curBest == NULL ? NULL : curBest->b;
-  }
-    
   forceinline
-  SpaceNode::SpaceNode(int alt, BestNode* cb)
-  : copy(NULL), workingSpace(NULL), curBest(cb), ownBest(NULL) {
+  SpaceNode::SpaceNode(int alt)
+  : copy(NULL), workingSpace(NULL), ownBest(NULL) {
     desc.branch = NULL;
     alternative = alt;
     status = UNDETERMINED;
@@ -62,15 +57,15 @@ namespace Gecode { namespace Gist {
   }
     
   forceinline Space*
-  SpaceNode::getSpace(void) {
-    acquireSpace();
+  SpaceNode::getSpace(BestNode* curBest) {
+    acquireSpace(curBest);
     Space* ret = workingSpace;
     workingSpace = NULL;
     return ret;
   }
 
   forceinline bool
-  SpaceNode::isCurrentBest(void) {
+  SpaceNode::isCurrentBest(BestNode* curBest) {
     return curBest != NULL && curBest->s == this;
   }
   
@@ -136,7 +131,7 @@ namespace Gecode { namespace Gist {
 
   forceinline SpaceNode*
   SpaceNode::createChild(int alternative) {
-    return new SpaceNode(alternative, curBest);
+    return new SpaceNode(alternative);
   }
   
 }}
