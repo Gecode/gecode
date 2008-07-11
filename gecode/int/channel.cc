@@ -40,7 +40,8 @@
 namespace Gecode {
 
   void
-  channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+  channel(Space* home, const IntVarArgs& x, unsigned int xoff,
+          const IntVarArgs& y, unsigned int yoff,
           IntConLevel icl, PropKind) {
     using namespace Int;
     using namespace Channel;
@@ -53,33 +54,79 @@ namespace Gecode {
     if (n == 0)
       return;
 
-    if (icl == ICL_DOM) {
-      DomInfo<IntView>* di
-        = DomInfo<IntView>::allocate(home,2*n);
-      for (int i=n; i--; ) {
-        di[i  ].init(x[i],n);
-        di[i+n].init(y[i],n);
-      }
-      if (x.same(y)) {
-        GECODE_ES_FAIL(home,(Dom<IntView,true>::post(home,n,di)));
+    if (xoff < 2 && yoff < 2 && xoff == yoff) {
+      if (icl == ICL_DOM) {
+        DomInfo<IntView>* di
+          = DomInfo<IntView>::allocate(home,2*(n+xoff));
+        for (int i=n; i--; ) {
+          di[xoff+i    ].init(x[i],n+xoff);
+          di[2*xoff+i+n].init(y[i],n+xoff);
+        }
+        if (xoff == 1) {
+          IntVar x0(home,0,0);
+          di[0].init(x0, n+xoff);
+          IntVar y0(home,0,0);
+          di[n+xoff].init(y0, n+xoff);
+        }
+        if (x.same(y)) {
+          GECODE_ES_FAIL(home,(Dom<IntView,true>::post(home,n+xoff,di)));
+        } else {
+          GECODE_ES_FAIL(home,(Dom<IntView,false>::post(home,n+xoff,di)));
+        }
       } else {
-        GECODE_ES_FAIL(home,(Dom<IntView,false>::post(home,n,di)));
+        ValInfo<IntView>* vi
+          = ValInfo<IntView>::allocate(home,2*(n+xoff));
+        for (int i=n; i--; ) {
+          vi[xoff+i    ].init(x[i],n+xoff);
+          vi[2*xoff+i+n].init(y[i],n+xoff);
+        }
+        if (xoff == 1) {
+          IntVar x0(home,0,0);
+          vi[0].init(x0, n+xoff);
+          IntVar y0(home,0,0);
+          vi[n+xoff].init(y0, n+xoff);
+        }
+        if (x.same(y)) {
+          GECODE_ES_FAIL(home,(Val<IntView,true>::post(home,n+xoff,vi)));
+        } else {
+          GECODE_ES_FAIL(home,(Val<IntView,false>::post(home,n+xoff,vi)));
+        }
       }
     } else {
-      ValInfo<IntView>* vi
-        = ValInfo<IntView>::allocate(home,2*n);
-      for (int i=n; i--; ) {
-        vi[i  ].init(x[i],n);
-        vi[i+n].init(y[i],n);
-      }
-      if (x.same(y)) {
-        GECODE_ES_FAIL(home,(Val<IntView,true>::post(home,n,vi)));
+      if (icl == ICL_DOM) {
+        DomInfo<OffsetView>* di
+          = DomInfo<OffsetView>::allocate(home,2*n);
+        for (int i=n; i--; ) {
+          di[i  ].init(OffsetView(x[i],-xoff),n);
+          di[i+n].init(OffsetView(y[i],-yoff),n);
+        }
+        if (x.same(y)) {
+          GECODE_ES_FAIL(home,(Dom<OffsetView,true>::post(home,n,di)));
+        } else {
+          GECODE_ES_FAIL(home,(Dom<OffsetView,false>::post(home,n,di)));
+        }
       } else {
-        GECODE_ES_FAIL(home,(Val<IntView,false>::post(home,n,vi)));
+        ValInfo<OffsetView>* vi
+          = ValInfo<OffsetView>::allocate(home,2*n);
+        for (int i=n; i--; ) {
+          vi[i  ].init(OffsetView(x[i],-xoff),n);
+          vi[i+n].init(OffsetView(y[i],-yoff),n);
+        }
+        if (x.same(y)) {
+          GECODE_ES_FAIL(home,(Val<OffsetView,true>::post(home,n,vi)));
+        } else {
+          GECODE_ES_FAIL(home,(Val<OffsetView,false>::post(home,n,vi)));
+        }
       }
     }
+
   }
 
+  void
+  channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+          IntConLevel icl, PropKind pk) {
+    channel(home, x, 0, y, 0, icl, pk);
+  }
   void
   channel(Space* home, BoolVar x0, IntVar x1, IntConLevel, PropKind) {
     using namespace Int;
@@ -105,6 +152,10 @@ namespace Gecode {
     GECODE_REGISTER2(Channel::Dom<IntView, true>);
     GECODE_REGISTER2(Channel::Val<IntView, false>);
     GECODE_REGISTER2(Channel::Val<IntView, true>);
+    GECODE_REGISTER2(Channel::Dom<OffsetView, false>);
+    GECODE_REGISTER2(Channel::Dom<OffsetView, true>);
+    GECODE_REGISTER2(Channel::Val<OffsetView, false>);
+    GECODE_REGISTER2(Channel::Val<OffsetView, true>);
     GECODE_REGISTER1(Channel::LinkSingle);
     GECODE_REGISTER1(Channel::LinkMulti);
   }

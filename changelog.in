@@ -70,6 +70,14 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The channel constraint now comes in a version that allows to specify offsets 
+to the array indices.
+
+[ENTRY]
 Module: example
 What:   removed
 Rank:   minor
