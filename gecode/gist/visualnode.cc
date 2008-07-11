@@ -46,7 +46,7 @@ namespace Gecode { namespace Gist {
     childrenLayoutDone(false), hidden(false), marked(false)
   , onPath(false)
   , heat(0)
-  , shape(NULL), box(0,0,0)
+  , shape(NULL), box(0,0)
   {}
 
   VisualNode::VisualNode(Space* root, Better* b)
@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     hidden(false), marked(false)
   , onPath(false)
   , heat(0)
-  , shape(NULL), box(0,0,0)
+  , shape(NULL), box(0,0)
   {}
 
   VisualNode::~VisualNode(void) {
@@ -153,7 +153,7 @@ namespace Gecode { namespace Gist {
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
     if (x < box.left ||
       x > box.right ||
-      depth > box.depth) {
+      depth > shape->depth()) {
       return false;
     }
     Extent theExtent;

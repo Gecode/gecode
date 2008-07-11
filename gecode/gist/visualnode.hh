@@ -50,16 +50,68 @@ namespace Gecode { namespace Gist {
     int left;
     /// Right coordinate 
     int right;
-    /// Depth
-    int depth;
     /// Constructor
-    BoundingBox(int l, int r, int d);
+    BoundingBox(int l, int r);
     /// Default constructor
     BoundingBox(void) {}
   };
 
-  class Shape;
+  /// \brief Extent, representing shape of a tree at one depth level
+  class Extent {
+  public:
+    /// Left extent
+    int l;
+    /// Right extent
+    int r;
+    /// Default constructor
+    Extent(void);
+    /// Construct with \a l0 and \a r0
+    Extent(int l0, int r0);
+    /// Construct with width \a width
+    Extent(int width);
+    
+    /// Extend extent by \a deltaL and \a deltaR
+    void extend(int deltaL, int deltaR);
+    /// Move extent by \a delta
+    void move(int delta);
+  };
 
+  /// \brief The shape of a subtree
+  class Shape {
+  private:
+    /// The depth of this shape
+    int _depth;
+    /// The shape is an array of extents, one for each depth level
+    Extent shape[1];
+    /// Copy construtor
+    Shape(const Shape&);
+    /// Assignment operator
+    Shape& operator=(const Shape&);
+    /// Constructor
+    Shape(void);
+  public:
+    /// Construct shape of depth \a d
+    static Shape* allocate(int d);
+    /// Construct with single extent \a e
+    static Shape* allocate(Extent e);
+    /// Construct with \e for the root and \a subShape for the children
+    static Shape* allocate(Extent e, const Shape* subShape);
+    /// Construct from \a subShape
+    static Shape* allocate(const Shape* subShape);
+    // Destruct
+    static void deallocate(Shape*);
+
+    /// Return depth of the shape
+    int depth(void) const;
+    /// Return extent at depth \a i
+    const Extent& operator[](int i) const;
+    /// Return extent at depth \a i
+    Extent& operator[](int i);
+    /// Return if extent exists at \a depth, if yes return it in \a extent
+    bool getExtentAtDepth(int depth, Extent& extent);
+    /// Return bounding box
+    BoundingBox getBoundingBox(void);
+  };
   /// \brief Node class that supports visual layout
   class VisualNode : public SpaceNode {
   protected:
@@ -150,6 +202,8 @@ namespace Gecode { namespace Gist {
     void setBoundingBox(BoundingBox b);
     /// Return the bounding box
     BoundingBox getBoundingBox(void);
+    /// Return depth of the subtree of this node
+    int depth(void);
     /// Create a child for alternative \a alternative
     virtual VisualNode* createChild(int alternative);
     /// Signal that the status has changed

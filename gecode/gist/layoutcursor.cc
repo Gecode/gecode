@@ -100,10 +100,8 @@ namespace Gecode { namespace Gist {
     int lastRight = 0;
     int left = 0;
     int right = 0;
-    int depth = 0;
     for (int i=0; i<_depth; i++) {
       Extent curExtent = shape[i];
-      depth++;
       lastLeft = lastLeft + curExtent.l;
       lastRight = lastRight + curExtent.r;
       if (lastLeft < left)
@@ -111,7 +109,7 @@ namespace Gecode { namespace Gist {
       if (lastRight > right)
         right = lastRight;
     }
-    return BoundingBox(left, right, depth);    
+    return BoundingBox(left, right);
   }
   
   LayoutCursor::LayoutCursor(VisualNode* theNode)
