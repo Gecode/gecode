@@ -166,10 +166,10 @@ namespace Gecode {
 
   void
   div(Space* home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl, PropKind pk) {
+      IntConLevel, PropKind) {
     if (home->failed()) return;
-    IntVar _mod(home, Int::Limits::min, Int::Limits::max);
-    divmod(home, x0, x1, x2, _mod, icl, pk);
+    GECODE_ES_FAIL(home,
+      (Arithmetic::DivBnd<IntView>::post(home,x0,x1,x2)));
   }
 
   void
@@ -220,6 +220,16 @@ namespace Gecode {
     GECODE_REGISTER1(Arithmetic::SqrtBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::SqrtDom<IntView>);
     GECODE_REGISTER1(Arithmetic::DivMod<IntView>);
+    
+    GECODE_REGISTER4(Arithmetic::DivPlusBnd<int,IntView,IntView,IntView>);
+    GECODE_REGISTER4(Arithmetic::DivPlusBnd<double,IntView,IntView,IntView>);
+    GECODE_REGISTER4(Arithmetic::DivPlusBnd<double,MinusView,
+                                            MinusView,IntView>);
+    GECODE_REGISTER5(Arithmetic::DivPlusBnd<double,IntView,MinusView,
+                                            MinusView,false>);
+    GECODE_REGISTER5(Arithmetic::DivPlusBnd<double,MinusView,IntView,
+                                            MinusView,false>);
+    GECODE_REGISTER1(Arithmetic::DivBnd<IntView>);
   }
 }
 

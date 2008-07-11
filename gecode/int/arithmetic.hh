@@ -707,6 +707,75 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   };
 
   /**
+   * \brief Bounds consistent positive division propagator
+   *
+   * This propagator provides division for positive views only.
+   */
+  template <class Val, class VA, class VB, class VC, bool towardsMinInf=true>
+  class DivPlusBnd : 
+    public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
+  protected:
+    using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x0;
+    using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x1;
+    using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x2;
+  public:
+    /// Constructor for posting
+    DivPlusBnd(Space* home, VA x0, VB x1, VC x2);
+    /// Constructor for cloning \a p
+    DivPlusBnd(Space* home, bool share,
+               DivPlusBnd<Val,VA,VB,VC,towardsMinInf>& p);
+    /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding to \f$-\infty\f$)
+    static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                       Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief Bounds consistent division propagator
+   *
+   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   *
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class DivBnd : public TernaryPropagator<View,PC_INT_BND> {
+  protected:
+    using TernaryPropagator<View,PC_INT_BND>::x0;
+    using TernaryPropagator<View,PC_INT_BND>::x1;
+    using TernaryPropagator<View,PC_INT_BND>::x2;
+
+    /// Constructor for cloning \a p
+    DivBnd(Space* home, bool share, DivBnd<View>& p);
+  public:
+    /// Constructor for posting
+    DivBnd(Space* home, View x0, View x1, View x2);
+    /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding to \f$-\infty\f$)
+    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    /// Post propagator for specification
+    static void post(Space* home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space* home,
+                                        Reflection::VarMap& m) const;
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+  
+  /**
    * \brief Integer division/modulo propagator
    *
    * This propagator implements the relation between divisor and
