@@ -71,6 +71,14 @@ This is a bugfix release.
 
 [ENTRY]
 Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed bug that could potentially have affected certain staged
+propagators.
+
+[ENTRY]
+Module: kernel
 What:   documentation
 Rank:   minor
 Thanks:	David Rijsman
