@@ -53,23 +53,19 @@ namespace Gecode { namespace Int { namespace Sorted {
    *   scclist ~ resulting sccs
    */
 
-  template<class View, class Tuple>
+  template<class View>
   inline void
-  computesccs(Space*,
-              ViewArray<Tuple>& xz,
-              ViewArray<View>& y,
-              int phi[],
-              SccComponent sinfo[],
-              int scclist[]) {
+  computesccs(ViewArray<View>& x, ViewArray<View>& y,
+              int phi[], SccComponent sinfo[], int scclist[]) {
 
     // number of sccs is bounded by xs (number of x-nodes)
-    int xs = xz.size();
+    int xs = x.size();
     Support::StaticStack<int> cs(xs);
 
     //select an y node from the graph
     for (int j = 0; j < xs; j++) {
-      int yjmin      = y[j].min();    // the processed min
-      while (!cs.empty() && xz[phi[sinfo[cs.top()].rightmost]][0].max() < yjmin) {
+      int yjmin = y[j].min();    // the processed min
+      while (!cs.empty() && x[phi[sinfo[cs.top()].rightmost]].max() < yjmin) {
         // the topmost scc cannot "reach" y_j or a node to the right of it
         cs.pop();
       }
@@ -78,7 +74,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       // C is a minimal scc in the oriented intersection graph
       // we only store y_j-Node, since \phi(j) gives the matching X-node
       int i     = phi[j];
-      int ximin = xz[i][0].min();
+      int ximin = x[i].min();
       while (!cs.empty() && ximin <= y[sinfo[cs.top()].rightmost].max()) {
         // y_j can "reach" cs.top() ,
         // i.e. component c can reach component cs.top()
@@ -132,23 +128,24 @@ namespace Gecode { namespace Int { namespace Sorted {
    *        where \f$y_h\f$ is the rightmost neighbour of \f$x_i\f$
    */
 
-  template<class View, class Tuple, bool Perm>
+  template<class View, bool Perm>
   inline bool
   narrow_domx(Space* home,
-              ViewArray<Tuple>& xz,
+              ViewArray<View>& x,
               ViewArray<View>& y,
+              ViewArray<View>& z,
               int tau[],
               int[],
               int scclist[],
               SccComponent sinfo[],
               bool& nofix) {
 
-    int xs        = xz.size();
+    int xs = x.size();
 
     // For every x node
     for (int i = 0; i < xs; i++) {
 
-      int xmin = xz[i][0].min();
+      int xmin = x[i].min();
       /*
        * take the scc-list for the current x node
        * start from the leftmost reachable y node of the scc
@@ -165,22 +162,22 @@ namespace Gecode { namespace Int { namespace Sorted {
         // start is the leftmost-position for x_i
         // that denotes the lower bound on p_i
 
-        ModEvent me_plb = xz[i][1].gq(home, start);
+        ModEvent me_plb = z[i].gq(home, start);
         if (me_failed(me_plb)) {
           return false;
         }
-        nofix |= (me_modified(me_plb) && start != xz[i][1].min());
+        nofix |= (me_modified(me_plb) && start != z[i].min());
       }
 
-      ModEvent me_lb = xz[i][0].gq(home, y[start].min());
+      ModEvent me_lb = x[i].gq(home, y[start].min());
       if (me_failed(me_lb)) {
         return false;
       }
       nofix |= (me_modified(me_lb) &&
-                y[start].min() != xz[i][0].min());
+                y[start].min() != x[i].min());
         
       int ptau = tau[xs - 1 - i];
-      int xmax = xz[ptau][0].max();
+      int xmax = x[ptau].max();
       /*
        * take the scc-list for the current x node
        * start from the rightmost reachable node and check which
@@ -196,19 +193,19 @@ namespace Gecode { namespace Int { namespace Sorted {
       if (Perm) {
         //start is the rightmost-position for x_i
         //that denotes the upper bound on p_i
-        ModEvent me_pub = xz[ptau][1].lq(home, start);
+        ModEvent me_pub = z[ptau].lq(home, start);
         if (me_failed(me_pub)) {
           return false;
         }
-        nofix |= (me_modified(me_pub) && start != xz[ptau][1].max());
+        nofix |= (me_modified(me_pub) && start != z[ptau].max());
       }
 
-      ModEvent me_ub = xz[ptau][0].lq(home, y[start].max());
+      ModEvent me_ub = x[ptau].lq(home, y[start].max());
       if (me_failed(me_ub)) {
         return false;
       }
       nofix |= (me_modified(me_ub) &&
-                y[start].max() != xz[ptau][0].max());
+                y[start].max() != x[ptau].max());
     }
     return true;
   }
@@ -223,30 +220,25 @@ namespace Gecode { namespace Int { namespace Sorted {
    *      and update the new lower bound by \f$T_j=max(E_j, D_{\phi'(j)})\f$
    */
 
-  template<class View, class Tuple, bool Perm>
+  template<class View>
   inline bool
   narrow_domy(Space* home,
-              ViewArray<Tuple>& xz,
-              ViewArray<View>& y,
-              int phi[],
-              int phiprime[],
-              bool& nofix) {
-
-    int xs = xz.size();
-    for (int i = xs; i--; ) {
-      ModEvent me_lb = y[i].gq(home, xz[phiprime[i]][0].min());
+              ViewArray<View>& x, ViewArray<View>& y,
+              int phi[], int phiprime[], bool& nofix) {
+    for (int i=x.size(); i--; ) {
+      ModEvent me_lb = y[i].gq(home, x[phiprime[i]].min());
       if (me_failed(me_lb)) {
         return false;
       }
       nofix |= (me_modified(me_lb) &&
-                xz[phiprime[i]][0].min() != y[i].min());
+                x[phiprime[i]].min() != y[i].min());
 
-      ModEvent me_ub = y[i].lq(home, xz[phi[i]][0].max());
+      ModEvent me_ub = y[i].lq(home, x[phi[i]].max());
       if (me_failed(me_ub)) {
         return false;
       }
       nofix |= (me_modified(me_ub) &&
-                xz[phi[i]][0].max() != y[i].max());
+                x[phi[i]].max() != y[i].max());
     }
     return true;
   }
