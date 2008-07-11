@@ -60,34 +60,6 @@ namespace Gecode { namespace Gist {
     delete s;    
   }
 
-  void
-  AnalysisCursor::moveDownwards(void) {
-    NodeCursor<VisualNode>::moveDownwards();
-    processTopDown();
-  }
-
-  void
-  AnalysisCursor::moveSidewards(void) {
-    NodeCursor<VisualNode>::moveSidewards();
-    processTopDown();
-  }
-
-  void
-  AnalysisCursor::processCurrentNode(void) {
-    VisualNode* n = node();
-    if (n->getStatus() == UNDETERMINED)
-      return;
-    VisualNode* p = n->getParent();
-    if (p == NULL) {
-      n->setHeat(0);
-    } else {
-      int h = p->getHeat() - n->getHeat();
-      n->setHeat(h);
-      maxHeat = std::max(maxHeat, h);
-      minHeat = std::min(minHeat, h);
-    }
-  }
-
   AnalysisCursor::AnalysisCursor(VisualNode* root, int& min, int& max)
   : NodeCursor<VisualNode>(root), minHeat(min), maxHeat(max) {
     minHeat = Gecode::Int::Limits::max;
