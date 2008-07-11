@@ -5676,8 +5676,6 @@ gecode/gist/addvisualisationdialog$(OBJSUFFIX) gecode/gist/addvisualisationdialo
 	./gecode/support/marked-pointer.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
 	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
-gecode/gist/reflectionhelpers$(OBJSUFFIX) gecode/gist/reflectionhelpers$(SBJSUFFIX): \
-	./gecode/gist/reflectionhelpers.hh 
 gecode/gist/config$(OBJSUFFIX) gecode/gist/config$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/better.hh ./gecode/gist/config.hh \
 	./gecode/gist/gist.icc ./gecode/gist/visualisation/intvaritem.hh ./gecode/gist/visualisation/setvaritem.hh \
