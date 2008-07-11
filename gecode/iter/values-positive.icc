@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Christian Schulte, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,31 +38,23 @@
 namespace Gecode { namespace Iter { namespace Values {
 
   /**
-   * \brief Value iterator for pointwise minus of a value iterator
+   * \brief Value iterator for selecting only positive values
    *
-   * This iterator in effect changes the order of how values
-   * are iterated: the first values of the input iterator defines
-   * the last value of the Minus iterator. Upon initialization
-   * all values of the input iterator are stored in an array
-   * which later allows iteration in inverse direction.
-   *
+   * If \a strict is true, zero is included.
    * \ingroup FuncIterValues
    */
-
-  template <class I>
-  class Minus  {
-  private:
-    /// %Values stored
-    SharedArray<int> v;
-    /// Current value position
-    int c;
+  template <class I, bool strict=false>
+  class Positive {
+  protected:
+    /// Input iterator
+    I i;
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    Minus(void);
+    Positive(void);
     /// Initialize with values from \a i
-    Minus(I& i);
+    Positive(I& i);
     /// Initialize with values from \a i
     void init(I& i);
     //@}
@@ -83,48 +75,49 @@ namespace Gecode { namespace Iter { namespace Values {
   };
 
 
-  template <class I>
+  template <class I, bool strict>
   forceinline
-  Minus<I>::Minus(void) {}
+  Positive<I,strict>::Positive(void) {}
 
-  template <class I>
-  inline void
-  Minus<I>::init(I& i) {
-    Support::DynamicArray<int> d;
-    int n=0;
-    while (i()) {
-      d[n] = -i.val();
-      ++n; ++i;
-    }
-    v.init(n);
-    for (int j=n; j--; )
-      v[j]=d[j];
-    c = n-1;
-  }
-
-  template <class I>
-  forceinline
-  Minus<I>::Minus(I& i) {
-    init(i);
-  }
-
-  template <class I>
+  template <class I, bool strict>
   forceinline void
-  Minus<I>::operator++(void) {
-    c--;
-  }
-  template <class I>
-  forceinline bool
-  Minus<I>::operator()(void) const {
-    return c >= 0;
+  Positive<I,strict>::init(I& i0) {
+    i=i0;
+    if (strict) {
+      while (i() && (i.val() <= 0)) ++i;
+    } else {
+      while (i() && (i.val() < 0)) ++i;
+    }
   }
 
-  template <class I>
+  template <class I, bool strict>
+  forceinline
+  Positive<I,strict>::Positive(I& i0) : i(i0) {
+    if (strict) {
+      while (i() && (i.val() <= 0)) ++i;
+    } else {
+      while (i() && (i.val() < 0)) ++i;
+    }
+  }
+
+  template <class I, bool strict>
+  forceinline void
+  Positive<I,strict>::operator++(void) {
+    ++i;
+  }
+  template <class I, bool strict>
+  forceinline bool
+  Positive<I,strict>::operator()(void) const {
+    return i();
+  }
+
+  template <class I, bool strict>
   forceinline int
-  Minus<I>::val(void) const {
-    return v[c];
+  Positive<I,strict>::val(void) const {
+    return i.val();
   }
 
 }}}
 
 // STATISTICS: iter-any
+
