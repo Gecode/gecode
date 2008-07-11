@@ -71,6 +71,7 @@ namespace Gecode {
 #include "gecode/iter/ranges-singleton-append.icc"
 
 #include "gecode/iter/values-array.icc"
+#include "gecode/iter/values-map.icc"
 #include "gecode/iter/values-minus.icc"
 #include "gecode/iter/values-offset.icc"
 #include "gecode/iter/values-ranges.icc"

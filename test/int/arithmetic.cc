@@ -149,8 +149,9 @@ namespace Test { namespace Int {
      class SqrXY : public Test {
      public:
        /// Create and register test
-       SqrXY(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Sqr::XY::"+s,2,d) {}
+       SqrXY(const std::string& s, const Gecode::IntSet& d, 
+             Gecode::IntConLevel icl)
+         : Test("Arithmetic::Sqr::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -159,7 +160,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::sqr(home, x[0], x[1]);
+         Gecode::sqr(home, x[0], x[1], icl);
        }
      };
    
@@ -167,8 +168,9 @@ namespace Test { namespace Int {
      class SqrXX : public Test {
      public:
        /// Create and register test
-       SqrXX(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Sqr::XX::"+s,1,d) {}
+       SqrXX(const std::string& s, const Gecode::IntSet& d,
+             Gecode::IntConLevel icl)
+         : Test("Arithmetic::Sqr::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -176,7 +178,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-         Gecode::sqr(home, x[0], x[0]);
+         Gecode::sqr(home, x[0], x[0], icl);
        }
      };
    
@@ -520,13 +522,21 @@ namespace Test { namespace Int {
      MultXXX mult_xxx_b("B",b);
      MultXXX mult_xxx_c("C",c);
    
-     SqrXY sqr_xy_a("A",a);
-     SqrXY sqr_xy_b("B",b);
-     SqrXY sqr_xy_c("C",c);
+     SqrXY sqr_xy_b_a("A",a,Gecode::ICL_BND);
+     SqrXY sqr_xy_b_b("B",b,Gecode::ICL_BND);
+     SqrXY sqr_xy_b_c("C",c,Gecode::ICL_BND);
    
-     SqrXX sqr_xx_a("A",a);
-     SqrXX sqr_xx_b("B",b);
-     SqrXX sqr_xx_c("C",c);
+     SqrXY sqr_xy_d_a("A",a,Gecode::ICL_DOM);
+     SqrXY sqr_xy_d_b("B",b,Gecode::ICL_DOM);
+     SqrXY sqr_xy_d_c("C",c,Gecode::ICL_DOM);
+   
+     SqrXX sqr_xx_b_a("A",a,Gecode::ICL_BND);
+     SqrXX sqr_xx_b_b("B",b,Gecode::ICL_BND);
+     SqrXX sqr_xx_b_c("C",c,Gecode::ICL_BND);
+   
+     SqrXX sqr_xx_d_a("A",a,Gecode::ICL_DOM);
+     SqrXX sqr_xx_d_b("B",b,Gecode::ICL_DOM);
+     SqrXX sqr_xx_d_c("C",c,Gecode::ICL_DOM);
    
      SqrtXY sqrt_xy_a("A",a);
      SqrtXY sqrt_xy_b("B",b);
@@ -536,19 +546,19 @@ namespace Test { namespace Int {
      SqrtXX sqrt_xx_b("B",b);
      SqrtXX sqrt_xx_c("C",c);
    
-     AbsXY abs_xy_bnd_a("A",a,Gecode::ICL_BND);
-     AbsXY abs_xy_bnd_b("B",b,Gecode::ICL_BND);
-     AbsXY abs_xy_bnd_c("C",c,Gecode::ICL_BND);
-     AbsXY abs_xy_dom_a("A",a,Gecode::ICL_DOM);
-     AbsXY abs_xy_dom_b("B",b,Gecode::ICL_DOM);
-     AbsXY abs_xy_dom_c("C",c,Gecode::ICL_DOM);
+     AbsXY abs_xy_b_a("A",a,Gecode::ICL_BND);
+     AbsXY abs_xy_b_b("B",b,Gecode::ICL_BND);
+     AbsXY abs_xy_b_c("C",c,Gecode::ICL_BND);
+     AbsXY abs_xy_d_a("A",a,Gecode::ICL_DOM);
+     AbsXY abs_xy_d_b("B",b,Gecode::ICL_DOM);
+     AbsXY abs_xy_d_c("C",c,Gecode::ICL_DOM);
 
-     AbsXX abs_xx_bnd_a("A",a,Gecode::ICL_BND);
-     AbsXX abs_xx_bnd_b("B",b,Gecode::ICL_BND);
-     AbsXX abs_xx_bnd_c("C",c,Gecode::ICL_BND);
-     AbsXX abs_xx_dom_a("A",a,Gecode::ICL_DOM);
-     AbsXX abs_xx_dom_b("B",b,Gecode::ICL_DOM);
-     AbsXX abs_xx_dom_c("C",c,Gecode::ICL_DOM);
+     AbsXX abs_xx_b_a("A",a,Gecode::ICL_BND);
+     AbsXX abs_xx_b_b("B",b,Gecode::ICL_BND);
+     AbsXX abs_xx_b_c("C",c,Gecode::ICL_BND);
+     AbsXX abs_xx_d_a("A",a,Gecode::ICL_DOM);
+     AbsXX abs_xx_d_b("B",b,Gecode::ICL_DOM);
+     AbsXX abs_xx_d_c("C",c,Gecode::ICL_DOM);
    
      MinXYZ min_xyz_a("A",a);
      MinXYZ min_xyz_b("B",b);

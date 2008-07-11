@@ -462,7 +462,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   Mult<View>::post(Space* home, View x0, View x1, View x2) {
     if (same(x0,x1))
-      return Sqr<View>::post(home,x0,x2);
+      return SqrBnd<View>::post(home,x0,x2);
     if (same(x0,x2))
       return MultZeroOne<View>::post(home,x0,x1);
     if (same(x1,x2))
