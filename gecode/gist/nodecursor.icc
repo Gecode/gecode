@@ -38,11 +38,19 @@ namespace Gecode { namespace Gist {
 
   template <class Node>
   forceinline
-  NodeCursor<Node>::NodeCursor(Node* theNode) : _startNode(theNode), _node(theNode) {}
+  NodeCursor<Node>::NodeCursor(Node* theNode) : _startNode(theNode), _node(theNode), _alternative(-1) {}
 
   template <class Node>
   forceinline Node*
   NodeCursor<Node>::node(void) { return _node; }
+
+  template <class Node>
+  forceinline int
+  NodeCursor<Node>::alternative(void) { return _alternative; }
+
+  template <class Node>
+  forceinline void
+  NodeCursor<Node>::alternative(int a) { _alternative=a; }
 
   template <class Node>
   forceinline Node*
@@ -54,33 +62,51 @@ namespace Gecode { namespace Gist {
 
   template <class Node>
   forceinline bool
-  NodeCursor<Node>::mayMoveUpwards(void) { return _node != _startNode && !_node->isRoot(); }
+  NodeCursor<Node>::mayMoveUpwards(void) {
+    return _node != _startNode && !_node->isRoot();
+  }
 
   template <class Node>
   forceinline void
   NodeCursor<Node>::moveUpwards(void) {
     _node = static_cast<Node*>(_node->getParent());
+    if (_node->isRoot()) {
+      _alternative = -1;
+    } else {
+      Node* p = static_cast<Node*>(_node->getParent());
+      for (int i=p->getNumberOfChildren(); i--;) {
+        if (p->getChild(i) == _node) {
+          _alternative = i;
+          break;
+        }
+      }
+    }
   }
 
   template <class Node>
   forceinline bool
-  NodeCursor<Node>::mayMoveDownwards(void) { return _node->getNumberOfChildren() > 0; }
+  NodeCursor<Node>::mayMoveDownwards(void) {
+    return _node->getNumberOfChildren() > 0;
+  }
 
   template <class Node>
   forceinline void
-  NodeCursor<Node>::moveDownwards(void) { _node = _node->getChild(0); }
+  NodeCursor<Node>::moveDownwards(void) {
+    _alternative = 0;
+    _node = _node->getChild(0);
+  }
 
   template <class Node>
   forceinline bool
   NodeCursor<Node>::mayMoveSidewards(void) {
     return (!_node->isRoot()) && (_node != _startNode) &&
-      (_node->getAlternative() < _node->getParent()->getNumberOfChildren() - 1);
+      (_alternative < _node->getParent()->getNumberOfChildren() - 1);
   }
 
   template <class Node>
   forceinline void
   NodeCursor<Node>::moveSidewards(void) {
-    _node = static_cast<Node*>(_node->getParent()->getChild(_node->getAlternative()+1));
+    _node = static_cast<Node*>(_node->getParent()->getChild(++_alternative));
   }
 
   forceinline bool

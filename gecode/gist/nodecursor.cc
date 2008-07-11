@@ -101,7 +101,7 @@ namespace Gecode { namespace Gist {
   bool
   NextSolCursor::mayMoveSidewards(void) {
     if (back) {
-      return notOnSol() && node()->getAlternative() > 0;
+      return notOnSol() && alternative() > 0;
     } else {
       return notOnSol() && NodeCursor<VisualNode>::mayMoveSidewards();
     }
@@ -110,7 +110,8 @@ namespace Gecode { namespace Gist {
   void
   NextSolCursor::moveSidewards(void) {
     if (back) {
-      node(node()->getParent()->getChild(node()->getAlternative()-1));
+      alternative(alternative()-1);
+      node(node()->getParent()->getChild(alternative()));
     } else {
       NodeCursor<VisualNode>::moveSidewards();      
     }

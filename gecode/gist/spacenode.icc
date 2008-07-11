@@ -45,15 +45,44 @@ namespace Gecode { namespace Gist {
   SpaceNode::getChild(int i) {
     return static_cast<SpaceNode*>(Node::getChild(i));
   }
-    
+  
+  forceinline void
+  SpaceNode::setHasOpenChildren(bool b) {
+    if (b)
+      nstatus |= 1<<(HASOPENCHILDREN-1);
+    else
+      nstatus &= ~(1<<(HASOPENCHILDREN-1));      
+  }
+
+  forceinline void
+  SpaceNode::setHasFailedChildren(bool b) {
+    if (b)
+      nstatus |= 1<<(HASFAILEDCHILDREN-1);
+    else
+      nstatus &= ~(1<<(HASFAILEDCHILDREN-1));
+  }
+
+  forceinline void
+  SpaceNode::setHasSolvedChildren(bool b) {
+    if (b)
+      nstatus |= 1<<(HASSOLVEDCHILDREN-1);
+    else
+      nstatus &= ~(1<<(HASSOLVEDCHILDREN-1));          
+  }
+
+  forceinline void
+  SpaceNode::setStatus(NodeStatus s) {
+    nstatus &= ~( STATUSMASK );
+    nstatus |= s;
+  }
+  
   forceinline
-  SpaceNode::SpaceNode(int alt)
+  SpaceNode::SpaceNode(void)
   : copy(NULL), workingSpace(NULL), ownBest(NULL) {
     desc.branch = NULL;
-    alternative = alt;
-    status = UNDETERMINED;
-    _hasSolvedChildren = false;
-    _hasFailedChildren = false;
+    setStatus(UNDETERMINED);
+    setHasSolvedChildren(false);
+    setHasFailedChildren(false);
   }
     
   forceinline Space*
@@ -70,13 +99,8 @@ namespace Gecode { namespace Gist {
   }
   
   forceinline NodeStatus
-  SpaceNode::getStatus(void) {
-    return status;
-  }
-  
-  forceinline void
-  SpaceNode::setStatus(NodeStatus s) {
-    status = s;
+  SpaceNode::getStatus(void) const {
+    return static_cast<NodeStatus>(nstatus & STATUSMASK);
   }
     
   forceinline void
@@ -98,25 +122,26 @@ namespace Gecode { namespace Gist {
   SpaceNode::getStepDesc(void) {
     return (isStepNode() ? desc.step : NULL);
   }
-
-  forceinline int
-  SpaceNode::getAlternative(void) {
-    return alternative;
-  }
     
   forceinline bool
   SpaceNode::isOpen(void) {
-    return status == UNDETERMINED || _hasOpenChildren;
+    return getStatus() == UNDETERMINED
+           || (nstatus & (1<<(HASOPENCHILDREN-1)));
   }
   
   forceinline bool
   SpaceNode::hasFailedChildren(void) {
-    return _hasFailedChildren;
+    return nstatus & (1<<(HASFAILEDCHILDREN-1));
   }
   
   forceinline bool
   SpaceNode::hasSolvedChildren(void) {
-    return _hasSolvedChildren;
+    return nstatus & (1<<(HASSOLVEDCHILDREN-1));
+  }
+
+  forceinline bool
+  SpaceNode::hasOpenChildren(void) {
+    return nstatus & (1<<(HASOPENCHILDREN-1));
   }
         
   forceinline bool
@@ -127,6 +152,17 @@ namespace Gecode { namespace Gist {
   forceinline bool
   SpaceNode::hasWorkingSpace(void) {
     return workingSpace != NULL;
+  }
+
+  forceinline int
+  SpaceNode::getAlternative(void) {
+    SpaceNode* p = getParent();
+    if (p) {
+      for (int i=p->getNumberOfChildren(); i--;)
+        if (p->getChild(i) == this)
+          return i;
+    }
+    return -1;
   }
   
 }}

@@ -41,21 +41,45 @@
 
 namespace Gecode { namespace Gist {
 
-  VisualNode::VisualNode(int alternative)
-  : SpaceNode(alternative), offset(0), dirty(true), 
-    childrenLayoutDone(false), hidden(false), marked(false)
-  , onPath(false)
-  , heat(0)
+  Shape* Shape::leaf;
+  Shape* Shape::hidden;
+  
+  /// Allocate shapes statically
+  class ShapeAllocator {
+  public:
+    /// Constructor
+    ShapeAllocator(void) {
+      Shape::leaf = Shape::allocate(Extent(Layout::extent));
+      Shape::hidden = Shape::allocate(Extent(Layout::extent), Shape::leaf);
+    }
+  };
+
+  /// Allocate shapes statically
+  ShapeAllocator shapeAllocator;
+
+  VisualNode::VisualNode(void)
+  : offset(0)
   , shape(NULL), box(0,0)
-  {}
+  {
+    setDirty(true);
+    setChildrenLayoutDone(false);
+    setHidden(false);
+    setMarked(false);
+    setOnPath(false);
+    setHeat(0);
+  }
 
   VisualNode::VisualNode(Space* root)
-  : SpaceNode(root), offset(0), dirty(true), childrenLayoutDone(false), 
-    hidden(false), marked(false)
-  , onPath(false)
-  , heat(0)
+  : SpaceNode(root), offset(0)
   , shape(NULL), box(0,0)
-  {}
+  {
+    setDirty(true);
+    setChildrenLayoutDone(false);
+    setHidden(false);
+    setMarked(false);
+    setOnPath(false);    
+    setHeat(0);
+  }
 
   VisualNode::~VisualNode(void) {
     Shape::deallocate(shape);
@@ -64,8 +88,8 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::dirtyUp(void) {
     VisualNode* cur = this;
-    while (!cur->dirty) {
-      cur->dirty = true;
+    while (!cur->isDirty()) {
+      cur->setDirty(true);
       if (! cur->isRoot()) {
         cur = cur->getParent();
       }
@@ -85,11 +109,6 @@ namespace Gecode { namespace Gist {
     //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
     // std::cout << "Layout done. " << nodesLayouted << " nodes in "
     //   << t << " ms. " << nps << " nodes/s." << std::endl;
-  }
-    
-  void
-  VisualNode::setOnPath(bool onPath0) {
-    onPath = onPath0;
   }
   
   void VisualNode::pathUp(void) {
@@ -119,7 +138,7 @@ namespace Gecode { namespace Gist {
 
   void
   VisualNode::toggleHidden(void) {
-    hidden = !hidden;
+    setHidden(!isHidden());
     dirtyUp();
   }
   
@@ -436,16 +455,16 @@ namespace Gecode { namespace Gist {
   VisualNode::size(void) const {
     size_t s = sizeof(*this);
     s += sizeof(Node*)*getNumberOfChildren();
-    if (shape) {
+    if (shape && shape != Shape::leaf && shape != Shape::hidden) {
       s += sizeof(Shape)+sizeof(Extent)*(shape->depth()-1);
     }
     if (copy)
       s += copy->allocated();
     if (workingSpace)
       s += workingSpace->allocated();
-    if (status == SPECIAL)
+    if (getStatus() == SPECIAL)
       s += sizeof(SpecialDesc);
-    else if (status == STEP)
+    else if (getStatus() == STEP)
       s += sizeof(StepDesc);
     else
       s += (desc.branch != NULL ? desc.branch->size() : 0);

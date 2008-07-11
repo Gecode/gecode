@@ -101,6 +101,11 @@ namespace Gecode { namespace Gist {
     // Destruct
     static void deallocate(Shape*);
 
+    /// Static shape for leaf nodes
+    static Shape* leaf;
+    /// Static shape for hidden nodes
+    static Shape* hidden;
+
     /// Return depth of the shape
     int depth(void) const;
     /// Return extent at depth \a i
@@ -118,19 +123,18 @@ namespace Gecode { namespace Gist {
   protected:
     /// Relative offset from the parent node
     int offset;
-    /// Whether the node needs re-layout
-    bool dirty;
-    /// Whether the layout of the node's children is completed
-    bool childrenLayoutDone;
-    /// Whether the node is hidden
-    bool hidden;
-    /// Whether the node is marked
-    bool marked;
-    /// Whether the node is on the selected path
-    bool onPath;
-
-    /// Heat value 
-    unsigned char heat;
+    
+    /// Flags for VisualNodes
+    enum VisualNodeFlags {
+      DIRTY = SpaceNode::LASTBIT+1,
+      CHILDRENLAYOUTDONE,
+      HIDDEN,
+      MARKED,
+      ONPATH
+    };
+    
+    static const unsigned int HEATMASK = ((1<<7)-1) << ONPATH;
+    static const unsigned int HEATSHIFT = ONPATH;
 
     /// Shape of this node
     Shape* shape;
@@ -140,7 +144,7 @@ namespace Gecode { namespace Gist {
     bool containsCoordinateAtDepth(int x, int depth);
   public:
     /// Constructor
-    VisualNode(int alternative);
+    VisualNode(void);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root);
     /// Destructor

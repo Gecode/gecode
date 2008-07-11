@@ -50,8 +50,6 @@ namespace Gecode { namespace Gist {
     Node** children;
     /// The number of children of this node
     int noOfChildren;
-    /// The alternative number this node represents
-    int alternative;
   public:
     /// Default constructor
     Node(void);
@@ -78,8 +76,6 @@ namespace Gecode { namespace Gist {
 
     /// Return the number of children
     int getNumberOfChildren(void) const;
-    /// Return which alternative this node represents
-    int getAlternative(void) const;
   };
 
 }}

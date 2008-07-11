@@ -59,11 +59,6 @@ namespace Gecode { namespace Gist {
     return noOfChildren;
   }
   
-  forceinline int
-  Node::getAlternative(void) const {
-    return alternative;
-  }
-  
 }}
 
 // STATISTICS: gist-any

@@ -118,15 +118,16 @@ namespace Gecode { namespace Gist {
       
       while (curNode->copy == NULL) {
         SpaceNode* parent = curNode->getParent();
+        int alternative = curNode->getAlternative();
 
         if(curNode->getStatus() == STEP) {
-          Branch b(curNode->alternative, curNode->desc.step, BK_STEP);
+          Branch b(alternative, curNode->desc.step, BK_STEP);
           stck.push(b);
           if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
              lastFixpoint = parent;
           }
       } else if(curNode->getStatus() == SPECIAL) {
-          Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_IN);
+          Branch b(alternative, curNode->desc.special, BK_SPECIAL_IN);
           stck.push(b);
           if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
             lastFixpoint = parent;
@@ -134,10 +135,10 @@ namespace Gecode { namespace Gist {
           specialNodeOnPath = true;
           // TODO nikopp: if the root node is failed, it neither has a copy nor a parent and we are not allowed to do the following
         } else if(parent->getStatus() == SPECIAL || parent->getStatus() == STEP) {
-           Branch b(curNode->alternative, curNode->desc.special, BK_SPECIAL_OUT);
+           Branch b(alternative, curNode->desc.special, BK_SPECIAL_OUT);
           stck.push(b);
         } else {
-          Branch b(curNode->alternative, parent->desc.branch,
+          Branch b(alternative, parent->desc.branch,
                    curBest == NULL ? NULL : curNode->ownBest);
           stck.push(b);
         }
@@ -202,18 +203,18 @@ namespace Gecode { namespace Gist {
   SpaceNode::acquireSpace(BestNode* curBest) {
     SpaceNode* p = getParent();
 
-    if (status == UNDETERMINED && curBest != NULL && ownBest == NULL &&
+    if (getStatus() == UNDETERMINED && curBest != NULL && ownBest == NULL &&
         p != NULL && curBest->s != p->ownBest) {
           ownBest = curBest->s;
     }
 
-    if (status != SPECIAL && status != STEP) {
+    if (getStatus() != SPECIAL && getStatus() != STEP) {
       if (workingSpace == NULL && p != NULL && p->workingSpace != NULL) {
         // If parent has a working space, steal it
         workingSpace = p->workingSpace;
         p->workingSpace = NULL;
         if (p->desc.branch != NULL)
-          workingSpace->commit(p->desc.branch, alternative);
+          workingSpace->commit(p->desc.branch, getAlternative());
       
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
@@ -224,13 +225,13 @@ namespace Gecode { namespace Gist {
 
     if (workingSpace == NULL) {
       if (recompute(curBest) > Config::mrd && Config::mrd >= 0 &&
-          status != SPECIAL && status != STEP &&
+          getStatus() != SPECIAL && getStatus() != STEP &&
           workingSpace->status() == SS_BRANCH) {
             copy = workingSpace->clone();
       }
     }
 
-    if (status != SPECIAL && status != STEP) {
+    if (getStatus() != SPECIAL && getStatus() != STEP) {
       // always return a fixpoint
       workingSpace->status();
       if (copy == NULL && p != NULL && isOpen() &&
@@ -241,7 +242,7 @@ namespace Gecode { namespace Gist {
         p->copy = NULL;
     
         if(p->desc.branch != NULL)
-          copy->commit(p->desc.branch, alternative);
+          copy->commit(p->desc.branch, getAlternative());
 
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
@@ -257,21 +258,21 @@ namespace Gecode { namespace Gist {
   
   void
   SpaceNode::closeChild(bool hadFailures, bool hadSolutions) {
-    _hasFailedChildren = _hasFailedChildren || hadFailures;
-    if (status == DECOMPOSE) {
-      _hasSolvedChildren = _hasSolvedChildren && hadSolutions;
-      if (!_hasSolvedChildren) {
+    setHasFailedChildren(hasFailedChildren() || hadFailures);
+    if (getStatus() == DECOMPOSE) {
+      setHasSolvedChildren(hasSolvedChildren() && hadSolutions);
+      if (!hasSolvedChildren()) {
         for (int i=0; i<getNumberOfChildren(); i++) {
           SpaceNode* c = static_cast<SpaceNode*>(getChild(i));
           if (c->isOpen()) {
-            c->status = COMPONENT_IGNORED;
+            c->setStatus(COMPONENT_IGNORED);
             c->setNumberOfChildren(0);
           }
         }
       }
     }
     else
-      _hasSolvedChildren = _hasSolvedChildren || hadSolutions;
+      setHasSolvedChildren(hasSolvedChildren() || hadSolutions);
 
     bool allClosed = true;
     for (int i=getNumberOfChildren(); i--;) {
@@ -282,21 +283,21 @@ namespace Gecode { namespace Gist {
     }
 
     if (allClosed) {
-      _hasOpenChildren = false;
+      setHasOpenChildren(false);
       for (int i=0; i<getNumberOfChildren(); i++)
-        _hasSolvedChildren |= 
-          static_cast<SpaceNode*>(getChild(i))->hasSolvedChildren();
+        setHasSolvedChildren(hasSolvedChildren() ||
+          static_cast<SpaceNode*>(getChild(i))->hasSolvedChildren());
       SpaceNode* p = static_cast<SpaceNode*>(getParent());
       if (p != NULL) {
         delete copy;
         copy = NULL;
-        p->closeChild(_hasFailedChildren, _hasSolvedChildren);
+        p->closeChild(hasFailedChildren(), hasSolvedChildren());
       }
-    } else if (hadSolutions && status != DECOMPOSE) {
-      _hasSolvedChildren = true;
+    } else if (hadSolutions && getStatus() != DECOMPOSE) {
+      setHasSolvedChildren(true);
       SpaceNode* p = getParent();
-      while (p != NULL && !p->_hasSolvedChildren) {
-        p->_hasSolvedChildren = true;
+      while (p != NULL && !p->hasSolvedChildren()) {
+        p->setHasSolvedChildren(true);
         p = p->getParent();
       }
     }
@@ -307,9 +308,9 @@ namespace Gecode { namespace Gist {
   : workingSpace(root), ownBest(NULL) {
     desc.branch = NULL;
     if (root == NULL) {
-      status = FAILED;
-      _hasSolvedChildren = false;
-      _hasFailedChildren = true;
+      setStatus(FAILED);
+      setHasSolvedChildren(false);
+      setHasFailedChildren(true);
       setNumberOfChildren(0);
       copy = root;
       return;
@@ -318,15 +319,15 @@ namespace Gecode { namespace Gist {
       copy = root->clone();
     else
       copy = root;
-    status = UNDETERMINED;
-    _hasSolvedChildren = false;
-    _hasFailedChildren = false;
+    setStatus(UNDETERMINED);
+    setHasSolvedChildren(false);
+    setHasFailedChildren(false);
   }
 
   SpaceNode::~SpaceNode(void) {
-    if(status == SPECIAL)
+    if(getStatus() == SPECIAL)
       delete desc.special;
-    else if (status == STEP)
+    else if (getStatus() == STEP)
       delete desc.step;
     else
       delete desc.branch;
@@ -352,10 +353,10 @@ namespace Gecode { namespace Gist {
             copy = NULL;
           }
           kids = 0;
-          _hasOpenChildren = false;
-          _hasSolvedChildren = false;
-          _hasFailedChildren = true;
-          status = FAILED;
+          setHasOpenChildren(false);
+          setHasSolvedChildren(false);
+          setHasFailedChildren(true);
+          setStatus(FAILED);
           stats.failures++;
           // stats.newDepth(getDepth());
           SpaceNode* p = getParent();
@@ -366,15 +367,20 @@ namespace Gecode { namespace Gist {
       case SS_SOLVED:
         {
           kids = 0;
-          status = SOLVED;
+          setStatus(SOLVED);
           // we may have got a copy from LAO
           if (getParent() != NULL) {
             delete copy;
             copy = NULL;
           }
-          _hasOpenChildren = false;
-          _hasSolvedChildren = true;
-          _hasFailedChildren = false;
+          if (ownBest == NULL) {
+            // do not store working spaces in solutions, except if we do BAB
+            delete workingSpace;
+            workingSpace = NULL;
+          }
+          setHasOpenChildren(false);
+          setHasSolvedChildren(true);
+          setHasFailedChildren(false);
           stats.solutions++;
           // stats.newDepth(getDepth());
           if (curBest != NULL) {
@@ -388,24 +394,24 @@ namespace Gecode { namespace Gist {
       case SS_BRANCH:
         desc.branch = workingSpace->description();
         kids = desc.branch->alternatives();
-        _hasOpenChildren = true;
+        setHasOpenChildren(true);
 #ifdef GECODE_HAS_DDS
         if (dynamic_cast<const Decomposition::SingletonDescBase*>(
               desc.branch)) {
-          status = SINGLETON;
-          _hasSolvedChildren = true;
-          _hasFailedChildren = false;
+          setStatus(SINGLETON);
+          setHasSolvedChildren(true);
+          setHasFailedChildren(false);
           kids = 0;
           SpaceNode* p = static_cast<SpaceNode*>(getParent());
           if (p != NULL)
             p->closeChild(false, true);
         } else if (dynamic_cast<const Decomposition::DecompDesc*>(
             desc.branch)) {
-          status = DECOMPOSE;
-          _hasSolvedChildren = true;
+          setStatus(DECOMPOSE);
+          setHasSolvedChildren(true);
         } else {
 #endif
-          status = BRANCH;
+          setStatus(BRANCH);
 #ifdef GECODE_HAS_DDS
         }
 #endif
@@ -418,7 +424,7 @@ namespace Gecode { namespace Gist {
       static_cast<VisualNode*>(this)->changedStatus();
       setNumberOfChildren(kids);
       for (int i=kids; i--;) {
-        setChild(i, new VisualNode(i));
+        setChild(i, new VisualNode());
       }
     }
     return kids;
@@ -426,7 +432,7 @@ namespace Gecode { namespace Gist {
 
   int
   SpaceNode::getNoOfOpenChildren(void) {
-    if (!_hasOpenChildren)
+    if (!hasOpenChildren())
       return 0;
     int noOfOpenChildren = 0;
     for (int i=noOfChildren; i--;)

@@ -37,14 +37,81 @@
 namespace Gecode { namespace Gist {
 
   forceinline
+  Extent::Extent(void) : l(-1), r(-1) {}
+
+  forceinline
+  Extent::Extent(int l0, int r0) : l(l0), r(r0) {}
+
+  inline
+  Extent::Extent(int width) {
+    int halfWidth = width / 2;
+    l = 0 - halfWidth;
+    r = 0 + halfWidth;
+  }
+  
+  inline void
+  Extent::extend(int deltaL, int deltaR) {
+    l += deltaL; r += deltaR;
+  }
+  
+  inline void
+  Extent::move(int delta) {
+    l += delta; r += delta;
+  }
+  
+  forceinline const Extent&
+  Shape::operator[](int i) const {
+    assert(i < _depth);
+    return shape[i];
+  }
+
+  forceinline Extent&
+  Shape::operator[](int i) {
+    assert(i < _depth);
+    return shape[i];
+  }
+
+  inline Shape*
+  Shape::allocate(int d) {
+    Shape* ret =
+      static_cast<Shape*>(Memory::malloc(sizeof(Shape) + 
+                                         (d-1)*sizeof(Extent)));
+    ret->_depth = d;
+    return ret;
+  }
+
+  inline Shape*
+  Shape::allocate(Extent e) {
+    Shape* ret = Shape::allocate(1);
+    (*ret)[0] = e;
+    return ret;
+  }
+
+  forceinline void
+  Shape::deallocate(Shape* shape) {
+    if (shape != hidden && shape != leaf)
+      Memory::free(shape);
+  }
+  
+  forceinline int
+  Shape::depth(void) const { return _depth; }
+  
+  forceinline
   BoundingBox::BoundingBox(int l, int r)
    : left(l), right(r) {}
 
   forceinline bool
-  VisualNode::isHidden(void) { return hidden; }
+  VisualNode::isHidden(void) {
+    return nstatus & (1<<(HIDDEN-1));
+  }
 
   forceinline void
-  VisualNode::setHidden(bool h) { hidden = h; }
+  VisualNode::setHidden(bool h) {
+    if (h)
+      nstatus |= 1<<(HIDDEN-1);
+    else
+      nstatus &= ~(1<<(HIDDEN-1));
+  }
 
   forceinline int
   VisualNode::getOffset(void) { return offset; }
@@ -53,31 +120,67 @@ namespace Gecode { namespace Gist {
   VisualNode::setOffset(int n) { offset = n; }
 
   forceinline bool
-  VisualNode::isDirty(void) { return dirty; }
+  VisualNode::isDirty(void) {
+    return nstatus & (1<<(DIRTY-1));
+  }
 
   forceinline void
-  VisualNode::setDirty(bool d) { dirty = d; }
+  VisualNode::setDirty(bool d) {
+    if (d)
+      nstatus |= 1<<(DIRTY-1);
+    else
+      nstatus &= ~(1<<(DIRTY-1));    
+  }
 
   forceinline bool
-  VisualNode::childrenLayoutIsDone(void) { return childrenLayoutDone; }
+  VisualNode::childrenLayoutIsDone(void) {
+    return nstatus & (1<<(CHILDRENLAYOUTDONE-1));
+  }
 
   forceinline void
-  VisualNode::setChildrenLayoutDone(bool d) { childrenLayoutDone = d; }
+  VisualNode::setChildrenLayoutDone(bool d) {
+    if (d)
+      nstatus |= 1<<(CHILDRENLAYOUTDONE-1);
+    else
+      nstatus &= ~(1<<(CHILDRENLAYOUTDONE-1));
+  }
 
   forceinline bool
-  VisualNode::isMarked(void) { return marked; }
+  VisualNode::isMarked(void) {
+    return nstatus & (1<<(MARKED-1));
+  }
 
   forceinline void
-  VisualNode::setMarked(bool m) { marked = m; }
+  VisualNode::setMarked(bool m) {
+    if (m)
+      nstatus |= 1<<(MARKED-1);
+    else
+      nstatus &= ~(1<<(MARKED-1));
+  }
 
   forceinline unsigned char
-  VisualNode::getHeat(void) const { return heat; }
+  VisualNode::getHeat(void) const {
+    return (nstatus & HEATMASK) >> HEATSHIFT;
+  }
 
   forceinline void
-  VisualNode::setHeat(unsigned char h) { heat = h; }
+  VisualNode::setHeat(unsigned char h) {
+    nstatus &= ~( HEATMASK );
+    nstatus |= h<<HEATSHIFT;
+  }
 
   forceinline bool
-  VisualNode::isOnPath(void) { return onPath; }
+  VisualNode::isOnPath(void) {
+    return nstatus & (1<<(ONPATH-1));
+  }
+
+  forceinline void
+  VisualNode::setOnPath(bool b) {
+    if (b)
+      nstatus |= 1<<(ONPATH-1);
+    else
+      nstatus &= ~(1<<(ONPATH-1));
+  }
 
   forceinline Shape*
   VisualNode::getShape(void) { return shape; }
