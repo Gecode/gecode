@@ -193,6 +193,8 @@ namespace Gecode {  namespace Gist {
     SearcherThread searcher;
     /// Flag signalling the search to stop
     bool stopSearchFlag;
+    /// Allocator for nodes
+    Node::NodeAllocator* na;
     /// The root node of the tree
     VisualNode* root;
     /// The currently best solution (for branch-and-bound)

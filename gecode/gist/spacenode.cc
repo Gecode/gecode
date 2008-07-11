@@ -337,7 +337,8 @@ namespace Gecode { namespace Gist {
 
 
   int
-  SpaceNode::getNumberOfChildNodes(BestNode* curBest, Statistics& stats) {
+  SpaceNode::getNumberOfChildNodes(NodeAllocator& na,
+                                   BestNode* curBest, Statistics& stats) {
     int kids;
     if (isUndetermined()) {
       stats.undetermined--;
@@ -424,7 +425,7 @@ namespace Gecode { namespace Gist {
       static_cast<VisualNode*>(this)->changedStatus();
       setNumberOfChildren(kids);
       for (int i=kids; i--;) {
-        setChild(i, new VisualNode());
+        setChild(i, new (na) VisualNode());
       }
     } else {
       kids = getNumberOfChildren();

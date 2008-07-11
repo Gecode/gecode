@@ -74,7 +74,8 @@ namespace Gecode { namespace Gist {
     , scrollTimerId(0) {
       QMutexLocker locker(&mutex);
       curBest = (b != NULL ? new BestNode(NULL, b) : NULL);
-      root = new VisualNode(rootSpace);
+      na = new Node::NodeAllocator();
+      root = new (*na) VisualNode(rootSpace);
       root->layout();
       root->setMarked(true);
       currentNode = root;
@@ -92,7 +93,7 @@ namespace Gecode { namespace Gist {
       update();
   }
   
-  TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; }
+  TreeCanvasImpl::~TreeCanvasImpl(void) { delete root; delete na; }
 
   void
   TreeCanvasImpl::setInspector(Inspector* i) { inspector = i; }
@@ -223,7 +224,7 @@ namespace Gecode { namespace Gist {
         }
         VisualNode* n = stck.top(); stck.pop();
         if (n->isOpen()) {
-          int kids = n->getNumberOfChildNodes(t->curBest, t->stats);
+          int kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats);
           if (!a && n->getStatus() == SOLVED) {
             sol = n;
             break;
@@ -431,7 +432,7 @@ namespace Gecode { namespace Gist {
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
         {
-          (void) currentNode->getNumberOfChildNodes(curBest,stats);
+          (void) currentNode->getNumberOfChildNodes(*na, curBest,stats);
           emit statusChanged(stats,true);
           emit currentNodeChanged(currentNode->getSpace(curBest), 
                                   currentNode->getStatus());
@@ -489,7 +490,9 @@ namespace Gecode { namespace Gist {
       curBest = new BestNode(NULL, b);
     }
     delete root;
-    root = new VisualNode(rootSpace);
+    delete na;
+    na = new Node::NodeAllocator();
+    root = new (*na) VisualNode(rootSpace);
     root->setMarked(true);
     currentNode = root;
     pathHead = root;
@@ -595,7 +598,7 @@ namespace Gecode { namespace Gist {
     VisualNode* p = currentNode->getParent();
     if (p != NULL) {
       int alt = currentNode->getAlternative();
-      if (alt + 1 < p->getNumberOfChildNodes(curBest)) {
+      if (alt + 1 < p->getNumberOfChildNodes(*na, curBest)) {
         VisualNode* n = p->getChild(alt+1);
         setCurrentNode(n);
         centerCurrentNode();
