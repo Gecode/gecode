@@ -35,21 +35,17 @@ namespace Gecode { namespace Decomposition {
     return sizeof(SingletonDescBase);
   }
 
-  unsigned int
-  SingletonDescBase::domainSize(void) const { return _size; }
-
-  unsigned int
-  SingletonDescBase::idx(void) const { return _idx; }
-
-  SingletonDescBase::SingletonDescBase(const Branching* b, 
-                                       unsigned int alt,
-                                       unsigned int idx,
-                                       unsigned int size)
-   : BranchingDesc(b, alt), _idx(idx), _size(size) {}
-
   size_t
   DecompDesc::size(void) const {
     return sizeof(DecompDesc);
+  }
+
+  void
+  DecompDesc::significantVars(int alt, std::vector<int>& sv) const {
+    assert(alt >= 0 && (unsigned int)alt < alternatives());
+    sv.resize(select[alt+1]-select[alt]);
+    for (int i=select[alt+1]-select[alt]; i--;)
+      sv[i] = label[i+select[alt]].second;
   }
 
   class Node {
@@ -131,14 +127,6 @@ namespace Gecode { namespace Decomposition {
     }
     if (separators.size() == 1)
       separators.push_back(label.size());
-  }
-
-  void
-  DecompDesc::significantVars(int alt, std::vector<int>& sv) const {
-    assert(alt >= 0 && (unsigned int)alt < alternatives());
-    sv.resize(select[alt+1]-select[alt]);
-    for (int i=select[alt+1]-select[alt]; i--;)
-      sv[i] = label[i+select[alt]].second;
   }
 
 }}
