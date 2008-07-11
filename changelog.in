@@ -70,6 +70,14 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added configure options for adding a prefix and a suffix to the names of the 
+compiled libraries.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major
