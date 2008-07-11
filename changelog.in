@@ -70,6 +70,14 @@ Date: ?
 This is a bugfix release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: David Rijsman
+[DESCRIPTION]
+Fixed bug in ValSplitMin::branchingSpec.
+
+[ENTRY]
 Module: kernel
 What:   removed
 Rank:   minor
@@ -118,7 +126,6 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 Added reified propagators for relations over Boolean variables.
-
 
 [RELEASE]
 Version: 2.1.1
