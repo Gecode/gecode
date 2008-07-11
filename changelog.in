@@ -73,6 +73,14 @@ This is a bugfix release.
 Module: int
 What:   bug
 Rank:   minor
+Thanks: Jaroslav Mlejnek
+[DESCRIPTION]
+Fixed bug in sqrt.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
 Thanks: David Rijsman
 [DESCRIPTION]
 Fixed bug in ValSplitMin::branchingSpec.

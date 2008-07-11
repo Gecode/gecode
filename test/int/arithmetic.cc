@@ -193,7 +193,7 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
-         return (d0 >= d1*d1) && (d0 < (d1+1)*(d1+1));
+         return (d0 >= 0) && (d0 >= d1*d1) && (d0 < (d1+1)*(d1+1));
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -211,7 +211,7 @@ namespace Test { namespace Int {
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
-         return (d0 >= d0*d0) && (d0 < (d0+1)*(d0+1));
+         return (d0 >= 0) && (d0 >= d0*d0) && (d0 < (d0+1)*(d0+1));
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
