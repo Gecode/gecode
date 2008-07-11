@@ -44,7 +44,6 @@
 #include "gecode/gist/nodevisitor.hh"
 #include "gecode/gist/layoutcursor.hh"
 #include "gecode/gist/visualnode.hh"
-#include "gecode/gist/postscript.hh"
 #include "gecode/gist/drawingcursor.hh"
 #include "gecode/gist/analysiscursor.hh"
 #include "gecode/gist/addchild.hh"
@@ -649,14 +648,47 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvasImpl::exportPostscript(void) {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save tree as postscript"), "", tr("Postscript (*.ps *.eps)"));
+  TreeCanvasImpl::exportPDF(void) {
+#if QT_VERSION >= 0x040400
+    QString filename = QFileDialog::getSaveFileName(this, tr("Export tree as pdf"), "", tr("PDF (*.pdf)"));
     if (filename != "") {
-      std::ofstream outfile(filename.toStdString().c_str());
+      QPrinter printer(QPrinter::ScreenResolution);
       QMutexLocker locker(&mutex);
-      Postscript::output(outfile, root);      
-      outfile.close();
+
+      BoundingBox bb = root->getBoundingBox();
+      printer.setFullPage(true);
+      printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
+                                  root->depth() * Layout::dist_y + 
+                                  2*Layout::extent), QPrinter::Point);
+      printer.setOutputFileName(filename);
+      QPainter painter(&printer);
+
+      QPen pen = painter.pen();
+      pen.setWidth(1);
+      painter.setPen(pen);
+      painter.setRenderHint(QPainter::Antialiasing);
+
+      QRect pageRect = printer.pageRect();
+      double newXScale =
+        static_cast<double>(pageRect.width()) / (bb.right - bb.left + 
+                                                 Layout::extent);
+      double newYScale =
+        static_cast<double>(pageRect.height()) /
+                            (root->depth() * Layout::dist_y + 
+                             2*Layout::extent);
+      double printScale = std::min(newXScale, newYScale);
+      painter.scale(printScale,printScale);
+
+
+      painter.translate(xtrans, Layout::dist_y);
+      QRect clip(0,0,0,0);
+      DrawingCursor dc(root, curBest, painter, heatView, clip);
+      currentNode->setMarked(false);
+      PreorderNodeVisitor<DrawingCursor> v(dc);
+      while (v.next()) {}
+      currentNode->setMarked(true);
     }
+#endif
   }
 
   void
@@ -1071,10 +1103,10 @@ namespace Gecode { namespace Gist {
     centerCN->setShortcut(QKeySequence("C"));
     connect(centerCN, SIGNAL(triggered()), canvas, SLOT(centerCurrentNode()));
 
-    exportPostscript = new QAction("Export postscript...", this);
-    exportPostscript->setShortcut(QKeySequence("Ctrl+Shift+P"));
-    connect(exportPostscript, SIGNAL(triggered()), canvas, 
-            SLOT(exportPostscript()));
+    exportPDF = new QAction("Export PDF...", this);
+    exportPDF->setShortcut(QKeySequence("Ctrl+Shift+P"));
+    connect(exportPDF, SIGNAL(triggered()), canvas, 
+            SLOT(exportPDF()));
 
     print = new QAction("Print...", this);
     print->setShortcut(QKeySequence("Ctrl+P"));
@@ -1121,7 +1153,7 @@ namespace Gecode { namespace Gist {
     addAction(unhideAll);
     addAction(zoomToFit);
     addAction(centerCN);
-    addAction(exportPostscript);
+    addAction(exportPDF);
     addAction(print);
 
     addAction(addVisualisation);
@@ -1216,7 +1248,7 @@ namespace Gecode { namespace Gist {
       unhideAll->setEnabled(false);
       zoomToFit->setEnabled(false);
       centerCN->setEnabled(false);
-      exportPostscript->setEnabled(false);
+      exportPDF->setEnabled(false);
       print->setEnabled(false);
 
       setPath->setEnabled(false);
@@ -1237,7 +1269,7 @@ namespace Gecode { namespace Gist {
 
       zoomToFit->setEnabled(true);
       centerCN->setEnabled(true);
-      exportPostscript->setEnabled(true);
+      exportPDF->setEnabled(true);
       print->setEnabled(true);
 
       setPath->setEnabled(true);

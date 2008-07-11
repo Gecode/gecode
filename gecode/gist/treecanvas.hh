@@ -97,8 +97,8 @@ namespace Gecode {  namespace Gist {
     void hideFailed(void);
     /// Unhide all nodes below selected node
     void unhideAll(void);
-    /// Export postscript of the tree
-    void exportPostscript(void);
+    /// Export pdf of the tree
+    void exportPDF(void);
     /// Print the tree
     void print(void);
     /// Zoom the canvas so that the whole tree fits
@@ -311,7 +311,7 @@ namespace Gecode {  namespace Gist {
     QAction* unhideAll;
     QAction* zoomToFit;
     QAction* centerCN;
-    QAction* exportPostscript;
+    QAction* exportPDF;
     QAction* print;
 
     QAction* setPath;
