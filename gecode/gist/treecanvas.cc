@@ -428,6 +428,7 @@ namespace Gecode { namespace Gist {
         if (inspector != NULL) {
           inspector->inspect(curSpace);
         }
+        delete curSpace;
       }
       break;
     }
