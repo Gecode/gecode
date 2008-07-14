@@ -54,6 +54,10 @@ namespace Gecode { namespace Gist {
       Shape::leaf = Shape::allocate(Extent(Layout::extent));
       Shape::hidden = Shape::allocate(Extent(Layout::extent), Shape::leaf);
     }
+    ~ShapeAllocator(void) {
+      Shape::deallocate(Shape::leaf);
+      Shape::deallocate(Shape::hidden);
+    }
   };
 
   /// Allocate shapes statically
