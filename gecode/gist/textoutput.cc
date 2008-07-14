@@ -75,7 +75,8 @@ namespace Gecode { namespace Gist {
   TextOutput::TextOutput(const std::string& name, QWidget *parent)
   : QMainWindow(parent) {
     QFont font;
-    font.setFamily("Courier");
+    QString fontFamily("Courier");
+    font.setFamily(fontFamily);
     font.setFixedPitch(true);
     font.setPointSize(12);
 

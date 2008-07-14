@@ -88,9 +88,9 @@ namespace Gecode { namespace Gist {
   class Config {
   public:
     /// Distance for adaptive recomputation
-    static const int a_d = 100000;
+    static const int a_d = 2;
     /// Distance for fixed recomputation
-    static const int mrd = 4;
+    static const int mrd = 8;
   };
   
   StepDesc::StepDesc(int steps) : noOfSteps(steps), debug(false) { }
@@ -162,6 +162,7 @@ namespace Gecode { namespace Gist {
             middleNode->getStatus() != SPECIAL &&
             middleNode->getStatus() != STEP &&
             curDist == rdist / 2) {
+              curSpace->status();
               middleNode->copy = curSpace->clone();
         }
         Branch b = stck.top(); stck.pop();
