@@ -656,6 +656,16 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvasImpl::exportWholeTreePDF(void) {
+#if QT_VERSION >= 0x040400
+    Gecode::Gist::VisualNode* saveCurNode = currentNode;
+    navRoot();
+    exportPDF();
+    setCurrentNode(saveCurNode);
+#endif
+  }
+
+  void
   TreeCanvasImpl::print(void) {
     QPrinter printer;
     if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
@@ -1060,10 +1070,15 @@ namespace Gecode { namespace Gist {
     centerCN->setShortcut(QKeySequence("C"));
     connect(centerCN, SIGNAL(triggered()), canvas, SLOT(centerCurrentNode()));
 
-    exportPDF = new QAction("Export PDF...", this);
-    exportPDF->setShortcut(QKeySequence("Ctrl+Shift+P"));
+    exportPDF = new QAction("Export subtree PDF...", this);
+    exportPDF->setShortcut(QKeySequence("P"));
     connect(exportPDF, SIGNAL(triggered()), canvas, 
             SLOT(exportPDF()));
+
+    exportWholeTreePDF = new QAction("Export PDF...", this);
+    exportWholeTreePDF->setShortcut(QKeySequence("Ctrl+Shift+P"));
+    connect(exportWholeTreePDF, SIGNAL(triggered()), canvas, 
+            SLOT(exportWholeTreePDF()));
 
     print = new QAction("Print...", this);
     print->setShortcut(QKeySequence("Ctrl+P"));
@@ -1101,6 +1116,7 @@ namespace Gecode { namespace Gist {
     addAction(zoomToFit);
     addAction(centerCN);
     addAction(exportPDF);
+    addAction(exportWholeTreePDF);
     addAction(print);
 
     addAction(addVisualisation);
@@ -1195,6 +1211,7 @@ namespace Gecode { namespace Gist {
       zoomToFit->setEnabled(false);
       centerCN->setEnabled(false);
       exportPDF->setEnabled(false);
+      exportWholeTreePDF->setEnabled(false);
       print->setEnabled(false);
 
       setPath->setEnabled(false);
@@ -1254,6 +1271,7 @@ namespace Gecode { namespace Gist {
       zoomToFit->setEnabled(true);
       centerCN->setEnabled(true);
       exportPDF->setEnabled(true);
+      exportWholeTreePDF->setEnabled(true);
       print->setEnabled(true);
 
       setPath->setEnabled(true);
