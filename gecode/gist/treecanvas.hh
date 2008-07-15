@@ -271,6 +271,8 @@ namespace Gecode {  namespace Gist {
   private Q_SLOTS:
     /// Search has finished
     void statusChanged(bool);
+    /// Export PDF of the subtree of \a n
+    void exportNodePDF(VisualNode* n);
   };
   
   /// Tree canvas widget

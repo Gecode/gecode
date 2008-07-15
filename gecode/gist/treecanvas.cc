@@ -611,17 +611,17 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvasImpl::exportPDF(void) {
+  TreeCanvasImpl::exportNodePDF(VisualNode* n) {
 #if QT_VERSION >= 0x040400
     QString filename = QFileDialog::getSaveFileName(this, tr("Export tree as pdf"), "", tr("PDF (*.pdf)"));
     if (filename != "") {
       QPrinter printer(QPrinter::ScreenResolution);
       QMutexLocker locker(&mutex);
 
-      BoundingBox bb = currentNode->getBoundingBox();
+      BoundingBox bb = n->getBoundingBox();
       printer.setFullPage(true);
       printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
-                                  currentNode->depth() * Layout::dist_y + 
+                                  n->depth() * Layout::dist_y + 
                                   Layout::extent), QPrinter::Point);
       printer.setOutputFileName(filename);
       QPainter painter(&printer);
@@ -634,7 +634,7 @@ namespace Gecode { namespace Gist {
                                                  Layout::extent);
       double newYScale =
         static_cast<double>(pageRect.height()) /
-                            (currentNode->depth() * Layout::dist_y + 
+                            (n->depth() * Layout::dist_y + 
                              Layout::extent);
       double printScale = std::min(newXScale, newYScale);
       painter.scale(printScale,printScale);
@@ -643,7 +643,7 @@ namespace Gecode { namespace Gist {
 
       painter.translate(printxtrans, Layout::dist_y / 2);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(currentNode, curBest, painter, clip);
+      DrawingCursor dc(n, curBest, painter, clip);
       currentNode->setMarked(false);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next()) {}
@@ -655,10 +655,14 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::exportWholeTreePDF(void) {
 #if QT_VERSION >= 0x040400
-    Gecode::Gist::VisualNode* saveCurNode = currentNode;
-    navRoot();
-    exportPDF();
-    setCurrentNode(saveCurNode);
+    exportNodePDF(root);
+#endif
+  }
+
+  void
+  TreeCanvasImpl::exportPDF(void) {
+#if QT_VERSION >= 0x040400
+    exportNodePDF(currentNode);
 #endif
   }
 
