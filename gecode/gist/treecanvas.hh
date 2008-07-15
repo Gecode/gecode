@@ -97,8 +97,10 @@ namespace Gecode {  namespace Gist {
     void hideFailed(void);
     /// Unhide all nodes below selected node
     void unhideAll(void);
-    /// Export pdf of the tree
+    /// Export pdf of the current subtree
     void exportPDF(void);
+    /// Export pdf of the whole tree
+    void exportWholeTreePDF(void);
     /// Print the tree
     void print(void);
     /// Zoom the canvas so that the whole tree fits
@@ -269,6 +271,8 @@ namespace Gecode {  namespace Gist {
   private Q_SLOTS:
     /// Search has finished
     void statusChanged(bool);
+    /// Export PDF of the subtree of \a n
+    void exportNodePDF(VisualNode* n);
   };
   
   /// Tree canvas widget
@@ -302,6 +306,7 @@ namespace Gecode {  namespace Gist {
     QAction* zoomToFit;
     QAction* centerCN;
     QAction* exportPDF;
+    QAction* exportWholeTreePDF;
     QAction* print;
 
     QAction* setPath;

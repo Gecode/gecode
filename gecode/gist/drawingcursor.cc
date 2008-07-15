@@ -69,7 +69,11 @@ namespace Gecode { namespace Gist {
                                const QRect& clippingRect0)
     : NodeCursor<VisualNode>(root), painter(painter0), 
       clippingRect(clippingRect0), curBest(curBest0),
-      x(0), y(0) {}
+      x(0), y(0) {
+    QPen pen = painter.pen();
+      pen.setWidth(1);
+      painter.setPen(pen);
+}
 
   bool
   DrawingCursor::isClipped(void) {

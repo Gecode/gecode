@@ -611,24 +611,21 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvasImpl::exportPDF(void) {
+  TreeCanvasImpl::exportNodePDF(VisualNode* n) {
 #if QT_VERSION >= 0x040400
     QString filename = QFileDialog::getSaveFileName(this, tr("Export tree as pdf"), "", tr("PDF (*.pdf)"));
     if (filename != "") {
       QPrinter printer(QPrinter::ScreenResolution);
       QMutexLocker locker(&mutex);
 
-      BoundingBox bb = currentNode->getBoundingBox();
+      BoundingBox bb = n->getBoundingBox();
       printer.setFullPage(true);
       printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
-                                  currentNode->depth() * Layout::dist_y + 
+                                  n->depth() * Layout::dist_y + 
                                   Layout::extent), QPrinter::Point);
       printer.setOutputFileName(filename);
       QPainter painter(&printer);
 
-      QPen pen = painter.pen();
-      pen.setWidth(1);
-      painter.setPen(pen);
       painter.setRenderHint(QPainter::Antialiasing);
 
       QRect pageRect = printer.pageRect();
@@ -637,7 +634,7 @@ namespace Gecode { namespace Gist {
                                                  Layout::extent);
       double newYScale =
         static_cast<double>(pageRect.height()) /
-                            (currentNode->depth() * Layout::dist_y + 
+                            (n->depth() * Layout::dist_y + 
                              Layout::extent);
       double printScale = std::min(newXScale, newYScale);
       painter.scale(printScale,printScale);
@@ -646,12 +643,26 @@ namespace Gecode { namespace Gist {
 
       painter.translate(printxtrans, Layout::dist_y / 2);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(currentNode, curBest, painter, clip);
+      DrawingCursor dc(n, curBest, painter, clip);
       currentNode->setMarked(false);
       PreorderNodeVisitor<DrawingCursor> v(dc);
       while (v.next()) {}
       currentNode->setMarked(true);
     }
+#endif
+  }
+
+  void
+  TreeCanvasImpl::exportWholeTreePDF(void) {
+#if QT_VERSION >= 0x040400
+    exportNodePDF(root);
+#endif
+  }
+
+  void
+  TreeCanvasImpl::exportPDF(void) {
+#if QT_VERSION >= 0x040400
+    exportNodePDF(currentNode);
 #endif
   }
 
@@ -1060,10 +1071,15 @@ namespace Gecode { namespace Gist {
     centerCN->setShortcut(QKeySequence("C"));
     connect(centerCN, SIGNAL(triggered()), canvas, SLOT(centerCurrentNode()));
 
-    exportPDF = new QAction("Export PDF...", this);
-    exportPDF->setShortcut(QKeySequence("Ctrl+Shift+P"));
+    exportPDF = new QAction("Export subtree PDF...", this);
+    exportPDF->setShortcut(QKeySequence("P"));
     connect(exportPDF, SIGNAL(triggered()), canvas, 
             SLOT(exportPDF()));
+
+    exportWholeTreePDF = new QAction("Export PDF...", this);
+    exportWholeTreePDF->setShortcut(QKeySequence("Ctrl+Shift+P"));
+    connect(exportWholeTreePDF, SIGNAL(triggered()), canvas, 
+            SLOT(exportWholeTreePDF()));
 
     print = new QAction("Print...", this);
     print->setShortcut(QKeySequence("Ctrl+P"));
@@ -1101,6 +1117,7 @@ namespace Gecode { namespace Gist {
     addAction(zoomToFit);
     addAction(centerCN);
     addAction(exportPDF);
+    addAction(exportWholeTreePDF);
     addAction(print);
 
     addAction(addVisualisation);
@@ -1195,6 +1212,7 @@ namespace Gecode { namespace Gist {
       zoomToFit->setEnabled(false);
       centerCN->setEnabled(false);
       exportPDF->setEnabled(false);
+      exportWholeTreePDF->setEnabled(false);
       print->setEnabled(false);
 
       setPath->setEnabled(false);
@@ -1254,6 +1272,7 @@ namespace Gecode { namespace Gist {
       zoomToFit->setEnabled(true);
       centerCN->setEnabled(true);
       exportPDF->setEnabled(true);
+      exportWholeTreePDF->setEnabled(true);
       print->setEnabled(true);
 
       setPath->setEnabled(true);
