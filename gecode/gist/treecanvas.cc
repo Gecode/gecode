@@ -626,9 +626,6 @@ namespace Gecode { namespace Gist {
       printer.setOutputFileName(filename);
       QPainter painter(&printer);
 
-      QPen pen = painter.pen();
-      pen.setWidth(1);
-      painter.setPen(pen);
       painter.setRenderHint(QPainter::Antialiasing);
 
       QRect pageRect = printer.pageRect();
