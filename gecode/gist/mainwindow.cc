@@ -97,8 +97,9 @@ namespace Gecode { namespace Gist {
     QPixmap myPic;
     myPic.loadFromData(logo, sizeof(logo));
 
-    setMinimumWidth(300);
-    setMaximumWidth(300);
+
+    setMinimumSize(300, 240);
+    setMaximumSize(300, 240);
     QVBoxLayout* layout = new QVBoxLayout();
     QLabel* logo = new QLabel();
     logo->setPixmap(myPic);
