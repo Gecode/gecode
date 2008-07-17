@@ -129,6 +129,7 @@ namespace Gecode { namespace Gist {
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));
     resize(500,500);
+    setMinimumSize(400, 200);
 
     menuBar = new QMenuBar(0);
 
