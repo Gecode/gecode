@@ -128,6 +128,11 @@ namespace Gecode { namespace Gist {
       c.setInspector(gi);
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));
+
+    QPixmap myPic;
+    myPic.loadFromData(gistLogo, sizeof(gistLogo));
+    setWindowIcon(myPic);
+
     resize(500,500);
     setMinimumSize(400, 200);
 
