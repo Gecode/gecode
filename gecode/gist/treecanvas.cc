@@ -181,10 +181,10 @@ namespace Gecode { namespace Gist {
           (t->root->depth() * Layout::dist_y + 2*Layout::extent);
 
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
-        if (scale0<1)
-          scale0 = 1;
-        if (scale0>400)
-          scale0 = 400;
+        if (scale0<minScale)
+          scale0 = minScale;
+        if (scale0>maxScale)
+          scale0 = maxScale;
         t->scale = (static_cast<double>(scale0)) / 100.0;
 
         w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
@@ -325,11 +325,17 @@ namespace Gecode { namespace Gist {
         double newYScale =
           static_cast<double>(p->height()) / (root->depth() * Layout::dist_y +
                                               2*Layout::extent);
+        int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
+        if (scale0<minScale)
+          scale0 = minScale;
+        if (scale0>maxScale)
+          scale0 = maxScale;
+
         if (!smoothScrollAndZoom) {
-          scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
+          scaleTree(scale0);
         } else {
           metaZoomCurrent = static_cast<int>(scale*100);
-          targetZoom = static_cast<int>(std::min(newXScale, newYScale)*100);
+          targetZoom = scale0;
           targetZoom = std::min(std::max(targetZoom, minScale), maxScale);
           zoomTimerId = startTimer(15);
         }
