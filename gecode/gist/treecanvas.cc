@@ -54,6 +54,7 @@ namespace Gecode { namespace Gist {
   const int minScale = 10;
   const int maxScale = 400;
   const int defScale = 100;
+  const int maxAutoZoomScale = defScale;
 
   Inspector::~Inspector(void) {}
     
@@ -183,15 +184,23 @@ namespace Gecode { namespace Gist {
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
         if (scale0<minScale)
           scale0 = minScale;
-        if (scale0>maxScale)
-          scale0 = maxScale;
-        t->scale = (static_cast<double>(scale0)) / 100.0;
+        if (scale0>maxAutoZoomScale)
+          scale0 = maxAutoZoomScale;
+        double scale = (static_cast<double>(scale0)) / 100.0;
+        if (!t->smoothScrollAndZoom) {
+          t->scale = scale;
+          emit scaleChanged(scale0);
+        } else {
+          t->metaZoomCurrent = static_cast<int>(t->scale*100);
+          t->targetZoom = scale0;
+          t->targetZoom = std::min(std::max(t->targetZoom, minScale), 
+                                   maxAutoZoomScale);
+          t->zoomTimerId = t->startTimer(15);
+        }
 
-        w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
+        w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
         h = static_cast<int>(2*Layout::extent+
-                             t->root->depth()*Layout::dist_y*t->scale);
-
-        emit scaleChanged(scale0);
+                             t->root->depth()*Layout::dist_y*scale);
       }
     }
     t->layoutMutex.unlock();
@@ -328,15 +337,16 @@ namespace Gecode { namespace Gist {
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
         if (scale0<minScale)
           scale0 = minScale;
-        if (scale0>maxScale)
-          scale0 = maxScale;
+        if (scale0>maxAutoZoomScale)
+          scale0 = maxAutoZoomScale;
 
         if (!smoothScrollAndZoom) {
           scaleTree(scale0);
         } else {
           metaZoomCurrent = static_cast<int>(scale*100);
           targetZoom = scale0;
-          targetZoom = std::min(std::max(targetZoom, minScale), maxScale);
+          targetZoom = std::min(std::max(targetZoom, minScale), 
+                                maxAutoZoomScale);
           zoomTimerId = startTimer(15);
         }
       }

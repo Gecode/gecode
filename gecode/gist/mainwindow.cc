@@ -220,8 +220,8 @@ namespace Gecode { namespace Gist {
             this,SLOT(statusChanged(const Statistics&,bool)));
     
     preferences(true);
-    c.reset->trigger();
     show();
+    c.reset->trigger();
   }
 
   void
@@ -253,9 +253,11 @@ namespace Gecode { namespace Gist {
   void
   GistMainWindow::preferences(bool setup) {
     PreferencesDialog pd(this);
+    if (setup) {
+      c.setAutoZoom(pd.zoom);      
+    }
     if (setup || pd.exec() == QDialog::Accepted) {
       c.setAutoHideFailed(pd.hideFailed);
-      c.setAutoZoom(pd.zoom);
       c.setRefresh(pd.refresh);
       c.setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
     }
