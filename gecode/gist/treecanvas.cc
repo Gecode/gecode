@@ -675,7 +675,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::print(void) {
     QPrinter printer;
-    if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+    if (QPrintDialog(&printer, this).exec() == QDialog::Accepted) {
       QMutexLocker locker(&mutex);
 
       BoundingBox bb = root->getBoundingBox();
