@@ -38,7 +38,7 @@
 #include "gecode/gist/preferences.hh"
 #include "gecode/gist/drawingcursor.hh"
 
-#include "gecode/gist/gecodelogo.icc"
+#include "gecode/gist/gecodelogo.hh"
 
 namespace Gecode { namespace Gist {
   
@@ -94,8 +94,13 @@ namespace Gecode { namespace Gist {
   
   AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
 
+    Logos logos;
     QPixmap myPic;
-    myPic.loadFromData(logo, sizeof(logo));
+    myPic.loadFromData(logos.logo, logos.logoSize);
+
+    QPixmap myPic2;
+    myPic2.loadFromData(logos.gistLogo, logos.gistLogoSize);
+    setWindowIcon(myPic2);
 
 
     setMinimumSize(300, 240);
@@ -129,8 +134,9 @@ namespace Gecode { namespace Gist {
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));
 
+    Logos logos;
     QPixmap myPic;
-    myPic.loadFromData(gistLogo, sizeof(gistLogo));
+    myPic.loadFromData(logos.gistLogo, logos.gistLogoSize);
     setWindowIcon(myPic);
 
     resize(500,500);

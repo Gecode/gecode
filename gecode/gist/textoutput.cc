@@ -38,6 +38,7 @@
 
 #include <iostream>
 #include "gecode/gist/textoutput.hh"
+#include "gecode/gist/gecodelogo.hh"
 
 namespace Gecode { namespace Gist {
   
@@ -74,6 +75,13 @@ namespace Gecode { namespace Gist {
   
   TextOutput::TextOutput(const std::string& name, QWidget *parent)
   : QMainWindow(parent) {
+
+    Logos logos;
+
+    QPixmap myPic;
+    myPic.loadFromData(logos.gistLogo, logos.gistLogoSize);
+    setWindowIcon(myPic);
+
     QFont font;
     QString fontFamily("Courier");
     font.setFamily(fontFamily);
