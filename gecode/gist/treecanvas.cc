@@ -83,8 +83,8 @@ namespace Gecode { namespace Gist {
 
       setAutoFillBackground(true);
 
-      connect(&searcher, SIGNAL(update(int,int)), this, 
-                         SLOT(layoutDone(int,int)));
+      connect(&searcher, SIGNAL(update(int,int,int)), this, 
+                         SLOT(layoutDone(int,int,int)));
       connect(&searcher, SIGNAL(statusChanged(bool)), this, 
               SLOT(statusChanged(bool)));
       
@@ -134,7 +134,16 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvasImpl::layoutDone(int w, int h) {
+  TreeCanvasImpl::layoutDone(int w, int h, int scale0) {
+    if (!smoothScrollAndZoom) {
+      scaleTree(scale0);
+    } else {
+      metaZoomCurrent = static_cast<int>(scale*100);
+      targetZoom = scale0;
+      targetZoom = std::min(std::max(targetZoom, minScale), 
+                            maxAutoZoomScale);
+      zoomTimerId = startTimer(15);
+    }
     resize(w,h);
     QWidget::update();
   }
@@ -171,6 +180,7 @@ namespace Gecode { namespace Gist {
                              t->root->depth()*Layout::dist_y*t->scale);
     t->xtrans = -bb.left+(Layout::extent / 2);
 
+    int scale0 = static_cast<int>(t->scale*100);
     if (t->autoZoom) {
       QWidget* p = t->parentWidget();
       if (p) {
@@ -181,22 +191,12 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->height()) /
           (t->root->depth() * Layout::dist_y + 2*Layout::extent);
 
-        int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
+        scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
         if (scale0<minScale)
           scale0 = minScale;
         if (scale0>maxAutoZoomScale)
           scale0 = maxAutoZoomScale;
         double scale = (static_cast<double>(scale0)) / 100.0;
-        if (!t->smoothScrollAndZoom) {
-          t->scale = scale;
-          emit scaleChanged(scale0);
-        } else {
-          t->metaZoomCurrent = static_cast<int>(t->scale*100);
-          t->targetZoom = scale0;
-          t->targetZoom = std::min(std::max(t->targetZoom, minScale), 
-                                   maxAutoZoomScale);
-          t->zoomTimerId = t->startTimer(15);
-        }
 
         w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
         h = static_cast<int>(2*Layout::extent+
@@ -204,7 +204,7 @@ namespace Gecode { namespace Gist {
       }
     }
     t->layoutMutex.unlock();
-    emit update(w,h);
+    emit update(w,h,scale0);
   }
   
   void
