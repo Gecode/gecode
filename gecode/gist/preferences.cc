@@ -50,7 +50,7 @@ namespace Gecode { namespace Gist {
       new QCheckBox(tr("Hide failed subtrees automatically"));
     hideCheck->setChecked(hideFailed);
     zoomCheck =
-      new QCheckBox(tr("Zoom to fit automatically"));
+      new QCheckBox(tr("Automatic zoom enabled on start-up"));
     zoomCheck->setChecked(zoom);
     smoothCheck =
       new QCheckBox(tr("Smooth scrolling and zooming"));
@@ -108,6 +108,7 @@ namespace Gecode { namespace Gist {
     hideFailed = true;
     zoom = false;
     refresh = 500;
+    smoothScrollAndZoom = true;
     hideCheck->setChecked(hideFailed);
     zoomCheck->setChecked(zoom);
     refreshBox->setValue(refresh);

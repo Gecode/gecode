@@ -54,6 +54,7 @@ namespace Gecode { namespace Gist {
   const int minScale = 10;
   const int maxScale = 400;
   const int defScale = 100;
+  const int maxAutoZoomScale = defScale;
 
   Inspector::~Inspector(void) {}
     
@@ -82,8 +83,8 @@ namespace Gecode { namespace Gist {
 
       setAutoFillBackground(true);
 
-      connect(&searcher, SIGNAL(update(int,int)), this, 
-                         SLOT(layoutDone(int,int)));
+      connect(&searcher, SIGNAL(update(int,int,int)), this, 
+                         SLOT(layoutDone(int,int,int)));
       connect(&searcher, SIGNAL(statusChanged(bool)), this, 
               SLOT(statusChanged(bool)));
       
@@ -133,7 +134,16 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvasImpl::layoutDone(int w, int h) {
+  TreeCanvasImpl::layoutDone(int w, int h, int scale0) {
+    if (!smoothScrollAndZoom) {
+      scaleTree(scale0);
+    } else {
+      metaZoomCurrent = static_cast<int>(scale*100);
+      targetZoom = scale0;
+      targetZoom = std::min(std::max(targetZoom, minScale), 
+                            maxAutoZoomScale);
+      zoomTimerId = startTimer(15);
+    }
     resize(w,h);
     QWidget::update();
   }
@@ -170,6 +180,7 @@ namespace Gecode { namespace Gist {
                              t->root->depth()*Layout::dist_y*t->scale);
     t->xtrans = -bb.left+(Layout::extent / 2);
 
+    int scale0 = static_cast<int>(t->scale*100);
     if (t->autoZoom) {
       QWidget* p = t->parentWidget();
       if (p) {
@@ -180,22 +191,20 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->height()) /
           (t->root->depth() * Layout::dist_y + 2*Layout::extent);
 
-        int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
-        if (scale0<1)
-          scale0 = 1;
-        if (scale0>400)
-          scale0 = 400;
-        t->scale = (static_cast<double>(scale0)) / 100.0;
+        scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
+        if (scale0<minScale)
+          scale0 = minScale;
+        if (scale0>maxAutoZoomScale)
+          scale0 = maxAutoZoomScale;
+        double scale = (static_cast<double>(scale0)) / 100.0;
 
-        w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
+        w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
         h = static_cast<int>(2*Layout::extent+
-                             t->root->depth()*Layout::dist_y*t->scale);
-
-        emit scaleChanged(scale0);
+                             t->root->depth()*Layout::dist_y*scale);
       }
     }
     t->layoutMutex.unlock();
-    emit update(w,h);
+    emit update(w,h,scale0);
   }
   
   void
@@ -325,12 +334,19 @@ namespace Gecode { namespace Gist {
         double newYScale =
           static_cast<double>(p->height()) / (root->depth() * Layout::dist_y +
                                               2*Layout::extent);
+        int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
+        if (scale0<minScale)
+          scale0 = minScale;
+        if (scale0>maxAutoZoomScale)
+          scale0 = maxAutoZoomScale;
+
         if (!smoothScrollAndZoom) {
-          scaleTree(static_cast<int>(std::min(newXScale, newYScale)*100));
+          scaleTree(scale0);
         } else {
           metaZoomCurrent = static_cast<int>(scale*100);
-          targetZoom = static_cast<int>(std::min(newXScale, newYScale)*100);
-          targetZoom = std::min(std::max(targetZoom, minScale), maxScale);
+          targetZoom = scale0;
+          targetZoom = std::min(std::max(targetZoom, minScale), 
+                                maxAutoZoomScale);
           zoomTimerId = startTimer(15);
         }
       }
@@ -669,7 +685,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvasImpl::print(void) {
     QPrinter printer;
-    if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+    if (QPrintDialog(&printer, this).exec() == QDialog::Accepted) {
       QMutexLocker locker(&mutex);
 
       BoundingBox bb = root->getBoundingBox();

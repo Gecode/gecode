@@ -38,7 +38,7 @@
 #include "gecode/gist/preferences.hh"
 #include "gecode/gist/drawingcursor.hh"
 
-#include "gecode/gist/gecodelogo.icc"
+#include "gecode/gist/gecodelogo.hh"
 
 namespace Gecode { namespace Gist {
   
@@ -94,11 +94,17 @@ namespace Gecode { namespace Gist {
   
   AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
 
+    Logos logos;
     QPixmap myPic;
-    myPic.loadFromData(logo, sizeof(logo));
+    myPic.loadFromData(logos.logo, logos.logoSize);
 
-    setMinimumWidth(300);
-    setMaximumWidth(300);
+    QPixmap myPic2;
+    myPic2.loadFromData(logos.gistLogo, logos.gistLogoSize);
+    setWindowIcon(myPic2);
+
+
+    setMinimumSize(300, 240);
+    setMaximumSize(300, 240);
     QVBoxLayout* layout = new QVBoxLayout();
     QLabel* logo = new QLabel();
     logo->setPixmap(myPic);
@@ -127,7 +133,14 @@ namespace Gecode { namespace Gist {
       c.setInspector(gi);
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));
+
+    Logos logos;
+    QPixmap myPic;
+    myPic.loadFromData(logos.gistLogo, logos.gistLogoSize);
+    setWindowIcon(myPic);
+
     resize(500,500);
+    setMinimumSize(400, 200);
 
     menuBar = new QMenuBar(0);
 
@@ -213,8 +226,8 @@ namespace Gecode { namespace Gist {
             this,SLOT(statusChanged(const Statistics&,bool)));
     
     preferences(true);
-    c.reset->trigger();
     show();
+    c.reset->trigger();
   }
 
   void
@@ -246,9 +259,11 @@ namespace Gecode { namespace Gist {
   void
   GistMainWindow::preferences(bool setup) {
     PreferencesDialog pd(this);
+    if (setup) {
+      c.setAutoZoom(pd.zoom);      
+    }
     if (setup || pd.exec() == QDialog::Accepted) {
       c.setAutoHideFailed(pd.hideFailed);
-      c.setAutoZoom(pd.zoom);
       c.setRefresh(pd.refresh);
       c.setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
     }

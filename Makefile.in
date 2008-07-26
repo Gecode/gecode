@@ -578,7 +578,7 @@ ITERHDR = gecode/iter.hh \
 
 GISTHDR0 = \
 	better.hh drawingcursor.hh \
-	gist.icc node.hh node.icc \
+	gist.icc gecodelogo.hh node.hh node.icc \
 	nodecursor.hh nodecursor.icc nodevisitor.hh \
 	nodevisitor.icc layoutcursor.hh layoutcursor.icc \
 	spacenode.hh spacenode.icc textoutput.hh treecanvas.hh zoomToFitIcon.icc \
@@ -593,7 +593,7 @@ GISTHDR0 = \
 	visualisation/setvaritem.hh
 
 GISTSRC0 = \
-	drawingcursor.cc gist.cc node.cc nodecursor.cc \
+	drawingcursor.cc gist.cc gecodelogo.cc node.cc nodecursor.cc \
 	layoutcursor.cc spacenode.cc \
 	textoutput.cc treecanvas.cc visualnode.cc \
 	mainwindow.cc preferences.cc \

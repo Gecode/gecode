@@ -59,7 +59,7 @@ namespace Gecode {  namespace Gist {
     void search(VisualNode* n, bool all, TreeCanvasImpl* ti);
     
   Q_SIGNALS:
-    void update(int w, int h);
+    void update(int w, int h, int scale0);
     void statusChanged(bool);
     void scaleChanged(int);
     
@@ -267,7 +267,7 @@ namespace Gecode {  namespace Gist {
     /// Update display
     void update(void);
     /// Layout done
-    void layoutDone(int w, int h);
+    void layoutDone(int w, int h, int scale0);
   private Q_SLOTS:
     /// Search has finished
     void statusChanged(bool);

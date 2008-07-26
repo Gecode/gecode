@@ -38,6 +38,7 @@
 
 #include <iostream>
 #include "gecode/gist/textoutput.hh"
+#include "gecode/gist/gecodelogo.hh"
 
 namespace Gecode { namespace Gist {
   
@@ -74,6 +75,12 @@ namespace Gecode { namespace Gist {
   
   TextOutput::TextOutput(const std::string& name, QWidget *parent)
   : QMainWindow(parent) {
+    Logos logos;
+
+    QPixmap myPic;
+    myPic.loadFromData(logos.gistLogo, logos.gistLogoSize);
+    setWindowIcon(myPic);
+
     QFont font;
     QString fontFamily("Courier");
     font.setFamily(fontFamily);
@@ -87,6 +94,18 @@ namespace Gecode { namespace Gist {
     editor->setLineWrapColumnOrWidth(80);
     editor->setTabStopWidth(2);
     os = new GistOutputStream(editor);
+
+    QAction* clearText = new QAction("Clear", this);
+    clearText->setShortcut(QKeySequence("Ctrl+K"));
+    this->addAction(clearText);
+    connect(clearText, SIGNAL(triggered()), editor, 
+                       SLOT(clear()));
+
+    QAction* closeWindow = new QAction("Close window", this);
+    closeWindow->setShortcut(QKeySequence("Ctrl+W"));
+    this->addAction(closeWindow);
+    connect(closeWindow, SIGNAL(triggered()), this, 
+                         SLOT(close()));
 
     setCentralWidget(editor);
     setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
