@@ -1,6 +1,5 @@
-/*****************************************************************[qsolver.hh]
-Copyright (c) 2007, Universite d'Orleans - Jeremie Vautard, Marco Benedetti,
-Arnaud Lallouet.
+/****   , [ qsolver.hh ], 
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,55 +18,29 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*****************************************************************************/
+ *************************************************************************/
+#ifndef __QECODE_QSOLVER_OPT__
+#define __QECODE_QSOLVER_OPT__
 
-#ifndef __QECODE_QSOLVER__
-#define __QECODE_QSOLVER__
-
-#include "qecode.hh"
+#include "Implicative.hh"
 #include <iostream>
 #include <cstdlib>
 #include "gecode/minimodel.hh"
-
-#include "qecore.hh"
-#include "valueHeuristic.hh"
+#include "gecode/search.hh"
+#include "Strategy.hh"
+#include "qecode.hh"
 
 using namespace Gecode;
-using namespace std;
-using namespace Gecode::Int;
-
-
-/** \brief Depth-first search engine for quantified spaces.
-* A quite naive depth-first search engine for quantified spaces. The answer of such an engine is true or false. The complete winning strategy, if existing, is not given. 
-*/
 class QECODE_VTABLE_EXPORT QSolver {
     
-private : 
-    bool debug;
+private:
     int n;
-    QSpace* sp;
+    Implicative* sp;
     int* nbRanges;
-    BranchingHeuristic* bh;
-    VariableHeuristic* eval;
-    valueHeuristic* valEval;
-    bool rSolve(QSpace* qs,unsigned long int& nodes, unsigned long int& propsteps, int curvar);
-public :
-        
-        /** \brief  Constructor for a quantified space solver.
-        * Builds, providing a quantified space and a score for this space, a solver for this space.
-        *  @param sp The quantified space to be solved.
-        *  @param ev The score attribuer ("evaluator") that will be used by the branching heuristic.
-        */
-        QECODE_EXPORT QSolver(QSpace* sp, VariableHeuristic* ev,valueHeuristic* ve);
-    
-    
-    /** \brief  Solves the quantified space.
-        * Solves the quantifies dpace, returning its solution. The parameters are used to provide statistics.
-        *  @param nodes The integer referenced will be increased by the number of nodes of the search tree explored.
-        *  @param propsteps The integer references will be increased by the total number of propagation steps (in the Gecode sense) performed during search.
-        */
-    QECODE_EXPORT bool solve(unsigned long int& nodes, unsigned long int& propsteps);
+    Strategy rSolve(Implicative* qs,int scope,vector<int> assignments,unsigned long int& nodes);
+public:
+    QECODE_EXPORT QSolver(Implicative* sp);
+    QECODE_EXPORT Strategy solve(unsigned long int& nodes);
 };
-
 
 #endif

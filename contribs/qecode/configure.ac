@@ -11,7 +11,7 @@ dnl Largely inspired from the map configure.ac file by Grégoire Dooms
 AC_REVISION([$Revision$])
 AC_PREREQ(2.53)
 AC_INIT(QECODE, 1.2, jeremie.vautard@univ-orleans.fr)
-AC_CONFIG_SRCDIR(qecore.hh)
+AC_CONFIG_SRCDIR(qecode.hh)
 
 dnl the names of the generated dlls
 AC_SUBST(QECODE,     "qecode")

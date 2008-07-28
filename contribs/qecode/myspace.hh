@@ -31,11 +31,9 @@ THE SOFTWARE.
 using namespace Gecode;
 using namespace Gecode::Int;
 
-/** \brief A simple extension of Gecode::Space class.
+/** \brief A simple extension of Gecode::Space class
+*
 *  A simple extension of the Space class from Gecode, in order to have access to the variables it contains.
-*/
-
-/** Types of variables.
 */
 
 class QECODE_VTABLE_EXPORT MySpace : public Space {
@@ -44,21 +42,22 @@ protected :
     unsigned int n;
     
 public:
-    /** This array contains all the variables this space contains.
+    /** \brief This array contains all the variables this space contains.
     */
     void** v;
     
     
-    /** This array indicates the type of each variable.
+    /** \brief This array indicates the type of each variable
     */
     VarType* type_of_v;
     
-    /** \brief Constructor of a space with a fixed number of variables.
+    /** \brief Constructor of a space with a fixed number of variables
+        *
         * Builds a space which will contain  nv variables (the variables themselves are however not declared).
         *  @param nv the number of variable the space must contain.
         */
     QECODE_EXPORT MySpace(unsigned int nv);
-    
+    QECODE_EXPORT int nbVars() {return n;}
     QECODE_EXPORT MySpace(bool share,MySpace& ms);
     QECODE_EXPORT virtual MySpace* copy(bool share);
     QECODE_EXPORT virtual ~MySpace();

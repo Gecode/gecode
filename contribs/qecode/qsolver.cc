@@ -1,6 +1,5 @@
-/*****************************************************************[qsolver.cc]
-Copyright (c) 2007, Universite d'Orleans - Jeremie Vautard, Marco Benedetti,
-Arnaud Lallouet.
+/****   , [ QSolver.cc ], 
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,150 +18,251 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*****************************************************************************/
+ *************************************************************************/
 
 #include "qsolver.hh"
-#include "implicative.hh"
+#include <climits>
 
-
-QSolver::QSolver(QSpace* qs, VariableHeuristic* ev, valueHeuristic* ve) {
-    debug=false;
-    eval=ev;
-    valEval = ve;
-    sp=qs;
-    n=sp->nv();
-    bh=new BranchingHeuristic(sp,eval);
-    sp->indicateBranchingHeuristic(bh);
-    nbRanges = new int;
+QSolver::QSolver(Implicative* sp) {
+    this->sp = sp;
+    nbRanges=new int;
 }
 
-
-bool QSolver::solve(unsigned long int& nodes, unsigned long int& propsteps) {
-    int ret = sp->status(0,propsteps);
-    return rSolve(sp,nodes,propsteps,0);
+Strategy QSolver::solve(unsigned long int& nodes) {
+    vector<int> plop;
+    plop.clear();
+    return rSolve(sp,0,plop,nodes);
 }
 
-
-bool QSolver::rSolve(QSpace* qs, unsigned long int& nodes, unsigned long int& propsteps, int curvar) {
-    unsigned int rien=0;
+Strategy QSolver::rSolve(Implicative* qs,int scope, vector<int> assignments, unsigned long int& nodes) {
     nodes++;
+//    cout<<"rSolve for scope "<<scope<<" with assignments ";
+//    for (int i=0;i<assignments.size();i++) cout<<assignments[i]<<" ";
+//    cout<<endl;
+    //////////////////////////////////////////////////////////////////////////////////////////
+    // First case : we reached the goal, we just have to check it                           //
+    //////////////////////////////////////////////////////////////////////////////////////////
+    if (scope == qs->spaces()) {
+//        cout<<"First case"<<endl;
+        MySpace* g = qs->getGoal();
+        if (g == NULL) {/*cout<<"the goal was null"<<endl;*/return Strategy(StrategyNode::SFalse());}
+        for (int i=0;i<g->nbVars();i++) {
+            switch (g->type_of_v[i]) {
+                case VTYPE_INT : 
+                    post(g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
+                    break;
+                case VTYPE_BOOL :
+                    post(g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
+                    break;
+                default :
+                    cout<<"1Unknown variable type"<<endl;
+                    abort();
+            }
+        }
+        if (g->status() == SS_FAILED) {
+//            cout<<"goal failed after assignments"<<endl;
+            delete g;
+            return Strategy(StrategyNode::SFalse());
+        }
+//        cout<<"goal OK"<<endl;
+        delete g;
+        return Strategy(StrategyNode::STrue());
+    }
     
-//    if (debug) cout<<"Solver : Rsolve appelé..."<<endl;
-    
-    // Step 0 : we ask to the branching heuristic /////////////////////////////////
-    // for the next variable to branch on. ////////////////////////////////////////
-    int branchon = bh->nextVar(qs);                                              //
-    ///////////////////////////////////////////////////////////////////////////////
-    
-    // Step 1 : if there is no more variables to branch on, we ask for the ////////
-    // final status of the QCSP, and return its result. ///////////////////////////
-    if (branchon == n) {                                                         //
-        int ret=qs->status(curvar,propsteps);
-        int fret=qs->finalStatus(propsteps);                                     //
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // Second case : we are in the middle of the problem...                                //
+    /////////////////////////////////////////////////////////////////////////////////////////
+    else {
+//        cout<<"second case "<<endl;
+        MySpace* espace = qs->getSpace(scope);
+        if (espace == NULL) cout<<"I caught a NULL for scope "<<scope<<". I will crash..."<<endl;
+//        cout<<"size of assignments "<<assignments.size()<<endl;
+        for (int i=0;i<assignments.size();i++) {
+//            cout<<"I assign variable "<<i<<" with value "<<assignments[i]<<endl; cout.flush();
+            switch (espace->type_of_v[i]) {
+                case VTYPE_INT : 
+                    post(espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
+                    break;
+                case VTYPE_BOOL :
+                    post(espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
+                    break;
+                default :
+                    cout<<"2Unknown variable type"<<endl;
+                    abort();
+            }
+        }
         
-#ifdef QDEBUG        
-        cout<<"Solver : finalstatus appelé, résultat = "<<fret<<endl;
-        qs->print();
-#endif
-        qs->backtrack();                                                         //
-        bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : backtracking"<<endl;                          //
-#endif
-        return (fret==1)?true:false;                                             //
-    }                                                                            //
-    ///////////////////////////////////////////////////////////////////////////////
-    
-    // Step 2 : if we must branch on a variable, first we check the status of  ////
-    // the problem (it could be given at this moment) /////////////////////////////
-    int ret = qs->status(curvar,propsteps);                                      //
-#ifdef QDEBUG        
-    cout<<"Solver : status appelé, résultat = "<<ret<<endl;
-    qs->print();
-#endif
-    if (ret==1) { // If the answer is TRUE...                                    //
-        qs->backtrack();                                                         //
-        bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : backtracking"<<endl;
-#endif
-        return true;                                                             //
-    }                                                                            //
-                                                                                 //
-    if (ret==0) { // If the answer is FALSE...                                   //
-        qs->backtrack();                                                         //
-        bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : backtracking"<<endl;
-#endif
-        return false;                                                            //
-    }                                                                            //
-    ///////////////////////////////////////////////////////////////////////////////
-    
-    
-    // Step 3 : the answer is "Don't know yet". We branch on the given variable. //
-    int** tab = valEval->subSet(static_cast<Implicative*>(qs),branchon,nbRanges);//
-    QSpace* subspace;                                                            //
-    subspace=qs->clone();                                                        //
-    switch (qs->type_of_v[branchon]) {                                           //
-        case VTYPE_INT :                                                         //
-            subspace->assign_int(branchon,tab,*nbRanges);                        //
-            break;                                                               //
-        case VTYPE_BOOL :                                                        //
-            subspace->assign_bool(branchon,tab,*nbRanges);                       //
-            break;
-    }
-#ifdef QDEBUG        
-    cout<<"Solver : first branch : v"<<branchon<<" = "<<the_set<<endl;
-#endif
-    if ( rSolve(subspace,nodes, propsteps,branchon) ^ qs->quantification(branchon)) {
-        delete subspace;                                                         //
-        qs->backtrack();                                                         //
-        bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : Backtrack"<<endl;
-#endif
-        delete [] tab[0];
-        delete [] tab[1];
-        delete [] tab;
-        return (!qs->quantification(branchon));                                  //
-    }                                                                            //
-    delete subspace;                                                             //
-    subspace=qs->clone();                                                        //
-    switch (subspace->type_of_v[branchon]) {
-        case VTYPE_INT : 
-            subspace->remove_int(branchon,tab,*nbRanges);
-            break;
-        case VTYPE_BOOL : 
-            subspace->remove_bool(branchon,tab,*nbRanges);
-            break;
-    }
+        // Second case, first subcase : current scope is universal
+        /////////////////////////////////////////////////////////
+        if (qs->quantification(scope)) {
+//            cout<<"universal"<<endl;
+            
+            if (espace->status() == SS_FAILED) {
+//                cout<<"the scope is failed"<<endl;
+                delete espace;
+                return Strategy(StrategyNode::STrue());
+            }
+            
+            DFS<MySpace> solutions(espace);
+            MySpace* sol = solutions.next();
+            if (sol == NULL) {
+//                cout<<"first sol is null"<<endl;
+                delete espace;
+                return Strategy(StrategyNode::STrue());
+            }
+            
+            Strategy retour = StrategyNode::Dummy();
+            while (sol != NULL) {
+//                cout<<"a solution"<<endl;
+                vector<int> assign;
+                for (int i = 0; i<sol->nbVars();i++) {
+                    switch (sol->type_of_v[i]) {
+                        case VTYPE_INT : 
+                            assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
+                            break;
+                        case VTYPE_BOOL : 
+                            assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
+                            break;
+                        default :
+                            cout<<"3Unknown variable type"<<endl;
+                            abort();
+                    }
+                }
+                
+                int vmin = ( (scope==0)? 0 : (qs->nbVarInScope(scope-1)) );
+                int vmax = (qs->nbVarInScope(scope))-1;
+                vector<int> zevalues;
+                for (int i = vmin; i<=vmax;i++) {
+                    switch (sol->type_of_v[i]) {
+                        case VTYPE_INT : 
+                            zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
+                            break;
+                        case VTYPE_BOOL : 
+                            zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
+                            break;
+                        default :
+                            cout<<"4Unknown variable type"<<endl;
+                            abort();
+                    }
+                }
+                Strategy toAttach(true,vmin,vmax,scope,zevalues);
+                
+                Strategy son = rSolve(qs,scope+1,assign,nodes);
+                if (son.isFalse()) {
+//                    cout<<"the son is false"<<endl;
+                    delete sol;
+                    delete espace;
+                    return Strategy(StrategyNode::SFalse());
+                }
+//                cout<<"the son is true"<<endl;
+                toAttach.attach(son);
+                retour.attach(toAttach);
+                delete sol;
+                sol = solutions.next();
+            } // end of while
+            delete espace;
+            return retour;
+        } // end of if(universal)
+        
+        // Second case, second subcase : current scope is existential
+        ////////////////////////////////////////////////////////////
+        else {
+//            cout<<"existential"<<endl;
+            if ((espace->status()) == SS_FAILED) {
+//                cout<<"the Espace is failed"<<endl;
+                delete espace;
+                return Strategy(StrategyNode::SFalse());
+            }
+            
+            DFS<MySpace> solutions(espace);
+            MySpace* sol =solutions.next();
+            if (sol == NULL) {
+//                cout<<"the first sol is null"<<endl;
+                delete espace;
+                return Strategy(StrategyNode::SFalse());
+            }
+            
+            OptVar* opt = qs->getOptVar(scope);
+            int opttype = qs->getOptType(scope);
+            Strategy retour(StrategyNode::SFalse());
+            int score= ( (opttype == 1) ? INT_MAX : INT_MIN );
+            while (sol != NULL) {
+//                cout<<"une solution"<<endl;
+                vector<int> assign;
+                for (int i = 0; i<sol->nbVars();i++) {
+                    switch (sol->type_of_v[i]) {
+                        case VTYPE_INT : 
+                            assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
+                            break;
+                        case VTYPE_BOOL : 
+                            assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
+                            break;
+                        default :
+                            cout<<"5Unknown variable type"<<endl;
+                            abort();
+                    }
+                } // end for
 
-#ifdef QDEBUG        
-    cout<<"Solver : second branch : v"<<branchon<<" != "<<the_set<<endl;
-#endif
-    if ( rSolve(subspace,nodes, propsteps, branchon) ^ qs->quantification(branchon)) {
-        delete subspace;                                                         //
-        qs->backtrack();                                                         //
-        bh->backtrack(qs);                                                       //
-#ifdef QDEBUG        
-        cout<<"Solver : Backtrack"<<endl;
-#endif
-        delete [] tab[0];
-        delete [] tab[1];
-        delete [] tab;
-        return (!qs->quantification(branchon));                                  //
-    }                                                                            //
-    delete subspace;                                                             //
-    qs->backtrack();                                                             //
-    bh->backtrack(qs);                                                           //
-#ifdef QDEBUG        
-    cout<<"Solver : Backtrack"<<endl;
-#endif
-    delete [] tab[0];
-    delete [] tab[1];
-    delete [] tab;
-    return (qs->quantification(branchon));                                       //
-  /////////////////////////////////////////////////////////////////////////////////
+                int vmin = ( (scope==0)?0 : qs->nbVarInScope(scope-1) );
+                int vmax = qs->nbVarInScope(scope)-1;
+                vector<int> zevalues;
+                for (int i = vmin; i<=vmax;i++) {
+                    switch (sol->type_of_v[i]) {
+                        case VTYPE_INT : 
+                            zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
+                            break;
+                        case VTYPE_BOOL : 
+                            zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
+                            break;
+                        default : 
+                            cout<<"6unknown Variable type"<<endl;
+                            abort();
+                    }
+                }
+                Strategy candidate(false,vmin,vmax,scope,zevalues);
+
+                Strategy son_of_candidate = rSolve(qs,scope+1,assign,nodes);
+                if (son_of_candidate.isFalse()) candidate = Strategy::SFalse();
+                else candidate.attach(son_of_candidate);
+                
+                int score_of_candidate;
+                if (candidate.isFalse()) score_of_candidate = ( (opttype == 1) ? INT_MAX : INT_MIN );
+                else score_of_candidate = opt->getVal(candidate);
+//                cout<<"score of candidate is "<<score_of_candidate<<endl;
+//                cout<<"Opt type is";
+                switch (opttype) {
+                    case 0 : // ANY
+//                        cout<<"ANY"<<endl;
+                        if (!candidate.isFalse()) {
+                            delete sol;
+                            delete espace;
+                            return candidate;
+                        }
+                        break;
+                    case 1 : // MIN
+//                        cout<<"MIN"<<endl;
+                        if (score_of_candidate < score) {
+                            retour=candidate;
+                            score=score_of_candidate;
+                        }
+                        break;
+                    case 2 : // MAX
+//                        cout<<"MAX"<<endl;
+                        if (score_of_candidate > score) {
+                            retour=candidate;
+                            score=score_of_candidate;
+                        }
+                        break;
+                    default : 
+                        cout<<"Unknown opt type : "<<opttype<<endl;
+                        abort();
+                        break;
+                } // end switch
+                delete sol;
+                sol=solutions.next();
+            } // end while 
+            delete espace;
+            return retour;
+        } // end if..else (existential)
+    }// end "Second case"
 }
-

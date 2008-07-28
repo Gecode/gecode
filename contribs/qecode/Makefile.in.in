@@ -13,6 +13,7 @@ qecode_top_builddir = .
 KERNELDLL := $(KERNELDLL:%=../../%)
 INTDLL := $(INTDLL:%=../../%)
 MMDLL := $(MMDLL:%=../../%)
+SEARCHDLL := $(SEARCHDLL:%=../../%)
 SUPPORTDLL := $(SUPPORTDLL:%=../../%)
 SUPPORTOBJ := $(SUPPORTOBJ:%=../../%)
 
@@ -33,7 +34,7 @@ endif
 # QECODE COMPONENTS
 #
 
-QECODESRC0 = implicative.cc warner.cc extensivecomparator.cc NaiveValueHeuristics.cc qecore.cc qsolver.cc SDFVariableHeuristic.cc FirstFailValueHeuristic.cc myspace.cc
+QECODESRC0 = implicative.cc myspace.cc OptVar.cc qsolver.cc Strategy.cc StrategyNode.cc
 QECODEHDR0 = 
 
 
@@ -92,17 +93,17 @@ all : $(LIBTARGETS)
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 #linux
-$(QECODEDLL): $(QECODEOBJ) $(KERNELDLL) $(INTDLL) $(SUPPORTDLL) $(MMDLL)
+$(QECODEDLL): $(QECODEOBJ) $(KERNELDLL) $(INTDLL) $(SEARCHDLL) $(SUPPORTDLL) $(MMDLL)
 	$(CXX) $(DLLFLAGS) $(QECODEOBJ)  $(QECODEFLAGS) \
-		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(LINKMM) $(LINKSUPPORT) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKSUPPORT) \
 		@LINKOUTPUT@$(QECODEDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 else
 #win
-$(QECODEDLL) $(QECODELIB): $(QECODEOBJ) $(KERNELDLL) $(INTDLL) $(SUPPORTDLL) $(MMDLL)
+$(QECODEDLL) $(QECODELIB): $(QECODEOBJ) $(KERNELDLL) $(INTDLL) $(SEARCHDLL) $(SUPPORTDLL) $(MMDLL)
 	$(CXX) $(DLLFLAGS) $(QECODEOBJ)  $(QECODEFLAGS)\
-		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(LINKMM) $(LINKSUPPORT)  \
+		@DLLPATH@ $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKSUPPORT)  \
 		@LINKOUTPUT@$(QECODEDLL)
 endif
 
