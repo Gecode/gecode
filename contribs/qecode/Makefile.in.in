@@ -34,7 +34,7 @@ endif
 # QECODE COMPONENTS
 #
 
-QECODESRC0 = implicative.cc myspace.cc OptVar.cc qsolver.cc Strategy.cc StrategyNode.cc
+QECODESRC0 = Implicative.cc myspace.cc OptVar.cc qsolver.cc Strategy.cc StrategyNode.cc
 QECODEHDR0 = 
 
 
