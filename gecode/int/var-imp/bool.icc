@@ -55,7 +55,7 @@ namespace Gecode { namespace Int {
 
 
   /*
-   * Operations on integer variable implementations
+   * Operations on Boolean variable implementations
    *
    */
   forceinline BoolStatus
