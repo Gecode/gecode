@@ -31,8 +31,6 @@ THE SOFTWARE.
 
 #include "qsolver.hh"
 #include "implicative.hh"
-#include "SDFVariableHeuristic.hh"
-#include "NaiveValueHeuristics.hh"
 
 #define UNIVERSAL true
 #define EXISTENTIAL false
@@ -47,9 +45,14 @@ using namespace MiniModel;
 
 int main (int argc, char * const argv[]) {
     
-    int depth = 6;  // Size of the matrix is 2^depth. Larger values may take long to solve...
+    int depth = 5;  // Size of the matrix is 2^depth. Larger values may take long to solve...
     int nbDecisionVar = 2*depth;
     int nbScope = nbDecisionVar+1;
+    bool* qtScopes = new bool[nbScope];
+    for (int i=0;i<nbScope;i++) { 
+        qtScopes[i] = ((i%2) != 0);
+        cout << (((i%2) != 0)?"true":"false")<<endl;
+    }
     int boardSize = (int)pow((double)2,(double)depth);
     
     std::srand(std::time(NULL));
@@ -83,12 +86,16 @@ int main (int argc, char * const argv[]) {
         scopesSize[i]=1;
     scopesSize[nbScope-1]=2;
     
-    Implicative p(nbScope, QECODE_EXISTENTIAL, scopesSize);
+    Implicative p(nbScope, qtScopes, scopesSize);
     
     // Defining the variable of the n first scopes ...
     for (int i=0; i<nbDecisionVar; i++)
     {
         p.QIntVar(i, 0, 1);
+        IntVarArgs b(i+1);
+        for (int plop=0;plop<(i+1);plop++) 
+            b[plop] = p.var(plop);
+        branch(p.space(),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
         p.nextScope();
     }
 	
@@ -96,6 +103,11 @@ int main (int argc, char * const argv[]) {
     
     p.QIntVar(nbDecisionVar, 0, 1);
     p.QIntVar(nbDecisionVar+1, 0, boardSize*boardSize);
+    IntVarArgs b(nbDecisionVar+2);
+    for (int plop=0;plop<(nbDecisionVar+2);plop++) 
+        b[plop] = p.var(plop);
+    branch(p.space(),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    
     p.nextScope();
     // Body
     
@@ -113,32 +125,16 @@ int main (int argc, char * const argv[]) {
     // must be called in order to lead the problem ready for solving.
     p.makeStructure();
     
-    /*
-     cout << (p.quantification(0)==UNIVERSAL? "universal" : "existential") << "-0\n";
-     cout << "  " << (p.quantification(1)==UNIVERSAL? "universal" : "existential") << "-1\n";
-     cout << "    " << (p.quantification(2)==UNIVERSAL? "universal" : "existential") << "-2\n";
-     cout << "      " << (p.quantification(3)==UNIVERSAL? "universal" : "existential") << "-3\n";
-     cout << "        " << (p.quantification(4)==UNIVERSAL? "universal" : "existential") << "-4\n";
-     
-     */
-    
-    // We will use a Smallest Domain First branching heuristic for solving this problem.
-    SmallestDomainFirst heur;
-    SmallestValueFirst v_heur;
-    
     // So, we build a quantified solver for our problem p, using the heuristic we just created.
-    QSolver solver(&p,&heur, &v_heur);
+    QSolver solver(&p);
     
     unsigned long int nodes=0;
-    unsigned long int steps=0;
     
     // then we solve the problem. Nodes and Steps will contain the number of nodes encountered and
     // of propagation steps achieved during the solving.
-    bool outcome = solver.solve(nodes,steps);
+    Strategy outcome = solver.solve(nodes);
     
-    cout << "  outcome: " << ( outcome? "TRUE" : "FALSE") << endl;
-    cout << "  nodes visited: " << nodes << " " << steps << endl;
-    
-    return outcome? 10:20;
+    cout << "  outcome: " << ( outcome.isFalse()? "FALSE" : "TRUE") << endl;
+    cout << "  nodes visited: " << nodes << endl;
     
 }

@@ -7,7 +7,7 @@ Example (with dynamic libs) :
     $ ./stress_test
 
   For MacOS, using gcc : 
-    $ g++ stress_test.cpp -I.. -I../../.. -L.. -L../../.. -lgecodeqecode -lgecodeminimodel -lgecodeint -lgecodekernel -lgecodesupport -o stress_test
+    $ g++ stress_test.cpp -I.. -I../../.. -L.. -L../../.. -lgecodeqecode -lgecodeminimodel -lgecodesearch -lgecodeint -lgecodekernel -lgecodesupport -o stress_test
     $ export DYLD_LIBRARY_PATH="..:../../.." # only if using shared libraries
     $ ./stress_test
 

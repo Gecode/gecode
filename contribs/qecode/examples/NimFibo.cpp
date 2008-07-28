@@ -22,9 +22,6 @@ THE SOFTWARE.
 
 #include "qsolver.hh"
 #include "implicative.hh"
-#include "SDFVariableHeuristic.hh"
-#include "NaiveValueHeuristics.hh"
-#include "FirstFailValueHeuristic.hh"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // This is a model of the nim-fibonacci game. We have a N matches set. First player may  //
@@ -33,17 +30,21 @@ THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-    int N = 20; // Initial number of matches
-    
+    for (int N = 10; N<=22;N++)  // Initial number of matches
+    {
     int* scopeSize = new int[N+2];
-    for (int i=0;i<N+2;i++) 
+    bool* qtScope = new bool[N+2];
+    for (int i=0;i<N+2;i++) {
+        qtScope[i] = ( i%2 != 0);
         scopeSize[i] = 2;
-    
-    Implicative p(N+2,QECODE_EXISTENTIAL,scopeSize);
+    }
+    Implicative p(N+2,qtScope,scopeSize);
     
     p.QIntVar(0,1,N-1);
     p.QIntVar(1,0,N);
     post(p.space(),p.var(0) == p.var(1));
+    IntVarArgs b(2); b[0] = p.var(0) ; b[1] = p.var(1);
+    branch(p.space(),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     p.nextScope();
     
     for (int i=1;i<N+2;i++) {
@@ -51,23 +52,22 @@ int main() {
         p.QIntVar(2*i + 1, 0, N);
         post(p.space(), p.var(2*i) <= 2*p.var(2*(i-1)));
         post(p.space(), p.var(2*i + 1) == p.var(2*i) + p.var(2*i - 1));
+        IntVarArgs bb(2*i + 2);
+        for (int plop = 0;plop < (2*i + 2);plop++)
+            bb[plop] = p.var(plop);
+        branch(p.space(),bb,INT_VAR_SIZE_MIN,INT_VAL_MIN);
         p.nextScope();
     }
     
     p.makeStructure();
-    
-    SmallestDomainFirst heur;
-//    SmallestValueFirst v_heur;
-    FirstFailValue v_heur;
-    QSolver s(&p,&heur,&v_heur);
+    QSolver s(&p);
     
     unsigned long int nodes=0;
-    unsigned long int propsteps=0;
     
-    bool outcome  = s.solve(nodes,propsteps);
-    
-    cout << "  outcome: " << ( outcome ? "TRUE" : "FALSE") << endl;
-    cout << "  nodes visited: " << nodes << " " << propsteps << endl;
-    
-    return outcome ? 10:20;
+    Strategy outcome  = s.solve(nodes);
+    cout << "For " << N << " matches : "<<endl;
+    cout << "  outcome: " << ( outcome.isFalse() ? "FALSE" : "TRUE") << endl;
+    cout << "  nodes visited: " << nodes << endl;
+    }
+    return 0;
 }
