@@ -58,8 +58,8 @@ public:
     Options::parse(argc,argv);
     if (argc < 3)
       return;
-    k = atoi(argv[1]);
-    n = atoi(argv[2]);
+    n = atoi(argv[1]);
+    k = atoi(argv[2]);
   }
   /// Print help message
   virtual void help(void) {
