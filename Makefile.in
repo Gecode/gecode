@@ -774,7 +774,7 @@ endif
 ifeq "@INSTALLLIBS@" "yes"
 LIBLIBTARGETS = \
 	$(ALLLIB) \
-	$(ALLLIB:%$(LIBSUFFIX)=%.pdb)
+	$(ALLLIB:%$(LIBSUFFIX)=%@USERSUFFIX@.pdb)
 else
 LIBLIBTARGETS =
 endif
