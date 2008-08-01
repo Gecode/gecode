@@ -43,9 +43,6 @@
 
 #include "gecode/int.hh"
 
-#include <vector>
-#include <list>
-
 namespace Gecode { namespace Int { namespace Cumulatives {
 
   /** \namespace Gecode::Int::Cumulatives
@@ -109,8 +106,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
     ExecStatus prune(Space * home, int low, int up, int r,
                      int ntask, int sheight,
-                     const std::vector<int>& contribution,
-                     std::list<int>& prune_tasks);
+                     int* contribution,
+                     int* prune_tasks, int& prune_tasks_size);
   public:
     virtual size_t dispose(Space* home);
     virtual Actor*     copy(Space* home, bool share);
