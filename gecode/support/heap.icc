@@ -99,6 +99,15 @@ namespace Gecode {
      */
     template <class T>
     T* trealloc(T* b, unsigned int n, unsigned int m);
+    /**
+     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
+     *
+     * Returns the address of the new block.
+     *
+     * This is a specialization for performance.
+     */
+    template <class T>
+    T** trealloc(T** b, unsigned int, unsigned int m);
     /** 
      * \brief Copy \a n objects starting at \a s to \a d
      *
@@ -109,6 +118,15 @@ namespace Gecode {
      */
     template <class T>
     static T* tcopy(T* d, const T* s, unsigned int n);
+    /** 
+     * \brief Copy \a n pointers starting at \a s to \a d
+     *
+     * Returns \a d.
+     *
+     * This is a specialization for performance.
+     */
+    template <class T>
+    static T** tcopy(T** d, const T** s, unsigned int n);
     //@}
   private:
     /// Allocate memory from heap (disabled)
@@ -171,61 +189,6 @@ namespace Gecode {
     free(b);
   }
 
-  template <class T>
-  forceinline T*
-  Heap::tcopy(T* d, const T* s, unsigned int n) {
-    for (unsigned int i=n; i--; )
-      d[i]=s[i];
-    return d;
-  }
-
-
-#if 0
-#define GECODE_SUPPORT_TCOPY(T)                                 \
-  template <>                                                   \
-  forceinline T*                                                \
-  Heap::tcopy(T* d, const T* s, unsigned int n) {               \
-    return static_cast<T*>(memcpy(d,s,n*sizeof(T)));            \
-  }
-
-  GECODE_SUPPORT_TCOPY(bool)
-  GECODE_SUPPORT_TCOPY(signed char)
-  GECODE_SUPPORT_TCOPY(unsigned char)
-  GECODE_SUPPORT_TCOPY(signed short int)
-  GECODE_SUPPORT_TCOPY(unsigned short int)
-  GECODE_SUPPORT_TCOPY(signed int)
-  GECODE_SUPPORT_TCOPY(unsigned int)
-  GECODE_SUPPORT_TCOPY(signed long int)
-  GECODE_SUPPORT_TCOPY(unsigned long int)
-  GECODE_SUPPORT_TCOPY(float)
-  GECODE_SUPPORT_TCOPY(double)
-
-#undef GECODE_SUPPORT_TCOPY
-
-  template <class T>
-  forceinline T**
-  Heap::tcopy(T** d, const T** s, unsigned int n) {
-    return static_cast<T**>(memcpy(d,s,n*sizeof(T*)));
-  }
-
-#endif
-
-  template <class T>
-  forceinline T*
-  Heap::trealloc(T* b, unsigned int n, unsigned int m) {
-    if (n == m)
-      return b;
-    T* p = static_cast<T*>(malloc(sizeof(T)*m));
-    for (unsigned int i=std::min(n,m); i--; )
-      (void) new (p+i) T(b[i]);
-    for (unsigned int i=n; i<m; i++)
-      (void) new (p+i) T();
-    tfree<T>(b,n);
-    return p;
-  }
-
-#if 0
-
 #define GECODE_SUPPORT_TREALLOC(T)                              \
   template <>                                                   \
   forceinline T*                                                \
@@ -253,7 +216,57 @@ namespace Gecode {
     return static_cast<T**>(realloc(b,m*sizeof(T*)));
   }
 
-#endif
+
+  template <class T>
+  forceinline T*
+  Heap::tcopy(T* d, const T* s, unsigned int n) {
+    for (unsigned int i=n; i--; )
+      d[i]=s[i];
+    return d;
+  }
+
+#define GECODE_SUPPORT_TCOPY(T)                                 \
+  template <>                                                   \
+  forceinline T*                                                \
+  Heap::tcopy(T* d, const T* s, unsigned int n) {               \
+    return static_cast<T*>(memcpy(d,s,n*sizeof(T)));            \
+  }
+
+  GECODE_SUPPORT_TCOPY(bool)
+  GECODE_SUPPORT_TCOPY(signed char)
+  GECODE_SUPPORT_TCOPY(unsigned char)
+  GECODE_SUPPORT_TCOPY(signed short int)
+  GECODE_SUPPORT_TCOPY(unsigned short int)
+  GECODE_SUPPORT_TCOPY(signed int)
+  GECODE_SUPPORT_TCOPY(unsigned int)
+  GECODE_SUPPORT_TCOPY(signed long int)
+  GECODE_SUPPORT_TCOPY(unsigned long int)
+  GECODE_SUPPORT_TCOPY(float)
+  GECODE_SUPPORT_TCOPY(double)
+
+#undef GECODE_SUPPORT_TCOPY
+
+  template <class T>
+  forceinline T**
+  Heap::tcopy(T** d, const T** s, unsigned int n) {
+    return static_cast<T**>(memcpy(d,s,n*sizeof(T*)));
+  }
+
+
+
+  template <class T>
+  forceinline T*
+  Heap::trealloc(T* b, unsigned int n, unsigned int m) {
+    if (n == m)
+      return b;
+    T* p = static_cast<T*>(malloc(sizeof(T)*m));
+    for (unsigned int i=std::min(n,m); i--; )
+      (void) new (p+i) T(b[i]);
+    for (unsigned int i=n; i<m; i++)
+      (void) new (p+i) T();
+    tfree<T>(b,n);
+    return p;
+  }
 
 }
 
