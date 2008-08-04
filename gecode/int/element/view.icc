@@ -397,7 +397,8 @@ namespace Gecode { namespace Int { namespace Element {
     VB x0(home, vars, spec[0]);
     VC x1(home, vars, spec[1]);
     Reflection::IntArrayArg* ia = spec[2]->toIntArray();
-    GECODE_AUTOARRAY(int,idx,ia->size());
+    Scratch s(home);
+    int* idx = s.talloc<int>(ia->size());
     for (int i=ia->size(); i--; )
       idx[i] = (*ia)[i];
     ViewArray<VA> y(home, vars, spec[3]);
@@ -522,7 +523,8 @@ namespace Gecode { namespace Int { namespace Element {
     VB x0(home, vars, spec[0]);
     VC x1(home, vars, spec[1]);
     Reflection::IntArrayArg* ia = spec[2]->toIntArray();
-    GECODE_AUTOARRAY(int,idx,ia->size());
+    Scratch s(home);
+    int* idx = s.talloc<int>(ia->size());
     for (int i=ia->size(); i--; )
       idx[i] = (*ia)[i];
     ViewArray<VA> y(home, vars, spec[3]);
@@ -569,11 +571,13 @@ namespace Gecode { namespace Int { namespace Element {
       return ES_SUBSUMED(this,s);
     }
     assert(n > 1);
-    GECODE_AUTOARRAY(ViewRanges<VA>,i_view,n);
+    Scratch s(home);
+    ViewRanges<VA>* i_view = s.talloc<ViewRanges<VA> >(n);
     for (int i = n; i--; )
       i_view[i].init(iv[i].view);
     Iter::Ranges::NaryUnion<ViewRanges<VA> > i_val(i_view, n);
     ModEvent me = x1.inter_r(home,i_val);
+    s.tfree<ViewRanges<VA> >(i_view,n);
     GECODE_ME_CHECK(me);
     return (shared(x0,x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
   }
