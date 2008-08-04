@@ -125,7 +125,7 @@
  *
  */
 
-#include "gecode/kernel/scratch-area.icc"
+#include "gecode/kernel/scratch.icc"
 
 
 /*

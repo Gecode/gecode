@@ -273,8 +273,8 @@ namespace Gecode { namespace Int { namespace Channel {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync(home));
     } else {
-      ScratchArea sa(home);
-      View* xv = sa.talloc<View>(n);
+      Scratch s(home);
+      View* xv = s.talloc<View>(n);
       for (int i=n; i--; )
         xv[i] = x[i].view;
       GECODE_ES_CHECK(dc.init(home,n,&xv[0]));

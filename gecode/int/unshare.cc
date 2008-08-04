@@ -111,8 +111,8 @@ namespace Gecode {
       if (n < 2)
         return ES_OK;
 
-      ScratchArea sa(home);
-      Var** y = sa.talloc<Var*>(n);
+      Scratch s(home);
+      Var** y = s.talloc<Var*>(n);
       for (int i=n; i--; )
         y[i]=&x[i];
 

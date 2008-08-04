@@ -75,8 +75,8 @@ namespace Gecode { namespace CpltSet {
 
   bdd 
   cardeq(Space* home, int offset, int c, int n, int r) {
-    ScratchArea sa(home);
-    bdd* layer = static_cast<bdd*>(sa.alloc(sizeof(bdd)*n));
+    Scratch s(home);
+    bdd* layer = static_cast<bdd*>(s.alloc(sizeof(bdd)*n));
     for (int i = n; i--;) 
       layer[i].init();
 
@@ -112,8 +112,8 @@ namespace Gecode { namespace CpltSet {
 
   bdd 
   cardlqgq(Space* home, int offset, int cl, int cr, int n, int r) {
-    ScratchArea sa(home);
-    bdd* layer = static_cast<bdd*>(sa.alloc(sizeof(bdd)*n));
+    Scratch s(home);
+    bdd* layer = static_cast<bdd*>(s.alloc(sizeof(bdd)*n));
     // the use of autoarray now requires explicit initialization
     // otherwise the bdd nodes are not known in the global table
     for (int i = n; i--;) 

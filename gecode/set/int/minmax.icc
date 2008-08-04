@@ -122,8 +122,8 @@ namespace Gecode { namespace Set { namespace Int {
       int size = 0;
       int maxN = BndSet::MAX_OF_EMPTY;
       for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++size) {}
-      ScratchArea sa(home);
-      int* ub = sa.talloc<int>(size*2);
+      Scratch s(home);
+      int* ub = s.talloc<int>(size*2);
       int i=0;
       for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++i) {
         ub[2*i]   = ubr.min();

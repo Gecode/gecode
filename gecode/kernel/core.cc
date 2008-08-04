@@ -106,7 +106,7 @@ namespace Gecode {
 #endif
 
   Space::Space(void) 
-    : ssa(new SharedScratchArea) {
+    : ssa(new SharedScratch) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;

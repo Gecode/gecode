@@ -245,16 +245,16 @@ public:
 
     const int nn = n*n;
 
-    ScratchArea sa(this);
-    IntSet* row = sa.talloc<IntSet>(nn);
-    IntSet* col = sa.talloc<IntSet>(nn);
-    IntSet* block = sa.talloc<IntSet>(nn);
+    Scratch s(this);
+    IntSet* row = s.talloc<IntSet>(nn);
+    IntSet* col = s.talloc<IntSet>(nn);
+    IntSet* block = s.talloc<IntSet>(nn);
 
     // Set up the row and column set constants
     for (int i=0; i<nn; i++) {
       row[i] = IntSet((i*nn)+1, (i+1)*nn);
 
-      int* dsc = sa.talloc<int>(nn);
+      int* dsc = s.talloc<int>(nn);
       for (int j=0; j<nn; j++) {
         dsc[j] = (j*nn)+1+i;
       }
@@ -264,7 +264,7 @@ public:
     // Set up the block set constants
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        int* dsb_arr = sa.talloc<int>(nn);
+        int* dsb_arr = s.talloc<int>(nn);
         
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {
@@ -365,16 +365,16 @@ public:
     for (int i=0; i<nn; i++)
       cardinality(this, y[i], nn);
 
-    ScratchArea sa(this);
-    IntSet* row = sa.talloc<IntSet>(nn);
-    IntSet* col = sa.talloc<IntSet>(nn);
-    IntSet* block = sa.talloc<IntSet>(nn);
+    Scratch s(this);
+    IntSet* row = s.talloc<IntSet>(nn);
+    IntSet* col = s.talloc<IntSet>(nn);
+    IntSet* block = s.talloc<IntSet>(nn);
 
     // Set up the row and column set constants
     for (int i=0; i<nn; i++) {
       row[i] = IntSet((i*nn)+1, (i+1)*nn);
 
-      int* dsc = sa.talloc<int>(nn);
+      int* dsc = s.talloc<int>(nn);
       for (int j=0; j<nn; j++) {
         dsc[j] = (j*nn)+1+i;
       }
@@ -384,7 +384,7 @@ public:
     // Set up the block set constants
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        int* dsb_arr = sa.talloc<int>(nn);
+        int* dsb_arr = s.talloc<int>(nn);
         
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {

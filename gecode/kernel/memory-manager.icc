@@ -138,11 +138,11 @@ namespace Gecode {
     void reuse(void* p, size_t s);
   };
 
-  class ScratchArea;
+  class Scratch;
 
   /// Shared object for scratch area
-  class SharedScratchArea {
-    friend class ScratchArea;
+  class SharedScratch {
+    friend class Scratch;
   private:
     /// How many spaces use this scratch area object
     unsigned int use_cnt;
@@ -152,11 +152,11 @@ namespace Gecode {
     double area[MemoryConfig::scratch_size / sizeof(double)];
   public:
     /// Initialize
-    SharedScratchArea(void);
+    SharedScratch(void);
     /// Return memory block if available
     bool alloc(size_t s, void*& p);
     /// Return copy during cloning
-    SharedScratchArea* copy(bool share);
+    SharedScratch* copy(bool share);
     /// Release by one space
     bool release(void);
     /// Allocate memory from heap
@@ -395,31 +395,31 @@ namespace Gecode {
    */
 
   forceinline void* 
-  SharedScratchArea::operator new(size_t s) {
+  SharedScratch::operator new(size_t s) {
     return heap.malloc(s);
   }
   forceinline void
-  SharedScratchArea::operator delete(void* p) {
+  SharedScratch::operator delete(void* p) {
     heap.free(p);
   }
   forceinline
-  SharedScratchArea::SharedScratchArea(void)
+  SharedScratch::SharedScratch(void)
     : use_cnt(1), free(MemoryConfig::scratch_size) {}
-  forceinline SharedScratchArea*
-  SharedScratchArea::copy(bool share) {
+  forceinline SharedScratch*
+  SharedScratch::copy(bool share) {
     if (share) {
       use_cnt++;
       return this;
     } else {
-      return new SharedScratchArea();
+      return new SharedScratch();
     }
   }
   forceinline bool
-  SharedScratchArea::release(void) {
+  SharedScratch::release(void) {
     return --use_cnt == 0;
   }
   forceinline bool
-  SharedScratchArea::alloc(size_t s, void*& p) {
+  SharedScratch::alloc(size_t s, void*& p) {
     MemoryConfig::align(s);
     if (s > free)
       return false;

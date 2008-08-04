@@ -47,8 +47,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    ScratchArea sa(home);
-    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
+    Scratch s(home);
+    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -62,8 +62,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    ScratchArea sa(home);
-    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
+    Scratch s(home);
+    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -81,8 +81,8 @@ namespace Gecode {
       return;
 
     int n=x.size();
-    ScratchArea sa(home);
-    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
+    Scratch s(home);
+    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -100,9 +100,9 @@ namespace Gecode {
       return;
 
     int n=x.size();
-    ScratchArea sa(home);
+    Scratch s(home);
     Linear::Term<BoolView>* t =
-      sa.talloc<Linear::Term<BoolView> >(n);
+      s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -131,8 +131,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    ScratchArea sa(home);
-    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
+    Scratch s(home);
+    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -146,8 +146,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    ScratchArea sa(home);
-    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
+    Scratch s(home);
+    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -164,8 +164,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    ScratchArea sa(home);
-    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
+    Scratch s(home);
+    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -182,8 +182,8 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n=x.size();
-    ScratchArea sa(home);
-    Linear::Term<BoolView>* t = sa.talloc<Linear::Term<BoolView> >(n);
+    Scratch s(home);
+    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }

@@ -297,8 +297,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     if (static_cast<unsigned int>(n_view)*4 >= width) {
       // Values are dense: use a mapping
-      ScratchArea sa(home);
-      ValNode<View>** val2node = sa.talloc<ValNode<View>* >(width);
+      Scratch s(home);
+      ValNode<View>** val2node = s.talloc<ValNode<View>* >(width);
 
       for (unsigned int i=width; i--; )
         val2node[i]=NULL;

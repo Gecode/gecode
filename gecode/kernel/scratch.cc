@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void*
-  ScratchArea::heap_alloc(size_t s) {
+  Scratch::heap_alloc(size_t s) {
     void* p = heap.malloc(s);
     switch (++n_malloc) {
     case 0: 
@@ -72,7 +72,7 @@ namespace Gecode {
   }
 
   void
-  ScratchArea::heap_free(void) {
+  Scratch::heap_free(void) {
     switch (n_malloc) {
     case 0:
       GECODE_NEVER;
