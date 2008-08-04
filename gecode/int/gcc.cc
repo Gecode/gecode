@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace GCC {
     rewrite = check_alldiff<Card,isView>(n, k);
     GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size())));
     if (rewrite) {
-      if (x.same())
+      if (x.same(home))
         throw ArgumentSame("Int::distinct");
       if (home->failed()) return;
       switch (icl) {
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int { namespace GCC {
     unsigned int csize = c.size();
     if (vsize != csize)
       throw ArgumentSizeMismatch("Int::count");
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::count");
     
     if (home->failed())
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int csize = c.size();
     if (vsize != csize)
       throw ArgumentSizeMismatch("Int::count");
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::count");
     for (int i=c.size(); i--; ) {
       Limits::check(v[i],"Int::count");

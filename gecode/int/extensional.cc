@@ -45,7 +45,7 @@ namespace Gecode {
   extensional(Space* home, const IntVarArgs& x, DFA dfa, 
               IntConLevel, PropKind) {
     using namespace Int;
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::extensional");
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -57,7 +57,7 @@ namespace Gecode {
   extensional(Space* home, const BoolVarArgs& x, DFA dfa, 
               IntConLevel, PropKind) {
     using namespace Int;
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::extensional");
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);

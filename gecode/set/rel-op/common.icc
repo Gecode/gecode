@@ -48,22 +48,22 @@ namespace Gecode {
 
   template <class View0, class View1>
   forceinline bool
-  viewarrayshared(const ViewArray<View0>& va,
-                       const View1& y) {
-    return va.shared(y);
+  viewarrayshared(const Space* home, 
+                  const ViewArray<View0>& va, const View1& y) {
+    return va.shared(home,y);
   }
 
   template <>
   forceinline bool
   viewarrayshared<Set::SingletonView,Set::SetView>
-  (const ViewArray<Set::SingletonView>&, const Set::SetView&) {
+  (const Space*, const ViewArray<Set::SingletonView>&, const Set::SetView&) {
     return false;
   }
 
   template <>
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,Set::SetView>
-  (const ViewArray<Set::ComplementView<Set::SingletonView> >&,
+  (const Space*, const ViewArray<Set::ComplementView<Set::SingletonView> >&,
    const Set::SetView&) {
     return false;
   }
@@ -72,7 +72,7 @@ namespace Gecode {
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,
                        Set::ComplementView<Set::SetView> >
-  (const ViewArray<Set::ComplementView<Set::SingletonView> >&,
+  (const Space*, const ViewArray<Set::ComplementView<Set::SingletonView> >&,
    const Set::ComplementView<Set::SetView>&) {
     return false;
   }

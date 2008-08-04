@@ -301,15 +301,15 @@ namespace Gecode {
      * 
      * Note that assigned views are ignored.
      */
-    bool same(void) const;
+    bool same(const Space* home) const;
     /**
      * \brief Test whether array contains a view being the same as \a y
      *
      * Note that assigned views are ignored.
      */
-    bool same(const View& y) const;
+    bool same(const Space* home, const View& y) const;
     /// Remove all duplicate views from array (changes element order)
-    void unique(void);
+    void unique(const Space* home);
     //@}
 
     /// \name View sharing
@@ -319,13 +319,13 @@ namespace Gecode {
      * 
      * Note that assigned views are ignored.
      */
-    bool shared(void) const;
+    bool shared(const Space* home) const;
     /**
      * \brief Test whether array contains a view being shared with \a y
      *
      * Note that assigned views are ignored.
      */
-    bool shared(const View& y) const;
+    bool shared(const Space* home, const View& y) const;
     //@}
 
     /// \name Reflection
@@ -469,19 +469,19 @@ namespace Gecode {
      * 
      * Note that assigned variables are ignored.
      */
-    bool same(void) const;
+    bool same(const Space* home) const;
     /**
      * \brief Test whether array contains variable \a y
      *
      * Note that assigned variables are ignored.
      */
-    bool same(const Var& y) const;
+    bool same(const Space* home, const Var& y) const;
     /**
      * \brief Test whether all elements from array and \a y contains same variable multiply
      * 
      * Note that assigned variables are ignored.
      */
-    bool same(const VarArgArray<Var>& y) const;
+    bool same(const Space* home, const VarArgArray<Var>& y) const;
     //@}
   };
 
@@ -915,22 +915,26 @@ namespace Gecode {
 
   template <class View>
   bool
-  ViewArray<View>::same(void) const {
+  ViewArray<View>::same(const Space* home) const {
     if (n < 2)
       return false;
-    GECODE_AUTOARRAY(View,y,n);
+    Scratch s(home);
+    View* y = s.talloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
     for (int i = n-1; i--; )
-      if (!y[i].assigned() && __same(y[i+1],y[i]))
+      if (!y[i].assigned() && __same(y[i+1],y[i])) {
+        s.tfree<View>(y,n);
         return true;
+      }
+    s.tfree<View>(y,n);
     return false;
   }
 
   template <class View>
   bool
-  ViewArray<View>::same(const View& y) const {
+  ViewArray<View>::same(const Space*, const View& y) const {
     if (y.assigned())
       return false;
     for (int i = n; i--; )
@@ -941,7 +945,7 @@ namespace Gecode {
 
   template <class View>
   void
-  ViewArray<View>::unique(void) {
+  ViewArray<View>::unique(const Space*) {
     if (n < 2)
       return;
     sort(x,n);
@@ -954,22 +958,26 @@ namespace Gecode {
 
   template <class View>
   bool
-  ViewArray<View>::shared(void) const {
+  ViewArray<View>::shared(const Space* home) const {
     if (n < 2)
       return false;
-    GECODE_AUTOARRAY(View,y,n);
+    Scratch s(home);
+    View* y = s.talloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
     for (int i = n-1; i--; )
-      if (!y[i].assigned() && __shared(y[i+1],y[i]))
+      if (!y[i].assigned() && __shared(y[i+1],y[i])) {
+        s.tfree<View>(y,n);
         return true;
+      }
+    s.tfree<View>(y,n);
     return false;
   }
 
   template <class View>
   bool
-  ViewArray<View>::shared(const View& y) const {
+  ViewArray<View>::shared(const Space*, const View& y) const {
     if (y.assigned())
       return false;
     for (int i = n; i--; )
@@ -1130,27 +1138,32 @@ namespace Gecode {
 
   template <class Var>
   bool
-  VarArgArray<Var>::same(void) const {
+  VarArgArray<Var>::same(const Space* home) const {
     if (n < 2)
       return false;
-    GECODE_AUTOARRAY(Var,y,n);
+    Scratch s(home);
+    Var* y = s.talloc<Var>(n);
     for (int i = n; i--; )
       y[i] = a[i];
     VarLess vl;
     Support::quicksort<Var,VarLess>(y,n,vl);
     for (int i = n-1; i--; )
-      if (!y[i].assigned() && (y[i+1].var() == y[i].var()))
+      if (!y[i].assigned() && (y[i+1].var() == y[i].var())) {
+        s.tfree<Var>(y,n);
         return true;
+      }
+    s.tfree<Var>(y,n);
     return false;
   }
 
   template <class Var>
   bool
-  VarArgArray<Var>::same(const VarArgArray<Var>& y) const {
+  VarArgArray<Var>::same(const Space* home, const VarArgArray<Var>& y) const {
     int m = n + y.n;
     if (m < 2)
       return false;
-    GECODE_AUTOARRAY(Var,z,m);
+    Scratch s(home);
+    Var* z = s.talloc<Var>(m);
     for (int i = n; i--; )
       z[i] = a[i];
     for (int i = y.n; i--; )
@@ -1158,14 +1171,17 @@ namespace Gecode {
     VarLess vl;
     Support::quicksort<Var,VarLess>(z,m,vl);
     for (int i = m-1; i--; )
-      if (!z[i].assigned() && (z[i+1].var() == z[i].var()))
+      if (!z[i].assigned() && (z[i+1].var() == z[i].var())) {
+        s.tfree<Var>(z,m);
         return true;
+      }
+    s.tfree<Var>(z,m);
     return false;
   }
 
   template <class Var>
   bool
-  VarArgArray<Var>::same(const Var& y) const {
+  VarArgArray<Var>::same(const Space*, const Var& y) const {
     if (y.assigned())
       return false;
     for (int i = n; i--; )

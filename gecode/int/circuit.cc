@@ -42,7 +42,7 @@ namespace Gecode {
   void
   circuit(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind) {
     using namespace Int;
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::circuit");
     if (home->failed()) return;
     if (x.size() == 0)

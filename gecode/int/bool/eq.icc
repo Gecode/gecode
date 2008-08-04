@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   inline ExecStatus
   NaryEq<BV>::post(Space* home, ViewArray<BV>& x) {
-    x.unique();
+    x.unique(home);
     int n = x.size();
     if (n < 2)
       return ES_OK;

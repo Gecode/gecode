@@ -48,7 +48,7 @@ namespace Gecode {
     int n = x.size();
     if (n != y.size())
       throw ArgumentSizeMismatch("Int::channel");
-    if (x.same() || y.same())
+    if (x.same(home) || y.same(home))
       throw ArgumentSame("Int::channel");
     if (home->failed()) return;
     if (n == 0)
@@ -68,7 +68,7 @@ namespace Gecode {
           IntVar y0(home,0,0);
           di[n+xoff].init(y0, n+xoff);
         }
-        if (x.same(y)) {
+        if (x.same(home,y)) {
           GECODE_ES_FAIL(home,(Dom<IntView,true>::post(home,n+xoff,di)));
         } else {
           GECODE_ES_FAIL(home,(Dom<IntView,false>::post(home,n+xoff,di)));
@@ -86,7 +86,7 @@ namespace Gecode {
           IntVar y0(home,0,0);
           vi[n+xoff].init(y0, n+xoff);
         }
-        if (x.same(y)) {
+        if (x.same(home,y)) {
           GECODE_ES_FAIL(home,(Val<IntView,true>::post(home,n+xoff,vi)));
         } else {
           GECODE_ES_FAIL(home,(Val<IntView,false>::post(home,n+xoff,vi)));
@@ -100,7 +100,7 @@ namespace Gecode {
           di[i  ].init(OffsetView(x[i],-xoff),n);
           di[i+n].init(OffsetView(y[i],-yoff),n);
         }
-        if (x.same(y)) {
+        if (x.same(home,y)) {
           GECODE_ES_FAIL(home,(Dom<OffsetView,true>::post(home,n,di)));
         } else {
           GECODE_ES_FAIL(home,(Dom<OffsetView,false>::post(home,n,di)));
@@ -112,7 +112,7 @@ namespace Gecode {
           vi[i  ].init(OffsetView(x[i],-xoff),n);
           vi[i+n].init(OffsetView(y[i],-yoff),n);
         }
-        if (x.same(y)) {
+        if (x.same(home,y)) {
           GECODE_ES_FAIL(home,(Val<OffsetView,true>::post(home,n,vi)));
         } else {
           GECODE_ES_FAIL(home,(Val<OffsetView,false>::post(home,n,vi)));
@@ -138,7 +138,7 @@ namespace Gecode {
   channel(Space* home, const BoolVarArgs& x, IntVar y, int o, 
           IntConLevel, PropKind) {
     using namespace Int;
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::channel");
     Limits::check(o,"Int::channel");
     if (home->failed()) return;

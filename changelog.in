@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+All functions for checking sharing for arrays (same, shared,
+unique) require a space argument (for memory management).
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

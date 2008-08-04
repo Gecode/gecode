@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       // this might happen in case of sharing
-      if (x.shared() && count[single] < k[single].min()) {
+      if (x.shared(home) && count[single] < k[single].min()) {
         count[single] = k[single].min();
       }
 

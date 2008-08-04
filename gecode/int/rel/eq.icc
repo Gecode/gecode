@@ -257,7 +257,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   ExecStatus
   NaryEqDom<View>::post(Space* home, ViewArray<View>& x) {
-    x.unique();
+    x.unique(home);
     if (x.size() == 2) {
       return EqDom<View,View>::post(home,x[0],x[1]);
     } else if (x.size() > 2) {

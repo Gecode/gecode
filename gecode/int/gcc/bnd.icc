@@ -615,7 +615,7 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = x0.size(); i < x0.size()+k0.size(); i++) {
         xc[i] = k0[i - x0.size()].intview();
       }
-      return xc.shared();
+      return xc.shared(home);
     }
   };
 
@@ -627,9 +627,9 @@ namespace Gecode { namespace Int { namespace GCC {
   class SharingTest<IntView,OccurBndsView> {
   public:
     /// Test whether the problem views in \a x0 contain shared views.
-    static bool shared(Space*,
+    static bool shared(Space* home,
                        ViewArray<IntView>& xs, ViewArray<OccurBndsView>&) {
-      return xs.shared();
+      return xs.shared(home);
     }
   };
 

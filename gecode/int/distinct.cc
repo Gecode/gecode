@@ -45,7 +45,7 @@ namespace Gecode {
 
   void
   distinct(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind) {
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -64,7 +64,7 @@ namespace Gecode {
   void
   distinct(Space* home, const IntArgs& c, const IntVarArgs& x,
            IntConLevel icl, PropKind) {
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::distinct");
