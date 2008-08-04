@@ -85,7 +85,7 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT void heap_free(void);
   public:
     /// Initialize scratch from space
-    Scratch(Space* home);
+    Scratch(const Space* home);
     /// Allocate memory from scratch
     void* alloc(size_t s);
     /// Free memory previously allocated (noop)
@@ -142,8 +142,8 @@ namespace Gecode {
    *
    */
   forceinline
-  Scratch::Scratch(Space* h) 
-    : home(h), free_reset(home->ssa->free), n_malloc(0) {}
+  Scratch::Scratch(const Space* h) 
+    : home(const_cast<Space*>(h)), free_reset(home->ssa->free), n_malloc(0) {}
 
   forceinline void*
   Scratch::alloc(size_t s) {
