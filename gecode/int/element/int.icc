@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     /// Allocating and initializing the data structure
     static IdxValMap* allocate(int);
-    template <class ViewA> void init(int*,ViewA);
+    template <class ViewA> void init(Space* home, int*, ViewA);
 
     /// Pruning from variables on data structure
     template <class ViewA> void prune_idx(ViewA);
@@ -219,7 +219,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA>
   inline void
-  IdxValMap::init(int* a, ViewA ix) {
+  IdxValMap::init(Space* home, int* a, ViewA ix) {
     // The first element in iv[0] is used as sentinel
     // Enter information sorted by idx
     IdxValLink* by_idx = &iv[1];
@@ -234,7 +234,8 @@ namespace Gecode { namespace Int { namespace Element {
     }
     int size = ix.size();
     // Create val links sorted by val
-    GECODE_AUTOARRAY(IdxValLink*,by_val,size);
+    Scratch s(home);
+    IdxValLink** by_val = s.talloc<IdxValLink*>(size);
     for (int i = size; i--; )
       by_val[i] = &iv[i+1];
     ByVal lt;
@@ -421,7 +422,7 @@ namespace Gecode { namespace Int { namespace Element {
     bool assigned = x0.assigned() && x1.assigned();
     if (ivm == NULL) {
       ivm = IdxValMap::allocate(x0.size());
-      ivm->init(&c[0],x0);
+      ivm->init(home,&c[0],x0);
     } else {
       ivm->prune_idx(x0);
     }

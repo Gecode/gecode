@@ -195,17 +195,22 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++)
            if ((x[i] < 0) || (x[i] > 2))
              return false;
-         GECODE_AUTOARRAY(int, card, m);
+         int* card = new int[m];
          for (int i=0; i<m; i++) {
            card[i] = 0;
-           if ((x[n+i] < 0) || (x[n+i] > 2))
+           if ((x[n+i] < 0) || (x[n+i] > 2)) {
+             delete [] card;
              return false;
+           }
          }
          for (int i=0; i<n; i++)
            card[x[i]]++;
          for (int i=0; i<m; i++)
-           if (card[i] != x[n+i])
+           if (card[i] != x[n+i]) {
+             delete [] card;
              return false;
+           }
+         delete [] card;
          return true;
        }
        /// Post constraint on \a xy
@@ -239,17 +244,22 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++)
            if ((x[i] < 0) || (x[i] > 1))
              return false;
-         GECODE_AUTOARRAY(int, card, m);
+         int* card = new int[m];
          for (int i=0; i<m; i++) {
            card[i] = 0;
-           if ((x[n+i] < 0) || (x[n+i] > 2))
+           if ((x[n+i] < 0) || (x[n+i] > 2)) {
+             delete [] card;
              return false;
+           }
          }
          for (int i=0; i<n; i++)
            card[x[i]]++;
          for (int i=0; i<m; i++)
-           if (card[i] != x[n+i])
+           if (card[i] != x[n+i]) {
+             delete [] card;
              return false;
+           }
+         delete [] card;
          return true;
        }
        /// Post constraint on \a xy
