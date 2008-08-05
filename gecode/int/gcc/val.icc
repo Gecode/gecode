@@ -124,12 +124,13 @@ namespace Gecode { namespace Int { namespace GCC {
     int  n   = x.size();
     int  m   = k.size();
 
+    Scratch s(home);
     // count[i] denotes how often value k[i].card() occurs in x
-    GECODE_AUTOARRAY(int,  count, m);
+    int* count = s.talloc<int>(m);
     // stack of values having reached their maximum occurence
-    GECODE_AUTOARRAY(int,  rem,   m);
+    int* rem = s.talloc<int>(m);
     // keep track whether a value is already on the stack
-    GECODE_AUTOARRAY(bool, onrem, m);
+    bool* onrem = s.talloc<bool>(m);
     // stacksize
     int rs = 0;
 

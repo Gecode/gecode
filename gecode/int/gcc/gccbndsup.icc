@@ -63,14 +63,10 @@ namespace Gecode { namespace Int { namespace GCC {
   prop_card(Space* home, ViewArray<View>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
     int m = k.size();
-    GECODE_AUTOARRAY(UnReachable, rv, m);
-    for(int i = m; i--; ) {
-      rv[i].minb    = 0;
-      rv[i].maxb    = 0;
-      rv[i].le = 0;
-      rv[i].gr = 0;
-      rv[i].eq = 0;
-    }
+    Scratch s(home);
+    UnReachable* rv = s.talloc<UnReachable>(m);
+    for(int i = m; i--; )
+      rv[i].minb = rv[i].maxb = rv[i].le = rv[i].gr = rv[i].eq = 0;
 
     for (int i = n; i--; ) {
       int b = x[i].assigned();
@@ -706,7 +702,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class Card>
   void
-  reduce_card(int cmin, int cmax, ViewArray<Card>& k) {
+  reduce_card(Space* home, int cmin, int cmax, ViewArray<Card>& k) {
     if (cmin == cmax) {
       int idx = 0;
       while (k[idx].card() != cmax) {
@@ -715,7 +711,8 @@ namespace Gecode { namespace Int { namespace GCC {
       k[0] = k[idx];
       k.size(1);
     } else {
-      GECODE_AUTOARRAY(bool, zero, k.size());
+      Scratch s(home);
+      bool* zero = s.talloc<bool>(k.size());
       int ks = k.size();
       int zc = 0;
       for (int i = 0; i < ks; i++) {

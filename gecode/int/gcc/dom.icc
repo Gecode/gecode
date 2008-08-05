@@ -173,10 +173,11 @@ namespace Gecode { namespace Int { namespace GCC {
     ExecStatus es = ES_NOFIX;
     bool card_mod = false;
 
-    GECODE_AUTOARRAY(int, count, k.size());
-    for (int i = k.size(); i--; ) {
+    Scratch s(home);
+    int* count = s.talloc<int>(k.size());
+    for (int i = k.size(); i--; )
       count[i] = 0;
-    }
+
     bool all_assigned = true;
     // total number of assigned views
     int noa = 0;
@@ -326,46 +327,42 @@ namespace Gecode { namespace Int { namespace GCC {
         return ES_FAILED;
       }
 
-      bool init_ubm = vvg->template maximum_matching<UBC>();
+      bool init_ubm = vvg->template maximum_matching<UBC>(home);
       if (!init_ubm) {
         return ES_FAILED;
       }
 
       if (!card_fixed) {
-        bool init_lbm = vvg->template maximum_matching<LBC>();
+        bool init_lbm = vvg->template maximum_matching<LBC>(home);
         if (!init_lbm) {
           return ES_FAILED;
         }
       }
     } else {
-      if (!vvg->sync()) {
+      if (!vvg->sync(home))
         return ES_FAILED;
-      }
     }
 
     bool filter_ubc = false;
     bool filter_lbc = false;
 
-    vvg->template free_alternating_paths<UBC>();
-    vvg->template strongly_connected_components<UBC>();
+    vvg->template free_alternating_paths<UBC>(home);
+    vvg->template strongly_connected_components<UBC>(home);
 
     filter_ubc = vvg->template narrow<UBC>(home);
     if (vvg->failed()) {
       return ES_FAILED;
     }
     if (!card_fixed) {
-      if (isView) {
-        if (!vvg->sync()) {
-          return ES_FAILED;
-        }
-      }
-      vvg->template free_alternating_paths<LBC>();
-      vvg->template strongly_connected_components<LBC>();
+      if (isView && !vvg->sync(home))
+        return ES_FAILED;
+
+      vvg->template free_alternating_paths<LBC>(home);
+      vvg->template strongly_connected_components<LBC>(home);
 
       filter_lbc = vvg->template narrow<LBC>(home);
-      if (vvg->failed()) {
+      if (vvg->failed())
         return ES_FAILED;
-      }
     }
 
     bool card_assigned = true;

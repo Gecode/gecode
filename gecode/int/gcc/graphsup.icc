@@ -553,7 +553,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * that do not longer belong to the graph associated with the current
      * variable domains.
      */
-    bool sync(void);
+    bool sync(Space* home);
 
     /// Print graph information for debugging
     void print_graph(void);
@@ -579,7 +579,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
 
     template <BC>
-    bool narrow(Space*);
+    bool narrow(Space* home);
 
     /** \brief Compute a maximum matching M on the graph
      *
@@ -588,21 +588,21 @@ namespace Gecode { namespace Int { namespace GCC {
      *    k[i].min()\f$
      */
     template <BC>
-    bool maximum_matching(void);
+    bool maximum_matching(Space* home);
 
     /// Compute possible free alternating paths in the graph
     template <BC>
-    void free_alternating_paths(void);
+    void free_alternating_paths(Space* home);
     /// Compute possible strongly connected components of the graph
     template <BC>
-    void strongly_connected_components(void);
+    void strongly_connected_components(Space* home);
     /**
      * \brief Test whether the current maximal matching on the graph
      * can be augmented by an alternating path starting and ending with
      * a free node.
      */
     template <BC>
-    bool augmenting_path(VVGNode*);
+    bool augmenting_path(Space* home, VVGNode*);
 
   protected:
     /**
@@ -1495,8 +1495,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   inline bool
-  VarValGraph<View, Card, isView>::sync(void){
-    GECODE_AUTOARRAY(VVGNode*, re, node_size);
+  VarValGraph<View, Card, isView>::sync(Space* home) {
+    Scratch s(home);
+    VVGNode** re = s.talloc<VVGNode*>(node_size);
     int n_re = 0;
 
     // synchronize cardinality variables
@@ -1696,13 +1697,13 @@ namespace Gecode { namespace Int { namespace GCC {
           if (!(re[n_re]->get_type())) {
             VarNode* vrn = static_cast<VarNode*>(re[n_re]);
             if (!vrn->template matched<UBC>()) {
-              repaired &= augmenting_path<UBC>(vrn);
+              repaired &= augmenting_path<UBC>(home,vrn);
             }
           } else {
             assert(re[n_re]->get_type());
             ValNode* vln = static_cast<ValNode*>(re[n_re]);
             while(!vln->template matched<LBC>()) {
-              repaired &= augmenting_path<LBC>(vln);
+              repaired &= augmenting_path<LBC>(home,vln);
               if (!repaired) {
                 break;
               }
@@ -1864,7 +1865,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>  template <BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::maximum_matching(void){
+  VarValGraph<View, Card, isView>::maximum_matching(Space* home) {
 
     int required_size = 0;
     int card_match    = 0;
@@ -1878,7 +1879,7 @@ namespace Gecode { namespace Int { namespace GCC {
     // find an intial matching in O(n*d)
     // greedy algorithm
 
-    for (int i = n_val; i--; ){
+    for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
       for (Edge* e = vln->first(); e != NULL ; e = e->vnext()) {
         VarNode* vrn = e->getVar();
@@ -1890,10 +1891,11 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
+    Scratch s(home);
     if (card_match < required_size) {
       if (direction == LBC) {
         // collect free value nodes
-        GECODE_AUTOARRAY(ValNode*, free, n_val);
+        ValNode** free = s.talloc<ValNode*>(n_val);
         int f = 0;
         // find failed nodes
         for (int i = n_val; i--; ) {
@@ -1905,7 +1907,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
         for (int i = 0; i < f; i++) {
           while(!free[i]->template matched<direction>()) {
-            if (augmenting_path<direction>(free[i])) {
+            if (augmenting_path<direction>(home,free[i])) {
               card_match++;
             } else {
               break;
@@ -1913,7 +1915,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       } else {
-        GECODE_AUTOARRAY(VarNode*, free, n_var);
+        VarNode** free = s.talloc<VarNode*>(n_var);
         int f = 0;
         // find failed nodes
         for (int i = n_var; i--; ) {
@@ -1925,7 +1927,7 @@ namespace Gecode { namespace Int { namespace GCC {
         
         for (int i = 0; i < f; i++) {
           if (!free[i]->template matched<direction>()) {
-            if (augmenting_path<direction>(free[i])) {
+            if (augmenting_path<direction>(home,free[i])) {
               card_match++;
             }
           }
@@ -1937,10 +1939,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template<BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::augmenting_path(VVGNode* v){
+  VarValGraph<View, Card, isView>::augmenting_path(Space* home, VVGNode* v) {
     Support::StaticStack<VVGNode*> ns(node_size);
-    GECODE_AUTOARRAY(bool, visited, node_size);
-    GECODE_AUTOARRAY(Edge*, start, node_size);
+    Scratch s(home);
+    bool* visited = s.talloc<bool>(node_size);
+    Edge** start = s.talloc<Edge*>(node_size);
 
     // augmenting path starting in a free var node
     assert(!v->is_matched(direction));
@@ -2046,13 +2049,13 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template<BC direction>
   inline void
-  VarValGraph<View, Card, isView>::free_alternating_paths(void){
+  VarValGraph<View, Card, isView>::free_alternating_paths(Space* home) {
     Support::StaticStack<VVGNode*> ns(node_size);
-    GECODE_AUTOARRAY(bool, visited, node_size);
+    Scratch s(home);
+    bool* visited = s.talloc<bool>(node_size);
     // keep track of the nodes that have already been visited
-    for (int i = node_size; i--; ){
+    for (int i = node_size; i--; )
       visited[i] = false;
-    }
 
     if (direction == LBC) {
       // after a maximum matching on the value nodes there still can be
@@ -2087,26 +2090,24 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    while(!ns.empty()){
+    while (!ns.empty()){
       VVGNode* node = ns.top();
       ns.pop();
       if (node->get_type()) {
         // ValNode
         ValNode* vln = static_cast<ValNode*>(node);
-        for (Edge* cur = vln->first(); cur != NULL; cur = cur->vnext()){
+        for (Edge* cur = vln->first(); cur != NULL; cur = cur->vnext()) {
           VarNode* mate = cur->getVar();
           bool follow = false;
           switch (direction) {
             // edges in M_l are directed from values to variables
-          case LBC: {
+          case LBC:
             follow = cur->template matched<direction>();
             break;
-          }
-          case UBC: {
+          case UBC:
             follow = !cur->template matched<direction>();
             break;
           default: GECODE_NEVER;
-          }
           }
           if (follow) {
             // mark the edge
@@ -2234,10 +2235,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template <BC direction>
   inline void
-  VarValGraph<View, Card, isView>::strongly_connected_components(void){
-    GECODE_AUTOARRAY(bool, inscc, node_size);
-    GECODE_AUTOARRAY(bool, in_unfinished,  node_size);
-    GECODE_AUTOARRAY(int,  dfsnum, node_size);
+  VarValGraph<View, Card, isView>::strongly_connected_components(Space* home) {
+    Scratch s(home);
+    bool* inscc = s.talloc<bool>(node_size);
+    bool* in_unfinished = s.talloc<bool>(node_size);
+    int* dfsnum = s.talloc<int>(node_size);
 
     for (int i = node_size; i--; ) {
       inscc[i]         = false;

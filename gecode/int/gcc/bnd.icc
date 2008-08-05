@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (k[m - 1].max() == 0) {
           cmax = k[m - 2].card();
         }
-        reduce_card<Card>(cmin, cmax, k);
+        reduce_card<Card>(home,cmin, cmax, k);
 
         if (lps != NULL) {
           delete lps; lps = NULL;
@@ -201,10 +201,10 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    GECODE_AUTOARRAY(int, count, k.size());
-    for (int i = k.size(); i--; ) {
+    Scratch s(home);
+    int* count = s.talloc<int>(k.size());
+    for (int i = k.size(); i--; )
       count[i] = 0;
-    }
 
     int noa = 0;
     int single = 0;
@@ -314,9 +314,8 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    for (int i = k.size(); i--; ) {
+    for (int i = k.size(); i--; )
       count[i] = 0;
-    }
 
     all_assigned = true;
     noa = 0;
@@ -394,7 +393,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (k[m - 1].max() == 0) {
           cmax = k[m - 2].card();
         }
-        reduce_card<Card>(cmin, cmax, k);
+        reduce_card<Card>(home,cmin, cmax, k);
 
         if (lps != NULL) {
           delete lps;
@@ -410,13 +409,12 @@ namespace Gecode { namespace Int { namespace GCC {
     ExecStatus es_lbc = ES_FIX;
     int n = x.size();
 
-    GECODE_AUTOARRAY(int, mu, n);
-    GECODE_AUTOARRAY(int, nu, n);
+    int* mu = s.talloc<int>(n);
+    int* nu = s.talloc<int>(n);
 
-    for (int i = n; i--; ) {
-      nu[i] = i;
-      mu[i] = i;
-    }
+    for (int i = n; i--; )
+      nu[i] = mu[i] = i;
+
     // Create sorting permutation mu according to the variables upper bounds
     MaxInc<View> max_inc(x);
     Support::quicksort<int, MaxInc<View> >(mu, n, max_inc);
@@ -482,8 +480,8 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
 
-    GECODE_AUTOARRAY(HallInfo, hall, (2 * n + 2));
-    GECODE_AUTOARRAY(Rank,     rank, n);
+    HallInfo* hall = s.talloc<HallInfo>(2 * n + 2);
+    Rank* rank = s.talloc<Rank>(n);
 
     int nb = 0;
     // setup bounds and rank
