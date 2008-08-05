@@ -168,12 +168,12 @@ namespace Gecode {
     n_states++;
 
     // Temporary structure for transitions
-    GECODE_AUTOARRAY(Transition, trans, n_trans);
+    Transition* trans = heap.talloc<Transition>(n_trans);
     for (int i = n_trans; i--; )
       trans[i] = t_spec[i];
     // Temporary structures for finals
-    GECODE_AUTOARRAY(int,  final,    n_states+1);
-    GECODE_AUTOARRAY(bool, is_final, n_states+1);
+    int* final = heap.talloc<int>(n_states+1);
+    bool* is_final = heap.talloc<bool>(n_states+1);
     int n_finals = 0;
     for (int i = n_states+1; i--; )
       is_final[i] = false;
@@ -185,7 +185,7 @@ namespace Gecode {
     if (minimize) {
       // Sort transitions by symbol and i_state
       TransBySymbolI_State::sort(trans, n_trans);
-      GECODE_AUTOARRAY(Transition*, idx, n_trans+1);
+      Transition** idx = heap.talloc<Transition*>(n_trans+1);
       //  idx[i]...idx[i+1]-1 gives where transitions for symbol i start
       int n_symbols = 0;
       {
@@ -200,9 +200,9 @@ namespace Gecode {
         assert(j == n_trans);
       }
       // Map states to groups
-      GECODE_AUTOARRAY(int,         s2g,  n_states+1);
-      GECODE_AUTOARRAY(StateGroup,  part, n_states+1);
-      GECODE_AUTOARRAY(GroupStates, g2s,  n_states+1);
+      int* s2g = heap.talloc<int>(n_states+1);
+      StateGroup* part = heap.talloc<StateGroup>(n_states+1);
+      GroupStates* g2s = heap.talloc<GroupStates>(n_states+1);
       // Initialize: final states is group one, all other group zero
       for (int i = n_states+1; i--; ) {
         part[i].state = i;
@@ -290,7 +290,7 @@ namespace Gecode {
               break;
             }
         // Compute representatives
-        GECODE_AUTOARRAY(int, s2r, n_states+1);
+        int* s2r = heap.talloc<int>(n_states+1);
         for (int i = n_states+1; i--; )
           s2r[i] = -1;
         for (int g = n_groups; g--; )
@@ -306,22 +306,27 @@ namespace Gecode {
           }
         n_trans  = j;
         n_states = n_groups;
+        heap.tfree<int>(s2r,n_states+1);
       }
+      heap.tfree<GroupStates>(g2s,n_states+1);
+      heap.tfree<StateGroup>(part,n_states+1);
+      heap.tfree<int>(s2g,n_states+1);
+      heap.tfree<Transition*>(idx,n_trans+1);
     }
 
     // Do a reachability analysis for all states starting from start state
     int* visitA = heap.talloc<int>(n_states+1);
     Gecode::Support::SentinelStack<int> visit(visitA,-1,n_states);    
     // GECODE_AUTOSTACK(home, int, -1, visit, n_states);
-    GECODE_AUTOARRAY(int, state, n_states);
+    int* state = heap.talloc<int>(n_states);
     for (int i=n_states; i--; )
       state[i] = SI_NONE;
 
+    Transition** idx = heap.talloc<Transition*>(n_states+1);
     {
       // Sort all transitions according to i_state and create index structure
       //  idx[i]...idx[i+1]-1 gives where transitions for state i start
       TransByI_State::sort(trans, n_trans);
-      GECODE_AUTOARRAY(Transition*, idx, n_states+1);
       {
         int j = 0;
         for (int i=0; i<n_states; i++) {
@@ -350,7 +355,6 @@ namespace Gecode {
       // Sort all transitions according to o_state and create index structure
       //  idx[i]...idx[i+1]-1 gives where transitions for state i start
       TransByO_State::sort(trans, n_trans);
-      GECODE_AUTOARRAY(Transition*, idx, n_states+1);
       {
         int j = 0;
         for (int i=0; i<n_states; i++) {
@@ -375,10 +379,13 @@ namespace Gecode {
           }
       }
     }
-    heap.tfree<int>(visitA);
+    heap.tfree<Transition*>(idx,n_states+1);
+    heap.tfree<int>(visitA,n_states+1);
+    heap.tfree<int>(final,n_states+1);
+    heap.tfree<bool>(is_final,n_states+1);
 
     // Now all reachable states are known (also the final ones)
-    GECODE_AUTOARRAY(int, re, n_states);
+    int* re = heap.talloc<int>(n_states);
     for (int i = n_states; i--; )
       re[i] = -1;
 
@@ -438,6 +445,9 @@ namespace Gecode {
     }
     d->fill();
     object(d);
+    heap.tfree<int>(re,n_states);
+    heap.tfree<int>(state,n_states);
+    heap.tfree<Transition>(trans,n_trans);
   }
 
   DFA::DFA(Reflection::VarMap& vm, Reflection::Arg* arg) {

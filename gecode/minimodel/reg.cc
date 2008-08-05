@@ -219,7 +219,7 @@ namespace Gecode {
     int n = x.size();
     if (n < 1)
       throw MiniModel::TooFewArguments("REG");
-    GECODE_AUTOARRAY(Exp*,a,n);
+    Exp** a = heap.talloc<Exp*>(n);
     // Initialize with symbols
     for (int i=n; i--; ) {
       a[i] = new Exp();
@@ -229,10 +229,10 @@ namespace Gecode {
       a[i]->data.symbol = x[i];
     }
     // Build a balanced tree of alternative nodes
-    while (n > 1) {
-      if (n & 1) {
-        n -= 1;
-        Exp* e1 = a[n];
+    for (int m=n; m>1; ) {
+      if (m & 1) {
+        m -= 1;
+        Exp* e1 = a[m];
         Exp* e2 = a[0];
         a[0] = new Exp;
         a[0]->use_cnt      = 1;
@@ -241,8 +241,8 @@ namespace Gecode {
         a[0]->data.kids[0] = e1;
         a[0]->data.kids[1] = e2;
       } else {
-        n >>= 1;
-        for (int i=0; i<n; i++) {
+        m >>= 1;
+        for (int i=0; i<m; i++) {
           Exp* e1 = a[2*i];
           Exp* e2 = a[2*i+1];
           a[i] = new Exp;
@@ -255,6 +255,7 @@ namespace Gecode {
       }
     }
     e = a[0];
+    heap.tfree<Exp*>(a,n);
   }
 
   REG
@@ -759,7 +760,7 @@ namespace Gecode {
     REG r = *this + REG(Int::Limits::max+1);
     int n_pos = r.e->n_pos();
 
-    GECODE_AUTOARRAY(PosInfo, pi, n_pos);
+    PosInfo* pi = heap.talloc<PosInfo>(n_pos);
     for (int i=n_pos; i--; )
       pi[i].followpos = NULL;
 
@@ -769,7 +770,7 @@ namespace Gecode {
     assert(n_p == n_pos);
 
     // Compute symbols
-    GECODE_AUTOARRAY(int, symbols, n_pos);
+    int* symbols = heap.talloc<int>(n_pos);
     for (int i=n_pos; i--; )
       symbols[i] = pi[i].symbol;
 
@@ -802,6 +803,8 @@ namespace Gecode {
         fb.add(n->state);
     fb.finish();
 
+    heap.tfree<PosInfo>(pi,n_pos);
+    heap.tfree<int>(symbols,n_pos);
     return DFA(0,tb.transitions(),fb.finals(),true);
   }
 
