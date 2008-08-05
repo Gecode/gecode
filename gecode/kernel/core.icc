@@ -1312,7 +1312,7 @@ namespace Gecode {
      * constructor of \a T is run for all \a n objects.
      */
     template <class T>
-    T* talloc(unsigned int n=1);
+    T* talloc(unsigned int n);
     /** 
      * \brief Delete \a n objects allocated from space heap starting at \a b
      *
@@ -1323,7 +1323,7 @@ namespace Gecode {
      * reusal.
      */
     template <class T>
-    void tfree(T* b, unsigned int n=1);
+    void tfree(T* b, unsigned int n);
     /**
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
      *
