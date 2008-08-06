@@ -403,7 +403,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         continue;
 
       // Sort the events according to date
-      Support::insertion(events, events_size, LT<Event>());
+      LT<Event> lt;
+      Support::insertion(events, events_size, lt);
 
       // Sweep line along d, starting at 0
       int d        = 0;
