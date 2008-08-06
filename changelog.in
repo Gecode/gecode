@@ -75,13 +75,17 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 The memory management has been completely reworked. It is now
-more robust, more portable, more efficient, fits C++ better and
-is much easier too understand. There are now three memory areas:
-a single heap, spaces, and scratches. Heap and spaces are as
-before. A scratch (an object of class Scratch) is a simple and
-very efficient memory manager for temporary memory managed in a
-stack fashion. These three memory managers provide uniform
-operations for allocation, deallocation, and reallocation.
+more robust, more portable (does not use alloca any longer), more
+efficient, fits C++ better and is much easier too
+understand. There are now three memory areas: a single heap,
+spaces, and scratches. Heap and spaces are as before. A scratch
+(an object of class Scratch) is a simple and very efficient
+memory manager for temporary memory managed in a stack
+fashion. These three memory managers provide uniform operations
+for allocation (alloc), deallocation (free), and reallocation
+(realloc). These operations use constructors, destructors, and
+assignment operators as required by C++ and are implemented with
+efficient specializations for basic data types.
 
 [ENTRY]
 Module: int
