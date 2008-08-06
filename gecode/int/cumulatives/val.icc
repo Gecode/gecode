@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
-  Val<ViewM,ViewD,ViewH,View>::prune(Space * home, int low, int up, int r,
+  Val<ViewM,ViewD,ViewH,View>::prune(Space*  home, int low, int up, int r,
                                      int ntask, int sheight,
                                      const std::vector<int>& contribution,
                                      std::list<int>& prune_tasks) {

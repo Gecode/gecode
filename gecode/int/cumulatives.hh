@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         const ViewArray<ViewD>&, const ViewArray<View>&,
         const ViewArray<ViewH>&, const IntArgs&, bool);
 
-    ExecStatus prune(Space * home, int low, int up, int r,
+    ExecStatus prune(Space*  home, int low, int up, int r,
                      int ntask, int sheight,
                      const std::vector<int>& contribution,
                      std::list<int>& prune_tasks);

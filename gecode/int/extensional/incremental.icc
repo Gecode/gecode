@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   //
   template <class View>
   ExecStatus
-  Incremental<View>::advise(Space *home, Advisor* a0, const Delta* d) {
+  Incremental<View>::advise(Space* home, Advisor* a0, const Delta* d) {
     SupportAdvisor* a = static_cast<SupportAdvisor*>(a0);
     ModEvent me = View::modevent(d);
     bool scheduled = !work.empty();
