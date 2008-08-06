@@ -40,9 +40,9 @@
 namespace Gecode { namespace Set { namespace Projection {
 
   size_t
-  ReNaryProjection::dispose(Space* home) {
+  ReNaryProjection::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x.cancel(home,this,PC_SET_ANY);
       b.cancel(home,this,Gecode::Int::PC_INT_VAL);
     }
@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   ExecStatus
-  ReNaryProjection::post(Space* home, ViewArray<SetView>& x,
+  ReNaryProjection::post(Space& home, ViewArray<SetView>& x,
                          Gecode::Int::BoolView b, ProjectorSet& ps) {
     if (ps.arity() != x.size() - 1)
       throw Set::InvalidProjector("");
@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   Actor*
-  ReNaryProjection::copy(Space* home, bool share) {
+  ReNaryProjection::copy(Space& home, bool share) {
     return new (home) ReNaryProjection(home,share,*this);
   }
 
@@ -71,12 +71,12 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   Reflection::ActorSpec
-  ReNaryProjection::spec(const Space*, Reflection::VarMap&) const {
+  ReNaryProjection::spec(const Space&, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   }
 
   ExecStatus
-  ReNaryProjection::propagate(Space* home, ModEventDelta) {
+  ReNaryProjection::propagate(Space& home, ModEventDelta) {
     ProjectorSet newps(ps);
     if (b.one())
       GECODE_REWRITE(this,(NaryProjection<false>::post(home,x,newps)));

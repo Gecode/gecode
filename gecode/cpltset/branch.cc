@@ -45,7 +45,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   /// Create virtual view selector for tie-breaking
   void
-  virtualize(Gecode::Space* home, CpltSetVarBranch vars,
+  virtualize(Gecode::Space& home, CpltSetVarBranch vars,
              const Gecode::VarBranchOptions& o_vars,
              Gecode::ViewSelVirtualBase<CpltSetView>*& v) {
     switch (vars) {
@@ -86,7 +86,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 namespace Gecode { 
 
   void
-  branch(Gecode::Space* home, const CpltSetVarArgs& x,
+  branch(Gecode::Space& home, const CpltSetVarArgs& x,
          CpltSetVarBranch vars, CpltSetValBranch vals,
          const Gecode::VarBranchOptions& o_vars,
          const Gecode::ValBranchOptions& o_vals) {
@@ -95,7 +95,7 @@ namespace Gecode {
     using namespace Gecode::CpltSet::Branch;
 
 
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<CpltSetView> xv(home,x);
     switch (vars) {
     case CPLTSET_VAR_NONE:
@@ -164,7 +164,7 @@ namespace Gecode {
   }
 
   void
-  branch(Gecode::Space* home, const CpltSetVarArgs& x,
+  branch(Gecode::Space& home, const CpltSetVarArgs& x,
          const Gecode::TieBreakVarBranch<CpltSetVarBranch>& vars,
          CpltSetValBranch vals,
          const Gecode::TieBreakVarBranchOptions& o_vars,
@@ -174,7 +174,7 @@ namespace Gecode {
     using namespace Gecode::CpltSet::Branch;
 
 
-    if (home->failed()) return;
+    if (home.failed()) return;
     if ((vars.a == CPLTSET_VAR_NONE) || (vars.a == CPLTSET_VAR_RND) ||
         ((vars.b == CPLTSET_VAR_NONE) && (vars.c == CPLTSET_VAR_NONE) && (vars.d == CPLTSET_VAR_NONE))) {
       branch(home,x,vars.a,vals,o_vars.a,o_vals);

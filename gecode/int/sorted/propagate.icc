@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   ExecStatus
-  bounds_propagation(Space* home, Propagator* p,
+  bounds_propagation(Space& home, Propagator* p,
                      ViewArray<View>& x,
                      ViewArray<View>& y,
                      ViewArray<View>& z,
@@ -349,7 +349,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   forceinline Sorted<View,Perm>::
-  Sorted(Space* home, bool share, Sorted<View,Perm>& p):
+  Sorted(Space& home, bool share, Sorted<View,Perm>& p):
     Propagator(home, share, p),
     reachable(p.reachable) {
     x.update(home, share, p.x);
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   Sorted<View,Perm>::
-  Sorted(Space* home, 
+  Sorted(Space& home, 
          ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0) :
     Propagator(home), x(x0), y(y0), z(z0), w(home,y0), reachable(-1) {
     x.subscribe(home, this, PC_INT_BND);
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   Sorted<View,Perm>::
-  Sorted(Space* home, 
+  Sorted(Space& home, 
          ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0,
          ViewArray<View>& w0, int reachable0) :
     Propagator(home), x(x0), y(y0), z(z0), w(w0), reachable(reachable0) {
@@ -383,8 +383,8 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   size_t
-  Sorted<View,Perm>::dispose(Space* home) {
-    assert(!home->failed());
+  Sorted<View,Perm>::dispose(Space& home) {
+    assert(!home.failed());
     x.cancel(home,this, PC_INT_BND);
     y.cancel(home,this, PC_INT_BND);
     if (Perm)
@@ -394,7 +394,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
-  Actor* Sorted<View,Perm>::copy(Space* home, bool share) {
+  Actor* Sorted<View,Perm>::copy(Space& home, bool share) {
     return new (home) Sorted<View,Perm>(home, share, *this);
   }
 
@@ -411,7 +411,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template <class View, bool Perm>
   Reflection::ActorSpec
-  Sorted<View,Perm>::spec(const Space* home,
+  Sorted<View,Perm>::spec(const Space& home,
                           Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m) << y.spec(home, m)
@@ -420,7 +420,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template <class View, bool Perm>
   void
-  Sorted<View,Perm>::post(Space* home, Reflection::VarMap& vars,
+  Sorted<View,Perm>::post(Space& home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     spec.checkArity(5);
     ViewArray<View> x(home, vars, spec[0]);
@@ -433,7 +433,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   ExecStatus
-  Sorted<View,Perm>::propagate(Space* home, ModEventDelta) {
+  Sorted<View,Perm>::propagate(Space& home, ModEventDelta) {
     int  n           = x.size();
     bool secondpass  = false;
     bool nofix       = false;
@@ -671,7 +671,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   template<class View, bool Perm>
   ExecStatus
   Sorted<View,Perm>::
-  post(Space* home, 
+  post(Space& home, 
        ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0) {
     int n = x0.size();
     if (n < 2) {

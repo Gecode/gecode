@@ -62,22 +62,22 @@ namespace Gecode { namespace Set { namespace Int {
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
-    MinElement(Space* home, bool share,MinElement& p);
+    MinElement(Space& home, bool share,MinElement& p);
     /// Constructor for posting
-    MinElement(Space* home, View, Gecode::Int::IntView);
+    MinElement(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \a x is the minimal element of \a s 
-    static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -96,22 +96,22 @@ namespace Gecode { namespace Set { namespace Int {
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
-    MaxElement(Space* home, bool share,MaxElement& p);
+    MaxElement(Space& home, bool share,MaxElement& p);
     /// Constructor for posting
-    MaxElement(Space* home, View, Gecode::Int::IntView);
+    MaxElement(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \a x is the largest element of \a s 
-    static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -130,22 +130,22 @@ namespace Gecode { namespace Set { namespace Int {
     using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x0;
     using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
-    Card(Space* home, bool share,Card& p);
+    Card(Space& home, bool share,Card& p);
     /// Constructor for posting
-    Card(Space* home, View, Gecode::Int::IntView);
+    Card(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \f$ |s|=x \f$ 
-    static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -167,27 +167,27 @@ namespace Gecode { namespace Set { namespace Int {
     ViewArray<Gecode::Int::IntView> xs;
 
     /// Constructor for cloning \a p
-    Match(Space* home, bool share,Match& p);
+    Match(Space& home, bool share,Match& p);
     /// Constructor for posting
-    Match(Space* home, View, ViewArray<Gecode::Int::IntView>&);
+    Match(Space& home, View, ViewArray<Gecode::Int::IntView>&);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
     GECODE_SET_EXPORT virtual PropCost cost(ModEventDelta med) const;
     /// Delete Propagator
-    GECODE_SET_EXPORT virtual size_t dispose(Space* home);
+    GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
-    static ExecStatus post(Space* home, View s,
+    static ExecStatus post(Space& home, View s,
                            ViewArray<Gecode::Int::IntView>& x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -219,28 +219,28 @@ namespace Gecode { namespace Set { namespace Int {
     ViewArray<View> ys;
 
     /// Constructor for cloning \a p
-    ChannelInt(Space* home, bool share,ChannelInt& p);
+    ChannelInt(Space& home, bool share,ChannelInt& p);
     /// Constructor for posting
-    ChannelInt(Space* home,ViewArray<Gecode::Int::IntView>&, 
+    ChannelInt(Space& home,ViewArray<Gecode::Int::IntView>&, 
                ViewArray<View>&);
   public:
     /// Copy propagator during cloning
-    virtual Actor*   copy(Space* home,bool);
+    virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-    static ExecStatus post(Space* home,ViewArray<Gecode::Int::IntView>& x,
+    static ExecStatus post(Space& home,ViewArray<Gecode::Int::IntView>& x,
                            ViewArray<View>& y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -270,9 +270,9 @@ namespace Gecode { namespace Set { namespace Int {
     using Super::y;
 
     /// Constructor for cloning \a p
-    ChannelBool(Space* home, bool share,ChannelBool& p);
+    ChannelBool(Space& home, bool share,ChannelBool& p);
     /// Constructor for posting
-    ChannelBool(Space* home,ViewArray<Gecode::Int::BoolView>&, 
+    ChannelBool(Space& home,ViewArray<Gecode::Int::BoolView>&, 
                 View);
 
     /// Advisor storing a single index
@@ -283,15 +283,15 @@ namespace Gecode { namespace Set { namespace Int {
     public: 
       /// Constructor for creation
       template <class A>
-      IndexAdvisor(Space* home, ChannelBool<View>* p, Council<A>& c,
+      IndexAdvisor(Space& home, ChannelBool<View>* p, Council<A>& c,
                    int index);
       /// Constructor for cloning \a a
-      IndexAdvisor(Space* home, bool share, IndexAdvisor& a);
+      IndexAdvisor(Space& home, bool share, IndexAdvisor& a);
       /// Access index
       int index(void) const;
       /// Delete advisor
       template <class A>
-      void dispose(Space* home, Council<A>& c);
+      void dispose(Space& home, Council<A>& c);
     };
 
     /// Council for managing advisors
@@ -306,24 +306,24 @@ namespace Gecode { namespace Set { namespace Int {
     bool running;
   public:
     /// Copy propagator during cloning
-    virtual Actor*   copy(Space* home,bool);
+    virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Give advice to propagator
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-    static ExecStatus post(Space* home,ViewArray<Gecode::Int::BoolView>& x,
+    static ExecStatus post(Space& home,ViewArray<Gecode::Int::BoolView>& x,
                            View y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -349,29 +349,29 @@ namespace Gecode { namespace Set { namespace Int {
     Gecode::Int::IntView y;
 
     /// Constructor for cloning \a p
-    Weights(Space* home, bool share,Weights& p);
+    Weights(Space& home, bool share,Weights& p);
     /// Constructor for posting
-    Weights(Space* home, const IntArgs&, const IntArgs&,
+    Weights(Space& home, const IntArgs&, const IntArgs&,
             View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
     GECODE_SET_EXPORT virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    GECODE_SET_EXPORT virtual size_t dispose(Space* home);
+    GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
-    static ExecStatus post(Space* home,
+    static ExecStatus post(Space& home,
                            const IntArgs& elements, const IntArgs& weights,
                            View x, Gecode::Int::IntView y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);

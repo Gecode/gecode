@@ -68,7 +68,7 @@ namespace Test { namespace Set {
         return !Iter::Ranges::equal(xr0, xr1);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::Projector p(0, Gecode::SetExpr(1), Gecode::SetExpr(1));
         Gecode::Projector q(1, Gecode::SetExpr(0), Gecode::SetExpr(0));
         Gecode::ProjectorSet ps(2);
@@ -91,7 +91,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::equal(xr0, xr1);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::SetExpr xe(0);
         Gecode::SetExpr ye(1);
         Gecode::Projector p(0, ye, ye);
@@ -102,7 +102,7 @@ namespace Test { namespace Set {
         Gecode::projector(home, x[0], x[1], ps);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,
                         BoolVar b) {
         Gecode::Projector p(0, Gecode::SetExpr(1), Gecode::SetExpr(1));
         Gecode::Projector q(1, Gecode::SetExpr(0), Gecode::SetExpr(0));
@@ -126,7 +126,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::subset(xr0, xr1);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::Projector p(0, Gecode::SetExpr(), Gecode::SetExpr(1));
         Gecode::Projector q(1, Gecode::SetExpr(0), -Gecode::SetExpr());
         Gecode::ProjectorSet ps(2);
@@ -134,7 +134,7 @@ namespace Test { namespace Set {
         Gecode::projector(home, x[0], x[1], ps);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,  
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,  
                         BoolVar b) {
         Gecode::Projector p(0, Gecode::SetExpr(), Gecode::SetExpr(1));
         Gecode::Projector q(1, Gecode::SetExpr(0), -Gecode::SetExpr());
@@ -158,7 +158,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::disjoint(xr0, xr1);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::Projector p(0, Gecode::SetExpr(), -Gecode::SetExpr(1));
         Gecode::Projector q(1, Gecode::SetExpr(), -Gecode::SetExpr(0));
         Gecode::ProjectorSet ps(2);
@@ -166,7 +166,7 @@ namespace Test { namespace Set {
         Gecode::projector(home, x[0], x[1], ps);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,
                         BoolVar b) {
         Gecode::Projector p(0, Gecode::SetExpr(), -Gecode::SetExpr(1));
         Gecode::Projector q(1, Gecode::SetExpr(), -Gecode::SetExpr(0));
@@ -191,7 +191,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::equal(xr0, xr1c);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::Projector p(0, -Gecode::SetExpr(1), -Gecode::SetExpr(1));
         Gecode::Projector q(1, -Gecode::SetExpr(0), -Gecode::SetExpr(0));
         Gecode::ProjectorSet ps(2);
@@ -199,7 +199,7 @@ namespace Test { namespace Set {
         Gecode::projector(home, x[0], x[1], ps);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,
                         BoolVar b) {
         Gecode::Projector p(0, -Gecode::SetExpr(1), -Gecode::SetExpr(1));
         Gecode::Projector q(1, -Gecode::SetExpr(0), -Gecode::SetExpr(0));
@@ -226,7 +226,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::equal(xr2, u);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::Projector p0(0,
                              Gecode::SetExpr(2) - Gecode::SetExpr(1),
                              Gecode::SetExpr(2)
@@ -278,7 +278,7 @@ namespace Test { namespace Set {
         Gecode::post(home, x0c == x2c - x1mx0c);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,
                         BoolVar b) {
         Gecode::Projector p0(0,
                              Gecode::SetExpr(2) - Gecode::SetExpr(1),
@@ -315,7 +315,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::equal(xr2, u);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Formula f = (Formula(0) | Formula(1)) == Formula(2);
         Gecode::ProjectorSet ps = f.projectors();
         Gecode::projector(home, x[0], x[1], x[2], ps);
@@ -339,7 +339,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::equal(xr2, u);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::Projector p0(0,
                              Gecode::SetExpr(2),
                              Gecode::SetExpr(2) || -Gecode::SetExpr(1)
@@ -410,7 +410,7 @@ namespace Test { namespace Set {
         return !Iter::Ranges::equal(xr2, u);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::Projector p0(0,
                              Gecode::SetExpr(2) - Gecode::SetExpr(1),
                              Gecode::SetExpr(2)

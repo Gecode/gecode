@@ -69,23 +69,23 @@ namespace Gecode { namespace Set { namespace Element {
     RView x1;
 
     /// Constructor for cloning \a p
-    ElementIntersection(Space* home, bool share,ElementIntersection& p);
+    ElementIntersection(Space& home, bool share,ElementIntersection& p);
     /// Constructor for posting
-    ElementIntersection(Space* home,SView,IdxViewArray<SView>&,RView,
+    ElementIntersection(Space& home,SView,IdxViewArray<SView>&,RView,
                        const IntSet& universe);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     virtual PropCost    cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -94,7 +94,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be the given universe
      * \a u (as an empty intersection is the universe).
      */
-    static  ExecStatus  post(Space* home,SView z,IdxViewArray<SView>& x,
+    static  ExecStatus  post(Space& home,SView z,IdxViewArray<SView>& x,
                              RView y, const IntSet& u);
   };
 
@@ -113,22 +113,22 @@ namespace Gecode { namespace Set { namespace Element {
     RView x1;
 
     /// Constructor for cloning \a p
-    ElementUnion(Space* home, bool share,ElementUnion& p);
+    ElementUnion(Space& home, bool share,ElementUnion& p);
     /// Constructor for posting
-    ElementUnion(Space* home,SView,IdxViewArray<SView>&,RView);
+    ElementUnion(Space& home,SView,IdxViewArray<SView>&,RView);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     virtual PropCost    cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -137,7 +137,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus  post(Space* home,SView z,IdxViewArray<SView>& x,
+    static  ExecStatus  post(Space& home,SView z,IdxViewArray<SView>& x,
                              RView y);
   };
 
@@ -156,22 +156,22 @@ namespace Gecode { namespace Set { namespace Element {
     RView x1;
 
     /// Constructor for cloning \a p
-    ElementUnionConst(Space* home, bool share,ElementUnionConst& p);
+    ElementUnionConst(Space& home, bool share,ElementUnionConst& p);
     /// Constructor for posting
-    ElementUnionConst(Space* home,SView,SharedArray<IntSet>&,RView);
+    ElementUnionConst(Space& home,SView,SharedArray<IntSet>&,RView);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     virtual PropCost    cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -180,7 +180,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus  post(Space* home,SView z,SharedArray<IntSet>& x,
+    static  ExecStatus  post(Space& home,SView z,SharedArray<IntSet>& x,
                              RView y);
   };
 
@@ -197,27 +197,27 @@ namespace Gecode { namespace Set { namespace Element {
     SetView x1;
 
     /// Constructor for cloning \a p
-    ElementDisjoint(Space* home, bool share,ElementDisjoint& p);
+    ElementDisjoint(Space& home, bool share,ElementDisjoint& p);
     /// Constructor for posting
-    ElementDisjoint(Space* home,IdxViewArray<SetView>&,SetView);
+    ElementDisjoint(Space& home,IdxViewArray<SetView>&,SetView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     GECODE_SET_EXPORT virtual PropCost    cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    GECODE_SET_EXPORT virtual size_t dispose(Space* home);
+    GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
-    static  ExecStatus  post(Space* home,IdxViewArray<SetView>& x,SetView y);
+    static  ExecStatus  post(Space& home,IdxViewArray<SetView>& x,SetView y);
   };
 
 }}}

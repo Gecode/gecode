@@ -75,7 +75,7 @@ namespace Test { namespace CpltSet {
         return a < b;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::rel(home, x[0], SRT_LE, x[1]);
       }
@@ -98,7 +98,7 @@ namespace Test { namespace CpltSet {
         return a <= b;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::rel(home, x[0], SRT_LQ, x[1]);
       }
@@ -120,7 +120,7 @@ namespace Test { namespace CpltSet {
         return a < b;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::dom(home, x[0], SRT_DISJ, ds_13);
         Gecode::dom(home, x[1], SRT_SUB, ds_13);
@@ -144,7 +144,7 @@ namespace Test { namespace CpltSet {
         return !inter();
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::rel(home, x[0], SRT_DISJ, x[1]);
       }

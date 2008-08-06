@@ -57,10 +57,10 @@ namespace Gecode {
     /// Constructs \a d0 as the bdd representing the Range constraint for the given variables
     template <class View0, class View1>
     forceinline void
-    buildRange(Space* home, ViewArray<View0>& seq, View1 selview,
+    buildRange(Space& home, ViewArray<View0>& seq, View1 selview,
                View1 unionview, bdd& d0) {
 
-      if (home->failed()) return;
+      if (home.failed()) return;
       int n = seq.size();
 
       unsigned int xrange = seq[0].tableWidth();
@@ -130,20 +130,20 @@ namespace Gecode {
 
     template <class View0, class View1>
     forceinline void 
-    range_post(Space* home, ViewArray<View0>& seq, View1 selview,
+    range_post(Space& home, ViewArray<View0>& seq, View1 selview,
                View1 unionview) {
-      if (home->failed())  return;
+      if (home.failed())  return;
 
       bdd d0 = bdd_true();
       buildRange(home, seq, selview, unionview, d0);
-      if (home->failed())  return;
+      if (home.failed())  return;
       GECODE_ES_FAIL(home,
         (NaryTwoCpltSetPropagator<View0, View1>::post(home, seq, selview, 
                                                       unionview, d0)));
     }
 
     forceinline void 
-    range_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
+    range_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& s,
               const CpltSetVar& t) {
       int n = x.size();
       CpltSetView selview(s);
@@ -159,9 +159,9 @@ namespace Gecode {
     /// Constructs \a d0 as the bdd representing the Roots constraint for the given variables
     template <class View0, class View1>
     forceinline void
-    buildRoots(Space* home, ViewArray<View0>& seq, View1 selview,
+    buildRoots(Space& home, ViewArray<View0>& seq, View1 selview,
                View1 unionview, bdd& d0) {
-      if (home->failed()) return;
+      if (home.failed()) return;
       int n = seq.size();
 
       unsigned int xrange = seq[0].tableWidth();
@@ -238,20 +238,20 @@ namespace Gecode {
 
     template <class View0, class View1>
     forceinline void 
-    roots_post(Space* home, ViewArray<View0>& seq, View1 selview,
+    roots_post(Space& home, ViewArray<View0>& seq, View1 selview,
                View1 unionview) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       bdd d0 = bdd_true();
       buildRoots(home, seq, selview, unionview, d0);
-      if (home->failed()) return;
+      if (home.failed()) return;
       GECODE_ES_FAIL(home,
         (NaryTwoCpltSetPropagator<View0, View1>::post(home, seq, selview,   
                                                       unionview, d0)));
     }
 
     forceinline void 
-    roots_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
+    roots_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& s,
               const CpltSetVar& t, const CpltSetVarArgs& allvars) {
       int n = x.size();
 
@@ -274,10 +274,10 @@ namespace Gecode {
 
     template <class View0, class View1>
     forceinline void 
-    nvalue_post(Space* home, ViewArray<View0>& seq, View1 selview,
+    nvalue_post(Space& home, ViewArray<View0>& seq, View1 selview,
                 View1 unionview, int usedvalues) {
       std::cout << "nvalue_post\n";
-      if (home->failed())  return;
+      if (home.failed())  return;
       /// TODO: WE HAVE TO ORDER ALL BDD VARS AVAILABLE SO FAR
       variableorder(home, seq);
 
@@ -291,7 +291,7 @@ namespace Gecode {
         unionview.cardinality(home, usedvalues, usedvalues));
       // build the bdd for the range constraint
       buildRange(home, seq, selview, unionview, d0);
-      if (home->failed())  return;
+      if (home.failed())  return;
       GECODE_ES_FAIL(home,
         (NaryTwoCpltSetPropagator<View0, View1>::post(home, seq, selview, 
                                                       unionview, d0)));
@@ -299,7 +299,7 @@ namespace Gecode {
 
 
     forceinline void 
-    nvalue_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
+    nvalue_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& s,
                const CpltSetVar& t, 
                int usedvalues, const CpltSetVarArgs& allvars) {
       int n = x.size();
@@ -322,11 +322,11 @@ namespace Gecode {
 
     template <class View0, class View1>
     forceinline void 
-    uses_post(Space* home, ViewArray<View0>& seq, View1 selview,
+    uses_post(Space& home, ViewArray<View0>& seq, View1 selview,
               View1 unionview, 
               ViewArray<View0>& seqprime, View1 selviewprime,
               View1 unionviewprime) {
-      if (home->failed())  return;
+      if (home.failed())  return;
 
       bdd d0 = bdd_true();
       int n = seq.size();
@@ -336,7 +336,7 @@ namespace Gecode {
 
       // build the bdd for the range constraint
       buildRange(home, seq, selview, unionview, d0);
-      if (home->failed())  return;
+      if (home.failed())  return;
 
       int m = seqprime.size();
       Iter::Ranges::Singleton idx2(0, m - 1);
@@ -347,7 +347,7 @@ namespace Gecode {
 
       bdd e0 = bdd_true();
       buildRange(home, seqprime, selviewprime, unionviewprime, e0);
-      if (home->failed())  return;
+      if (home.failed())  return;
 
       // unionviewprime is a subset of unionview
       bdd r0 = bdd_true();
@@ -371,7 +371,7 @@ namespace Gecode {
 
 
     forceinline void 
-    uses_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s,
+    uses_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& s,
              const CpltSetVar& t, 
              const CpltSetVarArgs& y, const CpltSetVar& u,
              const CpltSetVar& v) {
@@ -396,8 +396,8 @@ namespace Gecode {
     
     template <class View>
     forceinline void 
-    selectUnion_post(Space* home, ViewArray<View>& x) {
-      if (home->failed()) return;   
+    selectUnion_post(Space& home, ViewArray<View>& x) {
+      if (home.failed()) return;   
 
       bdd d0 = bdd_true();
       int n = x.size() - 2;
@@ -406,12 +406,12 @@ namespace Gecode {
         seq[i] = x[i];
       }
       buildRange(home, seq, x[n], x[n + 1], d0);
-      if (home->failed()) return;    
+      if (home.failed()) return;    
       GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
     }
 
     forceinline void 
-    selectUnion_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s, 
+    selectUnion_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& s, 
                     const CpltSetVar& t) {
       int n = x.size();
       int m = n + 2;
@@ -428,34 +428,34 @@ namespace Gecode {
   
   using namespace CpltSet::RangeRoots;
 
-  void range(Space* home, const CpltSetVarArgs& x, CpltSetVar s,
+  void range(Space& home, const CpltSetVarArgs& x, CpltSetVar s,
              CpltSetVar t) {
     range_con(home, x, s, t);
   }
 
-  void roots(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
+  void roots(Space& home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
              const CpltSetVarArgs& allvars) {
     roots_con(home, x, s, t, allvars);
   }
 
   // constraints using the range constraint
-  void alldifferent(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
+  void alldifferent(Space& home, const CpltSetVarArgs& x, CpltSetVar s, 
                     CpltSetVar t, const CpltSetVarArgs& allvars) {
     nvalue_con(home, x, s, t, x.size(), allvars);
   }
 
-  void nvalue(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
+  void nvalue(Space& home, const CpltSetVarArgs& x, CpltSetVar s, 
               CpltSetVar t, unsigned int n, const CpltSetVarArgs& allvars) {
     Set::Limits::check(n, "CpltSet::nvalue");
     nvalue_con(home, x, s, t, n, allvars);
   }
 
-  void uses(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
+  void uses(Space& home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
             const CpltSetVarArgs& y, CpltSetVar u, CpltSetVar v) {
     uses_con(home, x, s, t, y, u, v);
   }
 
-  void selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
+  void selectUnion(Space& home, const CpltSetVarArgs& x, CpltSetVar s, 
                    CpltSetVar t) {
     selectUnion_con(home, x, s, t);
   }

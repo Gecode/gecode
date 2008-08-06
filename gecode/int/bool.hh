@@ -61,20 +61,20 @@ namespace Gecode { namespace Int { namespace Bool {
     BVA x0; ///< Boolean view
     BVB x1; ///< Boolean view
     /// Constructor for posting
-    BoolBinary(Space* home, BVA b0, BVB b1);
+    BoolBinary(Space& home, BVA b0, BVB b1);
     /// Constructor for cloning
-    BoolBinary(Space* home, bool share, BoolBinary& p);
+    BoolBinary(Space& home, bool share, BoolBinary& p);
     /// Constructor for rewriting \a p during cloning
-    BoolBinary(Space* home, bool share, Propagator& p,
+    BoolBinary(Space& home, bool share, Propagator& p,
                BVA b0, BVB b1);
     /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m, 
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m, 
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /// Base-class for ternary Boolean propagators
@@ -85,20 +85,20 @@ namespace Gecode { namespace Int { namespace Bool {
     BVB x1; ///< Boolean view
     BVC x2; ///< Boolean view
     /// Constructor for posting
-    BoolTernary(Space* home, BVA b0, BVB b1, BVC b2);
+    BoolTernary(Space& home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning
-    BoolTernary(Space* home, bool share, BoolTernary& p);
+    BoolTernary(Space& home, bool share, BoolTernary& p);
     /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Constructor for rewriting \a p during cloning
-    BoolTernary(Space* home, bool share, Propagator& p,
+    BoolTernary(Space& home, bool share, Propagator& p,
                 BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -113,24 +113,24 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
     /// Constructor for posting
-    Eq(Space* home, BVA b0, BVB b1);
+    Eq(Space& home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
-    Eq(Space* home, bool share, Eq& p);
+    Eq(Space& home, bool share, Eq& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    Eq(Space* home, bool share, Propagator& p,
+    Eq(Space& home, bool share, Propagator& p,
        BVA b0, BVB b1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ b_0 = b_1\f$
-    static  ExecStatus post(Space* home, BVA b0, BVB b1);
+    static  ExecStatus post(Space& home, BVA b0, BVB b1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -148,23 +148,23 @@ namespace Gecode { namespace Int { namespace Bool {
   protected:
     using NaryPropagator<BV,PC_BOOL_VAL>::x;
     /// Constructor for posting
-    NaryEq(Space* home, ViewArray<BV>& x);
+    NaryEq(Space& home, ViewArray<BV>& x);
     /// Constructor for cloning \a p
-    NaryEq(Space* home, bool share, NaryEq& p);
+    NaryEq(Space& home, bool share, NaryEq& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
-    static  ExecStatus post(Space* home, ViewArray<BV>& x);
+    static  ExecStatus post(Space& home, ViewArray<BV>& x);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -183,21 +183,21 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
     /// Constructor for posting
-    Lq(Space* home, BV b0, BV b1);
+    Lq(Space& home, BV b0, BV b1);
     /// Constructor for cloning \a p
-    Lq(Space* home, bool share, Lq& p);
+    Lq(Space& home, bool share, Lq& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ b_0 \leq b_1\f$
-    static  ExecStatus post(Space* home, BV b0, BV b1);
+    static  ExecStatus post(Space& home, BV b0, BV b1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace Bool {
   class Le {
   public:
     /// Post propagator \f$ b_0 < b_1\f$
-    static  ExecStatus post(Space* home, BV b0, BV b1);
+    static  ExecStatus post(Space& home, BV b0, BV b1);
   };
 
 
@@ -230,24 +230,24 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
     /// Constructor for posting
-    BinOrTrue(Space* home, BVA b0, BVB b1);
+    BinOrTrue(Space& home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
-    BinOrTrue(Space* home, bool share, BinOrTrue& p);
+    BinOrTrue(Space& home, bool share, BinOrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    BinOrTrue(Space* home, bool share, Propagator& p,
+    BinOrTrue(Space& home, bool share, Propagator& p,
               BVA b0, BVB b1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
-    static  ExecStatus post(Space* home, BVA b0, BVB b1);
+    static  ExecStatus post(Space& home, BVA b0, BVB b1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -267,26 +267,26 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Boolean view without subscription
     BV x2;
     /// Constructor for posting
-    TerOrTrue(Space* home, BV b0, BV b1, BV b2);
+    TerOrTrue(Space& home, BV b0, BV b1, BV b2);
     /// Constructor for cloning \a p
-    TerOrTrue(Space* home, bool share, TerOrTrue& p);
+    TerOrTrue(Space& home, bool share, TerOrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    TerOrTrue(Space* home, bool share, Propagator& p,
+    TerOrTrue(Space& home, bool share, Propagator& p,
               BV b0, BV b1, BV b2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 = 1 \f$
-    static  ExecStatus post(Space* home, BV b0, BV b1, BV b2);
+    static  ExecStatus post(Space& home, BV b0, BV b1, BV b2);
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -308,29 +308,29 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Boolean view without subscription
     BV x3;
     /// Constructor for posting
-    QuadOrTrue(Space* home, BV b0, BV b1, BV b2, BV b3);
+    QuadOrTrue(Space& home, BV b0, BV b1, BV b2, BV b3);
     /// Constructor for cloning \a p
-    QuadOrTrue(Space* home, bool share, QuadOrTrue& p);
+    QuadOrTrue(Space& home, bool share, QuadOrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    QuadOrTrue(Space* home, bool share, Propagator& p,
+    QuadOrTrue(Space& home, bool share, Propagator& p,
                BV b0, BV b1, BV b2, BV b3);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 \lor b_3 = 1 \f$
-    static  ExecStatus post(Space* home, BV b0, BV b1, BV b2, BV b3);
+    static  ExecStatus post(Space& home, BV b0, BV b1, BV b2, BV b3);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -346,23 +346,23 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolTernary<BVA,BVB,BVC>::x1;
     using BoolTernary<BVA,BVB,BVC>::x2;
     /// Constructor for posting
-    Or(Space* home, BVA b0, BVB b1, BVC b2);
+    Or(Space& home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning \a p
-    Or(Space* home, bool share, Or& p);
+    Or(Space& home, bool share, Or& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    Or(Space* home, bool share, Propagator& p, BVA b0, BVB b1, BVC b2);
+    Or(Space& home, bool share, Propagator& p, BVA b0, BVB b1, BVC b2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ b_0 \lor b_1 = b_2 \f$
-    static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
+    static  ExecStatus post(Space& home, BVA b0, BVB b1, BVC b2);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -380,21 +380,21 @@ namespace Gecode { namespace Int { namespace Bool {
     using NaryOnePropagator<BV,PC_BOOL_VAL>::x;
     using NaryOnePropagator<BV,PC_BOOL_VAL>::y;
     /// Constructor for posting
-    NaryOr(Space* home,  ViewArray<BV>& b, BV c);
+    NaryOr(Space& home,  ViewArray<BV>& b, BV c);
     /// Constructor for cloning \a p
-    NaryOr(Space* home, bool share, NaryOr<BV>& p);
+    NaryOr(Space& home, bool share, NaryOr<BV>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
-    static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
+    static  ExecStatus post(Space& home, ViewArray<BV>& b, BV c);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -415,25 +415,25 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Views not yet subscribed to
     ViewArray<BV> x;
     /// Update subscription
-    ExecStatus resubscribe(Space* home, BV& x0, BV x1);
+    ExecStatus resubscribe(Space& home, BV& x0, BV x1);
     /// Constructor for posting
-    NaryOrTrue(Space* home,  ViewArray<BV>& b);
+    NaryOrTrue(Space& home,  ViewArray<BV>& b);
     /// Constructor for cloning \a p
-    NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p);
+    NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
-    static  ExecStatus post(Space* home, ViewArray<BV>& b);
+    static  ExecStatus post(Space& home, ViewArray<BV>& b);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -453,21 +453,21 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolTernary<BVA,BVB,BVC>::x1;
     using BoolTernary<BVA,BVB,BVC>::x2;
     /// Constructor for cloning \a p
-    Eqv(Space* home, bool share, Eqv& p);
+    Eqv(Space& home, bool share, Eqv& p);
     /// Constructor for posting
-    Eqv(Space* home, BVA b0 ,BVB b1, BVC b2);
+    Eqv(Space& home, BVA b0 ,BVB b1, BVC b2);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
-    static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
+    static  ExecStatus post(Space& home, BVA b0, BVB b1, BVC b2);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);

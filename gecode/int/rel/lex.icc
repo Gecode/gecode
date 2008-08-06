@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   inline
-  Lex<View>::Lex(Space* home,                             
+  Lex<View>::Lex(Space& home,                             
                  ViewArray<View>& x0, ViewArray<View>& y0, bool s)
     : Propagator(home), x(x0), y(y0), strict(s) {
     x.subscribe(home, this, PC_INT_BND);
@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   forceinline
-  Lex<View>::Lex(Space* home, bool share, Lex<View>& p)
+  Lex<View>::Lex(Space& home, bool share, Lex<View>& p)
     : Propagator(home,share,p), strict(p.strict) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   Actor*
-  Lex<View>::copy(Space* home, bool share) {
+  Lex<View>::copy(Space& home, bool share) {
     return new (home) Lex<View>(home,share,*this);
   }
 
@@ -68,14 +68,14 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   Reflection::ActorSpec
-  Lex<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Lex<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home,m) << y.spec(home,m) << strict;
   }
 
   template <class View>
   void
-  Lex<View>::post(Space* home, Reflection::VarMap& vars,
+  Lex<View>::post(Space& home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<View> x(home, vars, spec[0]);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  Lex<View>::propagate(Space* home, ModEventDelta) {
+  Lex<View>::propagate(Space& home, ModEventDelta) {
     /*
      * State 1
      *
@@ -246,7 +246,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  Lex<View>::post(Space* home, 
+  Lex<View>::post(Space& home, 
                   ViewArray<View>& x, ViewArray<View>& y, bool strict){
     if (x.size() == 0)
       return strict ? ES_FAILED : ES_OK;
@@ -262,8 +262,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   size_t
-  Lex<View>::dispose(Space* home) {
-    assert(!home->failed());
+  Lex<View>::dispose(Space& home) {
+    assert(!home.failed());
     x.cancel(home,this,PC_INT_BND);
     y.cancel(home,this,PC_INT_BND);
     (void) Propagator::dispose(home);

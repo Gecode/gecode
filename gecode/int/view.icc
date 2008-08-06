@@ -147,7 +147,7 @@ namespace Gecode {
       /// Initialize from integer variable \a x
       IntView(IntVarImp* x);
       /// Initialize from specification
-      IntView(Space* home, const Reflection::VarMap& vars,
+      IntView(Space& home, const Reflection::VarMap& vars,
               Reflection::Arg* arg);
       //@}
 
@@ -188,33 +188,33 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n);
+      ModEvent lq(Space& home, int n);
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n);
+      ModEvent lq(Space& home, double n);
 
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n);
+      ModEvent le(Space& home, int n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n);
+      ModEvent le(Space& home, double n);
 
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n);
+      ModEvent gq(Space& home, int n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n);
+      ModEvent gq(Space& home, double n);
 
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n);
+      ModEvent gr(Space& home, int n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n);
+      ModEvent gr(Space& home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n);
+      ModEvent nq(Space& home, int n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n);
+      ModEvent nq(Space& home, double n);
 
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n);
+      ModEvent eq(Space& home, int n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n);
+      ModEvent eq(Space& home, double n);
       //@}
 
       /**
@@ -234,22 +234,22 @@ namespace Gecode {
       //@{
       /// Replace domain by ranges described by \a i
       template <class I> 
-      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
       template <class I> 
-      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
       template <class I> 
-      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
       template <class I> 
-      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
       template <class I> 
-      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
       template <class I> 
-      ModEvent minus_v(Space* home, I& i, bool depends=true);
+      ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
       /// \name Delta information for advisors
@@ -273,13 +273,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, IntView& x);
+      void update(Space& home, bool share, IntView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -344,7 +344,7 @@ namespace Gecode {
       /// Initialize with integer view \a x
       MinusView(const IntView& x);
       /// Initialize from specification
-      MinusView(Space* home, const Reflection::VarMap& vars,
+      MinusView(Space& home, const Reflection::VarMap& vars,
                 Reflection::Arg* arg);
       /// Initialize with integer view \a x
       void init(const IntView& x);
@@ -387,29 +387,29 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n);
+      ModEvent lq(Space& home, int n);
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n);
+      ModEvent lq(Space& home, double n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n);
+      ModEvent le(Space& home, int n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n);
+      ModEvent le(Space& home, double n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n);
+      ModEvent gq(Space& home, int n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n);
+      ModEvent gq(Space& home, double n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n);
+      ModEvent gr(Space& home, int n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n);
+      ModEvent gr(Space& home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n);
+      ModEvent nq(Space& home, int n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n);
+      ModEvent nq(Space& home, double n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n);
+      ModEvent eq(Space& home, int n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n);
+      ModEvent eq(Space& home, double n);
       //@}
 
       /**
@@ -429,28 +429,28 @@ namespace Gecode {
       //@{
       /// Replace domain by ranges described by \a i
       template <class I> 
-      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
       template <class I> 
-      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
       template <class I> 
-      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
       template <class I> 
-      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
       template <class I> 
-      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
       template <class I> 
-      ModEvent minus_v(Space* home, I& i, bool depends=true);
+      ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -466,13 +466,13 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -490,13 +490,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, MinusView& x);
+      void update(Space& home, bool share, MinusView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -550,7 +550,7 @@ namespace Gecode {
       /// Initialize with integer view \a x and offset \a c
       OffsetView(const IntView& x, int c);
       /// Initialize from specification
-      OffsetView(Space* home, const Reflection::VarMap& vars,
+      OffsetView(Space& home, const Reflection::VarMap& vars,
                  Reflection::Arg* arg);
       /// Initialize with integer view \a x and offset \a c
       void init(const IntView& x, int c);
@@ -595,29 +595,29 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n);
+      ModEvent lq(Space& home, int n);
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n);
+      ModEvent lq(Space& home, double n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n);
+      ModEvent le(Space& home, int n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n);
+      ModEvent le(Space& home, double n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n);
+      ModEvent gq(Space& home, int n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n);
+      ModEvent gq(Space& home, double n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n);
+      ModEvent gr(Space& home, int n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n);
+      ModEvent gr(Space& home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n);
+      ModEvent nq(Space& home, int n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n);
+      ModEvent nq(Space& home, double n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n);
+      ModEvent eq(Space& home, int n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n);
+      ModEvent eq(Space& home, double n);
       //@}
 
       /**
@@ -637,28 +637,28 @@ namespace Gecode {
       //@{
       /// Replace domain by ranges described by \a i
       template <class I> 
-      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
       template <class I> 
-      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
       template <class I> 
-      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
       template <class I> 
-      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
       template <class I> 
-      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
       template <class I> 
-      ModEvent minus_v(Space* home, I& i, bool depends=true);
+      ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -674,13 +674,13 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -698,13 +698,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, OffsetView& x);
+      void update(Space& home, bool share, OffsetView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -796,7 +796,7 @@ namespace Gecode {
       /// Initialize as \f$b\cdot y\f$
       ScaleView(int b, const IntView& y);
       /// Initialize from specification
-      ScaleView(Space* home, const Reflection::VarMap& vars,
+      ScaleView(Space& home, const Reflection::VarMap& vars,
                 Reflection::Arg* arg);
       /// Initialize as \f$b\cdot y\f$
       void init(int b, const IntView& y);
@@ -839,23 +839,23 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, Val n);
+      ModEvent lq(Space& home, Val n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, Val n);
+      ModEvent le(Space& home, Val n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, Val n);
+      ModEvent gq(Space& home, Val n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, Val n);
+      ModEvent gr(Space& home, Val n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, Val n);
+      ModEvent nq(Space& home, Val n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, Val n);
+      ModEvent eq(Space& home, Val n);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -871,13 +871,13 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -895,13 +895,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, ScaleView<Val,UnsVal>& x);
+      void update(Space& home, bool share, ScaleView<Val,UnsVal>& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -972,7 +972,7 @@ namespace Gecode {
       /// Initialize with integer value \a n
       void init(int n);
       /// Initialize from specification
-      ConstIntView(Space* home, const Reflection::VarMap& vars,
+      ConstIntView(Space& home, const Reflection::VarMap& vars,
                    Reflection::Arg* arg);
       //@}
 
@@ -1013,29 +1013,29 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n);
+      ModEvent lq(Space& home, int n);
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n);
+      ModEvent lq(Space& home, double n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n);
+      ModEvent le(Space& home, int n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n);
+      ModEvent le(Space& home, double n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n);
+      ModEvent gq(Space& home, int n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n);
+      ModEvent gq(Space& home, double n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n);
+      ModEvent gr(Space& home, int n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n);
+      ModEvent gr(Space& home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n);
+      ModEvent nq(Space& home, int n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n);
+      ModEvent nq(Space& home, double n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n);
+      ModEvent eq(Space& home, int n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n);
+      ModEvent eq(Space& home, double n);
       //@}
 
       /**
@@ -1055,28 +1055,28 @@ namespace Gecode {
       //@{
       /// Replace domain by ranges described by \a i
       template <class I> 
-      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
       template <class I> 
-      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
       template <class I> 
-      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
       template <class I> 
-      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
       template <class I> 
-      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
       template <class I> 
-      ModEvent minus_v(Space* home, I& i, bool depends=true);
+      ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1092,13 +1092,13 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -1116,13 +1116,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, ConstIntView& x);
+      void update(Space& home, bool share, ConstIntView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -1171,7 +1171,7 @@ namespace Gecode {
       /// Initialize
       void init(void);
       /// Initialize from specification
-      ZeroIntView(Space* home, const Reflection::VarMap& vars,
+      ZeroIntView(Space& home, const Reflection::VarMap& vars,
                   Reflection::Arg* arg);
       //@}
 
@@ -1212,29 +1212,29 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n);
+      ModEvent lq(Space& home, int n);
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n);
+      ModEvent lq(Space& home, double n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n);
+      ModEvent le(Space& home, int n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n);
+      ModEvent le(Space& home, double n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n);
+      ModEvent gq(Space& home, int n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n);
+      ModEvent gq(Space& home, double n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n);
+      ModEvent gr(Space& home, int n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n);
+      ModEvent gr(Space& home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n);
+      ModEvent nq(Space& home, int n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n);
+      ModEvent nq(Space& home, double n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n);
+      ModEvent eq(Space& home, int n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n);
+      ModEvent eq(Space& home, double n);
       //@}
 
       /**
@@ -1254,28 +1254,28 @@ namespace Gecode {
       //@{
       /// Replace domain by ranges described by \a i
       template <class I> 
-      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
       template <class I> 
-      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
       template <class I> 
-      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
       template <class I> 
-      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
       template <class I> 
-      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
       template <class I> 
-      ModEvent minus_v(Space* home, I& i, bool depends=true);
+      ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1291,13 +1291,13 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -1315,13 +1315,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, ZeroIntView& x);
+      void update(Space& home, bool share, ZeroIntView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -1373,7 +1373,7 @@ namespace Gecode {
       /// Initialize from Boolean variable \a x
       BoolView(BoolVarImp* x);
       /// Initialize from specification
-      BoolView(Space* home, const Reflection::VarMap& vars,
+      BoolView(Space& home, const Reflection::VarMap& vars,
                Reflection::Arg* arg);
       //@}
 
@@ -1438,46 +1438,46 @@ namespace Gecode {
       /// \name Boolean assignment operations
       //@{
       /// Try to assign view to one
-      ModEvent one(Space* home);
+      ModEvent one(Space& home);
       /// Try to assign view to zero
-      ModEvent zero(Space* home);
+      ModEvent zero(Space& home);
       /// Assign not yet assigned view to one
-      ModEvent one_none(Space* home);
+      ModEvent one_none(Space& home);
       /// Assign not yet assigned view to zero
-      ModEvent zero_none(Space* home);
+      ModEvent zero_none(Space& home);
       //@}
 
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n);
+      ModEvent lq(Space& home, int n);
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n);
+      ModEvent lq(Space& home, double n);
 
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n);
+      ModEvent le(Space& home, int n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n);
+      ModEvent le(Space& home, double n);
 
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n);
+      ModEvent gq(Space& home, int n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n);
+      ModEvent gq(Space& home, double n);
 
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n);
+      ModEvent gr(Space& home, int n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n);
+      ModEvent gr(Space& home, double n);
 
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n);
+      ModEvent nq(Space& home, int n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n);
+      ModEvent nq(Space& home, double n);
 
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n);
+      ModEvent eq(Space& home, int n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n);
+      ModEvent eq(Space& home, double n);
       //@}
 
       /**
@@ -1497,22 +1497,22 @@ namespace Gecode {
       //@{
       /// Replace domain by ranges described by \a i
       template <class I> 
-      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
       template <class I> 
-      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
       template <class I> 
-      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
       template <class I> 
-      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
       template <class I> 
-      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
       template <class I> 
-      ModEvent minus_v(Space* home, I& i, bool depends=true);
+      ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
       /// \name Delta information for advisors
@@ -1536,13 +1536,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, BoolView& x);
+      void update(Space& home, bool share, BoolView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };
@@ -1609,7 +1609,7 @@ namespace Gecode {
       /// Initialize with Boolean view \a b
       void init(const BoolView& b);
       /// Initialize from specification
-      NegBoolView(Space* home, const Reflection::VarMap& vars,
+      NegBoolView(Space& home, const Reflection::VarMap& vars,
                   Reflection::Arg* arg);
       //@}
 
@@ -1640,13 +1640,13 @@ namespace Gecode {
       /// \name Boolean assignment operations
       //@{
       /// Try to assign view to one
-      ModEvent one(Space* home);
+      ModEvent one(Space& home);
       /// Try to assign view to zero
-      ModEvent zero(Space* home);
+      ModEvent zero(Space& home);
       /// Assign not yet assigned view to one
-      ModEvent one_none(Space* home);
+      ModEvent one_none(Space& home);
       /// Assign not yet assigned view to zero
-      ModEvent zero_none(Space* home);
+      ModEvent zero_none(Space& home);
       //@}
 
       /// \name Value access
@@ -1668,7 +1668,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1684,13 +1684,13 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -1708,13 +1708,13 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, NegBoolView& x);
+      void update(Space& home, bool share, NegBoolView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
     };

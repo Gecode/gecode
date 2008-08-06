@@ -72,7 +72,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          if (!useCount) {
            Gecode::distinct(home, x, icl);
          } else {
@@ -104,7 +104,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntArgs c(x.size());
          for (int i=0; i<x.size(); i++)
            c[i]=i;
@@ -133,7 +133,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::distinct(home, x, icl);
        }
      };
@@ -170,8 +170,8 @@ namespace Test { namespace Int {
            TestSpace* s = new TestSpace;
            IntVarArgs x(n);
            for (int i=0; i<n; i++)
-             x[i].init(s,0,i);
-           distinct(s,x,icl);
+             x[i].init(*s,0,i);
+           distinct(*s,x,icl);
            if (s->status() == SS_FAILED) {
              delete s; return false;
            }
@@ -187,11 +187,11 @@ namespace Test { namespace Int {
            for (int i=0; i<n; i++) {
              int v[] = {0,i};
              IntSet d(v,2);
-             x[i].init(s,d);
+             x[i].init(*s,d);
            }
            for (int i=n; i<2*n; i++)
-             x[i].init(s,n-1,i);
-           distinct(s,x,icl);
+             x[i].init(*s,n-1,i);
+           distinct(*s,x,icl);
            if (s->status() == SS_FAILED) {
              delete s; return false;
            }

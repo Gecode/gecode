@@ -69,7 +69,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::convex(home, x[0]);
       }
     };
@@ -103,7 +103,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::convexHull(home, x[1], x[0]);
       }
     };
@@ -126,7 +126,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::convexHull(home, x[0], x[0]);
       }
     };

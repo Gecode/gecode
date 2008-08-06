@@ -69,24 +69,24 @@ namespace Gecode { namespace Int { namespace Distinct {
     using NaryPropagator<View,PC_INT_VAL>::x;
 
     /// Constructor for posting
-    Val(Space* home, ViewArray<View>& x);
+    Val(Space& home, ViewArray<View>& x);
     /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val<View>& p);
+    Val(Space& home, bool share, Val<View>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space* home, bool share);
+    virtual Actor*     copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for view array \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x);
+    static ExecStatus post(Space& home, ViewArray<View>& x);
   };
 
   /**
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * which can be handled more efficiently with bounds propagation.
    */
   template <class View, bool complete>
-  ExecStatus prop_val(Space* home, ViewArray<View>&);
+  ExecStatus prop_val(Space& home, ViewArray<View>&);
 
 
 
@@ -140,17 +140,17 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Views on which to perform value-propagation (subset of \c x)
     ViewArray<View> y;
     /// Constructor for posting
-    Bnd(Space* home, ViewArray<View>& x);
+    Bnd(Space& home, ViewArray<View>& x);
     /// Constructor for cloning \a p
-    Bnd(Space* home, bool share, Bnd<View>& p);
+    Bnd(Space& home, bool share, Bnd<View>& p);
   public:
     /// Post propagator for view array \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x);
+    static ExecStatus post(Space& home, ViewArray<View>& x);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /**
      * \brief Cost function
      *
@@ -159,11 +159,11 @@ namespace Gecode { namespace Int { namespace Distinct {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Destructor
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * propagators.
    */
   template <class View>
-  ExecStatus prop_bnd(Space* home, ViewArray<View>& x, int m);
+  ExecStatus prop_bnd(Space& home, ViewArray<View>& x, int m);
 
   template <class View> class ViewNode;
   template <class View> class ValNode;
@@ -215,15 +215,15 @@ namespace Gecode { namespace Int { namespace Distinct {
       /// Test whether graph has been initialized
       bool initialized(void) const;
       /// Initialize graph
-      ExecStatus init(Space* home, int n, View* x);
+      ExecStatus init(Space& home, int n, View* x);
       /// Mark edges in graph
-      void mark(Space* home);
+      void mark(Space& home);
       /// Prune unmarked edges, \a assigned is true if a view got assigned
-      ExecStatus tell(Space* home, bool& assigned);
+      ExecStatus tell(Space& home, bool& assigned);
       /// Purge graph if necessary
       void purge(void);
       /// Synchronize graph with new view domains
-      bool sync(Space* home);
+      bool sync(Space& home);
     public:
       /// Stack used during matching
       typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
@@ -238,11 +238,11 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Check whether a view-value graph is available
     bool available(void);
     /// Initialize view-value graph for views \a x
-    ExecStatus init(Space* home, int n, View* x);
+    ExecStatus init(Space& home, int n, View* x);
     /// Synchronize available view-value graph
-    ExecStatus sync(Space* home);
+    ExecStatus sync(Space& home);
     /// Perform propagation, \a assigned is true if a view gets assigned
-    ExecStatus propagate(Space* home, bool& assigned);
+    ExecStatus propagate(Space& home, bool& assigned);
   };
 
   /**
@@ -267,12 +267,12 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Propagation controller
     DomCtrl<View> dc;
     /// Constructor for cloning \a p
-    Dom(Space* home, bool share, Dom<View>& p);
+    Dom(Space& home, bool share, Dom<View>& p);
     /// Constructor for posting
-    Dom(Space* home, ViewArray<View>& x);
+    Dom(Space& home, ViewArray<View>& x);
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /**
      * \brief Cost function
      *
@@ -281,16 +281,16 @@ namespace Gecode { namespace Int { namespace Distinct {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for views \a x
-    static  ExecStatus post(Space* home, ViewArray<View>& x);
+    static  ExecStatus post(Space& home, ViewArray<View>& x);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
   };
 
@@ -308,23 +308,23 @@ namespace Gecode { namespace Int { namespace Distinct {
     using TernaryPropagator<View,PC_INT_DOM>::x2;
 
     /// Constructor for cloning \a p
-    TerDom(Space* home, bool share, TerDom<View>& p);
+    TerDom(Space& home, bool share, TerDom<View>& p);
     /// Constructor for posting
-    TerDom(Space* home, View x0, View x1, View x2);
+    TerDom(Space& home, View x0, View x1, View x2);
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for views \a x
-    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    static  ExecStatus post(Space& home, View x0, View x1, View x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
   };
 

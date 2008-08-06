@@ -74,10 +74,10 @@ public:
   }
   /// Constructor
   Knights(const SizeOptions& opt)
-    : n(opt.size()), succ(this,n*n,0,n*n-1) {}
+    : n(opt.size()), succ(*this,n*n,0,n*n-1) {}
   /// Constructor for cloning \a s
   Knights(bool share, Knights& s) : Example(share,s), n(s.n) {
-    succ.update(this, share, s.succ);
+    succ.update(*this, share, s.succ);
   }
   /// Print board
   virtual void
@@ -122,34 +122,34 @@ public:
     IntVarArgs pred(nn);
 
     for (int i = nn; i--; ) {
-      IntVar p(this,0,nn-1); pred[i]=p;
-      IntVar j(this,0,nn-1); jump[i]=j;
+      IntVar p(*this,0,nn-1); pred[i]=p;
+      IntVar j(*this,0,nn-1); jump[i]=j;
     }
 
     // Place the first two knights
-    rel(this, jump[field(0,0)], IRT_EQ, 0);
-    rel(this, jump[field(1,2)], IRT_EQ, 1);
+    rel(*this, jump[field(0,0)], IRT_EQ, 0);
+    rel(*this, jump[field(1,2)], IRT_EQ, 1);
 
-    distinct(this, jump, opt.icl());
-    channel(this, succ, pred, opt.icl());
+    distinct(*this, jump, opt.icl());
+    channel(*this, succ, pred, opt.icl());
 
     for (int f = 0; f < nn; f++) {
       // Array of neighbours
       int nbs[8]; int n_nbs = 0;
       neighbours(f, nbs, n_nbs);
       for (int i=n_nbs; i--; )
-        rel(this,
-            post(this, ~(jump[nbs[i]]-jump[f] == 1)),
+        rel(*this,
+            post(*this, ~(jump[nbs[i]]-jump[f] == 1)),
             BOT_XOR,
-            post(this, ~(jump[nbs[i]]-jump[f] == 1-nn)),
-            post(this, ~(succ[f] == nbs[i])));
+            post(*this, ~(jump[nbs[i]]-jump[f] == 1-nn)),
+            post(*this, ~(succ[f] == nbs[i])));
 
       IntSet ds(nbs, n_nbs);
-      dom(this, pred[f], ds);
-      dom(this, succ[f], ds);
-      rel(this, succ[f], IRT_NQ, pred[f]);
+      dom(*this, pred[f], ds);
+      dom(*this, succ[f], ds);
+      rel(*this, succ[f], IRT_NQ, pred[f]);
     }
-    branch(this, succ, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, succ, INT_VAR_NONE, INT_VAL_MIN);
   }
   /// Constructor for cloning \a s
   KnightsReified(bool share, KnightsReified& s) : Knights(share,s) {}
@@ -174,18 +174,18 @@ class KnightsCircuit : public Knights {
 public:
   KnightsCircuit(const SizeOptions& opt) : Knights(opt) {
     // Fix the first move
-    rel(this, succ[0], IRT_EQ, field(1,2));
+    rel(*this, succ[0], IRT_EQ, field(1,2));
 
-    circuit(this, succ, opt.icl());
+    circuit(*this, succ, opt.icl());
 
     for (int f = 0; f < n*n; f++) {
       // Array of neighbours
       int nbs[8]; int n_nbs = 0;
       neighbours(f, nbs, n_nbs);
       IntSet ds(nbs, n_nbs);
-      dom(this, succ[f], ds);
+      dom(*this, succ[f], ds);
     }
-    branch(this, succ, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, succ, INT_VAR_NONE, INT_VAL_MIN);
   }
   /// Constructor for cloning \a s
   KnightsCircuit(bool share, KnightsCircuit& s) : Knights(share,s) {}

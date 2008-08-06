@@ -39,7 +39,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   forceinline
   CardProjection::CardProjection
-  (Space* home, ViewArray<SetView>& x0, Gecode::Int::IntView i0, Projector& p0)
+  (Space& home, ViewArray<SetView>& x0, Gecode::Int::IntView i0, Projector& p0)
     : Propagator(home), x(x0), i(i0), pc(x.size()), proj(p0) {
     force(home);
     Support::DynamicArray<int> scope;
@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   forceinline
   CardProjection::CardProjection
-  (Space* home, bool share, CardProjection& p)
+  (Space& home, bool share, CardProjection& p)
     : Propagator(home,share,p), proj(p.proj) {
     x.update(home,share,p.x);
     i.update(home,share,p.i);
@@ -78,14 +78,14 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   forceinline Reflection::ActorSpec
-  CardProjection::spec(const Space*, Reflection::VarMap&) const {
+  CardProjection::spec(const Space&, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   }
 
   inline size_t
-  CardProjection::dispose(Space* home) {
+  CardProjection::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       for (int i=x.size(); i--;)
         if (pc[i] != PC_SET_ANY + 1)
           x[i].cancel(home, this, pc[i]);
@@ -97,7 +97,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   inline ExecStatus
-  CardProjection::post(Space* home,
+  CardProjection::post(Space& home,
                        ViewArray<SetView>& x, Gecode::Int::IntView i,
                        Projector& p) {
     (void) new (home) CardProjection(home,x,i,p);
@@ -105,12 +105,12 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   inline Actor*
-  CardProjection::copy(Space* home, bool share) {
+  CardProjection::copy(Space& home, bool share) {
     return new (home) CardProjection(home,share,*this);
   }
 
   inline ExecStatus
-  CardProjection::propagate(Space* home, ModEventDelta) {
+  CardProjection::propagate(Space& home, ModEventDelta) {
     bool done = true;
     for (int j=x.size(); j--;)
       if (pc[j] != PC_SET_ANY + 1)

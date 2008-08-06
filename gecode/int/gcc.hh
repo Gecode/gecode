@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * in the domains of the problem views specified in \a x. Also
      * checks whether \a x and \a k contain shared views.
      */
-    static  ExecStatus  post(Space* home,
+    static  ExecStatus  post(Space& home,
                              ViewArray<View>& x,
                              ViewArray<Card>& k);
   };
@@ -153,29 +153,29 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool skip_lbc;
     /// Constructor for posting
-    BndImp(Space* home, ViewArray<View>&, ViewArray<Card>&, bool, bool);
+    BndImp(Space& home, ViewArray<View>&, ViewArray<Card>&, bool, bool);
     /// Constructor for cloning \a p
-    BndImp(Space* home, bool share, BndImp<View, Card, isView, shared>& p);
+    BndImp(Space& home, bool share, BndImp<View, Card, isView, shared>& p);
 
   public:
     /// Destructor
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return how much extra memory is allocated by the propagator
     virtual size_t allocated(void) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
   };
 
   /**
@@ -225,17 +225,17 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool card_fixed;
     /// Constructor for cloning \a p
-    Dom(Space* home, bool share, Dom<View, Card, isView>& p);
+    Dom(Space& home, bool share, Dom<View, Card, isView>& p);
     /// Constructor for posting
-    Dom(Space* home, ViewArray<View>&, ViewArray<Card>&, bool);
+    Dom(Space& home, ViewArray<View>&, ViewArray<Card>&, bool);
 
   public:
     /// Destructor including deallocation of variable-value graph
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return how much extra memory is allocated by the propagator
     virtual size_t allocated(void) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -250,12 +250,12 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * \a all denotes whether the propagator uses all values occuring
      * in the domains of the problem views specified in \a x.
      */
-    static  ExecStatus  post(Space* home,
+    static  ExecStatus  post(Space& home,
                              ViewArray<View>& x, ViewArray<Card>& k);
   };
 
@@ -283,24 +283,24 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
     /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val<View, Card, isView>& p );
+    Val(Space& home, bool share, Val<View, Card, isView>& p );
     /// Constructor for posting
-    Val(Space* home, ViewArray<View>&, ViewArray<Card>&);
+    Val(Space& home, ViewArray<View>&, ViewArray<Card>&);
 
   public:
     /// Destructor
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * \a all denotes whether the propagator uses all values occuring
      * in the domains of the problem views specified in \a x.
      */
-    static  ExecStatus  post(Space* home,
+    static  ExecStatus  post(Space& home,
                              ViewArray<View>& x, ViewArray<Card>& k);
   };
 

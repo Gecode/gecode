@@ -47,7 +47,7 @@ namespace Gecode { namespace Set {
    *
    */
   ModEvent
-  SetVarImp::cardMin_full(Space* home) {
+  SetVarImp::cardMin_full(Space& home) {
     ModEvent me = ME_SET_CARD;
     if (_cardMin == lub.size()) {
       glb.become(home, lub);
@@ -58,7 +58,7 @@ namespace Gecode { namespace Set {
   }
 
   ModEvent
-  SetVarImp::cardMax_full(Space* home) {
+  SetVarImp::cardMax_full(Space& home) {
     ModEvent me = ME_SET_CARD;
     if (_cardMax == glb.size()) {
       lub.become(home, glb);
@@ -69,7 +69,7 @@ namespace Gecode { namespace Set {
   }
 
   ModEvent
-  SetVarImp::processLubChange(Space* home, SetDelta& d) {
+  SetVarImp::processLubChange(Space& home, SetDelta& d) {
     ModEvent me = ME_SET_LUB;
     if (_cardMax > lub.size()) {
       _cardMax = lub.size();
@@ -91,7 +91,7 @@ namespace Gecode { namespace Set {
   }
 
   ModEvent
-  SetVarImp::processGlbChange(Space* home, SetDelta& d) {
+  SetVarImp::processGlbChange(Space& home, SetDelta& d) {
     ModEvent me = ME_SET_GLB;
     if (_cardMin < glb.size()) {
       _cardMin = glb.size();
@@ -118,7 +118,7 @@ namespace Gecode { namespace Set {
    */
 
   forceinline
-  SetVarImp::SetVarImp(Space* home, bool share, SetVarImp& x)
+  SetVarImp::SetVarImp(Space& home, bool share, SetVarImp& x)
     : SetVarImpBase(home,share,x),
       _cardMin(x._cardMin), _cardMax(x._cardMax) {
     lub.update(home, x.lub);
@@ -131,12 +131,12 @@ namespace Gecode { namespace Set {
 
 
   SetVarImp*
-  SetVarImp::perform_copy(Space* home, bool share) {
+  SetVarImp::perform_copy(Space& home, bool share) {
     return new (home) SetVarImp(home,share,*this);
   }
 
   Reflection::Arg*
-  SetVarImp::spec(const Space*, Reflection::VarMap& m) const {
+  SetVarImp::spec(const Space&, Reflection::VarMap& m) const {
     int specIndex = m.index(this);
     if (specIndex != -1)
       return Reflection::Arg::newVar(specIndex);
@@ -178,7 +178,7 @@ namespace Gecode { namespace Set {
   }
 
   VarImpBase*
-  SetVarImp::create(Space* home, Reflection::VarSpec& spec) {
+  SetVarImp::create(Space& home, Reflection::VarSpec& spec) {
     int cardMin = spec.dom()->first()->second()->toInt();
     int cardMax = spec.dom()->second()->second()->toInt();
     Reflection::IntArrayArgRanges 
@@ -190,7 +190,7 @@ namespace Gecode { namespace Set {
   }
 
   void
-  SetVarImp::constrain(Space* home, VarImpBase* v,
+  SetVarImp::constrain(Space& home, VarImpBase* v,
                        Reflection::VarSpec& spec) {
     int cardMin = spec.dom()->first()->second()->toInt();
     int cardMax = spec.dom()->second()->second()->toInt();

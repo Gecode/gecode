@@ -44,10 +44,10 @@ namespace Gecode {
   using namespace Int;
 
   void
-  distinct(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind) {
+  distinct(Space& home, const IntVarArgs& x, IntConLevel icl, PropKind) {
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (icl) {
     case ICL_BND:
@@ -62,13 +62,13 @@ namespace Gecode {
   }
 
   void
-  distinct(Space* home, const IntArgs& c, const IntVarArgs& x,
+  distinct(Space& home, const IntArgs& c, const IntVarArgs& x,
            IntConLevel icl, PropKind) {
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::distinct");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<OffsetView> cx(home,x.size());
     for (int i = c.size(); i--; ) {
       double cx_min = (static_cast<double>(c[i]) + 

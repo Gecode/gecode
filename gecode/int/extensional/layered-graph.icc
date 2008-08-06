@@ -60,8 +60,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Construct new edge and increment states
     Edge(State& i, State& o, Edge* n);
     static void  operator delete(void*, size_t);
-    static void  operator delete(void*,Space*);
-    static void* operator new(size_t, Space*);
+    static void  operator delete(void*,Space&);
+    static void* operator new(size_t, Space&);
   };
 
   forceinline
@@ -72,10 +72,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   Edge::operator delete(void*, size_t) {}
   forceinline void
-  Edge::operator delete(void*,Space*) {}
+  Edge::operator delete(void*,Space&) {}
   forceinline void*
-  Edge::operator new(size_t s, Space* home) {
-    return home->ralloc(s);
+  Edge::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
   }
 
 
@@ -142,18 +142,18 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template <class View>
   forceinline
-  LayeredGraph<View>::Index::Index(Space* home, Propagator* p,
+  LayeredGraph<View>::Index::Index(Space& home, Propagator* p,
                                    Council<Index>& c, int i0)
     : Advisor(home,p,c), i(i0) {}
 
   template <class View>
   forceinline
-  LayeredGraph<View>::Index::Index(Space* home, bool share, Index& a)
+  LayeredGraph<View>::Index::Index(Space& home, bool share, Index& a)
     : Advisor(home,share,a), i(a.i) {}
 
   template <class View>
   forceinline void
-  LayeredGraph<View>::Index::dispose(Space* home, Council<Index>& c) {
+  LayeredGraph<View>::Index::dispose(Space& home, Council<Index>& c) {
     Advisor::dispose(home,c);
   }
 
@@ -223,14 +223,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline ExecStatus
-  LayeredGraph<View>::construct(Space* home) {
+  LayeredGraph<View>::construct(Space& home) {
     int n = x.size();
-    layers = home->alloc<Layer>(n+2)+1;
+    layers = home.alloc<Layer>(n+2)+1;
     
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
-    states = home->alloc<State>((n+1)*n_states);
+    states = home.alloc<State>((n+1)*n_states);
 
     // Initialize states (indegree and outdegree)
     for (int i = (n+1)*n_states; i--; )
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
-      layers[i].support = home->alloc<Support>(x[i].size());
+      layers[i].support = home.alloc<Support>(x[i].size());
       unsigned int j=0;
       // Enter links leaving reachable states (indegree != 0)
       for (ViewValues<View> nx(x[i]); nx(); ++nx) {
@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline ExecStatus
-  LayeredGraph<View>::prune(Space* home) {
+  LayeredGraph<View>::prune(Space& home) {
     // Forward pass
     for (int i=i_ch.fst(); i<=i_ch.lst(); i++) {
       bool i_mod = false;
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  LayeredGraph<View>::advise(Space* home, Advisor& _a, const Delta& d) {
+  LayeredGraph<View>::advise(Space& home, Advisor& _a, const Delta& d) {
     Index& a = static_cast<Index&>(_a);
     int i = a.i;
     bool i_mod = false;
@@ -486,14 +486,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  LayeredGraph<View>::propagate(Space* home, ModEventDelta) {
+  LayeredGraph<View>::propagate(Space& home, ModEventDelta) {
     ExecStatus es = constructed() ? prune(home) : construct(home);
     return es;
   }
 
   template <class View>
   forceinline
-  LayeredGraph<View>::LayeredGraph(Space* home, ViewArray<View>& x0, DFA& d)
+  LayeredGraph<View>::LayeredGraph(Space& home, ViewArray<View>& x0, DFA& d)
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
     ModEvent me = ME_INT_BND;
@@ -508,7 +508,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <>
   forceinline
-  LayeredGraph<BoolView>::LayeredGraph(Space* home, ViewArray<BoolView>& x0,
+  LayeredGraph<BoolView>::LayeredGraph(Space& home, ViewArray<BoolView>& x0,
                                        DFA& d)
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
@@ -521,7 +521,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline size_t
-  LayeredGraph<View>::dispose(Space* home) {
+  LayeredGraph<View>::dispose(Space& home) {
     this->unforce(home);
     c.dispose(home);
     dfa.~DFA();
@@ -531,7 +531,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  LayeredGraph<View>::post(Space* home, ViewArray<View>& x, DFA& d) {
+  LayeredGraph<View>::post(Space& home, ViewArray<View>& x, DFA& d) {
     if (x.size() == 0) {
       // Check whether the start state 0 is also a final state
       if ((d.final_fst() <= 0) && (d.final_lst() >= 0))
@@ -549,7 +549,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline
-  LayeredGraph<View>::LayeredGraph(Space* home, bool share, 
+  LayeredGraph<View>::LayeredGraph(Space& home, bool share, 
                                    LayeredGraph<View>& p)
     : Propagator(home,share,p), layers(NULL) {
     assert(p.x.size() > 0);
@@ -574,7 +574,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Reflection::ActorSpec
-  LayeredGraph<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  LayeredGraph<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m)
              << dfa.spec(m);
@@ -582,7 +582,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   void
-  LayeredGraph<View>::post(Space* home, Reflection::VarMap& vars,
+  LayeredGraph<View>::post(Space& home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
@@ -592,7 +592,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Actor*
-  LayeredGraph<View>::copy(Space* home, bool share) {
+  LayeredGraph<View>::copy(Space& home, bool share) {
     return new (home) LayeredGraph<View>(home,share,*this);
   }
 

@@ -66,24 +66,24 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Maximum of range
     int max;
     /// Constructor for cloning \a p
-    ReRange(Space* home, bool share, ReRange& p);
+    ReRange(Space& home, bool share, ReRange& p);
     /// Constructor for creation
-    ReRange(Space* home, View x, int min, int max, BoolView b);
+    ReRange(Space& home, View x, int min, int max, BoolView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Mangled name
     static Support::Symbol ati(void);
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
-    static ExecStatus post(Space* home, View x, int min, int max, BoolView b);
+    static ExecStatus post(Space& home, View x, int min, int max, BoolView b);
   };
 
   /**
@@ -101,26 +101,26 @@ namespace Gecode { namespace Int { namespace Dom {
     /// %Domain
     IntSet is;
     /// Constructor for cloning \a p
-    ReIntSet(Space* home, bool share, ReIntSet& p);
+    ReIntSet(Space& home, bool share, ReIntSet& p);
     /// Constructor for creation
-    ReIntSet(Space* home, View x, const IntSet& s, BoolView b);
+    ReIntSet(Space& home, View x, const IntSet& s, BoolView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Mangled name
     static Support::Symbol ati(void);
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
-    static ExecStatus post(Space* home, View x, const IntSet& s, BoolView b);
+    static ExecStatus post(Space& home, View x, const IntSet& s, BoolView b);
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 }}}

@@ -46,7 +46,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   
   template <class View0, class View1, class Res>
   forceinline void
-  rel_eq(Space* home, View0 x0, SetOpType op, View1 x1, Res x2) {
+  rel_eq(Space& home, View0 x0, SetOpType op, View1 x1, Res x2) {
     switch(op) {
     case SOT_DUNION:
       {
@@ -82,7 +82,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   forceinline void
-  rel_sub(Space* home, View0 x0, SetOpType op, View1 x1, View2 x2) {
+  rel_sub(Space& home, View0 x0, SetOpType op, View1 x1, View2 x2) {
     switch(op) {
     case SOT_DUNION:
       {
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   forceinline void
-  rel_sup(Space* home, View0 x0, SetOpType op, View1 x1, View2 x2) {
+  rel_sup(Space& home, View0 x0, SetOpType op, View1 x1, View2 x2) {
     switch(op) {
     case SOT_DUNION:
       {
@@ -168,9 +168,9 @@ namespace Gecode { namespace Set { namespace RelOp {
   
   template <class View0, class View1, class View2>
   forceinline void
-  rel_op_post_nocompl(Space* home, View0 x, SetOpType op, View1 y,
+  rel_op_post_nocompl(Space& home, View0 x, SetOpType op, View1 y,
            SetRelType r, View2 z) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch(r) {
     case SRT_EQ:
       rel_eq<View0,View1,View2>(home, x, op, y, z);
@@ -207,9 +207,9 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   forceinline void
-  rel_op_post(Space* home, View0 x, SetOpType op, View1 y,
+  rel_op_post(Space& home, View0 x, SetOpType op, View1 y,
            SetRelType r, View2 z) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     if (r == SRT_CMPL) {
       ComplementView<View2> cz(z);
       rel_eq<View0,View1,ComplementView<View2> >(home, x, op, y, cz);      

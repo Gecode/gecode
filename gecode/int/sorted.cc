@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void 
-  sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y, 
+  sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y, 
          const IntVarArgs& z, IntConLevel, PropKind) {
     using namespace Int;
     if ((x.size() != y.size()) || (x.size() != z.size()))
@@ -48,7 +48,7 @@ namespace Gecode {
     if (x.same(home,y) || x.same(home,z) || y.same(home,z))
       throw ArgumentSame("Int::Sorted");
     
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,z);
 
@@ -57,7 +57,7 @@ namespace Gecode {
   }
 
   void 
-  sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+  sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y,
          IntConLevel, PropKind) {
     using namespace Int;
     if (x.size() != y.size())
@@ -65,7 +65,7 @@ namespace Gecode {
     if (x.same(home,y))
       throw ArgumentSame("Int::Sorted");
       
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,0);
 

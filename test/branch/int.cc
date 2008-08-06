@@ -46,7 +46,7 @@ namespace Test { namespace Branch {
     Int(const std::string& s, const Gecode::IntSet& d, int n)
       : IntTest(s,n,d) {}
     /// Post propagators on variables \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
       Gecode::distinct(home, x);
     }
   };

@@ -64,7 +64,7 @@ namespace Test {
       /// Perform test
       virtual bool run(void);
       /// Post assignment on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
     };
 
     /**
@@ -81,7 +81,7 @@ namespace Test {
       /// Perform test
       virtual bool run(void);
       /// Post assignment on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::BoolVarArray& x) = 0;
+      virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
     };
 
   }

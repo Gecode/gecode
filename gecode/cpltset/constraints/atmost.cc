@@ -51,8 +51,8 @@ namespace Gecode {
     
     template <class View>
     void 
-    atmostOne_post(Space* home, ViewArray<View>& x, int c) {
-      if (home->failed()) return;
+    atmostOne_post(Space& home, ViewArray<View>& x, int c) {
+      if (home.failed()) return;
       int n = x.size();
 
       int minx = x[0].initialLubMin();
@@ -87,9 +87,9 @@ namespace Gecode {
 
     template <class View>
     void 
-    atmost_post(Space* home, ViewArray<View>& x, int c, 
+    atmost_post(Space& home, ViewArray<View>& x, int c, 
                 SetRelType, int) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       unsigned int x1_tab = x[1].tableWidth();
 
@@ -117,9 +117,9 @@ namespace Gecode {
 
     template <class View>
     void 
-    atmost_post(Space* home, ViewArray<View>& x, int c, 
+    atmost_post(Space& home, ViewArray<View>& x, int c, 
                 CpltSetRelType lex, int card) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       unsigned int x1_tab = x[1].tableWidth();
 
@@ -202,9 +202,9 @@ namespace Gecode {
 
     template <class View>
     void 
-    atmost_post(Space* home, View& x, View& y, int c, CpltSetRelType lex,
+    atmost_post(Space& home, View& x, View& y, int c, CpltSetRelType lex,
                 int card) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       unsigned int xoff = x.offset();
       unsigned int yoff = y.offset();
@@ -283,9 +283,9 @@ namespace Gecode {
 
     template <class View>
     void 
-    atmost_post(Space* home, View& x, View& y, int c, SetRelType,
+    atmost_post(Space& home, View& x, View& y, int c, SetRelType,
                 int card) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       unsigned int xoff = x.offset();
       unsigned int yoff = y.offset();
@@ -317,7 +317,7 @@ namespace Gecode {
 
     template <class Rel>
     forceinline void 
-    atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, int c, 
+    atmost_con(Space& home, const CpltSetVar& x, const CpltSetVar& y, int c, 
                Rel lex, int card) {
       CpltSetView xv(x);
       CpltSetView yv(y);
@@ -326,7 +326,7 @@ namespace Gecode {
 
     template <class Rel>
     forceinline void 
-    atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y,
+    atmost_con(Space& home, const CpltSetVar& x, const CpltSetVar& y,
                const CpltSetVar& z, int c, Rel lex, int card) {
       ViewArray<CpltSetView> bv(home, 3);
       bv[0] = x;
@@ -337,7 +337,7 @@ namespace Gecode {
 
 
     forceinline void 
-    atmostOne_con(Space* home, const CpltSetVarArgs& x, int c) {
+    atmostOne_con(Space& home, const CpltSetVarArgs& x, int c) {
       int n = x.size();
       ViewArray<CpltSetView> bv(home, n);
       for (int i = 0; i < n; i++) {
@@ -352,8 +352,8 @@ namespace Gecode {
   using namespace CpltSet::AtMost;
 
   void
-  exactly(Space* home, CpltSetVar x, IntSet& is, unsigned int c) {
-    if (home->failed()) return;
+  exactly(Space& home, CpltSetVar x, IntSet& is, unsigned int c) {
+    if (home.failed()) return;
     Set::Limits::check(c, "CpltSet::exactly");
 
     ViewArray<CpltSetView> bv(home, 1);
@@ -370,7 +370,7 @@ namespace Gecode {
         if (!inter() && s == 1) {
           return;
         } else {
-          home->fail();
+          home.fail();
           return;
         }
       }
@@ -381,7 +381,7 @@ namespace Gecode {
     Gecode::Iter::Ranges::Inter<CpltSetVarUnknownRanges, IntSetRanges> 
       interdel(delta, irange);
     if (!interdel()) {
-      home->fail();
+      home.fail();
       return;
     } 
 
@@ -408,9 +408,9 @@ namespace Gecode {
   }
 
   void
-  atmost(Space* home, CpltSetVar x, IntSet& is, unsigned int c) {
+  atmost(Space& home, CpltSetVar x, IntSet& is, unsigned int c) {
     Set::Limits::check(c, "CpltSet::atmost");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
 
@@ -425,20 +425,20 @@ namespace Gecode {
   }
 
   void 
-  atmost(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c) {
+  atmost(Space& home, CpltSetVar x, CpltSetVar y, unsigned int c) {
     Set::Limits::check(c, "CpltSet::atmost");
     atmost_con(home, x, y, c, SRT_EQ, -1);
   }
 
   void 
-  atmostLex(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c, 
+  atmostLex(Space& home, CpltSetVar x, CpltSetVar y, unsigned int c, 
             CpltSetRelType lex) {
     Set::Limits::check(c, "CpltSet::atmostLex");
     atmost_con(home, x, y, c, lex, -1);
   }
 
   void 
-  atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c, 
+  atmostLexCard(Space& home, CpltSetVar x, CpltSetVar y, unsigned int c, 
                 CpltSetRelType lex, unsigned int d) {
     Set::Limits::check(c, "CpltSet::atmostLexCard");
     Set::Limits::check(d, "CpltSet::atmostLexCard");
@@ -446,7 +446,7 @@ namespace Gecode {
   }
 
   void 
-  atmostCard(Space* home, CpltSetVar x, CpltSetVar y, unsigned int c,
+  atmostCard(Space& home, CpltSetVar x, CpltSetVar y, unsigned int c,
              unsigned int d) {
     Set::Limits::check(c, "CpltSet::atmostCard");
     Set::Limits::check(d, "CpltSet::atmostCard");
@@ -454,14 +454,14 @@ namespace Gecode {
   }
 
   void 
-  atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z,
+  atmost(Space& home, CpltSetVar x, CpltSetVar y, CpltSetVar z,
          unsigned int c) {
     Set::Limits::check(c, "CpltSet::atmost");
     atmost_con(home, x, y, z, c, SRT_EQ, -1);
   }
 
   void 
-  atmostOne(Space* home, const CpltSetVarArgs& x, unsigned int c) {
+  atmostOne(Space& home, const CpltSetVarArgs& x, unsigned int c) {
     Set::Limits::check(c, "CpltSet::atmostOne");
     atmostOne_con(home, x, c);
   }

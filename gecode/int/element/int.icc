@@ -181,8 +181,8 @@ namespace Gecode { namespace Int { namespace Element {
     IdxValLink iv[1];
   public:
     /// Allocating and initializing the data structure
-    static IdxValMap* allocate(Space* home, int);
-    template <class ViewA> void init(Space* home, int*, ViewA);
+    static IdxValMap* allocate(Space& home, int);
+    template <class ViewA> void init(Space& home, int*, ViewA);
 
     /// Pruning from variables on data structure
     template <class ViewA> void prune_idx(ViewA);
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Element {
 
     /// Telling data structure to variables: returns true if at fixpoint
     template <class ViewA, class ViewB>
-    ExecStatus tell(Space*,ViewA,ViewB);
+    ExecStatus tell(Space&,ViewA,ViewB);
   private:
     static void* operator new(size_t);
     static void operator delete(void* p,size_t);
@@ -202,15 +202,15 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   forceinline IdxValMap*
-  IdxValMap::allocate(Space* home, int n) {
+  IdxValMap::allocate(Space& home, int n) {
     size_t s = sizeof(IdxValMap)+n*sizeof(IdxValLink);
-    IdxValMap* ivm = static_cast<IdxValMap*>(home->ralloc(s));
+    IdxValMap* ivm = static_cast<IdxValMap*>(home.ralloc(s));
     return ivm;
   }
 
   template <class ViewA>
   inline void
-  IdxValMap::init(Space* home, int* a, ViewA ix) {
+  IdxValMap::init(Space& home, int* a, ViewA ix) {
     // The first element in iv[0] is used as sentinel
     // Enter information sorted by idx
     IdxValLink* by_idx = &iv[1];
@@ -286,7 +286,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   forceinline ExecStatus
-  IdxValMap::tell(Space* home, ViewA x0, ViewB x1) {
+  IdxValMap::tell(Space& home, ViewA x0, ViewB x1) {
     IterIdx i(iv[0]);
     GECODE_ME_CHECK(x0.narrow_v(home,i,false));
     IterVal v(iv[0]);
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   forceinline
-  Int<ViewA,ViewB>::Int(Space* home, IntSharedArray& c0, ViewA y0, ViewB y1)
+  Int<ViewA,ViewB>::Int(Space& home, IntSharedArray& c0, ViewA y0, ViewB y1)
     : Propagator(home), x0(y0), x1(y1), c(c0), ivm(NULL) {
     force(home);
     x0.subscribe(home,this,PC_INT_DOM);
@@ -317,9 +317,9 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   forceinline size_t
-  Int<ViewA,ViewB>::dispose(Space* home) {
+  Int<ViewA,ViewB>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x0.cancel(home,this,PC_INT_DOM);
       x1.cancel(home,this,PC_INT_DOM);
     }
@@ -330,7 +330,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   ExecStatus
-  Int<ViewA,ViewB>::post(Space* home, IntSharedArray& c, ViewA x0, ViewB x1) {
+  Int<ViewA,ViewB>::post(Space& home, IntSharedArray& c, ViewA x0, ViewB x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,c.size()));
     if (x0.assigned()) {
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   forceinline
-  Int<ViewA,ViewB>::Int(Space* home, bool share, Int& p)
+  Int<ViewA,ViewB>::Int(Space& home, bool share, Int& p)
     : Propagator(home,share,p), ivm(NULL) {
     c.update(home,share,p.c);
     x0.update(home,share,p.x0);
@@ -352,7 +352,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   Actor*
-  Int<ViewA,ViewB>::copy(Space* home, bool share) {
+  Int<ViewA,ViewB>::copy(Space& home, bool share) {
     return new (home) Int<ViewA,ViewB>(home,share,*this);
   }
 
@@ -370,7 +370,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   Reflection::ActorSpec
-  Int<ViewA,ViewB>::spec(const Space* home, Reflection::VarMap& m) const {
+  Int<ViewA,ViewB>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x0.spec(home, m)
              << x1.spec(home, m)
@@ -379,7 +379,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   void
-  Int<ViewA,ViewB>::post(Space* home, Reflection::VarMap& vars,
+  Int<ViewA,ViewB>::post(Space& home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewA x0(home, vars, spec[0]);
@@ -394,7 +394,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   ExecStatus
-  Int<ViewA,ViewB>::propagate(Space* home, ModEventDelta) {
+  Int<ViewA,ViewB>::propagate(Space& home, ModEventDelta) {
     bool assigned = x0.assigned() && x1.assigned();
     if (ivm == NULL) {
       ivm = IdxValMap::allocate(home,x0.size());

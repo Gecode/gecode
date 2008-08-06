@@ -164,7 +164,7 @@ namespace Gecode { namespace CpltSet {
   protected:
     /// Constructor for cloning \a x
     GECODE_CPLTSET_EXPORT
-    CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x);
+    CpltSetVarImp(Space& home, bool share, CpltSetVarImp& x);
     /// Produce bdd representing \a i for this variable
     template <class I>
     bdd iterToBdd(I& i);
@@ -172,87 +172,87 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Construct variable with given domain
     GECODE_CPLTSET_EXPORT
-    CpltSetVarImp(Space* home, int glbMin, int glbMax, int lubMin, int lubMax, 
+    CpltSetVarImp(Space& home, int glbMin, int glbMax, int lubMin, int lubMax, 
                   unsigned int cardMin, unsigned int cardMax);
     /// Construct variable with given domain
     GECODE_CPLTSET_EXPORT
-    CpltSetVarImp(Space* home, const IntSet& glbD, int lubMin, int lubMax, 
+    CpltSetVarImp(Space& home, const IntSet& glbD, int lubMin, int lubMax, 
                   unsigned int cardMin, unsigned int cardMax);
     /// Construct variable with given domain
     GECODE_CPLTSET_EXPORT
-    CpltSetVarImp(Space* home, int glbMin, int glbMax, const IntSet& lubD,
+    CpltSetVarImp(Space& home, int glbMin, int glbMax, const IntSet& lubD,
                   unsigned int cardMin, unsigned int cardMax);
     /// Construct variable with given domain
     GECODE_CPLTSET_EXPORT
-    CpltSetVarImp(Space* home, const IntSet& glbD,const IntSet& lubD,
+    CpltSetVarImp(Space& home, const IntSet& glbD,const IntSet& lubD,
                   unsigned int cardMin, unsigned int cardMax);
     // Delete a bdd variable
     GECODE_CPLTSET_EXPORT
-    void dispose(Space* home);
+    void dispose(Space& home);
   public:
     /// \name Set bounds update by value
     //@{
     /// Exclude value \a v from lub
-    ModEvent exclude(Space* home, int v);
+    ModEvent exclude(Space& home, int v);
     /// Exclude range \f$ [a,\dots, b] \f$ from
-    GECODE_CPLTSET_EXPORT ModEvent exclude(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent exclude(Space& home, int a, int b);
 
     /// Include value \a v in glb
-    ModEvent include(Space* home, int v);
+    ModEvent include(Space& home, int v);
     /// Include range \f$ [a,\dots, b] \f$ in glb
-    GECODE_CPLTSET_EXPORT ModEvent include(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent include(Space& home, int a, int b);
 
     /// Intersect domain with singleton set \f$ \{i\} \f$
-    ModEvent intersect(Space* home, int i);
+    ModEvent intersect(Space& home, int i);
     /// Intersect domain with range \f$ [a..b] \f$
-    GECODE_CPLTSET_EXPORT ModEvent intersect(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent intersect(Space& home, int a, int b);
     //@}
 
     /// \name Set bounds update by range iterator
     //@{
     /// Intersect domain with range sequence described by \a i
-    template <class I> ModEvent intersectI(Space* home, I& i);
+    template <class I> ModEvent intersectI(Space& home, I& i);
     /// Exclude set described by range sequence \a i from lub
-    template <class I> ModEvent excludeI(Space* home, I& i);  
+    template <class I> ModEvent excludeI(Space& home, I& i);  
     /// Include set described by range list \a i in glb
-    template <class I> ModEvent includeI(Space* home, I& i);  
+    template <class I> ModEvent includeI(Space& home, I& i);  
     //@}
 
     /// \name Set cardinality update 
     //@{
     /// Restrict cardinality to be at least l and at most u
-    GECODE_CPLTSET_EXPORT ModEvent cardinality(Space* home, int l, int u);
+    GECODE_CPLTSET_EXPORT ModEvent cardinality(Space& home, int l, int u);
     /// Restrict cardinality to be at least n
-    ModEvent cardMin(Space* home,unsigned int n);
+    ModEvent cardMin(Space& home,unsigned int n);
     /// Restrict cardinality to be at most n
-    ModEvent cardMax(Space* home,unsigned int n);
+    ModEvent cardMax(Space& home,unsigned int n);
     //@}
 
     /// \name Set domain update by value
     //@{
     /// Restrict domain values to be different from singleton set \f$\{v\}\f$.
-    ModEvent nq(Space* home, int v);
+    ModEvent nq(Space& home, int v);
     /// Restrict domain values to be different from range \f$[a,b]\f$.
-    GECODE_CPLTSET_EXPORT ModEvent nq(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent nq(Space& home, int a, int b);
 
     /// Restrict domain to be equal to singleton set \f$\{v\}\f$.
-    ModEvent eq(Space* home, int v);
+    ModEvent eq(Space& home, int v);
     /// Restrict domain to be equal to range \f$[a,b]\f$.
-    GECODE_CPLTSET_EXPORT ModEvent eq(Space* home, int a, int b);
+    GECODE_CPLTSET_EXPORT ModEvent eq(Space& home, int a, int b);
     //@}
 
     /// \name Set domain update by range iterator
     //@{
     /// Restrict domain values to be different from set described by \a i.
-    template <class I> ModEvent nqI(Space* home, I& i);
+    template <class I> ModEvent nqI(Space& home, I& i);
     /// Restrict domain to be equal to the range sequence \a i
-    template <class I> ModEvent eqI(Space* home, I& i);
+    template <class I> ModEvent eqI(Space& home, I& i);
     //@}
 
     /// \name Set domain update by bdd
     //@{
     /// Intersect domain with the domain represented by \a d
-    GECODE_CPLTSET_EXPORT ModEvent intersect(Space* home, bdd& d);
+    GECODE_CPLTSET_EXPORT ModEvent intersect(Space& home, bdd& d);
     //@}
     
     /// \name Value access
@@ -325,27 +325,27 @@ namespace Gecode { namespace CpltSet {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p with propagation condition \a pc to variable
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space* home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator* p, PropCond pc);
     //@}
 
   private:
     /// Return copy of not-yet copied variable
     GECODE_CPLTSET_EXPORT 
-    CpltSetVarImp* perform_copy(Space* home, bool share);
+    CpltSetVarImp* perform_copy(Space& home, bool share);
 
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    CpltSetVarImp* copy(Space* home, bool share);
+    CpltSetVarImp* copy(Space& home, bool share);
     //@}  
 
     /// \name Reflection
     //@{
     GECODE_CPLTSET_EXPORT Reflection::Arg*
-    spec(const Space* home, Reflection::VarMap& m) const;
+    spec(const Space& home, Reflection::VarMap& m) const;
     //@}
 
     /// \name Delta information for advisors

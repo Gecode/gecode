@@ -84,7 +84,7 @@ namespace Gecode {
     /// View selection object
     ViewSel viewsel;
     /// Return position information
-    Pos pos(Space* home);
+    Pos pos(Space& home);
     /**
      * \brief Return view according to position information \a p
      *
@@ -92,15 +92,15 @@ namespace Gecode {
      */
     typename ViewSel::View view(const Pos& p, bool c=false);
     /// Constructor for cloning \a b
-    ViewBranching(Space* home, bool share, ViewBranching& b);
+    ViewBranching(Space& home, bool share, ViewBranching& b);
   public:
     /// Constructor for creation
-    ViewBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+    ViewBranching(Space& home, ViewArray<typename ViewSel::View>& x,
                   ViewSel& vi_s);
     /// Check status of branching, return true if alternatives left
-    virtual bool status(const Space* home) const;
+    virtual bool status(const Space& home) const;
     /// Delete branching and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 
@@ -121,33 +121,33 @@ namespace Gecode {
     /// Value selection object
     ValSel valsel;
     /// Constructor for cloning \a b
-    ViewValBranching(Space* home, bool share, ViewValBranching& b);
+    ViewValBranching(Space& home, bool share, ViewValBranching& b);
   public:
     /// Constructor for creation
-    ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+    ViewValBranching(Space& home, ViewArray<typename ViewSel::View>& x,
                      ViewSel& vi_s, ValSel& va_s);
     /// Return branching description (of type Gecode::PosValDesc)
-    virtual const BranchingDesc* description(Space* home);
+    virtual const BranchingDesc* description(Space& home);
     /// Perform commit for branching description \a d and alternative \a a
-    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+    virtual ExecStatus commit(Space& home, const BranchingDesc* d,
                               unsigned int a);
     /// Return specification for this branching given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
-    branchingSpec(const Space* home, 
+    branchingSpec(const Space& home, 
                   Reflection::VarMap& m,
                   const BranchingDesc* d) const;
     /// Actor type identifier of this branching
     static Support::Symbol ati(void);
     /// Post branching according to specification
-    static void post(Space* home, Reflection::VarMap& m,
+    static void post(Space& home, Reflection::VarMap& m,
                      const Reflection::ActorSpec& spec);
     /// Perform cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Delete branching and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 
@@ -270,7 +270,7 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline
-  ViewBranching<ViewSel>::ViewBranching(Space* home,
+  ViewBranching<ViewSel>::ViewBranching(Space& home,
                                         ViewArray<typename ViewSel::View>& x0,
                                         ViewSel& vi_s)
     : Branching(home), x(x0), start(0), viewsel(vi_s) {}
@@ -278,7 +278,7 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline
-  ViewBranching<ViewSel>::ViewBranching(Space* home, bool share, 
+  ViewBranching<ViewSel>::ViewBranching(Space& home, bool share, 
                                         ViewBranching& b)
     : Branching(home,share,b), start(b.start) {
     x.update(home,share,b.x);
@@ -287,7 +287,7 @@ namespace Gecode {
 
   template <class ViewSel>
   bool
-  ViewBranching<ViewSel>::status(const Space*) const {
+  ViewBranching<ViewSel>::status(const Space&) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
         start = i;
@@ -298,7 +298,7 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline Pos
-  ViewBranching<ViewSel>::pos(Space* home) {
+  ViewBranching<ViewSel>::pos(Space& home) {
     assert(!x[start].assigned());
     int i = start;
     int b = i++;
@@ -330,7 +330,7 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline size_t
-  ViewBranching<ViewSel>::dispose(Space* home) {
+  ViewBranching<ViewSel>::dispose(Space& home) {
     viewsel.dispose(home);
     (void) Branching::dispose(home);
     return sizeof(ViewBranching<ViewSel>);
@@ -346,28 +346,28 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   forceinline
   ViewValBranching<ViewSel,ValSel>::
-  ViewValBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+  ViewValBranching(Space& home, ViewArray<typename ViewSel::View>& x,
                    ViewSel& vi_s, ValSel& va_s)
     : ViewBranching<ViewSel>(home,x,vi_s), valsel(va_s) {}
 
   template <class ViewSel, class ValSel>
   forceinline
   ViewValBranching<ViewSel,ValSel>::
-  ViewValBranching(Space* home, bool share, ViewValBranching& b)
+  ViewValBranching(Space& home, bool share, ViewValBranching& b)
     : ViewBranching<ViewSel>(home,share,b) {
     valsel.update(home,share,b.valsel);
   }
   
   template <class ViewSel, class ValSel>
   Actor*
-  ViewValBranching<ViewSel,ValSel>::copy(Space* home, bool share) {
+  ViewValBranching<ViewSel,ValSel>::copy(Space& home, bool share) {
     return new (home)
       ViewValBranching<ViewSel,ValSel>(home,share,*this);
   }
 
   template <class ViewSel, class ValSel>
   const BranchingDesc*
-  ViewValBranching<ViewSel,ValSel>::description(Space* home) {
+  ViewValBranching<ViewSel,ValSel>::description(Space& home) {
     Pos p = ViewBranching<ViewSel>::pos(home);
     typename ValSel::View v(ViewBranching<ViewSel>::view(p).var());
     return new PosValDesc<ViewSel,ValSel>
@@ -379,7 +379,7 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   ExecStatus
   ViewValBranching<ViewSel,ValSel>
-  ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
+  ::commit(Space& home, const BranchingDesc* d, unsigned int a) {
     const PosValDesc<ViewSel,ValSel>* pvd 
       = static_cast<const PosValDesc<ViewSel,ValSel>*>(d);
     typename ValSel::View 
@@ -398,7 +398,7 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   void
   ViewValBranching<ViewSel,ValSel>
-  ::post(Space* home, Reflection::VarMap& vars,
+  ::post(Space& home, Reflection::VarMap& vars,
          const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<typename ViewSel::View> x(home, vars, spec[0]);
@@ -408,7 +408,7 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   Reflection::ActorSpec
   ViewValBranching<ViewSel,ValSel>
-  ::spec(const Space* home, Reflection::VarMap& m) const {
+  ::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
   }
@@ -416,7 +416,7 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   Reflection::BranchingSpec
   ViewValBranching<ViewSel,ValSel>
-  ::branchingSpec(const Space* home, 
+  ::branchingSpec(const Space& home, 
                   Reflection::VarMap& m, const BranchingDesc* d) const {
     const PosValDesc<ViewSel,ValSel>* pvd 
       = static_cast<const PosValDesc<ViewSel,ValSel>*>(d);
@@ -429,7 +429,7 @@ namespace Gecode {
 
   template <class ViewSel, class ValSel>
   forceinline size_t
-  ViewValBranching<ViewSel,ValSel>::dispose(Space* home) {
+  ViewValBranching<ViewSel,ValSel>::dispose(Space& home) {
     valsel.dispose(home);
     (void) ViewBranching<ViewSel>::dispose(home);
     return sizeof(ViewValBranching<ViewSel,ValSel>);

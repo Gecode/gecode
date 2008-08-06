@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB>
   forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space* home, BVA b0, BVB b1)
+  BoolBinary<BVA,BVB>::BoolBinary(Space& home, BVA b0, BVB b1)
     : Propagator(home), x0(b0), x1(b1) {
     x0.subscribe(home,this,PC_BOOL_VAL);
     x1.subscribe(home,this,PC_BOOL_VAL);
@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space* home, bool share,
+  BoolBinary<BVA,BVB>::BoolBinary(Space& home, bool share,
                                   BoolBinary<BVA,BVB>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space* home, bool share, Propagator& p,
+  BoolBinary<BVA,BVB>::BoolBinary(Space& home, bool share, Propagator& p,
                                   BVA b0, BVB b1)
     : Propagator(home,share,p) {
     x0.update(home,share,b0);
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   Reflection::ActorSpec
-  BoolBinary<BVA,BVB>::spec(const Space* home, Reflection::VarMap& m,
+  BoolBinary<BVA,BVB>::spec(const Space& home, Reflection::VarMap& m,
                             const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline size_t
-  BoolBinary<BVA,BVB>::dispose(Space* home) {
+  BoolBinary<BVA,BVB>::dispose(Space& home) {
     x0.cancel(home,this,PC_BOOL_VAL);
     x1.cancel(home,this,PC_BOOL_VAL);
     (void) Propagator::dispose(home);
@@ -98,7 +98,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB, class BVC>
   forceinline
   BoolTernary<BVA,BVB,BVC>::BoolTernary
-  (Space* home, BVA b0, BVB b1, BVC b2)
+  (Space& home, BVA b0, BVB b1, BVC b2)
     : Propagator(home), x0(b0), x1(b1), x2(b2) {
     x0.subscribe(home,this,PC_BOOL_VAL);
     x1.subscribe(home,this,PC_BOOL_VAL);
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space* home, bool share,
+  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home, bool share,
                                         BoolTernary<BVA,BVB,BVC>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space* home, bool share, Propagator& p,
+  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home, bool share, Propagator& p,
                                         BVA b0, BVB b1, BVC b2)
     : Propagator(home,share,p) {
     x0.update(home,share,b0);
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   Reflection::ActorSpec
-  BoolTernary<BVA,BVB,BVC>::spec(const Space* home, Reflection::VarMap& m, 
+  BoolTernary<BVA,BVB,BVC>::spec(const Space& home, Reflection::VarMap& m, 
                                  const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   forceinline size_t
-  BoolTernary<BVA,BVB,BVC>::dispose(Space* home) {
+  BoolTernary<BVA,BVB,BVC>::dispose(Space& home) {
     x0.cancel(home,this,PC_BOOL_VAL);
     x1.cancel(home,this,PC_BOOL_VAL);
     x2.cancel(home,this,PC_BOOL_VAL);

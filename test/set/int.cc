@@ -79,7 +79,7 @@ namespace Test { namespace Set {
         return s==(unsigned int)x.intval();
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::cardinality(home, x[0], y[0]);
       }
     };
@@ -97,7 +97,7 @@ namespace Test { namespace Set {
         return xr0() && xr0.min()==x.intval();
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::min(home, x[0], y[0]);
       }
     };
@@ -116,7 +116,7 @@ namespace Test { namespace Set {
         return x0.size() > 0 && x0.max()==x.intval();
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::max(home, x[0], y[0]);
       }
     };
@@ -136,11 +136,11 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::rel(home, x[0], SRT_SUP, y[0]);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y, BoolVar b) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y, BoolVar b) {
         Gecode::rel(home, x[0], SRT_SUP, y[0], b);
       }
     };
@@ -160,7 +160,7 @@ namespace Test { namespace Set {
         return true;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::rel(home, x[0], SRT_DISJ, y[0]);
       }
     };
@@ -212,14 +212,14 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         if (!inverse)
           Gecode::rel(home, x[0], srt, y[0]);
         else
           Gecode::rel(home, y[0], srt, x[0]);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y,
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
                         BoolVar b) {
         if (!inverse)
           Gecode::rel(home, x[0], srt, y[0], b);
@@ -289,7 +289,7 @@ namespace Test { namespace Set {
         return true;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         if (!inverse)
           Gecode::rel(home, x[0], irt, y[0]);
         else
@@ -349,7 +349,7 @@ namespace Test { namespace Set {
         return x.intval()==weightI(elements,weights,x0);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::weights(home, elements, weights, x[0], y[0]);
       }
     };
@@ -387,7 +387,7 @@ namespace Test { namespace Set {
         return true;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::match(home, x[0], y);
       }
     };
@@ -422,7 +422,7 @@ namespace Test { namespace Set {
         return true;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::channel(home, y, x);
       }
     };
@@ -457,7 +457,7 @@ namespace Test { namespace Set {
         return true;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         BoolVarArgs b(y.size());
         for (int i=y.size(); i--;)
           b[i] = channel(home, y[i]);

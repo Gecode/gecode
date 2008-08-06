@@ -105,11 +105,11 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], srt, is);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
         Gecode::dom(home, x[0], srt, is, b);
       }
     };
@@ -154,11 +154,11 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], srt, -3, -1);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
         Gecode::dom(home, x[0], srt, -3, -1, b);
       }
     };
@@ -203,11 +203,11 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], srt, -3);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
         Gecode::dom(home, x[0], srt, -3, b);
       }
     };
@@ -253,11 +253,11 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], srt, is);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&,BoolVar b) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
         Gecode::dom(home, x[0], srt, is, b);
       }
     };
@@ -281,7 +281,7 @@ namespace Test { namespace Set {
         return card >= 2 && card <= 3;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::cardinality(home, x[0], 2, 3);
       }
     };

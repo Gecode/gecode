@@ -42,7 +42,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   forceinline
   ElementUnion<SView,RView>::
-  ElementUnion(Space* home, SView y0,
+  ElementUnion(Space& home, SView y0,
                      IdxViewArray<SView>& iv0,
                      RView y1)
     : Propagator(home), x0(y0), iv(iv0), x1(y1) {
@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   forceinline
   ElementUnion<SView,RView>::
-  ElementUnion(Space* home, bool share,
+  ElementUnion(Space& home, bool share,
                      ElementUnion<SView,RView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   Reflection::ActorSpec
-  ElementUnion<SView,RView>::spec(const Space* home,
+  ElementUnion<SView,RView>::spec(const Space& home,
                                  Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x0.spec(home, m)
@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   void
-  ElementUnion<SView,RView>::post(Space* home,
+  ElementUnion<SView,RView>::post(Space& home,
                                  Reflection::VarMap& vars,
                                  const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
@@ -99,9 +99,9 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   size_t
-  ElementUnion<SView,RView>::dispose(Space* home) {
+  ElementUnion<SView,RView>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x0.cancel(home,this, PC_SET_ANY);
       x1.cancel(home,this, PC_SET_ANY);
       iv.cancel(home,this,PC_SET_ANY);
@@ -113,7 +113,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   ExecStatus
   ElementUnion<SView,RView>::
-  post(Space* home, SView x0, IdxViewArray<SView>& xs,
+  post(Space& home, SView x0, IdxViewArray<SView>& xs,
        RView x1) {
     int n = xs.size();
 
@@ -127,13 +127,13 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   Actor*
-  ElementUnion<SView,RView>::copy(Space* home, bool share) {
+  ElementUnion<SView,RView>::copy(Space& home, bool share) {
     return new (home) ElementUnion<SView,RView>(home,share,*this);
   }
 
   template <class SView, class RView>
   ExecStatus
-  ElementUnion<SView,RView>::propagate(Space* home, ModEventDelta) {
+  ElementUnion<SView,RView>::propagate(Space& home, ModEventDelta) {
     Scratch s(home);
     int n = iv.size();
 

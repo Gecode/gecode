@@ -42,17 +42,17 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   ValMin<inc>::ValMin(void) {}
   template<bool inc>
   forceinline
-  ValMin<inc>::ValMin(Space* home, const ValBranchOptions& vbo)
+  ValMin<inc>::ValMin(Space& home, const ValBranchOptions& vbo)
     : ValSelBase<CpltSetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMin<inc>::val(Space*, CpltSetView x) const {
+  ValMin<inc>::val(Space&, CpltSetView x) const {
     UnknownValues<CpltSetView> u(x);
     return u.val();
   }
   template <bool inc>
   forceinline ModEvent
-  ValMin<inc>::tell(Space* home, unsigned int a,
+  ValMin<inc>::tell(Space& home, unsigned int a,
                                CpltSetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
@@ -68,11 +68,11 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   ValMax<inc>::ValMax(void) {}
   template<bool inc>
   forceinline
-  ValMax<inc>::ValMax(Space* home, const ValBranchOptions& vbo)
+  ValMax<inc>::ValMax(Space& home, const ValBranchOptions& vbo)
     : ValSelBase<CpltSetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMax<inc>::val(Space*, CpltSetView x) const {
+  ValMax<inc>::val(Space&, CpltSetView x) const {
     int max = 0;
     for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
       max = u.max();
@@ -80,7 +80,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   template <bool inc>
   forceinline ModEvent
-  ValMax<inc>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
+  ValMax<inc>::tell(Space& home, unsigned int a, CpltSetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
   template<bool inc>
@@ -92,7 +92,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template <class SelView>
   void
-  create(Space* home, ViewArray<CpltSetView>& x, CpltSetValBranch vals) {
+  create(Space& home, ViewArray<CpltSetView>& x, CpltSetValBranch vals) {
     SelView v(home,VarBranchOptions::def);
     switch (vals) {
     case CPLTSET_VAL_MIN_INC:

@@ -102,29 +102,29 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     SharedArray<int>  limit;
     const bool        at_most;
 
-    Val(Space* home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
-    Val(Space* home, const ViewArray<ViewM>&, const ViewArray<View>&,
+    Val(Space& home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
+    Val(Space& home, const ViewArray<ViewM>&, const ViewArray<View>&,
         const ViewArray<ViewD>&, const ViewArray<View>&,
         const ViewArray<ViewH>&, const IntArgs&, bool);
 
-    ExecStatus prune(Space*  home, int low, int up, int r,
+    ExecStatus prune(Space& home, int low, int up, int r,
                      int ntask, int sheight,
                      const std::vector<int>& contribution,
                      std::list<int>& prune_tasks);
   public:
-    virtual size_t dispose(Space* home);
-    virtual Actor*     copy(Space* home, bool share);
+    virtual size_t dispose(Space& home);
+    virtual Actor*     copy(Space& home, bool share);
     virtual PropCost   cost(ModEventDelta med) const;
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
-    static  ExecStatus post(Space* home, const ViewArray<ViewM>&,
+    static  ExecStatus post(Space& home, const ViewArray<ViewM>&,
                             const ViewArray<View>&, const ViewArray<ViewD>&,
                             const ViewArray<View>&, const ViewArray<ViewH>&,
                             const IntArgs&, bool);

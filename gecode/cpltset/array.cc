@@ -41,7 +41,7 @@ namespace Gecode {
 
   namespace CpltSet {
     void 
-    setVariableOrderFromArray(Space* home, const CpltSetVarArray& x) {
+    setVariableOrderFromArray(Space& home, const CpltSetVarArray& x) {
       int n = x.size();
       ViewArray<CpltSetView> view(home, n);
       for (int i = n; i--; ) {
@@ -51,7 +51,7 @@ namespace Gecode {
     }
   }
 
-  CpltSetVarArray::CpltSetVarArray(Space* home, int n,
+  CpltSetVarArray::CpltSetVarArray(Space& home, int n,
                                    int lbMin,int lbMax,int ubMin,int ubMax,
                                    unsigned int minCard,
                                    unsigned int maxCard)
@@ -74,7 +74,7 @@ namespace Gecode {
     CpltSet::setVariableOrderFromArray(home, *this);
   }
 
-  CpltSetVarArray::CpltSetVarArray(Space* home, int n,
+  CpltSetVarArray::CpltSetVarArray(Space& home, int n,
                                    const IntSet& glb,int ubMin,int ubMax,
                                    unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
@@ -94,7 +94,7 @@ namespace Gecode {
     CpltSet::setVariableOrderFromArray(home, *this);
   }
 
-  CpltSetVarArray::CpltSetVarArray(Space* home, int n,
+  CpltSetVarArray::CpltSetVarArray(Space& home, int n,
                                    int lbMin,int lbMax,const IntSet& lub,
                                    unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
@@ -105,7 +105,7 @@ namespace Gecode {
       x[i].init(home, lbMin, lbMax, lub, minCard, maxCard);
   }
 
-  CpltSetVarArray::CpltSetVarArray(Space* home, int n,
+  CpltSetVarArray::CpltSetVarArray(Space& home, int n,
                                    const IntSet& glb, const IntSet& lub,
                                    unsigned int minCard, unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {

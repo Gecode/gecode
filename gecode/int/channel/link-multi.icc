@@ -38,12 +38,12 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   forceinline
-  LinkMulti::LinkMulti(Space* home, ViewArray<BoolView>& x, IntView y, int o0)
+  LinkMulti::LinkMulti(Space& home, ViewArray<BoolView>& x, IntView y, int o0)
     : MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
   (home,x,y), o(o0) {}
 
   forceinline ExecStatus
-  LinkMulti::post(Space* home, ViewArray<BoolView>& x, IntView y, int o) {
+  LinkMulti::post(Space& home, ViewArray<BoolView>& x, IntView y, int o) {
     int n=x.size();
     GECODE_ME_CHECK(y.gq(home,o));
     GECODE_ME_CHECK(y.lq(home,o+n-1));

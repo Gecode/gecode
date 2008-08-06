@@ -91,14 +91,14 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
+      void post(Space& home, SetVarArray& x, IntVarArray&) {
         if (!shared)
           Gecode::rel(home, x[0], srt, x[1]);
         else
           Gecode::rel(home, x[0], srt, x[0]);
       }
       /// Post reified constraint on \a x for \a b
-      void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
+      void post(Space& home, SetVarArray& x, IntVarArray&, BoolVar b) {
         if (!shared)
           Gecode::rel(home, x[0], srt, x[1], b);
         else

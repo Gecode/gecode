@@ -111,8 +111,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     Edge<View>* edge_lst(void) const;
 
     static void  operator delete(void*, size_t);
-    static void  operator delete(void*,Space*);
-    static void* operator new(size_t, Space*);
+    static void  operator delete(void*,Space&);
+    static void* operator new(size_t, Space&);
   };
 
   /**
@@ -203,8 +203,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     Edge<View>* next(void) const;
 
     static void  operator delete(void*, size_t);
-    static void  operator delete(void*,Space*);
-    static void* operator new(size_t, Space*);
+    static void  operator delete(void*,Space&);
+    static void* operator new(size_t, Space&);
   };
 
 }}}
@@ -273,9 +273,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  DomCtrl<View>::ViewValGraph::init(Space* home, int n, View* x) {
+  DomCtrl<View>::ViewValGraph::init(Space& home, int n, View* x) {
     n_view = n; 
-    view = home->alloc<ViewNode<View>*>(n_view);
+    view = home.alloc<ViewNode<View>*>(n_view);
 
     // Find value information for construction of view value graph
     int min = x[n_view-1].min();
@@ -370,7 +370,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline void
-  DomCtrl<View>::ViewValGraph::mark(Space* home) {
+  DomCtrl<View>::ViewValGraph::mark(Space& home) {
     {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free (unmatched node) by depth-first-search
@@ -520,7 +520,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline ExecStatus
-  DomCtrl<View>::ViewValGraph::tell(Space* home, bool& assigned) {
+  DomCtrl<View>::ViewValGraph::tell(Space& home, bool& assigned) {
     assigned = false;
     // Tell constraints and also eliminate nodes and edges
     for (int i = n_view; i--; ) {
@@ -554,7 +554,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   bool
-  DomCtrl<View>::ViewValGraph::sync(Space* home) {
+  DomCtrl<View>::ViewValGraph::sync(Space& home) {
     // Stack for view nodes to be rematched
     GECODE_AUTOSTACK(home,ViewNode<View>*,NULL,re,n_view);
     // Synchronize nodes
@@ -624,20 +624,20 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline ExecStatus
-  DomCtrl<View>::init(Space* home, int n, View* x) {
+  DomCtrl<View>::init(Space& home, int n, View* x) {
     return vvg.init(home,n,x);
   }
 
   template <class View>
   forceinline ExecStatus
-  DomCtrl<View>::sync(Space* home) {
+  DomCtrl<View>::sync(Space& home) {
     vvg.purge();
     return vvg.sync(home) ? ES_OK : ES_FAILED;
   }
 
   template <class View>
   forceinline ExecStatus
-  DomCtrl<View>::propagate(Space* home, bool& assigned) {
+  DomCtrl<View>::propagate(Space& home, bool& assigned) {
     vvg.mark(home);
     return vvg.tell(home,assigned);
   }
@@ -650,12 +650,12 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, ViewArray<View>& x)
+  Dom<View>::Dom(Space& home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_DOM>(home,x) {}
 
   template <class View>
   ExecStatus
-  Dom<View>::post(Space* home, ViewArray<View>& x) {
+  Dom<View>::post(Space& home, ViewArray<View>& x) {
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() == 3)
@@ -670,7 +670,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  Dom<View>::post(Space* home, Reflection::VarMap& vars,
+  Dom<View>::post(Space& home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
@@ -679,7 +679,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+  Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
@@ -698,19 +698,19 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   Reflection::ActorSpec
-  Dom<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Dom<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return NaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
   template <class View>
   Actor*
-  Dom<View>::copy(Space* home, bool share) {
+  Dom<View>::copy(Space& home, bool share) {
     return new (home) Dom<View>(home,share,*this);
   }
 
   template <class View>
   ExecStatus
-  Dom<View>::propagate(Space* home, ModEventDelta med) {
+  Dom<View>::propagate(Space& home, ModEventDelta med) {
     if (View::me(med) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,x);
       GECODE_ES_CHECK(es);

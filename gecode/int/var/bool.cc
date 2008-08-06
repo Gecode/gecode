@@ -39,7 +39,7 @@
 
 namespace Gecode {
 
-  BoolVar::BoolVar(Space* home, int min, int max) {
+  BoolVar::BoolVar(Space& home, int min, int max) {
     if ((min < 0) || (max > 1))
       throw Int::NotZeroOne("BoolVar::BoolVar");
     if (min > max)
@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   void
-  BoolVar::init(Space* home, int min, int max) {
+  BoolVar::init(Space& home, int min, int max) {
     if ((min < 0) || (max > 1))
       throw Int::NotZeroOne("BoolVar::init");
     if (min > max)

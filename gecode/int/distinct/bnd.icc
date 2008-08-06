@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Bnd<View>::Bnd(Space* home, ViewArray<View>& x0)
+  Bnd<View>::Bnd(Space& home, ViewArray<View>& x0)
     : Propagator(home), x(x0), y(home,x0) {
     // Both x and y initially contain the same variables
     //  - x is used for bounds propagation
@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline size_t
-  Bnd<View>::dispose(Space* home) {
+  Bnd<View>::dispose(Space& home) {
     y.cancel(home,this,PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Bnd<View>::Bnd(Space* home, bool share, Bnd<View>& p)
+  Bnd<View>::Bnd(Space& home, bool share, Bnd<View>& p)
     : Propagator(home,share,p) {
       x.update(home,share,p.x);
       y.update(home,share,p.y);
@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   Actor*
-  Bnd<View>::copy(Space* home, bool share) {
+  Bnd<View>::copy(Space& home, bool share) {
     return new (home) Bnd<View>(home,share,*this);
   }
 
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   Reflection::ActorSpec
-  Bnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Bnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
   }
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  prop_bnd(Space* home, ViewArray<View>& x) {
+  prop_bnd(Space& home, ViewArray<View>& x) {
     const int n = x.size();
     // Sort variable array for minimum directly
     {
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  Bnd<View>::propagate(Space* home, ModEventDelta med) {
+  Bnd<View>::propagate(Space& home, ModEventDelta med) {
     assert(x.size() > 1);
 
     if (View::me(med) == ME_INT_VAL) {
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  Bnd<View>::post(Space* home, ViewArray<View>& x){
+  Bnd<View>::post(Space& home, ViewArray<View>& x){
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() > 2)
@@ -368,7 +368,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  Bnd<View>::post(Space* home, Reflection::VarMap& vars,
+  Bnd<View>::post(Space& home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);

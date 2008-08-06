@@ -80,7 +80,7 @@ namespace Gecode {
   SetExprCode::SetExprCode(const SetExprCode& sc) : c(sc.c) {}
 
   forceinline void
-  SetExprCode::update(Space* home, bool share, SetExprCode& sc) {
+  SetExprCode::update(Space& home, bool share, SetExprCode& sc) {
     c.update(home, share, sc.c);
   }
   

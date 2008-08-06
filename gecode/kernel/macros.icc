@@ -68,7 +68,7 @@
  */
 #define GECODE_ME_FAIL(home,me)                 \
   if (::Gecode::me_failed(me)) {                \
-    (home)->fail();                             \
+    (home).fail();                              \
     return;                                     \
   }
 
@@ -96,7 +96,7 @@
     ::Gecode::ExecStatus __es__ ## __LINE__ = (es);             \
     assert(__es__ ## __LINE__ != ::Gecode::__ES_SUBSUMED);      \
     if (__es__ ## __LINE__ < ::Gecode::ES_OK) {                 \
-      (home)->fail(); return;                                   \
+      (home).fail(); return;                                    \
     }                                                           \
   }
 

@@ -60,16 +60,16 @@ namespace Gecode {
     View x0;
     Gecode::Int::IntView x1;
     /// Constructor for cloning
-    IntSetPropagator(Space* home,bool,IntSetPropagator&);
+    IntSetPropagator(Space& home,bool,IntSetPropagator&);
     /// Constructor for creation
-    IntSetPropagator(Space* home,View,Gecode::Int::IntView);
+    IntSetPropagator(Space& home,View,Gecode::Int::IntView);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -77,7 +77,7 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   IntSetPropagator<View,pcs,pci>::IntSetPropagator
-  (Space* home, View y0, Gecode::Int::IntView y1)
+  (Space& home, View y0, Gecode::Int::IntView y1)
     : Propagator(home), x0(y0), x1(y1) {
     x0.subscribe(home,this,pcs);
     x1.subscribe(home,this,pci);
@@ -86,7 +86,7 @@ namespace Gecode {
   template <class View, PropCond pcs, PropCond pci>
   forceinline
   IntSetPropagator<View,pcs,pci>::IntSetPropagator
-  (Space* home, bool share, IntSetPropagator<View,pcs,pci>& p)
+  (Space& home, bool share, IntSetPropagator<View,pcs,pci>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -100,8 +100,8 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   size_t
-  IntSetPropagator<View,pcs,pci>::dispose(Space* home) {
-    if (!home->failed()) {
+  IntSetPropagator<View,pcs,pci>::dispose(Space& home) {
+    if (!home.failed()) {
       x0.cancel(home,this,pcs);
       x1.cancel(home,this,pci);
     }
@@ -111,7 +111,7 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   Reflection::ActorSpec
-  IntSetPropagator<View,pcs,pci>::spec(const Space* home,
+  IntSetPropagator<View,pcs,pci>::spec(const Space& home,
                                        Reflection::VarMap& m,
                                        const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);

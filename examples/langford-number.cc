@@ -92,7 +92,7 @@ public:
   };
   /// Construct model
   LangfordNumber(const LangfordNumberOptions& opt)
-    : k(opt.k), n(opt.n), y(this,k*n,1,n) {
+    : k(opt.k), n(opt.n), y(*this,k*n,1,n) {
 
     switch (opt.propagation()) {
     case PROP_REIFIED:
@@ -100,7 +100,7 @@ public:
         /// Position of values in sequence
         IntVarArgs p(k*n);
         for (int i=k*n; i--; )
-          p[i].init(this,0,k*n-1);
+          p[i].init(*this,0,k*n-1);
         
         /* 
          * The occurences of v in the Langford sequence are v numbers apart.
@@ -114,14 +114,14 @@ public:
          */
         for (int i=n; i--; )
           for (int j=k-1; j--; )
-            post(this, p[i*k+j] + (i+2) == p[i*k+j+1]);
+            post(*this, p[i*k+j] + (i+2) == p[i*k+j+1]);
         
-        distinct(this, p, opt.icl());
+        distinct(*this, p, opt.icl());
         
         // Channel positions <-> values
         for (int i=n; i--; )
           for (int j=k; j--; )
-            element(this, y, p[i*k+j], i+1);
+            element(*this, y, p[i*k+j], i+1);
       }
       break;
     case PROP_EXTENSIONAL:
@@ -134,7 +134,7 @@ public:
           if (v > 1)
             a[v-2]=v-1;
           REG ra(a), rv(v);
-          extensional(this, y, *ra+rv+(ra(v,v)+rv)(k-1,k-1)+*ra);
+          extensional(*this, y, *ra+rv+(ra(v,v)+rv)(k-1,k-1)+*ra);
         }
       }
       break;
@@ -143,14 +143,14 @@ public:
         // Boolean variables for channeling
         BoolVarArgs b(k*n*n);
         for (int i=n*n*k; i--; )
-          b[i].init(this,0,1);
+          b[i].init(*this,0,1);
         
         // Post channel constraints
         for (int i=n*k; i--; ) {
           BoolVarArgs c(n);
           for (int j=n; j--; ) 
             c[j]=b[i*n+j];
-          channel(this, c, y[i], 1);
+          channel(*this, c, y[i], 1);
         }
         
         // For placing two numbers three steps apart, we construct the
@@ -162,17 +162,17 @@ public:
           BoolVarArgs c(k*n);
           for (int i = k*n; i--; )
             c[i] = b[i*n+(v-1)];
-          extensional(this, c, *r0 + r1 + (r0(v,v) + r1)(k-1,k-1) + *r0);
+          extensional(*this, c, *r0 + r1 + (r0(v,v) + r1)(k-1,k-1) + *r0);
         }
       }
       break;
     }
       
     // Symmetry breaking
-    rel(this, y[0], IRT_LE, y[n*k-1]);
+    rel(*this, y[0], IRT_LE, y[n*k-1]);
     
     // Branching
-    branch(this, y, INT_VAR_SIZE_MIN, INT_VAL_MAX);
+    branch(*this, y, INT_VAR_SIZE_MIN, INT_VAL_MAX);
   }
 
   /// Print solution
@@ -183,7 +183,7 @@ public:
   /// Constructor for cloning \a l
   LangfordNumber(bool share, LangfordNumber& l)
     : Example(share, l), k(l.k), n(l.n) {
-    y.update(this, share, l.y);
+    y.update(*this, share, l.y);
 
   }
   /// Copy during cloning

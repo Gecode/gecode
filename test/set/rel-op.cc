@@ -142,7 +142,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
+      void post(Space& home, SetVarArray& x, IntVarArray&) {
         SetVar a,b,c;
         switch (share) {
           case 0: a=x[0]; b=x[1]; c=x[2]; break;
@@ -298,7 +298,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
+      void post(Space& home, SetVarArray& x, IntVarArray&) {
         int size = shared == 0 ? x.size()-1 : 3;
         SetVarArgs xs(size);
         SetVar xn;
@@ -459,7 +459,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      void post(Space& home, SetVarArray& x, IntVarArray& y) {
         if (!withConst)
           Gecode::rel(home, sot, y, x[0]);
         else

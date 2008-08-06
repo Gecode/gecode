@@ -151,8 +151,8 @@ namespace Test { namespace Set {
       */
     SetTestSpace(int n, Gecode::IntSet& d0, int i, bool r, SetTest* t,
                  bool log=true)
-      : d(d0), x(this, n, Gecode::IntSet::empty, d), y(this, i, d), 
-        withInt(i), b(this, 0, 1), reified(r), test(t) {
+      : d(d0), x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d), 
+        withInt(i), b(*this, 0, 1), reified(r), test(t) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
         olog << " y[]=" << y;
@@ -166,9 +166,9 @@ namespace Test { namespace Set {
     SetTestSpace(bool share, SetTestSpace& s)
     : Gecode::Space(share,s), d(s.d), withInt(s.withInt),
       reified(s.reified), test(s.test) {
-      x.update(this, share, s.x);
-      y.update(this, share, s.y);
-      b.update(this, share, s.b);
+      x.update(*this, share, s.x);
+      y.update(*this, share, s.y);
+      b.update(*this, share, s.b);
     }
 
     /// Copy space during cloning
@@ -180,17 +180,17 @@ namespace Test { namespace Set {
     SetTestSpace* cloneWithReflection(void) {
       SetTestSpace* c = new SetTestSpace(x.size(), d, withInt, reified, test);
       Gecode::Reflection::VarMap vm;
-      vm.putArray(this, x, "x");
-      vm.putArray(this, y, "y");
-      vm.put(this, b, "b");
+      vm.putArray(*this, x, "x");
+      vm.putArray(*this, y, "y");
+      vm.put(*this, b, "b");
       Gecode::Reflection::VarMap cvm;
-      cvm.putArray(c, c->x, "x", true);
-      cvm.putArray(c, c->y, "y", true);
-      cvm.put(c, c->b, "b", true);
-      Gecode::Reflection::Unreflector d(c, cvm);
+      cvm.putArray(*c, c->x, "x", true);
+      cvm.putArray(*c, c->y, "y", true);
+      cvm.put(*c, c->b, "b", true);
+      Gecode::Reflection::Unreflector d(*c, cvm);
       Gecode::Reflection::VarMapIter vmi(vm);
       try {
-        for (Gecode::Reflection::ActorSpecIter si(this, vm); si(); ++si) {
+        for (Gecode::Reflection::ActorSpecIter si(*this, vm); si(); ++si) {
           Gecode::Reflection::ActorSpec s = si.actor();
           for (; vmi(); ++vmi) {
             try {
@@ -230,11 +230,11 @@ namespace Test { namespace Set {
     /// Post propagator
     void post(void) {
       if (reified){
-        test->post(this,x,y,b);
+        test->post(*this,x,y,b);
         if (opt.log)
           olog << ind(3) << "Posting reified propagator" << std::endl;
       } else {
-        test->post(this,x,y);
+        test->post(*this,x,y);
         if (opt.log)
           olog << ind(3) << "Posting propagator" << std::endl;
       }
@@ -267,7 +267,7 @@ namespace Test { namespace Set {
         }
         olog << is << std::endl;
       }
-      Gecode::dom(this, x[i], srt, is);
+      Gecode::dom(*this, x[i], srt, is);
     }
     /// Perform cardinality tell operation on \a x[i]
     void cardinality(int i, int cmin, int cmax) {
@@ -275,7 +275,7 @@ namespace Test { namespace Set {
         olog << ind(4) << cmin << " <= #(x[" << i << "]) <= " << cmax
              << std::endl;
       }
-      Gecode::cardinality(this, x[i], cmin, cmax);
+      Gecode::cardinality(*this, x[i], cmin, cmax);
     }
     /// Perform integer tell operation on \a y[i]
     void rel(int i, Gecode::IntRelType irt, int n) {
@@ -291,7 +291,7 @@ namespace Test { namespace Set {
         }
         olog << " " << n << std::endl;
       }
-      Gecode::rel(this, y[i], irt, n);
+      Gecode::rel(*this, y[i], irt, n);
     }
     /// Perform Boolean tell on \a b
     void rel(bool sol) {
@@ -299,7 +299,7 @@ namespace Test { namespace Set {
       assert(reified);
       if (opt.log) 
         olog << ind(4) << "b = " << n << std::endl;
-      Gecode::rel(this, b, Gecode::IRT_EQ, n);
+      Gecode::rel(*this, b, Gecode::IRT_EQ, n);
     }
 
     /// Assign all variables to values in \a a

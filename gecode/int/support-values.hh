@@ -144,7 +144,7 @@ namespace Gecode { namespace Int {
     /// Mark \a n as supported if possible
     bool support(double n);
     /// Remove all unsupported values
-    ModEvent tell(Space* home);
+    ModEvent tell(Space& home);
     //@}
   };
 

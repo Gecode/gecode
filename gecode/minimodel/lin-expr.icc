@@ -195,7 +195,7 @@ namespace Gecode { namespace MiniModel {
 
   template <class Var>
   inline void
-  LinExpr<Var>::post(Space* home, IntRelType irt, 
+  LinExpr<Var>::post(Space& home, IntRelType irt, 
                      IntConLevel icl, PropKind pk) const {
     Scratch s(home);
     Int::Linear::Term<VarViewTraits<Var>::View>* ts = 
@@ -207,7 +207,7 @@ namespace Gecode { namespace MiniModel {
 
   template <class Var>
   inline void
-  LinExpr<Var>::post(Space* home, IntRelType irt, const BoolVar& b,
+  LinExpr<Var>::post(Space& home, IntRelType irt, const BoolVar& b,
                      IntConLevel icl, PropKind pk) const {
     Scratch s(home);
     Int::Linear::Term<VarViewTraits<Var>::View>* ts = 
@@ -219,7 +219,7 @@ namespace Gecode { namespace MiniModel {
 
   template <>
   inline IntVar
-  LinExpr<IntVar>::post(Space* home, IntConLevel icl, PropKind pk) const {
+  LinExpr<IntVar>::post(Space& home, IntConLevel icl, PropKind pk) const {
     Scratch s(home);
     Int::Linear::Term<Int::IntView>* ts = 
       s.alloc<Int::Linear::Term<Int::IntView> >(n->n+1);
@@ -235,7 +235,7 @@ namespace Gecode { namespace MiniModel {
 
   template <>
   inline IntVar
-  LinExpr<BoolVar>::post(Space* home, IntConLevel icl, PropKind pk) const {
+  LinExpr<BoolVar>::post(Space& home, IntConLevel icl, PropKind pk) const {
     Scratch s(home);
     Int::Linear::Term<Int::BoolView>* ts = 
       s.alloc<Int::Linear::Term<Int::BoolView> >(n->n);
@@ -357,21 +357,21 @@ operator*(int a, const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& e) {
 namespace Gecode {
 
   forceinline IntVar
-  post(Space*, const IntVar& x, IntConLevel, PropKind) {
+  post(Space&, const IntVar& x, IntConLevel, PropKind) {
     return x;
   }
 
   inline IntVar
-  post(Space* home, int n, IntConLevel, PropKind) {
+  post(Space& home, int n, IntConLevel, PropKind) {
     IntVar x(home, n, n);
     return x;
   }
 
   template <class Var>
   inline IntVar
-  post(Space* home, const MiniModel::LinExpr<Var>& e, 
+  post(Space& home, const MiniModel::LinExpr<Var>& e, 
        IntConLevel icl, PropKind pk) {
-    if (!home->failed())
+    if (!home.failed())
       return e.post(home,icl,pk);
     IntVar x(home,Int::Limits::min,Int::Limits::max);
     return x;

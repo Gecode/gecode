@@ -89,7 +89,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a xy
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xy) {
          Gecode::IntVarArgs x(n), y(n);
          for (int i=0; i<n; i++) {
            x[i]=xy[i]; y[i]=xy[n+i];
@@ -144,7 +144,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a xyz
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& xyz) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xyz) {
          Gecode::IntVarArgs x(n), y(n), z(n);
          for (int i=0; i<n; i++) {
            x[i]=xyz[i]; y[i]=xyz[n+i]; z[i]=xyz[2*n+i];

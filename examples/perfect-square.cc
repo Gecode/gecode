@@ -197,8 +197,8 @@ public:
   };
   /// Actual model
   PerfectSquare(const SizeOptions& opt)
-    : x(this,specs[opt.size()][0],0,specs[opt.size()][1]-1), 
-      y(this,specs[opt.size()][0],0,specs[opt.size()][1]-1) {
+    : x(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1), 
+      y(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1) {
 
     const int* s = specs[opt.size()];
     int n = *s++;
@@ -206,14 +206,14 @@ public:
 
     // Restrict position according to square size
     for (int i=n; i--; ) {
-      rel(this, x[i], IRT_LQ, w-s[i]);
-      rel(this, y[i], IRT_LQ, w-s[i]);
+      rel(*this, x[i], IRT_LQ, w-s[i]);
+      rel(*this, y[i], IRT_LQ, w-s[i]);
     }
 
     // Squares do not overlap
     for (int i=0; i<n; i++)
       for (int j=i+1; j<n; j++)
-        post(this, tt(~(x[i]+s[i] <= x[j]) || ~(x[j]+s[j] <= x[i]) ||
+        post(*this, tt(~(x[i]+s[i] <= x[j]) || ~(x[j]+s[j] <= x[i]) ||
                       ~(y[i]+s[i] <= y[j]) || ~(y[j]+s[j] <= y[i])));
 
     /*
@@ -225,17 +225,17 @@ public:
       BoolVarArgs b(n);
       for (int cx=0; cx<w; cx++) {
         for (int i=0; i<n; i++) {
-          b[i].init(this,0,1);
-          dom(this, x[i], cx-s[i]+1, cx, b[i]);
+          b[i].init(*this,0,1);
+          dom(*this, x[i], cx-s[i]+1, cx, b[i]);
         }
-        linear(this, sa, b, IRT_EQ, w);
+        linear(*this, sa, b, IRT_EQ, w);
       }
       for (int cy=0; cy<w; cy++) {
         for (int i=0; i<n; i++) {
-          b[i].init(this,0,1);
-          dom(this, y[i], cy-s[i]+1, cy, b[i]);
+          b[i].init(*this,0,1);
+          dom(*this, y[i], cy-s[i]+1, cy, b[i]);
         }
-        linear(this, sa, b, IRT_EQ, w);
+        linear(*this, sa, b, IRT_EQ, w);
       }
     } else {
       IntArgs m(n), dh(n);
@@ -247,29 +247,29 @@ public:
       {
         // x-direction
         for (int i = n; i--; )
-          e[i].init(this, 0, w);
+          e[i].init(*this, 0, w);
         limit[0] = w;
-        cumulatives(this, m, x, dh, e, dh, limit, true);
-        cumulatives(this, m, x, dh, e, dh, limit, false);
+        cumulatives(*this, m, x, dh, e, dh, limit, true);
+        cumulatives(*this, m, x, dh, e, dh, limit, false);
       }
       {
         // y-direction
         for (int i = n; i--; )
-          e[i].init(this, 0, w);
+          e[i].init(*this, 0, w);
         limit[0] = w;
-        cumulatives(this, m, y, dh, e, dh, limit, true);
-        cumulatives(this, m, y, dh, e, dh, limit, false);
+        cumulatives(*this, m, y, dh, e, dh, limit, true);
+        cumulatives(*this, m, y, dh, e, dh, limit, false);
       }
     }
 
-    branch(this, x, INT_VAR_MIN_MIN, INT_VAL_MIN);
-    branch(this, y, INT_VAR_MIN_MIN, INT_VAL_MIN);
+    branch(*this, x, INT_VAR_MIN_MIN, INT_VAL_MIN);
+    branch(*this, y, INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s
   PerfectSquare(bool share, PerfectSquare& s) : Example(share,s) {
-    x.update(this, share, s.x);
-    y.update(this, share, s.y);
+    x.update(*this, share, s.x);
+    y.update(*this, share, s.y);
   }
   /// Copy during cloning
   virtual Space*

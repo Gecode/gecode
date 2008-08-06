@@ -74,7 +74,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post circuit constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          circuit(home, x, icl);
        }
      };

@@ -91,21 +91,21 @@ public:
   }
   /// The actual problem
   StressExtensional(const SizeOptions& opt)
-    : x(this,4*opt.size(),0,opt.size()) {
+    : x(*this,4*opt.size(),0,opt.size()) {
     DFA a = construct(opt.size());
     IntVarArgs y(opt.size());
     for (unsigned int i=0; i <= 3*opt.size(); i++) {
       for (int j = opt.size(); j--; )
         y[j] = x[i+j];
-      extensional(this, y, a);
+      extensional(*this, y, a);
     }
     for (int j=opt.size(); j--; )
       y[j] = x[j];
-    branch(this, y, INT_VAR_NONE, INT_VAL_MED);
+    branch(*this, y, INT_VAR_NONE, INT_VAL_MED);
   }
   /// Constructor for cloning \a s
   StressExtensional(bool share, StressExtensional& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
   virtual Space*

@@ -48,12 +48,12 @@ namespace Gecode { namespace MiniModel {
 
   template <IntRelType irt>
   void
-  OptimizeSpace<irt>::constrain(const Space* _best) {
+  OptimizeSpace<irt>::constrain(const Space& _best) {
     const OptimizeSpace<irt>* best = 
-      dynamic_cast<const OptimizeSpace<irt>*>(_best);
+      dynamic_cast<const OptimizeSpace<irt>*>(&_best);
     if (best == NULL)
       throw DynamicCastFailed("OptimizeSpace::constrain");
-    rel(this, cost(), irt, best->cost().val());
+    rel(*this, cost(), irt, best->cost().val());
   }
 
 }}

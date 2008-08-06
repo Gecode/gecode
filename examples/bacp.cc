@@ -116,44 +116,44 @@ public:
       maxCredit += c->credit;
     }
     
-    l = IntVarArray(this, p, a, b);
-    u = IntVar(this, 0, maxCredit);
-    q = IntVarArray(this, p, c, d);
-    x = IntVarArray(this, numberOfCourses, 0, p-1);
+    l = IntVarArray(*this, p, a, b);
+    u = IntVar(*this, 0, maxCredit);
+    q = IntVarArray(*this, p, c, d);
+    x = IntVarArray(*this, numberOfCourses, 0, p-1);
         
     for (int j=0; j<p; j++) {
-      BoolVarArray xij(this, numberOfCourses, 0, 1);
+      BoolVarArray xij(*this, numberOfCourses, 0, 1);
       IntArgs t(numberOfCourses);
       for (int i=0; i<numberOfCourses; i++) {
-        post(this, tt(eqv(~(x[i]==j), xij[i])));
+        post(*this, tt(eqv(~(x[i]==j), xij[i])));
         t[i] = curr.courses[i].credit;
       }
       // sum over all t*(xi==j) is load of period i
-      linear(this, t, xij, IRT_EQ, l[j]);
+      linear(*this, t, xij, IRT_EQ, l[j]);
       // sum over all (xi==j) is number of courses in period i
-      linear(this, xij, IRT_EQ, q[j]);
+      linear(*this, xij, IRT_EQ, q[j]);
     }
     
     // Precedence
     for (const char** prereq = curr.prereqs; *prereq != 0; prereq+=2) {
-      post(this, x[courseMap[*prereq]] < x[courseMap[*(prereq+1)]]);
+      post(*this, x[courseMap[*prereq]] < x[courseMap[*(prereq+1)]]);
     }
 
     // Optimization criterion: minimize u
-    max(this, l, u);
+    max(*this, l, u);
 
     // Redundant constraints
-    linear(this, l, IRT_EQ, maxCredit);
-    linear(this, q, IRT_EQ, numberOfCourses);
+    linear(*this, l, IRT_EQ, maxCredit);
+    linear(*this, q, IRT_EQ, numberOfCourses);
 
-    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for copying \a bacp
   BACP(bool share, BACP& bacp) : MinimizeExample(share,bacp),
     curr(bacp.curr) {
-    u.update(this, share, bacp.u);
-    x.update(this, share, bacp.x);
+    u.update(*this, share, bacp.u);
+    x.update(*this, share, bacp.x);
   }
   /// Copy during cloning
   virtual Space*

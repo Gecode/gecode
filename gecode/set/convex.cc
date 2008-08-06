@@ -43,14 +43,14 @@ using namespace Gecode::Set;
 
 namespace Gecode {
   void
-  convex(Space* home, SetVar x) {
-    if (home->failed()) return;
+  convex(Space& home, SetVar x) {
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Convex::Convex::post(home, x));
   }
 
   void
-  convexHull(Space* home, SetVar x, SetVar y) {
-    if (home->failed()) return;
+  convexHull(Space& home, SetVar x, SetVar y) {
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Convex::ConvexHull::post(home, x,y));
   }
 

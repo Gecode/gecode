@@ -45,18 +45,18 @@
 namespace Gecode {
 
   void
-  cardinality(Space* home, SetVar x, unsigned int i, unsigned int j) {
+  cardinality(Space& home, SetVar x, unsigned int i, unsigned int j) {
     Set::Limits::check(i, "Set::cardinality");
     Set::Limits::check(j, "Set::cardinality");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Set::SetView _x(x);
     GECODE_ME_FAIL(home,_x.cardMin(home, i));
     GECODE_ME_FAIL(home,_x.cardMax(home, j));
   }
 
   void
-  cardinality(Space* home, SetVar s, IntVar x) {
-    if (home->failed()) return;
+  cardinality(Space& home, SetVar s, IntVar x) {
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Set::Int::Card<Set::SetView>::post(home,s, x));
   }
 

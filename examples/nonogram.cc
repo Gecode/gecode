@@ -99,25 +99,25 @@ protected:
 public:
   /// Construction of the model.
   Nonogram(const SizeOptions& opt)
-    : spec(specs[opt.size()]), b(this,width()*height(),0,1) {
+    : spec(specs[opt.size()]), b(*this,width()*height(),0,1) {
     int spos = 2;
     MiniModel::Matrix<BoolVarArray> m(b, width(), height());
 
     // Post constraints for columns
     for (int w = 0; w < width(); ++w)
-      extensional(this, m.col(w), line(spos));
+      extensional(*this, m.col(w), line(spos));
 
     // Post constraints for rows
     for (int h = 0; h < height(); ++h)
-      extensional(this, m.row(h), line(spos));
+      extensional(*this, m.row(h), line(spos));
 
     // Install branchings
-    branch(this, b, INT_VAR_NONE, INT_VAL_MAX);
+    branch(*this, b, INT_VAR_NONE, INT_VAL_MAX);
   }
 
   /// Constructor for cloning \a s
   Nonogram(bool share, Nonogram& s) : Example(share,s), spec(s.spec) {
-    b.update(this, share, s.b);
+    b.update(*this, share, s.b);
   }
 
   /// Copy space during cloning

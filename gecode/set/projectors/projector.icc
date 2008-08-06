@@ -48,7 +48,7 @@ namespace Gecode {
 
   template <bool negated>
   inline ExecStatus
-  Projector::propagate(Space* home, ViewArray<Set::SetView>& x) {
+  Projector::propagate(Space& home, ViewArray<Set::SetView>& x) {
     if (negated) {
       switch (ExecStatus es=check(home, x)) {
       case ES_FAILED: 

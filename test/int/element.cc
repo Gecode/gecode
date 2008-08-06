@@ -63,7 +63,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::element(home, c, x[0], x[1]);
        }
      };
@@ -85,7 +85,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==r;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::element(home, c, x[0], r);
        }
      };
@@ -105,7 +105,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[0];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::element(home, c, x[0], x[0]);
        }
      };
@@ -124,7 +124,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::element(home, c, x[0], Gecode::channel(home,x[1]));
        }
      };
@@ -146,7 +146,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==r;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::element(home, c, x[0], r);
        }
      };
@@ -162,7 +162,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<x.size()-2) && x[2+x[0]]==x[1];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs c(x.size()-2);
          for (int i=0; i<x.size()-2; i++)
            c[i]=x[2+i];
@@ -187,7 +187,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==r;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs c(x.size()-1);
          for (int i=0; i<x.size()-1; i++)
            c[i]=x[1+i];
@@ -206,7 +206,7 @@ namespace Test { namespace Int {
          return (x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==x[0];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs c(x.size()-1);
          for (int i=0; i<x.size()-1; i++)
            c[i]=x[1+i];
@@ -228,7 +228,7 @@ namespace Test { namespace Int {
                  && (x[1]>=0) && (x[1]<=1));
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs c(x.size()-2);
          for (int i=0; i<x.size()-2; i++)
@@ -254,7 +254,7 @@ namespace Test { namespace Int {
          return ((x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==r);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs c(x.size()-1);
          for (int i=0; i<x.size()-1; i++)

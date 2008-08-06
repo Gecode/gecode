@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Initialize
     void init(View x, int n);
     /// Update during cloning
-    void update(Space* home, bool share, DomInfo<View>& vcb);
+    void update(Space& home, bool share, DomInfo<View>& vcb);
     /// Check whether propagation for assignment is to be done
     bool doval(void) const;
     /// Check whether propagation for domain is to be done
@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   forceinline void
-  DomInfo<View>::update(Space* home, bool share, DomInfo<View>& di) {
+  DomInfo<View>::update(Space& home, bool share, DomInfo<View>& di) {
     view.update(home,share,di.view);
     size = di.size;
     min  = di.min;
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Channel {
   // Propagate domain information from x to y
   template <class View>
   ExecStatus
-  prop_dom(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y,
+  prop_dom(Space& home, int n, DomInfo<View>* x, DomInfo<View>* y,
            ProcessStack& ya) {
     for (int i = n; i--; )
       // Only views with not yet propagated missing values
@@ -170,17 +170,17 @@ namespace Gecode { namespace Int { namespace Channel {
    */
   template <class View, bool shared>
   forceinline
-  Dom<View,shared>::Dom(Space* home, int n, DomInfo<View>* xy)
+  Dom<View,shared>::Dom(Space& home, int n, DomInfo<View>* xy)
     : Base<DomInfo<View>,PC_INT_DOM>(home,n,xy) {}
 
   template <class View, bool shared>
   forceinline
-  Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
+  Dom<View,shared>::Dom(Space& home, bool share, Dom<View,shared>& p)
     : Base<DomInfo<View>,PC_INT_DOM>(home,share,p) {}
 
   template <class View, bool shared>
   Actor*
-  Dom<View,shared>::copy(Space* home, bool share) {
+  Dom<View,shared>::copy(Space& home, bool share) {
     return new (home) Dom<View,shared>(home,share,*this);
   }
 
@@ -198,16 +198,16 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   Reflection::ActorSpec
-  Dom<View,shared>::spec(const Space* home, Reflection::VarMap& m) const {
+  Dom<View,shared>::spec(const Space& home, Reflection::VarMap& m) const {
     return Base<DomInfo<View>,PC_INT_DOM>::spec(home, m, ati());
   }
 
   template <class View, bool shared>
   void
-  Dom<View,shared>::post(Space* home, Reflection::VarMap& vars,
+  Dom<View,shared>::post(Space& home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     const int n = spec.noOfArgs();
-    DomInfo<View>* vi = home->alloc<DomInfo<View> >(n);
+    DomInfo<View>* vi = home.alloc<DomInfo<View> >(n);
     for (int i=n; i--; )
       vi[i].init(View(home, vars, spec[i]),n/2);
     (void) new (home) Dom<View,shared>(home,n/2,vi);
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   ExecStatus
-  Dom<View,shared>::propagate(Space* home, ModEventDelta med) {
+  Dom<View,shared>::propagate(Space& home, ModEventDelta med) {
     GECODE_AUTOSTACK(home,int,-1, xa, n);
     GECODE_AUTOSTACK(home,int,-1, ya, n);
 
@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View, bool shared>
   ExecStatus
-  Dom<View,shared>::post(Space* home, int n, DomInfo<View>* xy) {
+  Dom<View,shared>::post(Space& home, int n, DomInfo<View>* xy) {
     assert(n > 0);
     if (n == 1) {
       GECODE_ME_CHECK(xy[0].view.eq(home,0));

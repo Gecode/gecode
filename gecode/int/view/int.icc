@@ -50,7 +50,7 @@ namespace Gecode { namespace Int {
   IntView::IntView(IntVarImp* x)
     : VarViewBase<IntVarImp>(x) {}
   forceinline
-  IntView::IntView(Space* /*home*/, const Reflection::VarMap& vars,
+  IntView::IntView(Space&, const Reflection::VarMap& vars,
                    Reflection::Arg* arg) 
     : VarViewBase<IntVarImp>(IntVar(vars.var(arg->toVar())).var()) {}
 
@@ -121,56 +121,56 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  IntView::lq(Space* home, int n) {
+  IntView::lq(Space& home, int n) {
     return varimp->lq(home,n);
   }
   forceinline ModEvent
-  IntView::lq(Space* home, double n) {
+  IntView::lq(Space& home, double n) {
     return varimp->lq(home,n);
   }
 
   forceinline ModEvent
-  IntView::le(Space* home, int n) {
+  IntView::le(Space& home, int n) {
     return varimp->lq(home,n-1);
   }
   forceinline ModEvent
-  IntView::le(Space* home, double n) {
+  IntView::le(Space& home, double n) {
     return lq(home,n-1.0);
   }
 
   forceinline ModEvent
-  IntView::gq(Space* home, int n) {
+  IntView::gq(Space& home, int n) {
     return varimp->gq(home,n);
   }
   forceinline ModEvent
-  IntView::gq(Space* home, double n) {
+  IntView::gq(Space& home, double n) {
     return varimp->gq(home,n);
   }
 
   forceinline ModEvent
-  IntView::gr(Space* home, int n) {
+  IntView::gr(Space& home, int n) {
     return varimp->gq(home,n+1);
   }
   forceinline ModEvent
-  IntView::gr(Space* home, double n) {
+  IntView::gr(Space& home, double n) {
     return gq(home,n+1.0);
   }
 
   forceinline ModEvent
-  IntView::nq(Space* home, int n) {
+  IntView::nq(Space& home, int n) {
     return varimp->nq(home,n);
   }
   forceinline ModEvent
-  IntView::nq(Space* home, double n) {
+  IntView::nq(Space& home, double n) {
     return varimp->nq(home,n);
   }
 
   forceinline ModEvent
-  IntView::eq(Space* home, int n) {
+  IntView::eq(Space& home, int n) {
     return varimp->eq(home,n);
   }
   forceinline ModEvent
-  IntView::eq(Space* home, double n) {
+  IntView::eq(Space& home, double n) {
     return varimp->eq(home,n);
   }
 
@@ -181,37 +181,37 @@ namespace Gecode { namespace Int {
    */
   template <class I>
   forceinline ModEvent
-  IntView::narrow_r(Space* home, I& i, bool depend) {
+  IntView::narrow_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->narrow_r(home,i,depend);
   }
   template <class I>
   forceinline ModEvent
-  IntView::inter_r(Space* home, I& i, bool depend) {
+  IntView::inter_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->inter_r(home,i,depend);
   }
   template <class I>
   forceinline ModEvent
-  IntView::minus_r(Space* home, I& i, bool depend) {
+  IntView::minus_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->minus_r(home,i,depend);
   }
   template <class I>
   forceinline ModEvent
-  IntView::narrow_v(Space* home, I& i, bool depend) {
+  IntView::narrow_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
     return varimp->narrow_v(home,i,depend);
   }
   template <class I>
   forceinline ModEvent
-  IntView::inter_v(Space* home, I& i, bool depend) {
+  IntView::inter_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
     return varimp->inter_v(home,i,depend);
   }
   template <class I>
   forceinline ModEvent
-  IntView::minus_v(Space* home, I& i, bool depend) {
+  IntView::minus_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
     return varimp->minus_v(home,i,depend);
   }
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  IntView::update(Space* home, bool share, IntView& x) {
+  IntView::update(Space& home, bool share, IntView& x) {
     varimp = x.varimp->copy(home,share);
   }
 
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline Reflection::Arg*
-  IntView::spec(const Space* home, Reflection::VarMap& m) const {
+  IntView::spec(const Space& home, Reflection::VarMap& m) const {
     return varimp->spec(home, m);
   }
   inline Support::Symbol

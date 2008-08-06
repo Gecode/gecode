@@ -44,7 +44,7 @@ namespace Gecode {
    *
    */
   void
-  VarDisposerBase::dispose(Space*,VarImpBase*) {}
+  VarDisposerBase::dispose(Space&,VarImpBase*) {}
 
   VarDisposerBase::~VarDisposerBase(void) {}
 
@@ -55,7 +55,7 @@ namespace Gecode {
    *
    */
   Reflection::ActorSpec
-  Actor::spec(const Space*, Reflection::VarMap&) const {
+  Actor::spec(const Space&, Reflection::VarMap&) const {
     throw Reflection::NoReflectionDefinedException();
   }
 
@@ -76,7 +76,7 @@ namespace Gecode {
    *
    */
   ExecStatus 
-  Propagator::advise(Space*, Advisor&, const Delta&) {
+  Propagator::advise(Space&, Advisor&, const Delta&) {
     assert(false);
     return ES_FAILED;
   }
@@ -88,7 +88,7 @@ namespace Gecode {
    *
    */
   Reflection::BranchingSpec
-  Branching::branchingSpec(const Space*,
+  Branching::branchingSpec(const Space&,
                            Reflection::VarMap&, const BranchingDesc*) const {
     throw Reflection::NoReflectionDefinedException();
   }
@@ -183,7 +183,7 @@ namespace Gecode {
       b = Branching::cast(b->next());
     if (b == Branching::cast(&a_actors))
       throw SpaceNoBranching();
-    return b->branchingSpec(this, m, d);
+    return b->branchingSpec(*this, m, d);
   }
 
   Space::~Space(void) {
@@ -199,7 +199,7 @@ namespace Gecode {
       // So that d_unforce knows that deletion is in progress
       d_fst = NULL;
       while (a < e) {
-        (void) (*a)->dispose(this);
+        (void) (*a)->dispose(*this);
         a++;
       }
     }
@@ -207,7 +207,7 @@ namespace Gecode {
     // Delete variables that were registered for disposal
     for (int i=AllVarConf::idx_d; i--;)
       if (_vars_d[i] != NULL)
-        vd[i]->dispose(this, _vars_d[i]);
+        vd[i]->dispose(*this, _vars_d[i]);
 #endif
   }
 
@@ -232,7 +232,7 @@ namespace Gecode {
       med_o = p->u.med;
       // Clear med but leave propagator in queue
       p->u.med = 0;
-      switch (p->propagate(this,med_o)) {
+      switch (p->propagate(*this,med_o)) {
       case ES_FAILED:
         fail(); 
         return SS_FAILED;
@@ -307,7 +307,7 @@ namespace Gecode {
      *
      */
     while (b_status != Branching::cast(&a_actors)) {
-      if (b_status->status(this))
+      if (b_status->status(*this))
         return SS_BRANCH;
       b_status = Branching::cast(b_status->next());
     }
@@ -335,13 +335,13 @@ namespace Gecode {
       if (b == b_status)
         b_status = b_commit;
       b->unlink(); 
-      rfree(b,b->dispose(this));
+      rfree(b,b->dispose(*this));
     }
     if (b_commit == Branching::cast(&a_actors))
       throw SpaceNoBranching();
     if (a >= d->alternatives())
       throw SpaceIllegalAlternative();
-    if (b_commit->commit(this,d,a) == ES_FAILED)
+    if (b_commit->commit(*this,d,a) == ES_FAILED)
       fail();
   }
 
@@ -374,7 +374,7 @@ namespace Gecode {
       ActorLink* p = &a_actors;
       ActorLink* e = &s.a_actors;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        Actor* c = Actor::cast(a)->copy(this,share);
+        Actor* c = Actor::cast(a)->copy(*this,share);
         // Link copied actor
         p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
         // Note that forwarding is done in the constructors
@@ -470,7 +470,7 @@ namespace Gecode {
   }
 
   void 
-  Space::constrain(const Space*) {
+  Space::constrain(const Space&) {
     throw SpaceConstrainUndefined();
   }
 

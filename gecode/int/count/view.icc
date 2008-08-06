@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  BaseView<VX,VY,VZ,shr>::BaseView(Space* home,
+  BaseView<VX,VY,VZ,shr>::BaseView(Space& home,
                                    ViewArray<VX>& x0, VY y0, VZ z0, int c0)
     : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
     x.subscribe(home,this,PC_INT_DOM);
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  BaseView<VX,VY,VZ,shr>::BaseView(Space* home, bool share,
+  BaseView<VX,VY,VZ,shr>::BaseView(Space& home, bool share,
                                    BaseView<VX,VY,VZ,shr>& p)
     : Propagator(home,shr,p), c(p.c) {
     x.update(home,share,p.x);
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   Reflection::ActorSpec
-  BaseView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m,
+  BaseView<VX,VY,VZ,shr>::spec(const Space& home, Reflection::VarMap& m,
                                const Support::Symbol& ati) const {
     Reflection::ActorSpec s(ati);
     return s << x.spec(home, m)
@@ -81,8 +81,8 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline size_t
-  BaseView<VX,VY,VZ,shr>::dispose(Space* home) {
-    assert(!home->failed());
+  BaseView<VX,VY,VZ,shr>::dispose(Space& home) {
+    assert(!home.failed());
     x.cancel(home,this,PC_INT_DOM);
     y.cancel(home,this,PC_INT_DOM);
     z.cancel(home,this,PC_INT_BND);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline void
-  BaseView<VX,VY,VZ,shr>::count(Space* home) {
+  BaseView<VX,VY,VZ,shr>::count(Space& home) {
     int n = x.size();
     for (int i=n; i--; )
       switch (holds(x[i],y)) {
@@ -142,13 +142,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  EqView<VX,VY,VZ,shr>::EqView(Space* home, 
+  EqView<VX,VY,VZ,shr>::EqView(Space& home, 
                                ViewArray<VX>& x, VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  EqView<VX,VY,VZ,shr>::post(Space* home, 
+  EqView<VX,VY,VZ,shr>::post(Space& home, 
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     if (z.assigned())
       return EqInt<VX,VY>::post(home,x,y,z.val()+c);
@@ -161,13 +161,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  EqView<VX,VY,VZ,shr>::EqView(Space* home, bool share, 
+  EqView<VX,VY,VZ,shr>::EqView(Space& home, bool share, 
                                EqView<VX,VY,VZ,shr>& p)
     : BaseView<VX,VY,VZ,shr>(home,share,p) {}
 
   template <class VX, class VY, class VZ, bool shr>
   Actor*
-  EqView<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+  EqView<VX,VY,VZ,shr>::copy(Space& home, bool share) {
     return new (home) EqView<VX,VY,VZ,shr>(home,share,*this);
   }
 
@@ -179,13 +179,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   Reflection::ActorSpec
-  EqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
+  EqView<VX,VY,VZ,shr>::spec(const Space& home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  EqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
+  EqView<VX,VY,VZ,shr>::post(Space& home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  EqView<VX,VY,VZ,shr>::propagate(Space* home, ModEventDelta) {
+  EqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
     count(home);
 
     GECODE_ME_CHECK(z.gq(home,atleast()));
@@ -223,13 +223,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  NqView<VX,VY,VZ,shr>::NqView(Space* home, 
+  NqView<VX,VY,VZ,shr>::NqView(Space& home, 
                                ViewArray<VX>& x, VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  NqView<VX,VY,VZ,shr>::post(Space* home, 
+  NqView<VX,VY,VZ,shr>::post(Space& home, 
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     if (z.assigned())
       return NqInt<VX,VY>::post(home,x,y,z.val()+c);
@@ -239,13 +239,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  NqView<VX,VY,VZ,shr>::NqView(Space* home, bool share, 
+  NqView<VX,VY,VZ,shr>::NqView(Space& home, bool share, 
                                NqView<VX,VY,VZ,shr>& p)
     : BaseView<VX,VY,VZ,shr>(home,share,p) {}
 
   template <class VX, class VY, class VZ, bool shr>
   Actor*
-  NqView<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+  NqView<VX,VY,VZ,shr>::copy(Space& home, bool share) {
     return new (home) NqView<VX,VY,VZ,shr>(home,share,*this);
   }
 
@@ -257,13 +257,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   Reflection::ActorSpec
-  NqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
+  NqView<VX,VY,VZ,shr>::spec(const Space& home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  NqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
+  NqView<VX,VY,VZ,shr>::post(Space& home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  NqView<VX,VY,VZ,shr>::propagate(Space* home, ModEventDelta) {
+  NqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
     count(home);
     if (atleast() == atmost()) {
       GECODE_ME_CHECK(z.nq(home,atleast()));
@@ -299,13 +299,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  LqView<VX,VY,VZ,shr>::LqView(Space* home, ViewArray<VX>& x, 
+  LqView<VX,VY,VZ,shr>::LqView(Space& home, ViewArray<VX>& x, 
                                VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  LqView<VX,VY,VZ,shr>::post(Space* home, ViewArray<VX>& x, 
+  LqView<VX,VY,VZ,shr>::post(Space& home, ViewArray<VX>& x, 
                              VY y, VZ z, int c) {
     if (z.assigned())
       return LqInt<VX,VY>::post(home,x,y,z.val()+c);
@@ -318,13 +318,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  LqView<VX,VY,VZ,shr>::LqView(Space* home, bool share, 
+  LqView<VX,VY,VZ,shr>::LqView(Space& home, bool share, 
                                LqView<VX,VY,VZ,shr>& p)
     : BaseView<VX,VY,VZ,shr>(home,share,p) {}
 
   template <class VX, class VY, class VZ, bool shr>
   Actor*
-  LqView<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+  LqView<VX,VY,VZ,shr>::copy(Space& home, bool share) {
     return new (home) LqView<VX,VY,VZ,shr>(home,share,*this);
   }
 
@@ -336,13 +336,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   Reflection::ActorSpec
-  LqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
+  LqView<VX,VY,VZ,shr>::spec(const Space& home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  LqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
+  LqView<VX,VY,VZ,shr>::post(Space& home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
@@ -354,7 +354,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  LqView<VX,VY,VZ,shr>::propagate(Space* home, ModEventDelta) {
+  LqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
     count(home);
     GECODE_ME_CHECK(z.gq(home,atleast()));
     if (z.max() == atleast())
@@ -375,12 +375,12 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  GqView<VX,VY,VZ,shr>::GqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c)
+  GqView<VX,VY,VZ,shr>::GqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  GqView<VX,VY,VZ,shr>::post(Space* home, 
+  GqView<VX,VY,VZ,shr>::post(Space& home, 
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     if (z.assigned())
       return GqInt<VX,VY>::post(home,x,y,z.val()+c);
@@ -393,13 +393,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  GqView<VX,VY,VZ,shr>::GqView(Space* home, bool share, 
+  GqView<VX,VY,VZ,shr>::GqView(Space& home, bool share, 
                                GqView<VX,VY,VZ,shr>& p)
     : BaseView<VX,VY,VZ,shr>(home,share,p) {}
 
   template <class VX, class VY, class VZ, bool shr>
   Actor*
-  GqView<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+  GqView<VX,VY,VZ,shr>::copy(Space& home, bool share) {
     return new (home) GqView<VX,VY,VZ,shr>(home,share,*this);
   }
 
@@ -411,13 +411,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   Reflection::ActorSpec
-  GqView<VX,VY,VZ,shr>::spec(const Space* home, Reflection::VarMap& m) const {
+  GqView<VX,VY,VZ,shr>::spec(const Space& home, Reflection::VarMap& m) const {
     return BaseView<VX,VY,VZ,shr>::spec(home, m, ati());
   }
 
   template <class VX, class VY, class VZ, bool shr>
   void
-  GqView<VX,VY,VZ,shr>::post(Space* home, Reflection::VarMap& vars,
+  GqView<VX,VY,VZ,shr>::post(Space& home, Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  GqView<VX,VY,VZ,shr>::propagate(Space* home, ModEventDelta) {
+  GqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
     count(home);
 
     GECODE_ME_CHECK(z.lq(home,atmost()));

@@ -60,37 +60,37 @@ public:
     MODEL_CARRY   ///< Use carries
   };
   /// Actual model
-  Money(const Options& opt) : le(this,nl,0,9) {
+  Money(const Options& opt) : le(*this,nl,0,9) {
     IntVar
       s(le[0]), e(le[1]), n(le[2]), d(le[3]),
       m(le[4]), o(le[5]), r(le[6]), y(le[7]);
 
-    rel(this, s, IRT_NQ, 0);
-    rel(this, m, IRT_NQ, 0);
+    rel(*this, s, IRT_NQ, 0);
+    rel(*this, m, IRT_NQ, 0);
 
-    distinct(this, le, opt.icl());
+    distinct(*this, le, opt.icl());
 
     switch (opt.model()) {
     case MODEL_SINGLE:
-      post(this,            1000*s+100*e+10*n+d
+      post(*this,            1000*s+100*e+10*n+d
                   +         1000*m+100*o+10*r+e
                  == 10000*m+1000*o+100*n+10*e+y,
            opt.icl());
       break;
     case MODEL_CARRY:
       {
-        IntVar c0(this,0,1), c1(this,0,1), c2(this,0,1), c3(this,0,1);
-        post(this,    d+e == y+10*c0, opt.icl());
-        post(this, c0+n+r == e+10*c1, opt.icl());
-        post(this, c1+e+o == n+10*c2, opt.icl());
-        post(this, c2+s+m == o+10*c3, opt.icl());
-        post(this, c3     == m,       opt.icl());
+        IntVar c0(*this,0,1), c1(*this,0,1), c2(*this,0,1), c3(*this,0,1);
+        post(*this,    d+e == y+10*c0, opt.icl());
+        post(*this, c0+n+r == e+10*c1, opt.icl());
+        post(*this, c1+e+o == n+10*c2, opt.icl());
+        post(*this, c2+s+m == o+10*c3, opt.icl());
+        post(*this, c3     == m,       opt.icl());
       }
       break;
     default: GECODE_NEVER;
     }
 
-    branch(this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
   /// Print solution
   virtual void
@@ -100,7 +100,7 @@ public:
 
   /// Constructor for cloning \a s
   Money(bool share, Money& s) : Example(share,s) {
-    le.update(this, share, s.le);
+    le.update(*this, share, s.le);
   }
   /// Copy during cloning
   virtual Space*

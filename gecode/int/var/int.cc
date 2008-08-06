@@ -39,7 +39,7 @@
 
 namespace Gecode {
 
-  IntVar::IntVar(Space* home, int min, int max)
+  IntVar::IntVar(Space& home, int min, int max)
     : VarBase<Int::IntVarImp>(new (home) Int::IntVarImp(home,min,max)) {
     Int::Limits::check(min,"IntVar::IntVar");
     Int::Limits::check(max,"IntVar::IntVar");
@@ -47,7 +47,7 @@ namespace Gecode {
       throw Int::VariableEmptyDomain("IntVar::IntVar");
   }
 
-  IntVar::IntVar(Space* home, const IntSet& ds)
+  IntVar::IntVar(Space& home, const IntSet& ds)
     : VarBase<Int::IntVarImp>(new (home) Int::IntVarImp(home,ds)) {
     Int::Limits::check(ds.min(),"IntVar::IntVar");
     Int::Limits::check(ds.max(),"IntVar::IntVar");
@@ -56,7 +56,7 @@ namespace Gecode {
   }
 
   void
-  IntVar::init(Space* home, int min, int max) {
+  IntVar::init(Space& home, int min, int max) {
     Int::Limits::check(min,"IntVar::IntVar");
     Int::Limits::check(max,"IntVar::IntVar");
     if (min > max)
@@ -65,7 +65,7 @@ namespace Gecode {
   }
 
   void
-  IntVar::init(Space* home, const IntSet& ds) {
+  IntVar::init(Space& home, const IntSet& ds) {
     Int::Limits::check(ds.min(),"IntVar::IntVar");
     Int::Limits::check(ds.max(),"IntVar::IntVar");
     if (ds.size() == 0)

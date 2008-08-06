@@ -78,29 +78,29 @@ namespace Gecode { namespace Int { namespace Element {
     /// Cache for index-value map
     IdxValMap* ivm;
     /// Constructor for cloning \a p
-    Int(Space* home, bool shared, Int& p);
+    Int(Space& home, bool shared, Int& p);
     /// Constructor for creation
-    Int(Space* home, IntSharedArray& i, ViewA x0, ViewB x1);
+    Int(Space& home, IntSharedArray& i, ViewA x0, ViewB x1);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Const function (return PC_BINARY_HI)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$i_{x_0}=x_1\f$
-    static  ExecStatus post(Space* home, IntSharedArray& i,
+    static  ExecStatus post(Space& home, IntSharedArray& i,
                             ViewA x0, ViewB x1);
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 
@@ -127,17 +127,17 @@ namespace Gecode { namespace Int { namespace Element {
     /// View for result
     VC x1;
     /// Constructor for cloning \a p
-    View(Space* home, bool share, View& p);
+    View(Space& home, bool share, View& p);
     /// Constructor for creation
-    View(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
+    View(Space& home, IdxView<VA>* iv, int n, VB x0, VC x1);
     /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 
@@ -156,24 +156,24 @@ namespace Gecode { namespace Int { namespace Element {
     using View<VA,VB,VC,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    ViewBnd(Space* home, bool share, ViewBnd& p);
+    ViewBnd(Space& home, bool share, ViewBnd& p);
     /// Constructor for creation
-    ViewBnd(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
+    ViewBnd(Space& home, IdxView<VA>* iv, int n, VB x0, VC x1);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
+    static  ExecStatus post(Space& home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);
   };
 
@@ -196,12 +196,12 @@ namespace Gecode { namespace Int { namespace Element {
     using View<VA,VB,VC,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    ViewDom(Space* home, bool share, ViewDom& p);
+    ViewDom(Space& home, bool share, ViewDom& p);
     /// Constructor for creation
-    ViewDom(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
+    ViewDom(Space& home, IdxView<VA>* iv, int n, VB x0, VC x1);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -211,17 +211,17 @@ namespace Gecode { namespace Int { namespace Element {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
+    static  ExecStatus post(Space& home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);
   };
 

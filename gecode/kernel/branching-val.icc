@@ -69,15 +69,15 @@ namespace Gecode {
     /// Default constructor
     ValSelBase(void);
     /// Constructor for initialization
-    ValSelBase(Space* home, const ValBranchOptions& vbo);
+    ValSelBase(Space& home, const ValBranchOptions& vbo);
     /// Return description
-    EmptyValSelDesc description(Space* home);
+    EmptyValSelDesc description(Space& home);
     /// Commit to description
-    void commit(Space* home, const EmptyValSelDesc& d, unsigned a);
+    void commit(Space& home, const EmptyValSelDesc& d, unsigned a);
     /// Updating during cloning
-    void update(Space* home, bool share, ValSelBase& vs);
+    void update(Space& home, bool share, ValSelBase& vs);
     /// Delete value selection
-    void dispose(Space* home);
+    void dispose(Space& home);
   };
   //@}
 
@@ -94,21 +94,21 @@ namespace Gecode {
   ValSelBase<View,Val>::ValSelBase(void) {}
   template<class View, class Val>
   forceinline 
-  ValSelBase<View,Val>::ValSelBase(Space*, const ValBranchOptions&) {}
+  ValSelBase<View,Val>::ValSelBase(Space&, const ValBranchOptions&) {}
   template<class View, class Val>
   forceinline EmptyValSelDesc
-  ValSelBase<View,Val>::description(Space*) {
+  ValSelBase<View,Val>::description(Space&) {
     EmptyValSelDesc d; return d;
   }
   template<class View, class Val>
   forceinline void
-  ValSelBase<View,Val>::commit(Space*, const EmptyValSelDesc&, unsigned int) {}
+  ValSelBase<View,Val>::commit(Space&, const EmptyValSelDesc&, unsigned int) {}
   template<class View, class Val>
   forceinline void 
-  ValSelBase<View,Val>::update(Space*, bool, ValSelBase<View,Val>&) {}
+  ValSelBase<View,Val>::update(Space&, bool, ValSelBase<View,Val>&) {}
   template<class View, class Val>
   forceinline void
-  ValSelBase<View,Val>::dispose(Space*) {}
+  ValSelBase<View,Val>::dispose(Space&) {}
 
 }
 

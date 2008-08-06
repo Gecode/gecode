@@ -101,10 +101,10 @@ public:
     playersInGroup(t[opt.size()].playersInGroup),
     weeks(t[opt.size()].weeks),
     players(groups*playersInGroup),
-    groupsS(this,groups*weeks,IntSet::empty,0,players-1,
+    groupsS(*this,groups*weeks,IntSet::empty,0,players-1,
             playersInGroup,playersInGroup) {
 
-    SetVar allPlayers(this, 0, players-1, 0, players-1);
+    SetVar allPlayers(*this, 0, players-1, 0, players-1);
 
     // Groups in one week must be disjoint
     for (int w=0; w<weeks; w++) {
@@ -112,7 +112,7 @@ public:
       for (int g=0; g < groups; g++)
                p[g] = group(w,g);
 
-      rel(this,SOT_DUNION,p,allPlayers);
+      rel(*this,SOT_DUNION,p,allPlayers);
     }
 
     // No two golfers play in the same group more than once
@@ -121,24 +121,24 @@ public:
         SetVar v = group(w,g);
         SetVar vcompl;
         if (opt.propagation() == PROP_DECOMPOSE) {
-          vcompl = SetVar(this,IntSet::empty,
+          vcompl = SetVar(*this,IntSet::empty,
                           Set::Limits::min,Set::Limits::max);
-          rel(this, v, SRT_CMPL, vcompl);
+          rel(*this, v, SRT_CMPL, vcompl);
         }
         for (int i=(w+1)*groups; i<weeks*groups; i++) {
           if (opt.propagation() == PROP_PLAIN) {
-            SetVar atMostOne(this,IntSet::empty,0,players-1,0,1);
-            rel(this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
+            SetVar atMostOne(*this,IntSet::empty,0,players-1,0,1);
+            rel(*this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
           } else {
-            SetVar atMostOneC(this,IntSet::empty,
+            SetVar atMostOneC(*this,IntSet::empty,
                               Set::Limits::min,
                               Set::Limits::max,
                               Set::Limits::card-1,
                               Set::Limits::card);
-            SetVar groupsSiC(this,IntSet::empty,
+            SetVar groupsSiC(*this,IntSet::empty,
                              Set::Limits::min,Set::Limits::max);
-            rel(this, groupsS[i], SRT_CMPL, groupsSiC);
-            rel(this, vcompl, SOT_UNION, groupsSiC, SRT_EQ, atMostOneC);
+            rel(*this, groupsS[i], SRT_CMPL, groupsSiC);
+            rel(*this, vcompl, SOT_UNION, groupsSiC, SRT_EQ, atMostOneC);
           }
         }
       }
@@ -159,55 +159,55 @@ public:
          for (int p=0; p < players; p++) {
            BoolVarArgs bs(groups);
            for (int g=0; g<groups; g++) {
-            BoolVar b(this,0,1);
-            dom(this, group(w,g), SRT_SUP, p, b);
+            BoolVar b(*this,0,1);
+            dom(*this, group(w,g), SRT_SUP, p, b);
             bs[g] = b;
           }
-           linear(this, bs, IRT_EQ, 1);
+           linear(*this, bs, IRT_EQ, 1);
          }
        }
 
       // Redundant constraint:
       // any two groups has at most one player in common
-      atmostOne(this, groupsS, playersInGroup);
+      atmostOne(*this, groupsS, playersInGroup);
 
       // Symmetry breaking: order groups
       for (int w=0; w<weeks; w++) {
         for (int g=0; g<groups-1; g++) {
-          IntVar minG1(this, 0, players-1);
-          IntVar minG2(this, 0, players-1);
+          IntVar minG1(*this, 0, players-1);
+          IntVar minG2(*this, 0, players-1);
           SetVar g1 = group(w,g);
           SetVar g2 = group(w,g+1);
-          min(this, g1, minG1);
-          min(this, g2, minG2);
-          rel(this, minG1, IRT_LE, minG2);
+          min(*this, g1, minG1);
+          min(*this, g2, minG2);
+          rel(*this, minG1, IRT_LE, minG2);
         }
       }
 
       // Symmetry breaking: order weeks
       // minElem(group(w,0)\{0}) < minElem(group(w+1,0)\{0})
       for (int w=0; w<weeks-1; w++) {
-        SetVar g1(this, IntSet::empty, 1, players-1);
-        SetVar g2(this, IntSet::empty, 1, players-1);
-        rel(this, g1, SOT_DUNION, IntSet(0,0), SRT_EQ, group(w,0));
-        rel(this, g2, SOT_DUNION, IntSet(0,0), SRT_EQ, group(w+1,0));
-        IntVar minG1(this, 0, players-1);
-        IntVar minG2(this, 0, players-1);
-        min(this, g1, minG1);
-        min(this, g2, minG2);
-        rel(this, minG1, IRT_LE, minG2);
+        SetVar g1(*this, IntSet::empty, 1, players-1);
+        SetVar g2(*this, IntSet::empty, 1, players-1);
+        rel(*this, g1, SOT_DUNION, IntSet(0,0), SRT_EQ, group(w,0));
+        rel(*this, g2, SOT_DUNION, IntSet(0,0), SRT_EQ, group(w+1,0));
+        IntVar minG1(*this, 0, players-1);
+        IntVar minG2(*this, 0, players-1);
+        min(*this, g1, minG1);
+        min(*this, g2, minG2);
+        rel(*this, minG1, IRT_LE, minG2);
       }
 
       // Initialize the dual variables:
       // groupsSInv[w*players+p] is player p's group in week w
-      IntVarArray groupsSInv(this, weeks*players, 0, groups-1);
+      IntVarArray groupsSInv(*this, weeks*players, 0, groups-1);
       for (int w=0; w<weeks; w++) {
         for (int p=0; p<players; p++) {
-          SetVar thisPlayer(this, p,p, 0, players-1);
+          SetVar thisPlayer(*this, p,p, 0, players-1);
           SetVarArgs thisWeek(groups);
           for (int g=0; g<groups; g++)
             thisWeek[g] = group(w,g);
-          element(this, thisWeek, groupsSInv[w*players+p], thisPlayer);
+          element(*this, thisWeek, groupsSInv[w*players+p], thisPlayer);
         }
       }
 
@@ -215,10 +215,10 @@ public:
       // For all p<groups : groupsSInv[w*players+p] <= p
       for (int w=0; w<weeks; w++)
         for (int p=0; p<groups; p++)
-          rel(this, groupsSInv[w*players+p], IRT_LQ, p);
+          rel(*this, groupsSInv[w*players+p], IRT_LQ, p);
     }
 
-    branch(this, groupsS, SET_VAR_MIN_MIN, SET_VAL_MIN_INC);
+    branch(*this, groupsS, SET_VAR_MIN_MIN, SET_VAL_MIN_INC);
   }
 
   /// Print solution
@@ -251,7 +251,7 @@ public:
   Golf(bool share, Golf& s) : Example(share,s),
       groups(s.groups), playersInGroup(s.playersInGroup),
       weeks(s.weeks), players(s.players) {
-    groupsS.update(this, share, s.groupsS);
+    groupsS.update(*this, share, s.groupsS);
   }
   /// Copy during cloning
   virtual Space*
@@ -262,7 +262,7 @@ public:
   /// Make variables available for visualisation
   virtual void
   getVars(Gecode::Reflection::VarMap& vm, bool registerOnly) {
-    vm.putArray(this, groupsS, "groupsS", registerOnly);
+    vm.putArray(*this, groupsS, "groupsS", registerOnly);
   }
 };
 

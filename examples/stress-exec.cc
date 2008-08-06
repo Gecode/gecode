@@ -55,18 +55,18 @@ protected:
 public:
   /// The actual problem
   StressExec(const SizeOptions& opt)
-    : x(this,2,0,n) {
+    : x(*this,2,0,n) {
 
     for (unsigned int i=0; i<opt.size(); i++) {
-      rel(this, x[0], IRT_LE, x[1]);
-      rel(this, x[1], IRT_LE, x[0]);
+      rel(*this, x[0], IRT_LE, x[1]);
+      rel(*this, x[1], IRT_LE, x[0]);
     }
 
   }
 
   /// Constructor for cloning \a s
   StressExec(bool share, StressExec& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning

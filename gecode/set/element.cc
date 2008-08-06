@@ -44,8 +44,8 @@ namespace Gecode {
   using namespace Gecode::Set;
 
   void
-  elementsUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
-    if (home->failed()) return;
+  elementsUnion(Space& home, const SetVarArgs& x, SetVar y, SetVar z) {
+    if (home.failed()) return;
     Set::Element::IdxViewArray<SetView> iv(home, x);
     GECODE_ES_FAIL(home,
                    (Element::ElementUnion<SetView,SetView>::
@@ -53,19 +53,19 @@ namespace Gecode {
   }
 
   void
-  elementsUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z) {
+  elementsUnion(Space& home, const IntSetArgs& s, SetVar y, SetVar z) {
     SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
       new (&x[i]) IntSet(s[i]);
-    if (home->failed()) return;
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,
                    (Element::ElementUnionConst<SetView,SetView>::
                     post(home,z,x,y)));
   }
 
   void
-  elementsInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
-    if (home->failed()) return;
+  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z) {
+    if (home.failed()) return;
     Set::Element::IdxViewArray<SetView> iv(home, x);
     IntSet universe(Set::Limits::min,
                     Set::Limits::max);
@@ -75,9 +75,9 @@ namespace Gecode {
   }
 
   void
-  elementsInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
+  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z,
                 const IntSet& universe) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Set::Element::IdxViewArray<SetView> iv(home, x);
     GECODE_ES_FAIL(home,
                    (Element::ElementIntersection<SetView,SetView>::
@@ -85,15 +85,15 @@ namespace Gecode {
   }
 
   void
-  elementsDisjoint(Space* home, const SetVarArgs& x, SetVar y) {
-    if (home->failed()) return;
+  elementsDisjoint(Space& home, const SetVarArgs& x, SetVar y) {
+    if (home.failed()) return;
     Set::Element::IdxViewArray<SetView> iv(home, x);
     GECODE_ES_FAIL(home,Element::ElementDisjoint::post(home,iv,y));
   }
 
   void
-  element(Space* home, const SetVarArgs& x, IntVar y, SetVar z) {
-    if (home->failed()) return;
+  element(Space& home, const SetVarArgs& x, IntVar y, SetVar z) {
+    if (home.failed()) return;
     Set::Element::IdxViewArray<SetView > iv(home, x);
     SetView zv(z);
 
@@ -104,10 +104,10 @@ namespace Gecode {
   }
 
   void
-  element(Space* home, const IntSetArgs& s, IntVar y, SetVar z) {
+  element(Space& home, const IntSetArgs& s, IntVar y, SetVar z) {
     for (int i=s.size(); i--;)
       Set::Limits::check(s[i], "Set::element");
-    if (home->failed()) return;
+    if (home.failed()) return;
     SetView zv(z);
     SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)

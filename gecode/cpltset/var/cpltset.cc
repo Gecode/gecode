@@ -39,7 +39,7 @@
 
 namespace Gecode {
 
-  CpltSetVar::CpltSetVar(Space* home, int glbMin,int glbMax,
+  CpltSetVar::CpltSetVar(Space& home, int glbMin,int glbMax,
                          int lubMin,int lubMax, 
                          unsigned int cardMin, unsigned int cardMax) {
     Set::Limits::check(glbMin,"CpltSetVar::CpltSetVar");
@@ -55,7 +55,7 @@ namespace Gecode {
                                                cardMin, cardMax);
   }
 
-  CpltSetVar::CpltSetVar(Space* home, const IntSet& glbD,
+  CpltSetVar::CpltSetVar(Space& home, const IntSet& glbD,
                          int lubMin,int lubMax, 
                          unsigned int cardMin, unsigned int cardMax) {
     Set::Limits::check(glbD,"CpltSetVar::CpltSetVar");
@@ -70,7 +70,7 @@ namespace Gecode {
                                                cardMin, cardMax);
   }
 
-  CpltSetVar::CpltSetVar(Space* home, int glbMin,int glbMax,
+  CpltSetVar::CpltSetVar(Space& home, int glbMin,int glbMax,
                          const IntSet& lubD,
                          unsigned int cardMin, unsigned int cardMax) {
     Set::Limits::check(glbMin,"CpltSetVar::CpltSetVar");
@@ -83,7 +83,7 @@ namespace Gecode {
                                                lubD, cardMin, cardMax);
   }
 
-  CpltSetVar::CpltSetVar(Space* home, const IntSet& glbD,
+  CpltSetVar::CpltSetVar(Space& home, const IntSet& glbD,
                          const IntSet& lubD,
                          unsigned int cardMin, unsigned int cardMax) {
     Set::Limits::check(glbD,"CpltSetVar::CpltSetVar");

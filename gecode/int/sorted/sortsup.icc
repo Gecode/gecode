@@ -379,7 +379,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   inline bool
-  array_assigned(Space* home,
+  array_assigned(Space& home,
                  ViewArray<View>& x,
                  ViewArray<View>& y,
                  ViewArray<View>& z,
@@ -490,7 +490,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View>
   forceinline bool
-  channel(Space* home, ViewArray<View>& x, ViewArray<View>& y, 
+  channel(Space& home, ViewArray<View>& x, ViewArray<View>& y, 
           ViewArray<View>& z, bool& nofix) {
     int n = x.size();
     for (int i = n; i--; ) {

@@ -60,22 +60,22 @@ namespace Gecode { namespace Set { namespace Distinct {
     /// Cardinality of the sets
     unsigned int c;
     /// Constructor for cloning \a p
-    AtmostOne(Space* home, bool share,AtmostOne& p);
+    AtmostOne(Space& home, bool share,AtmostOne& p);
     /// Constructor for posting
-    AtmostOne(Space* home,ViewArray<SetView>&,unsigned int);
+    AtmostOne(Space& home,ViewArray<SetView>&,unsigned int);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home, bool);
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
-    static ExecStatus post(Space* home,ViewArray<SetView> x,unsigned int c);
+    static ExecStatus post(Space& home,ViewArray<SetView> x,unsigned int c);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);

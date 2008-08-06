@@ -49,15 +49,15 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   forceinline
-  Seq::Seq(Space* home, ViewArray<SetView>& x)
+  Seq::Seq(Space& home, ViewArray<SetView>& x)
     : NaryPropagator<SetView, PC_SET_ANY>(home,x) {}
 
   forceinline
-  Seq::Seq(Space* home, bool share, Seq& p)
+  Seq::Seq(Space& home, bool share, Seq& p)
     : NaryPropagator<SetView, PC_SET_ANY>(home,share,p) {}
 
   forceinline ExecStatus
-  Seq::post(Space* home, ViewArray<SetView> x) {
+  Seq::post(Space& home, ViewArray<SetView> x) {
     if (x.shared(home))
       return ES_FAILED;
     (void) new (home) Seq(home,x);

@@ -137,10 +137,10 @@ namespace Gecode {
     }    
   }
   
-  void emitJavaScript(Space* home, std::ostream& os) {
+  void emitJavaScript(Space& home, std::ostream& os) {
     using namespace std;
     Reflection::VarMap vm;
-    home->getVars(vm, false);
+    home.getVars(vm, false);
     int rootSize = vm.size();
     Reflection::VarMapIter vmi(vm);
     int varCount = 0;

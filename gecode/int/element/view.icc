@@ -69,20 +69,20 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     int idx; View view;
 
-    static IdxView* allocate(Space*, int);
-    static IdxView* init(Space*, const typename ViewToVarArg<View>::argtype&);
+    static IdxView* allocate(Space&, int);
+    static IdxView* init(Space&, const typename ViewToVarArg<View>::argtype&);
   };
 
 
   template <class View>
   forceinline IdxView<View>*
-  IdxView<View>::allocate(Space* home, int n) {
-    return home->alloc<IdxView<View> >(n);
+  IdxView<View>::allocate(Space& home, int n) {
+    return home.alloc<IdxView<View> >(n);
   }
 
   template <class View>
   forceinline IdxView<View>*
-  IdxView<View>::init(Space* home, 
+  IdxView<View>::init(Space& home, 
                       const typename ViewToVarArg<View>::argtype& x) {
     IdxView<View>* iv = allocate(home,x.size());
     for (int i = x.size(); i--; ) {
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Element {
    */
 
   template <class VA, class VB, class VC, PropCond pc_ac>
-  View<VA,VB,VC,pc_ac>::View(Space* home, IdxView<VA>* iv0, int n0,
+  View<VA,VB,VC,pc_ac>::View(Space& home, IdxView<VA>* iv0, int n0,
                              VB y0, VC y1)
     : Propagator(home), iv(iv0), n(n0), x0(y0), x1(y1) {
     x0.subscribe(home,this,PC_INT_DOM);
@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac>
   forceinline
-  View<VA,VB,VC,pc_ac>::View(Space* home, bool share, View& p)
+  View<VA,VB,VC,pc_ac>::View(Space& home, bool share, View& p)
     : Propagator(home,share,p), n(p.n) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -196,7 +196,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac>
   Reflection::ActorSpec
-  View<VA,VB,VC,pc_ac>::spec(const Space* home, Reflection::VarMap& m,
+  View<VA,VB,VC,pc_ac>::spec(const Space& home, Reflection::VarMap& m,
                              const Support::Symbol& ati) const {
     Reflection::ActorSpec s(ati);
     Reflection::IntArrayArg* ai = Reflection::Arg::newIntArray(n);
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac>
   forceinline size_t
-  View<VA,VB,VC,pc_ac>::dispose(Space* home) {
+  View<VA,VB,VC,pc_ac>::dispose(Space& home) {
     x0.cancel(home,this,PC_INT_DOM);
     x1.cancel(home,this,pc_ac);
     for (int i=n; i--;)
@@ -283,7 +283,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac, class RelTest>
   ExecStatus
-  scan(Space* home, IdxView<VA>* iv, int& n,
+  scan(Space& home, IdxView<VA>* iv, int& n,
        VB x0, VC x1, Propagator* p, RelTest rt) {
     assert(n > 1);
     /*
@@ -344,13 +344,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   forceinline
-  ViewBnd<VA,VB,VC>::ViewBnd(Space* home,
+  ViewBnd<VA,VB,VC>::ViewBnd(Space& home,
                              IdxView<VA>* iv, int n, VB x0, VC x1)
     : View<VA,VB,VC,PC_INT_BND>(home,iv,n,x0,x1) {}
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewBnd<VA,VB,VC>::post(Space* home,
+  ViewBnd<VA,VB,VC>::post(Space& home,
                           IdxView<VA>* iv, int n, VB x0, VC x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,n));
@@ -367,12 +367,12 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   forceinline
-  ViewBnd<VA,VB,VC>::ViewBnd(Space* home, bool share, ViewBnd& p)
+  ViewBnd<VA,VB,VC>::ViewBnd(Space& home, bool share, ViewBnd& p)
     : View<VA,VB,VC,PC_INT_BND>(home,share,p) {}
 
   template <class VA, class VB, class VC>
   Actor*
-  ViewBnd<VA,VB,VC>::copy(Space* home, bool share) {
+  ViewBnd<VA,VB,VC>::copy(Space& home, bool share) {
     return new (home) ViewBnd<VA,VB,VC>(home,share,*this);
   }
 
@@ -384,13 +384,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   Reflection::ActorSpec
-  ViewBnd<VA,VB,VC>::spec(const Space* home, Reflection::VarMap& m) const {
+  ViewBnd<VA,VB,VC>::spec(const Space& home, Reflection::VarMap& m) const {
     return View<VA,VB,VC,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class VA, class VB, class VC>
   void
-  ViewBnd<VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
+  ViewBnd<VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
     spec.checkArity(4);
@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewBnd<VA,VB,VC>::propagate(Space* home, ModEventDelta) {
+  ViewBnd<VA,VB,VC>::propagate(Space& home, ModEventDelta) {
     assert(n > 1);
     RelTestBnd<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
@@ -460,13 +460,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   forceinline
-  ViewDom<VA,VB,VC>::ViewDom(Space* home,
+  ViewDom<VA,VB,VC>::ViewDom(Space& home,
                              IdxView<VA>* iv, int n, VB x0, VC x1)
     : View<VA,VB,VC,PC_INT_DOM>(home,iv,n,x0,x1) {}
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewDom<VA,VB,VC>::post(Space* home,
+  ViewDom<VA,VB,VC>::post(Space& home,
                           IdxView<VA>* iv, int n, VB x0, VC x1){
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,n));
@@ -483,12 +483,12 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   forceinline
-  ViewDom<VA,VB,VC>::ViewDom(Space* home, bool share, ViewDom& p)
+  ViewDom<VA,VB,VC>::ViewDom(Space& home, bool share, ViewDom& p)
     : View<VA,VB,VC,PC_INT_DOM>(home,share,p) {}
 
   template <class VA, class VB, class VC>
   Actor*
-  ViewDom<VA,VB,VC>::copy(Space* home, bool share) {
+  ViewDom<VA,VB,VC>::copy(Space& home, bool share) {
     return new (home) ViewDom<VA,VB,VC>(home,share,*this);
   }
 
@@ -510,13 +510,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   Reflection::ActorSpec
-  ViewDom<VA,VB,VC>::spec(const Space* home, Reflection::VarMap& m) const {
+  ViewDom<VA,VB,VC>::spec(const Space& home, Reflection::VarMap& m) const {
     return View<VA,VB,VC,PC_INT_DOM>::spec(home, m, ati());
   }
 
   template <class VA, class VB, class VC>
   void
-  ViewDom<VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
+  ViewDom<VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
     spec.checkArity(4);
@@ -538,7 +538,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC>
   ExecStatus
-  ViewDom<VA,VB,VC>::propagate(Space* home, ModEventDelta med) {
+  ViewDom<VA,VB,VC>::propagate(Space& home, ModEventDelta med) {
     assert(n > 1);
     if (VA::me(med) != ME_INT_DOM) {
       RelTestBnd<VA,VC> rt;

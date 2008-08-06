@@ -155,24 +155,24 @@ namespace Gecode { namespace Int {
        *
        * \a p must be the pointer to the previous element of \c this.
        */
-      void dispose(Space* home, RangeList* p, RangeList* l);
+      void dispose(Space& home, RangeList* p, RangeList* l);
       /**
        * \brief Free memory for all elements between this and \a l (inclusive)
        *
        * This routine assumes that the list has already been fixed.
        */
-      void dispose(Space* home, RangeList* l);
+      void dispose(Space& home, RangeList* l);
       /// Free memory for this element
-      void dispose(Space* home);
+      void dispose(Space& home);
 
       /// Allocate memory from space
-      static void* operator new(size_t s, Space* home);
+      static void* operator new(size_t s, Space& home);
       /// Placement new
       static void* operator new(size_t s, void* p);
       /// No-op (for exceptions)
       static void  operator delete(void*);
       /// No-op (use dispose instead)
-      static void  operator delete(void*, Space*);
+      static void  operator delete(void*, Space&);
       /// No-op (use dispose instead)
       static void  operator delete(void*, void*);
       //@}
@@ -201,12 +201,12 @@ namespace Gecode { namespace Int {
 
   protected:
     /// Constructor for cloning \a x
-    IntVarImp(Space* home, bool share, IntVarImp& x);
+    IntVarImp(Space& home, bool share, IntVarImp& x);
   public:
     /// Initialize with range domain
-    IntVarImp(Space* home, int min, int max);
+    IntVarImp(Space& home, int min, int max);
     /// Initialize with domain specified by \a d
-    IntVarImp(Space* home, const IntSet& d);
+    IntVarImp(Space& home, const IntSet& d);
 
     /// \name Value access
     //@{
@@ -262,36 +262,36 @@ namespace Gecode { namespace Int {
     /// \name Domain update by value (full domain)
     //@{
     /// Restrict domain values to be less or equal than \a n
-    GECODE_INT_EXPORT ModEvent lq_full(Space* home, int n);
+    GECODE_INT_EXPORT ModEvent lq_full(Space& home, int n);
     /// Restrict domain values to be greater or equal than \a n
-    GECODE_INT_EXPORT ModEvent gq_full(Space* home, int n);
+    GECODE_INT_EXPORT ModEvent gq_full(Space& home, int n);
     /// Restrict domain values to be equal to current minimum of domain
-    GECODE_INT_EXPORT ModEvent eq_full(Space* home, int n);
+    GECODE_INT_EXPORT ModEvent eq_full(Space& home, int n);
     /// Restrict domain values to be different from \a n
-    GECODE_INT_EXPORT ModEvent nq_full(Space* home, int n);
+    GECODE_INT_EXPORT ModEvent nq_full(Space& home, int n);
     //@}
   public:
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, int n);
+    ModEvent lq(Space& home, int n);
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, double n);
+    ModEvent lq(Space& home, double n);
 
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, int n);
+    ModEvent gq(Space& home, int n);
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, double n);
+    ModEvent gq(Space& home, double n);
 
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, int n);
+    ModEvent nq(Space& home, int n);
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, double n);
+    ModEvent nq(Space& home, double n);
 
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, int n);
+    ModEvent eq(Space& home, int n);
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, double n);
+    ModEvent eq(Space& home, double n);
     //@}
 
     /**
@@ -312,22 +312,22 @@ namespace Gecode { namespace Int {
     //@{
     /// Replace domain by ranges described by \a i
     template <class I> 
-    ModEvent narrow_r(Space* home, I& i, bool depends=true);
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
     template <class I> 
-    ModEvent inter_r(Space* home, I& i, bool depends=true);
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
     template <class I> 
-    ModEvent minus_r(Space* home, I& i, bool depends=true);
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
     template <class I> 
-    ModEvent narrow_v(Space* home, I& i, bool depends=true);
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
     template <class I> 
-    ModEvent inter_v(Space* home, I& i, bool depends=true);
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
     template <class I> 
-    ModEvent minus_v(Space* home, I& i, bool depends=true);
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
     /// \name Dependencies
@@ -340,13 +340,13 @@ namespace Gecode { namespace Int {
      * subscriptions during propagation).
      *
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space* home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator* p, PropCond pc);
     /// Subscribe advisor \a a to variable
-    void subscribe(Space* home, Advisor& a);
+    void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
-    void cancel(Space* home, Advisor& a);
+    void cancel(Space& home, Advisor& a);
     //@}
 
     /// \name Variable implementation-dependent propagator support
@@ -358,25 +358,25 @@ namespace Gecode { namespace Int {
 
   private:
     /// Return copy of not-yet copied variable
-    GECODE_INT_EXPORT IntVarImp* perform_copy(Space* home, bool share);
+    GECODE_INT_EXPORT IntVarImp* perform_copy(Space& home, bool share);
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    IntVarImp* copy(Space* home, bool share);
+    IntVarImp* copy(Space& home, bool share);
     //@}
 
     /// \name Reflection
     //@{
     /// Return specification
     GECODE_INT_EXPORT Reflection::Arg*
-    spec(const Space* home, Reflection::VarMap& m) const;
+    spec(const Space& home, Reflection::VarMap& m) const;
     /// Create variable implementation from specification
     static GECODE_INT_EXPORT VarImpBase*
-    create(Space* home, Reflection::VarSpec& spec);
+    create(Space& home, Reflection::VarSpec& spec);
     /// Constrain variable implementation using specification
     static GECODE_INT_EXPORT void
-    constrain(Space* home, VarImpBase* v, Reflection::VarSpec& spec);
+    constrain(Space& home, VarImpBase* v, Reflection::VarSpec& spec);
     //@}
 
     /// \name Delta information for advisors
@@ -522,12 +522,12 @@ namespace Gecode { namespace Int {
     GECODE_INT_EXPORT static BoolVarImp s_zero;
 
     /// Constructor for cloning \a x
-    BoolVarImp(Space* home, bool share, BoolVarImp& x);
+    BoolVarImp(Space& home, bool share, BoolVarImp& x);
     /// Initialize static instance assigned to \a n
     BoolVarImp(int n);
   public:
     /// Initialize with range domain
-    BoolVarImp(Space* home, int min, int max);
+    BoolVarImp(Space& home, int min, int max);
 
     /// \name Domain status access
     //@{
@@ -590,24 +590,24 @@ namespace Gecode { namespace Int {
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, int n);
+    ModEvent lq(Space& home, int n);
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, double n);
+    ModEvent lq(Space& home, double n);
 
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, int n);
+    ModEvent gq(Space& home, int n);
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, double n);
+    ModEvent gq(Space& home, double n);
 
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, int n);
+    ModEvent nq(Space& home, int n);
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, double n);
+    ModEvent nq(Space& home, double n);
 
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, int n);
+    ModEvent eq(Space& home, int n);
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, double n);
+    ModEvent eq(Space& home, double n);
     //@}
 
     /**
@@ -628,34 +628,34 @@ namespace Gecode { namespace Int {
     //@{
     /// Replace domain by ranges described by \a i
     template <class I> 
-    ModEvent narrow_r(Space* home, I& i, bool depends=true);
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
     template <class I> 
-    ModEvent inter_r(Space* home, I& i, bool depends=true);
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
     template <class I> 
-    ModEvent minus_r(Space* home, I& i, bool depends=true);
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
     template <class I> 
-    ModEvent narrow_v(Space* home, I& i, bool depends=true);
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
     template <class I> 
-    ModEvent inter_v(Space* home, I& i, bool depends=true);
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
     template <class I> 
-    ModEvent minus_v(Space* home, I& i, bool depends=true);
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
     /// \name Boolean update operations
     //@{
     /// Assign variable to zero
-    ModEvent zero(Space* home);
+    ModEvent zero(Space& home);
     /// Assign variable to one
-    ModEvent one(Space* home);
+    ModEvent one(Space& home);
     /// Assign unassigned variable to zero
-    GECODE_INT_EXPORT ModEvent zero_none(Space* home);
+    GECODE_INT_EXPORT ModEvent zero_none(Space& home);
     /// Assign unassigned variable to one
-    GECODE_INT_EXPORT ModEvent one_none(Space* home);
+    GECODE_INT_EXPORT ModEvent one_none(Space& home);
     //@}
 
   public:
@@ -671,18 +671,18 @@ namespace Gecode { namespace Int {
      * The propagation condition \a pc can be a propagation condition
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
     /**
      * \brief Cancel subscription of propagator \a p with propagation condition \a pc
      * 
      * The propagation condition \a pc can be a propagation condition
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
-    void cancel(Space* home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator* p, PropCond pc);
     /// Subscribe advisor \a a to variable
-    void subscribe(Space* home, Advisor& a);
+    void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
-    void cancel(Space* home, Advisor& a);
+    void cancel(Space& home, Advisor& a);
     //@}
 
     /// \name Variable implementation-dependent propagator support
@@ -694,7 +694,7 @@ namespace Gecode { namespace Int {
      * integer variables, however \a me will be ignored if it is not
      * ME_INT_VAL (or ME_BOOL_VAL).
      */
-    static void schedule(Space* home, Propagator* p, ModEvent me);
+    static void schedule(Space& home, Propagator* p, ModEvent me);
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     //@}
@@ -714,20 +714,20 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    BoolVarImp* copy(Space* home, bool share);
+    BoolVarImp* copy(Space& home, bool share);
     //@}
     
     /// \name Reflection
     //@{
     /// Return specification
     GECODE_INT_EXPORT Reflection::Arg*
-    spec(const Space* home, Reflection::VarMap& m) const;
+    spec(const Space& home, Reflection::VarMap& m) const;
     /// Create variable implementation from specification
     static GECODE_INT_EXPORT VarImpBase*
-    create(Space* home, Reflection::VarSpec& spec);
+    create(Space& home, Reflection::VarSpec& spec);
     /// Constrain variable implementation using specification
     static GECODE_INT_EXPORT void
-    constrain(Space* home, VarImpBase* v, Reflection::VarSpec& spec);
+    constrain(Space& home, VarImpBase* v, Reflection::VarSpec& spec);
     //@}
     
   };

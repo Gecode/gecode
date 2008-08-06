@@ -52,7 +52,7 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline
-  ComplementView<View>::ComplementView(Space* home,
+  ComplementView<View>::ComplementView(Space& home,
                                        const Reflection::VarMap& vars,
                                        Reflection::Arg* arg)
   : DerivedViewBase<View>(View(home, vars, arg)) {}
@@ -173,7 +173,7 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::cardMin(Space* home, unsigned int c) {
+  ComplementView<View>::cardMin(Space& home, unsigned int c) {
     if (c < Limits::card)
       return me_negateset(view.cardMax(home, Limits::card - c));
     return ME_SET_NONE;
@@ -181,7 +181,7 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::cardMax(Space* home, unsigned int c) {
+  ComplementView<View>::cardMax(Space& home, unsigned int c) {
     if (c < Limits::card)
       return me_negateset(view.cardMin(home, Limits::card - c));
     return ME_SET_NONE;
@@ -189,19 +189,19 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::include(Space* home, int c) {
+  ComplementView<View>::include(Space& home, int c) {
     return me_negateset((view.exclude(home, c)));
   }
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::exclude(Space* home, int c) {
+  ComplementView<View>::exclude(Space& home, int c) {
     return me_negateset((view.include(home, c)));
   }
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::intersect(Space* home, int c) {
+  ComplementView<View>::intersect(Space& home, int c) {
     Iter::Ranges::Singleton si(c,c);
     RangesCompl<Iter::Ranges::Singleton> csi(si);
     return me_negateset((view.includeI(home, csi)));
@@ -209,7 +209,7 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::intersect(Space* home, int i, int j) {
+  ComplementView<View>::intersect(Space& home, int i, int j) {
     Iter::Ranges::Singleton si(i,j);
     RangesCompl<Iter::Ranges::Singleton> csi(si);
     return me_negateset((view.includeI(home, csi)));
@@ -217,63 +217,63 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::include(Space* home, int j, int k) {
+  ComplementView<View>::include(Space& home, int j, int k) {
     return me_negateset(view.exclude(home,j,k));
   }
 
   template <class View>
   forceinline ModEvent
-  ComplementView<View>::exclude(Space* home, int j, int k) {
+  ComplementView<View>::exclude(Space& home, int j, int k) {
     return me_negateset(view.include(home,j,k));
   }
 
   template <class View>
   template <class I> ModEvent
-  ComplementView<View>::excludeI(Space* home,I& iter) {
+  ComplementView<View>::excludeI(Space& home,I& iter) {
     return me_negateset(view.includeI(home,iter));
   }
 
   template <class View>
   template <class I> ModEvent
-  ComplementView<View>::includeI(Space* home,I& iter) {
+  ComplementView<View>::includeI(Space& home,I& iter) {
     return me_negateset(view.excludeI(home,iter));
   }
 
   template <class View>
   template <class I> ModEvent
-  ComplementView<View>::intersectI(Space* home,I& iter) {
+  ComplementView<View>::intersectI(Space& home,I& iter) {
     RangesCompl<I> c(iter);
     return me_negateset(view.includeI(home,c));
   }
 
   template <class View>
   forceinline void
-  ComplementView<View>::subscribe(Space* home, Propagator* p, PropCond pc,
+  ComplementView<View>::subscribe(Space& home, Propagator* p, PropCond pc,
                                   bool process) {
     view.subscribe(home,p, pc_negateset(pc),process);
   }
 
   template <class View>
   forceinline void
-  ComplementView<View>::cancel(Space* home, Propagator* p, PropCond pc) {
+  ComplementView<View>::cancel(Space& home, Propagator* p, PropCond pc) {
     view.cancel(home,p, pc_negateset(pc));
   }
 
   template <class View>
   forceinline void
-  ComplementView<View>::subscribe(Space* home, Advisor& a) {
+  ComplementView<View>::subscribe(Space& home, Advisor& a) {
     view.subscribe(home,a);
   }
 
   template <class View>
   forceinline void
-  ComplementView<View>::cancel(Space* home, Advisor& a) {
+  ComplementView<View>::cancel(Space& home, Advisor& a) {
     view.cancel(home,a);
   }
 
   template <class View>
   forceinline void
-  ComplementView<View>::schedule(Space* home, Propagator* p, ModEvent me) {
+  ComplementView<View>::schedule(Space& home, Propagator* p, ModEvent me) {
     return View::schedule(home,p,me_negateset(me));
   }
   template <class View>
@@ -290,14 +290,14 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline void
-  ComplementView<View>::update(Space* home, bool share, 
+  ComplementView<View>::update(Space& home, bool share, 
                                ComplementView& y) {
     view.update(home,share,y.view);
   }
 
   template <class View>
   forceinline Reflection::Arg*
-  ComplementView<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  ComplementView<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return view.spec(home, m);
   }
 

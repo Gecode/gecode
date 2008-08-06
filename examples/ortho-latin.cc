@@ -64,11 +64,11 @@ public:
   /// Actual model
   OrthoLatinSquare(const SizeOptions& opt)
     : n(opt.size()),
-      x1(this,n*n,1,n), x2(this,n*n,1,n) {
+      x1(*this,n*n,1,n), x2(*this,n*n,1,n) {
     const int nn = n*n;
-    IntVarArray z(this,nn,0,n*n-1);
+    IntVarArray z(*this,nn,0,n*n-1);
 
-    distinct(this, z, opt.icl());
+    distinct(*this, z, opt.icl());
     // Connect
     {
       IntArgs mod(n*n);
@@ -79,8 +79,8 @@ public:
           div[i*n+j] = i+1;
         }
       for (int i = nn; i--; ) {
-        element(this, div, z[i], x2[i]);
-        element(this, mod, z[i], x1[i]);
+        element(*this, div, z[i], x2[i]);
+        element(*this, mod, z[i], x1[i]);
       }
     }
 
@@ -89,19 +89,19 @@ public:
       IntVarArgs ry(n);
       for (int j = n; j--; )
         ry[j] = y1(i,j);
-      distinct(this, ry, opt.icl());
+      distinct(*this, ry, opt.icl());
       for (int j = n; j--; )
         ry[j] = y2(i,j);
-      distinct(this, ry, opt.icl());
+      distinct(*this, ry, opt.icl());
     }
     for (int j = n; j--; ) {
       IntVarArgs cy(n);
       for (int i = n; i--; )
         cy[i] = y1(i,j);
-      distinct(this, cy, opt.icl());
+      distinct(*this, cy, opt.icl());
       for (int i = n; i--; )
         cy[i] = y2(i,j);
-      distinct(this, cy, opt.icl());
+      distinct(*this, cy, opt.icl());
     }
 
     for (int i = 1; i<n; i++) {
@@ -111,17 +111,17 @@ public:
         ry1[j] = y1(i-1,j);
         ry2[j] = y2(i,j);
       }
-      rel(this, ry1, IRT_GQ, ry2);
+      rel(*this, ry1, IRT_GQ, ry2);
     }
 
-    branch(this, z, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+    branch(*this, z, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
 
   /// Constructor for cloning \a s
   OrthoLatinSquare(bool share, OrthoLatinSquare& s)
     : Example(share,s), n(s.n) {
-      x1.update(this, share, s.x1);
-      x2.update(this, share, s.x2);
+      x1.update(*this, share, s.x1);
+      x2.update(*this, share, s.x2);
   }
 
   /// Copy during cloning

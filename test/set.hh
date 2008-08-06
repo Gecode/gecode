@@ -214,10 +214,10 @@ namespace Test {
       /// Check for solution
       virtual bool solution(const SetAssignment&) const = 0;
       /// Post propagator
-      virtual void post(Gecode::Space* home, Gecode::SetVarArray& x, 
+      virtual void post(Gecode::Space& home, Gecode::SetVarArray& x, 
                         Gecode::IntVarArray& y) = 0;
       /// Post reified propagator
-      virtual void post(Gecode::Space*, Gecode::SetVarArray&,
+      virtual void post(Gecode::Space&, Gecode::SetVarArray&,
                         Gecode::IntVarArray&, Gecode::BoolVar) {}
       /// Perform test
       virtual bool run(void);

@@ -102,7 +102,7 @@ protected:
   VarArray<Reflection::Var> x;
 public:
   /// The actual problem
-  JavaScript(const FileNameOptions& opt) : x(this, 0) {
+  JavaScript(const FileNameOptions& opt) : x(*this, 0) {
     if (opt.file() == NULL) {
       throw Exception("JavaScript", "no file given");
     }
@@ -117,19 +117,19 @@ public:
       program += line+"\n";
     }
     programFile.close();
-    fromJavaScript(this, program);
+    fromJavaScript(*this, program);
     Reflection::VarMap vm;
-    for (Reflection::ActorSpecIter si(this, vm); si(); ++si) {
+    for (Reflection::ActorSpecIter si(*this, vm); si(); ++si) {
       (void) si.actor();
     }
     for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
-      x.add(this, Reflection::Var(vmi.varImpBase(), vmi.spec().vti()));
+      x.add(*this, Reflection::Var(vmi.varImpBase(), vmi.spec().vti()));
     }
   }
 
   /// Constructor for cloning \a s
   JavaScript(bool share, JavaScript& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning

@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View1, class View2>
   forceinline
-  Singleton<View1, View2>::Singleton(Space* home, View1& x0, View2& s0)
+  Singleton<View1, View2>::Singleton(Space& home, View1& x0, View2& s0)
     : Propagator(home), x(x0), s(s0) {
     force(home);
     x.subscribe(home, this, Gecode::Int::PC_INT_DOM);
@@ -48,7 +48,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View1, class View2>
   forceinline
-  Singleton<View1, View2>::Singleton(Space* home, bool share, Singleton& p)
+  Singleton<View1, View2>::Singleton(Space& home, bool share, Singleton& p)
     : Propagator(home,share,p) {
     x.update(home, share, p.x);
     s.update(home, share, p.s);
@@ -68,15 +68,15 @@ namespace Gecode { namespace CpltSet {
 
   template <class View1, class View2>
   Reflection::ActorSpec
-  Singleton<View1,View2>::spec(const Space*, Reflection::VarMap&) const {
+  Singleton<View1,View2>::spec(const Space&, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   } 
   
   template <class View1, class View2>
   size_t
-  Singleton<View1, View2>::dispose(Space* home) {
+  Singleton<View1, View2>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x.cancel(home, this, Gecode::Int::PC_INT_DOM);
       s.cancel(home, this, PC_CPLTSET_DOM);
     }
@@ -86,20 +86,20 @@ namespace Gecode { namespace CpltSet {
 
   template <class View1, class View2>
   forceinline ExecStatus
-  Singleton<View1, View2>::post(Space* home, View1& x0, View2& s0) {
+  Singleton<View1, View2>::post(Space& home, View1& x0, View2& s0) {
     (void) new (home) Singleton(home, x0, s0);
     return ES_OK;
   }
 
   template <class View1, class View2>
   forceinline Actor*
-  Singleton<View1, View2>::copy(Space* home, bool share) {
+  Singleton<View1, View2>::copy(Space& home, bool share) {
     return new (home) Singleton(home, share, *this);
   }
 
   template <class View1, class View2>
   forceinline ExecStatus 
-  Singleton<View1, View2>::propagate(Space* home, ModEventDelta) {
+  Singleton<View1, View2>::propagate(Space& home, ModEventDelta) {
     if (x.assigned()) {
       GECODE_ME_CHECK(s.eq(home, x.val()));
       return ES_SUBSUMED(this, home);

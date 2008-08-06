@@ -93,7 +93,7 @@ namespace Gecode { namespace Decomposition {
     }    
   }
 
-  void connectedComponents(const Space* home, Reflection::VarMap& vars,
+  void connectedComponents(const Space& home, Reflection::VarMap& vars,
                            Partition& p) {
     int noOfVars = vars.size();
     std::vector<Reflection::ActorSpec> as;

@@ -48,17 +48,17 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMin<inc>::ValMin(void) {}
   template <bool inc>
   forceinline
-  ValMin<inc>::ValMin(Space* home, const ValBranchOptions& vbo)
+  ValMin<inc>::ValMin(Space& home, const ValBranchOptions& vbo)
     : ValSelBase<SetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMin<inc>::val(Space*, SetView x) const {
+  ValMin<inc>::val(Space&, SetView x) const {
     UnknownRanges<SetView> u(x);
     return u.min();
   }
   template <bool inc>
   forceinline ModEvent
-  ValMin<inc>::tell(Space* home, unsigned int a, SetView x, int v) {
+  ValMin<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
   template <bool inc>
@@ -72,11 +72,11 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMax<inc>::ValMax(void) {}
   template <bool inc>
   forceinline
-  ValMax<inc>::ValMax(Space* home, const ValBranchOptions& vbo)
+  ValMax<inc>::ValMax(Space& home, const ValBranchOptions& vbo)
     : ValSelBase<SetView,int>(home,vbo) {}
   template <bool inc>
   forceinline int
-  ValMax<inc>::val(Space*, SetView x) const {
+  ValMax<inc>::val(Space&, SetView x) const {
     int max = 0;
     for (UnknownRanges<SetView> u(x); u(); ++u)
       max = u.max();
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   template <bool inc>
   forceinline ModEvent
-  ValMax<inc>::tell(Space* home, unsigned int a, SetView x, int v) {
+  ValMax<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
   template <bool inc>

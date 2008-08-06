@@ -48,7 +48,7 @@ namespace Test { namespace Branch {
     CpltSet(const std::string& s, const Gecode::IntSet& d, int n)
       : CpltSetTest(s,n,d) {}
     /// Post propagators on variables \a x
-    virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x) {
+    virtual void post(Gecode::Space& home, Gecode::CpltSetVarArray& x) {
       Gecode::CpltSetVarArgs xx(x.size()-1);
       for (int i=x.size()-1; i--;)
         xx[i] = x[i];

@@ -201,7 +201,7 @@ namespace Gecode { namespace Search {
       assert(ds.entries()-1 == lc());
       if (constrain && (mark > ds.entries()-1)) {
         mark = ds.entries()-1;
-        s->constrain(best);
+        s->constrain(*best);
       }
       ds.top().space(NULL);
       stat.lao(s);
@@ -219,7 +219,7 @@ namespace Gecode { namespace Search {
 
     if (constrain && (l < mark)) {
       mark = l;
-      s->constrain(best);
+      s->constrain(*best);
       // The space on the stack could be failed now as an additional
       // constraint might have been added.
       if (s->status(stat.propagate) == SS_FAILED) {

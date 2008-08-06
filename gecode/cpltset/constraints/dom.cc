@@ -40,9 +40,9 @@
 namespace Gecode {
   
   void 
-  dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s) {
+  dom(Space& home, CpltSetVar x, SetRelType r, const IntSet& s) {
     Set::Limits::check(s, "CpltSet::dom");
-    if (home->failed()) return;
+    if (home.failed()) return;
     CpltSet::CpltSetView bv(x);
 
     switch(r) {
@@ -130,13 +130,13 @@ namespace Gecode {
   }
 
   void
-  dom(Space* home, CpltSetVar x, SetRelType r, int i) {
+  dom(Space& home, CpltSetVar x, SetRelType r, int i) {
     IntSet d(i,i);
     dom(home, x, r, d);
   }
 
   void
-  dom(Space* home, CpltSetVar x, SetRelType r, int i, int j) {
+  dom(Space& home, CpltSetVar x, SetRelType r, int i, int j) {
     IntSet d(i,j);
     dom(home, x, r, d);
   }

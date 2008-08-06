@@ -44,7 +44,7 @@ namespace Gecode {
   ProjectorSet::ProjectorSet(int n) : _ps(n), _count(0), _arity(0) {}
 
   forceinline void
-  ProjectorSet::update(Space* home, bool share, ProjectorSet& p) {
+  ProjectorSet::update(Space& home, bool share, ProjectorSet& p) {
     _ps.update(home, share, p._ps);
     _count = p._count;
     _arity = p._arity;
@@ -55,7 +55,7 @@ namespace Gecode {
 
   template <bool negated>
   inline ExecStatus
-  ProjectorSet::propagate(Space* home, ViewArray<Set::SetView>& x) {
+  ProjectorSet::propagate(Space& home, ViewArray<Set::SetView>& x) {
     int failedCount = 0;
     for (int i=_count; i--; ) {
       ExecStatus es = _ps[i].propagate<negated>(home, x);

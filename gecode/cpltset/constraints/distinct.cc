@@ -50,7 +50,7 @@ namespace Gecode {
      */
 
     template <class View>
-    void distinct(Space* home, ViewArray<View>& x) {
+    void distinct(Space& home, ViewArray<View>& x) {
   
       int n = x.size();
       // build partition
@@ -72,8 +72,8 @@ namespace Gecode {
     }    
   }}
 
-  void distinct(Space* home, const CpltSetVarArgs& x) {
-    if (home->failed()) return;
+  void distinct(Space& home, const CpltSetVarArgs& x) {
+    if (home.failed()) return;
     ViewArray<CpltSetView> y(home, x);
     Distinct::distinct(home, y);
   }

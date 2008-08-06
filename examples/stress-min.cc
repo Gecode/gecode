@@ -52,21 +52,21 @@ protected:
 public:
   /// The actual problem
   StressMin(const SizeOptions& opt)
-    : n(opt.size()), x(this,n,0,2*n-1) {
+    : n(opt.size()), x(*this,n,0,2*n-1) {
     for (int i=1; i<n; i++) {
       IntVarArgs y(i);
       for (int j=0; j<i; j++)
         y[j]=x[j];
-      IntVar m(this,0,2*n);
-      min(this, y, m);
-      rel(this, m, IRT_GR, x[i]);
+      IntVar m(*this,0,2*n);
+      min(*this, y, m);
+      rel(*this, m, IRT_GR, x[i]);
     }
-    branch(this, x, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
+    branch(*this, x, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
   }
 
   /// Constructor for cloning \a s
   StressMin(bool share, StressMin& s) : Example(share,s), n(s.n) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning

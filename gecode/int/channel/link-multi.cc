@@ -83,12 +83,12 @@ namespace Gecode { namespace Int { namespace Channel {
 
 
   forceinline
-  LinkMulti::LinkMulti(Space* home, bool share, LinkMulti& p)
+  LinkMulti::LinkMulti(Space& home, bool share, LinkMulti& p)
     : MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
   (home,share,p), o(p.o) {}
 
   Actor*
-  LinkMulti::copy(Space* home, bool share) {
+  LinkMulti::copy(Space& home, bool share) {
     return new (home) LinkMulti(home,share,*this);
   }
 
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
   
   Reflection::ActorSpec
-  LinkMulti::spec(const Space* home, Reflection::VarMap& m) const {
+  LinkMulti::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s =
       MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
         ::spec(home, m, ati());
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   void
-  LinkMulti::post(Space* home, Reflection::VarMap& vars,
+  LinkMulti::post(Space& home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<BoolView> b(home, vars, spec[0]);
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   ExecStatus
-  LinkMulti::propagate(Space* home, ModEventDelta med) {
+  LinkMulti::propagate(Space& home, ModEventDelta med) {
     int n = x.size();
 
     // Always maintain the invariant that y lies inside the x-array

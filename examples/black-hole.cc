@@ -118,17 +118,17 @@ class BlackHoleBranch : Branching {
   };
  
   /// Construct branching
-  BlackHoleBranch(Space* home, ViewArray<Int::IntView>& xv) 
+  BlackHoleBranch(Space& home, ViewArray<Int::IntView>& xv) 
     : Branching(home), x(xv), pos(-1), val(-1) {}
   /// Copy constructor
-  BlackHoleBranch(Space* home, bool share, BlackHoleBranch& b) 
+  BlackHoleBranch(Space& home, bool share, BlackHoleBranch& b) 
     : Branching(home, share, b), pos(b.pos), val(b.val) {
     x.update(home, share, b.x);
   }
   
 public:
   /// Check status of branching, return true if alternatives left. 
-  virtual bool status(const Space*) const {
+  virtual bool status(const Space&) const {
     for (pos = 0; pos < x.size(); ++pos) {
       if (!x[pos].assigned()) {
         int w = 4;
@@ -145,12 +145,12 @@ public:
     return false;
   }
   /// Return branching description
-  virtual BranchingDesc* description(Space*) {
+  virtual BranchingDesc* description(Space&) {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
     return new Description(this, 2, pos, val);
   }
   /// Perform commit for branching description \a d and alternative \a a. 
-  virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
+  virtual ExecStatus commit(Space& home, const BranchingDesc* d, 
                             unsigned int a) {
     const Description* desc = 
       static_cast<const Description*>(d);
@@ -163,7 +163,7 @@ public:
         ? ES_FAILED : ES_OK;
   }
   /// Copy branching
-  virtual Actor* copy(Space *home, bool share) {
+  virtual Actor* copy(Space& home, bool share) {
     return new (home) BlackHoleBranch(home, share, *this);
   }
   /// Reflection name
@@ -171,7 +171,7 @@ public:
     return "BlackHoleBranch";
   }
   /// Post branching
-  static void post(Space* home, IntVarArgs x) {
+  static void post(Space& home, IntVarArgs x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) BlackHoleBranch(home, xv);
   }
@@ -222,13 +222,13 @@ public:
   };
   /// Actual model
   BlackHole(const SizeOptions& opt) 
-    : x(this, 52, 0,51), y(this, 52, 0,51) 
+    : x(*this, 52, 0,51), y(*this, 52, 0,51) 
   {
     // Black ace at bottom
-    rel(this, x[0], IRT_EQ, 0);
+    rel(*this, x[0], IRT_EQ, 0);
 
     // x is order and y is placement
-    channel(this, x, y, opt.icl());
+    channel(*this, x, y, opt.icl());
 
     // The placement rules: the absolute value of the difference
     // between two consecutive cards is 1 or 12.
@@ -239,12 +239,12 @@ public:
         modtable[i] = i%13;
       }
       for (int i = 0; i < 51; ++i) {
-        IntVar x1(this, 0, 12), x2(this, 0, 12);
-        element(this, modtable, x[i], x1);
-        element(this, modtable, x[i+1], x2);
+        IntVar x1(*this, 0, 12), x2(*this, 0, 12);
+        element(*this, modtable, x[i], x1);
+        element(*this, modtable, x[i+1], x2);
         const int dr[2] = {1, 12};
-        IntVar diff(this, IntSet(dr, 2));
-        post(this, abs(this, minus(this, x1, x2, ICL_DOM), ICL_DOM) 
+        IntVar diff(*this, IntSet(dr, 2));
+        post(*this, abs(*this, minus(*this, x1, x2, ICL_DOM), ICL_DOM) 
              == diff, ICL_DOM);
       }
     } else if (opt.propagation() == PROPAGATION_DFA) {
@@ -267,7 +267,7 @@ public:
       for (int i = 51; i--; ) {
         IntVarArgs iva(2);
         iva[0] = x[i]; iva[1] = x[i+1];
-        extensional(this, iva, table);
+        extensional(*this, iva, table);
       }
 
     } else { // opt.propagation() == PROPAGATION_TUPLE_SET)
@@ -289,13 +289,13 @@ public:
       for (int i = 51; i--; ) {
         IntVarArgs iva(2);
         iva[0] = x[i]; iva[1] = x[i+1];
-        extensional(this, iva, tupleSet, ICL_DOM, opt.pk());
+        extensional(*this, iva, tupleSet, ICL_DOM, opt.pk());
       }
     }
     // A card must be played before the one under it.
     for (int i = 17; i--; )
       for (int j = 2; j--; )
-        post(this, y[layout[i][j]] < y[layout[i][j+1]]);
+        post(*this, y[layout[i][j]] < y[layout[i][j+1]]);
 
     // Compute and break the conditional symmetries that are dependent
     // on the current layout.
@@ -320,28 +320,28 @@ public:
             int pos = 0;
             // Both cards played after the ones on top of them
             for (int i = 0; i < layer[o1]; ++i)
-              ba[pos++] = post(this, ~(y[layout[pile[o1]][i]] < y[o2]));
+              ba[pos++] = post(*this, ~(y[layout[pile[o1]][i]] < y[o2]));
             for (int i = 0; i < layer[o2]; ++i)
-              ba[pos++] = post(this, ~(y[layout[pile[o2]][i]] < y[o1]));
+              ba[pos++] = post(*this, ~(y[layout[pile[o2]][i]] < y[o1]));
             // Both cards played before the ones under them
             for (int i = layer[o1]+1; i < 3; ++i)
-              ba[pos++] = post(this, ~(y[o2] < y[layout[pile[o1]][i]]));
+              ba[pos++] = post(*this, ~(y[o2] < y[layout[pile[o1]][i]]));
             for (int i = layer[o2]+1; i < 3; ++i)
-              ba[pos++] = post(this, ~(y[o1] < y[layout[pile[o2]][i]]));
+              ba[pos++] = post(*this, ~(y[o1] < y[layout[pile[o2]][i]]));
             // Cond holds when all the above holds
-            BoolVar cond(this, 0, 1);
-            rel(this, BOT_AND, ba, cond);
+            BoolVar cond(*this, 0, 1);
+            rel(*this, BOT_AND, ba, cond);
             
             // If cond is fulfilled, then we can order the cards
             // cond -> (y[o1] < y[o2])
-            post(this, tt(!cond || ~(y[o1] < y[o2])));
+            post(*this, tt(!cond || ~(y[o1] < y[o2])));
           }
         }
       }
     }
     
     // Install custom branching
-    BlackHoleBranch::post(this, x);      
+    BlackHoleBranch::post(*this, x);      
   }
 
   /// Print instance and solution
@@ -373,8 +373,8 @@ public:
 
   /// Constructor for cloning \a s
   BlackHole(bool share, BlackHole& s) : Example(share,s) {
-    x.update(this, share, s.x);
-    y.update(this, share, s.y);
+    x.update(*this, share, s.x);
+    y.update(*this, share, s.y);
   }
   /// Copy during cloning
   virtual Space*

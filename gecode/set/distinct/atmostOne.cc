@@ -54,7 +54,7 @@ namespace Gecode { namespace Set { namespace Distinct {
    */
 
   Actor*
-  AtmostOne::copy(Space* home, bool share) {
+  AtmostOne::copy(Space& home, bool share) {
     return new (home) AtmostOne(home,share,*this);
   }
 
@@ -64,13 +64,13 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   Reflection::ActorSpec
-  AtmostOne::spec(const Space* home, Reflection::VarMap& m) const {
+  AtmostOne::spec(const Space& home, Reflection::VarMap& m) const {
     return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, ati())
       << c;
   }
 
   ExecStatus
-  AtmostOne::propagate(Space* home, ModEventDelta) {
+  AtmostOne::propagate(Space& home, ModEventDelta) {
     Scratch s(home);
     LubRanges<SetView>* lubs = s.alloc<LubRanges<SetView> >(x.size());
     for (int i = x.size(); i--; ) {
@@ -173,7 +173,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   void
-  AtmostOne::post(Space* home, Reflection::VarMap& vars,
+  AtmostOne::post(Space& home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<SetView> s(home, vars, spec[0]);

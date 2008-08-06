@@ -183,26 +183,26 @@ namespace Gecode {
 
     hhos << indent
          << "  /// Constructor for cloning" << endl << indent
-         << "  " << spec._name << "(Space* home,bool,"
+         << "  " << spec._name << "(Space& home,bool,"
          << spec._name << "&);" << endl;
 
     hhos << indent
          << "  /// Constructor for creation" << endl << indent
-         << "  " << spec._name << "(Space* home, ";
+         << "  " << spec._name << "(Space& home, ";
     viewsarglist(hhos);
     hhos
       << ");" << endl;
 
     hhos << endl;
     hhos << indent << "  /// Propagate non-negated version" << endl;
-    hhos << indent << "  ExecStatus propagatePositive(Space* home);"
+    hhos << indent << "  ExecStatus propagatePositive(Space& home);"
          << endl;
 
    if (spec._reified || spec._negated) {
       hhos << indent << "  /// Check if the constraint holds" << endl;
-      hhos << indent << "  ExecStatus check(Space* home);" << endl;
+      hhos << indent << "  ExecStatus check(Space& home);" << endl;
       hhos << indent << "  /// Propagate negated version" << endl;
-      hhos << indent << "  ExecStatus propagateNegative(Space* home);"
+      hhos << indent << "  ExecStatus propagateNegative(Space& home);"
            << endl << endl;        
     }
      
@@ -217,17 +217,17 @@ namespace Gecode {
     hhos << indent
          << "  /// Delete propagator and return its size"
          << endl << indent
-         << "  virtual size_t dispose(Space* home);" << endl;
+         << "  virtual size_t dispose(Space& home);" << endl;
 
     hhos << indent
          << "  /// Copy propagator during cloning" << endl << indent
-         << "  virtual Actor*      copy(Space* home,bool);" << endl
+         << "  virtual Actor*      copy(Space& home,bool);" << endl
          << endl << indent
          << "  /// Perform propagation" << endl << indent
-         << "  virtual ExecStatus propagate(Space* home, ModEventDelta med);" << endl
+         << "  virtual ExecStatus propagate(Space& home, ModEventDelta med);" << endl
          << endl << indent
          << "  /// Post projection propagator" << endl << indent
-         << "  static  ExecStatus post(Space* home, ";
+         << "  static  ExecStatus post(Space& home, ";
     viewsarglist(hhos);
     hhos
       << ");" << endl;
@@ -271,7 +271,7 @@ namespace Gecode {
     iccos << indent << spec._name;
     templateparams();
     iccos << "::" << spec._name << endl << indent
-          << "(Space* home, ";
+          << "(Space& home, ";
     viewsarglist(iccos);
     iccos << ")" << endl;
 
@@ -313,7 +313,7 @@ namespace Gecode {
          << spec._name;
     templateparams();
     iccos << "::" << spec._name << endl << indent
-         << "(Space* home, bool share, " << spec._name << "& p)" << endl;
+         << "(Space& home, bool share, " << spec._name << "& p)" << endl;
 
     ++indent;
 
@@ -343,9 +343,9 @@ namespace Gecode {
     iccos << indent << "size_t" << endl;
     iccos << indent << spec._name;
     templateparams();
-    iccos << "::dispose(Space* home) {" << endl;
+    iccos << "::dispose(Space& home) {" << endl;
     ++indent;
-    iccos << indent << "if (!home->failed()) {" << endl;
+    iccos << indent << "if (!home.failed()) {" << endl;
     ++indent;
 
     for (int i=0; i<=projArity; i++) {
@@ -379,7 +379,7 @@ namespace Gecode {
           << "Actor*" << endl << indent
           << spec._name;
     templateparams();
-    iccos << "::copy(Space* home, bool share) {"
+    iccos << "::copy(Space& home, bool share) {"
          << endl << indent
          << "  return new (home) " << spec._name << "(home,share,*this);"
          << endl << indent << "}" << endl << endl;
@@ -392,7 +392,7 @@ namespace Gecode {
           << "ExecStatus" << endl << indent
           << spec._name;
     templateparams();
-    iccos << "::post(Space* home, ";
+    iccos << "::post(Space& home, ";
     viewsarglist(iccos);
     iccos << ") {" << endl << indent
          << "  (void) new (home) " << spec._name << "(home, ";
@@ -557,7 +557,7 @@ namespace Gecode {
       templatehead(iccos);
       iccos << indent << "ExecStatus" << endl << indent << spec._name;
       templateparams();
-      iccos << "::propagatePositive(Space* home) {" << endl;
+      iccos << "::propagatePositive(Space& home) {" << endl;
       ++indent;
 
       string me_check;
@@ -636,7 +636,7 @@ namespace Gecode {
       templatehead(iccos);
       iccos << indent << "ExecStatus" << endl << indent << spec._name;
       templateparams();
-      iccos << "::check(Space* home) {" << endl;
+      iccos << "::check(Space& home) {" << endl;
       ++indent;
       iccos << indent << "ExecStatus es = ES_SUBSUMED(this,home);" << endl;
       for (int i=spec._ps.size(); i--; ) {
@@ -751,7 +751,7 @@ namespace Gecode {
       templatehead(iccos);
       iccos << indent << "ExecStatus" << endl << indent << spec._name;
       templateparams();
-      iccos << "::propagateNegative(Space* home) {" << endl;
+      iccos << "::propagateNegative(Space& home) {" << endl;
       ++indent;
       iccos << indent << "switch (ExecStatus es=check(home)) {" << endl;
       iccos << indent << "case ES_FAILED: return ES_SUBSUMED(this,home);" << endl;
@@ -765,7 +765,7 @@ namespace Gecode {
     templatehead(iccos);
     iccos << indent << "ExecStatus" << endl << indent << spec._name;
     templateparams();
-    iccos << "::propagate(Space* home, ModEventDelta) {" << endl;
+    iccos << "::propagate(Space& home, ModEventDelta) {" << endl;
     ++indent;
 
     if (spec._negated && ! spec._reified) {

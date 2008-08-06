@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Linear {
 
   void
-  post_pos_unit(Space* home, 
+  post_pos_unit(Space& home, 
                 Term<BoolView>* t_p, int n_p,
                 IntRelType r, IntView y, int c,
                 PropKind) {
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   
   void
-  post_pos_unit(Space* home, 
+  post_pos_unit(Space& home, 
                 Term<BoolView>* t_p, int n_p,
                 IntRelType r, ZeroIntView, int c, 
                 PropKind pk) {
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   
   void
-  post_neg_unit(Space* home, 
+  post_neg_unit(Space& home, 
                 Term<BoolView>* t_n, int n_n,
                 IntRelType r, IntView y, int c,
                 PropKind) {
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   
   void
-  post_neg_unit(Space* home, 
+  post_neg_unit(Space& home, 
                 Term<BoolView>* t_n, int n_n,
                 IntRelType r, ZeroIntView, int c, 
                 PropKind pk) {
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   void
-  post_mixed(Space* home,
+  post_mixed(Space& home,
              Term<BoolView>* t_p, int n_p,
              Term<BoolView>* t_n, int n_n,
              IntRelType r, IntView y, int c) {
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Linear {
   
 
   void
-  post_mixed(Space* home, 
+  post_mixed(Space& home, 
              Term<BoolView>* t_p, int n_p,
              Term<BoolView>* t_n, int n_n,
              IntRelType r, ZeroIntView y, int c) {
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Linear {
   
   template <class View>
   forceinline void
-  post_all(Space* home, 
+  post_all(Space& home, 
            Term<BoolView>* t, int n,
            IntRelType r, View x, int c, PropKind pk) {
 
@@ -391,14 +391,14 @@ namespace Gecode { namespace Int { namespace Linear {
   
 
   void
-  post(Space* home, 
+  post(Space& home, 
        Term<BoolView>* t, int n, IntRelType r, IntView x, int c, 
        IntConLevel, PropKind pk) {
     post_all(home,t,n,r,x,c,pk);
   }
   
   void
-  post(Space* home, 
+  post(Space& home, 
        Term<BoolView>* t, int n, IntRelType r, int c, 
        IntConLevel, PropKind pk) {
     ZeroIntView x;
@@ -406,7 +406,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post(Space* home, 
+  post(Space& home, 
        Term<BoolView>* t, int n, IntRelType r, IntView x, BoolView b,
        IntConLevel icl, PropKind pk) {
     int l, u;
@@ -417,7 +417,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   
   void
-  post(Space* home, 
+  post(Space& home, 
        Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel icl, PropKind pk) {
     int l, u;

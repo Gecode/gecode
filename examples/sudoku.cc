@@ -106,20 +106,20 @@ public:
 #endif
   /// Constructor
   SudokuInt(const SizeOptions& opt)
-    : Sudoku(opt), x(this, n*n*n*n, 1, n*n) {
+    : Sudoku(opt), x(*this, n*n*n*n, 1, n*n) {
     const int nn = n*n;
     MiniModel::Matrix<IntVarArray> m(x, nn, nn);
 
     // Constraints for rows and columns
     for (int i=0; i<nn; i++) {
-      distinct(this, m.row(i), opt.icl());
-      distinct(this, m.col(i), opt.icl());
+      distinct(*this, m.row(i), opt.icl());
+      distinct(*this, m.col(i), opt.icl());
     }
 
     // Constraints for squares
     for (int i=0; i<nn; i+=n) {
       for (int j=0; j<nn; j+=n) {
-        distinct(this, m.slice(i, i+n, j, j+n), opt.icl());
+        distinct(*this, m.slice(i, i+n, j, j+n), opt.icl());
       }
     }
 
@@ -127,7 +127,7 @@ public:
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
         if (int v = sudokuField(examples[opt.size()], nn, i, j))
-          rel(this, m(i,j), IRT_EQ, v );
+          rel(*this, m(i,j), IRT_EQ, v );
 
 #ifdef GECODE_HAS_SET_VARS
     if (opt.propagation() == PROP_SAME) {
@@ -162,19 +162,19 @@ public:
                 }
               }
             }
-            same(this, nn, bc1, bc2);
-            same(this, nn, br1, br2);
+            same(*this, nn, bc1, bc2);
+            same(*this, nn, br1, br2);
           }
       }
     }
 #endif
 
-    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);    
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);    
   }
   
   /// Constructor for cloning \a s
   SudokuInt(bool share, SudokuInt& s) : Sudoku(share, s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning
@@ -205,7 +205,7 @@ public:
 #ifdef GECODE_HAS_SET_VARS
 private:
   /// Post the constraint that \a a and \a b take the same values
-  void same(Space* home, int nn, IntVarArgs a, IntVarArgs b) {
+  void same(Space& home, int nn, IntVarArgs a, IntVarArgs b) {
     SetVar u(home, IntSet::empty, 1, nn);
     rel(home, SOT_DUNION, a, u);
     rel(home, SOT_DUNION, b, u);
@@ -241,11 +241,11 @@ public:
   /// Constructor
   SudokuSet(const SizeOptions& opt)
     : Sudoku(opt),
-      y(this,n*n,IntSet::empty,1,n*n*n*n,n*n,n*n) {
+      y(*this,n*n,IntSet::empty,1,n*n*n*n,n*n,n*n) {
 
     const int nn = n*n;
 
-    Scratch s(this);
+    Scratch s(*this);
     IntSet* row = s.alloc<IntSet>(nn);
     IntSet* col = s.alloc<IntSet>(nn);
     IntSet* block = s.alloc<IntSet>(nn);
@@ -277,32 +277,32 @@ public:
 
     IntSet full(1, nn*nn);
     // All x must be pairwise disjoint and partition the field indices
-    rel(this, SOT_DUNION, y, SetVar(this, full, full));
+    rel(*this, SOT_DUNION, y, SetVar(*this, full, full));
 
     // The x must intersect in exactly one element with each
     // row, column, and block
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++) {
-        SetVar inter_row(this, IntSet::empty, full, 1, 1);
-        rel(this, y[i], SOT_INTER, row[j], SRT_EQ, inter_row);
-        SetVar inter_col(this, IntSet::empty, full, 1, 1);
-        rel(this, y[i], SOT_INTER, col[j], SRT_EQ, inter_col);
-        SetVar inter_block(this, IntSet::empty, full, 1, 1);
-        rel(this, y[i], SOT_INTER, block[j], SRT_EQ, inter_block);
+        SetVar inter_row(*this, IntSet::empty, full, 1, 1);
+        rel(*this, y[i], SOT_INTER, row[j], SRT_EQ, inter_row);
+        SetVar inter_col(*this, IntSet::empty, full, 1, 1);
+        rel(*this, y[i], SOT_INTER, col[j], SRT_EQ, inter_col);
+        SetVar inter_block(*this, IntSet::empty, full, 1, 1);
+        rel(*this, y[i], SOT_INTER, block[j], SRT_EQ, inter_block);
       }
 
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
         if (int idx = sudokuField(examples[opt.size()], nn, i, j))
-          dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
+          dom(*this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
-    branch(this, y, SET_VAR_NONE, SET_VAL_MIN_INC);
+    branch(*this, y, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Constructor for cloning \a s
   SudokuSet(bool share, SudokuSet& s) : Sudoku(share,s) {
-    y.update(this, share, s.y);
+    y.update(*this, share, s.y);
   }
 
   /// Perform copying during cloning
@@ -346,26 +346,26 @@ public:
   /// Constructor
   SudokuCpltSet(const SizeOptions& opt)
     : Sudoku(opt),
-      y(this,n*n,IntSet::empty,1,n*n*n*n) {
+      y(*this,n*n,IntSet::empty,1,n*n*n*n) {
     const int nn = n*n;
 
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
         if (int idx = sudokuField(examples[opt.size()], nn, i, j)) {
-          dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
+          dom(*this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
           for (int z = 0; z < nn; z++) {
             if (z != idx - 1) {
-              dom(this, y[z], SRT_DISJ, (i+1)+(j*nn));
+              dom(*this, y[z], SRT_DISJ, (i+1)+(j*nn));
             }
           }
         }
 
     for (int i=0; i<nn; i++)
-      cardinality(this, y[i], nn);
+      cardinality(*this, y[i], nn);
 
-    Scratch s(this);
+    Scratch s(*this);
     IntSet* row = s.alloc<IntSet>(nn);
     IntSet* col = s.alloc<IntSet>(nn);
     IntSet* block = s.alloc<IntSet>(nn);
@@ -397,12 +397,12 @@ public:
 
     // All x must be pairwise disjoint and partition the field indices   
     if (nn == 9) {
-      partition(this, y);
+      partition(*this, y);
     } else {
     // Use naive implementation instead:
       for (int i = 0; i < nn - 1; i++) {
         for (int j = i + 1; j < nn; j++) {
-          rel(this, y[i], SRT_DISJ, y[j]);
+          rel(*this, y[i], SRT_DISJ, y[j]);
         }
       }
     }
@@ -411,17 +411,17 @@ public:
     // row, column, and block
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++) {
-        exactly(this, y[i], row[j], 1);
-        exactly(this, y[i], col[j], 1);
-        exactly(this, y[i], block[j], 1);
+        exactly(*this, y[i], row[j], 1);
+        exactly(*this, y[i], col[j], 1);
+        exactly(*this, y[i], block[j], 1);
       }
 
-    branch(this, y, CPLTSET_VAR_SIZE_MIN, CPLTSET_VAL_MIN_INC);
+    branch(*this, y, CPLTSET_VAR_SIZE_MIN, CPLTSET_VAL_MIN_INC);
   }
 
   /// Constructor for cloning \a s
   SudokuCpltSet(bool share, SudokuCpltSet& s) : Sudoku(share,s) {
-    y.update(this, share, s.y);
+    y.update(*this, share, s.y);
   }
 
   /// Perform copying during cloning
@@ -467,8 +467,8 @@ public:
     const int nn = n*n;
 
     IntSet is0(0,0);
-    SetVar dummySet0(this, is0, is0);
-    IntVar dummyInt0(this, 0, 0);
+    SetVar dummySet0(*this, is0, is0);
+    IntVar dummyInt0(*this, 0, 0);
     SetVarArgs ys(nn+1);
     ys[0] = dummySet0;
     for (int i=0; i<nn; i++)
@@ -478,12 +478,12 @@ public:
     for (int i=0; i<nn*nn; i++)
       xs[i+1] = x[i];
 
-    channel(this, xs, ys);
+    channel(*this, xs, ys);
 
     IntArgs values(nn);
     for (int i=nn; i--;)
       values[i] = i+1;
-    count(this, x, IntSet(nn,nn), values, ICL_DOM);
+    count(*this, x, IntSet(nn,nn), values, ICL_DOM);
   }
   
   /// Constructor for cloning \a s

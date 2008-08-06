@@ -45,7 +45,7 @@
  *
  * \relates QueenArmies
  */
-IntSet *A;
+IntSet* A;
 
 /**
  * \brief %Example: Peaceable co-existing armies of queens.
@@ -83,48 +83,48 @@ public:
   /// Constructor
   QueenArmies(const SizeOptions& opt) :
     n(opt.size()),
-    U(this, IntSet::empty, IntSet(0, n*n)),
-    W(this, IntSet::empty, IntSet(0, n*n)),
-    w(this, n*n, 0, 1),
-    b(this, n*n, 0, 1),
-    q(this, 0, n*n)
+    U(*this, IntSet::empty, IntSet(0, n*n)),
+    W(*this, IntSet::empty, IntSet(0, n*n)),
+    w(*this, n*n, 0, 1),
+    b(*this, n*n, 0, 1),
+    q(*this, 0, n*n)
   {
     // Basic rules of the model
     for (int i = n*n; i--; ) {
       // w[i] means that no blacks are allowed on A[i]
-      dom(this, U, SRT_DISJ, A[i], w[i]);
+      dom(*this, U, SRT_DISJ, A[i], w[i]);
       // Make sure blacks and whites are disjoint.
-      post(this, tt(!w[i] || !b[i]));
+      post(*this, tt(!w[i] || !b[i]));
       // If i in U, then b[i] has a piece.
-      dom(this, U, SRT_SUP, i, b[i]);
+      dom(*this, U, SRT_SUP, i, b[i]);
     }
 
     // Connect optimization variable to number of pieces
-    linear(this, w, IRT_EQ, q);
-    linear(this, b, IRT_GQ, q);
+    linear(*this, w, IRT_EQ, q);
+    linear(*this, b, IRT_GQ, q);
 
     // Connect cardinality of U to the number of black pieces.
-    IntVar unknowns(this, 0, n*n);
-    cardinality(this, U, unknowns);
-    post(this, q <= unknowns);
-    linear(this, b, IRT_EQ, unknowns);
+    IntVar unknowns(*this, 0, n*n);
+    cardinality(*this, U, unknowns);
+    post(*this, q <= unknowns);
+    linear(*this, b, IRT_EQ, unknowns);
 
     if (opt.branching() == BRANCH_NAIVE) {
-      branch(this, w, INT_VAR_NONE, INT_VAL_MAX);
-      branch(this, b, INT_VAR_NONE, INT_VAL_MAX);
+      branch(*this, w, INT_VAR_NONE, INT_VAL_MAX);
+      branch(*this, b, INT_VAR_NONE, INT_VAL_MAX);
     } else {
-      QueenBranch::post(this);
-      assign(this, b, INT_ASSIGN_MAX);
+      QueenBranch::post(*this);
+      assign(*this, b, INT_ASSIGN_MAX);
     }
   }
   /// Constructor for cloning
   QueenArmies(bool share, QueenArmies& s)
     : MaximizeExample(share,s), n(s.n) {
-    U.update(this, share, s.U);
-    W.update(this, share, s.W);
-    w.update(this, share, s.w);
-    b.update(this, share, s.b);
-    q.update(this, share, s.q);
+    U.update(*this, share, s.U);
+    W.update(*this, share, s.W);
+    w.update(*this, share, s.w);
+    b.update(*this, share, s.b);
+    q.update(*this, share, s.q);
   }
   /// Return copy during cloning
   virtual Space*
@@ -179,23 +179,23 @@ public:
     };
 
     /// Construct branching
-    QueenBranch(Space* home)
+    QueenBranch(Space& home)
       : Branching(home), pos(-1) {}
     /// Constructor for cloning
-    QueenBranch(Space* home, bool share, QueenBranch& b)
+    QueenBranch(Space& home, bool share, QueenBranch& b)
       : Branching(home, share, b), pos(b.pos) {}
 
   public:
     /// Check status of branching, return true if alternatives left. 
-    virtual bool status(const Space* home) const {
-      const QueenArmies *q = static_cast<const QueenArmies*>(home);
+    virtual bool status(const Space& home) const {
+      const QueenArmies& q = static_cast<const QueenArmies&>(home);
       int maxsize = -1;
       pos = -1;
 
-      for (int i = q->n*q->n; i--; ) {
-        if (q->w[i].assigned()) continue;
+      for (int i = q.n*q.n; i--; ) {
+        if (q.w[i].assigned()) continue;
         IntSetRanges ai(A[i]);
-        SetVarUnknownRanges qU(q->U);
+        SetVarUnknownRanges qU(q.U);
         Iter::Ranges::Inter<IntSetRanges, SetVarUnknownRanges> r(ai, qU);
         int size = Iter::Ranges::size(r);
         if (size > maxsize) {
@@ -207,24 +207,24 @@ public:
       return true;
     }
     /// Return branching description
-    virtual BranchingDesc* description(Space*) {
+    virtual BranchingDesc* description(Space&) {
       assert(pos != -1);
       return new Description(this, 2, pos, true);
     }
     /** \brief Perform commit for branching description \a d and
      * alternative \a a.
      */
-    virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
+    virtual ExecStatus commit(Space& home, const BranchingDesc* d, 
                               unsigned int a) {
-      QueenArmies* q = static_cast<QueenArmies*>(home);
+      QueenArmies& q = static_cast<QueenArmies&>(home);
       const Description* pvd = static_cast<const Description*>(d);
       bool val = a == 0 ? pvd->val : !pvd->val;
-      return me_failed(Int::BoolView(q->w[pvd->pos]).eq(q, val))
+      return me_failed(Int::BoolView(q.w[pvd->pos]).eq(q, val))
         ? ES_FAILED
         : ES_OK;
     }
     /// Clone
-    virtual Actor* copy(Space *home, bool share) {
+    virtual Actor* copy(Space& home, bool share) {
       return new (home) QueenBranch(home, share, *this);
     }
     /// Reflection name
@@ -232,7 +232,7 @@ public:
       return "QueenBranching";
     }
 
-    static void post(QueenArmies* home) {
+    static void post(QueenArmies& home) {
       (void) new (home) QueenBranch(home);
     }
   };

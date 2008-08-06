@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline ExecStatus
-  prop_sqrt_bnd(Space* home, View x0, View x1) {
+  prop_sqrt_bnd(Space& home, View x0, View x1) {
     bool mod;
     do {
       mod = false;
@@ -79,12 +79,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline
-  SqrtBnd<View>::SqrtBnd(Space* home, View x0, View x1)
+  SqrtBnd<View>::SqrtBnd(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template <class View>
   forceinline ExecStatus
-  SqrtBnd<View>::post(Space* home, View x0, View x1) {
+  SqrtBnd<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     if (same(x0,x1)) {
       GECODE_ME_CHECK(x1.lq(home,1));
@@ -98,7 +98,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline void
-  SqrtBnd<View>::post(Space* home, Reflection::VarMap& vars,
+  SqrtBnd<View>::post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
      spec.checkArity(2);
      View x0(home, vars, spec[0]);
@@ -108,18 +108,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline
-  SqrtBnd<View>::SqrtBnd(Space* home, bool share, SqrtBnd<View>& p)
+  SqrtBnd<View>::SqrtBnd(Space& home, bool share, SqrtBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
   Actor*
-  SqrtBnd<View>::copy(Space* home, bool share) {
+  SqrtBnd<View>::copy(Space& home, bool share) {
     return new (home) SqrtBnd<View>(home,share,*this);
   }
 
   template <class View>
   ExecStatus
-  SqrtBnd<View>::propagate(Space* home, ModEventDelta) {
+  SqrtBnd<View>::propagate(Space& home, ModEventDelta) {
     GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
     return x1.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
   }
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Reflection::ActorSpec
-  SqrtBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  SqrtBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
@@ -169,12 +169,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline
-  SqrtDom<View>::SqrtDom(Space* home, View x0, View x1)
+  SqrtDom<View>::SqrtDom(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
 
   template <class View>
   forceinline ExecStatus
-  SqrtDom<View>::post(Space* home, View x0, View x1) {
+  SqrtDom<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     if (same(x0,x1)) {
       GECODE_ME_CHECK(x1.lq(home,1));
@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline void
-  SqrtDom<View>::post(Space* home, Reflection::VarMap& vars,
+  SqrtDom<View>::post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
      spec.checkArity(2);
      View x0(home, vars, spec[0]);
@@ -198,12 +198,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline
-  SqrtDom<View>::SqrtDom(Space* home, bool share, SqrtDom<View>& p)
+  SqrtDom<View>::SqrtDom(Space& home, bool share, SqrtDom<View>& p)
     : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
   Actor*
-  SqrtDom<View>::copy(Space* home, bool share) {
+  SqrtDom<View>::copy(Space& home, bool share) {
     return new (home) SqrtDom<View>(home,share,*this);
   }
 
@@ -219,7 +219,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  SqrtDom<View>::propagate(Space* home, ModEventDelta med) {
+  SqrtDom<View>::propagate(Space& home, ModEventDelta med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
       return x1.assigned() ? ES_SUBSUMED(this,home) 
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Reflection::ActorSpec
-  SqrtDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  SqrtDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 

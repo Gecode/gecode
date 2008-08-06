@@ -38,12 +38,12 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   forceinline
-  LinkSingle::LinkSingle(Space* home, BoolView x0, IntView x1)
+  LinkSingle::LinkSingle(Space& home, BoolView x0, IntView x1)
     : MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
   (home,x0,x1) {}
 
   forceinline ExecStatus
-  LinkSingle::post(Space* home, BoolView x0, IntView x1) {
+  LinkSingle::post(Space& home, BoolView x0, IntView x1) {
     if (x1.assigned()) {
       switch (x1.val()) {
       case 0:

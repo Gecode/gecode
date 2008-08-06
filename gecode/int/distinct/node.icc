@@ -62,11 +62,11 @@ namespace Gecode { namespace Int { namespace Distinct {
   Node<View>::operator delete(void*, size_t) {}
   template <class View>
   forceinline void
-  Node<View>::operator delete(void*,Space*) {}
+  Node<View>::operator delete(void*,Space&) {}
   template <class View>
   forceinline void*
-  Node<View>::operator new(size_t s, Space* home) {
-    return home->ralloc(s);
+  Node<View>::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
   }
 
   /*

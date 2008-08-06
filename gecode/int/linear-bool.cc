@@ -42,9 +42,9 @@ namespace Gecode {
   using namespace Int;
 
   void
-  linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
+  linear(Space& home, const BoolVarArgs& x, IntRelType r, int c,
          IntConLevel icl, PropKind pk) {
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     int n=x.size();
     Scratch s(home);
@@ -57,9 +57,9 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
+  linear(Space& home, const BoolVarArgs& x, IntRelType r, IntVar y,
          IntConLevel icl, PropKind pk) {
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     int n=x.size();
     Scratch s(home);
@@ -72,12 +72,12 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
          IntConLevel icl, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) 
+    if (home.failed()) 
       return;
 
     int n=x.size();
@@ -91,12 +91,12 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
          IntConLevel icl, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) 
+    if (home.failed()) 
       return;
 
     int n=x.size();
@@ -121,14 +121,14 @@ namespace Gecode {
       break;
     default: ;
     }
-    if (home->failed()) return;
+    if (home.failed()) return;
     Linear::post(home,t,n,r,y,0,icl,pk);
   }
 
   void
-  linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
+  linear(Space& home, const BoolVarArgs& x, IntRelType r, int c,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     int n=x.size();
     Scratch s(home);
@@ -141,9 +141,9 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
+  linear(Space& home, const BoolVarArgs& x, IntRelType r, IntVar y,
          BoolVar b, IntConLevel icl, PropKind pk) {
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     int n=x.size();
     Scratch s(home);
@@ -156,12 +156,12 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
          BoolVar b, IntConLevel icl, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     int n=x.size();
     Scratch s(home);
@@ -174,12 +174,12 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
          BoolVar b, IntConLevel icl, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     int n=x.size();
     Scratch s(home);

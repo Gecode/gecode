@@ -327,40 +327,40 @@ public:
   /// The actual model
   GraphColor(const SizeOptions& opt)
     : g(opt.size() == 1 ? g2 : g1),
-      v(this,g.n_v,0,g.n_v),
-      m(this,0,g.n_v) {
-    rel(this, v, IRT_LQ, m);
+      v(*this,g.n_v,0,g.n_v),
+      m(*this,0,g.n_v) {
+    rel(*this, v, IRT_LQ, m);
     for (int i = 0; g.e[i] != -1; i += 2)
-      rel(this, v[g.e[i]], IRT_NQ, v[g.e[i+1]]);
+      rel(*this, v[g.e[i]], IRT_NQ, v[g.e[i+1]]);
 
     const int* c = g.c;
     for (int i = *c++; i--; c++)
-      rel(this, v[*c], IRT_EQ, i);
+      rel(*this, v[*c], IRT_EQ, i);
     while (*c != -1) {
       int n = *c;
       IntVarArgs x(n); c++;
       for (int i = n; i--; c++)
         x[i] = v[*c];
-      distinct(this, x, opt.icl());
+      distinct(*this, x, opt.icl());
       if (opt.model() == MODEL_CLIQUE)
-        rel(this, m, IRT_GQ, n-1);
+        rel(*this, m, IRT_GQ, n-1);
     }
     IntVarArgs ma(1);
     ma[0] = m;
-    branch(this, ma, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, ma, INT_VAR_NONE, INT_VAL_MIN);
     if (opt.branching() == BRANCH_SIZE) {
-      branch(this, v, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+      branch(*this, v, INT_VAR_SIZE_MIN, INT_VAL_MIN);
     } else if (opt.branching() == BRANCH_DEGREE) {
-      branch(this, v, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), 
+      branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), 
              INT_VAL_MIN);
     } else {
-      branch(this, v, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_MIN);
+      branch(*this, v, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_MIN);
     }
   }
   /// Constructor for cloning \a s
   GraphColor(bool share, GraphColor& s) : Example(share,s), g(s.g) {
-    v.update(this, share, s.v);
-    m.update(this, share, s.m);
+    v.update(*this, share, s.v);
+    m.update(*this, share, s.m);
   }
   /// Copying during cloning
   virtual Space*

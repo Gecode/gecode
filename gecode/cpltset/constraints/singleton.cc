@@ -42,7 +42,7 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
-  void singleton(Space* home, IntVar x, CpltSetVar s) {
+  void singleton(Space& home, IntVar x, CpltSetVar s) {
     Int::IntView iv(x);
     CpltSetView bv(s);
     GECODE_ES_FAIL(home, (CpltSet::Singleton<Int::IntView, CpltSetView>

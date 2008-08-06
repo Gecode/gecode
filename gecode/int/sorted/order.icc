@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template <class View, bool Perm>
   inline void
-  sort_sigma(Space* home, ViewArray<View>& x, ViewArray<View>& z) {
+  sort_sigma(Space& home, ViewArray<View>& x, ViewArray<View>& z) {
     if (Perm) {
       Scratch s(home);
       ViewPair<View>* xz = s.alloc<ViewPair<View> >(x.size());
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    */
   template <class View>
   inline bool
-  normalize(Space* home,
+  normalize(Space& home,
             ViewArray<View>& y,
             ViewArray<View>& x,
             bool& nofix) {
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View>
   inline bool
-  perm_bc(Space* home, int tau[],
+  perm_bc(Space& home, int tau[],
           SccComponent sinfo[],        
           int scclist[],
           ViewArray<View>& x,

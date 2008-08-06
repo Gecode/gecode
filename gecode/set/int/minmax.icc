@@ -48,13 +48,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  MinElement<View>::MinElement(Space* home, View y0, Gecode::Int::IntView y1)
+  MinElement<View>::MinElement(Space& home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
   template <class View>
   forceinline ExecStatus
-  MinElement<View>::post(Space* home, View x0, Gecode::Int::IntView x1) {
+  MinElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x0.cardMin(home,1));
     (void) new (home) MinElement(home,x0,x1);
     return ES_OK;
@@ -62,13 +62,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  MinElement<View>::MinElement(Space* home, bool share, MinElement& p)
+  MinElement<View>::MinElement(Space& home, bool share, MinElement& p)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, share, p) {}
 
   template <class View>
   Actor*
-  MinElement<View>::copy(Space* home, bool share) {
+  MinElement<View>::copy(Space& home, bool share) {
    return new (home) MinElement(home,share,*this);
   }
 
@@ -80,14 +80,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec
-  MinElement<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  MinElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
    return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
      ::spec(home, m, ati());
   }
 
   template <class View>
   void
-  MinElement<View>::post(Space* home, Reflection::VarMap& vars,
+  MinElement<View>::post(Space& home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     View x0(home, vars, spec[0]);
@@ -97,7 +97,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  MinElement<View>::propagate(Space* home, ModEventDelta) {
+  MinElement<View>::propagate(Space& home, ModEventDelta) {
     //x1 is an element of x0.ub
     //x1 =< smallest element of x0.lb
     //x1 =< x0.cardinialityMin-est largest element of x0.ub
@@ -156,19 +156,19 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  MaxElement<View>::MaxElement(Space* home, View y0, Gecode::Int::IntView y1)
+  MaxElement<View>::MaxElement(Space& home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
   template <class View>
   forceinline
-  MaxElement<View>::MaxElement(Space* home, bool share, MaxElement& p)
+  MaxElement<View>::MaxElement(Space& home, bool share, MaxElement& p)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, share, p) {}
 
   template <class View>
   ExecStatus
-  MaxElement<View>::post(Space* home, View x0,
+  MaxElement<View>::post(Space& home, View x0,
                               Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x0.cardMin(home,1));
     (void) new (home) MaxElement(home,x0,x1);
@@ -177,7 +177,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Actor*
-  MaxElement<View>::copy(Space* home, bool share) {
+  MaxElement<View>::copy(Space& home, bool share) {
     return new (home) MaxElement(home,share,*this);
   }
 
@@ -189,14 +189,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec
-  MaxElement<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  MaxElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
       ::spec(home, m, ati());
   }
 
   template <class View>
   void
-  MaxElement<View>::post(Space* home, Reflection::VarMap& vars,
+  MaxElement<View>::post(Space& home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     View x0(home, vars, spec[0]);
@@ -206,7 +206,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  MaxElement<View>::propagate(Space* home, ModEventDelta) {
+  MaxElement<View>::propagate(Space& home, ModEventDelta) {
     LubRanges<View> ub(x0);
     GECODE_ME_CHECK(x1.inter_r(home,ub,false));
     GECODE_ME_CHECK(x1.gq(home,x0.glbMax()));

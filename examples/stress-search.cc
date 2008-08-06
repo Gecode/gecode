@@ -50,13 +50,13 @@ protected:
 public:
   /// The actual problem
   StressSearch(const SizeOptions& opt)
-    : x(this,opt.size(),0,opt.size()) {
-    branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
+    : x(*this,opt.size(),0,opt.size()) {
+    branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s
   StressSearch(bool share, StressSearch& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning

@@ -75,14 +75,14 @@ namespace Gecode { namespace Int { namespace Rel {
     using MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    EqDom(Space* home, bool share, EqDom<View0,View1>& p);
+    EqDom(Space& home, bool share, EqDom<View0,View1>& p);
   public:
     /// Constructor for posting
-    EqDom(Space* home, View0 x0, View1 x1);
+    EqDom(Space& home, View0 x0, View1 x1);
     /// Constructor for rewriting \a p during cloning
-    EqDom(Space* home, bool share, Propagator& p, View0 x0, View1 x1);
+    EqDom(Space& home, bool share, Propagator& p, View0 x0, View1 x1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -92,17 +92,17 @@ namespace Gecode { namespace Int { namespace Rel {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post domain consistent propagator \f$ x_0 = x_1\f$
-    static  ExecStatus post(Space* home, View0 x0, View1 x1);
+    static  ExecStatus post(Space& home, View0 x0, View1 x1);
   };
 
   /**
@@ -119,26 +119,26 @@ namespace Gecode { namespace Int { namespace Rel {
     using MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    EqBnd(Space* home, bool share, EqBnd<View0,View1>& p);
+    EqBnd(Space& home, bool share, EqBnd<View0,View1>& p);
   public:
     /// Constructor for posting
-    EqBnd(Space* home, View0 x0, View1 x1);
+    EqBnd(Space& home, View0 x0, View1 x1);
     /// Constructor for rewriting \a p during cloning
-    EqBnd(Space* home, bool share, Propagator& p, View0 x0, View1 x1);
+    EqBnd(Space& home, bool share, Propagator& p, View0 x0, View1 x1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post bounds consistent propagator \f$ x_0 = x_1\f$
-    static  ExecStatus post(Space* home, View0 x0, View1 x1);
+    static  ExecStatus post(Space& home, View0 x0, View1 x1);
   };
 
   /**
@@ -156,12 +156,12 @@ namespace Gecode { namespace Int { namespace Rel {
     using NaryPropagator<View,PC_INT_DOM>::x;
 
     /// Constructor for cloning \a p
-    NaryEqDom(Space* home, bool share, NaryEqDom<View>& p);
+    NaryEqDom(Space& home, bool share, NaryEqDom<View>& p);
     /// Constructor for posting
-    NaryEqDom(Space* home, ViewArray<View>&);
+    NaryEqDom(Space& home, ViewArray<View>&);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -171,17 +171,17 @@ namespace Gecode { namespace Int { namespace Rel {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post domain consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
-    static  ExecStatus post(Space* home, ViewArray<View>& x);
+    static  ExecStatus post(Space& home, ViewArray<View>& x);
   };
 
   /**
@@ -196,12 +196,12 @@ namespace Gecode { namespace Int { namespace Rel {
     using NaryPropagator<View,PC_INT_BND>::x;
 
     /// Constructor for cloning \a p
-    NaryEqBnd(Space* home, bool share, NaryEqBnd<View>& p);
+    NaryEqBnd(Space& home, bool share, NaryEqBnd<View>& p);
     /// Constructor for posting
-    NaryEqBnd(Space* home, ViewArray<View>&);
+    NaryEqBnd(Space& home, ViewArray<View>&);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -210,17 +210,17 @@ namespace Gecode { namespace Int { namespace Rel {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post bounds consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
-    static  ExecStatus post(Space* home, ViewArray<View>& x);
+    static  ExecStatus post(Space& home, ViewArray<View>& x);
   };
 
   /**
@@ -237,24 +237,24 @@ namespace Gecode { namespace Int { namespace Rel {
     using ReBinaryPropagator<View,PC_INT_DOM,CtrlView>::b;
 
     /// Constructor for cloning \a p
-    ReEqDom(Space* home, bool share, ReEqDom& p);
+    ReEqDom(Space& home, bool share, ReEqDom& p);
     /// Constructor for posting
-    ReEqDom(Space* home, View x0, View x1, CtrlView b);
+    ReEqDom(Space& home, View x0, View x1, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post domain consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
-    static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
+    static  ExecStatus post(Space& home, View x0, View x1, CtrlView b);
   };
 
   /**
@@ -271,24 +271,24 @@ namespace Gecode { namespace Int { namespace Rel {
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::b;
 
     /// Constructor for cloning \a p
-    ReEqBnd(Space* home, bool share, ReEqBnd& p);
+    ReEqBnd(Space& home, bool share, ReEqBnd& p);
     /// Constructor for posting
-    ReEqBnd(Space* home, View x0, View x1, CtrlView b);
+    ReEqBnd(Space& home, View x0, View x1, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space* home, bool share);
+    virtual Actor*     copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post bounds consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
-    static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
+    static  ExecStatus post(Space& home, View x0, View x1, CtrlView b);
   };
 
   /**
@@ -306,24 +306,24 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Integer constant to check
     int c;
     /// Constructor for cloning \a p
-    ReEqDomInt(Space* home, bool share, ReEqDomInt& p);
+    ReEqDomInt(Space& home, bool share, ReEqDomInt& p);
     /// Constructor for posting
-    ReEqDomInt(Space* home, View x, int c, CtrlView b);
+    ReEqDomInt(Space& home, View x, int c, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post domain consistent propagator \f$ (x = c)\Leftrightarrow b\f$
-    static  ExecStatus post(Space* home, View x, int c, CtrlView b);
+    static  ExecStatus post(Space& home, View x, int c, CtrlView b);
   };
 
   /**
@@ -341,24 +341,24 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Integer constant to check
     int c;
     /// Constructor for cloning \a p
-    ReEqBndInt(Space* home, bool share, ReEqBndInt& p);
+    ReEqBndInt(Space& home, bool share, ReEqBndInt& p);
     /// Constructor for posting
-    ReEqBndInt(Space* home, View x, int c, CtrlView b);
+    ReEqBndInt(Space& home, View x, int c, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post bounds consistent propagator \f$ (x = c)\Leftrightarrow b\f$
-    static  ExecStatus post(Space* home, View x, int c, CtrlView b);
+    static  ExecStatus post(Space& home, View x, int c, CtrlView b);
   };
 
 
@@ -382,26 +382,26 @@ namespace Gecode { namespace Int { namespace Rel {
     using BinaryPropagator<View,PC_INT_VAL>::x1;
 
     /// Constructor for cloning \a p
-    Nq(Space* home, bool share, Nq<View>& p);
+    Nq(Space& home, bool share, Nq<View>& p);
     /// Constructor for posting
-    Nq(Space* home, View x0, View x1);
+    Nq(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator \f$x_0\neq x_1\f$
-    static  ExecStatus post(Space* home, View x0, View x1);
+    static  ExecStatus post(Space& home, View x0, View x1);
   };
 
   /*
@@ -423,24 +423,24 @@ namespace Gecode { namespace Int { namespace Rel {
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Lq(Space* home, bool share, Lq& p);
+    Lq(Space& home, bool share, Lq& p);
     /// Constructor for posting
-    Lq(Space* home, View x0, View x1);
+    Lq(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space* home, bool share);
+    virtual Actor*     copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator \f$x_0 \leq x_1\f$
-    static  ExecStatus post(Space* home, View x0, View x1);
+    static  ExecStatus post(Space& home, View x0, View x1);
   };
 
   /**
@@ -456,24 +456,24 @@ namespace Gecode { namespace Int { namespace Rel {
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Le(Space* home, bool share, Le& p);
+    Le(Space& home, bool share, Le& p);
     /// Constructor for posting
-    Le(Space* home, View x0, View x1);
+    Le(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const ;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator \f$x_0 \le x_1\f$
-    static  ExecStatus post(Space* home, View x0, View x1);
+    static  ExecStatus post(Space& home, View x0, View x1);
   };
 
 
@@ -497,24 +497,24 @@ namespace Gecode { namespace Int { namespace Rel {
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::b;
 
     /// Constructor for cloning \a p
-    ReLq(Space* home, bool share, ReLq& p);
+    ReLq(Space& home, bool share, ReLq& p);
     /// Constructor for posting
-    ReLq(Space* home, View x0, View x1, CtrlView b);
+    ReLq(Space& home, View x0, View x1, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$ (x_0 \leq x_1)\Leftrightarrow b\f$
-    static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
+    static  ExecStatus post(Space& home, View x0, View x1, CtrlView b);
   };
 
   /**
@@ -533,24 +533,24 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Integer constant to check
     int c;
     /// Constructor for cloning \a p
-    ReLqInt(Space* home, bool share, ReLqInt& p);
+    ReLqInt(Space& home, bool share, ReLqInt& p);
     /// Constructor for posting
-    ReLqInt(Space* home, View x, int c, CtrlView b);
+    ReLqInt(Space& home, View x, int c, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$ (x \leq c)\Leftrightarrow b\f$
-    static  ExecStatus post(Space* home, View x, int c, CtrlView b);
+    static  ExecStatus post(Space& home, View x, int c, CtrlView b);
    };
 
 
@@ -588,29 +588,29 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Determines whether propagator is strict or not
     bool strict;
     /// Constructor for cloning \a p
-    Lex(Space* home, bool share, Lex& p);
+    Lex(Space& home, bool share, Lex& p);
     /// Constructor for posting
-    Lex(Space* home, ViewArray<View>& x, ViewArray<View>& y, bool strict);
+    Lex(Space& home, ViewArray<View>& x, ViewArray<View>& y, bool strict);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for lexical order between \a x and \a y
-    static ExecStatus post(Space* home, ViewArray<View>& x, ViewArray<View>& y,
+    static ExecStatus post(Space& home, ViewArray<View>& x, ViewArray<View>& y,
                            bool strict);
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 }}}

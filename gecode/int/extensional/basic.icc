@@ -43,20 +43,20 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline
-  Basic<View>::Basic(Space* home, ViewArray<View>& x, const TupleSet& t)
+  Basic<View>::Basic(Space& home, ViewArray<View>& x, const TupleSet& t)
     : Base<View>(home,x,t) {
   }
 
   template <class View>
   ExecStatus
-  Basic<View>::post(Space* home, ViewArray<View>& x, const TupleSet& t) {
+  Basic<View>::post(Space& home, ViewArray<View>& x, const TupleSet& t) {
     (void) new (home) Basic<View>(home,x,t);
     return ES_OK;
   }
 
   template <class View>
   forceinline
-  Basic<View>::Basic(Space* home, bool share, Basic<View>& p)
+  Basic<View>::Basic(Space& home, bool share, Basic<View>& p)
     : Base<View>(home,share,p) {
   }
 
@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Actor*
-  Basic<View>::copy(Space* home, bool share) {
+  Basic<View>::copy(Space& home, bool share) {
     return new (home) Basic<View>(home,share,*this);
   }
 
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Reflection::ActorSpec
-  Basic<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Basic<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m)
              << tupleSet.spec(m);
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   void
-  Basic<View>::post(Space* home, Reflection::VarMap& vars,
+  Basic<View>::post(Space& home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  Basic<View>::propagate(Space* home, ModEventDelta) {
+  Basic<View>::propagate(Space& home, ModEventDelta) {
     ///// Domain consistent propagation
     //// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains

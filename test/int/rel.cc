@@ -69,7 +69,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          if (x.size() == 2) {
            rel(home, x[0], irt, x[1], icl);
@@ -80,7 +80,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
                          Gecode::BoolVar b) {
          assert(x.size() == 2);
          Gecode::rel(home, x[0], irt, x[1], b, icl);
@@ -107,11 +107,11 @@ namespace Test { namespace Int {
          return cmp(x[0],irt,x[0]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::rel(home, x[0], irt, x[0], icl);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
                          Gecode::BoolVar b) {
          Gecode::rel(home, x[0], irt, x[0], b, icl);
        }
@@ -137,7 +137,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          if (x.size() == 2) {
            rel(home, channel(home,x[0]), irt, channel(home,x[1]));
@@ -148,7 +148,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
                          Gecode::BoolVar b) {
          assert(x.size() == 2);
          using namespace Gecode;
@@ -177,7 +177,7 @@ namespace Test { namespace Int {
          return cmp(x[0],irt,x[0]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::BoolVar b = Gecode::channel(home,x[0]);
          Gecode::rel(home, b, irt, b);
        }
@@ -204,7 +204,7 @@ namespace Test { namespace Int {
            return cmp(x[0],irt,c) && cmp(x[1],irt,c);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          if (x.size() == 1)
            rel(home, x[0], irt, c);
@@ -212,7 +212,7 @@ namespace Test { namespace Int {
            rel(home, x, irt, c);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
                          Gecode::BoolVar b) {
          assert(x.size() == 1);
          Gecode::rel(home, x[0], irt, c, b);
@@ -240,7 +240,7 @@ namespace Test { namespace Int {
            return cmp(x[0],irt,c) && cmp(x[1],irt,c);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          if (x.size() == 1) {
            rel(home, channel(home,x[0]), irt, c);
@@ -251,7 +251,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
                          Gecode::BoolVar b) {
          assert(x.size() == 1);
          using namespace Gecode;
@@ -279,7 +279,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::rel(home, x, irt, icl);
        }
      };
@@ -303,7 +303,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs b(x.size());
          for (int i=x.size(); i--; )
@@ -333,7 +333,7 @@ namespace Test { namespace Int {
          return false;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          int n=x.size() >> 1;
          IntVarArgs y(n); IntVarArgs z(n);
@@ -365,7 +365,7 @@ namespace Test { namespace Int {
          return false;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          int n=x.size() >> 1;
          BoolVarArgs y(n); BoolVarArgs z(n);

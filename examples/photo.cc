@@ -92,30 +92,30 @@ public:
   /// Actual model
   Photo(const SizeOptions& opt) :
     spec(opt.size() == 0 ? p_small : p_large),
-    pos(this,spec.n_names, 0, spec.n_names-1),
-    sat(this,0,spec.n_prefs)
+    pos(*this,spec.n_names, 0, spec.n_names-1),
+    sat(*this,0,spec.n_prefs)
   {
     BoolVarArgs ful(spec.n_prefs);
     // Map preferences to fulfilment
     for (int i = spec.n_prefs; i--; ) {
       int pa = spec.prefs[2*i+0];
       int pb = spec.prefs[2*i+1];
-      ful[i] = post(this,
+      ful[i] = post(*this,
                     ~(pos[pb]-pos[pa] == 1) ^
                     ~(pos[pa]-pos[pb] == 1));
     }
     // Sum of fulfilment
-    linear(this, ful, IRT_EQ, sat);
+    linear(*this, ful, IRT_EQ, sat);
 
-    distinct(this, pos, opt.icl());
+    distinct(*this, pos, opt.icl());
 
     // Break some symmetries
-    rel(this, pos[0], IRT_LE, pos[1]);
+    rel(*this, pos[0], IRT_LE, pos[1]);
 
     if (opt.branching() == BRANCH_NONE) {
-      branch(this, pos, INT_VAR_NONE, INT_VAL_MIN);
+      branch(*this, pos, INT_VAR_NONE, INT_VAL_MIN);
     } else {
-      branch(this, pos, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), 
+      branch(*this, pos, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), 
              INT_VAL_MIN);
     }
   }
@@ -123,8 +123,8 @@ public:
   /// Constructor for cloning \a s
   Photo(bool share, Photo& s) :
     MaximizeExample(share,s), spec(s.spec) {
-    pos.update(this, share, s.pos);
-    sat.update(this, share, s.sat);
+    pos.update(*this, share, s.pos);
+    sat.update(*this, share, s.sat);
   }
   /// Copy during cloning
   virtual Space*

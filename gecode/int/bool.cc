@@ -43,33 +43,33 @@ namespace Gecode {
   namespace {
 
     forceinline void
-    post_and(Space* home, BoolVar x0, BoolVar x1, BoolVar x2) {
+    post_and(Space& home, BoolVar x0, BoolVar x1, BoolVar x2) {
       using namespace Int;
       NegBoolView n0(x0); NegBoolView n1(x1); NegBoolView n2(x2);
       GECODE_ES_FAIL(home,(Bool::Or<NegBoolView,NegBoolView,NegBoolView>
                            ::post(home,n0,n1,n2)));
     }
     forceinline void
-    post_or(Space* home, BoolVar x0, BoolVar x1, BoolVar x2) {
+    post_or(Space& home, BoolVar x0, BoolVar x1, BoolVar x2) {
       using namespace Int;
       GECODE_ES_FAIL(home,(Bool::Or<BoolView,BoolView,BoolView>
                            ::post(home,x0,x1,x2)));
     }
     forceinline void
-    post_imp(Space* home, BoolVar x0, BoolVar x1, BoolVar x2) {
+    post_imp(Space& home, BoolVar x0, BoolVar x1, BoolVar x2) {
       using namespace Int;
       NegBoolView n0(x0);
       GECODE_ES_FAIL(home,(Bool::Or<NegBoolView,BoolView,BoolView>
                            ::post(home,n0,x1,x2)));
     }
     forceinline void
-    post_eqv(Space* home, BoolVar x0, BoolVar x1, BoolVar x2) {
+    post_eqv(Space& home, BoolVar x0, BoolVar x1, BoolVar x2) {
       using namespace Int;
       GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,BoolView>
                            ::post(home,x0,x1,x2)));
     }
     forceinline void
-    post_xor(Space* home, BoolVar x0, BoolVar x1, BoolVar x2) {
+    post_xor(Space& home, BoolVar x0, BoolVar x1, BoolVar x2) {
       using namespace Int;
       NegBoolView n2(x2);
       GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,NegBoolView>
@@ -79,10 +79,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1, 
+  rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1, 
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
       GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
@@ -113,9 +113,9 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, IntRelType r, int n, IntConLevel, PropKind) {
+  rel(Space& home, BoolVar x0, IntRelType r, int n, IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     BoolView x(x0);
     if (n == 0) {
       switch (r) {
@@ -126,7 +126,7 @@ namespace Gecode {
       case IRT_GR:
         GECODE_ME_FAIL(home,x.one(home)); break;
       case IRT_LE:
-        home->fail(); break;
+        home.fail(); break;
       case IRT_GQ:
         break;
       default:
@@ -141,7 +141,7 @@ namespace Gecode {
       case IRT_LE:
         GECODE_ME_FAIL(home,x.zero(home)); break;
       case IRT_GR:
-        home->fail(); break;
+        home.fail(); break;
       case IRT_LQ:
         break;
       default:
@@ -153,10 +153,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
+  rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
       GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,BoolView>
@@ -193,10 +193,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, IntRelType r, int n, BoolVar b,
+  rel(Space& home, BoolVar x0, IntRelType r, int n, BoolVar b,
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     BoolView x(x0);
     BoolView y(b);
     if (n == 0) {
@@ -253,10 +253,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r, BoolVar y, 
+  rel(Space& home, const BoolVarArgs& x, IntRelType r, BoolVar y, 
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
       for (int i=x.size(); i--; ) {
@@ -299,10 +299,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r, int n, 
+  rel(Space& home, const BoolVarArgs& x, IntRelType r, int n, 
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     if (n == 0) {
       switch (r) {
       case IRT_LQ:
@@ -318,7 +318,7 @@ namespace Gecode {
         }
         break;
       case IRT_LE:
-        home->fail(); break;
+        home.fail(); break;
       case IRT_GQ:
         break;
       default:
@@ -339,7 +339,7 @@ namespace Gecode {
         }
         break;
       case IRT_GR:
-        home->fail(); break;
+        home.fail(); break;
       case IRT_LQ:
         break;
       default:
@@ -351,9 +351,9 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r, IntConLevel, PropKind) {
+  rel(Space& home, const BoolVarArgs& x, IntRelType r, IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed() || (x.size() < 2)) return;
+    if (home.failed() || (x.size() < 2)) return;
     switch (r) {
     case IRT_EQ:
       for (int i=x.size()-1; i--; )
@@ -366,14 +366,14 @@ namespace Gecode {
         GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
                              ::post(home,x[0],n)));
       } else {
-        home->fail();
+        home.fail();
       }
       break;
     case IRT_LE:
       if (x.size() == 2) {
         GECODE_ES_FAIL(home,Bool::Le<BoolView>::post(home,x[0],x[1]));
       } else {
-        home->fail();
+        home.fail();
       }
       break;
     case IRT_LQ:
@@ -384,7 +384,7 @@ namespace Gecode {
       if (x.size() == 2) {
         GECODE_ES_FAIL(home,Bool::Le<BoolView>::post(home,x[1],x[0]));
       } else {
-        home->fail();
+        home.fail();
       }
       break;
     case IRT_GQ:
@@ -397,12 +397,12 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
+  rel(Space& home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
       IntConLevel, PropKind) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     switch (r) {
     case IRT_GR: 
@@ -453,10 +453,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2, 
+  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2, 
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (o) {
     case BOT_AND: post_and(home,x0,x1,x2); break;
     case BOT_OR:  post_or(home,x0,x1,x2); break;
@@ -468,10 +468,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, int n, 
+  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, int n, 
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     if (n == 0) {
       switch (o) {
       case BOT_AND:
@@ -549,10 +549,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolOpType o, const BoolVarArgs& x, BoolVar y, 
+  rel(Space& home, BoolOpType o, const BoolVarArgs& x, BoolVar y, 
       IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     int m = x.size();
     Scratch s(home);
     switch (o) {
@@ -616,12 +616,12 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolOpType o, const BoolVarArgs& x, int n, 
+  rel(Space& home, BoolOpType o, const BoolVarArgs& x, int n, 
       IntConLevel, PropKind) {
     using namespace Int;
     if ((n < 0) || (n > 1))
       throw NotZeroOne("Int::rel");
-    if (home->failed()) return;
+    if (home.failed()) return;
     int m = x.size();
     Scratch s(home);
     switch (o) {

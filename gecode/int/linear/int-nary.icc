@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N, PropCond pc>
   forceinline
-  Lin<Val,P,N,pc>::Lin(Space* home, ViewArray<P>& x0, ViewArray<N>& y0, Val c0)
+  Lin<Val,P,N,pc>::Lin(Space& home, ViewArray<P>& x0, ViewArray<N>& y0, Val c0)
     : Propagator(home), x(x0), y(y0), c(c0) {
     x.subscribe(home,this,pc);
     y.subscribe(home,this,pc);
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, PropCond pc>
   forceinline
-  Lin<Val,P,N,pc>::Lin(Space* home, bool share, Lin<Val,P,N,pc>& p)
+  Lin<Val,P,N,pc>::Lin(Space& home, bool share, Lin<Val,P,N,pc>& p)
     : Propagator(home,share,p), c(p.c) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -84,8 +84,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, PropCond pc>
   forceinline size_t
-  Lin<Val,P,N,pc>::dispose(Space* home) {
-    assert(!home->failed());
+  Lin<Val,P,N,pc>::dispose(Space& home) {
+    assert(!home.failed());
     x.cancel(home,this,pc);
     y.cancel(home,this,pc);
     (void) Propagator::dispose(home);
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, PropCond pc>
   Reflection::ActorSpec
-  Lin<Val,P,N,pc>::spec(const Space* home, Reflection::VarMap& m,
+  Lin<Val,P,N,pc>::spec(const Space& home, Reflection::VarMap& m,
                         const Support::Symbol& ati) const {
     Reflection::ActorSpec s(ati);
     return s << x.spec(home, m)
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N, PropCond pc, class Ctrl>
   forceinline
   ReLin<Val,P,N,pc,Ctrl>::ReLin
-  (Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b0)
+  (Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b0)
     : Lin<Val,P,N,pc>(home,x,y,c), b(b0) {
     b.subscribe(home,this,PC_INT_VAL);
   }
@@ -117,15 +117,15 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N, PropCond pc, class Ctrl>
   forceinline
   ReLin<Val,P,N,pc,Ctrl>::ReLin
-  (Space* home, bool share, ReLin<Val,P,N,pc,Ctrl>& p)
+  (Space& home, bool share, ReLin<Val,P,N,pc,Ctrl>& p)
     : Lin<Val,P,N,pc>(home,share,p) {
     b.update(home,share,p.b);
   }
 
   template <class Val, class P, class N, PropCond pc, class Ctrl>
   forceinline size_t
-  ReLin<Val,P,N,pc,Ctrl>::dispose(Space* home) {
-    assert(!home->failed());
+  ReLin<Val,P,N,pc,Ctrl>::dispose(Space& home) {
+    assert(!home.failed());
     b.cancel(home,this,PC_BOOL_VAL);
     (void) Lin<Val,P,N,pc>::dispose(home);
     return sizeof(*this);
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, PropCond pc, class Ctrl>
   Reflection::ActorSpec
-  ReLin<Val,P,N,pc,Ctrl>::spec(const Space* home, Reflection::VarMap& m,
+  ReLin<Val,P,N,pc,Ctrl>::spec(const Space& home, Reflection::VarMap& m,
                                const Support::Symbol& ati) const {
     Reflection::ActorSpec s(ati);
     return s << Lin<Val,P,N,pc>::x.spec(home, m)
@@ -192,7 +192,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  prop_bnd(Space* home, ModEventDelta med, Propagator* p,
+  prop_bnd(Space& home, ModEventDelta med, Propagator* p,
            ViewArray<P>& x, ViewArray<N>& y, Val& c) {
     // Eliminate singletons
     Val sl = 0;
@@ -284,12 +284,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   forceinline
-  Eq<Val,P,N>::Eq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c)
+  Eq<Val,P,N>::Eq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c)
     : Lin<Val,P,N,PC_INT_BND>(home,x,y,c) {}
 
   template <class Val, class P, class N>
   ExecStatus
-  Eq<Val,P,N>::post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
+  Eq<Val,P,N>::post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Eq<Val,P,NoView>(home,x,nva,c);
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   forceinline
-  Eq<Val,P,N>::Eq(Space* home, bool share, Eq<Val,P,N>& p)
+  Eq<Val,P,N>::Eq(Space& home, bool share, Eq<Val,P,N>& p)
     : Lin<Val,P,N,PC_INT_BND>(home,share,p) {}
 
   /**
@@ -313,12 +313,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  eqtobin(Space*, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+  eqtobin(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
-  eqtobin(Space* home, bool share, Propagator& p,
+  eqtobin(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
     assert(x.size() == 2);
     return new (home) EqBin<Val,IntView,IntView>
@@ -326,7 +326,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  eqtobin(Space* home, bool share, Propagator& p,
+  eqtobin(Space& home, bool share, Propagator& p,
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 2);
     return new (home) EqBin<Val,IntView,IntView>
@@ -334,7 +334,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  eqtobin(Space* home, bool share, Propagator& p,
+  eqtobin(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 2)
       return new (home) EqBin<Val,IntView,IntView>
@@ -352,12 +352,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  eqtoter(Space*, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+  eqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
-  eqtoter(Space* home, bool share, Propagator& p,
+  eqtoter(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
     assert(x.size() == 3);
     return new (home) EqTer<Val,IntView,IntView,IntView>
@@ -365,7 +365,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  eqtoter(Space* home, bool share, Propagator& p,
+  eqtoter(Space& home, bool share, Propagator& p,
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 3);
     return new (home) EqTer<Val,IntView,IntView,IntView>
@@ -373,7 +373,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  eqtoter(Space* home, bool share, Propagator& p,
+  eqtoter(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 3)
       return new (home) EqTer<Val,IntView,IntView,IntView>
@@ -390,7 +390,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   Actor*
-  Eq<Val,P,N>::copy(Space* home, bool share) {
+  Eq<Val,P,N>::copy(Space& home, bool share) {
     if (isunit(x,y)) {
       // Check whether rewriting is possible
       if (x.size() + y.size() == 2)
@@ -410,13 +410,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   Reflection::ActorSpec
-  Eq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
+  Eq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
     return Lin<Val,P,N,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class Val, class P, class N>
   void
-  Eq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
+  Eq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<P> x(home, vars, spec[0]);
@@ -427,7 +427,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Eq<Val,P,N>::propagate(Space* home, ModEventDelta med) {
+  Eq<Val,P,N>::propagate(Space& home, ModEventDelta med) {
     return prop_bnd<Val,P,N>(home,med,this,x,y,c);
   }
 
@@ -438,13 +438,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   forceinline
-  ReEq<Val,P,N,Ctrl>::ReEq(Space* home,
+  ReEq<Val,P,N,Ctrl>::ReEq(Space& home,
                            ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,x,y,c,b) {}
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::post(Space* home,
+  ReEq<Val,P,N,Ctrl>::post(Space& home,
                            ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
@@ -460,12 +460,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   forceinline
-  ReEq<Val,P,N,Ctrl>::ReEq(Space* home, bool share, ReEq<Val,P,N,Ctrl>& p)
+  ReEq<Val,P,N,Ctrl>::ReEq(Space& home, bool share, ReEq<Val,P,N,Ctrl>& p)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,share,p) {}
 
   template <class Val, class P, class N, class Ctrl>
   Actor*
-  ReEq<Val,P,N,Ctrl>::copy(Space* home, bool share) {
+  ReEq<Val,P,N,Ctrl>::copy(Space& home, bool share) {
     return new (home) ReEq<Val,P,N,Ctrl>(home,share,*this);
   }
 
@@ -477,13 +477,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   Reflection::ActorSpec
-  ReEq<Val,P,N,Ctrl>::spec(const Space* home, Reflection::VarMap& m) const {
+  ReEq<Val,P,N,Ctrl>::spec(const Space& home, Reflection::VarMap& m) const {
     return ReLin<Val,P,N,PC_INT_BND,Ctrl>::spec(home, m, ati());
   }
 
   template <class Val, class P, class N, class Ctrl>
   void
-  ReEq<Val,P,N,Ctrl>::post(Space* home, Reflection::VarMap& vars,
+  ReEq<Val,P,N,Ctrl>::post(Space& home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<P> x(home, vars, spec[0]);
@@ -495,7 +495,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::propagate(Space* home, ModEventDelta med) {
+  ReEq<Val,P,N,Ctrl>::propagate(Space& home, ModEventDelta med) {
     if (b.zero())
       GECODE_REWRITE(this,(Nq<Val,P,N>::post(home,x,y,c)));
     if (b.one())
@@ -526,12 +526,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   forceinline
-  Nq<Val,P,N>::Nq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c)
+  Nq<Val,P,N>::Nq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c)
     : Lin<Val,P,N,PC_INT_VAL>(home,x,y,c) {}
 
   template <class Val, class P, class N>
   ExecStatus
-  Nq<Val,P,N>::post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
+  Nq<Val,P,N>::post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Nq<Val,P,NoView>(home,x,nva,c);
@@ -546,7 +546,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   forceinline
-  Nq<Val,P,N>::Nq(Space* home, bool share, Nq<Val,P,N>& p)
+  Nq<Val,P,N>::Nq(Space& home, bool share, Nq<Val,P,N>& p)
     : Lin<Val,P,N,PC_INT_VAL>(home,share,p) {}
 
   /**
@@ -555,12 +555,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  nqtobin(Space*, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+  nqtobin(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
-  nqtobin(Space* home, bool share, Propagator& p,
+  nqtobin(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
     assert(x.size() == 2);
     return new (home) NqBin<Val,IntView,IntView>
@@ -568,7 +568,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  nqtobin(Space* home, bool share, Propagator& p,
+  nqtobin(Space& home, bool share, Propagator& p,
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 2);
     return new (home) NqBin<Val,IntView,IntView>
@@ -576,7 +576,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  nqtobin(Space* home, bool share, Propagator& p,
+  nqtobin(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 2)
       return new (home) NqBin<Val,IntView,IntView>
@@ -594,12 +594,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  nqtoter(Space*, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, Val) {
+  nqtoter(Space&, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, Val) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
-  nqtoter(Space* home, bool share, Propagator& p,
+  nqtoter(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
     assert(x.size() == 3);
     return new (home) NqTer<Val,IntView,IntView,IntView>
@@ -607,7 +607,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  nqtoter(Space* home, bool share, Propagator& p,
+  nqtoter(Space& home, bool share, Propagator& p,
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 3);
     return new (home) NqTer<Val,IntView,IntView,IntView>
@@ -615,7 +615,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  nqtoter(Space* home, bool share, Propagator& p,
+  nqtoter(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 3)
       return new (home) NqTer<Val,IntView,IntView,IntView>
@@ -632,7 +632,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   Actor*
-  Nq<Val,P,N>::copy(Space* home, bool share) {
+  Nq<Val,P,N>::copy(Space& home, bool share) {
     if (isunit(x,y)) {
       // Check whether rewriting is possible
       if (x.size() + y.size() == 2)
@@ -651,13 +651,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   Reflection::ActorSpec
-  Nq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
+  Nq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
     return Lin<Val,P,N,PC_INT_VAL>::spec(home, m, ati());
   }
 
   template <class Val, class P, class N>
   void
-  Nq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
+  Nq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<P> x(home, vars, spec[0]);
@@ -668,7 +668,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Nq<Val,P,N>::propagate(Space* home, ModEventDelta) {
+  Nq<Val,P,N>::propagate(Space& home, ModEventDelta) {
     for (int i = x.size(); i--; )
       if (x[i].assigned()) {
         c -= x[i].val();  x.move_lst(i);
@@ -698,12 +698,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   forceinline
-  Lq<Val,P,N>::Lq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c)
+  Lq<Val,P,N>::Lq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c)
     : Lin<Val,P,N,PC_INT_BND>(home,x,y,c) {}
 
   template <class Val, class P, class N>
   ExecStatus
-  Lq<Val,P,N>::post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
+  Lq<Val,P,N>::post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Lq<Val,P,NoView>(home,x,nva,c);
@@ -718,7 +718,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   forceinline
-  Lq<Val,P,N>::Lq(Space* home, bool share, Lq<Val,P,N>& p)
+  Lq<Val,P,N>::Lq(Space& home, bool share, Lq<Val,P,N>& p)
     : Lin<Val,P,N,PC_INT_BND>(home,share,p) {}
 
   /**
@@ -727,12 +727,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  lqtobin(Space*, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, Val) {
+  lqtobin(Space&, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, Val) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
-  lqtobin(Space* home, bool share, Propagator& p,
+  lqtobin(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
     assert(x.size() == 2);
     return new (home) LqBin<Val,IntView,IntView>
@@ -740,7 +740,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  lqtobin(Space* home, bool share, Propagator& p,
+  lqtobin(Space& home, bool share, Propagator& p,
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 2);
     return new (home) LqBin<Val,MinusView,MinusView>
@@ -748,7 +748,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  lqtobin(Space* home, bool share, Propagator& p,
+  lqtobin(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 2)
       return new (home) LqBin<Val,IntView,IntView>
@@ -766,12 +766,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  lqtoter(Space*, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+  lqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
-  lqtoter(Space* home, bool share, Propagator& p,
+  lqtoter(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
     assert(x.size() == 3);
     return new (home) LqTer<Val,IntView,IntView,IntView>
@@ -779,7 +779,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  lqtoter(Space* home, bool share, Propagator& p,
+  lqtoter(Space& home, bool share, Propagator& p,
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 3);
     return new (home) LqTer<Val,MinusView,MinusView,MinusView>
@@ -787,7 +787,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline Actor*
-  lqtoter(Space* home, bool share, Propagator& p,
+  lqtoter(Space& home, bool share, Propagator& p,
           ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 3)
       return new (home) LqTer<Val,IntView,IntView,IntView>
@@ -804,7 +804,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   Actor*
-  Lq<Val,P,N>::copy(Space* home, bool share) {
+  Lq<Val,P,N>::copy(Space& home, bool share) {
     if (isunit(x,y)) {
       // Check whether rewriting is possible
       if (x.size() + y.size() == 2)
@@ -823,13 +823,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   Reflection::ActorSpec
-  Lq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
+  Lq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
     return Lin<Val,P,N,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class Val, class P, class N>
   void
-  Lq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
+  Lq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<P> x(home, vars, spec[0]);
@@ -840,7 +840,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Lq<Val,P,N>::propagate(Space* home, ModEventDelta med) {
+  Lq<Val,P,N>::propagate(Space& home, ModEventDelta med) {
     // Eliminate singletons
     Val sl = 0;
 
@@ -918,13 +918,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   forceinline
   ReLq<Val,P,N>::ReLq
-  (Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b)
+  (Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b)
     : ReLin<Val,P,N,PC_INT_BND,BoolView>(home,x,y,c,b) {}
 
   template <class Val, class P, class N>
   ExecStatus
   ReLq<Val,P,N>::post
-  (Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b) {
+  (Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) ReLq<Val,P,NoView>(home,x,nva,c,b);
@@ -939,12 +939,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   forceinline
-  ReLq<Val,P,N>::ReLq(Space* home, bool share, ReLq<Val,P,N>& p)
+  ReLq<Val,P,N>::ReLq(Space& home, bool share, ReLq<Val,P,N>& p)
     : ReLin<Val,P,N,PC_INT_BND,BoolView>(home,share,p) {}
 
   template <class Val, class P, class N>
   Actor*
-  ReLq<Val,P,N>::copy(Space* home, bool share) {
+  ReLq<Val,P,N>::copy(Space& home, bool share) {
     return new (home) ReLq<Val,P,N>(home,share,*this);
   }
 
@@ -956,13 +956,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   Reflection::ActorSpec
-  ReLq<Val,P,N>::spec(const Space* home, Reflection::VarMap& m) const {
+  ReLq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
     return ReLin<Val,P,N,PC_INT_BND,BoolView>::spec(home, m, ati());
   }
 
   template <class Val, class P, class N>
   void
-  ReLq<Val,P,N>::post(Space* home, Reflection::VarMap& vars,
+  ReLq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
@@ -973,7 +973,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  ReLq<Val,P,N>::propagate(Space* home, ModEventDelta med) {
+  ReLq<Val,P,N>::propagate(Space& home, ModEventDelta med) {
     if (b.zero())
       GECODE_REWRITE(this,(Lq<Val,N,P>::post(home,y,x,-c-1)));
     if (b.one())

@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace Int {
       
   template <class View>
   forceinline
-  ChannelInt<View>::ChannelInt(Space* home, 
+  ChannelInt<View>::ChannelInt(Space& home, 
                              ViewArray<Gecode::Int::IntView>& xs0,
                              ViewArray<View>& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Int {
       
   template <class View>
   forceinline
-  ChannelInt<View>::ChannelInt(Space* home, bool share, ChannelInt& p)
+  ChannelInt<View>::ChannelInt(Space& home, bool share, ChannelInt& p)
     : Propagator(home,share,p) {
     xs.update(home,share,p.xs);
     ys.update(home,share,p.ys);
@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline ExecStatus
-  ChannelInt<View>::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
+  ChannelInt<View>::post(Space& home, ViewArray<Gecode::Int::IntView>& xs,
                           ViewArray<View>& ys) {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables
@@ -91,8 +91,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   size_t
-  ChannelInt<View>::dispose(Space* home) {
-    assert(!home->failed());
+  ChannelInt<View>::dispose(Space& home) {
+    assert(!home.failed());
     xs.cancel(home,this, Gecode::Int::PC_INT_DOM);
     ys.cancel(home,this, PC_SET_ANY);
     (void) Propagator::dispose(home);
@@ -101,13 +101,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Actor*
-  ChannelInt<View>::copy(Space* home, bool share) {
+  ChannelInt<View>::copy(Space& home, bool share) {
     return new (home) ChannelInt(home,share,*this);
   }
 
   template <class View>
   ExecStatus
-  ChannelInt<View>::propagate(Space* home, ModEventDelta) {
+  ChannelInt<View>::propagate(Space& home, ModEventDelta) {
     int assigned = 0;
     for (int v=xs.size(); v--;) {
       if (xs[v].assigned()) {
@@ -154,14 +154,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec
-  ChannelInt<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  ChannelInt<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << xs.spec(home, m) << ys.spec(home, m);
   }
 
   template <class View>
   void
-  ChannelInt<View>::post(Space* home, Reflection::VarMap& vars,
+  ChannelInt<View>::post(Space& home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<Gecode::Int::IntView> x0(home, vars, spec[0]);

@@ -65,7 +65,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,2);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::count(home, x,0,irt,2);
        }
      };
@@ -88,7 +88,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,4);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(8);
          for (int i=x.size(); i--; )
            y[i]=y[4+i]=x[i];
@@ -114,7 +114,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[4]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];
@@ -142,7 +142,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,2);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[4]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];
@@ -194,7 +194,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[2]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::count(home, x, 0, irt, x[2]);
        }
      };
@@ -217,7 +217,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[4]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(3);
          for (int i=0; i<3; i++)
            y[i]=x[i];
@@ -243,7 +243,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,2);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(3);
          for (int i=0; i<3; i++)
            y[i]=x[i];
@@ -269,7 +269,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[4]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];
@@ -295,7 +295,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[3]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];
@@ -321,7 +321,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[3]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::count(home, x, x[1], irt, x[3]);
        }
      };

@@ -50,19 +50,19 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   forceinline
-  Union<View0,View1,View2>::Union(Space* home, View0 y0,View1 y1,View2 y2)
+  Union<View0,View1,View2>::Union(Space& home, View0 y0,View1 y1,View2 y2)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,y0,y1,y2) {}
 
   template <class View0, class View1, class View2>
   forceinline
-  Union<View0,View1,View2>::Union(Space* home, bool share,
+  Union<View0,View1,View2>::Union(Space& home, bool share,
                                Union<View0,View1,View2>& p)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,share,p) {}
 
   template <class View0, class View1, class View2>
-  ExecStatus Union<View0,View1,View2>::post(Space* home, View0 x0,
+  ExecStatus Union<View0,View1,View2>::post(Space& home, View0 x0,
                                          View1 x1, View2 x2) {
     (void) new (home) Union<View0,View1,View2>(home,x0,x1,x2);
     return ES_OK;
@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   Actor*
-  Union<View0,View1,View2>::copy(Space* home, bool share) {
+  Union<View0,View1,View2>::copy(Space& home, bool share) {
     return new (home) Union(home,share,*this);
   }
 
@@ -82,7 +82,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   Reflection::ActorSpec
-  Union<View0,View1,View2>::spec(const Space* home,
+  Union<View0,View1,View2>::spec(const Space& home,
                                  Reflection::VarMap& m) const {
     return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
       View2,PC_SET_ANY>::spec(home, m, ati());
@@ -90,7 +90,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   void
-  Union<View0,View1,View2>::post(Space* home,
+  Union<View0,View1,View2>::post(Space& home,
                                  Reflection::VarMap& vars,
                                  const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
@@ -102,7 +102,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  Union<View0,View1,View2>::propagate(Space* home, ModEventDelta med) {
+  Union<View0,View1,View2>::propagate(Space& home, ModEventDelta med) {
     // This propagator implements the constraint
     // x2 = x0 u x1
 
@@ -231,14 +231,14 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   forceinline
-  UnionN<View0,View1>::UnionN(Space* home, ViewArray<View0>& x, View1 y)
+  UnionN<View0,View1>::UnionN(Space& home, ViewArray<View0>& x, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
     shared = x.shared(home) || viewarrayshared(home,x,y);
   }
 
   template <class View0, class View1>
   forceinline
-  UnionN<View0,View1>::UnionN(Space* home, ViewArray<View0>& x,
+  UnionN<View0,View1>::UnionN(Space& home, ViewArray<View0>& x,
                               const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
     shared = x.shared(home) || viewarrayshared(home,x,y);
@@ -248,7 +248,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   forceinline
-  UnionN<View0,View1>::UnionN(Space* home, bool share, UnionN& p)
+  UnionN<View0,View1>::UnionN(Space& home, bool share, UnionN& p)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
       shared(p.shared) {
     unionOfDets.update(home,p.unionOfDets);
@@ -256,13 +256,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   Actor*
-  UnionN<View0,View1>::copy(Space* home, bool share) {
+  UnionN<View0,View1>::copy(Space& home, bool share) {
     return new (home) UnionN<View0,View1>(home,share,*this);
   }
 
   template <class View0, class View1>
   ExecStatus 
-  UnionN<View0,View1>::post(Space* home, ViewArray<View0>& x, View1 y) {
+  UnionN<View0,View1>::post(Space& home, ViewArray<View0>& x, View1 y) {
     switch (x.size()) {
     case 0:
       GECODE_ME_CHECK(y.cardMax(home, 0));
@@ -279,7 +279,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus 
-  UnionN<View0,View1>::post(Space* home, ViewArray<View0>& x,
+  UnionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
                             const IntSet& z, View1 y) {
     (void) new (home) UnionN<View0,View1>(home,x,z,y);
     return ES_OK;
@@ -299,7 +299,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   Reflection::ActorSpec
-  UnionN<View0,View1>::spec(const Space* home,
+  UnionN<View0,View1>::spec(const Space& home,
                             Reflection::VarMap& m) const {
     Reflection::ActorSpec s =
       MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
@@ -318,7 +318,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   void
-  UnionN<View0,View1>::post(Space* home,
+  UnionN<View0,View1>::post(Space& home,
                             Reflection::VarMap& vars,
                             const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
@@ -331,7 +331,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  UnionN<View0,View1>::propagate(Space* home, ModEventDelta med) {
+  UnionN<View0,View1>::propagate(Space& home, ModEventDelta med) {
     ModEvent me0 = View0::me(med);
     ModEvent me1 = View1::me(med);
     bool ubevent = Rel::testSetEventUB(me0, me1);

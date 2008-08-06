@@ -543,7 +543,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * \brief Check whether minimum requirements shrink variable domains
      *
      */
-    bool min_require(Space* home);
+    bool min_require(Space& home);
 
     /**
      * \brief Synchronization of the graph
@@ -553,7 +553,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * that do not longer belong to the graph associated with the current
      * variable domains.
      */
-    bool sync(Space* home);
+    bool sync(Space& home);
 
     /// Print graph information for debugging
     void print_graph(void);
@@ -579,7 +579,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
 
     template <BC>
-    bool narrow(Space* home);
+    bool narrow(Space& home);
 
     /** \brief Compute a maximum matching M on the graph
      *
@@ -588,21 +588,21 @@ namespace Gecode { namespace Int { namespace GCC {
      *    k[i].min()\f$
      */
     template <BC>
-    bool maximum_matching(Space* home);
+    bool maximum_matching(Space& home);
 
     /// Compute possible free alternating paths in the graph
     template <BC>
-    void free_alternating_paths(Space* home);
+    void free_alternating_paths(Space& home);
     /// Compute possible strongly connected components of the graph
     template <BC>
-    void strongly_connected_components(Space* home);
+    void strongly_connected_components(Space& home);
     /**
      * \brief Test whether the current maximal matching on the graph
      * can be augmented by an alternating path starting and ending with
      * a free node.
      */
     template <BC>
-    bool augmenting_path(Space* home, VVGNode*);
+    bool augmenting_path(Space& home, VVGNode*);
 
   protected:
     /**
@@ -1403,7 +1403,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   inline bool
-  VarValGraph<View, Card, isView>::min_require(Space* home){
+  VarValGraph<View, Card, isView>::min_require(Space& home){
     bool modified = false;
     for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
@@ -1495,7 +1495,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   inline bool
-  VarValGraph<View, Card, isView>::sync(Space* home) {
+  VarValGraph<View, Card, isView>::sync(Space& home) {
     Scratch s(home);
     VVGNode** re = s.alloc<VVGNode*>(node_size);
     int n_re = 0;
@@ -1717,7 +1717,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template <BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::narrow(Space* home) {
+  VarValGraph<View, Card, isView>::narrow(Space& home) {
     bool modified  = false;
     for (int i = n_var; i--; ) {
       VarNode* vrn = vars[i];
@@ -1865,7 +1865,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>  template <BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::maximum_matching(Space* home) {
+  VarValGraph<View, Card, isView>::maximum_matching(Space& home) {
 
     int required_size = 0;
     int card_match    = 0;
@@ -1939,7 +1939,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template<BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::augmenting_path(Space* home, VVGNode* v) {
+  VarValGraph<View, Card, isView>::augmenting_path(Space& home, VVGNode* v) {
     Support::StaticStack<VVGNode*> ns(node_size);
     Scratch s(home);
     bool* visited = s.alloc<bool>(node_size);
@@ -2049,7 +2049,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template<BC direction>
   inline void
-  VarValGraph<View, Card, isView>::free_alternating_paths(Space* home) {
+  VarValGraph<View, Card, isView>::free_alternating_paths(Space& home) {
     Support::StaticStack<VVGNode*> ns(node_size);
     Scratch s(home);
     bool* visited = s.alloc<bool>(node_size);
@@ -2235,7 +2235,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView> template <BC direction>
   inline void
-  VarValGraph<View, Card, isView>::strongly_connected_components(Space* home) {
+  VarValGraph<View, Card, isView>::strongly_connected_components(Space& home) {
     Scratch s(home);
     bool* inscc = s.alloc<bool>(node_size);
     bool* in_unfinished = s.alloc<bool>(node_size);

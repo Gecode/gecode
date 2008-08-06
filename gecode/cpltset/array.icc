@@ -74,7 +74,7 @@ namespace Gecode {
      * \prec x_{{n-1}_{1}}, \dots, x_{0_{k-1}} \prec x_{{n-1}_{k-1}}\f$
      */
     GECODE_CPLTSET_EXPORT void
-    setVariableOrderFromArray(Space* home, const CpltSetVarArray& x);
+    setVariableOrderFromArray(Space& home, const CpltSetVarArray& x);
   }
 }
 

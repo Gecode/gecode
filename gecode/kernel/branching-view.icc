@@ -63,15 +63,15 @@ namespace Gecode {
     /// Default constructor
     ViewSelBase(void);
     /// Constructor for initialization
-    ViewSelBase(Space* home, const VarBranchOptions& vbo);
+    ViewSelBase(Space& home, const VarBranchOptions& vbo);
     /// Return description
-    EmptyViewSelDesc description(Space* home);
+    EmptyViewSelDesc description(Space& home);
     /// Commit to description
-    void commit(Space* home, const EmptyViewSelDesc& d, unsigned a);
+    void commit(Space& home, const EmptyViewSelDesc& d, unsigned a);
     /// Updating during cloning
-    void update(Space* home, bool share, ViewSelBase& vs);
+    void update(Space& home, bool share, ViewSelBase& vs);
     /// Delete view selection
-    void dispose(Space* home);
+    void dispose(Space& home);
   };
 
   /**
@@ -83,11 +83,11 @@ namespace Gecode {
     /// Default constructor
     ViewSelNone(void);
     /// Constructor for initialization
-    ViewSelNone(Space* home, const VarBranchOptions& vbo);
+    ViewSelNone(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(Space* home, View x);
+    ViewSelStatus init(Space& home, View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(Space* home, View x);
+    ViewSelStatus select(Space& home, View x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -104,11 +104,11 @@ namespace Gecode {
     /// Default constructor
     ViewSelDegreeMin(void);
     /// Constructor for initialization
-    ViewSelDegreeMin(Space* home, const VarBranchOptions& vbo);
+    ViewSelDegreeMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(Space* home, View x);
+    ViewSelStatus init(Space& home, View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(Space* home, View x);
+    ViewSelStatus select(Space& home, View x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -125,11 +125,11 @@ namespace Gecode {
     /// Default constructor
     ViewSelDegreeMax(void);
     /// Constructor for initialization
-    ViewSelDegreeMax(Space* home, const VarBranchOptions& vbo);
+    ViewSelDegreeMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(Space* home, View x);
+    ViewSelStatus init(Space& home, View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(Space* home, View x);
+    ViewSelStatus select(Space& home, View x);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -152,19 +152,19 @@ namespace Gecode {
     /// Default constructor
     ViewSelRnd(void);
     /// Constructor for initialization
-    ViewSelRnd(Space* home, const VarBranchOptions& vbo);
+    ViewSelRnd(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
-    ViewSelStatus init(Space* home, _View x);
+    ViewSelStatus init(Space& home, _View x);
     /// Possibly select better view \a x
-    ViewSelStatus select(Space* home, _View x);
+    ViewSelStatus select(Space& home, _View x);
     /// Return description
-    Support::RandomGenerator description(Space* home);
+    Support::RandomGenerator description(Space& home);
     /// Commit to description
-    void commit(Space* home, const Support::RandomGenerator& d, unsigned a);
+    void commit(Space& home, const Support::RandomGenerator& d, unsigned a);
     /// Updating during cloning
-    void update(Space* home, bool share, ViewSelRnd& vs);
+    void update(Space& home, bool share, ViewSelRnd& vs);
     /// Delete view selection
-    void dispose(Space* home);
+    void dispose(Space& home);
     /// Type of this view selection (for reflection)
     static Support::Symbol type(void);
   };
@@ -182,21 +182,21 @@ namespace Gecode {
   ViewSelBase<View>::ViewSelBase(void) {}
   template<class View>
   forceinline
-  ViewSelBase<View>::ViewSelBase(Space*, const VarBranchOptions&) {}
+  ViewSelBase<View>::ViewSelBase(Space&, const VarBranchOptions&) {}
   template<class View>
   forceinline EmptyViewSelDesc
-  ViewSelBase<View>::description(Space*) {
+  ViewSelBase<View>::description(Space&) {
     EmptyViewSelDesc d; return d;
   }
   template<class View>
   forceinline void
-  ViewSelBase<View>::commit(Space*, const EmptyViewSelDesc&, unsigned int) {}
+  ViewSelBase<View>::commit(Space&, const EmptyViewSelDesc&, unsigned int) {}
   template<class View>
   forceinline void 
-  ViewSelBase<View>::update(Space*, bool, ViewSelBase<View>&) {}
+  ViewSelBase<View>::update(Space&, bool, ViewSelBase<View>&) {}
   template<class View>
   forceinline void
-  ViewSelBase<View>::dispose(Space*) {}
+  ViewSelBase<View>::dispose(Space&) {}
 
 
   // Select first view
@@ -205,16 +205,16 @@ namespace Gecode {
   ViewSelNone<View>::ViewSelNone(void) {}
   template<class View>
   forceinline
-  ViewSelNone<View>::ViewSelNone(Space* home, const VarBranchOptions& vbo)
+  ViewSelNone<View>::ViewSelNone(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelNone<View>::init(Space*, View) {
+  ViewSelNone<View>::init(Space&, View) {
     return VSS_BEST;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelNone<View>::select(Space*, View) {
+  ViewSelNone<View>::select(Space&, View) {
     return VSS_BEST;
   }
   template<class View>
@@ -230,18 +230,18 @@ namespace Gecode {
   ViewSelDegreeMin<View>::ViewSelDegreeMin(void) {}
   template<class View>
   forceinline
-  ViewSelDegreeMin<View>::ViewSelDegreeMin(Space* home, 
+  ViewSelDegreeMin<View>::ViewSelDegreeMin(Space& home, 
                                            const VarBranchOptions& vbo)
     : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMin<View>::init(Space*, View x) {
+  ViewSelDegreeMin<View>::init(Space&, View x) {
     degree = x.degree();
     return (degree == 0) ? VSS_BEST : VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMin<View>::select(Space*, View x) {
+  ViewSelDegreeMin<View>::select(Space&, View x) {
     if (x.degree() < degree) {
       degree = x.degree();
       return (degree == 0) ? VSS_BEST : VSS_BETTER;
@@ -263,18 +263,18 @@ namespace Gecode {
   ViewSelDegreeMax<View>::ViewSelDegreeMax(void) {}
   template<class View>
   forceinline
-  ViewSelDegreeMax<View>::ViewSelDegreeMax(Space* home, 
+  ViewSelDegreeMax<View>::ViewSelDegreeMax(Space& home, 
                                            const VarBranchOptions& vbo)
     : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMax<View>::init(Space*, View x) {
+  ViewSelDegreeMax<View>::init(Space&, View x) {
     degree = x.degree();
     return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMax<View>::select(Space*, View x) {
+  ViewSelDegreeMax<View>::select(Space&, View x) {
     if (x.degree() > degree) {
       degree = x.degree();
       return VSS_BETTER;
@@ -296,39 +296,39 @@ namespace Gecode {
   ViewSelRnd<View>::ViewSelRnd(void) {}
   template<class View>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space*, const VarBranchOptions& vbo)
+  ViewSelRnd<View>::ViewSelRnd(Space&, const VarBranchOptions& vbo)
     : r(vbo.seed) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelRnd<View>::init(Space*, View) {
+  ViewSelRnd<View>::init(Space&, View) {
     n=1;
     return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelRnd<View>::select(Space*, View) {
+  ViewSelRnd<View>::select(Space&, View) {
     n++;
     return (r(n) == (n-1)) ? VSS_BETTER : VSS_WORSE;
   }
   template<class View>
   forceinline Support::RandomGenerator
-  ViewSelRnd<View>::description(Space*) {
+  ViewSelRnd<View>::description(Space&) {
     return r;
   }
   template<class View>
   forceinline void
-  ViewSelRnd<View>::commit(Space*, const Support::RandomGenerator& d, 
+  ViewSelRnd<View>::commit(Space&, const Support::RandomGenerator& d, 
                            unsigned int) {
     r = d;
   }
   template<class View>
   forceinline void 
-  ViewSelRnd<View>::update(Space*, bool, ViewSelRnd<View>& vs) {
+  ViewSelRnd<View>::update(Space&, bool, ViewSelRnd<View>& vs) {
     r = vs.r;
   }
   template<class View>
   forceinline void
-  ViewSelRnd<View>::dispose(Space*) {
+  ViewSelRnd<View>::dispose(Space&) {
   }
   template<class View>
   inline Support::Symbol

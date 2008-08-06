@@ -65,13 +65,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    AbsBnd(Space* home, bool share, AbsBnd& p);
+    AbsBnd(Space& home, bool share, AbsBnd& p);
     /// Constructor for posting
-    AbsBnd(Space* home, View x0, View x1);
+    AbsBnd(Space& home, View x0, View x1);
   public:
 
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -80,14 +80,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Post bounds consistent propagator \f$ |x_0|=x_1\f$
-    static  ExecStatus  post(Space* home, View x0, View x1);
+    static  ExecStatus  post(Space& home, View x0, View x1);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -106,12 +106,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    AbsDom(Space* home, bool share, AbsDom& p);
+    AbsDom(Space& home, bool share, AbsDom& p);
     /// Constructor for posting
-    AbsDom(Space* home, View x0, View x1);
+    AbsDom(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -121,14 +121,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Post domain consistent propagator \f$ |x_0|=x_1\f$
-    static  ExecStatus  post(Space* home, View x0, View x1);
+    static  ExecStatus  post(Space& home, View x0, View x1);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -150,23 +150,23 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    MaxBnd(Space* home, bool share, MaxBnd& p);
+    MaxBnd(Space& home, bool share, MaxBnd& p);
     /// Constructor for posting
-    MaxBnd(Space* home, View x0, View x1, View x2);
+    MaxBnd(Space& home, View x0, View x1, View x2);
   public:
     /// Constructor for rewriting \a p during cloning
-    MaxBnd(Space* home, bool share, Propagator& p, View x0, View x1, View x2);
+    MaxBnd(Space& home, bool share, Propagator& p, View x0, View x1, View x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
-    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    static  ExecStatus post(Space& home, View x0, View x1, View x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -185,21 +185,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using NaryOnePropagator<View,PC_INT_BND>::y;
 
     /// Constructor for cloning \a p
-    NaryMaxBnd(Space* home, bool share, NaryMaxBnd& p);
+    NaryMaxBnd(Space& home, bool share, NaryMaxBnd& p);
     /// Constructor for posting
-    NaryMaxBnd(Space* home, ViewArray<View>& x, View y);
+    NaryMaxBnd(Space& home, ViewArray<View>& x, View y);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ \max x=y\f$
-    static  ExecStatus post(Space* home, ViewArray<View>& x, View y);
+    static  ExecStatus post(Space& home, ViewArray<View>& x, View y);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -220,14 +220,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    MaxDom(Space* home, bool share, MaxDom& p);
+    MaxDom(Space& home, bool share, MaxDom& p);
     /// Constructor for posting
-    MaxDom(Space* home, View x0, View x1, View x2);
+    MaxDom(Space& home, View x0, View x1, View x2);
   public:
     /// Constructor for rewriting \a p during cloning
-    MaxDom(Space* home, bool share, Propagator& p, View x0, View x1, View x2);
+    MaxDom(Space& home, bool share, Propagator& p, View x0, View x1, View x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -236,14 +236,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
-    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    static  ExecStatus post(Space& home, View x0, View x1, View x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -263,12 +263,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>::y;
 
     /// Constructor for cloning \a p
-    NaryMaxDom(Space* home, bool share, NaryMaxDom& p);
+    NaryMaxDom(Space& home, bool share, NaryMaxDom& p);
     /// Constructor for posting
-    NaryMaxDom(Space* home, ViewArray<View>& x, View y);
+    NaryMaxDom(Space& home, ViewArray<View>& x, View y);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -277,14 +277,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$ \max x=y\f$
-    static  ExecStatus post(Space* home, ViewArray<View>& x, View y);
+    static  ExecStatus post(Space& home, ViewArray<View>& x, View y);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -304,21 +304,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x0;
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x1;
     /// Constructor for posting
-    SqrPlusBnd(Space* home, VA x0, VB x1);
+    SqrPlusBnd(Space& home, VA x0, VB x1);
     /// Constructor for cloning \a p
-    SqrPlusBnd(Space* home, bool share, SqrPlusBnd<VA,VB>& p);
+    SqrPlusBnd(Space& home, bool share, SqrPlusBnd<VA,VB>& p);
   public:
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
-    static ExecStatus post(Space* home, VA x0, VB x1);
+    static ExecStatus post(Space& home, VA x0, VB x1);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -337,21 +337,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    SqrBnd(Space* home, bool share, SqrBnd<View>& p);
+    SqrBnd(Space& home, bool share, SqrBnd<View>& p);
     /// Constructor for posting
-    SqrBnd(Space* home, View x0, View x1);
+    SqrBnd(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
-    static ExecStatus post(Space* home, View x0, View x1);
+    static ExecStatus post(Space& home, View x0, View x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -370,17 +370,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x0;
     using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x1;
     /// Constructor for posting
-    SqrPlusDom(Space* home, VA x0, VB x1);
+    SqrPlusDom(Space& home, VA x0, VB x1);
     /// Constructor for cloning \a p
-    SqrPlusDom(Space* home, bool share, SqrPlusDom<VA,VB>& p);
+    SqrPlusDom(Space& home, bool share, SqrPlusDom<VA,VB>& p);
   public:
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
-    static ExecStatus post(Space* home, VA x0, VB x1);
+    static ExecStatus post(Space& home, VA x0, VB x1);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -390,9 +390,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -411,14 +411,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    SqrDom(Space* home, bool share, SqrDom<View>& p);
+    SqrDom(Space& home, bool share, SqrDom<View>& p);
     /// Constructor for posting
-    SqrDom(Space* home, View x0, View x1);
+    SqrDom(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /**
      * \brief Cost function
      *
@@ -428,12 +428,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
-    static ExecStatus post(Space* home, View x0, View x1);
+    static ExecStatus post(Space& home, View x0, View x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -454,21 +454,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    SqrtBnd(Space* home, bool share, SqrtBnd<View>& p);
+    SqrtBnd(Space& home, bool share, SqrtBnd<View>& p);
     /// Constructor for posting
-    SqrtBnd(Space* home, View x0, View x1);
+    SqrtBnd(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
-    static ExecStatus post(Space* home, View x0, View x1);
+    static ExecStatus post(Space& home, View x0, View x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -487,14 +487,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    SqrtDom(Space* home, bool share, SqrtDom<View>& p);
+    SqrtDom(Space& home, bool share, SqrtDom<View>& p);
     /// Constructor for posting
-    SqrtDom(Space* home, View x0, View x1);
+    SqrtDom(Space& home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /**
      * \brief Cost function
      *
@@ -504,12 +504,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
-    static ExecStatus post(Space* home, View x0, View x1);
+    static ExecStatus post(Space& home, View x0, View x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -530,23 +530,23 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,pc>::x1;
 
     /// Constructor for cloning \a p
-    MultZeroOne(Space* home, bool share, MultZeroOne<View,pc>& p);
+    MultZeroOne(Space& home, bool share, MultZeroOne<View,pc>& p);
     /// Constructor for posting
-    MultZeroOne(Space* home, View x0, View x1);
+    MultZeroOne(Space& home, View x0, View x1);
     /// Test whether \a x is equal to \a n
     static RelTest equal(View x, int n);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator \f$x_0\cdot x_1=x_0\f$
-    static ExecStatus post(Space* home, View x0, View x1);
+    static ExecStatus post(Space& home, View x0, View x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -568,20 +568,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x2;
   public:
     /// Constructor for posting
-    MultPlusBnd(Space* home, VA x0, VB x1, VC x2);
+    MultPlusBnd(Space& home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlusBnd(Space* home, bool share, MultPlusBnd<Val,VA,VB,VC>& p);
+    MultPlusBnd(Space& home, bool share, MultPlusBnd<Val,VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
+    static ExecStatus post(Space& home, VA x0, VB x1, VC x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -602,21 +602,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    MultBnd(Space* home, bool share, MultBnd<View>& p);
+    MultBnd(Space& home, bool share, MultBnd<View>& p);
   public:
     /// Constructor for posting
-    MultBnd(Space* home, View x0, View x1, View x2);
+    MultBnd(Space& home, View x0, View x1, View x2);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    static  ExecStatus post(Space& home, View x0, View x1, View x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -638,16 +638,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>::x2;
   public:
     /// Constructor for posting
-    MultPlusDom(Space* home, VA x0, VB x1, VC x2);
+    MultPlusDom(Space& home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlusDom(Space* home, bool share, MultPlusDom<Val,VA,VB,VC>& p);
+    MultPlusDom(Space& home, bool share, MultPlusDom<Val,VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
+    static ExecStatus post(Space& home, VA x0, VB x1, VC x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -656,9 +656,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -679,17 +679,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_DOM>::x2;
 
     /// Constructor for cloning \a p
-    MultDom(Space* home, bool share, MultDom<View>& p);
+    MultDom(Space& home, bool share, MultDom<View>& p);
   public:
     /// Constructor for posting
-    MultDom(Space* home, View x0, View x1, View x2);
+    MultDom(Space& home, View x0, View x1, View x2);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    static  ExecStatus post(Space& home, View x0, View x1, View x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -698,9 +698,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -720,21 +720,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x2;
   public:
     /// Constructor for posting
-    DivPlusBnd(Space* home, VA x0, VB x1, VC x2);
+    DivPlusBnd(Space& home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    DivPlusBnd(Space* home, bool share,
+    DivPlusBnd(Space& home, bool share,
                DivPlusBnd<Val,VA,VB,VC,towardsMinInf>& p);
     /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding to \f$-\infty\f$)
-    static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
+    static ExecStatus post(Space& home, VA x0, VB x1, VC x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -755,21 +755,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    DivBnd(Space* home, bool share, DivBnd<View>& p);
+    DivBnd(Space& home, bool share, DivBnd<View>& p);
   public:
     /// Constructor for posting
-    DivBnd(Space* home, View x0, View x1, View x2);
+    DivBnd(Space& home, View x0, View x1, View x2);
     /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding to \f$-\infty\f$)
-    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    static  ExecStatus post(Space& home, View x0, View x1, View x2);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -792,21 +792,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_BND>::x1;
     
     /// Constructor for cloning \a p
-    DivMod(Space* home, bool share, DivMod<View>& p);
+    DivMod(Space& home, bool share, DivMod<View>& p);
   public:
     /// Constructor for posting
-    DivMod(Space* home, View x0, View x1);
+    DivMod(Space& home, View x0, View x1);
     /// Post propagator \f$x_0\neq 0 \land (x_1\neq 0\Rightarrow x_0\times x_1>0) \land \mathrm{abs}(x_1)<\mathrm{abs}(x_0)\f$
-    static  ExecStatus post(Space* home, View x0, View x1);
+    static  ExecStatus post(Space& home, View x0, View x1);
     /// Post propagator for specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);

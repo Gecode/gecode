@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  UnaryCpltSetPropagator<View>::UnaryCpltSetPropagator(Space* home, View& x0, bdd& d0)
+  UnaryCpltSetPropagator<View>::UnaryCpltSetPropagator(Space& home, View& x0, bdd& d0)
     : Propagator(home), x(x0), d(d0) {
     force(home);
     x.subscribe(home, this, PC_CPLTSET_DOM);
@@ -47,7 +47,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  UnaryCpltSetPropagator<View>::UnaryCpltSetPropagator(Space* home, bool share, UnaryCpltSetPropagator& p)
+  UnaryCpltSetPropagator<View>::UnaryCpltSetPropagator(Space& home, bool share, UnaryCpltSetPropagator& p)
     : Propagator(home,share,p) {
     d = p.d;
     x.update(home, share, p.x);
@@ -73,17 +73,17 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   Reflection::ActorSpec
-  UnaryCpltSetPropagator<View>::spec(const Space*,
+  UnaryCpltSetPropagator<View>::spec(const Space&,
                                      Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   } 
   
   template <class View>
   size_t
-  UnaryCpltSetPropagator<View>::dispose(Space* home) {
+  UnaryCpltSetPropagator<View>::dispose(Space& home) {
     // std::cout << "dispose propagator\n";
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x.cancel(home, this, PC_CPLTSET_DOM);
     }
     manager.dispose(d);
@@ -93,20 +93,20 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  UnaryCpltSetPropagator<View>::post(Space* home, View& x0, bdd& d0) {
+  UnaryCpltSetPropagator<View>::post(Space& home, View& x0, bdd& d0) {
     (void) new (home) UnaryCpltSetPropagator(home, x0, d0);
     return ES_OK;
   }
 
   template <class View>
   forceinline Actor*
-  UnaryCpltSetPropagator<View>::copy(Space* home, bool share) {
+  UnaryCpltSetPropagator<View>::copy(Space& home, bool share) {
     return new (home) UnaryCpltSetPropagator(home, share, *this);
   }
 
   template <class View>
   forceinline ExecStatus 
-  UnaryCpltSetPropagator<View>::propagate(Space* home, ModEventDelta) {
+  UnaryCpltSetPropagator<View>::propagate(Space& home, ModEventDelta) {
     // std::cerr << "propagate unary: \n";
     // std::cerr << x << " " << x.glbSize() << " " << x.unknownSize() << "\n";
 //     UnknownRanges<CpltSetView> delta(x);

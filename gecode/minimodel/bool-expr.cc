@@ -71,7 +71,7 @@ namespace Gecode { namespace MiniModel {
   }
   
   BoolVar
-  BoolExpr::Node::post(Space* home, IntConLevel icl, PropKind pk) const {
+  BoolExpr::Node::post(Space& home, IntConLevel icl, PropKind pk) const {
     if (t == NT_VAR)
       return x;
     BoolVar b(home, 0, 1);
@@ -80,7 +80,7 @@ namespace Gecode { namespace MiniModel {
   }
   
   int
-  BoolExpr::Node::post(Space* home, NodeType t, 
+  BoolExpr::Node::post(Space& home, NodeType t, 
                        BoolVarArgs& b, int i, 
                        IntConLevel icl, PropKind pk) const {
     if (this->t != t) {
@@ -92,7 +92,7 @@ namespace Gecode { namespace MiniModel {
   }
   
   void
-  BoolExpr::Node::post(Space* home, BoolVar b, 
+  BoolExpr::Node::post(Space& home, BoolVar b, 
                        IntConLevel icl, PropKind pk) const {
     assert(t != NT_VAR);
     switch (t) {
@@ -147,7 +147,7 @@ namespace Gecode { namespace MiniModel {
   }
   
   void
-  BoolExpr::Node::post(Space* home, bool b, 
+  BoolExpr::Node::post(Space& home, bool b, 
                        IntConLevel icl, PropKind pk) const {
     if (b) {
       switch (t) {

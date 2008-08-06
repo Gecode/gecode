@@ -85,7 +85,7 @@ namespace Gecode {
   }
 
   ExecStatus
-  Projector::check(Space*, ViewArray<Set::SetView>& x) {
+  Projector::check(Space&, ViewArray<Set::SetView>& x) {
     {
       // Check if glb violates current upper bound of x[i]
       SetExprRanges glbranges(x,glb,false);

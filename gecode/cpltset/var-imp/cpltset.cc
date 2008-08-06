@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace CpltSet {
 
-  CpltSetVarImp::CpltSetVarImp(Space* home, 
+  CpltSetVarImp::CpltSetVarImp(Space& home, 
                                int glbMin, int glbMax, int lubMin, int lubMax,
                                unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
@@ -63,7 +63,7 @@ namespace Gecode { namespace CpltSet {
     assert(!manager.cfalse(domain));
   }
 
-  CpltSetVarImp::CpltSetVarImp(Space* home,
+  CpltSetVarImp::CpltSetVarImp(Space& home,
                                int glbMin, int glbMax, const IntSet& lubD,
                                unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
@@ -104,7 +104,7 @@ namespace Gecode { namespace CpltSet {
     assert(!manager.cfalse(domain));
   }
 
-  CpltSetVarImp::CpltSetVarImp(Space* home,
+  CpltSetVarImp::CpltSetVarImp(Space& home,
                                const IntSet& glbD, int lubMin, int lubMax,
                                unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
@@ -132,7 +132,7 @@ namespace Gecode { namespace CpltSet {
     assert(!manager.cfalse(domain));
   }
 
-  CpltSetVarImp::CpltSetVarImp(Space* home,
+  CpltSetVarImp::CpltSetVarImp(Space& home,
                                const IntSet& glbD,const IntSet& lubD,
                                unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
@@ -178,14 +178,14 @@ namespace Gecode { namespace CpltSet {
   }
 
   // copy bddvar
-  CpltSetVarImp::CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x)
+  CpltSetVarImp::CpltSetVarImp(Space& home, bool share, CpltSetVarImp& x)
     : CpltSetVarImpBase(home,share,x), 
       domain(x.domain), min(x.min), max(x.max),
       _offset(x._offset), _assigned(false) {
   }
 
   inline void 
-  CpltSetVarImp::dispose(Space*) {
+  CpltSetVarImp::dispose(Space&) {
     manager.dispose(domain);
     // only variables with nodes in the table need to be disposed
     if (!(_offset == 0 && 
@@ -197,13 +197,13 @@ namespace Gecode { namespace CpltSet {
   }
 
   CpltSetVarImp*
-  CpltSetVarImp::perform_copy(Space* home, bool share) {
+  CpltSetVarImp::perform_copy(Space& home, bool share) {
     CpltSetVarImp* ptr = new (home) CpltSetVarImp(home,share,*this);
     return ptr;
   }
 
   Reflection::Arg*
-  CpltSetVarImp::spec(const Space*, Reflection::VarMap&) const {
+  CpltSetVarImp::spec(const Space&, Reflection::VarMap&) const {
     // \todo FIXME implemente reflection
     return NULL;
   }
@@ -225,7 +225,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   ModEvent 
-  CpltSetVarImp::intersect(Space* home, bdd& d) {
+  CpltSetVarImp::intersect(Space& home, bdd& d) {
     bool assigned_before = assigned();
     bdd olddom = domain;
     domain &= d;
@@ -255,7 +255,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   ModEvent 
-  CpltSetVarImp::exclude(Space* home, int a, int b) {
+  CpltSetVarImp::exclude(Space& home, int a, int b) {
     // values are already excluded
     if (a > max  || b < min) 
       return ME_CPLTSET_NONE;
@@ -272,7 +272,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   ModEvent 
-  CpltSetVarImp::include(Space* home, int a, int b) {
+  CpltSetVarImp::include(Space& home, int a, int b) {
     if (a < min || b > max) 
       return ME_CPLTSET_FAILED;
 
@@ -284,7 +284,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   ModEvent
-  CpltSetVarImp::nq(Space* home, int a, int b) {
+  CpltSetVarImp::nq(Space& home, int a, int b) {
     if (b < min || a > max) 
       return ME_CPLTSET_NONE;
 
@@ -294,7 +294,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   ModEvent
-  CpltSetVarImp::eq(Space* home, int a, int b) {
+  CpltSetVarImp::eq(Space& home, int a, int b) {
     if (b < min || a > max) 
       return ME_CPLTSET_FAILED;
 
@@ -304,7 +304,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   ModEvent 
-  CpltSetVarImp::intersect(Space* home, int a, int b) {
+  CpltSetVarImp::intersect(Space& home, int a, int b) {
     ModEvent me_left = exclude(home, Set::Limits::min, a - 1);
 
     if (me_failed(me_left) || me_left == ME_CPLTSET_VAL) 
@@ -322,7 +322,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   ModEvent 
-  CpltSetVarImp::cardinality(Space* home, int l, int u) {
+  CpltSetVarImp::cardinality(Space& home, int l, int u) {
     unsigned int maxcard = tableWidth();
     // compute the cardinality formula
     bdd c = cardcheck(home, maxcard, _offset, l, u);

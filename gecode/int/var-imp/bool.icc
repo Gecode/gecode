@@ -47,7 +47,7 @@ namespace Gecode { namespace Int {
     bits() |= (n << 1) | n;
   }
   forceinline
-  BoolVarImp::BoolVarImp(Space* home, int min, int max)
+  BoolVarImp::BoolVarImp(Space& home, int min, int max)
     : BoolVarImpBase(home) {
     assert(bits() == 0);
     bits() |= (max << 1) | min;
@@ -172,13 +172,13 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  BoolVarImp::zero(Space* home) {
+  BoolVarImp::zero(Space& home) {
     if (one())  return ME_BOOL_FAILED;
     if (zero()) return ME_BOOL_NONE;
     return zero_none(home);
   }
   forceinline ModEvent
-  BoolVarImp::one(Space* home) {
+  BoolVarImp::one(Space& home) {
     if (one())  return ME_BOOL_NONE;
     if (zero()) return ME_BOOL_FAILED;
     return one_none(home);
@@ -190,13 +190,13 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  BoolVarImp::gq(Space* home, int n) {
+  BoolVarImp::gq(Space& home, int n) {
     if (n <= 0) return ME_INT_NONE;
     if (n > 1)  return ME_INT_FAILED;
     return one(home);
   }
   forceinline ModEvent
-  BoolVarImp::gq(Space* home, double n) {
+  BoolVarImp::gq(Space& home, double n) {
     if (n <= 0) return ME_INT_NONE;
     if (n > 1)  return ME_INT_FAILED;
     return one(home);
@@ -204,13 +204,13 @@ namespace Gecode { namespace Int {
 
 
   forceinline ModEvent
-  BoolVarImp::lq(Space* home, int n) {
+  BoolVarImp::lq(Space& home, int n) {
     if (n < 0)  return ME_INT_FAILED;
     if (n >= 1) return ME_INT_NONE;
     return zero(home);
   }
   forceinline ModEvent
-  BoolVarImp::lq(Space* home, double n) {
+  BoolVarImp::lq(Space& home, double n) {
     if (n < 0)  return ME_INT_FAILED;
     if (n >= 1) return ME_INT_NONE;
     return zero(home);
@@ -218,24 +218,24 @@ namespace Gecode { namespace Int {
 
 
   forceinline ModEvent
-  BoolVarImp::eq(Space* home, int n) {
+  BoolVarImp::eq(Space& home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
     return (n == 0) ? zero(home): one(home);
   }
   forceinline ModEvent
-  BoolVarImp::eq(Space* home, double n) {
+  BoolVarImp::eq(Space& home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
     return (n == 0) ? zero(home): one(home);
   }
 
 
   forceinline ModEvent
-  BoolVarImp::nq(Space* home, int n) {
+  BoolVarImp::nq(Space& home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
     return (n == 0) ? one(home): zero(home);
   }
   forceinline ModEvent
-  BoolVarImp::nq(Space* home, double n) {
+  BoolVarImp::nq(Space& home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
     return (n == 0) ? one(home): zero(home);
   }
@@ -247,10 +247,10 @@ namespace Gecode { namespace Int {
    */
 
   forceinline
-  BoolVarImp::BoolVarImp(Space* home, bool share, BoolVarImp& x)
+  BoolVarImp::BoolVarImp(Space& home, bool share, BoolVarImp& x)
     : BoolVarImpBase(home,share,x) {}
   forceinline BoolVarImp*
-  BoolVarImp::copy(Space* home, bool share) {
+  BoolVarImp::copy(Space& home, bool share) {
     if (copied())
       return static_cast<BoolVarImp*>(forward());
     else if (zero())
@@ -268,7 +268,7 @@ namespace Gecode { namespace Int {
    */
   template <class I>
   forceinline ModEvent
-  BoolVarImp::narrow_r(Space* home, I& i, bool) {
+  BoolVarImp::narrow_r(Space& home, I& i, bool) {
     Iter::Ranges::IsRangeIter<I>();
     // Is new domain empty?
     if (!i())
@@ -290,7 +290,7 @@ namespace Gecode { namespace Int {
   }
   template <class I>
   forceinline ModEvent
-  BoolVarImp::inter_r(Space* home, I& i, bool) {
+  BoolVarImp::inter_r(Space& home, I& i, bool) {
     Iter::Ranges::IsRangeIter<I>();
     // Skip all ranges that are too small
     while (i() && (i.max() < 0))
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int {
   }
   template <class I>
   forceinline ModEvent
-  BoolVarImp::minus_r(Space* home, I& i, bool) {
+  BoolVarImp::minus_r(Space& home, I& i, bool) {
     Iter::Ranges::IsRangeIter<I>();
     // Skip all ranges that are too small
     while (i() && (i.max() < 0))
@@ -327,7 +327,7 @@ namespace Gecode { namespace Int {
 
   template <class I>
   forceinline ModEvent
-  BoolVarImp::narrow_v(Space* home, I& i, bool) {
+  BoolVarImp::narrow_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();
     if (!i())
       return ME_INT_FAILED;
@@ -347,7 +347,7 @@ namespace Gecode { namespace Int {
   }
   template <class I>
   forceinline ModEvent
-  BoolVarImp::inter_v(Space* home, I& i, bool) {
+  BoolVarImp::inter_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();
     while (i() && (i.val() < 0)) 
       ++i;
@@ -367,7 +367,7 @@ namespace Gecode { namespace Int {
   }
   template <class I>
   forceinline ModEvent
-  BoolVarImp::minus_v(Space* home, I& i, bool) {
+  BoolVarImp::minus_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();
     while (i() && (i.val() < 0)) 
       ++i;
@@ -393,28 +393,28 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  BoolVarImp::subscribe(Space* home, Propagator* p, PropCond, 
+  BoolVarImp::subscribe(Space& home, Propagator* p, PropCond, 
                         bool process) {
     // Subscription can be used with integer propagation conditions,
     // which must be remapped to the single Boolean propagation condition.
     BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),process);
   }
   forceinline void
-  BoolVarImp::cancel(Space* home, Propagator* p, PropCond) {
+  BoolVarImp::cancel(Space& home, Propagator* p, PropCond) {
     BoolVarImpBase::cancel(home,p,PC_BOOL_VAL,assigned());
   }
 
   forceinline void
-  BoolVarImp::subscribe(Space* home, Advisor& a) {
+  BoolVarImp::subscribe(Space& home, Advisor& a) {
     BoolVarImpBase::subscribe(home,a,assigned());
   }
   forceinline void
-  BoolVarImp::cancel(Space* home, Advisor& a) {
+  BoolVarImp::cancel(Space& home, Advisor& a) {
     BoolVarImpBase::cancel(home,a,assigned());
   }
 
   forceinline void
-  BoolVarImp::schedule(Space* home, Propagator* p, ModEvent me) {
+  BoolVarImp::schedule(Space& home, Propagator* p, ModEvent me) {
     if (me == ME_GEN_ASSIGNED)
       BoolVarImpBase::schedule(home,p,me);
   }

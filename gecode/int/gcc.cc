@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View>
   forceinline int
-  x_card(Space* home, ViewArray<View>& x, IntConLevel) {
+  x_card(Space& home, ViewArray<View>& x, IntConLevel) {
     int n = x.size();
     Scratch s(home);
     ViewRanges<View>* xrange = s.alloc<ViewRanges<View> >(n);
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool isView>
   inline ExecStatus
-  card_cons(Space* home, ViewArray<Card>& k, int n) {
+  card_cons(Space& home, ViewArray<Card>& k, int n) {
     // this should be the required min and allowed max
     int smin = 0;
     int smax = 0;
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card, bool isView>
   inline void
-  post_template(Space* home, ViewArray<IntView>& x, ViewArray<Card>& k,
+  post_template(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k,
                 IntConLevel& icl){
     int  n        = x_card(home, x, icl);
     bool rewrite  = false;
@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (rewrite) {
       if (x.same(home))
         throw ArgumentSame("Int::distinct");
-      if (home->failed()) return;
+      if (home.failed()) return;
       switch (icl) {
       case ICL_BND:
         GECODE_ES_FAIL(home,Distinct::Bnd<IntView>::post(home,x));
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   // variable cardinality
 
-  void count(Space* home, const  IntVarArgs& x,
+  void count(Space& home, const  IntVarArgs& x,
              const  IntVarArgs& c, const  IntArgs& v, 
              IntConLevel icl, PropKind) {
 
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (x.same(home))
       throw ArgumentSame("Int::count");
     
-    if (home->failed())
+    if (home.failed())
       return;
 
     ViewArray<IntView> xv(home, x);
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   // domain is 0..|cards|- 1
-  void count(Space* home, const IntVarArgs& x, const IntVarArgs& c,
+  void count(Space& home, const IntVarArgs& x, const IntVarArgs& c,
              IntConLevel icl, PropKind) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; )
@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   // constant cards
-  void count(Space* home, const IntVarArgs& x,
+  void count(Space& home, const IntVarArgs& x,
              const IntSetArgs& c, const IntArgs& v,
              IntConLevel icl, PropKind) {
     int vsize = v.size();
@@ -259,7 +259,7 @@ namespace Gecode { namespace Int { namespace GCC {
       Limits::check(c[i].max(),"Int::count");
     }
 
-    if (home->failed())
+    if (home.failed())
       return;
        
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   // domain is 0..|cards|- 1
-  void count(Space* home, const IntVarArgs& x, const IntSetArgs& c,
+  void count(Space& home, const IntVarArgs& x, const IntSetArgs& c,
              IntConLevel icl, PropKind) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; ) 
@@ -352,7 +352,7 @@ namespace Gecode { namespace Int { namespace GCC {
     count(home, x, c, values, icl);   
   }
 
-  void count(Space* home, const IntVarArgs& x,
+  void count(Space& home, const IntVarArgs& x,
              const IntSet& c, const IntArgs& v,
              IntConLevel icl, PropKind) {
     IntSetArgs cards(v.size());

@@ -73,13 +73,13 @@ namespace Gecode { namespace Decomposition {
 }
 
   void
-  decomposingBranch(Space* home, const IntVarArgs& x,
+  decomposingBranch(Space& home, const IntVarArgs& x,
                     IntVarBranch vars, IntValBranch vals) {
     Int::Branch::createBranch<DecomposingViewValBranching>(home,x,vars,vals);
   }
   
   void
-  decomposingBranch(Space* home, const BoolVarArgs& x,
+  decomposingBranch(Space& home, const BoolVarArgs& x,
                     IntVarBranch vars, IntValBranch vals) {
     Int::Branch::createBranch<DecomposingViewValBranching>(home,x,vars,vals);
   }

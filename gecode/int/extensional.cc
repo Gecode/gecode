@@ -42,38 +42,38 @@
 namespace Gecode {
 
   void
-  extensional(Space* home, const IntVarArgs& x, DFA dfa, 
+  extensional(Space& home, const IntVarArgs& x, DFA dfa, 
               IntConLevel, PropKind) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     GECODE_ES_FAIL(home,(Extensional::LayeredGraph<IntView>
                          ::post(home,xv,dfa)));
   }
 
   void
-  extensional(Space* home, const BoolVarArgs& x, DFA dfa, 
+  extensional(Space& home, const BoolVarArgs& x, DFA dfa, 
               IntConLevel, PropKind) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
     GECODE_ES_FAIL(home,(Extensional::LayeredGraph<BoolView>
                          ::post(home,xv,dfa)));
   }
 
   void
-  extensional(Space* home, const IntVarArgs& x, const TupleSet& t, 
+  extensional(Space& home, const IntVarArgs& x, const TupleSet& t, 
               IntConLevel, PropKind pk) {
     using namespace Int;
     if (!t.finalized())
       const_cast<TupleSet&>(t).finalize();
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
@@ -95,14 +95,14 @@ namespace Gecode {
   }
 
   void
-  extensional(Space* home, const BoolVarArgs& x, const TupleSet& t, 
+  extensional(Space& home, const BoolVarArgs& x, const TupleSet& t, 
               IntConLevel, PropKind pk) {
     using namespace Int;
     if (!t.finalized())
       const_cast<TupleSet&>(t).finalize();
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     // Construct view array
     ViewArray<BoolView> xv(home,x);

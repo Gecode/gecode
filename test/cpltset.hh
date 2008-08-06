@@ -89,10 +89,10 @@ namespace Test {
       /// Check for solution
       virtual bool solution(const Test::Set::SetAssignment&) const = 0;
       /// Post propagator
-      virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x,
+      virtual void post(Gecode::Space& home, Gecode::CpltSetVarArray& x,
                         Gecode::IntVarArray& y) = 0;
       /// Post reified propagator
-      virtual void post(Gecode::Space*, Gecode::CpltSetVarArray&,
+      virtual void post(Gecode::Space&, Gecode::CpltSetVarArray&,
                         Gecode::IntVarArray&, Gecode::BoolVar) {}
       /// Perform test
       virtual bool run(void);

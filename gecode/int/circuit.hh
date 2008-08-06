@@ -62,19 +62,19 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Array for performing value propagation for distinct
     ViewArray<View> y;
     /// Constructor for cloning \a p
-    Base(Space* home, bool share, Base& p);
+    Base(Space& home, bool share, Base& p);
     /// Constructor for posting
-    Base(Space* home, ViewArray<View>& x);
+    Base(Space& home, ViewArray<View>& x);
     /// Check whether the view value graph is strongly connected
-    ExecStatus connected(Space* home);
+    ExecStatus connected(Space& home);
     /// Ensure path property: prune edges that could give to small cycles
-    ExecStatus path(Space* home);
+    ExecStatus path(Space& home);
     /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -95,23 +95,23 @@ namespace Gecode { namespace Int { namespace Circuit {
     using Base<View>::connected;
     using Base<View>::path;
     /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val& p);
+    Val(Space& home, bool share, Val& p);
     /// Constructor for posting
-    Val(Space* home, ViewArray<View>& x);
+    Val(Space& home, ViewArray<View>& x);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (returns PC_LINEAR_HI)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for circuit on \a x
-    static  ExecStatus post(Space* home, ViewArray<View>& x);
+    static  ExecStatus post(Space& home, ViewArray<View>& x);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -137,12 +137,12 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Propagation controller for propagating distinct
     Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
-    Dom(Space* home, bool share, Dom& p);
+    Dom(Space& home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Space* home, ViewArray<View>& x);
+    Dom(Space& home, ViewArray<View>& x);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
      *
@@ -151,17 +151,17 @@ namespace Gecode { namespace Int { namespace Circuit {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for circuit on \a x
-    static  ExecStatus post(Space* home, ViewArray<View>& x);
+    static  ExecStatus post(Space& home, ViewArray<View>& x);
   };
 
 }}}

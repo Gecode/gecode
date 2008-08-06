@@ -45,25 +45,25 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   forceinline
-  SubSet<View0,View1>::SubSet(Space* home, View0 y0, View1 y1)
+  SubSet<View0,View1>::SubSet(Space& home, View0 y0, View1 y1)
     : MixBinaryPropagator<View0,PC_SET_CGLB,
                             View1,PC_SET_CLUB>(home,y0,y1) {}
 
   template <class View0, class View1>
   forceinline
-  SubSet<View0,View1>::SubSet(Space* home, bool share, SubSet& p)
+  SubSet<View0,View1>::SubSet(Space& home, bool share, SubSet& p)
     : MixBinaryPropagator<View0,PC_SET_CGLB,
                             View1,PC_SET_CLUB>(home,share,p) {}
 
   template <class View0, class View1>
-  ExecStatus SubSet<View0,View1>::post(Space* home, View0 x, View1 y) {
+  ExecStatus SubSet<View0,View1>::post(Space& home, View0 x, View1 y) {
     (void) new (home) SubSet(home,x,y);
     return ES_OK;
   }
 
   template <class View0, class View1>
   Actor*
-  SubSet<View0,View1>::copy(Space* home, bool share) {
+  SubSet<View0,View1>::copy(Space& home, bool share) {
     return new (home) SubSet(home,share,*this);
   }
 
@@ -75,14 +75,14 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   Reflection::ActorSpec
-  SubSet<View0,View1>::spec(const Space* home, Reflection::VarMap& m) const {
+  SubSet<View0,View1>::spec(const Space& home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>
       ::spec(home, m, ati());
   }
 
   template <class View0, class View1>
   void
-  SubSet<View0,View1>::post(Space* home, Reflection::VarMap& vars,
+  SubSet<View0,View1>::post(Space& home, Reflection::VarMap& vars,
                             const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     View0 x0(home, vars, spec[0]);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   ExecStatus
-  SubSet<View0,View1>::propagate(Space* home, ModEventDelta) {
+  SubSet<View0,View1>::propagate(Space& home, ModEventDelta) {
     bool oneassigned = x0.assigned() || x1.assigned();
     unsigned int x0glbsize;
     do {

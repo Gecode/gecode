@@ -64,21 +64,21 @@ namespace Gecode { namespace Set { namespace Sequence {
     public NaryPropagator<SetView, PC_SET_ANY> {
   protected:
     /// Constructor for cloning \a p
-    Seq(Space* home, bool share,Seq& p);
+    Seq(Space& home, bool share,Seq& p);
     /// Constructor for posting
-    Seq(Space* home,ViewArray<SetView>&);
+    Seq(Space& home,ViewArray<SetView>&);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home, bool);
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
-    static ExecStatus post(Space* home,ViewArray<SetView>);
+    static ExecStatus post(Space& home,ViewArray<SetView>);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -95,29 +95,29 @@ namespace Gecode { namespace Set { namespace Sequence {
   protected:
     GLBndSet unionOfDets; //Union of determined variables dropped form x.
     /// Constructor for cloning \a p
-    SeqU(Space* home, bool share,SeqU& p);
+    SeqU(Space& home, bool share,SeqU& p);
     /// Constructor for posting
-    SeqU(Space* home,ViewArray<SetView>&, SetView);
-    ExecStatus propagateSeqUnion(Space* home,
+    SeqU(Space& home,ViewArray<SetView>&, SetView);
+    ExecStatus propagateSeqUnion(Space& home,
                                  bool& modified, ViewArray<SetView>& x,
                                  SetView& y);
     
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*     copy(Space* home, bool);
+    GECODE_SET_EXPORT virtual Actor*     copy(Space& home, bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
-    static ExecStatus post(Space* home,ViewArray<SetView>, SetView);
+    static ExecStatus post(Space& home,ViewArray<SetView>, SetView);
   };
 
 

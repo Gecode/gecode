@@ -210,9 +210,9 @@ public:
   /// Setup model
   SportsLeague(const SizeOptions& opt) :
     teams(opt.size()),
-    home(this, periods() * teams, 1, weeks()),
-    away(this, periods() * teams, 2, weeks()+1),
-    game(this, weeks()*periods(), 2, teams*weeks())
+    home(*this, periods() * teams, 1, weeks()),
+    away(*this, periods() * teams, 2, weeks()+1),
+    game(*this, weeks()*periods(), 2, teams*weeks())
   {
     // Initialize round robin schedule
     RRS r(teams);
@@ -223,30 +223,30 @@ public:
       IntVarArgs n(periods());
 
       for (int p=0; p<periods(); p++)
-        n[p].init(this,0,periods()-1);
-      distinct(this, n, opt.icl());
+        n[p].init(*this,0,periods()-1);
+      distinct(*this, n, opt.icl());
 
       r.hag(w,rh,ra,rg);
         
       for (int p=0; p<periods(); p++) {
-        element(this, rh, n[p], h(p,w));
-        element(this, ra, n[p], a(p,w));
-        element(this, rg, n[p], g(p,w));
+        element(*this, rh, n[p], h(p,w));
+        element(*this, ra, n[p], a(p,w));
+        element(*this, rg, n[p], g(p,w));
       }
     }
 
     /// (h,a) and (a,h) are the same game, focus on home (that is, h<a)
     for (int p=0; p<periods(); p++)
       for (int w=0; w<teams; w++)
-        rel(this, h(p,w), IRT_LE, a(p,w));
+        rel(*this, h(p,w), IRT_LE, a(p,w));
 
     // Home teams in first week are ordered
     for (int p=0; p<periods()-1; p++)
-      rel(this, h(p,0), IRT_LE, h(p+1,0));
+      rel(*this, h(p,0), IRT_LE, h(p+1,0));
 
     // Fix first pair
-    rel(this, h(0,0), IRT_EQ, 1);
-    rel(this, a(0,0), IRT_EQ, 2);
+    rel(*this, h(0,0), IRT_EQ, 1);
+    rel(*this, a(0,0), IRT_EQ, 2);
 
     /// Column constraint: each team occurs exactly once
     for (int w=0; w<teams; w++) {
@@ -254,7 +254,7 @@ public:
       for (int p=0; p<periods(); p++) {
         c[2*p] = h(p,w); c[2*p+1] = a(p,w);
       }
-      distinct(this, c, opt.icl());
+      distinct(*this, c, opt.icl());
     }
 
     /// Row constraint: no team appears more than twice
@@ -267,24 +267,24 @@ public:
       IntArgs values(teams);
       for (int i=1; i<=teams; i++)
         values[i-1] = i;
-      count(this, r, IntSet(2,2), values, opt.icl());
+      count(*this, r, IntSet(2,2), values, opt.icl());
     }
 
     // Redundant constraint
     for (int p=0; p<periods(); p++)
       for (int w=0; w<weeks(); w ++)
-        post(this, teams * h(p,w) + a(p,w) - g(p,w) == teams);
+        post(*this, teams * h(p,w) + a(p,w) - g(p,w) == teams);
 
-    distinct(this, game, opt.icl());
+    distinct(*this, game, opt.icl());
 
-    branch(this, game, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+    branch(*this, game, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
   SportsLeague(bool share, SportsLeague& s)
     : Example(share, s), teams(s.teams) {
-    home.update(this, share, s.home);
-    away.update(this, share, s.away);
-    game.update(this, share, s.game);
+    home.update(*this, share, s.home);
+    away.update(*this, share, s.away);
+    game.update(*this, share, s.game);
   }
   /// Copy during cloning
   virtual Space*

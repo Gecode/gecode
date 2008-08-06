@@ -106,7 +106,7 @@ namespace Gecode {
     //@}
 
     /// Copying
-    void update(Space* home, bool share, SetExprCode& sc);
+    void update(Space& home, bool share, SetExprCode& sc);
     
     /// Return number of instructions
     int size(void) const;
@@ -204,10 +204,10 @@ namespace Gecode {
               
     /// Propagate the projector
     template <bool negated>
-    ExecStatus propagate(Space* home, ViewArray<Set::SetView>& x);
+    ExecStatus propagate(Space& home, ViewArray<Set::SetView>& x);
 
     /// Check for subsumption or failure
-    GECODE_SET_EXPORT ExecStatus check(Space* home,
+    GECODE_SET_EXPORT ExecStatus check(Space& home,
                                        ViewArray<Set::SetView>& x);
 
     /// Compute size of greatest lower bound
@@ -245,7 +245,7 @@ namespace Gecode {
     ProjectorSet(int n);
 
     /// Used for copying
-    void update(Space* home, bool share, ProjectorSet& p);
+    void update(Space& home, bool share, ProjectorSet& p);
 
     /// Add projector \a p to the set
     GECODE_SET_EXPORT void add(const Projector& p);
@@ -259,10 +259,10 @@ namespace Gecode {
     
     /// Propagate the set
     template <bool negated>
-    ExecStatus propagate(Space* home, ViewArray<Set::SetView>& x);
+    ExecStatus propagate(Space& home, ViewArray<Set::SetView>& x);
 
     /// Check for subsumption or failure
-    GECODE_SET_EXPORT ExecStatus check(Space* home,
+    GECODE_SET_EXPORT ExecStatus check(Space& home,
                                        ViewArray<Set::SetView>& x);
 
     /// Return number of projectors int the set
@@ -340,7 +340,7 @@ namespace Gecode {
    * negation of the specified constraint is propagated.
    */
   GECODE_SET_EXPORT void
-  projector(Space* home, const SetVarArgs& xa,
+  projector(Space& home, const SetVarArgs& xa,
             ProjectorSet& ps, bool negated=false);
 
   /**
@@ -351,7 +351,7 @@ namespace Gecode {
    * negation of the specified constraint is propagated.
    */
   GECODE_SET_EXPORT void
-  projector(Space* home, const SetVar& xa, const SetVar& ya,
+  projector(Space& home, const SetVar& xa, const SetVar& ya,
             ProjectorSet& ps, bool negated=false);
 
   /**
@@ -361,7 +361,7 @@ namespace Gecode {
    * \a xa and \a ya, specified by \a ps, reified with \a bv.
    */
   GECODE_SET_EXPORT void
-  projector(Space* home, const SetVar& xa, const SetVar& ya,
+  projector(Space& home, const SetVar& xa, const SetVar& ya,
             const BoolVar& bv,
             ProjectorSet& ps);
 
@@ -373,7 +373,7 @@ namespace Gecode {
    * negation of the specified constraint is propagated.
    */
   GECODE_SET_EXPORT void
-  projector(Space* home,
+  projector(Space& home,
             const SetVar& xa, const SetVar& ya, const SetVar& za,
             ProjectorSet& ps, bool negated=false);
 
@@ -384,7 +384,7 @@ namespace Gecode {
    * \a xa, \a ya and \a za, specified by \a ps, reified with \a bv.
    */
   GECODE_SET_EXPORT void
-  projector(Space* home,
+  projector(Space& home,
             const SetVar& xa, const SetVar& ya, const SetVar& za,
             const BoolVar& bv,
             ProjectorSet& ps);
@@ -397,7 +397,7 @@ namespace Gecode {
    * variables \a xa and \a ya.
    */
   GECODE_SET_EXPORT void
-  projector(Space* home, const SetVar& xa, const SetVar& ya,
+  projector(Space& home, const SetVar& xa, const SetVar& ya,
             const IntVar& i,
             Projector& p);
 
@@ -409,7 +409,7 @@ namespace Gecode {
    * variables \a xa, \a ya, and \a za.
    */
   GECODE_SET_EXPORT void
-  projector(Space* home, const SetVar& xa, const SetVar& ya,
+  projector(Space& home, const SetVar& xa, const SetVar& ya,
             const SetVar& za, const IntVar& i,
             Projector& p);
 

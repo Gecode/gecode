@@ -89,7 +89,7 @@ public:
   Domino(const SizeOptions& opt)
     : spec(specs[opt.size()]), 
       width(spec[0]), height(spec[1]),
-      x(this, (width+1)*height, 0, 28) {
+      x(*this, (width+1)*height, 0, 28) {
     spec+=2; // skip board size information
     
     // Copy spec information to the board
@@ -101,13 +101,13 @@ public:
     // Initialize the separator column in the board
     for (int i=0; i<height; i++) {
       board[i*(width+1)+8] = -1;
-      post(this, x[i*(width+1)+8]==28);
+      post(*this, x[i*(width+1)+8]==28);
     }
 
     // Variables representing the coordinates of the first
     // and second half of a domino piece
-    IntVarArray p1(this, 28, 0, (width+1)*height-1);
-    IntVarArray p2(this, 28, 0, (width+1)*height-1);
+    IntVarArray p1(*this, 28, 0, (width+1)*height-1);
+    IntVarArray p2(*this, 28, 0, (width+1)*height-1);
     
 
     if (opt.propagation() == PROP_ELEMENT) {
@@ -124,22 +124,22 @@ public:
           // The separator column makes sure that a field
           // at the right border is not adjacent to the first field
           // in the next row.
-          IntVar diff(this, possibleDiffs);
-          abs(this, minus(this, p1[dominoCount], p2[dominoCount]),
+          IntVar diff(*this, possibleDiffs);
+          abs(*this, minus(*this, p1[dominoCount], p2[dominoCount]),
               diff, ICL_DOM);
 
           // If the piece is symmetrical, order the locations
           if (i == j)
-            rel(this, p1[dominoCount], IRT_LE, p2[dominoCount]);
+            rel(*this, p1[dominoCount], IRT_LE, p2[dominoCount]);
           
           // Link the current piece to the board
-          element(this, board, p1[dominoCount], i);
-          element(this, board, p2[dominoCount], j);
+          element(*this, board, p1[dominoCount], i);
+          element(*this, board, p2[dominoCount], j);
           
           // Link the current piece to the array where its
           // number is stored.
-          element(this, x, p1[dominoCount], dominoCount);
-          element(this, x, p2[dominoCount], dominoCount);
+          element(*this, x, p1[dominoCount], dominoCount);
+          element(*this, x, p2[dominoCount], dominoCount);
           dominoCount++;
         }
     } else {
@@ -170,13 +170,13 @@ public:
           IntVarArgs piece(2); 
           piece[0] = p1[dominoCount];
           piece[1] = p2[dominoCount];
-          extensional(this, piece, valids);
+          extensional(*this, piece, valids);
 
 
           // Link the current piece to the array where its
           // number is stored.
-          element(this, x, p1[dominoCount], dominoCount);
-          element(this, x, p2[dominoCount], dominoCount);
+          element(*this, x, p1[dominoCount], dominoCount);
+          element(*this, x, p2[dominoCount], dominoCount);
           dominoCount++;
         }
     }
@@ -189,7 +189,7 @@ public:
     }
 
     // Install branchings
-    branch(this, ps, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, ps, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Print solution
@@ -209,7 +209,7 @@ public:
   /// Constructor for cloning \a s
   Domino(bool share, Domino& s) :
     Example(share,s), spec(s.spec), width(s.width), height(s.height) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
   }
   /// Copy space during cloning
   virtual Space*

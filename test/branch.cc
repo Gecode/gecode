@@ -59,11 +59,11 @@ namespace Test { namespace Branch {
     Gecode::IntVarArray x;
     /// Initialize test space
     IntTestSpace(int n, Gecode::IntSet& d)
-      : x(this, n, d) {}
+      : x(*this, n, d) {}
     /// Constructor for cloning \a s
     IntTestSpace(bool share, IntTestSpace& s) 
       : Gecode::Space(share,s) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
@@ -78,11 +78,11 @@ namespace Test { namespace Branch {
     Gecode::BoolVarArray x;
     /// Initialize test space
     BoolTestSpace(int n)
-      : x(this, n, 0, 1) {}
+      : x(*this, n, 0, 1) {}
     /// Constructor for cloning \a s
     BoolTestSpace(bool share, BoolTestSpace& s) 
       : Gecode::Space(share,s) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
@@ -98,11 +98,11 @@ namespace Test { namespace Branch {
     Gecode::SetVarArray x;
     /// Initialize test space
     SetTestSpace(int n, Gecode::IntSet& d)
-      : x(this, n, Gecode::IntSet::empty, d) {}
+      : x(*this, n, Gecode::IntSet::empty, d) {}
     /// Constructor for cloning \a s
     SetTestSpace(bool share, SetTestSpace& s) 
       : Gecode::Space(share,s) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
@@ -119,11 +119,11 @@ namespace Test { namespace Branch {
     Gecode::CpltSetVarArray x;
     /// Initialize test space
     CpltSetTestSpace(int n, Gecode::IntSet& d)
-      : x(this, n, Gecode::IntSet::empty, d) {}
+      : x(*this, n, Gecode::IntSet::empty, d) {}
     /// Constructor for cloning \a s
     CpltSetTestSpace(bool share, CpltSetTestSpace& s) 
       : Gecode::Space(share,s) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
@@ -375,14 +375,14 @@ namespace Test { namespace Branch {
     map<int, vector<RunInfo> > results;
     // Set up root space
     IntTestSpace* root = new IntTestSpace(arity,dom);
-    post(root, root->x);
+    post(*root, root->x);
     results.clear();
 
     for (int vara = n_int_var_branch; vara--; ) {
       for (int varb = n_int_var_branch; varb--; ) {
         for (int val = n_int_val_branch; val--; ) {
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
-          branch(c, c->x, 
+          branch(*c, c->x, 
                  tiebreak(int_var_branch[vara],int_var_branch[varb]),
                  int_val_branch[val]);
           Gecode::Search::Options o;
@@ -428,14 +428,14 @@ namespace Test { namespace Branch {
     map<int, vector<RunInfo> > results;
     // Set up root space
     BoolTestSpace* root = new BoolTestSpace(arity);
-    post(root, root->x);
+    post(*root, root->x);
     results.clear();
 
     for (int vara = n_int_var_branch; vara--; ) {
       for (int varb = n_int_var_branch; varb--; ) {
         for (int val = n_int_val_branch; val--; ) {
           BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
-          branch(c, c->x, 
+          branch(*c, c->x, 
                  tiebreak(int_var_branch[vara], int_var_branch[varb]), 
                  int_val_branch[val]);
           Gecode::Search::Options o;
@@ -482,7 +482,7 @@ namespace Test { namespace Branch {
     map<int, vector<RunInfo> > results;
     // Set up root space
     SetTestSpace* root = new SetTestSpace(arity,dom);
-    post(root, root->x);
+    post(*root, root->x);
     root->status();
     results.clear();
 
@@ -490,7 +490,7 @@ namespace Test { namespace Branch {
       for (int varb = n_set_var_branch; varb--; ) {
         for (int val = n_set_val_branch; val--; ) {
           SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
-          branch(c, c->x, 
+          branch(*c, c->x, 
                  tiebreak(set_var_branch[vara], set_var_branch[varb]), 
                  set_val_branch[val]);
           Gecode::Search::Options o;
@@ -539,7 +539,7 @@ namespace Test { namespace Branch {
     map<int, vector<RunInfo> > results;
     // Set up root space
     CpltSetTestSpace* root = new CpltSetTestSpace(arity,dom);
-    post(root, root->x);
+    post(*root, root->x);
     root->status();
     results.clear();
 
@@ -548,7 +548,7 @@ namespace Test { namespace Branch {
         for (int val = n_cpltset_val_branch; val--; ) {
           CpltSetTestSpace* c = 
             static_cast<CpltSetTestSpace*>(root->clone(false));
-          branch(c, c->x, 
+          branch(*c, c->x, 
                  tiebreak(cpltset_var_branch[vara], cpltset_var_branch[varb]), 
                  cpltset_val_branch[val]);
           Gecode::Search::Options o;

@@ -43,17 +43,17 @@ namespace Gecode { namespace Int { namespace Circuit {
    */
   template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, ViewArray<View>& x)
+  Dom<View>::Dom(Space& home, ViewArray<View>& x)
     : Base<View>(home,x) {}
 
   template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+  Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
     : Base<View>(home,share,p) {}
 
   template <class View>
   Actor*
-  Dom<View>::copy(Space* home, bool share) {
+  Dom<View>::copy(Space& home, bool share) {
     return new (home) Dom<View>(home,share,*this);
   }
 
@@ -71,13 +71,13 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   Reflection::ActorSpec
-  Dom<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Dom<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return Base<View>::spec(home, m, ati());
   }
 
   template <class View>
   void
-  Dom<View>::post(Space* home, Reflection::VarMap& vars,
+  Dom<View>::post(Space& home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);
@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   ExecStatus
-  Dom<View>::propagate(Space* home, ModEventDelta med) {
+  Dom<View>::propagate(Space& home, ModEventDelta med) {
     if (View::me(med) == ME_INT_VAL) {
       GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));
       ExecStatus escv = connected(home);
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   ExecStatus
-  Dom<View>::post(Space* home, ViewArray<View>& x) {
+  Dom<View>::post(Space& home, ViewArray<View>& x) {
     int n = x.size();
     if (n == 1) {
       GECODE_ME_CHECK(x[0].eq(home,0));

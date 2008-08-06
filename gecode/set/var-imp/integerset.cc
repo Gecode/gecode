@@ -41,13 +41,13 @@
 
 namespace Gecode { namespace Set {
 
-  BndSet::BndSet(Space* home, const IntSet& is)  {
+  BndSet::BndSet(Space& home, const IntSet& is)  {
     if (is.size()==0) {
       fst(NULL); lst(NULL); _size = 0;
     } else {
       int n = is.size();
       RangeList* r = 
-        static_cast<RangeList*>(home->ralloc(sizeof(RangeList)*n));
+        static_cast<RangeList*>(home.ralloc(sizeof(RangeList)*n));
       fst(r); lst(r+n-1);
       unsigned int s = 0;
       for (int i = n; i--; ) {
@@ -62,7 +62,7 @@ namespace Gecode { namespace Set {
   }
 
   bool
-  GLBndSet::include_full(Space* home, int mi, int ma, SetDelta& d) {
+  GLBndSet::include_full(Space& home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     assert(fst() != NULL);
     
@@ -145,7 +145,7 @@ namespace Gecode { namespace Set {
   }
 
   bool
-  LUBndSet::intersect_full(Space* home, int mi, int ma) {
+  LUBndSet::intersect_full(Space& home, int mi, int ma) {
     RangeList* p = NULL;
     RangeList* c = fst();
 
@@ -209,7 +209,7 @@ namespace Gecode { namespace Set {
   }
 
   bool
-  LUBndSet::exclude_full(Space* home, int mi, int ma, SetDelta& d) {
+  LUBndSet::exclude_full(Space& home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     assert(mi <= max() && ma >= min() &&
            (mi > min() || ma < max()));

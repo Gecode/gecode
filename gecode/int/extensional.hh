@@ -77,11 +77,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// The position of the view in the view array
       int i;
       /// Create index advisor
-      Index(Space* home, Propagator* p, Council<Index>& c, int i);
+      Index(Space& home, Propagator* p, Council<Index>& c, int i);
       /// Clone index advisor \a a
-      Index(Space* home, bool share, Index& a);
+      Index(Space& home, bool share, Index& a);
       /// Dispose advisor
-      void dispose(Space* home, Council<Index>& c);
+      void dispose(Space& home, Council<Index>& c);
     };
     /// Range approximation of which positions have changed
     class IndexRange {
@@ -122,35 +122,35 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Eliminate assigned prefix, return how many layers removed
     void eliminate(void);
     /// Construct layered graph
-    ExecStatus construct(Space* home);
+    ExecStatus construct(Space& home);
     /// Prune incrementally
-    ExecStatus prune(Space* home);
+    ExecStatus prune(Space& home);
 
     /// Constructor for cloning \a p
-    LayeredGraph(Space* home, bool share, LayeredGraph<View>& p);
+    LayeredGraph(Space& home, bool share, LayeredGraph<View>& p);
   public:
     /// Constructor for posting
-    LayeredGraph(Space* home, ViewArray<View>& x, DFA& d);
+    LayeredGraph(Space& home, ViewArray<View>& x, DFA& d);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as dynamic PC_LINEAR_HI)
     virtual PropCost cost(ModEventDelta med) const;
     /// Give advice to propagator
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
     static Gecode::Support::Symbol ati(void);
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Post propagator on views \a x and DFA \a d
-    static ExecStatus post(Space* home, ViewArray<View>& x, DFA& d);
+    static ExecStatus post(Space& home, ViewArray<View>& x, DFA& d);
   };
 
 }}}
@@ -185,14 +185,14 @@ namespace Gecode { namespace Int { namespace Extensional {
     TupleSet::TupleSetI* ts(void);
 
     /// Constructor for cloning \a p
-    Base(Space* home, bool share, Base<View,subscribe>& p);
+    Base(Space& home, bool share, Base<View,subscribe>& p);
     /// Constructor for posting
-    Base(Space* home, ViewArray<View>& x, const TupleSet& t);
+    Base(Space& home, ViewArray<View>& x, const TupleSet& t);
 
-    void  init_last(Space* home, Tuple** source);
+    void  init_last(Space& home, Tuple** source);
     Tuple last(int var, int val);
     Tuple last_next(int var, int val);
-    void  init_dom(Space* home, Domain dom);
+    void  init_dom(Space& home, Domain dom);
     bool  valid(Tuple t, Domain dom);
     Tuple find_support(Domain dom, int var, int val);
 
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual PropCost cost(ModEventDelta med) const;
 
     // Dispose propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 }}}
 
@@ -232,13 +232,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Base<View>::find_support;
 
     /// Constructor for cloning \a p
-    Basic(Space* home, bool share, Basic<View>& p);
+    Basic(Space& home, bool share, Basic<View>& p);
     /// Constructor for posting
-    Basic(Space* home, ViewArray<View>& x, const TupleSet& t);
+    Basic(Space& home, ViewArray<View>& x, const TupleSet& t);
 
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /**
      * \brief Cost function
      *
@@ -247,15 +247,15 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x, const TupleSet& t);
+    static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
 
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
     static Gecode::Support::Symbol ati(void);
@@ -308,16 +308,16 @@ namespace Gecode { namespace Int { namespace Extensional {
        *
        * This routine assumes that the list has already been fixed.
        */
-      void dispose(Space* home, SupportEntry* l);
+      void dispose(Space& home, SupportEntry* l);
       /// Free memory for this element
-      void dispose(Space* home);
+      void dispose(Space& home);
       
       /// Allocate memory from space
-      static void* operator new(size_t s, Space* home);
+      static void* operator new(size_t s, Space& home);
       /// No-op (for exceptions)
       static void  operator delete(void*);
       /// No-op (use dispose instead)
-      static void  operator delete(void*, Space*);
+      static void  operator delete(void*, Space&);
       //@}
     };
     /// What is to be done
@@ -344,18 +344,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     int unassigned;
 
     /// Constructor for cloning \a p
-    Incremental(Space* home, bool share, Incremental<View>& p);
+    Incremental(Space& home, bool share, Incremental<View>& p);
     /// Constructor for posting
-    Incremental(Space* home, ViewArray<View>& x, const TupleSet& t);
+    Incremental(Space& home, ViewArray<View>& x, const TupleSet& t);
 
-    void   find_support(Space* home, Domain dom, int var, int val);
-    void   init_support(Space* home);
-    void    add_support(Space* home, Tuple l);
-    void remove_support(Space* home, Tuple l, int var, int val);
+    void   find_support(Space& home, Domain dom, int var, int val);
+    void   init_support(Space& home);
+    void    add_support(Space& home, Tuple l);
+    void remove_support(Space& home, Tuple l, int var, int val);
     SupportEntry* support(int var, int val);
   public:
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /**
      * \brief Cost function
      *
@@ -364,18 +364,18 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     virtual PropCost cost(ModEventDelta med) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x, const TupleSet& t);
+    static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
     // Dispose propagator
-    size_t dispose(Space* home);
+    size_t dispose(Space& home);
 
 
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
     static Gecode::Support::Symbol ati(void);
@@ -389,20 +389,20 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
       using ViewAdvisor<View>::x;
       unsigned int pos;
-      SupportAdvisor(Space* home, Propagator* p, Council<SupportAdvisor>& c,
+      SupportAdvisor(Space& home, Propagator* p, Council<SupportAdvisor>& c,
                      View v, unsigned int position) 
         : ViewAdvisor<View>(home,p,c,v), pos(position) {}
-      SupportAdvisor(Space* home, bool share, SupportAdvisor& a) 
+      SupportAdvisor(Space& home, bool share, SupportAdvisor& a) 
         : ViewAdvisor<View>(home, share, a), pos(a.pos) {
       }
       /// Dispose advisor
-      void dispose(Space* home, Council<SupportAdvisor>& c) {
+      void dispose(Space& home, Council<SupportAdvisor>& c) {
             ViewAdvisor<View>::dispose(home,c);
       }
     };
     Council<SupportAdvisor> ac;
   public:
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
   };
   
 }}}

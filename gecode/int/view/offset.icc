@@ -57,7 +57,7 @@ namespace Gecode {
       return c;
     }
     forceinline
-    OffsetView::OffsetView(Space* home, const Reflection::VarMap& vars,
+    OffsetView::OffsetView(Space& home, const Reflection::VarMap& vars,
                            Reflection::Arg* arg)
     : DerivedViewBase<IntView>(IntView(home, vars, arg->second())),
       c(arg->first()->toInt()) {}
@@ -128,51 +128,51 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    OffsetView::lq(Space* home, int n) {
+    OffsetView::lq(Space& home, int n) {
       return view.lq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::lq(Space* home, double n) {
+    OffsetView::lq(Space& home, double n) {
       return view.lq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::le(Space* home, int n) {
+    OffsetView::le(Space& home, int n) {
       return view.le(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::le(Space* home, double n) {
+    OffsetView::le(Space& home, double n) {
       return view.le(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gq(Space* home, int n) {
+    OffsetView::gq(Space& home, int n) {
       return view.gq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gq(Space* home, double n) {
+    OffsetView::gq(Space& home, double n) {
       return view.gq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gr(Space* home, int n) {
+    OffsetView::gr(Space& home, int n) {
       return view.gr(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gr(Space* home, double n) {
+    OffsetView::gr(Space& home, double n) {
       return view.gr(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::nq(Space* home, int n) {
+    OffsetView::nq(Space& home, int n) {
       return view.nq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::nq(Space* home, double n) {
+    OffsetView::nq(Space& home, double n) {
       return view.nq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::eq(Space* home, int n) {
+    OffsetView::eq(Space& home, int n) {
       return view.eq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::eq(Space* home, double n) {
+    OffsetView::eq(Space& home, double n) {
       return view.eq(home,n-c);
     }
 
@@ -183,37 +183,37 @@ namespace Gecode {
      */
     template <class I>
     forceinline ModEvent
-    OffsetView::narrow_r(Space* home, I& i, bool depend) {
+    OffsetView::narrow_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c); 
       return view.narrow_r(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
-    OffsetView::inter_r(Space* home, I& i, bool depend) {
+    OffsetView::inter_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c); 
       return view.inter_r(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
-    OffsetView::minus_r(Space* home, I& i, bool depend) {
+    OffsetView::minus_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c); 
       return view.minus_r(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
-    OffsetView::narrow_v(Space* home, I& i, bool depend) {
+    OffsetView::narrow_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c); 
       return view.narrow_v(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
-    OffsetView::inter_v(Space* home, I& i, bool depend) {
+    OffsetView::inter_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c); 
       return view.inter_v(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
-    OffsetView::minus_v(Space* home, I& i, bool depend) {
+    OffsetView::minus_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c); 
       return view.minus_v(home,oi,depend);
     }
@@ -225,7 +225,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::schedule(Space* home, Propagator* p, ModEvent me) {
+    OffsetView::schedule(Space& home, Propagator* p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
@@ -243,20 +243,20 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::subscribe(Space* home, Propagator* p, PropCond pc, 
+    OffsetView::subscribe(Space& home, Propagator* p, PropCond pc, 
                           bool process) {
       view.subscribe(home,p,pc,process);
     }
     forceinline void
-    OffsetView::cancel(Space* home, Propagator* p, PropCond pc) {
+    OffsetView::cancel(Space& home, Propagator* p, PropCond pc) {
       view.cancel(home,p,pc);
     }
     forceinline void
-    OffsetView::subscribe(Space* home, Advisor& a) {
+    OffsetView::subscribe(Space& home, Advisor& a) {
       view.subscribe(home,a);
     }
     forceinline void
-    OffsetView::cancel(Space* home, Advisor& a) {
+    OffsetView::cancel(Space& home, Advisor& a) {
       view.cancel(home,a);
     }
 
@@ -289,7 +289,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::update(Space* home, bool share, OffsetView& x) {
+    OffsetView::update(Space& home, bool share, OffsetView& x) {
       c=x.c; view.update(home,share,x.view);
     }
 
@@ -298,7 +298,7 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    OffsetView::spec(const Space* home, Reflection::VarMap& m) const {
+    OffsetView::spec(const Space& home, Reflection::VarMap& m) const {
       return Reflection::Arg::newPair(Reflection::Arg::newInt(c), 
                                       view.spec(home, m));
     }

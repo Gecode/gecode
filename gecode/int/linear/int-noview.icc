@@ -90,62 +90,62 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n) {
+      ModEvent lq(Space& home, int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, double n) {
+      ModEvent lq(Space& home, double n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n) {
+      ModEvent le(Space& home, int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, double n) {
+      ModEvent le(Space& home, double n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n) {
+      ModEvent gq(Space& home, int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, double n) {
+      ModEvent gq(Space& home, double n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n) {
+      ModEvent gr(Space& home, int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, double n) {
+      ModEvent gr(Space& home, double n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n) {
+      ModEvent nq(Space& home, int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, double n) {
+      ModEvent nq(Space& home, double n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n) {
+      ModEvent eq(Space& home, int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, double n) {
+      ModEvent eq(Space& home, double n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
@@ -154,7 +154,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me) {
+      static void schedule(Space& home, Propagator* p, ModEvent me) {
         (void) home; (void) p; (void) me;
       }
       /// Return modification event of propagator \a p for view
@@ -172,24 +172,24 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /// Subscribe propagator \a p with propagation condition \a pc to view
-      void subscribe(Space* home, Propagator* p, PropCond pc,
+      void subscribe(Space& home, Propagator* p, PropCond pc,
                      bool process=true) {
         (void) home; (void) p; (void)  pc; (void) process;
       }
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc) {
+      void cancel(Space& home, Propagator* p, PropCond pc) {
         (void) home; (void) p; (void)  pc;
       }
       /// Subscribe advisor to view
-      void subscribe(Space*, Advisor&) {};
+      void subscribe(Space&, Advisor&) {};
       /// Cancel subscription of advisor
-      void cancel(Space*, Advisor&) {};
+      void cancel(Space&, Advisor&) {};
       //@}
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, NoView& x) {
+      void update(Space& home, bool share, NoView& x) {
         (void) home; (void) share; (void) x;
       }
       //@}
@@ -197,7 +197,7 @@ namespace Gecode {
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const {
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const {
         (void) home; (void) m;
         return NULL;
       }
@@ -235,13 +235,13 @@ namespace Gecode {
     /// Default constructor (array of size 0)
     ViewArray(void) {}
     /// Allocate array with \a m variables
-    ViewArray(Space* home, int m) { (void) home; (void) m; }
+    ViewArray(Space& home, int m) { (void) home; (void) m; }
     /// Initialize
     ViewArray(const ViewArray<Int::Linear::NoView>&) {}
     /// Initialize
-    ViewArray(Space*, const ViewArray<Int::Linear::NoView>&) {}
+    ViewArray(Space&, const ViewArray<Int::Linear::NoView>&) {}
     /// Initialize
-    ViewArray(Space*, const Reflection::VarMap&, Reflection::Arg*) {}
+    ViewArray(Space&, const Reflection::VarMap&, Reflection::Arg*) {}
     /// Initialize
     const ViewArray<Int::Linear::NoView>& operator=(const ViewArray<Int::Linear::NoView>&) { return *this; }
     //@}
@@ -267,11 +267,11 @@ namespace Gecode {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p with propagation condition \a pc to all views
-    void subscribe(Space*, Propagator* p, PropCond pc, bool process=true) {
+    void subscribe(Space&, Propagator* p, PropCond pc, bool process=true) {
       (void) p; (void) pc; (void) process;
     }
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
-    void cancel(Space* home, Propagator* p, PropCond pc) {
+    void cancel(Space& home, Propagator* p, PropCond pc) {
       (void) home; (void) p; (void) pc;
     }
     //@}
@@ -285,7 +285,7 @@ namespace Gecode {
      * data structures. Otherwise, for each of them an independent
      * copy is created.
      */
-    void update(Space*, bool share, ViewArray<Int::Linear::NoView>& a) {
+    void update(Space&, bool share, ViewArray<Int::Linear::NoView>& a) {
       (void) share; (void) a;
     }
     //@}
@@ -293,7 +293,7 @@ namespace Gecode {
     /// \name Reflection
     //@{
     /// Return specification for this array, using variable map \a m
-    Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const {
+    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const {
       (void) home; (void) m;
       return Reflection::Arg::newArray(0);
     }

@@ -89,18 +89,18 @@ namespace Gecode { namespace Set {
   RangeList::operator delete(void*) {}
 
   forceinline void
-  RangeList::operator delete(void*, Space*) {
+  RangeList::operator delete(void*, Space&) {
     GECODE_NEVER;
   }
 
   forceinline void*
-  RangeList::operator new(size_t, Space* home) {
-    return home->fl_alloc<sizeof(RangeList)>();
+  RangeList::operator new(size_t, Space& home) {
+    return home.fl_alloc<sizeof(RangeList)>();
   }
 
   forceinline void
-  RangeList::dispose(Space* home, RangeList* l) {
-    home->fl_dispose<sizeof(RangeList)>(this,l);
+  RangeList::dispose(Space& home, RangeList* l) {
+    home.fl_dispose<sizeof(RangeList)>(this,l);
   }
 
 
@@ -124,7 +124,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  BndSet::dispose(Space* home) {
+  BndSet::dispose(Space& home) {
     if (fst()!=NULL)
       fst()->dispose(home,lst());
   }
@@ -140,7 +140,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline
-  BndSet::BndSet(Space* home, int mn, int mx) {
+  BndSet::BndSet(Space& home, int mn, int mx) {
     RangeList* p = 
       new (home) RangeList(mn,mx,NULL);
     fst(p); lst(p);
@@ -186,7 +186,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  BndSet::update(Space* home, BndSet& d) {
+  BndSet::update(Space& home, BndSet& d) {
     if ( d.fst() == fst())
       return;
     if (fst()!=NULL)
@@ -201,7 +201,7 @@ namespace Gecode { namespace Set {
     for (RangeList* c = d.fst(); c != NULL; c = c->next())
       n++;
 
-    RangeList* r = static_cast<RangeList*>(home->ralloc(sizeof(RangeList)*n));
+    RangeList* r = static_cast<RangeList*>(home.ralloc(sizeof(RangeList)*n));
     fst(r); lst(r+n-1);
 
     RangeList* c = d.fst();
@@ -215,7 +215,7 @@ namespace Gecode { namespace Set {
   }
 
   template <class I> forceinline bool
-  BndSet::overwrite(Space* home, I& ri) {
+  BndSet::overwrite(Space& home, I& ri) {
     Iter::Ranges::IsRangeIter<I>();
     // Is new domain empty?
     if (!ri()) {
@@ -256,7 +256,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  BndSet::become(Space* home, const BndSet& that){
+  BndSet::become(Space& home, const BndSet& that){
     if (fst()!=NULL){
       assert(lst()!=NULL);
       assert(fst()!= that.fst());
@@ -320,18 +320,21 @@ namespace Gecode { namespace Set {
    */
 
   forceinline
-  GLBndSet::GLBndSet(Space*) {}
+  GLBndSet::GLBndSet(void) {}
 
   forceinline
-  GLBndSet::GLBndSet(Space* home, int mi, int ma)
+  GLBndSet::GLBndSet(Space&) {}
+
+  forceinline
+  GLBndSet::GLBndSet(Space& home, int mi, int ma)
     : BndSet(home,mi,ma) { assert(mi<=ma); }
 
   forceinline
-  GLBndSet::GLBndSet(Space* home, const IntSet& s)
+  GLBndSet::GLBndSet(Space& home, const IntSet& s)
     : BndSet(home,s) {}
 
   forceinline void
-  GLBndSet::init(Space* home) {
+  GLBndSet::init(Space& home) {
     dispose(home);
     fst(NULL);
     lst(NULL);
@@ -339,7 +342,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline bool
-  GLBndSet::include(Space* home, int mi, int ma, SetDelta& d) {
+  GLBndSet::include(Space& home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     if (fst()==NULL) {
       RangeList* p = new (home) RangeList(mi,ma,NULL);
@@ -356,7 +359,7 @@ namespace Gecode { namespace Set {
   }
 
   template <class I> bool
-  GLBndSet::includeI(Space* home, I& i) {
+  GLBndSet::includeI(Space& home, I& i) {
     Iter::Ranges::IsRangeIter<I>();
     if (!i())
       return false;
@@ -377,19 +380,19 @@ namespace Gecode { namespace Set {
   LUBndSet::LUBndSet(void) {}
 
   forceinline
-  LUBndSet::LUBndSet(Space* home)
+  LUBndSet::LUBndSet(Space& home)
     : BndSet(home,Limits::min,Limits::max) {}
 
   forceinline
-  LUBndSet::LUBndSet(Space* home, int mi, int ma)
+  LUBndSet::LUBndSet(Space& home, int mi, int ma)
     : BndSet(home,mi,ma) { assert(mi<=ma); }
 
   forceinline
-  LUBndSet::LUBndSet(Space* home, const IntSet& s)
+  LUBndSet::LUBndSet(Space& home, const IntSet& s)
     : BndSet(home,s) {}
 
   forceinline void
-  LUBndSet::init(Space* home) {
+  LUBndSet::init(Space& home) {
     RangeList *p =
       new (home) RangeList(Limits::min,
                            Limits::max,
@@ -400,7 +403,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline bool
-  LUBndSet::exclude(Space* home, int mi, int ma, SetDelta& d) {
+  LUBndSet::exclude(Space& home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     if ((mi > max()) || (ma < min())) { return false; }
     if (mi <= min() && ma >= max() ) { //the range covers the whole set
@@ -416,7 +419,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline bool
-  LUBndSet::intersect(Space* home, int mi, int ma) {
+  LUBndSet::intersect(Space& home, int mi, int ma) {
     assert(ma >= mi);
     if ((mi <= min()) && (ma >= max())) { return false; }
     if (_size == 0) return false;
@@ -431,7 +434,7 @@ namespace Gecode { namespace Set {
   }
 
   template <class I> bool
-  LUBndSet::intersectI(Space* home, I& i) {
+  LUBndSet::intersectI(Space& home, I& i) {
     Iter::Ranges::IsRangeIter<I>();
     if (fst()==NULL) { return false; }
     if (!i()) {
@@ -447,7 +450,7 @@ namespace Gecode { namespace Set {
   }
 
   template <class I> bool
-  LUBndSet::excludeI(Space* home, I& i) {
+  LUBndSet::excludeI(Space& home, I& i) {
     Iter::Ranges::IsRangeIter<I>();
     if (!i()) { return false; }
     BndSetRanges j(*this);
@@ -458,7 +461,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  LUBndSet::excludeAll(Space* home) {
+  LUBndSet::excludeAll(Space& home) {
     fst()->dispose(home,lst()); fst(NULL); lst(NULL);
     _size=0;    
   }

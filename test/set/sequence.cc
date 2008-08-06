@@ -74,7 +74,7 @@ namespace Test { namespace Set {
         return true;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::sequence(home, x);
       }
     };
@@ -111,7 +111,7 @@ namespace Test { namespace Set {
         return ret;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         SetVarArgs xs(x.size()-1);
         for (int i=x.size()-1; i--;)
           xs[i]=x[i];

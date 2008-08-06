@@ -48,12 +48,12 @@ namespace Gecode { namespace MiniModel {
   }
 
   forceinline BoolVar
-  BoolExpr::post(Space* home, IntConLevel icl, PropKind pk) const {
+  BoolExpr::post(Space& home, IntConLevel icl, PropKind pk) const {
     return n->post(home,icl,pk);
   }
 
   forceinline void
-  BoolExpr::post(Space* home, bool t, IntConLevel icl, PropKind pk) const {
+  BoolExpr::post(Space& home, bool t, IntConLevel icl, PropKind pk) const {
     n->post(home,t,icl,pk);
   }
 
@@ -115,13 +115,13 @@ namespace Gecode {
 
 
   inline BoolVar
-  post(Space* home, const MiniModel::BoolExpr& e, 
+  post(Space& home, const MiniModel::BoolExpr& e, 
        IntConLevel icl, PropKind pk) {
     return e.post(home,icl,pk);
   }
 
   inline BoolVar
-  post(Space*, const BoolVar& b, IntConLevel, PropKind) {
+  post(Space&, const BoolVar& b, IntConLevel, PropKind) {
     return b;
   }
 

@@ -70,7 +70,7 @@ namespace Test { namespace Int {
          return false;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          int n=x.size() >> 1;
          IntVarArgs y(n); IntVarArgs z(n);
@@ -102,7 +102,7 @@ namespace Test { namespace Int {
          return false;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          int n=x.size() >> 1;
          BoolVarArgs y(n); BoolVarArgs z(n);

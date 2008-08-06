@@ -41,8 +41,8 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class View>
   forceinline IdxView<View>*
-  IdxView<View>::allocate(Space* home, int n) {
-    return static_cast<IdxView<View>*>(home->ralloc(sizeof(IdxView<View>)*n));
+  IdxView<View>::allocate(Space& home, int n) {
+    return static_cast<IdxView<View>*>(home.ralloc(sizeof(IdxView<View>)*n));
   }
 
   template <class View>
@@ -54,7 +54,7 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template <class View>
-  IdxViewArray<View>::IdxViewArray(Space* home, const SetVarArgs& xa)
+  IdxViewArray<View>::IdxViewArray(Space& home, const SetVarArgs& xa)
     : xs(NULL) {
     n = xa.size();
     if (n>0) {
@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class View>
   void
-  IdxViewArray<View>::subscribe(Space* home, Propagator* p, PropCond pc,
+  IdxViewArray<View>::subscribe(Space& home, Propagator* p, PropCond pc,
                                 bool process) {
     for (int i = n; i--; )
       xs[i].var.subscribe(home,p,pc,process);
@@ -103,14 +103,14 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class View>
   void
-  IdxViewArray<View>::cancel(Space* home, Propagator* p, PropCond pc) {
+  IdxViewArray<View>::cancel(Space& home, Propagator* p, PropCond pc) {
     for (int i = n; i--; )
       xs[i].var.cancel(home,p,pc);
   }
 
   template <class View>
   void
-  IdxViewArray<View>::update(Space* home, bool share, IdxViewArray<View>& a) {
+  IdxViewArray<View>::update(Space& home, bool share, IdxViewArray<View>& a) {
     n = a.size();
     if (n>0) {
       xs = IdxView<View>::allocate(home,n);
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Element {
   
   template <class View>
   Reflection::Arg*
-  IdxViewArray<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  IdxViewArray<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::IntArrayArg* is = Reflection::Arg::newIntArray(n);
     for (int i = 0; i<n; i++)
       (*is)[i] = xs[i].idx;
@@ -134,7 +134,7 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template <class View>
-  IdxViewArray<View>::IdxViewArray(Space* home,
+  IdxViewArray<View>::IdxViewArray(Space& home,
                                    const Reflection::VarMap& vars,
                                    Reflection::Arg* spec) : xs(NULL) {
     Reflection::IntArrayArg* is = spec->first()->toIntArray();

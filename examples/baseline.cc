@@ -50,13 +50,13 @@ protected:
 public:
   /// The actual problem
   Baseline(const Options&)
-    : x(this,1,0,1) {
-    branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
+    : x(*this,1,0,1) {
+    branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s
   Baseline(bool share, Baseline& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning

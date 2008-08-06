@@ -40,10 +40,10 @@
 namespace Gecode {
 
   void
-  assign(Space* home, const IntVarArgs& x, IntAssign vals,
+  assign(Space& home, const IntVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     ViewSelNone<IntView> v(home,VarBranchOptions::def);
     switch (vals) {
@@ -77,10 +77,10 @@ namespace Gecode {
   }
 
   void
-  assign(Space* home, const BoolVarArgs& x, IntAssign vals,
+  assign(Space& home, const BoolVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
     ViewSelNone<BoolView> v(home,VarBranchOptions::def);
     switch (vals) {

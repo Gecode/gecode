@@ -44,22 +44,22 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
     /// Constructor for cloning \a p
-    OrTrueSubsumed(Space* home, bool share, OrTrueSubsumed& p);
+    OrTrueSubsumed(Space& home, bool share, OrTrueSubsumed& p);
   public:
     /// Constructor
-    OrTrueSubsumed(Space* home, BV b0, BV b1);
+    OrTrueSubsumed(Space& home, BV b0, BV b1);
     /// Constructor for rewriting \a p during cloning
-    OrTrueSubsumed(Space* home, bool share, Propagator& p,
+    OrTrueSubsumed(Space& home, bool share, Propagator& p,
                    BV b0, BV b1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Actor type identifier of this propagator
     static Support::Symbol ati(void);    
@@ -68,30 +68,30 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BV>
   forceinline
   OrTrueSubsumed<BV>::OrTrueSubsumed
-  (Space* home, BV b0, BV b1)
+  (Space& home, BV b0, BV b1)
     : BoolBinary<BV,BV>(home,b0,b1) {}
 
   template <class BV>
   forceinline
   OrTrueSubsumed<BV>::OrTrueSubsumed
-  (Space* home, bool share, OrTrueSubsumed<BV>& p)
+  (Space& home, bool share, OrTrueSubsumed<BV>& p)
     : BoolBinary<BV,BV>(home,share,p) {}
 
   template <class BV>
   forceinline
-  OrTrueSubsumed<BV>::OrTrueSubsumed(Space* home, bool share, Propagator& p,
+  OrTrueSubsumed<BV>::OrTrueSubsumed(Space& home, bool share, Propagator& p,
                                      BV b0, BV b1)
     : BoolBinary<BV,BV>(home,share,p,b0,b1) {}
 
   template <class BV>
   Actor*
-  OrTrueSubsumed<BV>::copy(Space* home, bool share) {
+  OrTrueSubsumed<BV>::copy(Space& home, bool share) {
     return new (home) OrTrueSubsumed<BV>(home,share,*this);
   }
 
   template <class BV>
   ExecStatus
-  OrTrueSubsumed<BV>::propagate(Space* home, ModEventDelta) {
+  OrTrueSubsumed<BV>::propagate(Space& home, ModEventDelta) {
     return ES_SUBSUMED(this,home);
   }
 
@@ -103,13 +103,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   Reflection::ActorSpec
-  OrTrueSubsumed<BV>::spec(const Space* home, Reflection::VarMap& m) const {
+  OrTrueSubsumed<BV>::spec(const Space& home, Reflection::VarMap& m) const {
     return BoolBinary<BV,BV>::spec(home, m, ati());
   }
 
   template<class BV>
   void
-  OrTrueSubsumed<BV>::post(Space* home, Reflection::VarMap& vars,
+  OrTrueSubsumed<BV>::post(Space& home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     BV b0(home, vars, spec[0]);
@@ -125,29 +125,29 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB>
   forceinline
-  BinOrTrue<BVA,BVB>::BinOrTrue(Space* home, BVA b0, BVB b1)
+  BinOrTrue<BVA,BVB>::BinOrTrue(Space& home, BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,b0,b1) {}
 
   template <class BVA, class BVB>
   forceinline
-  BinOrTrue<BVA,BVB>::BinOrTrue(Space* home, bool share, BinOrTrue<BVA,BVB>& p)
+  BinOrTrue<BVA,BVB>::BinOrTrue(Space& home, bool share, BinOrTrue<BVA,BVB>& p)
     : BoolBinary<BVA,BVB>(home,share,p) {}
 
   template <class BVA, class BVB>
   forceinline
-  BinOrTrue<BVA,BVB>::BinOrTrue(Space* home, bool share, Propagator& p,
+  BinOrTrue<BVA,BVB>::BinOrTrue(Space& home, bool share, Propagator& p,
                               BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
 
   template <class BVA, class BVB>
   Actor*
-  BinOrTrue<BVA,BVB>::copy(Space* home, bool share) {
+  BinOrTrue<BVA,BVB>::copy(Space& home, bool share) {
     return new (home) BinOrTrue<BVA,BVB>(home,share,*this);
   }
 
   template <class BVA, class BVB>
   inline ExecStatus
-  BinOrTrue<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
+  BinOrTrue<BVA,BVB>::post(Space& home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
     case BT_SAME:
       GECODE_ME_CHECK(b0.one(home));
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB>
   ExecStatus
-  BinOrTrue<BVA,BVB>::propagate(Space* home, ModEventDelta) {
+  BinOrTrue<BVA,BVB>::propagate(Space& home, ModEventDelta) {
 #define GECODE_INT_STATUS(S0,S1) \
   ((BVA::S0<<(1*BVA::BITS))|(BVB::S1<<(0*BVB::BITS)))
     switch ((x0.status() << (1*BVA::BITS)) | (x1.status() << (0*BVB::BITS))) {
@@ -207,13 +207,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB>
   Reflection::ActorSpec
-  BinOrTrue<BVA,BVB>::spec(const Space* home, Reflection::VarMap& m) const {
+  BinOrTrue<BVA,BVB>::spec(const Space& home, Reflection::VarMap& m) const {
     return BoolBinary<BVA,BVB>::spec(home, m, ati());
   }
 
   template<class BVA, class BVB>
   void
-  BinOrTrue<BVA,BVB>::post(Space* home, Reflection::VarMap& vars,
+  BinOrTrue<BVA,BVB>::post(Space& home, Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     BVA b0(home, vars, spec[0]);
@@ -228,26 +228,26 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   forceinline
-  TerOrTrue<BV>::TerOrTrue(Space* home, BV b0, BV b1, BV b2)
+  TerOrTrue<BV>::TerOrTrue(Space& home, BV b0, BV b1, BV b2)
     : BoolBinary<BV,BV>(home,b0,b1), x2(b2) {}
 
   template<class BV>
   forceinline size_t
-  TerOrTrue<BV>::dispose(Space* home) {
+  TerOrTrue<BV>::dispose(Space& home) {
     (void) BoolBinary<BV,BV>::dispose(home);
     return sizeof(*this);
   }
 
   template <class BV>
   forceinline
-  TerOrTrue<BV>::TerOrTrue(Space* home, bool share, TerOrTrue<BV>& p)
+  TerOrTrue<BV>::TerOrTrue(Space& home, bool share, TerOrTrue<BV>& p)
     : BoolBinary<BV,BV>(home,share,p) {
     x2.update(home,share,p.x2);
   }
 
   template <class BV>
   forceinline
-  TerOrTrue<BV>::TerOrTrue(Space* home, bool share, Propagator& p,
+  TerOrTrue<BV>::TerOrTrue(Space& home, bool share, Propagator& p,
                            BV b0, BV b1, BV b2)
     : BoolBinary<BV,BV>(home,share,p,b0,b1) {
     x2.update(home,share,b2);
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   Actor*
-  TerOrTrue<BV>::copy(Space* home, bool share) {
+  TerOrTrue<BV>::copy(Space& home, bool share) {
     assert(x0.none() && x1.none());
     if (x2.one())
       return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
@@ -267,14 +267,14 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   forceinline ExecStatus
-  TerOrTrue<BV>::post(Space* home, BV b0, BV b1, BV b2) {
+  TerOrTrue<BV>::post(Space& home, BV b0, BV b1, BV b2) {
     (void) new (home) TerOrTrue<BV>(home,b0,b1,b2);
     return ES_OK;
   }
 
   template <class BV>
   ExecStatus
-  TerOrTrue<BV>::propagate(Space* home, ModEventDelta) {
+  TerOrTrue<BV>::propagate(Space& home, ModEventDelta) {
 #define GECODE_INT_STATUS(S0,S1,S2) \
     ((BV::S0<<(2*BV::BITS))|(BV::S1<<(1*BV::BITS))|(BV::S2<<(0*BV::BITS)))
     switch ((x0.status() << (2*BV::BITS)) | (x1.status() << (1*BV::BITS)) |
@@ -335,14 +335,14 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   Reflection::ActorSpec
-  TerOrTrue<BV>::spec(const Space* home, Reflection::VarMap& m) const {
+  TerOrTrue<BV>::spec(const Space& home, Reflection::VarMap& m) const {
     return BoolBinary<BV,BV>::spec(home, m, ati())
            << x2.spec(home, m);
   }
 
   template<class BV>
   void
-  TerOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
+  TerOrTrue<BV>::post(Space& home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     BV b0(home, vars, spec[0]);
@@ -358,19 +358,19 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   forceinline
-  QuadOrTrue<BV>::QuadOrTrue(Space* home, BV b0, BV b1, BV b2, BV b3)
+  QuadOrTrue<BV>::QuadOrTrue(Space& home, BV b0, BV b1, BV b2, BV b3)
     : BoolBinary<BV,BV>(home,b0,b1), x2(b2), x3(b3) {}
 
   template<class BV>
   forceinline size_t
-  QuadOrTrue<BV>::dispose(Space* home) {
+  QuadOrTrue<BV>::dispose(Space& home) {
     (void) BoolBinary<BV,BV>::dispose(home);
     return sizeof(*this);
   }
 
   template <class BV>
   forceinline
-  QuadOrTrue<BV>::QuadOrTrue(Space* home, bool share, QuadOrTrue<BV>& p)
+  QuadOrTrue<BV>::QuadOrTrue(Space& home, bool share, QuadOrTrue<BV>& p)
     : BoolBinary<BV,BV>(home,share,p) {
     x2.update(home,share,p.x2);
     x3.update(home,share,p.x3);
@@ -378,7 +378,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   forceinline
-  QuadOrTrue<BV>::QuadOrTrue(Space* home, bool share, Propagator& p,
+  QuadOrTrue<BV>::QuadOrTrue(Space& home, bool share, Propagator& p,
                              BV b0, BV b1, BV b2, BV b3)
     : BoolBinary<BV,BV>(home,share,p,b0,b1) {
     x2.update(home,share,b2);
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   Actor*
-  QuadOrTrue<BV>::copy(Space* home, bool share) {
+  QuadOrTrue<BV>::copy(Space& home, bool share) {
     assert(x0.none() && x1.none());
     if (x2.one() || x3.one())
       return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
@@ -403,14 +403,14 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   forceinline ExecStatus
-  QuadOrTrue<BV>::post(Space* home, BV b0, BV b1, BV b2, BV b3) {
+  QuadOrTrue<BV>::post(Space& home, BV b0, BV b1, BV b2, BV b3) {
     (void) new (home) QuadOrTrue<BV>(home,b0,b1,b2,b3);
     return ES_OK;
   }
 
   template <class BV>
   ExecStatus
-  QuadOrTrue<BV>::propagate(Space* home, ModEventDelta) {
+  QuadOrTrue<BV>::propagate(Space& home, ModEventDelta) {
 #define GECODE_INT_STATUS(S0,S1,S2,S3)                        \
     ((BV::S0 << (3*BV::BITS)) | (BV::S1 << (2*BV::BITS)) |    \
      (BV::S2 << (1*BV::BITS)) | (BV::S3 << (0*BV::BITS)))
@@ -538,7 +538,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   Reflection::ActorSpec
-  QuadOrTrue<BV>::spec(const Space* home, Reflection::VarMap& m) const {
+  QuadOrTrue<BV>::spec(const Space& home, Reflection::VarMap& m) const {
     return BoolBinary<BV,BV>::spec(home, m, ati())
       << x2.spec(home, m)
       << x3.spec(home, m);
@@ -546,7 +546,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  QuadOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
+  QuadOrTrue<BV>::post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     BV b0(home, vars, spec[0]);
@@ -563,23 +563,23 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB, class BVC>
   forceinline
-  Or<BVA,BVB,BVC>::Or(Space* home, BVA b0, BVB b1, BVC b2)
+  Or<BVA,BVB,BVC>::Or(Space& home, BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,b0,b1,b2) {}
 
   template <class BVA, class BVB, class BVC>
   forceinline
-  Or<BVA,BVB,BVC>::Or(Space* home, bool share, Or<BVA,BVB,BVC>& p)
+  Or<BVA,BVB,BVC>::Or(Space& home, bool share, Or<BVA,BVB,BVC>& p)
     : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
 
   template <class BVA, class BVB, class BVC>
   forceinline
-  Or<BVA,BVB,BVC>::Or(Space* home, bool share, Propagator& p,
+  Or<BVA,BVB,BVC>::Or(Space& home, bool share, Propagator& p,
                         BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,share,p,b0,b1,b2) {}
 
   template <class BVA, class BVB, class BVC>
   Actor*
-  Or<BVA,BVB,BVC>::copy(Space* home, bool share) {
+  Or<BVA,BVB,BVC>::copy(Space& home, bool share) {
     if (x2.one()) {
       assert(x0.none() && x1.none());
       return new (home) BinOrTrue<BVA,BVB>(home,share,*this,x0,x1);
@@ -596,7 +596,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB, class BVC>
   inline ExecStatus
-  Or<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2) {
+  Or<BVA,BVB,BVC>::post(Space& home, BVA b0, BVB b1, BVC b2) {
     if (b2.zero()) {
       GECODE_ME_CHECK(b0.zero(home));
       GECODE_ME_CHECK(b1.zero(home));
@@ -628,7 +628,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB, class BVC>
   ExecStatus
-  Or<BVA,BVB,BVC>::propagate(Space* home, ModEventDelta) {
+  Or<BVA,BVB,BVC>::propagate(Space& home, ModEventDelta) {
 #define GECODE_INT_STATUS(S0,S1,S2) \
   ((BVA::S0<<(2*BVA::BITS))|(BVB::S1<<(1*BVB::BITS))|(BVC::S2<<(0*BVC::BITS)))
     switch ((x0.status() << (2*BVA::BITS)) | (x1.status() << (1*BVB::BITS)) |
@@ -719,13 +719,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB, class BVC>
   Reflection::ActorSpec
-  Or<BVA,BVB,BVC>::spec(const Space* home, Reflection::VarMap& m) const {
+  Or<BVA,BVB,BVC>::spec(const Space& home, Reflection::VarMap& m) const {
     return BoolTernary<BVA,BVB,BVC>::spec(home, m, ati());      
   }
 
   template<class BVA, class BVB, class BVC>
   void
-  Or<BVA,BVB,BVC>::post(Space* home, Reflection::VarMap& vars,
+  Or<BVA,BVB,BVC>::post(Space& home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     BVA b0(home, vars, spec[0]);
@@ -741,7 +741,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  NaryOrTrue<BV>::NaryOrTrue(Space* home, ViewArray<BV>& b)
+  NaryOrTrue<BV>::NaryOrTrue(Space& home, ViewArray<BV>& b)
     : BinaryPropagator<BV,PC_BOOL_VAL>(home,
                                       b[b.size()-2],
                                       b[b.size()-1]), x(b) {
@@ -757,14 +757,14 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  NaryOrTrue<BV>::NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p)
+  NaryOrTrue<BV>::NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p)
     : BinaryPropagator<BV,PC_BOOL_VAL>(home,share,p) {
     x.update(home,share,p.x);
   }
 
   template<class BV>
   Actor*
-  NaryOrTrue<BV>::copy(Space* home, bool share) {
+  NaryOrTrue<BV>::copy(Space& home, bool share) {
     int n = x.size();
     if (n > 0) {
       // Check whether the original has already been purged
@@ -798,7 +798,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   inline ExecStatus
-  NaryOrTrue<BV>::post(Space* home, ViewArray<BV>& b) {
+  NaryOrTrue<BV>::post(Space& home, ViewArray<BV>& b) {
     for (int i=b.size(); i--; )
       if (b[i].one())
         return ES_OK;
@@ -822,7 +822,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline ExecStatus
-  NaryOrTrue<BV>::resubscribe(Space* home, BV& x0, BV x1) {
+  NaryOrTrue<BV>::resubscribe(Space& home, BV& x0, BV x1) {
     if (x0.zero()) {
       int n = x.size();
       for (int i=n; i--; )
@@ -855,7 +855,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   ExecStatus
-  NaryOrTrue<BV>::propagate(Space* home, ModEventDelta) {
+  NaryOrTrue<BV>::propagate(Space& home, ModEventDelta) {
     if (x0.one() || x1.one())
       return ES_SUBSUMED(this,home);
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
@@ -871,14 +871,14 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   Reflection::ActorSpec
-  NaryOrTrue<BV>::spec(const Space* home, Reflection::VarMap& m) const {
+  NaryOrTrue<BV>::spec(const Space& home, Reflection::VarMap& m) const {
     return BinaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, ati())
       << x.spec(home, m);
   }
 
   template<class BV>
   void
-  NaryOrTrue<BV>::post(Space* home, Reflection::VarMap& vars,
+  NaryOrTrue<BV>::post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     BV b0(home, vars, spec[0]);
@@ -899,17 +899,17 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  NaryOr<BV>::NaryOr(Space* home, ViewArray<BV>& b, BV c)
+  NaryOr<BV>::NaryOr(Space& home, ViewArray<BV>& b, BV c)
     : NaryOnePropagator<BV,PC_BOOL_VAL>(home,b,c) {}
 
   template<class BV>
   forceinline
-  NaryOr<BV>::NaryOr(Space* home, bool share, NaryOr<BV>& p)
+  NaryOr<BV>::NaryOr(Space& home, bool share, NaryOr<BV>& p)
     : NaryOnePropagator<BV,PC_BOOL_VAL>(home,share,p) {}
 
   template<class BV>
   Actor*
-  NaryOr<BV>::copy(Space* home, bool share) {
+  NaryOr<BV>::copy(Space& home, bool share) {
     if (x.size() == 1)
       return new (home) Eq<BV,BV>(home,share,*this,x[0],y);
     if (x.size() == 2)
@@ -919,7 +919,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   inline ExecStatus
-  NaryOr<BV>::post(Space* home, ViewArray<BV>& b, BV c) {
+  NaryOr<BV>::post(Space& home, ViewArray<BV>& b, BV c) {
     if (c.one())
       return NaryOrTrue<BV>::post(home,b);
     if (c.zero()) {
@@ -948,7 +948,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   ExecStatus
-  NaryOr<BV>::propagate(Space* home, ModEventDelta) {
+  NaryOr<BV>::propagate(Space& home, ModEventDelta) {
     if (y.zero()) {
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
@@ -979,13 +979,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   Reflection::ActorSpec
-  NaryOr<BV>::spec(const Space* home, Reflection::VarMap& m) const {
+  NaryOr<BV>::spec(const Space& home, Reflection::VarMap& m) const {
     return NaryOnePropagator<BV,PC_BOOL_VAL>::spec(home, m, ati());      
   }
 
   template<class BV>
   void
-  NaryOr<BV>::post(Space* home, Reflection::VarMap& vars,
+  NaryOr<BV>::post(Space& home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<BV> b(home, vars, spec[0]);

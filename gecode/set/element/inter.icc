@@ -42,7 +42,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   forceinline
   ElementIntersection<SView,RView>::
-  ElementIntersection(Space* home, SView y0,
+  ElementIntersection(Space& home, SView y0,
                      IdxViewArray<SView>& iv0,
                      RView y1,
                      const IntSet& theUniverse)
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   forceinline
   ElementIntersection<SView,RView>::
-  ElementIntersection(Space* home, bool share,
+  ElementIntersection(Space& home, bool share,
                      ElementIntersection<SView,RView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
@@ -79,7 +79,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   Reflection::ActorSpec
-  ElementIntersection<SView,RView>::spec(const Space* home,
+  ElementIntersection<SView,RView>::spec(const Space& home,
                                         Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     int count = 0;
@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   void
-  ElementIntersection<SView,RView>::post(Space* home,
+  ElementIntersection<SView,RView>::post(Space& home,
                                         Reflection::VarMap& vars,
                                         const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
@@ -113,9 +113,9 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   size_t
-  ElementIntersection<SView,RView>::dispose(Space* home) {
+  ElementIntersection<SView,RView>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x0.cancel(home,this, PC_SET_ANY);
       x1.cancel(home,this, PC_SET_ANY);
       iv.cancel(home,this,PC_SET_ANY);
@@ -128,7 +128,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   ExecStatus
   ElementIntersection<SView,RView>::
-  post(Space* home, SView x0, IdxViewArray<SView>& xs,
+  post(Space& home, SView x0, IdxViewArray<SView>& xs,
        RView x1, const IntSet& universe) {
     int n = xs.size();
 
@@ -142,13 +142,13 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   Actor*
-  ElementIntersection<SView,RView>::copy(Space* home, bool share) {
+  ElementIntersection<SView,RView>::copy(Space& home, bool share) {
     return new (home) ElementIntersection<SView,RView>(home,share,*this);
   }
 
   template <class SView, class RView>
   ExecStatus
-  ElementIntersection<SView,RView>::propagate(Space* home, ModEventDelta) {
+  ElementIntersection<SView,RView>::propagate(Space& home, ModEventDelta) {
     Scratch s(home);
     int n = iv.size();
 

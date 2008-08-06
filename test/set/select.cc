@@ -84,7 +84,7 @@ namespace Test { namespace Set {
         return ret;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
@@ -129,7 +129,7 @@ namespace Test { namespace Set {
         return ret;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         IntSetArgs xs(3);
         xs[0] = i0; xs[1] = i1; xs[2] = i2;
         Gecode::elementsUnion(home, xs, x[0], x[1]);
@@ -168,7 +168,7 @@ namespace Test { namespace Set {
         return ret;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
@@ -208,7 +208,7 @@ namespace Test { namespace Set {
         return ret;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
@@ -251,7 +251,7 @@ namespace Test { namespace Set {
         return ret;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         SetVarArgs xs(x.size()-1);
         for (int i=x.size()-1; i--;)
           xs[i]=x[i];
@@ -275,7 +275,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::equal(y, z);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         SetVarArgs xs(x.size()-1);
         for (int i=x.size()-1; i--;)
           xs[i]=x[i];
@@ -304,7 +304,7 @@ namespace Test { namespace Set {
         return Iter::Ranges::equal(xr, isr);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         IntSetArgs xs(3);
         xs[0] = i0; xs[1] = i1; xs[2] = i2;
         Gecode::element(home, xs, y[0], x[0]);

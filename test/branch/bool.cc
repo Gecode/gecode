@@ -46,7 +46,7 @@ namespace Test { namespace Branch {
     Bool(const std::string& s, int n)
       : BoolTest(s,n) {}
     /// Post propagators on variables \a x
-    virtual void post(Gecode::Space* home, Gecode::BoolVarArray& x) {
+    virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) {
       Gecode::rel(home, Gecode::BOT_OR, x, 1);
     }
   };

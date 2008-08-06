@@ -49,7 +49,7 @@ namespace Gecode { namespace Set {
    */
 
   forceinline
-  SetVarImp::SetVarImp(Space* home)
+  SetVarImp::SetVarImp(Space& home)
     : SetVarImpBase(home), lub(home), glb(home) {
     _cardMin = 0;
     _cardMax = Limits::card;
@@ -57,7 +57,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline
-  SetVarImp::SetVarImp(Space* home,int lbMin,int lbMax,int ubMin,int ubMax,
+  SetVarImp::SetVarImp(Space& home,int lbMin,int lbMax,int ubMin,int ubMax,
                        unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home),
       lub(home,ubMin,ubMax), glb(home,lbMin,lbMax) {
@@ -66,7 +66,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline
-  SetVarImp::SetVarImp(Space* home,
+  SetVarImp::SetVarImp(Space& home,
                        const IntSet& theGlb,int ubMin,int ubMax,
                        unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home),
@@ -76,7 +76,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline
-  SetVarImp::SetVarImp(Space* home,
+  SetVarImp::SetVarImp(Space& home,
                        int lbMin,int lbMax,const IntSet& theLub,
                        unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home),
@@ -86,7 +86,7 @@ namespace Gecode { namespace Set {
   }
   
   forceinline
-  SetVarImp::SetVarImp(Space* home,
+  SetVarImp::SetVarImp(Space& home,
                        const IntSet& theGlb,const IntSet& theLub,
                        unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home), lub(home,theLub), glb(home,theGlb) {
@@ -167,7 +167,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::cardMin(Space* home,unsigned int newMin) {
+  SetVarImp::cardMin(Space& home,unsigned int newMin) {
     if (_cardMin >= newMin)
       return ME_SET_NONE;
     if (newMin > _cardMax)
@@ -177,7 +177,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::cardMax(Space* home,unsigned int newMax) {
+  SetVarImp::cardMax(Space& home,unsigned int newMax) {
     if (_cardMax <= newMax)
       return ME_SET_NONE;
     if (_cardMin > newMax)
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::intersect(Space* home,int i, int j) {
+  SetVarImp::intersect(Space& home,int i, int j) {
     BndSetRanges lb(glb);
     Iter::Ranges::Singleton s(i,j);
     Iter::Ranges::Diff<BndSetRanges, Iter::Ranges::Singleton> probe(lb, s);
@@ -212,13 +212,13 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::intersect(Space* home,int i) {
+  SetVarImp::intersect(Space& home,int i) {
     return intersect(home, i, i);
   }
 
   template <class I>
   inline ModEvent
-  SetVarImp::intersectI(Space* home, I& iterator) {
+  SetVarImp::intersectI(Space& home, I& iterator) {
     Iter::Ranges::IsRangeIter<I>();
     if (assigned()) {
       BndSetRanges lbi(glb);
@@ -246,7 +246,7 @@ namespace Gecode { namespace Set {
 
   template <class I>
   ModEvent
-  SetVarImp::intersectI_full(Space* home, int mi, int ma, I& iterator) {
+  SetVarImp::intersectI_full(Space& home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
     if (lub.intersectI(home, si)) {
       BndSetRanges ub(lub);
@@ -279,7 +279,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::include(Space* home, int i, int j) {
+  SetVarImp::include(Space& home, int i, int j) {
     BndSetRanges ub(lub);
     Iter::Ranges::Singleton sij(i,j);
     if (!Iter::Ranges::subset(sij,ub)) {
@@ -292,12 +292,12 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::include(Space* home, int i) {
+  SetVarImp::include(Space& home, int i) {
     return include(home, i, i);
   }
 
   template <class I> forceinline ModEvent
-  SetVarImp::includeI(Space* home, I& iterator) {
+  SetVarImp::includeI(Space& home, I& iterator) {
     Iter::Ranges::IsRangeIter<I>();
     if (!iterator()) {
       return ME_SET_NONE;
@@ -319,7 +319,7 @@ namespace Gecode { namespace Set {
 
   template <class I>
   ModEvent
-  SetVarImp::includeI_full(Space* home, int mi, int ma, I& iterator) {
+  SetVarImp::includeI_full(Space& home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
     if (glb.includeI(home, si)) {
       BndSetRanges ub(lub);
@@ -352,7 +352,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::exclude(Space* home, int i, int j) {
+  SetVarImp::exclude(Space& home, int i, int j) {
     Iter::Ranges::Singleton sij(i,j);
     BndSetRanges lb(glb);
     Iter::Ranges::Inter<Iter::Ranges::Singleton,BndSetRanges> probe(sij,lb);
@@ -365,13 +365,13 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetVarImp::exclude(Space* home, int i) {
+  SetVarImp::exclude(Space& home, int i) {
     return exclude(home, i, i);
   }
 
   template <class I>
   inline ModEvent
-  SetVarImp::excludeI(Space* home, I& iterator) {
+  SetVarImp::excludeI(Space& home, I& iterator) {
     Iter::Ranges::IsRangeIter<I>();
     if (!iterator())
       return ME_SET_NONE;
@@ -391,7 +391,7 @@ namespace Gecode { namespace Set {
 
   template <class I>
   ModEvent
-  SetVarImp::excludeI_full(Space* home, int mi, int ma, I& iterator) {
+  SetVarImp::excludeI_full(Space& home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
     if (lub.excludeI(home, si)) {
       BndSetRanges ub(lub);
@@ -429,7 +429,7 @@ namespace Gecode { namespace Set {
    */
 
   forceinline SetVarImp*
-  SetVarImp::copy(Space* home, bool share) {
+  SetVarImp::copy(Space& home, bool share) {
     return copied() ?
       static_cast<SetVarImp*>(forward()) :
       perform_copy(home,share);
@@ -514,19 +514,19 @@ namespace Gecode { namespace Set {
    *
    */
   forceinline void
-  SetVarImp::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
+  SetVarImp::subscribe(Space& home, Propagator* p, PropCond pc, bool process) {
     SetVarImpBase::subscribe(home,p,pc,assigned(),process);
   }
   forceinline void
-  SetVarImp::cancel(Space* home, Propagator* p, PropCond pc) {
+  SetVarImp::cancel(Space& home, Propagator* p, PropCond pc) {
     SetVarImpBase::cancel(home,p,pc,assigned());
   }
   forceinline void
-  SetVarImp::subscribe(Space* home, Advisor& a) {
+  SetVarImp::subscribe(Space& home, Advisor& a) {
     SetVarImpBase::subscribe(home,a,assigned());
   }
   forceinline void
-  SetVarImp::cancel(Space* home, Advisor& a) {
+  SetVarImp::cancel(Space& home, Advisor& a) {
     SetVarImpBase::cancel(home,a,assigned());
   }
 

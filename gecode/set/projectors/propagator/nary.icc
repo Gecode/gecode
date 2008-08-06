@@ -40,7 +40,7 @@ namespace Gecode { namespace Set { namespace Projection {
   template <bool negated>
   forceinline
   NaryProjection<negated>::NaryProjection
-  (Space* home, ViewArray<SetView>& x0, ProjectorSet& ps0)
+  (Space& home, ViewArray<SetView>& x0, ProjectorSet& ps0)
     : Propagator(home), x(x0), pc(x.size()), ps(ps0) {
     force(home);
     Support::DynamicArray<int> scope;
@@ -58,7 +58,7 @@ namespace Gecode { namespace Set { namespace Projection {
   template <bool negated>
   forceinline
   NaryProjection<negated>::NaryProjection
-  (Space* home, bool share, NaryProjection& p)
+  (Space& home, bool share, NaryProjection& p)
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
     pc.update(home, share, p.pc);
@@ -87,15 +87,15 @@ namespace Gecode { namespace Set { namespace Projection {
 
   template <bool negated>
   Reflection::ActorSpec
-  NaryProjection<negated>::spec(const Space*, Reflection::VarMap&) const {
+  NaryProjection<negated>::spec(const Space&, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   }
 
   template <bool negated>
   size_t
-  NaryProjection<negated>::dispose(Space* home) {
+  NaryProjection<negated>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       for (int i=x.size(); i--;)
         if (pc[i] != PC_SET_ANY + 1)
           x[i].cancel(home, this, pc[i]);
@@ -108,7 +108,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   template <bool negated>
   ExecStatus
-  NaryProjection<negated>::post(Space* home,
+  NaryProjection<negated>::post(Space& home,
                                 ViewArray<SetView>& x, ProjectorSet& ps) {
     if (ps.arity() != x.size()-1) {
       throw Set::InvalidProjector("");
@@ -119,13 +119,13 @@ namespace Gecode { namespace Set { namespace Projection {
 
   template <bool negated>
   Actor*
-  NaryProjection<negated>::copy(Space* home, bool share) {
+  NaryProjection<negated>::copy(Space& home, bool share) {
     return new (home) NaryProjection<negated>(home,share,*this);
   }
 
   template <bool negated>
   ExecStatus
-  NaryProjection<negated>::propagate(Space* home, ModEventDelta) {
+  NaryProjection<negated>::propagate(Space& home, ModEventDelta) {
     bool done = true;
     for (int i=x.size(); i--;)
       if (!x[i].assigned()) {

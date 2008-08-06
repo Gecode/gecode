@@ -55,11 +55,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Default (empty) initialization of BitSet
     BitSet(void);
     /// BitSet with space for \a s bits. The bits are  set to \a value.
-    BitSet(Space* home, int s, bool value = false);
+    BitSet(Space& home, int s, bool value = false);
     /// Copy BitSet \a bs
-    BitSet(Space* home, const BitSet& bs);
+    BitSet(Space& home, const BitSet& bs);
     /// Initialize BitSet for \a s bits. The bits are  set to \a value.
-    void init(Space* home, int s, bool value=false);
+    void init(Space& home, int s, bool value=false);
     /// Access value at bit \a i
     bool get(unsigned int i);
     /// Set value at bit \a i to \a value
@@ -67,10 +67,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
   
   forceinline void
-  BitSet::init(Space* home, int s, bool value) {
+  BitSet::init(Space& home, int s, bool value) {
     size = static_cast<int>(std::ceil(static_cast<double>(s)
                                       /(CHAR_BIT*sizeof(Base))));
-    data = home->alloc<Base>(size);
+    data = home.alloc<Base>(size);
     Base ival = value ? ~0 : 0;
     for (int i = size; i--; ) data[i] = ival;
   }
@@ -79,13 +79,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   BitSet::BitSet(void) : data(NULL), size(0) {}
 
   forceinline
-  BitSet::BitSet(Space* home, int s, bool value) 
+  BitSet::BitSet(Space& home, int s, bool value) 
     : data(NULL), size(0) {
     init(home, s, value);
   }
   forceinline
-  BitSet::BitSet(Space* home, const BitSet& bs)
-    : data(home->alloc<Base>(bs.size)), size(bs.size) {
+  BitSet::BitSet(Space& home, const BitSet& bs)
+    : data(home.alloc<Base>(bs.size)), size(bs.size) {
     for (int i = size; i--; ) data[i] = bs.data[i];
   }
   forceinline bool

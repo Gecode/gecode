@@ -73,7 +73,7 @@ namespace Test {
       /// Perform test
       virtual bool run(void);
       /// Post propagators on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
     };
 
     /**
@@ -90,7 +90,7 @@ namespace Test {
       /// Perform test
       virtual bool run(void);
       /// Post propagators on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::BoolVarArray& x) = 0;
+      virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
     };
 
 #ifdef GECODE_HAS_SET_VARS
@@ -110,7 +110,7 @@ namespace Test {
       /// Perform test
       virtual bool run(void);
       /// Post propagators on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::SetVarArray& x) = 0;
+      virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
     };
 #endif
 
@@ -131,7 +131,7 @@ namespace Test {
       /// Perform test
       virtual bool run(void);
       /// Post propagators on variables \a x
-      virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x) = 0;
+      virtual void post(Gecode::Space& home, Gecode::CpltSetVarArray& x) = 0;
     };
 #endif
 

@@ -73,32 +73,32 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// connection to dropped view
     int reachable;
     /// Constructor for posting
-    Sorted(Space*, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
+    Sorted(Space&, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
     /// Constructor for posting from reflection
-    Sorted(Space*, ViewArray<View>& x, ViewArray<View>& y,
+    Sorted(Space&, ViewArray<View>& x, ViewArray<View>& y,
            ViewArray<View>& z, ViewArray<View>& w, int reachable);
     /// Constructor for cloning
-    Sorted(Space* home, bool share, Sorted<View,Perm>& p);
+    Sorted(Space& home, bool share, Sorted<View,Perm>& p);
 
   public:
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Cost function returning PC_LINEAR_HI
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for views \a x, \a y, and \a z
-    static  ExecStatus post(Space*, ViewArray<View>& x, ViewArray<View>& y, 
+    static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y, 
                             ViewArray<View>& z);
   };
 

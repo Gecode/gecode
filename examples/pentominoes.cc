@@ -341,14 +341,14 @@ public:
       filled(spec[0].amount),
       nspecs(examples_size[opt.size()]-1), 
       ntiles(compute_number_of_tiles(spec+1, nspecs)), 
-      board(this, width*height, filled,ntiles+1) {
+      board(*this, width*height, filled,ntiles+1) {
     spec += 1; // No need for the specification-part any longer
     
     // Set end-of-line markers
     for (int h = 0; h < height; ++h) {
       for (int w = 0; w < width-1; ++w)
-	rel(this, board[h*width + w], IRT_NQ, ntiles+1);
-      rel(this, board[h*width + width - 1], IRT_EQ, ntiles+1);
+	rel(*this, board[h*width + w], IRT_NQ, ntiles+1);
+      rel(*this, board[h*width + width - 1], IRT_EQ, ntiles+1);
     }
 
     // Post constraints
@@ -374,7 +374,7 @@ public:
           }
           // End of line marker
           REG eol(ntiles+1);
-          extensional(this, board, get_constraint(i, mark, other, eol));
+          extensional(*this, board, get_constraint(i, mark, other, eol));
           ++tile;
         }
       }
@@ -383,14 +383,14 @@ public:
       // Boolean variables for channeling
       BoolVarArgs p(ncolors * board.size());
       for (int i=p.size(); i--; )
-        p[i].init(this,0,1);
+        p[i].init(*this,0,1);
       
       // Post channel constraints
       for (int i=board.size(); i--; ) {
         BoolVarArgs c(ncolors);
         for (int j=ncolors; j--; ) 
           c[j]=p[i*ncolors+j];
-        channel(this, c, board[i]);
+        channel(*this, c, board[i]);
       }
       
       // For placing tile i, we construct the expression over
@@ -408,7 +408,7 @@ public:
             c[k] = p[k*ncolors+col];
           }
         
-          extensional(this, c, get_constraint(i, mark, other, other));
+          extensional(*this, c, get_constraint(i, mark, other, other));
           ++tile;
         }
       }
@@ -429,19 +429,19 @@ public:
       for (int i = 0; i < symscnt; ++i) {
         syms[i](orig, width-1, height, symm, w2, h2);
         if (width-1 == w2 && height == h2)
-          rel(this, orig, IRT_LQ, symm);
+          rel(*this, orig, IRT_LQ, symm);
       }
     }
       
     // Install branching
-    branch(this, board, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, board, INT_VAR_NONE, INT_VAL_MIN);
   }
   
   /// Constructor for cloning \a s
   Pentominoes(bool share, Pentominoes& s) :
     Example(share,s), spec(s.spec), width(s.width), height(s.height),
     filled(s.filled), nspecs(s.nspecs) {
-    board.update(this, share, s.board);
+    board.update(*this, share, s.board);
   }
   
   /// Copy space during cloning

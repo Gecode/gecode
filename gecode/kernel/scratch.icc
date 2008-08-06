@@ -57,7 +57,7 @@ namespace Gecode {
   class Scratch {
   private:
     /// Location to space
-    Space* home;
+    Space& home;
     /// Free memory to reset
     size_t free_reset;
     /// Heap information data structure
@@ -84,7 +84,7 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT void heap_free(void);
   public:
     /// Initialize scratch from space
-    Scratch(const Space* home);
+    Scratch(const Space& home);
     /// \name Typed allocation routines
     //@{
     /** 
@@ -140,7 +140,7 @@ namespace Gecode {
     /// Free memory allocated from heap (disabled)
     static void  operator delete(void* p) { (void) p; };
     /// Copy constructor (disabled)
-    Scratch(const Scratch&) {}
+    Scratch(const Scratch& s) : home(s.home) {}
     /// Assignment operator (disabled)
     const Scratch& operator=(const Scratch&) { return *this; }
   };
@@ -152,13 +152,13 @@ namespace Gecode {
    *
    */
   forceinline
-  Scratch::Scratch(const Space* h) 
-    : home(const_cast<Space*>(h)), free_reset(home->ssa->free), hi(0) {}
+  Scratch::Scratch(const Space& h) 
+    : home(const_cast<Space&>(h)), free_reset(home.ssa->free), hi(0) {}
 
   forceinline void*
   Scratch::ralloc(size_t s) {
     void* p;
-    if (home->ssa->alloc(s,p))
+    if (home.ssa->alloc(s,p))
       return p;
     return heap_alloc(s);
   }
@@ -168,7 +168,7 @@ namespace Gecode {
 
   forceinline
   Scratch::~Scratch(void) {
-    home->ssa->free = free_reset;
+    home.ssa->free = free_reset;
     if (hi != NULL)
       heap_free();
   }

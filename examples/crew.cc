@@ -95,7 +95,7 @@ public:
 
   /// The actual model
   Crew(const Options&) :
-    flight(this,noOfFlights,IntSet::empty,0,noOfEmployees-1)
+    flight(*this,noOfFlights,IntSet::empty,0,noOfEmployees-1)
   {
     IntSet stewardsDS(stewards,noOfStewards);
     IntSet hostessesDS(hostesses,noOfHostesses);
@@ -104,7 +104,7 @@ public:
     IntSet germanDS(germanSpeaking, noOfGermanSpeaking);
 
     for (int i=0; i<noOfFlights; i++) {
-      IntVarArray ia(this,5,0,noOfEmployees-1);
+      IntVarArray ia(*this,5,0,noOfEmployees-1);
       SetVar team = flight[i];
 
       int N        = requiredCrew[i].staff;
@@ -114,40 +114,40 @@ public:
       int NSpanish = requiredCrew[i].spanish;
       int NGerman  = requiredCrew[i].german;
 
-      cardinality(this, team,N,N);
-      SetVar stewardsInFS(this);
-      SetVar hostessesInFS(this);
-      SetVar spanishInFS(this);
-      SetVar frenchInFS(this);
-      SetVar germanInFS(this);
+      cardinality(*this, team,N,N);
+      SetVar stewardsInFS(*this);
+      SetVar hostessesInFS(*this);
+      SetVar spanishInFS(*this);
+      SetVar frenchInFS(*this);
+      SetVar germanInFS(*this);
 
-      rel(this, team, SOT_INTER, stewardsDS, SRT_EQ, stewardsInFS);
-      rel(this, team, SOT_INTER, hostessesDS, SRT_EQ, hostessesInFS);
-      rel(this, team, SOT_INTER, spanishDS, SRT_EQ, spanishInFS);
-      rel(this, team, SOT_INTER, frenchDS, SRT_EQ, frenchInFS);
-      rel(this, team, SOT_INTER, germanDS, SRT_EQ, germanInFS);
+      rel(*this, team, SOT_INTER, stewardsDS, SRT_EQ, stewardsInFS);
+      rel(*this, team, SOT_INTER, hostessesDS, SRT_EQ, hostessesInFS);
+      rel(*this, team, SOT_INTER, spanishDS, SRT_EQ, spanishInFS);
+      rel(*this, team, SOT_INTER, frenchDS, SRT_EQ, frenchInFS);
+      rel(*this, team, SOT_INTER, germanDS, SRT_EQ, germanInFS);
 
-      cardinality(this, stewardsInFS, ia[0]);
-      cardinality(this, hostessesInFS, ia[1]);
-      cardinality(this, spanishInFS, ia[2]);
-      cardinality(this, frenchInFS, ia[3]);
-      cardinality(this, germanInFS, ia[4]);
+      cardinality(*this, stewardsInFS, ia[0]);
+      cardinality(*this, hostessesInFS, ia[1]);
+      cardinality(*this, spanishInFS, ia[2]);
+      cardinality(*this, frenchInFS, ia[3]);
+      cardinality(*this, germanInFS, ia[4]);
 
-      rel(this, ia[0], IRT_GQ, NStew);
-      rel(this, ia[1], IRT_GQ, NHost);
-      rel(this, ia[2], IRT_GQ, NSpanish);
-      rel(this, ia[3], IRT_GQ, NFrench);
-      rel(this, ia[4], IRT_GQ, NGerman);
+      rel(*this, ia[0], IRT_GQ, NStew);
+      rel(*this, ia[1], IRT_GQ, NHost);
+      rel(*this, ia[2], IRT_GQ, NSpanish);
+      rel(*this, ia[3], IRT_GQ, NFrench);
+      rel(*this, ia[4], IRT_GQ, NGerman);
 
     }
 
     for (int i=0; i<noOfFlights-2; i++) {
-      rel(this, flight[i], SRT_DISJ, flight[i+1]);
-      rel(this, flight[i], SRT_DISJ, flight[i+2]);
+      rel(*this, flight[i], SRT_DISJ, flight[i+1]);
+      rel(*this, flight[i], SRT_DISJ, flight[i+2]);
     }
-    rel(this, flight[noOfFlights-2], SRT_DISJ, flight[noOfFlights-1]);
+    rel(*this, flight[noOfFlights-2], SRT_DISJ, flight[noOfFlights-1]);
 
-    branch(this, flight, SET_VAR_NONE, SET_VAL_MIN_INC);
+    branch(*this, flight, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Print solution
@@ -185,7 +185,7 @@ public:
   /// Constructor for cloning \a s
   Crew(bool share, Crew& s)
     : Example(share,s) {
-    flight.update(this,share,s.flight);
+    flight.update(*this,share,s.flight);
   }
   /// Copy during cloning
   virtual

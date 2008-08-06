@@ -140,77 +140,77 @@ namespace Gecode { namespace CpltSet {
    */
 
   forceinline ModEvent 
-  CpltSetView::cardinality(Space* home, int l, int u) {
+  CpltSetView::cardinality(Space& home, int l, int u) {
     return varimp->cardinality(home, l, u);
   }
 
   forceinline ModEvent
-  CpltSetView::cardMin(Space* home, unsigned int m) {
+  CpltSetView::cardMin(Space& home, unsigned int m) {
     return varimp->cardMin(home, m);
   }
 
   forceinline ModEvent
-  CpltSetView::cardMax(Space* home, unsigned int m) {
+  CpltSetView::cardMax(Space& home, unsigned int m) {
     return varimp->cardMax(home, m);
   }
 
   forceinline ModEvent
-  CpltSetView::include(Space* home, int from, int to) { 
+  CpltSetView::include(Space& home, int from, int to) { 
     return varimp->include(home, from, to);
   }
 
   forceinline ModEvent
-  CpltSetView::include(Space* home, int n) { return varimp->include(home, n); }
+  CpltSetView::include(Space& home, int n) { return varimp->include(home, n); }
 
   template <class I> ModEvent
-  CpltSetView::includeI(Space* home, I& iter) { return varimp->includeI(home, iter); }
+  CpltSetView::includeI(Space& home, I& iter) { return varimp->includeI(home, iter); }
 
   forceinline ModEvent
-  CpltSetView::exclude(Space* home, int from, int to) { 
+  CpltSetView::exclude(Space& home, int from, int to) { 
     return varimp->exclude(home, from, to);
   }
 
   forceinline ModEvent
-  CpltSetView::exclude(Space* home, int n) { return varimp->exclude(home, n); }
+  CpltSetView::exclude(Space& home, int n) { return varimp->exclude(home, n); }
 
   template <class I> ModEvent
-  CpltSetView::excludeI(Space* home, I& iter) { return varimp->excludeI(home, iter); }
+  CpltSetView::excludeI(Space& home, I& iter) { return varimp->excludeI(home, iter); }
 
   forceinline ModEvent
-  CpltSetView::intersect(Space* home,int from, int to) {
+  CpltSetView::intersect(Space& home,int from, int to) {
     return varimp->intersect(home,from,to);
   }
 
   forceinline ModEvent
-  CpltSetView::intersect(Space* home,int n) { return varimp->intersect(home,n); }
+  CpltSetView::intersect(Space& home,int n) { return varimp->intersect(home,n); }
 
   template <class I> ModEvent
-  CpltSetView::intersectI(Space* home, I& iter) { 
+  CpltSetView::intersectI(Space& home, I& iter) { 
     return varimp->intersectI(home, iter);
   }
 
   forceinline ModEvent
-  CpltSetView::nq(Space* home, int v) { return varimp->nq(home, v); }
+  CpltSetView::nq(Space& home, int v) { return varimp->nq(home, v); }
 
   forceinline ModEvent
-  CpltSetView::nq(Space* home, int a, int b) { return varimp->nq(home, a, b); }
+  CpltSetView::nq(Space& home, int a, int b) { return varimp->nq(home, a, b); }
 
   template <class I>
   forceinline ModEvent
-  CpltSetView::nqI(Space* home, I& i) { return varimp->nqI(home, i); }
+  CpltSetView::nqI(Space& home, I& i) { return varimp->nqI(home, i); }
 
   forceinline ModEvent
-  CpltSetView::eq(Space* home, int v) { return varimp->eq(home, v); }
+  CpltSetView::eq(Space& home, int v) { return varimp->eq(home, v); }
 
   forceinline ModEvent
-  CpltSetView::eq(Space* home, int a, int b) { return varimp->eq(home, a, b); }
+  CpltSetView::eq(Space& home, int a, int b) { return varimp->eq(home, a, b); }
   
   template <class I>
   forceinline ModEvent
-  CpltSetView::eqI(Space* home, I& i) { return varimp->eqI(home, i); }
+  CpltSetView::eqI(Space& home, I& i) { return varimp->eqI(home, i); }
 
   forceinline ModEvent 
-  CpltSetView::intersect(Space* home, bdd& d) {
+  CpltSetView::intersect(Space& home, bdd& d) {
     return varimp->intersect(home, d);
   }
 
@@ -220,7 +220,7 @@ namespace Gecode { namespace CpltSet {
    */
 
   forceinline void
-  CpltSetView::update(Space* home, bool share, CpltSetView& y) {
+  CpltSetView::update(Space& home, bool share, CpltSetView& y) {
     varimp = y.varimp->copy(home,share);
   }
 
@@ -229,7 +229,7 @@ namespace Gecode { namespace CpltSet {
    *
    */
   forceinline Reflection::Arg*
-  CpltSetView::spec(const Space* home, Reflection::VarMap& m) const {
+  CpltSetView::spec(const Space& home, Reflection::VarMap& m) const {
     return varimp->spec(home, m);
   }
   inline Support::Symbol

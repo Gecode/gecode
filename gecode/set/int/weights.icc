@@ -147,7 +147,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  Weights<View>::Weights(Space* home,
+  Weights<View>::Weights(Space& home,
                    const IntArgs& elements0, const IntArgs& weights0,
                    View x0, Gecode::Int::IntView y0)
     : Propagator(home), elements(elements0.size()), weights(weights0.size()),
@@ -162,7 +162,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  Weights<View>::Weights(Space* home, bool share, Weights& p)
+  Weights<View>::Weights(Space& home, bool share, Weights& p)
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -172,7 +172,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   inline ExecStatus
-  Weights<View>::post(Space* home, const IntArgs& elements, const IntArgs& weights,
+  Weights<View>::post(Space& home, const IntArgs& elements, const IntArgs& weights,
                 View x, Gecode::Int::IntView y) {
     if (elements.size() != weights.size())
       throw ArgumentSizeMismatch("Weights");
@@ -195,8 +195,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   size_t
-  Weights<View>::dispose(Space* home) {
-    assert(!home->failed());
+  Weights<View>::dispose(Space& home) {
+    assert(!home.failed());
     x.cancel(home,this, PC_SET_ANY);
     y.cancel(home,this, Gecode::Int::PC_INT_BND);
     (void) Propagator::dispose(home);
@@ -205,7 +205,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Actor*
-  Weights<View>::copy(Space* home, bool share) {
+  Weights<View>::copy(Space& home, bool share) {
     return new (home) Weights(home,share,*this);
   }
 
@@ -252,7 +252,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  Weights<View>::propagate(Space* home, ModEventDelta) {
+  Weights<View>::propagate(Space& home, ModEventDelta) {
 
     if (x.assigned()) {
       GlbRanges<View> glb(x);
@@ -341,7 +341,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec
-  Weights<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Weights<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << Reflection::Arg::newIntArray(elements)
              << Reflection::Arg::newIntArray(weights)
@@ -351,7 +351,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   void
-  Weights<View>::post(Space* home, Reflection::VarMap& vars,
+  Weights<View>::post(Space& home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     Reflection::IntArrayArg* elementsArg = spec[0]->toIntArray();

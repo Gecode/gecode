@@ -39,12 +39,12 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   forceinline
-  Base<View>::Base(Space* home, ViewArray<View>& x)
+  Base<View>::Base(Space& home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_DOM>(home,x), y(home,x) {}
 
   template <class View>
   forceinline
-  Base<View>::Base(Space* home, bool share, Base<View>& p)
+  Base<View>::Base(Space& home, bool share, Base<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
     y.update(home,share,p.y);
   }
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   ExecStatus
-  Base<View>::connected(Space* home) {
+  Base<View>::connected(Space& home) {
     int n = x.size();
 
     /// First non-assigned node.
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   ExecStatus
-  Base<View>::path(Space* home) {
+  Base<View>::path(Space& home) {
     // Prunes that partial assigned paths are not completed to cycles
 
     int n=x.size();
@@ -251,14 +251,14 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   forceinline size_t
-  Base<View>::dispose(Space* home) {
+  Base<View>::dispose(Space& home) {
     (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
 
   template <class View>
   Reflection::ActorSpec
-  Base<View>::spec(const Space* home, Reflection::VarMap& m,
+  Base<View>::spec(const Space& home, Reflection::VarMap& m,
                    const Support::Symbol& name) const {
     return NaryPropagator<View,PC_INT_DOM>::spec(home, m, name);                   
   }

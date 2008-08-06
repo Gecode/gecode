@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   Actor*
-  SeqU::copy(Space* home, bool share) {
+  SeqU::copy(Space& home, bool share) {
     return new (home) SeqU(home,share,*this);
   }
 
@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   Reflection::ActorSpec
-  SeqU::spec(const Space* home, Reflection::VarMap& m) const {
+  SeqU::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s =
      NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
     int count = 0;
@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   void
-  SeqU::post(Space* home, Reflection::VarMap& vars,
+  SeqU::post(Space& home, Reflection::VarMap& vars,
              const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<SetView> x0(home, vars, spec[0]);
@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   ExecStatus
-  SeqU::propagateSeqUnion(Space* home,
+  SeqU::propagateSeqUnion(Space& home,
                           bool& modified, ViewArray<SetView>& x,
                           SetView& y) {
     Scratch s(home);
@@ -137,7 +137,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   //Enforces sequentiality and ensures y contains union of Xi lower bounds.
   ExecStatus
-  SeqU::propagate(Space* home, ModEventDelta med) {
+  SeqU::propagate(Space& home, ModEventDelta med) {
     ModEvent me0 = SetView::me(med);
     bool ubevent = Rel::testSetEventUB(me0);
     bool anybevent = Rel::testSetEventAnyB(me0);

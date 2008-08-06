@@ -42,9 +42,9 @@ namespace Gecode {
   using namespace Int;
 
   void
-  element(Space* home, const IntArgs& c, IntVar x0, IntVar x1,
+  element(Space& home, const IntArgs& c, IntVar x0, IntVar x1,
           IntConLevel, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; ) {
       Limits::check(c[i],"Int::element");
@@ -54,9 +54,9 @@ namespace Gecode {
   }
 
   void
-  element(Space* home, const IntArgs& c, IntVar x0, BoolVar x1,
+  element(Space& home, const IntArgs& c, IntVar x0, BoolVar x1,
           IntConLevel, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; ) {
       Limits::check(c[i],"Int::element");
@@ -67,10 +67,10 @@ namespace Gecode {
   }
 
   void
-  element(Space* home, const IntArgs& c, IntVar x0, int x1,
+  element(Space& home, const IntArgs& c, IntVar x0, int x1,
           IntConLevel, PropKind) {
     Limits::check(x1,"Int::element");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; ) {
       Limits::check(c[i],"Int::element");
@@ -82,9 +82,9 @@ namespace Gecode {
   }
 
   void
-  element(Space* home, const IntVarArgs& c, IntVar x0, IntVar x1,
+  element(Space& home, const IntVarArgs& c, IntVar x0, IntVar x1,
           IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
@@ -97,10 +97,10 @@ namespace Gecode {
   }
 
   void
-  element(Space* home, const IntVarArgs& c, IntVar x0, int x1,
+  element(Space& home, const IntVarArgs& c, IntVar x0, int x1,
           IntConLevel icl, PropKind) {
     Limits::check(x1,"Int::element");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
     ConstIntView v1(x1);
@@ -114,9 +114,9 @@ namespace Gecode {
   }
 
   void
-  element(Space* home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
+  element(Space& home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
           IntConLevel, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Element::IdxView<BoolView>* iv = 
       Element::IdxView<BoolView>::init(home,c);
     GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,BoolView>
@@ -124,10 +124,10 @@ namespace Gecode {
   }
 
   void
-  element(Space* home, const BoolVarArgs& c, IntVar x0, int x1,
+  element(Space& home, const BoolVarArgs& c, IntVar x0, int x1,
           IntConLevel, PropKind) {
     Limits::check(x1,"Int::element");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Element::IdxView<BoolView>* iv = 
       Element::IdxView<BoolView>::init(home,c);
     ConstIntView v1(x1);

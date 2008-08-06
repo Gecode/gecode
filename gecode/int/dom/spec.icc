@@ -40,14 +40,14 @@ namespace Gecode { namespace Int { namespace Dom {
   template <class View>
   forceinline
   ReIntSet<View>::ReIntSet
-  (Space* home, View x, const IntSet& s, BoolView b)
+  (Space& home, View x, const IntSet& s, BoolView b)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b), is(s) {
     Propagator::force(home);
   }
 
   template <class View>
   forceinline size_t
-  ReIntSet<View>::dispose(Space* home) {
+  ReIntSet<View>::dispose(Space& home) {
     Propagator::unforce(home);
     is.~IntSet();
     (void) ReUnaryPropagator<View,PC_INT_DOM,BoolView>::dispose(home);
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   ExecStatus
-  ReIntSet<View>::post(Space* home, View x, const IntSet& s, BoolView b) {
+  ReIntSet<View>::post(Space& home, View x, const IntSet& s, BoolView b) {
     if (s.size() == 0) {
       GECODE_ME_CHECK(b.zero(home));
     } else if (s.size() == 1) {
@@ -70,14 +70,14 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   forceinline
-  ReIntSet<View>::ReIntSet(Space* home, bool share, ReIntSet& p)
+  ReIntSet<View>::ReIntSet(Space& home, bool share, ReIntSet& p)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p) {
     is.update(home,share,p.is);
   }
 
   template <class View>
   Actor*
-  ReIntSet<View>::copy(Space* home, bool share) {
+  ReIntSet<View>::copy(Space& home, bool share) {
     return new (home) ReIntSet(home,share,*this);
   }
 
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   Reflection::ActorSpec
-  ReIntSet<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  ReIntSet<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s =
       ReUnaryPropagator<View,PC_INT_DOM,BoolView>::spec(home, m, ati());
     int count=0;
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   void
-  ReIntSet<View>::post(Space* home, Reflection::VarMap& vars,
+  ReIntSet<View>::post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     View x0(home, vars, spec[0]);
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   ExecStatus
-  ReIntSet<View>::propagate(Space* home, ModEventDelta) {
+  ReIntSet<View>::propagate(Space& home, ModEventDelta) {
     IntSetRanges i_is(is);
     if (b.one()) {
       GECODE_ME_CHECK(x0.inter_r(home,i_is,false)); goto subsumed;

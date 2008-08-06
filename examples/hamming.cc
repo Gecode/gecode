@@ -64,10 +64,10 @@ public:
 
   /// Actual model
   Hamming(const SizeOptions& opt) :
-    xs(this,opt.size(),IntSet::empty,1,bits) {
-    SetVarArray cxs(this,xs.size());
+    xs(*this,opt.size(),IntSet::empty,1,bits) {
+    SetVarArray cxs(*this,xs.size());
     for (int i=0; i<xs.size(); i++)
-      rel(this, xs[i], SRT_CMPL, cxs[i]);
+      rel(*this, xs[i], SRT_CMPL, cxs[i]);
 
     for (int i=0; i<xs.size(); i++) {
       SetVar y = xs[i];
@@ -76,20 +76,20 @@ public:
         SetVar x = xs[j];
         SetVar cx = cxs[j];
 
-        SetVar xIntCy(this);
-        SetVar yIntCx(this);
+        SetVar xIntCy(*this);
+        SetVar yIntCx(*this);
 
-        rel(this, x, SOT_INTER, cy, SRT_EQ, xIntCy);
-        rel(this, y, SOT_INTER, cx, SRT_EQ, yIntCx);
-        IntVar diff1(this,0,1024);
-        IntVar diff2(this,0,1204);
-        cardinality(this, xIntCy,diff1);
-        cardinality(this, yIntCx,diff2);
-        post(this, diff1+diff2 >= dist);
+        rel(*this, x, SOT_INTER, cy, SRT_EQ, xIntCy);
+        rel(*this, y, SOT_INTER, cx, SRT_EQ, yIntCx);
+        IntVar diff1(*this,0,1024);
+        IntVar diff2(*this,0,1204);
+        cardinality(*this, xIntCy,diff1);
+        cardinality(*this, yIntCx,diff2);
+        post(*this, diff1+diff2 >= dist);
       }
     }
 
-    branch(this, xs, SET_VAR_NONE, SET_VAL_MIN_INC);
+    branch(*this, xs, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Print solution
@@ -102,7 +102,7 @@ public:
 
   /// Constructor for copying \a s
   Hamming(bool share, Hamming& s) : Example(share,s) {
-    xs.update(this, share, s.xs);
+    xs.update(*this, share, s.xs);
   }
   /// Copy during cloning
   virtual Space*

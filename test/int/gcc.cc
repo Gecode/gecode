@@ -72,7 +72,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          IntArgs values(4);
          IntSet fixed(0,2);
@@ -106,7 +106,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          IntSet fixed(0,2);
          IntSetArgs cards(4);
@@ -136,7 +136,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntArgs values(2, 1,2);
          Gecode::count(home, x, Gecode::IntSet(2,2), values, icl);
        }
@@ -163,7 +163,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          IntArgs values(2, 1,2);
          Gecode::IntSet fixed;
@@ -214,7 +214,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a xy
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xy) {
          using namespace Gecode;
          // Number of cardinality variables
          int m = xy.size()-n;
@@ -263,7 +263,7 @@ namespace Test { namespace Int {
          return true;
        }
        /// Post constraint on \a xy
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xy) {
          using namespace Gecode;
          // Number of cardinality variables
          int m = xy.size()-n;

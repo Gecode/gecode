@@ -228,8 +228,8 @@ public:
   /// Actual model
   TSP(const SizeOptions& opt) 
     : p(ps[opt.size()]),
-      succ(this, p.size(), 0, p.size()-1),
-      total(this, 0, p.max()) {
+      succ(*this, p.size(), 0, p.size()-1),
+      total(*this, 0, p.max()) {
 
     // Cost of each edge
     IntVarArgs costs(p.size());
@@ -243,25 +243,25 @@ public:
         m = std::max(m,p.d(i,j));
         d[j]=p.d(i,j);
       }
-      costs[i].init(this,0,m);
+      costs[i].init(*this,0,m);
       // Propagate cost for chosen edge
-      element(this, d, succ[i], costs[i]);
+      element(*this, d, succ[i], costs[i]);
     }
 
     // Cost ist sume of all costs
-    linear(this, costs, IRT_EQ, total);
+    linear(*this, costs, IRT_EQ, total);
 
     // Enforce that the succesors yield a tour
-    circuit(this, succ, opt.icl());
+    circuit(*this, succ, opt.icl());
 
     // Just assume that the circle starts forwards
-    rel(this, succ[0], IRT_LE, succ[1]);
+    rel(*this, succ[0], IRT_LE, succ[1]);
 
     // First enumerate cost values, prefer those that maximize cost reduction
-    branch(this, costs, INT_VAR_REGRET_MAX_MAX, INT_VAL_SPLIT_MIN);
+    branch(*this, costs, INT_VAR_REGRET_MAX_MAX, INT_VAL_SPLIT_MIN);
 
     // Then fix the remaining successors
-    branch(this, succ,  INT_VAR_MIN_MIN, INT_VAL_MIN);
+    branch(*this, succ,  INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
@@ -269,8 +269,8 @@ public:
   }
   /// Constructor for cloning \a s
   TSP(bool share, TSP& s) : MinimizeExample(share,s), p(s.p) {
-    succ.update(this, share, s.succ);
-    total.update(this, share, s.total);
+    succ.update(*this, share, s.succ);
+    total.update(*this, share, s.total);
   }
   /// Copy during cloning
   virtual Space*

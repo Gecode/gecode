@@ -50,27 +50,27 @@ protected:
 public:
   /// The actual problem
   StressDomain(const SizeOptions& opt)
-    : x(this,5,0,5*opt.size()) {
+    : x(*this,5,0,5*opt.size()) {
 
     // Cut holes: expand
     for (int i = 5; i--; ) {
       for (unsigned int j = 0; j <= 5*opt.size(); j++)
-        rel(this, x[i], IRT_NQ, 5*j);
+        rel(*this, x[i], IRT_NQ, 5*j);
       for (unsigned int j = 0; j <= 5*opt.size(); j++)
-        rel(this, x[i], IRT_NQ, 5*j+2);
+        rel(*this, x[i], IRT_NQ, 5*j+2);
       for (unsigned int j = 0; j <= 5*opt.size(); j++)
-        rel(this, x[i], IRT_NQ, 5*j+4);
+        rel(*this, x[i], IRT_NQ, 5*j+4);
     }
     // Contract
     for (unsigned int j = 0; j <= 5*opt.size()/2; j++)
       for (unsigned int i = 5; i--; ) {
-        rel(this, x[i], IRT_GQ, 5*j);
-        rel(this, x[i], IRT_LQ, 5*(j + (5*opt.size()/2)));
+        rel(*this, x[i], IRT_GQ, 5*j);
+        rel(*this, x[i], IRT_LQ, 5*(j + (5*opt.size()/2)));
       }
   }
   /// Constructor for cloning \a s
   StressDomain(bool share, StressDomain& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
   virtual Space*

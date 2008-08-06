@@ -686,12 +686,12 @@ EOF
   print <<EOF
   protected:
     /// Constructor for cloning \\a x
-    $class[$f](Gecode::Space* home, bool share, $class[$f]\& x);
+    $class[$f](Gecode::Space& home, bool share, $class[$f]\& x);
   public:
     /// Constructor for creating static instance of variable
     $class[$f](void);
     /// Constructor for creating variable
-    $class[$f](Gecode::Space* home);
+    $class[$f](Gecode::Space& home);
     /// \\name Dependencies
     //\@{
     /** \\brief Subscribe propagator \\a p with propagation condition \\a pc
@@ -706,11 +706,11 @@ EOF
      * with modification event \\a me provided that \\a pc is different
      * from \\a $pc_assigned[$f].
      */
-    void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    void subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \\a a if \\a assigned is false.
-    void subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned);
+    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d);
+    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     //\@}
 EOF
 ;
@@ -745,13 +745,13 @@ if ($dispose[$f]) {
   $class[$f]::$class[$f](void) {}
 
   forceinline
-  $class[$f]::$class[$f](Gecode::Space* home)
+  $class[$f]::$class[$f](Gecode::Space& home)
     : $base[$f](home) {
      _next_d = static_cast<$class[$f]*>(vars_d(home)); vars_d(home,this);
   }
 
   forceinline
-  $class[$f]::$class[$f](Gecode::Space* home, bool share, $class[$f]\& x)
+  $class[$f]::$class[$f](Gecode::Space& home, bool share, $class[$f]\& x)
     : $base[$f](home,share,x) {
      _next_d = static_cast<$class[$f]*>(vars_d(home)); vars_d(home,this);
   }
@@ -770,11 +770,11 @@ EOF
   $class[$f]::$class[$f](void) {}
 
   forceinline
-  $class[$f]::$class[$f](Gecode::Space* home)
+  $class[$f]::$class[$f](Gecode::Space& home)
     : $base[$f](home) {}
 
   forceinline
-  $class[$f]::$class[$f](Gecode::Space* home, bool share, $class[$f]\& x)
+  $class[$f]::$class[$f](Gecode::Space& home, bool share, $class[$f]\& x)
     : $base[$f](home,share,x) {}
 EOF
 ;
@@ -782,11 +782,11 @@ EOF
   print <<EOF
 
   forceinline void
-  $class[$f]::subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
+  $class[$f]::subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
     $base[$f]::subscribe(home,p,pc,assigned,$me_subscribe[$f],schedule);
   }
   forceinline void
-  $class[$f]::subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned) {
+  $class[$f]::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
     $base[$f]::subscribe(home,a,assigned);
   }
 
@@ -796,7 +796,7 @@ EOF
 if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline Gecode::ModEvent
-  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta& d) {
+  $class[$f]::notify(Gecode::Space& home, Gecode::ModEvent, Gecode::Delta& d) {
     schedule(home,$pc_assigned[$f],$pc_assigned[$f],$me_assigned[$f]);
     if (!$base[$f]::advise(home,$me_assigned[$f],d))
       return $me_failed[$f];
@@ -809,7 +809,7 @@ EOF
 } else {
   print <<EOF
   forceinline Gecode::ModEvent
-  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d) {
+  $class[$f]::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
     switch (me) {
 EOF
 ;
@@ -888,7 +888,7 @@ EOF
 
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
-    print "    $base[$f]::update(this,sub);\n";
+    print "    $base[$f]::update(*this,sub);\n";
     print $endif[$f];
   }
 

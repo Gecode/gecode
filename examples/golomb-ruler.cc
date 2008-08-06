@@ -81,23 +81,23 @@ public:
 
   /// Actual model
   GolombRuler(const SizeOptions& opt)
-    : n(opt.size()), m(this,n,0,n*n) {
+    : n(opt.size()), m(*this,n,0,n*n) {
     const int dn = (n*n-n)/2;
 
     IntVarArgs d(dn);
 
     // Assume first mark to be zero
-    rel(this, m[0], IRT_EQ, 0);
+    rel(*this, m[0], IRT_EQ, 0);
 
     // Setup difference constraints
     for (int j=1; j<n; j++)
       d[diag(0,j)] = m[j];
     for (int i=1; i<n-1; i++)
       for (int j=i+1; j<n; j++)
-        d[diag(i,j)] = minus(this, m[j], m[i]);
+        d[diag(i,j)] = minus(*this, m[j], m[i]);
 
     // Order marks
-    rel(this, m, IRT_LE);
+    rel(*this, m, IRT_LE);
 
     switch (opt.model()) {
     case MODEL_NONE:
@@ -106,7 +106,7 @@ public:
       // d[diag(i,j)] must be at least sum of first j-i integers
       for (int i=0; i<n; i++)
         for (int j=i+1; j<n; j++)
-          rel(this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
+          rel(*this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
       break;
     case MODEL_RULER:
       {
@@ -118,23 +118,23 @@ public:
         // Marks from i to j must be ruler of length j-1+i
         for (int i=0; i<n; i++)
           for (int j=i+1; j<n; j++)
-            rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
+            rel(*this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
       }
       break;
     }
 
-    distinct(this, d, opt.icl());
+    distinct(*this, d, opt.icl());
 
     if (n > 2)
-      rel(this, d[diag(0,1)], IRT_LE, d[diag(n-2,n-1)]);
+      rel(*this, d[diag(0,1)], IRT_LE, d[diag(n-2,n-1)]);
 
     if (opt.search() == SEARCH_DFS) {
       IntVarArgs max(1);
       max[0]=m[n-1];
-      branch(this, max, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+      branch(*this, max, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
     }
 
-    branch(this, m, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, m, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Return cost
@@ -151,7 +151,7 @@ public:
   /// Constructor for cloning \a s
   GolombRuler(bool share, GolombRuler& s)
     : MinimizeExample(share,s), n(s.n) {
-    m.update(this, share, s.m);
+    m.update(*this, share, s.m);
   }
   /// Copy during cloning
   virtual Space*
@@ -162,7 +162,7 @@ public:
   /// Make variables available for visualisation
   virtual void
   getVars(Gecode::Reflection::VarMap& vm, bool registerOnly) {
-    vm.putArray(this,m,"m", registerOnly);
+    vm.putArray(*this,m,"m", registerOnly);
   }
 };
 

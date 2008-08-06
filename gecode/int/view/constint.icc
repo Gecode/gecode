@@ -52,7 +52,7 @@ namespace Gecode {
       x=n;
     }
     forceinline
-    ConstIntView::ConstIntView(Space*, const Reflection::VarMap&,
+    ConstIntView::ConstIntView(Space&, const Reflection::VarMap&,
                                Reflection::Arg* arg) : x(arg->toInt()) {}
 
 
@@ -123,56 +123,56 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    ConstIntView::lq(Space*, int n) {
+    ConstIntView::lq(Space&, int n) {
       return (x <= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ConstIntView::lq(Space*, double n) {
+    ConstIntView::lq(Space&, double n) {
       return (x <= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ConstIntView::le(Space*, int n) {
+    ConstIntView::le(Space&, int n) {
       return (x < n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ConstIntView::le(Space*, double n) {
+    ConstIntView::le(Space&, double n) {
       return (x < n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ConstIntView::gq(Space*, int n) {
+    ConstIntView::gq(Space&, int n) {
       return (x >= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ConstIntView::gq(Space*, double n) {
+    ConstIntView::gq(Space&, double n) {
       return (x >= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ConstIntView::gr(Space*, int n) {
+    ConstIntView::gr(Space&, int n) {
       return (x > n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ConstIntView::gr(Space*, double n) {
+    ConstIntView::gr(Space&, double n) {
       return (x > n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ConstIntView::nq(Space*, int n) {
+    ConstIntView::nq(Space&, int n) {
       return (x != n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ConstIntView::nq(Space*, double n) {
+    ConstIntView::nq(Space&, double n) {
       return (x != n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ConstIntView::eq(Space*, int n) {
+    ConstIntView::eq(Space&, int n) {
       return (x == n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ConstIntView::eq(Space*, double n) {
+    ConstIntView::eq(Space&, double n) {
       return (x == n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
@@ -184,13 +184,13 @@ namespace Gecode {
      */
     template <class I>
     forceinline ModEvent
-    ConstIntView::narrow_r(Space*, I& i, bool) {
+    ConstIntView::narrow_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::inter_r(Space*, I& i, bool) {
+    ConstIntView::inter_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       while (i() && (i.max() < x)) 
         ++i;
@@ -198,7 +198,7 @@ namespace Gecode {
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::minus_r(Space*, I& i, bool) {
+    ConstIntView::minus_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       while (i() && (i.max() < x)) 
         ++i;
@@ -206,13 +206,13 @@ namespace Gecode {
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::narrow_v(Space*, I& i, bool) {
+    ConstIntView::narrow_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::inter_v(Space*, I& i, bool) {
+    ConstIntView::inter_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       while (i() && (i.val() < x)) 
         ++i;
@@ -220,7 +220,7 @@ namespace Gecode {
     }
     template <class I>
     forceinline ModEvent
-    ConstIntView::minus_v(Space*, I& i, bool) {
+    ConstIntView::minus_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       while (i() && (i.val() < x)) 
         ++i;
@@ -234,7 +234,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    ConstIntView::schedule(Space* home, Propagator* p, ModEvent me) {
+    ConstIntView::schedule(Space& home, Propagator* p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
@@ -252,15 +252,15 @@ namespace Gecode {
      *
      */
     forceinline void
-    ConstIntView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+    ConstIntView::subscribe(Space& home, Propagator* p, PropCond,bool) {
       schedule(home,p,ME_INT_VAL);
     }
     forceinline void
-    ConstIntView::cancel(Space*,Propagator*,PropCond) {}
+    ConstIntView::cancel(Space&,Propagator*,PropCond) {}
     forceinline void
-    ConstIntView::subscribe(Space*, Advisor&) {}
+    ConstIntView::subscribe(Space&, Advisor&) {}
     forceinline void
-    ConstIntView::cancel(Space*,Advisor&) {}
+    ConstIntView::cancel(Space&,Advisor&) {}
 
 
 
@@ -292,7 +292,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    ConstIntView::update(Space*, bool, ConstIntView& y) {
+    ConstIntView::update(Space&, bool, ConstIntView& y) {
       x = y.x;
     }
 
@@ -301,7 +301,7 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    ConstIntView::spec(const Space*, Reflection::VarMap&) const {
+    ConstIntView::spec(const Space&, Reflection::VarMap&) const {
       return Reflection::Arg::newInt(x);
     }
     inline Support::Symbol

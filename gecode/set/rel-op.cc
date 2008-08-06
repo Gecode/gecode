@@ -46,13 +46,13 @@ namespace Gecode {
   using namespace Gecode::Set::RelOp;
 
   void
-  rel(Space* home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z) {
+  rel(Space& home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z) {
     rel_op_post<SetView,SetView,SetView>(home, x, op, y, r, z);
   }
 
   void
-  rel(Space* home, SetOpType op, const SetVarArgs& x, SetVar y) {
-    if (home->failed()) return;
+  rel(Space& home, SetOpType op, const SetVarArgs& x, SetVar y) {
+    if (home.failed()) return;
     ViewArray<SetView> xa(home,x);
     switch(op) {
     case SOT_UNION:
@@ -76,8 +76,8 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
-    if (home->failed()) return;
+  rel(Space& home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
+    if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");
     ViewArray<SetView> xa(home,x);
     switch(op) {
@@ -102,8 +102,8 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, SetOpType op, const IntVarArgs& x, SetVar y) {
-    if (home->failed()) return;
+  rel(Space& home, SetOpType op, const IntVarArgs& x, SetVar y) {
+    if (home.failed()) return;
     ViewArray<SingletonView> xa(home,x.size());
     for (int i=x.size(); i--;) {
       Int::IntView iv(x[i]);
@@ -132,8 +132,8 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y) {
-    if (home->failed()) return;
+  rel(Space& home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y) {
+    if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");
     ViewArray<SingletonView> xa(home,x.size());
     for (int i=x.size(); i--;) {

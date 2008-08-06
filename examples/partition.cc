@@ -52,48 +52,48 @@ protected:
 public:
   /// Actual model
   Partition(const SizeOptions& opt)
-    : x(this,opt.size(),1,2*opt.size()),
-      y(this,opt.size(),1,2*opt.size()) {
+    : x(*this,opt.size(),1,2*opt.size()),
+      y(*this,opt.size(),1,2*opt.size()) {
     const int n = opt.size();
     // Break symmetries by ordering numbers in each group
-    rel(this, x, IRT_LE);
-    rel(this, y, IRT_LE);
+    rel(*this, x, IRT_LE);
+    rel(*this, y, IRT_LE);
 
-    rel(this, x[0], IRT_LE, y[0]);
+    rel(*this, x[0], IRT_LE, y[0]);
 
     IntVarArgs xy(2*n);
     for (int i = n; i--; ) {
       xy[i] = x[i]; xy[n+i] = y[i];
     }
-    distinct(this, xy, opt.icl());
+    distinct(*this, xy, opt.icl());
 
     IntArgs c(2*n);
     for (int i = n; i--; ) {
       c[i] = 1; c[n+i] = -1;
     }
-    linear(this, c, xy, IRT_EQ, 0);
+    linear(*this, c, xy, IRT_EQ, 0);
 
     // Array of products
     IntVarArgs sxy(2*n), sx(n), sy(n);
 
     for (int i = n; i--; ) {
-      sx[i] = sxy[i] =   sqr(this, x[i]);
-      sy[i] = sxy[n+i] = sqr(this, y[i]); 
+      sx[i] = sxy[i] =   sqr(*this, x[i]);
+      sy[i] = sxy[n+i] = sqr(*this, y[i]); 
     }
-    linear(this, c, sxy, IRT_EQ, 0);
+    linear(*this, c, sxy, IRT_EQ, 0);
 
     // Redundant
-    linear(this, x, IRT_EQ, 2*n*(2*n+1)/4);
-    linear(this, y, IRT_EQ, 2*n*(2*n+1)/4);
-    linear(this, sx, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
-    linear(this, sy, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
-    branch(this, xy, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    linear(*this, x, IRT_EQ, 2*n*(2*n+1)/4);
+    linear(*this, y, IRT_EQ, 2*n*(2*n+1)/4);
+    linear(*this, sx, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
+    linear(*this, sy, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
+    branch(*this, xy, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   /// Constructor used during cloning \a s
   Partition(bool share, Partition& s) : Example(share,s) {
-    x.update(this, share, s.x);
-    y.update(this, share, s.y);
+    x.update(*this, share, s.x);
+    y.update(*this, share, s.y);
   }
   /// Copying during cloning
   virtual Space*

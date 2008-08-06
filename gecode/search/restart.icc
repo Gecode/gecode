@@ -61,7 +61,7 @@ namespace Gecode {
   forceinline T*
   Restart<T>::next(void) {
     if (best != NULL) {
-      root->constrain(best);
+      root->constrain(*best);
       this->e.clone++;
       if (root->status(this->e.propagate) == SS_FAILED) {
         this->e.reset();

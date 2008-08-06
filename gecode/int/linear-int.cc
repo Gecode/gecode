@@ -42,10 +42,10 @@ namespace Gecode {
   using namespace Int;
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntVarArgs& x, IntRelType r, int c, 
          IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
@@ -55,10 +55,10 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntVarArgs& x, IntRelType r, int c, BoolVar b, 
          IntConLevel, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
@@ -68,12 +68,12 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, int c,
          IntConLevel icl, PropKind) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
@@ -83,12 +83,12 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, int c, BoolVar b,
          IntConLevel, PropKind) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
@@ -98,10 +98,10 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntVarArgs& x, IntRelType r, IntVar y, 
          IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -122,16 +122,16 @@ namespace Gecode {
       break;
     default: ;
     }
-    if (home->failed()) return;
+    if (home.failed()) return;
     t[x.size()].a=-1; t[x.size()].x=y;
     Linear::post(home,t,x.size()+1,r,0,icl);
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntVarArgs& x, IntRelType r, IntVar y, BoolVar b,
          IntConLevel, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -142,12 +142,12 @@ namespace Gecode {
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
          IntConLevel icl, PropKind) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -168,18 +168,18 @@ namespace Gecode {
       break;
     default: ;
     }
-    if (home->failed()) return;
+    if (home.failed()) return;
     t[x.size()].a=-1; t[x.size()].x=y;
     Linear::post(home,t,x.size()+1,r,0,icl);
   }
 
   void
-  linear(Space* home,
+  linear(Space& home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
          BoolVar b, IntConLevel, PropKind) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
+    if (home.failed()) return;
     Scratch s(home);
     Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {

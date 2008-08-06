@@ -84,7 +84,7 @@ namespace Gecode {
    *
    */
   GECODE_SERIALIZATION_EXPORT
-  void emitFlatzinc(Space* home, std::ostream& os);
+  void emitFlatzinc(Space& home, std::ostream& os);
 
   /**
    * \brief Produce JavaScript representation of \a home
@@ -95,7 +95,7 @@ namespace Gecode {
    *
    */
   GECODE_SERIALIZATION_EXPORT
-  void emitJavaScript(Space* home, std::ostream& os);
+  void emitJavaScript(Space& home, std::ostream& os);
 
 #ifdef GECODE_HAS_QT
   /**
@@ -103,7 +103,7 @@ namespace Gecode {
     * \ingroup TaskSerialization
     */
   GECODE_SERIALIZATION_EXPORT
-  void fromJavaScript(Space* home, const std::string& model);
+  void fromJavaScript(Space& home, const std::string& model);
 #endif
 
 namespace Serialization {

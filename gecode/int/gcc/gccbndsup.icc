@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool shared>
   inline ExecStatus
-  prop_card(Space* home, ViewArray<View>& x, ViewArray<Card>& k, bool& mod) {
+  prop_card(Space& home, ViewArray<View>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
     int m = k.size();
     Scratch s(home);
@@ -702,7 +702,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class Card>
   void
-  reduce_card(Space* home, int cmin, int cmax, ViewArray<Card>& k) {
+  reduce_card(Space& home, int cmin, int cmax, ViewArray<Card>& k) {
     if (cmin == cmax) {
       int idx = 0;
       while (k[idx].card() != cmax) {

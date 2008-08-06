@@ -92,7 +92,7 @@ public:
   MineSweeper(const SizeOptions& opt)
     : spec(specs[opt.size()]), 
       size(spec_size(spec)),
-      b(this,size*size,0,1) {
+      b(*this,size*size,0,1) {
     MiniModel::Matrix<BoolVarArray> m(b, size, size);
 
     // Initialize matrix and post constraints
@@ -100,13 +100,13 @@ public:
       for (int w=0; w<size; w++) {
         int v = mineField(spec, size, h, w);
         if (v != -1) {
-          rel(this, m(w, h), IRT_EQ, 0);
-          linear(this, fieldsAround(m, w, h), IRT_EQ, v);
+          rel(*this, m(w, h), IRT_EQ, 0);
+          linear(*this, fieldsAround(m, w, h), IRT_EQ, v);
         }
       }
 
     // Install branching
-    branch(this, b, INT_VAR_NONE, INT_VAL_MAX);
+    branch(*this, b, INT_VAR_NONE, INT_VAL_MAX);
   }
 
   /// Print solution
@@ -131,7 +131,7 @@ public:
   /// Constructor for cloning \a s
   MineSweeper(bool share, MineSweeper& s) :
     Example(share,s), spec(s.spec), size(s.size) {
-    b.update(this, share, s.b);
+    b.update(*this, share, s.b);
   }
   /// Copy space during cloning
   virtual Space*

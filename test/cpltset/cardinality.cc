@@ -77,7 +77,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::cardinality(home, x[0], 0, 3);
       }
     };
@@ -101,7 +101,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::cardinality(home, x[0], 3, 3);
       }
     };
@@ -125,7 +125,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::cardinality(home, x[0], 1, Gecode::Set::Limits::max);
       }
     };

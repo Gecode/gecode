@@ -57,27 +57,27 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::SupportEntry::operator delete(void*, Space*) {
+  Incremental<View>::SupportEntry::operator delete(void*, Space&) {
     GECODE_NEVER;
   }
 
   template <class View>
   forceinline void*
-  Incremental<View>::SupportEntry::operator new(size_t, Space* home) {
-    return home->fl_alloc<sizeof(SupportEntry)>();
+  Incremental<View>::SupportEntry::operator new(size_t, Space& home) {
+    return home.fl_alloc<sizeof(SupportEntry)>();
   }
 
   template <class View>
   forceinline void
-  Incremental<View>::SupportEntry::dispose(Space* home, SupportEntry* l) {
-    home->fl_dispose<sizeof(SupportEntry)>(this,l);
+  Incremental<View>::SupportEntry::dispose(Space& home, SupportEntry* l) {
+    home.fl_dispose<sizeof(SupportEntry)>(this,l);
   }
 
   template <class View>
   forceinline void
-  Incremental<View>::SupportEntry::dispose(Space* home) {
+  Incremental<View>::SupportEntry::dispose(Space& home) {
     next = NULL;
-    home->fl_dispose<sizeof(SupportEntry)>(this,this);
+    home.fl_dispose<sizeof(SupportEntry)>(this,this);
   }
 
 
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline
-  Incremental<View>::Incremental(Space* home, ViewArray<View>& x, const TupleSet& t)
+  Incremental<View>::Incremental(Space& home, ViewArray<View>& x, const TupleSet& t)
     : Base<View,false>(home,x,t), support_data(NULL), 
       work(x.size()), unassigned(x.size()), ac(home) {
     init_support(home);
@@ -125,14 +125,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  Incremental<View>::post(Space* home, ViewArray<View>& x, const TupleSet& t) {
+  Incremental<View>::post(Space& home, ViewArray<View>& x, const TupleSet& t) {
     (void) new (home) Incremental<View>(home,x,t);
     return ES_OK;
   }
 
   template <class View>
   forceinline
-  Incremental<View>::Incremental(Space* home, bool share, Incremental<View>& p)
+  Incremental<View>::Incremental(Space& home, bool share, Incremental<View>& p)
     : Base<View,false>(home,share,p), support_data(NULL), 
       work(2), unassigned(p.unassigned) {
     ac.update(home,share,p.ac);
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Actor*
-  Incremental<View>::copy(Space* home, bool share) {
+  Incremental<View>::copy(Space& home, bool share) {
     return new (home) Incremental<View>(home,share,*this);
   }
 
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   Reflection::ActorSpec
-  Incremental<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Incremental<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m)
              << tupleSet.spec(m);
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   void
-  Incremental<View>::post(Space* home, Reflection::VarMap& vars,
+  Incremental<View>::post(Space& home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  Incremental<View>::propagate(Space* home, ModEventDelta) {
+  Incremental<View>::propagate(Space& home, ModEventDelta) {
     assert(!work.empty() || unassigned==0);
     /// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::add_support(Space* home, Tuple l) {
+  Incremental<View>::add_support(Space& home, Tuple l) {
     for (int i = x.size(); i--; ) {
       int pos = (i*ts()->domsize) + (l[i] - ts()->min);
 
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::remove_support(Space* home, Tuple l,
+  Incremental<View>::remove_support(Space& home, Tuple l,
                                     int var, int /*val*/) {
     for (int i = x.size(); i--; ) {
       int v = l[i];
@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::find_support(Space* home, Domain dom, int var, int val) {
+  Incremental<View>::find_support(Space& home, Domain dom, int var, int val) {
     if (support(var, val) == NULL) {
       int oval = val - ts()->min;
       // Find support for value vv.val() in variable var
@@ -301,10 +301,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::init_support(Space* home) {
+  Incremental<View>::init_support(Space& home) {
     assert(support_data == NULL);
     int literals = ts()->domsize*x.size();
-    support_data = home->alloc<SupportEntry*>(literals);
+    support_data = home.alloc<SupportEntry*>(literals);
     for (int i = literals; i--; )
       support_data[i] = NULL;
   }
@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   //
   template <class View>
   ExecStatus
-  Incremental<View>::advise(Space* home, Advisor& _a, const Delta& d) {
+  Incremental<View>::advise(Space& home, Advisor& _a, const Delta& d) {
     SupportAdvisor& a = static_cast<SupportAdvisor&>(_a);
     ModEvent me = View::modevent(d);
     bool scheduled = !work.empty();
@@ -368,8 +368,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   size_t
-  Incremental<View>::dispose(Space* home) {
-    if (!home->failed()) {
+  Incremental<View>::dispose(Space& home) {
+    if (!home.failed()) {
       int literals = ts()->domsize*x.size();    
       for (int i = literals; i--; ) {
         if (support_data[i]) {
@@ -378,7 +378,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           support_data[i]->dispose(home, lastse);
         }
       }
-      home->rfree(support_data, sizeof(SupportEntry*)*literals);
+      home.rfree(support_data, sizeof(SupportEntry*)*literals);
     }
     work.~WorkStack();
     (void) ac.dispose(home);

@@ -70,19 +70,19 @@ namespace Test { namespace Int {
        /// Store task information
        Gecode::IntVarArray x;
        /// Initialize model for assignments
-       Ass(int n, const Gecode::IntSet& d) : x(this, n, d) {
+       Ass(int n, const Gecode::IntSet& d) : x(*this, n, d) {
          using namespace Gecode;
          for (int i = 0; i < n; i += 4) {
-           post(this, x[i+0] >= 0);
-           post(this, x[i+1] >= 0);
-           post(this, x[i+2] >= 0);
-           post(this, x[i] + x[i+1] == x[i+2]);
-           branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
+           post(*this, x[i+0] >= 0);
+           post(*this, x[i+1] >= 0);
+           post(*this, x[i+2] >= 0);
+           post(*this, x[i] + x[i+1] == x[i+2]);
+           branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
          }
        }
        /// Constructor for cloning \a s
        Ass(bool share, Ass& s) : Gecode::Space(share,s) {
-         x.update(this, share, s.x);
+         x.update(*this, share, s.x);
        }
        /// Create copy during cloning
        virtual Gecode::Space* copy(bool share) {
@@ -228,7 +228,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          IntArgs m(ntasks), l(1, limit);
          IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);

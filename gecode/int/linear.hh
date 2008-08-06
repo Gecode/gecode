@@ -73,19 +73,19 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Value of type \a Val
     Val c;
     /// Constructor for cloning \a p
-    LinBin(Space* home, bool share, LinBin& p);
+    LinBin(Space& home, bool share, LinBin& p);
     /// Constructor for rewriting \a p during cloning
-    LinBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
+    LinBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Constructor for creation
-    LinBin(Space* home, A x0, B x1, Val c);
+    LinBin(Space& home, A x0, B x1, Val c);
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -109,17 +109,17 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Control view for reification
     Ctrl b;
     /// Constructor for cloning \a p
-    ReLinBin(Space* home, bool share, ReLinBin& p);
+    ReLinBin(Space& home, bool share, ReLinBin& p);
     /// Constructor for creation
-    ReLinBin(Space* home, A x0, B x1, Val c, Ctrl b);
+    ReLinBin(Space& home, A x0, B x1, Val c, Ctrl b);
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -142,26 +142,26 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBin<Val,A,B,PC_INT_BND>::c;
 
     /// Constructor for cloning \a p
-    EqBin(Space* home, bool share, EqBin& p);
+    EqBin(Space& home, bool share, EqBin& p);
     /// Constructor for creation
-    EqBin(Space* home, A x0, B x1, Val c);
+    EqBin(Space& home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
-    EqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
+    EqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 = c\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c);
+    static ExecStatus post(Space& home, A x0, B x1, Val c);
   };
 
   /**
@@ -185,24 +185,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::b;
 
     /// Constructor for cloning \a p
-    ReEqBin(Space* home, bool share, ReEqBin& p);
+    ReEqBin(Space& home, bool share, ReEqBin& p);
     /// Constructor for creation
-    ReEqBin(Space* home,A,B,Val,Ctrl);
+    ReEqBin(Space& home,A,B,Val,Ctrl);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$(x_0+x_1 = c)\Leftrightarrow b\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c, Ctrl b);
+    static ExecStatus post(Space& home, A x0, B x1, Val c, Ctrl b);
   };
 
   /**
@@ -225,28 +225,28 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBin<Val,A,B,PC_INT_VAL>::c;
 
     /// Constructor for cloning \a p
-    NqBin(Space* home, bool share, NqBin& p);
+    NqBin(Space& home, bool share, NqBin& p);
     /// Constructor for creation
-    NqBin(Space* home, A x0, B x1, Val c);
+    NqBin(Space& home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
-    NqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
+    NqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 \neq c\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c);
+    static ExecStatus post(Space& home, A x0, B x1, Val c);
   };
 
   /**
@@ -269,26 +269,26 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBin<Val,A,B,PC_INT_BND>::c;
 
     /// Constructor for cloning \a p
-    LqBin(Space* home, bool share, LqBin& p);
+    LqBin(Space& home, bool share, LqBin& p);
     /// Constructor for creation
-    LqBin(Space* home, A x0, B x1, Val c);
+    LqBin(Space& home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
-    LqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
+    LqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 \leq c\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c);
+    static ExecStatus post(Space& home, A x0, B x1, Val c);
   };
 
   /**
@@ -311,26 +311,26 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBin<Val,A,B,PC_INT_BND>::c;
 
     /// Constructor for cloning \a p
-    GqBin(Space* home, bool share, GqBin& p);
+    GqBin(Space& home, bool share, GqBin& p);
     /// Constructor for creation
-    GqBin(Space* home, A x0, B x1, Val c);
+    GqBin(Space& home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
-    GqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
+    GqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1 \geq c\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c);
+    static ExecStatus post(Space& home, A x0, B x1, Val c);
   };
 
   /**
@@ -354,24 +354,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLinBin<Val,A,B,PC_INT_BND,BoolView>::b;
 
     /// Constructor for cloning \a p
-    ReLqBin(Space* home, bool share, ReLqBin& p);
+    ReLqBin(Space& home, bool share, ReLqBin& p);
     /// Constructor for creation
-    ReLqBin(Space* home, A x0, B x1, Val c, BoolView b);
+    ReLqBin(Space& home, A x0, B x1, Val c, BoolView b);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$(x_0+x_1 \leq c)\Leftrightarrow b\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c, BoolView b);
+    static ExecStatus post(Space& home, A x0, B x1, Val c, BoolView b);
   };
 
 }}}
@@ -406,19 +406,19 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Value of type \a Val
     Val c;
     /// Constructor for cloning \a p
-    LinTer(Space* home, bool share, LinTer& p);
+    LinTer(Space& home, bool share, LinTer& p);
     /// Constructor for creation
-    LinTer(Space* home, A x0, B x1, C x2, Val c);
+    LinTer(Space& home, A x0, B x1, C x2, Val c);
     /// Constructor for rewriting \a p during cloning
-    LinTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
+    LinTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -442,26 +442,26 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinTer<Val,A,B,C,PC_INT_BND>::c;
 
     /// Constructor for cloning \a p
-    EqTer(Space* home, bool share, EqTer& p);
+    EqTer(Space& home, bool share, EqTer& p);
     /// Constructor for creation
-    EqTer(Space* home, A x0, B x1, C x2, Val c);
+    EqTer(Space& home, A x0, B x1, C x2, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
-    EqTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
+    EqTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1+x_2 = c\f$
-    static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
+    static ExecStatus post(Space& home, A x0, B x1, C x2, Val c);
   };
 
   /**
@@ -485,26 +485,26 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinTer<Val,A,B,C,PC_INT_VAL>::c;
 
     /// Constructor for cloning \a p
-    NqTer(Space* home, bool share, NqTer& p);
+    NqTer(Space& home, bool share, NqTer& p);
     /// Constructor for creation
-    NqTer(Space* home, A x0, B x1, C x2, Val c);
+    NqTer(Space& home, A x0, B x1, C x2, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
-    NqTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
+    NqTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1+x_2 \neq c\f$
-    static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
+    static ExecStatus post(Space& home, A x0, B x1, C x2, Val c);
   };
 
   /**
@@ -528,26 +528,26 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinTer<Val,A,B,C,PC_INT_BND>::c;
 
     /// Constructor for cloning \a p
-    LqTer(Space* home, bool share, LqTer& p);
+    LqTer(Space& home, bool share, LqTer& p);
     /// Constructor for creation
-    LqTer(Space* home, A x0, B x1, C x2, Val c);
+    LqTer(Space& home, A x0, B x1, C x2, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
-    LqTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
+    LqTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$x_0+x_1+x_2 \leq c\f$
-    static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
+    static ExecStatus post(Space& home, A x0, B x1, C x2, Val c);
   };
 
 }}}
@@ -581,17 +581,17 @@ namespace Gecode { namespace Int { namespace Linear {
     Val c;
 
     /// Constructor for cloning \a p
-    Lin(Space* home, bool share, Lin& p);
+    Lin(Space& home, bool share, Lin& p);
     /// Constructor for creation
-    Lin(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Lin(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     /// Return specification
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -609,15 +609,15 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Control view for reification
     Ctrl b;
     /// Constructor for cloning \a p
-    ReLin(Space* home, bool share, ReLin& p);
+    ReLin(Space& home, bool share, ReLin& p);
     /// Constructor for creation
-    ReLin(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
+    ReLin(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
     /// Return specification
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -658,25 +658,25 @@ namespace Gecode { namespace Int { namespace Linear {
     using Lin<Val,P,N,PC_INT_BND>::c;
 
     /// Constructor for cloning \a p
-    Eq(Space* home, bool share, Eq& p);
+    Eq(Space& home, bool share, Eq& p);
   public:
     /// Constructor for creation
-    Eq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Eq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
-    post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
   /**
@@ -698,27 +698,27 @@ namespace Gecode { namespace Int { namespace Linear {
     using Lin<Val,View,View,PC_INT_DOM>::c;
 
     /// Constructor for cloning \a p
-    DomEq(Space* home, bool share, DomEq& p);
+    DomEq(Space& home, bool share, DomEq& p);
   public:
     /// Constructor for creation
-    DomEq(Space* home, ViewArray<View>& x, ViewArray<View>& y, Val c);
+    DomEq(Space& home, ViewArray<View>& x, ViewArray<View>& y, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Propagation cost
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
-    post(Space* home, ViewArray<View>& x, ViewArray<View>& y, Val c);
+    post(Space& home, ViewArray<View>& x, ViewArray<View>& y, Val c);
   };
 
   /**
@@ -742,25 +742,25 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLin<Val,P,N,PC_INT_BND,Ctrl>::b;
 
     /// Constructor for cloning \a p
-    ReEq(Space* home, bool share, ReEq& p);
+    ReEq(Space& home, bool share, ReEq& p);
   public:
     /// Constructor for creation
-    ReEq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
+    ReEq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\Leftrightarrow b\f$
     static ExecStatus
-    post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
+    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   };
 
   /**
@@ -783,25 +783,25 @@ namespace Gecode { namespace Int { namespace Linear {
     using Lin<Val,P,N,PC_INT_VAL>::c;
 
     /// Constructor for cloning \a p
-    Nq(Space* home, bool share, Nq& p);
+    Nq(Space& home, bool share, Nq& p);
   public:
     /// Constructor for creation
-    Nq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Nq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\neq c\f$
     static ExecStatus
-    post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
   /**
@@ -824,25 +824,25 @@ namespace Gecode { namespace Int { namespace Linear {
     using Lin<Val,P,N,PC_INT_BND>::c;
 
     /// Constructor for cloning \a p
-    Lq(Space* home, bool share, Lq& p);
+    Lq(Space& home, bool share, Lq& p);
   public:
     /// Constructor for creation
-    Lq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Lq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$
     static ExecStatus
-    post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
   /**
@@ -866,25 +866,25 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLin<Val,P,N,PC_INT_BND,BoolView>::b;
 
     /// Constructor for cloning \a p
-    ReLq(Space* home, bool share, ReLq& p);
+    ReLq(Space& home, bool share, ReLq& p);
   public:
     /// Constructor for creation
-    ReLq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
+    ReLq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\Leftrightarrow b\f$
     static ExecStatus
-    post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
+    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
   };
 
 }}}
@@ -913,17 +913,17 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Righthandside
     int c;
     /// Constructor for cloning \a p
-    MemoryLinBoolInt(Space* home, bool share, MemoryLinBoolInt& p);
+    MemoryLinBoolInt(Space& home, bool share, MemoryLinBoolInt& p);
     /// Constructor for creation
-    MemoryLinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+    MemoryLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -942,17 +942,17 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Council for managing advisors
     Council<ViewAdvisor<VX> > co;
     /// Constructor for cloning \a p
-    SpeedLinBoolInt(Space* home, bool share, SpeedLinBoolInt& p);
+    SpeedLinBoolInt(Space& home, bool share, SpeedLinBoolInt& p);
     /// Constructor for creation
-    SpeedLinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+    SpeedLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_UNARY_HI)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -974,18 +974,18 @@ namespace Gecode { namespace Int { namespace Linear {
       using MemoryLinBoolInt<VX>::c;
     public:
       /// Constructor for cloning \a p
-      Memory(Space* home, bool share, Memory& p);
+      Memory(Space& home, bool share, Memory& p);
       /// Constructor for creation
-      Memory(Space* home, ViewArray<VX>& x, int c);
+      Memory(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
-      virtual Actor* copy(Space* home, bool share);
+      virtual Actor* copy(Space& home, bool share);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, ModEventDelta med);
+      virtual ExecStatus propagate(Space& home, ModEventDelta med);
       /// Specification for this propagator
-      virtual Reflection::ActorSpec spec(const Space* home, 
+      virtual Reflection::ActorSpec spec(const Space& home, 
                                           Reflection::VarMap& m) const;
       /// Post propagator according to specification
-      static void post(Space* home, Reflection::VarMap& vars,
+      static void post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol ati(void);
@@ -999,27 +999,27 @@ namespace Gecode { namespace Int { namespace Linear {
       using SpeedLinBoolInt<VX>::co;
     public:
       /// Constructor for cloning \a p
-      Speed(Space* home, bool share, Speed& p);
+      Speed(Space& home, bool share, Speed& p);
       /// Constructor for creation
-      Speed(Space* home, ViewArray<VX>& x, int c);
+      Speed(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
-      virtual Actor* copy(Space* home, bool share);
+      virtual Actor* copy(Space& home, bool share);
       /// Give advice to propagator
-      virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, ModEventDelta med);
+      virtual ExecStatus propagate(Space& home, ModEventDelta med);
       /// Specification for this propagator
-      virtual Reflection::ActorSpec spec(const Space* home, 
+      virtual Reflection::ActorSpec spec(const Space& home, 
                                           Reflection::VarMap& m) const;
       /// Post propagator according to specification
-      static void post(Space* home, Reflection::VarMap& vars,
+      static void post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol ati(void);
     };
 
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, int c,
+    static ExecStatus post(Space& home, ViewArray<VX>& x, int c,
                            PropKind pk=PK_DEF);
   };
 
@@ -1042,18 +1042,18 @@ namespace Gecode { namespace Int { namespace Linear {
       using MemoryLinBoolInt<VX>::c;
     public:
       /// Constructor for cloning \a p
-      Memory(Space* home, bool share, Memory& p);
+      Memory(Space& home, bool share, Memory& p);
       /// Constructor for creation
-      Memory(Space* home, ViewArray<VX>& x, int c);
+      Memory(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
-      virtual Actor* copy(Space* home, bool share);
+      virtual Actor* copy(Space& home, bool share);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, ModEventDelta med);
+      virtual ExecStatus propagate(Space& home, ModEventDelta med);
       /// Specification for this propagator
-      virtual Reflection::ActorSpec spec(const Space* home, 
+      virtual Reflection::ActorSpec spec(const Space& home, 
                                           Reflection::VarMap& m) const;
       /// Post propagator according to specification
-      static void post(Space* home, Reflection::VarMap& vars,
+      static void post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol ati(void);
@@ -1067,27 +1067,27 @@ namespace Gecode { namespace Int { namespace Linear {
       using SpeedLinBoolInt<VX>::co;
     public:
       /// Constructor for cloning \a p
-      Speed(Space* home, bool share, Speed& p);
+      Speed(Space& home, bool share, Speed& p);
       /// Constructor for creation
-      Speed(Space* home, ViewArray<VX>& x, int c);
+      Speed(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
-      virtual Actor* copy(Space* home, bool share);
+      virtual Actor* copy(Space& home, bool share);
       /// Give advice to propagator
-      virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
       /// Perform propagation
-      virtual ExecStatus propagate(Space* home, ModEventDelta med);
+      virtual ExecStatus propagate(Space& home, ModEventDelta med);
       /// Specification for this propagator
-      virtual Reflection::ActorSpec spec(const Space* home, 
+      virtual Reflection::ActorSpec spec(const Space& home, 
                                           Reflection::VarMap& m) const;
       /// Post propagator according to specification
-      static void post(Space* home, Reflection::VarMap& vars,
+      static void post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec);
       /// Mangled propagator name
       static Support::Symbol ati(void);
     };
   public:
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, int c,
+    static ExecStatus post(Space& home, ViewArray<VX>& x, int c,
                            PropKind pk=PK_DEF);
   };
 
@@ -1107,28 +1107,28 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Righthandside
     int c;
     /// Update subscription
-    bool resubscribe(Space* home, VX& y);
+    bool resubscribe(Space& home, VX& y);
     /// Constructor for posting
-    NqBoolInt(Space* home,  ViewArray<VX>& b, int c);
+    NqBoolInt(Space& home,  ViewArray<VX>& b, int c);
     /// Constructor for cloning \a p
-    NqBoolInt(Space* home, bool share, NqBoolInt<VX>& p);
+    NqBoolInt(Space& home, bool share, NqBoolInt<VX>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
-    static  ExecStatus post(Space* home, ViewArray<VX>& b, int c);
+    static  ExecStatus post(Space& home, ViewArray<VX>& b, int c);
   };
 
 }}}
@@ -1151,17 +1151,17 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Righthandside (constant part from Boolean views assigned to 1)
     int c;
     /// Constructor for cloning \a p
-    LinBoolView(Space* home, bool share, LinBoolView& p);
+    LinBoolView(Space& home, bool share, LinBoolView& p);
     /// Constructor for creation
-    LinBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
+    LinBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 
@@ -1178,15 +1178,15 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Control variable
     BV b;
     /// Constructor for cloning \a p
-    ReLinBoolView(Space* home, bool share, ReLinBoolView& p);
+    ReLinBoolView(Space& home, bool share, ReLinBoolView& p);
     /// Constructor for creation
-    ReLinBoolView(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+    ReLinBoolView(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                const Support::Symbol& name) const;
   public:
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 
@@ -1204,24 +1204,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolView<XV,YV>::c;
 
     /// Constructor for cloning \a p
-    EqBoolView(Space* home, bool share, EqBoolView& p);
+    EqBoolView(Space& home, bool share, EqBoolView& p);
     /// Constructor for creation
-    EqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
+    EqBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = y+c\f$
-    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
+    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -1238,24 +1238,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolView<XV,YV>::c;
 
     /// Constructor for cloning \a p
-    NqBoolView(Space* home, bool share, NqBoolView& p);
+    NqBoolView(Space& home, bool share, NqBoolView& p);
     /// Constructor for creation
-    NqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
+    NqBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq y+c\f$
-    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
+    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -1272,24 +1272,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolView<XV,YV>::c;
 
     /// Constructor for cloning \a p
-    GqBoolView(Space* home, bool share, GqBoolView& p);
+    GqBoolView(Space& home, bool share, GqBoolView& p);
     /// Constructor for creation
-    GqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
+    GqBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq y+c\f$
-    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
+    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -1307,24 +1307,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLinBoolView<XV,YV,BV>::b;
 
     /// Constructor for cloning \a p
-    ReEqBoolView(Space* home, bool share, ReEqBoolView& p);
+    ReEqBoolView(Space& home, bool share, ReEqBoolView& p);
     /// Constructor for creation
-    ReEqBoolView(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+    ReEqBoolView(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = y+c\right)\Leftrightarrow b\f$
-    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
   };
 
   /**
@@ -1342,24 +1342,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLinBoolView<XV,YV,BV>::b;
 
     /// Constructor for cloning \a p
-    ReGqBoolView(Space* home, bool share, ReGqBoolView& p);
+    ReGqBoolView(Space& home, bool share, ReGqBoolView& p);
     /// Constructor for creation
-    ReGqBoolView(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+    ReGqBoolView(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq y+c\right)\Leftrightarrow b\f$
-    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c, BV b);
+    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
   };
 
 }}}
@@ -1388,13 +1388,13 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Default constructor
     ScaleBoolArray(void);
     /// Create array with \a n elements
-    ScaleBoolArray(Space* home, int n);
+    ScaleBoolArray(Space& home, int n);
     /// Subscribe propagator \a p
-    void subscribe(Space* home, Propagator* p);
+    void subscribe(Space& home, Propagator* p);
     /// Cancel propagator \a p
-    void cancel(Space* home, Propagator* p);
+    void cancel(Space& home, Propagator* p);
     /// Update \a sba during copying
-    void update(Space* home, bool share, ScaleBoolArray& sba);
+    void update(Space& home, bool share, ScaleBoolArray& sba);
     /// Return pointer to first element
     ScaleBool* fst(void) const;
     /// Return pointer after last element
@@ -1410,7 +1410,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return type of array
     static Support::Symbol type(void);
     /// Reflection
-    Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
   private:
     /// For sorting array in decreasing order of coefficients
     class ScaleDec {
@@ -1430,13 +1430,13 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Default constructor
     EmptyScaleBoolArray(void);
     /// Create array with \a n elements
-    EmptyScaleBoolArray(Space* home, int n);
+    EmptyScaleBoolArray(Space& home, int n);
     /// Subscribe propagator \a p
-    void subscribe(Space* home, Propagator* p);
+    void subscribe(Space& home, Propagator* p);
     /// Cancel propagator \a p
-    void cancel(Space* home, Propagator* p);
+    void cancel(Space& home, Propagator* p);
     /// Update \a sba during copying
-    void update(Space* home, bool share, EmptyScaleBoolArray& esba);
+    void update(Space& home, bool share, EmptyScaleBoolArray& esba);
     /// Return pointer to first element
     ScaleBool* fst(void) const;
     /// Return pointer after last element
@@ -1472,18 +1472,18 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Integer constant on right-hand side
     int  c;
     /// Return specification for this propagator given a variable map \a m
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Constructor for creation
-    LinBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    LinBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    LinBoolScale(Space* home, bool share, Propagator& pr, 
+    LinBoolScale(Space& home, bool share, Propagator& pr, 
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -1501,24 +1501,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::c;
   public:
     /// Constructor for creation
-    EqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    EqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    EqBoolScale(Space* home, bool share, Propagator& pr, 
+    EqBoolScale(Space& home, bool share, Propagator& pr, 
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator
-    static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    static ExecStatus post(Space& home, SBAP& p, SBAN& n, VX x, int c);
   };
 
   /**
@@ -1536,24 +1536,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::c;
   public:
     /// Constructor for creation
-    LqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    LqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    LqBoolScale(Space* home, bool share, Propagator& pr, 
+    LqBoolScale(Space& home, bool share, Propagator& pr, 
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator
-    static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    static ExecStatus post(Space& home, SBAP& p, SBAN& n, VX x, int c);
   };
 
   /**
@@ -1571,24 +1571,24 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::c;
   public:
     /// Constructor for creation
-    NqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    NqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    NqBoolScale(Space* home, bool share, Propagator& pr, 
+    NqBoolScale(Space& home, bool share, Propagator& pr, 
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled propagator name
     static Support::Symbol ati(void);
     /// Post propagator
-    static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    static ExecStatus post(Space& home, SBAP& p, SBAN& n, VX x, int c);
   };
 
 }}}
@@ -1682,7 +1682,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<IntView>* t, int n, IntRelType r, int c, 
+  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c, 
        IntConLevel=ICL_DEF, PropKind pk=PK_DEF);
 
   /**
@@ -1714,7 +1714,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
+  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel=ICL_DEF, PropKind pk=PK_DEF);
 
   /**
@@ -1744,7 +1744,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<BoolView>* t, int n, IntRelType r, int c, 
+  post(Space& home, Term<BoolView>* t, int n, IntRelType r, int c, 
        IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
   /**
@@ -1775,7 +1775,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
+  post(Space& home, Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
   /**
@@ -1806,7 +1806,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
+  post(Space& home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
        IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
   /**
@@ -1837,7 +1837,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y,
+  post(Space& home, Term<BoolView>* t, int n, IntRelType r, IntView y,
        BoolView b, IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
 }}}

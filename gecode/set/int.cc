@@ -47,8 +47,8 @@ using namespace Gecode::Int;
 namespace Gecode {
 
   void
-  rel(Space* home, SetVar s, IntRelType r, IntVar x) {
-    if (home->failed()) return;
+  rel(Space& home, SetVar s, IntRelType r, IntVar x) {
+    if (home.failed()) return;
     switch(r) {
     case IRT_EQ:
       {
@@ -105,7 +105,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, IntVar x, IntRelType r, SetVar s) {
+  rel(Space& home, IntVar x, IntRelType r, SetVar s) {
     IntRelType rr;
     switch (r) {
     case IRT_LE: rr=IRT_GR; break;
@@ -118,26 +118,26 @@ namespace Gecode {
   }
 
   void
-  min(Space* home, SetVar s, IntVar x){
-    if (home->failed()) return;
+  min(Space& home, SetVar s, IntVar x){
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,x));
   }
   void
-  max(Space* home, SetVar s, IntVar x){
-    if (home->failed()) return;
+  max(Space& home, SetVar s, IntVar x){
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Set::Int::MaxElement<Set::SetView>::post(home,s,x));
   }
 
   void
-  match(Space* home, SetVar s, const IntVarArgs& x) {
-    if (home->failed()) return;
+  match(Space& home, SetVar s, const IntVarArgs& x) {
+    if (home.failed()) return;
     ViewArray<IntView> xa(home,x);
     GECODE_ES_FAIL(home,Set::Int::Match<Set::SetView>::post(home,s,xa));
   }
 
   void
-  channel(Space* home, const IntVarArgs& x, const SetVarArgs& y) {
-    if (home->failed()) return;
+  channel(Space& home, const IntVarArgs& x, const SetVarArgs& y) {
+    if (home.failed()) return;
     ViewArray<Int::IntView> xa(home,x);
     ViewArray<Set::SetView> ya(home,y);
     GECODE_ES_FAIL(home,(Set::Int::ChannelInt<Set::SetView>
@@ -145,17 +145,17 @@ namespace Gecode {
   }
 
   void
-  channel(Space* home, const BoolVarArgs& x, SetVar y) {
-    if (home->failed()) return;
+  channel(Space& home, const BoolVarArgs& x, SetVar y) {
+    if (home.failed()) return;
     ViewArray<Int::BoolView> xv(home,x);
     Set::SetView yv(y);
     GECODE_ES_FAIL(home,(Set::Int::ChannelBool<Set::SetView>
                          ::post(home,xv,yv)));
   }
 
-  void weights(Space* home, const IntArgs& elements, const IntArgs& weights,
+  void weights(Space& home, const IntArgs& elements, const IntArgs& weights,
                SetVar x, IntVar y) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     Set::SetView xv(x);
     Int::IntView yv(y);
     GECODE_ES_FAIL(home,Set::Int::Weights<Set::SetView>::post(home,elements,

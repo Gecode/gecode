@@ -56,7 +56,7 @@ private:
 public:
   /// The actual problem
   Eq20(const Options& opt)
-    : x(this,x_n,0,10) {
+    : x(*this,x_n,0,10) {
     // Coefficients and constants for the equations
     int eqs[e_n][x_n+1] = {
       {876370, -16105, 62397, -6704, 43340, 95100, -68610, 58301},
@@ -84,14 +84,14 @@ public:
     for (int i = e_n; i--; ) {
       IntArgs c(7,eqs[i][1],eqs[i][2],eqs[i][3],eqs[i][4],
                 eqs[i][5],eqs[i][6],eqs[i][7]);
-      linear(this, c, x, IRT_EQ, eqs[i][0], opt.icl());
+      linear(*this, c, x, IRT_EQ, eqs[i][0], opt.icl());
     }
-    branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s
   Eq20(bool share, Eq20& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
   virtual Space*

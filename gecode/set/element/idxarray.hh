@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace Element {
     /// The variable
     View var;
     /// Allocate \a n elements
-    static IdxView* allocate(Space* home,int n);
+    static IdxView* allocate(Space& home,int n);
   };
 
   /**
@@ -71,11 +71,11 @@ namespace Gecode { namespace Set { namespace Element {
     /// Copy constructor
     IdxViewArray(const IdxViewArray<View>&);
     /// Initialize from specification \a spec with variables \a vars
-    IdxViewArray(Space* home, const Reflection::VarMap& vars,
+    IdxViewArray(Space& home, const Reflection::VarMap& vars,
                  Reflection::Arg* spec);
 
     /// Construct an IdxViewArray from \a x
-    IdxViewArray(Space* home, const SetVarArgs& x);
+    IdxViewArray(Space& home, const SetVarArgs& x);
 
     /// Return the current size
     int size(void) const;
@@ -91,18 +91,18 @@ namespace Gecode { namespace Set { namespace Element {
      * Subscribe propagator \a p with propagation condition \a pc
      * to all elements of the array.
      */
-    void subscribe(Space* home,Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home,Propagator* p, PropCond pc, bool process=true);
     /**
      * Cancel subscription of propagator \a p with propagation condition \a pc
      * for all elements of the array.
      */
-    void cancel(Space* home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator* p, PropCond pc);
 
     /// Cloning
-    void update(Space* home, bool share, IdxViewArray<View>& x);
+    void update(Space& home, bool share, IdxViewArray<View>& x);
     
     // Specification
-    Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
   };
 
 }}}

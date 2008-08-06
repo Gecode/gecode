@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline
-  BaseInt<VX,VY>::BaseInt(Space* home, 
+  BaseInt<VX,VY>::BaseInt(Space& home, 
                           ViewArray<VX>& x0, int n_s0, VY y0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
     for (int i=n_s; i--; )
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline size_t
-  BaseInt<VX,VY>::dispose(Space* home) {
+  BaseInt<VX,VY>::dispose(Space& home) {
     for (int i=n_s; i--; )
       x[i].cancel(home,this,PC_INT_DOM);
     y.cancel(home,this,PC_INT_DOM);
@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline
-  BaseInt<VX,VY>::BaseInt(Space* home, bool share, BaseInt<VX,VY>& p)
+  BaseInt<VX,VY>::BaseInt(Space& home, bool share, BaseInt<VX,VY>& p)
     : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec
-  BaseInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m,
+  BaseInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m,
                        const Support::Symbol& ati) const {
     Reflection::ActorSpec s(ati);
     return s << x.spec(home, m)
@@ -93,12 +93,12 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   forceinline
-  EqInt<VX,VY>::EqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c)
+  EqInt<VX,VY>::EqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
   template <class VX, class VY>
   ExecStatus
-  EqInt<VX,VY>::post(Space* home, ViewArray<VX>& x, VY y, int c) {
+  EqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -131,12 +131,12 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline
-  EqInt<VX,VY>::EqInt(Space* home, bool share, EqInt<VX,VY>& p)
+  EqInt<VX,VY>::EqInt(Space& home, bool share, EqInt<VX,VY>& p)
     : BaseInt<VX,VY>(home,share,p) {}
 
   template <class VX, class VY>
   Actor*
-  EqInt<VX,VY>::copy(Space* home, bool share) {
+  EqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) EqInt<VX,VY>(home,share,*this);
   }
 
@@ -148,13 +148,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec
-  EqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
+  EqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
     return BaseInt<VX,VY>::spec(home, m, ati());
   }
 
   template <class VX, class VY>
   void
-  EqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
+  EqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   ExecStatus
-  EqInt<VX,VY>::propagate(Space* home, ModEventDelta) {
+  EqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
     // Eliminate decided views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -218,12 +218,12 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   forceinline
-  GqInt<VX,VY>::GqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c)
+  GqInt<VX,VY>::GqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
   template <class VX, class VY>
   ExecStatus
-  GqInt<VX,VY>::post(Space* home, ViewArray<VX>& x, VY y, int c) {
+  GqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -253,12 +253,12 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline
-  GqInt<VX,VY>::GqInt(Space* home, bool share, GqInt<VX,VY>& p)
+  GqInt<VX,VY>::GqInt(Space& home, bool share, GqInt<VX,VY>& p)
     : BaseInt<VX,VY>(home,share,p) {}
 
   template <class VX, class VY>
   Actor*
-  GqInt<VX,VY>::copy(Space* home, bool share) {
+  GqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) GqInt<VX,VY>(home,share,*this);
   }
 
@@ -270,13 +270,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec
-  GqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
+  GqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
     return BaseInt<VX,VY>::spec(home, m, ati());
   }
 
   template <class VX, class VY>
   void
-  GqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
+  GqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
@@ -288,7 +288,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   ExecStatus
-  GqInt<VX,VY>::propagate(Space* home, ModEventDelta) {
+  GqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
     // Eliminate decided views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -339,12 +339,12 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   forceinline
-  LqInt<VX,VY>::LqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c)
+  LqInt<VX,VY>::LqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
   template <class VX, class VY>
   ExecStatus
-  LqInt<VX,VY>::post(Space* home, ViewArray<VX>& x, VY y, int c) {
+  LqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -372,12 +372,12 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline
-  LqInt<VX,VY>::LqInt(Space* home, bool share, LqInt<VX,VY>& p)
+  LqInt<VX,VY>::LqInt(Space& home, bool share, LqInt<VX,VY>& p)
     : BaseInt<VX,VY>(home,share,p) {}
 
   template <class VX, class VY>
   Actor*
-  LqInt<VX,VY>::copy(Space* home, bool share) {
+  LqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) LqInt<VX,VY>(home,share,*this);
   }
 
@@ -389,13 +389,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec
-  LqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
+  LqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
     return BaseInt<VX,VY>::spec(home, m, ati());
   }
 
   template <class VX, class VY>
   void
-  LqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
+  LqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<VX> x(home, vars, spec[0]);
@@ -407,7 +407,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   ExecStatus
-  LqInt<VX,VY>::propagate(Space* home, ModEventDelta) {
+  LqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
     // Eliminate decided views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -459,7 +459,7 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template<class VX, class VY>
   forceinline
-  NqInt<VX,VY>::NqInt(Space* home, ViewArray<VX>& x0, VY y0, int c0)
+  NqInt<VX,VY>::NqInt(Space& home, ViewArray<VX>& x0, VY y0, int c0)
     : BinaryPropagator<VX,PC_INT_DOM>(home,
                                       x0[x0.size()-2],
                                       x0[x0.size()-1]), x(x0), y(y0), c(c0) {
@@ -470,7 +470,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline size_t
-  NqInt<VX,VY>::dispose(Space* home) {
+  NqInt<VX,VY>::dispose(Space& home) {
     y.cancel(home,this,PC_INT_DOM);
     (void) BinaryPropagator<VX,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
@@ -478,7 +478,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   forceinline
-  NqInt<VX,VY>::NqInt(Space* home, bool share, NqInt<VX,VY>& p)
+  NqInt<VX,VY>::NqInt(Space& home, bool share, NqInt<VX,VY>& p)
     : BinaryPropagator<VX,PC_INT_DOM>(home,share,p), c(p.c) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -486,7 +486,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   forceinline ExecStatus
-  NqInt<VX,VY>::post(Space* home, ViewArray<VX>& x, VY y, int c) {
+  NqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
     int n = x.size();
     for (int i=n; i--; )
       switch (holds(x[i],y)) {
@@ -512,7 +512,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   Actor*
-  NqInt<VX,VY>::copy(Space* home, bool share) {
+  NqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) NqInt<VX,VY>(home,share,*this);
   }
 
@@ -530,7 +530,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec
-  NqInt<VX,VY>::spec(const Space* home, Reflection::VarMap& m) const {
+  NqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s =
       BinaryPropagator<VX, PC_INT_DOM>::spec(home, m, ati());
     return s << x.spec(home, m)
@@ -540,7 +540,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   void
-  NqInt<VX,VY>::post(Space* home, Reflection::VarMap& vars,
+  NqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
     spec.checkArity(5);
     VX x0(home, vars, spec[0]);
@@ -558,7 +558,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   forceinline bool
-  NqInt<VX,VY>::resubscribe(Space* home, VX& z) {
+  NqInt<VX,VY>::resubscribe(Space& home, VX& z) {
     switch (holds(z,y)) {
     case RT_FALSE: break;
     case RT_TRUE:  c--; break;
@@ -591,7 +591,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   ExecStatus
-  NqInt<VX,VY>::propagate(Space* home, ModEventDelta) {
+  NqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
     bool s0 = resubscribe(home,x0);
     bool s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;

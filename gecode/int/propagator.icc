@@ -62,19 +62,19 @@ namespace Gecode {
     /// Boolean control view
     CtrlView b;
     /// Constructor for cloning \a p
-    ReUnaryPropagator(Space* home, bool share, ReUnaryPropagator& p);
+    ReUnaryPropagator(Space& home, bool share, ReUnaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    ReUnaryPropagator(Space* home, bool share, Propagator& p,
+    ReUnaryPropagator(Space& home, bool share, Propagator& p,
                       View x0, CtrlView b);
     /// Constructor for creation
-    ReUnaryPropagator(Space* home, View x0, CtrlView b);
+    ReUnaryPropagator(Space& home, View x0, CtrlView b);
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -96,19 +96,19 @@ namespace Gecode {
     /// Boolean control view
     CtrlView b;
     /// Constructor for cloning \a p
-    ReBinaryPropagator(Space* home, bool share, ReBinaryPropagator& p);
+    ReBinaryPropagator(Space& home, bool share, ReBinaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    ReBinaryPropagator(Space* home, bool share, Propagator& p,
+    ReBinaryPropagator(Space& home, bool share, Propagator& p,
                        View x0, View x1, CtrlView b);
     /// Constructor for creation
-    ReBinaryPropagator(Space* home, View x0, View x1, CtrlView b);
+    ReBinaryPropagator(Space& home, View x0, View x1, CtrlView b);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
   //@}
@@ -121,7 +121,7 @@ namespace Gecode {
    */
   template <class View, PropCond pc, class CtrlView>
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
-  (Space* home, View y0, CtrlView b0)
+  (Space& home, View y0, CtrlView b0)
     : Propagator(home), x0(y0), b(b0) {
     if (pc != PC_GEN_NONE)
       x0.subscribe(home,this,pc);
@@ -131,7 +131,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   forceinline
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
-  (Space* home, bool share, ReUnaryPropagator<View,pc,CtrlView>& p)
+  (Space& home, bool share, ReUnaryPropagator<View,pc,CtrlView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     b.update(home,share,p.b);
@@ -140,7 +140,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   forceinline
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
-  (Space* home, bool share, Propagator& p, View y0, CtrlView b0)
+  (Space& home, bool share, Propagator& p, View y0, CtrlView b0)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
     b.update(home,share,b0);
@@ -154,7 +154,7 @@ namespace Gecode {
 
   template <class View, PropCond pc, class CtrlView>
   forceinline size_t
-  ReUnaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
+  ReUnaryPropagator<View,pc,CtrlView>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
       x0.cancel(home,this,pc);
     b.cancel(home,this,Int::PC_INT_VAL);
@@ -164,7 +164,7 @@ namespace Gecode {
 
   template <class View, PropCond pc, class CtrlView>
   Reflection::ActorSpec
-  ReUnaryPropagator<View,pc,CtrlView>::spec(const Space* home,
+  ReUnaryPropagator<View,pc,CtrlView>::spec(const Space& home,
     Reflection::VarMap& m, const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
@@ -177,7 +177,7 @@ namespace Gecode {
    */
   template <class View, PropCond pc, class CtrlView>
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
-  (Space* home, View y0, View y1, CtrlView b1)
+  (Space& home, View y0, View y1, CtrlView b1)
     : Propagator(home), x0(y0), x1(y1), b(b1) {
     if (pc != PC_GEN_NONE) {
       x0.subscribe(home,this,pc);
@@ -189,7 +189,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   forceinline
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
-  (Space* home, bool share, ReBinaryPropagator<View,pc,CtrlView>& p)
+  (Space& home, bool share, ReBinaryPropagator<View,pc,CtrlView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -199,7 +199,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   forceinline
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
-  (Space* home, bool share, Propagator& p, View y0, View y1, CtrlView b0)
+  (Space& home, bool share, Propagator& p, View y0, View y1, CtrlView b0)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -214,7 +214,7 @@ namespace Gecode {
 
   template <class View, PropCond pc, class CtrlView>
   forceinline size_t
-  ReBinaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
+  ReBinaryPropagator<View,pc,CtrlView>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
       x0.cancel(home,this,pc);
       x1.cancel(home,this,pc);
@@ -226,7 +226,7 @@ namespace Gecode {
 
   template <class View, PropCond pc, class CtrlView>
   Reflection::ActorSpec
-  ReBinaryPropagator<View,pc,CtrlView>::spec(const Space* home,
+  ReBinaryPropagator<View,pc,CtrlView>::spec(const Space& home,
     Reflection::VarMap& m, const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)

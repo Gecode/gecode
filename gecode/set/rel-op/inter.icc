@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    */
 
   template <class View0, class View1, class View2> ExecStatus
-  Intersection<View0,View1,View2>::post(Space* home,
+  Intersection<View0,View1,View2>::post(Space& home,
                                         View0 x0,View1 x1,View2 x2) {
     (void) new (home) Intersection<View0,View1,View2>(home,x0,x1,x2);
     return ES_OK;
@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   Actor*
-  Intersection<View0,View1,View2>::copy(Space* home, bool share) {
+  Intersection<View0,View1,View2>::copy(Space& home, bool share) {
     return new (home) Intersection(home,share,*this);
   }
 
@@ -69,7 +69,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   Reflection::ActorSpec
-  Intersection<View0,View1,View2>::spec(const Space* home,
+  Intersection<View0,View1,View2>::spec(const Space& home,
                                         Reflection::VarMap& m) const {
     return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
       View2,PC_SET_ANY>::spec(home, m, ati());
@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   void
-  Intersection<View0,View1,View2>::post(Space* home,
+  Intersection<View0,View1,View2>::post(Space& home,
                                         Reflection::VarMap& vars,
                                         const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
@@ -89,7 +89,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  Intersection<View0,View1,View2>::propagate(Space* home, ModEventDelta med) {
+  Intersection<View0,View1,View2>::propagate(Space& home, ModEventDelta med) {
     // This propagator implements the constraint
     // x2 = x0 \cap x1
 
@@ -213,14 +213,14 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   forceinline
-  Intersection<View0,View1,View2>::Intersection(Space* home,
+  Intersection<View0,View1,View2>::Intersection(Space& home,
                                              View0 y0,View1 y1,View2 y2)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,y0,y1,y2) {}
 
   template <class View0, class View1, class View2>
   forceinline
-  Intersection<View0,View1,View2>::Intersection(Space* home, bool share,
+  Intersection<View0,View1,View2>::Intersection(Space& home, bool share,
                                              Intersection<View0,View1,View2>& p)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,share,p) {}
@@ -232,7 +232,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   forceinline
-  IntersectionN<View0,View1>::IntersectionN(Space* home, ViewArray<View0>& x,
+  IntersectionN<View0,View1>::IntersectionN(Space& home, ViewArray<View0>& x,
                                             View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
@@ -241,7 +241,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   forceinline
-  IntersectionN<View0,View1>::IntersectionN(Space* home, ViewArray<View0>& x,
+  IntersectionN<View0,View1>::IntersectionN(Space& home, ViewArray<View0>& x,
                                             const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
@@ -252,7 +252,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   forceinline
-  IntersectionN<View0,View1>::IntersectionN(Space* home, bool share,
+  IntersectionN<View0,View1>::IntersectionN(Space& home, bool share,
                                             IntersectionN& p)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
       shared(p.shared),
@@ -262,7 +262,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  IntersectionN<View0,View1>::post(Space* home,
+  IntersectionN<View0,View1>::post(Space& home,
                                    ViewArray<View0>& x, View1 y) {
     switch (x.size()) {
     case 0:
@@ -280,7 +280,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  IntersectionN<View0,View1>::post(Space* home, ViewArray<View0>& x,
+  IntersectionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
                                    const IntSet& z, View1 y) {
     (void) new (home) IntersectionN<View0,View1>(home,x,z,y);
     return ES_OK;
@@ -288,7 +288,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   Actor*
-  IntersectionN<View0,View1>::copy(Space* home, bool share) {
+  IntersectionN<View0,View1>::copy(Space& home, bool share) {
     return new (home) IntersectionN<View0,View1>(home,share,*this);
   }
 
@@ -306,7 +306,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   Reflection::ActorSpec
-  IntersectionN<View0,View1>::spec(const Space* home,
+  IntersectionN<View0,View1>::spec(const Space& home,
                                    Reflection::VarMap& m) const {
     Reflection::ActorSpec s =
       MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
@@ -325,7 +325,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   void
-  IntersectionN<View0,View1>::post(Space* home,
+  IntersectionN<View0,View1>::post(Space& home,
                                    Reflection::VarMap& vars,
                                    const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
@@ -338,7 +338,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  IntersectionN<View0,View1>::propagate(Space* home, ModEventDelta) {
+  IntersectionN<View0,View1>::propagate(Space& home, ModEventDelta) {
     Scratch s(home);
     bool repeat = false;
     do {

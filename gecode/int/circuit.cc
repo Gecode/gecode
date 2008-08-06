@@ -40,11 +40,11 @@
 namespace Gecode {
 
   void
-  circuit(Space* home, const IntVarArgs& x, IntConLevel icl, PropKind) {
+  circuit(Space& home, const IntVarArgs& x, IntConLevel icl, PropKind) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::circuit");
-    if (home->failed()) return;
+    if (home.failed()) return;
     if (x.size() == 0)
       return;
     ViewArray<IntView> xv(home,x);

@@ -63,22 +63,22 @@ namespace Gecode { namespace Set { namespace Convex {
   class Convex : public UnaryPropagator<SetView,PC_SET_ANY> {
   protected:
     /// Constructor for cloning \a p
-    Convex(Space* home, bool share, Convex& p);
+    Convex(Space& home, bool share, Convex& p);
     /// Constructor for posting
-    Convex(Space* home, SetView);
+    Convex(Space& home, SetView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Post propagator that propagates that \a x is convex 
-    static  ExecStatus  post(Space* home,SetView x);
+    static  ExecStatus  post(Space& home,SetView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -94,22 +94,22 @@ namespace Gecode { namespace Set { namespace Convex {
   class ConvexHull : public BinaryPropagator<SetView,PC_SET_ANY> {
   protected:
     /// Constructor for cloning \a p
-    ConvexHull(Space* home, bool share, ConvexHull&);
+    ConvexHull(Space& home, bool share, ConvexHull&);
     /// Constructor for posting
-    ConvexHull(Space* home, SetView, SetView);
+    ConvexHull(Space& home, SetView, SetView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*  copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor*  copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, ModEventDelta med);
     /// Post propagator that propagates that \a y is the convex hull of \a x
-    static  ExecStatus  post(Space* home,SetView x,SetView y);
+    static  ExecStatus  post(Space& home,SetView x,SetView y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post using specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);

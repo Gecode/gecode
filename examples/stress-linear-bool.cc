@@ -50,17 +50,17 @@ protected:
 public:
   /// Constructor for the model
   StressLinearBool(const SizeOptions& opt)
-    : x(this,4*opt.size()+1,0,1) {
+    : x(*this,4*opt.size()+1,0,1) {
     
-    linear(this, x, IRT_GQ, 2*opt.size());
+    linear(*this, x, IRT_GQ, 2*opt.size());
 
     for (unsigned int i=0; i<opt.size(); i++) {
       // Assign a variable
-      rel(this, x[opt.size()-1-i], IRT_EQ, 0);
+      rel(*this, x[opt.size()-1-i], IRT_EQ, 0);
       // Propagate
       (void) status();
       // Assign a variable
-      rel(this, x[opt.size()+i], IRT_EQ, 0);
+      rel(*this, x[opt.size()+i], IRT_EQ, 0);
       // Propagate
       (void) status();
     }
@@ -68,7 +68,7 @@ public:
   }
   /// Constructor for cloning \a s
   StressLinearBool(bool share, StressLinearBool& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
   virtual Space*

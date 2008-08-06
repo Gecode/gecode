@@ -104,31 +104,31 @@ public:
   }
   /// Actual model
   BIBD(const BIBDOptions& o)
-    : opt(o), _p(this,opt.v*opt.b,0,1) {
+    : opt(o), _p(*this,opt.v*opt.b,0,1) {
     // r ones per row
     for (int i=opt.v; i--; ) {
       BoolVarArgs row(opt.b);
       for (int j=opt.b; j--; )
         row[j] = p(i,j);
-      linear(this, row, IRT_EQ, opt.r, ICL_DEF, opt.pk());
+      linear(*this, row, IRT_EQ, opt.r, ICL_DEF, opt.pk());
     }
     // k ones per column
     for (int j=opt.b; j--; ) {
       BoolVarArgs col(opt.v);
       for (int i=opt.v; i--; )
         col[i] = p(i,j);
-      linear(this, col, IRT_EQ, opt.k, ICL_DEF, opt.pk());
+      linear(*this, col, IRT_EQ, opt.k, ICL_DEF, opt.pk());
     }
     // Exactly lambda ones in scalar product between two different rows
     for (int i1=0; i1<opt.v; i1++)
       for (int i2=i1+1; i2<opt.v; i2++) {
         BoolVarArgs row(opt.b);
         for (int j=opt.b; j--; ) {
-          BoolVar b(this,0,1);
-          rel(this,p(i1,j),BOT_AND,p(i2,j),b);
+          BoolVar b(*this,0,1);
+          rel(*this,p(i1,j),BOT_AND,p(i2,j),b);
           row[j] = b;
         }
-        linear(this, row, IRT_EQ, opt.lambda, ICL_DEF, opt.pk());
+        linear(*this, row, IRT_EQ, opt.lambda, ICL_DEF, opt.pk());
       }
 
     for (int i=1;i<opt.v;i++) {
@@ -138,7 +138,7 @@ public:
         row1[j] = p(i-1,j);
         row2[j] = p(i,j);
       }
-      rel(this, row1, IRT_GQ, row2);
+      rel(*this, row1, IRT_GQ, row2);
     }
     for (int j=1;j<opt.b;j++) {
       BoolVarArgs col1(opt.v);
@@ -147,10 +147,10 @@ public:
         col1[i] = p(i,j-1);
         col2[i] = p(i,j);
       }
-      rel(this, col1, IRT_GQ, col2);
+      rel(*this, col1, IRT_GQ, col2);
     }
 
-    branch(this, _p, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, _p, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Print solution
@@ -171,7 +171,7 @@ public:
   /// Constructor for cloning \a s
   BIBD(bool share, BIBD& s)
     : Example(share,s), opt(s.opt) {
-    _p.update(this,share,s._p);
+    _p.update(*this,share,s._p);
   }
 
   /// Copy during cloning

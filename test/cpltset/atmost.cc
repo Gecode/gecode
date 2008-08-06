@@ -80,7 +80,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::atmost(home, x[0], x[1], 1);
       }
@@ -114,7 +114,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::atmostLex(home, x[0], x[1], 1, SRT_LE);
       }
@@ -141,7 +141,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::atmost(home, x[0], ds_33, 1);
       }

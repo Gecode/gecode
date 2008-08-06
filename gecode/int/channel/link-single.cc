@@ -40,12 +40,12 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   forceinline
-  LinkSingle::LinkSingle(Space* home, bool share, LinkSingle& p)
+  LinkSingle::LinkSingle(Space& home, bool share, LinkSingle& p)
     : MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
   (home,share,p) {}
 
   Actor*
-  LinkSingle::copy(Space* home, bool share) {
+  LinkSingle::copy(Space& home, bool share) {
     return new (home) LinkSingle(home,share,*this);
   }
 
@@ -60,13 +60,13 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   Reflection::ActorSpec
-  LinkSingle::spec(const Space* home, Reflection::VarMap& m) const {
+  LinkSingle::spec(const Space& home, Reflection::VarMap& m) const {
     return MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
       ::spec(home, m, ati());
   }
 
   void
-  LinkSingle::post(Space* home, Reflection::VarMap& vars,
+  LinkSingle::post(Space& home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     BoolView b(home, vars, spec[0]);
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   ExecStatus
-  LinkSingle::propagate(Space* home, ModEventDelta) {
+  LinkSingle::propagate(Space& home, ModEventDelta) {
     if (x0.zero()) {
       GECODE_ME_CHECK(x1.eq(home,0));
     } else if (x0.one()) {

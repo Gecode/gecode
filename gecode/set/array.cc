@@ -45,13 +45,13 @@
 
 namespace Gecode {
 
-  SetVarArray::SetVarArray(Space* home, int n)
+  SetVarArray::SetVarArray(Space& home, int n)
     : VarArray<SetVar>(home,n) {
     for (int i = size(); i--; )
       x[i].init(home);
   }
 
-  SetVarArray::SetVarArray(Space* home,int n,
+  SetVarArray::SetVarArray(Space& home,int n,
                            int lbMin,int lbMax,int ubMin,int ubMax,
                            unsigned int minCard,
                            unsigned int maxCard)
@@ -67,7 +67,7 @@ namespace Gecode {
       x[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);    
   }
 
-  SetVarArray::SetVarArray(Space* home,int n,
+  SetVarArray::SetVarArray(Space& home,int n,
                            const IntSet& glb,int ubMin,int ubMax,
                            unsigned int minCard,unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
@@ -81,7 +81,7 @@ namespace Gecode {
       x[i].init(home,glb,ubMin,ubMax,minCard,maxCard);
   }
 
-  SetVarArray::SetVarArray(Space* home,int n,
+  SetVarArray::SetVarArray(Space& home,int n,
                            int lbMin,int lbMax,const IntSet& lub,
                            unsigned int minCard,unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
@@ -95,7 +95,7 @@ namespace Gecode {
       x[i].init(home,lbMin,lbMax,lub,minCard,maxCard);
   }
 
-  SetVarArray::SetVarArray(Space* home,int n,
+  SetVarArray::SetVarArray(Space& home,int n,
                            const IntSet& glb, const IntSet& lub,
                            unsigned int minCard, unsigned int maxCard)
     : VarArray<SetVar>(home,n) {

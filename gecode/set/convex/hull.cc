@@ -46,7 +46,7 @@
 namespace Gecode { namespace Set { namespace Convex {
 
   Actor*
-  ConvexHull::copy(Space* home, bool share) {
+  ConvexHull::copy(Space& home, bool share) {
     return new (home) ConvexHull(home,share,*this);
   }
 
@@ -56,12 +56,12 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   Reflection::ActorSpec
-  ConvexHull::spec(const Space* home, Reflection::VarMap& m) const {
+  ConvexHull::spec(const Space& home, Reflection::VarMap& m) const {
     return BinaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
   }
 
   ExecStatus
-  ConvexHull::propagate(Space* home, ModEventDelta) {
+  ConvexHull::propagate(Space& home, ModEventDelta) {
     //x1 is the convex hull of x0
 
     GECODE_ME_CHECK( x1.cardMin(home,x0.cardMin()) );
@@ -121,7 +121,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   void
-  ConvexHull::post(Space* home, Reflection::VarMap& vars,
+  ConvexHull::post(Space& home, Reflection::VarMap& vars,
                const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     SetView s0(home, vars, spec[0]);

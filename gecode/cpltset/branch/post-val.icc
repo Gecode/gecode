@@ -42,7 +42,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /// Post branching according to \a v and \a vals
   template <class SelView>
   void
-  post(Space* home, ViewArray<CpltSetView>& x, SelView& v,
+  post(Space& home, ViewArray<CpltSetView>& x, SelView& v,
        CpltSetValBranch vals, const ValBranchOptions& o_vals) {
     switch (vals) {
     case CPLTSET_VAL_MIN_INC:

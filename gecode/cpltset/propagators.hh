@@ -58,41 +58,41 @@ namespace Gecode { namespace CpltSet {
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    NaryCpltSetPropagator(Space* home, bool share, NaryCpltSetPropagator& p);
+    NaryCpltSetPropagator(Space& home, bool share, NaryCpltSetPropagator& p);
     /// Constructor for creation
-    NaryCpltSetPropagator(Space* home, ViewArray<View>& x, bdd& d);
+    NaryCpltSetPropagator(Space& home, ViewArray<View>& x, bdd& d);
     /// (EEQ) Earliest Existential Quantification for set bounds propagation
     bdd bnd_phi(int j);
     /// (EEQ) Earliest Existential Quantification
     bdd phi(int i, int j);
     /// Apply existential quantification for all variables
     ExecStatus 
-    divide_conquer(Space* home, bdd& p, int i, int j);
+    divide_conquer(Space& home, bdd& p, int i, int j);
   public:
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
 
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Use eeq to perform domain propagation with n^2 and-abstractions
-    ExecStatus propagate_eeq(Space* home);
+    ExecStatus propagate_eeq(Space& home);
     /// Use eeq to perform bounds propagation 
-    ExecStatus propagate_bnd_eeq(Space* home);
+    ExecStatus propagate_bnd_eeq(Space& home);
     /// Use ddc to perform domain propagation with nlog(n) and-abstractions
-    ExecStatus propagate_ddc(Space* home);
+    ExecStatus propagate_ddc(Space& home);
     /// Use ddc to perform bounds propagation with nlog(n) and-abstractions
-    ExecStatus propagate_bnd_ddc(Space* home);
+    ExecStatus propagate_bnd_ddc(Space& home);
 
-    static  ExecStatus post(Space* home, ViewArray<View>& x, bdd& d);
+    static  ExecStatus post(Space& home, ViewArray<View>& x, bdd& d);
   };
 
 
@@ -114,26 +114,26 @@ namespace Gecode { namespace CpltSet {
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    BinaryCpltSetPropagator(Space* home, bool share,
+    BinaryCpltSetPropagator(Space& home, bool share,
                             BinaryCpltSetPropagator& p);
     /// Constructor for posting
-    BinaryCpltSetPropagator(Space* home, View0& x0, View1& y0, bdd& d);
+    BinaryCpltSetPropagator(Space& home, View0& x0, View1& y0, bdd& d);
   public:
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
 
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    static  ExecStatus post(Space* home, View0& x0, View1& y0, bdd& d);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    static  ExecStatus post(Space& home, View0& x0, View1& y0, bdd& d);
   };
 
   /**
@@ -147,25 +147,25 @@ namespace Gecode { namespace CpltSet {
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    UnaryCpltSetPropagator(Space* home, bool share, UnaryCpltSetPropagator& p);
+    UnaryCpltSetPropagator(Space& home, bool share, UnaryCpltSetPropagator& p);
     /// Constructor for posting
-    UnaryCpltSetPropagator(Space* home, View& x0, bdd& d);
+    UnaryCpltSetPropagator(Space& home, View& x0, bdd& d);
   public:
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
 
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    static  ExecStatus post(Space* home, View& x0, bdd& d);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    static  ExecStatus post(Space& home, View& x0, bdd& d);
   };
 
   /**
@@ -187,26 +187,26 @@ namespace Gecode { namespace CpltSet {
     using Super::x;
     using Super::y;
     /// Constructor for cloning \a p
-    NaryOneCpltSetPropagator(Space* home, bool share, 
+    NaryOneCpltSetPropagator(Space& home, bool share, 
                              NaryOneCpltSetPropagator& p);
     /// Constructor for posting
-    NaryOneCpltSetPropagator(Space* home, ViewArray<View0>&, View1&, bdd&);
+    NaryOneCpltSetPropagator(Space& home, ViewArray<View0>&, View1&, bdd&);
     /// Divide and conquer method including additional view \a y
-    ExecStatus divide_conquer(Space* home, bdd& p, 
+    ExecStatus divide_conquer(Space& home, bdd& p, 
                               int l, int r, int ypos);
   public:
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    static  ExecStatus post(Space* home, ViewArray<View0>& x, View1& y, 
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    static  ExecStatus post(Space& home, ViewArray<View0>& x, View1& y, 
                             bdd& d);
   };
 
@@ -231,29 +231,29 @@ namespace Gecode { namespace CpltSet {
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    NaryTwoCpltSetPropagator(Space* home, bool share, 
+    NaryTwoCpltSetPropagator(Space& home, bool share, 
                              NaryTwoCpltSetPropagator& p);
     /// Constructor for posting
-    NaryTwoCpltSetPropagator(Space* home,
+    NaryTwoCpltSetPropagator(Space& home,
                              ViewArray<View0>&, View1&, View1&, bdd&);
     /// Divide and conquer method including additional \a y and \a z views
-    ExecStatus divide_conquer(Space* home, bdd& p, int l, int r, 
+    ExecStatus divide_conquer(Space& home, bdd& p, int l, int r, 
                               int ypos, int zpos);
   public:
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    static  ExecStatus post(Space* home, ViewArray<View0>& x, 
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    static  ExecStatus post(Space& home, ViewArray<View0>& x, 
                             View1& y, View1& z, bdd& d);
   };
   
@@ -273,17 +273,17 @@ namespace Gecode { namespace CpltSet {
     using BinaryCpltSetPropagator<View0,View1>::x;
     using BinaryCpltSetPropagator<View0,View1>::y;
     /// Constructor for cloning \a p
-    BinRelDisj(Space* home, bool share, BinRelDisj<View0,View1>& p);
+    BinRelDisj(Space& home, bool share, BinRelDisj<View0,View1>& p);
     /// Constructor for posting
-    BinRelDisj(Space* home, View0& x0, View1& y0, bdd& d);
+    BinRelDisj(Space& home, View0& x0, View1& y0, bdd& d);
   public:
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    static  ExecStatus post(Space* home, View0& x0, View1& y0, bdd& d);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    static  ExecStatus post(Space& home, View0& x0, View1& y0, bdd& d);
   };
 
   /**
@@ -300,25 +300,25 @@ namespace Gecode { namespace CpltSet {
     /// View for the CpltSetVar
     View2 s;
     /// Constructor for cloning \a p
-    Singleton(Space* home, bool share, Singleton& p);
+    Singleton(Space& home, bool share, Singleton& p);
     /// Constructor for creation
-    Singleton(Space* home, View1& x, View2& s);
+    Singleton(Space& home, View1& x, View2& s);
   public:
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
 
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
-    static  ExecStatus post(Space* home, View1& x, View2& s);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    static  ExecStatus post(Space& home, View1& x, View2& s);
   }; 
 
 }}

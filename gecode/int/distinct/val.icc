@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   template <class View, bool complete>
   ExecStatus
-  prop_val(Space* home, ViewArray<View>& x) {
+  prop_val(Space& home, ViewArray<View>& x) {
     assert(x.size() > 1);
     int n = x.size();
 
@@ -152,17 +152,17 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   template <class View>
   forceinline
-  Val<View>::Val(Space* home, ViewArray<View>& x)
+  Val<View>::Val(Space& home, ViewArray<View>& x)
   : NaryPropagator<View,PC_INT_VAL>(home,x) {}
 
   template <class View>
   forceinline
-  Val<View>::Val(Space* home, bool share, Val<View>& p)
+  Val<View>::Val(Space& home, bool share, Val<View>& p)
     : NaryPropagator<View,PC_INT_VAL>(home,share,p) {}
 
   template <class View>
   Actor*
-  Val<View>::copy(Space* home, bool share) {
+  Val<View>::copy(Space& home, bool share) {
     return new (home) Val<View>(home,share,*this);
   }
 
@@ -174,20 +174,20 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   Reflection::ActorSpec
-  Val<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Val<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return NaryPropagator<View,PC_INT_VAL>::spec(home, m, ati());
   }
 
   template <class View>
   ExecStatus
-  Val<View>::propagate(Space* home, ModEventDelta) {
+  Val<View>::propagate(Space& home, ModEventDelta) {
     GECODE_ES_CHECK((prop_val<View,true>(home,x)));
     return (x.size() < 2) ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
   template <class View>
   ExecStatus
-  Val<View>::post(Space* home, ViewArray<View>& x) {
+  Val<View>::post(Space& home, ViewArray<View>& x) {
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() > 2)
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  Val<View>::post(Space* home, Reflection::VarMap& vars,
+  Val<View>::post(Space& home, Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<View> x(home, vars, spec[0]);

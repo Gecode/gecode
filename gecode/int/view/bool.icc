@@ -52,7 +52,7 @@ namespace Gecode {
     BoolView::BoolView(BoolVarImp* x)
       : VarViewBase<BoolVarImp>(x) {}
     forceinline
-    BoolView::BoolView(Space* /*home*/, const Reflection::VarMap& vars,
+    BoolView::BoolView(Space&, const Reflection::VarMap& vars,
                        Reflection::Arg* arg) 
       : VarViewBase<BoolVarImp>(BoolVar(vars.var(arg->toVar())).var()) {}
 
@@ -127,56 +127,56 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    BoolView::lq(Space* home, int n) {
+    BoolView::lq(Space& home, int n) {
       return varimp->lq(home,n);
     }
     forceinline ModEvent
-    BoolView::lq(Space* home, double n) {
+    BoolView::lq(Space& home, double n) {
       return varimp->lq(home,n);
     }
     
     forceinline ModEvent
-    BoolView::le(Space* home, int n) {
+    BoolView::le(Space& home, int n) {
       return varimp->lq(home,n-1);
     }
     forceinline ModEvent
-    BoolView::le(Space* home, double n) {
+    BoolView::le(Space& home, double n) {
       return lq(home,n-1.0);
     }
     
     forceinline ModEvent
-    BoolView::gq(Space* home, int n) {
+    BoolView::gq(Space& home, int n) {
     return varimp->gq(home,n);
     }
     forceinline ModEvent
-    BoolView::gq(Space* home, double n) {
+    BoolView::gq(Space& home, double n) {
       return varimp->gq(home,n);
     }
     
     forceinline ModEvent
-    BoolView::gr(Space* home, int n) {
+    BoolView::gr(Space& home, int n) {
       return varimp->gq(home,n+1);
     }
     forceinline ModEvent
-    BoolView::gr(Space* home, double n) {
+    BoolView::gr(Space& home, double n) {
       return gq(home,n+1.0);
     }
     
     forceinline ModEvent
-    BoolView::nq(Space* home, int n) {
+    BoolView::nq(Space& home, int n) {
       return varimp->nq(home,n);
     }
     forceinline ModEvent
-    BoolView::nq(Space* home, double n) {
+    BoolView::nq(Space& home, double n) {
       return varimp->nq(home,n);
     }
     
     forceinline ModEvent
-    BoolView::eq(Space* home, int n) {
+    BoolView::eq(Space& home, int n) {
       return varimp->eq(home,n);
     }
     forceinline ModEvent
-    BoolView::eq(Space* home, double n) {
+    BoolView::eq(Space& home, double n) {
       return varimp->eq(home,n);
     }
     
@@ -187,37 +187,37 @@ namespace Gecode {
      */
     template <class I>
     forceinline ModEvent
-    BoolView::narrow_r(Space* home, I& i, bool depend) {
+    BoolView::narrow_r(Space& home, I& i, bool depend) {
       Iter::Ranges::IsRangeIter<I>();
       return varimp->narrow_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
-    BoolView::inter_r(Space* home, I& i, bool depend) {
+    BoolView::inter_r(Space& home, I& i, bool depend) {
       Iter::Ranges::IsRangeIter<I>();
       return varimp->inter_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
-    BoolView::minus_r(Space* home, I& i, bool depend) {
+    BoolView::minus_r(Space& home, I& i, bool depend) {
       Iter::Ranges::IsRangeIter<I>();
       return varimp->minus_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
-    BoolView::narrow_v(Space* home, I& i, bool depend) {
+    BoolView::narrow_v(Space& home, I& i, bool depend) {
       Iter::Values::IsValueIter<I>();
       return varimp->narrow_v(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
-    BoolView::inter_v(Space* home, I& i, bool depend) {
+    BoolView::inter_v(Space& home, I& i, bool depend) {
       Iter::Values::IsValueIter<I>();
       return varimp->inter_v(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
-    BoolView::minus_v(Space* home, I& i, bool depend) {
+    BoolView::minus_v(Space& home, I& i, bool depend) {
       Iter::Values::IsValueIter<I>();
       return varimp->minus_v(home,i,depend);
     }
@@ -246,20 +246,20 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    BoolView::zero_none(Space* home) {
+    BoolView::zero_none(Space& home) {
       return varimp->zero_none(home);
     }
     forceinline ModEvent
-    BoolView::one_none(Space* home) {
+    BoolView::one_none(Space& home) {
       return varimp->one_none(home);
     }
 
     forceinline ModEvent
-    BoolView::zero(Space* home) {
+    BoolView::zero(Space& home) {
       return varimp->zero(home);
     }
     forceinline ModEvent
-    BoolView::one(Space* home) {
+    BoolView::one(Space& home) {
       return varimp->one(home);
     }
 
@@ -298,7 +298,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    BoolView::update(Space* home, bool share, BoolView& x) {
+    BoolView::update(Space& home, bool share, BoolView& x) {
       varimp = x.varimp->copy(home,share);
     }
 
@@ -307,7 +307,7 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    BoolView::spec(const Space* home, Reflection::VarMap& m) const {
+    BoolView::spec(const Space& home, Reflection::VarMap& m) const {
       return varimp->spec(home, m);
     }
     inline Support::Symbol
@@ -334,7 +334,7 @@ namespace Gecode {
       view = b;
     }
     forceinline
-    NegBoolView::NegBoolView(Space* home, const Reflection::VarMap& vars,
+    NegBoolView::NegBoolView(Space& home, const Reflection::VarMap& vars,
                              Reflection::Arg* arg)
     : DerivedViewBase<BoolView>(BoolView(home, vars, arg)) {}
 
@@ -366,20 +366,20 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    NegBoolView::zero_none(Space* home) {
+    NegBoolView::zero_none(Space& home) {
       return view.one_none(home);
     }
     forceinline ModEvent
-    NegBoolView::one_none(Space* home) {
+    NegBoolView::one_none(Space& home) {
       return view.zero_none(home);
     }
 
     forceinline ModEvent
-    NegBoolView::zero(Space* home) {
+    NegBoolView::zero(Space& home) {
       return view.one(home);
     }
     forceinline ModEvent
-    NegBoolView::one(Space* home) {
+    NegBoolView::one(Space& home) {
       return view.zero(home);
     }
 
@@ -416,7 +416,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    NegBoolView::schedule(Space* home, Propagator* p, ModEvent me) {
+    NegBoolView::schedule(Space& home, Propagator* p, ModEvent me) {
       return BoolView::schedule(home,p,me);
     }
     forceinline ModEvent
@@ -434,20 +434,20 @@ namespace Gecode {
      *
      */
     forceinline void
-    NegBoolView::subscribe(Space* home, Propagator* p, PropCond pc,
+    NegBoolView::subscribe(Space& home, Propagator* p, PropCond pc,
                            bool process) {
       view.subscribe(home,p,pc,process);
     }
     forceinline void
-    NegBoolView::cancel(Space* home, Propagator* p, PropCond pc) {
+    NegBoolView::cancel(Space& home, Propagator* p, PropCond pc) {
       view.cancel(home,p,pc);
     }
     forceinline void
-    NegBoolView::subscribe(Space* home, Advisor& a) {
+    NegBoolView::subscribe(Space& home, Advisor& a) {
       view.subscribe(home,a);
     }
     forceinline void
-    NegBoolView::cancel(Space* home, Advisor& a) {
+    NegBoolView::cancel(Space& home, Advisor& a) {
       view.cancel(home,a);
     }
 
@@ -480,7 +480,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    NegBoolView::update(Space* home, bool share, NegBoolView& b) {
+    NegBoolView::update(Space& home, bool share, NegBoolView& b) {
       view.update(home,share,b.view);
     }
 
@@ -489,7 +489,7 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    NegBoolView::spec(const Space* home, Reflection::VarMap& m) const {
+    NegBoolView::spec(const Space& home, Reflection::VarMap& m) const {
       return view.spec(home, m);
     }
     inline Support::Symbol

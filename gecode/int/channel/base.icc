@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class Info, PropCond pc>
   forceinline
-  Base<Info,pc>::Base(Space* home, int n0, Info* xy0)
+  Base<Info,pc>::Base(Space& home, int n0, Info* xy0)
     : Propagator(home), n(n0), n_na(2*n), xy(xy0) {
     for (int i=2*n; i--; )
       xy[i].view.subscribe(home,this,pc);
@@ -47,9 +47,9 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class Info, PropCond pc>
   forceinline
-  Base<Info,pc>::Base(Space* home, bool share, Base<Info,pc>& p)
+  Base<Info,pc>::Base(Space& home, bool share, Base<Info,pc>& p)
     : Propagator(home,share,p), n(p.n), n_na(p.n_na),
-      xy(home->alloc<Info>(2*n)) {
+      xy(home.alloc<Info>(2*n)) {
     for (int i=2*n; i--; )
       xy[i].update(home,share,p.xy[i]);
   }
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class Info, PropCond pc>
   Reflection::ActorSpec
-  Base<Info,pc>::spec(const Space* home, Reflection::VarMap& m,
+  Base<Info,pc>::spec(const Space& home, Reflection::VarMap& m,
                       const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     for (int i=0; i<2*n; i++)
@@ -72,8 +72,8 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class Info, PropCond pc>
   forceinline size_t
-  Base<Info,pc>::dispose(Space* home) {
-    if (!home->failed())
+  Base<Info,pc>::dispose(Space& home) {
+    if (!home.failed())
       for (int i=2*n; i--; )
         xy[i].view.cancel(home,this,pc);
     (void) Propagator::dispose(home);

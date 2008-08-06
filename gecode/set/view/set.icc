@@ -57,7 +57,7 @@ namespace Gecode { namespace Set {
   SetView::SetView(SetVarImp* y)
     : VarViewBase<SetVarImp>(y) {}
   forceinline
-  SetView::SetView(Space* /*home*/, const Reflection::VarMap& vars,
+  SetView::SetView(Space&, const Reflection::VarMap& vars,
                    Reflection::Arg* arg)
     : VarViewBase<SetVarImp>(SetVar(vars.var(arg->toVar())).var()) {}
 
@@ -113,58 +113,58 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  SetView::cardMin(Space* home, unsigned int m) {
+  SetView::cardMin(Space& home, unsigned int m) {
     return varimp-> cardMin(home, m);
   }
 
   forceinline ModEvent
-  SetView::cardMax(Space* home, unsigned int m) {
+  SetView::cardMax(Space& home, unsigned int m) {
     return varimp-> cardMax(home, m);
   }
 
   forceinline ModEvent
-  SetView::include (Space* home,int from, int to) {
+  SetView::include (Space& home,int from, int to) {
     return (varimp->include(home,from,to));
   }
 
   forceinline ModEvent
-  SetView::include (Space* home,int n) {
+  SetView::include (Space& home,int n) {
     return (varimp->include(home,n));
   }
 
   forceinline ModEvent
-  SetView::exclude (Space* home,int n) {
+  SetView::exclude (Space& home,int n) {
     return (varimp->exclude(home, n));
   }
 
   forceinline ModEvent
-  SetView::intersect (Space* home,int from, int to) {
+  SetView::intersect (Space& home,int from, int to) {
     return (varimp->intersect(home,from,to));
   }
 
   forceinline ModEvent
-  SetView::intersect (Space* home,int n) {
+  SetView::intersect (Space& home,int n) {
     return (varimp->intersect(home,n));
   }
 
   template <class I> ModEvent
-  SetView::includeI (Space* home, I& iter) {      
+  SetView::includeI (Space& home, I& iter) {      
     Iter::Ranges::IsRangeIter<I>();
     return (varimp->includeI(home, iter));
   }
 
   forceinline ModEvent
-  SetView::exclude (Space* home,int from, int to)
+  SetView::exclude (Space& home,int from, int to)
   { return (varimp->exclude(home,from,to)); }
 
   template <class I> ModEvent
-  SetView::excludeI(Space* home, I& iter) {
+  SetView::excludeI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->excludeI(home, iter);
   }
 
   template <class I> ModEvent
-  SetView::intersectI(Space* home, I& iter) {
+  SetView::intersectI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->intersectI(home, iter);
   }
@@ -177,12 +177,12 @@ namespace Gecode { namespace Set {
    */
 
   forceinline void
-  SetView::update(Space* home, bool share, SetView& y) {
+  SetView::update(Space& home, bool share, SetView& y) {
     varimp = y.varimp->copy(home,share);
   }
 
   forceinline Reflection::Arg*
-  SetView::spec(const Space* home, Reflection::VarMap& m) const {
+  SetView::spec(const Space& home, Reflection::VarMap& m) const {
     return varimp->spec(home, m);
   }
 

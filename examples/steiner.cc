@@ -67,34 +67,34 @@ public:
   /// Actual model
   Steiner(const SizeOptions& opt)
     : n(opt.size()), noOfTriples((n*(n-1))/6),
-      triples(this, noOfTriples, IntSet::empty, 1, n, 3, 3) {
+      triples(*this, noOfTriples, IntSet::empty, 1, n, 3, 3) {
 
     for (int i=0; i<noOfTriples; i++) {
       for (int j=i+1; j<noOfTriples; j++) {
         SetVar x = triples[i];
         SetVar y = triples[j];
 
-        SetVar atmostOne(this,IntSet::empty,1,n,0,1);
-        cardinality(this, atmostOne,0,1);
-        rel(this, x, SOT_INTER, y, SRT_EQ, atmostOne);
+        SetVar atmostOne(*this,IntSet::empty,1,n,0,1);
+        cardinality(*this, atmostOne,0,1);
+        rel(*this, x, SOT_INTER, y, SRT_EQ, atmostOne);
 
-        IntVar x1(this,1,n);
-        IntVar x2(this,1,n);
-        IntVar x3(this,1,n);
-        IntVar y1(this,1,n);
-        IntVar y2(this,1,n);
-        IntVar y3(this,1,n);
+        IntVar x1(*this,1,n);
+        IntVar x2(*this,1,n);
+        IntVar x3(*this,1,n);
+        IntVar y1(*this,1,n);
+        IntVar y2(*this,1,n);
+        IntVar y3(*this,1,n);
 
         if (opt.model() == MODEL_NONE) {
           /* Naive alternative:
            * just including the ints in the set
            */
-          rel(this, x, SRT_SUP, x1);
-          rel(this, x, SRT_SUP, x2);
-          rel(this, x, SRT_SUP, x3);
-          rel(this, y, SRT_SUP, y1);
-          rel(this, y, SRT_SUP, y2);
-          rel(this, y, SRT_SUP, y3);
+          rel(*this, x, SRT_SUP, x1);
+          rel(*this, x, SRT_SUP, x2);
+          rel(*this, x, SRT_SUP, x3);
+          rel(*this, y, SRT_SUP, y1);
+          rel(*this, y, SRT_SUP, y2);
+          rel(*this, y, SRT_SUP, y3);
                     
         } else  if (opt.model() == MODEL_MATCHING) {
           /* Smart alternative:
@@ -103,51 +103,51 @@ public:
         
           IntVarArgs xargs(3);
           xargs[0] = x1; xargs[1] = x2; xargs[2] = x3;
-          match(this, x,xargs);
+          match(*this, x,xargs);
         
           IntVarArgs yargs(3);
           yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
-          match(this, y,yargs);
+          match(*this, y,yargs);
         } else if (opt.model() == MODEL_SEQ) {
-          SetVar tmp20(this,IntSet::empty,1,n);
-          SetVar tmp21(this,IntSet::empty,1,n);
-          SetVar tmp22(this,IntSet::empty,1,n);
-          SetVar tmp23(this,IntSet::empty,1,n);
-          SetVar tmp24(this,IntSet::empty,1,n);
-          SetVar tmp25(this,IntSet::empty,1,n);
-          rel(this, tmp20, SRT_EQ, x1);
-          rel(this, tmp21, SRT_EQ, x2);
-          rel(this, tmp22, SRT_EQ, x3);
-          rel(this, tmp23, SRT_EQ, y1);
-          rel(this, tmp24, SRT_EQ, y2);
-          rel(this, tmp25, SRT_EQ, y3);
+          SetVar tmp20(*this,IntSet::empty,1,n);
+          SetVar tmp21(*this,IntSet::empty,1,n);
+          SetVar tmp22(*this,IntSet::empty,1,n);
+          SetVar tmp23(*this,IntSet::empty,1,n);
+          SetVar tmp24(*this,IntSet::empty,1,n);
+          SetVar tmp25(*this,IntSet::empty,1,n);
+          rel(*this, tmp20, SRT_EQ, x1);
+          rel(*this, tmp21, SRT_EQ, x2);
+          rel(*this, tmp22, SRT_EQ, x3);
+          rel(*this, tmp23, SRT_EQ, y1);
+          rel(*this, tmp24, SRT_EQ, y2);
+          rel(*this, tmp25, SRT_EQ, y3);
           SetVarArgs xargs(3);
           xargs[0] = tmp20; xargs[1] = tmp21; xargs[2] = tmp22;
           SetVarArgs yargs(3);
           yargs[0] = tmp23; yargs[1] = tmp24; yargs[2] = tmp25;
-          sequentialUnion(this,xargs,x);
-          sequentialUnion(this,yargs,y);          
+          sequentialUnion(*this,xargs,x);
+          sequentialUnion(*this,yargs,y);          
         }
         
         /* Breaking symmetries */
         
-        rel(this, x1,IRT_LE,x2);
-        rel(this, x2,IRT_LE,x3);
-        rel(this, x1,IRT_LE,x3);
+        rel(*this, x1,IRT_LE,x2);
+        rel(*this, x2,IRT_LE,x3);
+        rel(*this, x1,IRT_LE,x3);
         
-        rel(this, y1,IRT_LE,y2);
-        rel(this, y2,IRT_LE,y3);
-        rel(this, y1,IRT_LE,y3);
+        rel(*this, y1,IRT_LE,y2);
+        rel(*this, y2,IRT_LE,y3);
+        rel(*this, y1,IRT_LE,y3);
         
         IntArgs ia(6,(n+1)*(n+1),n+1,1,-(n+1)*(n+1),-(n+1),-1);
         IntVarArgs iva(6);
         iva[0]=x1; iva[1]=x2; iva[2]=x3;
         iva[3]=y1; iva[4]=y2; iva[5]=y3;
-        linear(this, ia, iva, IRT_LE, 0);
+        linear(*this, ia, iva, IRT_LE, 0);
       }
     }
 
-    branch(this, triples, SET_VAR_NONE, SET_VAL_MIN_INC);
+    branch(*this, triples, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Print solution
@@ -160,7 +160,7 @@ public:
 
   /// Constructor for copying \a s
   Steiner(bool share, Steiner& s) : Example(share,s), n(s.n), noOfTriples(s.noOfTriples) {
-    triples.update(this, share, s.triples);
+    triples.update(*this, share, s.triples);
   }
   /// Copy during cloning
   virtual Space*

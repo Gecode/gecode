@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class View>
   forceinline void
-  post_nary(Space* home,
+  post_nary(Space& home,
             ViewArray<View>& x, ViewArray<View>& y, IntRelType r, Val c) {
     switch (r) {
     case IRT_EQ:
@@ -192,7 +192,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post(Space* home, Term<IntView>* t, int n, IntRelType r, int c,
+  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c,
        IntConLevel icl, PropKind) {
 
     Limits::check(c,"Int::linear");
@@ -209,9 +209,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (n == 0) {
       switch (r) {
-      case IRT_EQ: if (d != 0.0) home->fail(); break;
-      case IRT_NQ: if (d == 0.0) home->fail(); break;
-      case IRT_LQ: if (d < 0.0)  home->fail(); break;
+      case IRT_EQ: if (d != 0.0) home.fail(); break;
+      case IRT_NQ: if (d == 0.0) home.fail(); break;
+      case IRT_LQ: if (d < 0.0)  home.fail(); break;
       default: GECODE_NEVER;
       }
       return;
@@ -306,7 +306,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class View>
   forceinline void
-  post_nary(Space* home,
+  post_nary(Space& home,
             ViewArray<View>& x, ViewArray<View>& y, 
             IntRelType r, Val c, BoolView b) {
     switch (r) {
@@ -328,7 +328,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post(Space* home,
+  post(Space& home,
        Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel,PropKind) {
 
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int { namespace Linear {
       default: GECODE_NEVER;
       }
       if ((fail ? b.zero(home) : b.one(home)) == ME_INT_FAILED)
-        home->fail();
+        home.fail();
       return;
     }
 

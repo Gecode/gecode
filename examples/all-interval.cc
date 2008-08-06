@@ -67,32 +67,32 @@ private:
 public:
   /// Actual model
   AllInterval(const SizeOptions& opt) :
-    x(this, opt.size(), 0, opt.size() - 1) {
+    x(*this, opt.size(), 0, opt.size() - 1) {
     const int n = x.size();
 
     IntVarArgs d(n-1);
 
     // Set up variables for distance
     for (int i=0; i<n-1; i++)
-      d[i] = abs(this, minus(this,x[i+1],x[i],opt.icl()),opt.icl());
+      d[i] = abs(*this, minus(*this,x[i+1],x[i],opt.icl()),opt.icl());
 
     // Constrain them to be between 1 and n-1
-    dom(this, d, 1, n-1);
+    dom(*this, d, 1, n-1);
 
-    distinct(this, x, opt.icl());
-    distinct(this, d, opt.icl());
+    distinct(*this, x, opt.icl());
+    distinct(*this, d, opt.icl());
 
     // Break mirror symmetry
-    rel(this, x[0], IRT_LE, x[1]);
+    rel(*this, x[0], IRT_LE, x[1]);
     // Break symmetry of dual solution
-    rel(this, d[0], IRT_GR, d[n-2]);
+    rel(*this, d[0], IRT_GR, d[n-2]);
 
-    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a e
   AllInterval(bool share, AllInterval& e)
     : Example(share, e) {
-    x.update(this, share, e.x);
+    x.update(*this, share, e.x);
   }
   /// Copy during cloning
   virtual Space*

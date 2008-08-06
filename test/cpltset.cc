@@ -92,8 +92,8 @@ namespace Test { namespace CpltSet {
       */
     CpltSetTestSpace(int n, Gecode::IntSet& d, int i, bool r, CpltSetTest* t,
                      const Options& o, bool log=true)
-      : x(this, n, Gecode::IntSet::empty, d), y(this, i, d), withInt(i),
-        b(this, 0, 1), reified(r), test(t), opt(o) {
+      : x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d), withInt(i),
+        b(*this, 0, 1), reified(r), test(t), opt(o) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
         olog << " y[]=" << y;
@@ -107,9 +107,9 @@ namespace Test { namespace CpltSet {
     CpltSetTestSpace(bool share, CpltSetTestSpace& s) 
       : Space(share,s), withInt(s.withInt), reified(s.reified), test(s.test), 
         opt(s.opt) {
-      x.update(this, share, s.x);
-      y.update(this, share, s.y);
-      b.update(this, share, s.b);
+      x.update(*this, share, s.x);
+      y.update(*this, share, s.y);
+      b.update(*this, share, s.b);
     }
   
     /// Copy space during cloning
@@ -120,11 +120,11 @@ namespace Test { namespace CpltSet {
     /// Post propagator
     void post(void) {
       if (reified){
-        test->post(this,x,y,b);
+        test->post(*this,x,y,b);
         if (opt.log)
           olog << ind(3) << "Posting reified propagator" << std::endl;
       } else {
-        test->post(this,x,y);
+        test->post(*this,x,y);
         if (opt.log)
           olog << ind(3) << "Posting propagator" << std::endl;
       }
@@ -157,7 +157,7 @@ namespace Test { namespace CpltSet {
         }
         olog << is << std::endl;
       }
-      Gecode::dom(this, x[i], srt, is);
+      Gecode::dom(*this, x[i], srt, is);
     }
     /// Perform cardinality tell operation on \a x[i]
     void cardinality(int i, int cmin, int cmax) {
@@ -165,7 +165,7 @@ namespace Test { namespace CpltSet {
         olog << ind(4) << cmin << " <= #(x[" << i << "]) <= " << cmax
              << std::endl;
       }
-      Gecode::cardinality(this, x[i], cmin, cmax);
+      Gecode::cardinality(*this, x[i], cmin, cmax);
     }
     /// Perform integer tell operation on \a y[i]
     void rel(int i, Gecode::IntRelType irt, int n) {
@@ -181,7 +181,7 @@ namespace Test { namespace CpltSet {
         }
         olog << " " << n << std::endl;
       }
-      Gecode::rel(this, y[i], irt, n);
+      Gecode::rel(*this, y[i], irt, n);
     }
     /// Perform Boolean tell on \a b
     void rel(bool sol) {
@@ -189,7 +189,7 @@ namespace Test { namespace CpltSet {
       assert(reified);
       if (opt.log) 
         olog << ind(4) << "b = " << n << std::endl;
-      Gecode::rel(this, b, Gecode::IRT_EQ, n);
+      Gecode::rel(*this, b, Gecode::IRT_EQ, n);
     }
 
     /// Assign all variables to values in \a a

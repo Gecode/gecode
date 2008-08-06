@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void
-  channel(Space* home, const IntVarArgs& x, unsigned int xoff,
+  channel(Space& home, const IntVarArgs& x, unsigned int xoff,
           const IntVarArgs& y, unsigned int yoff,
           IntConLevel icl, PropKind) {
     using namespace Int;
@@ -50,13 +50,13 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::channel");
     if (x.same(home) || y.same(home))
       throw ArgumentSame("Int::channel");
-    if (home->failed()) return;
+    if (home.failed()) return;
     if (n == 0)
       return;
 
     if ((xoff < 2) && (yoff < 2) && (xoff == yoff)) {
       if (icl == ICL_DOM) {
-        DomInfo<IntView>* di = home->alloc<DomInfo<IntView> >(2*(n+xoff));
+        DomInfo<IntView>* di = home.alloc<DomInfo<IntView> >(2*(n+xoff));
         for (int i=n; i--; ) {
           di[xoff+i    ].init(x[i],n+xoff);
           di[2*xoff+i+n].init(y[i],n+xoff);
@@ -73,7 +73,7 @@ namespace Gecode {
           GECODE_ES_FAIL(home,(Dom<IntView,false>::post(home,n+xoff,di)));
         }
       } else {
-        ValInfo<IntView>* vi = home->alloc<ValInfo<IntView> >(2*(n+xoff));
+        ValInfo<IntView>* vi = home.alloc<ValInfo<IntView> >(2*(n+xoff));
         for (int i=n; i--; ) {
           vi[xoff+i    ].init(x[i],n+xoff);
           vi[2*xoff+i+n].init(y[i],n+xoff);
@@ -92,7 +92,7 @@ namespace Gecode {
       }
     } else {
       if (icl == ICL_DOM) {
-        DomInfo<OffsetView>* di = home->alloc<DomInfo<OffsetView> >(2*n);
+        DomInfo<OffsetView>* di = home.alloc<DomInfo<OffsetView> >(2*n);
         for (int i=n; i--; ) {
           OffsetView oxi(x[i],-xoff);
           di[i  ].init(oxi,n);
@@ -105,7 +105,7 @@ namespace Gecode {
           GECODE_ES_FAIL(home,(Dom<OffsetView,false>::post(home,n,di)));
         }
       } else {
-        ValInfo<OffsetView>* vi = home->alloc<ValInfo<OffsetView> >(2*n);
+        ValInfo<OffsetView>* vi = home.alloc<ValInfo<OffsetView> >(2*n);
         for (int i=n; i--; ) {
           OffsetView oxi(x[i],-xoff);
           vi[i  ].init(oxi,n);
@@ -123,25 +123,25 @@ namespace Gecode {
   }
 
   void
-  channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+  channel(Space& home, const IntVarArgs& x, const IntVarArgs& y,
           IntConLevel icl, PropKind pk) {
     channel(home, x, 0, y, 0, icl, pk);
   }
   void
-  channel(Space* home, BoolVar x0, IntVar x1, IntConLevel, PropKind) {
+  channel(Space& home, BoolVar x0, IntVar x1, IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Channel::LinkSingle::post(home,x0,x1));
   }
 
   void
-  channel(Space* home, const BoolVarArgs& x, IntVar y, int o, 
+  channel(Space& home, const BoolVarArgs& x, IntVar y, int o, 
           IntConLevel, PropKind) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::channel");
     Limits::check(o,"Int::channel");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
     GECODE_ES_FAIL(home,Channel::LinkMulti::post(home,xv,y,o));
   }

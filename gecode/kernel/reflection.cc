@@ -68,7 +68,7 @@ namespace Gecode { namespace Reflection {
   }
   
   VarImpBase*
-  Registry::createVar(Space* home, VarSpec& spec) const {
+  Registry::createVar(Space& home, VarSpec& spec) const {
     varCreator vc = NULL;
     if (!ro->varCreators.get(spec.vti(),vc)) {
       throw Reflection::ReflectionException("VTI not found");
@@ -77,7 +77,7 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  Registry::constrainVar(Space* home, VarImpBase* v, VarSpec& spec) const {
+  Registry::constrainVar(Space& home, VarImpBase* v, VarSpec& spec) const {
     varConstrainer vc = NULL;
     if (!ro->varConstrainers.get(spec.vti(),vc)) {
       throw Reflection::ReflectionException("VTI not found");
@@ -86,7 +86,7 @@ namespace Gecode { namespace Reflection {
   }
 
   VarImpBase*
-  Registry::updateVariable(Space* home, bool share, VarImpBase* v,
+  Registry::updateVariable(Space& home, bool share, VarImpBase* v,
                            const Support::Symbol& vti) const {
     varUpdater vu = NULL;
     if (!ro->varUpdaters.get(vti,vu)) {
@@ -106,7 +106,7 @@ namespace Gecode { namespace Reflection {
   }
 
   Arg*
-  Registry::spec(const Space* home, VarMap& vm,
+  Registry::spec(const Space& home, VarMap& vm,
                  VarImpBase* v, const Support::Symbol& vti) const {
     varSpec vs = NULL;
     if (!ro->varSpecs.get(vti,vs)) {
@@ -116,7 +116,7 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  Registry::post(Space* home, VarMap& vm, const ActorSpec& spec) const {
+  Registry::post(Space& home, VarMap& vm, const ActorSpec& spec) const {
     poster p = NULL;
     if (!ro->posters.get(spec.ati(),p)) {
       throw Reflection::ReflectionException("Constraint not found");
@@ -845,33 +845,33 @@ namespace Gecode { namespace Reflection {
    
   bool
   ActorSpecIter::operator()(void) const {
-    return cur != &s->a_actors;
+    return cur != &s.a_actors;
   }
 
   void
   ActorSpecIter::operator++(void) {
     cur = cur->next();
-    while (active > &s->pc.p.queue[0] && (cur == active)) {
+    while (active > &s.pc.p.queue[0] && (cur == active)) {
       active--;
       cur = active;
       cur = cur->next();
     }
-    if (active == &s->pc.p.queue[0] && cur == active) {
+    if (active == &s.pc.p.queue[0] && cur == active) {
       active--;
-      cur = s->a_actors.next();
+      cur = s.a_actors.next();
     }
-    if (cur == s->b_commit)
+    if (cur == s.b_commit)
       isBranching = true;
   }
 
-  ActorSpecIter::ActorSpecIter(const Space* s0, VarMap& m0)
+  ActorSpecIter::ActorSpecIter(const Space& s0, VarMap& m0)
   : m(&m0), s(s0),
-    active(s0->pc.p.active == NULL ?
-           &s->pc.p.queue[PC_MAX] : s0->pc.p.active),
+    active(s0.pc.p.active == NULL ?
+           &s.pc.p.queue[PC_MAX] : s0.pc.p.active),
     cur(active),
     isBranching(false) {
-    if (s->stable() && !s->failed())
-      cur = &s->a_actors;
+    if (s.stable() && !s.failed())
+      cur = &s.a_actors;
     ++(*this);
   }
 
@@ -881,11 +881,11 @@ namespace Gecode { namespace Reflection {
     if (isBranching)
       spec.queue(-1-static_cast<const Branching*>(cur)->id);
     else
-      spec.queue( (active - &s->pc.p.queue[0]) + 1);
+      spec.queue( (active - &s.pc.p.queue[0]) + 1);
     return spec;
   }
 
-  Unreflector::Unreflector(Space* home0, Reflection::VarMap& m0)
+  Unreflector::Unreflector(Space& home0, Reflection::VarMap& m0)
     : home(home0), m(m0) {}
 
   Unreflector::~Unreflector(void) {}
@@ -917,7 +917,7 @@ namespace Gecode { namespace Reflection {
   /* Generic variable */
   
   void
-  Var::update(Space* home, bool share, Var& v) {
+  Var::update(Space& home, bool share, Var& v) {
     new (&_vti) Support::Symbol(v._vti);
     _var = registry().updateVariable(home, share, v._var, v._vti);
   }
@@ -928,7 +928,7 @@ namespace Gecode { namespace Reflection {
   }
   
   Arg*
-  Var::spec(const Space* home, VarMap& vm) const {
+  Var::spec(const Space& home, VarMap& vm) const {
     return registry().spec(home, vm, _var, _vti);
   }
 

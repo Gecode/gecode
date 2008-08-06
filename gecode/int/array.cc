@@ -39,7 +39,7 @@
 
 namespace Gecode {
 
-  IntVarArray::IntVarArray(Space* home, int n, int min, int max)
+  IntVarArray::IntVarArray(Space& home, int n, int min, int max)
     : VarArray<IntVar>(home,n) {
     Int::Limits::check(min,"IntVarArray::IntVarArray");
     Int::Limits::check(max,"IntVarArray::IntVarArray");
@@ -49,7 +49,7 @@ namespace Gecode {
       x[i]._init(home,min,max);
   }
 
-  IntVarArray::IntVarArray(Space* home, int n, const IntSet& s)
+  IntVarArray::IntVarArray(Space& home, int n, const IntSet& s)
     : VarArray<IntVar>(home,n) {
     Int::Limits::check(s.min(),"IntVarArray::IntVarArray");
     Int::Limits::check(s.max(),"IntVarArray::IntVarArray");
@@ -59,7 +59,7 @@ namespace Gecode {
       x[i]._init(home,s);
   }
 
-  BoolVarArray::BoolVarArray(Space* home, int n, int min, int max)
+  BoolVarArray::BoolVarArray(Space& home, int n, int min, int max)
     : VarArray<BoolVar>(home, n) {
     if ((min < 0) || (max > 1))
       throw Int::NotZeroOne("BoolVarArray::BoolVarArray");

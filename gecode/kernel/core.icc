@@ -116,7 +116,7 @@ namespace Gecode {
     /// Assignment operator mainitaining reference count
     SharedHandle& operator=(const SharedHandle& sh);
     /// Updating during cloning
-    void update(Space* home, bool share, SharedHandle& sh);
+    void update(Space& home, bool share, SharedHandle& sh);
     /// Destructor that maintains reference count
     ~SharedHandle(void);
   protected:
@@ -242,7 +242,7 @@ namespace Gecode {
   class GECODE_VTABLE_EXPORT VarDisposerBase {
   public:
     /// Dispose list of variable implementations starting at \a x
-    GECODE_KERNEL_EXPORT virtual void dispose(Space* home, VarImpBase* x);
+    GECODE_KERNEL_EXPORT virtual void dispose(Space& home, VarImpBase* x);
     /// Destructor (not used)
     GECODE_KERNEL_EXPORT virtual ~VarDisposerBase(void);
   };
@@ -259,7 +259,7 @@ namespace Gecode {
     /// Constructor (registers disposer with kernel)
     VarDisposer(void);
     /// Dispose list of variable implementations starting at \a x
-    virtual void dispose(Space* home, VarImpBase* x);
+    virtual void dispose(Space& home, VarImpBase* x);
   };
 
   /// Generic domain change information to be supplied to advisors
@@ -326,26 +326,26 @@ namespace Gecode {
      * The argument \a sub gives the memory area where subscriptions are
      * to be stored.
      */
-    static void update(Space* home, ActorLink**& sub);
+    static void update(Space& home, ActorLink**& sub);
 
     /// Enter propagator or advisor to subscription array
-    void enter(Space* home, ActorLink* a, PropCond pc);
+    void enter(Space& home, ActorLink* a, PropCond pc);
     /// Resize subscription array
-    void resize(Space* home);
+    void resize(Space& home);
     /// Remove propagator or advisor from subscription array
-    void remove(Space* home, ActorLink* a, PropCond pc);
+    void remove(Space& home, ActorLink* a, PropCond pc);
 
   protected:
 #ifdef GECODE_HAS_VAR_DISPOSE
     /// Return reference to variables (dispose)
-    static VarImp<VIC>* vars_d(Space* home);
+    static VarImp<VIC>* vars_d(Space& home);
     /// Set reference to variables (dispose)
-    static void vars_d(Space* home, VarImp<VIC>* x);
+    static void vars_d(Space& home, VarImp<VIC>* x);
 #endif
 
   public:
     /// Creation
-    VarImp(Space* home);
+    VarImp(Space& home);
     /// Creation of static instances
     VarImp(void);
 
@@ -363,29 +363,29 @@ namespace Gecode {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc,
+    void subscribe(Space& home, Propagator* p, PropCond pc,
                    bool assigned, ModEvent me, bool schedule);
     /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *
      * If the variable is assigned, \a assigned must be true.
      *
      */
-    void cancel(Space* home, Propagator* p, PropCond pc,
+    void cancel(Space& home, Propagator* p, PropCond pc,
                 bool assigned);
     /** \brief Subscribe advisor \a a to variable
      *
      * The advisor \a a is only subscribed if \a assigned is false.
      *
      */
-    void subscribe(Space* home, Advisor& a, bool assigned);
+    void subscribe(Space& home, Advisor& a, bool assigned);
     /** \brief Cancel subscription of advisor \a a
      *
      * If the variable is assigned, \a assigned must be true.
      *
      */
-    void cancel(Space* home, Advisor& a, bool assigned);
+    void cancel(Space& home, Advisor& a, bool assigned);
     /// Cancel all subscriptions when variable implementation is assigned
-    void cancel(Space* home);
+    void cancel(Space& home);
     /**
      * \brief Return degree (number of subscribed propagators and advisors)
      *
@@ -398,13 +398,13 @@ namespace Gecode {
      *
      * Returns false if an advisor has failed.
      */
-    bool advise(Space* home, ModEvent me, Delta& d);
+    bool advise(Space& home, ModEvent me, Delta& d);
     //@}
 
     /// \name Cloning variables
     //@{
     /// Constructor for cloning
-    VarImp(Space* home, bool share, VarImp& x);
+    VarImp(Space& home, bool share, VarImp& x);
     /// Is variable already copied
     bool copied(void) const;
     /// Use forward pointer if variable already copied
@@ -416,7 +416,7 @@ namespace Gecode {
     /// \name Variable implementation-dependent propagator support
     //@{
     /// Schedule propagator \a p with modification event \a me
-    static void schedule(Space* home, Propagator* p, ModEvent me);
+    static void schedule(Space& home, Propagator* p, ModEvent me);
     /// Project modification event for this variable type from \a med
     static ModEvent me(ModEventDelta med);
     /// Translate modification event \a me into modification event delta
@@ -432,15 +432,15 @@ namespace Gecode {
 
   protected:
     /// Schedule subscribed propagators
-    void schedule(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
+    void schedule(Space& home, PropCond pc1, PropCond pc2, ModEvent me);
 
   public:
     /// \name Memory management
     //@{
     /// Allocate memory from space
-    static void* operator new(size_t,Space*);
+    static void* operator new(size_t,Space&);
     /// Return memory to space
-    static void  operator delete(void*,Space*);
+    static void  operator delete(void*,Space&);
     /// Needed for exceptions
     static void  operator delete(void*);
     //@}
@@ -563,7 +563,7 @@ namespace Gecode {
     static const Actor* cast(const ActorLink* al);
   public:
     /// Create copy
-    virtual Actor* copy(Space* home, bool share) = 0;
+    virtual Actor* copy(Space& home, bool share) = 0;
 
     /// \name Memory management
     //@{
@@ -572,18 +572,18 @@ namespace Gecode {
     virtual size_t allocated(void) const;
     /// Delete actor and return its size
     GECODE_KERNEL_EXPORT
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Register actor for forced dispose when \a home is deleted
-    void force(Space* home);
+    void force(Space& home);
     /// Deregister actor for forced dispose
-    void unforce(Space* home);
+    void unforce(Space& home);
     /// Allocate memory from space
-    static void* operator new(size_t s, Space* home);
+    static void* operator new(size_t s, Space& home);
     /// No-op for exceptions
-    static void  operator delete(void* p, Space* home);
+    static void  operator delete(void* p, Space& home);
     /// Return specification for this actor given a variable map \a m
     GECODE_KERNEL_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
   private:
 #ifndef __GNUC__
@@ -633,7 +633,7 @@ namespace Gecode {
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_SUBSUMED(Propagator* p, Space* home);
+  ExecStatus ES_SUBSUMED(Propagator* p, Space& home);
   /**
    * \brief %Propagator \a p has computed partial fixpoint
    *
@@ -666,7 +666,7 @@ namespace Gecode {
     friend class Space;
     template <class VIC> friend class VarImp;
     friend ExecStatus ES_SUBSUMED(Propagator*, size_t);
-    friend ExecStatus ES_SUBSUMED(Propagator*, Space*);
+    friend ExecStatus ES_SUBSUMED(Propagator*, Space&);
     friend ExecStatus ES_FIX_PARTIAL(Propagator*, ModEventDelta);
     friend ExecStatus ES_NOFIX_PARTIAL(Propagator*, ModEventDelta);
     friend class Advisor;
@@ -686,9 +686,9 @@ namespace Gecode {
     static const Propagator* cast(const ActorLink* al);
   protected:
     /// Constructor for creation
-    Propagator(Space* home);
+    Propagator(Space& home);
     /// Constructor for cloning \a p
-    Propagator(Space* home, bool share, Propagator& p);
+    Propagator(Space& home, bool share, Propagator& p);
 
   public:
     /// \name Propagation
@@ -716,7 +716,7 @@ namespace Gecode {
      * For more details, see the individual functions.
      *
      */
-    virtual ExecStatus propagate(Space* home, ModEventDelta med) = 0;
+    virtual ExecStatus propagate(Space& home, ModEventDelta med) = 0;
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const  = 0;
     /**
@@ -749,7 +749,7 @@ namespace Gecode {
      *
      */
     GECODE_KERNEL_EXPORT
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     //@}
   };
 
@@ -772,13 +772,13 @@ namespace Gecode {
     /// Default constructor
     Council(void);
     /// Construct advisor council
-    Council(Space* home);
+    Council(Space& home);
     /// Test whether council has advisor left
     bool empty(void) const;
     /// Update during cloning (copies all advisors)
-    void update(Space* home, bool share, Council<A>& c);
+    void update(Space& home, bool share, Council<A>& c);
     /// Dispose council
-    void dispose(Space* home);
+    void dispose(Space& home);
   };
 
 
@@ -815,7 +815,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class A>
-  ExecStatus ES_SUBSUMED_FIX(A& a, Space* home, Council<A>& c);
+  ExecStatus ES_SUBSUMED_FIX(A& a, Space& home, Council<A>& c);
   /**
    * \brief %Advisor \a a is subsumed
    *
@@ -828,7 +828,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class A>
-  ExecStatus ES_SUBSUMED_NOFIX(A& a, Space* home, Council<A>& c);
+  ExecStatus ES_SUBSUMED_NOFIX(A& a, Space& home, Council<A>& c);
 
   /**
    * \brief Base-class for advisors
@@ -857,19 +857,19 @@ namespace Gecode {
   public:
     /// Constructor for creation
     template <class A>
-    Advisor(Space* home, Propagator* p, Council<A>& c);
+    Advisor(Space& home, Propagator* p, Council<A>& c);
     /// Copying constructor
-    Advisor(Space* home, bool share, Advisor& a);
+    Advisor(Space& home, bool share, Advisor& a);
 
     /// \name Memory management
     //@{
     /// Dispose the advisor
     template <class A>
-    void dispose(Space* home, Council<A>& c);
+    void dispose(Space& home, Council<A>& c);
     /// Allocate memory from space
-    static void* operator new(size_t s, Space* home);
+    static void* operator new(size_t s, Space& home);
     /// No-op for exceptions
-    static void  operator delete(void* p, Space* home);
+    static void  operator delete(void* p, Space& home);
     //@}
   private:
 #ifndef __GNUC__
@@ -940,9 +940,9 @@ namespace Gecode {
     static const Branching* cast(const ActorLink* al);
   protected:
     /// Constructor for creation
-    Branching(Space* home);
+    Branching(Space& home);
     /// Constructor for cloning \a b
-    Branching(Space* home, bool share, Branching& b);
+    Branching(Space& home, bool share, Branching& b);
 
   public:
     /// \name Branching
@@ -955,7 +955,7 @@ namespace Gecode {
      * the (possibly) next branching.
      *
      */
-    virtual bool status(const Space* home) const = 0;
+    virtual bool status(const Space& home) const = 0;
     /**
      * \brief Return branching description
      *
@@ -963,7 +963,7 @@ namespace Gecode {
      * immediately after a previous call to status. Moreover, the
      * member function can only be called once.
      */
-    virtual const BranchingDesc* description(Space* home) = 0;
+    virtual const BranchingDesc* description(Space& home) = 0;
     /**
      * \brief Commit for branching description \a d and alternative \a a
      *
@@ -971,7 +971,7 @@ namespace Gecode {
      * the information provided by the branching description \a d
      * and the alternative \a a.
      */
-    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+    virtual ExecStatus commit(Space& home, const BranchingDesc* d,
                               unsigned int a) = 0;
     //@}
     
@@ -979,7 +979,7 @@ namespace Gecode {
     //@{
     /// Specification for BranchingDesc \a d
     virtual GECODE_KERNEL_EXPORT Reflection::BranchingSpec
-    branchingSpec(const Space* home,
+    branchingSpec(const Space& home,
                   Reflection::VarMap& m, const BranchingDesc* d) const;
     //@}
   };
@@ -1143,7 +1143,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT virtual void constrain(const Space* best);
+    GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
     /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskModelScript
@@ -1520,10 +1520,10 @@ namespace Gecode {
   forceinline void
   Actor::operator delete(void*) {}
   forceinline void
-  Actor::operator delete(void*, Space*) {}
+  Actor::operator delete(void*, Space&) {}
   forceinline void*
-  Actor::operator new(size_t s, Space* home) {
-    return home->ralloc(s);
+  Actor::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
   }
 
   template <class VIC>
@@ -1531,11 +1531,11 @@ namespace Gecode {
   VarImp<VIC>::operator delete(void*) {}
   template <class VIC>
   forceinline void
-  VarImp<VIC>::operator delete(void*, Space*) {}
+  VarImp<VIC>::operator delete(void*, Space&) {}
   template <class VIC>
   forceinline void*
-  VarImp<VIC>::operator new(size_t s, Space* home) {
-    return home->ralloc(s);
+  VarImp<VIC>::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
   }
 
 #ifndef __GNUC__
@@ -1543,10 +1543,10 @@ namespace Gecode {
   Advisor::operator delete(void*) {}
 #endif
   forceinline void
-  Advisor::operator delete(void*, Space*) {}
+  Advisor::operator delete(void*, Space&) {}
   forceinline void*
-  Advisor::operator new(size_t s, Space* home) {
-    return home->ralloc(s);
+  Advisor::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
   }
 
 
@@ -1590,7 +1590,7 @@ namespace Gecode {
     return *this;
   }
   forceinline void 
-  SharedHandle::update(Space* home, bool share, SharedHandle& sh) {
+  SharedHandle::update(Space& home, bool share, SharedHandle& sh) {
     if (sh.o == NULL) {
       o = NULL;
     } else if (share) {
@@ -1600,8 +1600,8 @@ namespace Gecode {
     } else {
       o = sh.o->copy(); 
       sh.o->fwd = o;
-      sh.o->next = home->pc.c.shared; 
-      home->pc.c.shared = sh.o;
+      sh.o->next = home.pc.c.shared; 
+      home.pc.c.shared = sh.o;
       subscribe();
     }
   }
@@ -1718,26 +1718,26 @@ namespace Gecode {
   }
 
   forceinline void
-  Actor::force(Space* home) {
-    if (home->d_cur == home->d_lst)
-      home->d_resize();
-    *(home->d_cur++) = this;
+  Actor::force(Space& home) {
+    if (home.d_cur == home.d_lst)
+      home.d_resize();
+    *(home.d_cur++) = this;
   }
 
   forceinline void
-  Actor::unforce(Space* home) {
+  Actor::unforce(Space& home) {
     // Check wether array has already been discarded as space
     // deletion is already in progress
-    Actor** f = home->d_fst;
+    Actor** f = home.d_fst;
     if (f != NULL) {
       while (this != *f)
         f++;
-      *f = *(--home->d_cur);
+      *f = *(--home.d_cur);
     }
   }
 
   forceinline size_t
-  Actor::dispose(Space*) {
+  Actor::dispose(Space&) {
     return sizeof(*this);
   }
 
@@ -1763,14 +1763,14 @@ namespace Gecode {
   }
 
   forceinline
-  Propagator::Propagator(Space* home) {
+  Propagator::Propagator(Space& home) {
     u.advisors = NULL;
     assert(u.med == 0 && u.size == 0);
-    home->a_actors.head(this);
+    home.a_actors.head(this);
   }
 
   forceinline
-  Propagator::Propagator(Space*, bool, Propagator& p) {
+  Propagator::Propagator(Space&, bool, Propagator& p) {
     u.advisors = NULL;
     assert(u.med == 0 && u.size == 0);
     // Set forwarding pointer
@@ -1784,7 +1784,7 @@ namespace Gecode {
   }
 
   forceinline ExecStatus
-  ES_SUBSUMED(Propagator* p, Space* home) {
+  ES_SUBSUMED(Propagator* p, Space& home) {
     p->u.size = p->dispose(home); 
     return __ES_SUBSUMED;
   }
@@ -1826,20 +1826,20 @@ namespace Gecode {
   }
 
   forceinline
-  Branching::Branching(Space* home) {
+  Branching::Branching(Space& home) {
     // Propagators are put at the tail of the link of actors
-    id = home->pc.p.branch_id++;
+    id = home.pc.p.branch_id++;
     // If no branching available, make it the first one
-    if (home->b_status == &(home->a_actors)) {
-      home->b_status = this;
-      if (home->b_commit == &(home->a_actors))
-        home->b_commit = this;
+    if (home.b_status == &(home.a_actors)) {
+      home.b_status = this;
+      if (home.b_commit == &(home.a_actors))
+        home.b_commit = this;
     }
-    home->a_actors.tail(this);
+    home.a_actors.tail(this);
   }
 
   forceinline
-  Branching::Branching(Space*, bool, Branching& b)
+  Branching::Branching(Space&, bool, Branching& b)
     : id(b.id)  {
     // Set forwarding pointer
     b.prev(this);
@@ -1887,7 +1887,7 @@ namespace Gecode {
    */
   template <class A>
   forceinline 
-  Advisor::Advisor(Space*, Propagator* p, Council<A>& c) {
+  Advisor::Advisor(Space&, Propagator* p, Council<A>& c) {
     assert(p != NULL);
     // Store propagator and forwarding in prev()
     ActorLink::prev(p);
@@ -1896,7 +1896,7 @@ namespace Gecode {
   }
 
   forceinline 
-  Advisor::Advisor(Space*, bool, Advisor&) {}
+  Advisor::Advisor(Space&, bool, Advisor&) {}
 
   forceinline bool
   Advisor::disposed(void) const { 
@@ -1921,7 +1921,7 @@ namespace Gecode {
 
   template <class A>
   forceinline void
-  Advisor::dispose(Space*,Council<A>&) {
+  Advisor::dispose(Space&,Council<A>&) {
     assert(!disposed());
     ActorLink::prev(NULL); 
     // Shorten chains of disposed advisors by one, if possible
@@ -1932,14 +1932,14 @@ namespace Gecode {
 
   template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(A& a, Space* home, Council<A>& c) {
+  ES_SUBSUMED_FIX(A& a, Space& home, Council<A>& c) {
     a.dispose(home,c);
     return ES_FIX;
   }
 
   template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(A& a, Space* home, Council<A>& c) {
+  ES_SUBSUMED_NOFIX(A& a, Space& home, Council<A>& c) {
     a.dispose(home,c);
     return ES_NOFIX;
   }
@@ -1956,7 +1956,7 @@ namespace Gecode {
 
   template <class A>
   forceinline
-  Council<A>::Council(Space*) 
+  Council<A>::Council(Space&) 
     : advisors(NULL) {}
 
   template <class A>
@@ -1971,7 +1971,7 @@ namespace Gecode {
 
   template <class A>
   forceinline void
-  Council<A>::update(Space* home, bool share, Council<A>& c) {
+  Council<A>::update(Space& home, bool share, Council<A>& c) {
     // Skip all disposed advisors
     {
       ActorLink* a = c.advisors;
@@ -2014,7 +2014,7 @@ namespace Gecode {
   
   template <class A>
   forceinline void
-  Council<A>::dispose(Space* home) {
+  Council<A>::dispose(Space& home) {
     ActorLink* a = advisors;
     while (a != NULL) {
       if (!static_cast<A*>(a)->disposed())
@@ -2091,7 +2091,7 @@ namespace Gecode {
   Space::description(void) {
     if (!stable())
       throw SpaceNotStable("Space::description");
-    return b_status->description(this);
+    return b_status->description(*this);
   }
 
 
@@ -2102,7 +2102,7 @@ namespace Gecode {
    */
   template <class VIC>
   forceinline
-  VarImp<VIC>::VarImp(Space*) {
+  VarImp<VIC>::VarImp(Space&) {
     for (PropCond i=0; i<pc_max+3; i++)
       idx[i] = NULL;
     free_and_bits = 0;
@@ -2138,14 +2138,14 @@ namespace Gecode {
 #ifdef GECODE_HAS_VAR_DISPOSE
   template <class VIC>
   forceinline VarImp<VIC>*
-  VarImp<VIC>::vars_d(Space* home) {
-    return static_cast<VarImp<VIC>*>(home->vars_d<VIC>());
+  VarImp<VIC>::vars_d(Space& home) {
+    return static_cast<VarImp<VIC>*>(home.vars_d<VIC>());
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::vars_d(Space* home, VarImp<VIC>* x) {
-    home->vars_d<VIC>(x);
+  VarImp<VIC>::vars_d(Space& home, VarImp<VIC>* x) {
+    home.vars_d<VIC>(x);
   }
 #endif
 
@@ -2171,19 +2171,19 @@ namespace Gecode {
 
   template <class VIC>
   forceinline
-  VarImp<VIC>::VarImp(Space* home, bool, VarImp<VIC>& x) {
+  VarImp<VIC>::VarImp(Space& home, bool, VarImp<VIC>& x) {
     VarImpBase** reg;
     free_and_bits = x.free_and_bits & ((1 << free_bits) - 1);
     if (x.idx[0] == NULL) {
       // Variable implementation needs no index structure
       for (PropCond i=0; i<pc_max+3; i++)
         idx[i] = NULL;
-      reg = &home->pc.c.vars_noidx;
+      reg = &home.pc.c.vars_noidx;
     } else {
       // Save original values in copy
       idx[0] = x.idx[0];
       idx[1] = x.idx[1];
-      reg = &home->pc.c.vars_u[idx_c];
+      reg = &home.pc.c.vars_u[idx_c];
     }
     // Set forwarding pointer
     x.idx[0] = reinterpret_cast<ActorLink**>(Support::mark(this));
@@ -2211,14 +2211,14 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::schedule(Space* home, Propagator* p, ModEvent me) {
+  VarImp<VIC>::schedule(Space& home, Propagator* p, ModEvent me) {
     if (VIC::med_update(p->u.med,me))
-      home->enqueue(p);
+      home.enqueue(p);
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::schedule(Space* home, PropCond pc1, PropCond pc2, ModEvent me) {
+  VarImp<VIC>::schedule(Space& home, PropCond pc1, PropCond pc2, ModEvent me) {
     ActorLink** b = idx[pc1];
     ActorLink** p = idx[pc2+1];
     while (p-- > b)
@@ -2227,9 +2227,9 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::enter(Space* home, ActorLink* a, PropCond pc) {
+  VarImp<VIC>::enter(Space& home, ActorLink* a, PropCond pc) {
     // Count one new subscription
-    home->pc.p.n_sub += 1;
+    home.pc.p.n_sub += 1;
     if ((free_and_bits >> free_bits) == 0)
       resize(home);
     free_and_bits -= 1 << free_bits;
@@ -2242,12 +2242,12 @@ namespace Gecode {
 
   template <class VIC>
   void
-  VarImp<VIC>::resize(Space* home) {
+  VarImp<VIC>::resize(Space& home) {
     if (idx[0] == NULL) {
       assert((free_and_bits >> free_bits) == 0);
       // Create fresh dependency array with four entries
       free_and_bits += 4 << free_bits;
-      ActorLink** prop = home->alloc<ActorLink*>(4) + 4;
+      ActorLink** prop = home.alloc<ActorLink*>(4) + 4;
       for (PropCond i=0; i<pc_max+3; i++)
         idx[i] = prop;
     } else {
@@ -2257,15 +2257,15 @@ namespace Gecode {
       // reserved for subscriptions. If yes, just resize mildly otherwise
       // more agressively
       ActorLink** s = static_cast<ActorLink**>
-        (home->mm.subscriptions());
+        (home.mm.subscriptions());
       unsigned int m = 
-        ((s <= idx[0]) && (idx[0] < s+home->pc.p.n_sub)) ?
+        ((s <= idx[0]) && (idx[0] < s+home.pc.p.n_sub)) ?
         (n+4) : ((n+1)*3>>1);
-      ActorLink** prop = home->alloc<ActorLink*>(m) + m-n;
+      ActorLink** prop = home.alloc<ActorLink*>(m) + m-n;
       free_and_bits += (m-n) << free_bits;
       // Copy entries
       Heap::copy<ActorLink*>(prop, idx[0], n);
-      home->free<ActorLink*>(idx[0],n);
+      home.free<ActorLink*>(idx[0],n);
       // Update index pointers
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
@@ -2276,7 +2276,7 @@ namespace Gecode {
 
   template <class VIC>
   void
-  VarImp<VIC>::subscribe(Space* home, Propagator* p, PropCond pc,
+  VarImp<VIC>::subscribe(Space& home, Propagator* p, PropCond pc,
                          bool assigned, ModEvent me, bool schedule) {
     if (assigned) {
       // Do not subscribe, just schedule the propagator
@@ -2292,14 +2292,14 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::subscribe(Space* home, Advisor& a, bool assigned) {
+  VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned) {
     if (!assigned)
       enter(home,&a,pc_max+1);
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::remove(Space* home, ActorLink* a, PropCond pc) {
+  VarImp<VIC>::remove(Space& home, ActorLink* a, PropCond pc) {
     /*
      * The entries are removed from front to back, so when iterating
      * over dependencies wile removing them it must be done in
@@ -2322,38 +2322,38 @@ namespace Gecode {
       *(idx[i]++)=*(idx[i-1]);
     idx[0]++;
     free_and_bits += 1 << free_bits;
-    home->pc.p.n_sub -= 1;
+    home.pc.p.n_sub -= 1;
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space* home, Propagator* p, PropCond pc, bool assigned) {
+  VarImp<VIC>::cancel(Space& home, Propagator* p, PropCond pc, bool assigned) {
     if (!assigned)
       remove(home,ActorLink::cast(p),pc);
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space* home, Advisor& a, bool assigned) {
+  VarImp<VIC>::cancel(Space& home, Advisor& a, bool assigned) {
     if (!assigned)
       remove(home,&a,pc_max+1);
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space* home) {
+  VarImp<VIC>::cancel(Space& home) {
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+2])
     ActorLink** b = idx[0]; idx[0] = NULL;
     ActorLink** p = idx[pc_max+2]; idx[pc_max+2] = NULL;
-    home->pc.p.n_sub -= (p-b);
+    home.pc.p.n_sub -= (p-b);
     unsigned int n = (free_and_bits >> VIC::free_bits) + (p-b);
-    home->free<ActorLink*>(p-n,n);
+    home.free<ActorLink*>(p-n,n);
   }
 
   template <class VIC>
   forceinline bool
-  VarImp<VIC>::advise(Space* home, ModEvent me, Delta& d) {
+  VarImp<VIC>::advise(Space& home, ModEvent me, Delta& d) {
     /*
      * An advisor that is executed might remove itself due to subsumption.
      * As entries are removed from front to back, the advisors must
@@ -2419,8 +2419,8 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::update(Space* home, ActorLink**& sub) {
-    VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home->pc.c.vars_u[idx_c]);
+  VarImp<VIC>::update(Space& home, ActorLink**& sub) {
+    VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home.pc.c.vars_u[idx_c]);
     while (x != NULL) {
       VarImp<VIC>* n = x->next(); x->forward()->update(x,sub); x = n;
     }
@@ -2441,7 +2441,7 @@ namespace Gecode {
 
   template <class VarType>
   void
-  VarDisposer<VarType>::dispose(Space* home, VarImpBase* _x) {
+  VarDisposer<VarType>::dispose(Space& home, VarImpBase* _x) {
     VarType* x = static_cast<VarType*>(_x);
     do {
       x->dispose(home); x = static_cast<VarType*>(x->next_d());

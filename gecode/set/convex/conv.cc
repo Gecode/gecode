@@ -44,7 +44,7 @@
 namespace Gecode { namespace Set { namespace Convex {
 
   Actor*
-  Convex::copy(Space* home, bool share) {
+  Convex::copy(Space& home, bool share) {
     return new (home) Convex(home,share,*this);
   }
 
@@ -54,12 +54,12 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   Reflection::ActorSpec
-  Convex::spec(const Space* home, Reflection::VarMap& m) const {
+  Convex::spec(const Space& home, Reflection::VarMap& m) const {
     return UnaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
   }
 
   ExecStatus
-  Convex::propagate(Space* home, ModEventDelta) {
+  Convex::propagate(Space& home, ModEventDelta) {
     //I, drop ranges from UB that are shorter than cardMin
     //II, add range LB.smallest to LB.largest to LB
     //III, Drop ranges from UB that do not contain all elements of LB
@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   void
-  Convex::post(Space* home, Reflection::VarMap& vars,
+  Convex::post(Space& home, Reflection::VarMap& vars,
                const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     SetView s(home, vars, spec[0]);

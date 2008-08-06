@@ -72,7 +72,7 @@ namespace Gecode {
       /// Initialize from set variable \a x
       SetView(SetVarImp* x);
       /// Initialize from specification
-      SetView(Space* home, const Reflection::VarMap& vars,
+      SetView(Space& home, const Reflection::VarMap& vars,
               Reflection::Arg* arg);
       //@}
 
@@ -116,53 +116,53 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict cardinality to be greater than or equal to \a m
-      ModEvent cardMin(Space* home, unsigned int m);
+      ModEvent cardMin(Space& home, unsigned int m);
       /// Restrict cardinality to be less than or equal to \a m
-      ModEvent cardMax(Space* home, unsigned int m);
+      ModEvent cardMax(Space& home, unsigned int m);
       /**
        * \brief Update greatest lower bound to include all elements
        * between and including \a i and \a j
        */
-      ModEvent include(Space* home,int i,int j);
+      ModEvent include(Space& home,int i,int j);
       /**
        * \brief Restrict least upper bound to not contain all elements
        * between and including \a i and \a j
        */
-      ModEvent exclude(Space* home,int i,int j);
+      ModEvent exclude(Space& home,int i,int j);
       /// Update greatest lower bound to contain \a i
-      ModEvent include(Space* home,int i);
+      ModEvent include(Space& home,int i);
       /// Restrict least upper bound to not contain \a i
-      ModEvent exclude(Space* home,int i);
+      ModEvent exclude(Space& home,int i);
       /**
        * \brief Update least upper bound to contain at most all elements
        * between and including \a i and \a j
        */
-      ModEvent intersect(Space* home,int i,int j);
+      ModEvent intersect(Space& home,int i,int j);
       /// Update least upper bound to contain at most the element \a i
-      ModEvent intersect(Space* home,int i);
+      ModEvent intersect(Space& home,int i);
       //@}
 
       /// \name Domain update by range iterator
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space* home, I& i);
+      template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space* home, I& i);
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space* home, I& iter);
+      template <class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, SetView& x);
+      void update(Space& home, bool share, SetView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -240,16 +240,16 @@ namespace Gecode {
       unsigned int size;
       unsigned int domSize;
       /// Initialize with constant \a s
-      void init(Space* home, const IntSet& s);
+      void init(Space& home, const IntSet& s);
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       ConstantView(void);
       /// Construct with \a s as the domain
-      ConstantView(Space* home, const IntSet& s);
+      ConstantView(Space& home, const IntSet& s);
       /// Initialize from specification
-      ConstantView(Space* home, const Reflection::VarMap& vars,
+      ConstantView(Space& home, const Reflection::VarMap& vars,
                    Reflection::Arg* arg);
       //@}
 
@@ -292,47 +292,47 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict cardinality to be greater than or equal to \a m
-      ModEvent cardMin(Space* home, unsigned int m);
+      ModEvent cardMin(Space& home, unsigned int m);
       /// Restrict cardinality to be less than or equal to \a m
-      ModEvent cardMax(Space* home, unsigned int m);
+      ModEvent cardMax(Space& home, unsigned int m);
       /**
        * \brief Update greatest lower bound to include all elements
        * between and including \a i and \a j
        */
-      ModEvent include(Space* home,int i,int j);
+      ModEvent include(Space& home,int i,int j);
       /**
        * \brief Restrict least upper bound to not contain all elements
        * between and including \a i and \a j
        */
-      ModEvent exclude(Space* home,int i,int j);
+      ModEvent exclude(Space& home,int i,int j);
       /// Update greatest lower bound to contain \a i
-      ModEvent include(Space* home,int i);
+      ModEvent include(Space& home,int i);
       /// Restrict least upper bound to not contain \a i
-      ModEvent exclude(Space* home,int i);
+      ModEvent exclude(Space& home,int i);
       /**
        * \brief Update least upper bound to contain at most all elements
        * between and including \a i and \a j
        */
-      ModEvent intersect(Space* home,int i,int j);
+      ModEvent intersect(Space& home,int i,int j);
       /// Update least upper bound to contain at most the element \a i
-      ModEvent intersect(Space* home,int i);
+      ModEvent intersect(Space& home,int i);
       //@}
 
       /// \name Domain update by range iterator
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space* home, I& i);
+      template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space* home, I& i);
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space* home, I& iter);
+      template <class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -348,25 +348,25 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, ConstantView& x);
+      void update(Space& home, bool share, ConstantView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -432,7 +432,7 @@ namespace Gecode {
       /// Default constructor
       EmptyView(void);
       /// Initialize from specification
-      EmptyView(Space* home, const Reflection::VarMap& vars,
+      EmptyView(Space& home, const Reflection::VarMap& vars,
                 Reflection::Arg* arg);
       //@}
 
@@ -476,47 +476,47 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict cardinality to be greater than or equal to \a m
-      ModEvent cardMin(Space* home, unsigned int m);
+      ModEvent cardMin(Space& home, unsigned int m);
       /// Restrict cardinality to be less than or equal to \a m
-      ModEvent cardMax(Space* home, unsigned int m);
+      ModEvent cardMax(Space& home, unsigned int m);
       /**
        * \brief Update greatest lower bound to include all elements
        * between and including \a i and \a j
        */
-      ModEvent include(Space* home,int i,int j);
+      ModEvent include(Space& home,int i,int j);
       /**
        * \brief Restrict least upper bound to not contain all elements
        * between and including \a i and \a j
        */
-      ModEvent exclude(Space* home,int i,int j);
+      ModEvent exclude(Space& home,int i,int j);
       /// Update greatest lower bound to contain \a i
-      ModEvent include(Space* home,int i);
+      ModEvent include(Space& home,int i);
       /// Restrict least upper bound to not contain \a i
-      ModEvent exclude(Space* home,int i);
+      ModEvent exclude(Space& home,int i);
       /**
        * \brief Update least upper bound to contain at most all elements
        * between and including \a i and \a j
        */
-      ModEvent intersect(Space* home,int i,int j);
+      ModEvent intersect(Space& home,int i,int j);
       /// Update least upper bound to contain at most the element \a i
-      ModEvent intersect(Space* home,int i);
+      ModEvent intersect(Space& home,int i);
       //@}
 
       /// \name Domain update by range iterator
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space* home, I& i);
+      template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space* home, I& i);
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space* home, I& iter);
+      template <class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -532,25 +532,25 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, EmptyView& x);
+      void update(Space& home, bool share, EmptyView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -617,7 +617,7 @@ namespace Gecode {
       /// Default constructor
       UniverseView(void);
       /// Initialize from specification
-      UniverseView(Space* home, const Reflection::VarMap& vars,
+      UniverseView(Space& home, const Reflection::VarMap& vars,
                    Reflection::Arg* arg);
       //@}
 
@@ -661,47 +661,47 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict cardinality to be greater than or equal to \a m
-      ModEvent cardMin(Space* home, unsigned int m);
+      ModEvent cardMin(Space& home, unsigned int m);
       /// Restrict cardinality to be less than or equal to \a m
-      ModEvent cardMax(Space* home, unsigned int m);
+      ModEvent cardMax(Space& home, unsigned int m);
       /**
        * \brief Update greatest lower bound to include all elements
        * between and including \a i and \a j
        */
-      ModEvent include(Space* home,int i,int j);
+      ModEvent include(Space& home,int i,int j);
       /**
        * \brief Restrict least upper bound to not contain all elements
        * between and including \a i and \a j
        */
-      ModEvent exclude(Space* home,int i,int j);
+      ModEvent exclude(Space& home,int i,int j);
       /// Update greatest lower bound to contain \a i
-      ModEvent include(Space* home,int i);
+      ModEvent include(Space& home,int i);
       /// Restrict least upper bound to not contain \a i
-      ModEvent exclude(Space* home,int i);
+      ModEvent exclude(Space& home,int i);
       /**
        * \brief Update least upper bound to contain at most all elements
        * between and including \a i and \a j
        */
-      ModEvent intersect(Space* home,int i,int j);
+      ModEvent intersect(Space& home,int i,int j);
       /// Update least upper bound to contain at most the element \a i
-      ModEvent intersect(Space* home,int i);
+      ModEvent intersect(Space& home,int i);
       //@}
 
       /// \name Domain update by range iterator
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space* home, I& i);
+      template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space* home, I& i);
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space* home, I& iter);
+      template <class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -717,25 +717,25 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, UniverseView& x);
+      void update(Space& home, bool share, UniverseView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -816,7 +816,7 @@ namespace Gecode {
       /// Initialize with integer view \a x
       SingletonView(Gecode::Int::IntView& x);
       /// Initialize from specification
-      SingletonView(Space* home, const Reflection::VarMap& vars,
+      SingletonView(Space& home, const Reflection::VarMap& vars,
                     Reflection::Arg* arg);
       //@}
 
@@ -860,47 +860,47 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict cardinality to be greater than or equal to \a m
-      ModEvent cardMin(Space* home, unsigned int m);
+      ModEvent cardMin(Space& home, unsigned int m);
       /// Restrict cardinality to be less than or equal to \a m
-      ModEvent cardMax(Space* home, unsigned int m);
+      ModEvent cardMax(Space& home, unsigned int m);
       /**
        * \brief Update greatest lower bound to include all elements
        * between and including \a i and \a j
        */
-      ModEvent include(Space* home,int i,int j);
+      ModEvent include(Space& home,int i,int j);
       /**
        * \brief Restrict least upper bound to not contain all elements
        * between and including \a i and \a j
        */
-      ModEvent exclude(Space* home,int i,int j);
+      ModEvent exclude(Space& home,int i,int j);
       /// Update greatest lower bound to contain \a i
-      ModEvent include(Space* home,int i);
+      ModEvent include(Space& home,int i);
       /// Restrict least upper bound to not contain \a i
-      ModEvent exclude(Space* home,int i);
+      ModEvent exclude(Space& home,int i);
       /**
        * \brief Update least upper bound to contain at most all elements
        * between and including \a i and \a j
        */
-      ModEvent intersect(Space* home,int i,int j);
+      ModEvent intersect(Space& home,int i,int j);
       /// Update least upper bound to contain at most the element \a i
-      ModEvent intersect(Space* home,int i);
+      ModEvent intersect(Space& home,int i);
       //@}
 
       /// \name Domain update by range iterator
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space* home, I& i);
+      template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space* home, I& i);
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space* home, I& iter);
+      template <class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -916,26 +916,26 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, SingletonView& x);
+      void update(Space& home, bool share, SingletonView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -1015,7 +1015,7 @@ namespace Gecode {
       /// Initialize with set view x
       ComplementView(View& x);
       /// Initialize from specification
-      ComplementView(Space* home, const Reflection::VarMap& vars,
+      ComplementView(Space& home, const Reflection::VarMap& vars,
                      Reflection::Arg* arg);
       //@}
 
@@ -1059,47 +1059,47 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict cardinality to be greater than or equal to \a m
-      ModEvent cardMin(Space* home, unsigned int m);
+      ModEvent cardMin(Space& home, unsigned int m);
       /// Restrict cardinality to be less than or equal to \a m
-      ModEvent cardMax(Space* home, unsigned int m);
+      ModEvent cardMax(Space& home, unsigned int m);
       /**
        * \brief Update greatest lower bound to include all elements
        * between and including \a i and \a j
        */
-      ModEvent include(Space* home,int i,int j);
+      ModEvent include(Space& home,int i,int j);
       /**
        * \brief Restrict least upper bound to not contain all elements
        * between and including \a i and \a j
        */
-      ModEvent exclude(Space* home,int i,int j);
+      ModEvent exclude(Space& home,int i,int j);
       /// Update greatest lower bound to contain \a i
-      ModEvent include(Space* home,int i);
+      ModEvent include(Space& home,int i);
       /// Restrict least upper bound to not contain \a i
-      ModEvent exclude(Space* home,int i);
+      ModEvent exclude(Space& home,int i);
       /**
        * \brief Update least upper bound to contain at most all elements
        * between and including \a i and \a j
        */
-      ModEvent intersect(Space* home,int i,int j);
+      ModEvent intersect(Space& home,int i,int j);
       /// Update least upper bound to contain at most the element \a i
-      ModEvent intersect(Space* home,int i);
+      ModEvent intersect(Space& home,int i);
       //@}
 
       /// \name Domain update by range iterator
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space* home, I& i);
+      template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space* home, I& i);
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space* home, I& iter);
+      template <class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1115,26 +1115,26 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, ComplementView& x);
+      void update(Space& home, bool share, ComplementView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       
@@ -1213,7 +1213,7 @@ namespace Gecode {
       /// Initialize with set view \a x and offset \a k0
       OffsetSetView(View& x, int k0);
       /// Initialize from specification
-      OffsetSetView(Space* home, const Reflection::VarMap& vars,
+      OffsetSetView(Space& home, const Reflection::VarMap& vars,
                     Reflection::Arg* arg);
       //@}
 
@@ -1259,47 +1259,47 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict cardinality to be greater than or equal to \a m
-      ModEvent cardMin(Space* home, unsigned int m);
+      ModEvent cardMin(Space& home, unsigned int m);
       /// Restrict cardinality to be less than or equal to \a m
-      ModEvent cardMax(Space* home, unsigned int m);
+      ModEvent cardMax(Space& home, unsigned int m);
       /**
        * \brief Update greatest lower bound to include all elements
        * between and including \a i and \a j
        */
-      ModEvent include(Space* home,int i,int j);
+      ModEvent include(Space& home,int i,int j);
       /**
        * \brief Restrict least upper bound to not contain all elements
        * between and including \a i and \a j
        */
-      ModEvent exclude(Space* home,int i,int j);
+      ModEvent exclude(Space& home,int i,int j);
       /// Update greatest lower bound to contain \a i
-      ModEvent include(Space* home,int i);
+      ModEvent include(Space& home,int i);
       /// Restrict least upper bound to not contain \a i
-      ModEvent exclude(Space* home,int i);
+      ModEvent exclude(Space& home,int i);
       /**
        * \brief Update least upper bound to contain at most all elements
        * between and including \a i and \a j
        */
-      ModEvent intersect(Space* home,int i,int j);
+      ModEvent intersect(Space& home,int i,int j);
       /// Update least upper bound to contain at most the element \a i
-      ModEvent intersect(Space* home,int i);
+      ModEvent intersect(Space& home,int i);
       //@}
 
       /// \name Domain update by range iterator
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space* home, I& i);
+      template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space* home, I& i);
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space* home, I& iter);
+      template <class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space* home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator* p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1315,26 +1315,26 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator* p, PropCond pc);
       /// Subscribe advisor \a a to view
-      void subscribe(Space* home, Advisor& a);
+      void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
-      void cancel(Space* home, Advisor& a);
+      void cancel(Space& home, Advisor& a);
       //@}
 
 
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, OffsetSetView& x);
+      void update(Space& home, bool share, OffsetSetView& x);
       //@}
       
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
       

@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, PropCond pc>
   forceinline
-  MultZeroOne<View,pc>::MultZeroOne(Space* home, View x0, View x1)
+  MultZeroOne<View,pc>::MultZeroOne(Space& home, View x0, View x1)
     : BinaryPropagator<View,pc>(home,x0,x1) {}
 
   template <class View, PropCond pc>
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, PropCond pc>
   forceinline ExecStatus
-  MultZeroOne<View,pc>::post(Space* home, View x0, View x1) {
+  MultZeroOne<View,pc>::post(Space& home, View x0, View x1) {
     switch (equal(x0,0)) {
     case RT_FALSE:
       GECODE_ME_CHECK(x1.eq(home,1)); 
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, PropCond pc>
   forceinline void
-  MultZeroOne<View,pc>::post(Space* home, Reflection::VarMap& vars,
+  MultZeroOne<View,pc>::post(Space& home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
      spec.checkArity(2);
      View x0(home, vars, spec[0]);
@@ -199,19 +199,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, PropCond pc>
   forceinline
-  MultZeroOne<View,pc>::MultZeroOne(Space* home, bool share, 
+  MultZeroOne<View,pc>::MultZeroOne(Space& home, bool share, 
                                     MultZeroOne<View,pc>& p)
     : BinaryPropagator<View,pc>(home,share,p) {}
 
   template <class View, PropCond pc>
   Actor*
-  MultZeroOne<View,pc>::copy(Space* home, bool share) {
+  MultZeroOne<View,pc>::copy(Space& home, bool share) {
     return new (home) MultZeroOne<View,pc>(home,share,*this);
   }
 
   template <class View, PropCond pc>
   ExecStatus
-  MultZeroOne<View,pc>::propagate(Space* home, ModEventDelta) {
+  MultZeroOne<View,pc>::propagate(Space& home, ModEventDelta) {
     switch (equal(x0,0)) {
     case RT_FALSE:
       GECODE_ME_CHECK(x1.eq(home,1)); 
@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, PropCond pc>
   Reflection::ActorSpec
-  MultZeroOne<View,pc>::spec(const Space* home, Reflection::VarMap& m) const {
+  MultZeroOne<View,pc>::spec(const Space& home, Reflection::VarMap& m) const {
     return BinaryPropagator<View,pc>::spec(home, m, ati());
   }
 
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class Val, class VA, class VB, class VC>
   forceinline ExecStatus
-  prop_mult_plus_bnd(Space* home, Propagator* p, VA x0, VB x1, VC x2) {
+  prop_mult_plus_bnd(Space& home, Propagator* p, VA x0, VB x1, VC x2) {
     assert(pos(x0) && pos(x1) && pos(x2));
     bool mod;
     do {
@@ -297,32 +297,32 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Space* home, VA x0, VB x1, VC x2)
+  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Space& home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,x0,x1,x2) {}
 
   template <class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Space* home, bool share, 
+  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Space& home, bool share, 
                                    MultPlusBnd<Val,VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,share,p) {}
 
   template <class Val, class VA, class VB, class VC>
   Actor*
-  MultPlusBnd<Val,VA,VB,VC>::copy(Space* home, bool share) {
+  MultPlusBnd<Val,VA,VB,VC>::copy(Space& home, bool share) {
     return new (home) MultPlusBnd<Val,VA,VB,VC>(home,share,*this);
   }
 
   template <class Val, class VA, class VB, class VC>
   ExecStatus
-  MultPlusBnd<Val,VA,VB,VC>::propagate(Space* home, ModEventDelta) {
+  MultPlusBnd<Val,VA,VB,VC>::propagate(Space& home, ModEventDelta) {
     return prop_mult_plus_bnd<Val,VA,VB,VC>(home,this,x0,x1,x2);
   }
 
   template <class Val, class VA, class VB, class VC>
   forceinline ExecStatus
-  MultPlusBnd<Val,VA,VB,VC>::post(Space* home, VA x0, VB x1, VC x2) {
+  MultPlusBnd<Val,VA,VB,VC>::post(Space& home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
     GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) * 
@@ -339,7 +339,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   forceinline void
-  MultPlusBnd<Val,VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
+  MultPlusBnd<Val,VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
      spec.checkArity(3);
      VA x0(home, vars, spec[0]);
@@ -357,7 +357,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   Reflection::ActorSpec
-  MultPlusBnd<Val,VA,VB,VC>::spec(const Space* home,
+  MultPlusBnd<Val,VA,VB,VC>::spec(const Space& home,
                                Reflection::VarMap& m) const {
     return MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
       ::spec(home, m, ati());
@@ -370,23 +370,23 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   forceinline
-  MultBnd<View>::MultBnd(Space* home, View x0, View x1, View x2)
+  MultBnd<View>::MultBnd(Space& home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
 
   template <class View>
   forceinline
-  MultBnd<View>::MultBnd(Space* home, bool share, MultBnd<View>& p)
+  MultBnd<View>::MultBnd(Space& home, bool share, MultBnd<View>& p)
     : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
   Actor*
-  MultBnd<View>::copy(Space* home, bool share) {
+  MultBnd<View>::copy(Space& home, bool share) {
     return new (home) MultBnd<View>(home,share,*this);
   }
 
   template <class View>
   ExecStatus
-  MultBnd<View>::propagate(Space* home, ModEventDelta) {
+  MultBnd<View>::propagate(Space& home, ModEventDelta) {
     if (pos(x0)) {
       if (pos(x1) || pos(x2)) goto rewrite_ppp;
       if (neg(x1) || neg(x2)) goto rewrite_pnn;
@@ -483,7 +483,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  MultBnd<View>::post(Space* home, View x0, View x1, View x2) {
+  MultBnd<View>::post(Space& home, View x0, View x1, View x2) {
     if (same(x0,x1))
       return SqrBnd<View>::post(home,x0,x2);
     if (same(x0,x2))
@@ -530,7 +530,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline void
-  MultBnd<View>::post(Space* home, Reflection::VarMap& vars,
+  MultBnd<View>::post(Space& home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
      spec.checkArity(3);
      View x0(home, vars, spec[0]);
@@ -547,7 +547,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Reflection::ActorSpec
-  MultBnd<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  MultBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
@@ -559,7 +559,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class Val, class View>
   forceinline ExecStatus
-  prop_mult_dom(Space* home, Propagator* p, View x0, View x1, View x2) {
+  prop_mult_dom(Space& home, Propagator* p, View x0, View x1, View x2) {
     SupportValues<View> s0(x0), s1(x1), s2(x2);
     while (s0()) {
       while (s1()) {
@@ -578,20 +578,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space* home, VA x0, VB x1, VC x2)
+  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space& home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
   (home,x0,x1,x2) {}
 
   template <class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space* home, bool share, 
+  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space& home, bool share, 
                                          MultPlusDom<Val,VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
       (home,share,p) {}
 
   template <class Val, class VA, class VB, class VC>
   Actor*
-  MultPlusDom<Val,VA,VB,VC>::copy(Space* home, bool share) {
+  MultPlusDom<Val,VA,VB,VC>::copy(Space& home, bool share) {
     return new (home) MultPlusDom<Val,VA,VB,VC>(home,share,*this);
   }
 
@@ -603,7 +603,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   ExecStatus
-  MultPlusDom<Val,VA,VB,VC>::propagate(Space* home, ModEventDelta med) {
+  MultPlusDom<Val,VA,VB,VC>::propagate(Space& home, ModEventDelta med) {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_mult_plus_bnd<Val,VA,VB,VC>(home,this,x0,x1,x2)));
       return ES_FIX_PARTIAL(this,VA::med(ME_INT_DOM));
@@ -614,7 +614,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   forceinline ExecStatus
-  MultPlusDom<Val,VA,VB,VC>::post(Space* home, VA x0, VB x1, VC x2) {
+  MultPlusDom<Val,VA,VB,VC>::post(Space& home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
     GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) * 
@@ -631,7 +631,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   forceinline void
-  MultPlusDom<Val,VA,VB,VC>::post(Space* home, Reflection::VarMap& vars,
+  MultPlusDom<Val,VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
                                   const Reflection::ActorSpec& spec) {
      spec.checkArity(3);
      VA x0(home, vars, spec[0]);
@@ -649,7 +649,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   Reflection::ActorSpec
-  MultPlusDom<Val,VA,VB,VC>::spec(const Space* home,
+  MultPlusDom<Val,VA,VB,VC>::spec(const Space& home,
                                Reflection::VarMap& m) const {
     return MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
       ::spec(home, m, ati());
@@ -662,17 +662,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   forceinline
-  MultDom<View>::MultDom(Space* home, View x0, View x1, View x2)
+  MultDom<View>::MultDom(Space& home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
 
   template <class View>
   forceinline
-  MultDom<View>::MultDom(Space* home, bool share, MultDom<View>& p)
+  MultDom<View>::MultDom(Space& home, bool share, MultDom<View>& p)
     : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
   Actor*
-  MultDom<View>::copy(Space* home, bool share) {
+  MultDom<View>::copy(Space& home, bool share) {
     return new (home) MultDom<View>(home,share,*this);
   }
 
@@ -684,7 +684,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  MultDom<View>::propagate(Space* home, ModEventDelta med) {
+  MultDom<View>::propagate(Space& home, ModEventDelta med) {
     if (View::me(med) != ME_INT_DOM) {
       if (pos(x0)) {
         if (pos(x1) || pos(x2)) goto rewrite_ppp;
@@ -784,7 +784,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  MultDom<View>::post(Space* home, View x0, View x1, View x2) {
+  MultDom<View>::post(Space& home, View x0, View x1, View x2) {
     if (same(x0,x1))
       return SqrDom<View>::post(home,x0,x2);
     if (same(x0,x2))
@@ -831,7 +831,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline void
-  MultDom<View>::post(Space* home, Reflection::VarMap& vars,
+  MultDom<View>::post(Space& home, Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
      spec.checkArity(3);
      View x0(home, vars, spec[0]);
@@ -848,7 +848,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   Reflection::ActorSpec
-  MultDom<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  MultDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return TernaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 

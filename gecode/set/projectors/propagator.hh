@@ -60,25 +60,25 @@ namespace Gecode { namespace Set { namespace Projection {
     /// The projector set to propagate
     ProjectorSet ps;
     /// Constructor for cloning \a p
-    NaryProjection(Space* home, bool share, NaryProjection& p);
+    NaryProjection(Space& home, bool share, NaryProjection& p);
     /// Constructor for creation
-    NaryProjection(Space* home, ViewArray<SetView>& x, ProjectorSet& ps);
+    NaryProjection(Space& home, ViewArray<SetView>& x, ProjectorSet& ps);
   public:
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
-    static  ExecStatus post(Space* home, ViewArray<SetView>& x,
+    static  ExecStatus post(Space& home, ViewArray<SetView>& x,
                             ProjectorSet& ps);
   };
 
@@ -94,27 +94,27 @@ namespace Gecode { namespace Set { namespace Projection {
     /// The projector set to propagate
     ProjectorSet ps;
     /// Constructor for cloning \a p
-    ReNaryProjection(Space* home, bool share, ReNaryProjection& p);
+    ReNaryProjection(Space& home, bool share, ReNaryProjection& p);
     /// Constructor for creation
-    ReNaryProjection(Space* home,ViewArray<SetView>& x,
+    ReNaryProjection(Space& home,ViewArray<SetView>& x,
                      Gecode::Int::BoolView,
                      ProjectorSet& ps);
   public:
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator
-    GECODE_SET_EXPORT virtual size_t dispose(Space* home);
+    GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor* copy(Space* home,bool);
+    GECODE_SET_EXPORT virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
-    GECODE_SET_EXPORT static  ExecStatus post(Space* home,
+    GECODE_SET_EXPORT static  ExecStatus post(Space& home,
                                               ViewArray<SetView>& x,
                                               Gecode::Int::BoolView b,
                                               ProjectorSet& ps);
@@ -134,26 +134,26 @@ namespace Gecode { namespace Set { namespace Projection {
     /// The projector to propagate
     Projector proj;
     /// Constructor for cloning \a p
-    CardProjection(Space* home, bool share, CardProjection& p);
+    CardProjection(Space& home, bool share, CardProjection& p);
     /// Constructor for creation
-    CardProjection(Space* home, ViewArray<SetView>& x,
+    CardProjection(Space& home, ViewArray<SetView>& x,
                    Gecode::Int::IntView i, Projector& ps);
   public:
     /// Cost function
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
+    virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
-    static  ExecStatus post(Space* home, ViewArray<SetView>& x,
+    static  ExecStatus post(Space& home, ViewArray<SetView>& x,
                             Gecode::Int::IntView i, Projector& p);
   };
   

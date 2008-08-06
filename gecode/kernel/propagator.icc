@@ -92,19 +92,19 @@ namespace Gecode {
     /// Single view
     View x0;
     /// Constructor for cloning \a p
-    UnaryPropagator(Space* home, bool share, UnaryPropagator& p);
+    UnaryPropagator(Space& home, bool share, UnaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    UnaryPropagator(Space* home, bool share, Propagator& p,
+    UnaryPropagator(Space& home, bool share, Propagator& p,
                     View x0);
     /// Constructor for creation
-    UnaryPropagator(Space* home, View x0);
+    UnaryPropagator(Space& home, View x0);
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -123,19 +123,19 @@ namespace Gecode {
     /// Two views
     View x0, x1;
     /// Constructor for cloning \a p
-    BinaryPropagator(Space* home, bool share, BinaryPropagator& p);
+    BinaryPropagator(Space& home, bool share, BinaryPropagator& p);
     /// Constructor for creation
-    BinaryPropagator(Space* home, View x0, View x1);
+    BinaryPropagator(Space& home, View x0, View x1);
     /// Constructor for rewriting \a p during cloning
-    BinaryPropagator(Space* home, bool share, Propagator& p,
+    BinaryPropagator(Space& home, bool share, Propagator& p,
                      View x0, View x1);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -154,19 +154,19 @@ namespace Gecode {
     /// Three views
     View x0, x1, x2;
     /// Constructor for cloning \a p
-    TernaryPropagator(Space* home, bool share, TernaryPropagator& p);
+    TernaryPropagator(Space& home, bool share, TernaryPropagator& p);
     /// Constructor for creation
-    TernaryPropagator(Space* home, View x0, View x1, View x2);
+    TernaryPropagator(Space& home, View x0, View x1, View x2);
     /// Constructor for rewriting \a p during cloning
-    TernaryPropagator(Space* home, bool share, Propagator& p,
+    TernaryPropagator(Space& home, bool share, Propagator& p,
                       View x0, View x1, View x2);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -185,19 +185,19 @@ namespace Gecode {
     /// Array of views
     ViewArray<View> x;
     /// Constructor for cloning \a p
-    NaryPropagator(Space* home, bool share, NaryPropagator& p);
+    NaryPropagator(Space& home, bool share, NaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    NaryPropagator(Space* home, bool share, Propagator& p,
+    NaryPropagator(Space& home, bool share, Propagator& p,
                    ViewArray<View>& x);
     /// Constructor for creation
-    NaryPropagator(Space* home, ViewArray<View>& x);
+    NaryPropagator(Space& home, ViewArray<View>& x);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -219,19 +219,19 @@ namespace Gecode {
     /// Single view
     View y;
     /// Constructor for cloning \a p
-    NaryOnePropagator(Space* home, bool share, NaryOnePropagator& p);
+    NaryOnePropagator(Space& home, bool share, NaryOnePropagator& p);
     /// Constructor for rewriting \a p during cloning
-    NaryOnePropagator(Space* home, bool share, Propagator& p,
+    NaryOnePropagator(Space& home, bool share, Propagator& p,
                       ViewArray<View>& x, View y);
     /// Constructor for creation
-    NaryOnePropagator(Space* home, ViewArray<View>& x, View y);
+    NaryOnePropagator(Space& home, ViewArray<View>& x, View y);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -251,19 +251,19 @@ namespace Gecode {
     View0 x0;
     View1 x1;
     /// Constructor for cloning
-    MixBinaryPropagator(Space* home,bool,MixBinaryPropagator&);
+    MixBinaryPropagator(Space& home,bool,MixBinaryPropagator&);
     /// Constructor for creation
-    MixBinaryPropagator(Space* home,View0,View1);
+    MixBinaryPropagator(Space& home,View0,View1);
     /// Constructor for rewriting \a p during cloning
-    MixBinaryPropagator(Space* home, bool share, Propagator& p,
+    MixBinaryPropagator(Space& home, bool share, Propagator& p,
                         View0 x0, View1 x1);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -285,19 +285,19 @@ namespace Gecode {
     View1 x1;
     View2 x2;
     /// Constructor for cloning
-    MixTernaryPropagator(Space* home,bool,MixTernaryPropagator&);
+    MixTernaryPropagator(Space& home,bool,MixTernaryPropagator&);
     /// Constructor for creation
-    MixTernaryPropagator(Space* home,View0,View1,View2);
+    MixTernaryPropagator(Space& home,View0,View1,View2);
     /// Constructor for rewriting \a p during cloning
-    MixTernaryPropagator(Space* home, bool share, Propagator& p,
+    MixTernaryPropagator(Space& home, bool share, Propagator& p,
                          View0 x0, View1 x1, View2 x2);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
 
@@ -319,19 +319,19 @@ namespace Gecode {
     /// Single view
     View1 y;
     /// Constructor for cloning \a p
-    MixNaryOnePropagator(Space* home, bool share, MixNaryOnePropagator& p);
+    MixNaryOnePropagator(Space& home, bool share, MixNaryOnePropagator& p);
     /// Constructor for creation
-    MixNaryOnePropagator(Space* home, ViewArray<View0>& x, View1 y);
+    MixNaryOnePropagator(Space& home, ViewArray<View0>& x, View1 y);
     /// Constructor for rewriting \a p during cloning
-    MixNaryOnePropagator(Space* home, bool share, Propagator& p,
+    MixNaryOnePropagator(Space& home, bool share, Propagator& p,
                          ViewArray<View0>& x, View1 y);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   };
   //@}
@@ -366,7 +366,7 @@ namespace Gecode {
    */
 
   template <class View, PropCond pc>
-  UnaryPropagator<View,pc>::UnaryPropagator(Space* home, View y0)
+  UnaryPropagator<View,pc>::UnaryPropagator(Space& home, View y0)
     : Propagator(home), x0(y0) {
     if (pc != PC_GEN_NONE)
       x0.subscribe(home,this,pc);
@@ -375,7 +375,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   UnaryPropagator<View,pc>::UnaryPropagator
-  (Space* home, bool share, UnaryPropagator<View,pc>& p)
+  (Space& home, bool share, UnaryPropagator<View,pc>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
   }
@@ -383,7 +383,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   UnaryPropagator<View,pc>::UnaryPropagator
-  (Space* home, bool share, Propagator& p, View y0)
+  (Space& home, bool share, Propagator& p, View y0)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
   }
@@ -396,7 +396,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   forceinline size_t
-  UnaryPropagator<View,pc>::dispose(Space* home) {
+  UnaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
       x0.cancel(home,this,pc);
     (void) Propagator::dispose(home);
@@ -405,7 +405,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   Reflection::ActorSpec
-  UnaryPropagator<View,pc>::spec(const Space* home, Reflection::VarMap& m,
+  UnaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
                                  const Support::Symbol& ati) const {
     Reflection::ActorSpec s(ati);
     return s << x0.spec(home, m);
@@ -418,7 +418,7 @@ namespace Gecode {
    */
 
   template <class View, PropCond pc>
-  BinaryPropagator<View,pc>::BinaryPropagator(Space* home, View y0, View y1)
+  BinaryPropagator<View,pc>::BinaryPropagator(Space& home, View y0, View y1)
     : Propagator(home), x0(y0), x1(y1) {
     if (pc != PC_GEN_NONE) {
       x0.subscribe(home,this,pc);
@@ -429,7 +429,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   BinaryPropagator<View,pc>::BinaryPropagator
-  (Space* home, bool share, BinaryPropagator<View,pc>& p)
+  (Space& home, bool share, BinaryPropagator<View,pc>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -438,7 +438,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   BinaryPropagator<View,pc>::BinaryPropagator
-  (Space* home, bool share, Propagator& p, View y0, View y1)
+  (Space& home, bool share, Propagator& p, View y0, View y1)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -452,7 +452,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   forceinline size_t
-  BinaryPropagator<View,pc>::dispose(Space* home) {
+  BinaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
       x0.cancel(home,this,pc);
       x1.cancel(home,this,pc);
@@ -463,7 +463,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   Reflection::ActorSpec
-  BinaryPropagator<View,pc>::spec(const Space* home, Reflection::VarMap& m,
+  BinaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
                                   const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
@@ -477,7 +477,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   TernaryPropagator<View,pc>::TernaryPropagator
-  (Space* home, View y0, View y1, View y2)
+  (Space& home, View y0, View y1, View y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     if (pc != PC_GEN_NONE) {
       x0.subscribe(home,this,pc);
@@ -489,7 +489,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   TernaryPropagator<View,pc>::TernaryPropagator
-  (Space* home, bool share, TernaryPropagator<View,pc>& p)
+  (Space& home, bool share, TernaryPropagator<View,pc>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -499,7 +499,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   TernaryPropagator<View,pc>::TernaryPropagator
-  (Space* home, bool share, Propagator& p, View y0, View y1, View y2)
+  (Space& home, bool share, Propagator& p, View y0, View y1, View y2)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -514,7 +514,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   forceinline size_t
-  TernaryPropagator<View,pc>::dispose(Space* home) {
+  TernaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
       x0.cancel(home,this,pc);
       x1.cancel(home,this,pc);
@@ -526,7 +526,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   Reflection::ActorSpec
-  TernaryPropagator<View,pc>::spec(const Space* home, Reflection::VarMap& m,
+  TernaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
                                    const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
@@ -541,7 +541,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   NaryPropagator<View,pc>::NaryPropagator
-  (Space* home, ViewArray<View>& y)
+  (Space& home, ViewArray<View>& y)
     : Propagator(home), x(y) {
     if (pc != PC_GEN_NONE)
       x.subscribe(home,this,pc);
@@ -550,7 +550,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   NaryPropagator<View,pc>::NaryPropagator
-  (Space* home, bool share, NaryPropagator<View,pc>& p)
+  (Space& home, bool share, NaryPropagator<View,pc>& p)
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
   }
@@ -558,7 +558,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   NaryPropagator<View,pc>::NaryPropagator
-  (Space* home, bool share, Propagator& p, ViewArray<View>& x0)
+  (Space& home, bool share, Propagator& p, ViewArray<View>& x0)
     : Propagator(home,share,p) {
     x.update(home,share,x0);
   }
@@ -571,7 +571,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   forceinline size_t
-  NaryPropagator<View,pc>::dispose(Space* home) {
+  NaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
       x.cancel(home,this,pc);
     (void) Propagator::dispose(home);
@@ -580,7 +580,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   Reflection::ActorSpec
-  NaryPropagator<View,pc>::spec(const Space* home, Reflection::VarMap& m,
+  NaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x.spec(home, m);
@@ -593,7 +593,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   NaryOnePropagator<View,pc>::NaryOnePropagator
-  (Space* home, ViewArray<View>& x0, View y0)
+  (Space& home, ViewArray<View>& x0, View y0)
     : Propagator(home), x(x0), y(y0) {
     if (pc != PC_GEN_NONE) {
       x.subscribe(home,this,pc);
@@ -604,7 +604,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   NaryOnePropagator<View,pc>::NaryOnePropagator
-  (Space* home, bool share, NaryOnePropagator<View,pc>& p)
+  (Space& home, bool share, NaryOnePropagator<View,pc>& p)
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -613,7 +613,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   forceinline
   NaryOnePropagator<View,pc>::NaryOnePropagator
-  (Space* home, bool share, Propagator& p, ViewArray<View>& x0, View y0)
+  (Space& home, bool share, Propagator& p, ViewArray<View>& x0, View y0)
     : Propagator(home,share,p) {
     x.update(home,share,x0);
     y.update(home,share,y0);
@@ -627,7 +627,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   forceinline size_t
-  NaryOnePropagator<View,pc>::dispose(Space* home) {
+  NaryOnePropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
       x.cancel(home,this,pc);
       y.cancel(home,this,pc);
@@ -638,7 +638,7 @@ namespace Gecode {
 
   template <class View, PropCond pc>
   Reflection::ActorSpec
-  NaryOnePropagator<View,pc>::spec(const Space* home, Reflection::VarMap& m,
+  NaryOnePropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
                                    const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x.spec(home, m)
@@ -652,7 +652,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
-  (Space* home, View0 y0, View1 y1)
+  (Space& home, View0 y0, View1 y1)
     : Propagator(home), x0(y0), x1(y1) {
     if (pc0 != PC_GEN_NONE)
       x0.subscribe(home,this,pc0);
@@ -663,7 +663,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
-  (Space* home, bool share, MixBinaryPropagator<View0,pc0,View1,pc1>& p)
+  (Space& home, bool share, MixBinaryPropagator<View0,pc0,View1,pc1>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -672,7 +672,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
-  (Space* home, bool share, Propagator& p, View0 y0, View1 y1)
+  (Space& home, bool share, Propagator& p, View0 y0, View1 y1)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -686,7 +686,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline size_t
-  MixBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
+  MixBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
       x0.cancel(home,this,pc0);
     if (pc1 != PC_GEN_NONE)
@@ -698,7 +698,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   Reflection::ActorSpec
   MixBinaryPropagator<View0,pc0,View1,pc1>
-  ::spec(const Space* home, Reflection::VarMap& m,
+  ::spec(const Space& home, Reflection::VarMap& m,
          const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
@@ -713,7 +713,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
-  MixTernaryPropagator(Space* home, View0 y0, View1 y1, View2 y2)
+  MixTernaryPropagator(Space& home, View0 y0, View1 y1, View2 y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     if (pc0 != PC_GEN_NONE)
       x0.subscribe(home,this,pc0);
@@ -727,7 +727,7 @@ namespace Gecode {
             class View2, PropCond pc2>
   forceinline
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
-  MixTernaryPropagator(Space* home, bool share,
+  MixTernaryPropagator(Space& home, bool share,
                          MixTernaryPropagator<View0,pc0,View1,pc1,
                          View2,pc2>& p)
     : Propagator(home,share,p) {
@@ -740,7 +740,7 @@ namespace Gecode {
             class View2, PropCond pc2>
   forceinline
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::MixTernaryPropagator
-  (Space* home, bool share, Propagator& p, View0 y0, View1 y1, View2 y2)
+  (Space& home, bool share, Propagator& p, View0 y0, View1 y1, View2 y2)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -757,7 +757,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline size_t
-  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::dispose(Space* home) {
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
       x0.cancel(home,this,pc0);
     if (pc1 != PC_GEN_NONE)
@@ -772,7 +772,7 @@ namespace Gecode {
             class View2, PropCond pc2>
   Reflection::ActorSpec
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>
-  ::spec(const Space* home, Reflection::VarMap& m,
+  ::spec(const Space& home, Reflection::VarMap& m,
          const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
@@ -787,7 +787,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
-  (Space* home, ViewArray<View0>& x0, View1 y0)
+  (Space& home, ViewArray<View0>& x0, View1 y0)
     : Propagator(home), x(x0), y(y0) {
     if (pc0 != PC_GEN_NONE)
       x.subscribe(home,this,pc0);
@@ -798,7 +798,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
-  (Space* home, bool share, MixNaryOnePropagator<View0,pc0,View1,pc1>& p)
+  (Space& home, bool share, MixNaryOnePropagator<View0,pc0,View1,pc1>& p)
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -807,7 +807,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
-  (Space* home, bool share, Propagator& p, ViewArray<View0>& x0, View1 y0)
+  (Space& home, bool share, Propagator& p, ViewArray<View0>& x0, View1 y0)
     : Propagator(home,share,p) {
     x.update(home,share,x0);
     y.update(home,share,y0);
@@ -821,7 +821,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline size_t
-  MixNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
       x.cancel(home,this,pc0);
     if (pc1 != PC_GEN_NONE)
@@ -833,7 +833,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   Reflection::ActorSpec
   MixNaryOnePropagator<View0,pc0,View1,pc1>
-  ::spec(const Space* home, Reflection::VarMap& m,
+  ::spec(const Space& home, Reflection::VarMap& m,
          const Support::Symbol& name) const {
     Reflection::ActorSpec s(name);
     return s << x.spec(home, m)

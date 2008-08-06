@@ -42,8 +42,8 @@ namespace Gecode {
   using namespace Int;
 
   void
-  abs(Space* home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+  abs(Space& home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
+    if (home.failed()) return;
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::AbsDom<IntView>::post(home,x0,x1));
     } else {
@@ -53,9 +53,9 @@ namespace Gecode {
 
 
   void
-  max(Space* home, IntVar x0, IntVar x1, IntVar x2, 
+  max(Space& home, IntVar x0, IntVar x1, IntVar x2, 
       IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::MaxDom<IntView>::post(home,x0,x1,x2));
     } else {
@@ -64,11 +64,11 @@ namespace Gecode {
   }
 
   void
-  max(Space* home, const IntVarArgs& x, IntVar y,
+  max(Space& home, const IntVarArgs& x, IntVar y,
       IntConLevel icl, PropKind) {
     if (x.size() == 0)
       throw TooFewArguments("Int::max");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::NaryMaxDom<IntView>::post(home,xv,y));
@@ -79,9 +79,9 @@ namespace Gecode {
 
 
   void
-  min(Space* home, IntVar x0, IntVar x1, IntVar x2, 
+  min(Space& home, IntVar x0, IntVar x1, IntVar x2, 
       IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     MinusView m0(x0); MinusView m1(x1); MinusView m2(x2);
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::MaxDom<MinusView>::post(home,m0,m1,m2));
@@ -91,11 +91,11 @@ namespace Gecode {
   }
 
   void
-  min(Space* home, const IntVarArgs& x, IntVar y, 
+  min(Space& home, const IntVarArgs& x, IntVar y, 
       IntConLevel icl, PropKind) {
     if (x.size() == 0)
       throw TooFewArguments("Int::min");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<MinusView> m(home,x.size());
     for (int i=x.size(); i--; )
       m[i].init(x[i]);
@@ -109,9 +109,9 @@ namespace Gecode {
 
 
   void
-  mult(Space* home, IntVar x0, IntVar x1, IntVar x2, 
+  mult(Space& home, IntVar x0, IntVar x1, IntVar x2, 
        IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::MultDom<IntView>::post(home,x0,x1,x2));
     } else {
@@ -121,8 +121,8 @@ namespace Gecode {
 
 
   void
-  sqr(Space* home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+  sqr(Space& home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
+    if (home.failed()) return;
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::SqrDom<IntView>::post(home,x0,x1));
     } else {
@@ -131,8 +131,8 @@ namespace Gecode {
   }
 
   void
-  sqrt(Space* home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+  sqrt(Space& home, IntVar x0, IntVar x1, IntConLevel icl, PropKind) {
+    if (home.failed()) return;
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Arithmetic::SqrtDom<IntView>::post(home,x0,x1));
     } else {
@@ -141,9 +141,9 @@ namespace Gecode {
   }
 
   void
-  divmod(Space* home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
+  divmod(Space& home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
          IntConLevel, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     IntVar prod(home, Int::Limits::min, Int::Limits::max);
     GECODE_ES_FAIL(home, 
@@ -158,24 +158,24 @@ namespace Gecode {
     GECODE_ME_FAIL(home, x0v.lq(home,max));
     t[2].a=-1; t[2].x=x0;
     Linear::post(home,t,3,IRT_EQ,0);
-    if (home->failed()) return;
+    if (home.failed()) return;
     IntView x1v(x1);
     GECODE_ES_FAIL(home,
       Arithmetic::DivMod<IntView>::post(home,x1,x3));
   }
 
   void
-  div(Space* home, IntVar x0, IntVar x1, IntVar x2,
+  div(Space& home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,
       (Arithmetic::DivBnd<IntView>::post(home,x0,x1,x2)));
   }
 
   void
-  mod(Space* home, IntVar x0, IntVar x1, IntVar x2,
+  mod(Space& home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl, PropKind pk) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     IntVar _div(home, Int::Limits::min, Int::Limits::max);
     divmod(home, x0, x1, _div, x2, icl, pk);
   }

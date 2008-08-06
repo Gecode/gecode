@@ -50,11 +50,11 @@ namespace Test { namespace Assign {
     Gecode::IntVarArray x;
     /// Initialize test space
     IntTestSpace(int n, Gecode::IntSet& d)
-      : x(this, n, d) {}
+      : x(*this, n, d) {}
     /// Constructor for cloning \a s
     IntTestSpace(bool share, IntTestSpace& s) 
       : Gecode::Space(share,s) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
@@ -69,11 +69,11 @@ namespace Test { namespace Assign {
     Gecode::BoolVarArray x;
     /// Initialize test space
     BoolTestSpace(int n)
-      : x(this, n, 0, 1) {}
+      : x(*this, n, 0, 1) {}
     /// Constructor for cloning \a s
     BoolTestSpace(bool share, BoolTestSpace& s) 
       : Gecode::Space(share,s) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
@@ -112,14 +112,14 @@ namespace Test { namespace Assign {
   IntTest::run(void) {
     using namespace Gecode;
     IntTestSpace* root = new IntTestSpace(arity,dom);
-    post(root, root->x);
+    post(*root, root->x);
 
     for (int val = n_int_assign; val--; ) {
       IntTestSpace* clone = static_cast<IntTestSpace*>(root->clone(false));
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
-      assign(clone, clone->x, int_assign[val]);
+      assign(*clone, clone->x, int_assign[val]);
       Gecode::DFS<IntTestSpace> e_s(clone, o);
       delete clone;
         
@@ -148,14 +148,14 @@ namespace Test { namespace Assign {
   BoolTest::run(void) {
     using namespace Gecode;
     BoolTestSpace* root = new BoolTestSpace(arity);
-    post(root, root->x);
+    post(*root, root->x);
 
     for (int val = n_int_assign; val--; ) {
       BoolTestSpace* clone = static_cast<BoolTestSpace*>(root->clone(false));
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
-      assign(clone, clone->x, int_assign[val]);
+      assign(*clone, clone->x, int_assign[val]);
       Gecode::DFS<BoolTestSpace> e_s(clone, o);
       delete clone;
         

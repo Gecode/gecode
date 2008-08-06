@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  Match<View>::Match(Space* home, View y0, ViewArray< Gecode::Int::IntView >& ys)
+  Match<View>::Match(Space& home, View y0, ViewArray< Gecode::Int::IntView >& ys)
     : Propagator(home), x0(y0), xs(ys) {
     x0.subscribe(home,this, PC_SET_ANY);
     xs.subscribe(home,this, Gecode::Int::PC_INT_BND);
@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  Match<View>::Match(Space* home, bool share, Match& p)
+  Match<View>::Match(Space& home, bool share, Match& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     xs.update(home,share,p.xs);
@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline ExecStatus
-  Match<View>::post(Space* home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
+  Match<View>::post(Space& home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
     unsigned int xs_size = xs.size();
     GECODE_ME_CHECK(x0.cardMin(home,xs_size));
     GECODE_ME_CHECK(x0.cardMax(home,xs_size));
@@ -89,8 +89,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   size_t
-  Match<View>::dispose(Space* home) {
-    assert(!home->failed());
+  Match<View>::dispose(Space& home) {
+    assert(!home.failed());
     x0.cancel(home,this, PC_SET_ANY);
     xs.cancel(home,this, Gecode::Int::PC_INT_BND);
     (void) Propagator::dispose(home);
@@ -99,13 +99,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Actor*
-  Match<View>::copy(Space* home, bool share) {
+  Match<View>::copy(Space& home, bool share) {
     return new (home) Match(home,share,*this);
   }
 
   template <class View>
   ExecStatus
-  Match<View>::propagate(Space* home, ModEventDelta) {
+  Match<View>::propagate(Space& home, ModEventDelta) {
 
     int xs_size = xs.size();
 
@@ -203,7 +203,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec
-  Match<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  Match<View>::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x0.spec(home, m)
              << xs.spec(home, m);
@@ -211,7 +211,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   void
-  Match<View>::post(Space* home, Reflection::VarMap& vars,
+  Match<View>::post(Space& home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     View x0(home, vars, spec[0]);

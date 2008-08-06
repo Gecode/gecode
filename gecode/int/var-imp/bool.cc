@@ -43,7 +43,7 @@ namespace Gecode { namespace Int {
   BoolVarImp BoolVarImp::s_zero(0);
 
   ModEvent
-  BoolVarImp::one_none(Space* home) {
+  BoolVarImp::one_none(Space& home) {
     assert(none());
     bits() ^= (NONE ^ ONE);
     assert(one());
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int {
   }
 
   ModEvent
-  BoolVarImp::zero_none(Space* home) {
+  BoolVarImp::zero_none(Space& home) {
     assert(none());
     bits() ^= (NONE ^ ZERO);
     assert(zero());
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int {
 
 
   Reflection::Arg*
-  BoolVarImp::spec(const Space*, Reflection::VarMap& m) const {
+  BoolVarImp::spec(const Space&, Reflection::VarMap& m) const {
     int specIndex = m.index(this);
     if (specIndex != -1)
       return Reflection::Arg::newVar(specIndex);
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int {
 
 
   VarImpBase*
-  BoolVarImp::create(Space* home, Reflection::VarSpec& spec) {
+  BoolVarImp::create(Space& home, Reflection::VarSpec& spec) {
     unsigned int dom = spec.dom()->toInt();
     int min = 0;
     int max = 1;
@@ -86,7 +86,7 @@ namespace Gecode { namespace Int {
   }
 
   void
-  BoolVarImp::constrain(Space* home, VarImpBase* v,
+  BoolVarImp::constrain(Space& home, VarImpBase* v,
                         Reflection::VarSpec& spec) {
     unsigned int d = spec.dom()->toInt();
     if (d == Int::BoolVarImp::ZERO) {

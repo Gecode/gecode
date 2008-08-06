@@ -60,7 +60,7 @@ namespace Gecode {
     
     /// Return a fresh yet equal integer variable
     forceinline ExecStatus
-    link(Space* home, IntVar** x, int n, IntConLevel icl) {
+    link(Space& home, IntVar** x, int n, IntConLevel icl) {
       if (n > 2) {
         ViewArray<IntView> y(home,n);
         y[0]=*x[0];
@@ -88,7 +88,7 @@ namespace Gecode {
     
     /// Return a fresh yet equal Boolean variable
     forceinline ExecStatus
-    link(Space* home, BoolVar** x, int n, IntConLevel) {
+    link(Space& home, BoolVar** x, int n, IntConLevel) {
       if (n > 2) {
         ViewArray<BoolView> y(home,n);
         y[0]=*x[0];
@@ -106,7 +106,7 @@ namespace Gecode {
     /// Replace unassigned shared variables by fresh, yet equal variables
     template <class Var>
     forceinline ExecStatus 
-    unshare(Space* home, VarArgArray<Var>& x, IntConLevel icl) {
+    unshare(Space& home, VarArgArray<Var>& x, IntConLevel icl) {
       int n=x.size();
       if (n < 2)
         return ES_OK;
@@ -133,14 +133,14 @@ namespace Gecode {
   }}
 
   void 
-  unshare(Space* home, IntVarArgs& x, IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+  unshare(Space& home, IntVarArgs& x, IntConLevel icl, PropKind) {
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Int::Unshare::unshare<IntVar>(home,x,icl));
   }
 
   void 
-  unshare(Space* home, BoolVarArgs& x, IntConLevel, PropKind) {
-    if (home->failed()) return;
+  unshare(Space& home, BoolVarArgs& x, IntConLevel, PropKind) {
+    if (home.failed()) return;
     GECODE_ES_FAIL(home,Int::Unshare::unshare<BoolVar>(home,x,ICL_DEF));
   }
 

@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   /// Create virtual view selector for tie-breaking
   void
-  virtualize(Gecode::Space* home, IntVarBranch vars,
+  virtualize(Gecode::Space& home, IntVarBranch vars,
              const Gecode::VarBranchOptions& o_vars,
              Gecode::ViewSelVirtualBase<IntView>*& v) {
     switch (vars) {
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Branch {
 namespace Gecode { 
 
   void
-  branch(Gecode::Space* home, const IntVarArgs& x,
+  branch(Gecode::Space& home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const Gecode::VarBranchOptions& o_vars,
          const Gecode::ValBranchOptions& o_vals) {
@@ -113,7 +113,7 @@ namespace Gecode {
     using namespace Gecode::Int::Branch;
 
 
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (vars) {
     case INT_VAR_NONE:
@@ -218,7 +218,7 @@ namespace Gecode {
   }
 
   void
-  branch(Gecode::Space* home, const IntVarArgs& x,
+  branch(Gecode::Space& home, const IntVarArgs& x,
          const Gecode::TieBreakVarBranch<IntVarBranch>& vars,
          IntValBranch vals,
          const Gecode::TieBreakVarBranchOptions& o_vars,
@@ -228,7 +228,7 @@ namespace Gecode {
     using namespace Gecode::Int::Branch;
 
 
-    if (home->failed()) return;
+    if (home.failed()) return;
     if ((vars.a == INT_VAR_NONE) || (vars.a == INT_VAR_RND) ||
         ((vars.b == INT_VAR_NONE) && (vars.c == INT_VAR_NONE) && (vars.d == INT_VAR_NONE))) {
       branch(home,x,vars.a,vals,o_vars.a,o_vals);

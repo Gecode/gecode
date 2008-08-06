@@ -45,10 +45,10 @@ namespace Gecode {
   using namespace Int;
 
   void
-  rel(Space* home, IntVar x0, IntRelType r, int n, 
+  rel(Space& home, IntVar x0, IntRelType r, int n, 
       IntConLevel, PropKind) {
     Limits::check(n,"Int::rel");
-    if (home->failed()) return;
+    if (home.failed()) return;
     IntView x(x0);
     switch (r) {
     case IRT_EQ: GECODE_ME_FAIL(home,x.eq(home,n)); break;
@@ -62,10 +62,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const IntVarArgs& x, IntRelType r, int n, 
+  rel(Space& home, const IntVarArgs& x, IntRelType r, int n, 
       IntConLevel, PropKind) {
     Limits::check(n,"Int::rel");
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ: 
       for (int i=x.size(); i--; ) {
@@ -103,9 +103,9 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, IntVar x0, IntRelType r, IntVar x1, 
+  rel(Space& home, IntVar x0, IntRelType r, IntVar x1, 
       IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
       if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
@@ -130,9 +130,9 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const IntVarArgs& x, IntRelType r, IntVar y, 
+  rel(Space& home, const IntVarArgs& x, IntRelType r, IntVar y, 
       IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
       {
@@ -179,9 +179,9 @@ namespace Gecode {
 
 
   void
-  rel(Space* home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
+  rel(Space& home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
       IntConLevel icl, PropKind) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
       if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
@@ -223,10 +223,10 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, IntVar x, IntRelType r, int n, BoolVar b,
+  rel(Space& home, IntVar x, IntRelType r, int n, BoolVar b,
       IntConLevel icl, PropKind) {
     Limits::check(n,"Int::rel");
-    if (home->failed()) return;
+    if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
       if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
@@ -270,9 +270,9 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const IntVarArgs& x, IntRelType r, 
+  rel(Space& home, const IntVarArgs& x, IntRelType r, 
       IntConLevel icl, PropKind) {
-    if (home->failed() || (x.size() < 2)) return;
+    if (home.failed() || (x.size() < 2)) return;
     switch (r) {
     case IRT_EQ:
       {
@@ -309,11 +309,11 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+  rel(Space& home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl, PropKind) {
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     switch (r) {
     case IRT_GR: 

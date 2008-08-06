@@ -124,7 +124,7 @@ namespace Test { namespace Int {
          return eval(bis, reg) == c;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::MiniModel::BoolExpr reg[4] = {
            channel(home,x[0]),channel(home,x[1]),
@@ -152,7 +152,7 @@ namespace Test { namespace Int {
          return eval(bis, reg) == x[4];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::MiniModel::BoolExpr reg[4] = {
            channel(home,x[0]),channel(home,x[1]),

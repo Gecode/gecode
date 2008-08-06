@@ -44,10 +44,10 @@
 
 namespace Gecode {
 
-  SetVar::SetVar(Space* home)
+  SetVar::SetVar(Space& home)
     : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home)) {}
 
-  SetVar::SetVar(Space* home,int lbMin,int lbMax,int ubMin,int ubMax,
+  SetVar::SetVar(Space& home,int lbMin,int lbMax,int ubMin,int ubMax,
                  unsigned int minCard, unsigned int maxCard)
     : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,lbMin,lbMax,
                                                         ubMin,ubMax,
@@ -61,7 +61,7 @@ namespace Gecode {
       throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
-  SetVar::SetVar(Space* home, const IntSet& glb,int ubMin,int ubMax,
+  SetVar::SetVar(Space& home, const IntSet& glb,int ubMin,int ubMax,
                  unsigned int minCard, unsigned int maxCard)
     : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,glb,ubMin,ubMax,
                                                         minCard,maxCard)) {
@@ -75,7 +75,7 @@ namespace Gecode {
       throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
-  SetVar::SetVar(Space* home,int lbMin,int lbMax,const IntSet& lub,
+  SetVar::SetVar(Space& home,int lbMin,int lbMax,const IntSet& lub,
                  unsigned int minCard, unsigned int maxCard)
     : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,lbMin,lbMax,lub,
                                                         minCard,maxCard)) {
@@ -87,7 +87,7 @@ namespace Gecode {
       throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
-  SetVar::SetVar(Space* home,
+  SetVar::SetVar(Space& home,
                  const IntSet& glb, const IntSet& lub,
                  unsigned int minCard, unsigned int maxCard)
     : VarBase<Set::SetVarImp>(new (home) Set::SetVarImp(home,glb,lub,minCard,

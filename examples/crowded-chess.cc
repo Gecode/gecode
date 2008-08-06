@@ -67,7 +67,7 @@ namespace {
       return (i >= 0 && i < n) && (j >= 0 && j < n);
     }
     Bishops(int size)
-      : n(size), k(this,n*n,0,1) {
+      : n(size), k(*this,n*n,0,1) {
       MiniModel::Matrix<BoolVarArray> kb(k, n, n);
       for (int l = n; l--; ) {
         const int il = (n-1) - l;
@@ -79,21 +79,21 @@ namespace {
           d4[i] = kb((n-1)-i, i+il);
         }
 
-        linear(this, d1, IRT_LQ, 1);
-        linear(this, d2, IRT_LQ, 1);
-        linear(this, d3, IRT_LQ, 1);
-        linear(this, d4, IRT_LQ, 1);
+        linear(*this, d1, IRT_LQ, 1);
+        linear(*this, d2, IRT_LQ, 1);
+        linear(*this, d3, IRT_LQ, 1);
+        linear(*this, d4, IRT_LQ, 1);
       }
 
-      linear(this, k, IRT_EQ, 2*n - 2);
+      linear(*this, k, IRT_EQ, 2*n - 2);
       // Forced bishop placement from crowded chess model
-      rel(this, kb(n-1,   0), IRT_EQ, 1);
-      rel(this, kb(n-1, n-1), IRT_EQ, 1);
-      branch(this, k, 
+      rel(*this, kb(n-1,   0), IRT_EQ, 1);
+      rel(*this, kb(n-1, n-1), IRT_EQ, 1);
+      branch(*this, k, 
              tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), INT_VAL_MAX);
     }
     Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
-      k.update(this, share, s.k);
+      k.update(*this, share, s.k);
     }
     virtual Space* copy(bool share) {
       return new Bishops(share,*this);
@@ -217,7 +217,7 @@ protected:
       for (int y = n; y--; )
         for (int i = 4; i--; )
           if (valid_pos(x+kmoves[i][0], y+kmoves[i][1]))
-            rel(this, 
+            rel(*this, 
                 kb(x, y),
                 BOT_AND,
                 kb(x+kmoves[i][0], y+kmoves[i][1]),
@@ -234,10 +234,10 @@ public:
   /// The model of the problem
   CrowdedChess(const SizeOptions& opt)
     : n(opt.size()), 
-      s(this, n*n, 0, PMAX-1), 
-      queens(this, n, 0, n-1),
-      rooks(this, n, 0, n-1), 
-      knights(this, n*n, 0, 1) {
+      s(*this, n*n, 0, PMAX-1), 
+      queens(*this, n, 0, n-1),
+      rooks(*this, n, 0, n-1), 
+      knights(*this, n*n, 0, 1) {
     const int nkval = sizeof(kval)/sizeof(int);
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
       k = n <= nkval ? kval[n-1] : kval[nkval-1];
@@ -251,36 +251,36 @@ public:
     // Basic model
     // ***********************
 
-    count(this, s, E, IRT_EQ, e, opt.icl());
-    count(this, s, Q, IRT_EQ, q, opt.icl());
-    count(this, s, R, IRT_EQ, r, opt.icl());
-    count(this, s, B, IRT_EQ, b, opt.icl());
-    count(this, s, K, IRT_EQ, k, opt.icl());
+    count(*this, s, E, IRT_EQ, e, opt.icl());
+    count(*this, s, Q, IRT_EQ, q, opt.icl());
+    count(*this, s, R, IRT_EQ, r, opt.icl());
+    count(*this, s, B, IRT_EQ, b, opt.icl());
+    count(*this, s, K, IRT_EQ, k, opt.icl());
 
     // Collect rows and columns for handling rooks and queens.
     for (int i = 0; i < n; ++i) {
       IntVarArgs aa = m.row(i), bb = m.col(i);
 
-      count(this, aa, Q, IRT_EQ, 1, opt.icl());
-      count(this, bb, Q, IRT_EQ, 1, opt.icl());
-      count(this, aa, R, IRT_EQ, 1, opt.icl());
-      count(this, bb, R, IRT_EQ, 1, opt.icl());
+      count(*this, aa, Q, IRT_EQ, 1, opt.icl());
+      count(*this, bb, Q, IRT_EQ, 1, opt.icl());
+      count(*this, aa, R, IRT_EQ, 1, opt.icl());
+      count(*this, bb, R, IRT_EQ, 1, opt.icl());
 
       //Connect (queens|rooks)[i] to the row it is in
-      element(this, aa, queens[i], Q, ICL_DOM);
-      element(this, aa,  rooks[i], R, ICL_DOM);
+      element(*this, aa, queens[i], Q, ICL_DOM);
+      element(*this, aa,  rooks[i], R, ICL_DOM);
     }
 
     // N-queens constraints
-    distinct(this, queens, ICL_DOM);
+    distinct(*this, queens, ICL_DOM);
     IntArgs koff(n);
     for (int i = n; i--; ) koff[i] = i;
-    distinct(this, koff, queens, ICL_DOM);
+    distinct(*this, koff, queens, ICL_DOM);
     for (int i = n; i--; ) koff[i] = -i;
-    distinct(this, koff, queens, ICL_DOM);
+    distinct(*this, koff, queens, ICL_DOM);
 
     // N-rooks constraints
-    distinct(this,  rooks, ICL_DOM);
+    distinct(*this,  rooks, ICL_DOM);
 
     // Collect diagonals for handling queens and bishops
     for (int l = n; l--; ) {
@@ -293,28 +293,28 @@ public:
         d4[i] = m((n-1)-i, i+il);
       }
 
-      count(this, d1, Q, IRT_LQ, 1, opt.icl());
-      count(this, d2, Q, IRT_LQ, 1, opt.icl());
-      count(this, d3, Q, IRT_LQ, 1, opt.icl());
-      count(this, d4, Q, IRT_LQ, 1, opt.icl());
+      count(*this, d1, Q, IRT_LQ, 1, opt.icl());
+      count(*this, d2, Q, IRT_LQ, 1, opt.icl());
+      count(*this, d3, Q, IRT_LQ, 1, opt.icl());
+      count(*this, d4, Q, IRT_LQ, 1, opt.icl());
       if (opt.propagation() == PROP_DECOMPOSE) {
-        count(this, d1, B, IRT_LQ, 1, opt.icl());
-        count(this, d2, B, IRT_LQ, 1, opt.icl());
-        count(this, d3, B, IRT_LQ, 1, opt.icl());
-        count(this, d4, B, IRT_LQ, 1, opt.icl());
+        count(*this, d1, B, IRT_LQ, 1, opt.icl());
+        count(*this, d2, B, IRT_LQ, 1, opt.icl());
+        count(*this, d3, B, IRT_LQ, 1, opt.icl());
+        count(*this, d4, B, IRT_LQ, 1, opt.icl());
       }
     }
     if (opt.propagation() == PROP_TUPLE_SET) {
       IntVarArgs b(s.size());
       for (int i = s.size(); i--; )
-        b[i] = channel(this, post(this, ~(s[i] == B)));
-      extensional(this, b, bishops, opt.icl(), opt.pk());
+        b[i] = channel(*this, post(*this, ~(s[i] == B)));
+      extensional(*this, b, bishops, opt.icl(), opt.pk());
     }
 
     // Handle knigths
     //Connect knigths to board
     for(int i = n*n; i--; )
-      knights[i] = post(this, ~(s[i] == K));
+      knights[i] = post(*this, ~(s[i] == K));
     knight_constraints();
 
 
@@ -325,29 +325,29 @@ public:
     // Queens and rooks not in the same place
     // Faster than going through the channeled board-connection
     for (int i = n; i--; ) {
-      rel(this, queens[i], IRT_NQ, rooks[i]);
+      rel(*this, queens[i], IRT_NQ, rooks[i]);
     }
 
     // Place bishops in two corners (from Schimpf and Hansens solution)
     // Avoids some symmetries of the problem
-    rel(this, m(n-1,   0), IRT_EQ, B);
-    rel(this, m(n-1, n-1), IRT_EQ, B);
+    rel(*this, m(n-1,   0), IRT_EQ, B);
+    rel(*this, m(n-1, n-1), IRT_EQ, B);
 
 
     // ***********************
     // Branchings
     // ***********************
     //Place each piece in turn
-    branch(this, s, INT_VAR_MIN_MIN, INT_VAL_MIN);
+    branch(*this, s, INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for cloning e
   CrowdedChess(bool share, CrowdedChess& e)
     : Example(share,e), n(e.n) {
-    s.update(this, share, e.s);
-    queens.update(this, share, e.queens);
-    rooks.update(this, share, e.rooks);
-    knights.update(this, share, e.knights);
+    s.update(*this, share, e.s);
+    queens.update(*this, share, e.queens);
+    rooks.update(*this, share, e.rooks);
+    knights.update(*this, share, e.knights);
   }
 
   /// Copy during cloning

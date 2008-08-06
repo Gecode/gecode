@@ -101,7 +101,7 @@ namespace Test { namespace CpltSet {
         return valid;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         int vars = selector_pos;
         CpltSetVarArgs xs(vars);
         for (int i=vars; i--;)
@@ -200,7 +200,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         int vars = selector_pos;
         CpltSetVarArgs xs(vars);
         for (int i=vars; i--;)

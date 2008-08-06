@@ -42,7 +42,7 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   template <class A>
   forceinline
-  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space* home, 
+  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, 
                                                 ChannelBool<View>* p, 
                                                 Council<A>& c, int index)
     : Advisor(home,p,c), idx(index) {
@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space* home, bool share, 
+  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, bool share, 
                                                 IndexAdvisor& a) 
     : Advisor(home,share,a), idx(a.idx) {}
 
@@ -68,7 +68,7 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   template <class A>
   forceinline void
-  ChannelBool<View>::IndexAdvisor::dispose(Space* home, Council<A>& c) {
+  ChannelBool<View>::IndexAdvisor::dispose(Space& home, Council<A>& c) {
     ChannelBool<View>* p = static_cast<ChannelBool<View>*>(propagator());
     if (idx == -1)
       p->y.cancel(home,*this);
@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  ChannelBool<View>::ChannelBool(Space* home, 
+  ChannelBool<View>::ChannelBool(Space& home, 
                                  ViewArray<Gecode::Int::BoolView>& x0,
                                  View y0)
     : Super(home,x0,y0), co(home), running(false) {
@@ -106,14 +106,14 @@ namespace Gecode { namespace Set { namespace Int {
       
   template <class View>
   forceinline
-  ChannelBool<View>::ChannelBool(Space* home, bool share, ChannelBool& p)
+  ChannelBool<View>::ChannelBool(Space& home, bool share, ChannelBool& p)
     : Super(home,share,p), running(false) {
     co.update(home, share, p.co);  
   }
 
   template <class View>
   forceinline ExecStatus
-  ChannelBool<View>::post(Space* home, ViewArray<Gecode::Int::BoolView>& x,
+  ChannelBool<View>::post(Space& home, ViewArray<Gecode::Int::BoolView>& x,
                           View y) {
     GECODE_ME_CHECK(y.intersect(home, 0, x.size()-1));
     (void) new (home) ChannelBool(home,x,y);
@@ -126,8 +126,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   size_t
-  ChannelBool<View>::dispose(Space* home) {
-    assert(!home->failed());
+  ChannelBool<View>::dispose(Space& home) {
+    assert(!home.failed());
     co.dispose(home);
     (void) Super::dispose(home);
     return sizeof(*this);
@@ -135,13 +135,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Actor*
-  ChannelBool<View>::copy(Space* home, bool share) {
+  ChannelBool<View>::copy(Space& home, bool share) {
     return new (home) ChannelBool(home,share,*this);
   }
 
   template <class View>
   ExecStatus
-  ChannelBool<View>::propagate(Space* home, ModEventDelta) {
+  ChannelBool<View>::propagate(Space& home, ModEventDelta) {
     running = true;
     if (zeros.size() > 0) {
       BndSetRanges zi(zeros);
@@ -191,7 +191,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  ChannelBool<View>::advise(Space* home, Advisor& _a, const Delta& _d) {
+  ChannelBool<View>::advise(Space& home, Advisor& _a, const Delta& _d) {
     IndexAdvisor& a = static_cast<IndexAdvisor&>(_a);
     const SetDelta& d = static_cast<const SetDelta&>(_d);
 
@@ -284,13 +284,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   Reflection::ActorSpec
-  ChannelBool<View>::spec(const Space* home, Reflection::VarMap& m) const {
+  ChannelBool<View>::spec(const Space& home, Reflection::VarMap& m) const {
     return Super::spec(home, m, ati());
   }
   
   template <class View>
   void
-  ChannelBool<View>::post(Space* home, Reflection::VarMap& vars,
+  ChannelBool<View>::post(Space& home, Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<Gecode::Int::BoolView> x0(home, vars, spec[0]);

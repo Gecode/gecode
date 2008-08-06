@@ -130,7 +130,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   inline bool
-  narrow_domx(Space* home,
+  narrow_domx(Space& home,
               ViewArray<View>& x,
               ViewArray<View>& y,
               ViewArray<View>& z,
@@ -222,7 +222,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View>
   inline bool
-  narrow_domy(Space* home,
+  narrow_domy(Space& home,
               ViewArray<View>& x, ViewArray<View>& y,
               int phi[], int phiprime[], bool& nofix) {
     for (int i=x.size(); i--; ) {

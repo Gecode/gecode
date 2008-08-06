@@ -38,7 +38,7 @@
 namespace Gecode {
 
   forceinline void
-  BoolVar::_init(Space* home, int min, int max) {
+  BoolVar::_init(Space& home, int min, int max) {
     assert((min >= 0) && (max <= 1) && (min <= max));
     if (min > 0)
       varimp = &Int::BoolVarImp::s_one;
@@ -106,7 +106,7 @@ namespace Gecode {
 
 
   forceinline void
-  BoolVar::update(Space* home, bool share, BoolVar& x) {
+  BoolVar::update(Space& home, bool share, BoolVar& x) {
     varimp = x.varimp->copy(home,share);
   }
 

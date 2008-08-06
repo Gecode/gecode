@@ -70,7 +70,7 @@ namespace Test { namespace CpltSet {
         return Iter::Ranges::equal(xr, dr);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_EQ, ds_33);
       }
     };
@@ -88,7 +88,7 @@ namespace Test { namespace CpltSet {
         return Iter::Ranges::equal(xr, dr);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_EQ, d1);
       }
     };
@@ -106,7 +106,7 @@ namespace Test { namespace CpltSet {
         return Iter::Ranges::subset(dr, xr);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_SUP, ds_33);
       }
     };
@@ -124,7 +124,7 @@ namespace Test { namespace CpltSet {
         return Iter::Ranges::subset(dr, xr);
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_SUP, d1);
       }
     };

@@ -127,7 +127,7 @@ With unreflection, %Gecode can create variables and actors in a space from a Var
 Assuming that the actor and variable specifications were stored in vectors, the basic setup for unreflection looks like this:
 
 \code
-void unreflect(Space* home, std::vector<ActorSpec>& as, std::vector<VarSpec>& vs) {
+void unreflect(Space& home, std::vector<ActorSpec>& as, std::vector<VarSpec>& vs) {
   Gecode::Reflection::VarMap vm;
   Gecode::Reflection::Unreflector ur(home, vm);
   for (std::vector<VarSpec>::iterator it=vs.begin(); it != vs.end(); ++it) {
@@ -146,7 +146,7 @@ The VarMap can be filled \em before you use unreflection. That way, existing var
 \code
 ...
 Gecode::Reflection::VarMap vm;
-home->getVars(vm, true);   // Register variables
+home.getVars(vm, true);   // Register variables
 Gecode::Reflection::Unreflector ur(home, vm);
 for (std::vector<VarSpec>::iterator it=vs.begin(); it != vs.end(); ++it) {
 ...
@@ -159,7 +159,7 @@ for (std::vector<VarSpec>::iterator it=vs.begin(); it != vs.end(); ++it) {
 All variables can be constructed from a generic variable. At construction, a dynamic check is performed that guarantees that the generic variable is actually an instance of the variable type that is constructed. The variables in a VarMap can be accessed as generic variables:
 \code
 ...
-Gecode::Space* home = ...
+Gecode::Space& home = ...
 Gecode::Reflection::VarMap vm;
 space->getVars(vm);
 Gecode::Reflection::Var v = vm.var(0); // Get variable at index 0
@@ -173,8 +173,8 @@ A Gecode::Reflection::BranchingSpec provides a human-readable description of a G
 A BranchingSpec contains one ArrayArg per alternative, and each ArrayArg may only contain strings and variable references. The string concatenation of these arguments yields a human-readable description of the alternative:
 
 \code
-void printAlternatives(Gecode::Space* home) {
-  if (home->status() != SS_BRANCH) {
+void printAlternatives(Gecode::Space& home) {
+  if (home.status() != SS_BRANCH) {
     std::cout << "no alternatives left" << std::endl;
     return;
   }
@@ -249,7 +249,7 @@ protected:
 public:
   // Return specification for reflection
   virtual Gecode::Reflection::ActorSpec
-  spec(const Space* home, Gecode::Reflection::VarMap& m) const {
+  spec(const Space& home, Gecode::Reflection::VarMap& m) const {
     Gecode::Support::Symbol ati("MyPropagator");
     Gecode::Reflection::ActorSpec spec(ati);
     spec << x.spec(home, m);
@@ -272,7 +272,7 @@ protected:
 public:
   // Return specification for reflection
   virtual Gecode::Reflection::ActorSpec
-  spec(const Space* home, Gecode::Reflection::VarMap& m) const {
+  spec(const Space& home, Gecode::Reflection::VarMap& m) const {
     Gecode::Support::Symbol ati =
       Gecode::Reflection::mangle<View0,View1>("MyGenericPropagator");
     Gecode::Reflection::ActorSpec spec(ati);
@@ -297,14 +297,14 @@ protected:
   int              c;
 public:
   // Constructor
-  MyGenericPropagator(Space*,View0,ViewArray<View1>&,int);
+  MyGenericPropagator(Space&,View0,ViewArray<View1>&,int);
   // Actor type identifier
   static Gecode::Symbol ati(void) const {
     return Gecode::Reflection::mangle<View0,View1>("MyGenericPropagator");
   }
   // Return specification for reflection
   virtual Gecode::Reflection::ActorSpec
-  spec(const Space* home, Gecode::Reflection::VarMap& m) const {
+  spec(const Space& home, Gecode::Reflection::VarMap& m) const {
     Gecode::Reflection::ActorSpec spec(ati());
     spec << x.spec(home, m);
     spec << y.spec(home, m);
@@ -313,7 +313,7 @@ public:
   }
   // Posting the propagator from a specification
   static void
-  post(Space* home, Reflection::VarMap& vars, const Reflection::ActorSpec& spec) {
+  post(Space& home, Reflection::VarMap& vars, const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     View0 x(home, vars, spec[0]);
     ViewArray<View1> y(home, vars, spec[1]);
@@ -351,7 +351,7 @@ Reflection for variables and views is similar to reflection for actors. Each vie
 \code
 class MyView {
 public:
-  Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+  Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
   static Support::Symbol type(void);
 };
 \endcode
@@ -360,7 +360,7 @@ Views delegate the reflection of the underlying variable to the variable impleme
 
 The \c spec function of a view returns a <em>reference to a variable</em>. As a side effect, the actual VarSpec is entered into the VarMap.
 
-Views and variables also have constructors for unreflection. Again, the Views delegate unreflection of the underlying variable. See Gecode::IntVar::IntVar(const Gecode::Reflection::Var&) and Gecode::Int::IntView::IntView(Space*, const Reflection::VarMap&, Reflection::Arg*).
+Views and variables also have constructors for unreflection. Again, the Views delegate unreflection of the underlying variable. See Gecode::IntVar::IntVar(const Gecode::Reflection::Var&) and Gecode::Int::IntView::IntView(Space&, const Reflection::VarMap&, Reflection::Arg*).
 
 For unreflection, the registry contains functions for creating, constraining, updating, and printing variable implementations. If a variable implementation implements the two functions \c create and \c constrain, it can be registered using a Gecode::Reflection::VarImpRegistrar. The generic variables (Gecode::Reflection::Var) use the registry to perform updates. For an example of how to implement the necessary functionality, see Gecode::Int::IntVarImp.
 
@@ -374,7 +374,7 @@ The registry maps an actor type identifier (ati) to a function that posts the co
 class Registry {
 public:
     /// The type of constraint posting functions
-    typedef void (*poster) (Gecode::Space*,
+    typedef void (*poster) (Gecode::Space&,
                             Gecode::Reflection::VarMap&,
                             const Gecode::Reflection::ActorSpec&);
 };

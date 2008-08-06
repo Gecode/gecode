@@ -49,17 +49,17 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   forceinline
-  SeqU::SeqU(Space* home, ViewArray<SetView>& x, SetView y)
+  SeqU::SeqU(Space& home, ViewArray<SetView>& x, SetView y)
     : NaryOnePropagator<SetView,PC_SET_ANY>(home,x, y) {}
 
   forceinline
-  SeqU::SeqU(Space* home, bool share, SeqU& p)
+  SeqU::SeqU(Space& home, bool share, SeqU& p)
     : NaryOnePropagator<SetView,PC_SET_ANY>(home,share,p) {
     unionOfDets.update(home, p.unionOfDets);
   }
 
   forceinline ExecStatus
-  SeqU::post(Space* home, ViewArray<SetView> x, SetView y) {
+  SeqU::post(Space& home, ViewArray<SetView> x, SetView y) {
     switch (x.size()) {
     case 0:
       GECODE_ME_CHECK(y.cardMax(home, 0));

@@ -48,7 +48,7 @@ namespace Gecode {
     forceinline void
     ZeroIntView::init(void) {}
     forceinline
-    ZeroIntView::ZeroIntView(Space*, const Reflection::VarMap&,
+    ZeroIntView::ZeroIntView(Space&, const Reflection::VarMap&,
                              Reflection::Arg*) {}
 
     /*
@@ -118,56 +118,56 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    ZeroIntView::lq(Space*, int n) {
+    ZeroIntView::lq(Space&, int n) {
       return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ZeroIntView::lq(Space*, double n) {
+    ZeroIntView::lq(Space&, double n) {
       return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ZeroIntView::le(Space*, int n) {
+    ZeroIntView::le(Space&, int n) {
       return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ZeroIntView::le(Space*, double n) {
+    ZeroIntView::le(Space&, double n) {
       return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ZeroIntView::gq(Space*, int n) {
+    ZeroIntView::gq(Space&, int n) {
       return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ZeroIntView::gq(Space*, double n) {
+    ZeroIntView::gq(Space&, double n) {
       return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ZeroIntView::gr(Space*, int n) {
+    ZeroIntView::gr(Space&, int n) {
       return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ZeroIntView::gr(Space*, double n) {
+    ZeroIntView::gr(Space&, double n) {
       return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ZeroIntView::nq(Space*, int n) {
+    ZeroIntView::nq(Space&, int n) {
       return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ZeroIntView::nq(Space*, double n) {
+    ZeroIntView::nq(Space&, double n) {
       return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
     forceinline ModEvent
-    ZeroIntView::eq(Space*, int n) {
+    ZeroIntView::eq(Space&, int n) {
       return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
     }
     forceinline ModEvent
-    ZeroIntView::eq(Space*, double n) {
+    ZeroIntView::eq(Space&, double n) {
       return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
     }
 
@@ -179,13 +179,13 @@ namespace Gecode {
      */
     template <class I>
     forceinline ModEvent
-    ZeroIntView::narrow_r(Space* home, I& i, bool) {
+    ZeroIntView::narrow_r(Space& home, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ZeroIntView::inter_r(Space* home, I& i, bool) {
+    ZeroIntView::inter_r(Space& home, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       while (i() && (i.max() < 0)) 
         ++i;
@@ -193,7 +193,7 @@ namespace Gecode {
     }
     template <class I>
     forceinline ModEvent
-    ZeroIntView::minus_r(Space* home, I& i, bool) {
+    ZeroIntView::minus_r(Space& home, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       while (i() && (i.max() < 0)) 
         ++i;
@@ -201,13 +201,13 @@ namespace Gecode {
     }
     template <class I>
     forceinline ModEvent
-    ZeroIntView::narrow_v(Space* home, I& i, bool) {
+    ZeroIntView::narrow_v(Space& home, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
     forceinline ModEvent
-    ZeroIntView::inter_v(Space* home, I& i, bool) {
+    ZeroIntView::inter_v(Space& home, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       while (i() && (i.val() < 0)) 
         ++i;
@@ -215,7 +215,7 @@ namespace Gecode {
     }
     template <class I>
     forceinline ModEvent
-    ZeroIntView::minus_v(Space* home, I& i, bool) {
+    ZeroIntView::minus_v(Space& home, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       while (i() && (i.val() < 0)) 
         ++i;
@@ -228,7 +228,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::schedule(Space* home, Propagator* p, ModEvent me) {
+    ZeroIntView::schedule(Space& home, Propagator* p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
@@ -246,15 +246,15 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+    ZeroIntView::subscribe(Space& home, Propagator* p, PropCond,bool) {
       schedule(home,p,ME_INT_VAL);
     }
     forceinline void
-    ZeroIntView::cancel(Space*,Propagator*,PropCond) {}
+    ZeroIntView::cancel(Space&,Propagator*,PropCond) {}
     forceinline void
-    ZeroIntView::subscribe(Space*, Advisor&) {}
+    ZeroIntView::subscribe(Space&, Advisor&) {}
     forceinline void
-    ZeroIntView::cancel(Space*,Advisor&) {}
+    ZeroIntView::cancel(Space&,Advisor&) {}
 
 
 
@@ -286,14 +286,14 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::update(Space*, bool, ZeroIntView&) {}
+    ZeroIntView::update(Space&, bool, ZeroIntView&) {}
 
     /*
      * Serialization
      *
      */
     forceinline Reflection::Arg*
-    ZeroIntView::spec(const Space*, Reflection::VarMap&) const {
+    ZeroIntView::spec(const Space&, Reflection::VarMap&) const {
       return Reflection::Arg::newInt(0);
     }
     inline Support::Symbol

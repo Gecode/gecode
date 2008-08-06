@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, 
+  Val<ViewM,ViewD,ViewH,View>::Val(Space& home, 
                                    const ViewArray<ViewM>& _machine,
                                    const ViewArray<View>& _start,
                                    const ViewArray<ViewD>& _duration,
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>
-  ::post(Space* home, const ViewArray<ViewM>& machine,
+  ::post(Space& home, const ViewArray<ViewM>& machine,
          const ViewArray<View>& start, const ViewArray<ViewD>& duration,
          const ViewArray<View>& end, const ViewArray<ViewH>& height,
          const IntArgs& limit, bool at_most) {
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, bool share,
+  Val<ViewM,ViewD,ViewH,View>::Val(Space& home, bool share,
                                    Val<ViewM,ViewD,ViewH,View>& p)
     : Propagator(home,share,p), at_most(p.at_most) {
     machine.update(home,share,p.machine);
@@ -121,9 +121,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   size_t
-  Val<ViewM,ViewD,ViewH,View>::dispose(Space* home) {
+  Val<ViewM,ViewD,ViewH,View>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       machine.cancel(home,this,PC_INT_DOM);
       start.cancel(home,this,PC_INT_BND);
       duration.cancel(home,this,PC_INT_BND);
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   Reflection::ActorSpec
-  Val<ViewM,ViewD,ViewH,View>::spec(const Space* home,
+  Val<ViewM,ViewD,ViewH,View>::spec(const Space& home,
                                     Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
 
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   void
-  Val<ViewM,ViewD,ViewH,View>::post(Space* home, Reflection::VarMap& vars,
+  Val<ViewM,ViewD,ViewH,View>::post(Space& home, Reflection::VarMap& vars,
                                     const Reflection::ActorSpec& spec) {
     spec.checkArity(7);
     ViewArray<ViewM> machine(home, vars, spec[0]);
@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   Actor*
-  Val<ViewM,ViewD,ViewH,View>::copy(Space* home, bool share) {
+  Val<ViewM,ViewD,ViewH,View>::copy(Space& home, bool share) {
     return new (home) Val<ViewM,ViewD,ViewH,View>(home,share,*this);
   }
 
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
-  Val<ViewM,ViewD,ViewH,View>::prune(Space*  home, int low, int up, int r,
+  Val<ViewM,ViewD,ViewH,View>::prune(Space& home, int low, int up, int r,
                                      int ntask, int sheight,
                                      const std::vector<int>& contribution,
                                      std::list<int>& prune_tasks) {
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
-  Val<ViewM,ViewD,ViewH,View>::propagate(Space* home, ModEventDelta) {
+  Val<ViewM,ViewD,ViewH,View>::propagate(Space& home, ModEventDelta) {
     // Check for subsumption
     bool subsumed = true;
     for (int t = start.size(); t--; )

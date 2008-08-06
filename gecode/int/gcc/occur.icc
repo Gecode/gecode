@@ -57,24 +57,24 @@ namespace Gecode { namespace Int { namespace GCC {
     void card(int c);
     void counter(int c);
 
-    void init(Space* home, int min, int max, int c);
-    ModEvent lq(Space* home, int n);
-    ModEvent gq(Space* home, int n);
-    ModEvent eq(Space* home, int n);
+    void init(Space& home, int min, int max, int c);
+    ModEvent lq(Space& home, int n);
+    ModEvent gq(Space& home, int n);
+    ModEvent eq(Space& home, int n);
     bool assigned(void) const;
     bool range(void) const;
     ModEvent inc(void);
 
-    void cancel(Space*, Propagator* , PropCond ) {}
-    void subscribe(Space*, Propagator* , PropCond, bool=true) {}
+    void cancel(Space&, Propagator* , PropCond ) {}
+    void subscribe(Space&, Propagator* , PropCond, bool=true) {}
 
-    void cancel(Space*, Advisor&) {}
-    void subscribe(Space*, Advisor&) {}
+    void cancel(Space&, Advisor&) {}
+    void subscribe(Space&, Advisor&) {}
 
-    void update(Space*, bool, OccurBndsView&);
+    void update(Space&, bool, OccurBndsView&);
 
-    Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
-    OccurBndsView(Space* home, const Reflection::VarMap& m,
+    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
+    OccurBndsView(Space& home, const Reflection::VarMap& m,
                   Reflection::Arg* arg);
     static Support::Symbol type(void);
     
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline void
-  OccurBndsView::init(Space*, int min, int max, int val) {
+  OccurBndsView::init(Space&, int min, int max, int val) {
     _min = min; _max=max;
     c = val;
     count = 0;
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   forceinline ModEvent
-  OccurBndsView::lq(Space*, int i){
+  OccurBndsView::lq(Space&, int i){
     // the maximum can be made consistent
     if (_min > i) {
       return ME_GEN_FAILED;
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline ModEvent
-  OccurBndsView::gq(Space*, int i){
+  OccurBndsView::gq(Space&, int i){
     // this bound is fix
     if (_max < i) {
       return ME_GEN_FAILED;
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline ModEvent
-  OccurBndsView::eq(Space*, int i){
+  OccurBndsView::eq(Space&, int i){
     if (_min > i || _max < i) {
       return ME_GEN_FAILED;
     } else {
@@ -192,7 +192,7 @@ operator<<(std::ostream& os, Gecode::Int::GCC::OccurBndsView& xs) {
 namespace Gecode { namespace Int { namespace GCC {
 
   forceinline void
-  OccurBndsView::update(Space*, bool, OccurBndsView& oc) {
+  OccurBndsView::update(Space&, bool, OccurBndsView& oc) {
     _min = oc._min;
     _max = oc._max;
     c = oc.c;
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline Reflection::Arg*
-  OccurBndsView::spec(const Space*, Reflection::VarMap&) const {
+  OccurBndsView::spec(const Space&, Reflection::VarMap&) const {
     return Reflection::Arg::newPair(
       Reflection::Arg::newPair(Reflection::Arg::newInt(_min),
         Reflection::Arg::newInt(_max)),
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline
-  OccurBndsView::OccurBndsView(Space*, const Reflection::VarMap&,
+  OccurBndsView::OccurBndsView(Space&, const Reflection::VarMap&,
                                Reflection::Arg* arg) {
     _min = arg->first()->first()->toInt();
     _max = arg->first()->second()->toInt();
@@ -288,7 +288,7 @@ namespace Gecode { namespace Int { namespace GCC {
     CardView(const IntView& x, int c);
     /// Initialize with integer view \a x and value \a c
     void init(const IntView& x, int c);
-    void init(Space* home, int mi, int ma , int c);
+    void init(Space& home, int mi, int ma , int c);
 
     /// Return value
     int card(void) const;
@@ -341,29 +341,29 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Domain update by value
     ///@{
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, int n);
+    ModEvent lq(Space& home, int n);
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, double n);
+    ModEvent lq(Space& home, double n);
     /// Restrict domain values to be less than \a n
-    ModEvent le(Space* home, int n);
+    ModEvent le(Space& home, int n);
     /// Restrict domain values to be less than \a n
-    ModEvent le(Space* home, double n);
+    ModEvent le(Space& home, double n);
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, int n);
+    ModEvent gq(Space& home, int n);
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, double n);
+    ModEvent gq(Space& home, double n);
     /// Restrict domain values to be greater than \a n
-    ModEvent gr(Space* home, int n);
+    ModEvent gr(Space& home, int n);
     /// Restrict domain values to be greater than \a n
-    ModEvent gr(Space* home, double n);
+    ModEvent gr(Space& home, double n);
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, int n);
+    ModEvent nq(Space& home, int n);
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, double n);
+    ModEvent nq(Space& home, double n);
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, int n);
+    ModEvent eq(Space& home, int n);
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, double n);
+    ModEvent eq(Space& home, double n);
     ///@}
 
     /**
@@ -383,28 +383,28 @@ namespace Gecode { namespace Int { namespace GCC {
     //@{
     /// Replace domain by ranges described by \a i
     template <class I> 
-    ModEvent narrow_r(Space* home, I& i, bool depends=true);
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
     template <class I> 
-    ModEvent inter_r(Space* home, I& i, bool depends=true);
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
     template <class I> 
-    ModEvent minus_r(Space* home, I& i, bool depends=true);
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
     template <class I> 
-    ModEvent narrow_v(Space* home, I& i, bool depends=true);
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
     template <class I> 
-    ModEvent inter_v(Space* home, I& i, bool depends=true);
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
     template <class I> 
-    ModEvent minus_v(Space* home, I& i, bool depends=true);
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
     /// \name View-dependent propagator support
     ///@{
     /// Schedule propagator \a p with modification event \a me
-    static void schedule(Space* home, Propagator* p, ModEvent me);
+    static void schedule(Space& home, Propagator* p, ModEvent me);
     /// Return modification event for view type in \a med
     static ModEvent me(ModEventDelta med);
     /// Translate modification event \a me to modification event delta for view
@@ -414,30 +414,30 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Dependencies
     ///@{
     /// Subscribe propagator \a p with propagation condition \a pc to view
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Space* home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator* p, PropCond pc);
     /// Subscribe advisor \a a to variable
-    void subscribe(Space* home, Advisor& a);
+    void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
-    void cancel(Space* home, Advisor& a);
+    void cancel(Space& home, Advisor& a);
     
     ///@}
 
     /// \name Cloning
     ///@{
     /// Update this view to be a clone of view \a x
-    void update(Space* home, bool share, CardView& x);
+    void update(Space& home, bool share, CardView& x);
     ///@}
 
     /// \name Reflection
     ///@{
     /// Return specification for this view, using variable map \a m
-    Reflection::Arg* spec(const Space* home, Reflection::VarMap& m) const;
+    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
     /// Return type of this view
     static Support::Symbol type(void);
     /// Create from specification
-    CardView(Space* home, const Reflection::VarMap& m,
+    CardView(Space& home, const Reflection::VarMap& m,
              Reflection::Arg* arg);
     ///@}
 
@@ -474,7 +474,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   forceinline void
-  CardView::init(Space* home, int mi, int ma, int d) {
+  CardView::init(Space& home, int mi, int ma, int d) {
     IntVar ivar(home, mi, ma);
     IntView iview(ivar);
     view  = iview;
@@ -601,51 +601,51 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline ModEvent
-  CardView::lq(Space* home, int n) {
+  CardView::lq(Space& home, int n) {
     return view.lq(home,n);
   }
   forceinline ModEvent
-  CardView::lq(Space* home, double n) {
+  CardView::lq(Space& home, double n) {
     return view.lq(home,n);
   }
   forceinline ModEvent
-  CardView::le(Space* home, int n) {
+  CardView::le(Space& home, int n) {
     return view.le(home,n);
   }
   forceinline ModEvent
-  CardView::le(Space* home, double n) {
+  CardView::le(Space& home, double n) {
     return view.le(home,n);
   }
   forceinline ModEvent
-  CardView::gq(Space* home, int n) {
+  CardView::gq(Space& home, int n) {
     return view.gq(home,n);
   }
   forceinline ModEvent
-  CardView::gq(Space* home, double n) {
+  CardView::gq(Space& home, double n) {
     return view.gq(home,n);
   }
   forceinline ModEvent
-  CardView::gr(Space* home, int n) {
+  CardView::gr(Space& home, int n) {
     return view.gr(home,n);
   }
   forceinline ModEvent
-  CardView::gr(Space* home, double n) {
+  CardView::gr(Space& home, double n) {
     return view.gr(home,n);
   }
   forceinline ModEvent
-  CardView::nq(Space* home, int n) {
+  CardView::nq(Space& home, int n) {
     return view.nq(home,n);
   }
   forceinline ModEvent
-  CardView::nq(Space* home, double n) {
+  CardView::nq(Space& home, double n) {
     return view.nq(home,n);
   }
   forceinline ModEvent
-  CardView::eq(Space* home, int n) {
+  CardView::eq(Space& home, int n) {
     return view.eq(home,n);
   }
   forceinline ModEvent
-  CardView::eq(Space* home, double n) {
+  CardView::eq(Space& home, double n) {
     return view.eq(home,n);
   }
 
@@ -656,32 +656,32 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class I>
   ModEvent
-  CardView::narrow_r(Space* home, I& i, bool depends) {
+  CardView::narrow_r(Space& home, I& i, bool depends) {
     return view.narrow_r(home,i,depends);
   }
   template <class I>
   ModEvent
-  CardView::inter_r(Space* home, I& i, bool depends) {
+  CardView::inter_r(Space& home, I& i, bool depends) {
     return view.inter_r(home,i,depends);
   }
   template <class I>
   ModEvent
-  CardView::minus_r(Space* home, I& i, bool depends) {
+  CardView::minus_r(Space& home, I& i, bool depends) {
     return view.minus_r(home,i,depends);
   }
   template <class I>
   ModEvent
-  CardView::narrow_v(Space* home, I& i, bool depends) {
+  CardView::narrow_v(Space& home, I& i, bool depends) {
     return view.narrow_v(home,i,depends);
   }
   template <class I>
   ModEvent
-  CardView::inter_v(Space* home, I& i, bool depends) {
+  CardView::inter_v(Space& home, I& i, bool depends) {
     return view.inter_v(home,i,depends);
   }
   template <class I>
   ModEvent
-  CardView::minus_v(Space* home, I& i, bool depends) {
+  CardView::minus_v(Space& home, I& i, bool depends) {
     return view.minus_v(home,i,depends);
   }
 
@@ -692,7 +692,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline void
-  CardView::schedule(Space* home, Propagator* p, ModEvent me) {
+  CardView::schedule(Space& home, Propagator* p, ModEvent me) {
     return IntView::schedule(home,p,me);
   }
   forceinline ModEvent
@@ -710,19 +710,19 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline void
-  CardView::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
+  CardView::subscribe(Space& home, Propagator* p, PropCond pc, bool process) {
     view.subscribe(home, p, pc, process);
   }
   forceinline void
-  CardView::cancel(Space* home, Propagator* p, PropCond pc) {
+  CardView::cancel(Space& home, Propagator* p, PropCond pc) {
     view.cancel(home,p, pc);
   }
   forceinline void
-  CardView::subscribe(Space* home, Advisor& a) {
+  CardView::subscribe(Space& home, Advisor& a) {
     view.subscribe(home, a);
   }
   forceinline void
-  CardView::cancel(Space* home, Advisor& a) {
+  CardView::cancel(Space& home, Advisor& a) {
     view.cancel(home, a);
   }
 
@@ -732,7 +732,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline void
-  CardView::update(Space* home, bool share, CardView& x) {
+  CardView::update(Space& home, bool share, CardView& x) {
     c     = x.c;
     count = x.count;
     view.update(home,share,x.view);
@@ -743,7 +743,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline Reflection::Arg*
-  CardView::spec(const Space* home, Reflection::VarMap& m) const {
+  CardView::spec(const Space& home, Reflection::VarMap& m) const {
     return Reflection::Arg::newPair(
       Reflection::Arg::newPair(Reflection::Arg::newInt(c),
         Reflection::Arg::newInt(count)), view.spec(home, m));
@@ -753,7 +753,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return Support::Symbol("Gecode::Int::GCC::CardView");
   }
   forceinline
-  CardView::CardView(Space* home, const Reflection::VarMap& m,
+  CardView::CardView(Space& home, const Reflection::VarMap& m,
                      Reflection::Arg* arg)
    : DerivedViewBase<IntView>(IntView(home, m, arg->second())) {
     c = arg->first()->first()->toInt();

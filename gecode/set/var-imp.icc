@@ -134,14 +134,14 @@ namespace Gecode { namespace Set {
     /**
      * \brief Free memory for all elements between this and \a l (inclusive)
      */
-    void dispose(Space* home, RangeList* l);
+    void dispose(Space& home, RangeList* l);
     
     /// Allocate memory from space
-    static void* operator new(size_t s, Space* home);
+    static void* operator new(size_t s, Space& home);
     /// No-op (for exceptions)
     static void  operator delete(void*);
     /// No-op (use dispose instead)
-    static void  operator delete(void*, Space* home);
+    static void  operator delete(void*, Space& home);
     //@}
   };
 
@@ -177,15 +177,15 @@ namespace Gecode { namespace Set {
     /// Default constructor. Creates an empty set.
     BndSet(void);
     /// Initialize as the set \f$ \{i,\dots,j\}\f$
-    BndSet(Space* home, int i, int j);
+    BndSet(Space& home, int i, int j);
     /// Initialize as the set represented by \a s
-    BndSet(Space* home, const IntSet& s);
+    BndSet(Space& home, const IntSet& s);
     //@}
 
     /// \name Memory management
     //@{
     /// Free memory used by this set
-    void dispose(Space* home);
+    void dispose(Space& home);
     //@}
 
     /// \name Value access
@@ -211,7 +211,7 @@ namespace Gecode { namespace Set {
     /// \name Update operations
     //@{
     /// Make this set equal to \a s
-    void become(Space* home, const BndSet& s);
+    void become(Space& home, const BndSet& s);
     //@}
     
     /// \name Range list access for iteration
@@ -222,13 +222,13 @@ namespace Gecode { namespace Set {
 
   protected:
     /// Overwrite the ranges with those represented by \a i
-    template <class I> bool overwrite(Space* home,I& i);
+    template <class I> bool overwrite(Space& home,I& i);
 
   public:
     /// \name Cloning
     //@{
     /// Update this set to be a clone of set \a x
-    void update(Space* home, BndSet& x);
+    void update(Space& home, BndSet& x);
     //@}
 
     /// Check whether internal invariants hold
@@ -283,26 +283,28 @@ namespace Gecode { namespace Set {
   class GLBndSet : public BndSet {
   private:
     /// Include the set \f$\{i,\dots,j\}\f$ in this set
-    GECODE_SET_EXPORT bool include_full(Space* home,int,int,SetDelta&);
+    GECODE_SET_EXPORT bool include_full(Space& home,int,int,SetDelta&);
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor. Creates an empty set.
-    GLBndSet(Space* =NULL);
+    GLBndSet(void);
+    /// Default constructor. Creates an empty set.
+    GLBndSet(Space&);
     /// Initialize as the set \f$ \{i,\dots,j\}\f$
-    GLBndSet(Space* home, int i, int j);
+    GLBndSet(Space& home, int i, int j);
     /// Initialize as the set represented by \a s
-    GLBndSet(Space* home, const IntSet& s);
+    GLBndSet(Space& home, const IntSet& s);
     /// Initialize as the empty set
-    void init(Space* home);
+    void init(Space& home);
     //@}
 
     /// \name Update operations
     //@{
     /// Include the set \f$\{i,\dots,j\}\f$ in this set
-    bool include(Space* home,int i,int j,SetDelta& d);
+    bool include(Space& home,int i,int j,SetDelta& d);
     /// Include the set represented by \a i in this set
-    template <class I> bool includeI(Space* home,I& i);
+    template <class I> bool includeI(Space& home,I& i);
     //@}
   private:
     GLBndSet(const GLBndSet&);
@@ -318,35 +320,35 @@ namespace Gecode { namespace Set {
    */
   class LUBndSet: public BndSet{
   private:
-    GECODE_SET_EXPORT bool exclude_full(Space* home, int, int, SetDelta&);
-    GECODE_SET_EXPORT bool intersect_full(Space* home, int i, int j);
+    GECODE_SET_EXPORT bool exclude_full(Space& home, int, int, SetDelta&);
+    GECODE_SET_EXPORT bool intersect_full(Space& home, int i, int j);
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor. Creates an empty set.
     LUBndSet(void);
     /// Initialize as the full set including everything between Limits::min and Limits::max
-    LUBndSet(Space* home);
+    LUBndSet(Space& home);
     /// Initialize as the set \f$ \{i,\dots,j\}\f$
-    LUBndSet(Space* home, int i, int j);
+    LUBndSet(Space& home, int i, int j);
     /// Initialize as the set represented by \a s
-    LUBndSet(Space* home, const IntSet& s);
+    LUBndSet(Space& home, const IntSet& s);
     /// Initialize as the full set including everything between Limits::min and Limits::max
-    void init(Space* home);
+    void init(Space& home);
     //@}
 
     /// \name Update operations
     //@{
     /// Exclude the set \f$\{i,\dots,j\}\f$ from this set
-    bool exclude(Space* home, int i, int j, SetDelta& d);
+    bool exclude(Space& home, int i, int j, SetDelta& d);
     /// Intersect this set with the set \f$\{i,\dots,j\}\f$
-    bool intersect(Space* home, int i, int j);
+    bool intersect(Space& home, int i, int j);
     /// Exclude all elements not in the set represented by \a i from this set
-    template <class I> bool intersectI(Space* home, I& i);
+    template <class I> bool intersectI(Space& home, I& i);
     /// Exclude all elements in the set represented by \a i from this set
-    template <class I> bool excludeI(Space* home, I& i);
+    template <class I> bool excludeI(Space& home, I& i);
     /// Exclude all elements from this set
-    void excludeAll(Space* home);
+    void excludeAll(Space& home);
     //@}
   private:
     LUBndSet(const LUBndSet&);
@@ -518,12 +520,12 @@ namespace Gecode { namespace Set {
 
   protected:
     /// Constructor for cloning \a x
-    SetVarImp(Space* home, bool share, SetVarImp& x);
+    SetVarImp(Space& home, bool share, SetVarImp& x);
   public:
     /// \name Constructors and initialization
     //@{
     /// Initialize with empty lower and full upper bound
-    SetVarImp(Space* home);
+    SetVarImp(Space& home);
     /**
      * \brief Initialize with given bounds and cardinality
      *
@@ -532,7 +534,7 @@ namespace Gecode { namespace Set {
      * \f$\mathit{lub}(s)=\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
-    SetVarImp(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
+    SetVarImp(Space& home,int glbMin,int glbMax,int lubMin,int lubMax,
                unsigned int cardMin = 0,
                unsigned int cardMax = Limits::card);
     /**
@@ -543,7 +545,7 @@ namespace Gecode { namespace Set {
      * \f$\mathit{lub}(s)=\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
-    SetVarImp(Space* home,const IntSet& glbD,int lubMin,int lubMax,
+    SetVarImp(Space& home,const IntSet& glbD,int lubMin,int lubMax,
               unsigned int cardMin,unsigned int cardMax);
     /**
      * \brief Initialize with given bounds and cardinality
@@ -553,7 +555,7 @@ namespace Gecode { namespace Set {
      * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
-    SetVarImp(Space* home,int glbMin,int glbMax,const IntSet& lubD,
+    SetVarImp(Space& home,int glbMin,int glbMax,const IntSet& lubD,
               unsigned int cardMin,unsigned int cardMax);
     /**
      * \brief Initialize with given bounds and cardinality
@@ -563,7 +565,7 @@ namespace Gecode { namespace Set {
      * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
-    SetVarImp(Space* home,const IntSet& glbD,const IntSet& lubD,
+    SetVarImp(Space& home,const IntSet& glbD,const IntSet& lubD,
               unsigned int cardMin,unsigned int cardMax);
     //@}
 
@@ -603,22 +605,22 @@ namespace Gecode { namespace Set {
     /// \name Domain update by range iterator, implementations
     //@{
     /// Include set described by \a i in the greatest lower bound
-    template <class I> ModEvent includeI_full(Space* home,int mi, int ma, I& i);
+    template <class I> ModEvent includeI_full(Space& home,int mi, int ma, I& i);
     /// Exclude set described by \a i from the least upper bound
-    template <class I> ModEvent excludeI_full(Space* home,int mi, int ma, I& i);
+    template <class I> ModEvent excludeI_full(Space& home,int mi, int ma, I& i);
     /// Exclude everything but set described by \a i from the least upper bound
-    template <class I> ModEvent intersectI_full(Space* home,int mi, int ma, I& i);
+    template <class I> ModEvent intersectI_full(Space& home,int mi, int ma, I& i);
     //@}
 
-    GECODE_SET_EXPORT ModEvent processLubChange(Space* home, SetDelta& d);
-    GECODE_SET_EXPORT ModEvent processGlbChange(Space* home, SetDelta& d);
+    GECODE_SET_EXPORT ModEvent processLubChange(Space& home, SetDelta& d);
+    GECODE_SET_EXPORT ModEvent processGlbChange(Space& home, SetDelta& d);
 
     /// \name Cardinality update implementation
     //@{
     /// Restrict cardinality to be at least n
-    GECODE_SET_EXPORT ModEvent cardMin_full(Space* home);
+    GECODE_SET_EXPORT ModEvent cardMin_full(Space& home);
     /// Restrict cardinality to be at most n
-    GECODE_SET_EXPORT ModEvent cardMax_full(Space* home);
+    GECODE_SET_EXPORT ModEvent cardMax_full(Space& home);
     //@}
 
   public:
@@ -626,31 +628,31 @@ namespace Gecode { namespace Set {
     /// \name Domain update by value
     //@{
     /// Include \a n in the greatest lower bound
-    ModEvent include(Space* home,int n);
+    ModEvent include(Space& home,int n);
     /// Include the range \f$\{i,\dots,j\}\f$ in the greatest lower bound
-    ModEvent include(Space* home,int i,int j);
+    ModEvent include(Space& home,int i,int j);
     /// Exclude \a n from the least upper bound
-    ModEvent exclude(Space* home,int n);
+    ModEvent exclude(Space& home,int n);
     /// Exclude the range \f$\{i,\dots,j\}\f$ from the least upper bound
-    ModEvent exclude(Space* home,int i,int j);
+    ModEvent exclude(Space& home,int i,int j);
     /// Exclude everything but \a n from the least upper bound
-    ModEvent intersect(Space* home,int n);
+    ModEvent intersect(Space& home,int n);
     /// Exclude everything but the range \f$\{i,\dots,j\}\f$ from the least upper bound
-    ModEvent intersect(Space* home,int i,int j);
+    ModEvent intersect(Space& home,int i,int j);
     /// Restrict cardinality to be at least n
-    ModEvent cardMin(Space* home,unsigned int n);
+    ModEvent cardMin(Space& home,unsigned int n);
     /// Restrict cardinality to be at most n
-    ModEvent cardMax(Space* home,unsigned int n);
+    ModEvent cardMax(Space& home,unsigned int n);
     //@}
 
     /// \name Domain update by range iterator
     //@{
     /// Include set described by \a i in the greatest lower bound
-    template <class I> ModEvent includeI(Space* home,I& i);
+    template <class I> ModEvent includeI(Space& home,I& i);
     /// Exclude set described by \a i from the least upper bound
-    template <class I> ModEvent excludeI(Space* home,I& i);
+    template <class I> ModEvent excludeI(Space& home,I& i);
     /// Exclude everything but set described by \a i from the least upper bound
-    template <class I> ModEvent intersectI(Space* home,I& i);
+    template <class I> ModEvent intersectI(Space& home,I& i);
     //@}
 
   public:
@@ -663,37 +665,37 @@ namespace Gecode { namespace Set {
      * not processed for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space* home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator* p, PropCond pc);
     /// Subscribe advisor \a a to variable
-    void subscribe(Space* home, Advisor& a);
+    void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
-    void cancel(Space* home, Advisor& a);
+    void cancel(Space& home, Advisor& a);
     //@}
 
   private:
     /// Return copy of not-yet copied variable
-    GECODE_SET_EXPORT SetVarImp* perform_copy(Space* home, bool share);
+    GECODE_SET_EXPORT SetVarImp* perform_copy(Space& home, bool share);
 
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    SetVarImp* copy(Space* home, bool share);
+    SetVarImp* copy(Space& home, bool share);
     //@}
 
     /// \name Reflection
     //@{
     /// Return specification
     GECODE_SET_EXPORT Reflection::Arg*
-    spec(const Space* home, Reflection::VarMap& m) const;
+    spec(const Space& home, Reflection::VarMap& m) const;
     /// Create variable implementation from specification
     static GECODE_SET_EXPORT VarImpBase*
-    create(Space* home, Reflection::VarSpec& spec);
+    create(Space& home, Reflection::VarSpec& spec);
     /// Constrain variable implementation using specification
     static GECODE_SET_EXPORT void
-    constrain(Space* home, VarImpBase* v, Reflection::VarSpec& spec);
+    constrain(Space& home, VarImpBase* v, Reflection::VarSpec& spec);
     //@}
 
     /// \name Delta information for advisors

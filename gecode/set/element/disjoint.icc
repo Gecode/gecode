@@ -40,7 +40,7 @@
 namespace Gecode { namespace Set { namespace Element {
 
   forceinline
-  ElementDisjoint::ElementDisjoint(Space* home,
+  ElementDisjoint::ElementDisjoint(Space& home,
                                  IdxViewArray<SetView>& iv0,
                                  SetView y1)
     : Propagator(home), iv(iv0), x1(y1) {
@@ -50,14 +50,14 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   forceinline
-  ElementDisjoint::ElementDisjoint(Space* home, bool share, ElementDisjoint& p)
+  ElementDisjoint::ElementDisjoint(Space& home, bool share, ElementDisjoint& p)
     : Propagator(home,share,p) {
     x1.update(home,share,p.x1);
     iv.update(home,share,p.iv);
   }
 
   forceinline ExecStatus
-  ElementDisjoint::post(Space* home, IdxViewArray<SetView>& xs,
+  ElementDisjoint::post(Space& home, IdxViewArray<SetView>& xs,
                        SetView x1) {
     int n = xs.size();
 

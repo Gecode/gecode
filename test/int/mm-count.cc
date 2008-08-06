@@ -79,7 +79,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,2);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          switch (irt) {
          case Gecode::IRT_EQ:
            Gecode::exactly(home,x,0,2); break;
@@ -110,7 +110,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[4]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];
@@ -144,7 +144,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[4]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(3);
          for (int i=0; i<3; i++)
            y[i]=x[i];
@@ -178,7 +178,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,2);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(3);
          for (int i=0; i<3; i++)
            y[i]=x[i];
@@ -215,7 +215,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,2);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];
@@ -250,7 +250,7 @@ namespace Test { namespace Int {
          return cmp(m,irt,x[4]);
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs y(4);
          for (int i=0; i<4; i++)
            y[i]=x[i];

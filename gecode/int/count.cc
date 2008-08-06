@@ -40,12 +40,12 @@
 namespace Gecode {
 
   void
-  count(Space* home, const IntVarArgs& x, int n,
+  count(Space& home, const IntVarArgs& x, int n,
         IntRelType r, int m, IntConLevel, PropKind) {
     using namespace Int;
     Limits::check(n,"Int::count");
     Limits::check(m,"Int::count");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     ConstIntView y(n);
     switch (r) {
@@ -79,11 +79,11 @@ namespace Gecode {
   }
 
   void
-  count(Space* home, const IntVarArgs& x, IntVar y,
+  count(Space& home, const IntVarArgs& x, IntVar y,
         IntRelType r, int m, IntConLevel, PropKind) {
     using namespace Int;
     Limits::check(m,"Int::count");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (r) {
     case IRT_EQ:
@@ -116,13 +116,13 @@ namespace Gecode {
   }
 
   void
-  count(Space* home, const IntVarArgs& x, const IntArgs& y,
+  count(Space& home, const IntVarArgs& x, const IntArgs& y,
         IntRelType r, int m, IntConLevel, PropKind) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");
     Limits::check(m,"Int::count");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     ViewArray<OffsetView> xy(home,x.size());
     for (int i=x.size(); i--; )
@@ -160,11 +160,11 @@ namespace Gecode {
   }
 
   void
-  count(Space* home, const IntVarArgs& x, int n,
+  count(Space& home, const IntVarArgs& x, int n,
         IntRelType r, IntVar z, IntConLevel, PropKind) {
     using namespace Int;
     Limits::check(n,"Int::count");
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     ConstIntView yv(n);
     switch (r) {
@@ -198,10 +198,10 @@ namespace Gecode {
   }
 
   void
-  count(Space* home, const IntVarArgs& x, IntVar y,
+  count(Space& home, const IntVarArgs& x, IntVar y,
         IntRelType r, IntVar z, IntConLevel, PropKind) {
     using namespace Int;
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (r) {
     case IRT_EQ:
@@ -234,12 +234,12 @@ namespace Gecode {
   }
 
   void
-  count(Space* home, const IntVarArgs& x, const IntArgs& y,
+  count(Space& home, const IntVarArgs& x, const IntArgs& y,
         IntRelType r, IntVar z, IntConLevel, PropKind) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");
-    if (home->failed()) return;
+    if (home.failed()) return;
 
     ViewArray<OffsetView> xy(home,x.size());
     for (int i=x.size(); i--; )

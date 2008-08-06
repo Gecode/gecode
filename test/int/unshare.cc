@@ -62,7 +62,7 @@ namespace Test { namespace Int {
                  (x[2] == x[5]) && (x[2] == x[7]) && (x[2] == x[8]));
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          IntVarArgs y(6);
          y[0]=x[0]; y[1]=y[3]=x[1]; y[2]=y[4]=y[5]=x[2];
@@ -85,7 +85,7 @@ namespace Test { namespace Int {
                  (x[2] == x[5]) && (x[2] == x[7]) && (x[2] == x[8]));
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs y(6);
          y[0]=channel(home,x[0]); 

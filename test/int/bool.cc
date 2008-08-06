@@ -77,7 +77,7 @@ namespace Test { namespace Int {
          return check(x[0],op,x[1]) == x[2];
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          rel(home, 
              channel(home,x[0]), op, channel(home,x[1]), 
@@ -99,7 +99,7 @@ namespace Test { namespace Int {
          return check(x[0],op,x[0]) == x[1];
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVar b = channel(home,x[0]);
          rel(home, b, op, b, channel(home,x[1]));
@@ -120,7 +120,7 @@ namespace Test { namespace Int {
          return check(x[0],op,x[1]) == x[0];
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVar b = channel(home,x[0]);
          rel(home, b, op, channel(home,x[1]), b);
@@ -141,7 +141,7 @@ namespace Test { namespace Int {
          return check(x[0],op,x[1]) == x[1];
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVar b = channel(home,x[1]);
          rel(home, channel(home,x[0]), op, b, b);
@@ -162,7 +162,7 @@ namespace Test { namespace Int {
          return check(x[0],op,x[0]) == x[0];
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVar b = channel(home,x[0]);
          rel(home, b, op, b, b);
@@ -186,7 +186,7 @@ namespace Test { namespace Int {
          return check(x[0],op,x[1]) == c;
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          rel(home, channel(home,x[0]), op, channel(home,x[1]), c);
        }
@@ -209,7 +209,7 @@ namespace Test { namespace Int {
          return check(x[0],op,x[0]) == c;
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVar b = channel(home,x[0]);
          rel(home, b, op, b, c);
@@ -233,7 +233,7 @@ namespace Test { namespace Int {
          return b == x[x.size()-1];
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs b(x.size()-1);
          for (int i=x.size()-1; i--; )
@@ -260,7 +260,7 @@ namespace Test { namespace Int {
          return b == x[x.size()-1];
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs b(x.size());
          for (int i=x.size(); i--; )
@@ -289,7 +289,7 @@ namespace Test { namespace Int {
          return b == c;
        }
        /// Post constraint
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs b(x.size());
          for (int i=x.size(); i--; )

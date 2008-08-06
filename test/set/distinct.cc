@@ -97,7 +97,7 @@ namespace Test { namespace Set {
         return true;
       }
       /// Post constraint on \a x
-      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         SetVar s1(home, IntSet::empty, -2, 2, 0,1);
         Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, s1);
         SetVar s2(home, IntSet::empty, -2, 2, 0,1);

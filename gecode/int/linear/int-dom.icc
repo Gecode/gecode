@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   public:
     /// Perform tell according to recorded support information on \arg x
-    ModEvent tell(Space* home, IntView& x) const;
+    ModEvent tell(Space& home, IntView& x) const;
     /// Release memory
     void dispose(void);
   };
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Record value at current position as supported
     void support(void);
     /// Tell back new variable domain according to support found
-    ModEvent tell(Space* home);
+    ModEvent tell(Space& home);
     /// Finalize memory for support set
     void dispose(void);
   };
@@ -203,7 +203,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   inline ModEvent
-  SupportSet::tell(Space* home, IntView& x) const {
+  SupportSet::tell(Space& home, IntView& x) const {
     unsigned int n = x.size() / bpui;
     // Check whether all bits are zero: failure
     for (unsigned int i=n+1; i--; )
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline ModEvent
-  SupportIter<Val>::tell(Space* home) {
+  SupportIter<Val>::tell(Space& home) {
     return s.tell(home,x);
   }
   template <class Val>
@@ -381,14 +381,14 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class View>
   forceinline
-  DomEq<Val,View>::DomEq(Space* home,
+  DomEq<Val,View>::DomEq(Space& home,
                          ViewArray<View >& x, ViewArray<View >& y,
                          Val c)
     : Lin<Val,View,View,PC_INT_DOM>(home,x,y,c) {}
 
   template <class Val, class View>
   ExecStatus
-  DomEq<Val,View>::post(Space* home,
+  DomEq<Val,View>::post(Space& home,
                         ViewArray<View>& x, ViewArray<View>& y,
                         Val c) {
     (void) new (home) DomEq<Val,View>(home,x,y,c);
@@ -397,12 +397,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   forceinline
-  DomEq<Val,View>::DomEq(Space* home, bool share, DomEq<Val,View>& p)
+  DomEq<Val,View>::DomEq(Space& home, bool share, DomEq<Val,View>& p)
     : Lin<Val,View,View,PC_INT_DOM>(home,share,p) {}
 
   template <class Val, class View>
   Actor*
-  DomEq<Val,View>::copy(Space* home, bool share) {
+  DomEq<Val,View>::copy(Space& home, bool share) {
     return new (home) DomEq<Val,View>(home,share,*this);
   }
 
@@ -422,13 +422,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   Reflection::ActorSpec
-  DomEq<Val,View>::spec(const Space* home, Reflection::VarMap& m) const {
+  DomEq<Val,View>::spec(const Space& home, Reflection::VarMap& m) const {
     return Lin<Val,View,View,PC_INT_DOM>::spec(home, m, ati());
   }
   
   template <class Val, class View>
   void
-  DomEq<Val,View>::post(Space* home, Reflection::VarMap& vars,
+  DomEq<Val,View>::post(Space& home, Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<View> x(home, vars, spec[0]);
@@ -439,7 +439,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   ExecStatus
-  DomEq<Val,View>::propagate(Space* home, ModEventDelta med) {
+  DomEq<Val,View>::propagate(Space& home, ModEventDelta med) {
     if (View::me(med) != ME_INT_DOM) {
       ExecStatus es = prop_bnd<Val,View,View>(home,med,this,x,y,c);
       GECODE_ES_CHECK(es);

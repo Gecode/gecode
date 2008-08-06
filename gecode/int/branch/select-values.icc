@@ -123,26 +123,26 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class ViewSel, class View>
   forceinline
   ViewValuesBranching<ViewSel,View>::
-  ViewValuesBranching(Space* home, ViewArray<typename ViewSel::View>& x,
+  ViewValuesBranching(Space& home, ViewArray<typename ViewSel::View>& x,
                       ViewSel& vi_s)
     : ViewBranching<ViewSel>(home,x,vi_s) {}
 
   template <class ViewSel, class View>
   forceinline
   ViewValuesBranching<ViewSel,View>::
-  ViewValuesBranching(Space* home, bool share, ViewValuesBranching& b)
+  ViewValuesBranching(Space& home, bool share, ViewValuesBranching& b)
     : ViewBranching<ViewSel>(home,share,b) {}
 
   template <class ViewSel, class View>
   Actor*
-  ViewValuesBranching<ViewSel,View>::copy(Space* home, bool share) {
+  ViewValuesBranching<ViewSel,View>::copy(Space& home, bool share) {
     return new (home)
       ViewValuesBranching<ViewSel,View>(home,share,*this);
   }
 
   template <class ViewSel, class View>
   const BranchingDesc*
-  ViewValuesBranching<ViewSel,View>::description(Space* home) {
+  ViewValuesBranching<ViewSel,View>::description(Space& home) {
     Pos p = ViewBranching<ViewSel>::pos(home);
     View v(ViewBranching<ViewSel>::view(p).var());
     return new PosValuesDesc<ViewSel,View>(this,p,viewsel.description(home),v);
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class ViewSel, class View>
   ExecStatus
   ViewValuesBranching<ViewSel,View>
-  ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
+  ::commit(Space& home, const BranchingDesc* d, unsigned int a) {
     const PosValuesDesc<ViewSel,View>* pvd 
       = static_cast<const PosValuesDesc<ViewSel,View>*>(d);
     View v(ViewBranching<ViewSel>::view(pvd->pos(),true).var());
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class ViewSel, class View>
   void
   ViewValuesBranching<ViewSel,View>::post
-  (Space* home, Reflection::VarMap& vars,
+  (Space& home, Reflection::VarMap& vars,
    const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<typename ViewSel::View> x(home, vars, spec[0]);
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class ViewSel, class View>
   Reflection::ActorSpec
   ViewValuesBranching<ViewSel,View>
-  ::spec(const Space* home, Reflection::VarMap& m) const {
+  ::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m);
   }
@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class ViewSel, class View>
   Reflection::BranchingSpec
   ViewValuesBranching<ViewSel,View>
-  ::branchingSpec(const Space* home, 
+  ::branchingSpec(const Space& home, 
                   Reflection::VarMap& m, const BranchingDesc* d) const {
     const PosValuesDesc<ViewSel,View>* pvd 
       = static_cast<const PosValuesDesc<ViewSel,View>*>(d);

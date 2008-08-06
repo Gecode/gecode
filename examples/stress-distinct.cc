@@ -54,14 +54,14 @@ protected:
 public:
   /// The actual problem
   StressDistinct(const SizeOptions& opt)
-    : x(this,opt.size()+1,0,opt.size()) {
-    distinct(this, x, opt.icl());
+    : x(*this,opt.size()+1,0,opt.size()) {
+    distinct(*this, x, opt.icl());
     for (unsigned int i=0; i<opt.size(); i++)
-      rel(this, x[i], IRT_LQ, i);
+      rel(*this, x[i], IRT_LQ, i);
   }
   /// Constructor for cloning \a s
   StressDistinct(bool share, StressDistinct& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
   virtual Space*

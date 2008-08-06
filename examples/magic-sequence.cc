@@ -73,37 +73,37 @@ public:
     // I occurs in V X times
     BoolVarArgs b(v.size());
     for (int j = v.size(); j--; )
-      b[j] = post(this, ~(v[j] == i));
-    linear(this, b, IRT_EQ, x);
+      b[j] = post(*this, ~(v[j] == i));
+    linear(*this, b, IRT_EQ, x);
   }
   /// The actual model
   MagicSequence(const SizeOptions& opt)
-    : n(opt.size()), s(this,n,0,n-1) {
+    : n(opt.size()), s(*this,n,0,n-1) {
     switch (opt.propagation()) {
     case PROP_REIFIED:
       for (int i=n; i--; )
         exactly(s, s[i], i);
-      linear(this, s, IRT_EQ, n);
+      linear(*this, s, IRT_EQ, n);
       break;
     case PROP_COUNT:
       for (int i=n; i--; )
-        count(this, s, i, IRT_EQ, s[i]);
-      linear(this, s, IRT_EQ, n);
+        count(*this, s, i, IRT_EQ, s[i]);
+      linear(*this, s, IRT_EQ, n);
       break;
     case PROP_GCC:
-      count(this, s, s, opt.icl());
+      count(*this, s, s, opt.icl());
       break;
     }
     IntArgs c(n);
     for (int j = n; j--; )
       c[j] = j-1;
-    linear(this, c, s, IRT_EQ, 0);
-    branch(this, s, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
+    linear(*this, c, s, IRT_EQ, 0);
+    branch(*this, s, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
   }
 
   /// Constructor for cloning \a e
   MagicSequence(bool share, MagicSequence& e) : Example(share,e), n(e.n) {
-    s.update(this, share, e.s);
+    s.update(*this, share, e.s);
   }
   /// Copy during cloning
   virtual Space*

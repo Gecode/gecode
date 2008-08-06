@@ -107,7 +107,7 @@ namespace Test { namespace Int {
      *
      */
     TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log=true)
-      : d(d0), x(this,n,d), b(this,0,1), reified(r), test(t) {
+      : d(d0), x(*this,n,d), b(*this,0,1), reified(r), test(t) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
         if (reified)
@@ -118,8 +118,8 @@ namespace Test { namespace Int {
     /// Constructor for cloning \a s
     TestSpace(bool share, TestSpace& s) 
       : Gecode::Space(share,s), d(s.d), reified(s.reified), test(s.test) {
-      x.update(this, share, s.x);
-      b.update(this, share, s.b);
+      x.update(*this, share, s.x);
+      b.update(*this, share, s.b);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
@@ -130,15 +130,15 @@ namespace Test { namespace Int {
     TestSpace* cloneWithReflection(void) {
       TestSpace* c = new TestSpace(x.size(), d, reified, test);
       Gecode::Reflection::VarMap vm;
-      vm.putArray(this, x, "x");
-      vm.put(this, b, "b");
+      vm.putArray(*this, x, "x");
+      vm.put(*this, b, "b");
       Gecode::Reflection::VarMap cvm;
-      cvm.putArray(c, c->x, "x", true);
-      cvm.put(c, c->b, "b", true);
-      Gecode::Reflection::Unreflector d(c, cvm);
+      cvm.putArray(*c, c->x, "x", true);
+      cvm.put(*c, c->b, "b", true);
+      Gecode::Reflection::Unreflector d(*c, cvm);
       Gecode::Reflection::VarMapIter vmi(vm);
       try {
-        for (Gecode::Reflection::ActorSpecIter si(this, vm); si(); ++si) {
+        for (Gecode::Reflection::ActorSpecIter si(*this, vm); si(); ++si) {
           Gecode::Reflection::ActorSpec s = si.actor();
           for (; vmi(); ++vmi) {
             try {
@@ -187,11 +187,11 @@ namespace Test { namespace Int {
     /// Post propagator
     void post(void) {
       if (reified){
-        test->post(this,x,b);
+        test->post(*this,x,b);
         if (opt.log)
           olog << ind(3) << "Posting reified propagator" << std::endl;
       } else {
-        test->post(this,x);
+        test->post(*this,x);
         if (opt.log)
           olog << ind(3) << "Posting propagator" << std::endl;
         }
@@ -221,7 +221,7 @@ namespace Test { namespace Int {
         }
         olog << " " << n << std::endl;
       }
-      Gecode::rel(this, x[i], irt, n);
+      Gecode::rel(*this, x[i], irt, n);
     }
     /// Perform Boolean tell on \a b
     void rel(bool sol) {
@@ -229,7 +229,7 @@ namespace Test { namespace Int {
       assert(reified);
       if (opt.log) 
         olog << ind(4) << "b = " << n << std::endl;
-      Gecode::rel(this, b, Gecode::IRT_EQ, n);
+      Gecode::rel(*this, b, Gecode::IRT_EQ, n);
     }
     /// Assign all (or all but one, if \a skip is true) variables to values in \a a
     void assign(const Assignment& a, bool skip=false) {
@@ -378,7 +378,7 @@ if (!(T)) {                                                     \
   }
 
   void 
-  Test::post(Gecode::Space*, Gecode::IntVarArray&, 
+  Test::post(Gecode::Space&, Gecode::IntVarArray&, 
              Gecode::BoolVar) {}
 
   bool
@@ -393,8 +393,8 @@ if (!(T)) {                                                     \
 
     // Set up space for all solution search
     TestSpace* search_s = new TestSpace(arity,dom,false,this,false);
-    post(search_s,search_s->x);
-    branch(search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
+    post(*search_s,search_s->x);
+    branch(*search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
     DFS<TestSpace> e_s(search_s);
     delete search_s;
 

@@ -65,18 +65,18 @@ namespace Gecode { namespace Int { namespace Channel {
     /// View and information for both \a x and \a y
     Info* xy;
     /// Constructor for cloning \a p
-    Base(Space* home, bool share, Base<Info,pc>& p);
+    Base(Space& home, bool share, Base<Info,pc>& p);
     /// Constructor for posting
-    Base(Space* home, int n, Info* xy);
+    Base(Space& home, int n, Info* xy);
     // Specification for this propagator
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Propagation cost
     virtual PropCost cost(ModEventDelta med) const;
     /// Specification for this propagator
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 
@@ -102,21 +102,21 @@ namespace Gecode { namespace Int { namespace Channel {
     using Base<ValInfo<View>,PC_INT_VAL>::n_na;
     using Base<ValInfo<View>,PC_INT_VAL>::xy;
     /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val& p);
+    Val(Space& home, bool share, Val& p);
     /// Constructor for posting
-    Val(Space* home, int n, ValInfo<View>* xy);
+    Val(Space& home, int n, ValInfo<View>* xy);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for channeling
-    static  ExecStatus post(Space* home, int n, ValInfo<View>* xy);
+    static  ExecStatus post(Space& home, int n, ValInfo<View>* xy);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -146,23 +146,23 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Propagation controller for propagating distinct
     Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
-    Dom(Space* home, bool share, Dom& p);
+    Dom(Space& home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Space* home, int n, DomInfo<View>* xy);
+    Dom(Space& home, int n, DomInfo<View>* xy);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Propagation cost
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for channeling on \a xy
-    static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
+    static  ExecStatus post(Space& home, int n, DomInfo<View>* xy);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -181,24 +181,24 @@ namespace Gecode { namespace Int { namespace Channel {
     using MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>::x1;
 
     /// Constructor for cloning \a p
-    LinkSingle(Space* home, bool share, LinkSingle& p);
+    LinkSingle(Space& home, bool share, LinkSingle& p);
     /// Constructor for posting
-    LinkSingle(Space* home, BoolView x0, IntView x1);
+    LinkSingle(Space& home, BoolView x0, IntView x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \f$ x_0 = x_1\f$
-    static  ExecStatus post(Space* home, BoolView x0, IntView x1);
+    static  ExecStatus post(Space& home, BoolView x0, IntView x1);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post according to specification
     GECODE_INT_EXPORT
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     GECODE_INT_EXPORT
@@ -219,25 +219,25 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Offset value
     int o;
     /// Constructor for cloning \a p
-    LinkMulti(Space* home, bool share, LinkMulti& p);
+    LinkMulti(Space& home, bool share, LinkMulti& p);
     /// Constructor for posting
-    LinkMulti(Space* home, ViewArray<BoolView>& x, IntView y, int o0);
+    LinkMulti(Space& home, ViewArray<BoolView>& x, IntView y, int o0);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (PC_UNARY_LO if \a y is assigned, PC_LINEAR_LO otherwise)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
     GECODE_INT_EXPORT
-    static  ExecStatus post(Space* home, 
+    static  ExecStatus post(Space& home, 
                             ViewArray<BoolView>& x, IntView y, int o);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     GECODE_INT_EXPORT

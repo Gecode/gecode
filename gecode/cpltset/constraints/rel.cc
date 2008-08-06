@@ -49,9 +49,9 @@ namespace Gecode {
      */
 
     template <class View>
-    void rel_post(Space* home, View x, CpltSetRelType r, View y) {
+    void rel_post(Space& home, View x, CpltSetRelType r, View y) {
 
-      if (home->failed()) return;
+      if (home.failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
 
@@ -115,9 +115,9 @@ namespace Gecode {
     }
 
     template <class View>
-    void rel_post(Space* home, View x, SetRelType r, View y) {
+    void rel_post(Space& home, View x, SetRelType r, View y) {
 
-      if (home->failed()) return;
+      if (home.failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
 
@@ -221,8 +221,8 @@ namespace Gecode {
     }
 
     template <class View0, class View1>
-    void rel_post(Space* home, View0 x, CpltSetRelType r, View1 s) {
-      if (home->failed()) return;
+    void rel_post(Space& home, View0 x, CpltSetRelType r, View1 s) {
+      if (home.failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
 
@@ -270,8 +270,8 @@ namespace Gecode {
 
 
     template <class View0, class View1>
-    void rel_post(Space* home, View0 x, SetRelType r, View1 s) {
-      if (home->failed()) return;
+    void rel_post(Space& home, View0 x, SetRelType r, View1 s) {
+      if (home.failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
 
@@ -353,16 +353,16 @@ namespace Gecode {
     // BddOp and BddRel
     // 
     template <class View>
-    void rel_post(Space*, ViewArray<View>&, CpltSetOpType,   
+    void rel_post(Space&, ViewArray<View>&, CpltSetOpType,   
                   CpltSetRelType) {
       throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
     }
 
     // BddOp and SetRel
     template <class View>
-    void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, 
+    void rel_post(Space& home, ViewArray<View>& x, CpltSetOpType o, 
                   SetRelType r) {
-      if (home->failed()) return;
+      if (home.failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
 
@@ -406,7 +406,7 @@ namespace Gecode {
     // SetOp and BddRel
     // 
     template <class View>
-    void rel_post(Space*, ViewArray<View>&, SetOpType,
+    void rel_post(Space&, ViewArray<View>&, SetOpType,
                   CpltSetRelType) {
       throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
     }
@@ -414,9 +414,9 @@ namespace Gecode {
 
     // SetOp and SetRel
     template <class View>
-    void rel_post(Space* home, ViewArray<View>& x,
+    void rel_post(Space& home, ViewArray<View>& x,
                   SetOpType o, SetRelType r) {
-      if (home->failed()) return;
+      if (home.failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
 
@@ -475,7 +475,7 @@ namespace Gecode {
 
 
     template <class Rel>
-    void rel_con(Space* home, const CpltSetVar& x, Rel r,
+    void rel_con(Space& home, const CpltSetVar& x, Rel r,
                  const CpltSetVar& y) {
       CpltSetView xv(x);
       CpltSetView yv(y);
@@ -484,7 +484,7 @@ namespace Gecode {
 
     template <class Rel, class Op>
     forceinline void
-    rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y,
+    rel_con_bdd(Space& home, const CpltSetVar& x, Op o, const CpltSetVar& y,
                 Rel r, const CpltSetVar& z) {
       ViewArray<CpltSetView> bv(home, 3);
       bv[0] = x;
@@ -497,31 +497,31 @@ namespace Gecode {
   
   using namespace CpltSet::Rel;
 
-  void rel(Space* home, CpltSetVar x, CpltSetRelType r, CpltSetVar y) {
+  void rel(Space& home, CpltSetVar x, CpltSetRelType r, CpltSetVar y) {
     rel_con(home, x, r, y);
   }
 
-  void rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
+  void rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
            CpltSetRelType r, CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
-  void rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
+  void rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
            SetRelType r, CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
-  void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
+  void rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y, 
            CpltSetRelType r, CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
-  void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, SetRelType r, 
+  void rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y, SetRelType r, 
            CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
-  void rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y) {
+  void rel(Space& home, CpltSetVar x, SetRelType r, CpltSetVar y) {
     rel_con(home, x, r, y);      
   }
 

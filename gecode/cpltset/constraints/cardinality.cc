@@ -43,8 +43,8 @@ using namespace Gecode::CpltSet;
 namespace Gecode {
 
   void
-  cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u) {
-    if (home->failed()) return;
+  cardinality(Space& home, CpltSetVar x, unsigned int l, unsigned int u) {
+    if (home.failed()) return;
     Set::Limits::check(l, "CpltSet::cardinality");
     Set::Limits::check(u, "CpltSet::cardinality");
 
@@ -61,7 +61,7 @@ namespace Gecode {
   }
 
   void
-  cardinality(Space* home, CpltSetVar x, unsigned int c) {
+  cardinality(Space& home, CpltSetVar x, unsigned int c) {
     cardinality(home, x, c, c);
   }
 

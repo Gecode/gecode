@@ -375,14 +375,14 @@ namespace {
     /// The variables
     IntVarArray x;
     /// The actual problem
-    DistinctLinear(int n, int s) : x(this,n,1,9) {
-      distinct(this, x);
-      linear(this, x, IRT_EQ, s);
-      branch(this, x, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+    DistinctLinear(int n, int s) : x(*this,n,1,9) {
+      distinct(*this, x);
+      linear(*this, x, IRT_EQ, s);
+      branch(*this, x, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
     }
     /// Constructor for cloning \a s
     DistinctLinear(bool share, DistinctLinear& s) : Space(share,s) {
-      x.update(this, share, s.x);
+      x.update(*this, share, s.x);
     }
     /// Perform copying during cloning
     virtual Space*
@@ -533,65 +533,65 @@ public:
   /// Init the field at position \a x, \a y if necessary
   void init(int x, int y) {
     if (b(x,y).min() == 0)
-      b(x,y).init(this,1,9);
+      b(x,y).init(*this,1,9);
   }
   /// Post a distinct-linear constraint on variables \a x with sum \a c
   template <class Data>
   void distinctlinear(Cache<Data>& dc, const IntVarArgs& x, int c, 
                       const SizeOptions& opt) {
     if (opt.model() == MODEL_DECOMPOSE) {
-      distinct(this, x, opt.icl());
-      linear(this, x, IRT_EQ, c, opt.icl());
+      distinct(*this, x, opt.icl());
+      linear(*this, x, IRT_EQ, c, opt.icl());
     } else {
       int n=x.size();
       switch (n) {
       case 0:
         return;
       case 1:
-        rel(this, x[0], IRT_EQ, c);
+        rel(*this, x[0], IRT_EQ, c);
         return;
       case 8:
         // Prune the single missing digit
-        rel(this, x, IRT_NQ, 9*(9+1)/2 - c);
+        rel(*this, x, IRT_NQ, 9*(9+1)/2 - c);
         break;
       case 9:
         break;
       default:
         if (c == n*(n+1)/2) {
           // sum has unique decomposition: 1 + ... + n
-          rel(this, x, IRT_LQ, n);
+          rel(*this, x, IRT_LQ, n);
         } else if (c == n*(n+1)/2 + 1) {
           // sum has unique decomposition: 1 + ... + n-1 + n+1
-          rel(this, x, IRT_LQ, n+1);
-          rel(this, x, IRT_NQ, n);
+          rel(*this, x, IRT_LQ, n+1);
+          rel(*this, x, IRT_NQ, n);
         } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2) {
           // sum has unique decomposition: (9-n+1) + (9-n+2) + ... + 9
-          rel(this, x, IRT_GQ, 9-n+1);
+          rel(*this, x, IRT_GQ, 9-n+1);
         } else if (c == 9*(9+1)/2 - (9-n)*(9-n+1)/2 + 1) {
           // sum has unique decomposition: (9-n) + (9-n+2) + ... + 9
-          rel(this, x, IRT_GQ, 9-n);
-          rel(this, x, IRT_NQ, 9-n+1);
+          rel(*this, x, IRT_GQ, 9-n);
+          rel(*this, x, IRT_NQ, 9-n+1);
         } else if (n == 2) {
           // Just use element constraint with no two equal digits
           IntArgs e(c);
           e[0]=0;
           for (int i=1; i<c; i++)
             e[i]=(c-i == i) ? 0 : c-i;
-          element(this, e, x[0], x[1]);
+          element(*this, e, x[0], x[1]);
           return;
         } else {
-          extensional(this, x, dc.get(n,c), opt.icl(), opt.pk());
+          extensional(*this, x, dc.get(n,c), opt.icl(), opt.pk());
           return;
         }
       }
-      distinct(this, x, opt.icl());
+      distinct(*this, x, opt.icl());
     }
   }
   /// The actual problem
   Kakuro(const SizeOptions& opt)
     : w(examples[opt.size()][0]),  h(examples[opt.size()][1]), 
-      _b(this,w*h) {
-    IntVar black(this,0,0);
+      _b(*this,w*h) {
+    IntVar black(*this,0,0);
     // Initialize all fields as black (unused). Only if a field
     // is actually used in a constraint, create a fresh variable
     // for it (done via init).
@@ -627,11 +627,11 @@ public:
       else
         distinctlinear(dfa_cache,row,s,opt);
     }
-    branch(this, _b, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN); 
+    branch(*this, _b, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN); 
   }
   /// Constructor for cloning \a s
   Kakuro(bool share, Kakuro& s) : Example(share,s), w(s.w), h(s.h) {
-    _b.update(this, share, s._b);
+    _b.update(*this, share, s._b);
   }
   /// Perform copying during cloning
   virtual Space*

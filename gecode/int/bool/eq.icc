@@ -39,29 +39,29 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  Eq<BVA,BVB>::Eq(Space* home, BVA b0, BVB b1)
+  Eq<BVA,BVB>::Eq(Space& home, BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,b0,b1) {}
 
   template<class BVA, class BVB>
   forceinline
-  Eq<BVA,BVB>::Eq(Space* home, bool share, Eq<BVA,BVB>& p)
+  Eq<BVA,BVB>::Eq(Space& home, bool share, Eq<BVA,BVB>& p)
     : BoolBinary<BVA,BVB>(home,share,p) {}
 
   template<class BVA, class BVB>
   forceinline
-  Eq<BVA,BVB>::Eq(Space* home, bool share, Propagator& p,
+  Eq<BVA,BVB>::Eq(Space& home, bool share, Propagator& p,
                   BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
 
   template<class BVA, class BVB>
   Actor*
-  Eq<BVA,BVB>::copy(Space* home, bool share) {
+  Eq<BVA,BVB>::copy(Space& home, bool share) {
     return new (home) Eq<BVA,BVB>(home,share,*this);
   }
 
   template<class BVA, class BVB>
   inline ExecStatus
-  Eq<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
+  Eq<BVA,BVB>::post(Space& home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
     case BT_SAME: return ES_OK;
     case BT_COMP: return ES_FAILED;
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   ExecStatus
-  Eq<BVA,BVB>::propagate(Space* home, ModEventDelta) {
+  Eq<BVA,BVB>::propagate(Space& home, ModEventDelta) {
 #define GECODE_INT_STATUS(S0,S1) \
   ((BVA::S0<<(1*BVA::BITS))|(BVB::S1<<(0*BVB::BITS)))
     switch ((x0.status() << (1*BVA::BITS)) | (x1.status() << (0*BVB::BITS))) {
@@ -122,13 +122,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   Reflection::ActorSpec
-  Eq<BVA,BVB>::spec(const Space* home, Reflection::VarMap& m) const {
+  Eq<BVA,BVB>::spec(const Space& home, Reflection::VarMap& m) const {
     return BoolBinary<BVA,BVB>::spec(home, m, ati());
   }
 
   template<class BVA, class BVB>
   void
-  Eq<BVA,BVB>::post(Space* home, Reflection::VarMap& vars,
+  Eq<BVA,BVB>::post(Space& home, Reflection::VarMap& vars,
                     const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     BVA b0(home, vars, spec[0]);
@@ -138,23 +138,23 @@ namespace Gecode { namespace Int { namespace Bool {
   
   template<class BV>
   forceinline
-  NaryEq<BV>::NaryEq(Space* home, ViewArray<BV>& x)
+  NaryEq<BV>::NaryEq(Space& home, ViewArray<BV>& x)
     : NaryPropagator<BV,PC_BOOL_VAL>(home,x) {}
 
   template<class BV>
   forceinline
-  NaryEq<BV>::NaryEq(Space* home, bool share, NaryEq<BV>& p)
+  NaryEq<BV>::NaryEq(Space& home, bool share, NaryEq<BV>& p)
     : NaryPropagator<BV,PC_BOOL_VAL>(home,share,p) {}
 
   template<class BV>
   Actor*
-  NaryEq<BV>::copy(Space* home, bool share) {
+  NaryEq<BV>::copy(Space& home, bool share) {
     return new (home) NaryEq<BV>(home,share,*this);
   }
 
   template<class BV>
   inline ExecStatus
-  NaryEq<BV>::post(Space* home, ViewArray<BV>& x) {
+  NaryEq<BV>::post(Space& home, ViewArray<BV>& x) {
     x.unique(home);
     int n = x.size();
     if (n < 2)
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   void
-  NaryEq<BV>::post(Space* home, Reflection::VarMap& vars,
+  NaryEq<BV>::post(Space& home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<BV> x(home, vars, spec[0]);
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   ExecStatus
-  NaryEq<BV>::propagate(Space* home, ModEventDelta) {
+  NaryEq<BV>::propagate(Space& home, ModEventDelta) {
     int n=x.size();
     int i=0;
     while (true) {
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Bool {
   
   template<class BV>
   Reflection::ActorSpec
-  NaryEq<BV>::spec(const Space* home, Reflection::VarMap& m) const {
+  NaryEq<BV>::spec(const Space& home, Reflection::VarMap& m) const {
     return NaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, ati());
   }
 

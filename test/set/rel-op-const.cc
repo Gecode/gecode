@@ -146,7 +146,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
+      void post(Space& home, SetVarArray& x, IntVarArray&) {
         if (!inverse)
           Gecode::rel(home, is, sot, x[0], srt, x[1]);
         else
@@ -236,7 +236,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
+      void post(Space& home, SetVarArray& x, IntVarArray&) {
         Gecode::rel(home, x[0], sot, x[1], srt, is);
       }
     };
@@ -333,7 +333,7 @@ namespace Test { namespace Set {
         return false;
       }
       /// Post constraint on \a x
-      void post(Space* home, SetVarArray& x, IntVarArray&) {
+      void post(Space& home, SetVarArray& x, IntVarArray&) {
         if (!inverse)
           Gecode::rel(home, is0, sot, x[0], srt, is1);
         else

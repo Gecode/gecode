@@ -58,7 +58,7 @@ private:
 public:
   /// Post constraints
   MagicSquare(const SizeOptions& opt)
-    : n(opt.size()), x(this,n*n,1,n*n) {
+    : n(opt.size()), x(*this,n*n,1,n*n) {
     // Number of fields on square
     const int nn = n*n;
 
@@ -69,8 +69,8 @@ public:
     MiniModel::Matrix<IntVarArray> m(x, n, n);
 
     for (int i = n; i--; ) {
-        linear(this, m.row(i), IRT_EQ, s, opt.icl());
-        linear(this, m.col(i), IRT_EQ, s, opt.icl());
+        linear(*this, m.row(i), IRT_EQ, s, opt.icl());
+        linear(*this, m.col(i), IRT_EQ, s, opt.icl());
     }
     // Both diagonals must have sum s
     {
@@ -80,23 +80,23 @@ public:
         d1y[i] = m(i,i);
         d2y[i] = m(n-i-1,i);
       }
-      linear(this, d1y, IRT_EQ, s, opt.icl());
-      linear(this, d2y, IRT_EQ, s, opt.icl());
+      linear(*this, d1y, IRT_EQ, s, opt.icl());
+      linear(*this, d2y, IRT_EQ, s, opt.icl());
     }
 
     // All fields must be distinct
-    distinct(this, x, opt.icl());
+    distinct(*this, x, opt.icl());
 
     // Break some (few) symmetries
-    rel(this, m(0,0), IRT_GR, m(0,n-1));
-    rel(this, m(0,0), IRT_GR, m(n-1,0));
+    rel(*this, m(0,0), IRT_GR, m(0,n-1));
+    rel(*this, m(0,0), IRT_GR, m(n-1,0));
 
-    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
 
   /// Constructor for cloning \a s
   MagicSquare(bool share, MagicSquare& s) : Example(share,s), n(s.n) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Copy during cloning

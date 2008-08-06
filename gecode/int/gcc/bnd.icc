@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   inline
   BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, ViewArray<View>& x0, ViewArray<Card>& k0, 
+  BndImp(Space& home, ViewArray<View>& x0, ViewArray<Card>& k0, 
          bool cf,  bool nolbc) :
     Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
     card_fixed(cf), skip_lbc(nolbc) {
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   forceinline
   BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, bool share, BndImp<View, Card, isView, shared>& p)
+  BndImp(Space& home, bool share, BndImp<View, Card, isView, shared>& p)
     : Propagator(home, share, p), lps(NULL), ups(NULL),
       card_fixed(p.card_fixed), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
@@ -63,9 +63,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   size_t
-  BndImp<View, Card, isView, shared>::dispose(Space* home){
+  BndImp<View, Card, isView, shared>::dispose(Space& home){
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x.cancel(home,this, PC_INT_BND);
       k.cancel(home,this, PC_INT_BND);
     }
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   Actor*
-  BndImp<View, Card, isView, shared>::copy(Space* home, bool share){
+  BndImp<View, Card, isView, shared>::copy(Space& home, bool share){
     return new (home) BndImp<View, Card, isView, shared>
       (home, share, *this);
   }
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   Reflection::ActorSpec
-  BndImp<View,Card,isView,shared>::spec(const Space* home,
+  BndImp<View,Card,isView,shared>::spec(const Space& home,
                                         Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << x.spec(home, m) << k.spec(home, m) << card_fixed << skip_lbc;
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   void
-  BndImp<View,Card,isView,shared>::post(Space* home, Reflection::VarMap& vars,
+  BndImp<View,Card,isView,shared>::post(Space& home, Reflection::VarMap& vars,
                                         const Reflection::ActorSpec& spec) {
     spec.checkArity(4);
     ViewArray<View> x(home, vars, spec[0]);
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   ExecStatus
-  BndImp<View, Card, isView, shared>::propagate(Space* home, ModEventDelta) {
+  BndImp<View, Card, isView, shared>::propagate(Space& home, ModEventDelta) {
     bool all_assigned = true;
     bool mod          = false;
     int  smin         = 0;
@@ -604,7 +604,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * \brief Test whether the problem views in \a x0 or the
      *  cardinality views in \a k0 contain shared views.
      */
-    static bool shared(Space* home, ViewArray<View1>& x0,
+    static bool shared(Space& home, ViewArray<View1>& x0,
                        ViewArray<View2>& k0) {
       ViewArray<View1> xc(home, x0.size()+k0.size());
       for (int i = 0; i < x0.size(); i++) {
@@ -625,7 +625,7 @@ namespace Gecode { namespace Int { namespace GCC {
   class SharingTest<IntView,OccurBndsView> {
   public:
     /// Test whether the problem views in \a x0 contain shared views.
-    static bool shared(Space* home,
+    static bool shared(Space& home,
                        ViewArray<IntView>& xs, ViewArray<OccurBndsView>&) {
       return xs.shared(home);
     }
@@ -633,7 +633,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   ExecStatus
-  Bnd<View, Card, isView>::post(Space* home,
+  Bnd<View, Card, isView>::post(Space& home,
                                 ViewArray<View>& x0,
                                 ViewArray<Card>& k0) {
     bool cardfix = true;

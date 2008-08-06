@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline
-  Base<View,subscribe>::Base(Space* home, ViewArray<View>& x0, const TupleSet& t)
+  Base<View,subscribe>::Base(Space& home, ViewArray<View>& x0, const TupleSet& t)
     : Propagator(home), x(x0), tupleSet(t), last_data(NULL) {
     if (subscribe)
       x.subscribe(home, this, PC_INT_DOM);
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline
-  Base<View,subscribe>::Base(Space* home, bool share, Base<View,subscribe>& p)
+  Base<View,subscribe>::Base(Space& home, bool share, Base<View,subscribe>& p)
     : Propagator(home,share,p), last_data(NULL) {
     x.update(home, share, p.x);
     tupleSet.update(home, share, p.tupleSet);
@@ -65,10 +65,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline void
-  Base<View,subscribe>::init_last(Space* home, Tuple** source) {
+  Base<View,subscribe>::init_last(Space& home, Tuple** source) {
     if (last_data == NULL) {
       int literals = ts()->domsize*x.size();
-      last_data = home->alloc<Tuple*>(literals);
+      last_data = home.alloc<Tuple*>(literals);
       for (int i = literals; i--; )
         last_data[i] = source[i];
     }
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline void
-  Base<View,subscribe>::init_dom(Space* home, Domain dom) {
+  Base<View,subscribe>::init_dom(Space& home, Domain dom) {
     int domsize = ts()->domsize;
     for (int i = x.size(); i--; ) {
       dom[i].init(home, domsize);
@@ -140,15 +140,15 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   size_t
-  Base<View,subscribe>::dispose(Space* home) {
+  Base<View,subscribe>::dispose(Space& home) {
     this->unforce(home);
     (void) Propagator::dispose(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       if (subscribe)
         x.cancel(home,this,PC_INT_DOM);
       // take care of last_data
       int literals = ts()->domsize*x.size();    
-      home->rfree(last_data, sizeof(Tuple*)*literals);
+      home.rfree(last_data, sizeof(Tuple*)*literals);
     }
     (void) tupleSet.~TupleSet();    
     return sizeof(*this);

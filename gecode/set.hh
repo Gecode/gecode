@@ -124,7 +124,7 @@ namespace Gecode {
   private:
     using VarBase<Set::SetVarImp>::varimp;
     /// Initialize variable with empty greatest lower and full least upper bound
-    void init(Space* home);
+    void init(Space& home);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -133,7 +133,7 @@ namespace Gecode {
      * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      */
-    void init(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
+    void init(Space& home,int glbMin,int glbMax,int lubMin,int lubMax,
               unsigned int cardMin = 0,
               unsigned int cardMax = Set::Limits::card);
     /**
@@ -144,7 +144,7 @@ namespace Gecode {
      * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      */
-    void init(Space* home,const IntSet& glbD,int lubMin,int lubMax,
+    void init(Space& home,const IntSet& glbD,int lubMin,int lubMax,
               unsigned int cardMin = 0,
               unsigned int cardMax = Set::Limits::card);
     /**
@@ -155,7 +155,7 @@ namespace Gecode {
      * least upper bound \a lubD, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      */
-    void init(Space* home,int glbMin,int glbMax,const IntSet& lubD,
+    void init(Space& home,int glbMin,int glbMax,const IntSet& lubD,
               unsigned int cardMin = 0,
               unsigned int cardMax = Set::Limits::card);
     /**
@@ -166,7 +166,7 @@ namespace Gecode {
      * least upper bound \a lubD, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      */
-    void init(Space* home,const IntSet& glbD,const IntSet& lubD,
+    void init(Space& home,const IntSet& glbD,const IntSet& lubD,
               unsigned int cardMin = 0,
               unsigned int cardMax = Set::Limits::card);
   public:
@@ -182,7 +182,7 @@ namespace Gecode {
     SetVar(const Reflection::Var& x0);
 
     /// Initialize variable with empty greatest lower and full least upper bound
-    GECODE_SET_EXPORT SetVar(Space* home);
+    GECODE_SET_EXPORT SetVar(Space& home);
 
     /**
      * \brief Initialize variable with given bounds and cardinality
@@ -202,7 +202,7 @@ namespace Gecode {
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
     GECODE_SET_EXPORT 
-    SetVar(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
+    SetVar(Space& home,int glbMin,int glbMax,int lubMin,int lubMax,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
 
@@ -224,7 +224,7 @@ namespace Gecode {
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
     GECODE_SET_EXPORT 
-    SetVar(Space* home,const IntSet& glbD,int lubMin,int lubMax,
+    SetVar(Space& home,const IntSet& glbD,int lubMin,int lubMax,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
 
@@ -246,7 +246,7 @@ namespace Gecode {
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
     GECODE_SET_EXPORT 
-    SetVar(Space* home,int glbMin,int glbMax,const IntSet& lubD,
+    SetVar(Space& home,int glbMin,int glbMax,const IntSet& lubD,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
 
@@ -268,7 +268,7 @@ namespace Gecode {
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
     GECODE_SET_EXPORT 
-    SetVar(Space* home,const IntSet& glbD,const IntSet& lubD,
+    SetVar(Space& home,const IntSet& glbD,const IntSet& lubD,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
     //@}
@@ -307,7 +307,7 @@ namespace Gecode {
     /// \name Cloning
     //@{
     /// Update this variable to be a clone of variable \a x
-    void update(Space* home, bool, SetVar& x);
+    void update(Space& home, bool, SetVar& x);
     //@}
   };
 
@@ -547,7 +547,7 @@ namespace Gecode {
     SetVarArray(void);
     SetVarArray(const SetVarArray&);
     /// Create an uninitialized array of size \a n
-    GECODE_SET_EXPORT SetVarArray(Space* home,int n);
+    GECODE_SET_EXPORT SetVarArray(Space& home,int n);
     /**
      * \brief Create an array of size \a n.
      *
@@ -555,7 +555,7 @@ namespace Gecode {
      * given by the arguments.
      */
     GECODE_SET_EXPORT 
-    SetVarArray(Space* home,int n,int glbMin,int glbMax,int lubMin,int lubMax,
+    SetVarArray(Space& home,int n,int glbMin,int glbMax,int lubMin,int lubMax,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
     /**
@@ -565,7 +565,7 @@ namespace Gecode {
      * given by the arguments.
      */
     GECODE_SET_EXPORT 
-    SetVarArray(Space* home,int n,const IntSet& glb, int lubMin, int lubMax,
+    SetVarArray(Space& home,int n,const IntSet& glb, int lubMin, int lubMax,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
     /**
@@ -575,7 +575,7 @@ namespace Gecode {
      * given by the arguments.
      */
     GECODE_SET_EXPORT 
-    SetVarArray(Space* home,int n,int glbMin,int glbMax,const IntSet& lub,
+    SetVarArray(Space& home,int n,int glbMin,int glbMax,const IntSet& lub,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
     /**
@@ -585,7 +585,7 @@ namespace Gecode {
      * given by the arguments.
      */
     GECODE_SET_EXPORT 
-    SetVarArray(Space* home,int n,
+    SetVarArray(Space& home,int n,
                 const IntSet& glb,const IntSet& lub,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
@@ -631,31 +631,31 @@ namespace Gecode {
 
   /// Propagates \f$ x \sim_r \{i\}\f$
   GECODE_SET_EXPORT void
-  dom(Space* home, SetVar x, SetRelType r, int i);
+  dom(Space& home, SetVar x, SetRelType r, int i);
 
   /// Propagates \f$ x \sim_r \{i,\dots,j\}\f$
   GECODE_SET_EXPORT void
-  dom(Space* home, SetVar x, SetRelType r, int i, int j);
+  dom(Space& home, SetVar x, SetRelType r, int i, int j);
 
   /// Propagates \f$ x \sim_r s\f$
   GECODE_SET_EXPORT void
-  dom(Space* home, SetVar x, SetRelType r, const IntSet& s);
+  dom(Space& home, SetVar x, SetRelType r, const IntSet& s);
 
   /// Post propagator for \f$ (x \sim_r \{i\}) \Leftrightarrow b \f$
   GECODE_SET_EXPORT void
-  dom(Space* home, SetVar x, SetRelType r, int i, BoolVar b);
+  dom(Space& home, SetVar x, SetRelType r, int i, BoolVar b);
 
   /// Post propagator for \f$ (x \sim_r \{i,\dots,j\}) \Leftrightarrow b \f$
   GECODE_SET_EXPORT void
-  dom(Space* home, SetVar x, SetRelType r, int i, int j, BoolVar b);
+  dom(Space& home, SetVar x, SetRelType r, int i, int j, BoolVar b);
 
   /// Post propagator for \f$ (x \sim_r s) \Leftrightarrow b \f$
   GECODE_SET_EXPORT void
-  dom(Space* home, SetVar x, SetRelType r, const IntSet& s, BoolVar b);
+  dom(Space& home, SetVar x, SetRelType r, const IntSet& s, BoolVar b);
 
   /// Propagates \f$ i \leq |s| \leq j \f$
   GECODE_SET_EXPORT void
-  cardinality(Space* home, SetVar x, unsigned int i, unsigned int j);
+  cardinality(Space& home, SetVar x, unsigned int i, unsigned int j);
 
   //@}
 
@@ -670,35 +670,35 @@ namespace Gecode {
 
   /// Post propagator for \f$ x \sim_r y\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar x, SetRelType r, SetVar y);
+  rel(Space& home, SetVar x, SetRelType r, SetVar y);
 
   /// Post propagator for \f$ (x \sim_r y) \Leftrightarrow b \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar x, SetRelType r, SetVar y, BoolVar b);
+  rel(Space& home, SetVar x, SetRelType r, SetVar y, BoolVar b);
 
   /// Post propagator for \f$ s \sim_r \{x\}\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar s, SetRelType r, IntVar x);
+  rel(Space& home, SetVar s, SetRelType r, IntVar x);
 
   /// Post propagator for \f$ \{x\} \sim_r s\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, IntVar x, SetRelType r, SetVar s);
+  rel(Space& home, IntVar x, SetRelType r, SetVar s);
 
   /// Post propagator for \f$ (s \sim_r \{x\}) \Leftrightarrow b \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar s, SetRelType r, IntVar x, BoolVar b);
+  rel(Space& home, SetVar s, SetRelType r, IntVar x, BoolVar b);
 
   /// Post propagator for \f$ (\{x\} \sim_r s) \Leftrightarrow b \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, IntVar x, SetRelType r, SetVar s, BoolVar b);
+  rel(Space& home, IntVar x, SetRelType r, SetVar s, BoolVar b);
 
   /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ i \sim_r x\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar s, IntRelType r, IntVar x);
+  rel(Space& home, SetVar s, IntRelType r, IntVar x);
 
   /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ x \sim_r i\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, IntVar x, IntRelType r, SetVar s);
+  rel(Space& home, IntVar x, IntRelType r, SetVar s);
 
   //@}
 
@@ -712,47 +712,47 @@ namespace Gecode {
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z);
+  rel(Space& home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z);
 
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetOpType op, const SetVarArgs& x, SetVar y);
+  rel(Space& home, SetOpType op, const SetVarArgs& x, SetVar y);
 
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x \diamond_{\mathit{op}} z\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y);
+  rel(Space& home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y);
 
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x \diamond_{\mathit{op}} z\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y);
+  rel(Space& home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y);
 
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x\f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetOpType op, const IntVarArgs& x, SetVar y);
+  rel(Space& home, SetOpType op, const IntVarArgs& x, SetVar y);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, const IntSet& x, SetOpType op, SetVar y,
+  rel(Space& home, const IntSet& x, SetOpType op, SetVar y,
       SetRelType r, SetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar x, SetOpType op, const IntSet& y,
+  rel(Space& home, SetVar x, SetOpType op, const IntSet& y,
       SetRelType r, SetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar x, SetOpType op, SetVar y,
+  rel(Space& home, SetVar x, SetOpType op, SetVar y,
       SetRelType r, const IntSet& z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
+  rel(Space& home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
       const IntSet& z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
+  rel(Space& home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
       const IntSet& z);
 
   //@}
@@ -767,11 +767,11 @@ namespace Gecode {
 
   /// Post propagator that propagates that \a x is convex 
   GECODE_SET_EXPORT void
-  convex(Space* home, SetVar x);
+  convex(Space& home, SetVar x);
 
   /// Post propagator that propagates that \a y is the convex hull of \a x
   GECODE_SET_EXPORT void
-  convexHull(Space* home, SetVar x, SetVar y);
+  convexHull(Space& home, SetVar x, SetVar y);
 
   //@}
 
@@ -784,11 +784,11 @@ namespace Gecode {
 
   /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
   GECODE_SET_EXPORT void
-  sequence(Space* home, const SetVarArgs& x);
+  sequence(Space& home, const SetVarArgs& x);
 
   /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
   GECODE_SET_EXPORT void
-  sequentialUnion(Space* home, const SetVarArgs& y, SetVar x);
+  sequentialUnion(Space& home, const SetVarArgs& y, SetVar x);
 
   //@}
 
@@ -802,7 +802,7 @@ namespace Gecode {
 
   /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
   GECODE_SET_EXPORT void
-  atmostOne(Space* home, const SetVarArgs& x, unsigned int c);
+  atmostOne(Space& home, const SetVarArgs& x, unsigned int c);
 
   //@}
 
@@ -817,28 +817,28 @@ namespace Gecode {
   /** \brief Post propagator that propagates that \a x is the
    *  minimal element of \a s, and that \a s is not empty */
   GECODE_SET_EXPORT void
-  min(Space* home, SetVar s, IntVar x);
+  min(Space& home, SetVar s, IntVar x);
   
   /** \brief Post propagator that propagates that \a x is the
    *  maximal element of \a s, and that \a s is not empty */
   GECODE_SET_EXPORT void
-  max(Space* home, SetVar s, IntVar x);
+  max(Space& home, SetVar s, IntVar x);
   
   /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
   GECODE_SET_EXPORT void
-  match(Space* home, SetVar s, const IntVarArgs& x);
+  match(Space& home, SetVar s, const IntVarArgs& x);
   
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
-  channel(Space* home, const IntVarArgs& x,const SetVarArgs& y);
+  channel(Space& home, const IntVarArgs& x,const SetVarArgs& y);
 
   /// Post propagator for \f$x_i=1 \Leftrightarrow i\in y\f$
   GECODE_SET_EXPORT void
-  channel(Space* home, const BoolVarArgs& x, SetVar y);
+  channel(Space& home, const BoolVarArgs& x, SetVar y);
   
   /// Post propagator for \f$ |s|=x \f$ 
   GECODE_SET_EXPORT void
-  cardinality(Space* home, SetVar s, IntVar x);
+  cardinality(Space& home, SetVar s, IntVar x);
 
 
   /**
@@ -852,7 +852,7 @@ namespace Gecode {
    * elements.
    */
   GECODE_SET_EXPORT void
-  weights(Space* home, const IntArgs& elements, const IntArgs& weights,
+  weights(Space& home, const IntArgs& elements, const IntArgs& weights,
           SetVar x, IntVar y);
 
   //@}
@@ -879,7 +879,7 @@ namespace Gecode {
    * The indices for \a s start at 0.
    */
   GECODE_SET_EXPORT void
-  elementsUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z);
+  elementsUnion(Space& home, const SetVarArgs& x, SetVar y, SetVar z);
 
   /**
    * \brief Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
@@ -889,7 +889,7 @@ namespace Gecode {
    * The indices for \a s start at 0.
    */
   GECODE_SET_EXPORT void
-  elementsUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z);
+  elementsUnion(Space& home, const IntSetArgs& s, SetVar y, SetVar z);
 
   /** 
    * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \f$ \mathcal{U} \f$ as universe
@@ -899,7 +899,7 @@ namespace Gecode {
    * The indices for \a s start at 0.
    */
   GECODE_SET_EXPORT void
-  elementsInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z);
+  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z);
 
   /** 
    * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
@@ -909,12 +909,12 @@ namespace Gecode {
    * The indices for \a s start at 0.
    */
   GECODE_SET_EXPORT void
-  elementsInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
+  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z,
                const IntSet& u);
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_SET_EXPORT void
-  elementsDisjoint(Space* home, const SetVarArgs& x, SetVar y);
+  elementsDisjoint(Space& home, const SetVarArgs& x, SetVar y);
 
   /**
    * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
@@ -922,7 +922,7 @@ namespace Gecode {
    * The indices for \a s start at 0.
    */
   GECODE_SET_EXPORT void
-  element(Space* home, const SetVarArgs& x, IntVar y, SetVar z);
+  element(Space& home, const SetVarArgs& x, IntVar y, SetVar z);
 
   /**
    * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y] \f$ 
@@ -930,7 +930,7 @@ namespace Gecode {
    * The indices for \a s start at 0.
    */
   GECODE_SET_EXPORT void
-  element(Space* home, const IntSetArgs& s, IntVar y, SetVar z);
+  element(Space& home, const IntSetArgs& s, IntVar y, SetVar z);
 
   //@}
 
@@ -964,13 +964,13 @@ namespace Gecode {
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_SET_EXPORT void
-  branch(Space* home, const SetVarArgs& x,
+  branch(Space& home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const VarBranchOptions& o_vars = VarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_SET_EXPORT void
-  branch(Space* home, const SetVarArgs& x, 
+  branch(Space& home, const SetVarArgs& x, 
          const TieBreakVarBranch<SetVarBranch>& vars, SetValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);

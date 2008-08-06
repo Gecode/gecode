@@ -40,7 +40,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   BinaryCpltSetPropagator<View0,View1>
-  ::BinaryCpltSetPropagator(Space* home, View0& x0, View1& y0, bdd& d0)
+  ::BinaryCpltSetPropagator(Space& home, View0& x0, View1& y0, bdd& d0)
     : Propagator(home), x(x0), y(y0), d(d0) {
     force(home);
     x.subscribe(home, this, PC_CPLTSET_DOM);
@@ -50,7 +50,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   BinaryCpltSetPropagator<View0,View1>
-  ::BinaryCpltSetPropagator(Space* home, bool share,
+  ::BinaryCpltSetPropagator(Space& home, bool share,
                             BinaryCpltSetPropagator& p)
     : Propagator(home,share,p) {
     d = p.d;
@@ -77,16 +77,16 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   Reflection::ActorSpec
-  BinaryCpltSetPropagator<View0,View1>::spec(const Space*,
+  BinaryCpltSetPropagator<View0,View1>::spec(const Space&,
                                              Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   } 
   
   template <class View0, class View1>
   size_t
-  BinaryCpltSetPropagator<View0,View1>::dispose(Space* home) {
+  BinaryCpltSetPropagator<View0,View1>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x.cancel(home, this, PC_CPLTSET_DOM);
       y.cancel(home, this, PC_CPLTSET_DOM);
     }
@@ -97,7 +97,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline ExecStatus
-  BinaryCpltSetPropagator<View0,View1>::post(Space* home,
+  BinaryCpltSetPropagator<View0,View1>::post(Space& home,
                                              View0& x0, View1& y0, bdd& d0) {
     (void) new (home) BinaryCpltSetPropagator(home, x0, y0, d0);
     return ES_OK;
@@ -105,13 +105,13 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline Actor*
-  BinaryCpltSetPropagator<View0,View1>::copy(Space* home, bool share) {
+  BinaryCpltSetPropagator<View0,View1>::copy(Space& home, bool share) {
     return new (home) BinaryCpltSetPropagator(home, share, *this);
   }
 
   template <class View0, class View1>
   forceinline ExecStatus 
-  BinaryCpltSetPropagator<View0,View1>::propagate(Space* home, ModEventDelta) {
+  BinaryCpltSetPropagator<View0,View1>::propagate(Space& home, ModEventDelta) {
     bool assigned = true;
     {
       bdd dom = y.dom();
@@ -143,26 +143,26 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline
-  BinRelDisj<View0,View1>::BinRelDisj(Space* home, View0& x0, View1& y0, 
+  BinRelDisj<View0,View1>::BinRelDisj(Space& home, View0& x0, View1& y0, 
                                       bdd& d0)
     : BinaryCpltSetPropagator<View0,View1>(home, x0, y0, d0) { }
 
   template <class View0, class View1>
   forceinline
-  BinRelDisj<View0,View1>::BinRelDisj(Space* home, bool share, BinRelDisj& p)
+  BinRelDisj<View0,View1>::BinRelDisj(Space& home, bool share, BinRelDisj& p)
     : BinaryCpltSetPropagator<View0,View1>(home,share,p) { }
   
 
   template <class View0, class View1>
   size_t
-  BinRelDisj<View0,View1>::dispose(Space* home) {
+  BinRelDisj<View0,View1>::dispose(Space& home) {
     BinaryCpltSetPropagator<View0,View1>::dispose(home);
     return sizeof(*this);
   }
 
   template <class View0, class View1>
   forceinline ExecStatus
-  BinRelDisj<View0,View1>::post(Space* home, View0& x0, View1& y0, 
+  BinRelDisj<View0,View1>::post(Space& home, View0& x0, View1& y0, 
                                 bdd& d0) {
     (void) new (home) BinRelDisj(home, x0, y0, d0);
     return ES_OK;
@@ -170,13 +170,13 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline Actor*
-  BinRelDisj<View0,View1>::copy(Space* home, bool share) {
+  BinRelDisj<View0,View1>::copy(Space& home, bool share) {
     return new (home) BinRelDisj(home, share, *this);
   }
 
   template <class View0, class View1>
   forceinline ExecStatus 
-  BinRelDisj<View0,View1>::propagate(Space* home, ModEventDelta) {
+  BinRelDisj<View0,View1>::propagate(Space& home, ModEventDelta) {
     bool assigned = true;
 
     if (x.assigned()) {

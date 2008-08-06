@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   Actor*
-  Seq::copy(Space* home, bool share) {
+  Seq::copy(Space& home, bool share) {
     return new (home) Seq(home,share,*this);
   }
 
@@ -61,12 +61,12 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   Reflection::ActorSpec
-  Seq::spec(const Space* home, Reflection::VarMap& m) const {
+  Seq::spec(const Space& home, Reflection::VarMap& m) const {
     return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, ati());
   }
 
   void
-  Seq::post(Space* home, Reflection::VarMap& vars,
+  Seq::post(Space& home, Reflection::VarMap& vars,
              const Reflection::ActorSpec& spec) {
     spec.checkArity(1);
     ViewArray<SetView> x0(home, vars, spec[0]);
@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   ExecStatus
-  Seq::propagate(Space* home, ModEventDelta) {
+  Seq::propagate(Space& home, ModEventDelta) {
     bool modified = false;
     bool assigned;
     do {

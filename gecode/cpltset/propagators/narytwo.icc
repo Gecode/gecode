@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   ExecStatus
-  NaryTwoCpltSetPropagator<View0, View1>::divide_conquer(Space* home, bdd& p, 
+  NaryTwoCpltSetPropagator<View0, View1>::divide_conquer(Space& home, bdd& p, 
                                       int l, int r, int ypos, int zpos) {
     if (l == r) {
       ModEvent me = ME_CPLTSET_NONE;
@@ -96,7 +96,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   NaryTwoCpltSetPropagator<View0, View1>
-  ::NaryTwoCpltSetPropagator(Space* home, ViewArray<View0>& x0,
+  ::NaryTwoCpltSetPropagator(Space& home, ViewArray<View0>& x0,
                              View1& y0, View1& z0, bdd&)
   : Propagator(home), x(x0), y(y0), z(z0) {
     Propagator::force(home);
@@ -108,7 +108,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   NaryTwoCpltSetPropagator<View0, View1>
-  ::NaryTwoCpltSetPropagator(Space* home, bool share, 
+  ::NaryTwoCpltSetPropagator(Space& home, bool share, 
                              NaryTwoCpltSetPropagator& p)
     : Propagator(home, share, p), d(p.d) {
     x.update(home,share,p.x);
@@ -118,7 +118,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline ExecStatus
-  NaryTwoCpltSetPropagator<View0, View1>::post(Space* home, ViewArray<View0>& x, 
+  NaryTwoCpltSetPropagator<View0, View1>::post(Space& home, ViewArray<View0>& x, 
                             View1& y, View1& z, bdd& d0) {
     (void) new (home) NaryTwoCpltSetPropagator(home, x, y, z, d0);
     return ES_OK;
@@ -133,20 +133,20 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   Reflection::ActorSpec
-  NaryTwoCpltSetPropagator<View0,View1>::spec(const Space*,
+  NaryTwoCpltSetPropagator<View0,View1>::spec(const Space&,
                                               Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
   } 
 
   template <class View0, class View1>
   forceinline Actor*
-  NaryTwoCpltSetPropagator<View0, View1>::copy(Space* home, bool share) {
+  NaryTwoCpltSetPropagator<View0, View1>::copy(Space& home, bool share) {
     return new (home) NaryTwoCpltSetPropagator(home, share, *this);
   }
   
   template <class View0, class View1>
   forceinline ExecStatus 
-  NaryTwoCpltSetPropagator<View0, View1>::propagate(Space* home, ModEventDelta) {
+  NaryTwoCpltSetPropagator<View0, View1>::propagate(Space& home, ModEventDelta) {
     bool assigned = true;
     int n = x.size();
     ExecStatus es = ES_OK;
@@ -174,9 +174,9 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   size_t
-  NaryTwoCpltSetPropagator<View0, View1>::dispose(Space* home) {
+  NaryTwoCpltSetPropagator<View0, View1>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x.cancel(home, this, PC_CPLTSET_DOM);
       y.cancel(home, this, PC_CPLTSET_DOM);
       z.cancel(home, this, PC_CPLTSET_DOM);

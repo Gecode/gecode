@@ -167,9 +167,9 @@ namespace Test {
       /// Whether to ignore assignment for reification
       virtual bool ignore(const Assignment&) const;
       /// Post constraint
-      virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
       /// Post reified constraint
-      virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
                         Gecode::BoolVar b);
       /// Perform test
       virtual bool run(void);

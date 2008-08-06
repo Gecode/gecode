@@ -91,7 +91,7 @@ namespace Gecode {
   IntVarArray::IntVarArray(void) {}
 
   forceinline
-  IntVarArray::IntVarArray(Space* home, int n)
+  IntVarArray::IntVarArray(Space& home, int n)
     : VarArray<IntVar>(home,n) {}
 
   forceinline
@@ -103,7 +103,7 @@ namespace Gecode {
   BoolVarArray::BoolVarArray(void) {}
 
   forceinline
-  BoolVarArray::BoolVarArray(Space* home, int n)
+  BoolVarArray::BoolVarArray(Space& home, int n)
     : VarArray<BoolVar>(home,n) {}
 
   forceinline

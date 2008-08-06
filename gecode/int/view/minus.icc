@@ -53,7 +53,7 @@ namespace Gecode {
       view = x;
     }
     forceinline
-    MinusView::MinusView(Space* home, const Reflection::VarMap& vars,
+    MinusView::MinusView(Space& home, const Reflection::VarMap& vars,
                          Reflection::Arg* arg)
     : DerivedViewBase<IntView>(IntView(home, vars, arg)) {}
 
@@ -125,51 +125,51 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    MinusView::lq(Space* home, int n) {
+    MinusView::lq(Space& home, int n) {
       return view.gq(home,-n);
     }
     forceinline ModEvent
-    MinusView::lq(Space* home, double n) {
+    MinusView::lq(Space& home, double n) {
       return view.gq(home,-n);
     }
     forceinline ModEvent
-    MinusView::le(Space* home, int n) {
+    MinusView::le(Space& home, int n) {
       return view.gr(home,-n);
     }
     forceinline ModEvent
-    MinusView::le(Space* home, double n) {
+    MinusView::le(Space& home, double n) {
       return view.gr(home,-n);
     }
     forceinline ModEvent
-    MinusView::gq(Space* home, int n) {
+    MinusView::gq(Space& home, int n) {
       return view.lq(home,-n);
     }
     forceinline ModEvent
-    MinusView::gq(Space* home, double n) {
+    MinusView::gq(Space& home, double n) {
       return view.lq(home,-n);
     }
     forceinline ModEvent
-    MinusView::gr(Space* home, int n) {
+    MinusView::gr(Space& home, int n) {
       return view.le(home,-n);
     }
     forceinline ModEvent
-    MinusView::gr(Space* home, double n) {
+    MinusView::gr(Space& home, double n) {
       return view.le(home,-n);
     }
     forceinline ModEvent
-    MinusView::nq(Space* home, int n) {
+    MinusView::nq(Space& home, int n) {
       return view.nq(home,-n);
     }
     forceinline ModEvent
-    MinusView::nq(Space* home, double n) {
+    MinusView::nq(Space& home, double n) {
       return view.nq(home,-n);
     }
     forceinline ModEvent
-    MinusView::eq(Space* home, int n) {
+    MinusView::eq(Space& home, int n) {
       return view.eq(home,-n);
     }
     forceinline ModEvent
-    MinusView::eq(Space* home, double n) {
+    MinusView::eq(Space& home, double n) {
       return view.eq(home,-n);
     }
 
@@ -180,37 +180,37 @@ namespace Gecode {
      */
     template <class I>
     forceinline ModEvent
-    MinusView::narrow_r(Space* home, I& i, bool) {
+    MinusView::narrow_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i); 
       return view.narrow_r(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
-    MinusView::inter_r(Space* home, I& i, bool) {
+    MinusView::inter_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i); 
       return view.inter_r(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
-    MinusView::minus_r(Space* home, I& i, bool) {
+    MinusView::minus_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i); 
       return view.minus_r(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
-    MinusView::narrow_v(Space* home, I& i, bool) {
+    MinusView::narrow_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i); 
       return view.narrow_v(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
-    MinusView::inter_v(Space* home, I& i, bool) {
+    MinusView::inter_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i); 
       return view.inter_v(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
-    MinusView::minus_v(Space* home, I& i, bool) {
+    MinusView::minus_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i); 
       return view.minus_v(home,mi,false);
     }
@@ -221,7 +221,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    MinusView::schedule(Space* home, Propagator* p, ModEvent me) {
+    MinusView::schedule(Space& home, Propagator* p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
@@ -239,20 +239,20 @@ namespace Gecode {
      *
      */
     forceinline void
-    MinusView::subscribe(Space* home, Propagator* p, PropCond pc, 
+    MinusView::subscribe(Space& home, Propagator* p, PropCond pc, 
                          bool process) {
       view.subscribe(home,p,pc,process);
     }
     forceinline void
-    MinusView::cancel(Space* home, Propagator* p, PropCond pc) {
+    MinusView::cancel(Space& home, Propagator* p, PropCond pc) {
       view.cancel(home,p,pc);
     }
     forceinline void
-    MinusView::subscribe(Space* home, Advisor& a) {
+    MinusView::subscribe(Space& home, Advisor& a) {
       view.subscribe(home,a);
     }
     forceinline void
-    MinusView::cancel(Space* home, Advisor& a) {
+    MinusView::cancel(Space& home, Advisor& a) {
       view.cancel(home,a);
     }
 
@@ -286,7 +286,7 @@ namespace Gecode {
      */
 
     forceinline void
-    MinusView::update(Space* home, bool share, MinusView& x) {
+    MinusView::update(Space& home, bool share, MinusView& x) {
       view.update(home,share,x.view);
     }
 
@@ -295,7 +295,7 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    MinusView::spec(const Space* home, Reflection::VarMap& m) const {
+    MinusView::spec(const Space& home, Reflection::VarMap& m) const {
       return view.spec(home, m);
     }
     inline Support::Symbol

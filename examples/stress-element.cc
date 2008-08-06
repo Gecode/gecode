@@ -60,26 +60,26 @@ protected:
 public:
   /// The actual problem
   StressElement(const Options&)
-    : x(this,n,0,n-1) {
+    : x(*this,n,0,n-1) {
 
     IntVarArgs s(n);
     for (int i=0; i<n; i++)
-      s[i].init(this,0,m);
+      s[i].init(*this,0,m);
 
-    rel(this, s, IRT_LQ);
+    rel(*this, s, IRT_LQ);
 
     IntArgs e(n,p);
 
     for (int i=0; i<n; i++)
-      element(this, e, x[i], s[i]);
+      element(*this, e, x[i], s[i]);
 
-    distinct(this, x);
-    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    distinct(*this, x);
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s
   StressElement(bool share, StressElement& s) : Example(share,s) {
-    x.update(this, share, s.x);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning

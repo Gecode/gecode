@@ -203,10 +203,10 @@ namespace Gecode {
     }
 
     template <class View>
-    void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
+    void partition_post(Space& home, ViewArray<View>& x, bool withlex, 
                         CpltSetRelType lex, bool withcard, int d) {
 
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       int n = x.size();
 
@@ -229,9 +229,9 @@ namespace Gecode {
     }
 
     template <class View>
-    void partition_post(Space* home, ViewArray<View>& x, View& y, 
+    void partition_post(Space& home, ViewArray<View>& x, View& y, 
                         bool, SetRelType, bool, int) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       int n = x.size();
 
@@ -248,10 +248,10 @@ namespace Gecode {
     }
 
     template <class View0, class View1>
-    void partition_post(Space* home, ViewArray<View0>& x, View1& y, 
+    void partition_post(Space& home, ViewArray<View0>& x, View1& y, 
                         bool withlex, SetRelType lex, 
                         bool withcard, int d) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       bdd d0 = bdd_true();     
       build_partition(x, y, d0);
@@ -261,9 +261,9 @@ namespace Gecode {
     }
 
     template <class View>
-    void partition_post(Space* home, ViewArray<View>& x, bool,
+    void partition_post(Space& home, ViewArray<View>& x, bool,
                         SetRelType, bool withcard, int d) {
-      if (home->failed()) return;
+      if (home.failed()) return;
 
       int n = x.size();
 
@@ -335,7 +335,7 @@ namespace Gecode {
 
     template <class Rel>
     forceinline void 
-    partition_con(Space* home, const CpltSetVarArgs& x, bool withlex, Rel lex, 
+    partition_con(Space& home, const CpltSetVarArgs& x, bool withlex, Rel lex, 
                   bool withcard, int d) {
       ViewArray<CpltSetView> bv(home, x);
       partition_post(home, bv, withlex, lex, withcard, d);
@@ -344,7 +344,7 @@ namespace Gecode {
     // For testing purposes only supported for bddviews
     template <class Rel>
     forceinline void 
-    partition_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, 
+    partition_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& y, 
                   bool withlex, Rel lex, bool withcard, int d) {
       ViewArray<CpltSetView> bv(home, x);
       CpltSetView yv(y);
@@ -355,26 +355,26 @@ namespace Gecode {
 
   using namespace CpltSet::Partition;
 
-  void partition(Space* home, const CpltSetVarArgs& x) {
+  void partition(Space& home, const CpltSetVarArgs& x) {
     partition_con(home, x, false, SRT_EQ, false, -1);
   }
 
-  void partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y) {
+  void partition(Space& home, const CpltSetVarArgs& x, const CpltSetVar& y) {
     partition_con(home, x, y, false, SRT_EQ, false, -1);
   }
 
-  void partitionLex(Space* home, const CpltSetVarArgs& x,
+  void partitionLex(Space& home, const CpltSetVarArgs& x,
                     CpltSetRelType lex) {
     partition_con(home, x, true, lex, false, -1);
   }
 
-  void partitionLexCard(Space* home, const CpltSetVarArgs& x,
+  void partitionLexCard(Space& home, const CpltSetVarArgs& x,
                         CpltSetRelType lex, unsigned int c) {
     Set::Limits::check(c, "CpltSet::partitionLexCard");
     partition_con(home, x, true, lex, true, c);
   }
 
-  void partitionCard(Space* home, const CpltSetVarArgs& x, unsigned int c) {
+  void partitionCard(Space& home, const CpltSetVarArgs& x, unsigned int c) {
     Set::Limits::check(c, "CpltSet::partitionCard");
     partition_con(home, x, false, SRT_EQ, true, c);
   }

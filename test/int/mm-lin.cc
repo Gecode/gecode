@@ -110,7 +110,7 @@ namespace Test { namespace Int {
          return eval(lis, reg) == x[3];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::MiniModel::LinExpr<IntVar> reg[3] = {x[0],x[1],x[2]};
          rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
@@ -139,7 +139,7 @@ namespace Test { namespace Int {
          return cmp(eval(l_lis,l_reg),irt,eval(r_lis,r_reg));
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::MiniModel::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
          Gecode::MiniModel::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
@@ -166,7 +166,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post constraint on \a x for \a bb
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x,
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          using namespace Gecode;
          Gecode::MiniModel::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
@@ -221,7 +221,7 @@ namespace Test { namespace Int {
          return eval(lis, reg) == x[3];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::MiniModel::LinExpr<BoolVar> reg[3] = {
            channel(home,x[0]),channel(home,x[1]),channel(home,x[2])
@@ -252,7 +252,7 @@ namespace Test { namespace Int {
          return cmp(eval(l_lis,l_reg),irt,eval(r_lis,r_reg));
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs y(3);
          y[0] = channel(home,x[0]); y[1] = channel(home,x[1]); 
@@ -282,7 +282,7 @@ namespace Test { namespace Int {
          }
        }
        /// Post constraint on \a x for \a bb
-       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x,
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          using namespace Gecode;
          BoolVarArgs y(3);

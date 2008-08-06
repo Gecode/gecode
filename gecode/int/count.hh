@@ -62,16 +62,16 @@ namespace Gecode { namespace Int { namespace Count {
   RelTest holds(VX x, ConstIntView y);
   /// Post that all views in \a x are equal to \a y
   template <class VX>
-  bool post_true(Space* home, ViewArray<VX>& x, VX y);
+  bool post_true(Space& home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are equal to \a y
   template <class VX>
-  bool post_true(Space* home, ViewArray<VX>& x, ConstIntView y);
+  bool post_true(Space& home, ViewArray<VX>& x, ConstIntView y);
   /// Post that all views in \a x are not equal to \a y
   template <class VX>
-  bool post_false(Space* home, ViewArray<VX>& x, VX y);
+  bool post_false(Space& home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are not equal to \a y
   template <class VX>
-  bool post_false(Space* home, ViewArray<VX>& x, ConstIntView y);
+  bool post_false(Space& home, ViewArray<VX>& x, ConstIntView y);
   //@}
 
 }}}
@@ -97,17 +97,17 @@ namespace Gecode { namespace Int { namespace Count {
     /// Number of views which are equal and have been eliminated
     int c;
     /// Constructor for cloning \a p
-    BaseInt(Space* home, bool share, BaseInt& p);
+    BaseInt(Space& home, bool share, BaseInt& p);
     /// Constructor for creation
-    BaseInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
+    BaseInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
     /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
   /**
@@ -127,21 +127,21 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseInt<VX,VY>::y;
     using BaseInt<VX,VY>::c;
     /// Constructor for cloning \a p
-    EqInt(Space* home, bool share, EqInt& p);
+    EqInt(Space& home, bool share, EqInt& p);
     /// Constructor for creation
-    EqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
+    EqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
@@ -164,24 +164,24 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseInt<VX,VY>::y;
     using BaseInt<VX,VY>::c;
     /// Constructor for cloning \a p
-    GqInt(Space* home, bool share, GqInt& p);
+    GqInt(Space& home, bool share, GqInt& p);
     /// Constructor for creation
-    GqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
+    GqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
   };
 
   /**
@@ -201,24 +201,24 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseInt<VX,VY>::y;
     using BaseInt<VX,VY>::c;
     /// Constructor for cloning \a p
-    LqInt(Space* home, bool share, LqInt& p);
+    LqInt(Space& home, bool share, LqInt& p);
     /// Constructor for creation
-    LqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
+    LqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
   };
 
   /**
@@ -242,30 +242,30 @@ namespace Gecode { namespace Int { namespace Count {
     /// Righthandside
     int c;
     /// Update subscription
-    bool resubscribe(Space* home, VX& z);
+    bool resubscribe(Space& home, VX& z);
     /// Constructor for posting
-    NqInt(Space* home,  ViewArray<VX>& x, VY y, int c);
+    NqInt(Space& home,  ViewArray<VX>& x, VY y, int c);
     /// Constructor for cloning \a p
-    NqInt(Space* home, bool share, NqInt& p);
+    NqInt(Space& home, bool share, NqInt& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq c\f$
-    static  ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+    static  ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
   };
 
 }}}
@@ -291,20 +291,20 @@ namespace Gecode { namespace Int { namespace Count {
     /// Number of views which are equal and have been eliminated
     int   c;
     /// Constructor for cloning \a p
-    BaseView(Space* home, bool shr, BaseView& p);
+    BaseView(Space& home, bool shr, BaseView& p);
     /// Constructor for creation
-    BaseView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    BaseView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space* home, Reflection::VarMap& m,
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
     /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space& home);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(ModEventDelta med) const;
   protected:
     /// Count how many views are equal now
-    void count(Space* home);
+    void count(Space& home);
     /// How many views are at least equal
     int atleast(void) const;
     /// How many views are at most equal
@@ -334,24 +334,24 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    EqView(Space* home, bool shr, EqView& p);
+    EqView(Space& home, bool shr, EqView& p);
   public:
     /// Constructor for creation
-    EqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    EqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool shr);
+    virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
   /**
@@ -375,24 +375,24 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    NqView(Space* home, bool shr, NqView& p);
+    NqView(Space& home, bool shr, NqView& p);
   public:
     /// Constructor for creation
-    NqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    NqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool shr);
+    virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq z+c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
   /**
@@ -416,24 +416,24 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    LqView(Space* home, bool shr, LqView& p);
+    LqView(Space& home, bool shr, LqView& p);
   public:
     /// Constructor for creation
-    LqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    LqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool shr);
+    virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z+c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
   /**
@@ -457,24 +457,24 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    GqView(Space* home, bool shr, GqView& p);
+    GqView(Space& home, bool shr, GqView& p);
   public:
     /// Constructor for creation
-    GqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    GqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
+    virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space* home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, ModEventDelta med);
     /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space* home,
+    virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
     /// Post propagator according to specification
-    static void post(Space* home, Reflection::VarMap& vars,
+    static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z+c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
 }}}

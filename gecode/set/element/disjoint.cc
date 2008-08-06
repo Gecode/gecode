@@ -54,13 +54,13 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   Reflection::ActorSpec
-  ElementDisjoint::spec(const Space* home, Reflection::VarMap& m) const {
+  ElementDisjoint::spec(const Space& home, Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << iv.spec(home, m) << x1.spec(home, m);
   }
 
   void
-  ElementDisjoint::post(Space* home, Reflection::VarMap& vars,
+  ElementDisjoint::post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     IdxViewArray<SetView> iv(home, vars, spec[0]);
@@ -69,8 +69,8 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   size_t
-  ElementDisjoint::dispose(Space* home) {
-    assert(!home->failed());
+  ElementDisjoint::dispose(Space& home) {
+    assert(!home.failed());
     x1.cancel(home,this, PC_SET_ANY);
     iv.cancel(home,this,PC_SET_ANY);
     (void) Propagator::dispose(home);
@@ -78,12 +78,12 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   Actor*
-  ElementDisjoint::copy(Space* home, bool share) {
+  ElementDisjoint::copy(Space& home, bool share) {
     return new (home) ElementDisjoint(home,share,*this);
   }
 
   ExecStatus
-  ElementDisjoint::propagate(Space* home, ModEventDelta) {
+  ElementDisjoint::propagate(Space& home, ModEventDelta) {
     int n = iv.size();
 
     bool fix_flag = false;

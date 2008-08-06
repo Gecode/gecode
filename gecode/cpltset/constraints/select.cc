@@ -51,8 +51,8 @@ namespace Gecode {
 
     template <class View>
     forceinline void 
-    selectNonEmptySub_post(Space* home, ViewArray<View> x) {
-      if (home->failed()) return;
+    selectNonEmptySub_post(Space& home, ViewArray<View> x) {
+      if (home.failed()) return;
       int n = x.size() - 2;
       int s = n;
       int t = n + 1;
@@ -99,7 +99,7 @@ namespace Gecode {
     }
 
     forceinline void 
-    selectNonEmptySub_con(Space* home, const CpltSetVarArgs& x,
+    selectNonEmptySub_con(Space& home, const CpltSetVarArgs& x,
                         const CpltSetVar& s, const CpltSetVar& t) {
       int n = x.size();
       int m = n + 2;
@@ -116,7 +116,7 @@ namespace Gecode {
   
   using namespace CpltSet::Select;
 
-  void selectNonEmptySub(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
+  void selectNonEmptySub(Space& home, const CpltSetVarArgs& x, CpltSetVar s, 
                          CpltSetVar t) {
     selectNonEmptySub_con(home, x, s, t);
   }

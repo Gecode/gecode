@@ -41,9 +41,9 @@ using namespace Gecode::Set;
 
 namespace Gecode {
 
-  void projector(Space* home, const SetVar& xa, const SetVar& ya,
+  void projector(Space& home, const SetVar& xa, const SetVar& ya,
                  ProjectorSet& ps, bool negated) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<SetView> x(home, 2);
     x[0] = xa; x[1] = ya;
     if (negated) {
@@ -58,9 +58,9 @@ namespace Gecode {
     
   }
 
-  void projector(Space* home, const SetVarArgs& xa,
+  void projector(Space& home, const SetVarArgs& xa,
                  ProjectorSet& ps, bool negated) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<SetView> x(home, xa.size());
     for (int i=x.size(); i--;)
       x[i] = xa[i];
@@ -76,9 +76,9 @@ namespace Gecode {
     
   }
 
-  void projector(Space* home, const SetVar& xa, const SetVar& ya,
+  void projector(Space& home, const SetVar& xa, const SetVar& ya,
                  const BoolVar& bv, ProjectorSet& ps) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<SetView> x(home, 2);
     x[0] = xa; x[1] = ya;
     Gecode::Int::BoolView b(bv);
@@ -87,10 +87,10 @@ namespace Gecode {
                                                        x, b, ps)));
   }
 
-  void projector(Space* home,
+  void projector(Space& home,
                  const SetVar& xa, const SetVar& ya, const SetVar& za,
                  ProjectorSet& ps, bool negated) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<SetView> x(home, 3);
     x[0] = xa; x[1] = ya; x[2] = za;
     if (negated) {
@@ -105,10 +105,10 @@ namespace Gecode {
     
   }
 
-  void projector(Space* home,
+  void projector(Space& home,
                  const SetVar& xa, const SetVar& ya, const SetVar& za,
                  const BoolVar& bv, ProjectorSet& ps) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<SetView> x(home, 3);
     x[0] = xa; x[1] = ya; x[2] = za;
     Gecode::Int::BoolView b(bv);
@@ -117,9 +117,9 @@ namespace Gecode {
                                                           x, b, ps)));
   }
 
-  void projector(Space* home, const SetVar& xa, const SetVar& ya,
+  void projector(Space& home, const SetVar& xa, const SetVar& ya,
                  const IntVar& i, Projector& p) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<SetView> x(home, 2);
     x[0] = xa; x[1] = ya;
     Gecode::Int::IntView iv(i);
@@ -127,9 +127,9 @@ namespace Gecode {
                    (Projection::CardProjection::post(home,x,i,p)));
   }
 
-  void projector(Space* home, const SetVar& xa, const SetVar& ya,
+  void projector(Space& home, const SetVar& xa, const SetVar& ya,
                  const SetVar& za, const IntVar& i, Projector& p) {
-    if (home->failed()) return;
+    if (home.failed()) return;
     ViewArray<SetView> x(home, 3);
     x[0] = xa; x[1] = ya; x[2] = za;
     Gecode::Int::IntView iv(i);

@@ -86,7 +86,7 @@ namespace Gecode { namespace Int {
    */
 
   ModEvent
-  IntVarImp::lq_full(Space* home, int m) {
+  IntVarImp::lq_full(Space& home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
     IntDelta d(m+1,dom.max());
     ModEvent me = ME_INT_BND;
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int {
   }
 
   ModEvent
-  IntVarImp::gq_full(Space* home, int m) {
+  IntVarImp::gq_full(Space& home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
     IntDelta d(dom.min(),m-1);
     ModEvent me = ME_INT_BND;
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int {
   }
 
   ModEvent
-  IntVarImp::eq_full(Space* home, int m) {
+  IntVarImp::eq_full(Space& home, int m) {
     dom.min(m); dom.max(m);
     if (!range()) {
       bool failed = false;
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int {
   }
 
   ModEvent
-  IntVarImp::nq_full(Space* home, int m) {
+  IntVarImp::nq_full(Space& home, int m) {
     assert(!((m < dom.min()) || (m > dom.max())));
     ModEvent me = ME_INT_DOM;
     if (range()) {
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int {
    */
 
   forceinline
-  IntVarImp::IntVarImp(Space* home, bool share, IntVarImp& x)
+  IntVarImp::IntVarImp(Space& home, bool share, IntVarImp& x)
     : IntVarImpBase(home,share,x), dom(x.dom.min(),x.dom.max()) { 
     holes = x.holes;
     if (holes) {
@@ -328,7 +328,7 @@ namespace Gecode { namespace Int {
           RangeList* s_n = s_c->next(s_p); s_p=s_c; s_c=s_n;
         } while (s_c != NULL);
       }
-      RangeList* d_c = home->alloc<RangeList>(m);
+      RangeList* d_c = home.alloc<RangeList>(m);
       fst(d_c); lst(d_c+m-1);
       d_c->min(x.fst()->min());
       d_c->max(x.fst()->max());
@@ -350,12 +350,12 @@ namespace Gecode { namespace Int {
   }
 
   IntVarImp*
-  IntVarImp::perform_copy(Space* home, bool share) {
+  IntVarImp::perform_copy(Space& home, bool share) {
     return new (home) IntVarImp(home,share,*this);
   }
 
   Reflection::Arg*
-  IntVarImp::spec(const Space*, Reflection::VarMap& m) const {
+  IntVarImp::spec(const Space&, Reflection::VarMap& m) const {
     int varIndex = m.index(this);
     if (varIndex != -1)
       return Reflection::Arg::newVar(varIndex);
@@ -385,13 +385,13 @@ namespace Gecode { namespace Int {
   }
 
   VarImpBase*
-  IntVarImp::create(Space* home, Reflection::VarSpec& spec) {
+  IntVarImp::create(Space& home, Reflection::VarSpec& spec) {
     Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
     return new (home) IntVarImp(home, IntSet(ai));
   }
 
   void
-  IntVarImp::constrain(Space* home, VarImpBase* v,
+  IntVarImp::constrain(Space& home, VarImpBase* v,
                        Reflection::VarSpec& spec) {
     Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
     GECODE_ME_FAIL(home,

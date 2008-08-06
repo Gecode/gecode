@@ -511,7 +511,7 @@ namespace Gecode { namespace Reflection {
     /// The variable map used by this iterator
     VarMap*      m;
     /// The space for which to iterate the actors
-    const Space* s;
+    const Space& s;
     /// The queue to iterate
     const ActorLink *active;
     /// The current actor
@@ -520,7 +520,7 @@ namespace Gecode { namespace Reflection {
     bool       isBranching;
   public:
     /// Constructor
-    ActorSpecIter(const Space*, VarMap&);
+    ActorSpecIter(const Space&, VarMap&);
     /// %Test whether iterator still has actor specifications or is done
     bool operator()(void) const;
     /// Move iterator to next actor
@@ -539,17 +539,17 @@ namespace Gecode { namespace Reflection {
     RegistryObject* ro;
   public:
     /// The type of constraint posting functions
-    typedef void (*poster) (Space*, VarMap&, const ActorSpec&);
+    typedef void (*poster) (Space&, VarMap&, const ActorSpec&);
     /// The type of variable creation functions
-    typedef VarImpBase* (*varCreator) (Space*, VarSpec&);
+    typedef VarImpBase* (*varCreator) (Space&, VarSpec&);
     /// The type of variable domain constraint functions
-    typedef void (*varConstrainer) (Space*, VarImpBase*, VarSpec&);
+    typedef void (*varConstrainer) (Space&, VarImpBase*, VarSpec&);
     /// The type of variable update functions
-    typedef VarImpBase* (*varUpdater) (Space*, bool, VarImpBase*);
+    typedef VarImpBase* (*varUpdater) (Space&, bool, VarImpBase*);
     /// The type of variable printing functions
     typedef std::ostream& (*varPrinter) (std::ostream&, VarImpBase*);
     /// The type of variable reflection functions
-    typedef Arg* (*varSpec) (const Space* home, VarMap& m, VarImpBase*);
+    typedef Arg* (*varSpec) (const Space& home, VarMap& m, VarImpBase*);
 
     /// Constructor
     GECODE_KERNEL_EXPORT Registry(void);
@@ -558,15 +558,15 @@ namespace Gecode { namespace Reflection {
 
     /// Create a new variable in \a home from \a spec and return it
     GECODE_KERNEL_EXPORT VarImpBase*
-    createVar(Space* home, VarSpec& spec) const;
+    createVar(Space& home, VarSpec& spec) const;
 
     /// Constrain \a v to \a spec
     GECODE_KERNEL_EXPORT void
-    constrainVar(Space* home, VarImpBase* v, VarSpec& spec) const;
+    constrainVar(Space& home, VarImpBase* v, VarSpec& spec) const;
 
     /// Update variable \a v with type identifier \a vti during cloning
     GECODE_KERNEL_EXPORT VarImpBase*
-    updateVariable(Space* home, bool share, VarImpBase* v,
+    updateVariable(Space& home, bool share, VarImpBase* v,
                    const Support::Symbol& vti) const;
 
     /// Print variable \a v with type identifier \a vti to \a os
@@ -576,12 +576,12 @@ namespace Gecode { namespace Reflection {
 
     /// Reflection for variable \a v with type identifier \a vti
     GECODE_KERNEL_EXPORT Arg*
-    spec(const Space* home, VarMap& vm,
+    spec(const Space& home, VarMap& vm,
          VarImpBase* v, const Support::Symbol& vti) const;
 
     /// Post constraint in \a home for \a spec using variables \a vars
     GECODE_KERNEL_EXPORT void
-    post(Space* home, VarMap& vm, const ActorSpec& spec) const;
+    post(Space& home, VarMap& vm, const ActorSpec& spec) const;
 
     /// Register variable creation function for \a vti
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varCreator vc);
@@ -613,7 +613,7 @@ namespace Gecode { namespace Reflection {
     *
     * The registered Actor class \a P has to provide two functions:
     *  - static Support::Symbol ati(void)
-    *  - static void post(Space*, const VarMap&, const ActorSpec&)
+    *  - static void post(Space&, const VarMap&, const ActorSpec&)
     */
   template <class P>
   class ActorRegistrar {
@@ -633,15 +633,15 @@ namespace Gecode { namespace Reflection {
     *
     * The registered variable implementation class \a V has to
     * provide two functions:
-    *  - static void create(Space*, Reflection::VarSpec&)
-    *  - static void contrain(Space*, VarImpBase*, Reflection::VarSpec&)
+    *  - static void create(Space&, Reflection::VarSpec&)
+    *  - static void contrain(Space&, VarImpBase*, Reflection::VarSpec&)
     */
   template <class V>
   class VarImpRegistrar {
   private:
-    static VarImpBase* updateVar(Space* home, bool share, VarImpBase* v);
+    static VarImpBase* updateVar(Space& home, bool share, VarImpBase* v);
     static std::ostream& printVar(std::ostream& os, VarImpBase* v);
-    static Reflection::Arg* spec(const Space* home, Reflection::VarMap& m,
+    static Reflection::Arg* spec(const Space& home, Reflection::VarMap& m,
                                  VarImpBase* v);
   public:
     /// Default constructor
@@ -650,7 +650,7 @@ namespace Gecode { namespace Reflection {
 
   template <class V>
   VarImpBase*
-  VarImpRegistrar<V>::updateVar(Space* home, bool share, VarImpBase* v) {
+  VarImpRegistrar<V>::updateVar(Space& home, bool share, VarImpBase* v) {
     typedef typename VarImpVarTraits<V>::Var Var;
     typedef typename VarViewTraits<Var>::View View;
     View view(static_cast<V*>(v));
@@ -673,7 +673,7 @@ namespace Gecode { namespace Reflection {
 
   template <class V>
   Reflection::Arg*
-  VarImpRegistrar<V>::spec(const Space* home, Reflection::VarMap& m,
+  VarImpRegistrar<V>::spec(const Space& home, Reflection::VarMap& m,
                            VarImpBase* v) {
     typedef typename VarImpVarTraits<V>::Var Var;
     typedef typename VarViewTraits<Var>::View View;
@@ -715,11 +715,11 @@ namespace Gecode { namespace Reflection {
     /// Construct from \a var with variable type identifier \a vti
     Var(VarImpBase* var, const Support::Symbol& vti);
     /// Update during cloning
-    GECODE_KERNEL_EXPORT void update(Space* home, bool share, Var& v);
+    GECODE_KERNEL_EXPORT void update(Space& home, bool share, Var& v);
     /// Output to \a os
     GECODE_KERNEL_EXPORT std::ostream& print(std::ostream& os) const;
     /// Reflection
-    GECODE_KERNEL_EXPORT Arg* spec(const Space* home, VarMap& vm) const;
+    GECODE_KERNEL_EXPORT Arg* spec(const Space& home, VarMap& vm) const;
     /// Cast to variable implementation base
     VarImpBase* varImpBase(void) const;
     /// Cast to concrete variable type
@@ -738,13 +738,13 @@ namespace Gecode { namespace Reflection {
   class GECODE_KERNEL_EXPORT Unreflector {
   private:
     /// The space in which to create variables and post constraints
-    Space* home;
+    Space& home;
     /// The VarMap that indicates which variables to reuse
     Reflection::VarMap& m;
     
   public:
     /// Constructor
-    Unreflector(Space* home0, Reflection::VarMap& m0);
+    Unreflector(Space& home0, Reflection::VarMap& m0);
 
     /// Destructor
     GECODE_MSC_VIRTUAL ~Unreflector(void);

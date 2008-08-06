@@ -83,7 +83,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::partition(home, x);
       }
@@ -118,7 +118,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::partitionLex(home, x, SRT_LE);
       }
     };
@@ -148,7 +148,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         int n = x.size() - 1;
         CpltSetVarArgs z(n);
@@ -190,7 +190,7 @@ namespace Test { namespace CpltSet {
       }
 
       /// Post constraint on \a x
-      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+      virtual void post(Space& home, CpltSetVarArray& x, IntVarArray&) {
         int n = x.size() - 1;
         CpltSetVarArgs z(n);
         for (int i = 0; i < n; i++)

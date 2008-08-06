@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   inline
-  Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0,
+  Dom<View, Card, isView>::Dom(Space& home, ViewArray<View>& x0,
                                ViewArray<Card>& k0, bool cf)
     : Propagator(home), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf){
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   forceinline
-  Dom<View, Card, isView>::Dom(Space* home, bool share,
+  Dom<View, Card, isView>::Dom(Space& home, bool share,
                                Dom<View, Card, isView>& p)
     : Propagator(home, share, p), vvg(NULL), card_fixed(p.card_fixed) {
     x.update(home, share, p.x);
@@ -86,9 +86,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   size_t
-  Dom<View, Card, isView>::dispose(Space* home) {
+  Dom<View, Card, isView>::dispose(Space& home) {
     unforce(home);
-    if (!home->failed()) {
+    if (!home.failed()) {
       x.cancel(home,this, PC_INT_DOM);
       k.cancel(home,this, PC_INT_DOM);
     }
@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   Actor*
-  Dom<View, Card, isView>::copy(Space* home, bool share) {
+  Dom<View, Card, isView>::copy(Space& home, bool share) {
     return new (home) Dom<View, Card, isView>(home, share, *this);
   }
 
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   Reflection::ActorSpec
-  Dom<View,Card,isView>::spec(const Space* home,
+  Dom<View,Card,isView>::spec(const Space& home,
                               Reflection::VarMap& m) const {
     Reflection::ActorSpec s(ati());
     return s << y.spec(home, m) << k.spec(home, m) << card_fixed;
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   void
-  Dom<View,Card,isView>::post(Space* home, Reflection::VarMap& vars,
+  Dom<View,Card,isView>::post(Space& home, Reflection::VarMap& vars,
                               const Reflection::ActorSpec& spec) {
     spec.checkArity(3);
     ViewArray<View> x(home, vars, spec[0]);
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Perform domain propagation.
   template <class View, class Card, bool isView>
   ExecStatus
-  Dom<View, Card, isView>::propagate(Space* home, ModEventDelta) {
+  Dom<View, Card, isView>::propagate(Space& home, ModEventDelta) {
 
     ExecStatus es = ES_NOFIX;
     bool card_mod = false;
@@ -509,7 +509,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   inline ExecStatus
-  Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0,
+  Dom<View, Card, isView>::post(Space& home, ViewArray<View>& x0,
                                 ViewArray<Card>& k0){
     bool cardfix = true;
     for (int i = k0.size(); i--; ) {

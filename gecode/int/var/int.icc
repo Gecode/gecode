@@ -38,12 +38,12 @@
 namespace Gecode {
 
   forceinline void
-  IntVar::_init(Space* home, int min, int max) {
+  IntVar::_init(Space& home, int min, int max) {
     varimp = new (home) Int::IntVarImp(home,min,max);
   }
 
   forceinline void
-  IntVar::_init(Space* home, const IntSet& ds) {
+  IntVar::_init(Space& home, const IntSet& ds) {
     varimp = new (home) Int::IntVarImp(home,ds);
   }
 
@@ -106,7 +106,7 @@ namespace Gecode {
 
 
   forceinline void
-  IntVar::update(Space* home, bool share, IntVar& x) {
+  IntVar::update(Space& home, bool share, IntVar& x) {
     varimp = x.varimp->copy(home,share);
   }
 
