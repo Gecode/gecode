@@ -81,7 +81,7 @@ namespace Gecode {
   forceinline
   DFA::DFAI::DFAI(unsigned int nt)
     : trans(nt == 0 ? NULL :
-            static_cast<Transition*>(heap.malloc(sizeof(Transition)*nt))) {}
+            static_cast<Transition*>(heap.alloc(sizeof(Transition)*nt))) {}
   
   forceinline
   DFA::DFAI::~DFAI(void) {

@@ -49,7 +49,7 @@ namespace Gecode { namespace MiniModel {
   template <class Var>
   forceinline void*
   LinExpr<Var>::Node::operator new(size_t size) {
-    return heap.malloc(size);
+    return heap.alloc(size);
   }
 
   template <class Var>

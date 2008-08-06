@@ -46,7 +46,7 @@ namespace Gecode { namespace Support {
 
   forceinline void* 
   Symbol::SO::operator new(size_t s) {
-    return heap.malloc(s);
+    return heap.alloc(s);
   }
   forceinline void
   Symbol::SO::operator delete(void* p) {
@@ -66,7 +66,7 @@ namespace Gecode { namespace Support {
   forceinline char*
   Symbol::SO::strdup(const char* s) {
     unsigned int n = strlen(s)+1;
-    char* d = static_cast<char*>(heap.malloc(sizeof(char)*n));
+    char* d = static_cast<char*>(heap.alloc(sizeof(char)*n));
     for (unsigned int i=n; i--; )
       d[i]=s[i];
     return d;
@@ -93,7 +93,7 @@ namespace Gecode { namespace Support {
       return;
     unsigned int n1 = strlen(s);
     unsigned int n2 = strlen(so0->s);
-    char* d = static_cast<char*>(heap.malloc(sizeof(char)*(n1+n2+1)));
+    char* d = static_cast<char*>(heap.alloc(sizeof(char)*(n1+n2+1)));
     for (unsigned int i=n1; i--; )
       d[i] = s[i];
     for (unsigned int i=n2+1; i--; )

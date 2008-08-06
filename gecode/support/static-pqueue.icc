@@ -112,7 +112,7 @@ namespace Gecode { namespace Support {
   PQueue<T,Less>::SharedPQueue::allocate(int n, const Less& l) {
     SharedPQueue* spq
       = static_cast<SharedPQueue*>
-      (heap.malloc(sizeof(SharedPQueue) + (n-1)*sizeof(T)));
+      (heap.alloc(sizeof(SharedPQueue) + (n-1)*sizeof(T)));
     spq->size = n;
     spq->n    = 0;
     spq->ref  = 1;

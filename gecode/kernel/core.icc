@@ -1367,7 +1367,7 @@ namespace Gecode {
   // Heap allocated
   forceinline void* 
   SharedHandle::Object::operator new(size_t s) {
-    return heap.malloc(s);
+    return heap.alloc(s);
   }
   forceinline void
   SharedHandle::Object::operator delete(void* p) {
@@ -1376,7 +1376,7 @@ namespace Gecode {
 
   forceinline void*
   Space::operator new(size_t s) {
-    return heap.malloc(s);
+    return heap.alloc(s);
   }
   forceinline void
   Space::operator delete(void* p) {
@@ -1389,7 +1389,7 @@ namespace Gecode {
   }
   forceinline void*
   BranchingDesc::operator new(size_t s) {
-    return heap.malloc(s);
+    return heap.alloc(s);
   }
 
   // Space allocation: general space heaps and free lists

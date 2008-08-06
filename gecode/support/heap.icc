@@ -62,7 +62,7 @@ namespace Gecode {
     /// \name Raw allocation routines
     //@{
     /// Allocate \a s bytes from heap
-    void* malloc(size_t s);
+    void* alloc(size_t s);
     /// Free memory block starting at \a p
     void  free(void* p);
     /// Change memory block starting at \a p to size \a s
@@ -147,7 +147,7 @@ namespace Gecode {
    *
    */
   forceinline void*
-  Heap::malloc(size_t s) {
+  Heap::alloc(size_t s) {
     void* p = ::malloc(s);
     if (p != NULL)
       return p;
@@ -175,7 +175,7 @@ namespace Gecode {
   template <class T>
   forceinline T*
   Heap::talloc(unsigned int n) {
-    T* p = static_cast<T*>(malloc(sizeof(T)*n));
+    T* p = static_cast<T*>(alloc(sizeof(T)*n));
     for (unsigned int i=n; i--; )
       (void) new (p+i) T();
     return p;
@@ -259,7 +259,7 @@ namespace Gecode {
   Heap::trealloc(T* b, unsigned int n, unsigned int m) {
     if (n == m)
       return b;
-    T* p = static_cast<T*>(malloc(sizeof(T)*m));
+    T* p = static_cast<T*>(alloc(sizeof(T)*m));
     for (unsigned int i=std::min(n,m); i--; )
       (void) new (p+i) T(b[i]);
     for (unsigned int i=n; i<m; i++)

@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : PosDesc<ViewSel>(b,x.size(),p,viewd), n(0) {
     for (ViewRanges<View> r(x); r(); ++r)
       n++;
-    pm = static_cast<PosMin*>(heap.malloc((n+1)*sizeof(PosMin)));
+    pm = static_cast<PosMin*>(heap.alloc((n+1)*sizeof(PosMin)));
     unsigned int w=0;
     int i=0;
     for (ViewRanges<View> r(x); r(); ++r) {

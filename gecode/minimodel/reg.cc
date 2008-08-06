@@ -96,7 +96,7 @@ namespace Gecode {
 
   forceinline void*
   REG::Exp::operator new(size_t s) {
-    return heap.malloc(s);
+    return heap.alloc(s);
   }
   forceinline void
   REG::Exp::operator delete(void*) {

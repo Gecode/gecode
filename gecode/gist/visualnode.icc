@@ -74,7 +74,7 @@ namespace Gecode { namespace Gist {
   inline Shape*
   Shape::allocate(int d) {
     Shape* ret =
-      static_cast<Shape*>(heap.malloc(sizeof(Shape) + 
+      static_cast<Shape*>(heap.alloc(sizeof(Shape) + 
                                          (d-1)*sizeof(Extent)));
     ret->_depth = d;
     return ret;

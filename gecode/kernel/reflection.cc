@@ -230,7 +230,7 @@ namespace Gecode { namespace Reflection {
     Arg* ret = new Arg(ARRAY_ARG);
     ret->arg1.i = n;
     if (n > 0)
-      ret->arg2.aa = static_cast<Arg**>(heap.malloc(sizeof(Arg*)*n));
+      ret->arg2.aa = static_cast<Arg**>(heap.alloc(sizeof(Arg*)*n));
     else
       ret->arg2.aa = NULL;
     return static_cast<ArrayArg*>(ret);
@@ -239,7 +239,7 @@ namespace Gecode { namespace Reflection {
   Arg::initArray(int n) {
     t = ARRAY_ARG;
     arg1.i = n;
-    arg2.aa = static_cast<Arg**>(heap.malloc(sizeof(Arg*)*n));
+    arg2.aa = static_cast<Arg**>(heap.alloc(sizeof(Arg*)*n));
   }
 
   bool
@@ -263,7 +263,7 @@ namespace Gecode { namespace Reflection {
     Arg* ret = new Arg(INT_ARRAY_ARG);
     ret->arg1.i = n;
     if (n > 0)
-      ret->arg2.ia = static_cast<int*>(heap.malloc(sizeof(int)*n));
+      ret->arg2.ia = static_cast<int*>(heap.alloc(sizeof(int)*n));
     else
       ret->arg2.ia = NULL;
     return static_cast<IntArrayArg*>(ret);
@@ -272,7 +272,7 @@ namespace Gecode { namespace Reflection {
   Arg::initIntArray(int n) {
     t = INT_ARRAY_ARG;
     arg1.i = n;
-    arg2.ia = static_cast<int*>(heap.malloc(sizeof(int)*n));
+    arg2.ia = static_cast<int*>(heap.alloc(sizeof(int)*n));
   }
 
   bool
@@ -645,7 +645,7 @@ namespace Gecode { namespace Reflection {
   inline
   ActorSpec::Arguments::Arguments(const Support::Symbol& ati)
    :  _ati(ati), size(4), n(0), r(1) {
-     a = static_cast<Arg**>(heap.malloc(sizeof(Arg*)*size));
+     a = static_cast<Arg**>(heap.alloc(sizeof(Arg*)*size));
   }
 
   inline
@@ -660,7 +660,7 @@ namespace Gecode { namespace Reflection {
     assert(_args != NULL);
     _args->size = _args->size * 3 / 2;
     Arg** newargs =
-      static_cast<Arg**>(heap.malloc(sizeof(Arg*)*_args->size));
+      static_cast<Arg**>(heap.alloc(sizeof(Arg*)*_args->size));
     for (int i=_args->n; i--;)
       newargs[i] = _args->a[i];
     heap.free(_args->a);
@@ -783,7 +783,7 @@ namespace Gecode { namespace Reflection {
   inline
   BranchingSpec::Arguments::Arguments(unsigned int n0)
    : n(n0), r(1) {
-     a = static_cast<Arg**>(heap.malloc(sizeof(Arg*)*n));
+     a = static_cast<Arg**>(heap.alloc(sizeof(Arg*)*n));
      for (unsigned int i=n; i--;)
        a[i] = NULL;
   }

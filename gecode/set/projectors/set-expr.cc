@@ -88,7 +88,7 @@ namespace Gecode {
 
   forceinline void*
   SetExpr::Node::operator new(size_t size) {
-    return heap.malloc(size);
+    return heap.alloc(size);
   }
 
   forceinline void

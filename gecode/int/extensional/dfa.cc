@@ -521,7 +521,7 @@ namespace Gecode {
       n_log++;
     // Allocate memory
     table = static_cast<HashEntry*>
-      (heap.malloc(sizeof(HashEntry)*(1<<n_log)));
+      (heap.alloc(sizeof(HashEntry)*(1<<n_log)));
     // Initialize table
     for (int i=(1<<n_log); i--; )
       table[i].fst = table[i].lst = NULL;

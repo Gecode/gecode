@@ -41,7 +41,7 @@ namespace Gecode {
 
   void*
   Scratch::heap_alloc(size_t s) {
-    void* p = heap.malloc(s);
+    void* p = heap.alloc(s);
     switch (++n_malloc) {
     case 0: 
       GECODE_NEVER;
@@ -51,7 +51,7 @@ namespace Gecode {
       at.two.snd = p; break;
     case 3:
       {
-        void** b = static_cast<void**>(heap.malloc(sizeof(void*) * 8));
+        void** b = static_cast<void**>(heap.alloc(sizeof(void*) * 8));
         b[0]=at.two.fst; b[1]=at.two.snd; b[2]=p;
         at.any.l_malloc = 8;
         at.any.b_malloc = b;

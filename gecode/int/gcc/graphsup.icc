@@ -1302,7 +1302,7 @@ namespace Gecode { namespace Int { namespace GCC {
     _allocated = size;
 
     mem      = static_cast<char*>
-      (heap.malloc(size));
+      (heap.alloc(size));
     edges    = Support::ptr_cast<Edge*>
       (mem);
     VarNode* vars_ptr = Support::ptr_cast<VarNode*>
@@ -2407,7 +2407,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline void*
   VarValGraph<View, Card, isView>::operator new(size_t t){
-    return heap.malloc(t);
+    return heap.alloc(t);
   }
 
   template <class View, class Card, bool isView>

@@ -343,7 +343,7 @@ namespace Gecode {
   }
   forceinline void*
   DescVirtualBase::operator new(size_t s) {
-    return heap.malloc(s);
+    return heap.alloc(s);
   }
   forceinline
   DescVirtualBase::~DescVirtualBase(void) {

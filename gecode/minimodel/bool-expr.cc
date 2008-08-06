@@ -47,7 +47,7 @@ namespace Gecode { namespace MiniModel {
    */
   forceinline void*
   BoolExpr::Node::operator new(size_t size) {
-    return heap.malloc(size);
+    return heap.alloc(size);
   }
   
   forceinline void

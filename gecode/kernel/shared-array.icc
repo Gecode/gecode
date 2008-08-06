@@ -136,7 +136,7 @@ namespace Gecode {
   template <class T>
   forceinline
   SharedArray<T>::SAO::SAO(int n0) : n(n0) {
-    a = (n>0) ? static_cast<T*>(heap.malloc(sizeof(T)*n)) : NULL;
+    a = (n>0) ? static_cast<T*>(heap.alloc(sizeof(T)*n)) : NULL;
   }
 
   template <class T>
