@@ -1333,10 +1333,21 @@ namespace Gecode {
      */
     template <class T>
     T* realloc(T* b, unsigned int n, unsigned int m);
+    /**
+     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from the space heap
+     *
+     * Returns the address of the new block.
+     *
+     * This is a specialization for performance.
+     */
+    template <class T>
+    T** realloc(T** b, unsigned int, unsigned int m);
     /// Allocate memory on space heap
     void* ralloc(size_t s);
     /// Free memory previously allocated with alloc (might be reused later)
     void rfree(void* p, size_t s);
+    /// Reallocate memory block starting at \a b from size \a n to size \a s
+    void* rrealloc(void* b, size_t n, size_t m);
     /// Allocate from freelist-managed memory
     template <size_t> void* fl_alloc(void);
     /**
@@ -1401,6 +1412,20 @@ namespace Gecode {
   Space::rfree(void* p, size_t s) {
     return mm.reuse(p,s);
   }
+  forceinline void*
+  Space::rrealloc(void* _b, size_t n, size_t m) {
+    char* b = static_cast<char*>(_b);
+    if (n < m) {
+      char* p = static_cast<char*>(ralloc(m));
+      memcpy(p,b,n);
+      rfree(b,n);
+      return p;
+    } else {
+      rfree(b+m,m-n);
+      return b;
+    }
+  }
+
   template <size_t s>
   forceinline void*
   Space::fl_alloc(void) {
@@ -1450,6 +1475,32 @@ namespace Gecode {
     }
   }
 
+#define GECODE_KERNEL_REALLOC(T)                                        \
+  template <>                                                           \
+  forceinline T*                                                        \
+  Space::realloc<T>(T* b, unsigned int n, unsigned int m) {             \
+    return static_cast<T*>(rrealloc(b,n*sizeof(T),m*sizeof(T)));        \
+  }
+
+  GECODE_KERNEL_REALLOC(bool)
+  GECODE_KERNEL_REALLOC(signed char)
+  GECODE_KERNEL_REALLOC(unsigned char)
+  GECODE_KERNEL_REALLOC(signed short int)
+  GECODE_KERNEL_REALLOC(unsigned short int)
+  GECODE_KERNEL_REALLOC(signed int)
+  GECODE_KERNEL_REALLOC(unsigned int)
+  GECODE_KERNEL_REALLOC(signed long int)
+  GECODE_KERNEL_REALLOC(unsigned long int)
+  GECODE_KERNEL_REALLOC(float)
+  GECODE_KERNEL_REALLOC(double)
+
+#undef GECODE_KERNEL_REALLOC
+
+  template <class T>
+  forceinline T**
+  Space::realloc(T** b, unsigned int n, unsigned int m) {
+    return static_cast<T**>(rrealloc(b,n*sizeof(T),m*sizeof(T*)));
+  }
 
 
 #ifdef GECODE_HAS_VAR_DISPOSE
