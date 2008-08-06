@@ -2213,7 +2213,7 @@ namespace Gecode {
       ActorLink** prop = home->alloc<ActorLink*>(m) + m-n;
       free_and_bits += (m-n) << free_bits;
       // Copy entries
-      memcpy(prop, idx[0], n*sizeof(ActorLink*));
+      Heap::copy<ActorLink*>(prop, idx[0], n);
       home->free<ActorLink*>(idx[0],n);
       // Update index pointers
       ptrdiff_t o = prop - idx[0];

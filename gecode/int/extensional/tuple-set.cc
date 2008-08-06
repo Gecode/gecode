@@ -194,7 +194,7 @@ namespace Gecode {
 
     // Table data
     d->data = heap.alloc<int>(size*arity);
-    memcpy(&d->data[0], &data[0], sizeof(int)*size*arity);
+    heap.copy(&d->data[0], &data[0], size*arity);
 
     // Indexing data
     d->tuples = heap.alloc<Tuple*>(arity);

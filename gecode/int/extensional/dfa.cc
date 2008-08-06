@@ -508,7 +508,7 @@ namespace Gecode {
     d->n_trans   = n_trans;
     d->final_fst = final_fst;
     d->final_lst = final_lst;
-    memcpy(&d->trans[0], &trans[0], sizeof(Transition)*n_trans);
+    heap.copy<Transition>(&d->trans[0], &trans[0], n_trans);
     d->fill();
     return d;
   }
