@@ -181,9 +181,9 @@ namespace Gecode {
         (void) home; (void) p; (void)  pc;
       }
       /// Subscribe advisor to view
-      void subscribe(Space*, Advisor*) {};
+      void subscribe(Space*, Advisor&) {};
       /// Cancel subscription of advisor
-      void cancel(Space*, Advisor*) {};
+      void cancel(Space*, Advisor&) {};
       //@}
 
       /// \name Cloning
