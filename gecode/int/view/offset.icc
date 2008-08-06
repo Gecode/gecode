@@ -252,11 +252,11 @@ namespace Gecode {
       view.cancel(home,p,pc);
     }
     forceinline void
-    OffsetView::subscribe(Space* home, Advisor* a) {
+    OffsetView::subscribe(Space* home, Advisor& a) {
       view.subscribe(home,a);
     }
     forceinline void
-    OffsetView::cancel(Space* home, Advisor* a) {
+    OffsetView::cancel(Space* home, Advisor& a) {
       view.cancel(home,a);
     }
 
@@ -266,19 +266,19 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    OffsetView::modevent(const Delta* d) {
+    OffsetView::modevent(const Delta& d) {
       return IntView::modevent(d);
     }
     forceinline int
-    OffsetView::min(const Delta* d) const {
+    OffsetView::min(const Delta& d) const {
       return view.min(d)+c;
     }
     forceinline int
-    OffsetView::max(const Delta* d) const {
+    OffsetView::max(const Delta& d) const {
       return view.max(d)+c;
     }
     forceinline bool
-    OffsetView::any(const Delta* d) const {
+    OffsetView::any(const Delta& d) const {
       return view.any(d);
     }
 

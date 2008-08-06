@@ -47,9 +47,9 @@ namespace Gecode { namespace Set { namespace Int {
                                                 Council<A>& c, int index)
     : Advisor(home,p,c), idx(index) {
     if (idx == -1)
-      p->y.subscribe(home,this);
+      p->y.subscribe(home,*this);
     else {
-      p->x[idx].subscribe(home,this);
+      p->x[idx].subscribe(home,*this);
     }
   }
 
@@ -71,9 +71,9 @@ namespace Gecode { namespace Set { namespace Int {
   ChannelBool<View>::IndexAdvisor::dispose(Space* home, Council<A>& c) {
     ChannelBool<View>* p = static_cast<ChannelBool<View>*>(propagator());
     if (idx == -1)
-      p->y.cancel(home,this);
+      p->y.cancel(home,*this);
     else {
-      p->x[idx].cancel(home,this);
+      p->x[idx].cancel(home,*this);
     }
     Advisor::dispose(home,c);
   }
@@ -191,12 +191,12 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  ChannelBool<View>::advise(Space* home, Advisor* _a, const Delta* _d) {
-    IndexAdvisor* a = static_cast<IndexAdvisor* >(_a);
-    const SetDelta* d = static_cast<const SetDelta*>(_d);
+  ChannelBool<View>::advise(Space* home, Advisor& _a, const Delta& _d) {
+    IndexAdvisor& a = static_cast<IndexAdvisor&>(_a);
+    const SetDelta& d = static_cast<const SetDelta&>(_d);
 
     ModEvent me = View::modevent(d);
-    int index = a->index();
+    int index = a.index();
     if ( (running && index == -1 && me != ME_SET_VAL)
          || (index == -1 && me == ME_SET_CARD) ) {
       return ES_OK;
@@ -214,24 +214,24 @@ namespace Gecode { namespace Set { namespace Int {
       return ES_SUBSUMED_NOFIX(a, home, co);
     }
 
-    if (a->index() == -1 && Rel::testSetEventLB(me)) {
-      if (d->glbAny()) {
+    if ((a.index() == -1) && Rel::testSetEventLB(me)) {
+      if (d.glbAny()) {
         new (&delta)
           SetDelta(2,0, delta.lubMin(), delta.lubMax());
       } else {
         if (delta.glbMin() == 1 && delta.glbMax() == 0) {
           new (&delta)
-            SetDelta(d->glbMin(), d->glbMax(),
+            SetDelta(d.glbMin(), d.glbMax(),
                      delta.lubMin(), delta.lubMax());
         } else {
           if (delta.glbMin() != 2 || delta.glbMax() != 0) {
-            if ((delta.glbMin() <= d->glbMin() && delta.glbMax() >= d->glbMin())
+            if ((delta.glbMin() <= d.glbMin() && delta.glbMax() >= d.glbMin())
                 ||
-                (delta.glbMin() <= d->glbMax() && delta.glbMax() >= d->glbMax())    
+                (delta.glbMin() <= d.glbMax() && delta.glbMax() >= d.glbMax())    
                ) {
                  new (&delta)
-                   SetDelta(std::min(delta.glbMin(), d->glbMin()),
-                            std::max(delta.glbMax(), d->glbMax()),
+                   SetDelta(std::min(delta.glbMin(), d.glbMin()),
+                            std::max(delta.glbMax(), d.glbMax()),
                             delta.lubMin(), delta.lubMax());
             } else {
               new (&delta)
@@ -241,25 +241,25 @@ namespace Gecode { namespace Set { namespace Int {
         }
       }
     }
-    if (a->index() == -1 && Rel::testSetEventUB(me)) {
-      if (d->lubAny()) {
+    if ((a.index() == -1) && Rel::testSetEventUB(me)) {
+      if (d.lubAny()) {
         new (&delta)
           SetDelta(delta.glbMin(), delta.glbMax(), 2,0);
       } else {
         if (delta.lubMin() == 1 && delta.lubMax() == 0) {
           new (&delta)
             SetDelta(delta.glbMin(), delta.glbMax(),
-                     d->lubMin(), d->lubMax());
+                     d.lubMin(), d.lubMax());
         } else {
           if (delta.lubMin() != 2 || delta.lubMax() != 0) {
-            if ((delta.lubMin() <= d->lubMin() && delta.lubMax() >= d->lubMin())
+            if ((delta.lubMin() <= d.lubMin() && delta.lubMax() >= d.lubMin())
                 ||
-                (delta.lubMin() <= d->lubMax() && delta.lubMax() >= d->lubMax())    
+                (delta.lubMin() <= d.lubMax() && delta.lubMax() >= d.lubMax())    
                ) {
                  new (&delta)
                    SetDelta(delta.lubMin(), delta.lubMax(),
-                            std::min(delta.lubMin(), d->lubMin()),
-                            std::max(delta.lubMax(), d->lubMax())
+                            std::min(delta.lubMin(), d.lubMin()),
+                            std::max(delta.lubMax(), d.lubMax())
                             );
             } else {
               new (&delta)

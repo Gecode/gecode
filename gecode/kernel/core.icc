@@ -377,13 +377,13 @@ namespace Gecode {
      * The advisor \a a is only subscribed if \a assigned is false.
      *
      */
-    void subscribe(Space* home, Advisor* a, bool assigned);
+    void subscribe(Space* home, Advisor& a, bool assigned);
     /** \brief Cancel subscription of advisor \a a
      *
      * If the variable is assigned, \a assigned must be true.
      *
      */
-    void cancel(Space* home, Advisor* p, bool assigned);
+    void cancel(Space* home, Advisor& a, bool assigned);
     /// Cancel all subscriptions when variable implementation is assigned
     void cancel(Space* home);
     /**
@@ -398,7 +398,7 @@ namespace Gecode {
      *
      * Returns false if an advisor has failed.
      */
-    bool advise(Space* home, ModEvent me, Delta* d);
+    bool advise(Space* home, ModEvent me, Delta& d);
     //@}
 
     /// \name Cloning variables
@@ -749,7 +749,7 @@ namespace Gecode {
      *
      */
     GECODE_KERNEL_EXPORT
-    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
     //@}
   };
 
@@ -815,7 +815,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class A>
-  ExecStatus ES_SUBSUMED_FIX(A* a, Space* home, Council<A>& c);
+  ExecStatus ES_SUBSUMED_FIX(A& a, Space* home, Council<A>& c);
   /**
    * \brief %Advisor \a a is subsumed
    *
@@ -828,7 +828,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class A>
-  ExecStatus ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c);
+  ExecStatus ES_SUBSUMED_NOFIX(A& a, Space* home, Council<A>& c);
 
   /**
    * \brief Base-class for advisors
@@ -1932,15 +1932,15 @@ namespace Gecode {
 
   template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(A* a, Space* home, Council<A>& c) {
-    a->dispose(home,c);
+  ES_SUBSUMED_FIX(A& a, Space* home, Council<A>& c) {
+    a.dispose(home,c);
     return ES_FIX;
   }
 
   template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c) {
-    a->dispose(home,c);
+  ES_SUBSUMED_NOFIX(A& a, Space* home, Council<A>& c) {
+    a.dispose(home,c);
     return ES_NOFIX;
   }
 
@@ -2292,9 +2292,9 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::subscribe(Space* home, Advisor* a, bool assigned) {
+  VarImp<VIC>::subscribe(Space* home, Advisor& a, bool assigned) {
     if (!assigned)
-      enter(home,a,pc_max+1);
+      enter(home,&a,pc_max+1);
   }
 
   template <class VIC>
@@ -2334,9 +2334,9 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space* home, Advisor* a, bool assigned) {
+  VarImp<VIC>::cancel(Space* home, Advisor& a, bool assigned) {
     if (!assigned)
-      remove(home,a,pc_max+1);
+      remove(home,&a,pc_max+1);
   }
 
   template <class VIC>
@@ -2353,7 +2353,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline bool
-  VarImp<VIC>::advise(Space* home, ModEvent me, Delta* d) {
+  VarImp<VIC>::advise(Space* home, ModEvent me, Delta& d) {
     /*
      * An advisor that is executed might remove itself due to subsumption.
      * As entries are removed from front to back, the advisors must
@@ -2363,14 +2363,14 @@ namespace Gecode {
     ActorLink** le = idx[pc_max+2];
     if (la == le)
       return true;
-    d->me = me;
+    d.me = me;
     // An advisor that is run, might be removed during execution.
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
     do {
       Advisor* a = Advisor::cast(*la);
       Propagator* p = a->propagator();
-      switch (p->advise(home,a,d)) {
+      switch (p->advise(home,*a,d)) {
       case ES_FIX:
         break;
       case ES_FAILED:

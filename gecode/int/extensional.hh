@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Cost function (defined as dynamic PC_LINEAR_HI)
     virtual PropCost cost(ModEventDelta med) const;
     /// Give advice to propagator
-    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
@@ -402,7 +402,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     };
     Council<SupportAdvisor> ac;
   public:
-    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
   };
   
 }}}

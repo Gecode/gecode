@@ -115,7 +115,7 @@ namespace Gecode { namespace Int {
         c->next(n,NULL); lst(c);
       }
     }
-    return notify(home,me,&d);
+    return notify(home,me,d);
   }
 
   ModEvent
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int {
         c->prev(p,NULL); fst(c);
       }
     }
-    return notify(home,me,&d);
+    return notify(home,me,d);
   }
 
   ModEvent
@@ -173,7 +173,7 @@ namespace Gecode { namespace Int {
         return ME_INT_FAILED;
     }
     IntDelta d;
-    return notify(home,ME_INT_VAL,&d);
+    return notify(home,ME_INT_VAL,d);
   }
 
   ModEvent
@@ -303,7 +303,7 @@ namespace Gecode { namespace Int {
       }
     }
     IntDelta d(m,m);
-    return notify(home,me,&d);
+    return notify(home,me,d);
   }
 
 

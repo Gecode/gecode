@@ -48,7 +48,7 @@ namespace Gecode { namespace Int {
     bits() ^= (NONE ^ ONE);
     assert(one());
     IntDelta d(false);
-    return notify(home,ME_BOOL_VAL,&d);
+    return notify(home,ME_BOOL_VAL,d);
   }
 
   ModEvent
@@ -57,7 +57,7 @@ namespace Gecode { namespace Int {
     bits() ^= (NONE ^ ZERO);
     assert(zero());
     IntDelta d(false);
-    return notify(home,ME_BOOL_VAL,&d);
+    return notify(home,ME_BOOL_VAL,d);
   }
 
 

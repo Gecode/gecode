@@ -317,20 +317,20 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  IntVarImp::modevent(const Delta* d) {
-    return d->modevent();
+  IntVarImp::modevent(const Delta& d) {
+    return d.modevent();
   }
   forceinline int 
-  IntVarImp::min(const Delta* d) const {
-    return static_cast<const IntDelta*>(d)->min();
+  IntVarImp::min(const Delta& d) const {
+    return static_cast<const IntDelta&>(d).min();
   }
   forceinline int 
-  IntVarImp::max(const Delta* d) const {
-    return static_cast<const IntDelta*>(d)->max();
+  IntVarImp::max(const Delta& d) const {
+    return static_cast<const IntDelta&>(d).max();
   }
   forceinline bool 
-  IntVarImp::any(const Delta* d) const {
-    return static_cast<const IntDelta*>(d)->any(); 
+  IntVarImp::any(const Delta& d) const {
+    return static_cast<const IntDelta&>(d).any(); 
   }
 
 
@@ -665,7 +665,7 @@ namespace Gecode { namespace Int {
     }
   notify:
     IntDelta d;
-    return notify(home,me,&d);
+    return notify(home,me,d);
   }
 
   template <class I>
@@ -817,7 +817,7 @@ namespace Gecode { namespace Int {
     return ME_INT_NONE;
   notify:
     IntDelta d;
-    return notify(home,me,&d);
+    return notify(home,me,d);
   }
 
   template <class I>
@@ -944,9 +944,9 @@ namespace Gecode { namespace Int {
       fst(NULL); lst(NULL);
       holes = 0;
       if (assigned())
-        return notify(home,ME_INT_VAL,&d);
+        return notify(home,ME_INT_VAL,d);
       else
-        return notify(home,ME_INT_BND,&d);
+        return notify(home,ME_INT_BND,d);
     }
 
     // The number of removed values
@@ -963,12 +963,12 @@ namespace Gecode { namespace Int {
       assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
       dom.min(fn->min()); dom.max(ln->max());
       holes -= b;
-      return notify(home,ME_INT_BND,&d);
+      return notify(home,ME_INT_BND,d);
     }
 
     if (h > 0) {
       assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
-      return notify(home,ME_INT_DOM,&d);
+      return notify(home,ME_INT_DOM,d);
     }
 
     return ME_INT_NONE;
@@ -1001,11 +1001,11 @@ namespace Gecode { namespace Int {
   }
 
   forceinline void
-  IntVarImp::subscribe(Space* home, Advisor* a) {
+  IntVarImp::subscribe(Space* home, Advisor& a) {
     IntVarImpBase::subscribe(home,a,dom.min()==dom.max());
   }
   forceinline void
-  IntVarImp::cancel(Space* home, Advisor* a) {
+  IntVarImp::cancel(Space* home, Advisor& a) {
     IntVarImpBase::cancel(home,a,dom.min()==dom.max());
   }
 

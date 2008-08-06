@@ -258,8 +258,8 @@ namespace Gecode { namespace CpltSet {
    *
    */
   forceinline ModEvent
-  CpltSetVarImp::modevent(const Delta* d) {
-    return d->modevent();
+  CpltSetVarImp::modevent(const Delta& d) {
+    return d.modevent();
   }
 
   /// Iterator for the values in the greatest lower bound of a bdd variable implementation

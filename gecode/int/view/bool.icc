@@ -269,19 +269,19 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    BoolView::modevent(const Delta* d) {
+    BoolView::modevent(const Delta& d) {
       return BoolVarImp::modevent(d);
     }
     forceinline int
-    BoolView::min(const Delta* d) const {
+    BoolView::min(const Delta& d) const {
       return varimp->min(d);
     }
     forceinline int
-    BoolView::max(const Delta* d) const {
+    BoolView::max(const Delta& d) const {
       return varimp->max(d);
     }
     forceinline bool
-    BoolView::any(const Delta* d) const {
+    BoolView::any(const Delta& d) const {
       return varimp->any(d);
     }
 
@@ -443,11 +443,11 @@ namespace Gecode {
       view.cancel(home,p,pc);
     }
     forceinline void
-    NegBoolView::subscribe(Space* home, Advisor* a) {
+    NegBoolView::subscribe(Space* home, Advisor& a) {
       view.subscribe(home,a);
     }
     forceinline void
-    NegBoolView::cancel(Space* home, Advisor* a) {
+    NegBoolView::cancel(Space* home, Advisor& a) {
       view.cancel(home,a);
     }
 
@@ -457,19 +457,19 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    NegBoolView::modevent(const Delta* d) {
+    NegBoolView::modevent(const Delta& d) {
       return BoolView::modevent(d);
     }
     forceinline int
-    NegBoolView::min(const Delta* d) const {
+    NegBoolView::min(const Delta& d) const {
       return view.max(d);
     }
     forceinline int
-    NegBoolView::max(const Delta* d) const {
+    NegBoolView::max(const Delta& d) const {
       return view.min(d);
     }
     forceinline bool
-    NegBoolView::any(const Delta* d) const {
+    NegBoolView::any(const Delta& d) const {
       return view.any(d);
     }
 

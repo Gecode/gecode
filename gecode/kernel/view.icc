@@ -105,9 +105,9 @@ namespace Gecode {
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space* home, Propagator* p, PropCond pc);
     /// Subscribe advisor \a a to view
-    void subscribe(Space* home, Advisor* a);
+    void subscribe(Space* home, Advisor& a);
     /// Cancel subscription of advisor \a a
-    void cancel(Space* home, Advisor* a);
+    void cancel(Space* home, Advisor& a);
     //@}
   };
 
@@ -267,12 +267,12 @@ namespace Gecode {
   }
   template <class VarImp>
   forceinline void
-  VarViewBase<VarImp>::subscribe(Space* home, Advisor* a) {
+  VarViewBase<VarImp>::subscribe(Space* home, Advisor& a) {
     varimp->subscribe(home,a);
   }
   template <class VarImp>
   forceinline void
-  VarViewBase<VarImp>::cancel(Space* home, Advisor* a) {
+  VarViewBase<VarImp>::cancel(Space* home, Advisor& a) {
     varimp->cancel(home,a);
   }
   template <class VarImp>

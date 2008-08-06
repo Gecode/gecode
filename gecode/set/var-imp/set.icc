@@ -138,32 +138,32 @@ namespace Gecode { namespace Set {
    *
    */
   forceinline ModEvent
-  SetVarImp::modevent(const Delta* d) {
-    return d->modevent();
+  SetVarImp::modevent(const Delta& d) {
+    return d.modevent();
   }
   forceinline int 
-  SetVarImp::glbMin(const Delta* d) const {
-    return static_cast<const SetDelta*>(d)->glbMin();
+  SetVarImp::glbMin(const Delta& d) const {
+    return static_cast<const SetDelta&>(d).glbMin();
   }
   forceinline int 
-  SetVarImp::glbMax(const Delta* d) const {
-    return static_cast<const SetDelta*>(d)->glbMax();
+  SetVarImp::glbMax(const Delta& d) const {
+    return static_cast<const SetDelta&>(d).glbMax();
   }
   forceinline bool 
-  SetVarImp::glbAny(const Delta* d) const {
-    return static_cast<const SetDelta*>(d)->glbAny(); 
+  SetVarImp::glbAny(const Delta& d) const {
+    return static_cast<const SetDelta&>(d).glbAny(); 
   }
   forceinline int 
-  SetVarImp::lubMin(const Delta* d) const {
-    return static_cast<const SetDelta*>(d)->lubMin();
+  SetVarImp::lubMin(const Delta& d) const {
+    return static_cast<const SetDelta&>(d).lubMin();
   }
   forceinline int 
-  SetVarImp::lubMax(const Delta* d) const {
-    return static_cast<const SetDelta*>(d)->lubMax();
+  SetVarImp::lubMax(const Delta& d) const {
+    return static_cast<const SetDelta&>(d).lubMax();
   }
   forceinline bool 
-  SetVarImp::lubAny(const Delta* d) const {
-    return static_cast<const SetDelta*>(d)->lubAny(); 
+  SetVarImp::lubAny(const Delta& d) const {
+    return static_cast<const SetDelta&>(d).lubAny(); 
   }
 
   forceinline ModEvent
@@ -233,7 +233,7 @@ namespace Gecode { namespace Set {
       _cardMax = 0;
       SetDelta d(1, 0, lub.min(), lub.max());
       lub.excludeAll(home);
-      return notify(home, ME_SET_VAL, &d);
+      return notify(home, ME_SET_VAL, d);
     }
     int mi=iterator.min();
     int ma=iterator.max();
@@ -273,7 +273,7 @@ namespace Gecode { namespace Set {
         me = ME_SET_VAL;
       }
       SetDelta d;
-      return notify(home, me, &d);
+      return notify(home, me, d);
     }
     return ME_SET_NONE;
   }
@@ -346,7 +346,7 @@ namespace Gecode { namespace Set {
         me = ME_SET_VAL;
       }
       SetDelta d;
-      return notify(home, me, &d);
+      return notify(home, me, d);
     }
     return ME_SET_NONE;
   }
@@ -418,7 +418,7 @@ namespace Gecode { namespace Set {
         me = ME_SET_VAL;
       }
       SetDelta d;
-      return notify(home, me, &d);
+      return notify(home, me, d);
     }
     return ME_SET_NONE;
   }
@@ -522,11 +522,11 @@ namespace Gecode { namespace Set {
     SetVarImpBase::cancel(home,p,pc,assigned());
   }
   forceinline void
-  SetVarImp::subscribe(Space* home, Advisor* a) {
+  SetVarImp::subscribe(Space* home, Advisor& a) {
     SetVarImpBase::subscribe(home,a,assigned());
   }
   forceinline void
-  SetVarImp::cancel(Space* home, Advisor* a) {
+  SetVarImp::cancel(Space* home, Advisor& a) {
     SetVarImpBase::cancel(home,a,assigned());
   }
 

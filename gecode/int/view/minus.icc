@@ -248,11 +248,11 @@ namespace Gecode {
       view.cancel(home,p,pc);
     }
     forceinline void
-    MinusView::subscribe(Space* home, Advisor* a) {
+    MinusView::subscribe(Space* home, Advisor& a) {
       view.subscribe(home,a);
     }
     forceinline void
-    MinusView::cancel(Space* home, Advisor* a) {
+    MinusView::cancel(Space* home, Advisor& a) {
       view.cancel(home,a);
     }
 
@@ -262,19 +262,19 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    MinusView::modevent(const Delta* d) {
+    MinusView::modevent(const Delta& d) {
       return IntView::modevent(d);
     }
     forceinline int
-    MinusView::min(const Delta* d) const {
+    MinusView::min(const Delta& d) const {
       return -view.max(d);
     }
     forceinline int
-    MinusView::max(const Delta* d) const {
+    MinusView::max(const Delta& d) const {
       return -view.min(d);
     }
     forceinline bool
-    MinusView::any(const Delta* d) const {
+    MinusView::any(const Delta& d) const {
       return view.any(d);
     }
 

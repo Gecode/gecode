@@ -667,9 +667,9 @@ namespace Gecode { namespace Set {
     /// Cancel subscription of propagator \a p with propagation condition \a pc
     void cancel(Space* home, Propagator* p, PropCond pc);
     /// Subscribe advisor \a a to variable
-    void subscribe(Space* home, Advisor* a);
+    void subscribe(Space* home, Advisor& a);
     /// Cancel subscription of advisor \a a
-    void cancel(Space* home, Advisor* a);
+    void cancel(Space* home, Advisor& a);
     //@}
 
   private:
@@ -699,19 +699,19 @@ namespace Gecode { namespace Set {
     /// \name Delta information for advisors
     //@{
     /// Return modification event
-    static ModEvent modevent(const Delta* d);
+    static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned from glb
-    int glbMin(const Delta* d) const;
+    int glbMin(const Delta& d) const;
     /// Return maximum value just pruned from glb
-    int glbMax(const Delta* d) const;
+    int glbMax(const Delta& d) const;
     /// Test whether arbitrary values got pruned from glb
-    bool glbAny(const Delta* d) const;
+    bool glbAny(const Delta& d) const;
     /// Return minimum value just pruned from lub
-    int lubMin(const Delta* d) const;
+    int lubMin(const Delta& d) const;
     /// Return maximum value just pruned from lub
-    int lubMax(const Delta* d) const;
+    int lubMax(const Delta& d) const;
     /// Test whether arbitrary values got pruned from lub
-    bool lubAny(const Delta* d) const;
+    bool lubAny(const Delta& d) const;
     //@}
 
   };

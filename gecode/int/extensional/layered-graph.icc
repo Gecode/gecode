@@ -389,9 +389,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   ExecStatus
-  LayeredGraph<View>::advise(Space* home, Advisor* _a, const Delta* d) {
-    Index* a = static_cast<Index*>(_a);
-    int i = a->i;
+  LayeredGraph<View>::advise(Space* home, Advisor& _a, const Delta& d) {
+    Index& a = static_cast<Index&>(_a);
+    int i = a.i;
     bool i_mod = false;
     bool o_mod = false;
     Layer& l = layers[i];
@@ -478,7 +478,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
   fix:
     if (View::modevent(d) == ME_INT_VAL) {
-      a->dispose(home,c);
+      a.dispose(home,c);
       return c.empty() ? ES_NOFIX : ES_FIX;
     }
     return ES_FIX;
@@ -501,7 +501,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (x[i].assigned())
         me = ME_INT_VAL;
       else
-        x[i].subscribe(home, new (home) Index(home,this,c,i));
+        x[i].subscribe(home, *new (home) Index(home,this,c,i));
     View::schedule(home,this,me);
     this->force(home);
   }
@@ -514,7 +514,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(x.size() > 0);
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-        x[i].subscribe(home, new (home) Index(home,this,c,i));
+        x[i].subscribe(home, *new (home) Index(home,this,c,i));
     BoolView::schedule(home,this,ME_BOOL_VAL);
     this->force(home);
   }

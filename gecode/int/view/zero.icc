@@ -252,9 +252,9 @@ namespace Gecode {
     forceinline void
     ZeroIntView::cancel(Space*,Propagator*,PropCond) {}
     forceinline void
-    ZeroIntView::subscribe(Space*, Advisor*) {}
+    ZeroIntView::subscribe(Space*, Advisor&) {}
     forceinline void
-    ZeroIntView::cancel(Space*,Advisor*) {}
+    ZeroIntView::cancel(Space*,Advisor&) {}
 
 
 
@@ -263,19 +263,19 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    ZeroIntView::modevent(const Delta*) {
+    ZeroIntView::modevent(const Delta&) {
       return ME_INT_NONE;
     }
     forceinline int
-    ZeroIntView::min(const Delta*) const {
+    ZeroIntView::min(const Delta&) const {
       return 1;
     }
     forceinline int
-    ZeroIntView::max(const Delta*) const {
+    ZeroIntView::max(const Delta&) const {
       return 0;
     }
     forceinline bool
-    ZeroIntView::any(const Delta*) const {
+    ZeroIntView::any(const Delta&) const {
       return true;
     }
 

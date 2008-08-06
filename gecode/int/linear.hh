@@ -1005,7 +1005,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Create copy during cloning
       virtual Actor* copy(Space* home, bool share);
       /// Give advice to propagator
-      virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+      virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
       /// Perform propagation
       virtual ExecStatus propagate(Space* home, ModEventDelta med);
       /// Specification for this propagator
@@ -1073,7 +1073,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Create copy during cloning
       virtual Actor* copy(Space* home, bool share);
       /// Give advice to propagator
-      virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+      virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
       /// Perform propagation
       virtual ExecStatus propagate(Space* home, ModEventDelta med);
       /// Specification for this propagator

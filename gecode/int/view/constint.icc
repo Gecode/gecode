@@ -258,9 +258,9 @@ namespace Gecode {
     forceinline void
     ConstIntView::cancel(Space*,Propagator*,PropCond) {}
     forceinline void
-    ConstIntView::subscribe(Space*, Advisor*) {}
+    ConstIntView::subscribe(Space*, Advisor&) {}
     forceinline void
-    ConstIntView::cancel(Space*,Advisor*) {}
+    ConstIntView::cancel(Space*,Advisor&) {}
 
 
 
@@ -269,19 +269,19 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    ConstIntView::modevent(const Delta*) {
+    ConstIntView::modevent(const Delta&) {
       return ME_INT_NONE;
     }
     forceinline int
-    ConstIntView::min(const Delta*) const {
+    ConstIntView::min(const Delta&) const {
       return 1;
     }
     forceinline int
-    ConstIntView::max(const Delta*) const {
+    ConstIntView::max(const Delta&) const {
       return 0;
     }
     forceinline bool
-    ConstIntView::any(const Delta*) const {
+    ConstIntView::any(const Delta&) const {
       return true;
     }
 

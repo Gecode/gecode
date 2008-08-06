@@ -70,9 +70,9 @@ namespace Gecode { namespace Int {
      */
     void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d);
     //@}
   };
 }}
@@ -105,9 +105,9 @@ namespace Gecode { namespace Int {
      */
     void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d);
     //@}
   };
 }}
@@ -140,9 +140,9 @@ namespace Gecode { namespace Set {
      */
     void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d);
     //@}
   };
 }}
@@ -178,9 +178,9 @@ namespace Gecode { namespace CpltSet {
      */
     void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d);
     //@}
     /// Return link to next variable to be disposed
     CpltSetVarImpBase* next_d(void) const;
@@ -206,12 +206,12 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,p,pc,assigned,ME_INT_BND,schedule);
   }
   forceinline void
-  IntVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
+  IntVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned) {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline Gecode::ModEvent
-  IntVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+  IntVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d) {
     switch (me) {
     case ME_INT_VAL:
       // Conditions: VAL, BND, DOM
@@ -258,12 +258,12 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,schedule);
   }
   forceinline void
-  BoolVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
+  BoolVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned) {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline Gecode::ModEvent
-  BoolVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta* d) {
+  BoolVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta& d) {
     schedule(home,PC_BOOL_VAL,PC_BOOL_VAL,ME_BOOL_VAL);
     if (!Gecode::VarImp<Gecode::Int::BoolVarImpConf>::advise(home,ME_BOOL_VAL,d))
       return ME_BOOL_FAILED;
@@ -292,12 +292,12 @@ namespace Gecode { namespace Set {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,schedule);
   }
   forceinline void
-  SetVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
+  SetVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned) {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline Gecode::ModEvent
-  SetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+  SetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d) {
     switch (me) {
     case ME_SET_VAL:
       // Conditions: VAL, CARD, CLUB, CGLB, ANY
@@ -385,12 +385,12 @@ namespace Gecode { namespace CpltSet {
     Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,p,pc,assigned,ME_CPLTSET_DOM,schedule);
   }
   forceinline void
-  CpltSetVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
+  CpltSetVarImpBase::subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned) {
     Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,a,assigned);
   }
 
   forceinline Gecode::ModEvent
-  CpltSetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+  CpltSetVarImpBase::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d) {
     switch (me) {
     case ME_CPLTSET_VAL:
       // Conditions: VAL, DOM

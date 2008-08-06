@@ -259,9 +259,9 @@ namespace Gecode { namespace Set {
   ConstantView::cancel(Space*,Propagator*,PropCond) {}
 
   forceinline void
-  ConstantView::subscribe(Space*, Advisor*) {}
+  ConstantView::subscribe(Space*, Advisor&) {}
   forceinline void
-  ConstantView::cancel(Space*,Advisor*) {}
+  ConstantView::cancel(Space*,Advisor&) {}
 
   forceinline void
   ConstantView::update(Space* home, bool, ConstantView& p) {
@@ -309,43 +309,43 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  ConstantView::modevent(const Delta*) {
+  ConstantView::modevent(const Delta&) {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
   
   forceinline int
-  ConstantView::glbMin(const Delta*) const {
+  ConstantView::glbMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  ConstantView::glbMax(const Delta*) const {
+  ConstantView::glbMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  ConstantView::glbAny(const Delta*) const {
+  ConstantView::glbAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
 
   forceinline int
-  ConstantView::lubMin(const Delta*) const {
+  ConstantView::lubMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  ConstantView::lubMax(const Delta*) const {
+  ConstantView::lubMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  ConstantView::lubAny(const Delta*) const {
+  ConstantView::lubAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
@@ -464,9 +464,9 @@ namespace Gecode { namespace Set {
   forceinline void
   EmptyView::cancel(Space*,Propagator*,PropCond) {}
   forceinline void
-  EmptyView::subscribe(Space*, Advisor*) {}
+  EmptyView::subscribe(Space*, Advisor&) {}
   forceinline void
-  EmptyView::cancel(Space*,Advisor*) {}
+  EmptyView::cancel(Space*,Advisor&) {}
 
 
   forceinline void
@@ -488,43 +488,43 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  EmptyView::modevent(const Delta*) {
+  EmptyView::modevent(const Delta&) {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
   
   forceinline int
-  EmptyView::glbMin(const Delta*) const {
+  EmptyView::glbMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  EmptyView::glbMax(const Delta*) const {
+  EmptyView::glbMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  EmptyView::glbAny(const Delta*) const {
+  EmptyView::glbAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
 
   forceinline int
-  EmptyView::lubMin(const Delta*) const {
+  EmptyView::lubMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  EmptyView::lubMax(const Delta*) const {
+  EmptyView::lubMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  EmptyView::lubAny(const Delta*) const {
+  EmptyView::lubAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
@@ -650,9 +650,9 @@ namespace Gecode { namespace Set {
   UniverseView::cancel(Space*,Propagator*,PropCond) {}
 
   forceinline void
-  UniverseView::subscribe(Space*,Advisor*) {}
+  UniverseView::subscribe(Space*,Advisor&) {}
   forceinline void
-  UniverseView::cancel(Space*,Advisor*) {}
+  UniverseView::cancel(Space*,Advisor&) {}
 
 
   forceinline void
@@ -674,43 +674,43 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  UniverseView::modevent(const Delta*) {
+  UniverseView::modevent(const Delta&) {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
   
   forceinline int
-  UniverseView::glbMin(const Delta*) const {
+  UniverseView::glbMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  UniverseView::glbMax(const Delta*) const {
+  UniverseView::glbMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  UniverseView::glbAny(const Delta*) const {
+  UniverseView::glbAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
 
   forceinline int
-  UniverseView::lubMin(const Delta*) const {
+  UniverseView::lubMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline int
-  UniverseView::lubMax(const Delta*) const {
+  UniverseView::lubMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
 
   forceinline bool
-  UniverseView::lubAny(const Delta*) const {
+  UniverseView::lubAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }

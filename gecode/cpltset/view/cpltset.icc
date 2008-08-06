@@ -243,7 +243,9 @@ namespace Gecode { namespace CpltSet {
    */
 
   forceinline ModEvent
-  CpltSetView::modevent(const Delta* d) { return CpltSetVarImp::modevent(d); }
+  CpltSetView::modevent(const Delta& d) { 
+    return CpltSetVarImp::modevent(d); 
+  }
 
   /// Iterator for the values in the greatest lower bound of a CpltSetView
   template <>

@@ -708,9 +708,9 @@ EOF
      */
     void subscribe(Gecode::Space* home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \\a a if \\a assigned is false.
-    void subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned);
+    void subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
-    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d);
+    Gecode::ModEvent notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d);
     //\@}
 EOF
 ;
@@ -786,7 +786,7 @@ EOF
     $base[$f]::subscribe(home,p,pc,assigned,$me_subscribe[$f],schedule);
   }
   forceinline void
-  $class[$f]::subscribe(Gecode::Space* home, Gecode::Advisor* a, bool assigned) {
+  $class[$f]::subscribe(Gecode::Space* home, Gecode::Advisor& a, bool assigned) {
     $base[$f]::subscribe(home,a,assigned);
   }
 
@@ -796,7 +796,7 @@ EOF
 if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline Gecode::ModEvent
-  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta* d) {
+  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent, Gecode::Delta& d) {
     schedule(home,$pc_assigned[$f],$pc_assigned[$f],$me_assigned[$f]);
     if (!$base[$f]::advise(home,$me_assigned[$f],d))
       return $me_failed[$f];
@@ -809,7 +809,7 @@ EOF
 } else {
   print <<EOF
   forceinline Gecode::ModEvent
-  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta* d) {
+  $class[$f]::notify(Gecode::Space* home, Gecode::ModEvent me, Gecode::Delta& d) {
     switch (me) {
 EOF
 ;

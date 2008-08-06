@@ -351,7 +351,7 @@ namespace Gecode { namespace CpltSet {
     /// \name Delta information for advisors
     //@{
     /// Return modification event
-    static ModEvent modevent(const Delta* d);
+    static ModEvent modevent(const Delta& d);
     //@}
 
   };

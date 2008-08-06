@@ -322,28 +322,28 @@ namespace Gecode { namespace Int { namespace Extensional {
   //
   template <class View>
   ExecStatus
-  Incremental<View>::advise(Space* home, Advisor* a0, const Delta* d) {
-    SupportAdvisor* a = static_cast<SupportAdvisor*>(a0);
+  Incremental<View>::advise(Space* home, Advisor& _a, const Delta& d) {
+    SupportAdvisor& a = static_cast<SupportAdvisor&>(_a);
     ModEvent me = View::modevent(d);
     bool scheduled = !work.empty();
 
-    if (a->x.any(d)) {
-      ViewValues<View> vv(a->x);
+    if (a.x.any(d)) {
+      ViewValues<View> vv(a.x);
       for (int i = ts()->min; i <= ts()->max; ++i) {
         if (vv() && i == vv.val()) {
           ++vv;  
           continue;
         }
-        while (SupportEntry* s = support(a->pos, i)) {
-          remove_support(home, s->t, a->pos, i);
+        while (SupportEntry* s = support(a.pos, i)) {
+          remove_support(home, s->t, a.pos, i);
         }
       } 
     } else {
-      int lo = a->x.min(d);
-      int hi = a->x.max(d);
+      int lo = a.x.min(d);
+      int hi = a.x.max(d);
       for (int val = lo; val <= hi; ++val) {
-        while (SupportEntry* s = support(a->pos, val)) {
-          remove_support(home, s->t, a->pos, val);
+        while (SupportEntry* s = support(a.pos, val)) {
+          remove_support(home, s->t, a.pos, val);
         }
       }
     }

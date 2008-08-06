@@ -150,19 +150,19 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  BoolVarImp::modevent(const Delta*) {
+  BoolVarImp::modevent(const Delta&) {
     return ME_BOOL_VAL;
   }
   forceinline int 
-  BoolVarImp::min(const Delta*) const {
+  BoolVarImp::min(const Delta&) const {
     return 1-val();
   }
   forceinline int 
-  BoolVarImp::max(const Delta*) const {
+  BoolVarImp::max(const Delta&) const {
     return 1-val();
   }
   forceinline bool 
-  BoolVarImp::any(const Delta*) const {
+  BoolVarImp::any(const Delta&) const {
     return false;
   }
 
@@ -405,11 +405,11 @@ namespace Gecode { namespace Int {
   }
 
   forceinline void
-  BoolVarImp::subscribe(Space* home, Advisor* a) {
+  BoolVarImp::subscribe(Space* home, Advisor& a) {
     BoolVarImpBase::subscribe(home,a,assigned());
   }
   forceinline void
-  BoolVarImp::cancel(Space* home, Advisor* a) {
+  BoolVarImp::cancel(Space* home, Advisor& a) {
     BoolVarImpBase::cancel(home,a,assigned());
   }
 

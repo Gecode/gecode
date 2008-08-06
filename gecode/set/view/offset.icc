@@ -226,13 +226,13 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::subscribe(Space* home, Advisor* a) {
+  OffsetSetView<View>::subscribe(Space* home, Advisor& a) {
     view.subscribe(home,a);
   }
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::cancel(Space* home, Advisor* a) {
+  OffsetSetView<View>::cancel(Space* home, Advisor& a) {
     view.cancel(home,a);
   }
 
@@ -284,43 +284,43 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline ModEvent
-  OffsetSetView<View>::modevent(const Delta* d) {
+  OffsetSetView<View>::modevent(const Delta& d) {
     return View::modevent(d);
   }
   
   template <class View>
   forceinline int
-  OffsetSetView<View>::glbMin(const Delta* d) const {
+  OffsetSetView<View>::glbMin(const Delta& d) const {
     return view.glbMin(d)+k;
   }
 
   template <class View>
   forceinline int
-  OffsetSetView<View>::glbMax(const Delta* d) const {
+  OffsetSetView<View>::glbMax(const Delta& d) const {
     return view.glbMax(d)+k;
   }
 
   template <class View>
   forceinline bool
-  OffsetSetView<View>::glbAny(const Delta* d) const {
+  OffsetSetView<View>::glbAny(const Delta& d) const {
     return view.glbAny(d);
   }
 
   template <class View>
   forceinline int
-  OffsetSetView<View>::lubMin(const Delta* d) const {
+  OffsetSetView<View>::lubMin(const Delta& d) const {
     return view.lubMin(d)+k;
   }
 
   template <class View>
   forceinline int
-  OffsetSetView<View>::lubMax(const Delta* d) const {
+  OffsetSetView<View>::lubMax(const Delta& d) const {
     return view.lubMax(d)+k;
   }
 
   template <class View>
   forceinline bool
-  OffsetSetView<View>::lubAny(const Delta* d) const {
+  OffsetSetView<View>::lubAny(const Delta& d) const {
     return view.lubAny(d);
   }
 

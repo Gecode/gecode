@@ -314,7 +314,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Give advice to propagator
-    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space* home,ViewArray<Gecode::Int::BoolView>& x,
                            View y);

@@ -302,12 +302,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::Speed::advise(Space* home, Advisor* _a, const Delta*) {
-    ViewAdvisor<VX>* a = static_cast<ViewAdvisor<VX>*>(_a);
+  GqBoolInt<VX>::Speed::advise(Space* home, Advisor& _a, const Delta&) {
+    ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
     if (n_s == 0)
       return ES_SUBSUMED_FIX(a,home,co);
-    assert(!a->view().none());
-    if (a->view().one()) {
+    assert(!a.view().none());
+    if (a.view().one()) {
       c--; goto subsume;
     }
     if (c+1 < n_s) 
@@ -315,7 +315,7 @@ namespace Gecode { namespace Int { namespace Linear {
     // Find a new subscription
     for (int i = x.size(); i--; )
       if (x[i].none()) {
-        a->view(home,x[i]);
+        a.view(home,x[i]);
         x.size(i);
         return ES_FIX;
       } else if (x[i].one()) {
@@ -527,12 +527,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::Speed::advise(Space* home, Advisor* _a, const Delta*) {
-    ViewAdvisor<VX>* a = static_cast<ViewAdvisor<VX>*>(_a);
+  EqBoolInt<VX>::Speed::advise(Space* home, Advisor& _a, const Delta&) {
+    ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
     if (n_s == 0)
       return ES_SUBSUMED_FIX(a,home,co);
-    assert(!a->view().none());
-    if (a->view().one())
+    assert(!a.view().none());
+    if (a.view().one())
       c--;
     //    std::max(c,x.size()-c)+1;
     if ((c+1 < n_s) && (x.size() < c))
@@ -540,7 +540,7 @@ namespace Gecode { namespace Int { namespace Linear {
     // Find a new subscription
     for (int i = x.size(); i--; )
       if (x[i].none()) {
-        a->view(home,x[i]);
+        a.view(home,x[i]);
         x.size(i);
         return ES_FIX;
       } else if (x[i].one()) {
