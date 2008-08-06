@@ -230,7 +230,7 @@ namespace Gecode { namespace Reflection {
     Arg* ret = new Arg(ARRAY_ARG);
     ret->arg1.i = n;
     if (n > 0)
-      ret->arg2.aa = static_cast<Arg**>(heap.ralloc(sizeof(Arg*)*n));
+      ret->arg2.aa = heap.alloc<Arg*>(n);
     else
       ret->arg2.aa = NULL;
     return static_cast<ArrayArg*>(ret);
@@ -239,7 +239,7 @@ namespace Gecode { namespace Reflection {
   Arg::initArray(int n) {
     t = ARRAY_ARG;
     arg1.i = n;
-    arg2.aa = static_cast<Arg**>(heap.ralloc(sizeof(Arg*)*n));
+    arg2.aa = heap.alloc<Arg*>(n);
   }
 
   bool
@@ -263,7 +263,7 @@ namespace Gecode { namespace Reflection {
     Arg* ret = new Arg(INT_ARRAY_ARG);
     ret->arg1.i = n;
     if (n > 0)
-      ret->arg2.ia = static_cast<int*>(heap.ralloc(sizeof(int)*n));
+      ret->arg2.ia = heap.alloc<int>(n);
     else
       ret->arg2.ia = NULL;
     return static_cast<IntArrayArg*>(ret);
@@ -272,7 +272,7 @@ namespace Gecode { namespace Reflection {
   Arg::initIntArray(int n) {
     t = INT_ARRAY_ARG;
     arg1.i = n;
-    arg2.ia = static_cast<int*>(heap.ralloc(sizeof(int)*n));
+    arg2.ia = heap.alloc<int>(n);
   }
 
   bool
@@ -645,26 +645,21 @@ namespace Gecode { namespace Reflection {
   inline
   ActorSpec::Arguments::Arguments(const Support::Symbol& ati)
    :  _ati(ati), size(4), n(0), r(1) {
-     a = static_cast<Arg**>(heap.ralloc(sizeof(Arg*)*size));
+     a = heap.alloc<Arg*>(size);
   }
 
   inline
   ActorSpec::Arguments::~Arguments(void) {
     for (int i=n; i--;)
       delete a[i];
-    heap.rfree(a);
+    heap.free<Arg*>(a,n);
   }
 
   void
   ActorSpec::resize(void) {
     assert(_args != NULL);
-    _args->size = _args->size * 3 / 2;
-    Arg** newargs =
-      static_cast<Arg**>(heap.ralloc(sizeof(Arg*)*_args->size));
-    for (int i=_args->n; i--;)
-      newargs[i] = _args->a[i];
-    heap.rfree(_args->a);
-    _args->a = newargs;
+    int ns = _args->size * 3 / 2;
+    _args->a = heap.realloc<Arg*>(_args->a, _args->size, ns);
   }
 
   ActorSpec::ActorSpec(void) : _args(NULL) {}
@@ -783,7 +778,7 @@ namespace Gecode { namespace Reflection {
   inline
   BranchingSpec::Arguments::Arguments(unsigned int n0)
    : n(n0), r(1) {
-     a = static_cast<Arg**>(heap.ralloc(sizeof(Arg*)*n));
+     a = heap.alloc<Arg*>(n);
      for (unsigned int i=n; i--;)
        a[i] = NULL;
   }
@@ -792,7 +787,7 @@ namespace Gecode { namespace Reflection {
   BranchingSpec::Arguments::~Arguments(void) {
     for (unsigned int i=n; i--;)
       delete a[i];
-    heap.rfree(a);
+    heap.free<Arg*>(a,n);
   }
   
   BranchingSpec::BranchingSpec(void) : _args(NULL) {}
