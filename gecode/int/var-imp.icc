@@ -167,10 +167,14 @@ namespace Gecode { namespace Int {
 
       /// Allocate memory from space
       static void* operator new(size_t s, Space* home);
+      /// Placement new
+      static void* operator new(size_t s, void* p);
       /// No-op (for exceptions)
       static void  operator delete(void*);
       /// No-op (use dispose instead)
       static void  operator delete(void*, Space*);
+      /// No-op (use dispose instead)
+      static void  operator delete(void*, void*);
       //@}
     };
 

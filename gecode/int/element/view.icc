@@ -77,13 +77,13 @@ namespace Gecode { namespace Int { namespace Element {
   template <class View>
   forceinline IdxView<View>*
   IdxView<View>::allocate(Space* home, int n) {
-      return static_cast<IdxView<View>*>
-        (home->ralloc(sizeof(IdxView<View>)*n));
-    }
+    return home->alloc<IdxView<View> >(n);
+  }
 
   template <class View>
   forceinline IdxView<View>*
-  IdxView<View>::init(Space* home, const typename ViewToVarArg<View>::argtype& x) {
+  IdxView<View>::init(Space* home, 
+                      const typename ViewToVarArg<View>::argtype& x) {
     IdxView<View>* iv = allocate(home,x.size());
     for (int i = x.size(); i--; ) {
       iv[i].idx = i; iv[i].view = x[i];

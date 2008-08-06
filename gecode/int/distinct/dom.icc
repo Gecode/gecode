@@ -275,8 +275,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   ExecStatus
   DomCtrl<View>::ViewValGraph::init(Space* home, int n, View* x) {
     n_view = n; 
-    view = static_cast<ViewNode<View>**>
-      (home->ralloc(n_view*sizeof(ViewNode<View>*)));
+    view = home->alloc<ViewNode<View>*>(n_view);
 
     // Find value information for construction of view value graph
     int min = x[n_view-1].min();

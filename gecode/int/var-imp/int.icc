@@ -119,10 +119,19 @@ namespace Gecode { namespace Int {
   IntVarImp::RangeList::operator delete(void*, Space*) {
     GECODE_NEVER;
   }
+  forceinline void
+  IntVarImp::RangeList::operator delete(void*, void*) {
+    GECODE_NEVER;
+  }
 
   forceinline void*
   IntVarImp::RangeList::operator new(size_t, Space* home) {
     return home->fl_alloc<sizeof(RangeList)>();
+  }
+
+  forceinline void*
+  IntVarImp::RangeList::operator new(size_t, void* p) {
+    return p;
   }
 
   forceinline void
@@ -188,7 +197,7 @@ namespace Gecode { namespace Int {
     : IntVarImpBase(home), dom(d.min(),d.max()) {
     if (d.size() > 1) {
       int n = d.size();
-      RangeList* r = static_cast<RangeList*>(home->ralloc(sizeof(RangeList)*n));
+      RangeList* r = home->alloc<RangeList>(n);
       fst(r); lst(r+n-1);
       unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
       for (int i = n; i--; ) {

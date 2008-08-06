@@ -304,11 +304,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   Incremental<View>::init_support(Space* home) {
     assert(support_data == NULL);
     int literals = ts()->domsize*x.size();
-    support_data = static_cast<SupportEntry**>
-      (home->ralloc(literals*sizeof(SupportEntry*)));
-    for (int i = literals; i--; ) {
+    support_data = home->alloc<SupportEntry*>(literals);
+    for (int i = literals; i--; )
       support_data[i] = NULL;
-    }
   }
 
   template <class View>

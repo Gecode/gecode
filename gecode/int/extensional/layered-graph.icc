@@ -225,13 +225,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   LayeredGraph<View>::construct(Space* home) {
     int n = x.size();
-    layers = static_cast<Layer*>(home->ralloc(sizeof(Layer)*(n+2)))+1;
+    layers = home->alloc<Layer>(n+2)+1;
     
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
-    states = static_cast<State*>
-      (home->ralloc(sizeof(State)*(n+1)*n_states));
+    states = home->alloc<State>((n+1)*n_states);
 
     // Initialize states (indegree and outdegree)
     for (int i = (n+1)*n_states; i--; )
@@ -246,8 +245,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
-      layers[i].support = 
-        static_cast<Support*>(home->ralloc(x[i].size()*sizeof(Support)));
+      layers[i].support = home->alloc<Support>(x[i].size());
       unsigned int j=0;
       // Enter links leaving reachable states (indegree != 0)
       for (ViewValues<View> nx(x[i]); nx(); ++nx) {

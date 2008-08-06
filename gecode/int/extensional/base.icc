@@ -68,10 +68,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   Base<View,subscribe>::init_last(Space* home, Tuple** source) {
     if (last_data == NULL) {
       int literals = ts()->domsize*x.size();
-      last_data = static_cast<Tuple**>(home->ralloc(literals*sizeof(Tuple*)));
-      for (int i = literals; i--; ) {
+      last_data = home->alloc<Tuple*>(literals);
+      for (int i = literals; i--; )
         last_data[i] = source[i];
-      }
     }
   }
 

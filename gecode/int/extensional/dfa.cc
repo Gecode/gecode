@@ -520,8 +520,7 @@ namespace Gecode {
     while (n_symbols >= static_cast<unsigned int>(1<<n_log))
       n_log++;
     // Allocate memory
-    table = static_cast<HashEntry*>
-      (heap.ralloc(sizeof(HashEntry)*(1<<n_log)));
+    table = heap.alloc<HashEntry>(1<<n_log);
     // Initialize table
     for (int i=(1<<n_log); i--; )
       table[i].fst = table[i].lst = NULL;
