@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline void
   SupportSet::init(unsigned int n0) {
     n = n0;
-    bits = heap.talloc<unsigned int>((n / bpui) + 1);
+    bits = heap.alloc<unsigned int>((n / bpui) + 1);
     for (unsigned int i = (n / bpui) + 1; i--; )
       bits[i] = 0;
   }
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   forceinline void
   SupportSet::dispose(void) {
-    heap.tfree(bits,n);
+    heap.free(bits,n);
   }
 
 
@@ -454,8 +454,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
     Scratch s(home);
     // Create support-base iterators
-    PosSupportIter<Val>* xp = s.talloc<PosSupportIter<Val> >(n);
-    NegSupportIter<Val>* yp = s.talloc<NegSupportIter<Val> >(m);
+    PosSupportIter<Val>* xp = s.alloc<PosSupportIter<Val> >(n);
+    NegSupportIter<Val>* yp = s.alloc<NegSupportIter<Val> >(m);
 
     // Initialize views for assignments
     {

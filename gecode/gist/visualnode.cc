@@ -375,7 +375,7 @@ namespace Gecode { namespace Gist {
       assert(root->copy != NULL);
       Scratch s(root->copy);
       std::pair<int,int>* alpha =
-        s.talloc<std::pair<int,int> >(numberOfShapes);
+        s.alloc<std::pair<int,int> >(numberOfShapes);
         
       // distance between the leftmost and the rightmost axis in the list
       int width = 0;
@@ -384,7 +384,7 @@ namespace Gecode { namespace Gist {
       for (int i = numberOfShapes; i--;)
         maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
         
-      Extent* currentShapeL = s.talloc<Extent>(maxDepth);
+      Extent* currentShapeL = s.alloc<Extent>(maxDepth);
       int ldepth = getChild(0)->getShape()->depth();
       for (int i=ldepth; i--;)
         currentShapeL[i] = (*getChild(0)->getShape())[i];

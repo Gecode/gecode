@@ -75,13 +75,13 @@ namespace Gecode { namespace Support {
   forceinline
   StaticStack<T>::StaticStack(const int n)
     : tos(0) {
-    stack = static_cast<T*>(heap.alloc((n+1)*sizeof(T)));
+    stack = static_cast<T*>(heap.ralloc((n+1)*sizeof(T)));
   }
 
   template <class T>
   forceinline
   StaticStack<T>::~StaticStack(void) {
-    heap.free(stack);
+    heap.rfree(stack);
   }
 
   template <class T>

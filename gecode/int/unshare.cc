@@ -112,7 +112,7 @@ namespace Gecode {
         return ES_OK;
 
       Scratch s(home);
-      Var** y = s.talloc<Var*>(n);
+      Var** y = s.alloc<Var*>(n);
       for (int i=n; i--; )
         y[i]=&x[i];
 

@@ -43,7 +43,7 @@ namespace Gecode {
   IntSet::IntSetObject::allocate(int n) {
     IntSetObject* o = new IntSetObject;
     o->n = n;
-    o->r = static_cast<Range*>(heap.alloc(n*sizeof(Range)));
+    o->r = static_cast<Range*>(heap.ralloc(n*sizeof(Range)));
     return o;
   }
 
@@ -56,7 +56,7 @@ namespace Gecode {
   }
 
   IntSet::IntSetObject::~IntSetObject(void) {
-    heap.free(r);
+    heap.rfree(r);
   }
 
   /// Sort ranges according to increasing minimum
@@ -104,24 +104,24 @@ namespace Gecode {
 
   void
   IntSet::init(const int r[], int n) {
-    Range* dr = heap.talloc<Range>(n);
+    Range* dr = heap.alloc<Range>(n);
     for (int i=n; i--; ) {
       dr[i].min=r[i]; dr[i].max=r[i];
     }
     normalize(&dr[0],n);
-    heap.tfree<Range>(dr,n);
+    heap.free(dr,n);
   }
 
   void
   IntSet::init(const int r[][2], int n) {
-    Range* dr = heap.talloc<Range>(n);
+    Range* dr = heap.alloc<Range>(n);
     int j = 0;
     for (int i=n; i--; )
       if (r[i][0] <= r[i][1]) {
         dr[j].min=r[i][0]; dr[j].max=r[i][1]; j++;
       }
     normalize(&dr[0],j);
-    heap.tfree<Range>(dr,n);
+    heap.free(dr,n);
   }
 
   void

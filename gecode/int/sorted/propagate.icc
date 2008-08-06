@@ -85,11 +85,11 @@ namespace Gecode { namespace Int { namespace Sorted {
     int n = x.size();
 
     Scratch s(home);
-    int* tau = s.talloc<int>(n);
-    int* phi = s.talloc<int>(n);
-    int* phiprime = s.talloc<int>(n);
-    OfflineMinItem* sequence = s.talloc<OfflineMinItem>(n);
-    int* vertices = s.talloc<int>(n);
+    int* tau = s.alloc<int>(n);
+    int* phi = s.alloc<int>(n);
+    int* phiprime = s.alloc<int>(n);
+    OfflineMinItem* sequence = s.alloc<OfflineMinItem>(n);
+    int* vertices = s.alloc<int>(n);
 
     if (match_fixed) {
       // sorting is determined, sigma and tau coincide
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       int mab = y[n - 1].max();
       // interval size
       int ivs = (mab - mib + 1);
-      Rank* allbnd = s.talloc<Rank>(ivs);
+      Rank* allbnd = s.alloc<Rank>(ivs);
       int iter = mib;
       int idx = 0;
       while(iter <= mab && idx < n) {
@@ -284,8 +284,8 @@ namespace Gecode { namespace Int { namespace Sorted {
      *  "narrowing.icc" in the function narrow_domx
      */
 
-    int* scclist = s.talloc<int>(n);
-    SccComponent* sinfo = s.talloc<SccComponent>(n);
+    int* scclist = s.alloc<int>(n);
+    SccComponent* sinfo = s.alloc<SccComponent>(n);
 
     for(int i = n; i--; )
       sinfo[i].left=sinfo[i].right=sinfo[i].rightmost=sinfo[i].leftmost= i;
@@ -563,7 +563,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     Scratch s(home);
-    int* tau = s.talloc<int>(n);
+    int* tau = s.alloc<int>(n);
     if (match_fixed) {
       // sorting is determined
       // sigma and tau coincide

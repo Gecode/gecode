@@ -77,19 +77,19 @@ namespace Gecode { namespace Support {
   template <class T>
   forceinline
   DynamicArray<T>::DynamicArray(int m)
-    : n(m), x(heap.talloc<T>(static_cast<size_t>(n))) {}
+    : n(m), x(heap.alloc<T>(static_cast<size_t>(n))) {}
 
   template <class T>
   forceinline
   DynamicArray<T>::DynamicArray(const DynamicArray<T>& a)
-    : n(a.n), x(heap.talloc<T>(n)) {
-    (void) heap.tcopy<T>(x,a.x,n);
+    : n(a.n), x(heap.alloc<T>(n)) {
+    (void) heap.copy<T>(x,a.x,n);
   }
 
   template <class T>
   forceinline
   DynamicArray<T>::~DynamicArray(void) {
-    heap.tfree(x,n);
+    heap.free(x,n);
   }
 
   template <class T>
@@ -97,9 +97,9 @@ namespace Gecode { namespace Support {
   DynamicArray<T>::operator =(const DynamicArray<T>& a) {
     if (this != &a) {
       if (n < a.n) {
-        heap.tfree(x,n); n = a.n; x = heap.talloc<T>(n);
+        heap.free(x,n); n = a.n; x = heap.alloc<T>(n);
       }
-      (void) heap.tcopy(x,a.x,n);
+      (void) heap.copy(x,a.x,n);
     }
     return *this;
   }
@@ -108,7 +108,7 @@ namespace Gecode { namespace Support {
   void
   DynamicArray<T>::resize(int i) {
     int m = std::max(i+1, (3*n)/2);
-    x = heap.trealloc(x,static_cast<size_t>(n),static_cast<size_t>(m));
+    x = heap.realloc(x,static_cast<size_t>(n),static_cast<size_t>(m));
     n = m;
   }
 

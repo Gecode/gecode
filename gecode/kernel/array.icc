@@ -173,7 +173,7 @@ namespace Gecode {
       : n(a.size()) {
       // This may not be in the icc file (to satisfy the MS compiler)
       if (n>0) {
-        x = home->talloc<View>(n);
+        x = home->alloc<View>(n);
         for (int i=n; i--; )
           x[i]=a[i];
       } else {
@@ -549,7 +549,7 @@ namespace Gecode {
   VarArray<Var>::VarArray(Space* home, int n0)
     : n(n0), capacity(n0) {
     // Allocate from space
-    x = (n>0) ? home->talloc<Var>(n) : NULL;
+    x = (n>0) ? home->alloc<Var>(n) : NULL;
   }
 
   template <class Var>
@@ -563,7 +563,7 @@ namespace Gecode {
   VarArray<Var>::~VarArray(void) {
     if (n != capacity) {
       // Array was allocated on the heap
-      heap.tfree<Var>(x, capacity);
+      heap.free<Var>(x, capacity);
     }
   }
 
@@ -599,8 +599,8 @@ namespace Gecode {
     if (n == capacity) {
       // Array was space allocated, copy to heap with new size
       Var* oldx = x;
-      x = heap.tcopy<Var>(heap.talloc<Var>(newsize), x, n);
-      home->free(oldx, capacity);
+      x = heap.copy<Var>(heap.alloc<Var>(newsize), x, n);
+      home->rfree(oldx, capacity);
     } else {
       // Array was heap allocated, just reallocate with new size
       x = heap.trealloc<Var>(x, n, newsize);
@@ -637,7 +637,7 @@ namespace Gecode {
     capacity = a.n;
     n = capacity;
     if (capacity > 0) {
-      x = home->talloc<Var>(capacity);
+      x = home->alloc<Var>(capacity);
       for (int i = capacity; i--; )
         x[i].update(home, share, a.x[i]);
     } else {
@@ -669,14 +669,14 @@ namespace Gecode {
   forceinline
   ViewArray<View>::ViewArray(Space* home, int n0)
     : n(n0) {
-    x = (n>0) ? home->talloc<View>(n) : NULL;
+    x = (n>0) ? home->alloc<View>(n) : NULL;
   }
 
   template <class View>
   ViewArray<View>::ViewArray(Space* home, const ViewArray<View>& a)
     : n(a.size()) {
     if (n>0) {
-      x = home->talloc<View>(n);
+      x = home->alloc<View>(n);
       for (int i = n; i--; )
         x[i] = a[i];
     } else {
@@ -694,7 +694,7 @@ namespace Gecode {
     }
     Reflection::ArrayArg* a = spec->toArray();
     n = a->size();
-    x = n>0 ? home->talloc<View>(n) : NULL;
+    x = n>0 ? home->alloc<View>(n) : NULL;
     for (int i=n; i--;)
       x[i] = View(home, vars, (*a)[i]);
   }
@@ -846,7 +846,7 @@ namespace Gecode {
   ViewArray<View>::update(Space* home, bool share, ViewArray<View>& y) {
     n = y.n;
     if (n > 0) {
-      x = home->talloc<View>(n);
+      x = home->alloc<View>(n);
       for (int i = n; i--; )
         x[i].update(home, share, y.x[i]);
     } else {
@@ -919,16 +919,16 @@ namespace Gecode {
     if (n < 2)
       return false;
     Scratch s(home);
-    View* y = s.talloc<View>(n);
+    View* y = s.alloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
     for (int i = n-1; i--; )
       if (!y[i].assigned() && __same(y[i+1],y[i])) {
-        s.tfree<View>(y,n);
+        s.free<View>(y,n);
         return true;
       }
-    s.tfree<View>(y,n);
+    s.free<View>(y,n);
     return false;
   }
 
@@ -962,16 +962,16 @@ namespace Gecode {
     if (n < 2)
       return false;
     Scratch s(home);
-    View* y = s.talloc<View>(n);
+    View* y = s.alloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
     for (int i = n-1; i--; )
       if (!y[i].assigned() && __shared(y[i+1],y[i])) {
-        s.tfree<View>(y,n);
+        s.free<View>(y,n);
         return true;
       }
-    s.tfree<View>(y,n);
+    s.free<View>(y,n);
     return false;
   }
 
@@ -1016,7 +1016,7 @@ namespace Gecode {
   forceinline T*
   ArgArrayBase<T>::allocate(int n) {
     return (n > onstack_size) ?
-      heap.talloc<T>(static_cast<unsigned int>(n)) : &onstack[0];
+      heap.alloc<T>(static_cast<unsigned int>(n)) : &onstack[0];
   }
 
   template <class T>
@@ -1028,14 +1028,14 @@ namespace Gecode {
   inline
   ArgArrayBase<T>::ArgArrayBase(const ArgArrayBase<T>& aa)
     : n(aa.n), a(allocate(n)) {
-    heap.tcopy<T>(a,aa.a,n);
+    heap.copy<T>(a,aa.a,n);
   }
 
   template <class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
     if (n > onstack_size)
-      heap.tfree(a,n);
+      heap.free(a,n);
   }
 
   template <class T>
@@ -1043,10 +1043,10 @@ namespace Gecode {
   ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
     if (&aa != this) {
       if (n > onstack_size)
-        heap.tfree(a,n);
+        heap.free(a,n);
       n = aa.n;
       a = allocate(aa.n);
-      heap.tcopy<T>(a,aa.a,n);
+      heap.copy<T>(a,aa.a,n);
     }
     return *this;
   }
@@ -1142,17 +1142,17 @@ namespace Gecode {
     if (n < 2)
       return false;
     Scratch s(home);
-    Var* y = s.talloc<Var>(n);
+    Var* y = s.alloc<Var>(n);
     for (int i = n; i--; )
       y[i] = a[i];
     VarLess vl;
     Support::quicksort<Var,VarLess>(y,n,vl);
     for (int i = n-1; i--; )
       if (!y[i].assigned() && (y[i+1].var() == y[i].var())) {
-        s.tfree<Var>(y,n);
+        s.free<Var>(y,n);
         return true;
       }
-    s.tfree<Var>(y,n);
+    s.free<Var>(y,n);
     return false;
   }
 
@@ -1163,7 +1163,7 @@ namespace Gecode {
     if (m < 2)
       return false;
     Scratch s(home);
-    Var* z = s.talloc<Var>(m);
+    Var* z = s.alloc<Var>(m);
     for (int i = n; i--; )
       z[i] = a[i];
     for (int i = y.n; i--; )
@@ -1172,10 +1172,10 @@ namespace Gecode {
     Support::quicksort<Var,VarLess>(z,m,vl);
     for (int i = m-1; i--; )
       if (!z[i].assigned() && (z[i+1].var() == z[i].var())) {
-        s.tfree<Var>(z,m);
+        s.free<Var>(z,m);
         return true;
       }
-    s.tfree<Var>(z,m);
+    s.free<Var>(z,m);
     return false;
   }
 
@@ -1205,7 +1205,7 @@ namespace Gecode {
   VarArray<Var>::VarArray(Space* home, const VarArgArray<Var>& a)
     : n(a.size()), capacity(a.size()) {
     if (capacity>0) {
-      x = home->talloc<Var>(capacity);
+      x = home->alloc<Var>(capacity);
       for (int i = capacity; i--; )
         x[i] = a[i];
     } else {

@@ -48,7 +48,7 @@ namespace Gecode {
 
     int n=x.size();
     Scratch s(home);
-    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
+    Linear::Term<BoolView>* t = s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -63,7 +63,7 @@ namespace Gecode {
 
     int n=x.size();
     Scratch s(home);
-    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
+    Linear::Term<BoolView>* t = s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -82,7 +82,7 @@ namespace Gecode {
 
     int n=x.size();
     Scratch s(home);
-    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
+    Linear::Term<BoolView>* t = s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -102,7 +102,7 @@ namespace Gecode {
     int n=x.size();
     Scratch s(home);
     Linear::Term<BoolView>* t =
-      s.talloc<Linear::Term<BoolView> >(n);
+      s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -132,7 +132,7 @@ namespace Gecode {
 
     int n=x.size();
     Scratch s(home);
-    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
+    Linear::Term<BoolView>* t = s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -147,7 +147,7 @@ namespace Gecode {
 
     int n=x.size();
     Scratch s(home);
-    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
+    Linear::Term<BoolView>* t = s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -165,7 +165,7 @@ namespace Gecode {
 
     int n=x.size();
     Scratch s(home);
-    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
+    Linear::Term<BoolView>* t = s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -183,7 +183,7 @@ namespace Gecode {
 
     int n=x.size();
     Scratch s(home);
-    Linear::Term<BoolView>* t = s.talloc<Linear::Term<BoolView> >(n);
+    Linear::Term<BoolView>* t = s.alloc<Linear::Term<BoolView> >(n);
     for (int i=n; i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }

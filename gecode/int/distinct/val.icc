@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     int n = x.size();
 
     Scratch s(home);
-    int* stack = s.talloc<int>(n);
+    int* stack = s.alloc<int>(n);
     int* c_v = &stack[0];
     // c_n is the current number of values on stack
     int c_n = 0;

@@ -356,8 +356,8 @@ namespace Gecode { namespace Set { namespace RelOp {
         }
       }
       {
-        GlbRanges<View0>* xLBs = s.talloc<GlbRanges<View0> >(xsize);
-        LubRanges<View0>* xUBs = s.talloc<LubRanges<View0> >(xsize);
+        GlbRanges<View0>* xLBs = s.alloc<GlbRanges<View0> >(xsize);
+        LubRanges<View0>* xUBs = s.alloc<LubRanges<View0> >(xsize);
         for (int i = xsize; i--; ) {
           GlbRanges<View0> lb(x[i]);
           LubRanges<View0> ub(x[i]);
@@ -387,7 +387,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       // xi.exclude (Intersection(xj.lb) - y.ub)
       {
         GLBndSet* rightSet =
-          static_cast<GLBndSet*>(s.alloc(sizeof(GLBndSet)*xsize));
+          static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
         new (&rightSet[xsize-1]) GLBndSet(home);
         rightSet[xsize-1].update(home,intOfDets);
         for (int i=xsize-1;i--;) {

@@ -34,15 +34,15 @@ namespace Gecode { namespace Decomposition {
   void
   Partition::init(int noOfElements, int noOfComponents) {
     elements = 
-      static_cast<int*>(heap.alloc(sizeof(int)*noOfElements));
+      static_cast<int*>(heap.ralloc(sizeof(int)*noOfElements));
     separators =
-      static_cast<int*>(heap.alloc(sizeof(int)*noOfComponents));
+      static_cast<int*>(heap.ralloc(sizeof(int)*noOfComponents));
     _size = noOfComponents;
   }
 
   Partition::~Partition(void) {
-    heap.free(elements);
-    heap.free(separators);
+    heap.rfree(elements);
+    heap.rfree(separators);
   }
 
   size_t
@@ -65,8 +65,8 @@ namespace Gecode { namespace Decomposition {
   }
 
   DecompDesc::~DecompDesc(void) {
-    heap.free(component);
-    heap.free(element);
+    heap.rfree(component);
+    heap.rfree(element);
   }
 
   class Node {
@@ -105,7 +105,7 @@ namespace Gecode { namespace Decomposition {
     std::vector<int> label;
     int graphSize = vars.size()+as.size();
     Scratch s(home);
-    Node* g = s.talloc<Node>(graphSize);
+    Node* g = s.alloc<Node>(graphSize);
     for (int i=noOfVars; i--;) {
       if (vars.spec(i).assigned()) {
         g[i].component = 0;

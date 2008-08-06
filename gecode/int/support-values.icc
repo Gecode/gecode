@@ -61,13 +61,13 @@ namespace Gecode { namespace Int {
   template<class View>
   inline
   SupportValues<View>::SupportValues(View x0) : x(x0) {
-    bits = heap.talloc<unsigned int>((x.size() / bpui) + 1);
+    bits = heap.alloc<unsigned int>((x.size() / bpui) + 1);
     for (unsigned int i = (x.size() / bpui) + 1; i--; )
       bits[i] = 0;
     unsigned int n = 0;
     for (ViewRanges<View> r(x); r(); ++r)
       n++;
-    rp_fst = heap.talloc<RangePos>(n+1);
+    rp_fst = heap.alloc<RangePos>(n+1);
     rp_lst = rp_fst + n;
     unsigned int p = 0;
     int i = 0;
@@ -83,8 +83,8 @@ namespace Gecode { namespace Int {
   template<class View>
   inline
   SupportValues<View>::~SupportValues(void) {
-    heap.free(bits);
-    heap.free(rp_fst);
+    heap.rfree(bits);
+    heap.rfree(rp_fst);
   }
   
   template<class View>

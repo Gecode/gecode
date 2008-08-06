@@ -136,6 +136,6 @@ namespace Gecode { namespace Support {
   int __GECODE__AS__ ## X ## __LINE__ ## n = (N); \
   T* __GECODE__AS__ ## X ## __LINE__ =                                     \
     static_cast<T*>(__GECODE__AS__SA__ ## X ##                             \
-      __LINE__.alloc(sizeof(T)*((__GECODE__AS__ ## X ## __LINE__ ## n)+1)));                                  \
+      __LINE__.ralloc(sizeof(T)*((__GECODE__AS__ ## X ## __LINE__ ## n)+1)));                                  \
   Gecode::Support::SentinelStack<T> X(__GECODE__AS__ ## X ## __LINE__,(S),__GECODE__AS__ ## X ## __LINE__ ## n);
 // STATISTICS: support-any

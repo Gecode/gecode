@@ -177,7 +177,7 @@ namespace Gecode { namespace Set { namespace Int {
     if (elements.size() != weights.size())
       throw ArgumentSizeMismatch("Weights");
     Scratch s(home);
-    int* els_arr = s.talloc<int>(elements.size());
+    int* els_arr = s.alloc<int>(elements.size());
     for (int i=elements.size(); i--;)
       els_arr[i] = elements[i];
     IntSet els(els_arr, elements.size());
@@ -270,7 +270,7 @@ namespace Gecode { namespace Set { namespace Int {
       UnknownRanges<View> ur(x);
       Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur);
       Scratch s(home);
-      int* currentWeights = s.talloc<int>(size);
+      int* currentWeights = s.alloc<int>(size);
       for (int i=0; i<size; i++) {
         if (!urv() || elements[i]<urv.val()) {
           currentWeights[i] = 0;

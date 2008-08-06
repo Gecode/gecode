@@ -578,7 +578,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        BoolVar* z = s.talloc<BoolVar>(m);
+        BoolVar* z = s.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -590,7 +590,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        BoolVar* z = s.talloc<BoolVar>(m);
+        BoolVar* z = s.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -602,7 +602,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        BoolVar* z = s.talloc<BoolVar>(m);
+        BoolVar* z = s.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -654,7 +654,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        BoolVar* z = s.talloc<BoolVar>(m);
+        BoolVar* z = s.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1].init(home,n,n);;
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -666,7 +666,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        BoolVar* z = s.talloc<BoolVar>(m);
+        BoolVar* z = s.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1].init(home,n,n);
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);
@@ -678,7 +678,7 @@ namespace Gecode {
       if (m < 2) {
         throw TooFewArguments("Int::rel");
       } else {
-        BoolVar* z = s.talloc<BoolVar>(m);
+        BoolVar* z = s.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1].init(home,n,n);
         for (int i=1; i<m-1; i++)
           z[i].init(home,0,1);

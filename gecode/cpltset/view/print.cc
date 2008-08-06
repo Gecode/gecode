@@ -146,12 +146,12 @@ operator<<(std::ostream& os, const CpltSetView& x) {
   } else {
     bdd dom = x.dom();
     os << "{";
-    char* profile = heap.talloc<char>(x.tableWidth());
+    char* profile = heap.alloc<char>(x.tableWidth());
     for (int i=x.tableWidth(); i--;)
       profile[i] = -1;
     printBddDom(os, x.offset(), x.initialLubMin(), x.tableWidth(), true, 
                 profile, dom);
-    heap.free(profile);
+    heap.rfree(profile);
     os << "}";
   }
   return os;

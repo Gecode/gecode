@@ -86,10 +86,8 @@ namespace Gecode {
   public:
     /// Initialize scratch from space
     Scratch(const Space* home);
-    /// Allocate memory from scratch
-    void* alloc(size_t s);
-    /// Free memory previously allocated (noop)
-    void free(void* p, size_t s);
+    /// \name Typed allocation routines
+    //@{
     /** 
      * \brief Allocate block of \a n objects of type \a T from scratch
      *
@@ -97,7 +95,7 @@ namespace Gecode {
      * constructor of \a T is run for all \a n objects.
      */
     template <class T>
-    T* talloc(unsigned int n);
+    T* alloc(unsigned int n);
     /** 
      * \brief Delete \a n objects allocated from the scratch starting at \a b
      *
@@ -108,7 +106,7 @@ namespace Gecode {
      * destructors.
      */
     template <class T>
-    void tfree(T* b, unsigned int n);
+    void free(T* b, unsigned int n);
     /**
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the scratch
      *
@@ -121,7 +119,20 @@ namespace Gecode {
      * Returns the address of the new block.
      */
     template <class T>
-    T* trealloc(T* b, unsigned int n, unsigned int m);
+    T* realloc(T* b, unsigned int n, unsigned int m);
+    //@}
+    /// \name Raw allocation routines
+    //@{
+    /// Allocate memory from scratch
+    void* ralloc(size_t s);
+    /**
+     * \brief Free memory previously allocated
+     *
+     * Note that the memory is only guaranteed to be freed after the
+     * scratch object itself gets deleted.
+     */
+    void rfree(void* p, size_t s);
+    //@}
     /// Return memory
     ~Scratch(void);
   private:
@@ -146,7 +157,7 @@ namespace Gecode {
     : home(const_cast<Space*>(h)), free_reset(home->ssa->free), n_malloc(0) {}
 
   forceinline void*
-  Scratch::alloc(size_t s) {
+  Scratch::ralloc(size_t s) {
     void* p;
     if (home->ssa->alloc(s,p))
       return p;
@@ -154,7 +165,7 @@ namespace Gecode {
   }
 
   forceinline void
-  Scratch::free(void*, size_t) {}
+  Scratch::rfree(void*, size_t) {}
 
   forceinline
   Scratch::~Scratch(void) {
@@ -170,8 +181,8 @@ namespace Gecode {
    */
   template <class T>
   forceinline T*
-  Scratch::talloc(unsigned int n) {
-    T* p = static_cast<T*>(alloc(sizeof(T)*n));
+  Scratch::alloc(unsigned int n) {
+    T* p = static_cast<T*>(ralloc(sizeof(T)*n));
     for (unsigned int i=n; i--; )
       (void) new (p+i) T();
     return p;
@@ -179,29 +190,28 @@ namespace Gecode {
 
   template <class T>
   forceinline void
-  Scratch::tfree(T* b, unsigned int n) {
+  Scratch::free(T* b, unsigned int n) {
     for (unsigned int i=n; i--; )
       b[i].~T();
-    free(b,n*sizeof(T));
+    rfree(b,n*sizeof(T));
   }
 
   template <class T>
   forceinline T*
-  Scratch::trealloc(T* b, unsigned int n, unsigned int m) {
+  Scratch::realloc(T* b, unsigned int n, unsigned int m) {
     if (n < m) {
-      T* p = static_cast<T*>(alloc(sizeof(T)*m));
+      T* p = static_cast<T*>(ralloc(sizeof(T)*m));
       for (unsigned int i=n; i--; )
         (void) new (p+i) T(b[i]);
       for (unsigned int i=n; i<m; i++)
         (void) new (p+i) T();
-      tfree<T>(b,n);
+      free<T>(b,n);
       return p;
     } else {
-      tfree<T>(b+m,m-n);
+      free<T>(b+m,m-n);
       return b;
     }
   }
-
 
 }
 

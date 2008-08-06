@@ -201,7 +201,7 @@ namespace Gecode { namespace Set {
     for (RangeList* c = d.fst(); c != NULL; c = c->next())
       n++;
 
-    RangeList* r = static_cast<RangeList*>(home->alloc(sizeof(RangeList)*n));
+    RangeList* r = static_cast<RangeList*>(home->ralloc(sizeof(RangeList)*n));
     fst(r); lst(r+n-1);
 
     RangeList* c = d.fst();

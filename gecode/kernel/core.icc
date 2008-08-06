@@ -1301,10 +1301,6 @@ namespace Gecode {
      * \ingroup FuncMem
      */
     //@{
-    /// Allocate memory on space heap
-    void* alloc(size_t s);
-    /// Free memory previously allocated with alloc (might be reused later)
-    void free(void* p, size_t s);
     /** 
      * \brief Allocate block of \a n objects of type \a T from space heap
      *
@@ -1312,7 +1308,7 @@ namespace Gecode {
      * constructor of \a T is run for all \a n objects.
      */
     template <class T>
-    T* talloc(unsigned int n);
+    T* alloc(unsigned int n);
     /** 
      * \brief Delete \a n objects allocated from space heap starting at \a b
      *
@@ -1323,7 +1319,7 @@ namespace Gecode {
      * reusal.
      */
     template <class T>
-    void tfree(T* b, unsigned int n);
+    void free(T* b, unsigned int n);
     /**
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
      *
@@ -1336,7 +1332,11 @@ namespace Gecode {
      * Returns the address of the new block.
      */
     template <class T>
-    T* trealloc(T* b, unsigned int n, unsigned int m);
+    T* realloc(T* b, unsigned int n, unsigned int m);
+    /// Allocate memory on space heap
+    void* ralloc(size_t s);
+    /// Free memory previously allocated with alloc (might be reused later)
+    void rfree(void* p, size_t s);
     /// Allocate from freelist-managed memory
     template <size_t> void* fl_alloc(void);
     /**
@@ -1367,38 +1367,38 @@ namespace Gecode {
   // Heap allocated
   forceinline void* 
   SharedHandle::Object::operator new(size_t s) {
-    return heap.alloc(s);
+    return heap.ralloc(s);
   }
   forceinline void
   SharedHandle::Object::operator delete(void* p) {
-    heap.free(p);
+    heap.rfree(p);
   }
 
   forceinline void*
   Space::operator new(size_t s) {
-    return heap.alloc(s);
+    return heap.ralloc(s);
   }
   forceinline void
   Space::operator delete(void* p) {
-    heap.free(p);
+    heap.rfree(p);
   }
 
   forceinline void
   BranchingDesc::operator delete(void* p) {
-    heap.free(p);
+    heap.rfree(p);
   }
   forceinline void*
   BranchingDesc::operator new(size_t s) {
-    return heap.alloc(s);
+    return heap.ralloc(s);
   }
 
   // Space allocation: general space heaps and free lists
   forceinline void*
-  Space::alloc(size_t s) {
+  Space::ralloc(size_t s) {
     return mm.alloc(s);
   }
   forceinline void
-  Space::free(void* p, size_t s) {
+  Space::rfree(void* p, size_t s) {
     return mm.reuse(p,s);
   }
   template <size_t s>
@@ -1418,8 +1418,8 @@ namespace Gecode {
    */
   template <class T>
   forceinline T*
-  Space::talloc(unsigned int n) {
-    T* p = static_cast<T*>(alloc(sizeof(T)*n));
+  Space::alloc(unsigned int n) {
+    T* p = static_cast<T*>(ralloc(sizeof(T)*n));
     for (unsigned int i=n; i--; )
       (void) new (p+i) T();
     return p;
@@ -1427,25 +1427,25 @@ namespace Gecode {
 
   template <class T>
   forceinline void
-  Space::tfree(T* b, unsigned int n) {
+  Space::free(T* b, unsigned int n) {
     for (unsigned int i=n; i--; )
       b[i].~T();
-    free(b,n*sizeof(T));
+    rfree(b,n*sizeof(T));
   }
 
   template <class T>
   forceinline T*
-  Space::trealloc(T* b, unsigned int n, unsigned int m) {
+  Space::realloc(T* b, unsigned int n, unsigned int m) {
     if (n < m) {
-      T* p = static_cast<T*>(alloc(sizeof(T)*m));
+      T* p = static_cast<T*>(ralloc(sizeof(T)*m));
       for (unsigned int i=n; i--; )
         (void) new (p+i) T(b[i]);
       for (unsigned int i=n; i<m; i++)
         (void) new (p+i) T();
-      tfree<T>(b,n);
+      free<T>(b,n);
       return p;
     } else {
-      tfree<T>(b+m,m-n);
+      free<T>(b+m,m-n);
       return b;
     }
   }
@@ -1472,7 +1472,7 @@ namespace Gecode {
   Actor::operator delete(void*, Space*) {}
   forceinline void*
   Actor::operator new(size_t s, Space* home) {
-    return home->alloc(s);
+    return home->ralloc(s);
   }
 
   template <class VIC>
@@ -1484,7 +1484,7 @@ namespace Gecode {
   template <class VIC>
   forceinline void*
   VarImp<VIC>::operator new(size_t s, Space* home) {
-    return home->alloc(s);
+    return home->ralloc(s);
   }
 
 #ifndef __GNUC__
@@ -1495,7 +1495,7 @@ namespace Gecode {
   Advisor::operator delete(void*, Space*) {}
   forceinline void*
   Advisor::operator new(size_t s, Space* home) {
-    return home->alloc(s);
+    return home->ralloc(s);
   }
 
 
@@ -2197,7 +2197,7 @@ namespace Gecode {
       // Create fresh dependency array with four entries
       free_and_bits += 4 << free_bits;
       ActorLink** prop = static_cast<ActorLink**>
-        (home->alloc(4*sizeof(ActorLink*))) + 4;
+        (home->ralloc(4*sizeof(ActorLink*))) + 4;
       for (PropCond i=0; i<pc_max+3; i++)
         idx[i] = prop;
     } else {
@@ -2212,11 +2212,11 @@ namespace Gecode {
         ((s <= idx[0]) && (idx[0] < s+home->pc.p.n_sub)) ?
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = static_cast<ActorLink**>
-        (home->alloc(m*sizeof(ActorLink*))) + m-n;
+        (home->ralloc(m*sizeof(ActorLink*))) + m-n;
       free_and_bits += (m-n) << free_bits;
       // Copy entries
       memcpy(prop, idx[0], n*sizeof(ActorLink*));
-      home->free(idx[0], n*sizeof(ActorLink*));
+      home->rfree(idx[0], n*sizeof(ActorLink*));
       // Update index pointers
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
@@ -2299,7 +2299,7 @@ namespace Gecode {
     ActorLink** p = idx[pc_max+2]; idx[pc_max+2] = NULL;
     home->pc.p.n_sub -= (p-b);
     unsigned int n = (free_and_bits >> VIC::free_bits) + (p-b);
-    home->free(p-n,n*sizeof(ActorLink*));
+    home->rfree(p-n,n*sizeof(ActorLink*));
   }
 
   template <class VIC>

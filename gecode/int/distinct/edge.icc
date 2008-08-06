@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline void*
   Edge<View>::operator new(size_t s, Space* home) {
-    return home->alloc(s);
+    return home->ralloc(s);
   }
 
 }}}

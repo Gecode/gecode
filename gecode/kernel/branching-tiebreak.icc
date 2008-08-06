@@ -333,17 +333,17 @@ namespace Gecode {
   template <class View>
   forceinline void*
   ViewSelVirtualBase<View>::operator new(size_t s, Space* home) {
-    return home->alloc(s);
+    return home->ralloc(s);
   }
 
   // Virtualized description
   forceinline void
   DescVirtualBase::operator delete(void* p) {
-    heap.free(p);
+    heap.rfree(p);
   }
   forceinline void*
   DescVirtualBase::operator new(size_t s) {
-    return heap.alloc(s);
+    return heap.ralloc(s);
   }
   forceinline
   DescVirtualBase::~DescVirtualBase(void) {
@@ -420,14 +420,14 @@ namespace Gecode {
   forceinline
   ViewSelTieBreakDynamic<View>::Desc::Desc
   (Space* home, ViewSelVirtualBase<View>** tb, int n0)
-    : n(n0), d(heap.talloc<DescVirtualBase*>(n)) {
+    : n(n0), d(heap.alloc<DescVirtualBase*>(n)) {
     for (int i=n; i--; )
       d[i] = tb[i]->description(home);
   }
   template<class View>
   forceinline
   ViewSelTieBreakDynamic<View>::Desc::Desc(const Desc& de)
-    : n(de.n), d(heap.talloc<DescVirtualBase*>(n)) {
+    : n(de.n), d(heap.alloc<DescVirtualBase*>(n)) {
     for (int i=n; i--; )
       d[i] = de.d[i]->copy();        
   }
@@ -463,7 +463,7 @@ namespace Gecode {
   ViewSelTieBreakDynamic<View>::Desc::~Desc(void) {
     for (int i=n; i--; )
       delete d[i];
-    heap.tfree(d,n);
+    heap.free(d,n);
   }
 
 
@@ -475,7 +475,7 @@ namespace Gecode {
   forceinline
   ViewSelTieBreakDynamic<View>::
   ViewSelTieBreakDynamic(Space* home, ViewSelVirtualBase<View>** vsv, int n0) 
-    : n(n0), tb(home->talloc<ViewSelVirtualBase<View>*>(n)) {
+    : n(n0), tb(home->alloc<ViewSelVirtualBase<View>*>(n)) {
     for (int i=0; i<n; i++)
       tb[i]=vsv[i];
     assert(n > 0);
@@ -546,7 +546,7 @@ namespace Gecode {
   ViewSelTieBreakDynamic<View>::update(Space* home, bool share, 
                                        ViewSelTieBreakDynamic<View>& vstb) {
     n = vstb.n;
-    tb = home->talloc<ViewSelVirtualBase<View>*>(n);
+    tb = home->alloc<ViewSelVirtualBase<View>*>(n);
     for (int i=0; i<n; i++)
       tb[i] = vstb.tb[i]->copy(home,share);
   } 
@@ -554,8 +554,8 @@ namespace Gecode {
   forceinline void
   ViewSelTieBreakDynamic<View>::dispose(Space* home) {
     for (int i=0; i<n; i++)
-      home->free(tb[i],tb[i]->dispose(home));
-    home->tfree<ViewSelVirtualBase<View>*>(tb,n);
+      home->rfree(tb[i],tb[i]->dispose(home));
+    home->free<ViewSelVirtualBase<View>*>(tb,n);
   } 
 
 }

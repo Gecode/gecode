@@ -92,7 +92,7 @@ namespace Gecode { namespace Set { namespace Sequence {
                           bool& modified, ViewArray<SetView>& x,
                           SetView& y) {
     Scratch s(home);
-    GlbRanges<SetView>* XLBs = s.talloc<GlbRanges<SetView> >(x.size());
+    GlbRanges<SetView>* XLBs = s.alloc<GlbRanges<SetView> >(x.size());
     for (int i=x.size(); i--; ){
       GlbRanges<SetView> lb(x[i]);
       XLBs[i]=lb;

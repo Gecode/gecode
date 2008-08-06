@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int n = x.size();
     int m = k.size();
     Scratch s(home);
-    UnReachable* rv = s.talloc<UnReachable>(m);
+    UnReachable* rv = s.alloc<UnReachable>(m);
     for(int i = m; i--; )
       rv[i].minb = rv[i].maxb = rv[i].le = rv[i].gr = rv[i].eq = 0;
 
@@ -273,21 +273,21 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   PartialSum<Card>::~PartialSum(void){
     assert(mem != NULL);
-    heap.free(mem);
+    heap.rfree(mem);
   }
 
   /// \brief Memory allocation for the partial sum structure
   template <class Card>
   forceinline void*
   PartialSum<Card>::operator new(size_t t){
-    return heap.alloc(t);
+    return heap.ralloc(t);
   }
 
   /// \brief Free memory used by partial sum structure
   template <class Card>
   forceinline void
   PartialSum<Card>::operator delete(void* p){
-      heap.free(p);
+      heap.rfree(p);
   }
 
   /**
@@ -318,7 +318,7 @@ namespace Gecode { namespace Int { namespace GCC {
     size_t total    = sum_size + ds_size;
     _allocated = total;
 
-    mem = static_cast<char*>(heap.alloc(total));
+    mem = static_cast<char*>(heap.ralloc(total));
     sum = Support::ptr_cast<int*>(mem);
     ds  = Support::ptr_cast<int*>(mem + sum_size);
 
@@ -712,7 +712,7 @@ namespace Gecode { namespace Int { namespace GCC {
       k.size(1);
     } else {
       Scratch s(home);
-      bool* zero = s.talloc<bool>(k.size());
+      bool* zero = s.alloc<bool>(k.size());
       int ks = k.size();
       int zc = 0;
       for (int i = 0; i < ks; i++) {

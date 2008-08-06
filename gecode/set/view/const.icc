@@ -90,7 +90,7 @@ namespace Gecode { namespace Set {
     size = dom.size();
     domSize = 0;
     if (size > 0) {
-      ranges = static_cast<int*>(home->alloc(2*size*sizeof(int)));
+      ranges = static_cast<int*>(home->ralloc(2*size*sizeof(int)));
       IntSetRanges dr(dom);
       for (int i=0; dr(); ++dr, i+=2) {
         int min = dr.min(); int max = dr.max();
@@ -267,7 +267,7 @@ namespace Gecode { namespace Set {
   ConstantView::update(Space* home, bool, ConstantView& p) {
     // dispose old ranges
     if (size > 0)
-      home->free(ranges, 2*size*sizeof(int));
+      home->rfree(ranges, 2*size*sizeof(int));
 
     domSize = p.domSize;
     size = p.size;
@@ -275,7 +275,7 @@ namespace Gecode { namespace Set {
       ranges = NULL;
     } else {
       // copy ranges from p
-      ranges = static_cast<int*>(home->alloc(2*size*sizeof(int)));
+      ranges = static_cast<int*>(home->ralloc(2*size*sizeof(int)));
       for (unsigned int i=size; i--; ) {
         ranges[2*i]   = p.ranges[2*i];
         ranges[2*i+1] = p.ranges[2*i+1];

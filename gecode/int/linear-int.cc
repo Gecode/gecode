@@ -47,7 +47,7 @@ namespace Gecode {
          IntConLevel icl, PropKind) {
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size());
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -60,7 +60,7 @@ namespace Gecode {
          IntConLevel, PropKind) {
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size());
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -75,7 +75,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size());
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -90,7 +90,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size());
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -103,7 +103,7 @@ namespace Gecode {
          IntConLevel icl, PropKind) {
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size()+1);
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -133,7 +133,7 @@ namespace Gecode {
          IntConLevel, PropKind) {
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size()+1);
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -149,7 +149,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size()+1);
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -181,7 +181,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
     Scratch s(home);
-    Linear::Term<IntView>* t = s.talloc<Linear::Term<IntView> >(x.size()+1);
+    Linear::Term<IntView>* t = s.alloc<Linear::Term<IntView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }

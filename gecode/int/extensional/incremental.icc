@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     Scratch s(home);
     // Add initial supports
-    BitSet* dom = s.talloc<BitSet>(x.size());
+    BitSet* dom = s.alloc<BitSet>(x.size());
     init_dom(home, dom);
     for (int i = x.size(); i--; ) {
       ViewValues<View> vv(x[i]);
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Bit-sets for amortized O(1) access to domains
     Scratch s(home);
     // Add initial supports
-    BitSet* dom = s.talloc<BitSet>(x.size());
+    BitSet* dom = s.alloc<BitSet>(x.size());
     init_dom(home, dom);
 
     /// Work loop
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(support_data == NULL);
     int literals = ts()->domsize*x.size();
     support_data = static_cast<SupportEntry**>
-      (home->alloc(literals*sizeof(SupportEntry*)));
+      (home->ralloc(literals*sizeof(SupportEntry*)));
     for (int i = literals; i--; ) {
       support_data[i] = NULL;
     }
@@ -380,7 +380,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           support_data[i]->dispose(home, lastse);
         }
       }
-      home->free(support_data, sizeof(SupportEntry*)*literals);
+      home->rfree(support_data, sizeof(SupportEntry*)*literals);
     }
     work.~WorkStack();
     (void) ac.dispose(home);

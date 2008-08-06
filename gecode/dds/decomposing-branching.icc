@@ -298,8 +298,8 @@ namespace Gecode {
                            const Partition& p,
                            const ViewArray<Decomposition::IdxView<View> >& x)
       : BranchingDesc(b,p.size()-1), _start(start) {
-      element = static_cast<int*>(heap.alloc(x.size()*sizeof(int)*2));
-      component = static_cast<int*>(heap.alloc(p.size()*sizeof(int)));
+      element = static_cast<int*>(heap.ralloc(x.size()*sizeof(int)*2));
+      component = static_cast<int*>(heap.ralloc(p.size()*sizeof(int)));
       for (int i=x.size(); i--;) {
         element[i*2]   = p[i];
         element[i*2+1] = x[start+p[i]].idx;
@@ -558,7 +558,7 @@ namespace Gecode {
       int compSize = dd->componentStart(a+1)-dd->componentStart(a);
       Scratch s(home);
       Decomposition::IdxView<typename ViewSel::View>* tmp =
-        s.talloc<Decomposition::IdxView<typename ViewSel::View> >(compSize);
+        s.alloc<Decomposition::IdxView<typename ViewSel::View> >(compSize);
       for (int i=compSize; i--; ) {
         tmp[i] = x[(*dd)[i+dd->componentStart(a)]];
       }

@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   BitSet::init(Space* home, int s, bool value) {
     size = static_cast<int>(std::ceil(static_cast<double>(s)
                                       /(CHAR_BIT*sizeof(Base))));
-    data = static_cast<Base*>(home->alloc(size*sizeof(Base)));
+    data = static_cast<Base*>(home->ralloc(size*sizeof(Base)));
     Base ival = value ? ~0 : 0;
     for (int i = size; i--; ) data[i] = ival;
   }
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
   forceinline
   BitSet::BitSet(Space *home, const BitSet& bs)
-    : data(static_cast<Base*>(home->alloc(bs.size*sizeof(Base)))), 
+    : data(static_cast<Base*>(home->ralloc(bs.size*sizeof(Base)))), 
       size(bs.size) {
     for (int i = size; i--; ) data[i] = bs.data[i];
   }

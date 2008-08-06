@@ -1302,7 +1302,7 @@ namespace Gecode { namespace Int { namespace GCC {
     _allocated = size;
 
     mem      = static_cast<char*>
-      (heap.alloc(size));
+      (heap.ralloc(size));
     edges    = Support::ptr_cast<Edge*>
       (mem);
     VarNode* vars_ptr = Support::ptr_cast<VarNode*>
@@ -1497,7 +1497,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline bool
   VarValGraph<View, Card, isView>::sync(Space* home) {
     Scratch s(home);
-    VVGNode** re = s.talloc<VVGNode*>(node_size);
+    VVGNode** re = s.alloc<VVGNode*>(node_size);
     int n_re = 0;
 
     // synchronize cardinality variables
@@ -1895,7 +1895,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (card_match < required_size) {
       if (direction == LBC) {
         // collect free value nodes
-        ValNode** free = s.talloc<ValNode*>(n_val);
+        ValNode** free = s.alloc<ValNode*>(n_val);
         int f = 0;
         // find failed nodes
         for (int i = n_val; i--; ) {
@@ -1915,7 +1915,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       } else {
-        VarNode** free = s.talloc<VarNode*>(n_var);
+        VarNode** free = s.alloc<VarNode*>(n_var);
         int f = 0;
         // find failed nodes
         for (int i = n_var; i--; ) {
@@ -1942,8 +1942,8 @@ namespace Gecode { namespace Int { namespace GCC {
   VarValGraph<View, Card, isView>::augmenting_path(Space* home, VVGNode* v) {
     Support::StaticStack<VVGNode*> ns(node_size);
     Scratch s(home);
-    bool* visited = s.talloc<bool>(node_size);
-    Edge** start = s.talloc<Edge*>(node_size);
+    bool* visited = s.alloc<bool>(node_size);
+    Edge** start = s.alloc<Edge*>(node_size);
 
     // augmenting path starting in a free var node
     assert(!v->is_matched(direction));
@@ -2052,7 +2052,7 @@ namespace Gecode { namespace Int { namespace GCC {
   VarValGraph<View, Card, isView>::free_alternating_paths(Space* home) {
     Support::StaticStack<VVGNode*> ns(node_size);
     Scratch s(home);
-    bool* visited = s.talloc<bool>(node_size);
+    bool* visited = s.alloc<bool>(node_size);
     // keep track of the nodes that have already been visited
     for (int i = node_size; i--; )
       visited[i] = false;
@@ -2237,9 +2237,9 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   VarValGraph<View, Card, isView>::strongly_connected_components(Space* home) {
     Scratch s(home);
-    bool* inscc = s.talloc<bool>(node_size);
-    bool* in_unfinished = s.talloc<bool>(node_size);
-    int* dfsnum = s.talloc<int>(node_size);
+    bool* inscc = s.alloc<bool>(node_size);
+    bool* in_unfinished = s.alloc<bool>(node_size);
+    int* dfsnum = s.alloc<int>(node_size);
 
     for (int i = node_size; i--; ) {
       inscc[i]         = false;
@@ -2401,19 +2401,19 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline
   VarValGraph<View, Card, isView>::~VarValGraph(void){
-    heap.free(mem);
+    heap.rfree(mem);
   }
 
   template <class View, class Card, bool isView>
   forceinline void*
   VarValGraph<View, Card, isView>::operator new(size_t t){
-    return heap.alloc(t);
+    return heap.ralloc(t);
   }
 
   template <class View, class Card, bool isView>
   forceinline void
   VarValGraph<View, Card, isView>::operator delete(void* p){
-    heap.free(p);
+    heap.rfree(p);
   }
 
 

@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace Rel {
     int n = x.size();
 
     Scratch s(home);
-    ViewRanges<View>* i_x = s.talloc<ViewRanges<View> >(n);
+    ViewRanges<View>* i_x = s.alloc<ViewRanges<View> >(n);
     for (int i = n; i--; ) {
       ViewRanges<View> i_xi(x[i]);
       i_x[i] = i_xi;

@@ -329,7 +329,7 @@ namespace Gecode { namespace Int {
         } while (s_c != NULL);
       }
       RangeList* d_c =
-        static_cast<RangeList*>(home->alloc(m*sizeof(RangeList)));
+        static_cast<RangeList*>(home->ralloc(m*sizeof(RangeList)));
       fst(d_c); lst(d_c+m-1);
       d_c->min(x.fst()->min());
       d_c->max(x.fst()->max());

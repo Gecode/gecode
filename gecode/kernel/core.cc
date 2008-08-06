@@ -139,16 +139,16 @@ namespace Gecode {
   Space::d_resize(void) {
     if (d_fst == NULL) {
       // Create new array
-      d_fst = static_cast<Actor**>(alloc(4*sizeof(Actor*)));
+      d_fst = static_cast<Actor**>(ralloc(4*sizeof(Actor*)));
       d_cur = d_fst;
       d_lst = d_fst+4;
     } else {
       // Resize existing array
       ptrdiff_t n = d_lst - d_fst;
       assert(n != 0);
-      Actor** a = static_cast<Actor**>(alloc(2*n*sizeof(Actor*)));
+      Actor** a = static_cast<Actor**>(ralloc(2*n*sizeof(Actor*)));
       memcpy(a, d_fst, n*sizeof(Actor*));
-      free(d_fst,n*sizeof(Actor*));
+      free(d_fst,n);
       d_fst = a;
       d_cur = a+n;
       d_lst = a+2*n;
@@ -274,7 +274,7 @@ namespace Gecode {
         assert(pc.p.active < &pc.p.queue[0]);
         goto stable;
       case __ES_SUBSUMED:
-        p->unlink(); free(p,p->u.size);
+        p->unlink(); rfree(p,p->u.size);
         goto stable_or_unstable;
       case __ES_PARTIAL:
         // Schedule propagator with specified propagator events
@@ -338,7 +338,7 @@ namespace Gecode {
       if (b == b_status)
         b_status = b_commit;
       b->unlink(); 
-      free(b,b->dispose(this));
+      rfree(b,b->dispose(this));
     }
     if (b_commit == Branching::cast(&a_actors))
       throw SpaceNoBranching();
@@ -394,7 +394,7 @@ namespace Gecode {
         d_fst = d_cur = d_lst = NULL;
       } else {
         // Leave one entry free
-        Actor** a = static_cast<Actor**>(alloc((n+1)*sizeof(Actor*)));
+        Actor** a = static_cast<Actor**>(ralloc((n+1)*sizeof(Actor*)));
         d_fst = a;
         d_cur = a+n;
         d_lst = a+n+1;

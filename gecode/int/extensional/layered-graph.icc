@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   Edge::operator delete(void*,Space*) {}
   forceinline void*
   Edge::operator new(size_t s, Space* home) {
-    return home->alloc(s);
+    return home->ralloc(s);
   }
 
 
@@ -225,13 +225,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   LayeredGraph<View>::construct(Space* home) {
     int n = x.size();
-    layers = static_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
+    layers = static_cast<Layer*>(home->ralloc(sizeof(Layer)*(n+2)))+1;
     
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
     states = static_cast<State*>
-      (home->alloc(sizeof(State)*(n+1)*n_states));
+      (home->ralloc(sizeof(State)*(n+1)*n_states));
 
     // Initialize states (indegree and outdegree)
     for (int i = (n+1)*n_states; i--; )
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
       layers[i].support = 
-        static_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
+        static_cast<Support*>(home->ralloc(x[i].size()*sizeof(Support)));
       unsigned int j=0;
       // Enter links leaving reachable states (indegree != 0)
       for (ViewValues<View> nx(x[i]); nx(); ++nx) {

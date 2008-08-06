@@ -96,7 +96,7 @@ namespace Gecode { namespace Support {
   template <class T, int blocksize>
   forceinline
   BlockAllocator<T,blocksize>::BlockAllocator(void) {
-    b = static_cast<Block*>(heap.alloc(sizeof(Block)));
+    b = static_cast<Block*>(heap.ralloc(sizeof(Block)));
     b->next = NULL;
     n       = &b->b[blocksize];
     _size = sizeof(Block);
@@ -107,7 +107,7 @@ namespace Gecode { namespace Support {
   BlockAllocator<T,blocksize>::~BlockAllocator(void) {
     while (b != NULL) {
       Block* f = b; b = b->next;
-      heap.free(f);
+      heap.rfree(f);
     }
   }
 
@@ -124,7 +124,7 @@ namespace Gecode { namespace Support {
   void
   BlockAllocator<T,blocksize>::allocate(void) {
     // Allocate another block
-    Block* nb = static_cast<Block*>(heap.alloc(sizeof(Block)));
+    Block* nb = static_cast<Block*>(heap.ralloc(sizeof(Block)));
     nb->next = b; b = nb;
     n = &nb->b[blocksize];
     _size += sizeof(Block);

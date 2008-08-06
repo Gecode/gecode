@@ -219,7 +219,7 @@ namespace Set { namespace RelOp {
     Scratch s(home);
     //TODO: overflow management is a waste now.
     {
-      unsigned int* rightSum = s.talloc<unsigned int>(xsize);
+      unsigned int* rightSum = s.alloc<unsigned int>(xsize);
       rightSum[xsize-1]=0;
 
       for (int i=x.size()-1;i--;) {
@@ -251,7 +251,7 @@ namespace Set { namespace RelOp {
 
     {
       GLBndSet* rightUnion =
-        static_cast<GLBndSet*>(s.alloc(sizeof(GLBndSet)*xsize));
+        static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
       new (&rightUnion[xsize-1]) GLBndSet(home);
       for (int i=xsize-1;i--;){
         BndSetRanges prev(rightUnion[i+1]);
@@ -342,8 +342,8 @@ namespace Set { namespace RelOp {
 
     {
       Scratch s(home);
-      unsigned int* rightMinSum = s.talloc<unsigned int>(xsize);
-      unsigned int* rightMaxSum = s.talloc<unsigned int>(xsize);
+      unsigned int* rightMinSum = s.alloc<unsigned int>(xsize);
+      unsigned int* rightMaxSum = s.alloc<unsigned int>(xsize);
       rightMinSum[xsize-1]=0;
       rightMaxSum[xsize-1]=0;
 
@@ -404,9 +404,9 @@ namespace Set { namespace RelOp {
     int xsize = x.size();
     Scratch s(home);
     GLBndSet* afterUB =
-      static_cast<GLBndSet*>(s.alloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
     GLBndSet* afterLB =
-      static_cast<GLBndSet*>(s.alloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterUB;
@@ -475,7 +475,7 @@ namespace Set { namespace RelOp {
     int xsize = x.size();
     Scratch s(home);
     GLBndSet* afterLB =
-      static_cast<GLBndSet*>(s.alloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterLB;
@@ -521,7 +521,7 @@ namespace Set { namespace RelOp {
     int xsize = x.size();
     Scratch s(home);
     GLBndSet* afterUB =
-      static_cast<GLBndSet*>(s.alloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterUB;
@@ -568,7 +568,7 @@ namespace Set { namespace RelOp {
     assert(unionOfDets.isConsistent());
     int xsize = x.size();
     Scratch s(home);
-    GlbRanges<View0>* xLBs = s.talloc<GlbRanges<View0> >(xsize);
+    GlbRanges<View0>* xLBs = s.alloc<GlbRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
       GlbRanges<View0> r(x[i]);
@@ -597,7 +597,7 @@ namespace Set { namespace RelOp {
                 GLBndSet& unionOfDets) {
     int xsize = x.size();
     Scratch s(home);
-    LubRanges<View0>* xUBs = s.talloc<LubRanges<View0> >(xsize);
+    LubRanges<View0>* xUBs = s.alloc<LubRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
       LubRanges<View0> r(x[i]);

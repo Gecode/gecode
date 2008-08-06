@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Channel {
   forceinline DomInfo<View>*
   DomInfo<View>::allocate(Space* home, int n) {
     return static_cast<DomInfo<View>*>
-      (home->alloc(n*sizeof(DomInfo<View>)));
+      (home->ralloc(n*sizeof(DomInfo<View>)));
   }
 
   template <class View>
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ES_CHECK(dc.sync(home));
     } else {
       Scratch s(home);
-      View* xv = s.talloc<View>(n);
+      View* xv = s.alloc<View>(n);
       for (int i=n; i--; )
         xv[i] = x[i].view;
       GECODE_ES_CHECK(dc.init(home,n,&xv[0]));

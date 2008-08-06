@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline IdxValMap*
   IdxValMap::allocate(int n) {
     size_t s = sizeof(IdxValMap)+n*sizeof(IdxValLink);
-    IdxValMap* ivm = static_cast<IdxValMap*>(heap.alloc(s));
+    IdxValMap* ivm = static_cast<IdxValMap*>(heap.ralloc(s));
     ivm->_size = s;
     return ivm;
   }
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace Element {
     int size = ix.size();
     // Create val links sorted by val
     Scratch s(home);
-    IdxValLink** by_val = s.talloc<IdxValLink*>(size);
+    IdxValLink** by_val = s.alloc<IdxValLink*>(size);
     for (int i = size; i--; )
       by_val[i] = &iv[i+1];
     ByVal lt;
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   forceinline void
   IdxValMap::operator delete(void* p,size_t) {
-    heap.free(p);
+    heap.rfree(p);
   }
 
 

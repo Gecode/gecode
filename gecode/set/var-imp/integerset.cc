@@ -47,7 +47,7 @@ namespace Gecode { namespace Set {
     } else {
       int n = is.size();
       RangeList* r = 
-        static_cast<RangeList*>(home->alloc(sizeof(RangeList)*n));
+        static_cast<RangeList*>(home->ralloc(sizeof(RangeList)*n));
       fst(r); lst(r+n-1);
       unsigned int s = 0;
       for (int i = n; i--; ) {

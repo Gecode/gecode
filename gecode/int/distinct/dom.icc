@@ -276,7 +276,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   DomCtrl<View>::ViewValGraph::init(Space* home, int n, View* x) {
     n_view = n; 
     view = static_cast<ViewNode<View>**>
-      (home->alloc(n_view*sizeof(ViewNode<View>*)));
+      (home->ralloc(n_view*sizeof(ViewNode<View>*)));
 
     // Find value information for construction of view value graph
     int min = x[n_view-1].min();
@@ -298,7 +298,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (static_cast<unsigned int>(n_view)*4 >= width) {
       // Values are dense: use a mapping
       Scratch s(home);
-      ValNode<View>** val2node = s.talloc<ValNode<View>* >(width);
+      ValNode<View>** val2node = s.alloc<ValNode<View>* >(width);
 
       for (unsigned int i=width; i--; )
         val2node[i]=NULL;

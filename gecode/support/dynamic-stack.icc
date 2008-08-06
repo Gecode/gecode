@@ -95,21 +95,21 @@ namespace Gecode { namespace Support {
   void
   DynamicStack<T>::resize(void) {
     int nl = (limit * 3) / 2;
-    stack = heap.trealloc<T>(stack,
-                                static_cast<size_t>(limit),
-                                static_cast<size_t>(nl));
+    stack = heap.realloc<T>(stack,
+                            static_cast<size_t>(limit),
+                            static_cast<size_t>(nl));
     limit = nl;
   }
 
   template <class T>
   forceinline
   DynamicStack<T>::DynamicStack(int n)
-    : limit(n), tos(0), stack(heap.talloc<T>(static_cast<size_t>(n))) {}
+    : limit(n), tos(0), stack(heap.alloc<T>(static_cast<size_t>(n))) {}
 
   template <class T>
   forceinline
   DynamicStack<T>::~DynamicStack(void) {
-    heap.tfree(stack,limit);
+    heap.free(stack,limit);
   }
 
   template <class T>

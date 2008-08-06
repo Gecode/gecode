@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace GCC {
     bool card_mod = false;
 
     Scratch s(home);
-    int* count = s.talloc<int>(k.size());
+    int* count = s.alloc<int>(k.size());
     for (int i = k.size(); i--; )
       count[i] = 0;
 

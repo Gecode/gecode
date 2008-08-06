@@ -119,8 +119,8 @@ namespace Gecode {
     domsize = max - min + 1;
 
     // Allocate tuple indexing data-structures
-    tuples = heap.talloc<Tuple*>(arity);
-    tuple_data = heap.talloc<Tuple>(size*arity+1);
+    tuples = heap.alloc<Tuple*>(arity);
+    tuple_data = heap.alloc<Tuple>(size*arity+1);
     tuple_data[size*arity] = NULL;
     nullptr = tuple_data+(size*arity);
 
@@ -133,14 +133,14 @@ namespace Gecode {
     FullTupleCompare ftc(arity);
     Support::quicksort(tuples[0], size, ftc);
     assert(tuples[0][size-1][0] == ia[0]);
-    int* new_data = heap.talloc<int>(size*arity);
+    int* new_data = heap.alloc<int>(size*arity);
     for (int t = size; t--; ) {
       for (int i = arity; i--; ) {
         new_data[t*arity + i] = tuples[0][t][i];
       }
     }
 
-    heap.free(data);
+    heap.rfree(data);
     data = new_data;
     excess = -1;
 
@@ -154,7 +154,7 @@ namespace Gecode {
     }
 
     // Set up initial last-structure
-    last = heap.talloc<Tuple*>(domsize*arity);
+    last = heap.alloc<Tuple*>(domsize*arity);
     for (int i = arity; i--; ) {
       Tuple* t = tuples[i];
       for (int d = 0; d < domsize; ++d) {
@@ -177,8 +177,7 @@ namespace Gecode {
   TupleSet::TupleSetI::resize(void) {
     assert(excess == 0);
     int ndatasize = static_cast<int>(1+size*1.5);
-    data = heap.trealloc<int>(data, size * arity, 
-                                 ndatasize * arity);
+    data = heap.realloc<int>(data, size * arity, ndatasize * arity);
     excess = ndatasize - size;
   }
 
@@ -194,12 +193,12 @@ namespace Gecode {
     d->domsize    = domsize;
 
     // Table data
-    d->data = heap.talloc<int>(size*arity);
+    d->data = heap.alloc<int>(size*arity);
     memcpy(&d->data[0], &data[0], sizeof(int)*size*arity);
 
     // Indexing data
-    d->tuples = heap.talloc<Tuple*>(arity);
-    d->tuple_data = heap.talloc<Tuple>(size*arity+1);
+    d->tuples = heap.alloc<Tuple*>(arity);
+    d->tuple_data = heap.alloc<Tuple>(size*arity+1);
     d->tuple_data[size*arity] = NULL;
     d->nullptr = d->tuple_data+(size*arity);
 
@@ -213,7 +212,7 @@ namespace Gecode {
     }
 
     // Last data
-    d->last = heap.talloc<Tuple*>(domsize*arity);
+    d->last = heap.alloc<Tuple*>(domsize*arity);
     for (int i = domsize+arity; i--; ) {
       d->last[i] = d->tuple_data + (last[i]-tuple_data);
     }
@@ -223,10 +222,10 @@ namespace Gecode {
 
   TupleSet::TupleSetI::~TupleSetI(void) {
     excess = -2;
-    heap.free(tuples);
-    heap.free(tuple_data);
-    heap.free(data);
-    heap.free(last);
+    heap.rfree(tuples);
+    heap.rfree(tuple_data);
+    heap.rfree(data);
+    heap.rfree(last);
   }  
 
 

@@ -105,17 +105,17 @@ namespace Gecode { namespace Int { namespace Extensional {
     //// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
     Scratch s(home);
-    BitSet* dom = s.talloc<BitSet>(x.size());
+    BitSet* dom = s.alloc<BitSet>(x.size());
     init_dom(home, dom);
 
     /// Bit-sets for processed values.
-    BitSet* has_support = s.talloc<BitSet>(x.size());
+    BitSet* has_support = s.alloc<BitSet>(x.size());
     for (int i = x.size(); i--; ) 
       has_support[i].init(home, ts()->domsize);
  
 
     /// Values to prune
-    int* nq = s.talloc<int>(ts()->domsize*x.size());
+    int* nq = s.alloc<int>(ts()->domsize*x.size());
     int n_nq = 0;
     
     ExecStatus es = ES_FIX;

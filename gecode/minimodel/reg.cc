@@ -96,7 +96,7 @@ namespace Gecode {
 
   forceinline void*
   REG::Exp::operator new(size_t s) {
-    return heap.alloc(s);
+    return heap.ralloc(s);
   }
   forceinline void
   REG::Exp::operator delete(void*) {
@@ -119,7 +119,7 @@ namespace Gecode {
           todo.push(e->data.kids[0]);
       default: ;
       }
-      heap.free(e);
+      heap.rfree(e);
     }
   }
 
@@ -219,7 +219,7 @@ namespace Gecode {
     int n = x.size();
     if (n < 1)
       throw MiniModel::TooFewArguments("REG");
-    Exp** a = heap.talloc<Exp*>(n);
+    Exp** a = heap.alloc<Exp*>(n);
     // Initialize with symbols
     for (int i=n; i--; ) {
       a[i] = new Exp();
@@ -255,7 +255,7 @@ namespace Gecode {
       }
     }
     e = a[0];
-    heap.tfree<Exp*>(a,n);
+    heap.free<Exp*>(a,n);
   }
 
   REG
@@ -760,7 +760,7 @@ namespace Gecode {
     REG r = *this + REG(Int::Limits::max+1);
     int n_pos = r.e->n_pos();
 
-    PosInfo* pi = heap.talloc<PosInfo>(n_pos);
+    PosInfo* pi = heap.alloc<PosInfo>(n_pos);
     for (int i=n_pos; i--; )
       pi[i].followpos = NULL;
 
@@ -770,7 +770,7 @@ namespace Gecode {
     assert(n_p == n_pos);
 
     // Compute symbols
-    int* symbols = heap.talloc<int>(n_pos);
+    int* symbols = heap.alloc<int>(n_pos);
     for (int i=n_pos; i--; )
       symbols[i] = pi[i].symbol;
 
@@ -803,8 +803,8 @@ namespace Gecode {
         fb.add(n->state);
     fb.finish();
 
-    heap.tfree<PosInfo>(pi,n_pos);
-    heap.tfree<int>(symbols,n_pos);
+    heap.free<PosInfo>(pi,n_pos);
+    heap.free<int>(symbols,n_pos);
     return DFA(0,tb.transitions(),fb.finals(),true);
   }
 

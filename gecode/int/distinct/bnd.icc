@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     Scratch s(home);
 
-    int* _maxsorted = s.talloc<int>(n);
+    int* _maxsorted = s.alloc<int>(n);
 
     for (int i = n; i--; )
       _maxsorted[i]=i;
@@ -198,8 +198,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     // Setup rank and bounds info
-    HallInfo* hall = s.talloc<HallInfo>(2*n+2);
-    Rank* rank = s.talloc<Rank>(n);
+    HallInfo* hall = s.alloc<HallInfo>(2*n+2);
+    Rank* rank = s.alloc<Rank>(n);
 
     int nb = 0;
     {
