@@ -54,10 +54,9 @@ namespace Gecode {
     if (n == 0)
       return;
 
-    if (xoff < 2 && yoff < 2 && xoff == yoff) {
+    if ((xoff < 2) && (yoff < 2) && (xoff == yoff)) {
       if (icl == ICL_DOM) {
-        DomInfo<IntView>* di
-          = DomInfo<IntView>::allocate(home,2*(n+xoff));
+        DomInfo<IntView>* di = home->alloc<DomInfo<IntView> >(2*(n+xoff));
         for (int i=n; i--; ) {
           di[xoff+i    ].init(x[i],n+xoff);
           di[2*xoff+i+n].init(y[i],n+xoff);
@@ -74,8 +73,7 @@ namespace Gecode {
           GECODE_ES_FAIL(home,(Dom<IntView,false>::post(home,n+xoff,di)));
         }
       } else {
-        ValInfo<IntView>* vi
-          = ValInfo<IntView>::allocate(home,2*(n+xoff));
+        ValInfo<IntView>* vi = home->alloc<ValInfo<IntView> >(2*(n+xoff));
         for (int i=n; i--; ) {
           vi[xoff+i    ].init(x[i],n+xoff);
           vi[2*xoff+i+n].init(y[i],n+xoff);
@@ -94,11 +92,12 @@ namespace Gecode {
       }
     } else {
       if (icl == ICL_DOM) {
-        DomInfo<OffsetView>* di
-          = DomInfo<OffsetView>::allocate(home,2*n);
+        DomInfo<OffsetView>* di = home->alloc<DomInfo<OffsetView> >(2*n);
         for (int i=n; i--; ) {
-          di[i  ].init(OffsetView(x[i],-xoff),n);
-          di[i+n].init(OffsetView(y[i],-yoff),n);
+          OffsetView oxi(x[i],-xoff);
+          di[i  ].init(oxi,n);
+          OffsetView oyi(y[i],-yoff);
+          di[i+n].init(oyi,n);
         }
         if (x.same(home,y)) {
           GECODE_ES_FAIL(home,(Dom<OffsetView,true>::post(home,n,di)));
@@ -106,11 +105,12 @@ namespace Gecode {
           GECODE_ES_FAIL(home,(Dom<OffsetView,false>::post(home,n,di)));
         }
       } else {
-        ValInfo<OffsetView>* vi
-          = ValInfo<OffsetView>::allocate(home,2*n);
+        ValInfo<OffsetView>* vi = home->alloc<ValInfo<OffsetView> >(2*n);
         for (int i=n; i--; ) {
-          vi[i  ].init(OffsetView(x[i],-xoff),n);
-          vi[i+n].init(OffsetView(y[i],-yoff),n);
+          OffsetView oxi(x[i],-xoff);
+          vi[i  ].init(oxi,n);
+          OffsetView oyi(y[i],-yoff);
+          vi[i+n].init(oyi,n);
         }
         if (x.same(home,y)) {
           GECODE_ES_FAIL(home,(Val<OffsetView,true>::post(home,n,vi)));

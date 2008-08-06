@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Channel {
   forceinline
   Base<Info,pc>::Base(Space* home, bool share, Base<Info,pc>& p)
     : Propagator(home,share,p), n(p.n), n_na(p.n_na),
-      xy(Info::allocate(home,2*n)) {
+      xy(home->alloc<Info>(2*n)) {
     for (int i=2*n; i--; )
       xy[i].update(home,share,p.xy[i]);
   }

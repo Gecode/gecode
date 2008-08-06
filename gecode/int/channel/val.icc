@@ -52,8 +52,6 @@ namespace Gecode { namespace Int { namespace Channel {
     View view;
     /// Whether it has been propagated that view is assigned
     bool a;
-    /// Allocate memory from space \a home for \a n elements
-    static ValInfo<View>* allocate(Space* home, int n);
     /// Initialize
     void init(View x, int n);
     /// Update during cloning
@@ -69,13 +67,6 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Update the cardinality and bounds information after pruning
     void done(void);
   };
-
-  template <class View>
-  forceinline ValInfo<View>*
-  ValInfo<View>::allocate(Space* home, int n) {
-    return static_cast<ValInfo<View>*>
-      (home->ralloc(n*sizeof(ValInfo<View>)));
-  }
 
   template <class View>
   forceinline void
@@ -247,11 +238,9 @@ namespace Gecode { namespace Int { namespace Channel {
   Val<View,shared>::post(Space* home, Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
     const int n = spec.noOfArgs();
-    ValInfo<View>* vi
-      = ValInfo<View>::allocate(home,n);
-    for (int i=0; i<n; i++) {
+    ValInfo<View>* vi = home->alloc<ValInfo<View> >(n);
+    for (int i=n; i--; )
       vi[i].init(View(home, vars, spec[i]),n/2);
-    }
     (void) new (home) Val<View,shared>(home,n/2,vi);
   }
 
