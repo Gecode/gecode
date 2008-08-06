@@ -48,9 +48,13 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   class DomInfo {
   public:
+    /// The view
     View view;
-    unsigned int card;
+    /// Last propagated size
+    unsigned int size;
+    /// Last propagated minimum
     int min;
+    /// Last propagated maximum
     int max;
     /// Initialize
     void init(View x, int n);
@@ -64,7 +68,7 @@ namespace Gecode { namespace Int { namespace Channel {
     void assigned(void);
     /// Record that one value got removed
     void removed(int i);
-    /// Update the cardinality and bounds information after pruning
+    /// Update the size and bounds information after pruning
     void done(void);
   };
 
@@ -72,7 +76,7 @@ namespace Gecode { namespace Int { namespace Channel {
   forceinline void
   DomInfo<View>::init(View x, int n) {
     view = x;
-    card = static_cast<unsigned int>(n);
+    size = static_cast<unsigned int>(n);
     min  = 0;
     max  = n-1;
   }
@@ -81,7 +85,7 @@ namespace Gecode { namespace Int { namespace Channel {
   forceinline void
   DomInfo<View>::update(Space* home, bool share, DomInfo<View>& di) {
     view.update(home,share,di.view);
-    card = di.card;
+    size = di.size;
     min  = di.min;
     max  = di.max;
   }
@@ -89,25 +93,25 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   forceinline bool
   DomInfo<View>::doval(void) const {
-    return (card != 1) && view.assigned();
+    return (size != 1) && view.assigned();
   }
 
   template <class View>
   forceinline bool
   DomInfo<View>::dodom(void) const {
-    return card != view.size();
+    return size != view.size();
   }
 
   template <class View>
   forceinline void
   DomInfo<View>::assigned(void) {
-    card = 1;
+    size = 1;
   }
 
   template <class View>
   forceinline void
   DomInfo<View>::removed(int i) {
-    card--;
+    size--;
     if (i == min)
       min++;
     else if (i == max)
@@ -117,7 +121,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   forceinline void
   DomInfo<View>::done(void) {
-    card = view.size();
+    size = view.size();
     min  = view.min();
     max  = view.max();
   }
