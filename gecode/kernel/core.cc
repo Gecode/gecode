@@ -139,19 +139,16 @@ namespace Gecode {
   Space::d_resize(void) {
     if (d_fst == NULL) {
       // Create new array
-      d_fst = static_cast<Actor**>(ralloc(4*sizeof(Actor*)));
+      d_fst = alloc<Actor*>(4);
       d_cur = d_fst;
       d_lst = d_fst+4;
     } else {
       // Resize existing array
       ptrdiff_t n = d_lst - d_fst;
       assert(n != 0);
-      Actor** a = static_cast<Actor**>(ralloc(2*n*sizeof(Actor*)));
-      memcpy(a, d_fst, n*sizeof(Actor*));
-      free(d_fst,n);
-      d_fst = a;
-      d_cur = a+n;
-      d_lst = a+2*n;
+      d_fst = realloc<Actor*>(d_fst,n,2*n);
+      d_cur = d_fst+n;
+      d_lst = d_fst+2*n;
     }
   }
   
@@ -394,14 +391,12 @@ namespace Gecode {
         d_fst = d_cur = d_lst = NULL;
       } else {
         // Leave one entry free
-        Actor** a = static_cast<Actor**>(ralloc((n+1)*sizeof(Actor*)));
-        d_fst = a;
-        d_cur = a+n;
-        d_lst = a+n+1;
-        Actor** f = s.d_fst;
+        d_fst = alloc<Actor*>(n+1);
+        d_cur = d_fst+n;
+        d_lst = d_cur+1;
         do {
           n--;
-          a[n] = Actor::cast(f[n]->prev());
+          d_fst[n] = Actor::cast(s.d_fst[n]->prev());
         } while (n != 0);
       }
     }
