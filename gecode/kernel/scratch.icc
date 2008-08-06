@@ -60,25 +60,24 @@ namespace Gecode {
     Space* home;
     /// Free memory to reset
     size_t free_reset;
-    /// Number of memory blocks allocated by malloc
-    unsigned int n_malloc;
-    /// Either have an array of pointer to blocks or just two entries
-    union {
-      /// Structure for arbitrarily many blocks
-      struct {
-        /// Limit for memory blocks
-        unsigned int l_malloc;
-        /// Pointer to array of memory blocks allocated by malloc
-        void** b_malloc;
-      } any;
-      /// Structure for atmost two blocks
-      struct {
-        /// Pointer to first block
-        void* fst;
-        /// Pointer to second block
-        void* snd;
-      } two;
-    } at;
+    /// Heap information data structure
+    class HeapInfo {
+    public:
+      /// Number of allocated heap blocks
+      unsigned int n;
+      /// Limit of allocated heap blocks
+      unsigned int size;
+      /// Pointers to allocated heap blocks (more entries)
+      void* blocks[1];
+    };
+    /**
+     * \brief Heap allocation information
+     *
+     * If NULL, no heap memory has been allocated. If the pointer
+     * is marked, it points to a single heap allocated block. Otherwise,
+     * it points to a HeapInfo data structure.
+     */
+    void* hi;
     /// Allocate memory from heap
     GECODE_KERNEL_EXPORT void* heap_alloc(size_t s);
     /// Free memory previously allocated from heap
@@ -154,7 +153,7 @@ namespace Gecode {
    */
   forceinline
   Scratch::Scratch(const Space* h) 
-    : home(const_cast<Space*>(h)), free_reset(home->ssa->free), n_malloc(0) {}
+    : home(const_cast<Space*>(h)), free_reset(home->ssa->free), hi(0) {}
 
   forceinline void*
   Scratch::ralloc(size_t s) {
@@ -170,7 +169,7 @@ namespace Gecode {
   forceinline
   Scratch::~Scratch(void) {
     home->ssa->free = free_reset;
-    if (n_malloc > 0)
+    if (hi != NULL)
       heap_free();
   }
   

@@ -42,52 +42,40 @@ namespace Gecode {
   void*
   Scratch::heap_alloc(size_t s) {
     void* p = heap.ralloc(s);
-    switch (++n_malloc) {
-    case 0: 
-      GECODE_NEVER;
-    case 1:
-      at.two.fst = p; break;
-    case 2:
-      at.two.snd = p; break;
-    case 3:
-      {
-        void** b = static_cast<void**>(heap.ralloc(sizeof(void*) * 8));
-        b[0]=at.two.fst; b[1]=at.two.snd; b[2]=p;
-        at.any.l_malloc = 8;
-        at.any.b_malloc = b;
+    if (hi == NULL) {
+      hi = p;
+      assert(!Support::marked(hi));
+    } else if (!Support::marked(hi)) {
+      HeapInfo* h = static_cast<HeapInfo*>
+        (heap.ralloc(sizeof(HeapInfo)+(4-1)*sizeof(void*)));
+      h->n=2; h->size=4;
+      h->blocks[0]=hi; h->blocks[1]=p;
+      hi = Support::mark(h);
+    } else {
+      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
+      if (h->n == h->size) {
+        HeapInfo* n = static_cast<HeapInfo*>
+          (heap.ralloc(sizeof(HeapInfo)+(2*h->n-1)*sizeof(void*)));
+        n->size = 2*h->n;
+        n->n = h->n;
+        memcpy(&n->blocks[0], &h->blocks[0], h->n*sizeof(void*));
+        hi = Support::mark(n);
+        h = n;
       }
-      break;
-    default:
-      if (at.any.l_malloc == n_malloc) {
-        unsigned int l = (3 * n_malloc) / 2;
-        at.any.b_malloc = 
-          static_cast<void**>(heap.rrealloc(at.any.b_malloc,
-                                              l*sizeof(void*)));
-        at.any.l_malloc = l;
-      }
-      at.any.b_malloc[n_malloc-1] = p;
-      break;
+      h->blocks[h->n++] = p;
     }
     return p;
   }
 
   void
   Scratch::heap_free(void) {
-    switch (n_malloc) {
-    case 0:
-      GECODE_NEVER;
-    case 2:
-      heap.rfree(at.two.snd);
-      // Fall through
-    case 1:
-      heap.rfree(at.two.fst);
-      break;
-    default:
-      for (unsigned int i=n_malloc; i--; )
-        heap.rfree(at.any.b_malloc[i]);
-      heap.rfree(at.any.b_malloc);
-      break;
+    assert(hi != NULL);
+    if (Support::marked(hi)) {
+      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
+      for (unsigned int i=h->n; i--; )
+        heap.rfree(h->blocks[i]);
     }
+    heap.rfree(hi);
   }
 
 }
