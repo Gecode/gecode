@@ -587,22 +587,22 @@ namespace Gecode {
 
   //@{
 
-  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
+  /// Post propagator for \f$ (x \diamond_{\mathit{o}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
       CpltSetRelType r, CpltSetVar z);
 
-  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
+  /// Post propagator for \f$ (x \diamond_{\mathit{o}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
       SetRelType r, CpltSetVar z);
 
-  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
+  /// Post propagator for \f$ (x \diamond_{\mathit{o}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
       CpltSetRelType r, CpltSetVar z);
 
-  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
+  /// Post propagator for \f$ (x \diamond_{\mathit{o}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
       SetRelType r, CpltSetVar z);

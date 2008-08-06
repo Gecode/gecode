@@ -940,7 +940,7 @@ namespace Gecode {
   /** \brief Post propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
-   * \diamond_{\mathit{op}} x_{|x|-1}= y\f$
+   * \diamond_{\mathit{o}} x_{|x|-1}= y\f$
    *
    * Throws an exception of type Int::TooFewArguments, if \f$|x|<2\f$
    * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
@@ -951,7 +951,7 @@ namespace Gecode {
   /** \brief Post propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
-   * \diamond_{\mathit{op}} x_{|x|-1}= n\f$
+   * \diamond_{\mathit{o}} x_{|x|-1}= n\f$
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
