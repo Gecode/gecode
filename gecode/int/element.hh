@@ -70,13 +70,13 @@ namespace Gecode { namespace Int { namespace Element {
   class Int : public Propagator {
   protected:
     /// View for index
-    ViewA          x0;
+    ViewA x0;
     /// View for result
-    ViewB          x1;
+    ViewB x1;
     /// Shared array of integer values
     IntSharedArray c;
     /// Cache for index-value map
-    IdxValMap*     ivm;
+    IdxValMap* ivm;
     /// Constructor for cloning \a p
     Int(Space* home, bool shared, Int& p);
     /// Constructor for creation
@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home, ModEventDelta med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space* home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space* home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -99,8 +99,6 @@ namespace Gecode { namespace Int { namespace Element {
     /// Post propagator for \f$i_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IntSharedArray& i,
                             ViewA x0, ViewB x1);
-    /// Return size of index-value map
-    virtual size_t allocated(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };

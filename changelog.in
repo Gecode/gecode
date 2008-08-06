@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Simpler and more efficient memory management for element
+propagators (integer arrays).
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

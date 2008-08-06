@@ -178,11 +178,10 @@ namespace Gecode { namespace Int { namespace Element {
     public:
       bool operator()(IdxValLink*&, IdxValLink*&);
     };
-    size_t _size;
     IdxValLink iv[1];
   public:
     /// Allocating and initializing the data structure
-    static IdxValMap* allocate(int);
+    static IdxValMap* allocate(Space* home, int);
     template <class ViewA> void init(Space* home, int*, ViewA);
 
     /// Pruning from variables on data structure
@@ -192,11 +191,9 @@ namespace Gecode { namespace Int { namespace Element {
     /// Telling data structure to variables: returns true if at fixpoint
     template <class ViewA, class ViewB>
     ExecStatus tell(Space*,ViewA,ViewB);
-
-    size_t size(void) const;
-    static void operator delete(void* p,size_t);
   private:
     static void* operator new(size_t);
+    static void operator delete(void* p,size_t);
   };
 
   forceinline bool
@@ -205,16 +202,10 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   forceinline IdxValMap*
-  IdxValMap::allocate(int n) {
+  IdxValMap::allocate(Space* home, int n) {
     size_t s = sizeof(IdxValMap)+n*sizeof(IdxValLink);
-    IdxValMap* ivm = static_cast<IdxValMap*>(heap.ralloc(s));
-    ivm->_size = s;
+    IdxValMap* ivm = static_cast<IdxValMap*>(home->ralloc(s));
     return ivm;
-  }
-
-  forceinline size_t
-  IdxValMap::size(void) const {
-    return _size;
   }
 
   template <class ViewA>
@@ -308,13 +299,6 @@ namespace Gecode { namespace Int { namespace Element {
     }
   }
 
-  forceinline void
-  IdxValMap::operator delete(void* p,size_t) {
-    heap.rfree(p);
-  }
-
-
-
 
   /*
    * Element propagator proper
@@ -340,7 +324,6 @@ namespace Gecode { namespace Int { namespace Element {
       x1.cancel(home,this,PC_INT_DOM);
     }
     c.~IntSharedArray();
-    delete ivm;
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -356,13 +339,6 @@ namespace Gecode { namespace Int { namespace Element {
       (void) new (home) Int<ViewA,ViewB>(home,c,x0,x1);
     }
     return ES_OK;
-  }
-
-
-  template <class ViewA, class ViewB>
-  size_t
-  Int<ViewA,ViewB>::allocated(void) const {
-    return (ivm != NULL) ? ivm->size() : 0;
   }
 
   template <class ViewA, class ViewB>
@@ -421,7 +397,7 @@ namespace Gecode { namespace Int { namespace Element {
   Int<ViewA,ViewB>::propagate(Space* home, ModEventDelta) {
     bool assigned = x0.assigned() && x1.assigned();
     if (ivm == NULL) {
-      ivm = IdxValMap::allocate(x0.size());
+      ivm = IdxValMap::allocate(home,x0.size());
       ivm->init(home,&c[0],x0);
     } else {
       ivm->prune_idx(x0);
