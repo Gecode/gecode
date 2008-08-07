@@ -614,8 +614,8 @@ namespace Gecode { namespace Int { namespace GCC {
     template <BC>
     void dfs(VVGNode*,
              bool[], bool[], int[],
-             Support::StaticStack<VVGNode*>&,
-             Support::StaticStack<VVGNode*>&,
+             Support::StaticStack<VVGNode*,Region>&,
+             Support::StaticStack<VVGNode*,Region>&,
              int&);
 
     //@}
@@ -1940,8 +1940,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView> template<BC direction>
   inline bool
   VarValGraph<View, Card, isView>::augmenting_path(Space& home, VVGNode* v) {
-    Support::StaticStack<VVGNode*> ns(node_size);
     Region r(home);
+    Support::StaticStack<VVGNode*,Region> ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
     Edge** start = r.alloc<Edge*>(node_size);
 
@@ -1957,11 +1957,10 @@ namespace Gecode { namespace Int { namespace GCC {
     // nodes in sp only follow free edges
     // nodes in V - sp only follow matched edges
 
-    for (int i = node_size; i--; ){
+    for (int i = node_size; i--; )
       visited[i] = false;
-    }
 
-    for (int i = node_size; i--; ){
+    for (int i = node_size; i--; )
       if (i >= n_var) {
         vals[i - n_var]->inedge(NULL);
         start[i]   = vals[i - n_var]->first();
@@ -1969,7 +1968,6 @@ namespace Gecode { namespace Int { namespace GCC {
         vars[i]->inedge(NULL);
         start[i]   = vars[i]->first();
       }
-    }
 
     v->inedge(NULL);
     ns.push(v);
@@ -2050,8 +2048,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView> template<BC direction>
   inline void
   VarValGraph<View, Card, isView>::free_alternating_paths(Space& home) {
-    Support::StaticStack<VVGNode*> ns(node_size);
     Region r(home);
+    Support::StaticStack<VVGNode*,Region> ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
     // keep track of the nodes that have already been visited
     for (int i = node_size; i--; )
@@ -2161,8 +2159,8 @@ namespace Gecode { namespace Int { namespace GCC {
                                        bool inscc[],
                                        bool in_unfinished[],
                                        int dfsnum[],
-                                       Support::StaticStack<VVGNode*>& roots,
-                                       Support::StaticStack<VVGNode*>& unfinished,
+                                       Support::StaticStack<VVGNode*,Region>& roots,
+                                       Support::StaticStack<VVGNode*,Region>& unfinished,
                                        int& count){
     count++;
     int v_index            = v->get_info();
@@ -2248,13 +2246,12 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     int count = 0;
-    Support::StaticStack<VVGNode*> roots(node_size);
-    Support::StaticStack<VVGNode*> unfinished(node_size);
+    Support::StaticStack<VVGNode*,Region> roots(r,node_size);
+    Support::StaticStack<VVGNode*,Region> unfinished(r,node_size);
 
-    for (int i = n_var; i--; ) {
+    for (int i = n_var; i--; )
       dfs<direction>(vars[i], inscc, in_unfinished, dfsnum,
                      roots, unfinished, count);
-    }
   }
 
 

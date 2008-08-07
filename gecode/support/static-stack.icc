@@ -42,16 +42,20 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T>
+  template <class T, class A>
   class StaticStack {
   private:
-    /// Stack space
-    T* stack;
+    /// Allocator
+    A& a;
+    /// Number of elements
+    int n;
     /// Top of stack
     unsigned int tos;
+    /// Stack space
+    T* stack;
   public:
     /// Initialize for \a n elements
-    StaticStack(const int n);
+    StaticStack(A& a, int n);
     /// Release memory
     ~StaticStack(void);
 
@@ -67,56 +71,54 @@ namespace Gecode { namespace Support {
     /// Return element that has just been popped
     T& last(void) const;
     /// Push element \a x on top of stack
-    void push(T x);
+    void push(const T& x);
 
   };
 
-  template <class T>
+  template <class T, class A>
   forceinline
-  StaticStack<T>::StaticStack(const int n)
-    : tos(0) {
-    stack = static_cast<T*>(heap.ralloc((n+1)*sizeof(T)));
+  StaticStack<T,A>::StaticStack(A& a0, int n0)
+    : a(a0), n(n0), tos(0), stack(a.alloc<T>(n+1)) {}
+
+  template <class T, class A>
+  forceinline
+  StaticStack<T,A>::~StaticStack(void) {
+    a.free<T>(stack,n);
   }
 
-  template <class T>
-  forceinline
-  StaticStack<T>::~StaticStack(void) {
-    heap.rfree(stack);
-  }
-
-  template <class T>
+  template <class T, class A>
   forceinline bool
-  StaticStack<T>::empty(void) const {
+  StaticStack<T,A>::empty(void) const {
     return tos==0;
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline void
-  StaticStack<T>::reset(void) {
+  StaticStack<T,A>::reset(void) {
     tos = 0;
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline T
-  StaticStack<T>::pop(void) {
+  StaticStack<T,A>::pop(void) {
     return stack[--tos];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline T&
-  StaticStack<T>::top(void) const {
+  StaticStack<T,A>::top(void) const {
     return stack[tos-1];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline T&
-  StaticStack<T>::last(void) const {
+  StaticStack<T,A>::last(void) const {
     return stack[tos];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline void
-  StaticStack<T>::push(T x) {
+  StaticStack<T,A>::push(const T& x) {
     stack[tos++] = x;
   }
 

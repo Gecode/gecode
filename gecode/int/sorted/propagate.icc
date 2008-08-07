@@ -290,7 +290,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     for(int i = n; i--; )
       sinfo[i].left=sinfo[i].right=sinfo[i].rightmost=sinfo[i].leftmost= i;
 
-    computesccs(x,y,phi,sinfo,scclist);
+    computesccs(home,x,y,phi,sinfo,scclist);
 
     /*
      * STEP 5:
