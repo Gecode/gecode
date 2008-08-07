@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Bool {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Bool {
     BoolTernary(Space& home, bool share, Propagator& p,
                 BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as PC_BINARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
@@ -424,7 +424,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$

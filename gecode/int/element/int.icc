@@ -358,7 +358,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   PropCost
-  Int<ViewA,ViewB>::cost(const ModEventDelta&) const {
+  Int<ViewA,ViewB>::cost(const Space&, const ModEventDelta&) const {
     return PC_BINARY_HI;
   }
 

@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(const ModEventDelta& med) const;
+    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(const ModEventDelta& med) const;
+    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -162,7 +162,7 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(const ModEventDelta& med) const;
+    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -203,7 +203,7 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
-    GECODE_SET_EXPORT virtual PropCost    cost(const ModEventDelta& med) const;
+    GECODE_SET_EXPORT virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation

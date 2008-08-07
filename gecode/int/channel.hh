@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Channel {
                                 const Support::Symbol& name) const;
   public:
     /// Propagation cost
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Specification for this propagator
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Propagation cost
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling on \a xy
@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ x_0 = x_1\f$
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (PC_UNARY_LO if \a y is assigned, PC_LINEAR_LO otherwise)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$

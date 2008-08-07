@@ -562,7 +562,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   PropCost
-  LayeredGraph<View>::cost(const ModEventDelta&) const {
+  LayeredGraph<View>::cost(const Space&, const ModEventDelta&) const {
     return cost_hi(x.size(), PC_LINEAR_HI);
   }
 

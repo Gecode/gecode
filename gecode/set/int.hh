@@ -174,7 +174,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
-    GECODE_SET_EXPORT virtual PropCost cost(const ModEventDelta& med) const;
+    GECODE_SET_EXPORT virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete Propagator
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -227,7 +227,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -308,7 +308,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -357,7 +357,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
-    GECODE_SET_EXPORT virtual PropCost cost(const ModEventDelta& med) const;
+    GECODE_SET_EXPORT virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation

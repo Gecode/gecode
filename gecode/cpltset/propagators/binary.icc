@@ -60,7 +60,7 @@ namespace Gecode { namespace CpltSet {
   
   template <class View0, class View1>
   forceinline PropCost
-  BinaryCpltSetPropagator<View0,View1>::cost(const ModEventDelta&) const {
+  BinaryCpltSetPropagator<View0,View1>::cost(const Space&, const ModEventDelta&) const {
     if (manager.ctrue(x.dom()) || manager.ctrue(d)) {
       return PC_LINEAR_LO;
     } else {

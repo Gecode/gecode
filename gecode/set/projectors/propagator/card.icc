@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   forceinline PropCost
-  CardProjection::cost(const ModEventDelta&) const {
+  CardProjection::cost(const Space&, const ModEventDelta&) const {
     switch (x.size()) {
     case 1: return PC_UNARY_HI;
     case 2: return PC_BINARY_HI;

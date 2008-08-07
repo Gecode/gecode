@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Distinct {
      * If in stage for naive value propagation, the cost is dynamic
      * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
      */
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Destructor
@@ -279,7 +279,7 @@ namespace Gecode { namespace Int { namespace Distinct {
      * If in stage for naive value propagation, the cost is dynamic
      * PC_LINEAR_LO. Otherwise it is dynamic PC_CUBIC_LO.
      */
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Specification for this propagator

@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (returns PC_LINEAR_HI)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for circuit on \a x
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Circuit {
      * If in stage for naive value propagation, the cost is dynamic
      * PC_LINEAR_HI. Otherwise it is dynamic PC_QUADRATIC_LO.
      */
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator

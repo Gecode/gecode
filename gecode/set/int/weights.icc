@@ -189,7 +189,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   PropCost
-  Weights<View>::cost(const ModEventDelta&) const {
+  Weights<View>::cost(const Space&, const ModEventDelta&) const {
     return PC_LINEAR_LO;
   }
 

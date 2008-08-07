@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   PropCost
-  LinBoolView<XV,YV>::cost(const ModEventDelta&) const {
+  LinBoolView<XV,YV>::cost(const Space&, const ModEventDelta&) const {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 

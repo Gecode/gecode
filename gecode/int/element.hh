@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Const function (return PC_BINARY_HI)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace Element {
                                 const Support::Symbol& name) const;
   public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int { namespace Element {
      * otherwise as dynamic PC_LINEAR_HI.
      *
      */
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator

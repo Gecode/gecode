@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_BINARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_BINARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -416,7 +416,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -589,7 +589,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -705,7 +705,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Propagation cost
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
@@ -921,7 +921,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -950,7 +950,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_UNARY_HI)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -1116,7 +1116,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Return specification for this propagator given a variable map \a m
@@ -1159,7 +1159,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -1481,7 +1481,7 @@ namespace Gecode { namespace Int { namespace Linear {
     LinBoolScale(Space& home, bool share, Propagator& pr, 
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

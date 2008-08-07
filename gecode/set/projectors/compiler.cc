@@ -212,7 +212,7 @@ namespace Gecode {
     hhos << indent
          << "  /// Cost function (defined as " << propcost() << ")" 
          << endl << indent
-         << "  virtual PropCost cost(const ModEventDelta& med) const;" << endl;
+         << "  virtual PropCost cost(const Space& home, const ModEventDelta& med) const;" << endl;
 
     hhos << indent
          << "  /// Delete propagator and return its size"
@@ -421,7 +421,7 @@ namespace Gecode {
           << "PropCost" << endl << indent
           << spec._name;
     templateparams();
-    iccos << "::cost(const ModEventDelta&) const {" << endl << indent
+    iccos << "::cost(const Space&, const ModEventDelta&) const {" << endl << indent
           << "  return " << propcost() << ";" << endl << indent
           << "}" << endl;
     ///////////////////////////////////////////////////

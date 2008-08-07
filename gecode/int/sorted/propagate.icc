@@ -399,7 +399,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
-  PropCost Sorted<View,Perm>::cost(const ModEventDelta&) const {
+  PropCost Sorted<View,Perm>::cost(const Space&, const ModEventDelta&) const {
     return cost_hi(x.size(), PC_LINEAR_HI);
   }
 

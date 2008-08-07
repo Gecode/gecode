@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -217,7 +217,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation

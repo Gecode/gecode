@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   PropCost
-  LinkSingle::cost(const ModEventDelta&) const {
+  LinkSingle::cost(const Space&, const ModEventDelta&) const {
     return PC_UNARY_LO;
   }
 

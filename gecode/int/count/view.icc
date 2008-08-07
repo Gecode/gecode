@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   PropCost
-  BaseView<VX,VY,VZ,shr>::cost(const ModEventDelta&) const {
+  BaseView<VX,VY,VZ,shr>::cost(const Space&, const ModEventDelta&) const {
     return cost_lo(x.size()+1, PC_LINEAR_LO);
   }
 

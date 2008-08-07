@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Count {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
   protected:
     /// Count how many views are equal now
     void count(Space& home);

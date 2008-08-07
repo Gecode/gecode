@@ -44,7 +44,7 @@
 namespace Gecode { namespace Set { namespace Element {
 
   PropCost
-  ElementDisjoint::cost(const ModEventDelta&) const {
+  ElementDisjoint::cost(const Space&, const ModEventDelta&) const {
     return PC_QUADRATIC_LO;
   }
 

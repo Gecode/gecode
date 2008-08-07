@@ -718,7 +718,7 @@ namespace Gecode {
      */
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med) = 0;
     /// Cost function
-    virtual PropCost cost(const ModEventDelta& med) const  = 0;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const = 0;
     /**
      * \brief Advise function
      *
@@ -2065,7 +2065,7 @@ namespace Gecode {
   forceinline void
   Space::enqueue(Propagator* p) {
     ActorLink::cast(p)->unlink();
-    ActorLink* c = &pc.p.queue[p->cost(p->u.med)];
+    ActorLink* c = &pc.p.queue[p->cost(*this,p->u.med)];
     c->tail(ActorLink::cast(p));
     if (c > pc.p.active)
       pc.p.active = c;

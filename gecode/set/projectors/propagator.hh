@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace Projection {
     NaryProjection(Space& home, ViewArray<SetView>& x, ProjectorSet& ps);
   public:
     /// Cost function
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
@@ -101,7 +101,7 @@ namespace Gecode { namespace Set { namespace Projection {
                      ProjectorSet& ps);
   public:
     /// Cost function
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
@@ -140,7 +140,7 @@ namespace Gecode { namespace Set { namespace Projection {
                    Gecode::Int::IntView i, Projector& ps);
   public:
     /// Cost function
-    virtual PropCost cost(const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
