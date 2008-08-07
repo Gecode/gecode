@@ -42,9 +42,11 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T>
+  template <class T, class A>
   class DynamicStack {
   private:
+    /// Memory allocator
+    A& a;
     /// Current size of the stack
     int limit;
     /// Top of stack
@@ -55,22 +57,25 @@ namespace Gecode { namespace Support {
     void resize(void);
   public:
     /// Initialize stack with \a n elements
-    DynamicStack(int n=64);
+    DynamicStack(A& a, int n=64);
     /// Release memory
     ~DynamicStack(void);
 
     /// Test whether stack is empty
     bool empty(void) const;
-    /// Pop topmost element from stack and return it
-    T pop(void);
-    /// Return top of stack
-    T& top(void);
-    /// Push element on stack
-    void push(T);
-
-
     /// Return number of entries currently on stack
     int entries(void) const;
+
+    /// Pop topmost element from stack and return it
+    T pop(void);
+    /// Return element on top of stack
+    T& top(void) const;
+    /// Return element that has just been popped
+    T& last(void) const;
+    /// Push element \a x on top of stack
+    void push(const T& x);
+
+
     /** \brief Return entry at position \a i
      *
      * Position 0 corresponds to the element first pushed,
@@ -88,78 +93,92 @@ namespace Gecode { namespace Support {
 
     /// Return size of stack
     size_t size(void) const;
+  private:
+    /// Allocate memory from heap (disabled)
+    static void* operator new(size_t s) throw() { (void) s; return NULL; }
+    /// Free memory allocated from heap (disabled)
+    static void  operator delete(void* p) { (void) p; };
+    /// Copy constructor (disabled)
+    DynamicStack(const DynamicStack& s) : a(s.a) {}
+    /// Assignment operator (disabled)
+    const DynamicStack& operator=(const DynamicStack&) { return *this; }
   };
 
 
-  template <class T>
+  template <class T, class A>
   void
-  DynamicStack<T>::resize(void) {
+  DynamicStack<T,A>::resize(void) {
     int nl = (limit * 3) / 2;
-    stack = heap.realloc<T>(stack,
-                            static_cast<size_t>(limit),
-                            static_cast<size_t>(nl));
+    stack = a.realloc<T>(stack,limit,nl);
     limit = nl;
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline
-  DynamicStack<T>::DynamicStack(int n)
-    : limit(n), tos(0), stack(heap.alloc<T>(static_cast<size_t>(n))) {}
+  DynamicStack<T,A>::DynamicStack(A& a0, int n)
+    : a(a0), limit(n), tos(0), stack(a.alloc<T>(n)) {}
 
-  template <class T>
+  template <class T, class A>
   forceinline
-  DynamicStack<T>::~DynamicStack(void) {
-    heap.free(stack,limit);
+  DynamicStack<T,A>::~DynamicStack(void) {
+    a.free(stack,limit);
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline T
-  DynamicStack<T>::pop(void) {
+  DynamicStack<T,A>::pop(void) {
     return stack[--tos];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline T&
-  DynamicStack<T>::top(void) {
+  DynamicStack<T,A>::top(void) const {
     return stack[tos-1];
   }
 
-  template <class T>
+  template <class T, class A>
+  forceinline T&
+  DynamicStack<T,A>::last(void) const {
+    return stack[tos];
+  }
+
+  template <class T, class A>
   forceinline void
-  DynamicStack<T>::push(T x) {
+  DynamicStack<T,A>::push(const T& x) {
     stack[tos++] = x;
     if (tos==limit)
       resize();
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline bool
-  DynamicStack<T>::empty(void) const {
+  DynamicStack<T,A>::empty(void) const {
     return tos==0;
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline int
-  DynamicStack<T>::entries(void) const {
+  DynamicStack<T,A>::entries(void) const {
     return tos;
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline T&
-  DynamicStack<T>::operator[](int i) {
+  DynamicStack<T,A>::operator[](int i) {
     return stack[i];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline const T&
-  DynamicStack<T>::operator[](int i) const {
+  DynamicStack<T,A>::operator[](int i) const {
     return stack[i];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline size_t
-  DynamicStack<T>::size(void) const {
-    return (static_cast<size_t>(limit) * sizeof(T)) + sizeof(DynamicStack<T>);
+  DynamicStack<T,A>::size(void) const {
+    return (static_cast<size_t>(limit) * sizeof(T)) + 
+      sizeof(DynamicStack<T,A>);
   }
 
 }}

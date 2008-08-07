@@ -338,7 +338,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
 
-    typedef ::Gecode::Support::DynamicStack<Work> WorkStack;
+    typedef ::Gecode::Support::DynamicStack<Work,Heap> WorkStack;
     SupportEntry** support_data;
     WorkStack work;
     int unassigned;

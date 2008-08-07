@@ -90,7 +90,7 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ReCoStack::ReCoStack(unsigned int a_d0) : a_d(a_d0) {}
+  ReCoStack::ReCoStack(unsigned int a_d0) : ds(heap), a_d(a_d0) {}
 
   forceinline const BranchingDesc*
   ReCoStack::push(Space* s, Space* c) {

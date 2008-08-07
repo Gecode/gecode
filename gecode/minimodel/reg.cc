@@ -105,7 +105,7 @@ namespace Gecode {
 
   void
   REG::Exp::dispose(void) {
-    Support::DynamicStack<Exp*> todo;
+    Support::DynamicStack<Exp*,Heap> todo(heap);
     todo.push(this);
     while (!todo.empty()) {
       Exp* e = todo.pop();

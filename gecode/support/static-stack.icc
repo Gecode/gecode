@@ -63,6 +63,8 @@ namespace Gecode { namespace Support {
     void reset(void);
     /// Test whether stack is empty
     bool empty(void) const;
+    /// Return number of entries currently on stack
+    int entries(void) const;
 
     /// Pop topmost element from stack and return it
     T pop(void);
@@ -72,6 +74,7 @@ namespace Gecode { namespace Support {
     T& last(void) const;
     /// Push element \a x on top of stack
     void push(const T& x);
+
   private:
     /// Allocate memory from heap (disabled)
     static void* operator new(size_t s) throw() { (void) s; return NULL; }
@@ -98,6 +101,12 @@ namespace Gecode { namespace Support {
   forceinline bool
   StaticStack<T,A>::empty(void) const {
     return tos==0;
+  }
+
+  template <class T, class A>
+  forceinline int
+  StaticStack<T,A>::entries(void) const {
+    return tos;
   }
 
   template <class T, class A>

@@ -86,7 +86,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   ProbeEngine::ProbeEngine(Stop* st, size_t sz)
-    : EngineCtrl(st,sz) {}
+    : EngineCtrl(st,sz), ds(heap) {}
 
   forceinline void
   ProbeEngine::init(Space* s, unsigned int d0) {

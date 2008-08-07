@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Incremental<View>::Incremental(Space& home, ViewArray<View>& x, const TupleSet& t)
     : Base<View,false>(home,x,t), support_data(NULL), 
-      work(x.size()), unassigned(x.size()), ac(home) {
+      work(heap,x.size()), unassigned(x.size()), ac(home) {
     init_support(home);
 
     ModEvent me = ME_INT_DOM;
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Incremental<View>::Incremental(Space& home, bool share, Incremental<View>& p)
     : Base<View,false>(home,share,p), support_data(NULL), 
-      work(2), unassigned(p.unassigned) {
+      work(heap,2), unassigned(p.unassigned) {
     ac.update(home,share,p.ac);
 
     init_support(home);

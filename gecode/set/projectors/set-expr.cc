@@ -239,7 +239,7 @@ namespace Gecode {
 
     typedef Iter::Ranges::Virt::Iterator Iterator;
 
-    Support::DynamicStack<Iterator*> s;
+    Support::DynamicStack<Iterator*,Heap> s(heap);
 
     int tmp = 0;
     for (int i=0; i<c.size(); i++) {

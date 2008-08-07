@@ -331,7 +331,7 @@ namespace Gecode {
     class ReCoStack {
     private:
       /// Stack to store node information
-      Support::DynamicStack<ReCoNode> ds;
+      Support::DynamicStack<ReCoNode,Heap> ds;
       /// Adaptive recomputation distance
       const unsigned int a_d;
       /// Unused default argument
@@ -495,7 +495,7 @@ namespace Gecode {
         void next(void);
       };
       /// %Stack storing current path in search tree
-      Support::DynamicStack<ProbeNode> ds;
+      Support::DynamicStack<ProbeNode,Heap> ds;
       /// Current space
       Space* cur;
       /// Current discrepancy
