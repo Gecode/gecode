@@ -603,7 +603,7 @@ namespace Gecode {
       home.rfree(oldx, capacity);
     } else {
       // Array was heap allocated, just reallocate with new size
-      x = heap.trealloc<Var>(x, n, newsize);
+      x = heap.realloc<Var>(x, n, newsize);
     }
     capacity = newsize; n = m;
     // After resizing, the array is always heap allocated
