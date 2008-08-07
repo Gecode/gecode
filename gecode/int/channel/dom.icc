@@ -216,8 +216,9 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space& home, ModEventDelta med) {
-    GECODE_AUTOSTACK(home,int,-1, xa, n);
-    GECODE_AUTOSTACK(home,int,-1, ya, n);
+    Region r(home);
+    ProcessStack xa(r,n);
+    ProcessStack ya(r,n);
 
     DomInfo<View>* x = xy;
     DomInfo<View>* y = xy+n;
@@ -266,7 +267,6 @@ namespace Gecode { namespace Int { namespace Channel {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync(home));
     } else {
-      Region r(home);
       View* xv = r.alloc<View>(n);
       for (int i=n; i--; )
         xv[i] = x[i].view;

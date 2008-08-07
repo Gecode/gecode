@@ -98,7 +98,6 @@
 #include "gecode/support/dynamic-array.icc"
 #include "gecode/support/dynamic-stack.icc"
 #include "gecode/support/random.icc"
-#include "gecode/support/sentinel-stack.icc"
 #include "gecode/support/sort.icc"
 #include "gecode/support/static-pqueue.icc"
 #include "gecode/support/static-stack.icc"

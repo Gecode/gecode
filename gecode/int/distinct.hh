@@ -226,9 +226,9 @@ namespace Gecode { namespace Int { namespace Distinct {
       bool sync(Space& home);
     public:
       /// Stack used during matching
-      typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
+      typedef Support::StaticStack<ViewNode<View>*,Region> ViewNodeStack;
       /// Find a matching for node \a x
-      bool match(MatchStack& m, ViewNode<View>* x);
+      bool match(ViewNodeStack& m, ViewNode<View>* x);
     };
     /// Propagation is performed on a view-value graph
     ViewValGraph vvg;

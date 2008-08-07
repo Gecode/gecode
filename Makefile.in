@@ -125,7 +125,7 @@ SUPPORTSRC0 = \
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
 	dynamic-stack exception map heap \
-	macros random sentinel-stack sort \
+	macros random sort \
 	static-pqueue static-stack symbol \
 	marked-pointer
 

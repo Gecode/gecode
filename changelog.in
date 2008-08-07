@@ -112,6 +112,22 @@ assignment operators as required by C++ and are implemented with
 efficient specializations for basic data types.
 
 [ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+GECODE_AUTOARRAY has been removed. Use a Region for memory
+management instead.
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+GECODE_AUTOSTACK and SentinelStack has been removed. Use
+StaticStack instead.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor

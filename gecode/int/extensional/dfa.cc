@@ -315,9 +315,7 @@ namespace Gecode {
     }
 
     // Do a reachability analysis for all states starting from start state
-    int* visitA = heap.alloc<int>(n_states+1);
-    Gecode::Support::SentinelStack<int> visit(visitA,-1,n_states);    
-    // GECODE_AUTOSTACK(home, int, -1, visit, n_states);
+    Gecode::Support::StaticStack<int,Heap> visit(heap,n_states);
     int* state = heap.alloc<int>(n_states);
     for (int i=n_states; i--; )
       state[i] = SI_NONE;
@@ -380,7 +378,6 @@ namespace Gecode {
       }
     }
     heap.free<Transition*>(idx,n_states+1);
-    heap.free<int>(visitA,n_states+1);
     heap.free<int>(final,n_states+1);
     heap.free<bool>(is_final,n_states+1);
 

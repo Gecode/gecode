@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline bool
-  DomCtrl<View>::ViewValGraph::match(MatchStack& m, ViewNode<View>* x) {
+  DomCtrl<View>::ViewValGraph::match(ViewNodeStack& m, ViewNode<View>* x) {
     count++;
   start:
     // Try to find matching edge cheaply: is there a free edge around?
@@ -294,9 +294,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     n_val = 0;
     val = NULL;
 
+    Region r(home);
+
     if (static_cast<unsigned int>(n_view)*4 >= width) {
       // Values are dense: use a mapping
-      Region r(home);
       ValNode<View>** val2node = r.alloc<ValNode<View>* >(width);
 
       for (unsigned int i=width; i--; )
@@ -361,7 +362,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
     }
 
-    GECODE_AUTOSTACK(home,ViewNode<View>*,NULL,m,n_view);
+    ViewNodeStack m(r,n_view);
     for (int i = n_view; i--; )
       if (!match(m,view[i]))
         return ES_FAILED;
@@ -371,10 +372,11 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline void
   DomCtrl<View>::ViewValGraph::mark(Space& home) {
+    Region r(home);
     {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free (unmatched node) by depth-first-search
-      GECODE_AUTOSTACK(home,ValNode<View>*,NULL,visit,n_val);
+      Support::StaticStack<ValNode<View>*,Region> visit(r,n_val);
       
       // Insert all free nodes: they can be only value nodes as we
       // have a maximum matching covering all view nodes
@@ -418,8 +420,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     {
-      GECODE_AUTOSTACK(home,Node<View>*,NULL,scc,n_val+n_view);
-      GECODE_AUTOSTACK(home,Node<View>*,NULL,visit,n_val+n_view);
+      Support::StaticStack<Node<View>*,Region> scc(r,n_val+n_view);
+      Support::StaticStack<Node<View>*,Region> visit(r,n_val+n_view);
 
       count++;
       unsigned int cnt0 = count;
@@ -555,8 +557,9 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   bool
   DomCtrl<View>::ViewValGraph::sync(Space& home) {
+    Region r(home);
     // Stack for view nodes to be rematched
-    GECODE_AUTOSTACK(home,ViewNode<View>*,NULL,re,n_view);
+    ViewNodeStack re(r,n_view);
     // Synchronize nodes
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
@@ -598,7 +601,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
       }
     }
-    GECODE_AUTOSTACK(home,ViewNode<View>*,NULL,m,n_view);
+    ViewNodeStack m(r,n_view);
     while (!re.empty())
       if (!match(m,re.pop()))
         return false;
