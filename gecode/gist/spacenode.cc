@@ -174,7 +174,7 @@ namespace Gecode { namespace Gist {
         switch (b.branchKind) {
         case BK_NORMAL:
             {
-              curSpace->commit(b.desc.branch, b.alternative);
+              curSpace->commit(*b.desc.branch, b.alternative);
             }
             break;
         case BK_STEP:
@@ -219,7 +219,7 @@ namespace Gecode { namespace Gist {
         workingSpace = p->workingSpace;
         p->workingSpace = NULL;
         if (p->desc.branch != NULL)
-          workingSpace->commit(p->desc.branch, getAlternative());
+          workingSpace->commit(*p->desc.branch, getAlternative());
       
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
@@ -247,7 +247,7 @@ namespace Gecode { namespace Gist {
         p->copy = NULL;
     
         if(p->desc.branch != NULL)
-          copy->commit(p->desc.branch, getAlternative());
+          copy->commit(*p->desc.branch, getAlternative());
 
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);

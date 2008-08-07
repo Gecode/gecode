@@ -373,9 +373,9 @@ namespace Gecode { namespace Gist {
       // shape[i] and shape[i+1], when shape[i] and shape[i+1] are merged
       // right-to-left.
       assert(root->copy != NULL);
-      Scratch s(root->copy);
+      Region r(*root->copy);
       std::pair<int,int>* alpha =
-        s.alloc<std::pair<int,int> >(numberOfShapes);
+        r.alloc<std::pair<int,int> >(numberOfShapes);
         
       // distance between the leftmost and the rightmost axis in the list
       int width = 0;
@@ -384,7 +384,7 @@ namespace Gecode { namespace Gist {
       for (int i = numberOfShapes; i--;)
         maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
         
-      Extent* currentShapeL = s.alloc<Extent>(maxDepth);
+      Extent* currentShapeL = r.alloc<Extent>(maxDepth);
       int ldepth = getChild(0)->getShape()->depth();
       for (int i=ldepth; i--;)
         currentShapeL[i] = (*getChild(0)->getShape())[i];
