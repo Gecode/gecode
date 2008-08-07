@@ -118,8 +118,8 @@ namespace Gecode { namespace Int { namespace Dom {
     }
     return ES_FIX;
   subsumed:
-    x0.cancel(home,this,PC_INT_BND);
-    return ES_SUBSUMED(this,sizeof(*this));
+    x0.cancel(home,*this,PC_INT_BND);
+    return ES_SUBSUMED(*this,sizeof(*this));
   }
 
 

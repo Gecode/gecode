@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class View>
   void
-  IdxViewArray<View>::subscribe(Space& home, Propagator* p, PropCond pc,
+  IdxViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                 bool process) {
     for (int i = n; i--; )
       xs[i].var.subscribe(home,p,pc,process);
@@ -103,7 +103,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class View>
   void
-  IdxViewArray<View>::cancel(Space& home, Propagator* p, PropCond pc) {
+  IdxViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
     for (int i = n; i--; )
       xs[i].var.cancel(home,p,pc);
   }

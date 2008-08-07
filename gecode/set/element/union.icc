@@ -47,9 +47,9 @@ namespace Gecode { namespace Set { namespace Element {
                      RView y1)
     : Propagator(home), x0(y0), iv(iv0), x1(y1) {
     force(home);
-    x0.subscribe(home,this, PC_SET_ANY);
-    x1.subscribe(home,this, PC_SET_ANY);
-    iv.subscribe(home,this, PC_SET_ANY);
+    x0.subscribe(home,*this, PC_SET_ANY);
+    x1.subscribe(home,*this, PC_SET_ANY);
+    iv.subscribe(home,*this, PC_SET_ANY);
   }
 
   template <class SView, class RView>
@@ -102,9 +102,9 @@ namespace Gecode { namespace Set { namespace Element {
   ElementUnion<SView,RView>::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      x0.cancel(home,this, PC_SET_ANY);
-      x1.cancel(home,this, PC_SET_ANY);
-      iv.cancel(home,this,PC_SET_ANY);
+      x0.cancel(home,*this, PC_SET_ANY);
+      x1.cancel(home,*this, PC_SET_ANY);
+      iv.cancel(home,*this,PC_SET_ANY);
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -174,7 +174,7 @@ namespace Gecode { namespace Set { namespace Element {
 
         // Remove vars at indices not in the upper bound
         if (iv[i].idx < vx1ub.val()) {
-          iv[i].var.cancel(home,this, PC_SET_ANY);
+          iv[i].var.cancel(home,*this, PC_SET_ANY);
           ++i;
           continue;
         }
@@ -214,7 +214,7 @@ namespace Gecode { namespace Set { namespace Element {
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
 
-          iv[j].var.cancel(home,this, PC_SET_ANY);
+          iv[j].var.cancel(home,*this, PC_SET_ANY);
           ++i;
           ++vx1ub;
           continue;
@@ -251,7 +251,7 @@ namespace Gecode { namespace Set { namespace Element {
       // cancel the variables with index greater than
       // max of lub(x1)
       for (int k=i; k<n; k++) {
-        iv[k].var.cancel(home,this, PC_SET_ANY);
+        iv[k].var.cancel(home,*this, PC_SET_ANY);
       }
       n = j;
       iv.size(n);
@@ -263,7 +263,7 @@ namespace Gecode { namespace Set { namespace Element {
         }
         for (int i=n; i--;)
           before[i].dispose(home);
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       }
 
       if (x1.cardMin() > 0) {
@@ -337,20 +337,20 @@ namespace Gecode { namespace Set { namespace Element {
         ViewArray<SView> is(home,ubsize);
         for (int i=n; i--;)
           is[i]=iv[i].var;
-        GECODE_REWRITE(this,(RelOp::UnionN<SView, SView>
+        GECODE_REWRITE(*this,(RelOp::UnionN<SView, SView>
                         ::post(home,is,x0)));
       } else if (ubsize == 2) {
         assert(n==2);
         SView a = iv[0].var;
         SView b = iv[1].var;
-        GECODE_REWRITE(this,(RelOp::Union<SView, SView, SView>
+        GECODE_REWRITE(*this,(RelOp::Union<SView, SView, SView>
                        ::post(home,a,b,x0)));
       } else if (ubsize == 1) {
         assert(n==1);
-        GECODE_REWRITE(this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
+        GECODE_REWRITE(*this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
       } else {
         GECODE_ME_CHECK(x0.cardMax(home, 0));
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       }
     }
 
@@ -362,7 +362,7 @@ namespace Gecode { namespace Set { namespace Element {
       }
     }
     if (x0.assigned() && x1.assigned() && allAssigned) {
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
 
     return ES_FIX;

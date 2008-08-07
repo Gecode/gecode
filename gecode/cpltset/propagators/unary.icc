@@ -42,7 +42,7 @@ namespace Gecode { namespace CpltSet {
   UnaryCpltSetPropagator<View>::UnaryCpltSetPropagator(Space& home, View& x0, bdd& d0)
     : Propagator(home), x(x0), d(d0) {
     force(home);
-    x.subscribe(home, this, PC_CPLTSET_DOM);
+    x.subscribe(home, *this, PC_CPLTSET_DOM);
   }
 
   template <class View>
@@ -84,7 +84,7 @@ namespace Gecode { namespace CpltSet {
     // std::cout << "dispose propagator\n";
     unforce(home);
     if (!home.failed()) {
-      x.cancel(home, this, PC_CPLTSET_DOM);
+      x.cancel(home, *this, PC_CPLTSET_DOM);
     }
     manager.dispose(d);
     Propagator::dispose(home);
@@ -118,10 +118,10 @@ namespace Gecode { namespace CpltSet {
     GECODE_ME_CHECK(me);
 //     if (x.assigned()) {
 //       std::cerr << "SUBS-ASSIGNED\n";
-//       return ES_SUBSUMED(this, home);
+//       return ES_SUBSUMED(*this, home);
 //     }
 //     std::cerr << "tell done\n";
-    return ES_SUBSUMED(this, home);
+    return ES_SUBSUMED(*this, home);
   }
 
 

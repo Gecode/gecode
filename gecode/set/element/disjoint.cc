@@ -71,8 +71,8 @@ namespace Gecode { namespace Set { namespace Element {
   size_t
   ElementDisjoint::dispose(Space& home) {
     assert(!home.failed());
-    x1.cancel(home,this, PC_SET_ANY);
-    iv.cancel(home,this,PC_SET_ANY);
+    x1.cancel(home,*this, PC_SET_ANY);
+    iv.cancel(home,*this,PC_SET_ANY);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -107,7 +107,7 @@ namespace Gecode { namespace Set { namespace Element {
         // Cancel all elements that are no longer in the upper bound
         while (vx1ub()) {
           if (iv[i].idx < vx1ub.val()) {
-            iv[i].var.cancel(home,this, PC_SET_ANY);
+            iv[i].var.cancel(home,*this, PC_SET_ANY);
             i++;
             continue;
           }
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Element {
         // cancel the variables with index greater than
         // max of lub(x1)
         for (int k=i; k<n; k++) {
-          iv[k].var.cancel(home,this, PC_SET_ANY);
+          iv[k].var.cancel(home,*this, PC_SET_ANY);
         }
         n = j;
         iv.size(n);
@@ -151,7 +151,7 @@ namespace Gecode { namespace Set { namespace Element {
           fix_flag |= me_modified(me);
           GECODE_ME_CHECK(me);
 
-          candidate.cancel(home,this, PC_SET_ANY);
+          candidate.cancel(home,*this, PC_SET_ANY);
           ++i;
           ++vx1u;
           continue;
@@ -174,7 +174,7 @@ namespace Gecode { namespace Set { namespace Element {
 
       if (x1.cardMax()==0) {
         // Selector is empty, we're done
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       }
 
       {
@@ -300,7 +300,7 @@ namespace Gecode { namespace Set { namespace Element {
     if (!x1.assigned())
       allAssigned = false;
 
-    return allAssigned ? ES_SUBSUMED(this,home) : ES_FIX;
+    return allAssigned ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 }}}

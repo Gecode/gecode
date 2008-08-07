@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template <class View>
   forceinline
-  LayeredGraph<View>::Index::Index(Space& home, Propagator* p,
+  LayeredGraph<View>::Index::Index(Space& home, Propagator& p,
                                    Council<Index>& c, int i0)
     : Advisor(home,p,c), i(i0) {}
 
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     if (c.empty())
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     return ES_FIX;
   }
 
@@ -383,7 +383,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Check subsumption
     if (c.empty())
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     return ES_FIX;
   }
 
@@ -501,8 +501,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (x[i].assigned())
         me = ME_INT_VAL;
       else
-        x[i].subscribe(home, *new (home) Index(home,this,c,i));
-    View::schedule(home,this,me);
+        x[i].subscribe(home, *new (home) Index(home,*this,c,i));
+    View::schedule(home,*this,me);
     this->force(home);
   }
 
@@ -514,8 +514,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(x.size() > 0);
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-        x[i].subscribe(home, *new (home) Index(home,this,c,i));
-    BoolView::schedule(home,this,ME_BOOL_VAL);
+        x[i].subscribe(home, *new (home) Index(home,*this,c,i));
+    BoolView::schedule(home,*this,ME_BOOL_VAL);
     this->force(home);
   }
 

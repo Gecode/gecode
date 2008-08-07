@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                          int n_s0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), c(c0) {
     for (int i=n_s; i--; )
-      x[i].subscribe(home,this,PC_INT_VAL);
+      x[i].subscribe(home,*this,PC_INT_VAL);
   }
 
   template <class VX>
@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Linear {
   MemoryLinBoolInt<VX>::dispose(Space& home) {
     assert(!home.failed());
     for (int i=n_s; i--; )
-      x[i].cancel(home,this,PC_INT_VAL);
+      x[i].cancel(home,*this,PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Linear {
     : Propagator(home), x(x0), n_s(n_s0), c(c0), co(home) {
     int n_x = x.size() - n_s;
     for (int i=n_x; i<x.size(); i++)
-      (void) new (home) ViewAdvisor<VX>(home,this,co,x[i]);
+      (void) new (home) ViewAdvisor<VX>(home,*this,co,x[i]);
     x.size(n_x);
   }
 
@@ -231,7 +231,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     // Find unassigned variables to subscribe to
     while ((n_s < n_x) && (n_s <= c)) 
       if (x[n_s].zero()) {
@@ -239,13 +239,13 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[n_s].one()) {
         x[n_s]=x[--n_x]; c--;
       } else {
-        x[n_s++].subscribe(home,this,PC_INT_VAL,false);
+        x[n_s++].subscribe(home,*this,PC_INT_VAL,false);
       }
     x.size(n_x);
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     if (c == n_x) {
       // These are known to be not assigned
       for (int i=n_s; i--; )
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Linear {
         GECODE_ME_CHECK(x[i].one(home));
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
     return ES_FIX;
   }
@@ -350,7 +350,7 @@ namespace Gecode { namespace Int { namespace Linear {
       for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
         GECODE_ME_CHECK(as.advisor()->view().one_none(home));
     }
-    return ES_SUBSUMED(this,home);
+    return ES_SUBSUMED(*this,home);
   }
 
   template <class VX>
@@ -454,7 +454,7 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[n_s].one()) {
         x[n_s]=x[--n_x]; c--;
       } else {
-        x[n_s++].subscribe(home,this,PC_INT_VAL,false);
+        x[n_s++].subscribe(home,*this,PC_INT_VAL,false);
       }
     x.size(n_x);
     if ((c < 0) || (c > n_x))
@@ -468,7 +468,7 @@ namespace Gecode { namespace Int { namespace Linear {
         GECODE_ME_CHECK(x[i].zero(home));
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
     if (c == n_x) {
       // These are known to be not assigned
@@ -479,7 +479,7 @@ namespace Gecode { namespace Int { namespace Linear {
         GECODE_ME_CHECK(x[i].one(home));
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
     return ES_FIX;
   }
@@ -575,7 +575,7 @@ namespace Gecode { namespace Int { namespace Linear {
       for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
         GECODE_ME_CHECK(as.advisor()->view().one_none(home));
     }
-    return ES_SUBSUMED(this,home);
+    return ES_SUBSUMED(*this,home);
   }
 
   template <class VX>
@@ -742,7 +742,7 @@ namespace Gecode { namespace Int { namespace Linear {
         // Move to y and subscribe
         y=x[i]; x[i]=x[--n]; 
         x.size(n);
-        y.subscribe(home,this,PC_INT_VAL,false);
+        y.subscribe(home,*this,PC_INT_VAL,false);
         return true;
       }
     // All views have been assigned!
@@ -761,9 +761,9 @@ namespace Gecode { namespace Int { namespace Linear {
       s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;
     if ((n < c) || (c < 0))
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     if (n == 0)
-      return (c == 0) ? ES_FAILED : ES_SUBSUMED(this,sizeof(*this));
+      return (c == 0) ? ES_FAILED : ES_SUBSUMED(*this,sizeof(*this));
     if (n == 1) {
       if (s0) {
         if (c == 1) {
@@ -779,7 +779,7 @@ namespace Gecode { namespace Int { namespace Linear {
           GECODE_ME_CHECK(x1.one_none(home));
         }
       }
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
     return ES_FIX;
   }

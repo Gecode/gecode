@@ -166,10 +166,10 @@ namespace Gecode { namespace Int { namespace Element {
   View<VA,VB,VC,pc_ac>::View(Space& home, IdxView<VA>* iv0, int n0,
                              VB y0, VC y1)
     : Propagator(home), iv(iv0), n(n0), x0(y0), x1(y1) {
-    x0.subscribe(home,this,PC_INT_DOM);
-    x1.subscribe(home,this,pc_ac);
+    x0.subscribe(home,*this,PC_INT_DOM);
+    x1.subscribe(home,*this,pc_ac);
     for (int i=n; i--; )
-      iv[i].view.subscribe(home,this,pc_ac);
+      iv[i].view.subscribe(home,*this,pc_ac);
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
@@ -214,10 +214,10 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC, PropCond pc_ac>
   forceinline size_t
   View<VA,VB,VC,pc_ac>::dispose(Space& home) {
-    x0.cancel(home,this,PC_INT_DOM);
-    x1.cancel(home,this,pc_ac);
+    x0.cancel(home,*this,PC_INT_DOM);
+    x1.cancel(home,*this,pc_ac);
     for (int i=n; i--;)
-      iv[i].view.cancel(home,this,pc_ac);
+      iv[i].view.cancel(home,*this,pc_ac);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC, PropCond pc_ac, class RelTest>
   ExecStatus
   scan(Space& home, IdxView<VA>* iv, int& n,
-       VB x0, VC x1, Propagator* p, RelTest rt) {
+       VB x0, VC x1, Propagator& p, RelTest rt) {
     assert(n > 1);
     /*
      * Prunes pairs of index, variable
@@ -416,11 +416,11 @@ namespace Gecode { namespace Int { namespace Element {
     assert(n > 1);
     RelTestBnd<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
-                     (home,iv,n,x0,x1,this,rt)));
+                     (home,iv,n,x0,x1,*this,rt)));
     if (n == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
-      return ES_SUBSUMED(this,s);
+      return ES_SUBSUMED(*this,s);
     }
     assert(n > 1);
     // Compute new result
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Element {
        es = ES_NOFIX;
     }
     return (x1.assigned() && (min == max)) ? 
-      ES_SUBSUMED(this,home) : es;
+      ES_SUBSUMED(*this,home) : es;
   }
 
 
@@ -543,11 +543,11 @@ namespace Gecode { namespace Int { namespace Element {
     if (VA::me(med) != ME_INT_DOM) {
       RelTestBnd<VA,VC> rt;
       GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
-                       (home,iv,n,x0,x1,this,rt)));
+                       (home,iv,n,x0,x1,*this,rt)));
       if (n == 1) {
         size_t s = this->dispose(home);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-        return ES_SUBSUMED(this,s);
+        return ES_SUBSUMED(*this,s);
       }
       // Compute new result
       int min = iv[n-1].view.min();
@@ -559,16 +559,16 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK(x1.lq(home,max));
       GECODE_ME_CHECK(x1.gq(home,min));
       return (x1.assigned() && (min == max)) ?
-        ES_SUBSUMED(this,home) :
-        ES_NOFIX_PARTIAL(this,VA::med(ME_INT_DOM));
+        ES_SUBSUMED(*this,home) :
+        ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
     RelTestDom<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
-                     (home,iv,n,x0,x1,this,rt)));
+                     (home,iv,n,x0,x1,*this,rt)));
     if (n == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-      return ES_SUBSUMED(this,s);
+      return ES_SUBSUMED(*this,s);
     }
     assert(n > 1);
     Scratch s(home);

@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace Channel {
         GECODE_ME_CHECK(x[i].zero(home));
       for (int i=j+1; i<n; i++)
         GECODE_ME_CHECK(x[i].zero(home));
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
 
   redo:
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Channel {
     if (n == 1) {
       GECODE_ME_CHECK(x[0].one(home));
       GECODE_ME_CHECK(y.eq(home,o));
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
 
     // Update bounds
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Channel {
         for (int j=i+1; j<n; j++)
           GECODE_ME_CHECK(x[j].zero(home));
         GECODE_ME_CHECK(y.eq(home,i+o));
-        return ES_SUBSUMED(this,sizeof(*this));
+        return ES_SUBSUMED(*this,sizeof(*this));
       }
 
     assert((n >= 2) && x[0].none() && x[n-1].none());

@@ -450,7 +450,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -466,9 +466,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
@@ -658,7 +658,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -674,9 +674,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
@@ -855,7 +855,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -871,9 +871,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
@@ -1076,7 +1076,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1092,9 +1092,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
@@ -1275,7 +1275,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1291,9 +1291,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
@@ -1668,7 +1668,7 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator* p, ModEvent me);
+      static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
       static ModEvent me(ModEventDelta med);
       /// Translate modification event \a me to modification event delta for view
@@ -1684,9 +1684,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator* p, PropCond pc);
+      void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a

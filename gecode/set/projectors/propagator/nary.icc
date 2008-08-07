@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Projection {
       if (pc[i] != PC_SET_ANY + 1) {
         if (negated)
           pc[i] = ComplementView<SetView>::pc_negateset(pc[i]);
-        x[i].subscribe(home, this, pc[i]);
+        x[i].subscribe(home, *this, pc[i]);
       }
     }
   }
@@ -98,7 +98,7 @@ namespace Gecode { namespace Set { namespace Projection {
     if (!home.failed()) {
       for (int i=x.size(); i--;)
         if (pc[i] != PC_SET_ANY + 1)
-          x[i].cancel(home, this, pc[i]);
+          x[i].cancel(home, *this, pc[i]);
     }
     ps.~ProjectorSet();
     pc.~SharedArray();
@@ -135,8 +135,8 @@ namespace Gecode { namespace Set { namespace Projection {
     if (es == ES_FAILED)
       return ES_FAILED;
     if (es == __ES_SUBSUMED)
-      return ES_SUBSUMED(this,home);
-    return done ? ES_SUBSUMED(this,home) : es;
+      return ES_SUBSUMED(*this,home);
+    return done ? ES_SUBSUMED(*this,home) : es;
   }
 
 }}}

@@ -43,8 +43,8 @@ namespace Gecode { namespace Set { namespace Projection {
    ProjectorSet& ps0)
     : Propagator(home), x(x0), b(b0), ps(ps0) {
     force(home);
-    x.subscribe(home, this, PC_SET_ANY);
-    b.subscribe(home,this,Gecode::Int::PC_INT_VAL);
+    x.subscribe(home, *this, PC_SET_ANY);
+    b.subscribe(home, *this, Gecode::Int::PC_INT_VAL);
   }
 
   forceinline

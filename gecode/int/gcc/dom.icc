@@ -70,8 +70,8 @@ namespace Gecode { namespace Int { namespace GCC {
     // y is used for bounds propagation since prop_bnd needs all variables
     // values within the domain bounds
     force(home);
-    x.subscribe(home, this, PC_INT_DOM);
-    k.subscribe(home, this, PC_INT_DOM);
+    x.subscribe(home, *this, PC_INT_DOM);
+    k.subscribe(home, *this, PC_INT_DOM);
   }
 
   template <class View, class Card, bool isView>
@@ -89,8 +89,8 @@ namespace Gecode { namespace Int { namespace GCC {
   Dom<View, Card, isView>::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      x.cancel(home,this, PC_INT_DOM);
-      k.cancel(home,this, PC_INT_DOM);
+      x.cancel(home,*this, PC_INT_DOM);
+      k.cancel(home,*this, PC_INT_DOM);
     }
     delete vvg;
     (void) Propagator::dispose(home);
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (all_assigned)
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
     }
 
     // before propagation performs inferences on cardinality variables:
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int { namespace GCC {
             return ES_FAILED;
           }
         }
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       } else {
         if (x.size() == 1) {
           if (x[0].assigned()) {
@@ -276,7 +276,7 @@ namespace Gecode { namespace Int { namespace GCC {
             for (int j = k.size(); j--; )
               if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter())
                 return ES_FAILED;
-            return ES_SUBSUMED(this,home);
+            return ES_SUBSUMED(*this,home);
           }
         }
       }
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace GCC {
               return ES_FAILED;
             }
           }
-          return ES_SUBSUMED(this,home);
+          return ES_SUBSUMED(*this,home);
         } else {
           if (x.size() == 1) {
             if (x[0].assigned()) {
@@ -408,7 +408,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   return ES_FAILED;
                 }
               }
-              return ES_SUBSUMED(this,home);
+              return ES_SUBSUMED(*this,home);
             }
           }
         }
@@ -462,7 +462,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (all_assigned) {
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       }
     }
 

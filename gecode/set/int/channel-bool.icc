@@ -43,13 +43,13 @@ namespace Gecode { namespace Set { namespace Int {
   template <class A>
   forceinline
   ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, 
-                                                ChannelBool<View>* p, 
+                                                ChannelBool<View>& p, 
                                                 Council<A>& c, int index)
     : Advisor(home,p,c), idx(index) {
     if (idx == -1)
-      p->y.subscribe(home,*this);
+      p.y.subscribe(home,*this);
     else {
-      p->x[idx].subscribe(home,*this);
+      p.x[idx].subscribe(home,*this);
     }
   }
 
@@ -69,11 +69,11 @@ namespace Gecode { namespace Set { namespace Int {
   template <class A>
   forceinline void
   ChannelBool<View>::IndexAdvisor::dispose(Space& home, Council<A>& c) {
-    ChannelBool<View>* p = static_cast<ChannelBool<View>*>(propagator());
+    ChannelBool<View>& p = static_cast<ChannelBool<View>&>(propagator());
     if (idx == -1)
-      p->y.cancel(home,*this);
+      p.y.cancel(home,*this);
     else {
-      p->x[idx].cancel(home,*this);
+      p.x[idx].cancel(home,*this);
     }
     Advisor::dispose(home,c);
   }
@@ -95,13 +95,13 @@ namespace Gecode { namespace Set { namespace Int {
           SetDelta d;
           ones.include(home, i, i, d);          
         } else {
-          (void) new (home) IndexAdvisor(home,this,co,i);
+          (void) new (home) IndexAdvisor(home,*this,co,i);
         }
       }
       if (assigned)
-        Gecode::Int::BoolView::schedule(home, this, Gecode::Int::ME_BOOL_VAL);
-      View::schedule(home, this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
-      (void) new (home) IndexAdvisor(home,this,co,-1);
+        Gecode::Int::BoolView::schedule(home, *this, Gecode::Int::ME_BOOL_VAL);
+      View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
+      (void) new (home) IndexAdvisor(home,*this,co,-1);
     }
       
   template <class View>
@@ -186,7 +186,7 @@ namespace Gecode { namespace Set { namespace Int {
     
     new (&delta) SetDelta();
 
-    return y.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
+    return y.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
   template <class View>

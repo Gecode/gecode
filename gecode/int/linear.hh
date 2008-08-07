@@ -1390,9 +1390,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create array with \a n elements
     ScaleBoolArray(Space& home, int n);
     /// Subscribe propagator \a p
-    void subscribe(Space& home, Propagator* p);
+    void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p
-    void cancel(Space& home, Propagator* p);
+    void cancel(Space& home, Propagator& p);
     /// Update \a sba during copying
     void update(Space& home, bool share, ScaleBoolArray& sba);
     /// Return pointer to first element
@@ -1432,9 +1432,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Create array with \a n elements
     EmptyScaleBoolArray(Space& home, int n);
     /// Subscribe propagator \a p
-    void subscribe(Space& home, Propagator* p);
+    void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p
-    void cancel(Space& home, Propagator* p);
+    void cancel(Space& home, Propagator& p);
     /// Update \a sba during copying
     void update(Space& home, bool share, EmptyScaleBoolArray& esba);
     /// Return pointer to first element

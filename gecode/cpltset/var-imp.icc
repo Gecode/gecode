@@ -325,9 +325,9 @@ namespace Gecode { namespace CpltSet {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p with propagation condition \a pc to variable
-    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space& home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator& p, PropCond pc);
     //@}
 
   private:

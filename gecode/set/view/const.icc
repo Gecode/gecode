@@ -239,7 +239,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  ConstantView::schedule(Space& home, Propagator* p, ModEvent me) {
+  ConstantView::schedule(Space& home, Propagator& p, ModEvent me) {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
@@ -252,11 +252,11 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  ConstantView::subscribe(Space& home, Propagator* p, PropCond,bool) {
+  ConstantView::subscribe(Space& home, Propagator& p, PropCond,bool) {
     schedule(home,p,ME_SET_VAL);    
   }
   forceinline void
-  ConstantView::cancel(Space&,Propagator*,PropCond) {}
+  ConstantView::cancel(Space&,Propagator&,PropCond) {}
 
   forceinline void
   ConstantView::subscribe(Space&, Advisor&) {}
@@ -445,7 +445,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  EmptyView::schedule(Space& home, Propagator* p, ModEvent me) {
+  EmptyView::schedule(Space& home, Propagator& p, ModEvent me) {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
@@ -458,11 +458,11 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  EmptyView::subscribe(Space& home, Propagator* p, PropCond,bool) {
+  EmptyView::subscribe(Space& home, Propagator& p, PropCond,bool) {
     schedule(home,p,ME_SET_VAL);    
   }
   forceinline void
-  EmptyView::cancel(Space&,Propagator*,PropCond) {}
+  EmptyView::cancel(Space&,Propagator&,PropCond) {}
   forceinline void
   EmptyView::subscribe(Space&, Advisor&) {}
   forceinline void
@@ -631,7 +631,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  UniverseView::schedule(Space& home, Propagator* p, ModEvent me) {
+  UniverseView::schedule(Space& home, Propagator& p, ModEvent me) {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
@@ -643,11 +643,11 @@ namespace Gecode { namespace Set {
     return SetVarImp::med(me);
   }
   forceinline void
-  UniverseView::subscribe(Space& home, Propagator* p, PropCond,bool) {
+  UniverseView::subscribe(Space& home, Propagator& p, PropCond,bool) {
     schedule(home,p,ME_SET_VAL);    
   }
   forceinline void
-  UniverseView::cancel(Space&,Propagator*,PropCond) {}
+  UniverseView::cancel(Space&,Propagator&,PropCond) {}
 
   forceinline void
   UniverseView::subscribe(Space&,Advisor&) {}

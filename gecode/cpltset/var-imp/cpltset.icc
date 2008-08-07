@@ -243,13 +243,13 @@ namespace Gecode { namespace CpltSet {
    *
    */
   forceinline void
-  CpltSetVarImp::subscribe(Space& home, Propagator* p, PropCond pc,
+  CpltSetVarImp::subscribe(Space& home, Propagator& p, PropCond pc,
                            bool process) {
     CpltSetVarImpBase::subscribe(home,p,pc,assigned(), process);
   }
 
   forceinline void
-  CpltSetVarImp::cancel(Space& home, Propagator* p, PropCond pc) {
+  CpltSetVarImp::cancel(Space& home, Propagator& p, PropCond pc) {
     CpltSetVarImpBase::cancel(home,p,pc,assigned());
   }
 

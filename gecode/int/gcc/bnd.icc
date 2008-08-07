@@ -46,8 +46,8 @@ namespace Gecode { namespace Int { namespace GCC {
     Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
     card_fixed(cf), skip_lbc(nolbc) {
     force(home);
-    x.subscribe(home, this, PC_INT_BND);
-    k.subscribe(home, this, PC_INT_BND);
+    x.subscribe(home, *this, PC_INT_BND);
+    k.subscribe(home, *this, PC_INT_BND);
   }
 
   // for cloning
@@ -66,8 +66,8 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<View, Card, isView, shared>::dispose(Space& home){
     unforce(home);
     if (!home.failed()) {
-      x.cancel(home,this, PC_INT_BND);
-      k.cancel(home,this, PC_INT_BND);
+      x.cancel(home,*this, PC_INT_BND);
+      k.cancel(home,*this, PC_INT_BND);
     }
     if (lps != NULL) {
       delete lps;
@@ -356,7 +356,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (all_assigned)
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
     }
 
     if (isView) {
@@ -583,7 +583,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (all_assigned)
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
     }
 
     return mod ? ES_NOFIX : ES_FIX;

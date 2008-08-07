@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Channel {
         GECODE_ME_CHECK(x0.one_none(home));
       }
     }
-    return ES_SUBSUMED(this,sizeof(*this));
+    return ES_SUBSUMED(*this,sizeof(*this));
   }
 
 }}}

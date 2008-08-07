@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline ExecStatus
-  prop_div_plus_bnd(Space& home, Propagator* p, VA x0, VB x1, VC x2) {
+  prop_div_plus_bnd(Space& home, Propagator& p, VA x0, VB x1, VC x2) {
     assert(pos(x0) && pos(x1) && !neg(x2));
     bool mod;
     do {
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     } while (mod);
     return x0.assigned() && x1.assigned() ?
-      ES_SUBSUMED(p,sizeof(*p)) : ES_FIX;
+      ES_SUBSUMED(p,sizeof(p)) : ES_FIX;
   }
 
   template <class Val, class VA, class VB, class VC, bool towardsMinInf>
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
   ::propagate(Space& home, ModEventDelta) {
-    return prop_div_plus_bnd<Val,VA,VB,VC,towardsMinInf>(home,this,x0,x1,x2);
+    return prop_div_plus_bnd<Val,VA,VB,VC,towardsMinInf>(home,*this,x0,x1,x2);
   }
 
   template <class Val, class VA, class VB, class VC, bool towardsMinInf>
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
 
     return ES_NOFIX;
@@ -280,7 +280,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
 
     return ES_NOFIX;
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
     return ES_NOFIX;
 
@@ -319,21 +319,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED(*this,sizeof(*this));
     }
     return ES_NOFIX;
 
   rewrite_ppp:
-    GECODE_REWRITE(this,(DivPlusBnd<double,IntView,IntView,IntView>
+    GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,IntView,IntView>
                          ::post(home,x0,x1,x2)));
   rewrite_nnp:
-    GECODE_REWRITE(this,(DivPlusBnd<double,MinusView,MinusView,IntView>
+    GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,MinusView,IntView>
                          ::post(home,x0,x1,x2)));
   rewrite_pnn:
-    GECODE_REWRITE(this,(DivPlusBnd<double,IntView,MinusView,MinusView,false>
+    GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,MinusView,MinusView,false>
                          ::post(home,x0,x1,x2)));
   rewrite_npn:
-    GECODE_REWRITE(this,(DivPlusBnd<double,MinusView,IntView,MinusView,false>
+    GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,IntView,MinusView,false>
                          ::post(home,x0,x1,x2)));
   }
 
@@ -473,7 +473,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       int minx0 = std::min(x0.min() < 0 ? -x0.min():x0.min(),
                            x0.max() < 0 ? -x0.max():x0.max());
       if (maxx1 < minx0) {
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       }
     }
     return ES_FIX;

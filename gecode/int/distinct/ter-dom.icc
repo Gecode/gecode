@@ -96,11 +96,11 @@ namespace Gecode { namespace Int { namespace Distinct {
     GECODE_ME_CHECK(x2.nq(home,x0.val()));      \
     if (x1.assigned()) {                        \
       GECODE_ME_CHECK(x2.nq(home,x1.val()));    \
-      return ES_SUBSUMED(this,home);            \
+      return ES_SUBSUMED(*this,home);            \
     }                                           \
     if (x2.assigned()) {                        \
       GECODE_ME_CHECK(x1.nq(home,x2.val()));    \
-      return ES_SUBSUMED(this,home);            \
+      return ES_SUBSUMED(*this,home);            \
     }                                           \
     return ES_FIX;                              \
   }

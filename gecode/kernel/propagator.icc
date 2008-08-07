@@ -369,7 +369,7 @@ namespace Gecode {
   UnaryPropagator<View,pc>::UnaryPropagator(Space& home, View y0)
     : Propagator(home), x0(y0) {
     if (pc != PC_GEN_NONE)
-      x0.subscribe(home,this,pc);
+      x0.subscribe(home,*this,pc);
   }
 
   template <class View, PropCond pc>
@@ -398,7 +398,7 @@ namespace Gecode {
   forceinline size_t
   UnaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
-      x0.cancel(home,this,pc);
+      x0.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -421,8 +421,8 @@ namespace Gecode {
   BinaryPropagator<View,pc>::BinaryPropagator(Space& home, View y0, View y1)
     : Propagator(home), x0(y0), x1(y1) {
     if (pc != PC_GEN_NONE) {
-      x0.subscribe(home,this,pc);
-      x1.subscribe(home,this,pc);
+      x0.subscribe(home,*this,pc);
+      x1.subscribe(home,*this,pc);
     }
   }
 
@@ -454,8 +454,8 @@ namespace Gecode {
   forceinline size_t
   BinaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
-      x0.cancel(home,this,pc);
-      x1.cancel(home,this,pc);
+      x0.cancel(home,*this,pc);
+      x1.cancel(home,*this,pc);
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -480,9 +480,9 @@ namespace Gecode {
   (Space& home, View y0, View y1, View y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     if (pc != PC_GEN_NONE) {
-      x0.subscribe(home,this,pc);
-      x1.subscribe(home,this,pc);
-      x2.subscribe(home,this,pc);
+      x0.subscribe(home,*this,pc);
+      x1.subscribe(home,*this,pc);
+      x2.subscribe(home,*this,pc);
     }
   }
 
@@ -516,9 +516,9 @@ namespace Gecode {
   forceinline size_t
   TernaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
-      x0.cancel(home,this,pc);
-      x1.cancel(home,this,pc);
-      x2.cancel(home,this,pc);
+      x0.cancel(home,*this,pc);
+      x1.cancel(home,*this,pc);
+      x2.cancel(home,*this,pc);
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -544,7 +544,7 @@ namespace Gecode {
   (Space& home, ViewArray<View>& y)
     : Propagator(home), x(y) {
     if (pc != PC_GEN_NONE)
-      x.subscribe(home,this,pc);
+      x.subscribe(home,*this,pc);
   }
 
   template <class View, PropCond pc>
@@ -573,7 +573,7 @@ namespace Gecode {
   forceinline size_t
   NaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
-      x.cancel(home,this,pc);
+      x.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -596,8 +596,8 @@ namespace Gecode {
   (Space& home, ViewArray<View>& x0, View y0)
     : Propagator(home), x(x0), y(y0) {
     if (pc != PC_GEN_NONE) {
-      x.subscribe(home,this,pc);
-      y.subscribe(home,this,pc);
+      x.subscribe(home,*this,pc);
+      y.subscribe(home,*this,pc);
     }
   }
 
@@ -629,8 +629,8 @@ namespace Gecode {
   forceinline size_t
   NaryOnePropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
-      x.cancel(home,this,pc);
-      y.cancel(home,this,pc);
+      x.cancel(home,*this,pc);
+      y.cancel(home,*this,pc);
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -655,9 +655,9 @@ namespace Gecode {
   (Space& home, View0 y0, View1 y1)
     : Propagator(home), x0(y0), x1(y1) {
     if (pc0 != PC_GEN_NONE)
-      x0.subscribe(home,this,pc0);
+      x0.subscribe(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      x1.subscribe(home,this,pc1);
+      x1.subscribe(home,*this,pc1);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
@@ -688,9 +688,9 @@ namespace Gecode {
   forceinline size_t
   MixBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
-      x0.cancel(home,this,pc0);
+      x0.cancel(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      x1.cancel(home,this,pc1);
+      x1.cancel(home,*this,pc1);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -716,11 +716,11 @@ namespace Gecode {
   MixTernaryPropagator(Space& home, View0 y0, View1 y1, View2 y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     if (pc0 != PC_GEN_NONE)
-      x0.subscribe(home,this,pc0);
+      x0.subscribe(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      x1.subscribe(home,this,pc1);
+      x1.subscribe(home,*this,pc1);
     if (pc2 != PC_GEN_NONE)
-      x2.subscribe(home,this,pc2);
+      x2.subscribe(home,*this,pc2);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
@@ -759,11 +759,11 @@ namespace Gecode {
   forceinline size_t
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
-      x0.cancel(home,this,pc0);
+      x0.cancel(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      x1.cancel(home,this,pc1);
+      x1.cancel(home,*this,pc1);
     if (pc2 != PC_GEN_NONE)
-      x2.cancel(home,this,pc2);
+      x2.cancel(home,*this,pc2);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -790,9 +790,9 @@ namespace Gecode {
   (Space& home, ViewArray<View0>& x0, View1 y0)
     : Propagator(home), x(x0), y(y0) {
     if (pc0 != PC_GEN_NONE)
-      x.subscribe(home,this,pc0);
+      x.subscribe(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      y.subscribe(home,this,pc1);
+      y.subscribe(home,*this,pc1);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
@@ -823,9 +823,9 @@ namespace Gecode {
   forceinline size_t
   MixNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
-      x.cancel(home,this,pc0);
+      x.cancel(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      y.cancel(home,this,pc1);
+      y.cancel(home,*this,pc1);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

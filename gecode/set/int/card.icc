@@ -97,7 +97,7 @@ namespace Gecode { namespace Set { namespace Int {
      GECODE_ME_CHECK(x1.lq(home,(int)x0.cardMax()));
    } while (x1.min() > x1min || x1.max() < x1max);
    if (x1.assigned())
-     return ES_SUBSUMED(this,home);
+     return ES_SUBSUMED(*this,home);
    return ES_FIX;
   }
 

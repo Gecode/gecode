@@ -152,8 +152,8 @@ namespace Gecode { namespace Set { namespace Int {
                    View x0, Gecode::Int::IntView y0)
     : Propagator(home), elements(elements0.size()), weights(weights0.size()),
       x(x0), y(y0) {
-    x.subscribe(home,this, PC_SET_ANY);
-    y.subscribe(home,this, Gecode::Int::PC_INT_BND);
+    x.subscribe(home,*this, PC_SET_ANY);
+    y.subscribe(home,*this, Gecode::Int::PC_INT_BND);
     for (int i=elements0.size(); i--;) {
       elements[i] = elements0[i];
       weights[i] = weights0[i];
@@ -197,8 +197,8 @@ namespace Gecode { namespace Set { namespace Int {
   size_t
   Weights<View>::dispose(Space& home) {
     assert(!home.failed());
-    x.cancel(home,this, PC_SET_ANY);
-    y.cancel(home,this, Gecode::Int::PC_INT_BND);
+    x.cancel(home,*this, PC_SET_ANY);
+    y.cancel(home,*this, Gecode::Int::PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -259,7 +259,7 @@ namespace Gecode { namespace Set { namespace Int {
       int w = 
         weightI<GlbRanges<View>,ALL_COST>(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
 
     int lowCost;
@@ -328,7 +328,7 @@ namespace Gecode { namespace Set { namespace Int {
       int w = 
         weightI<GlbRanges<View>,ALL_COST>(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
     return me_modified(me) ? ES_NOFIX : ES_FIX;
   }

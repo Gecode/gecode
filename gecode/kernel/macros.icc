@@ -106,8 +106,8 @@
  * \ingroup TaskActor
  */
 #define GECODE_REWRITE(prop,post) {                                     \
-  Propagator* __p__ ## __LINE__ = (prop);                               \
-  size_t     __s__ ## __LINE__  = __p__ ## __LINE__->dispose((home));   \
+  Propagator& __p__ ## __LINE__ = (prop);                               \
+  size_t     __s__ ## __LINE__  = __p__ ## __LINE__.dispose((home));    \
   ExecStatus __es__ ## __LINE__ = (post);                               \
   if (__es__ ## __LINE__ != ::Gecode::ES_OK)                            \
     return ::Gecode::ES_FAILED;                                         \

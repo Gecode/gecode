@@ -48,16 +48,16 @@ namespace Gecode { namespace Int { namespace Count {
                           ViewArray<VX>& x0, int n_s0, VY y0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
     for (int i=n_s; i--; )
-      x[i].subscribe(home,this,PC_INT_DOM);
-    y.subscribe(home,this,PC_INT_DOM);
+      x[i].subscribe(home,*this,PC_INT_DOM);
+    y.subscribe(home,*this,PC_INT_DOM);
   }
 
   template <class VX, class VY>
   forceinline size_t
   BaseInt<VX,VY>::dispose(Space& home) {
     for (int i=n_s; i--; )
-      x[i].cancel(home,this,PC_INT_DOM);
-    y.cancel(home,this,PC_INT_DOM);
+      x[i].cancel(home,*this,PC_INT_DOM);
+    y.cancel(home,*this,PC_INT_DOM);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -172,11 +172,11 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_s; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-        x[i].cancel(home,this,PC_INT_DOM);
+        x[i].cancel(home,*this,PC_INT_DOM);
         x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
         break;
       case RT_TRUE:
-        x[i].cancel(home,this,PC_INT_DOM);
+        x[i].cancel(home,*this,PC_INT_DOM);
         x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
         break;
       case RT_MAYBE:
@@ -200,15 +200,15 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_FAILED;
     if (c == 0)
       // All views must be different
-      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
     if (c == n_x)
       // All views must be equal
-      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
     int m = std::max(c,n_x-c)+1;
     assert(m <= n_x);
     // Now, there must be new subscriptions from x[n_s] up to x[m-1]
     while (n_s < m)
-      x[n_s++].subscribe(home,this,PC_INT_DOM,false);
+      x[n_s++].subscribe(home,*this,PC_INT_DOM,false);
     return ES_FIX;
   }
 
@@ -294,11 +294,11 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_s; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-        x[i].cancel(home,this,PC_INT_DOM);
+        x[i].cancel(home,*this,PC_INT_DOM);
         x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
         break;
       case RT_TRUE:
-        x[i].cancel(home,this,PC_INT_DOM);
+        x[i].cancel(home,*this,PC_INT_DOM);
         x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
         break;
       case RT_MAYBE:
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Count {
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     // Eliminate decided views from unsubscribed views
     for (int i=n_x; i-- > n_s; )
       switch (holds(x[i],y)) {
@@ -323,13 +323,13 @@ namespace Gecode { namespace Int { namespace Count {
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     if (c == n_x)
       // All views must be equal
-      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
     // Now, there must be new subscriptions from x[n_s] up to x[c+1]
     while (n_s <= c)
-      x[n_s++].subscribe(home,this,PC_INT_DOM,false);
+      x[n_s++].subscribe(home,*this,PC_INT_DOM,false);
     return ES_FIX;
   }
 
@@ -413,11 +413,11 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_s; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-        x[i].cancel(home,this,PC_INT_DOM);
+        x[i].cancel(home,*this,PC_INT_DOM);
         x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
         break;
       case RT_TRUE:
-        x[i].cancel(home,this,PC_INT_DOM);
+        x[i].cancel(home,*this,PC_INT_DOM);
         x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
         break;
       case RT_MAYBE:
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Count {
     if (c < 0)
       return ES_FAILED;
     if (c >= n_x)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     // Eliminate decided views from unsubscribed views
     for (int i=n_x; i-- > n_s; )
       switch (holds(x[i],y)) {
@@ -442,14 +442,14 @@ namespace Gecode { namespace Int { namespace Count {
     if (c < 0)
       return ES_FAILED;
     if (c >= n_x)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     if (c == 0)
       // All views must be different
-      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
     // Now, there must be new subscriptions from x[n_s] up to x[n_x-c+1]
     int m = n_x-c;
     while (n_s <= m)
-      x[n_s++].subscribe(home,this,PC_INT_DOM,false);
+      x[n_s++].subscribe(home,*this,PC_INT_DOM,false);
     return ES_FIX;
   }
 
@@ -465,13 +465,13 @@ namespace Gecode { namespace Int { namespace Count {
                                       x0[x0.size()-1]), x(x0), y(y0), c(c0) {
     assert(x.size() >= 2);
     x.size(x.size()-2);
-    y.subscribe(home,this,PC_INT_DOM);
+    y.subscribe(home,*this,PC_INT_DOM);
   }
 
   template <class VX, class VY>
   forceinline size_t
   NqInt<VX,VY>::dispose(Space& home) {
-    y.cancel(home,this,PC_INT_DOM);
+    y.cancel(home,*this,PC_INT_DOM);
     (void) BinaryPropagator<VX,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
@@ -576,10 +576,10 @@ namespace Gecode { namespace Int { namespace Count {
         break;
       case RT_MAYBE: 
         // New undecided view found
-        z.cancel(home,this,PC_INT_DOM);
+        z.cancel(home,*this,PC_INT_DOM);
         z=x[i]; x[i]=x[--n]; 
         x.size(n);
-        z.subscribe(home,this,PC_INT_DOM,false);
+        z.subscribe(home,*this,PC_INT_DOM,false);
         return true;
       default:       
         GECODE_NEVER;
@@ -596,20 +596,20 @@ namespace Gecode { namespace Int { namespace Count {
     bool s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;
     if ((n < c) || (c < 0))
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     if (n == 0)
-      return (c == 0) ? ES_FAILED : ES_SUBSUMED(this,home);
+      return (c == 0) ? ES_FAILED : ES_SUBSUMED(*this,home);
     if (n == 1) {
       if (s0)
         if (c == 1)
-          return post_false(home,x0,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+          return post_false(home,x0,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
         else 
-          return post_true(home,x0,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+          return post_true(home,x0,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
       else
         if (c == 1)
-          return post_false(home,x1,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+          return post_false(home,x1,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
         else
-          return post_true(home,x1,y) ? ES_FAILED : ES_SUBSUMED(this,home);
+          return post_true(home,x1,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
     }
     return ES_FIX;
   }

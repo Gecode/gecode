@@ -47,8 +47,8 @@ namespace Gecode { namespace Set { namespace Element {
                      RView y1)
     : Propagator(home), x0(y0), iv(iv0), x1(y1) {
     force(home);
-    x0.subscribe(home,this, PC_SET_ANY);
-    x1.subscribe(home,this, PC_SET_ANY);
+    x0.subscribe(home,*this, PC_SET_ANY);
+    x1.subscribe(home,*this, PC_SET_ANY);
   }
 
   template <class SView, class RView>
@@ -120,8 +120,8 @@ namespace Gecode { namespace Set { namespace Element {
   ElementUnionConst<SView,RView>::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      x0.cancel(home,this, PC_SET_ANY);
-      x1.cancel(home,this, PC_SET_ANY);
+      x0.cancel(home,*this, PC_SET_ANY);
+      x1.cancel(home,*this, PC_SET_ANY);
     }
     iv.~SharedArray();
     (void) Propagator::dispose(home);
@@ -260,7 +260,7 @@ namespace Gecode { namespace Set { namespace Element {
             before[i].dispose(home);
         selectedInter.dispose(home);
         sofarBefore.dispose(home);
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       }
 
       if (x1.cardMin() > 0) {
@@ -325,7 +325,7 @@ namespace Gecode { namespace Set { namespace Element {
     } while (loopVar);
 
     if (x0.assigned() || x1.assigned()) {
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
 
     return ES_FIX;

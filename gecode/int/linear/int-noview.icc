@@ -154,11 +154,11 @@ namespace Gecode {
       /// \name View-dependent propagator support
       //@{
       /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator* p, ModEvent me) {
+      static void schedule(Space& home, Propagator& p, ModEvent me) {
         (void) home; (void) p; (void) me;
       }
       /// Return modification event of propagator \a p for view
-      static ModEvent med(const Propagator* p) {
+      static ModEvent med(const Propagator& p) {
         (void) p;
         return ME_INT_NONE;
       }
@@ -172,12 +172,12 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /// Subscribe propagator \a p with propagation condition \a pc to view
-      void subscribe(Space& home, Propagator* p, PropCond pc,
+      void subscribe(Space& home, Propagator& p, PropCond pc,
                      bool process=true) {
         (void) home; (void) p; (void)  pc; (void) process;
       }
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator* p, PropCond pc) {
+      void cancel(Space& home, Propagator& p, PropCond pc) {
         (void) home; (void) p; (void)  pc;
       }
       /// Subscribe advisor to view
@@ -267,11 +267,11 @@ namespace Gecode {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p with propagation condition \a pc to all views
-    void subscribe(Space&, Propagator* p, PropCond pc, bool process=true) {
+    void subscribe(Space&, Propagator& p, PropCond pc, bool process=true) {
       (void) p; (void) pc; (void) process;
     }
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
-    void cancel(Space& home, Propagator* p, PropCond pc) {
+    void cancel(Space& home, Propagator& p, PropCond pc) {
       (void) home; (void) p; (void) pc;
     }
     //@}
@@ -311,7 +311,7 @@ namespace Gecode {
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
-    void move_fst(int i, Propagator* p, PropCond pc) {
+    void move_fst(int i, Propagator& p, PropCond pc) {
       (void) i; (void) p; (void) pc;
     }
     /** \brief Move view from position \c size()-1 to position \a i (truncate array by one)
@@ -319,7 +319,7 @@ namespace Gecode {
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
-    void move_lst(int i, Propagator* p, PropCond pc) {
+    void move_lst(int i, Propagator& p, PropCond pc) {
       (void) i; (void) p; (void) pc;
     }
     //@}
@@ -335,7 +335,7 @@ namespace Gecode {
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions 0 to \a i-1.
      */
-    void drop_fst(int i, Propagator* p, PropCond pc) {
+    void drop_fst(int i, Propagator& p, PropCond pc) {
       (void) i; (void) p; (void) pc;
     }
     /** \brief Drop assigned views from positions \a i+1 to \c size()-1 from array
@@ -344,7 +344,7 @@ namespace Gecode {
      * propagation condition \a pc to views at positions \a i+1 to
      * \c size()-1.
      */
-    void drop_lst(int i, Propagator* p, PropCond pc) {
+    void drop_lst(int i, Propagator& p, PropCond pc) {
       (void) i; (void) p; (void) pc;
     }
     //@}

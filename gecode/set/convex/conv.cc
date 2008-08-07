@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Convex {
         GECODE_ME_CHECK( x0.exclude(home,ubRangeItC.min(), ubRangeItC.max()) );
       }
     }
-    if (x0.assigned()) {return ES_SUBSUMED(this,home);}
+    if (x0.assigned()) {return ES_SUBSUMED(*this,home);}
     return ES_FIX;
   }
 

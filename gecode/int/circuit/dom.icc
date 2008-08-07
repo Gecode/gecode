@@ -93,8 +93,8 @@ namespace Gecode { namespace Int { namespace Circuit {
       if (escv != ES_FIX)
         return escv;
       if (y.size() < 2)
-        return ES_SUBSUMED(this,home);
-      return ES_FIX_PARTIAL(this,View::med(ME_INT_DOM));
+        return ES_SUBSUMED(*this,home);
+      return ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
     if (dc.available()) {

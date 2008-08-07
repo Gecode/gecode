@@ -259,7 +259,7 @@ namespace Gecode {
      */
     template <class Val, class UnsVal>
     forceinline void
-    ScaleView<Val,UnsVal>::schedule(Space& home, Propagator* p, ModEvent me) {
+    ScaleView<Val,UnsVal>::schedule(Space& home, Propagator& p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
     template <class Val, class UnsVal>
@@ -282,13 +282,13 @@ namespace Gecode {
      */
     template <class Val, class UnsVal>
     forceinline void
-    ScaleView<Val,UnsVal>::subscribe(Space& home, Propagator* p, PropCond pc,
+    ScaleView<Val,UnsVal>::subscribe(Space& home, Propagator& p, PropCond pc,
                                      bool process) {
       view.subscribe(home,p,pc,process);
     }
     template <class Val, class UnsVal>
     forceinline void
-    ScaleView<Val,UnsVal>::cancel(Space& home, Propagator* p, PropCond pc) {
+    ScaleView<Val,UnsVal>::cancel(Space& home, Propagator& p, PropCond pc) {
       view.cancel(home,p,pc);
     }
     template <class Val, class UnsVal>

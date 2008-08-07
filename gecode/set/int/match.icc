@@ -51,8 +51,8 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   Match<View>::Match(Space& home, View y0, ViewArray< Gecode::Int::IntView >& ys)
     : Propagator(home), x0(y0), xs(ys) {
-    x0.subscribe(home,this, PC_SET_ANY);
-    xs.subscribe(home,this, Gecode::Int::PC_INT_BND);
+    x0.subscribe(home,*this, PC_SET_ANY);
+    xs.subscribe(home,*this, Gecode::Int::PC_INT_BND);
   }
 
   template <class View>
@@ -91,8 +91,8 @@ namespace Gecode { namespace Set { namespace Int {
   size_t
   Match<View>::dispose(Space& home) {
     assert(!home.failed());
-    x0.cancel(home,this, PC_SET_ANY);
-    xs.cancel(home,this, Gecode::Int::PC_INT_BND);
+    x0.cancel(home,*this, PC_SET_ANY);
+    xs.cancel(home,*this, Gecode::Int::PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -192,7 +192,7 @@ namespace Gecode { namespace Set { namespace Int {
     for (int i=xs_size; i--; )
       if (!xs[i].assigned())        
         return ES_FIX;
-    return ES_SUBSUMED(this,home);
+    return ES_SUBSUMED(*this,home);
   }
 
   template <class View>

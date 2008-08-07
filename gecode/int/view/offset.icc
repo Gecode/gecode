@@ -225,7 +225,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::schedule(Space& home, Propagator* p, ModEvent me) {
+    OffsetView::schedule(Space& home, Propagator& p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
@@ -243,12 +243,12 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::subscribe(Space& home, Propagator* p, PropCond pc, 
+    OffsetView::subscribe(Space& home, Propagator& p, PropCond pc, 
                           bool process) {
       view.subscribe(home,p,pc,process);
     }
     forceinline void
-    OffsetView::cancel(Space& home, Propagator* p, PropCond pc) {
+    OffsetView::cancel(Space& home, Propagator& p, PropCond pc) {
       view.cancel(home,p,pc);
     }
     forceinline void

@@ -213,14 +213,14 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::subscribe(Space& home, Propagator* p, PropCond pc,
+  OffsetSetView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                   bool process) {
     view.subscribe(home,p, pc,process);
   }
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::cancel(Space& home, Propagator* p, PropCond pc) {
+  OffsetSetView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
     view.cancel(home,p, pc);
   }
 
@@ -238,7 +238,7 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::schedule(Space& home, Propagator* p, ModEvent me) {
+  OffsetSetView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
     return View::schedule(home,p,me);
   }
   template <class View>
@@ -255,8 +255,7 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::update(Space& home, bool share, 
-                               OffsetSetView& y) {
+  OffsetSetView<View>::update(Space& home, bool share, OffsetSetView& y) {
     k = y.k;
     view.update(home,share,y.view);
   }

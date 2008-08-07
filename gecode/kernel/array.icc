@@ -207,9 +207,9 @@ namespace Gecode {
      * not processed for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
-    void cancel(Space& home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to variable
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -240,13 +240,13 @@ namespace Gecode {
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
-    void move_fst(int i, Space& home, Propagator* p, PropCond pc);
+    void move_fst(int i, Space& home, Propagator& p, PropCond pc);
     /** \brief Move view from position \c size()-1 to position \a i (truncate array by one)
      *
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
-    void move_lst(int i, Space& home, Propagator* p, PropCond pc);
+    void move_lst(int i, Space& home, Propagator& p, PropCond pc);
     /** \brief Move view from position 0 to position \a i (shift elements to the left)
      *
      * Before moving, cancel subscription of advisor \a a
@@ -272,14 +272,14 @@ namespace Gecode {
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions 0 to \a i-1.
      */
-    void drop_fst(int i, Space& home, Propagator* p, PropCond pc);
+    void drop_fst(int i, Space& home, Propagator& p, PropCond pc);
     /** \brief Drop assigned views from positions \a i+1 to \c size()-1 from array
      *
      * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions \a i+1 to
      * \c size()-1.
      */
-    void drop_lst(int i, Space& home, Propagator* p, PropCond pc);
+    void drop_lst(int i, Space& home, Propagator& p, PropCond pc);
     /** \brief Drop views from positions 0 to \a i-1 from array
      *
      * Before moving, cancel subscription of advisor \a a to views at 
@@ -771,7 +771,7 @@ namespace Gecode {
 
   template <class View>
   forceinline void
-  ViewArray<View>::move_fst(int i, Space& home, Propagator* p, PropCond pc) {
+  ViewArray<View>::move_fst(int i, Space& home, Propagator& p, PropCond pc) {
     // Move x[0] to x[i]
     x[i].cancel(home,p,pc);
     x[i]=x[0]; x++; n--;
@@ -779,7 +779,7 @@ namespace Gecode {
 
   template <class View>
   forceinline void
-  ViewArray<View>::move_lst(int i, Space& home, Propagator* p, PropCond pc) {
+  ViewArray<View>::move_lst(int i, Space& home, Propagator& p, PropCond pc) {
     // Move x[n-1] to x[i]
     x[i].cancel(home,p,pc);
     n--; x[i]=x[n];
@@ -787,7 +787,7 @@ namespace Gecode {
 
   template <class View>
   void
-  ViewArray<View>::drop_fst(int i, Space& home, Propagator* p, PropCond pc) {
+  ViewArray<View>::drop_fst(int i, Space& home, Propagator& p, PropCond pc) {
     // Drop elements from 0..i-1
     assert(i>=0);
     for (int j=i; j--; )
@@ -797,7 +797,7 @@ namespace Gecode {
 
   template <class View>
   void
-  ViewArray<View>::drop_lst(int i, Space& home, Propagator* p, PropCond pc) {
+  ViewArray<View>::drop_lst(int i, Space& home, Propagator& p, PropCond pc) {
     // Drop elements from i+1..n-1
     assert(i<n);
     for (int j=i+1; j<n; j++)
@@ -856,7 +856,7 @@ namespace Gecode {
 
   template <class View>
   void
-  ViewArray<View>::subscribe(Space& home, Propagator* p, PropCond pc, 
+  ViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc, 
                              bool process) {
     for (int i = n; i--; )
       x[i].subscribe(home,p,pc,process);
@@ -864,7 +864,7 @@ namespace Gecode {
 
   template <class View>
   void
-  ViewArray<View>::cancel(Space& home, Propagator* p, PropCond pc) {
+  ViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
     for (int i = n; i--; )
       x[i].cancel(home,p,pc);
   }

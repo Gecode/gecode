@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   SqrPlusBnd<VA,VB>::propagate(Space& home, ModEventDelta) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
-    return x0.assigned() ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
+    return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
   template <class VA, class VB>
@@ -187,9 +187,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SqrBnd<View>::propagate(Space& home, ModEventDelta) {
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
-      GECODE_REWRITE(this,(SqrPlusBnd<IntView,IntView>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(SqrPlusBnd<IntView,IntView>::post(home,x0,x1)));
     if (x0.max() <= 0)
-      GECODE_REWRITE(this,(SqrPlusBnd<MinusView,IntView>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(SqrPlusBnd<MinusView,IntView>::post(home,x0,x1)));
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                         x0.max()*x0.max())));
@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned())
       return (x0.val()*x0.val() == x1.val()) ? 
-        ES_SUBSUMED(this,sizeof(*this)) : ES_FAILED;
+        ES_SUBSUMED(*this,sizeof(*this)) : ES_FAILED;
 
     return ES_NOFIX;
   }
@@ -297,8 +297,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
       return x0.assigned() ? 
-        ES_SUBSUMED(this,sizeof(*this)) 
-        : ES_NOFIX_PARTIAL(this,VA::med(ME_INT_DOM));
+        ES_SUBSUMED(*this,sizeof(*this)) 
+        : ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
     
     {
@@ -313,7 +313,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.inter_v(home,s1,false));
     }
 
-    return x0.assigned() ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
+    return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
   template <class VA, class VB>
@@ -400,9 +400,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     assert(x1.min() >= 0);
     if (View::me(med) != ME_INT_DOM) {
       if (x0.min() >= 0)
-        GECODE_REWRITE(this,(SqrPlusDom<IntView,IntView>::post(home,x0,x1)));
+        GECODE_REWRITE(*this,(SqrPlusDom<IntView,IntView>::post(home,x0,x1)));
       if (x0.max() <= 0)
-        GECODE_REWRITE(this,(SqrPlusDom<MinusView,IntView>::post(home,x0,x1)));
+        GECODE_REWRITE(*this,(SqrPlusDom<MinusView,IntView>::post(home,x0,x1)));
 
       GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                           x0.max()*x0.max())));
@@ -414,8 +414,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       
       if (x0.assigned() && x1.assigned())
         return (x0.val()*x0.val() == x1.val()) ? 
-          ES_SUBSUMED(this,sizeof(*this)) : ES_FAILED;
-      return ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+          ES_SUBSUMED(*this,sizeof(*this)) : ES_FAILED;
+      return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
 
     }
     
@@ -443,7 +443,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.inter_v(home,u,false));
     }
 
-    return x0.assigned() ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
+    return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
   template <class View>

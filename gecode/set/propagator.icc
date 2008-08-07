@@ -79,8 +79,8 @@ namespace Gecode {
   IntSetPropagator<View,pcs,pci>::IntSetPropagator
   (Space& home, View y0, Gecode::Int::IntView y1)
     : Propagator(home), x0(y0), x1(y1) {
-    x0.subscribe(home,this,pcs);
-    x1.subscribe(home,this,pci);
+    x0.subscribe(home,*this,pcs);
+    x1.subscribe(home,*this,pci);
   }
 
   template <class View, PropCond pcs, PropCond pci>
@@ -102,8 +102,8 @@ namespace Gecode {
   size_t
   IntSetPropagator<View,pcs,pci>::dispose(Space& home) {
     if (!home.failed()) {
-      x0.cancel(home,this,pcs);
-      x1.cancel(home,this,pci);
+      x0.cancel(home,*this,pcs);
+      x1.cancel(home,*this,pci);
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);

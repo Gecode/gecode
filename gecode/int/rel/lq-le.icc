@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Rel {
   Lq<View>::propagate(Space& home, ModEventDelta) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
-    return (x0.max() <= x1.min()) ? ES_SUBSUMED(this,home) : ES_FIX;
+    return (x0.max() <= x1.min()) ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Rel {
   Le<View>::propagate(Space& home, ModEventDelta) {
     GECODE_ME_CHECK(x0.le(home,x1.max()));
     GECODE_ME_CHECK(x1.gr(home,x0.min()));
-    return (x0.max() < x1.min()) ? ES_SUBSUMED(this,home) : ES_FIX;
+    return (x0.max() < x1.min()) ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 
@@ -240,14 +240,14 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReLq<View,CtrlView>::propagate(Space& home, ModEventDelta) {
     if (b.one())
-      GECODE_REWRITE(this,Lq<View>::post(home,x0,x1));
+      GECODE_REWRITE(*this,Lq<View>::post(home,x0,x1));
     if (b.zero())
-      GECODE_REWRITE(this,Le<View>::post(home,x1,x0));
+      GECODE_REWRITE(*this,Le<View>::post(home,x1,x0));
     switch (rtest_lq(x0,x1)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(*this,home);
     case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(*this,home);
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     return ES_FIX;
   subsumed:
-    return ES_SUBSUMED(this,home);
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}

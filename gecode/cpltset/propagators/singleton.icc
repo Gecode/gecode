@@ -42,8 +42,8 @@ namespace Gecode { namespace CpltSet {
   Singleton<View1, View2>::Singleton(Space& home, View1& x0, View2& s0)
     : Propagator(home), x(x0), s(s0) {
     force(home);
-    x.subscribe(home, this, Gecode::Int::PC_INT_DOM);
-    s.subscribe(home, this, PC_CPLTSET_DOM);
+    x.subscribe(home, *this, Gecode::Int::PC_INT_DOM);
+    s.subscribe(home, *this, PC_CPLTSET_DOM);
   }
 
   template <class View1, class View2>
@@ -77,8 +77,8 @@ namespace Gecode { namespace CpltSet {
   Singleton<View1, View2>::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      x.cancel(home, this, Gecode::Int::PC_INT_DOM);
-      s.cancel(home, this, PC_CPLTSET_DOM);
+      x.cancel(home, *this, Gecode::Int::PC_INT_DOM);
+      s.cancel(home, *this, PC_CPLTSET_DOM);
     }
     Propagator::dispose(home);
     return sizeof(*this);
@@ -102,7 +102,7 @@ namespace Gecode { namespace CpltSet {
   Singleton<View1, View2>::propagate(Space& home, ModEventDelta) {
     if (x.assigned()) {
       GECODE_ME_CHECK(s.eq(home, x.val()));
-      return ES_SUBSUMED(this, home);
+      return ES_SUBSUMED(*this, home);
     } else {
       // compute intersection
       Gecode::Int::ViewRanges<View1> dom(x);

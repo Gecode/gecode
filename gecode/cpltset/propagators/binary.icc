@@ -43,8 +43,8 @@ namespace Gecode { namespace CpltSet {
   ::BinaryCpltSetPropagator(Space& home, View0& x0, View1& y0, bdd& d0)
     : Propagator(home), x(x0), y(y0), d(d0) {
     force(home);
-    x.subscribe(home, this, PC_CPLTSET_DOM);
-    y.subscribe(home, this, PC_CPLTSET_DOM);
+    x.subscribe(home, *this, PC_CPLTSET_DOM);
+    y.subscribe(home, *this, PC_CPLTSET_DOM);
   }
 
   template <class View0, class View1>
@@ -87,8 +87,8 @@ namespace Gecode { namespace CpltSet {
   BinaryCpltSetPropagator<View0,View1>::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      x.cancel(home, this, PC_CPLTSET_DOM);
-      y.cancel(home, this, PC_CPLTSET_DOM);
+      x.cancel(home, *this, PC_CPLTSET_DOM);
+      y.cancel(home, *this, PC_CPLTSET_DOM);
     }
     manager.dispose(d);
     Propagator::dispose(home);
@@ -134,7 +134,7 @@ namespace Gecode { namespace CpltSet {
     assigned &= (x.assigned() && y.assigned());
 
     if (assigned) {
-      return ES_SUBSUMED(this, home);
+      return ES_SUBSUMED(*this, home);
     }
     return ES_FIX;
   }
@@ -187,11 +187,11 @@ namespace Gecode { namespace CpltSet {
           inter(glbx, glby);
         if (inter())
           return ES_FAILED;
-        return ES_SUBSUMED(this, home);
+        return ES_SUBSUMED(*this, home);
       }
       ModEvent me = y.excludeI(home, glbx);
       GECODE_ME_CHECK(me);
-      return ES_SUBSUMED(this, home);
+      return ES_SUBSUMED(*this, home);
     }
 
     if (y.assigned()) {
@@ -215,7 +215,7 @@ namespace Gecode { namespace CpltSet {
       > cache(ival);
 
     if (!cache()) {
-      return ES_SUBSUMED(this, home);
+      return ES_SUBSUMED(*this, home);
     } else {
       d = bdd_true();
       cache.last();
@@ -248,7 +248,7 @@ namespace Gecode { namespace CpltSet {
     assigned &= (x.assigned() && y.assigned());
 
     if (assigned) {
-      return ES_SUBSUMED(this, home);
+      return ES_SUBSUMED(*this, home);
     }
 
     return ES_FIX;

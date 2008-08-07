@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
     return ES_FIX;
   subsumed:
-    return ES_SUBSUMED(this,home);
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}

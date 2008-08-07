@@ -43,8 +43,8 @@ namespace Gecode { namespace Set { namespace Projection {
   ReNaryProjection::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      x.cancel(home,this,PC_SET_ANY);
-      b.cancel(home,this,Gecode::Int::PC_INT_VAL);
+      x.cancel(home,*this,PC_SET_ANY);
+      b.cancel(home,*this,Gecode::Int::PC_INT_VAL);
     }
     ps.~ProjectorSet();
     (void) Propagator::dispose(home);
@@ -79,17 +79,17 @@ namespace Gecode { namespace Set { namespace Projection {
   ReNaryProjection::propagate(Space& home, ModEventDelta) {
     ProjectorSet newps(ps);
     if (b.one())
-      GECODE_REWRITE(this,(NaryProjection<false>::post(home,x,newps)));
+      GECODE_REWRITE(*this,(NaryProjection<false>::post(home,x,newps)));
     if (b.zero())
-      GECODE_REWRITE(this,(NaryProjection<true>::post(home,x,newps)));
+      GECODE_REWRITE(*this,(NaryProjection<true>::post(home,x,newps)));
 
     switch (ps.check(home, x)) {
     case __ES_SUBSUMED:
       GECODE_ME_CHECK(b.one_none(home));
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     case ES_FAILED:
       GECODE_ME_CHECK(b.zero_none(home));
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     default:
       return ES_FIX;
     }

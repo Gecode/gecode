@@ -228,7 +228,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::schedule(Space& home, Propagator* p, ModEvent me) {
+    ZeroIntView::schedule(Space& home, Propagator& p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
@@ -246,11 +246,11 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::subscribe(Space& home, Propagator* p, PropCond,bool) {
+    ZeroIntView::subscribe(Space& home, Propagator& p, PropCond,bool) {
       schedule(home,p,ME_INT_VAL);
     }
     forceinline void
-    ZeroIntView::cancel(Space&,Propagator*,PropCond) {}
+    ZeroIntView::cancel(Space&,Propagator&,PropCond) {}
     forceinline void
     ZeroIntView::subscribe(Space&, Advisor&) {}
     forceinline void

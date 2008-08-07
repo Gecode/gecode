@@ -91,12 +91,12 @@ namespace Gecode { namespace Set { namespace Element {
      * Subscribe propagator \a p with propagation condition \a pc
      * to all elements of the array.
      */
-    void subscribe(Space& home,Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
     /**
      * Cancel subscription of propagator \a p with propagation condition \a pc
      * for all elements of the array.
      */
-    void cancel(Space& home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator& p, PropCond pc);
 
     /// Cloning
     void update(Space& home, bool share, IdxViewArray<View>& x);

@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   ExecStatus
-  bounds_propagation(Space& home, Propagator* p,
+  bounds_propagation(Space& home, Propagator& p,
                      ViewArray<View>& x,
                      ViewArray<View>& y,
                      ViewArray<View>& z,
@@ -363,10 +363,10 @@ namespace Gecode { namespace Int { namespace Sorted {
   Sorted(Space& home, 
          ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0) :
     Propagator(home), x(x0), y(y0), z(z0), w(home,y0), reachable(-1) {
-    x.subscribe(home, this, PC_INT_BND);
-    y.subscribe(home, this, PC_INT_BND);
+    x.subscribe(home, *this, PC_INT_BND);
+    y.subscribe(home, *this, PC_INT_BND);
     if (Perm)
-      z.subscribe(home, this, PC_INT_BND);
+      z.subscribe(home, *this, PC_INT_BND);
   }
 
   template<class View, bool Perm>
@@ -375,20 +375,20 @@ namespace Gecode { namespace Int { namespace Sorted {
          ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0,
          ViewArray<View>& w0, int reachable0) :
     Propagator(home), x(x0), y(y0), z(z0), w(w0), reachable(reachable0) {
-    x.subscribe(home, this, PC_INT_BND);
-    y.subscribe(home, this, PC_INT_BND);
+    x.subscribe(home, *this, PC_INT_BND);
+    y.subscribe(home, *this, PC_INT_BND);
     if (Perm)
-      z.subscribe(home, this, PC_INT_BND);
+      z.subscribe(home, *this, PC_INT_BND);
   }
 
   template<class View, bool Perm>
   size_t
   Sorted<View,Perm>::dispose(Space& home) {
     assert(!home.failed());
-    x.cancel(home,this, PC_INT_BND);
-    y.cancel(home,this, PC_INT_BND);
+    x.cancel(home,*this, PC_INT_BND);
+    y.cancel(home,*this, PC_INT_BND);
     if (Perm)
-      z.cancel(home,this, PC_INT_BND);
+      z.cancel(home,*this, PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -456,7 +456,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (array_subs)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
 
     sort_sigma<View,Perm>(home,x,z);
 
@@ -467,7 +467,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (subsumed)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
 
     if (Perm) {
       // dropping possibly yields inconsistent indices on permutation variables
@@ -479,9 +479,9 @@ namespace Gecode { namespace Int { namespace Sorted {
         }
 
         if (unreachable) {
-          x.drop_fst(dropfst, home, this, PC_INT_BND);
-          y.drop_fst(dropfst, home, this, PC_INT_BND);
-          z.drop_fst(dropfst, home, this, PC_INT_BND);
+          x.drop_fst(dropfst, home, *this, PC_INT_BND);
+          y.drop_fst(dropfst, home, *this, PC_INT_BND);
+          z.drop_fst(dropfst, home, *this, PC_INT_BND);
         } else {
           dropfst = 0;
         }
@@ -495,7 +495,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         if (Perm) {
           GECODE_ME_CHECK(z[0].eq(home, w.size() - 1));
         }
-        GECODE_REWRITE(this,(Rel::EqBnd<View,View>::post(home, x[0], y[0])));
+        GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home, x[0], y[0])));
       }
 
       // check whether shifting the permutation variables
@@ -524,26 +524,26 @@ namespace Gecode { namespace Int { namespace Sorted {
         }
 
         GECODE_ES_CHECK((bounds_propagation<OffsetView,Perm>
-                         (home,this,ox,oy,oz,secondpass,nofix,match_fixed)));
+                         (home,*this,ox,oy,oz,secondpass,nofix,match_fixed)));
 
         if (secondpass) {
           GECODE_ES_CHECK((bounds_propagation<OffsetView,Perm>
-                           (home,this,ox,oy,oz,secondpass,nofix,match_fixed)));
+                           (home,*this,ox,oy,oz,secondpass,nofix,match_fixed)));
         }
       } else {
         GECODE_ES_CHECK((bounds_propagation<View,Perm>
-                         (home,this,x,y,z,secondpass,nofix,match_fixed)));
+                         (home,*this,x,y,z,secondpass,nofix,match_fixed)));
 
         if (secondpass) {
           GECODE_ES_CHECK((bounds_propagation<View,Perm>
-                           (home,this,x,y,z,secondpass,nofix,match_fixed)));
+                           (home,*this,x,y,z,secondpass,nofix,match_fixed)));
         }
       }
     } else {
       // dropping has no consequences
       if (dropfst) {
-        x.drop_fst(dropfst, home, this, PC_INT_BND);
-        y.drop_fst(dropfst, home, this, PC_INT_BND);
+        x.drop_fst(dropfst, home, *this, PC_INT_BND);
+        y.drop_fst(dropfst, home, *this, PC_INT_BND);
       }
 
       n = x.size();
@@ -551,11 +551,11 @@ namespace Gecode { namespace Int { namespace Sorted {
       if (n < 2) {
         if (x[0].max() < y[0].min() || y[0].max() < x[0].min())
           return ES_FAILED;
-        GECODE_REWRITE(this,(Rel::EqBnd<View,View>::post(home, x[0], y[0])));
+        GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home, x[0], y[0])));
       }
 
       GECODE_ES_CHECK((bounds_propagation<View,Perm>
-                       (home, this, x, y, z,secondpass, nofix, match_fixed)));
+                       (home, *this, x, y, z,secondpass, nofix, match_fixed)));
       // no second pass possible if there are no permvars
     }
 
@@ -657,13 +657,13 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (array_subs)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
 
     if (!check_subsumption<View,Perm>(x,y,z,subsumed,dropfst))
       return ES_FAILED;
 
     if (subsumed)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
 
     return nofix ? ES_NOFIX : ES_FIX;
   }

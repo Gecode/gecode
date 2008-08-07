@@ -340,9 +340,9 @@ namespace Gecode { namespace Int {
      * subscriptions during propagation).
      *
      */
-    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space& home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to variable
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -671,14 +671,14 @@ namespace Gecode { namespace Int {
      * The propagation condition \a pc can be a propagation condition
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
-    void subscribe(Space& home, Propagator* p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
     /**
      * \brief Cancel subscription of propagator \a p with propagation condition \a pc
      * 
      * The propagation condition \a pc can be a propagation condition
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
-    void cancel(Space& home, Propagator* p, PropCond pc);
+    void cancel(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to variable
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -694,7 +694,7 @@ namespace Gecode { namespace Int {
      * integer variables, however \a me will be ignored if it is not
      * ME_INT_VAL (or ME_BOOL_VAL).
      */
-    static void schedule(Space& home, Propagator* p, ModEvent me);
+    static void schedule(Space& home, Propagator& p, ModEvent me);
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     //@}

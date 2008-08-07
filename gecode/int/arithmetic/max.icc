@@ -127,11 +127,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MaxBnd<View>::propagate(Space& home, ModEventDelta) {
     GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
     if (x0.max() <= x1.min())
-      GECODE_REWRITE(this,(Rel::EqBnd<View,View>::post(home,x1,x2)));
+      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x1,x2)));
     if (x1.max() <= x0.min())
-      GECODE_REWRITE(this,(Rel::EqBnd<View,View>::post(home,x0,x2)));
+      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x0,x2)));
     return x0.assigned() && x1.assigned() && x2.assigned() ?
-      ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
+      ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
   template <class View>
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline ExecStatus
-  prop_nary_max_bnd(Space& home, Propagator* p,
+  prop_nary_max_bnd(Space& home, Propagator& p,
                     ViewArray<View>& x, View y, PropCond pc) {
   rerun:
     assert(x.size() > 0);
@@ -249,14 +249,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((status & MPS_REMOVED) != 0)
       goto rerun;
     if (((status & MPS_ASSIGNED) != 0) && y.assigned())
-      return ES_SUBSUMED(p,sizeof(*p));
+      return ES_SUBSUMED(p,sizeof(p));
     return ((status & MPS_NEW_BOUND) != 0) ? ES_NOFIX : ES_FIX;
   }
 
   template <class View>
   ExecStatus
   NaryMaxBnd<View>::propagate(Space& home, ModEventDelta) {
-    return prop_nary_max_bnd(home,this,x,y,PC_INT_BND);
+    return prop_nary_max_bnd(home,*this,x,y,PC_INT_BND);
   }
 
   template <class View>
@@ -340,12 +340,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
       if (x0.max() <= x1.min())
-        GECODE_REWRITE(this,(Rel::EqDom<View,View>::post(home,x1,x2)));
+        GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x1,x2)));
       if (x1.max() <= x0.min())
-        GECODE_REWRITE(this,(Rel::EqDom<View,View>::post(home,x0,x2)));
+        GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
       return x0.assigned() && x1.assigned() && x2.assigned() ?
-        ES_SUBSUMED(this,sizeof(*this)) : 
-        ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+        ES_SUBSUMED(*this,sizeof(*this)) : 
+        ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
     ViewRanges<View> r0(x0), r1(x1);
     Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
@@ -440,11 +440,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   NaryMaxDom<View>::propagate(Space& home, ModEventDelta med) {
     if (View::me(med) != ME_INT_DOM) {
-      ExecStatus es = prop_nary_max_bnd(home,this,x,y,PC_INT_DOM);
+      ExecStatus es = prop_nary_max_bnd(home,*this,x,y,PC_INT_DOM);
       GECODE_ES_CHECK(es);
       return (es == ES_FIX) ? 
-        ES_FIX_PARTIAL(this,View::med(ME_INT_DOM)) :
-        ES_NOFIX_PARTIAL(this,View::med(ME_INT_DOM));
+        ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM)) :
+        ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
     Scratch s(home);
     ViewRanges<View>* i_x = s.alloc<ViewRanges<View> >(x.size());

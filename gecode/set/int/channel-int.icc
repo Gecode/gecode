@@ -49,8 +49,8 @@ namespace Gecode { namespace Set { namespace Int {
                              ViewArray<Gecode::Int::IntView>& xs0,
                              ViewArray<View>& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
-    xs.subscribe(home,this, Gecode::Int::PC_INT_DOM);
-    ys.subscribe(home,this, PC_SET_ANY);
+    xs.subscribe(home,*this, Gecode::Int::PC_INT_DOM);
+    ys.subscribe(home,*this, PC_SET_ANY);
   }
       
   template <class View>
@@ -93,8 +93,8 @@ namespace Gecode { namespace Set { namespace Int {
   size_t
   ChannelInt<View>::dispose(Space& home) {
     assert(!home.failed());
-    xs.cancel(home,this, Gecode::Int::PC_INT_DOM);
-    ys.cancel(home,this, PC_SET_ANY);
+    xs.cancel(home,*this, Gecode::Int::PC_INT_DOM);
+    ys.cancel(home,*this, PC_SET_ANY);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Int {
       }
     }
 
-    return (assigned==xs.size()) ? ES_SUBSUMED(this,home) : ES_NOFIX;
+    return (assigned==xs.size()) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
   }
 
   template <class View>

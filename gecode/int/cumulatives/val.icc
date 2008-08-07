@@ -86,11 +86,11 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     for(int i = _limit.size(); i--; )
       limit[i] = _limit[i];
 
-    machine.subscribe(home,this,PC_INT_DOM);
-    start.subscribe(home,this,PC_INT_BND);
-    duration.subscribe(home,this,PC_INT_BND);
-    end.subscribe(home,this,PC_INT_BND);
-    height.subscribe(home,this,PC_INT_BND);
+    machine.subscribe(home,*this,PC_INT_DOM);
+    start.subscribe(home,*this,PC_INT_BND);
+    duration.subscribe(home,*this,PC_INT_BND);
+    end.subscribe(home,*this,PC_INT_BND);
+    height.subscribe(home,*this,PC_INT_BND);
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
@@ -124,11 +124,11 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   Val<ViewM,ViewD,ViewH,View>::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      machine.cancel(home,this,PC_INT_DOM);
-      start.cancel(home,this,PC_INT_BND);
-      duration.cancel(home,this,PC_INT_BND);
-      end.cancel(home,this,PC_INT_BND);
-      height.cancel(home,this,PC_INT_BND);
+      machine.cancel(home,*this,PC_INT_DOM);
+      start.cancel(home,*this,PC_INT_BND);
+      duration.cancel(home,*this,PC_INT_BND);
+      end.cancel(home,*this,PC_INT_BND);
+      height.cancel(home,*this,PC_INT_BND);
     }
     limit.~SharedArray();
     (void) Propagator::dispose(home);
@@ -424,7 +424,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                             ntask, sheight,
                             contribution, prune_tasks));
     }
-    return subsumed ? ES_SUBSUMED(this,home): ES_NOFIX;
+    return subsumed ? ES_SUBSUMED(*this,home): ES_NOFIX;
   }
 
 }}}

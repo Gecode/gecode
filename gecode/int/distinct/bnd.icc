@@ -46,13 +46,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     //  - y is used for performing singleton propagation
     // They can not be shared as singleton propagation removes
     // determined variables still required for bounds propagation.
-    y.subscribe(home,this,PC_INT_BND);
+    y.subscribe(home,*this,PC_INT_BND);
   }
 
   template <class View>
   forceinline size_t
   Bnd<View>::dispose(Space& home) {
-    y.cancel(home,this,PC_INT_BND);
+    y.cancel(home,*this,PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -312,13 +312,13 @@ namespace Gecode { namespace Int { namespace Distinct {
       ExecStatus es = prop_val<View,false>(home,y);
       GECODE_ES_CHECK(es);
       if (y.size() < 2)
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
       if (es == ES_FIX)
-        return ES_FIX_PARTIAL(this,View::med(ME_INT_BND));
+        return ES_FIX_PARTIAL(*this,View::med(ME_INT_BND));
     }
 
     if (y.size() == 2)
-      GECODE_REWRITE(this,Rel::Nq<View>::post(home,y[0],y[1]));
+      GECODE_REWRITE(*this,Rel::Nq<View>::post(home,y[0],y[1]));
 
     ExecStatus es = prop_bnd<View>(home,x);
 
@@ -348,10 +348,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
     
     if (x.size() < 2)
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
 
     if (x.size() == 2)
-      GECODE_REWRITE(this,Rel::Nq<View>::post(home,x[0],x[1]));
+      GECODE_REWRITE(*this,Rel::Nq<View>::post(home,x[0],x[1]));
 
     return es;
   }

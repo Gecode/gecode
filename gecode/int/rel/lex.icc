@@ -42,8 +42,8 @@ namespace Gecode { namespace Int { namespace Rel {
   Lex<View>::Lex(Space& home,                             
                  ViewArray<View>& x0, ViewArray<View>& y0, bool s)
     : Propagator(home), x(x0), y(y0), strict(s) {
-    x.subscribe(home, this, PC_INT_BND);
-    y.subscribe(home, this, PC_INT_BND);
+    x.subscribe(home, *this, PC_INT_BND);
+    y.subscribe(home, *this, PC_INT_BND);
   }
 
   template <class View>
@@ -109,14 +109,14 @@ namespace Gecode { namespace Int { namespace Rel {
       }
 
       if (i == n) // case: $
-        return strict ? ES_FAILED : ES_SUBSUMED(this,sizeof(*this));
+        return strict ? ES_FAILED : ES_SUBSUMED(*this,sizeof(*this));
 
       // Possible cases left: <, <=, > (yields failure), ?
       GECODE_ME_CHECK(x[i].lq(home,y[i].max()));
       GECODE_ME_CHECK(y[i].gq(home,x[i].min()));
 
       if (x[i].max() < y[i].min()) // case: < (after tell)
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(*this,home);
 
       // x[i] can never be equal to y[i] (otherwise: >=)
       assert(!(x[i].assigned() && y[i].assigned() &&
@@ -189,8 +189,8 @@ namespace Gecode { namespace Int { namespace Rel {
       if (x[i].min() > y[i].max()) { // case: >
         // Eliminate [i]...[n-1]
         for (int j=i; j<n; j++) {
-          x[j].cancel(home,this,PC_INT_BND);
-          y[j].cancel(home,this,PC_INT_BND);
+          x[j].cancel(home,*this,PC_INT_BND);
+          y[j].cancel(home,*this,PC_INT_BND);
         }
         x.size(i); y.size(i);
         strict = true;
@@ -226,8 +226,8 @@ namespace Gecode { namespace Int { namespace Rel {
       if (x[i].max() < y[i].min()) { // case: <
         // Eliminate [i]...[n-1]
         for (int j=i; j<n; j++) {
-          x[j].cancel(home,this,PC_INT_BND);
-          y[j].cancel(home,this,PC_INT_BND);
+          x[j].cancel(home,*this,PC_INT_BND);
+          y[j].cancel(home,*this,PC_INT_BND);
         }
         x.size(i); y.size(i);
         strict = false;
@@ -239,9 +239,9 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_FIX;
 
   rewrite_le:
-    GECODE_REWRITE(this,Le<View>::post(home,x[0],y[0]));
+    GECODE_REWRITE(*this,Le<View>::post(home,x[0],y[0]));
   rewrite_lq:
-    GECODE_REWRITE(this,Lq<View>::post(home,x[0],y[0]));
+    GECODE_REWRITE(*this,Lq<View>::post(home,x[0],y[0]));
   }
 
   template <class View>
@@ -264,8 +264,8 @@ namespace Gecode { namespace Int { namespace Rel {
   size_t
   Lex<View>::dispose(Space& home) {
     assert(!home.failed());
-    x.cancel(home,this,PC_INT_BND);
-    y.cancel(home,this,PC_INT_BND);
+    x.cancel(home,*this,PC_INT_BND);
+    y.cancel(home,*this,PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

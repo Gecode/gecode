@@ -100,9 +100,9 @@ namespace Gecode { namespace CpltSet {
                              View1& y0, View1& z0, bdd&)
   : Propagator(home), x(x0), y(y0), z(z0) {
     Propagator::force(home);
-    x.subscribe(home, this, PC_CPLTSET_DOM);
-    y.subscribe(home, this, PC_CPLTSET_DOM);
-    z.subscribe(home, this, PC_CPLTSET_DOM);
+    x.subscribe(home, *this, PC_CPLTSET_DOM);
+    y.subscribe(home, *this, PC_CPLTSET_DOM);
+    z.subscribe(home, *this, PC_CPLTSET_DOM);
   }
 
   template <class View0, class View1>
@@ -160,7 +160,7 @@ namespace Gecode { namespace CpltSet {
       assigned &= x[i].assigned();
     }
     if (assigned) {
-      return ES_SUBSUMED(this, home);
+      return ES_SUBSUMED(*this, home);
     }
 
     return ES_FIX;
@@ -177,9 +177,9 @@ namespace Gecode { namespace CpltSet {
   NaryTwoCpltSetPropagator<View0, View1>::dispose(Space& home) {
     unforce(home);
     if (!home.failed()) {
-      x.cancel(home, this, PC_CPLTSET_DOM);
-      y.cancel(home, this, PC_CPLTSET_DOM);
-      z.cancel(home, this, PC_CPLTSET_DOM);
+      x.cancel(home, *this, PC_CPLTSET_DOM);
+      y.cancel(home, *this, PC_CPLTSET_DOM);
+      z.cancel(home, *this, PC_CPLTSET_DOM);
     }
     manager.dispose(d);
     (void) Propagator::dispose(home);

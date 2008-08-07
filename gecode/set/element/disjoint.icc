@@ -41,12 +41,12 @@ namespace Gecode { namespace Set { namespace Element {
 
   forceinline
   ElementDisjoint::ElementDisjoint(Space& home,
-                                 IdxViewArray<SetView>& iv0,
-                                 SetView y1)
+                                   IdxViewArray<SetView>& iv0,
+                                   SetView y1)
     : Propagator(home), iv(iv0), x1(y1) {
 
-    x1.subscribe(home,this, PC_SET_ANY);
-    iv.subscribe(home,this, PC_SET_ANY);
+    x1.subscribe(home,*this, PC_SET_ANY);
+    iv.subscribe(home,*this, PC_SET_ANY);
   }
 
   forceinline

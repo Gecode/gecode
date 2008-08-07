@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         --unassigned;
         me = ME_INT_VAL;
       } else {
-        (void) new (home) SupportAdvisor(home, this, ac, x[i], i);
+        (void) new (home) SupportAdvisor(home, *this, ac, x[i], i);
       }
     }
 
@@ -117,10 +117,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         ++vv;
       }
     }
-    if (!work.empty() || unassigned==0) {
-      // Work to be done or subsumption
-      View::schedule(home,this,me);
-    }
+    // Work to be done or subsumption
+    if (!work.empty() || unassigned==0)
+      View::schedule(home,*this,me);
   }
 
   template <class View>
@@ -240,7 +239,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       return ES_FIX;
     }
 
-    return ES_SUBSUMED(this, home);
+    return ES_SUBSUMED(*this, home);
   }
 
 

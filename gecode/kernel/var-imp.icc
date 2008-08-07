@@ -68,7 +68,7 @@ namespace Gecode { namespace Int {
      * with modification event \a me provided that \a pc is different
      * from \a PC_INT_VAL.
      */
-    void subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
     void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int {
      * with modification event \a me provided that \a pc is different
      * from \a PC_BOOL_VAL.
      */
-    void subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
     void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
@@ -138,7 +138,7 @@ namespace Gecode { namespace Set {
      * with modification event \a me provided that \a pc is different
      * from \a PC_SET_VAL.
      */
-    void subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
     void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
@@ -176,7 +176,7 @@ namespace Gecode { namespace CpltSet {
      * with modification event \a me provided that \a pc is different
      * from \a PC_CPLTSET_VAL.
      */
-    void subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
     void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
@@ -202,7 +202,7 @@ namespace Gecode { namespace Int {
     : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home,share,x) {}
 
   forceinline void
-  IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
+  IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,p,pc,assigned,ME_INT_BND,schedule);
   }
   forceinline void
@@ -254,7 +254,7 @@ namespace Gecode { namespace Int {
     : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home,share,x) {}
 
   forceinline void
-  BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
+  BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,schedule);
   }
   forceinline void
@@ -288,7 +288,7 @@ namespace Gecode { namespace Set {
     : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home,share,x) {}
 
   forceinline void
-  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
+  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,schedule);
   }
   forceinline void
@@ -381,7 +381,7 @@ namespace Gecode { namespace CpltSet {
 
 
   forceinline void
-  CpltSetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
+  CpltSetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
     Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,p,pc,assigned,ME_CPLTSET_DOM,schedule);
   }
   forceinline void

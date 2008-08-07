@@ -283,7 +283,7 @@ namespace Gecode { namespace Set { namespace Int {
     public: 
       /// Constructor for creation
       template <class A>
-      IndexAdvisor(Space& home, ChannelBool<View>* p, Council<A>& c,
+      IndexAdvisor(Space& home, ChannelBool<View>& p, Council<A>& c,
                    int index);
       /// Constructor for cloning \a a
       IndexAdvisor(Space& home, bool share, IndexAdvisor& a);

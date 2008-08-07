@@ -706,7 +706,7 @@ EOF
      * with modification event \\a me provided that \\a pc is different
      * from \\a $pc_assigned[$f].
      */
-    void subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule);
+    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \\a a if \\a assigned is false.
     void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
@@ -782,7 +782,7 @@ EOF
   print <<EOF
 
   forceinline void
-  $class[$f]::subscribe(Gecode::Space& home, Gecode::Propagator* p, Gecode::PropCond pc, bool assigned, bool schedule) {
+  $class[$f]::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
     $base[$f]::subscribe(home,p,pc,assigned,$me_subscribe[$f],schedule);
   }
   forceinline void

@@ -393,14 +393,14 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  BoolVarImp::subscribe(Space& home, Propagator* p, PropCond, 
+  BoolVarImp::subscribe(Space& home, Propagator& p, PropCond, 
                         bool process) {
     // Subscription can be used with integer propagation conditions,
     // which must be remapped to the single Boolean propagation condition.
     BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),process);
   }
   forceinline void
-  BoolVarImp::cancel(Space& home, Propagator* p, PropCond) {
+  BoolVarImp::cancel(Space& home, Propagator& p, PropCond) {
     BoolVarImpBase::cancel(home,p,PC_BOOL_VAL,assigned());
   }
 
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int {
   }
 
   forceinline void
-  BoolVarImp::schedule(Space& home, Propagator* p, ModEvent me) {
+  BoolVarImp::schedule(Space& home, Propagator& p, ModEvent me) {
     if (me == ME_GEN_ASSIGNED)
       BoolVarImpBase::schedule(home,p,me);
   }

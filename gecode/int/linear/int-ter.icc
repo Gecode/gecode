@@ -45,9 +45,9 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   LinTer<Val,A,B,C,pc>::LinTer(Space& home, A y0, B y1, C y2, Val c0)
     : Propagator(home), x0(y0), x1(y1), x2(y2), c(c0) {
-    x0.subscribe(home,this,pc);
-    x1.subscribe(home,this,pc);
-    x2.subscribe(home,this,pc);
+    x0.subscribe(home,*this,pc);
+    x1.subscribe(home,*this,pc);
+    x2.subscribe(home,*this,pc);
   }
 
   template <class Val, class A, class B, class C, PropCond pc>
@@ -80,9 +80,9 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline size_t
   LinTer<Val,A,B,C,pc>::dispose(Space& home) {
     assert(!home.failed());
-    x0.cancel(home,this,pc);
-    x1.cancel(home,this,pc);
-    x2.cancel(home,this,pc);
+    x0.cancel(home,*this,pc);
+    x1.cancel(home,*this,pc);
+    x2.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Linear {
                     TM_X0_MIN | TM_X1_MIN);
     } while (bm);
     return (x0.assigned() && x1.assigned()) ? 
-      ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
+      ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
 #undef GECODE_INT_PV
@@ -266,15 +266,15 @@ namespace Gecode { namespace Int { namespace Linear {
   NqTer<Val,A,B,C>::propagate(Space& home, ModEventDelta) {
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.nq(home,c-x0.val()-x1.val()));
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
     if (x0.assigned() && x2.assigned()) {
       GECODE_ME_CHECK(x1.nq(home,c-x0.val()-x2.val()));
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
     if (x1.assigned() && x2.assigned()) {
       GECODE_ME_CHECK(x0.nq(home,c-x1.val()-x2.val()));
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
     return ES_FIX;
   }
@@ -348,7 +348,7 @@ namespace Gecode { namespace Int { namespace Linear {
     GECODE_ME_CHECK(x1.lq(home,c-x0.min()-x2.min()));
     GECODE_ME_CHECK(x2.lq(home,c-x0.min()-x1.min()));
     return (x0.max()+x1.max()+x2.max() <= c) ? 
-      ES_SUBSUMED(this,home) : ES_FIX;
+      ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 }}}

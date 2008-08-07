@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// The position of the view in the view array
       int i;
       /// Create index advisor
-      Index(Space& home, Propagator* p, Council<Index>& c, int i);
+      Index(Space& home, Propagator& p, Council<Index>& c, int i);
       /// Clone index advisor \a a
       Index(Space& home, bool share, Index& a);
       /// Dispose advisor
@@ -373,7 +373,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
       using ViewAdvisor<View>::x;
       unsigned int pos;
-      SupportAdvisor(Space& home, Propagator* p, Council<SupportAdvisor>& c,
+      SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
                      View v, unsigned int position) 
         : ViewAdvisor<View>(home,p,c,v), pos(position) {}
       SupportAdvisor(Space& home, bool share, SupportAdvisor& a) 
@@ -397,7 +397,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
       /// Dispose advisor
       void dispose(Space& home, Council<SupportAdvisor>& c) {
-            ViewAdvisor<View>::dispose(home,c);
+        ViewAdvisor<View>::dispose(home,c);
       }
     };
     Council<SupportAdvisor> ac;

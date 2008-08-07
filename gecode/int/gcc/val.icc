@@ -42,8 +42,8 @@ namespace Gecode { namespace Int { namespace GCC {
                                ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
     force(home);
-    x.subscribe(home, this, PC_INT_VAL);
-    k.subscribe(home, this, PC_INT_VAL);
+    x.subscribe(home, *this, PC_INT_VAL);
+    k.subscribe(home, *this, PC_INT_VAL);
   }
 
   template <class View, class Card, bool isView>
@@ -59,8 +59,8 @@ namespace Gecode { namespace Int { namespace GCC {
   size_t
   Val<View, Card, isView>::dispose(Space& home) {
     unforce(home);
-    x.cancel(home,this, PC_INT_VAL);
-    k.cancel(home,this, PC_INT_VAL);
+    x.cancel(home,*this, PC_INT_VAL);
+    k.cancel(home,*this, PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
 
     // total number of unsatisfied miminum occurences
@@ -252,7 +252,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
 
     for (int i = m; i--; ) {
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(*this,home);
     }
 
     if (isView) {

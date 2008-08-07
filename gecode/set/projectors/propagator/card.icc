@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace Projection {
     for (int i=x0.size(); i--;) {
       pc[i] = scope[i];
       if (pc[i] != PC_SET_ANY + 1)
-        x[i].subscribe(home, this, pc[i]);
+        x[i].subscribe(home, *this, pc[i]);
     }
   }
 
@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Projection {
     if (!home.failed()) {
       for (int i=x.size(); i--;)
         if (pc[i] != PC_SET_ANY + 1)
-          x[i].cancel(home, this, pc[i]);
+          x[i].cancel(home, *this, pc[i]);
     }
     proj.~Projector();
     pc.~SharedArray();
@@ -120,7 +120,7 @@ namespace Gecode { namespace Set { namespace Projection {
       GECODE_ME_CHECK(i.gq(home, static_cast<int>(proj.glbSize(x))));
       GECODE_ME_CHECK(i.lq(home, static_cast<int>(proj.lubSize(x))));
     }
-    return done ? ES_SUBSUMED(this,home) : ES_FIX;
+    return done ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 }}}
