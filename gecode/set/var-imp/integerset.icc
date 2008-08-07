@@ -93,14 +93,19 @@ namespace Gecode { namespace Set {
     GECODE_NEVER;
   }
 
+  forceinline void
+  RangeList::operator delete(void*, void*) {
+    GECODE_NEVER;
+  }
+
   forceinline void*
   RangeList::operator new(size_t, Space& home) {
     return home.fl_alloc<sizeof(RangeList)>();
   }
 
   forceinline void*
-  RangeList::operator new(size_t, RangeList* r) {
-    return r;
+  RangeList::operator new(size_t, void* p) {
+    return p;
   }
 
   forceinline void
