@@ -192,7 +192,7 @@ namespace Gecode { namespace Gist {
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
           b.ownBest->acquireSpace(curBest);
-          curBest->b->constrain(curSpace, b.ownBest->workingSpace);
+          curBest->b->constrain(curSpace, *b.ownBest->workingSpace);
           lastBest = b.ownBest;
         }
         curDist++;
@@ -223,7 +223,7 @@ namespace Gecode { namespace Gist {
       
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
-          curBest->b->constrain(workingSpace, ownBest->workingSpace);
+          curBest->b->constrain(workingSpace, *ownBest->workingSpace);
         }
       }
     }
@@ -251,7 +251,7 @@ namespace Gecode { namespace Gist {
 
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
-          curBest->b->constrain(copy, ownBest->workingSpace);
+          curBest->b->constrain(copy, *ownBest->workingSpace);
         }
         if (copy->status() == SS_FAILED) {
           delete copy;

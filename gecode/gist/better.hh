@@ -47,7 +47,7 @@ namespace Gecode {
   class Better {
   public:
     /// Constrain \a s to be better than \a best
-    virtual void constrain(Space* s, Space* best) = 0;
+    virtual void constrain(Space* s, Space& best) = 0;
     /// Destructor
     virtual ~Better(void) {}
   };

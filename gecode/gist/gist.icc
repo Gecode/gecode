@@ -41,7 +41,7 @@ namespace Gecode {
     template <class S>
     class GistBetter : public Better {
     public:
-      virtual void constrain(Space* s, Space* best) {
+      virtual void constrain(Space* s, Space& best) {
         static_cast<S*>(s)->constrain(best);
       }
     };
