@@ -1496,8 +1496,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline bool
   VarValGraph<View, Card, isView>::sync(Space& home) {
-    Scratch s(home);
-    VVGNode** re = s.alloc<VVGNode*>(node_size);
+    Region r(home);
+    VVGNode** re = r.alloc<VVGNode*>(node_size);
     int n_re = 0;
 
     // synchronize cardinality variables
@@ -1891,11 +1891,11 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    Scratch s(home);
+    Region r(home);
     if (card_match < required_size) {
       if (direction == LBC) {
         // collect free value nodes
-        ValNode** free = s.alloc<ValNode*>(n_val);
+        ValNode** free = r.alloc<ValNode*>(n_val);
         int f = 0;
         // find failed nodes
         for (int i = n_val; i--; ) {
@@ -1915,7 +1915,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       } else {
-        VarNode** free = s.alloc<VarNode*>(n_var);
+        VarNode** free = r.alloc<VarNode*>(n_var);
         int f = 0;
         // find failed nodes
         for (int i = n_var; i--; ) {
@@ -1941,9 +1941,9 @@ namespace Gecode { namespace Int { namespace GCC {
   inline bool
   VarValGraph<View, Card, isView>::augmenting_path(Space& home, VVGNode* v) {
     Support::StaticStack<VVGNode*> ns(node_size);
-    Scratch s(home);
-    bool* visited = s.alloc<bool>(node_size);
-    Edge** start = s.alloc<Edge*>(node_size);
+    Region r(home);
+    bool* visited = r.alloc<bool>(node_size);
+    Edge** start = r.alloc<Edge*>(node_size);
 
     // augmenting path starting in a free var node
     assert(!v->is_matched(direction));
@@ -2051,8 +2051,8 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   VarValGraph<View, Card, isView>::free_alternating_paths(Space& home) {
     Support::StaticStack<VVGNode*> ns(node_size);
-    Scratch s(home);
-    bool* visited = s.alloc<bool>(node_size);
+    Region r(home);
+    bool* visited = r.alloc<bool>(node_size);
     // keep track of the nodes that have already been visited
     for (int i = node_size; i--; )
       visited[i] = false;
@@ -2236,10 +2236,10 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView> template <BC direction>
   inline void
   VarValGraph<View, Card, isView>::strongly_connected_components(Space& home) {
-    Scratch s(home);
-    bool* inscc = s.alloc<bool>(node_size);
-    bool* in_unfinished = s.alloc<bool>(node_size);
-    int* dfsnum = s.alloc<int>(node_size);
+    Region r(home);
+    bool* inscc = r.alloc<bool>(node_size);
+    bool* in_unfinished = r.alloc<bool>(node_size);
+    int* dfsnum = r.alloc<int>(node_size);
 
     for (int i = node_size; i--; ) {
       inscc[i]         = false;

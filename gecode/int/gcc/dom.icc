@@ -173,8 +173,8 @@ namespace Gecode { namespace Int { namespace GCC {
     ExecStatus es = ES_NOFIX;
     bool card_mod = false;
 
-    Scratch s(home);
-    int* count = s.alloc<int>(k.size());
+    Region r(home);
+    int* count = r.alloc<int>(k.size());
     for (int i = k.size(); i--; )
       count[i] = 0;
 

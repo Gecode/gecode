@@ -185,9 +185,9 @@ namespace Gecode { namespace Int { namespace Distinct {
       Support::insertion<View,MinInc<View> >(&x[0], n, min_inc);
     }
 
-    Scratch s(home);
+    Region r(home);
 
-    int* _maxsorted = s.alloc<int>(n);
+    int* _maxsorted = r.alloc<int>(n);
 
     for (int i = n; i--; )
       _maxsorted[i]=i;
@@ -198,8 +198,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     // Setup rank and bounds info
-    HallInfo* hall = s.alloc<HallInfo>(2*n+2);
-    Rank* rank = s.alloc<Rank>(n);
+    HallInfo* hall = r.alloc<HallInfo>(2*n+2);
+    Rank* rank = r.alloc<Rank>(n);
 
     int nb = 0;
     {

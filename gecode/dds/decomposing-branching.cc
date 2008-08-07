@@ -104,8 +104,8 @@ namespace Gecode { namespace Decomposition {
     }
     std::vector<int> label;
     int graphSize = vars.size()+as.size();
-    Scratch s(home);
-    Node* g = s.alloc<Node>(graphSize);
+    Region r(home);
+    Node* g = r.alloc<Node>(graphSize);
     for (int i=noOfVars; i--;) {
       if (vars.spec(i).assigned()) {
         g[i].component = 0;

@@ -216,10 +216,10 @@ namespace Set { namespace RelOp {
     if (x.size() == 0)
       return ES_NOFIX;
 
-    Scratch s(home);
+    Region r(home);
     //TODO: overflow management is a waste now.
     {
-      unsigned int* rightSum = s.alloc<unsigned int>(xsize);
+      unsigned int* rightSum = r.alloc<unsigned int>(xsize);
       rightSum[xsize-1]=0;
 
       for (int i=x.size()-1;i--;) {
@@ -251,7 +251,7 @@ namespace Set { namespace RelOp {
 
     {
       GLBndSet* rightUnion =
-        static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
+        static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
       new (&rightUnion[xsize-1]) GLBndSet(home);
       for (int i=xsize-1;i--;){
         BndSetRanges prev(rightUnion[i+1]);
@@ -341,9 +341,9 @@ namespace Set { namespace RelOp {
     //Cardinality of each x[i] limited by cardinality of y minus all x[j]s:
 
     {
-      Scratch s(home);
-      unsigned int* rightMinSum = s.alloc<unsigned int>(xsize);
-      unsigned int* rightMaxSum = s.alloc<unsigned int>(xsize);
+      Region r(home);
+      unsigned int* rightMinSum = r.alloc<unsigned int>(xsize);
+      unsigned int* rightMaxSum = r.alloc<unsigned int>(xsize);
       rightMinSum[xsize-1]=0;
       rightMaxSum[xsize-1]=0;
 
@@ -402,11 +402,11 @@ namespace Set { namespace RelOp {
   partitionNXi(Space& home,
                bool& modified, ViewArray<View0>& x, View1& y) {
     int xsize = x.size();
-    Scratch s(home);
+    Region r(home);
     GLBndSet* afterUB =
-      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
     GLBndSet* afterLB =
-      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterUB;
@@ -473,9 +473,9 @@ namespace Set { namespace RelOp {
                  bool& modified, ViewArray<View0>& x, View1& y,
                  GLBndSet& unionOfDets) {
     int xsize = x.size();
-    Scratch s(home);
+    Region r(home);
     GLBndSet* afterLB =
-      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterLB;
@@ -519,9 +519,9 @@ namespace Set { namespace RelOp {
                  bool& modified, ViewArray<View0>& x, View1& y,
                  GLBndSet& unionOfDets) {
     int xsize = x.size();
-    Scratch s(home);
+    Region r(home);
     GLBndSet* afterUB =
-      static_cast<GLBndSet*>(s.ralloc(sizeof(GLBndSet)*xsize));
+      static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
 
     {
       GLBndSet sofarAfterUB;
@@ -567,8 +567,8 @@ namespace Set { namespace RelOp {
                 GLBndSet& unionOfDets) {
     assert(unionOfDets.isConsistent());
     int xsize = x.size();
-    Scratch s(home);
-    GlbRanges<View0>* xLBs = s.alloc<GlbRanges<View0> >(xsize);
+    Region r(home);
+    GlbRanges<View0>* xLBs = r.alloc<GlbRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
       GlbRanges<View0> r(x[i]);
@@ -596,8 +596,8 @@ namespace Set { namespace RelOp {
                 bool& modified, ViewArray<View0>& x, View1& y,
                 GLBndSet& unionOfDets) {
     int xsize = x.size();
-    Scratch s(home);
-    LubRanges<View0>* xUBs = s.alloc<LubRanges<View0> >(xsize);
+    Region r(home);
+    LubRanges<View0>* xUBs = r.alloc<LubRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
       LubRanges<View0> r(x[i]);

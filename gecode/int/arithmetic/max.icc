@@ -446,8 +446,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM)) :
         ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
-    Scratch s(home);
-    ViewRanges<View>* i_x = s.alloc<ViewRanges<View> >(x.size());
+    Region r(home);
+    ViewRanges<View>* i_x = r.alloc<ViewRanges<View> >(x.size());
     for (int i = x.size(); i--; ) {
       ViewRanges<View> i_xi(x[i]); i_x[i]=i_xi;
     }

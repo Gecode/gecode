@@ -245,9 +245,9 @@ namespace Gecode {
       }
     }
 
-    GJSSpace::GJSSpace(QScriptEngine* engine, Gecode::Space* s0)
+    GJSSpace::GJSSpace(QScriptEngine* engine, Gecode::Space& s0)
     : varProto(engine->newObject()), pairProto(engine->newObject()),
-      s(s0), d(s, vm) {
+      s(&s0), d(*s, vm) {
       s->getVars(vm, true);
     }
 
@@ -299,7 +299,7 @@ namespace Gecode {
    
   }
   
-  void fromJavaScript(Space* space, const std::string& model) {
+  void fromJavaScript(Space& space, const std::string& model) {
     QScriptEngine engine;
     Serialization::GJSSpace gjsspace(&engine, space);
     QScriptValue spaceValue = engine.newQObject(&gjsspace);

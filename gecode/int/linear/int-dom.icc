@@ -452,10 +452,10 @@ namespace Gecode { namespace Int { namespace Linear {
     int n = x.size();
     int m = y.size();
 
-    Scratch s(home);
+    Region r(home);
     // Create support-base iterators
-    PosSupportIter<Val>* xp = s.alloc<PosSupportIter<Val> >(n);
-    NegSupportIter<Val>* yp = s.alloc<NegSupportIter<Val> >(m);
+    PosSupportIter<Val>* xp = r.alloc<PosSupportIter<Val> >(n);
+    NegSupportIter<Val>* yp = r.alloc<NegSupportIter<Val> >(m);
 
     // Initialize views for assignments
     {

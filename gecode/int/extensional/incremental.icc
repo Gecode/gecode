@@ -106,9 +106,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
     }
 
-    Scratch s(home);
+    Region r(home);
     // Add initial supports
-    BitSet* dom = s.alloc<BitSet>(x.size());
+    BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);
     for (int i = x.size(); i--; ) {
       ViewValues<View> vv(x[i]);
@@ -196,9 +196,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(!work.empty() || unassigned==0);
     /// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
-    Scratch s(home);
+    Region r(home);
     // Add initial supports
-    BitSet* dom = s.alloc<BitSet>(x.size());
+    BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);
 
     /// Work loop

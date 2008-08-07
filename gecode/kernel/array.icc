@@ -918,17 +918,17 @@ namespace Gecode {
   ViewArray<View>::same(const Space& home) const {
     if (n < 2)
       return false;
-    Scratch s(home);
-    View* y = s.alloc<View>(n);
+    Region r(home);
+    View* y = r.alloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
     for (int i = n-1; i--; )
       if (!y[i].assigned() && __same(y[i+1],y[i])) {
-        s.free<View>(y,n);
+        r.free<View>(y,n);
         return true;
       }
-    s.free<View>(y,n);
+    r.free<View>(y,n);
     return false;
   }
 
@@ -961,17 +961,17 @@ namespace Gecode {
   ViewArray<View>::shared(const Space& home) const {
     if (n < 2)
       return false;
-    Scratch s(home);
-    View* y = s.alloc<View>(n);
+    Region r(home);
+    View* y = r.alloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
     for (int i = n-1; i--; )
       if (!y[i].assigned() && __shared(y[i+1],y[i])) {
-        s.free<View>(y,n);
+        r.free<View>(y,n);
         return true;
       }
-    s.free<View>(y,n);
+    r.free<View>(y,n);
     return false;
   }
 
@@ -1141,18 +1141,18 @@ namespace Gecode {
   VarArgArray<Var>::same(const Space& home) const {
     if (n < 2)
       return false;
-    Scratch s(home);
-    Var* y = s.alloc<Var>(n);
+    Region r(home);
+    Var* y = r.alloc<Var>(n);
     for (int i = n; i--; )
       y[i] = a[i];
     VarLess vl;
     Support::quicksort<Var,VarLess>(y,n,vl);
     for (int i = n-1; i--; )
       if (!y[i].assigned() && (y[i+1].var() == y[i].var())) {
-        s.free<Var>(y,n);
+        r.free<Var>(y,n);
         return true;
       }
-    s.free<Var>(y,n);
+    r.free<Var>(y,n);
     return false;
   }
 
@@ -1162,8 +1162,8 @@ namespace Gecode {
     int m = n + y.n;
     if (m < 2)
       return false;
-    Scratch s(home);
-    Var* z = s.alloc<Var>(m);
+    Region r(home);
+    Var* z = r.alloc<Var>(m);
     for (int i = n; i--; )
       z[i] = a[i];
     for (int i = y.n; i--; )
@@ -1172,10 +1172,10 @@ namespace Gecode {
     Support::quicksort<Var,VarLess>(z,m,vl);
     for (int i = m-1; i--; )
       if (!z[i].assigned() && (z[i+1].var() == z[i].var())) {
-        s.free<Var>(z,m);
+        r.free<Var>(z,m);
         return true;
       }
-    s.free<Var>(z,m);
+    r.free<Var>(z,m);
     return false;
   }
 

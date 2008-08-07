@@ -132,7 +132,7 @@ namespace Gecode { namespace Support {
  */
 
 #define GECODE_AUTOSTACK(home,T,S,X,N)                                     \
-  Scratch __GECODE__AS__SA__ ## X ## __LINE__(home);                   \
+  Region __GECODE__AS__SA__ ## X ## __LINE__(home);                   \
   int __GECODE__AS__ ## X ## __LINE__ ## n = (N); \
   T* __GECODE__AS__ ## X ## __LINE__ =                                     \
     static_cast<T*>(__GECODE__AS__SA__ ## X ##                             \

@@ -201,8 +201,8 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    Scratch s(home);
-    int* count = s.alloc<int>(k.size());
+    Region r(home);
+    int* count = r.alloc<int>(k.size());
     for (int i = k.size(); i--; )
       count[i] = 0;
 
@@ -409,8 +409,8 @@ namespace Gecode { namespace Int { namespace GCC {
     ExecStatus es_lbc = ES_FIX;
     int n = x.size();
 
-    int* mu = s.alloc<int>(n);
-    int* nu = s.alloc<int>(n);
+    int* mu = r.alloc<int>(n);
+    int* nu = r.alloc<int>(n);
 
     for (int i = n; i--; )
       nu[i] = mu[i] = i;
@@ -480,8 +480,8 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
 
-    HallInfo* hall = s.alloc<HallInfo>(2 * n + 2);
-    Rank* rank = s.alloc<Rank>(n);
+    HallInfo* hall = r.alloc<HallInfo>(2 * n + 2);
+    Rank* rank = r.alloc<Rank>(n);
 
     int nb = 0;
     // setup bounds and rank

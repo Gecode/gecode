@@ -48,8 +48,8 @@ namespace Gecode { namespace Int { namespace Sorted {
   inline void
   sort_sigma(Space& home, ViewArray<View>& x, ViewArray<View>& z) {
     if (Perm) {
-      Scratch s(home);
-      ViewPair<View>* xz = s.alloc<ViewPair<View> >(x.size());
+      Region r(home);
+      ViewPair<View>* xz = r.alloc<ViewPair<View> >(x.size());
       for (int i=x.size(); i--; ) {
         xz[i].x=x[i]; xz[i].z=z[i];
       }

@@ -1008,12 +1008,12 @@ namespace Gecode {
     template <class VIC> friend class VarImp;
     template <class VarType> friend class VarDisposer;
     friend class SharedHandle;
-    friend class Scratch;
+    friend class Region;
   private:
     /// Performs memory management for space
     MemoryManager mm; 
-    /// Shared scratch area
-    SharedScratch* ssa;
+    /// Shared region area
+    SharedRegionArea* sra;
     /**
      * \brief Doubly linked list of all actors
      *

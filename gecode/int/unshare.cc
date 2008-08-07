@@ -111,8 +111,8 @@ namespace Gecode {
       if (n < 2)
         return ES_OK;
 
-      Scratch s(home);
-      Var** y = s.alloc<Var*>(n);
+      Region r(home);
+      Var** y = r.alloc<Var*>(n);
       for (int i=n; i--; )
         y[i]=&x[i];
 

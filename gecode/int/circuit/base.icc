@@ -77,8 +77,8 @@ namespace Gecode { namespace Int { namespace Circuit {
     }
 
     /// Information needed for checking scc's
-    Scratch s(home);
-    SsccInfo<View>* si = s.alloc<SsccInfo<View> >(n);
+    Region r(home);
+    SsccInfo<View>* si = r.alloc<SsccInfo<View> >(n);
     unsigned int n_edges = 0;
     for (int i=n; i--; ) {
       n_edges += x[i].size();
@@ -89,11 +89,11 @@ namespace Gecode { namespace Int { namespace Circuit {
     GECODE_AUTOSTACK(home,int,-1,next,n);
 
     // Array to remember which mandatory tells need to be done
-    TellInfo<View>* eq = s.alloc<TellInfo<View> >(n);
+    TellInfo<View>* eq = r.alloc<TellInfo<View> >(n);
     int n_eq = 0;
 
     // Array to remember which edges need to be pruned
-    TellInfo<View>* nq = s.alloc<TellInfo<View> >(n_edges);
+    TellInfo<View>* nq = r.alloc<TellInfo<View> >(n_edges);
     int n_nq = 0;
 
     /* 
@@ -203,11 +203,11 @@ namespace Gecode { namespace Int { namespace Circuit {
 
     int n=x.size();
 
-    Scratch s(home);
+    Region r(home);
 
     // The path starting at assigned x[i] ends at x[end[j]] which is
     // not assigned.
-    int* end = s.alloc<int>(n);
+    int* end = r.alloc<int>(n);
     for (int i=n; i--; )
       end[i]=-1;
 

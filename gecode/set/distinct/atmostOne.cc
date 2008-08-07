@@ -71,8 +71,8 @@ namespace Gecode { namespace Set { namespace Distinct {
 
   ExecStatus
   AtmostOne::propagate(Space& home, ModEventDelta) {
-    Scratch s(home);
-    LubRanges<SetView>* lubs = s.alloc<LubRanges<SetView> >(x.size());
+    Region r(home);
+    LubRanges<SetView>* lubs = r.alloc<LubRanges<SetView> >(x.size());
     for (int i = x.size(); i--; ) {
       lubs[i].init(x[i]);
     }
@@ -120,13 +120,13 @@ namespace Gecode { namespace Set { namespace Distinct {
           }
         }
       } else {
-        LubRanges<SetView>* lubs2 = s.alloc<LubRanges<SetView> >(x.size());
+        LubRanges<SetView>* lubs2 = r.alloc<LubRanges<SetView> >(x.size());
         for (int i = x.size(); i--; ) {
           lubs2[i].init(x[i]);
         }
         Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT2(lubs2, x.size());
         
-        GlbRanges<SetView>* glbs = s.alloc<GlbRanges<SetView> >(cardSa);
+        GlbRanges<SetView>* glbs = r.alloc<GlbRanges<SetView> >(cardSa);
         int count = 0;
         for (int i=x.size(); i--; ) {
           if (x[i].contains(a)) {

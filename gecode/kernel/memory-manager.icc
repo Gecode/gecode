@@ -138,25 +138,25 @@ namespace Gecode {
     void reuse(void* p, size_t s);
   };
 
-  class Scratch;
+  class Region;
 
   /// Shared object for scratch area
-  class SharedScratch {
-    friend class Scratch;
+  class SharedRegionArea {
+    friend class Region;
   private:
     /// How many spaces use this scratch area object
     unsigned int use_cnt;
     /// Amount of free memory
     size_t free;
     /// The actual memory area (allocated from top to bottom)
-    double area[MemoryConfig::scratch_size / sizeof(double)];
+    double area[MemoryConfig::region_area_size / sizeof(double)];
   public:
     /// Initialize
-    SharedScratch(void);
+    SharedRegionArea(void);
     /// Return memory block if available
     bool alloc(size_t s, void*& p);
     /// Return copy during cloning
-    SharedScratch* copy(bool share);
+    SharedRegionArea* copy(bool share);
     /// Release by one space
     bool release(void);
     /// Allocate memory from heap
@@ -390,36 +390,36 @@ namespace Gecode {
   }
 
   /*
-   * Scratch area
+   * Shared region area
    *
    */
 
   forceinline void* 
-  SharedScratch::operator new(size_t s) {
+  SharedRegionArea::operator new(size_t s) {
     return heap.ralloc(s);
   }
   forceinline void
-  SharedScratch::operator delete(void* p) {
+  SharedRegionArea::operator delete(void* p) {
     heap.rfree(p);
   }
   forceinline
-  SharedScratch::SharedScratch(void)
-    : use_cnt(1), free(MemoryConfig::scratch_size) {}
-  forceinline SharedScratch*
-  SharedScratch::copy(bool share) {
+  SharedRegionArea::SharedRegionArea(void)
+    : use_cnt(1), free(MemoryConfig::region_area_size) {}
+  forceinline SharedRegionArea*
+  SharedRegionArea::copy(bool share) {
     if (share) {
       use_cnt++;
       return this;
     } else {
-      return new SharedScratch();
+      return new SharedRegionArea();
     }
   }
   forceinline bool
-  SharedScratch::release(void) {
+  SharedRegionArea::release(void) {
     return --use_cnt == 0;
   }
   forceinline bool
-  SharedScratch::alloc(size_t s, void*& p) {
+  SharedRegionArea::alloc(size_t s, void*& p) {
     MemoryConfig::align(s);
     if (s > free)
       return false;

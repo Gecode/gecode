@@ -121,11 +121,11 @@
 
 
 /*
- * Scratch memory management
+ * Region memory management
  *
  */
 
-#include "gecode/kernel/scratch.icc"
+#include "gecode/kernel/region.icc"
 
 
 /*

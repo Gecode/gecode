@@ -79,8 +79,8 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline int
   x_card(Space& home, ViewArray<View>& x, IntConLevel) {
     int n = x.size();
-    Scratch s(home);
-    ViewRanges<View>* xrange = s.alloc<ViewRanges<View> >(n);
+    Region r(home);
+    ViewRanges<View>* xrange = r.alloc<ViewRanges<View> >(n);
     for (int i = n; i--; ){
       ViewRanges<View> iter(x[i]);
       xrange[i] = iter;

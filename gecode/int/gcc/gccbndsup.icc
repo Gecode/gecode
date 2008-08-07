@@ -63,8 +63,8 @@ namespace Gecode { namespace Int { namespace GCC {
   prop_card(Space& home, ViewArray<View>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
     int m = k.size();
-    Scratch s(home);
-    UnReachable* rv = s.alloc<UnReachable>(m);
+    Region r(home);
+    UnReachable* rv = r.alloc<UnReachable>(m);
     for(int i = m; i--; )
       rv[i].minb = rv[i].maxb = rv[i].le = rv[i].gr = rv[i].eq = 0;
 
@@ -711,8 +711,8 @@ namespace Gecode { namespace Int { namespace GCC {
       k[0] = k[idx];
       k.size(1);
     } else {
-      Scratch s(home);
-      bool* zero = s.alloc<bool>(k.size());
+      Region r(home);
+      bool* zero = r.alloc<bool>(k.size());
       int ks = k.size();
       int zc = 0;
       for (int i = 0; i < ks; i++) {

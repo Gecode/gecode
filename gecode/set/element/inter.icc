@@ -149,7 +149,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   ExecStatus
   ElementIntersection<SView,RView>::propagate(Space& home, ModEventDelta) {
-    Scratch s(home);
+    Region r(home);
     int n = iv.size();
 
     bool loopVar;
@@ -174,7 +174,7 @@ namespace Gecode { namespace Set { namespace Element {
       // the list, cancel their dependencies.
 
       LUBndSet sofarBefore(home,universe);
-      LUBndSet* before = s.alloc<LUBndSet>(n);
+      LUBndSet* before = r.alloc<LUBndSet>(n);
 
       int j = 0;
       int i = 0;

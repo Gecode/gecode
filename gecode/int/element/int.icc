@@ -225,8 +225,8 @@ namespace Gecode { namespace Int { namespace Element {
     }
     int size = ix.size();
     // Create val links sorted by val
-    Scratch s(home);
-    IdxValLink** by_val = s.alloc<IdxValLink*>(size);
+    Region r(home);
+    IdxValLink** by_val = r.alloc<IdxValLink*>(size);
     for (int i = size; i--; )
       by_val[i] = &iv[i+1];
     ByVal lt;

@@ -124,13 +124,13 @@ namespace Gecode { namespace Int { namespace GCC {
     int  n   = x.size();
     int  m   = k.size();
 
-    Scratch s(home);
+    Region r(home);
     // count[i] denotes how often value k[i].card() occurs in x
-    int* count = s.alloc<int>(m);
+    int* count = r.alloc<int>(m);
     // stack of values having reached their maximum occurence
-    int* rem = s.alloc<int>(m);
+    int* rem = r.alloc<int>(m);
     // keep track whether a value is already on the stack
-    bool* onrem = s.alloc<bool>(m);
+    bool* onrem = r.alloc<bool>(m);
     // stacksize
     int rs = 0;
 

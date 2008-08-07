@@ -91,7 +91,7 @@ gecode/kernel/core$(OBJSUFFIX) gecode/kernel/core$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -106,7 +106,7 @@ gecode/kernel/reflection$(OBJSUFFIX) gecode/kernel/reflection$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -121,7 +121,7 @@ gecode/kernel/var-map$(OBJSUFFIX) gecode/kernel/var-map$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -136,7 +136,7 @@ gecode/kernel/var-type$(OBJSUFFIX) gecode/kernel/var-type$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -151,7 +151,7 @@ gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -166,7 +166,7 @@ gecode/kernel/branch$(OBJSUFFIX) gecode/kernel/branch$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -175,13 +175,13 @@ gecode/kernel/branch$(OBJSUFFIX) gecode/kernel/branch$(SBJSUFFIX): \
 	./gecode/support/map.icc ./gecode/support/marked-pointer.icc ./gecode/support/random.icc \
 	./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc ./gecode/support/static-pqueue.icc \
 	./gecode/support/static-stack.icc ./gecode/support/symbol.icc 
-gecode/kernel/scratch$(OBJSUFFIX) gecode/kernel/scratch$(SBJSUFFIX): \
+gecode/kernel/region$(OBJSUFFIX) gecode/kernel/region$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
 	./gecode/kernel/branch.icc ./gecode/kernel/branching-tiebreak.icc ./gecode/kernel/branching-val.icc \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -196,7 +196,7 @@ gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
@@ -214,7 +214,7 @@ gecode/search/lds$(OBJSUFFIX) gecode/search/lds$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
@@ -232,7 +232,7 @@ gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
@@ -250,7 +250,7 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
@@ -268,7 +268,7 @@ gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
@@ -286,7 +286,7 @@ gecode/search/reco-stack$(OBJSUFFIX) gecode/search/reco-stack$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
@@ -324,7 +324,7 @@ gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -359,7 +359,7 @@ gecode/int/var-imp/int$(OBJSUFFIX) gecode/int/var-imp/int$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -394,7 +394,7 @@ gecode/int/var-imp/bool$(OBJSUFFIX) gecode/int/var-imp/bool$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -429,7 +429,7 @@ gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -464,7 +464,7 @@ gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -499,7 +499,7 @@ gecode/int/view/print$(OBJSUFFIX) gecode/int/view/print$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -534,7 +534,7 @@ gecode/int/array$(OBJSUFFIX) gecode/int/array$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -573,7 +573,7 @@ gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -608,7 +608,7 @@ gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -643,7 +643,7 @@ gecode/int/extensional/tuple-set$(OBJSUFFIX) gecode/int/extensional/tuple-set$(S
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -682,7 +682,7 @@ gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -720,7 +720,7 @@ gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -759,7 +759,7 @@ gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -797,7 +797,7 @@ gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -835,7 +835,7 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -878,7 +878,7 @@ gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -918,7 +918,7 @@ gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -957,7 +957,7 @@ gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
@@ -996,7 +996,7 @@ gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX):
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
@@ -1035,7 +1035,7 @@ gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
@@ -1072,7 +1072,7 @@ gecode/int/branch$(OBJSUFFIX) gecode/int/branch$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -1112,7 +1112,7 @@ gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -1151,7 +1151,7 @@ gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -1193,7 +1193,7 @@ gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -1236,7 +1236,7 @@ gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -1278,7 +1278,7 @@ gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -1320,7 +1320,7 @@ gecode/int/channel/link-single$(OBJSUFFIX) gecode/int/channel/link-single$(SBJSU
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -1362,7 +1362,7 @@ gecode/int/channel/link-multi$(OBJSUFFIX) gecode/int/channel/link-multi$(SBJSUFF
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -1403,7 +1403,7 @@ gecode/int/circuit$(OBJSUFFIX) gecode/int/circuit$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -1442,7 +1442,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -1479,7 +1479,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -1516,7 +1516,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -1551,7 +1551,7 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1597,7 +1597,7 @@ gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1639,7 +1639,7 @@ gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1681,7 +1681,7 @@ gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1723,7 +1723,7 @@ gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1767,7 +1767,7 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1816,7 +1816,7 @@ gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1862,7 +1862,7 @@ gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1908,7 +1908,7 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -1954,7 +1954,7 @@ gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2003,7 +2003,7 @@ gecode/set/element/disjoint$(OBJSUFFIX) gecode/set/element/disjoint$(SBJSUFFIX):
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2052,7 +2052,7 @@ gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2097,7 +2097,7 @@ gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2139,7 +2139,7 @@ gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFF
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2181,7 +2181,7 @@ gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2226,7 +2226,7 @@ gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2271,7 +2271,7 @@ gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2312,7 +2312,7 @@ gecode/set/var-imp/set$(OBJSUFFIX) gecode/set/var-imp/set$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2353,7 +2353,7 @@ gecode/set/var-imp/integerset$(OBJSUFFIX) gecode/set/var-imp/integerset$(SBJSUFF
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2394,7 +2394,7 @@ gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2435,7 +2435,7 @@ gecode/set/view/print$(OBJSUFFIX) gecode/set/view/print$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2476,7 +2476,7 @@ gecode/set/projectors$(OBJSUFFIX) gecode/set/projectors$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2520,7 +2520,7 @@ gecode/set/projectors/set-expr$(OBJSUFFIX) gecode/set/projectors/set-expr$(SBJSU
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2563,7 +2563,7 @@ gecode/set/projectors/projector$(OBJSUFFIX) gecode/set/projectors/projector$(SBJ
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2606,7 +2606,7 @@ gecode/set/projectors/projector-set$(OBJSUFFIX) gecode/set/projectors/projector-
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2649,7 +2649,7 @@ gecode/set/projectors/propagator/re-nary$(OBJSUFFIX) gecode/set/projectors/propa
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2693,7 +2693,7 @@ gecode/set/projectors/compiler$(OBJSUFFIX) gecode/set/projectors/compiler$(SBJSU
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2736,7 +2736,7 @@ gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFF
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2779,7 +2779,7 @@ gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFF
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/set.hh ./gecode/set/array.icc \
@@ -2825,7 +2825,7 @@ gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
@@ -2870,7 +2870,7 @@ gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
@@ -2915,7 +2915,7 @@ gecode/cpltset/bddmanager$(OBJSUFFIX) gecode/cpltset/bddmanager$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
@@ -2960,7 +2960,7 @@ gecode/cpltset/var-imp/cpltset$(OBJSUFFIX) gecode/cpltset/var-imp/cpltset$(SBJSU
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
@@ -3005,7 +3005,7 @@ gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
@@ -3050,7 +3050,7 @@ gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
@@ -3097,7 +3097,7 @@ gecode/cpltset/constraints/singleton$(OBJSUFFIX) gecode/cpltset/constraints/sing
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3142,7 +3142,7 @@ gecode/cpltset/constraints/dom$(OBJSUFFIX) gecode/cpltset/constraints/dom$(SBJSU
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/limits.icc \
@@ -3189,7 +3189,7 @@ gecode/cpltset/constraints/rel$(OBJSUFFIX) gecode/cpltset/constraints/rel$(SBJSU
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3236,7 +3236,7 @@ gecode/cpltset/constraints/cardinality$(OBJSUFFIX) gecode/cpltset/constraints/ca
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3283,7 +3283,7 @@ gecode/cpltset/constraints/atmost$(OBJSUFFIX) gecode/cpltset/constraints/atmost$
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3330,7 +3330,7 @@ gecode/cpltset/constraints/partition$(OBJSUFFIX) gecode/cpltset/constraints/part
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3377,7 +3377,7 @@ gecode/cpltset/constraints/select$(OBJSUFFIX) gecode/cpltset/constraints/select$
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3424,7 +3424,7 @@ gecode/cpltset/constraints/distinct$(OBJSUFFIX) gecode/cpltset/constraints/disti
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3471,7 +3471,7 @@ gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/ran
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3517,7 +3517,7 @@ gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/ran
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -3562,7 +3562,7 @@ gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -3604,7 +3604,7 @@ gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -3642,7 +3642,7 @@ gecode/serialization/flatzinc$(OBJSUFFIX) gecode/serialization/flatzinc$(SBJSUFF
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
@@ -3664,7 +3664,7 @@ gecode/serialization/javascript$(OBJSUFFIX) gecode/serialization/javascript$(SBJ
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/serialization.hh ./gecode/serialization/boost.icc ./gecode/serialization/javascript.hh \
@@ -3680,7 +3680,7 @@ gecode/serialization/boost$(OBJSUFFIX) gecode/serialization/boost$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/serialization.hh ./gecode/serialization/boost.icc ./gecode/support.hh \
@@ -3717,7 +3717,7 @@ gecode/dds/decomposing-branching$(OBJSUFFIX) gecode/dds/decomposing-branching$(S
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -3759,7 +3759,7 @@ gecode/dds/dds$(OBJSUFFIX) gecode/dds/dds$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -3804,7 +3804,7 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -3851,7 +3851,7 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -3898,7 +3898,7 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -3945,7 +3945,7 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -3992,7 +3992,7 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4039,7 +4039,7 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4086,7 +4086,7 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4133,7 +4133,7 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4180,7 +4180,7 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4227,7 +4227,7 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4274,7 +4274,7 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4321,7 +4321,7 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4368,7 +4368,7 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4415,7 +4415,7 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4462,7 +4462,7 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4509,7 +4509,7 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4556,7 +4556,7 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4603,7 +4603,7 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4650,7 +4650,7 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4700,7 +4700,7 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/minimodel.hh ./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc \
@@ -4753,7 +4753,7 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4800,7 +4800,7 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4847,7 +4847,7 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4894,7 +4894,7 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4941,7 +4941,7 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -4988,7 +4988,7 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5035,7 +5035,7 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5082,7 +5082,7 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5129,7 +5129,7 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5176,7 +5176,7 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5223,7 +5223,7 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5270,7 +5270,7 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5317,7 +5317,7 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5364,7 +5364,7 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5411,7 +5411,7 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5458,7 +5458,7 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5505,7 +5505,7 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5552,7 +5552,7 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5599,7 +5599,7 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5646,7 +5646,7 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5693,7 +5693,7 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5746,7 +5746,7 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5799,7 +5799,7 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5852,7 +5852,7 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5905,7 +5905,7 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -5958,7 +5958,7 @@ examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -6005,7 +6005,7 @@ examples/support/example$(OBJSUFFIX) examples/support/example$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -6030,7 +6030,7 @@ gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -6049,7 +6049,7 @@ gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -6068,7 +6068,7 @@ gecode/gist/node$(OBJSUFFIX) gecode/gist/node$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -6086,7 +6086,7 @@ gecode/gist/nodecursor$(OBJSUFFIX) gecode/gist/nodecursor$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -6105,7 +6105,7 @@ gecode/gist/layoutcursor$(OBJSUFFIX) gecode/gist/layoutcursor$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/support.hh \
 	./gecode/support/block-allocator.icc ./gecode/support/cast.icc ./gecode/support/config.icc \
@@ -6144,7 +6144,7 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -6172,7 +6172,7 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -6191,7 +6191,7 @@ gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -6212,7 +6212,7 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/support.hh ./gecode/support/block-allocator.icc \
@@ -6250,7 +6250,7 @@ gecode/gist/addchild$(OBJSUFFIX) gecode/gist/addchild$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
@@ -6273,7 +6273,7 @@ gecode/gist/addvisualisationdialog$(OBJSUFFIX) gecode/gist/addvisualisationdialo
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
@@ -6315,7 +6315,7 @@ gecode/gist/config$(OBJSUFFIX) gecode/gist/config$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/minimodel.hh ./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc \
@@ -6358,7 +6358,7 @@ gecode/gist/visualisation/vararrayview$(OBJSUFFIX) gecode/gist/visualisation/var
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -6400,7 +6400,7 @@ gecode/gist/visualisation/varitem$(OBJSUFFIX) gecode/gist/visualisation/varitem$
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/minimodel.hh ./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc \
@@ -6442,7 +6442,7 @@ gecode/gist/visualisation/intvaritem$(OBJSUFFIX) gecode/gist/visualisation/intva
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/minimodel.hh ./gecode/minimodel/arithmetic.icc \
@@ -6484,7 +6484,7 @@ gecode/gist/visualisation/setvaritem$(OBJSUFFIX) gecode/gist/visualisation/setva
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/minimodel.hh ./gecode/minimodel/arithmetic.icc \
@@ -6532,7 +6532,7 @@ gecode/serialization/register$(OBJSUFFIX) gecode/serialization/register$(SBJSUFF
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -6556,7 +6556,7 @@ test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
-	./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc \
 	./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc \
 	./gecode/kernel/var-type.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/search.hh ./gecode/search/bab.icc ./gecode/search/dfs.icc \
@@ -6595,7 +6595,7 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -6639,7 +6639,7 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -6681,7 +6681,7 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -6721,7 +6721,7 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -6765,7 +6765,7 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -6807,7 +6807,7 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -6847,7 +6847,7 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -6887,7 +6887,7 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -6931,7 +6931,7 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -6977,7 +6977,7 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7023,7 +7023,7 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7069,7 +7069,7 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7115,7 +7115,7 @@ test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7157,7 +7157,7 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7197,7 +7197,7 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7237,7 +7237,7 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7281,7 +7281,7 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7327,7 +7327,7 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7373,7 +7373,7 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7419,7 +7419,7 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7465,7 +7465,7 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7511,7 +7511,7 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7553,7 +7553,7 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7599,7 +7599,7 @@ test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7645,7 +7645,7 @@ test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7691,7 +7691,7 @@ test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7737,7 +7737,7 @@ test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7783,7 +7783,7 @@ test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7829,7 +7829,7 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7879,7 +7879,7 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -7928,7 +7928,7 @@ test/set/select$(OBJSUFFIX) test/set/select$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -7974,7 +7974,7 @@ test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -8024,7 +8024,7 @@ test/set/projection$(OBJSUFFIX) test/set/projection$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \
@@ -8078,7 +8078,7 @@ test/cpltset$(OBJSUFFIX) test/cpltset$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8128,7 +8128,7 @@ test/cpltset/dom$(OBJSUFFIX) test/cpltset/dom$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8178,7 +8178,7 @@ test/cpltset/rel$(OBJSUFFIX) test/cpltset/rel$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8228,7 +8228,7 @@ test/cpltset/atmost$(OBJSUFFIX) test/cpltset/atmost$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8278,7 +8278,7 @@ test/cpltset/partition$(OBJSUFFIX) test/cpltset/partition$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8328,7 +8328,7 @@ test/cpltset/cardinality$(OBJSUFFIX) test/cpltset/cardinality$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8378,7 +8378,7 @@ test/cpltset/select$(OBJSUFFIX) test/cpltset/select$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8428,7 +8428,7 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8477,7 +8477,7 @@ test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8526,7 +8526,7 @@ test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8575,7 +8575,7 @@ test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8624,7 +8624,7 @@ test/branch/cpltset$(OBJSUFFIX) test/branch/cpltset$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/search.hh \
 	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
@@ -8669,7 +8669,7 @@ test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -8709,7 +8709,7 @@ test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -8749,7 +8749,7 @@ test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
 	./gecode/kernel/branching-val.icc ./gecode/kernel/branching-view.icc ./gecode/kernel/branching.icc \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/modevent.icc \
-	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/scratch.icc \
+	./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc ./gecode/kernel/region.icc \
 	./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc ./gecode/kernel/var-map.icc \
 	./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc ./gecode/kernel/var.icc \
 	./gecode/kernel/view.icc ./gecode/search.hh ./gecode/search/bab.icc \
@@ -8793,7 +8793,7 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
 	./gecode/kernel/macros.icc ./gecode/kernel/memory-config.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/scratch.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
+	./gecode/kernel/region.icc ./gecode/kernel/shared-array.icc ./gecode/kernel/var-imp.icc \
 	./gecode/kernel/var-map.icc ./gecode/kernel/var-traits.icc ./gecode/kernel/var-type.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/minimodel.hh \
 	./gecode/minimodel/arithmetic.icc ./gecode/minimodel/bool-expr.icc ./gecode/minimodel/bool-rel.icc \

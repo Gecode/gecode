@@ -38,23 +38,23 @@
 namespace Gecode {
 
   /**
-   * \defgroup FuncMemScratch Scratch memory management
+   * \defgroup FuncMemRegion Region memory management
    *
-   * A scratch (area) provides a handle to temporary memory owned by
+   * A region provides a handle to temporary memory owned by
    * a space. The memory will be managed in a stack fashion, that is,
-   * the memory allocated through a scratch will be released
-   * only after the scratch is deleted and all other scratches
+   * the memory allocated through a region will be released
+   * only after the region is deleted and all other regions
    * created later also have been deleted.
    *
-   * In case a memory request cannot be fulfilled from a space's scratch, 
+   * In case a memory request cannot be fulfilled from a space's region, 
    * heap memory is allocated and returned to the operating system
-   * as soon as the scratch is deleted.
+   * as soon as the region is deleted.
    *
    * \ingroup FuncMem
    */
   //@{
-  /// Handle to scratch
-  class Scratch {
+  /// Handle to region
+  class Region {
   private:
     /// Location to space
     Space& home;
@@ -83,12 +83,12 @@ namespace Gecode {
     /// Free memory previously allocated from heap
     GECODE_KERNEL_EXPORT void heap_free(void);
   public:
-    /// Initialize scratch from space
-    Scratch(const Space& home);
+    /// Initialize region from space
+    Region(const Space& home);
     /// \name Typed allocation routines
     //@{
     /** 
-     * \brief Allocate block of \a n objects of type \a T from scratch
+     * \brief Allocate block of \a n objects of type \a T from region
      *
      * Note that this function implements C++ semantics: the default
      * constructor of \a T is run for all \a n objects.
@@ -96,7 +96,7 @@ namespace Gecode {
     template <class T>
     T* alloc(unsigned int n);
     /** 
-     * \brief Delete \a n objects allocated from the scratch starting at \a b
+     * \brief Delete \a n objects allocated from the region starting at \a b
      *
      * Note that this function implements C++ semantics: the destructor
      * of \a T is run for all \a n objects.
@@ -107,7 +107,7 @@ namespace Gecode {
     template <class T>
     void free(T* b, unsigned int n);
     /**
-     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the scratch
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the region
      *
      * Note that this function implements C++ semantics: the copy constructor
      * of \a T is run for all \f$\min(n,m)$\f objects, the default
@@ -122,27 +122,27 @@ namespace Gecode {
     //@}
     /// \name Raw allocation routines
     //@{
-    /// Allocate memory from scratch
+    /// Allocate memory from region
     void* ralloc(size_t s);
     /**
      * \brief Free memory previously allocated
      *
      * Note that the memory is only guaranteed to be freed after the
-     * scratch object itself gets deleted.
+     * region object itself gets deleted.
      */
     void rfree(void* p, size_t s);
     //@}
     /// Return memory
-    ~Scratch(void);
+    ~Region(void);
   private:
     /// Allocate memory from heap (disabled)
     static void* operator new(size_t s) throw() { (void) s; return NULL; }
     /// Free memory allocated from heap (disabled)
     static void  operator delete(void* p) { (void) p; };
     /// Copy constructor (disabled)
-    Scratch(const Scratch& s) : home(s.home) {}
+    Region(const Region& r) : home(r.home) {}
     /// Assignment operator (disabled)
-    const Scratch& operator=(const Scratch&) { return *this; }
+    const Region& operator=(const Region&) { return *this; }
   };
   //@}
 
@@ -152,23 +152,23 @@ namespace Gecode {
    *
    */
   forceinline
-  Scratch::Scratch(const Space& h) 
-    : home(const_cast<Space&>(h)), free_reset(home.ssa->free), hi(0) {}
+  Region::Region(const Space& h) 
+    : home(const_cast<Space&>(h)), free_reset(home.sra->free), hi(0) {}
 
   forceinline void*
-  Scratch::ralloc(size_t s) {
+  Region::ralloc(size_t s) {
     void* p;
-    if (home.ssa->alloc(s,p))
+    if (home.sra->alloc(s,p))
       return p;
     return heap_alloc(s);
   }
 
   forceinline void
-  Scratch::rfree(void*, size_t) {}
+  Region::rfree(void*, size_t) {}
 
   forceinline
-  Scratch::~Scratch(void) {
-    home.ssa->free = free_reset;
+  Region::~Region(void) {
+    home.sra->free = free_reset;
     if (hi != NULL)
       heap_free();
   }
@@ -180,7 +180,7 @@ namespace Gecode {
    */
   template <class T>
   forceinline T*
-  Scratch::alloc(unsigned int n) {
+  Region::alloc(unsigned int n) {
     T* p = static_cast<T*>(ralloc(sizeof(T)*n));
     for (unsigned int i=n; i--; )
       (void) new (p+i) T();
@@ -189,7 +189,7 @@ namespace Gecode {
 
   template <class T>
   forceinline void
-  Scratch::free(T* b, unsigned int n) {
+  Region::free(T* b, unsigned int n) {
     for (unsigned int i=n; i--; )
       b[i].~T();
     rfree(b,n*sizeof(T));
@@ -197,7 +197,7 @@ namespace Gecode {
 
   template <class T>
   forceinline T*
-  Scratch::realloc(T* b, unsigned int n, unsigned int m) {
+  Region::realloc(T* b, unsigned int n, unsigned int m) {
     if (n < m) {
       T* p = static_cast<T*>(ralloc(sizeof(T)*m));
       for (unsigned int i=n; i--; )

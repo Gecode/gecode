@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void*
-  Scratch::heap_alloc(size_t s) {
+  Region::heap_alloc(size_t s) {
     void* p = heap.ralloc(s);
     if (hi == NULL) {
       hi = p;
@@ -68,7 +68,7 @@ namespace Gecode {
   }
 
   void
-  Scratch::heap_free(void) {
+  Region::heap_free(void) {
     assert(hi != NULL);
     if (Support::marked(hi)) {
       HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
