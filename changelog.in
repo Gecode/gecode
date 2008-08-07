@@ -76,11 +76,11 @@ Rank:   major
 [DESCRIPTION]
 Now everything is passed as reference (Space, Propagator,
 Advisor, Branching, and BranchingDesc). The reason for this
-massive changes is to be more C++ and make it consistent (at some
+massive change is to be more C++ and make it consistent (at some
 places things were passed as references and at other places as
 pointers, for no obvious and explainable reason). Routines that
 create objects rather than pass them (such as copy, clone, or
-decsription) still return a pointer to an object (so that it can
+description) still return a pointer to an object (so that it can
 actually be deleted!).
 
 You will have to rewrite your models and other programs using
