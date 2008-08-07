@@ -245,26 +245,26 @@ public:
 
     const int nn = n*n;
 
-    Scratch s(*this);
-    IntSet* row = s.alloc<IntSet>(nn);
-    IntSet* col = s.alloc<IntSet>(nn);
-    IntSet* block = s.alloc<IntSet>(nn);
+    Region r(*this);
+    IntSet* row = r.alloc<IntSet>(nn);
+    IntSet* col = r.alloc<IntSet>(nn);
+    IntSet* block = r.alloc<IntSet>(nn);
 
     // Set up the row and column set constants
+    int* dsc = r.alloc<int>(nn);
     for (int i=0; i<nn; i++) {
       row[i] = IntSet((i*nn)+1, (i+1)*nn);
 
-      int* dsc = s.alloc<int>(nn);
       for (int j=0; j<nn; j++) {
         dsc[j] = (j*nn)+1+i;
       }
-      col[i] = IntSet (dsc, nn);
+      col[i] = IntSet(dsc, nn);
     }
 
     // Set up the block set constants
+    int* dsb_arr = r.alloc<int>(nn);
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        int* dsb_arr = s.alloc<int>(nn);
         
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {
@@ -365,26 +365,26 @@ public:
     for (int i=0; i<nn; i++)
       cardinality(*this, y[i], nn);
 
-    Scratch s(*this);
-    IntSet* row = s.alloc<IntSet>(nn);
-    IntSet* col = s.alloc<IntSet>(nn);
-    IntSet* block = s.alloc<IntSet>(nn);
+    Region r(*this);
+    IntSet* row = r.alloc<IntSet>(nn);
+    IntSet* col = r.alloc<IntSet>(nn);
+    IntSet* block = r.alloc<IntSet>(nn);
 
     // Set up the row and column set constants
+    int* dsc = r.alloc<int>(nn);
     for (int i=0; i<nn; i++) {
       row[i] = IntSet((i*nn)+1, (i+1)*nn);
 
-      int* dsc = s.alloc<int>(nn);
       for (int j=0; j<nn; j++) {
         dsc[j] = (j*nn)+1+i;
       }
-      col[i] = IntSet (dsc, nn);
+      col[i] = IntSet(dsc, nn);
     }
 
     // Set up the block set constants
+    int* dsb_arr = r.alloc<int>(nn);
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        int* dsb_arr = s.alloc<int>(nn);
         
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {
