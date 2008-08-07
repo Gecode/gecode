@@ -72,13 +72,21 @@ namespace Gecode { namespace Support {
     T& last(void) const;
     /// Push element \a x on top of stack
     void push(const T& x);
-
+  private:
+    /// Allocate memory from heap (disabled)
+    static void* operator new(size_t s) throw() { (void) s; return NULL; }
+    /// Free memory allocated from heap (disabled)
+    static void  operator delete(void* p) { (void) p; };
+    /// Copy constructor (disabled)
+    StaticStack(const StaticStack& s) : a(s.a) {}
+    /// Assignment operator (disabled)
+    const StaticStack& operator=(const StaticStack&) { return *this; }
   };
 
   template <class T, class A>
   forceinline
   StaticStack<T,A>::StaticStack(A& a0, int n0)
-    : a(a0), n(n0), tos(0), stack(a.alloc<T>(n+1)) {}
+    : a(a0), n(n0), tos(0), stack(a.alloc<T>(n)) {}
 
   template <class T, class A>
   forceinline
@@ -101,24 +109,28 @@ namespace Gecode { namespace Support {
   template <class T, class A>
   forceinline T
   StaticStack<T,A>::pop(void) {
+    assert((tos > 0) && (tos <= n));
     return stack[--tos];
   }
 
   template <class T, class A>
   forceinline T&
   StaticStack<T,A>::top(void) const {
+    assert((tos > 0) && (tos <= n));
     return stack[tos-1];
   }
 
   template <class T, class A>
   forceinline T&
   StaticStack<T,A>::last(void) const {
+    assert((tos >= 0) && (tos < n));
     return stack[tos];
   }
 
   template <class T, class A>
   forceinline void
   StaticStack<T,A>::push(const T& x) {
+    assert(tos < n);
     stack[tos++] = x;
   }
 
