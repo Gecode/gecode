@@ -198,8 +198,8 @@ namespace Gecode { namespace MiniModel {
   LinExpr<Var>::post(Space& home, IntRelType irt, 
                      IntConLevel icl, PropKind pk) const {
     Scratch s(home);
-    Int::Linear::Term<VarViewTraits<Var>::View>* ts = 
-      s.alloc<Int::Linear::Term<VarViewTraits<Var>::View> >(n->n);
+    Int::Linear::Term<typename VarViewTraits<Var>::View>* ts = 
+      s.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
     Int::Linear::post(home, ts, i, irt, -c_o, icl, pk);
@@ -210,8 +210,8 @@ namespace Gecode { namespace MiniModel {
   LinExpr<Var>::post(Space& home, IntRelType irt, const BoolVar& b,
                      IntConLevel icl, PropKind pk) const {
     Scratch s(home);
-    Int::Linear::Term<VarViewTraits<Var>::View>* ts = 
-      s.alloc<Int::Linear::Term<VarViewTraits<Var>::View> >(n->n);
+    Int::Linear::Term<typename VarViewTraits<Var>::View>* ts = 
+      s.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
     Int::Linear::post(home, ts, i, irt, -c_o, b, icl, pk);
