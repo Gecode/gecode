@@ -903,7 +903,7 @@ namespace Gecode {
     unsigned int id(void) const;
   protected:
     /// Initialize for particular branching \a b and alternatives \a a
-    BranchingDesc(const Branching* b, const unsigned int a);
+    BranchingDesc(const Branching& b, const unsigned int a);
   public:
     /// Return number of alternatives
     unsigned int alternatives(void) const;
@@ -971,7 +971,7 @@ namespace Gecode {
      * the information provided by the branching description \a d
      * and the alternative \a a.
      */
-    virtual ExecStatus commit(Space& home, const BranchingDesc* d,
+    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a) = 0;
     //@}
     
@@ -980,7 +980,7 @@ namespace Gecode {
     /// Specification for BranchingDesc \a d
     virtual GECODE_KERNEL_EXPORT Reflection::BranchingSpec
     branchingSpec(const Space& home,
-                  Reflection::VarMap& m, const BranchingDesc* d) const;
+                  Reflection::VarMap& m, const BranchingDesc& d) const;
     //@}
   };
 
@@ -1244,7 +1244,7 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT void commit(const BranchingDesc* d, unsigned int a);
+    GECODE_KERNEL_EXPORT void commit(const BranchingDesc& d, unsigned int a);
 
     /**
      * \brief Fail space
@@ -1293,7 +1293,7 @@ namespace Gecode {
     /// Get reflection for BranchingDesc \a d
     GECODE_KERNEL_EXPORT
     Reflection::BranchingSpec branchingSpec(Reflection::VarMap& m,
-                                            const BranchingDesc* d) const;
+                                            const BranchingDesc& d) const;
     //@}
 
     /**
@@ -1852,8 +1852,8 @@ namespace Gecode {
    *
    */
   forceinline
-  BranchingDesc::BranchingDesc(const Branching* b, const unsigned int a)
-    : _id(b->id), _alt(a) {}
+  BranchingDesc::BranchingDesc(const Branching& b, const unsigned int a)
+    : _id(b.id), _alt(a) {}
 
   forceinline unsigned int
   BranchingDesc::alternatives(void) const {

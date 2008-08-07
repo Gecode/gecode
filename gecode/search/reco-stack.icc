@@ -150,7 +150,7 @@ namespace Gecode { namespace Search {
   forceinline void
   ReCoStack::commit(Space* s, int i) const {
     const ReCoNode& n = ds[i];
-    s->commit(n.desc(),n.alt());
+    s->commit(*n.desc(),n.alt());
   }
 
   forceinline int
@@ -197,7 +197,7 @@ namespace Gecode { namespace Search {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
-      s->commit(ds.top().desc(),ds.top().alt());
+      s->commit(*ds.top().desc(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       if (constrain && (mark > ds.entries()-1)) {
         mark = ds.entries()-1;

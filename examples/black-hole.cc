@@ -109,7 +109,7 @@ class BlackHoleBranch : Branching {
     /** Initialize description for branching \a b, number of
      *  alternatives \a a, position \a pos0, and value \a val0.
      */
-    Description(const Branching* b, unsigned int a, int pos0, int val0)
+    Description(const Branching& b, unsigned int a, int pos0, int val0)
       : BranchingDesc(b,a), pos(pos0), val(val0) {}
     /// Report size occupied
     virtual size_t size(void) const {
@@ -147,19 +147,19 @@ public:
   /// Return branching description
   virtual BranchingDesc* description(Space&) {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
-    return new Description(this, 2, pos, val);
+    return new Description(*this, 2, pos, val);
   }
   /// Perform commit for branching description \a d and alternative \a a. 
-  virtual ExecStatus commit(Space& home, const BranchingDesc* d, 
+  virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
                             unsigned int a) {
-    const Description* desc = 
-      static_cast<const Description*>(d);
+    const Description& desc = 
+      static_cast<const Description&>(d);
     pos = val = -1;
     if (a)
-      return me_failed(x[desc->pos].nq(home, desc->val)) 
+      return me_failed(x[desc.pos].nq(home, desc.val)) 
         ? ES_FAILED : ES_OK;
     else 
-      return me_failed(x[desc->pos].eq(home, desc->val)) 
+      return me_failed(x[desc.pos].eq(home, desc.val)) 
         ? ES_FAILED : ES_OK;
   }
   /// Copy branching

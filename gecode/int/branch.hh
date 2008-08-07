@@ -232,7 +232,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Return branching description (of type PosValuesDesc)
     virtual const BranchingDesc* description(Space& home);
     /// Perform commit for branching description \a d and alternative \a a
-    virtual ExecStatus commit(Space& home, const BranchingDesc* d,
+    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a);
     /// Return specification for this branching given a variable map \a m
     virtual Reflection::ActorSpec spec(const Space& home,
@@ -241,7 +241,7 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual Reflection::BranchingSpec
     branchingSpec(const Space& home, 
                   Reflection::VarMap& m,
-                  const BranchingDesc* d) const;
+                  const BranchingDesc& d) const;
     /// Actor type identifier of this branching
     static Support::Symbol ati(void);
     /// Post branching according to specification

@@ -89,7 +89,7 @@ namespace Gecode {
    */
   Reflection::BranchingSpec
   Branching::branchingSpec(const Space&,
-                           Reflection::VarMap&, const BranchingDesc*) const {
+                           Reflection::VarMap&, const BranchingDesc&) const {
     throw Reflection::NoReflectionDefinedException();
   }
 
@@ -177,9 +177,9 @@ namespace Gecode {
   Space::getVars(Reflection::VarMap&, bool) {}
 
   Reflection::BranchingSpec
-  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc* d) const {
+  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc& d) const {
     const Branching* b = b_commit;
-    while ((b != Branching::cast(&a_actors)) && (d->_id != b->id))
+    while ((b != Branching::cast(&a_actors)) && (d._id != b->id))
       b = Branching::cast(b->next());
     if (b == Branching::cast(&a_actors))
       throw SpaceNoBranching();
@@ -317,7 +317,7 @@ namespace Gecode {
 
 
   void
-  Space::commit(const BranchingDesc* d, unsigned int a) {
+  Space::commit(const BranchingDesc& d, unsigned int a) {
     if (failed())
       return;
     /*
@@ -329,7 +329,7 @@ namespace Gecode {
      *
      */
     while ((b_commit != Branching::cast(&a_actors)) && 
-           (d->_id != b_commit->id)) {
+           (d._id != b_commit->id)) {
       Branching* b = b_commit;
       b_commit = Branching::cast(b_commit->next());
       if (b == b_status)
@@ -339,7 +339,7 @@ namespace Gecode {
     }
     if (b_commit == Branching::cast(&a_actors))
       throw SpaceNoBranching();
-    if (a >= d->alternatives())
+    if (a >= d.alternatives())
       throw SpaceIllegalAlternative();
     if (b_commit->commit(*this,d,a) == ES_FAILED)
       fail();

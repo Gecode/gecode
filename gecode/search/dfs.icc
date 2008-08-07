@@ -112,7 +112,7 @@ namespace Gecode {
               const BranchingDesc* desc = rcs.push(cur,c);
               EngineCtrl::push(c,desc);
               commit++;
-              cur->commit(desc,0);
+              cur->commit(*desc,0);
               break;
             }
           default: GECODE_NEVER;

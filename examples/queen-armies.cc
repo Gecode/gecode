@@ -170,7 +170,7 @@ public:
       /** Initialize description for branching \a b, number of
        *  alternatives \a a, position \a pos0, and value \a val0.
        */
-      Description(const Branching* b, unsigned int a, int pos0, bool val0)
+      Description(const Branching& b, unsigned int a, int pos0, bool val0)
         : BranchingDesc(b,a), pos(pos0), val(val0) {}
       /// Report size occupied
       virtual size_t size(void) const {
@@ -209,17 +209,17 @@ public:
     /// Return branching description
     virtual BranchingDesc* description(Space&) {
       assert(pos != -1);
-      return new Description(this, 2, pos, true);
+      return new Description(*this, 2, pos, true);
     }
     /** \brief Perform commit for branching description \a d and
      * alternative \a a.
      */
-    virtual ExecStatus commit(Space& home, const BranchingDesc* d, 
+    virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
                               unsigned int a) {
       QueenArmies& q = static_cast<QueenArmies&>(home);
-      const Description* pvd = static_cast<const Description*>(d);
-      bool val = a == 0 ? pvd->val : !pvd->val;
-      return me_failed(Int::BoolView(q.w[pvd->pos]).eq(q, val))
+      const Description& pvd = static_cast<const Description&>(d);
+      bool val = a == 0 ? pvd.val : !pvd.val;
+      return me_failed(Int::BoolView(q.w[pvd.pos]).eq(q, val))
         ? ES_FAILED
         : ES_OK;
     }
