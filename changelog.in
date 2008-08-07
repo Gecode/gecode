@@ -70,6 +70,13 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The home space is now also passed to the cost function of a propagator.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major
