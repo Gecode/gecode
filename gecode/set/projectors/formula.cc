@@ -110,9 +110,9 @@ namespace Gecode {
     left(NULL), right(NULL), signLeft(0), signRight(0), x(x) {}
 
   forceinline
-  Formula::Node::Node(Node* l, int sL, Operator _r, Node* r, int sR) :
+  Formula::Node::Node(Node* l, int sL, Operator o, Node* r, int sR) :
     use(1),
-    left(l), right(r), signLeft(sL), signRight(sR), r(_r) {
+    left(l), right(r), signLeft(sL), signRight(sR), r(o) {
     if (left != NULL)
       left->increment();
     if (right != NULL)
