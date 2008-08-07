@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     case MORE_CHILDREN:
       for (int i=c.noOfChildren; i--;)
         delete static_cast<VisualNode**>(getPtr())[i];
-      heap.rfree(static_cast<Node**>(getPtr()));
+      heap.free<Node*>(static_cast<Node**>(getPtr()),c.noOfChildren);
     }
   }
     
@@ -132,7 +132,7 @@ namespace Gecode { namespace Gist {
         Node** children = static_cast<Node**>(getPtr());
         for (int i=noOfChildren; i--;)
           newChildren[i] = children[i];
-        heap.rfree(children);
+        heap.free<Node*>(children,noOfChildren);
         childrenOrFirstChild = newChildren;
         setTag(MORE_CHILDREN);
         c.noOfChildren++;

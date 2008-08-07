@@ -76,9 +76,7 @@ namespace Gecode { namespace CpltSet {
   bdd 
   cardeq(Space& home, int offset, int c, int n, int r) {
     Region re(home);
-    bdd* layer = static_cast<bdd*>(re.ralloc(sizeof(bdd)*n));
-    for (int i = n; i--;) 
-      layer[i].init();
+    bdd* layer = re.alloc<bdd>(n);
 
     // build the nodes of the lowest layer
     layer[0] = bdd_true();
@@ -113,11 +111,7 @@ namespace Gecode { namespace CpltSet {
   bdd 
   cardlqgq(Space& home, int offset, int cl, int cr, int n, int r) {
     Region re(home);
-    bdd* layer = static_cast<bdd*>(re.ralloc(sizeof(bdd)*n));
-    // the use of autoarray now requires explicit initialization
-    // otherwise the bdd nodes are not known in the global table
-    for (int i = n; i--;) 
-      layer[i].init();
+    bdd* layer = re.alloc<bdd>(n);
 
     // creates TOP v(c) v(c-1) ... v(c - cl + 1)
     layer[n - cl - 1] = bdd_true();

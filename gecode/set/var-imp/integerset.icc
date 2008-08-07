@@ -98,6 +98,11 @@ namespace Gecode { namespace Set {
     return home.fl_alloc<sizeof(RangeList)>();
   }
 
+  forceinline void*
+  RangeList::operator new(size_t, RangeList* r) {
+    return r;
+  }
+
   forceinline void
   RangeList::dispose(Space& home, RangeList* l) {
     home.fl_dispose<sizeof(RangeList)>(this,l);
@@ -201,7 +206,7 @@ namespace Gecode { namespace Set {
     for (RangeList* c = d.fst(); c != NULL; c = c->next())
       n++;
 
-    RangeList* r = static_cast<RangeList*>(home.ralloc(sizeof(RangeList)*n));
+    RangeList* r = home.alloc<RangeList>(n);
     fst(r); lst(r+n-1);
 
     RangeList* c = d.fst();

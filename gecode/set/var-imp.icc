@@ -138,6 +138,8 @@ namespace Gecode { namespace Set {
     
     /// Allocate memory from space
     static void* operator new(size_t s, Space& home);
+    /// Placement-new operator (noop)
+    static void* operator new(size_t s, RangeList* r);
     /// No-op (for exceptions)
     static void  operator delete(void*);
     /// No-op (use dispose instead)

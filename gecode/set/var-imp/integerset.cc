@@ -46,8 +46,7 @@ namespace Gecode { namespace Set {
       fst(NULL); lst(NULL); _size = 0;
     } else {
       int n = is.size();
-      RangeList* r = 
-        static_cast<RangeList*>(home.ralloc(sizeof(RangeList)*n));
+      RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
       unsigned int s = 0;
       for (int i = n; i--; ) {
@@ -75,7 +74,7 @@ namespace Gecode { namespace Set {
           _size+=(ma-mi+1);
           d._glbMin = mi;
           d._glbMax = ma;
-          RangeList* q=new (home) RangeList(mi,ma,c);
+          RangeList* q = new (home) RangeList(mi,ma,c);
           if (p==NULL)
             //the new range is the first
             fst(q);

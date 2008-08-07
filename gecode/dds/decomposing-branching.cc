@@ -33,10 +33,8 @@ namespace Gecode { namespace Decomposition {
 
   void
   Partition::init(int noOfElements, int noOfComponents) {
-    elements = 
-      static_cast<int*>(heap.ralloc(sizeof(int)*noOfElements));
-    separators =
-      static_cast<int*>(heap.ralloc(sizeof(int)*noOfComponents));
+    elements = heap.alloc<int>(noOfElements);
+    separators = heap.alloc<int>(noOfComponents);
     _size = noOfComponents;
   }
 

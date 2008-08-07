@@ -42,7 +42,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class View>
   forceinline IdxView<View>*
   IdxView<View>::allocate(Space& home, int n) {
-    return static_cast<IdxView<View>*>(home.ralloc(sizeof(IdxView<View>)*n));
+    return home.alloc<IdxView<View> >(n);
   }
 
   template <class View>
