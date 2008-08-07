@@ -58,11 +58,11 @@ namespace Gecode { namespace Reflection {
     Support::PtrMap<void,int>    sharedObjectMap;
 
     /// Map indices to variable implementations
-    Support::DynamicArray<VarImpBase*>  vars;
+    Support::DynamicArray<VarImpBase*,Heap>  vars;
     /// Map indices to variable specifications
-    Support::DynamicArray<VarSpec*>  specs;
+    Support::DynamicArray<VarSpec*,Heap>  specs;
     /// Map indices to shared objects
-    Support::DynamicArray<void*>     sharedObjects;
+    Support::DynamicArray<void*,Heap>     sharedObjects;
 
     /// Number of variable indices in use
     int n;
@@ -73,7 +73,9 @@ namespace Gecode { namespace Reflection {
     int r;
   };
 
-  VarMap::VarMapObj::VarMapObj(void) : n(0), so(0), r(1) {}
+  VarMap::VarMapObj::VarMapObj(void) 
+    : vars(heap), specs(heap), sharedObjects(heap),
+      n(0), so(0), r(1) {}
 
   VarMap::VarMap(void) : vo(new VarMapObj()) {}
 

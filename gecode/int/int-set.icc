@@ -47,7 +47,7 @@ namespace Gecode {
   template <class I>
   IntSet::IntSet(I& i) {
     Iter::Ranges::IsRangeIter<I>();
-    Support::DynamicArray<Range> d;
+    Support::DynamicArray<Range,Heap> d(heap);
     int n=0;
     while (i()) {
       d[n].min = i.min(); d[n].max = i.max();

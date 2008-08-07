@@ -93,7 +93,7 @@ namespace Gecode { namespace Iter { namespace Values {
   template <class I>
   inline void
   Minus<I>::init(I& i) {
-    Support::DynamicArray<int> d;
+    Support::DynamicArray<int,Heap> d(heap);
     int n=0;
     while (i()) {
       d[n] = -i.val();

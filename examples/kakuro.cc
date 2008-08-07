@@ -413,7 +413,7 @@ namespace {
       ts[i].symbol = 0;
     ts[0].i_state = 0;
     // Record all transitions in \a ts_all
-    Support::DynamicArray<DFA::Transition> ts_all;
+    Support::DynamicArray<DFA::Transition,Heap> ts_all(heap);
     int ts_next = 0;
     int n_state = 2;
     while (DistinctLinear* s = d.next()) {

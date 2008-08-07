@@ -81,7 +81,7 @@ namespace Gecode {
     class Stream {
     private:
       /// Instruction stream
-      Support::DynamicArray<int> is;
+      Support::DynamicArray<int,Heap> is;
       /// Current instruction
       int n;
     public:
@@ -197,7 +197,7 @@ namespace Gecode {
     Projector(SetExpr::var_idx x, const SetExpr& sglb, const SetExpr& slub);
 
     /// Returns the scope of the projector
-    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>& scope) const;
+    GECODE_SET_EXPORT void scope(Support::DynamicArray<int,Heap>& scope) const;
 
     /// Returns the arity of the projector
     GECODE_SET_EXPORT int arity(void) const;
@@ -254,7 +254,7 @@ namespace Gecode {
     int arity(void) const;
 
     /// Returns the scope of the projector set
-    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>& scope,
+    GECODE_SET_EXPORT void scope(Support::DynamicArray<int,Heap>& scope,
                                  unsigned int size) const;
     
     /// Propagate the set

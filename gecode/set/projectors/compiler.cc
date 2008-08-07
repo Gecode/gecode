@@ -283,7 +283,7 @@ namespace Gecode {
     iccos << " {" << endl;
       
     int projArity = spec._ps.arity();
-    Support::DynamicArray<int> scope;
+    Support::DynamicArray<int,Heap> scope(heap);
     spec._ps.scope(scope, projArity);
     bool isNary = nary();
 

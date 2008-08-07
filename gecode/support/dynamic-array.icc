@@ -44,9 +44,11 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T>
+  template <class T, class A>
   class DynamicArray {
   private:
+    /// Memory allocator
+    A& a;
     /// Size of array
     int n;
     /// Array elements
@@ -54,15 +56,15 @@ namespace Gecode { namespace Support {
     /// Resize to at least \a n + 1 elements
     void resize(int n);
   public:
-    /// Initialize with size \a m
-    DynamicArray(int m = 32);
-    /// Copy elements from array \a a
-    DynamicArray(const DynamicArray<T>& a);
+    /// Initialize with size \a n
+    DynamicArray(A& a0, int n = 32);
+    /// Copy elements from array \a da
+    DynamicArray(const DynamicArray<T,A>& da);
     /// Release memory
     ~DynamicArray(void);
 
     /// Assign array (copy elements from \a a)
-    const DynamicArray<T>& operator =(const DynamicArray<T>& a);
+    const DynamicArray<T,A>& operator =(const DynamicArray<T,A>& da);
 
     /// Return element at position \a i (possibly resize)
     T& operator[](int i);
@@ -74,62 +76,62 @@ namespace Gecode { namespace Support {
   };
 
 
-  template <class T>
+  template <class T, class A>
   forceinline
-  DynamicArray<T>::DynamicArray(int m)
-    : n(m), x(heap.alloc<T>(static_cast<size_t>(n))) {}
+  DynamicArray<T,A>::DynamicArray(A& a0, int n0)
+    : a(a0), n(n0), x(a.alloc<T>(n)) {}
 
-  template <class T>
+  template <class T, class A>
   forceinline
-  DynamicArray<T>::DynamicArray(const DynamicArray<T>& a)
-    : n(a.n), x(heap.alloc<T>(n)) {
-    (void) heap.copy<T>(x,a.x,n);
+  DynamicArray<T,A>::DynamicArray(const DynamicArray<T,A>& da)
+    : a(da.a), n(da.n), x(a.alloc<T>(n)) {
+    (void) heap.copy<T>(x,da.x,n);
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline
-  DynamicArray<T>::~DynamicArray(void) {
-    heap.free(x,n);
+  DynamicArray<T,A>::~DynamicArray(void) {
+    a.free(x,n);
   }
 
-  template <class T>
-  forceinline const DynamicArray<T>&
-  DynamicArray<T>::operator =(const DynamicArray<T>& a) {
-    if (this != &a) {
-      if (n < a.n) {
-        heap.free(x,n); n = a.n; x = heap.alloc<T>(n);
+  template <class T, class A>
+  forceinline const DynamicArray<T,A>&
+  DynamicArray<T,A>::operator =(const DynamicArray<T,A>& da) {
+    if (this != &da) {
+      if (n < da.n) {
+        a.free(x,n); n = da.n; x = a.alloc<T>(n);
       }
-      (void) heap.copy(x,a.x,n);
+      (void) heap.copy(x,da.x,n);
     }
     return *this;
   }
 
-  template <class T>
+  template <class T, class A>
   void
-  DynamicArray<T>::resize(int i) {
+  DynamicArray<T,A>::resize(int i) {
     int m = std::max(i+1, (3*n)/2);
-    x = heap.realloc(x,static_cast<size_t>(n),static_cast<size_t>(m));
+    x = a.realloc(x,n,m);
     n = m;
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline T&
-  DynamicArray<T>::operator [](int i) {
+  DynamicArray<T,A>::operator [](int i) {
     if (i >= n) resize(i);
     assert(n > i);
     return x[i];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline const T&
-  DynamicArray<T>::operator [](int i) const {
+  DynamicArray<T,A>::operator [](int i) const {
     assert(n > i);
     return x[i];
   }
 
-  template <class T>
+  template <class T, class A>
   forceinline
-  DynamicArray<T>::operator T*(void) {
+  DynamicArray<T,A>::operator T*(void) {
     return x;
   }
 

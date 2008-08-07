@@ -48,7 +48,7 @@ namespace Gecode {
   }
 
   void
-  ProjectorSet::scope(Support::DynamicArray<int>& s,
+  ProjectorSet::scope(Support::DynamicArray<int,Heap>& s,
                       unsigned int size) const {
     // Clear out s
     for (int i=std::max((unsigned)_arity+1, size); i--;)

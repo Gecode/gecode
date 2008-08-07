@@ -43,7 +43,7 @@ namespace Gecode { namespace Set { namespace Projection {
   (Space& home, ViewArray<SetView>& x0, ProjectorSet& ps0)
     : Propagator(home), x(x0), pc(x.size()), ps(ps0) {
     force(home);
-    Support::DynamicArray<int> scope;
+    Support::DynamicArray<int,Heap> scope(heap);
     ps.scope(scope, x.size());
     for (int i=x.size(); i--;) {
       pc[i] = scope[i];

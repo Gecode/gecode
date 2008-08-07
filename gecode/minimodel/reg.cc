@@ -674,7 +674,7 @@ namespace Gecode {
      */
     class TransitionBag {
     private:
-      Support::DynamicArray<DFA::Transition> t;
+      Support::DynamicArray<DFA::Transition,Heap> t;
       int n;
     public:
       TransitionBag(void);
@@ -684,7 +684,7 @@ namespace Gecode {
     };
 
     forceinline
-    TransitionBag::TransitionBag(void) : n(0) {}
+    TransitionBag::TransitionBag(void) : t(heap), n(0) {}
 
     forceinline void
     TransitionBag::add(int i_state, int symbol, int o_state) {
@@ -711,7 +711,7 @@ namespace Gecode {
      */
     class FinalBag {
     private:
-      Support::DynamicArray<int> f;
+      Support::DynamicArray<int,Heap> f;
       int n;
     public:
       FinalBag(void);
@@ -721,7 +721,7 @@ namespace Gecode {
     };
 
     forceinline
-    FinalBag::FinalBag(void) : n(0) {}
+    FinalBag::FinalBag(void) : f(heap), n(0) {}
 
     forceinline void
     FinalBag::add(int state) {

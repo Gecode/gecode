@@ -291,7 +291,7 @@ namespace Gecode { namespace CpltSet {
 
   // mark all nodes in the dqueue
   void
-  extcache_mark(Support::DynamicArray<bdd>& nodes, 
+  extcache_mark(Support::DynamicArray<bdd,Heap>& nodes, 
                 int n, int& l, int& r, int& markref) {
     // the left side
     if (l > 0) {
@@ -315,7 +315,7 @@ namespace Gecode { namespace CpltSet {
 
   // unmark all nodes in the dqueue
   void
-  extcache_unmark(Support::DynamicArray<bdd>& nodes, 
+  extcache_unmark(Support::DynamicArray<bdd,Heap>& nodes, 
                   int n, int& l, int& r, int& markref) {
     if (l > 0) {
       for (int i = 0; i < l; i++) {
@@ -340,7 +340,7 @@ namespace Gecode { namespace CpltSet {
   void 
   extcardbounds(int& markref, bdd&, int& n, int& l, int& r,
                 bool& singleton, int& _level, 
-                Support::DynamicArray<bdd>& nodes, 
+                Support::DynamicArray<bdd,Heap>& nodes, 
                 int& curmin, int& curmax) {
     bdd cur = bdd_true();
   
@@ -629,7 +629,7 @@ namespace Gecode { namespace CpltSet {
     int r       = csize - 1;
     bool singleton = (csize == 1);
     int _level = -1;
-    Support::DynamicArray<bdd> nodes(csize);
+    Support::DynamicArray<bdd,Heap> nodes(heap,csize);
     
     // the given ROBDD c has internal nodes
     if (!manager.leaf(c)) {

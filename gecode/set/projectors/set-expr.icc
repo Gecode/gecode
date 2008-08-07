@@ -47,7 +47,7 @@ namespace Gecode {
    */
 
   forceinline
-  SetExprCode::Stream::Stream(void) : n(0) {}
+  SetExprCode::Stream::Stream(void) : is(heap), n(0) {}
 
   forceinline void 
   SetExprCode::Stream::add(int i) {

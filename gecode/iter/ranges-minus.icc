@@ -102,7 +102,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I>
   inline void
   Minus<I>::init(I& i) {
-    Support::DynamicArray<Range> d;
+    Support::DynamicArray<Range,Heap> d(heap);
     int n=0;
     while (i()) {
       d[n].min = -i.max(); d[n].max = -i.min();

@@ -52,7 +52,7 @@ protected:
   IntVarArray x;
 public:
   /// Type definition as abbreviation
-  typedef Support::DynamicArray<DFA::Transition> Transitions;
+  typedef Support::DynamicArray<DFA::Transition,Heap> Transitions;
   /// Create all states for permutation of symbols
   void
   permute(int i_state, int i, int n, int p,
@@ -80,7 +80,7 @@ public:
   /// Construct a distinct %DFA for \a n values
   DFA
   construct(int n) {
-    Transitions t;
+    Transitions t(heap);
     int n_t     = 0;
     int n_state = 1;
     permute(0,0,n,0,t,n_t,n_state);

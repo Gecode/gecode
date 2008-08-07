@@ -44,7 +44,7 @@ namespace Gecode {
     return _arity;
   }
 
-  void codeScope(Support::DynamicArray<int>& s, const SetExprCode& c,
+  void codeScope(Support::DynamicArray<int,Heap>& s, const SetExprCode& c,
                  bool monotone) {
     int tmp = 0;
     for (int i=0; i<c.size(); i++) {
@@ -79,7 +79,7 @@ namespace Gecode {
   }
 
   void
-  Projector::scope(Support::DynamicArray<int>& s) const {
+  Projector::scope(Support::DynamicArray<int,Heap>& s) const {
     codeScope(s, glb, false);
     codeScope(s, lub, true);
   }

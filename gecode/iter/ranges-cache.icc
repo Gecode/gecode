@@ -101,7 +101,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I>
   inline void
   Cache<I>::init(I& i) {
-    Support::DynamicArray<Range> d;
+    Support::DynamicArray<Range,Heap> d(heap);
     int n=0;
     while (i()) {
       d[n].min = i.min(); d[n].max = i.max();
@@ -232,7 +232,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I>
   inline void
   ValCache<I>::init(I& i) {
-    Support::DynamicArray<int> d;
+    Support::DynamicArray<int,Heap> d(heap);
     int j = 0;
     s = 0;
     while (i()) {
