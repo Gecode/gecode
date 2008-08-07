@@ -37,37 +37,38 @@
 
 namespace Gecode { namespace Int {
 
-  template<class View>
+  template<class View, class A>
   forceinline void
-  SupportValues<View>::set(unsigned int i) {
+  SupportValues<View,A>::set(unsigned int i) {
     unsigned int p = i / bpui;
     bits[p] |= 1 << (i-p*bpui);
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline bool
-  SupportValues<View>::bit(unsigned int i) const {
+  SupportValues<View,A>::bit(unsigned int i) const {
     unsigned int p = i / bpui;
     return (bits[p] & (1 << (i-p*bpui))) != 0;
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline void
-  SupportValues<View>::reset(void) {
+  SupportValues<View,A>::reset(void) {
     rp = rp_fst; v = rp->min;
     max = rp->min + static_cast<int>((rp+1)->pos - rp->pos) - 1;
   }
   
-  template<class View>
+  template<class View, class A>
   inline
-  SupportValues<View>::SupportValues(View x0) : x(x0) {
-    bits = heap.alloc<unsigned int>((x.size() / bpui) + 1);
+  SupportValues<View,A>::SupportValues(A& a0, View x0) 
+    : a(a0), x(x0), sz((x.size() / bpui) + 1), 
+      bits(a.alloc<unsigned int>(sz)) {
     for (unsigned int i = (x.size() / bpui) + 1; i--; )
       bits[i] = 0;
     unsigned int n = 0;
     for (ViewRanges<View> r(x); r(); ++r)
       n++;
-    rp_fst = heap.alloc<RangePos>(n+1);
+    rp_fst = a.alloc<RangePos>(n+1);
     rp_lst = rp_fst + n;
     unsigned int p = 0;
     int i = 0;
@@ -80,16 +81,16 @@ namespace Gecode { namespace Int {
     reset();
   }
   
-  template<class View>
+  template<class View, class A>
   inline
-  SupportValues<View>::~SupportValues(void) {
-    heap.rfree(bits);
-    heap.rfree(rp_fst);
+  SupportValues<View,A>::~SupportValues(void) {
+    a.free(bits,sz);
+    a.free(rp_fst,rp_lst-rp_fst+1);
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline void
-  SupportValues<View>::operator++(void) {
+  SupportValues<View,A>::operator++(void) {
     if (++v > max)
       if (++rp < rp_lst) {
         v = rp->min;
@@ -97,27 +98,27 @@ namespace Gecode { namespace Int {
       }
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline bool
-  SupportValues<View>::operator()(void) const {
+  SupportValues<View,A>::operator()(void) const {
     return rp < rp_lst;
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline int
-  SupportValues<View>::val(void) const {
+  SupportValues<View,A>::val(void) const {
     return v;
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline void
-  SupportValues<View>::support(void) {
+  SupportValues<View,A>::support(void) {
     set(rp->pos + static_cast<unsigned int>(v-rp->min));
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline bool
-  SupportValues<View>::_support(int n) {
+  SupportValues<View,A>::_support(int n) {
     RangePos* l = rp_fst;
     RangePos* r = rp_lst-1;
     while (true) {
@@ -138,25 +139,25 @@ namespace Gecode { namespace Int {
     return false;
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline bool
-  SupportValues<View>::support(int n) {
+  SupportValues<View,A>::support(int n) {
     if ((n < x.min()) || (n > x.max()))
       return false;
     return _support(n);
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline bool
-  SupportValues<View>::support(double n) {
+  SupportValues<View,A>::support(double n) {
     if ((n < x.min()) || (n > x.max()))
       return false;
     return _support(static_cast<int>(n));
   }
   
-  template<class View>
+  template<class View, class A>
   forceinline void
-  SupportValues<View>::Unsupported::find(void) {
+  SupportValues<View,A>::Unsupported::find(void) {
     // Skip all supported positions
     while ((p < sv.x.size()) && sv.bit(p))
       p++;
@@ -165,34 +166,34 @@ namespace Gecode { namespace Int {
       rp++;
   }
 
-  template<class View>
+  template<class View, class A>
   forceinline
-  SupportValues<View>::Unsupported::Unsupported(SupportValues& sv0) 
+  SupportValues<View,A>::Unsupported::Unsupported(SupportValues& sv0) 
     : rp(sv0.rp_fst), p(0), sv(sv0) {
     find();
   }
 
-  template<class View>
+  template<class View, class A>
   forceinline void
-  SupportValues<View>::Unsupported::operator++(void) {
+  SupportValues<View,A>::Unsupported::operator++(void) {
     p++; find();
   }
 
-  template<class View>
+  template<class View, class A>
   forceinline bool
-  SupportValues<View>::Unsupported::operator()(void) const {
+  SupportValues<View,A>::Unsupported::operator()(void) const {
     return rp < sv.rp_lst;
   }
 
-  template<class View>
+  template<class View, class A>
   forceinline int
-  SupportValues<View>::Unsupported::val(void) const {
+  SupportValues<View,A>::Unsupported::val(void) const {
     return rp->min+(p-rp->pos);
   }
     
-  template<class View>
+  template<class View, class A>
   inline ModEvent
-  SupportValues<View>::tell(Space& home) {
+  SupportValues<View,A>::tell(Space& home) {
     Unsupported u(*this);
     return x.minus_v(home,u,false);
   }

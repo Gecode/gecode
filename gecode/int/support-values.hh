@@ -48,9 +48,11 @@ namespace Gecode { namespace Int {
    * Requires \code #include "gecode/int/support-values.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
+  template<class View, class A>
   class SupportValues {
   private:
+    /// Memory allocator
+    A& a;
     /// Number of bits per unsigned integer
     static const unsigned int bpui = sizeof(unsigned int) * 8;
     /// Range and position information
@@ -94,6 +96,8 @@ namespace Gecode { namespace Int {
     
     /// The view
     View x;
+    /// Size of bitarray
+    unsigned int sz;
     /// Array of bits
     unsigned int* bits;
     /// Start of range and position information
@@ -115,7 +119,7 @@ namespace Gecode { namespace Int {
     bool _support(int n);
   public:
     /// Initialize for view \a x
-    SupportValues(View x);
+    SupportValues(A& a, View x);
     /// Destructor
     ~SupportValues(void);
     

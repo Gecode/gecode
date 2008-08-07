@@ -53,9 +53,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Array of bits
     unsigned int* bits;
   public:
-    /// Initialize support set with cardinality \arg n
-    void init(unsigned int n);
-    /// Record that there is support at position \arg i
+    /// Initialize support set with cardinality \a n
+    void init(Region& r, unsigned int n);
+    /// Record that there is support at position \a i
     void support(unsigned int i);
     /// Check whether position \arg i has support
     bool supported(unsigned int i) const;
@@ -78,8 +78,6 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Perform tell according to recorded support information on \arg x
     ModEvent tell(Space& home, IntView& x) const;
-    /// Release memory
-    void dispose(void);
   };
 
   /**
@@ -105,13 +103,11 @@ namespace Gecode { namespace Int { namespace Linear {
     Val           u;
   public:
     /// Initialize view
-    void init(int a, const IntView& x, Val l, Val u);
+    void init(Region& r, int a, const IntView& x, Val l, Val u);
     /// Record value at current position as supported
     void support(void);
     /// Tell back new variable domain according to support found
     ModEvent tell(Space& home);
-    /// Finalize memory for support set
-    void dispose(void);
   };
 
 
@@ -170,9 +166,9 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   forceinline void
-  SupportSet::init(unsigned int n0) {
+  SupportSet::init(Region& r, unsigned int n0) {
     n = n0;
-    bits = heap.alloc<unsigned int>((n / bpui) + 1);
+    bits = r.alloc<unsigned int>((n / bpui) + 1);
     for (unsigned int i = (n / bpui) + 1; i--; )
       bits[i] = 0;
   }
@@ -227,11 +223,6 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
-  forceinline void
-  SupportSet::dispose(void) {
-    heap.free(bits,n);
-  }
-
 
   /*
    * Base-class for support-based iterator
@@ -239,9 +230,10 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val>
   forceinline void
-  SupportIter<Val>::init(int a0, const IntView& x0, Val l0, Val u0) {
+  SupportIter<Val>::init(Region& r, 
+                         int a0, const IntView& x0, Val l0, Val u0) {
     a=a0; x=x0; l=l0; u=u0;
-    s.init(x.size());
+    s.init(r,x.size());
   }
   template <class Val>
   forceinline void
@@ -252,11 +244,6 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline ModEvent
   SupportIter<Val>::tell(Space& home) {
     return s.tell(home,x);
-  }
-  template <class Val>
-  forceinline void
-  SupportIter<Val>::dispose(void) {
-    s.dispose();
   }
 
 
@@ -462,11 +449,11 @@ namespace Gecode { namespace Int { namespace Linear {
       Val l = 0;
       Val u = 0;
       for (int j=m; j--; ) {
-        yp[j].init(-y[j].scale(),y[j].base(),l,u);
+        yp[j].init(r,-y[j].scale(),y[j].base(),l,u);
         l += y[j].max(); u += y[j].min();
       }
       for (int i=n; i--; ) {
-        xp[i].init(x[i].scale(),x[i].base(),l,u);
+        xp[i].init(r,x[i].scale(),x[i].base(),l,u);
         l -= x[i].min(); u -= x[i].max();
       }
     }
@@ -510,32 +497,20 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     // Tell back new variable domains
-    ExecStatus es = ES_NOFIX;
+    bool assigned = true;
     for (int i=n; i--; ) {
-      ModEvent me = xp[i].tell(home);
-      if (me_failed(me)) {
-        es = ES_FAILED; goto dispose;
-      }
+      GECODE_ME_CHECK(xp[i].tell(home));
       if (!x[i].assigned())
-        es = ES_FIX;
+        assigned = false;
     }
     for (int j=m; j--; ) {
-      ModEvent me = yp[j].tell(home);
-      if (me_failed(me)) {
-        es = ES_FAILED; goto dispose;
-      }
+      GECODE_ME_CHECK(yp[j].tell(home));
       if (!y[j].assigned())
-        es = ES_FIX;
+        assigned = false;
     }
-
-    // Release memory
-  dispose:
-    for (int i=n; i--; ) xp[i].dispose();
-    for (int j=m; j--; ) yp[j].dispose();
-
-    if (es == ES_NOFIX)
+    if (assigned)
       return ES_SUBSUMED(*this,sizeof(*this));
-    return es;
+    return ES_FIX;
   }
 
 }}}
