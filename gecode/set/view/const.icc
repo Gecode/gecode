@@ -243,7 +243,7 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  ConstantView::me(ModEventDelta) {
+  ConstantView::me(const ModEventDelta&) {
     return ME_SET_NONE;
   }
   forceinline ModEventDelta
@@ -449,7 +449,7 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  EmptyView::me(ModEventDelta) {
+  EmptyView::me(const ModEventDelta&) {
     return ME_SET_NONE;
   }
   forceinline ModEventDelta
@@ -635,7 +635,7 @@ namespace Gecode { namespace Set {
     return SetView::schedule(home,p,me);
   }
   forceinline ModEvent
-  UniverseView::me(ModEventDelta) {
+  UniverseView::me(const ModEventDelta&) {
     return ME_SET_NONE;
   }
   forceinline ModEventDelta

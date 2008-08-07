@@ -212,7 +212,7 @@ namespace Gecode {
     hhos << indent
          << "  /// Cost function (defined as " << propcost() << ")" 
          << endl << indent
-         << "  virtual PropCost cost(ModEventDelta med) const;" << endl;
+         << "  virtual PropCost cost(const ModEventDelta& med) const;" << endl;
 
     hhos << indent
          << "  /// Delete propagator and return its size"
@@ -224,7 +224,7 @@ namespace Gecode {
          << "  virtual Actor*      copy(Space& home,bool);" << endl
          << endl << indent
          << "  /// Perform propagation" << endl << indent
-         << "  virtual ExecStatus propagate(Space& home, ModEventDelta med);" << endl
+         << "  virtual ExecStatus propagate(Space& home, const ModEventDelta& med);" << endl
          << endl << indent
          << "  /// Post projection propagator" << endl << indent
          << "  static  ExecStatus post(Space& home, ";
@@ -421,7 +421,7 @@ namespace Gecode {
           << "PropCost" << endl << indent
           << spec._name;
     templateparams();
-    iccos << "::cost(ModEventDelta) const {" << endl << indent
+    iccos << "::cost(const ModEventDelta&) const {" << endl << indent
           << "  return " << propcost() << ";" << endl << indent
           << "}" << endl;
     ///////////////////////////////////////////////////
@@ -765,7 +765,7 @@ namespace Gecode {
     templatehead(iccos);
     iccos << indent << "ExecStatus" << endl << indent << spec._name;
     templateparams();
-    iccos << "::propagate(Space& home, ModEventDelta) {" << endl;
+    iccos << "::propagate(Space& home, const ModEventDelta&) {" << endl;
     ++indent;
 
     if (spec._negated && ! spec._reified) {

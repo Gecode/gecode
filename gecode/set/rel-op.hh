@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z \supseteq x \cap y\f$ 
     static  ExecStatus  post(Space& home, View0 x, View1 y, View2 z);
     /// Specification for this propagator
@@ -118,7 +118,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z \subseteq x \cap y\f$ 
     static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
@@ -157,7 +157,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z=x\cap y\f$ 
     static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
@@ -195,7 +195,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z=x\cup y\f$
     static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
     /// Specification for this propagator
@@ -231,11 +231,11 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for posting
     IntersectionN(Space& home,ViewArray<View0>&, const IntSet&, View1);
   public:
-    virtual PropCost    cost(ModEventDelta med) const;
+    virtual PropCost    cost(const ModEventDelta& med) const;
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x = \bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
     static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\cap\bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
@@ -277,8 +277,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
-    virtual PropCost    cost(ModEventDelta med) const;
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual PropCost    cost(const ModEventDelta& med) const;
     /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
     static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
@@ -321,8 +321,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
-    virtual PropCost    cost(ModEventDelta med) const;
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual PropCost    cost(const ModEventDelta& med) const;
     /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$ 
     static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$ 

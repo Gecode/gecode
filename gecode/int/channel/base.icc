@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class Info, PropCond pc>
   PropCost
-  Base<Info,pc>::cost(ModEventDelta) const {
+  Base<Info,pc>::cost(const ModEventDelta&) const {
     return PC_QUADRATIC_LO;
   }
 

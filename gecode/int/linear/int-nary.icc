@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, PropCond pc>
   PropCost
-  Lin<Val,P,N,pc>::cost(ModEventDelta) const {
+  Lin<Val,P,N,pc>::cost(const ModEventDelta&) const {
     return cost_lo(x.size() + y.size(), PC_LINEAR_LO);
   }
 
@@ -427,7 +427,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Eq<Val,P,N>::propagate(Space& home, ModEventDelta med) {
+  Eq<Val,P,N>::propagate(Space& home, const ModEventDelta& med) {
     return prop_bnd<Val,P,N>(home,med,*this,x,y,c);
   }
 
@@ -495,7 +495,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::propagate(Space& home, ModEventDelta med) {
+  ReEq<Val,P,N,Ctrl>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero())
       GECODE_REWRITE(*this,(Nq<Val,P,N>::post(home,x,y,c)));
     if (b.one())
@@ -668,7 +668,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Nq<Val,P,N>::propagate(Space& home, ModEventDelta) {
+  Nq<Val,P,N>::propagate(Space& home, const ModEventDelta&) {
     for (int i = x.size(); i--; )
       if (x[i].assigned()) {
         c -= x[i].val();  x.move_lst(i);
@@ -840,7 +840,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  Lq<Val,P,N>::propagate(Space& home, ModEventDelta med) {
+  Lq<Val,P,N>::propagate(Space& home, const ModEventDelta& med) {
     // Eliminate singletons
     Val sl = 0;
 
@@ -973,7 +973,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N>
   ExecStatus
-  ReLq<Val,P,N>::propagate(Space& home, ModEventDelta med) {
+  ReLq<Val,P,N>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero())
       GECODE_REWRITE(*this,(Lq<Val,N,P>::post(home,y,x,-c-1)));
     if (b.one())

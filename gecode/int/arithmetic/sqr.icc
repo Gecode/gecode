@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class VA, class VB>
   ExecStatus
-  SqrPlusBnd<VA,VB>::propagate(Space& home, ModEventDelta) {
+  SqrPlusBnd<VA,VB>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  SqrBnd<View>::propagate(Space& home, ModEventDelta) {
+  SqrBnd<View>::propagate(Space& home, const ModEventDelta&) {
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
       GECODE_REWRITE(*this,(SqrPlusBnd<IntView,IntView>::post(home,x0,x1)));
@@ -283,7 +283,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class VA, class VB>
   PropCost
-  SqrPlusDom<VA,VB>::cost(ModEventDelta med) const {
+  SqrPlusDom<VA,VB>::cost(const ModEventDelta& med) const {
     if (VA::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
     if (VA::me(med) == ME_INT_DOM)
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class VA, class VB>
   ExecStatus
-  SqrPlusDom<VA,VB>::propagate(Space& home, ModEventDelta med) {
+  SqrPlusDom<VA,VB>::propagate(Space& home, const ModEventDelta& med) {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
       return x0.assigned() ? 
@@ -386,7 +386,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  SqrDom<View>::cost(ModEventDelta med) const {
+  SqrDom<View>::cost(const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
     if (View::me(med) == ME_INT_DOM)
@@ -396,7 +396,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  SqrDom<View>::propagate(Space& home, ModEventDelta med) {
+  SqrDom<View>::propagate(Space& home, const ModEventDelta& med) {
     assert(x1.min() >= 0);
     if (View::me(med) != ME_INT_DOM) {
       if (x0.min() >= 0)

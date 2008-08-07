@@ -102,7 +102,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  Union<View0,View1,View2>::propagate(Space& home, ModEventDelta med) {
+  Union<View0,View1,View2>::propagate(Space& home, const ModEventDelta& med) {
     // This propagator implements the constraint
     // x2 = x0 u x1
 
@@ -287,7 +287,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   PropCost
-  UnionN<View0,View1>::cost(ModEventDelta) const {
+  UnionN<View0,View1>::cost(const ModEventDelta&) const {
     return PC_QUADRATIC_LO;
   }
 
@@ -331,7 +331,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  UnionN<View0,View1>::propagate(Space& home, ModEventDelta med) {
+  UnionN<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
     ModEvent me0 = View0::me(med);
     ModEvent me1 = View1::me(med);
     bool ubevent = Rel::testSetEventUB(me0, me1);

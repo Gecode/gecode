@@ -173,9 +173,9 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
   };
 
   /**
@@ -248,9 +248,9 @@ namespace Gecode { namespace Int { namespace GCC {
      * - dynamic PC_QUADRATIC_LO ( \f$ \frac{n}{2} \leq d < n^2 \f$)
      * - dynamic PC_CUBIC_LO  ( \f$ n^2 \leq d \f$)
      */
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -293,9 +293,9 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;

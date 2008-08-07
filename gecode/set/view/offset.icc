@@ -243,7 +243,7 @@ namespace Gecode { namespace Set {
   }
   template <class View>
   forceinline ModEvent
-  OffsetSetView<View>::me(ModEventDelta med) {
+  OffsetSetView<View>::me(const ModEventDelta& med) {
     return View::me(med);
   }
 

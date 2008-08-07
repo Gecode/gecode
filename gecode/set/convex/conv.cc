@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   ExecStatus
-  Convex::propagate(Space& home, ModEventDelta) {
+  Convex::propagate(Space& home, const ModEventDelta&) {
     //I, drop ranges from UB that are shorter than cardMin
     //II, add range LB.smallest to LB.largest to LB
     //III, Drop ranges from UB that do not contain all elements of LB

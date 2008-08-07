@@ -65,13 +65,13 @@ namespace Gecode { namespace Set { namespace Projection {
     NaryProjection(Space& home, ViewArray<SetView>& x, ProjectorSet& ps);
   public:
     /// Cost function
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Delete propagator
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec spec(const Space& home,
@@ -101,13 +101,13 @@ namespace Gecode { namespace Set { namespace Projection {
                      ProjectorSet& ps);
   public:
     /// Cost function
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Delete propagator
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec spec(const Space& home,
@@ -140,13 +140,13 @@ namespace Gecode { namespace Set { namespace Projection {
                    Gecode::Int::IntView i, Projector& ps);
   public:
     /// Cost function
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Delete propagator
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec spec(const Space& home,

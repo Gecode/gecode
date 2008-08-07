@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  Lq<View>::propagate(Space& home, ModEventDelta) {
+  Lq<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
     return (x0.max() <= x1.min()) ? ES_SUBSUMED(*this,home) : ES_FIX;
@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  Le<View>::propagate(Space& home, ModEventDelta) {
+  Le<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.le(home,x1.max()));
     GECODE_ME_CHECK(x1.gr(home,x0.min()));
     return (x0.max() < x1.min()) ? ES_SUBSUMED(*this,home) : ES_FIX;
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   ExecStatus
-  ReLq<View,CtrlView>::propagate(Space& home, ModEventDelta) {
+  ReLq<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
       GECODE_REWRITE(*this,Lq<View>::post(home,x0,x1));
     if (b.zero())
@@ -325,7 +325,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   ExecStatus
-  ReLqInt<View,CtrlView>::propagate(Space& home, ModEventDelta) {
+  ReLqInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.lq(home,c)); goto subsumed;
     }

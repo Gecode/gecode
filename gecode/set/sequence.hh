@@ -71,7 +71,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
     static ExecStatus post(Space& home,ViewArray<SetView>);
     /// Specification for this propagator
@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*     copy(Space& home, bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec spec(const Space& home,

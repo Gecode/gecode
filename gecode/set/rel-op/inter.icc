@@ -89,7 +89,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  Intersection<View0,View1,View2>::propagate(Space& home, ModEventDelta med) {
+  Intersection<View0,View1,View2>::propagate(Space& home, const ModEventDelta& med) {
     // This propagator implements the constraint
     // x2 = x0 \cap x1
 
@@ -294,7 +294,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   PropCost
-  IntersectionN<View0,View1>::cost(ModEventDelta) const {
+  IntersectionN<View0,View1>::cost(const ModEventDelta&) const {
     return PC_QUADRATIC_LO;
   }
 
@@ -338,7 +338,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus
-  IntersectionN<View0,View1>::propagate(Space& home, ModEventDelta) {
+  IntersectionN<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
     bool repeat = false;
     do {

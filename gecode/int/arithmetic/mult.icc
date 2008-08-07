@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, PropCond pc>
   ExecStatus
-  MultZeroOne<View,pc>::propagate(Space& home, ModEventDelta) {
+  MultZeroOne<View,pc>::propagate(Space& home, const ModEventDelta&) {
     switch (equal(x0,0)) {
     case RT_FALSE:
       GECODE_ME_CHECK(x1.eq(home,1)); 
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   ExecStatus
-  MultPlusBnd<Val,VA,VB,VC>::propagate(Space& home, ModEventDelta) {
+  MultPlusBnd<Val,VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
     return prop_mult_plus_bnd<Val,VA,VB,VC>(home,*this,x0,x1,x2);
   }
 
@@ -386,7 +386,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  MultBnd<View>::propagate(Space& home, ModEventDelta) {
+  MultBnd<View>::propagate(Space& home, const ModEventDelta&) {
     if (pos(x0)) {
       if (pos(x1) || pos(x2)) goto rewrite_ppp;
       if (neg(x1) || neg(x2)) goto rewrite_pnn;
@@ -598,13 +598,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   PropCost
-  MultPlusDom<Val,VA,VB,VC>::cost(ModEventDelta med) const {
+  MultPlusDom<Val,VA,VB,VC>::cost(const ModEventDelta& med) const {
     return (VA::me(med) == ME_INT_DOM) ? PC_TERNARY_HI : PC_TERNARY_LO;
   }
 
   template <class Val, class VA, class VB, class VC>
   ExecStatus
-  MultPlusDom<Val,VA,VB,VC>::propagate(Space& home, ModEventDelta med) {
+  MultPlusDom<Val,VA,VB,VC>::propagate(Space& home, const ModEventDelta& med) {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_mult_plus_bnd<Val,VA,VB,VC>(home,*this,x0,x1,x2)));
       return ES_FIX_PARTIAL(*this,VA::med(ME_INT_DOM));
@@ -679,13 +679,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  MultDom<View>::cost(ModEventDelta med) const {
+  MultDom<View>::cost(const ModEventDelta& med) const {
     return (View::me(med) == ME_INT_DOM) ? PC_TERNARY_HI : PC_TERNARY_LO;
   }
 
   template <class View>
   ExecStatus
-  MultDom<View>::propagate(Space& home, ModEventDelta med) {
+  MultDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       if (pos(x0)) {
         if (pos(x1) || pos(x2)) goto rewrite_ppp;

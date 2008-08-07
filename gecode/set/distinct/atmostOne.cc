@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   ExecStatus
-  AtmostOne::propagate(Space& home, ModEventDelta) {
+  AtmostOne::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
     LubRanges<SetView>* lubs = r.alloc<LubRanges<SetView> >(x.size());
     for (int i = x.size(); i--; ) {

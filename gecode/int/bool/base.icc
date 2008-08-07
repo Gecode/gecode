@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   PropCost
-  BoolBinary<BVA,BVB>::cost(ModEventDelta) const {
+  BoolBinary<BVA,BVB>::cost(const ModEventDelta&) const {
     return PC_UNARY_LO;
   }
 
@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   PropCost
-  BoolTernary<BVA,BVB,BVC>::cost(ModEventDelta) const {
+  BoolTernary<BVA,BVB,BVC>::cost(const ModEventDelta&) const {
     return PC_BINARY_LO;
   }
 

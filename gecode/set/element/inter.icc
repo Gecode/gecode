@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   PropCost
-  ElementIntersection<SView,RView>::cost(ModEventDelta) const {
+  ElementIntersection<SView,RView>::cost(const ModEventDelta&) const {
     return PC_LINEAR_HI;
   }
 
@@ -148,7 +148,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   ExecStatus
-  ElementIntersection<SView,RView>::propagate(Space& home, ModEventDelta) {
+  ElementIntersection<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
     int n = iv.size();
 

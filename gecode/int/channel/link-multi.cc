@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   PropCost
-  LinkMulti::cost(ModEventDelta med) const {
+  LinkMulti::cost(const ModEventDelta& med) const {
     return (IntView::me(med) == ME_INT_VAL) ? 
       PC_UNARY_LO : cost_lo(x.size(),PC_LINEAR_LO);
   }
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   ExecStatus
-  LinkMulti::propagate(Space& home, ModEventDelta med) {
+  LinkMulti::propagate(Space& home, const ModEventDelta& med) {
     int n = x.size();
 
     // Always maintain the invariant that y lies inside the x-array

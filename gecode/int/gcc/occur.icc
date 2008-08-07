@@ -406,7 +406,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Schedule propagator \a p with modification event \a me
     static void schedule(Space& home, Propagator& p, ModEvent me);
     /// Return modification event for view type in \a med
-    static ModEvent me(ModEventDelta med);
+    static ModEvent me(const ModEventDelta& med);
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     ///@}
@@ -696,7 +696,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return IntView::schedule(home,p,me);
   }
   forceinline ModEvent
-  CardView::me(ModEventDelta med) {
+  CardView::me(const ModEventDelta& med) {
     return IntView::me(med);
   }
   forceinline ModEventDelta

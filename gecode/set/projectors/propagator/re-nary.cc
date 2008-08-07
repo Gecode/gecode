@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   ExecStatus
-  ReNaryProjection::propagate(Space& home, ModEventDelta) {
+  ReNaryProjection::propagate(Space& home, const ModEventDelta&) {
     ProjectorSet newps(ps);
     if (b.one())
       GECODE_REWRITE(*this,(NaryProjection<false>::post(home,x,newps)));

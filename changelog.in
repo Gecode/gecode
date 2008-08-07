@@ -75,20 +75,20 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 Now everything is passed as reference (Space, Propagator,
-Advisor, Branching, and BranchingDesc). The reason for this
-massive change is to be more C++ and make it consistent (at some
-places things were passed as references and at other places as
-pointers, for no obvious and explainable reason). Routines that
-create objects rather than pass them (such as copy, clone, or
-description) still return a pointer to an object (so that it can
-actually be deleted!).
+ModEventDelta, Advisor, Branching, and BranchingDesc). The reason
+for this massive change is to be more C++ and make it consistent
+(at some places things were passed as references and at other
+places as pointers, for no obvious and explainable
+reason). Routines that create objects rather than pass them (such
+as copy, clone, or description) still return a pointer to an
+object (so that it can actually be deleted!).
 
 You will have to rewrite your models and other programs using
 Gecode. For models this is easy enough:
  - Replace "(Space* home" by "(Space& home".
  - Replace "home->" by "home.".
  - Replace "(this" by "(*this".
-That should do the trick for 99.9% of the models.
+That should do the trick for 99% of the models.
 
 For the other changes, just lookout for the changes in types and
 that "this" becomes "*this" now.

@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   ExecStatus
-  ReIntSet<View>::propagate(Space& home, ModEventDelta) {
+  ReIntSet<View>::propagate(Space& home, const ModEventDelta&) {
     IntSetRanges i_is(is);
     if (b.one()) {
       GECODE_ME_CHECK(x0.inter_r(home,i_is,false)); goto subsumed;

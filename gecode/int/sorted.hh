@@ -94,9 +94,9 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Cost function returning PC_LINEAR_HI
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for views \a x, \a y, and \a z
     static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y, 
                             ViewArray<View>& z);

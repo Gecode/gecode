@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   PropCost
-  BaseView<VX,VY,VZ,shr>::cost(ModEventDelta) const {
+  BaseView<VX,VY,VZ,shr>::cost(const ModEventDelta&) const {
     return cost_lo(x.size()+1, PC_LINEAR_LO);
   }
 
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  EqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
+  EqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
     count(home);
 
     GECODE_ME_CHECK(z.gq(home,atleast()));
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  NqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
+  NqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
     count(home);
     if (atleast() == atmost()) {
       GECODE_ME_CHECK(z.nq(home,atleast()));
@@ -354,7 +354,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  LqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
+  LqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
     count(home);
     GECODE_ME_CHECK(z.gq(home,atleast()));
     if (z.max() == atleast())
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  GqView<VX,VY,VZ,shr>::propagate(Space& home, ModEventDelta) {
+  GqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
     count(home);
 
     GECODE_ME_CHECK(z.lq(home,atmost()));

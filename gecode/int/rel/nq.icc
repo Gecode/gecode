@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   PropCost
-  Nq<View>::cost(ModEventDelta) const {
+  Nq<View>::cost(const ModEventDelta&) const {
     return PC_UNARY_LO;
   }
 
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   ExecStatus
-  Nq<View>::propagate(Space& home, ModEventDelta) {
+  Nq<View>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.nq(home,x0.val()));
       x1.cancel(home,*this,PC_INT_VAL);

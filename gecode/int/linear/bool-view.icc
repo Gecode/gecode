@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   PropCost
-  LinBoolView<XV,YV>::cost(ModEventDelta) const {
+  LinBoolView<XV,YV>::cost(const ModEventDelta&) const {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Linear {
     
   template <class XV, class YV>
   ExecStatus
-  EqBoolView<XV,YV>::propagate(Space& home, ModEventDelta) {
+  EqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();
     for (int i = n; i--; )
       if (x[i].one()) {
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   ExecStatus
-  NqBoolView<XV,YV>::propagate(Space& home, ModEventDelta) {
+  NqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();
     for (int i = n; i--; )
       if (x[i].one()) {
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   ExecStatus
-  GqBoolView<XV,YV>::propagate(Space& home, ModEventDelta) {
+  GqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();
     for (int i = n; i--; )
       if (x[i].one()) {

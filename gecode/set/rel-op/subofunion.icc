@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus
-  SubOfUnion<View0,View1,View2>::propagate(Space& home, ModEventDelta med) {
+  SubOfUnion<View0,View1,View2>::propagate(Space& home, const ModEventDelta& med) {
 
     bool allassigned = x0.assigned() && x1.assigned() && x2.assigned();
 

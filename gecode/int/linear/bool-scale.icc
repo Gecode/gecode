@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   PropCost
-  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(ModEventDelta) const {
+  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(const ModEventDelta&) const {
     return cost_lo(p.size() + n.size(), PC_LINEAR_LO);
   }
 
@@ -315,7 +315,7 @@ namespace Gecode { namespace Int { namespace Linear {
   
   template<class SBAP, class SBAN, class VX>
   ExecStatus
-  EqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, ModEventDelta med) {
+  EqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, const ModEventDelta& med) {
     int sl_p = 0; // Lower bound, computed positive
     int su_n = 0; // Upper bound, computed negative
     if (BoolView::me(med) == ME_BOOL_VAL) {
@@ -571,7 +571,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   ExecStatus
-  LqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, ModEventDelta med) {
+  LqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, const ModEventDelta& med) {
     int sl = 0;
     if (BoolView::me(med) == ME_BOOL_VAL) {
       // Eliminate assigned positive views while keeping order
@@ -766,7 +766,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   ExecStatus
-  NqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, ModEventDelta med) {
+  NqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, const ModEventDelta& med) {
     if (BoolView::me(med) == ME_BOOL_VAL) {
       // Eliminate assigned positive views
       {

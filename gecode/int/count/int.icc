@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   PropCost
-  BaseInt<VX,VY>::cost(ModEventDelta) const {
+  BaseInt<VX,VY>::cost(const ModEventDelta&) const {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   ExecStatus
-  EqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
+  EqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -288,7 +288,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   ExecStatus
-  GqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
+  GqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -407,7 +407,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   ExecStatus
-  LqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
+  LqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -518,7 +518,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   PropCost
-  NqInt<VX,VY>::cost(ModEventDelta) const {
+  NqInt<VX,VY>::cost(const ModEventDelta&) const {
     return PC_LINEAR_LO;
   }
 
@@ -591,7 +591,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   ExecStatus
-  NqInt<VX,VY>::propagate(Space& home, ModEventDelta) {
+  NqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     bool s0 = resubscribe(home,x0);
     bool s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;

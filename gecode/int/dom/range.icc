@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
   ExecStatus
-  ReRange<View>::propagate(Space& home, ModEventDelta) {
+  ReRange<View>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.gq(home,min));
       GECODE_ME_CHECK(x0.lq(home,max));

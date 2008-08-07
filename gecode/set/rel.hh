@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\subseteq y\f$
     static  ExecStatus post(Space& home,View0 x,View1 y);
     /// Specification for this propagator
@@ -108,7 +108,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\subseteq y\f$
     static  ExecStatus post(Space& home,View0 x,View1 y);
     /// Specification for this propagator
@@ -143,11 +143,11 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$ 
     static ExecStatus post(Space& home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
@@ -182,7 +182,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x=y \f$ 
     static  ExecStatus  post(Space& home,View0,View1);
     /// Specification for this propagator
@@ -217,11 +217,11 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$ 
     static ExecStatus post(Space& home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
@@ -256,7 +256,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y \f$ 
     static  ExecStatus  post(Space& home,View0,View1);
     /// Specification for this propagator
@@ -293,7 +293,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y \f$ 
     static ExecStatus post(Space& home, View0, ConstantView);
     /// Specification for this propagator

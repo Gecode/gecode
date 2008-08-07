@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   ExecStatus
-  ConvexHull::propagate(Space& home, ModEventDelta) {
+  ConvexHull::propagate(Space& home, const ModEventDelta&) {
     //x1 is the convex hull of x0
 
     GECODE_ME_CHECK( x1.cardMin(home,x0.cardMin()) );

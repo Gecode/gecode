@@ -420,7 +420,7 @@ namespace Gecode {
       return BoolView::schedule(home,p,me);
     }
     forceinline ModEvent
-    NegBoolView::me(ModEventDelta med) {
+    NegBoolView::me(const ModEventDelta& med) {
       return BoolView::me(med);
     }
     forceinline ModEventDelta

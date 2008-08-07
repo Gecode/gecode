@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   PropCost
-  Match<View>::cost(ModEventDelta) const {
+  Match<View>::cost(const ModEventDelta&) const {
     return PC_LINEAR_LO;
   }
 
@@ -105,7 +105,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  Match<View>::propagate(Space& home, ModEventDelta) {
+  Match<View>::propagate(Space& home, const ModEventDelta&) {
 
     int xs_size = xs.size();
 

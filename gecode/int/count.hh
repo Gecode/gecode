@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Count {
                                 const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
     /// Specification for this propagator
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -251,9 +251,9 @@ namespace Gecode { namespace Int { namespace Count {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(ModEventDelta med) const;
+    virtual PropCost cost(const ModEventDelta& med) const;
   protected:
     /// Count how many views are equal now
     void count(Space& home);
@@ -341,7 +341,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -423,7 +423,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -464,7 +464,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;

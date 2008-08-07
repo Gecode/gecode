@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  TerDom<View>::propagate(Space& home, ModEventDelta) {
+  TerDom<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_INT_HALL_ONE(x0,x1,x2);
     GECODE_INT_HALL_ONE(x1,x0,x2);
     GECODE_INT_HALL_ONE(x2,x0,x1);

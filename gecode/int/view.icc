@@ -452,7 +452,7 @@ namespace Gecode {
       /// Schedule propagator \a p with modification event \a me
       static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
-      static ModEvent me(ModEventDelta med);
+      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}
@@ -660,7 +660,7 @@ namespace Gecode {
       /// Schedule propagator \a p with modification event \a me
       static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
-      static ModEvent me(ModEventDelta med);
+      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}
@@ -857,7 +857,7 @@ namespace Gecode {
       /// Schedule propagator \a p with modification event \a me
       static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
-      static ModEvent me(ModEventDelta med);
+      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}
@@ -1078,7 +1078,7 @@ namespace Gecode {
       /// Schedule propagator \a p with modification event \a me
       static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
-      static ModEvent me(ModEventDelta med);
+      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}
@@ -1277,7 +1277,7 @@ namespace Gecode {
       /// Schedule propagator \a p with modification event \a me
       static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
-      static ModEvent me(ModEventDelta med);
+      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}
@@ -1670,7 +1670,7 @@ namespace Gecode {
       /// Schedule propagator \a p with modification event \a me
       static void schedule(Space& home, Propagator& p, ModEvent me);
       /// Return modification event for view type in \a med
-      static ModEvent me(ModEventDelta med);
+      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}

@@ -146,7 +146,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class Val, class VA, class VB, class VC, bool towardsMinInf>
   ExecStatus
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
-  ::propagate(Space& home, ModEventDelta) {
+  ::propagate(Space& home, const ModEventDelta&) {
     return prop_div_plus_bnd<Val,VA,VB,VC,towardsMinInf>(home,*this,x0,x1,x2);
   }
 
@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  DivBnd<View>::propagate(Space& home, ModEventDelta) {
+  DivBnd<View>::propagate(Space& home, const ModEventDelta&) {
     if (pos(x1)) {
       if (pos(x2) || pos(x0)) goto rewrite_ppp;
       if (neg(x2) || neg(x0)) goto rewrite_npn;
@@ -432,7 +432,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  DivMod<View>::propagate(Space& home, ModEventDelta) {
+  DivMod<View>::propagate(Space& home, const ModEventDelta&) {
     bool signIsSame;
     do {
       signIsSame = true;

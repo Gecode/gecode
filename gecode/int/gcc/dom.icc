@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   PropCost
-  Dom<View, Card, isView>::cost(ModEventDelta) const {
+  Dom<View, Card, isView>::cost(const ModEventDelta&) const {
 
     unsigned int n = x.size();
     unsigned int d = x[n - 1].size();
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Perform domain propagation.
   template <class View, class Card, bool isView>
   ExecStatus
-  Dom<View, Card, isView>::propagate(Space& home, ModEventDelta) {
+  Dom<View, Card, isView>::propagate(Space& home, const ModEventDelta&) {
 
     ExecStatus es = ES_NOFIX;
     bool card_mod = false;

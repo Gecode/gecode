@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   forceinline PropCost
-  CardProjection::cost(ModEventDelta) const {
+  CardProjection::cost(const ModEventDelta&) const {
     switch (x.size()) {
     case 1: return PC_UNARY_HI;
     case 2: return PC_BINARY_HI;
@@ -110,7 +110,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   inline ExecStatus
-  CardProjection::propagate(Space& home, ModEventDelta) {
+  CardProjection::propagate(Space& home, const ModEventDelta&) {
     bool done = true;
     for (int j=x.size(); j--;)
       if (pc[j] != PC_SET_ANY + 1)

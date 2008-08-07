@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    virtual ExecStatus propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   ExecStatus
-  OrTrueSubsumed<BV>::propagate(Space& home, ModEventDelta) {
+  OrTrueSubsumed<BV>::propagate(Space& home, const ModEventDelta&) {
     return ES_SUBSUMED(*this,home);
   }
 
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB>
   ExecStatus
-  BinOrTrue<BVA,BVB>::propagate(Space& home, ModEventDelta) {
+  BinOrTrue<BVA,BVB>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1) \
   ((BVA::S0<<(1*BVA::BITS))|(BVB::S1<<(0*BVB::BITS)))
     switch ((x0.status() << (1*BVA::BITS)) | (x1.status() << (0*BVB::BITS))) {
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   ExecStatus
-  TerOrTrue<BV>::propagate(Space& home, ModEventDelta) {
+  TerOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1,S2) \
     ((BV::S0<<(2*BV::BITS))|(BV::S1<<(1*BV::BITS))|(BV::S2<<(0*BV::BITS)))
     switch ((x0.status() << (2*BV::BITS)) | (x1.status() << (1*BV::BITS)) |
@@ -410,7 +410,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BV>
   ExecStatus
-  QuadOrTrue<BV>::propagate(Space& home, ModEventDelta) {
+  QuadOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1,S2,S3)                        \
     ((BV::S0 << (3*BV::BITS)) | (BV::S1 << (2*BV::BITS)) |    \
      (BV::S2 << (1*BV::BITS)) | (BV::S3 << (0*BV::BITS)))
@@ -628,7 +628,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB, class BVC>
   ExecStatus
-  Or<BVA,BVB,BVC>::propagate(Space& home, ModEventDelta) {
+  Or<BVA,BVB,BVC>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1,S2) \
   ((BVA::S0<<(2*BVA::BITS))|(BVB::S1<<(1*BVB::BITS))|(BVC::S2<<(0*BVC::BITS)))
     switch ((x0.status() << (2*BVA::BITS)) | (x1.status() << (1*BVB::BITS)) |
@@ -751,7 +751,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   PropCost
-  NaryOrTrue<BV>::cost(ModEventDelta) const {
+  NaryOrTrue<BV>::cost(const ModEventDelta&) const {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
@@ -855,7 +855,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   ExecStatus
-  NaryOrTrue<BV>::propagate(Space& home, ModEventDelta) {
+  NaryOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
     if (x0.one() || x1.one())
       return ES_SUBSUMED(*this,home);
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
@@ -948,7 +948,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   ExecStatus
-  NaryOr<BV>::propagate(Space& home, ModEventDelta) {
+  NaryOr<BV>::propagate(Space& home, const ModEventDelta&) {
     if (y.zero()) {
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));

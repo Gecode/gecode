@@ -225,7 +225,7 @@ namespace Gecode {
       return IntView::schedule(home,p,me);
     }
     forceinline ModEvent
-    MinusView::me(ModEventDelta med) {
+    MinusView::me(const ModEventDelta& med) {
       return IntView::me(med);
     }
     forceinline ModEventDelta

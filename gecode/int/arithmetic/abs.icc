@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  AbsBnd<View>::cost(ModEventDelta med) const {
+  AbsBnd<View>::cost(const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
     return PC_BINARY_LO;
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  AbsBnd<View>::propagate(Space& home, ModEventDelta) {
+  AbsBnd<View>::propagate(Space& home, const ModEventDelta&) {
     return prop_abs_bnd<View,Rel::EqBnd>(home, *this, x0, x1);
   }
 
@@ -203,7 +203,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  AbsDom<View>::cost(ModEventDelta med) const {
+  AbsDom<View>::cost(const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
     if (View::me(med) == ME_INT_DOM)
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   ExecStatus
-  AbsDom<View>::propagate(Space& home, ModEventDelta med) {
+  AbsDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_abs_bnd<View,Rel::EqDom>(home, *this, x0, x1)));
       return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));

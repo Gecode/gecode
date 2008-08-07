@@ -64,7 +64,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   PropCost
-  ElementUnionConst<SView,RView>::cost(ModEventDelta) const {
+  ElementUnionConst<SView,RView>::cost(const ModEventDelta&) const {
     return PC_LINEAR_HI;
   }
 
@@ -151,7 +151,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   ExecStatus
-  ElementUnionConst<SView,RView>::propagate(Space& home, ModEventDelta) {
+  ElementUnionConst<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
     int n = iv.size();
 

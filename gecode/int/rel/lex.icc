@@ -86,13 +86,13 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   PropCost
-  Lex<View>::cost(ModEventDelta) const {
+  Lex<View>::cost(const ModEventDelta&) const {
     return cost_lo(x.size(), PC_LINEAR_LO);
   }
 
   template <class View>
   ExecStatus
-  Lex<View>::propagate(Space& home, ModEventDelta) {
+  Lex<View>::propagate(Space& home, const ModEventDelta&) {
     /*
      * State 1
      *

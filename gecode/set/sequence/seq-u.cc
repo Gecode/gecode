@@ -137,7 +137,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   //Enforces sequentiality and ensures y contains union of Xi lower bounds.
   ExecStatus
-  SeqU::propagate(Space& home, ModEventDelta med) {
+  SeqU::propagate(Space& home, const ModEventDelta& med) {
     ModEvent me0 = SetView::me(med);
     bool ubevent = Rel::testSetEventUB(me0);
     bool anybevent = Rel::testSetEventAnyB(me0);

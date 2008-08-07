@@ -418,7 +418,7 @@ namespace Gecode {
     /// Schedule propagator \a p with modification event \a me
     static void schedule(Space& home, Propagator& p, ModEvent me);
     /// Project modification event for this variable type from \a med
-    static ModEvent me(ModEventDelta med);
+    static ModEvent me(const ModEventDelta& med);
     /// Translate modification event \a me into modification event delta
     static ModEventDelta med(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
@@ -644,7 +644,7 @@ namespace Gecode {
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_FIX_PARTIAL(Propagator& p, ModEventDelta med);
+  ExecStatus ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med);
   /**
    * \brief %Propagator \a p has not computed partial fixpoint
    *
@@ -655,7 +655,7 @@ namespace Gecode {
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_NOFIX_PARTIAL(Propagator& p, ModEventDelta med);
+  ExecStatus ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med);
 
   /**
    * \brief Base-class for propagators
@@ -667,8 +667,8 @@ namespace Gecode {
     template <class VIC> friend class VarImp;
     friend ExecStatus ES_SUBSUMED(Propagator&, size_t);
     friend ExecStatus ES_SUBSUMED(Propagator&, Space&);
-    friend ExecStatus ES_FIX_PARTIAL(Propagator&, ModEventDelta);
-    friend ExecStatus ES_NOFIX_PARTIAL(Propagator&, ModEventDelta);
+    friend ExecStatus ES_FIX_PARTIAL(Propagator&, const ModEventDelta&);
+    friend ExecStatus ES_NOFIX_PARTIAL(Propagator&, const ModEventDelta&);
     friend class Advisor;
     template <class A> friend class Council;
   private:
@@ -716,9 +716,9 @@ namespace Gecode {
      * For more details, see the individual functions.
      *
      */
-    virtual ExecStatus propagate(Space& home, ModEventDelta med) = 0;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med) = 0;
     /// Cost function
-    virtual PropCost cost(ModEventDelta med) const  = 0;
+    virtual PropCost cost(const ModEventDelta& med) const  = 0;
     /**
      * \brief Advise function
      *
@@ -1790,14 +1790,14 @@ namespace Gecode {
   }
 
   forceinline ExecStatus
-  ES_FIX_PARTIAL(Propagator& p, ModEventDelta med) {
+  ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
     p.u.med = med; 
     assert(p.u.med != 0);
     return __ES_PARTIAL;
   }
 
   forceinline ExecStatus
-  ES_NOFIX_PARTIAL(Propagator& p, ModEventDelta med) {
+  ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
     p.u.med = AllVarConf::med_combine(p.u.med,med); 
     assert(p.u.med != 0);
     return __ES_PARTIAL;
@@ -2192,7 +2192,7 @@ namespace Gecode {
 
   template <class VIC>
   forceinline ModEvent
-  VarImp<VIC>::me(ModEventDelta med) {
+  VarImp<VIC>::me(const ModEventDelta& med) {
     return static_cast<ModEvent>((med & VIC::med_mask) >> VIC::med_fst);
   }
 

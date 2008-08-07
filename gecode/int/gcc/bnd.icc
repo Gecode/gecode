@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   PropCost
-  BndImp<View, Card, isView, shared>::cost(ModEventDelta) const {
+  BndImp<View, Card, isView, shared>::cost(const ModEventDelta&) const {
     /*
      * The bounds consistent version of the Global Cardinality constraint
      * has a theoretical complexity of
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   ExecStatus
-  BndImp<View, Card, isView, shared>::propagate(Space& home, ModEventDelta) {
+  BndImp<View, Card, isView, shared>::propagate(Space& home, const ModEventDelta&) {
     bool all_assigned = true;
     bool mod          = false;
     int  smin         = 0;

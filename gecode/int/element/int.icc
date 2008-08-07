@@ -358,7 +358,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   PropCost
-  Int<ViewA,ViewB>::cost(ModEventDelta) const {
+  Int<ViewA,ViewB>::cost(const ModEventDelta&) const {
     return PC_BINARY_HI;
   }
 
@@ -394,7 +394,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   ExecStatus
-  Int<ViewA,ViewB>::propagate(Space& home, ModEventDelta) {
+  Int<ViewA,ViewB>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = x0.assigned() && x1.assigned();
     if (ivm == NULL) {
       ivm = IdxValMap::allocate(home,x0.size());

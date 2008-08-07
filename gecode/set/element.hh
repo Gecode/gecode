@@ -76,11 +76,11 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(ModEventDelta med) const;
+    virtual PropCost    cost(const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -119,11 +119,11 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(ModEventDelta med) const;
+    virtual PropCost    cost(const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -162,11 +162,11 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(ModEventDelta med) const;
+    virtual PropCost    cost(const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -203,11 +203,11 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
-    GECODE_SET_EXPORT virtual PropCost    cost(ModEventDelta med) const;
+    GECODE_SET_EXPORT virtual PropCost    cost(const ModEventDelta& med) const;
     /// Delete propagator and return its size
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, ModEventDelta med);
+    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;

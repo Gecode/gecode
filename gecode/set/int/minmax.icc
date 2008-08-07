@@ -97,7 +97,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  MinElement<View>::propagate(Space& home, ModEventDelta) {
+  MinElement<View>::propagate(Space& home, const ModEventDelta&) {
     //x1 is an element of x0.ub
     //x1 =< smallest element of x0.lb
     //x1 =< x0.cardinialityMin-est largest element of x0.ub
@@ -206,7 +206,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   ExecStatus
-  MaxElement<View>::propagate(Space& home, ModEventDelta) {
+  MaxElement<View>::propagate(Space& home, const ModEventDelta&) {
     LubRanges<View> ub(x0);
     GECODE_ME_CHECK(x1.inter_r(home,ub,false));
     GECODE_ME_CHECK(x1.gq(home,x0.glbMax()));

@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   PropCost
-  Bnd<View>::cost(ModEventDelta med) const {
+  Bnd<View>::cost(const ModEventDelta& med) const {
     return (View::me(med) == ME_INT_VAL)
       ? cost_lo(y.size(),PC_LINEAR_LO)
       : cost_hi(x.size(),PC_LINEAR_HI);
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  Bnd<View>::propagate(Space& home, ModEventDelta med) {
+  Bnd<View>::propagate(Space& home, const ModEventDelta& med) {
     assert(x.size() > 1);
 
     if (View::me(med) == ME_INT_VAL) {
