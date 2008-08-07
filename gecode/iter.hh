@@ -77,6 +77,8 @@ namespace Gecode {
   }
 }
 
+#include "gecode/iter/priority-queue.icc"
+
 #include "gecode/iter/ranges-operations.icc"
 #include "gecode/iter/ranges-minmax.icc"
 

@@ -126,7 +126,7 @@ SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
 	dynamic-stack exception map heap \
 	macros random sort \
-	static-pqueue static-stack symbol \
+	static-stack symbol \
 	marked-pointer
 
 BUDDYSRC0 = \
@@ -578,7 +578,8 @@ ITERHDR0 =							\
 	values-singleton values-unique values-inter 		\
 	values-union values-map					\
 	virtual-ranges virtual-ranges-union			\
-	virtual-ranges-inter virtual-ranges-compl
+	virtual-ranges-inter virtual-ranges-compl               \
+	priority-queue
 ITERHDR = gecode/iter.hh \
 	$(ITERHDR0:%=gecode/iter/%.icc)
 

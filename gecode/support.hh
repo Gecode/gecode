@@ -99,7 +99,6 @@
 #include "gecode/support/dynamic-stack.icc"
 #include "gecode/support/random.icc"
 #include "gecode/support/sort.icc"
-#include "gecode/support/static-pqueue.icc"
 #include "gecode/support/static-stack.icc"
 #include "gecode/support/symbol.icc"
 #include "gecode/support/map.icc"

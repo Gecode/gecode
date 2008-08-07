@@ -116,6 +116,13 @@ Module: support
 What:   removed
 Rank:   minor
 [DESCRIPTION]
+PQueue has been removed (too specialized to be reused anyway).
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
 GECODE_AUTOARRAY has been removed. Use a Region for memory
 management instead.
 

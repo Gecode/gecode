@@ -93,7 +93,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Instance for order
     RangeUnionOrder order;
     /// Priority queue to give access to next range
-    Support::PQueue<I,RangeUnionOrder> r;
+    PriorityQueue<I,RangeUnionOrder> r;
   public:
     /// \name Constructors and initialization
     //@{

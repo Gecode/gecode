@@ -39,7 +39,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Support {
+namespace Gecode { namespace Iter {
 
   /**
    * \brief Simple fixed-size priority queue
@@ -52,10 +52,10 @@ namespace Gecode { namespace Support {
    * \ingroup FuncSupport
    */
   template <class T, class Less>
-  class PQueue  {
+  class PriorityQueue  {
   private:
     /// The class holding the shared queue (organized as heap)
-    class SharedPQueue  {
+    class SharedPriorityQueue  {
     public:
       /// Number of elements currently in queue
       int n;
@@ -69,28 +69,28 @@ namespace Gecode { namespace Support {
       T pq[1];
 
       /// Allocate queue with \a n elements
-      static SharedPQueue* allocate(int n, const Less& l);
+      static SharedPriorityQueue* allocate(int n, const Less& l);
       /// Reorganize after smallest element has changed
       void fixdown(void);
       /// Reorganize after element at position \a n has changed
       void fixup(int n);
     };
     /// Handle to shared queue
-    SharedPQueue* spq;
+    SharedPriorityQueue* spq;
 
   public:
     /// Default constructor (creates empty queue)
-    PQueue(void);
+    PriorityQueue(void);
     /// Create for \a n elements and order \a l
-    PQueue(int n, const Less& l);
+    PriorityQueue(int n, const Less& l);
     /// Initialize for \a n elements and order \a l
     void init(int, const Less&);
     /// Assign queue from queue \a p (elements are shared)
-    PQueue(const PQueue& p);
+    PriorityQueue(const PriorityQueue& p);
     /// Assign queue from queue \a p (elements are shared)
-    const PQueue& operator=(const PQueue&);
+    const PriorityQueue& operator=(const PriorityQueue&);
     /// Release queue
-    ~PQueue(void);
+    ~PriorityQueue(void);
 
     /// Test whether queue is empty
     bool empty(void) const;
@@ -104,15 +104,15 @@ namespace Gecode { namespace Support {
     void fix(void);
 
     /// Update this queue from queue \a p (share elements if \a share is true)
-    void update(const PQueue<T,Less>& p, bool share);
+    void update(const PriorityQueue<T,Less>& p, bool share);
   };
 
   template <class T, class Less>
-  forceinline typename PQueue<T,Less>::SharedPQueue*
-  PQueue<T,Less>::SharedPQueue::allocate(int n, const Less& l) {
-    SharedPQueue* spq
-      = static_cast<SharedPQueue*>
-      (heap.ralloc(sizeof(SharedPQueue) + (n-1)*sizeof(T)));
+  forceinline typename PriorityQueue<T,Less>::SharedPriorityQueue*
+  PriorityQueue<T,Less>::SharedPriorityQueue::allocate(int n, const Less& l) {
+    SharedPriorityQueue* spq
+      = static_cast<SharedPriorityQueue*>
+      (heap.ralloc(sizeof(SharedPriorityQueue) + (n-1)*sizeof(T)));
     spq->size = n;
     spq->n    = 0;
     spq->ref  = 1;
@@ -122,7 +122,7 @@ namespace Gecode { namespace Support {
 
   template <class T, class Less>
   forceinline void
-  PQueue<T,Less>::SharedPQueue::fixdown(void) {
+  PriorityQueue<T,Less>::SharedPriorityQueue::fixdown(void) {
     int k = 0;
     while ((k << 1) < n) {
       int j = k << 1;
@@ -137,7 +137,7 @@ namespace Gecode { namespace Support {
 
   template <class T, class Less>
   forceinline void
-  PQueue<T,Less>::SharedPQueue::fixup(int k) {
+  PriorityQueue<T,Less>::SharedPriorityQueue::fixup(int k) {
     while (k > 0 && l(pq[k >> 1],pq[k])) {
       std::swap(pq[k],pq[k >> 1]);
       k >>= 1;
@@ -146,31 +146,31 @@ namespace Gecode { namespace Support {
 
   template <class T, class Less>
   forceinline
-  PQueue<T,Less>::PQueue(void)
+  PriorityQueue<T,Less>::PriorityQueue(void)
     : spq(NULL) {}
 
   template <class T, class Less>
   forceinline
-  PQueue<T,Less>::PQueue(int n, const Less& l)
-    : spq(SharedPQueue::allocate(n,l)) {}
+  PriorityQueue<T,Less>::PriorityQueue(int n, const Less& l)
+    : spq(SharedPriorityQueue::allocate(n,l)) {}
 
   template <class T, class Less>
   forceinline void
-  PQueue<T,Less>::init(int n, const Less& l) {
-    spq = SharedPQueue::allocate(n,l);
+  PriorityQueue<T,Less>::init(int n, const Less& l) {
+    spq = SharedPriorityQueue::allocate(n,l);
   }
 
   template <class T, class Less>
   forceinline
-  PQueue<T,Less>::PQueue(const PQueue<T,Less>& p)
+  PriorityQueue<T,Less>::PriorityQueue(const PriorityQueue<T,Less>& p)
     : spq(p.spq) {
     if (spq != NULL)
       spq->ref++;
   }
 
   template <class T, class Less>
-  forceinline const PQueue<T,Less>&
-  PQueue<T,Less>::operator =(const PQueue<T,Less>& p) {
+  forceinline const PriorityQueue<T,Less>&
+  PriorityQueue<T,Less>::operator =(const PriorityQueue<T,Less>& p) {
     if (this != &p) {
       if ((spq != NULL) && (--spq->ref == 0))
         heap.rfree(spq);
@@ -183,7 +183,7 @@ namespace Gecode { namespace Support {
 
   template <class T, class Less>
   forceinline void
-  PQueue<T,Less>::update(const PQueue<T,Less>& p, bool share) {
+  PriorityQueue<T,Less>::update(const PriorityQueue<T,Less>& p, bool share) {
     if (share) {
       spq = p.spq;
       if (spq != NULL)
@@ -199,41 +199,41 @@ namespace Gecode { namespace Support {
 
   template <class T, class Less>
   forceinline
-  PQueue<T,Less>::~PQueue(void) {
+  PriorityQueue<T,Less>::~PriorityQueue(void) {
     if ((spq != NULL) && (--spq->ref == 0))
       heap.rfree(spq);
   }
 
   template <class T, class Less>
   forceinline bool
-  PQueue<T,Less>::empty(void) const {
+  PriorityQueue<T,Less>::empty(void) const {
     return (spq == NULL) || (spq->n == 0);
   }
 
 
   template <class T, class Less>
   forceinline void
-  PQueue<T,Less>::insert(const T& x) {
+  PriorityQueue<T,Less>::insert(const T& x) {
     spq->pq[spq->n++] = x;
     spq->fixup(spq->n-1);
   }
 
   template <class T, class Less>
   forceinline void
-  PQueue<T,Less>::remove(void) {
+  PriorityQueue<T,Less>::remove(void) {
     spq->pq[0] = spq->pq[--spq->n];
     spq->fixdown();
   }
 
   template <class T, class Less>
   forceinline T&
-  PQueue<T,Less>::top(void) {
+  PriorityQueue<T,Less>::top(void) {
     return spq->pq[0];
   }
 
   template <class T, class Less>
   forceinline void
-  PQueue<T,Less>::fix(void) {
+  PriorityQueue<T,Less>::fix(void) {
     spq->fixdown();
   }
 

@@ -97,7 +97,7 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
     /// Instance for order
     RangeUnionOrder order;
     /// Priority queue to give access to next range
-    Support::PQueue<Iterator*,RangeUnionOrder> r;
+    PriorityQueue<Iterator*,RangeUnionOrder> r;
   public:
     /// \name Constructors and initialization
     //@{
