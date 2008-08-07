@@ -64,7 +64,7 @@
 #
 
 [RELEASE]
-Version: 2.1.2
+Version: 3.x
 Date: 2008-
 [DESCRIPTION]
 This is a release.
@@ -102,6 +102,114 @@ Rank:   minor
 [DESCRIPTION]
 All functions for checking sharing for arrays (same, shared,
 unique) require a space argument (for memory management).
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added MinimizeSpace and MaximizeSpace classes for cost-based
+optimization (requires implementing a cost function returning an
+integer cost variable). Optimization can now be implemented by
+inheriting from these classes rather than from Space and by
+implementing a cost function.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The description() member function of a space is not any longer
+const: it can be called at most once.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The constrain method used for best solution search must be
+virtual and takes an argument of type const Space* rather than
+Space* as argument.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Tie-breaking and random selection for branch is now supported.
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   major
+[DESCRIPTION]
+The values for variable and value selection for branching have
+been made consistent and extended. The following values have 
+been renamed:
+ - SET_VAR_MIN_CARD -> SET_VAR_SIZE_MIN
+ - SET_VAR_MAX_CARD -> SET_VAR_SIZE_MAX
+ - SET_VAR_MIN_UNKNOWN_ELEM -> SET_VAR_MIN_MIN
+ - SET_VAR_MAX_UNKNOWN_ELEM -> SET_VAR_MAX_MAX
+ - SET_VAL_MIN -> SET_VAL_MIN_INC
+ - SET_VAL_MAX -> SET_VAL_MAX_INC
+
+Tie-breaking and random selection is now supported.
+
+[ENTRY]
+Module: cpltset
+What:   change
+Rank:   major
+[DESCRIPTION]
+The values for variable and value selection for branching have
+been made consistent and extended. The following values have 
+been renamed:
+ - CPLTSET_VAR_MIN_CARD -> CPLTSET_VAR_SIZE_MIN
+ - CPLTSET_VAR_MAX_CARD -> CPLTSET_VAR_SIZE_MAX
+ - CPLTSET_VAR_MIN_UNKNOWN_ELEM -> CPLTSET_VAR_MIN_MIN
+ - CPLTSET_VAR_MAX_UNKNOWN_ELEM -> CPLTSET_VAR_MAX_MAX
+ - CPLTSET_VAL_MIN_UNKNOWN -> CPLTSET_VAL_MIN_INC
+ - CPLTSET_VAL_MAX_UNKNOWN -> CPLTSET_VAL_MAX_INC
+ - CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MIN_EXC
+ - CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MAX_EXC
+
+Tie-breaking and random selection is now supported.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The variable selection INT_VAR_DEGREE_MIN and INT_VAR_DEGREE_MAX
+do not have tiebreaking with smallest domain size built in. The old
+behaviour can be reclaimed by explicit tiebreaking, for example
+replace INT_VAR_DEGREE_MAX by
+tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN).
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+View and value branchings have been completely reimplemented to support
+tie-breaking and state (for randomized selection).
+
+[ENTRY]
+Module: kernel
+What:   removed
+Rank:   major
+[DESCRIPTION]
+View and value assignments have been removed as they now can be
+expressed by view and value branchings.
+
+[RELEASE]
+Version: 2.2.0
+Date: ?
+[DESCRIPTION]
+This release adds many domain consistent propagators for
+arithmetic constraints and fixes a number of bugs. Some of these
+bugs fixed are potentially serious, in particular as they occur
+very seldom. Please change to 2.2.0 as soon as possible. And,
+of course, the usual small fixes and changes.
 
 [ENTRY]
 Module: other
@@ -170,25 +278,6 @@ been removed. Might be reintroduced later in a more general
 fashion.
 
 [ENTRY]
-Module: minimodel
-What:   new
-Rank:   minor
-[DESCRIPTION]
-Added MinimizeSpace and MaximizeSpace classes for cost-based
-optimization (requires implementing a cost function returning an
-integer cost variable). Optimization can now be implemented by
-inheriting from these classes rather than from Space and by
-implementing a cost function.
-
-[ENTRY]
-Module: kernel
-What:   change
-Rank:   minor
-[DESCRIPTION]
-The description() member function of a space is not any longer
-const: it can be called at most once.
-
-[ENTRY]
 Module: other
 What:   new
 Rank:   minor
@@ -202,58 +291,6 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The set selection constraints are now called element.
-
-[ENTRY]
-Module: kernel
-What:   change
-Rank:   major
-[DESCRIPTION]
-The constrain method used for best solution search must be
-virtual and takes an argument of type const Space* rather than
-Space* as argument.
-
-[ENTRY]
-Module: int
-What:   change
-Rank:   major
-[DESCRIPTION]
-Tie-breaking and random selection for branch is now supported.
-
-[ENTRY]
-Module: set
-What:   change
-Rank:   major
-[DESCRIPTION]
-The values for variable and value selection for branching have
-been made consistent and extended. The following values have 
-been renamed:
- - SET_VAR_MIN_CARD -> SET_VAR_SIZE_MIN
- - SET_VAR_MAX_CARD -> SET_VAR_SIZE_MAX
- - SET_VAR_MIN_UNKNOWN_ELEM -> SET_VAR_MIN_MIN
- - SET_VAR_MAX_UNKNOWN_ELEM -> SET_VAR_MAX_MAX
- - SET_VAL_MIN -> SET_VAL_MIN_INC
- - SET_VAL_MAX -> SET_VAL_MAX_INC
-
-Tie-breaking and random selection is now supported.
-
-[ENTRY]
-Module: cpltset
-What:   change
-Rank:   major
-[DESCRIPTION]
-The values for variable and value selection for branching have
-been made consistent and extended. The following values have 
-been renamed:
- - CPLTSET_VAR_MIN_CARD -> CPLTSET_VAR_SIZE_MIN
- - CPLTSET_VAR_MAX_CARD -> CPLTSET_VAR_SIZE_MAX
- - CPLTSET_VAR_MIN_UNKNOWN_ELEM -> CPLTSET_VAR_MIN_MIN
- - CPLTSET_VAR_MAX_UNKNOWN_ELEM -> CPLTSET_VAR_MAX_MAX
- - CPLTSET_VAL_MIN_UNKNOWN -> CPLTSET_VAL_MIN_INC
- - CPLTSET_VAL_MAX_UNKNOWN -> CPLTSET_VAL_MAX_INC
- - CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MIN_EXC
- - CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MAX_EXC
-
-Tie-breaking and random selection is now supported.
 
 [ENTRY]
 Module: int
@@ -272,17 +309,6 @@ Fixed bug that could potentially have affected certain staged
 propagators.
 
 [ENTRY]
-Module: int
-What:   change
-Rank:   minor
-[DESCRIPTION]
-The variable selection INT_VAR_DEGREE_MIN and INT_VAR_DEGREE_MAX
-do not have tiebreaking with smallest domain size built in. The old
-behaviour can be reclaimed by explicit tiebreaking, for example
-replace INT_VAR_DEGREE_MAX by
-tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN).
-
-[ENTRY]
 Module: kernel
 What:   documentation
 Rank:   minor
@@ -299,22 +325,6 @@ Rank:   minor
 The configure script now always uses the Microsoft compiler on Windows. Use
 the CC and CXX environment variables to override this if you want to use
 gcc.
-
-[ENTRY]
-Module: kernel
-What:   change
-Rank:   major
-[DESCRIPTION]
-View and value branchings have been completely reimplemented to support
-tie-breaking and state (for randomized selection).
-
-[ENTRY]
-Module: kernel
-What:   removed
-Rank:   major
-[DESCRIPTION]
-View and value assignments have been removed as they now can be
-expressed by view and value branchings.
 
 [ENTRY]
 Module: int
