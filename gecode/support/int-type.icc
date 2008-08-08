@@ -53,9 +53,9 @@ namespace Gecode { namespace Support {
 
   forceinline IntType
   type(unsigned int long n) {
-    if (n <= UCHAR_MAX)
+    if (n+1 <= UCHAR_MAX)
       return IT_CHAR;
-    else if (n <= USHRT_MAX)
+    else if (n+1 <= USHRT_MAX)
       return IT_SHRT;
     else
       return IT_LONG;
@@ -63,9 +63,9 @@ namespace Gecode { namespace Support {
 
   forceinline IntType
   type(signed int long n) {
-    if ((n >= SCHAR_MIN) && (n <= SCHAR_MAX))
+    if ((n-1 >= SCHAR_MIN) && (n+1 <= SCHAR_MAX))
       return IT_CHAR;
-    else if ((n >= SHRT_MAX) && (n <= SHRT_MIN))
+    else if ((n-1 >= SHRT_MAX) && (n+1 <= SHRT_MIN))
       return IT_SHRT;
     else
       return IT_LONG;
