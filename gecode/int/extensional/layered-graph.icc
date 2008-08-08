@@ -45,8 +45,8 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   class State {
   public:
-    unsigned int i_deg;
-    unsigned int o_deg;
+    unsigned int i_deg; ///< The in-degree (number of incoming edges)
+    unsigned int o_deg; ///< The out-degree (number of outgoing edges)
   };
 
   /**
@@ -59,18 +59,25 @@ namespace Gecode { namespace Int { namespace Extensional {
     Edge* next; ///< Next edge in support list
     /// Construct new edge
     Edge(int i, int o, Edge* n);
-    static void  operator delete(void*, size_t);
-    static void  operator delete(void*,Space&);
-    static void* operator new(size_t, Space&);
+    /// No-op (for exceptions)
+    static void  operator delete(void* p, size_t s);
+    /// No-op (for exceptions)
+    static void  operator delete(void* p, Space& home);
+    /// Allocate from space
+    static void* operator new(size_t s, Space& home);
   };
 
   forceinline
   Edge::Edge(int i, int o, Edge* n)
     : i_state(i), o_state(o), next(n) {}
   forceinline void
-  Edge::operator delete(void*, size_t) {}
+  Edge::operator delete(void* p, size_t s) {
+    (void) p; (void) s;
+  }
   forceinline void
-  Edge::operator delete(void*,Space&) {}
+  Edge::operator delete(void* p, Space& home) {
+    (void) p; (void) home;
+  }
   forceinline void*
   Edge::operator new(size_t s, Space& home) {
     return home.ralloc(s);
