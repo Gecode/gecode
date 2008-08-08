@@ -58,7 +58,7 @@ namespace Gecode { namespace Gist {
 
   Inspector::~Inspector(void) {}
     
-  TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, Better* b,
+  TreeCanvasImpl::TreeCanvasImpl(Space* rootSpace, bool bab,
                                  QWidget* parent)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
@@ -72,7 +72,7 @@ namespace Gecode { namespace Gist {
     , metaScrollXCurrent(0.0), metaScrollYCurrent(0.0)
     , scrollTimerId(0) {
       QMutexLocker locker(&mutex);
-      curBest = (b != NULL ? new BestNode(NULL, b) : NULL);
+      curBest = (bab ? new BestNode(NULL) : NULL);
       na = new Node::NodeAllocator();
       root = new (*na) VisualNode(rootSpace);
       root->layout();
@@ -442,7 +442,7 @@ namespace Gecode { namespace Gist {
         emit inspect(vm, nextPit);
         saveCurrentNode();
         if (inspector != NULL) {
-          inspector->inspect(curSpace);
+          inspector->inspect(*curSpace);
         }
         delete curSpace;
       }
@@ -464,9 +464,8 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     Space* rootSpace = root->getSpace(curBest);
     if (curBest != NULL) {
-      Better* b = curBest->b;
       delete curBest;
-      curBest = new BestNode(NULL, b);
+      curBest = new BestNode(NULL);
     }
     delete root;
     delete na;
@@ -976,7 +975,7 @@ namespace Gecode { namespace Gist {
     }
   }
 
-  TreeCanvas::TreeCanvas(Space* root, Better* b,
+  TreeCanvas::TreeCanvas(Space* root, bool bab,
                          QWidget* parent) : QWidget(parent) {
     QGridLayout* layout = new QGridLayout(this);    
 
@@ -989,7 +988,7 @@ namespace Gecode { namespace Gist {
     QPalette myPalette(scrollArea->palette());
     myPalette.setColor(QPalette::Window, Qt::white);
     scrollArea->setPalette(myPalette);
-    canvas = new TreeCanvasImpl(root, b, this);
+    canvas = new TreeCanvasImpl(root, bab, this);
     canvas->setPalette(myPalette);
     canvas->setObjectName("canvas");
 

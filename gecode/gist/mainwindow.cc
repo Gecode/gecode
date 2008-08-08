@@ -126,9 +126,9 @@ namespace Gecode { namespace Gist {
     setAttribute(Qt::WA_DeleteOnClose, false);
   }
   
-  GistMainWindow::GistMainWindow(Space* root, Better* b,
+  GistMainWindow::GistMainWindow(Space* root, bool bab,
                                  Gist::Inspector* gi)
-  : c(root,b,this), aboutGist(this) {
+  : c(root,bab,this), aboutGist(this) {
     if (gi != NULL)
       c.setInspector(gi);
     setCentralWidget(&c);

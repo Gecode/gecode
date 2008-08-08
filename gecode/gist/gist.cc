@@ -87,13 +87,13 @@ namespace Gecode {
     }
 
     QWidget*
-    exploreWidget(QWidget* parent, Space* root, Better* b,
+    exploreWidget(QWidget* parent, Space* root, bool bab,
                   Gist::Inspector* gi) {
       if (root->status() == SS_FAILED)
         root = NULL;
       else
         root = root->clone();
-      Gist::TreeCanvas *c = new Gist::TreeCanvas(root, b, parent);
+      Gist::TreeCanvas *c = new Gist::TreeCanvas(root, bab, parent);
       if (gi)
         c->setInspector(gi);
       c->show();
@@ -101,14 +101,14 @@ namespace Gecode {
     }
 
     int
-    explore(Space* root, Better* b, Gist::Inspector* gi) {
+    explore(Space* root, bool bab, Gist::Inspector* gi) {
       char* argv = ""; int argc=0;
       QApplication app(argc, &argv);
       if (root->status() == SS_FAILED)
         root = NULL;
       else
         root = root->clone();
-      Gist::GistMainWindow mw(root, b, gi);
+      Gist::GistMainWindow mw(root, bab, gi);
       return app.exec();
     }
     
@@ -116,14 +116,24 @@ namespace Gecode {
   
   void
   exploreWidget(QWidget* parent, Space* root, Gist::Inspector* gi) {
-    (void) Gist::exploreWidget(parent, root, NULL, gi);
+    (void) Gist::exploreWidget(parent, root, false, gi);
   }
 
   int
   explore(Space* root, Gist::Inspector* gi) {
-    return Gist::explore(root, NULL, gi);
+    return Gist::explore(root, false, gi);
   }
   
+  int
+  exploreBest(Space* root, Gist::Inspector* gi) {
+    return Gist::explore(root, true, gi);
+  }
+
+  void
+  exploreBestWidget(QWidget* parent, Space* root, Gist::Inspector* gi) {
+    (void) Gist::exploreWidget(parent, root, true, gi);
+  }
+
 }
 
 // STATISTICS: gist-any

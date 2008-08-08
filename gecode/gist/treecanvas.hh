@@ -76,7 +76,7 @@ namespace Gecode {  namespace Gist {
 
   public:
     /// Constructor
-    TreeCanvasImpl(Space* rootSpace, Better* b, QWidget* parent = NULL);
+    TreeCanvasImpl(Space* rootSpace, bool bab, QWidget* parent = NULL);
     /// Destructor
     ~TreeCanvasImpl(void);
 
@@ -315,7 +315,7 @@ namespace Gecode {  namespace Gist {
 
   public:
     /// Constructor
-    TreeCanvas(Space* root, Better* b = NULL, QWidget* parent = NULL);
+    TreeCanvas(Space* root, bool bab = false, QWidget* parent = NULL);
     /// Destructor
     ~TreeCanvas(void);
 

@@ -38,7 +38,6 @@
 #define GECODE_GIST_SPACENODE_HH
 
 #include "gecode/gist/node.hh"
-#include "gecode/gist/better.hh"
 #include "gecode/kernel.hh"
 
 namespace Gecode { namespace Gist {
@@ -99,10 +98,8 @@ namespace Gecode { namespace Gist {
   public:
     /// The currently best node found, or NULL
     SpaceNode* s;
-    /// The object used for constraining spaces to be better
-    Better* b;
     /// Constructor
-    BestNode(SpaceNode* s0, Better* b);
+    BestNode(SpaceNode* s0);
   };
 
   /// \brief A node of a search tree of Gecode spaces

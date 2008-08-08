@@ -103,7 +103,7 @@ namespace Gecode { namespace Gist {
   SpecialDesc::SpecialDesc(std::string varName, int rel0, int v0)
   : vn(varName), v(v0), rel(rel0) { }
 
-  BestNode::BestNode(SpaceNode* s0, Better* b0) : s(s0), b(b0) {}
+  BestNode::BestNode(SpaceNode* s0) : s(s0) {}
   
   int
   SpaceNode::recompute(BestNode* curBest) {
@@ -192,7 +192,7 @@ namespace Gecode { namespace Gist {
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
           b.ownBest->acquireSpace(curBest);
-          curBest->b->constrain(curSpace, *b.ownBest->workingSpace);
+          curSpace->constrain(*b.ownBest->workingSpace);
           lastBest = b.ownBest;
         }
         curDist++;
@@ -223,7 +223,7 @@ namespace Gecode { namespace Gist {
       
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
-          curBest->b->constrain(workingSpace, *ownBest->workingSpace);
+          workingSpace->constrain(*ownBest->workingSpace);
         }
       }
     }
@@ -251,7 +251,7 @@ namespace Gecode { namespace Gist {
 
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
-          curBest->b->constrain(copy, *ownBest->workingSpace);
+          copy->constrain(*ownBest->workingSpace);
         }
         if (copy->status() == SS_FAILED) {
           delete copy;

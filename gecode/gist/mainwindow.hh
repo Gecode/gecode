@@ -73,7 +73,7 @@ namespace Gecode { namespace Gist {
     void preferences(bool setup=false);
   public:
     /// Constructor
-    GistMainWindow(Space* root, Better* b, Gist::Inspector* gi);
+    GistMainWindow(Space* root, bool bab, Gist::Inspector* gi);
   protected:
     void closeEvent(QCloseEvent* event);
   };

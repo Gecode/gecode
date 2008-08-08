@@ -68,8 +68,6 @@ class QWidget;
 #include <string>
 #include <sstream>
 
-#include "gecode/gist/better.hh"
-
 namespace Gecode { 
   
   /** 
@@ -91,7 +89,7 @@ namespace Gecode {
   class GECODE_GIST_EXPORT Inspector {
   public:
     /// Call-back function
-    virtual void inspect(Space* node) = 0;
+    virtual void inspect(Space& node) = 0;
     /// Destructor
     virtual ~Inspector(void);
   };
@@ -125,17 +123,17 @@ namespace Gecode {
     /// Constructor
     PrintingInspector(const std::string& name);
     /// Use the print method of the template class S to print a space
-    virtual void inspect(Space* node);
+    virtual void inspect(Space& node);
   };
   
   /// Create a new stand-alone Gist for \a root using \a b and \a gi
   GECODE_GIST_EXPORT
-  int explore(Space* root, Better* b, Inspector* gi);
+  int explore(Space* root, bool bab, Inspector* gi);
   
   /// Create a new Gist widget with parent \a parent for \a root using \a b and \a gi
   GECODE_GIST_EXPORT
   QWidget* exploreWidget(QWidget* parent, 
-                         Space* root, Better* b, Inspector* gi);
+                         Space* root, bool bab, Inspector* gi);
   }	
 
   /// Create a new stand-alone Gist for \a root using \a gi
@@ -146,12 +144,12 @@ namespace Gecode {
   void exploreWidget(QWidget* parent, Space* root, Gist::Inspector* gi = 0);
 
   /// Create a new stand-alone Gist for branch-and-bound search of \a root, using \a gi
-  template <class S>
-  int exploreBest(S* root, Gist::Inspector* gi = 0);
+  GECODE_GIST_EXPORT
+  int exploreBest(Space* root, Gist::Inspector* gi = 0);
 
   /// Create a new Gist widget with parent \a parent for branch-and-bound search of \a root, using \a gi
-  template <class S>
-  void exploreBestWidget(QWidget* parent, S* root, Gist::Inspector* gi = 0);
+  GECODE_GIST_EXPORT
+  void exploreBestWidget(QWidget* parent, Space* root, Gist::Inspector* gi = 0);
 
 }
 

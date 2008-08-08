@@ -37,14 +37,6 @@
 namespace Gecode { 
 
   namespace Gist {
-    /// Implement branch-and-bound constraining function
-    template <class S>
-    class GistBetter : public Better {
-    public:
-      virtual void constrain(Space* s, Space& best) {
-        static_cast<S*>(s)->constrain(best);
-      }
-    };
 
     template <class S>
     PrintingInspector<S>::PrintingInspector(const std::string& name)
@@ -52,23 +44,11 @@ namespace Gecode {
     
     template <class S>
     void
-    PrintingInspector<S>::inspect(Space* node) {
+    PrintingInspector<S>::inspect(Space& node) {
       init();
-      dynamic_cast<S*>(node)->print(getStream());
+      dynamic_cast<S&>(node).print(getStream());
     }
     
-  }
-
-  template <class S>
-  int exploreBest(S* root, Gist::Inspector* gi) {
-    Gist::GistBetter<S>* gb = new Gist::GistBetter<S>();
-    return Gist::explore(root, gb, gi);
-  }
-
-  template <class S>
-  void exploreBestWidget(QWidget* parent, S* root, Gist::Inspector* gi) {
-    Gist::GistBetter<S>* gb = new Gist::GistBetter<S>();
-    (void) Gist::exploreWidget(parent, root, gb, gi);
   }
 
 }
