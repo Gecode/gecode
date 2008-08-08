@@ -1558,6 +1558,8 @@ namespace Gecode {
     unsigned int n_symbols(void) const;
     /// Return the number of transitions
     unsigned int n_transitions(void) const;
+    /// Return maximal degree (in-degree and out-degree) of any state
+    unsigned int max_degree(void) const;
     /// Return the number of the first final state
     int final_fst(void) const;
     /// Return the number of the last final state

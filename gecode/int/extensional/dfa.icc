@@ -49,6 +49,8 @@ namespace Gecode {
     unsigned int n_symbols;
     /// Number of transitions
     unsigned int n_trans;
+    /// Return maximal degree (in-degree and out-degree) of any state
+    unsigned int max_degree;
     /// First final state
     int final_fst;
     /// Last final state
@@ -113,6 +115,12 @@ namespace Gecode {
   DFA::n_transitions(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
     return (d == NULL) ? 0 : d->n_trans;
+  }
+
+  forceinline unsigned int
+  DFA::max_degree(void) const {
+    const DFAI* d = static_cast<DFAI*>(object());
+    return (d == NULL) ? 0 : d->max_degree;
   }
 
   forceinline int

@@ -432,13 +432,37 @@ namespace Gecode {
     {
       // Count number of symbols
       unsigned int n_symbols = 0;
-      for (int i = 0; i<m_trans; ) {
+      for (unsigned int i = 0; i<m_trans; ) {
         int s = d->trans[i++].symbol;
         n_symbols++;
         while ((i<m_trans) && (d->trans[i].symbol == s))
           i++;
       }
       d->n_symbols = n_symbols;
+    }
+    {
+      // Compute maximal degree
+      unsigned int max_degree = 0;
+      unsigned int* deg = heap.alloc<unsigned int>(m_states);
+
+      // Compute in-degree per state
+      for (unsigned int i = m_states; i--; )
+        deg[i] = 0;
+      for (unsigned int i = m_trans; i--; )
+        deg[d->trans[i].o_state]++;
+      for (unsigned int i = m_states; i--; )
+        max_degree = std::max(max_degree,deg[i]);
+
+      // Compute out-degree per state
+      for (unsigned int i = m_states; i--; )
+        deg[i] = 0;
+      for (unsigned int i = m_trans; i--; )
+        deg[d->trans[i].i_state]++;
+      for (unsigned int i = m_states; i--; )
+        max_degree = std::max(max_degree,deg[i]);
+
+      heap.free<unsigned int>(deg,m_states);
+      d->max_degree = max_degree;
     }
     d->fill();
     object(d);
@@ -459,17 +483,18 @@ namespace Gecode {
 
     // All done... Construct the automaton
 
-    int n_trans = (a->size() - 4) / 3;
+    int n_trans = (a->size() - 5) / 3;
     DFAI* d = new DFAI(n_trans);
-    d->n_states  = (*a)[0];
-    d->n_symbols = (*a)[1];
-    d->final_fst = (*a)[2];
-    d->final_lst = (*a)[3];
-    d->n_trans   = n_trans;
+    d->n_states   = (*a)[0];
+    d->n_symbols  = (*a)[1];
+    d->max_degree = (*a)[2];
+    d->final_fst  = (*a)[3];
+    d->final_lst  = (*a)[4];
+    d->n_trans    = n_trans;
     for (int i=0; i<n_trans; i++) {
-      d->trans[i].i_state = (*a)[4+3*i+0];
-      d->trans[i].symbol  = (*a)[4+3*i+1];
-      d->trans[i].o_state = (*a)[4+3*i+2];
+      d->trans[i].i_state = (*a)[5+3*i+0];
+      d->trans[i].symbol  = (*a)[5+3*i+1];
+      d->trans[i].o_state = (*a)[5+3*i+2];
     }
     d->fill();
     object(d);    
@@ -482,16 +507,17 @@ namespace Gecode {
     if (sharedIndex >= 0)
       return Reflection::Arg::newSharedReference(sharedIndex);
     Reflection::IntArrayArg* a = 
-      Reflection::Arg::newIntArray(static_cast<int>(4+3*n_transitions()));
+      Reflection::Arg::newIntArray(static_cast<int>(5+3*n_transitions()));
     (*a)[0] = n_states();
     (*a)[1] = n_symbols();
-    (*a)[2] = final_fst();
-    (*a)[3] = final_lst();
+    (*a)[2] = max_degree();
+    (*a)[3] = final_fst();
+    (*a)[4] = final_lst();
     const DFAI* o = static_cast<DFAI*>(object());
     for (unsigned int i=0; i<n_transitions(); i++ ) {
-      (*a)[4+3*i+0] = o->trans[i].i_state;
-      (*a)[4+3*i+1] = o->trans[i].symbol;
-      (*a)[4+3*i+2] = o->trans[i].o_state;
+      (*a)[5+3*i+0] = o->trans[i].i_state;
+      (*a)[5+3*i+1] = o->trans[i].symbol;
+      (*a)[5+3*i+2] = o->trans[i].o_state;
     }
     vm.putMasterObject(object());
     return Reflection::Arg::newSharedObject(a);    
@@ -500,11 +526,12 @@ namespace Gecode {
   SharedHandle::Object*
   DFA::DFAI::copy(void) const {
     DFAI* d = new DFAI(n_trans);
-    d->n_states  = n_states;
-    d->n_symbols = n_symbols;
-    d->n_trans   = n_trans;
-    d->final_fst = final_fst;
-    d->final_lst = final_lst;
+    d->n_states   = n_states;
+    d->n_symbols  = n_symbols;
+    d->n_trans    = n_trans;
+    d->max_degree = max_degree;
+    d->final_fst  = final_fst;
+    d->final_lst  = final_lst;
     heap.copy<Transition>(&d->trans[0], &trans[0], n_trans);
     d->fill();
     return d;
