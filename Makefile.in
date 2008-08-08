@@ -127,7 +127,7 @@ SUPPORTHDR0 = \
 	dynamic-stack exception map heap \
 	macros random sort \
 	static-stack symbol \
-	marked-pointer
+	marked-pointer int-type
 
 BUDDYSRC0 = \
 	bddio.c \

@@ -88,6 +88,7 @@
 #include "gecode/support/cast.icc"
 #include "gecode/support/heap.icc"
 #include "gecode/support/marked-pointer.icc"
+#include "gecode/support/int-type.icc"
 
 /*
  * Common datastructures and algorithms
