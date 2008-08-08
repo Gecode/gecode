@@ -534,21 +534,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     this->force(home);
   }
 
-  /*
-  template <class Degree, class StateIdx>
-  forceinline
-  LayeredGraph<BoolView,Degree,StateIdx>
-  ::LayeredGraph(Space& home, ViewArray<BoolView>& x0, DFA& d)
-    : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
-    assert(x.size() > 0);
-    for (int i=x.size(); i--; )
-      if (!x[i].assigned())
-        x[i].subscribe(home, *new (home) Index(home,*this,c,i));
-    BoolView::schedule(home,*this,ME_BOOL_VAL);
-    this->force(home);
-  }
-  */
-
   template <class View, class Degree, class StateIdx>
   forceinline size_t
   LayeredGraph<View,Degree,StateIdx>::dispose(Space& home) {
