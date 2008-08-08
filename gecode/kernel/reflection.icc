@@ -831,51 +831,53 @@ namespace Gecode { namespace Reflection {
    *  @{
    */  
 
-  /** \brief String representation for View types, used for name mangling
-    */
+  /// String representation for View types, used for name mangling
   template <class View>
   class TypeOf {
   public:
     /// Return string representation
     static Support::Symbol t(void) { return View::type(); }
   };
-  
-  /** \brief String representation for bool, used for name mangling
-    */
-  template <>
-  class TypeOf<bool> {
-  public:
-    /// Return string representation
-    static Support::Symbol t(void) { return Support::Symbol("bool"); }
+
+#define GECODE_KERNEL_TYPEOF(type,name)                                 \
+  template <>                                                           \
+  class TypeOf<type> {                                                  \
+  public:                                                               \
+    /** Return string representation */                                 \
+    static Support::Symbol t(void) { return Support::Symbol(name); }    \
   };
 
-  /** \brief String representation for int, used for name mangling
-    */
-  template <>
-  class TypeOf<int> {
-  public:
-    /// Return string representation
-    static Support::Symbol t(void) { return Support::Symbol("int"); }
-  };
+  /// String representation for bool, used for name mangling
+  GECODE_KERNEL_TYPEOF(bool,"bool")
 
-  /** \brief String representation for unsigned int, used for name mangling
-    */
-  template <>
-  class TypeOf<unsigned int> {
-  public:
-    /// Return string representation
-    static Support::Symbol t(void) { return Support::Symbol("unsigned int"); }
-  };
+  /// String representation for char, used for name mangling
+  GECODE_KERNEL_TYPEOF(char,"char")
+  /// String representation for signed char, used for name mangling
+  GECODE_KERNEL_TYPEOF(signed char,"signed char")
+  /// String representation for unsigned char, used for name mangling
+  GECODE_KERNEL_TYPEOF(unsigned char,"unsigned char")
 
-  /** \brief String representation for double, used for name mangling
-    */
-  template <>
-  class TypeOf<double> {
-  public:
-    /// Return string representation
-    static Support::Symbol t(void) { return Support::Symbol("double"); }
-  };
+  /// String representation for int, used for name mangling
+  GECODE_KERNEL_TYPEOF(int,"int")
+  /// String representation for unsigned int, used for name mangling
+  GECODE_KERNEL_TYPEOF(unsigned int,"unsigned int")
 
+  /// String representation for short int, used for name mangling
+  GECODE_KERNEL_TYPEOF(short int,"short int")
+  /// String representation for unsigned short int, used for name mangling
+  GECODE_KERNEL_TYPEOF(unsigned short int,"unsigned short int")
+
+  /// String representation for long int, used for name mangling
+  GECODE_KERNEL_TYPEOF(long int,"long int")
+  /// String representation for unsigned long int, used for name mangling
+  GECODE_KERNEL_TYPEOF(unsigned long int,"unsigned long int")
+
+  /// String representation for float, used for name mangling
+  GECODE_KERNEL_TYPEOF(float,"float")
+  /// String representation for signed char, used for name mangling
+  GECODE_KERNEL_TYPEOF(double,"double")
+
+#undef GECODE_KERNEL_TYPEOF
   //@}
 
 }
