@@ -166,7 +166,7 @@ foreach $ns (split('::',$lns)) {
 print "\n\n";
 print "  /// Create virtual view selector for tie-breaking\n";
 print "  void\n";
-print "  virtualize(Gecode::Space* home, $varbranch vars,\n";
+print "  virtualize(Gecode::Space& home, $varbranch vars,\n";
 print "             const Gecode::VarBranchOptions& o_vars,\n";
 print "             Gecode::ViewSelVirtualBase<$view>*& v) {\n";
 print "    switch (vars) {\n";
@@ -191,7 +191,7 @@ foreach $ns (split('::',$gns)) {
 }
 print "\n\n";
 print "  void\n";
-print "  branch(Gecode::Space* home, const $varargs\& x,\n";
+print "  branch(Gecode::Space& home, const $varargs\& x,\n";
 print "         $varbranch vars, $valbranch vals,\n";
 print "         const Gecode::VarBranchOptions& o_vars,\n";
 print "         const Gecode::ValBranchOptions& o_vals) {\n";
@@ -205,7 +205,7 @@ foreach $ns (split('::',$lns)) {
   print "    using namespace $ans;\n";
 }
 print "\n\n";
-print "    if (home->failed()) return;\n";
+print "    if (home.failed()) return;\n";
 print "    ViewArray<$view> xv(home,x);\n";
 print "    switch (vars) {\n";
 for ($i=0; $i<$n; $i++) {
@@ -223,7 +223,7 @@ print "      throw $exception;\n";
 print "    }\n";
 print "  }\n\n";
 print "  void\n";
-print "  branch(Gecode::Space* home, const $varargs\& x,\n";
+print "  branch(Gecode::Space& home, const $varargs\& x,\n";
 print "         const Gecode::TieBreakVarBranch<$varbranch>\& vars,\n";
 print "         $valbranch vals,\n";
 print "         const Gecode::TieBreakVarBranchOptions& o_vars,\n";
@@ -238,7 +238,7 @@ foreach $ns (split('::',$lns)) {
   print "    using namespace $ans;\n";
 }
 print "\n\n";
-print "    if (home->failed()) return;\n";
+print "    if (home.failed()) return;\n";
 $c = "";
 for ($i=0; $i<$n; $i++) {
   if ($complete[$i]) {
