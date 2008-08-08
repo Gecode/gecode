@@ -79,12 +79,12 @@ namespace Gecode { namespace Support {
   template <class T, class A>
   forceinline
   DynamicArray<T,A>::DynamicArray(A& a0, int n0)
-    : a(a0), n(n0), x(a.alloc<T>(n)) {}
+    : a(a0), n(n0), x(a.template alloc<T>(n)) {}
 
   template <class T, class A>
   forceinline
   DynamicArray<T,A>::DynamicArray(const DynamicArray<T,A>& da)
-    : a(da.a), n(da.n), x(a.alloc<T>(n)) {
+    : a(da.a), n(da.n), x(a.template alloc<T>(n)) {
     (void) heap.copy<T>(x,da.x,n);
   }
 
@@ -99,7 +99,7 @@ namespace Gecode { namespace Support {
   DynamicArray<T,A>::operator =(const DynamicArray<T,A>& da) {
     if (this != &da) {
       if (n < da.n) {
-        a.free(x,n); n = da.n; x = a.alloc<T>(n);
+        a.free(x,n); n = da.n; x = a.template alloc<T>(n);
       }
       (void) heap.copy(x,da.x,n);
     }

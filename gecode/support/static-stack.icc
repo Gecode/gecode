@@ -89,12 +89,12 @@ namespace Gecode { namespace Support {
   template <class T, class A>
   forceinline
   StaticStack<T,A>::StaticStack(A& a0, int n0)
-    : a(a0), n(n0), tos(0), stack(a.alloc<T>(n)) {}
+    : a(a0), n(n0), tos(0), stack(a.template alloc<T>(n)) {}
 
   template <class T, class A>
   forceinline
   StaticStack<T,A>::~StaticStack(void) {
-    a.free<T>(stack,n);
+    a.free(stack,n);
   }
 
   template <class T, class A>

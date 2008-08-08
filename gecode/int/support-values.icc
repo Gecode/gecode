@@ -62,13 +62,13 @@ namespace Gecode { namespace Int {
   inline
   SupportValues<View,A>::SupportValues(A& a0, View x0) 
     : a(a0), x(x0), sz((x.size() / bpui) + 1), 
-      bits(a.alloc<unsigned int>(sz)) {
+      bits(a.template alloc<unsigned int>(sz)) {
     for (unsigned int i = (x.size() / bpui) + 1; i--; )
       bits[i] = 0;
     unsigned int n = 0;
     for (ViewRanges<View> r(x); r(); ++r)
       n++;
-    rp_fst = a.alloc<RangePos>(n+1);
+    rp_fst = a.template alloc<RangePos>(n+1);
     rp_lst = rp_fst + n;
     unsigned int p = 0;
     int i = 0;

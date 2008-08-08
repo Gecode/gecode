@@ -109,14 +109,14 @@ namespace Gecode { namespace Support {
   void
   DynamicStack<T,A>::resize(void) {
     int nl = (limit * 3) / 2;
-    stack = a.realloc<T>(stack,limit,nl);
+    stack = a.template realloc<T>(stack,limit,nl);
     limit = nl;
   }
 
   template <class T, class A>
   forceinline
   DynamicStack<T,A>::DynamicStack(A& a0, int n)
-    : a(a0), limit(n), tos(0), stack(a.alloc<T>(n)) {}
+    : a(a0), limit(n), tos(0), stack(a.template alloc<T>(n)) {}
 
   template <class T, class A>
   forceinline
