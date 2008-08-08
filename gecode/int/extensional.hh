@@ -51,8 +51,8 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
-  class Layer;
-  class State;
+  template <class StateIdx> class Layer;
+  template <class Degree> class State;
 
   /**
    * \brief Domain consistent layered graph (regular) propagator
@@ -62,13 +62,13 @@ namespace Gecode { namespace Int { namespace Extensional {
    *   for Finite Sequences of Variables, CP 2004.
    *   Pages 482-495, LNCS 3258, Springer-Verlag, 2004.
    *
-   * The propagator is not capable of multiple occurences of the same
-   * view.
+   * The propagator is not capable of dealing with multiple occurences
+   * of the same view.
    *
    * Requires \code #include "gecode/int/extensional.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template <class View, class Degree, class StateIdx>
   class LayeredGraph : public Propagator {
   protected:
     /// Advisors for views (by position in array)
@@ -109,9 +109,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// The start state for graph construction
     int start;
     /// The layers of the graph
-    Layer* layers;
+    Layer<StateIdx>* layers;
     /// The states used in the graph
-    State* states;
+    State<Degree>* states;
     /// Index range with in-degree modifications
     IndexRange i_ch;
     /// Index range with out-degree modifications
@@ -127,7 +127,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     ExecStatus prune(Space& home);
 
     /// Constructor for cloning \a p
-    LayeredGraph(Space& home, bool share, LayeredGraph<View>& p);
+    LayeredGraph(Space& home, bool share, 
+                 LayeredGraph<View,Degree,StateIdx>& p);
   public:
     /// Constructor for posting
     LayeredGraph(Space& home, ViewArray<View>& x, DFA& d);
@@ -141,7 +142,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

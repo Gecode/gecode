@@ -49,7 +49,7 @@ namespace Gecode {
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(home,(Extensional::LayeredGraph<IntView>
+    GECODE_ES_FAIL(home,(Extensional::LayeredGraph<IntView,unsigned int,int>
                          ::post(home,xv,dfa)));
   }
 
@@ -61,7 +61,7 @@ namespace Gecode {
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(home,(Extensional::LayeredGraph<BoolView>
+    GECODE_ES_FAIL(home,(Extensional::LayeredGraph<BoolView,unsigned int,int>
                          ::post(home,xv,dfa)));
   }
 
@@ -123,8 +123,8 @@ namespace Gecode {
     }
   }
 
-  GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::IntView>);
-  GECODE_REGISTER1(Int::Extensional::LayeredGraph<Int::BoolView>);
+  GECODE_REGISTER3(Int::Extensional::LayeredGraph<Int::IntView,unsigned int,int>);
+  GECODE_REGISTER3(Int::Extensional::LayeredGraph<Int::BoolView,unsigned int,int>);
 
   GECODE_REGISTER1(Int::Extensional::Basic<Int::IntView>);
   GECODE_REGISTER1(Int::Extensional::Incremental<Int::IntView>);

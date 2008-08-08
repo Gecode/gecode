@@ -849,7 +849,7 @@ namespace Gecode { namespace Reflection {
     static Support::Symbol t(void) { return Support::Symbol("bool"); }
   };
 
-  /** \brief String representation for ints, used for name mangling
+  /** \brief String representation for int, used for name mangling
     */
   template <>
   class TypeOf<int> {
@@ -858,7 +858,16 @@ namespace Gecode { namespace Reflection {
     static Support::Symbol t(void) { return Support::Symbol("int"); }
   };
 
-  /** \brief String representation for doubles, used for name mangling
+  /** \brief String representation for unsigned int, used for name mangling
+    */
+  template <>
+  class TypeOf<unsigned int> {
+  public:
+    /// Return string representation
+    static Support::Symbol t(void) { return Support::Symbol("unsigned int"); }
+  };
+
+  /** \brief String representation for double, used for name mangling
     */
   template <>
   class TypeOf<double> {
