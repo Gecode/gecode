@@ -70,6 +70,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+The regular propagator now chooses datastructures according to
+the size of the DFA. This can save up to 80% memory on a 64 bit
+machine, and still up to 50% on a 32 bit machine.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

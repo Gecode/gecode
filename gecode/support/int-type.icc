@@ -43,29 +43,34 @@ namespace Gecode { namespace Support {
   enum IntType {
     IT_CHAR, ///< char integer type
     IT_SHRT, ///< short integer type
+    IT_INT,  ///< integer type
     IT_LONG  ///< long integer type
   };
 
   /// Return the type required to represent \a n
-  IntType type(unsigned long int n);
+  IntType u_type(unsigned long int n);
   /// Return the type required to represent \a n
-  IntType type(signed long int n);
+  IntType s_type(signed long int n);
 
   forceinline IntType
-  type(unsigned int long n) {
+  u_type(unsigned int long n) {
     if (n+1 <= UCHAR_MAX)
       return IT_CHAR;
     else if (n+1 <= USHRT_MAX)
       return IT_SHRT;
+    else if (n+1 <= UINT_MAX)
+      return IT_INT;
     else
       return IT_LONG;
   }
 
   forceinline IntType
-  type(signed int long n) {
+  s_type(signed int long n) {
     if ((n-1 >= SCHAR_MIN) && (n+1 <= SCHAR_MAX))
       return IT_CHAR;
-    else if ((n-1 >= SHRT_MAX) && (n+1 <= SHRT_MIN))
+    else if ((n-1 >= SHRT_MIN) && (n+1 <= SHRT_MAX))
+      return IT_SHRT;
+    else if ((n-1 >= INT_MIN) && (n+1 <= INT_MAX))
       return IT_SHRT;
     else
       return IT_LONG;
