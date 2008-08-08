@@ -54,21 +54,19 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   class Edge {
   public:
-    State* i_state; ///< Pointer to in-state
-    State* o_state; ///< Pointer to out-state
-    Edge*  next;    ///< Next edge in support list
-    /// Construct new edge and increment states
-    Edge(State& i, State& o, Edge* n);
+    int i_state; ///< Number of in-state
+    int o_state; ///< Number of out-state
+    Edge* next; ///< Next edge in support list
+    /// Construct new edge
+    Edge(int i, int o, Edge* n);
     static void  operator delete(void*, size_t);
     static void  operator delete(void*,Space&);
     static void* operator new(size_t, Space&);
   };
 
   forceinline
-  Edge::Edge(State& i, State& o, Edge* n)
-    : i_state(&i), o_state(&o), next(n) {
-    i_state->o_deg++; o_state->i_deg++;
-  }
+  Edge::Edge(int i, int o, Edge* n)
+    : i_state(i), o_state(o), next(n) {}
   forceinline void
   Edge::operator delete(void*, size_t) {}
   forceinline void
@@ -212,9 +210,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       i++;
     // There is only a single edge
     Edge* e = layers[i-1].support[0].edges;
-    assert((e->next == NULL) && (e->o_state->i_deg == 1));
-    // Map the state address to the state
-    start = static_cast<int>(e->o_state-states) % dfa.n_states();
+    assert((e->next == NULL) && (states[e->o_state].i_deg == 1));
+    // New start state
+    start = e->o_state % dfa.n_states();
     layers += i;
     x.drop_fst(i);
     for (Advisors<Index> as(c); as(); ++as)
@@ -251,10 +249,13 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (ViewValues<View> nx(x[i]); nx(); ++nx) {
         Edge* e = NULL;
         for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
-          if (states[i*n_states + t.i_state()].i_deg != 0)
-            e = new (home) Edge(states[i*n_states + t.i_state()],
-                                states[(i+1)*n_states +  t.o_state()],
-                                e);
+          if (states[i*n_states + t.i_state()].i_deg != 0) {
+            int i_s = i*n_states + t.i_state();
+            states[i_s].o_deg++; 
+            int o_s = (i+1)*n_states +  t.o_state();
+            states[o_s].i_deg++;
+            e = new (home) Edge(i_s, o_s, e);
+          }
         // Found support for value
         if (e != NULL) {
           layers[i].support[j].val   = nx.val();
@@ -273,12 +274,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         Edge** p = &layers[i].support[j].edges;
         Edge*  e = *p;
         do {
-          if (e->o_state->o_deg != 0) {
+          if (states[e->o_state].o_deg != 0) {
             // This state is still reachable, keep edge
             p = &e->next;
           } else {
             // Unreachable state, prune edge
-            e->i_state->o_deg--; e->o_state->i_deg--;
+            states[e->i_state].o_deg--; states[e->o_state].i_deg--;
             *p = e->next;
           }
           e = e->next;
@@ -315,10 +316,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         Edge** p = &layers[i].support[j].edges;
         Edge*  e = *p;
         do {
-          if (e->i_state->i_deg == 0) {
+          if (states[e->i_state].i_deg == 0) {
             // Adapt states
-            o_mod |= ((--e->i_state->o_deg) == 0);
-            i_mod |= ((--e->o_state->i_deg) == 0);
+            o_mod |= ((--states[e->i_state].o_deg) == 0);
+            i_mod |= ((--states[e->o_state].i_deg) == 0);
             // Remove edge
             *p = e->next;
           } else {
@@ -354,13 +355,13 @@ namespace Gecode { namespace Int { namespace Extensional {
         Edge** p = &layers[i].support[j].edges;
         Edge*  e = *p;
         do {
-          if (e->o_state->o_deg != 0) {
+          if (states[e->o_state].o_deg != 0) {
             // This state is still reachable, keep edge
             p = &e->next;
           } else {
             // Unreachable state, prune edge
-            o_mod |= (--e->i_state->o_deg == 0);
-            --e->o_state->i_deg;
+            o_mod |= (--states[e->i_state].o_deg == 0);
+            --states[e->o_state].i_deg;
             *p = e->next;
           }
           e = e->next;
@@ -407,8 +408,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Supported value not any longer in view
         for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
-          o_mod |= ((--e->i_state->o_deg) == 0);
-          i_mod |= ((--e->o_state->i_deg) == 0);
+          o_mod |= ((--states[e->i_state].o_deg) == 0);
+          i_mod |= ((--states[e->o_state].i_deg) == 0);
         }
       assert(l.support[j].val == n);
       l.support[0] = l.support[j++];
@@ -417,8 +418,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (; j<s; j++)
         for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
-          o_mod |= ((--e->i_state->o_deg) == 0);
-          i_mod |= ((--e->o_state->i_deg) == 0);
+          o_mod |= ((--states[e->i_state].o_deg) == 0);
+          i_mod |= ((--states[e->o_state].i_deg) == 0);
         }
     } else if (x[i].any(d)) {
       unsigned int j=0;
@@ -429,8 +430,8 @@ namespace Gecode { namespace Int { namespace Extensional {
           // Supported value not any longer in view
           for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
-            o_mod |= ((--e->i_state->o_deg) == 0);
-            i_mod |= ((--e->o_state->i_deg) == 0);
+            o_mod |= ((--states[e->i_state].o_deg) == 0);
+            i_mod |= ((--states[e->o_state].i_deg) == 0);
           }
           ++j;
         } else if (l.support[j].val > rx.max()) {
@@ -444,8 +445,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (; j<s; j++)
         for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
-          o_mod |= ((--e->i_state->o_deg) == 0);
-          i_mod |= ((--e->o_state->i_deg) == 0);
+          o_mod |= ((--states[e->i_state].o_deg) == 0);
+          i_mod |= ((--states[e->o_state].i_deg) == 0);
         }
     } else {
       int min = x[i].min(d);
@@ -459,8 +460,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (; (j<s) && (l.support[j].val <= max); j++)
         for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
-          o_mod |= ((--e->i_state->o_deg) == 0);
-          i_mod |= ((--e->o_state->i_deg) == 0);
+          o_mod |= ((--states[e->i_state].o_deg) == 0);
+          i_mod |= ((--states[e->o_state].i_deg) == 0);
         }
       // Keep remaining values
       while (j<s)
