@@ -972,6 +972,12 @@ $(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
 #
 # Generated branchings
 #
+GENBRANCHSRC = \
+	$(top_srcdir)/gecode/int/branch/post-view-int.cc \
+	$(top_srcdir)/gecode/int/branch/post-view-bool.cc \
+	$(top_srcdir)/gecode/set/branch.cc \
+	$(top_srcdir)/gecode/cpltset/branch.cc
+
 $(top_srcdir)/gecode/int/branch/post-view-int.cc: \
 	$(top_srcdir)/gecode/int/branch/post-view-int.bs \
 	$(top_srcdir)/misc/genbranch.perl
@@ -1656,14 +1662,14 @@ veryclean: clean
 
 distclean: veryclean
 	$(RMF) $(VARIMP:%=$(top_srcdir)/%)
-	$(RMF) misc/gecode.pc misc/gecode-search.pc \
-		misc/gecode-minimodel.pc misc/gecode-serialization.pc
+	$(RMF) $(GENBRANCHSRC)
 	$(RMF) Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 	$(RMF) $(SERREGSRC)
 
-depend: $(VARIMP:%=$(top_srcdir)/%) $(SERREGSRC:%=$(top_srcdir)/%)
+depend: $(VARIMP:%=$(top_srcdir)/%) $(GENBRANCHSRC) \
+		$(SERREGSRC:%=$(top_srcdir)/%)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
