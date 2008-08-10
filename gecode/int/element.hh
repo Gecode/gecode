@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   typedef SharedArray<int> IntSharedArray;
 
-  /// Class for index-value ma
+  /// Class for index-value map
   class IdxValMap;
 
   /**

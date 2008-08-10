@@ -51,9 +51,6 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
-  template <class StateIdx> class Layer;
-  template <class Degree> class State;
-
   /**
    * \brief Domain consistent layered graph (regular) propagator
    *
@@ -71,13 +68,65 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, class Degree, class StateIdx>
   class LayeredGraph : public Propagator {
   protected:
+    /// States are described by number of incoming and outgoing edges
+    class State {
+    public:
+      Degree i_deg; ///< The in-degree (number of incoming edges)
+      Degree o_deg; ///< The out-degree (number of outgoing edges)
+    };
+    ///
+    class Edge {
+    public:
+      StateIdx i_state; ///< Number of in-state
+      StateIdx o_state; ///< Number of out-state
+      Edge* next; ///< Next edge in support list
+      /// Construct new edge
+      Edge(StateIdx i, StateIdx o, Edge* n);
+      /// No-op (for exceptions)
+      static void  operator delete(void* p, size_t s);
+      /// No-op (for exceptions)
+      static void  operator delete(void* p, Space& home);
+      /// Allocate from space
+      static void* operator new(size_t s, Space& home);
+    };
+    /// Support information for a value
+    class Support {
+    public:
+      int val; ///< Supported value
+      Edge* edges; ///< Supporting edges in layered graph
+    };
+    /// Layer for a view in the layered graph
+    class Layer {
+    public:
+      unsigned int size; ///< Number of supported values
+      Support* support; ///< Supported values
+    };
+    /// Iterator for telling variable domains by scanning support
+    class LayerValues {
+    private:
+      const Support* s1; ///< Current support
+      const Support* s2; ///< End of support
+    public:
+      /// Default constructor
+      LayerValues(void);
+      /// Initialize for support of layer \a l
+      LayerValues(const Layer& l);
+      /// Initialize for support of layer \a l
+      void init(const Layer& l);
+      /// Test whether more values supported
+      bool operator()(void) const;
+      /// Move to next supported value
+      void operator++(void);
+      /// Return supported value
+      int val(void) const;
+    };
     /// Advisors for views (by position in array)
     class Index : public Advisor {
     public:
       /// The position of the view in the view array
-      int i;
+      StateIdx i;
       /// Create index advisor
-      Index(Space& home, Propagator& p, Council<Index>& c, int i);
+      Index(Space& home, Propagator& p, Council<Index>& c, StateIdx i);
       /// Clone index advisor \a a
       Index(Space& home, bool share, Index& a);
       /// Dispose advisor
@@ -107,11 +156,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// The %DFA describing the language
     DFA dfa;
     /// The start state for graph construction
-    int start;
+    StateIdx start;
     /// The layers of the graph
-    Layer<StateIdx>* layers;
+    Layer* layers;
     /// The states used in the graph
-    State<Degree>* states;
+    State* states;
     /// Index range with in-degree modifications
     IndexRange i_ch;
     /// Index range with out-degree modifications

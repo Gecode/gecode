@@ -41,99 +41,6 @@
 
 namespace Gecode {
 
-  namespace Int { namespace Extensional {
-
-    /// Select small types for the layered graph propagator
-    template <class View>
-    forceinline void
-    post(Space& home, ViewArray<View>& x, DFA dfa) {
-      Gecode::Support::IntType t_state_idx = 
-        Gecode::Support::s_type(x.size()*dfa.n_states());
-      Gecode::Support::IntType t_degree =
-        Gecode::Support::u_type(dfa.max_degree());
-      switch (t_state_idx) {
-      case Gecode::Support::IT_CHAR: 
-      case Gecode::Support::IT_SHRT:
-        switch (t_degree) {
-        case Gecode::Support::IT_CHAR:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned char,short int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_SHRT:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned short int,short int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_INT:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned int,short int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_LONG:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned long int,short int>
-                               ::post(home,x,dfa)));
-          break;
-        default: GECODE_NEVER;
-        }
-        break;
-      case Gecode::Support::IT_INT:
-        switch (t_degree) {
-        case Gecode::Support::IT_CHAR:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned char,int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_SHRT:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned short int,int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_INT:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned int,int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_LONG:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned long int,int>
-                               ::post(home,x,dfa)));
-          break;
-        default: GECODE_NEVER;
-        }
-        break;
-      case Gecode::Support::IT_LONG:
-        switch (t_degree) {
-        case Gecode::Support::IT_CHAR:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned char,long int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_SHRT:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned short int,long int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_INT:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned int,long int>
-                               ::post(home,x,dfa)));
-          break;
-        case Gecode::Support::IT_LONG:
-          GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                               unsigned long int,long int>
-                               ::post(home,x,dfa)));
-          break;
-        default: GECODE_NEVER;
-        }
-        break;
-      default: GECODE_NEVER;
-      }
-    }
-
-  }}
-
   void
   extensional(Space& home, const IntVarArgs& x, DFA dfa, 
               IntConLevel, PropKind) {
@@ -142,7 +49,7 @@ namespace Gecode {
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
-    Extensional::post<IntView>(home,xv,dfa);
+    Extensional::post_lgp<IntView>(home,xv,dfa);
   }
 
   void
@@ -153,7 +60,7 @@ namespace Gecode {
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
-    Extensional::post<BoolView>(home,xv,dfa);
+    Extensional::post_lgp<BoolView>(home,xv,dfa);
   }
 
   void
