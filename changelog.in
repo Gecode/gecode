@@ -74,6 +74,17 @@ Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
+The element propagator for integer arrays now chooses
+datastructures according to and the elements of the array. This
+can save more than 80% memory on a 64 bit machine, and up to 75%
+on a 32 bit machine. In common cases, one can expect a reduction by
+at least 50%.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
 The regular propagator now chooses datastructures according to
 the size of the DFA. This can save up to 80% memory on a 64 bit
 machine, and still up to 50% on a 32 bit machine.

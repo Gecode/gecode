@@ -555,7 +555,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   /// Select small types for the layered graph propagator
   template <class View>
-  forceinline void
+  forceinline ExecStatus
   post_lgp(Space& home, ViewArray<View>& x, DFA dfa) {
     Gecode::Support::IntType t_state_idx = 
       Gecode::Support::s_type(x.size()*dfa.n_states());
@@ -566,45 +566,34 @@ namespace Gecode { namespace Int { namespace Extensional {
     case Gecode::Support::IT_SHRT:
       switch (t_degree) {
       case Gecode::Support::IT_CHAR:
-        GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                             unsigned char,short int>
-                             ::post(home,x,dfa)));
-        break;
+        return Extensional::LayeredGraph<View,unsigned char,short int>
+          ::post(home,x,dfa);
       case Gecode::Support::IT_SHRT:
-        GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                             unsigned short int,short int>
-                             ::post(home,x,dfa)));
-        break;
+        return Extensional::LayeredGraph<View,unsigned short int,short int>
+          ::post(home,x,dfa);
       case Gecode::Support::IT_INT:
-        GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                             unsigned int,short int>
-                             ::post(home,x,dfa)));
-        break;
+        return Extensional::LayeredGraph<View,unsigned int,short int>
+          ::post(home,x,dfa);
       default: GECODE_NEVER;
       }
       break;
     case Gecode::Support::IT_INT:
       switch (t_degree) {
       case Gecode::Support::IT_CHAR:
-        GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                             unsigned char,int>
-                             ::post(home,x,dfa)));
-        break;
+        return Extensional::LayeredGraph<View,unsigned char,int>
+          ::post(home,x,dfa);
       case Gecode::Support::IT_SHRT:
-        GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                             unsigned short int,int>
-                             ::post(home,x,dfa)));
-        break;
+        return Extensional::LayeredGraph<View,unsigned short int,int>
+          ::post(home,x,dfa);
       case Gecode::Support::IT_INT:
-        GECODE_ES_FAIL(home,(Extensional::LayeredGraph<View,
-                             unsigned int,int>
-                             ::post(home,x,dfa)));
-        break;
+        return Extensional::LayeredGraph<View,unsigned int,int>
+          ::post(home,x,dfa);
       default: GECODE_NEVER;
       }
       break;
     default: GECODE_NEVER;
     }
+    return ES_OK;
   }
 
 }}}

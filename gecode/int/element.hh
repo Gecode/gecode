@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace Element {
    * Requires \code #include "gecode/int/element.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class ViewA, class ViewB>
+  template <class V0, class V1, class Idx, class Val>
   class Int : public Propagator {
   protected:
     /**
@@ -76,10 +76,10 @@ namespace Gecode { namespace Int { namespace Element {
      */
     class IdxVal  {
     public:
-      IdxVal* idx_next; ///< The next pair in index order
-      IdxVal* val_next; ///< The next pair in value order
-      int idx; ///< The index
-      int val; ///< The value
+      Idx idx_next; ///< The position of the next pair in index order
+      Idx val_next; ///< The position of the next pair in value order
+      Idx idx; ///< The index
+      Val val; ///< The value
       /// Mark that this pair should be removed
       void mark(void);
       /// Return whether this pair is marked for removal
@@ -93,16 +93,17 @@ namespace Gecode { namespace Int { namespace Element {
      */
     class IterIdx {
     private:
-      IdxVal* l; ///< Current index value pair
+      IdxVal* iv; ///< The index value data structure
+      Idx i; ///< Current index value pair
     public:
-      /// Initialize with pair \a l
-      IterIdx(IdxVal& l);
+      /// Initialize with start
+      IterIdx(IdxVal* iv);
       /// Test whether more pairs to be iterated
       bool operator()(void) const;
       /// Move to next index value pair (next index)
       void operator++(void);
       /// Return index of current index value pair
-      int val(void) const;
+      Idx val(void) const;
     };
     /**
      * \brief Value iterator for values in index-value map
@@ -112,27 +113,33 @@ namespace Gecode { namespace Int { namespace Element {
      */
     class IterVal {
     private:
-      const IdxVal* l; ///< Current index value pair
+      IdxVal* iv; ///< The index value data structure
+      Idx i; ///< Current index value pair
     public:
-      /// Initialize with pair \a l
-      IterVal(const IdxVal& l);
+      /// Initialize with start
+      IterVal(IdxVal* iv);
       /// Test whether more pairs to be iterated
       bool operator()(void) const;
       /// Move to next index value pair (next value)
       void operator++(void);
       /// Return value of current index value pair
-      int val(void) const;
+      Val val(void) const;
     };
     /// Sorting pointers to (index,value) pairs in value order
     class ByVal {
+    protected:
+      const IdxVal* iv; ///< Index-value pairs
     public:
-      bool operator()(IdxVal*&, IdxVal*&);
+      /// Initialize with index value pairs
+      ByVal(const IdxVal* iv);
+      /// Compare pairs at positions \a i and \a j
+      bool operator()(Idx& i, Idx& j);
     };
 
     /// View for index
-    ViewA x0;
+    V0 x0;
     /// View for result
-    ViewB x1;
+    V1 x1;
     /// Shared array of integer values
     IntSharedArray c;
     /// The index-value data structure
@@ -140,7 +147,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for cloning \a p
     Int(Space& home, bool shared, Int& p);
     /// Constructor for creation
-    Int(Space& home, IntSharedArray& i, ViewA x0, ViewB x1);
+    Int(Space& home, IntSharedArray& i, V0 x0, V1 x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -157,12 +164,14 @@ namespace Gecode { namespace Int { namespace Element {
     /// Mangled name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$i_{x_0}=x_1\f$
-    static  ExecStatus post(Space& home, IntSharedArray& i,
-                            ViewA x0, ViewB x1);
+    static  ExecStatus post(Space& home, IntSharedArray& i, V0 x0, V1 x1);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
+  /// Post propagator with apropriate index and value types
+  template <class V0, class V1>
+  ExecStatus post_int(Space& home, IntSharedArray& c, V0 x0, V1 x1);
 
 
   /**

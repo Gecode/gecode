@@ -50,7 +50,7 @@ namespace Gecode {
       Limits::check(c[i],"Int::element");
       cs[i] = c[i];
     }
-    GECODE_ES_FAIL(home,(Element::Int<IntView,IntView>::post(home,cs,x0,x1)));
+    GECODE_ES_FAIL(home,(Element::post_int<IntView,IntView>(home,cs,x0,x1)));
   }
 
   void
@@ -62,8 +62,7 @@ namespace Gecode {
       Limits::check(c[i],"Int::element");
       cs[i] = c[i];
     }
-    GECODE_ES_FAIL(home,
-                   (Element::Int<IntView,BoolView>::post(home,cs,x0,x1)));
+    GECODE_ES_FAIL(home,(Element::post_int<IntView,BoolView>(home,cs,x0,x1)));
   }
 
   void
@@ -77,8 +76,8 @@ namespace Gecode {
       cs[i] = c[i];
     }
     ConstIntView cx1(x1);
-    GECODE_ES_FAIL(home,(Element::Int<IntView,ConstIntView>
-                         ::post(home,cs,x0,cx1)));
+    GECODE_ES_FAIL(home,
+                   (Element::post_int<IntView,ConstIntView>(home,cs,x0,cx1)));
   }
 
   void
@@ -137,9 +136,62 @@ namespace Gecode {
 
   namespace {
     using namespace Int;
-    GECODE_REGISTER2(Element::Int<IntView,ConstIntView>);
-    GECODE_REGISTER2(Element::Int<IntView,BoolView>);
-    GECODE_REGISTER2(Element::Int<IntView,IntView>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed char,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed short int,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed int,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed char,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed short int,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed int,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed char,signed int>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed short int,signed int>);
+    GECODE_REGISTER4(Element::Int<IntView,ConstIntView,
+                     signed int,signed int>);
+
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed char,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed short int,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed int,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed char,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed short int,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed int,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed char,signed int>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed short int,signed int>);
+    GECODE_REGISTER4(Element::Int<IntView,IntView,
+                     signed int,signed int>);
+
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed char,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed short int,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed int,signed char>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed char,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed short int,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed int,signed short int>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed char,signed int>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed short int,signed int>);
+    GECODE_REGISTER4(Element::Int<IntView,BoolView,
+                     signed int,signed int>);
 
     GECODE_REGISTER3(Element::ViewBnd<IntView,IntView,ConstIntView>);
     GECODE_REGISTER3(Element::ViewBnd<IntView,IntView,IntView>);

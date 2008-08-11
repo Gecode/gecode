@@ -203,6 +203,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     static ExecStatus post(Space& home, ViewArray<View>& x, DFA& d);
   };
 
+  /// Select small types for the layered graph propagator
+  template <class View>
+  ExecStatus post_lgp(Space& home, ViewArray<View>& x, DFA dfa);
+
 }}}
 
 #include "gecode/int/extensional/layered-graph.icc"

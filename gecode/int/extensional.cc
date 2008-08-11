@@ -49,7 +49,7 @@ namespace Gecode {
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
-    Extensional::post_lgp<IntView>(home,xv,dfa);
+    GECODE_ES_FAIL(home,Extensional::post_lgp<IntView>(home,xv,dfa));
   }
 
   void
@@ -60,7 +60,7 @@ namespace Gecode {
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
-    Extensional::post_lgp<BoolView>(home,xv,dfa);
+    GECODE_ES_FAIL(home,Extensional::post_lgp<BoolView>(home,xv,dfa));
   }
 
   void
