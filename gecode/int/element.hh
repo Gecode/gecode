@@ -57,9 +57,6 @@ namespace Gecode { namespace Int { namespace Element {
 
   typedef SharedArray<int> IntSharedArray;
 
-  /// Class for index-value map
-  class IdxValMap;
-
   /**
    * \brief %Element propagator for array of integers
    *
@@ -69,14 +66,77 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB>
   class Int : public Propagator {
   protected:
+    /**
+     * \brief Linked index-value pairs
+     *
+     * Data structure linking pairs of index and value (index,value)
+     * where pairs are linked in order of both index and
+     * value (to allow for easy removal while keeping both index and
+     * value sorted).
+     */
+    class IdxVal  {
+    public:
+      IdxVal* idx_next; ///< The next pair in index order
+      IdxVal* val_next; ///< The next pair in value order
+      int idx; ///< The index
+      int val; ///< The value
+      /// Mark that this pair should be removed
+      void mark(void);
+      /// Return whether this pair is marked for removal
+      bool marked(void) const;
+    };
+    /**
+     * \brief Value iterator for indices in index-value map
+     *
+     * The iterator also removes marked index-value pairs.
+     *
+     */
+    class IterIdx {
+    private:
+      IdxVal* l; ///< Current index value pair
+    public:
+      /// Initialize with pair \a l
+      IterIdx(IdxVal& l);
+      /// Test whether more pairs to be iterated
+      bool operator()(void) const;
+      /// Move to next index value pair (next index)
+      void operator++(void);
+      /// Return index of current index value pair
+      int val(void) const;
+    };
+    /**
+     * \brief Value iterator for values in index-value map
+     *
+     * Note that the iterated value sequence is not strictly
+     * increasing (might contain duplicates).
+     */
+    class IterVal {
+    private:
+      const IdxVal* l; ///< Current index value pair
+    public:
+      /// Initialize with pair \a l
+      IterVal(const IdxVal& l);
+      /// Test whether more pairs to be iterated
+      bool operator()(void) const;
+      /// Move to next index value pair (next value)
+      void operator++(void);
+      /// Return value of current index value pair
+      int val(void) const;
+    };
+    /// Sorting pointers to (index,value) pairs in value order
+    class ByVal {
+    public:
+      bool operator()(IdxVal*&, IdxVal*&);
+    };
+
     /// View for index
     ViewA x0;
     /// View for result
     ViewB x1;
     /// Shared array of integer values
     IntSharedArray c;
-    /// Cache for index-value map
-    IdxValMap* ivm;
+    /// The index-value data structure
+    IdxVal* iv;
     /// Constructor for cloning \a p
     Int(Space& home, bool shared, Int& p);
     /// Constructor for creation

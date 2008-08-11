@@ -37,266 +37,80 @@
 
 namespace Gecode { namespace Int { namespace Element {
 
-  /**
-   * \brief Links for index-value map
-   *
-   * Data structure linking pairs of index and value (index,value)
-   * where pairs are linked in order of both index and
-   * value (to allow for easy removal while keeping both index and
-   * value sorted).
-   *
-   */
-  class IdxValLink  {
-  public:
-    IdxValLink* idx_next;
-    IdxValLink* val_next;
-    int idx, val;
 
-    void mark(void);
-    bool marked(void) const;
-  };
-
+  // Index value pairs
+  template <class ViewA, class ViewB>
   forceinline void
-  IdxValLink::mark(void) {
+  Int<ViewA,ViewB>::IdxVal::mark(void) {
     idx = -1;
   }
+  template <class ViewA, class ViewB>
   forceinline bool
-  IdxValLink::marked(void) const {
+  Int<ViewA,ViewB>::IdxVal::marked(void) const {
     return idx<0;
   }
 
-
-
-  /**
-   * \brief Value iterator for indices in index-value map
-   *
-   * The iterator also removes marked index-value pairs.
-   *
-   */
-  class IterIdx {
-  private:
-    IdxValLink* l;
-  public:
-    IterIdx(void);
-    IterIdx(IdxValLink&);
-    void init(IdxValLink&);
-    bool operator()(void) const;
-    void operator++(void);
-    int  val(void) const;
-  };
-
+  // Index iterator
+  template <class ViewA, class ViewB>
   forceinline
-  IterIdx::IterIdx(void) {}
-  forceinline
-  IterIdx::IterIdx(IdxValLink& ivl) {
-    IdxValLink* p=&ivl;
+  Int<ViewA,ViewB>::IterIdx::IterIdx(IdxVal& ivl) {
+    IdxVal* p=&ivl;
     l = p->idx_next;
     while ((l != NULL) && l->marked())
       l=l->idx_next;
     p->idx_next=l;
   }
-  forceinline void
-  IterIdx::init(IdxValLink& ivl) {
-    IdxValLink* p=&ivl;
-    l = p->idx_next;
-    while ((l != NULL) && l->marked())
-      l=l->idx_next;
-    p->idx_next=l;
-  }
+  template <class ViewA, class ViewB>
   forceinline bool
-  IterIdx::operator()(void) const {
+  Int<ViewA,ViewB>::IterIdx::operator()(void) const {
     return l != NULL;
   }
+  template <class ViewA, class ViewB>
   forceinline void
-  IterIdx::operator++(void) {
-    IdxValLink* p=l;
+  Int<ViewA,ViewB>::IterIdx::operator++(void) {
+    IdxVal* p=l;
     l = p->idx_next;
     while ((l != NULL) && l->marked())
       l=l->idx_next;
     p->idx_next=l;
   }
+  template <class ViewA, class ViewB>
   forceinline int
-  IterIdx::val(void) const {
+  Int<ViewA,ViewB>::IterIdx::val(void) const {
     assert(!l->marked());
     return l->idx;
   }
 
 
 
-  /**
-   * \brief Value iterator for values in index-value map
-   *
-   * Note that the iterated value sequence is not strictly
-   * increasing (might contain duplicates).
-   */
-  class IterVal {
-  private:
-    const IdxValLink* l;
-  public:
-    IterVal(void);
-    IterVal(const IdxValLink&);
-    void init(const IdxValLink&);
-    bool operator()(void) const;
-    void operator++(void);
-    int  val(void) const;
-  };
-
+  template <class ViewA, class ViewB>
   forceinline
-  IterVal::IterVal(void) {}
-  forceinline
-  IterVal::IterVal(const IdxValLink& ivl)
+  Int<ViewA,ViewB>::IterVal::IterVal(const IdxVal& ivl)
     : l(ivl.val_next) {}
-  forceinline void
-  IterVal::init(const IdxValLink& ivl) {
-    l = ivl.val_next;
-  }
+  template <class ViewA, class ViewB>
   forceinline bool
-  IterVal::operator()(void) const {
+  Int<ViewA,ViewB>::IterVal::operator()(void) const {
     return l != NULL;
   }
+  template <class ViewA, class ViewB>
   forceinline void
-  IterVal::operator++(void) {
+  Int<ViewA,ViewB>::IterVal::operator++(void) {
     l=l->val_next;
   }
+  template <class ViewA, class ViewB>
   forceinline int
-  IterVal::val(void) const {
+  Int<ViewA,ViewB>::IterVal::val(void) const {
     assert(!l->marked());
     return l->val;
   }
 
 
 
-
-  /**
-   * \brief Class for index-value map
-   *
-   */
-  class IdxValMap {
-  private:
-    /// Sorting pointers to (index,value) pairs in value order
-    class ByVal {
-    public:
-      bool operator()(IdxValLink*&, IdxValLink*&);
-    };
-    IdxValLink iv[1];
-  public:
-    /// Allocating and initializing the data structure
-    static IdxValMap* allocate(Space& home, int);
-    template <class ViewA> void init(Space& home, int*, ViewA);
-
-    /// Pruning from variables on data structure
-    template <class ViewA> void prune_idx(ViewA);
-    template <class ViewB> void prune_val(ViewB);
-
-    /// Telling data structure to variables: returns true if at fixpoint
-    template <class ViewA, class ViewB>
-    ExecStatus tell(Space&,ViewA,ViewB);
-  private:
-    static void* operator new(size_t);
-    static void operator delete(void* p,size_t);
-  };
-
-  forceinline bool
-  IdxValMap::ByVal::operator()(IdxValLink*& x, IdxValLink*& y) {
-    return x->val < y->val;
-  }
-
-  forceinline IdxValMap*
-  IdxValMap::allocate(Space& home, int n) {
-    size_t s = sizeof(IdxValMap)+n*sizeof(IdxValLink);
-    IdxValMap* ivm = static_cast<IdxValMap*>(home.ralloc(s));
-    return ivm;
-  }
-
-  template <class ViewA>
-  inline void
-  IdxValMap::init(Space& home, int* a, ViewA ix) {
-    // The first element in iv[0] is used as sentinel
-    // Enter information sorted by idx
-    IdxValLink* by_idx = &iv[1];
-    {
-      int i = 0;
-      ViewValues<ViewA> v(ix);
-      while (v()) {
-        by_idx[i].idx = v.val();
-        by_idx[i].val = a[v.val()];
-        ++i; ++v;
-      }
-    }
-    int size = ix.size();
-    // Create val links sorted by val
-    Region r(home);
-    IdxValLink** by_val = r.alloc<IdxValLink*>(size);
-    for (int i = size; i--; )
-      by_val[i] = &iv[i+1];
-    ByVal lt;
-    Support::quicksort<IdxValLink*>(by_val,size,lt);
-    // Create idx and val links
-    for (int i = size-1; i--; ) {
-      by_idx[i].idx_next  = by_idx+i+1;
-      by_val[i]->val_next = by_val[i+1];
-    }
-    by_idx[size-1].idx_next  = NULL;
-    by_val[size-1]->val_next = NULL;
-    // Set up sentinel element: iv[0]
-    iv[0].idx_next = &by_idx[0];
-    iv[0].val_next = by_val[0];
-  }
-
-  template <class ViewA>
-  forceinline void
-  IdxValMap::prune_idx(ViewA x0) {
-    IdxValLink* p = &iv[0];
-    IdxValLink* l = p->idx_next;
-    ViewRanges<ViewA> i(x0);
-    while (i() && (l != NULL)) {
-      assert(!l->marked());
-      if (l->idx < i.min()) {
-        l->mark(); l=l->idx_next; p->idx_next=l;
-      } else if (l->idx > i.max()) {
-        ++i;
-      } else {
-        p=l; l=l->idx_next;
-      }
-    }
-    p->idx_next = NULL;
-    while (l != NULL) { l->mark(); l=l->idx_next; }
-  }
-
-  template <class ViewB>
-  forceinline void
-  IdxValMap::prune_val(ViewB x1) {
-    IdxValLink* p = &iv[0];
-    IdxValLink* l = p->val_next;
-    ViewRanges<ViewB> v(x1);
-    while (v() && (l != NULL)) {
-      if (l->marked()) {
-        l=l->val_next; p->val_next=l;
-      } else if (l->val < v.min()) {
-        l->mark(); l=l->val_next; p->val_next=l;
-      } else if (l->val > v.max()) {
-        ++v;
-      } else {
-        p=l; l=l->val_next;
-      }
-    }
-    p->val_next = NULL;
-    while (l != NULL) { l->mark(); l=l->val_next; }
-  }
-
+  // Sort function
   template <class ViewA, class ViewB>
-  forceinline ExecStatus
-  IdxValMap::tell(Space& home, ViewA x0, ViewB x1) {
-    IterIdx i(iv[0]);
-    GECODE_ME_CHECK(x0.narrow_v(home,i,false));
-    IterVal v(iv[0]);
-    if (shared(x0,x1)) {
-      GECODE_ME_CHECK(x1.inter_v(home,v,false));
-      return ES_NOFIX;
-    } else {
-      GECODE_ME_CHECK(x1.narrow_v(home,v,false));
-      return ES_FIX;
-    }
+  forceinline bool
+  Int<ViewA,ViewB>::ByVal::operator()(IdxVal*& x, IdxVal*& y) {
+    return x->val < y->val;
   }
 
 
@@ -304,12 +118,10 @@ namespace Gecode { namespace Int { namespace Element {
    * Element propagator proper
    *
    */
-
-
   template <class ViewA, class ViewB>
   forceinline
   Int<ViewA,ViewB>::Int(Space& home, IntSharedArray& c0, ViewA y0, ViewB y1)
-    : Propagator(home), x0(y0), x1(y1), c(c0), ivm(NULL) {
+    : Propagator(home), x0(y0), x1(y1), c(c0), iv(NULL) {
     force(home);
     x0.subscribe(home,*this,PC_INT_DOM);
     x1.subscribe(home,*this,PC_INT_DOM);
@@ -344,7 +156,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB>
   forceinline
   Int<ViewA,ViewB>::Int(Space& home, bool share, Int& p)
-    : Propagator(home,share,p), ivm(NULL) {
+    : Propagator(home,share,p), iv(NULL) {
     c.update(home,share,p.c);
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -396,17 +208,93 @@ namespace Gecode { namespace Int { namespace Element {
   ExecStatus
   Int<ViewA,ViewB>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = x0.assigned() && x1.assigned();
-    if (ivm == NULL) {
-      ivm = IdxValMap::allocate(home,x0.size());
-      ivm->init(home,&c[0],x0);
-    } else {
-      ivm->prune_idx(x0);
-    }
-    ivm->prune_val(x1);
+    if (iv == NULL) {
+      // Initialize data structure
+      iv = home.alloc<IdxVal>(x0.size() + 1);
 
-    ExecStatus es = ivm->tell(home,x0,x1);
-    if (es == ES_FAILED)
-      return es;
+      // The first element in iv[0] is used as sentinel
+      // Enter information sorted by idx
+      IdxVal* by_idx = &iv[1];
+      {
+        int i = 0;
+        ViewValues<ViewA> v(x0);
+        while (v()) {
+          by_idx[i].idx = v.val();
+          by_idx[i].val = c[v.val()];
+          ++i; ++v;
+        }
+      }
+      int size = x0.size();
+      // Create val links sorted by val
+      Region r(home);
+      IdxVal** by_val = r.alloc<IdxVal*>(size);
+      for (int i = size; i--; )
+        by_val[i] = &iv[i+1];
+      ByVal lt;
+      Support::quicksort<IdxVal*>(by_val,size,lt);
+      // Create idx and val links
+      for (int i = size-1; i--; ) {
+        by_idx[i].idx_next  = by_idx+i+1;
+        by_val[i]->val_next = by_val[i+1];
+      }
+      by_idx[size-1].idx_next  = NULL;
+      by_val[size-1]->val_next = NULL;
+      // Set up sentinel element: iv[0]
+      iv[0].idx_next = &by_idx[0];
+      iv[0].val_next = by_val[0];
+    } else {
+      // Prune index
+      IdxVal* p = &iv[0];
+      IdxVal* l = p->idx_next;
+      ViewRanges<ViewA> i(x0);
+      while (i() && (l != NULL)) {
+        assert(!l->marked());
+        if (l->idx < i.min()) {
+          l->mark(); l=l->idx_next; p->idx_next=l;
+        } else if (l->idx > i.max()) {
+          ++i;
+        } else {
+          p=l; l=l->idx_next;
+        }
+      }
+      p->idx_next = NULL;
+      while (l != NULL) { l->mark(); l=l->idx_next; }
+    }
+
+    // Prune values
+    {
+      IdxVal* p = &iv[0];
+      IdxVal* l = p->val_next;
+      ViewRanges<ViewB> v(x1);
+      while (v() && (l != NULL)) {
+        if (l->marked()) {
+          l=l->val_next; p->val_next=l;
+        } else if (l->val < v.min()) {
+          l->mark(); l=l->val_next; p->val_next=l;
+        } else if (l->val > v.max()) {
+          ++v;
+        } else {
+          p=l; l=l->val_next;
+        }
+      }
+      p->val_next = NULL;
+      while (l != NULL) { l->mark(); l=l->val_next; }
+    }
+
+    // Peform tell
+    ExecStatus es;
+    {
+      IterIdx i(iv[0]);
+      GECODE_ME_CHECK(x0.narrow_v(home,i,false));
+      IterVal v(iv[0]);
+      if (shared(x0,x1)) {
+        GECODE_ME_CHECK(x1.inter_v(home,v,false));
+        es = ES_NOFIX;
+      } else {
+        GECODE_ME_CHECK(x1.narrow_v(home,v,false));
+        es = ES_FIX;
+      }
+    }
     if (es == ES_NOFIX)
       return assigned ? ES_SUBSUMED(*this,home) : ES_NOFIX;
 
