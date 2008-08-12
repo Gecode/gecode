@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     
 
     // Values to prune
-    Support::StaticStack<int,Region> nq(r,ts()->domsize*x.size());
+    Support::StaticStack<int,Region> nq(r,ts()->domsize);
     
     // Run algorithm
 
