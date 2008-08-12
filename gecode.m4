@@ -190,7 +190,7 @@ dnl   Leif Kornstaedt <kornstae@ps.uni-sb.de>
 dnl   Marco Kuhlmann <kuhlmann@ps.uni-sb.de>
 dnl
 AC_DEFUN([AC_GECODE_CHECK_CXXFLAG],
-  [if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+  [if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      AC_GECODE_CHECK_MS_CL_FLAG($1,[
        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"],
        [])
@@ -202,7 +202,7 @@ AC_DEFUN([AC_GECODE_CHECK_CXXFLAG],
 
 AC_DEFUN([AC_GECODE_CHECK_COMPILERFLAG],
   [
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      AC_GECODE_CHECK_MS_CL_FLAG($1,[
        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"
        CFLAGS="${CFLAGS}${CFLAGS:+ }$1"],[])

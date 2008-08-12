@@ -4044,7 +4044,7 @@ fi
   if test "${host_os}" = "darwin"; then
     if test "${with_sdk:-no}" != "no"; then
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -isysroot ${with_sdk}" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -isysroot ${with_sdk}... $ECHO_C" >&6; }
    if ${CXX} -isysroot ${with_sdk} 2>&1 | grep D9002 -q; then
@@ -4203,7 +4203,7 @@ fi
   if test "${host_os}" = "darwin"; then
     if test "${with_macosx_version_min:-no}" != "no"; then
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -mmacosx-version-min=${with_macosx_version_min}" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -mmacosx-version-min=${with_macosx_version_min}... $ECHO_C" >&6; }
    if ${CXX} -mmacosx-version-min=${with_macosx_version_min} 2>&1 | grep D9002 -q; then
@@ -4368,7 +4368,7 @@ echo $ECHO_N "checking Whether to build for different architectures... $ECHO_C" 
 	archflags="${archflags} -arch $a";
       done
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts ${archflags}" >&5
 echo $ECHO_N "checking whether ${CXX} accepts ${archflags}... $ECHO_C" >&6; }
    if ${CXX} ${archflags} 2>&1 | grep D9002 -q; then
@@ -4733,7 +4733,7 @@ echo $ECHO_N "checking whether to use gcc visibility attributes... $ECHO_C" >&6;
 	 if test "${enable_gcc_visibility:-yes}" = "yes"; then
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-	    if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+	    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fvisibility=hidden" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fvisibility=hidden... $ECHO_C" >&6; }
    if ${CXX} -fvisibility=hidden 2>&1 | grep D9002 -q; then
@@ -4828,7 +4828,7 @@ echo $ECHO_N "checking whether to build with profiling information... $ECHO_C" >
 	 if test "${enable_profile:-no}" = "yes"; then
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-	    if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+	    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -pg" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -pg... $ECHO_C" >&6; }
    if ${CXX} -pg 2>&1 | grep D9002 -q; then
@@ -4924,7 +4924,7 @@ echo $ECHO_N "checking whether to build with gcov support... $ECHO_C" >&6; }
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fprofile-arcs" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fprofile-arcs... $ECHO_C" >&6; }
    if ${CXX} -fprofile-arcs 2>&1 | grep D9002 -q; then
@@ -5072,7 +5072,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ftest-coverage" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ftest-coverage... $ECHO_C" >&6; }
    if ${CXX} -ftest-coverage 2>&1 | grep D9002 -q; then
@@ -6530,7 +6530,7 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
 _ACEOF
 
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fPIC... $ECHO_C" >&6; }
    if ${CXX} -fPIC 2>&1 | grep D9002 -q; then
@@ -6678,7 +6678,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wextra... $ECHO_C" >&6; }
    if ${CXX} -Wextra 2>&1 | grep D9002 -q; then
@@ -6826,7 +6826,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wall... $ECHO_C" >&6; }
    if ${CXX} -Wall 2>&1 | grep D9002 -q; then
@@ -6974,7 +6974,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -pipe... $ECHO_C" >&6; }
    if ${CXX} -pipe 2>&1 | grep D9002 -q; then
@@ -7121,7 +7121,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-  if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+  if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ggdb" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ggdb... $ECHO_C" >&6; }
    if ${CXX} -ggdb 2>&1 | grep D9002 -q; then
@@ -7270,7 +7270,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   if test "${enable_debug:-no}" = "no" -a "${enable_gcov:-no}" = "no"; then
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -O3... $ECHO_C" >&6; }
    if ${CXX} -O3 2>&1 | grep D9002 -q; then
@@ -7418,7 +7418,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
    if ${CXX} -fno-strict-aliasing 2>&1 | grep D9002 -q; then
@@ -7567,7 +7567,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    fi
 
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -finline-limit=3000" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -finline-limit=3000... $ECHO_C" >&6; }
    if ${CXX} -finline-limit=3000 2>&1 | grep D9002 -q; then
@@ -7715,7 +7715,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ffast-math" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ffast-math... $ECHO_C" >&6; }
    if ${CXX} -ffast-math 2>&1 | grep D9002 -q; then
@@ -7863,7 +7863,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -mthreads" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -mthreads... $ECHO_C" >&6; }
    if ${CXX} -mthreads 2>&1 | grep D9002 -q; then
@@ -8013,7 +8013,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   else
     if test "${enable_debug:-no}" = "yes"; then
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-inline-functions... $ECHO_C" >&6; }
    if ${CXX} -fno-inline-functions 2>&1 | grep D9002 -q; then
@@ -8161,7 +8161,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fimplement-inlines... $ECHO_C" >&6; }
    if ${CXX} -fimplement-inlines 2>&1 | grep D9002 -q; then
@@ -8322,7 +8322,7 @@ _ACEOF
   CFLAGS="${CFLAGS}${CFLAGS:+ }-nologo"
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-nologo"
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -arch:SSE2... $ECHO_C" >&6; }
    if ${CXX} -arch:SSE2 2>&1 | grep D9002 -q; then
@@ -8719,7 +8719,7 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
 _ACEOF
 
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fPIC... $ECHO_C" >&6; }
    if ${CXX} -fPIC 2>&1 | grep D9002 -q; then
@@ -8867,7 +8867,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wextra... $ECHO_C" >&6; }
    if ${CXX} -Wextra 2>&1 | grep D9002 -q; then
@@ -9015,7 +9015,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wall... $ECHO_C" >&6; }
    if ${CXX} -Wall 2>&1 | grep D9002 -q; then
@@ -9163,7 +9163,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -pipe... $ECHO_C" >&6; }
    if ${CXX} -pipe 2>&1 | grep D9002 -q; then
@@ -9310,7 +9310,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-  if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+  if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ggdb" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ggdb... $ECHO_C" >&6; }
    if ${CXX} -ggdb 2>&1 | grep D9002 -q; then
@@ -9459,7 +9459,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
        if test "${enable_debug:-no}" = "no"; then
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -O3... $ECHO_C" >&6; }
    if ${CXX} -O3 2>&1 | grep D9002 -q; then
@@ -9607,7 +9607,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
    if ${CXX} -fno-strict-aliasing 2>&1 | grep D9002 -q; then
@@ -9756,7 +9756,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    fi
        else
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-inline-functions... $ECHO_C" >&6; }
    if ${CXX} -fno-inline-functions 2>&1 | grep D9002 -q; then
@@ -9904,7 +9904,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fimplement-inlines... $ECHO_C" >&6; }
    if ${CXX} -fimplement-inlines 2>&1 | grep D9002 -q; then
@@ -10063,7 +10063,7 @@ _ACEOF
   CFLAGS="${CFLAGS}${CFLAGS:+ }-nologo"
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-nologo"
 
-   if test ${ac_cv_cxx_compiler_vendor}=microsoft; then
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -arch:SSE2... $ECHO_C" >&6; }
    if ${CXX} -arch:SSE2 2>&1 | grep D9002 -q; then
