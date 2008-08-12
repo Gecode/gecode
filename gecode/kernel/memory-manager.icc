@@ -60,6 +60,8 @@ namespace Gecode {
     FreeList(FreeList* n);
     /// Return next freelist object
     FreeList* next(void) const;
+    /// Return pointer to next link in freelist object
+    FreeList** nextRef(void);
     /// Set next freelist object to \a n
     void next(FreeList* n);
   };
@@ -181,6 +183,11 @@ namespace Gecode {
   forceinline FreeList*
   FreeList::next(void) const {
     return _next;
+  }
+
+  forceinline FreeList**
+  FreeList::nextRef(void) {
+    return &_next;
   }
 
   forceinline void
