@@ -67,16 +67,27 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Support entries
    *
    */
-  
   template <class View>
   forceinline
-  Incremental<View>::SupportEntry::SupportEntry(void) 
-    : t(NULL), next(NULL) {}
+  Incremental<View>::SupportEntry::SupportEntry(Tuple t0)
+    : t(t0) {}
 
   template <class View>
   forceinline
-  Incremental<View>::SupportEntry::SupportEntry(Tuple t0, SupportEntry* n0)
-    : t(t0), next(n0) {}
+  Incremental<View>::SupportEntry::SupportEntry(Tuple t0, SupportEntry* n)
+    : FreeList(n), t(t0) {}
+
+  template <class View>
+  forceinline typename Incremental<View>::SupportEntry*
+  Incremental<View>::SupportEntry::next(void) const {
+    return static_cast<SupportEntry*>(FreeList::next());
+  }
+
+  template <class View>
+  forceinline typename Incremental<View>::SupportEntry**
+  Incremental<View>::SupportEntry::nextRef(void) {
+    return reinterpret_cast<SupportEntry**>(FreeList::nextRef());
+  }
 
   template <class View>
   forceinline void
@@ -96,15 +107,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::SupportEntry::dispose(Space& home, SupportEntry* l) {
-    home.fl_dispose<sizeof(SupportEntry)>(this,l);
+  Incremental<View>::SupportEntry::dispose(Space& home) {
+    home.fl_dispose<sizeof(SupportEntry)>(this,this);
   }
 
   template <class View>
   forceinline void
-  Incremental<View>::SupportEntry::dispose(Space& home) {
-    next = NULL;
-    home.fl_dispose<sizeof(SupportEntry)>(this,this);
+  Incremental<View>::SupportEntry::dispose(Space& home, SupportEntry* l) {
+    home.fl_dispose<sizeof(SupportEntry)>(this,l);
   }
 
 
@@ -168,10 +178,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         SupportEntry* s = new (home) SupportEntry(o->t);
         // Link in support entry
         (*n) = s;
-        n = &(s->next);
+        n = s->nextRef();
         // move to next one
-        o = o->next;
+        o = o->next();
       }
+      *n = NULL;
     }
   }
 
@@ -256,9 +267,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   Incremental<View>::add_support(Space& home, Tuple l) {
     for (int i = x.size(); i--; ) {
       int pos = (i*ts()->domsize) + (l[i] - ts()->min);
-
-      SupportEntry* s = new (home) SupportEntry(l, support_data[pos]);
-      support_data[pos] = s;
+      support_data[pos] = new (home) SupportEntry(l, support_data[pos]);
     }
   }
 
@@ -275,11 +284,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       
       SupportEntry** a = &(support_data[pos]);
       while ((*a)->t != l) {
-        assert((*a)->next != NULL);
-        a = &((*a)->next);
+        assert((*a)->next() != NULL);
+        a = (*a)->nextRef();
       }
       SupportEntry* old = *a;
-      *a = (*a)->next;
+      *a = (*a)->next();
       
       old->dispose(home);
       if (i != var && support_data[pos] == NULL) {
@@ -369,8 +378,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (int i = literals; i--; )
         if (support_data[i]) {
           SupportEntry* lastse = support_data[i];
-          while (lastse->next != NULL) 
-            lastse = lastse->next;
+          while (lastse->next() != NULL) 
+            lastse = lastse->next();
           support_data[i]->dispose(home, lastse);
         }
       home.rfree(support_data, sizeof(SupportEntry*)*literals);

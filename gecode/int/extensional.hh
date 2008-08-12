@@ -347,24 +347,26 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
       /// Supporting Tuple
       Tuple t;
-      /// Next support
-      SupportEntry* next;
       
+      /// \name Linkage access
+      //@{
+      /// Return next support entry
+      SupportEntry* next(void) const;
+      /// Return reference to field for next support entry
+      SupportEntry** nextRef(void);
+      //@}
+
       /// \name Constructors
       //@{
-      /// Default constructor (noop)
-      SupportEntry(void);
-      /// Initialize with Tuple and next (defaulting to NULL)
-      SupportEntry(Tuple t0, SupportEntry* n0 = NULL);
+      /// Initialize with Tuple \a t
+      SupportEntry(Tuple t);
+      /// Initialize with Tuple \a t and next entry \a n
+      SupportEntry(Tuple t, SupportEntry* n);
       //@}
       
       /// \name Memory management
       //@{
-      /**
-       * \brief Free memory for all elements between this and \a l (inclusive)
-       *
-       * This routine assumes that the list has already been fixed.
-       */
+      /// Free memory for all elements between this and \a l (inclusive)
       void dispose(Space& home, SupportEntry* l);
       /// Free memory for this element
       void dispose(Space& home);
