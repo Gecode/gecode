@@ -36,6 +36,33 @@
  */
 
 namespace Gecode { namespace Int { namespace Extensional {
+
+  /*
+   * Support advisor
+   *
+   */
+
+  template <class View>
+  forceinline
+  Incremental<View>::SupportAdvisor::
+  SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
+                 View x, unsigned int pos0) 
+    : ViewAdvisor<View>(home,p,c,x), pos(pos0) {}
+
+  template <class View>
+  forceinline
+  Incremental<View>::SupportAdvisor::
+  SupportAdvisor(Space& home, bool share, SupportAdvisor& a) 
+    : ViewAdvisor<View>(home,share,a), pos(a.pos) {}
+
+  template <class View>
+  forceinline void
+  Incremental<View>::SupportAdvisor::
+  dispose(Space& home, Council<SupportAdvisor>& c) {
+    ViewAdvisor<View>::dispose(home,c);
+  }
+
+
   /*
    * Support entries
    *
@@ -315,10 +342,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     return support_data[(var*(ts()->domsize)) + oval];
   }
 
-
-  // 
-  // Advisor proper
-  //
   template <class View>
   ExecStatus
   Incremental<View>::advise(Space& home, Advisor& _a, const Delta& d) {

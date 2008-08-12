@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline Tuple
   Base<View,subscribe>::find_support(Domain dom, int var, int val) {
     Tuple l = last(var, val);
-    while (l != NULL && !valid(l, dom)) {
+    while ((l != NULL) && !valid(l, dom)) {
       l = last_next(var, val);
     }
     return l;

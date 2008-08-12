@@ -36,6 +36,7 @@
  */
 
 namespace Gecode { namespace Int { namespace Extensional {
+
   /*
    * The propagator proper
    *
@@ -101,34 +102,35 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   ExecStatus
   Basic<View>::propagate(Space& home, const ModEventDelta&) {
-    ///// Domain consistent propagation
-    //// Set up datastructures
-    /// Bit-sets for amortized O(1) access to domains
+    // Set up datastructures
+  
+    // Bit-sets for amortized O(1) access to domains
     Region r(home);
     BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);
 
-    /// Bit-sets for processed values.
+    // Bit-sets for processed values.
     BitSet* has_support = r.alloc<BitSet>(x.size());
     for (int i = x.size(); i--; ) 
       has_support[i].init(home, ts()->domsize);
- 
+    
 
-    /// Values to prune
+    // Values to prune
     int* nq = r.alloc<int>(ts()->domsize*x.size());
     int n_nq = 0;
     
     ExecStatus es = ES_FIX;
+    
+    // Run algorithm
 
-    //// Run algorithm
-    /// Check consistency for each variable-value pair
-    for (int var = x.size(); var--; ) {
-      for (ViewValues<View> vv(x[var]); vv(); ++vv) {
+    // Check consistency for each view-value pair
+    for (int i = x.size(); i--; ) {
+      for (ViewValues<View> vv(x[i]); vv(); ++vv) {
         // Value offset for indexing
         int val = vv.val() - ts()->min;
-        if (!has_support[var].get(val)) {
-          // Find support for value vv.val() in variable var
-          Tuple l = find_support(dom, var, val);
+        if (!has_support[i].get(val)) {
+          // Find support for value vv.val() in view
+          Tuple l = find_support(dom, i, val);
           if (l == NULL) {
             // No possible supports left
             nq[n_nq] = vv.val();
@@ -137,17 +139,17 @@ namespace Gecode { namespace Int { namespace Extensional {
             // Mark values as supported 
             // Only forward direction marking is needed since all
             // previous values have been checked
-            for (int i = var; i--; ) {
-              has_support[i].set(l[i]- ts()->min);
-              assert(has_support[i].get(l[i]- ts()->min));
+            for (int j = i; j--; ) {
+              has_support[j].set(l[j]- ts()->min);
+              assert(has_support[j].get(l[j] - ts()->min));
             }
           }
         }
       }
 
-      // Prune values for var which do not have support anymore
+      // Prune values for x[i] which do not have support anymore
       while (n_nq-- > 0) {
-        ModEvent me = x[var].nq(home,nq[n_nq]);
+        ModEvent me = x[i].nq(home,nq[n_nq]);
         if (me_failed(me))
           return ES_FAILED;
         if (me_modified(me))
@@ -161,6 +163,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         return es;
     return ES_SUBSUMED(*this, home);
   }
+
 }}}
+
 // STATISTICS: int-prop
 

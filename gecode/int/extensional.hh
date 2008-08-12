@@ -242,18 +242,22 @@ namespace Gecode { namespace Int { namespace Extensional {
     Base(Space& home, bool share, Base<View,subscribe>& p);
     /// Constructor for posting
     Base(Space& home, ViewArray<View>& x, const TupleSet& t);
-
-    void  init_last(Space& home, Tuple** source);
+    /// Initialize last support
+    void init_last(Space& home, Tuple** source);
+    /// Find last support
     Tuple last(int var, int val);
+    /// Find last support
     Tuple last_next(int var, int val);
-    void  init_dom(Space& home, Domain dom);
-    bool  valid(Tuple t, Domain dom);
+    /// Initialize domain information
+    void init_dom(Space& home, Domain dom);
+    /// Check wether tuple is valid for domain
+    bool valid(Tuple t, Domain dom);
+    /// Find support
     Tuple find_support(Domain dom, int var, int val);
-
   public:
+    /// Cost function (defined as PC_QUADRATIC_HI)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-
-    // Dispose propagator
+    /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 }}}
@@ -304,7 +308,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
     static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
-
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -395,17 +398,22 @@ namespace Gecode { namespace Int { namespace Extensional {
     typedef ::Gecode::Support::DynamicStack<Work,Heap> WorkStack;
     SupportEntry** support_data;
     WorkStack work;
+    /// Number of unassigned views
     int unassigned;
 
     /// Constructor for cloning \a p
     Incremental(Space& home, bool share, Incremental<View>& p);
     /// Constructor for posting
     Incremental(Space& home, ViewArray<View>& x, const TupleSet& t);
-
-    void   find_support(Space& home, Domain dom, int var, int val);
-    void   init_support(Space& home);
-    void    add_support(Space& home, Tuple l);
+    /// Initialize support
+    void init_support(Space& home);
+    /// Find a next support
+    void find_support(Space& home, Domain dom, int var, int val);
+    /// Add support
+    void add_support(Space& home, Tuple l);
+    /// Remove support
     void remove_support(Space& home, Tuple l, int var, int val);
+    /// Creat support entry
     SupportEntry* support(int var, int val);
   public:
     /// Perform propagation
@@ -421,10 +429,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
     static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
-    // Dispose propagator
+    /// Delete propagator and return its size
     size_t dispose(Space& home);
-
-
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
@@ -433,29 +439,25 @@ namespace Gecode { namespace Int { namespace Extensional {
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
     static Gecode::Support::Symbol ati(void);
-
-
-    //
-    // Advisor proper
-    //
   private:
+    /// Advisor for computing support
     class SupportAdvisor : public ViewAdvisor<View> {
     public:
       using ViewAdvisor<View>::x;
+      /// Position of support
       unsigned int pos;
+      /// Create support advisor
       SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
-                     View v, unsigned int position) 
-        : ViewAdvisor<View>(home,p,c,v), pos(position) {}
-      SupportAdvisor(Space& home, bool share, SupportAdvisor& a) 
-        : ViewAdvisor<View>(home, share, a), pos(a.pos) {
-      }
+                     View x, unsigned int pos);
+      /// Clone support advisor \a a
+      SupportAdvisor(Space& home, bool share, SupportAdvisor& a);
       /// Dispose advisor
-      void dispose(Space& home, Council<SupportAdvisor>& c) {
-        ViewAdvisor<View>::dispose(home,c);
-      }
+      void dispose(Space& home, Council<SupportAdvisor>& c);
     };
+    /// The advisor council
     Council<SupportAdvisor> ac;
   public:
+    /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
   };
   
