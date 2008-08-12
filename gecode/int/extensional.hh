@@ -374,32 +374,68 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Allocate memory from space
       static void* operator new(size_t s, Space& home);
       /// No-op (for exceptions)
-      static void  operator delete(void*);
+      static void operator delete(void* p);
       /// No-op (use dispose instead)
-      static void  operator delete(void*, Space&);
+      static void operator delete(void* p, Space& home);
       //@}
     };
-    /// What is to be done
-    enum WorkType {
-      WT_FIND_SUPPORT,
-      WT_REMOVE_VALUE
-    };
     /// Description of work to be done
-    class Work {
+    class WorkEntry : public FreeList {
     public:
-      WorkType work;
-      int var;
-      int val;
-      Work(void) {}
-      Work(WorkType w0, int var0, int val0)
-        : work(w0), var(var0), val(val0) {}
+      /// Position of view in view array
+      int i;
+      /// Value
+      int n;
+      
+      /// \name Constructor
+      //@{
+      /// Initialize with position \a i, value \a n, and next entry \a ne
+      WorkEntry(int i, int n, WorkEntry* ne);
+      //@}
+
+      /// \name Linkage access
+      //@{
+      /// Return next work entry
+      WorkEntry* next(void) const;
+      /// Set next work entry
+      void next(WorkEntry* n);
+      //@}
+      
+      /// \name Memory management
+      //@{
+      /// Free memory for this element
+      void dispose(Space& home);
+      
+      /// Allocate memory from space
+      static void* operator new(size_t s, Space& home);
+      /// No-op (for exceptions)
+      static void operator delete(void* p);
+      /// No-op (use dispose instead)
+      static void operator delete(void* p, Space& home);
+      //@}
     };
+    /// Work stack
+    class Work {
+    private:
+      /// Next work entry
+      WorkEntry* we;
+    public:
+      /// Initialize as empty
+      Work(void);
+      /// Check whether work stack is empty
+      bool empty(void) const;
+      /// Push new work entry for position \a i and value \a n
+      void push(Space& home, int i, int n);
+      /// Pop current top entry and set position \a i and value \a n
+      void pop(Space& home, int& i, int& n);
+    };
+    /// Work for finding support
+    Work w_support;
+    /// Work for removing values
+    Work w_remove;
 
-
-
-    typedef ::Gecode::Support::DynamicStack<Work,Heap> WorkStack;
+    /// Support information
     SupportEntry** support_data;
-    WorkStack work;
     /// Number of unassigned views
     int unassigned;
 
