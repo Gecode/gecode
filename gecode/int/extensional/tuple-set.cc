@@ -116,7 +116,7 @@ namespace Gecode {
     min = real_min; max = real_max;
 
     // Domainsize
-    domsize = max - min + 1;
+    domsize = static_cast<unsigned int>(max - min) + 1;
 
     // Allocate tuple indexing data-structures
     tuples = heap.alloc<Tuple*>(arity);

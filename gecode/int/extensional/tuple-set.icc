@@ -59,7 +59,7 @@ namespace Gecode {
     /// Minimum and maximum in domain-values
     int min, max;
     /// Domain size
-    int domsize;
+    unsigned int domsize;
     /// Initial last structure
     Tuple** last;
     /// Pointer to NULL-pointer
@@ -84,8 +84,8 @@ namespace Gecode {
 
   forceinline bool
   TupleSet::TupleSetI::finalized(void) const { 
-    assert((excess == -1 && domsize >= 0) ||
-           (excess != -1 && domsize == -1)); 
+    assert(((excess == -1) && (domsize > 0)) ||
+           ((excess != -1) && (domsize == 0))); 
     return excess == -1; 
   }
 
@@ -99,7 +99,7 @@ namespace Gecode {
       excess(0),
       min(Int::Limits::max),
       max(Int::Limits::min),
-      domsize(-1),
+      domsize(0),
       last(NULL),
       nullptr(NULL)
   {}
@@ -107,7 +107,7 @@ namespace Gecode {
 
   template <class T>
   void
-  TupleSet::TupleSetI::add(T t){
+  TupleSet::TupleSetI::add(T t) {
     assert(arity  != -1); // Arity has been set
     assert(excess != -1); // Tuples may still be added
     if (excess == 0) resize();
