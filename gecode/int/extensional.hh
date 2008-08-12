@@ -441,14 +441,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     static Gecode::Support::Symbol ati(void);
   private:
     /// Advisor for computing support
-    class SupportAdvisor : public ViewAdvisor<View> {
+    class SupportAdvisor : public Advisor {
     public:
-      using ViewAdvisor<View>::x;
-      /// Position of support
-      unsigned int pos;
-      /// Create support advisor
+      /// Position of view
+      int i;
+      /// Create support advisor for view at position \a i
       SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
-                     View x, unsigned int pos);
+                     int i);
       /// Clone support advisor \a a
       SupportAdvisor(Space& home, bool share, SupportAdvisor& a);
       /// Dispose advisor
