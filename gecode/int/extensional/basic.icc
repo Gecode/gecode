@@ -116,8 +116,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     
 
     // Values to prune
-    int* nq = r.alloc<int>(ts()->domsize*x.size());
-    int n_nq = 0;
+    Support::StaticStack<int,Region> nq(r,ts()->domsize*x.size());
     
     // Run algorithm
 
@@ -131,8 +130,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           Tuple l = find_support(dom, i, val);
           if (l == NULL) {
             // No possible supports left
-            nq[n_nq] = vv.val();
-            n_nq++;
+            nq.push(vv.val());
           } else {
             // Mark values as supported 
             // Only forward direction marking is needed since all
@@ -146,9 +144,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
 
       // Prune values for x[i] which do not have support anymore
-      while (n_nq-- > 0)
-        GECODE_ME_CHECK(x[i].nq(home,nq[n_nq]));
-      n_nq = 0;
+      while (!nq.empty())
+        GECODE_ME_CHECK(x[i].nq(home,nq.pop()));
     }
 
     for (int i = x.size(); i--; )
