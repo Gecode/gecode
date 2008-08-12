@@ -116,37 +116,34 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline
-  Incremental<View>::Incremental(Space& home, ViewArray<View>& x, const TupleSet& t)
+  Incremental<View>::Incremental(Space& home, ViewArray<View>& x, 
+                                 const TupleSet& t)
     : Base<View,false>(home,x,t), support_data(NULL), 
       work(heap,x.size()), unassigned(x.size()), ac(home) {
     init_support(home);
-
-    ModEvent me = ME_INT_DOM;
 
     // Post advisors
     for (int i = x.size(); i--; ) {
       if (x[i].assigned()) {
         --unassigned;
-        me = ME_INT_VAL;
       } else {
         (void) new (home) SupportAdvisor(home, *this, ac, x[i], i);
       }
     }
 
     Region r(home);
+
     // Add initial supports
     BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);
-    for (int i = x.size(); i--; ) {
-      ViewValues<View> vv(x[i]);
-      while (vv()) {
+    for (int i = x.size(); i--; )
+      for (ViewValues<View> vv(x[i]); vv(); ++vv)
         find_support(home, dom, i, vv.val());
-        ++vv;
-      }
-    }
+
     // Work to be done or subsumption
-    if (!work.empty() || unassigned==0)
-      View::schedule(home,*this,me);
+    if (!work.empty() || (unassigned == 0))
+      View::schedule(home,*this,
+                     (unassigned != x.size()) ? ME_INT_VAL : ME_INT_DOM);
   }
 
   template <class View>
@@ -164,11 +161,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     ac.update(home,share,p.ac);
 
     init_support(home);
-    int literals = ts()->domsize*x.size();    
-    for (int i = literals; i--; ) {
+    for (int i = ts()->domsize*x.size(); i--; ) {
       SupportEntry** n = &(support_data[i]);
       SupportEntry*  o = p.support_data[i];
-      while (o) {
+      while (o != NULL) {
         // Allocate new support entry
         SupportEntry* s = new (home) SupportEntry(o->t);
         // Link in support entry
@@ -238,14 +234,9 @@ namespace Gecode { namespace Int { namespace Extensional {
           find_support(home, dom, w.var, w.val);
           break;
         case WT_REMOVE_VALUE:
-          {
-            assert(support(w.var, w.val) == NULL);
-            ModEvent me = x[w.var].nq(home,w.val);
-            if (me_failed(me)) {
-              return ES_FAILED;
-            }
-            dom[w.var].set(w.val-ts()->min, false);
-          }
+          assert(support(w.var, w.val) == NULL);
+          GECODE_ME_CHECK(x[w.var].nq(home,w.val));
+          dom[w.var].set(w.val-ts()->min, false);
           break;
         default:
           GECODE_NEVER;
@@ -253,18 +244,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         };
       }
     }
-    /*
-    for (int i = 0; i < x.size(); ++i) {
-      ViewValues<View> vv(x[i]);
-      while(vv()) {
-        assert(support(i, vv.val()) != NULL);
-        ++vv;
-      }
-    }
-    */
-    if (unassigned != 0) {
+    if (unassigned != 0)
       return ES_FIX;
-    }
 
     return ES_SUBSUMED(*this, home);
   }
@@ -351,36 +332,29 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     if (a.x.any(d)) {
       ViewValues<View> vv(a.x);
-      for (int i = ts()->min; i <= ts()->max; ++i) {
-        if (vv() && i == vv.val()) {
+      for (int n = ts()->min; n <= ts()->max; n++) {
+        if (vv() && (n == vv.val())) {
           ++vv;  
           continue;
         }
-        while (SupportEntry* s = support(a.pos, i)) {
-          remove_support(home, s->t, a.pos, i);
-        }
+        while (SupportEntry* s = support(a.pos,n))
+          remove_support(home, s->t, a.pos, n);
       } 
     } else {
-      int lo = a.x.min(d);
-      int hi = a.x.max(d);
-      for (int val = lo; val <= hi; ++val) {
-        while (SupportEntry* s = support(a.pos, val)) {
-          remove_support(home, s->t, a.pos, val);
-        }
-      }
+      for (int n = a.x.min(d); n <= a.x.max(d); n++)
+        while (SupportEntry* s = support(a.pos,n))
+          remove_support(home, s->t, a.pos, n);
     }
 
-    
     if (me == ME_INT_VAL) {
       --unassigned;
-      if ((work.empty() || scheduled) && unassigned!=0) {
-        // nothing to do or already scheduled
-        // propagator is not subsumed since unassigned!=0
+      // nothing to do or already scheduled
+      // propagator is not subsumed since unassigned!=0
+      if ((work.empty() || scheduled) && (unassigned != 0))
         return ES_SUBSUMED_FIX(a,home,ac);
-      }
-      return ES_SUBSUMED_NOFIX(a,home,ac);
-    }
-    if (work.empty() || scheduled) {
+      else
+        return ES_SUBSUMED_NOFIX(a,home,ac);
+    } else if (work.empty() || scheduled) {
       // nothing to do or already scheduled
       return ES_FIX;
     }
@@ -393,13 +367,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   Incremental<View>::dispose(Space& home) {
     if (!home.failed()) {
       int literals = ts()->domsize*x.size();    
-      for (int i = literals; i--; ) {
+      for (int i = literals; i--; )
         if (support_data[i]) {
           SupportEntry* lastse = support_data[i];
-          while (lastse->next) lastse = lastse->next;
+          while (lastse->next != NULL) 
+            lastse = lastse->next;
           support_data[i]->dispose(home, lastse);
         }
-      }
       home.rfree(support_data, sizeof(SupportEntry*)*literals);
     }
     work.~WorkStack();
