@@ -505,6 +505,25 @@ namespace Gecode {
   };
 
   /**
+   * \brief Actor properties
+   * \ingroup TaskActor
+   */
+  enum ActorProperty {
+    /**
+     * \brief Actor must always be disposed
+     *
+     * Normally, a propagator will not be disposed if its home space
+     * is deleted. However, if an actor uses external resources,
+     * this property can be used to make sure that the actor
+     * will always be disposed.
+     */ 
+    AP_DISPOSE = (1 << 0),
+    /// Actor is non-monotonic
+    AP_NONMONO = (1 << 2)
+  };
+
+
+  /**
    * \brief Double-linked list for actors
    *
    * Used to maintain which actors belong to a space and also
@@ -1101,8 +1120,18 @@ namespace Gecode {
     /// Resize disposal array
     GECODE_KERNEL_EXPORT void d_resize(void);
 
+    /**
+     * \brief Number of non-monotonic actors
+     *
+     * If zero, none exists. If one, then none exists right now but
+     * there has been one since the last fixpoint computed. Otherwise,
+     * it gives the number of non-monotoning actors minus one.
+     */
+    unsigned int n_nma;
+
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
+    GECODE_KERNEL_EXPORT static bool unused_b;
   public:
     /**
      * \brief Default constructor
@@ -1164,15 +1193,18 @@ namespace Gecode {
     /**
      * \brief Query space status
      *
-     * Propagates the space until fixpoint or failure and
-     * increments \a pn by the number of propagator executions.
+     * Propagates the space until fixpoint or failure;
+     * increments \a pn by the number of propagator executions;
+     * sets \a nm to true, if the space has non-monotonic actors or
+     * a non-monotonic actor might have been used in propagation; and:
      *  - if the space is failed, SpaceStatus::SS_FAILED is returned.
      *  - if the space is not failed but the space has no branching left,
      *    SpaceStatus::SS_SOLVED is returned.
      *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT SpaceStatus status(unsigned long int& pn=unused_uli);
+    GECODE_KERNEL_EXPORT SpaceStatus status(unsigned long int& pn=unused_uli,
+                                            bool& nm=unused_b);
 
     /**
      * \brief Create new branching description for current branching
@@ -1245,6 +1277,23 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT void commit(const BranchingDesc& d, unsigned int a);
+
+    /**
+     * \brief Notice actor property
+     *
+     * Make the space notice that the actor \a a has the property \a p.
+     * Note that the same property can only be noticed once for an actor.
+     * \ingroup TaskActor
+     */
+    void notice(Actor& a, ActorProperty p);
+    /**
+     * \brief Ignore actor property
+     *
+     * Make the space ignore that the actor \a a has the property \a p.
+     * Note that a property must be ignored before an actor is disposed.
+     * \ingroup TaskActor
+     */
+    void ignore(Actor& a, ActorProperty p);
 
     /**
      * \brief Fail space
@@ -1717,6 +1766,41 @@ namespace Gecode {
     return static_cast<const Actor*>(&t);
   }
 
+  forceinline void
+  Space::notice(Actor& a, ActorProperty p) {
+    if (p & AP_DISPOSE) {
+      if (d_cur == d_lst)
+        d_resize();
+      *(d_cur++) = &a;
+    }
+    if (p & AP_NONMONO) {
+      if (n_nma == 0)
+        n_nma = 2;
+      else
+        n_nma++;
+    }
+  }
+
+  forceinline void
+  Space::ignore(Actor& a, ActorProperty p) {
+    if (p & AP_DISPOSE) {
+      // Check wether array has already been discarded as space
+      // deletion is already in progress
+      Actor** f = d_fst;
+      if (f != NULL) {
+        while (&a != *f)
+          f++;
+        *f = *(--d_cur);
+      }
+    }
+    if (p & AP_NONMONO) {
+      if (n_nma == 2)
+        n_nma = 0;
+      else
+        n_nma--;
+    }
+  }
+  
   forceinline void
   Actor::force(Space& home) {
     if (home.d_cur == home.d_lst)
