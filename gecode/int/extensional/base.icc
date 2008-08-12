@@ -91,20 +91,20 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline Tuple
-  Base<View,subscribe>::last(int var, int val) {
-    return GECODE_LAST_TUPLE(last_data[(var*ts()->domsize) + val]);
+  Base<View,subscribe>::last(int i, int n) {
+    return GECODE_LAST_TUPLE(last_data[(i*ts()->domsize) + n]);
   }
 
   template <class View, bool subscribe>
   forceinline Tuple
-  Base<View,subscribe>::last_next(int var, int val) {
-    assert(last(var, val) != NULL);
-    assert(last(var, val)[var] == val+ts()->min);
-    int pos = (var*ts()->domsize) + val;
+  Base<View,subscribe>::last_next(int i, int n) {
+    assert(last(i,n) != NULL);
+    assert(last(i,n)[i] == n+ts()->min);
+    int pos = (i*ts()->domsize) + n;
     ++(last_data[pos]);
-    if (last(var,val)[var] != (val+ts()->min))
+    if (last(i,n)[i] != (n+ts()->min))
       last_data[pos] = ts()->nullptr;
-    return last(var, val);
+    return last(i,n);
   }
 
 
@@ -130,11 +130,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 #undef GECODE_LAST_TUPLE
   template <class View, bool subscribe>
   forceinline Tuple
-  Base<View,subscribe>::find_support(Domain dom, int var, int val) {
-    Tuple l = last(var, val);
-    while ((l != NULL) && !valid(l, dom)) {
-      l = last_next(var, val);
-    }
+  Base<View,subscribe>::find_support(Domain dom, int i, int n) {
+    Tuple l = last(i,n);
+    while ((l != NULL) && !valid(l, dom))
+      l = last_next(i,n);
     return l;
   }
 

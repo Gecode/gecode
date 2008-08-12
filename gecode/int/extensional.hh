@@ -244,16 +244,16 @@ namespace Gecode { namespace Int { namespace Extensional {
     Base(Space& home, ViewArray<View>& x, const TupleSet& t);
     /// Initialize last support
     void init_last(Space& home, Tuple** source);
-    /// Find last support
-    Tuple last(int var, int val);
-    /// Find last support
-    Tuple last_next(int var, int val);
+    /// Find last support for view at position \a i and value \a n
+    Tuple last(int i, int n);
+    /// Find last support for view at position \a i and value \a n
+    Tuple last_next(int i, int n);
     /// Initialize domain information
     void init_dom(Space& home, Domain dom);
     /// Check wether tuple is valid for domain
     bool valid(Tuple t, Domain dom);
-    /// Find support
-    Tuple find_support(Domain dom, int var, int val);
+    /// Find support for view at position \a i and value \a n
+    Tuple find_support(Domain dom, int i, int n);
   public:
     /// Cost function (defined as PC_QUADRATIC_HI)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -409,14 +409,14 @@ namespace Gecode { namespace Int { namespace Extensional {
     Incremental(Space& home, ViewArray<View>& x, const TupleSet& t);
     /// Initialize support
     void init_support(Space& home);
-    /// Find a next support
-    void find_support(Space& home, Domain dom, int var, int val);
+    /// Find a next support for view at position \a i and value \a n
+    void find_support(Space& home, Domain dom, int i, int n);
     /// Add support
     void add_support(Space& home, Tuple l);
-    /// Remove support
-    void remove_support(Space& home, Tuple l, int var, int val);
-    /// Creat support entry
-    SupportEntry* support(int var, int val);
+    /// Remove support for view at position \a i and value \a n
+    void remove_support(Space& home, Tuple l, int i, int n);
+    /// Creat support entry for view at position \a i and value \a n
+    SupportEntry* support(int i, int n);
   public:
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

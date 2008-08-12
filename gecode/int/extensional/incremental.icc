@@ -273,12 +273,12 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::remove_support(Space& home, Tuple l,
-                                    int var, int /*val*/) {
-    for (int i = x.size(); i--; ) {
-      int v = l[i];
+  Incremental<View>::remove_support(Space& home, Tuple l, int i, int n) {
+    (void) n;
+    for (int j = x.size(); j--; ) {
+      int v = l[j];
       int ov = v - ts()->min;
-      int pos = (i*(ts()->domsize)) + ov;
+      int pos = (j*(ts()->domsize)) + ov;
 
       assert(support_data[pos] != NULL);
       
@@ -291,22 +291,21 @@ namespace Gecode { namespace Int { namespace Extensional {
       *a = (*a)->next();
       
       old->dispose(home);
-      if (i != var && support_data[pos] == NULL) {
-        work.push(Work(WT_FIND_SUPPORT, i, v));
+      if ((i != j) && (support_data[pos] == NULL)) {
+        work.push(Work(WT_FIND_SUPPORT, j, v));
       }
     }
   }
 
   template <class View>
   forceinline void
-  Incremental<View>::find_support(Space& home, Domain dom, int var, int val) {
-    if (support(var, val) == NULL) {
-      int oval = val - ts()->min;
-      // Find support for value vv.val() in variable var
-      Tuple l = Base<View,false>::find_support(dom, var, oval);
+  Incremental<View>::find_support(Space& home, Domain dom, int i, int n) {
+    if (support(i,n) == NULL) {
+      // Find support for value vv.val() in view i
+      Tuple l = Base<View,false>::find_support(dom,i,n - ts()->min);
       if (l == NULL) {
         // No possible supports left
-        work.push(Work(WT_REMOVE_VALUE, var, val));
+        work.push(Work(WT_REMOVE_VALUE,i,n));
       } else {
         // Mark values in support as supported
         add_support(home, l);
@@ -326,9 +325,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline typename Incremental<View>::SupportEntry*
-  Incremental<View>::support(int var, int val) {
-    int oval = val - ts()->min;
-    return support_data[(var*(ts()->domsize)) + oval];
+  Incremental<View>::support(int i, int n) {
+    return support_data[(i*(ts()->domsize)) + (n - ts()->min)];
   }
 
   template <class View>
