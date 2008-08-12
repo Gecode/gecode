@@ -1639,9 +1639,9 @@ namespace Gecode {
     int tuples(void) const;
     /// Get tuple i
     Tuple operator[](int i) const;
-    /// Minimum domain size
+    /// Minimum domain element
     int min(void) const;
-    /// Maximum domain size
+    /// Maximum domain element
     int max(void) const;
 
     /// Initialize TupleSet from reflection specification
