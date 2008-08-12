@@ -118,6 +118,78 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
 
+  /*
+   * Support management
+   *
+   */
+  template <class View>
+  forceinline typename Incremental<View>::SupportEntry*
+  Incremental<View>::support(int i, int n) {
+    return support_data[(i*(ts()->domsize)) + (n - ts()->min)];
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::init_support(Space& home) {
+    assert(support_data == NULL);
+    int literals = ts()->domsize*x.size();
+    support_data = home.alloc<SupportEntry*>(literals);
+    for (int i = literals; i--; )
+      support_data[i] = NULL;
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::add_support(Space& home, Tuple l) {
+    for (int i = x.size(); i--; ) {
+      int pos = (i*ts()->domsize) + (l[i] - ts()->min);
+      support_data[pos] = new (home) SupportEntry(l, support_data[pos]);
+    }
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::find_support(Space& home, Domain dom, int i, int n) {
+    if (support(i,n) == NULL) {
+      // Find support for value vv.val() in view i
+      Tuple l = Base<View,false>::find_support(dom,i,n - ts()->min);
+      if (l == NULL) {
+        // No possible supports left
+        work.push(Work(WT_REMOVE_VALUE,i,n));
+      } else {
+        // Mark values in support as supported
+        add_support(home, l);
+      }
+    }
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::remove_support(Space& home, Tuple l, int i, int n) {
+    (void) n;
+    for (int j = x.size(); j--; ) {
+      int v = l[j];
+      int ov = v - ts()->min;
+      int pos = (j*(ts()->domsize)) + ov;
+
+      assert(support_data[pos] != NULL);
+      
+      SupportEntry** a = &(support_data[pos]);
+      while ((*a)->t != l) {
+        assert((*a)->next() != NULL);
+        a = (*a)->nextRef();
+      }
+      SupportEntry* old = *a;
+      *a = (*a)->next();
+      
+      old->dispose(home);
+      if ((i != j) && (support_data[pos] == NULL)) {
+        work.push(Work(WT_FIND_SUPPORT, j, v));
+      }
+    }
+  }
+
+
 
   /*
    * The propagator proper
@@ -227,14 +299,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   Incremental<View>::propagate(Space& home, const ModEventDelta&) {
     assert(!work.empty() || unassigned==0);
-    /// Set up datastructures
-    /// Bit-sets for amortized O(1) access to domains
+    // Set up datastructures
+    // Bit-sets for amortized O(1) access to domains
     Region r(home);
     // Add initial supports
     BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);
 
-    /// Work loop
+    // Work loop
     while (!work.empty()) {
       Work w = work.pop();
       if (dom[w.var].get(w.val-ts()->min)) {
@@ -260,74 +332,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_SUBSUMED(*this, home);
   }
 
-
-
-  template <class View>
-  forceinline void
-  Incremental<View>::add_support(Space& home, Tuple l) {
-    for (int i = x.size(); i--; ) {
-      int pos = (i*ts()->domsize) + (l[i] - ts()->min);
-      support_data[pos] = new (home) SupportEntry(l, support_data[pos]);
-    }
-  }
-
-  template <class View>
-  forceinline void
-  Incremental<View>::remove_support(Space& home, Tuple l, int i, int n) {
-    (void) n;
-    for (int j = x.size(); j--; ) {
-      int v = l[j];
-      int ov = v - ts()->min;
-      int pos = (j*(ts()->domsize)) + ov;
-
-      assert(support_data[pos] != NULL);
-      
-      SupportEntry** a = &(support_data[pos]);
-      while ((*a)->t != l) {
-        assert((*a)->next() != NULL);
-        a = (*a)->nextRef();
-      }
-      SupportEntry* old = *a;
-      *a = (*a)->next();
-      
-      old->dispose(home);
-      if ((i != j) && (support_data[pos] == NULL)) {
-        work.push(Work(WT_FIND_SUPPORT, j, v));
-      }
-    }
-  }
-
-  template <class View>
-  forceinline void
-  Incremental<View>::find_support(Space& home, Domain dom, int i, int n) {
-    if (support(i,n) == NULL) {
-      // Find support for value vv.val() in view i
-      Tuple l = Base<View,false>::find_support(dom,i,n - ts()->min);
-      if (l == NULL) {
-        // No possible supports left
-        work.push(Work(WT_REMOVE_VALUE,i,n));
-      } else {
-        // Mark values in support as supported
-        add_support(home, l);
-      }
-    }
-  }
-
-  template <class View>
-  forceinline void
-  Incremental<View>::init_support(Space& home) {
-    assert(support_data == NULL);
-    int literals = ts()->domsize*x.size();
-    support_data = home.alloc<SupportEntry*>(literals);
-    for (int i = literals; i--; )
-      support_data[i] = NULL;
-  }
-
-  template <class View>
-  forceinline typename Incremental<View>::SupportEntry*
-  Incremental<View>::support(int i, int n) {
-    return support_data[(i*(ts()->domsize)) + (n - ts()->min)];
-  }
 
   template <class View>
   ExecStatus
