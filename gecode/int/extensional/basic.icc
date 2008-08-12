@@ -119,8 +119,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     int* nq = r.alloc<int>(ts()->domsize*x.size());
     int n_nq = 0;
     
-    ExecStatus es = ES_FIX;
-    
     // Run algorithm
 
     // Check consistency for each view-value pair
@@ -148,19 +146,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
 
       // Prune values for x[i] which do not have support anymore
-      while (n_nq-- > 0) {
-        ModEvent me = x[i].nq(home,nq[n_nq]);
-        if (me_failed(me))
-          return ES_FAILED;
-        if (me_modified(me))
-          es = ES_NOFIX;
-      }
+      while (n_nq-- > 0)
+        GECODE_ME_CHECK(x[i].nq(home,nq[n_nq]));
       n_nq = 0;
     }
 
     for (int i = x.size(); i--; )
       if (!x[i].assigned())
-        return es;
+        return ES_NOFIX;
     return ES_SUBSUMED(*this, home);
   }
 
