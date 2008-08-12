@@ -74,6 +74,14 @@ Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
+The incremental extensional propagator for tuplesets uses less
+memory (around 25%) and reports its size correctly.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
 The element propagator for integer arrays now chooses
 datastructures according to and the elements of the array. This
 can save more than 80% memory on a 64 bit machine, and up to 75%
