@@ -4123,8 +4123,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -isysroot ${with_sdk}" >&5
-echo $ECHO_N "checking whether ${CC} accepts -isysroot ${with_sdk}... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -isysroot ${with_sdk}" >&5
 echo $ECHO_N "checking whether ${CC} accepts -isysroot ${with_sdk}... $ECHO_C" >&6; }
@@ -4282,8 +4280,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -mmacosx-version-min=${with_macosx_version_min}" >&5
-echo $ECHO_N "checking whether ${CC} accepts -mmacosx-version-min=${with_macosx_version_min}... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -mmacosx-version-min=${with_macosx_version_min}" >&5
 echo $ECHO_N "checking whether ${CC} accepts -mmacosx-version-min=${with_macosx_version_min}... $ECHO_C" >&6; }
@@ -4447,8 +4443,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts ${archflags}" >&5
-echo $ECHO_N "checking whether ${CC} accepts ${archflags}... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts ${archflags}" >&5
 echo $ECHO_N "checking whether ${CC} accepts ${archflags}... $ECHO_C" >&6; }
@@ -5003,8 +4997,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fprofile-arcs" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fprofile-arcs... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fprofile-arcs" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fprofile-arcs... $ECHO_C" >&6; }
@@ -5151,8 +5143,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -ftest-coverage" >&5
-echo $ECHO_N "checking whether ${CC} accepts -ftest-coverage... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -ftest-coverage" >&5
 echo $ECHO_N "checking whether ${CC} accepts -ftest-coverage... $ECHO_C" >&6; }
@@ -6609,8 +6599,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fPIC" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fPIC... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fPIC... $ECHO_C" >&6; }
@@ -6757,8 +6745,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wextra" >&5
-echo $ECHO_N "checking whether ${CC} accepts -Wextra... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wextra... $ECHO_C" >&6; }
@@ -6905,8 +6891,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wall" >&5
-echo $ECHO_N "checking whether ${CC} accepts -Wall... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wall... $ECHO_C" >&6; }
@@ -7053,8 +7037,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -pipe" >&5
-echo $ECHO_N "checking whether ${CC} accepts -pipe... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CC} accepts -pipe... $ECHO_C" >&6; }
@@ -7349,8 +7331,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -O3" >&5
-echo $ECHO_N "checking whether ${CC} accepts -O3... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CC} accepts -O3... $ECHO_C" >&6; }
@@ -7497,8 +7477,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-strict-aliasing" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
@@ -7646,8 +7624,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -finline-limit=3000" >&5
-echo $ECHO_N "checking whether ${CC} accepts -finline-limit=3000... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -finline-limit=3000" >&5
 echo $ECHO_N "checking whether ${CC} accepts -finline-limit=3000... $ECHO_C" >&6; }
@@ -7794,8 +7770,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -ffast-math" >&5
-echo $ECHO_N "checking whether ${CC} accepts -ffast-math... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -ffast-math" >&5
 echo $ECHO_N "checking whether ${CC} accepts -ffast-math... $ECHO_C" >&6; }
@@ -7942,8 +7916,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -mthreads" >&5
-echo $ECHO_N "checking whether ${CC} accepts -mthreads... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -mthreads" >&5
 echo $ECHO_N "checking whether ${CC} accepts -mthreads... $ECHO_C" >&6; }
@@ -8092,8 +8064,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-inline-functions" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fno-inline-functions... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-inline-functions... $ECHO_C" >&6; }
@@ -8240,8 +8210,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fimplement-inlines" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fimplement-inlines... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fimplement-inlines... $ECHO_C" >&6; }
@@ -8401,8 +8369,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -arch:SSE2" >&5
-echo $ECHO_N "checking whether ${CC} accepts -arch:SSE2... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CC} accepts -arch:SSE2... $ECHO_C" >&6; }
@@ -8798,8 +8764,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fPIC" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fPIC... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fPIC... $ECHO_C" >&6; }
@@ -8946,8 +8910,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wextra" >&5
-echo $ECHO_N "checking whether ${CC} accepts -Wextra... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wextra... $ECHO_C" >&6; }
@@ -9094,8 +9056,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wall" >&5
-echo $ECHO_N "checking whether ${CC} accepts -Wall... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wall... $ECHO_C" >&6; }
@@ -9242,8 +9202,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -pipe" >&5
-echo $ECHO_N "checking whether ${CC} accepts -pipe... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CC} accepts -pipe... $ECHO_C" >&6; }
@@ -9538,8 +9496,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -O3" >&5
-echo $ECHO_N "checking whether ${CC} accepts -O3... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CC} accepts -O3... $ECHO_C" >&6; }
@@ -9686,8 +9642,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-strict-aliasing" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
@@ -9835,8 +9789,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-inline-functions" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fno-inline-functions... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-inline-functions... $ECHO_C" >&6; }
@@ -9983,8 +9935,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -fimplement-inlines" >&5
-echo $ECHO_N "checking whether ${CC} accepts -fimplement-inlines... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fimplement-inlines... $ECHO_C" >&6; }
@@ -10142,8 +10092,6 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-      { echo "$as_me:$LINENO: checking whether ${CC} accepts -arch:SSE2" >&5
-echo $ECHO_N "checking whether ${CC} accepts -arch:SSE2... $ECHO_C" >&6; }
 
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CC} accepts -arch:SSE2... $ECHO_C" >&6; }

@@ -209,7 +209,6 @@ AC_DEFUN([AC_GECODE_CHECK_COMPILERFLAG],
    else
      AC_GECODE_CHECK_GXX_FLAG($1,[
         CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"],[])
-      AC_MSG_CHECKING(whether ${CC} accepts [$1])
       AC_GECODE_CHECK_GCC_FLAG($1,[
         CFLAGS="${CFLAGS}${CFLAGS:+ }$1"],[])
    fi])dnl
