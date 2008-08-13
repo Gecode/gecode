@@ -159,7 +159,7 @@ Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed bug for domain-consistent distinct that never occured in
+Fixed bug for domain-consistent distinct that never occurred in
 practice.
 
 [ENTRY]
