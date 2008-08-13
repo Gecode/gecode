@@ -192,11 +192,12 @@ dnl
 AC_DEFUN([AC_GECODE_CHECK_CXXFLAG],
   [if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      AC_GECODE_CHECK_MS_CL_FLAG($1,[
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"],
-       [])
+       ifelse([$2], , CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1", [$2])],
+       [ifelse([$3], , :, [$3])])
    else
      AC_GECODE_CHECK_GXX_FLAG($1,[
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"],[])
+       ifelse([$2], , CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1", [$2])],
+       [ifelse([$3], , :, [$3])])
    fi
   ])dnl
 
