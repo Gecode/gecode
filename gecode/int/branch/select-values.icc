@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ::commit(Space& home, const BranchingDesc& d, unsigned int a) {
     const PosValuesDesc<ViewSel,View>& pvd 
       = static_cast<const PosValuesDesc<ViewSel,View>&>(d);
-    View v(ViewBranching<ViewSel>::view(pvd.pos(),true).var());
+    View v(ViewBranching<ViewSel>::view(pvd.pos()).var());
     viewsel.commit(home, pvd.viewdesc(), a);
     return me_failed(v.eq(home,pvd.val(a))) ? ES_FAILED : ES_OK;
   }

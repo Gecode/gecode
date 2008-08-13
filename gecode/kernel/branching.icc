@@ -60,10 +60,8 @@ namespace Gecode {
   public:
     /// Position of view
     const int pos;
-    /// Start position in view array
-    const int start;
     /// Create position information
-    Pos(int p, int s);
+    Pos(int p);
   };
 
   /**
@@ -85,12 +83,8 @@ namespace Gecode {
     ViewSel viewsel;
     /// Return position information
     Pos pos(Space& home);
-    /**
-     * \brief Return view according to position information \a p
-     *
-     * If used during a commit, \a c must be true (eliminates views).
-     */
-    typename ViewSel::View view(const Pos& p, bool c=false);
+    /// Return view according to position information \a p
+    typename ViewSel::View view(const Pos& p) const;
     /// Constructor for cloning \a b
     ViewBranching(Space& home, bool share, ViewBranching& b);
   public:
@@ -202,7 +196,7 @@ namespace Gecode {
    *
    */
   forceinline
-  Pos::Pos(int p, int s) : pos(p), start(s) {}
+  Pos::Pos(int p) : pos(p) {}
 
 
   /*
@@ -312,20 +306,14 @@ namespace Gecode {
           default:                      GECODE_NEVER;
           }
   create:
-    Pos p(b-start,start);
+    Pos p(b);
     return p;
   }
 
   template <class ViewSel>
   forceinline typename ViewSel::View
-  ViewBranching<ViewSel>::view(const Pos& p, bool c) {
-    if (c) {
-      // Eliminate views from x[0] ... x[d->start()-1]
-      x.drop_fst(p.start); start = 0;
-      return x[p.pos];
-    } else {
-      return x[p.start+p.pos];
-    }
+  ViewBranching<ViewSel>::view(const Pos& p) const {
+    return x[p.pos];
   }
 
   template <class ViewSel>
@@ -383,7 +371,7 @@ namespace Gecode {
     const PosValDesc<ViewSel,ValSel>& pvd 
       = static_cast<const PosValDesc<ViewSel,ValSel>&>(d);
     typename ValSel::View 
-      v(ViewBranching<ViewSel>::view(pvd.pos(),true).var());
+      v(ViewBranching<ViewSel>::view(pvd.pos()).var());
     viewsel.commit(home, pvd.viewdesc(), a);
     valsel.commit(home, pvd.valdesc(), a);
     return me_failed(valsel.tell(home,a,v,pvd.val())) ? ES_FAILED : ES_OK;
