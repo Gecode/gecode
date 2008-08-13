@@ -76,7 +76,7 @@ Rank:   minor
 [DESCRIPTION]
 The functions force and unforce of an actor to force disposal
 have been removed. Now, the new interface based on notice and
-ingore using actor properties must be used instead. So, instead
+ignore using actor properties must be used instead. So, instead
 of "force(home)", write "home.notice(*this,AP_DISPOSE)" and,
 instead of "unforce(home)", write
 "home.ignore(*this,AP_DISPOSE)".
@@ -391,7 +391,7 @@ Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed bug for domain-consistent distinct that never occured in
+Fixed bug for domain-consistent distinct that never occurred in
 practice.
 
 [ENTRY]
