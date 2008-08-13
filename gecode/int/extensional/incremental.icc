@@ -303,8 +303,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
-  ExecStatus
+  forceinline ExecStatus
   Incremental<View>::post(Space& home, ViewArray<View>& x, const TupleSet& t) {
+    // All variables in the correct domain
+    for (int i = x.size(); i--; ) {
+      GECODE_ME_CHECK(x[i].gq(home, t.min()));
+      GECODE_ME_CHECK(x[i].lq(home, t.max()));
+    }
     (void) new (home) Incremental<View>(home,x,t);
     return ES_OK;
   }

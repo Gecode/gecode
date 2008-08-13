@@ -274,10 +274,12 @@ namespace Gecode { namespace Int { namespace Extensional {
    * algorithm. It is based on GAC2001, and as such it does not fully
    * take into account multidirectionality.
    *
+   * If \a shared is true, the same view can occur multiply.
+   *
    * Requires \code #include "gecode/int/extensional.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template <class View, bool shared>
   class Basic : public Base<View> {
   protected:
     using Base<View>::x;
@@ -290,7 +292,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Base<View>::find_support;
 
     /// Constructor for cloning \a p
-    Basic(Space& home, bool share, Basic<View>& p);
+    Basic(Space& home, bool share, Basic<View,shared>& p);
     /// Constructor for posting
     Basic(Space& home, ViewArray<View>& x, const TupleSet& t);
 
@@ -310,7 +312,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post propagator according to specification
     static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

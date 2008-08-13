@@ -75,19 +75,19 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
-
-    // All variables in the correct domain
-    for (int i = xv.size(); i--; ) {
-      GECODE_ME_FAIL(home, xv[i].gq(home, t.min()));
-      GECODE_ME_FAIL(home, xv[i].lq(home, t.max()));
-    }
-
     switch (pk) {
     case PK_SPEED:
-      GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::post(home,xv,t)));
+      GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>
+                           ::post(home,xv,t)));
       break;
     default:
-      GECODE_ES_FAIL(home,(Extensional::Basic<IntView>::post(home,xv,t)));
+      if (x.same(home)) {
+        GECODE_ES_FAIL(home,(Extensional::Basic<IntView,true>
+                             ::post(home,xv,t)));
+      } else {
+        GECODE_ES_FAIL(home,(Extensional::Basic<IntView,false>
+                             ::post(home,xv,t)));
+      }
       break;
     }
   }
@@ -104,19 +104,19 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<BoolView> xv(home,x);
-
-    // All variables in the correct domain
-    for (int i = xv.size(); i--; ) {
-      GECODE_ME_FAIL(home, xv[i].gq(home, t.min()));
-      GECODE_ME_FAIL(home, xv[i].lq(home, t.max()));
-    }
-
     switch (pk) {
     case PK_SPEED:
-      GECODE_ES_FAIL(home,(Extensional::Incremental<BoolView>::post(home,xv,t)));
+      GECODE_ES_FAIL(home,(Extensional::Incremental<BoolView>
+                           ::post(home,xv,t)));
       break;
     default:
-      GECODE_ES_FAIL(home,(Extensional::Basic<BoolView>::post(home,xv,t)));
+      if (x.same(home)) {
+        GECODE_ES_FAIL(home,(Extensional::Basic<BoolView,true>
+                             ::post(home,xv,t)));
+      } else {
+        GECODE_ES_FAIL(home,(Extensional::Basic<BoolView,false>
+                             ::post(home,xv,t)));
+      }
       break;
     }
   }
@@ -172,10 +172,12 @@ namespace Gecode {
                    <Int::BoolView,unsigned long int,long int>);
 
 
-  GECODE_REGISTER1(Int::Extensional::Basic<Int::IntView>);
+  GECODE_REGISTER2(Int::Extensional::Basic<Int::IntView,true>);
+  GECODE_REGISTER2(Int::Extensional::Basic<Int::IntView,false>);
   GECODE_REGISTER1(Int::Extensional::Incremental<Int::IntView>);
 
-  GECODE_REGISTER1(Int::Extensional::Basic<Int::BoolView>);
+  GECODE_REGISTER2(Int::Extensional::Basic<Int::BoolView,true>);
+  GECODE_REGISTER2(Int::Extensional::Basic<Int::BoolView,false>);
   GECODE_REGISTER1(Int::Extensional::Incremental<Int::BoolView>);
 
 }
