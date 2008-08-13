@@ -84,9 +84,11 @@ namespace Gecode { namespace Gist {
     int choices;
     int undetermined;
     int maxDepth;
+    bool hadWMPropagators;
     
     Statistics(void)
-    : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0) {}
+    : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0),
+      hadWMPropagators(false) {}
     
     static Statistics dummy;
   };

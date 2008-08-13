@@ -204,6 +204,8 @@ namespace Gecode { namespace Gist {
     QWidget* stw = new QWidget();
     QHBoxLayout* hbl = new QHBoxLayout();
     hbl->setContentsMargins(0,0,0,0);
+    wmpLabel = new QLabel("");
+    hbl->addWidget(wmpLabel);
     hbl->addWidget(new StatusBarNode(SOLVED));
     solvedLabel = new QLabel("0");
     hbl->addWidget(solvedLabel);
@@ -249,6 +251,10 @@ namespace Gecode { namespace Gist {
     failedLabel->setNum(stats.failures);
     choicesLabel->setNum(stats.choices);
     openLabel->setNum(stats.undetermined);
+    if (stats.hadWMPropagators)
+      wmpLabel->setText("WMP");
+    else
+      wmpLabel->setText("");
   }
 
   void

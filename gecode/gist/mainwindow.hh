@@ -59,6 +59,8 @@ namespace Gecode { namespace Gist {
     
     /// Whether search is currently running
     bool isSearching;
+    /// Status bar label for weakly monotonic propagator indicator
+    QLabel* wmpLabel;
     /// Status bar label for number of solutions
     QLabel* solvedLabel;
     /// Status bar label for number of failures

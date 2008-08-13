@@ -49,6 +49,8 @@
 #include "gecode/gist/addvisualisationdialog.hh"
 #include "gecode/gist/zoomToFitIcon.icc"
 
+#include "gecode/search.hh"
+
 namespace Gecode { namespace Gist {
 
   const int minScale = 10;
@@ -437,6 +439,14 @@ namespace Gecode { namespace Gist {
         //           << std::endl;
     
         Space* curSpace = currentNode->getSpace(curBest);
+        if (currentNode->getStatus() == SOLVED &&
+            curSpace->status() != SS_SOLVED) {
+          // in the presence of weakly monotonic propagators, we may have to
+          // use search to find the solution here
+          Space* dfsSpace = dfs(curSpace);
+          delete curSpace;
+          curSpace = dfsSpace;
+        }
         Reflection::VarMap vm;
         curSpace->getVars(vm, false);
         emit inspect(vm, nextPit);
