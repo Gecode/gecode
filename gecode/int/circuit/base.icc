@@ -40,7 +40,9 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   forceinline
   Base<View>::Base(Space& home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x), y(home,x) {}
+    : NaryPropagator<View,PC_INT_DOM>(home,x), y(home,x) {
+    home.notice(*this,AP_WEAKLY);
+  }
 
   template <class View>
   forceinline
@@ -252,6 +254,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   forceinline size_t
   Base<View>::dispose(Space& home) {
+    home.ignore(*this,AP_WEAKLY);
     (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
