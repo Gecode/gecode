@@ -42,7 +42,7 @@ namespace Gecode { namespace CpltSet {
   BinaryCpltSetPropagator<View0,View1>
   ::BinaryCpltSetPropagator(Space& home, View0& x0, View1& y0, bdd& d0)
     : Propagator(home), x(x0), y(y0), d(d0) {
-    force(home);
+    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_CPLTSET_DOM);
     y.subscribe(home, *this, PC_CPLTSET_DOM);
   }
@@ -85,7 +85,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   size_t
   BinaryCpltSetPropagator<View0,View1>::dispose(Space& home) {
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home, *this, PC_CPLTSET_DOM);
       y.cancel(home, *this, PC_CPLTSET_DOM);

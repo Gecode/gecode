@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace GCC {
       k(k0), vvg(NULL), card_fixed(cf){
     // y is used for bounds propagation since prop_bnd needs all variables
     // values within the domain bounds
-    force(home);
+    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_INT_DOM);
     k.subscribe(home, *this, PC_INT_DOM);
   }
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   size_t
   Dom<View, Card, isView>::dispose(Space& home) {
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home,*this, PC_INT_DOM);
       k.cancel(home,*this, PC_INT_DOM);

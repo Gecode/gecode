@@ -70,6 +70,18 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The functions force and unforce of an actor to force disposal
+have been removed. Now, the new interface based on notice and
+ingore using actor properties must be used instead. So, instead
+of "force(home)", write "home.notice(*this,AP_DISPOSE)" and,
+instead of "unforce(home)", write
+"home.ignore(*this,AP_DISPOSE)".
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor

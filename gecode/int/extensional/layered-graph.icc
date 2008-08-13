@@ -467,13 +467,13 @@ namespace Gecode { namespace Int { namespace Extensional {
       else
         x[i].subscribe(home, *new (home) Index(home,*this,c,i));
     View::schedule(home,*this,me);
-    this->force(home);
+    home.notice(*this,AP_DISPOSE);
   }
 
   template <class View, class Degree, class StateIdx>
   forceinline size_t
   LayeredGraph<View,Degree,StateIdx>::dispose(Space& home) {
-    this->unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     c.dispose(home);
     dfa.~DFA();
     (void) Propagator::dispose(home);

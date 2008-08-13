@@ -91,7 +91,7 @@ namespace Gecode { namespace CpltSet {
                                                      ViewArray<View>& x0,
                                                      bdd& d0)
     : Propagator(home), x(x0), d(d0) {
-    force(home);
+    home.notice(*this,AP_DISPOSE);
     for (int i = x.size(); i--;) {
       x[i].subscribe(home, *this, PC_CPLTSET_DOM);
     }
@@ -127,7 +127,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   size_t
   NaryCpltSetPropagator<View>::dispose(Space& home) {
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       for (int i = x.size(); i--;) {
         x[i].cancel(home, *this, PC_CPLTSET_DOM);

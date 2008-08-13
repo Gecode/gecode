@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace GCC {
          bool cf,  bool nolbc) :
     Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
     card_fixed(cf), skip_lbc(nolbc) {
-    force(home);
+    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_INT_BND);
     k.subscribe(home, *this, PC_INT_BND);
   }
@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   size_t
   BndImp<View, Card, isView, shared>::dispose(Space& home){
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home,*this, PC_INT_BND);
       k.cancel(home,*this, PC_INT_BND);

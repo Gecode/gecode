@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (!ts()->finalized()) ts()->finalize();
     init_last(home, ts()->last);
 
-    this->force(home);
+    home.notice(*this,AP_DISPOSE);
   }
 
   template <class View, bool subscribe>
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, bool subscribe>
   size_t
   Base<View,subscribe>::dispose(Space& home) {
-    this->unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     (void) Propagator::dispose(home);
     if (!home.failed()) {
       if (subscribe)

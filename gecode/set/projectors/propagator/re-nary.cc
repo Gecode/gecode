@@ -41,7 +41,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   size_t
   ReNaryProjection::dispose(Space& home) {
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home,*this,PC_SET_ANY);
       b.cancel(home,*this,Gecode::Int::PC_INT_VAL);

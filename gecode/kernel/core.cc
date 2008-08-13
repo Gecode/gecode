@@ -107,7 +107,7 @@ namespace Gecode {
 #endif
 
   Space::Space(void) 
-    : sra(new SharedRegionArea), n_nma(0) {
+    : sra(new SharedRegionArea), n_wmp(0) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -219,7 +219,7 @@ namespace Gecode {
    *
    */
   SpaceStatus
-  Space::status(unsigned long int& pn, bool& nm) {
+  Space::status(unsigned long int& pn, bool& wmp) {
     SpaceStatus s;
     if (failed()) {
       s = SS_FAILED; goto exit;
@@ -318,8 +318,8 @@ namespace Gecode {
     // No branching with alternatives left, space is solved
     s = SS_SOLVED;
   exit:
-    nm = (n_nma > 0);
-    if (n_nma == 1) n_nma = 0;
+    wmp = (n_wmp > 0);
+    if (n_wmp == 1) n_wmp = 0;
     return s;
   }
 

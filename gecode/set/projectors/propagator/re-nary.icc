@@ -42,7 +42,7 @@ namespace Gecode { namespace Set { namespace Projection {
   (Space& home, ViewArray<SetView>& x0, Gecode::Int::BoolView b0,
    ProjectorSet& ps0)
     : Propagator(home), x(x0), b(b0), ps(ps0) {
-    force(home);
+    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_SET_ANY);
     b.subscribe(home, *this, Gecode::Int::PC_INT_VAL);
   }

@@ -99,7 +99,7 @@ namespace Gecode { namespace CpltSet {
   ::NaryTwoCpltSetPropagator(Space& home, ViewArray<View0>& x0,
                              View1& y0, View1& z0, bdd&)
   : Propagator(home), x(x0), y(y0), z(z0) {
-    Propagator::force(home);
+    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_CPLTSET_DOM);
     y.subscribe(home, *this, PC_CPLTSET_DOM);
     z.subscribe(home, *this, PC_CPLTSET_DOM);
@@ -175,7 +175,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   size_t
   NaryTwoCpltSetPropagator<View0, View1>::dispose(Space& home) {
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home, *this, PC_CPLTSET_DOM);
       y.cancel(home, *this, PC_CPLTSET_DOM);

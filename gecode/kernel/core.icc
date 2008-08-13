@@ -518,8 +518,12 @@ namespace Gecode {
      * will always be disposed.
      */ 
     AP_DISPOSE = (1 << 0),
-    /// Actor is non-monotonic
-    AP_NONMONO = (1 << 2)
+    /**
+     * Propagator is only weakly monotonic, that is, the propagator
+     * is only monotonic on assignments.
+     *
+     */
+    AP_WEAKLY  = (1 << 1)
   };
 
 
@@ -592,10 +596,6 @@ namespace Gecode {
     /// Delete actor and return its size
     GECODE_KERNEL_EXPORT
     virtual size_t dispose(Space& home);
-    /// Register actor for forced dispose when \a home is deleted
-    void force(Space& home);
-    /// Deregister actor for forced dispose
-    void unforce(Space& home);
     /// Allocate memory from space
     static void* operator new(size_t s, Space& home);
     /// No-op for exceptions
@@ -1121,13 +1121,13 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT void d_resize(void);
 
     /**
-     * \brief Number of non-monotonic actors
+     * \brief Number of weakly monotonic propagators
      *
      * If zero, none exists. If one, then none exists right now but
      * there has been one since the last fixpoint computed. Otherwise,
-     * it gives the number of non-monotoning actors minus one.
+     * it gives the number of weakly monotoning propagators minus one.
      */
-    unsigned int n_nma;
+    unsigned int n_wmp;
 
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
@@ -1195,8 +1195,8 @@ namespace Gecode {
      *
      * Propagates the space until fixpoint or failure;
      * increments \a pn by the number of propagator executions;
-     * sets \a nm to true, if the space has non-monotonic actors or
-     * a non-monotonic actor might have been used in propagation; and:
+     * sets \a wmp to true, if the space has weakly monotonic propagators or
+     * a weakly monotonic propagator might have been used in propagation; and:
      *  - if the space is failed, SpaceStatus::SS_FAILED is returned.
      *  - if the space is not failed but the space has no branching left,
      *    SpaceStatus::SS_SOLVED is returned.
@@ -1204,7 +1204,7 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT SpaceStatus status(unsigned long int& pn=unused_uli,
-                                            bool& nm=unused_b);
+                                            bool& wmp=unused_b);
 
     /**
      * \brief Create new branching description for current branching
@@ -1773,11 +1773,11 @@ namespace Gecode {
         d_resize();
       *(d_cur++) = &a;
     }
-    if (p & AP_NONMONO) {
-      if (n_nma == 0)
-        n_nma = 2;
+    if (p & AP_WEAKLY) {
+      if (n_wmp == 0)
+        n_wmp = 2;
       else
-        n_nma++;
+        n_wmp++;
     }
   }
 
@@ -1793,33 +1793,14 @@ namespace Gecode {
         *f = *(--d_cur);
       }
     }
-    if (p & AP_NONMONO) {
-      if (n_nma == 2)
-        n_nma = 0;
+    if (p & AP_WEAKLY) {
+      if (n_wmp == 2)
+        n_wmp = 0;
       else
-        n_nma--;
+        n_wmp--;
     }
   }
   
-  forceinline void
-  Actor::force(Space& home) {
-    if (home.d_cur == home.d_lst)
-      home.d_resize();
-    *(home.d_cur++) = this;
-  }
-
-  forceinline void
-  Actor::unforce(Space& home) {
-    // Check wether array has already been discarded as space
-    // deletion is already in progress
-    Actor** f = home.d_fst;
-    if (f != NULL) {
-      while (this != *f)
-        f++;
-      *f = *(--home.d_cur);
-    }
-  }
-
   forceinline size_t
   Actor::dispose(Space&) {
     return sizeof(*this);

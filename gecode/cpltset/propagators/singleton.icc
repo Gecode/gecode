@@ -41,7 +41,7 @@ namespace Gecode { namespace CpltSet {
   forceinline
   Singleton<View1, View2>::Singleton(Space& home, View1& x0, View2& s0)
     : Propagator(home), x(x0), s(s0) {
-    force(home);
+    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, Gecode::Int::PC_INT_DOM);
     s.subscribe(home, *this, PC_CPLTSET_DOM);
   }
@@ -75,7 +75,7 @@ namespace Gecode { namespace CpltSet {
   template <class View1, class View2>
   size_t
   Singleton<View1, View2>::dispose(Space& home) {
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home, *this, Gecode::Int::PC_INT_DOM);
       s.cancel(home, *this, PC_CPLTSET_DOM);

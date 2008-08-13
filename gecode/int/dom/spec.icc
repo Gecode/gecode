@@ -42,13 +42,13 @@ namespace Gecode { namespace Int { namespace Dom {
   ReIntSet<View>::ReIntSet
   (Space& home, View x, const IntSet& s, BoolView b)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b), is(s) {
-    Propagator::force(home);
+    home.notice(*this,AP_DISPOSE);
   }
 
   template <class View>
   forceinline size_t
   ReIntSet<View>::dispose(Space& home) {
-    Propagator::unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     is.~IntSet();
     (void) ReUnaryPropagator<View,PC_INT_DOM,BoolView>::dispose(home);
     return sizeof(*this);

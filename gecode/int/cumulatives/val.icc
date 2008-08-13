@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     Propagator(home),
     machine(_machine), start(_start), duration(_duration),
     end(_end), height(_height), limit(_limit.size()), at_most(_at_most) {
-    force(home);    
+    home.notice(*this,AP_DISPOSE);    
     for(int i = _limit.size(); i--; )
       limit[i] = _limit[i];
 
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   size_t
   Val<ViewM,ViewD,ViewH,View>::dispose(Space& home) {
-    unforce(home);
+    home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       machine.cancel(home,*this,PC_INT_DOM);
       start.cancel(home,*this,PC_INT_BND);
