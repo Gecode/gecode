@@ -200,22 +200,22 @@ namespace Gecode { namespace Set {
   SetView::modevent(const Delta& d) { return SetVarImp::modevent(d); }
   
   forceinline int
-  SetView::glbMin(const Delta& d) const { return varimp->glbMin(d); }
+  SetView::glbMin(const Delta& d) const { return SetVarImp::glbMin(d); }
 
   forceinline int
-  SetView::glbMax(const Delta& d) const { return varimp->glbMax(d); }
+  SetView::glbMax(const Delta& d) const { return SetVarImp::glbMax(d); }
 
   forceinline bool
-  SetView::glbAny(const Delta& d) const { return varimp->glbAny(d); }
+  SetView::glbAny(const Delta& d) const { return SetVarImp::glbAny(d); }
 
   forceinline int
-  SetView::lubMin(const Delta& d) const { return varimp->lubMin(d); }
+  SetView::lubMin(const Delta& d) const { return SetVarImp::lubMin(d); }
 
   forceinline int
-  SetView::lubMax(const Delta& d) const { return varimp->lubMax(d); }
+  SetView::lubMax(const Delta& d) const { return SetVarImp::lubMax(d); }
 
   forceinline bool
-  SetView::lubAny(const Delta& d) const { return varimp->lubAny(d); }
+  SetView::lubAny(const Delta& d) const { return SetVarImp::lubAny(d); }
 
 
   /**

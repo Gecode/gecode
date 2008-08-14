@@ -142,27 +142,27 @@ namespace Gecode { namespace Set {
     return d.modevent();
   }
   forceinline int 
-  SetVarImp::glbMin(const Delta& d) const {
+  SetVarImp::glbMin(const Delta& d) {
     return static_cast<const SetDelta&>(d).glbMin();
   }
   forceinline int 
-  SetVarImp::glbMax(const Delta& d) const {
+  SetVarImp::glbMax(const Delta& d) {
     return static_cast<const SetDelta&>(d).glbMax();
   }
   forceinline bool 
-  SetVarImp::glbAny(const Delta& d) const {
+  SetVarImp::glbAny(const Delta& d) {
     return static_cast<const SetDelta&>(d).glbAny(); 
   }
   forceinline int 
-  SetVarImp::lubMin(const Delta& d) const {
+  SetVarImp::lubMin(const Delta& d) {
     return static_cast<const SetDelta&>(d).lubMin();
   }
   forceinline int 
-  SetVarImp::lubMax(const Delta& d) const {
+  SetVarImp::lubMax(const Delta& d) {
     return static_cast<const SetDelta&>(d).lubMax();
   }
   forceinline bool 
-  SetVarImp::lubAny(const Delta& d) const {
+  SetVarImp::lubAny(const Delta& d) {
     return static_cast<const SetDelta&>(d).lubAny(); 
   }
 
