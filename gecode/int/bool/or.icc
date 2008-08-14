@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -899,76 +899,125 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  NaryOr<BV>::NaryOr(Space& home, ViewArray<BV>& b, BV c)
-    : NaryOnePropagator<BV,PC_BOOL_VAL>(home,b,c) {}
+  NaryOr<BV>::NaryOr(Space& home, ViewArray<BV>& x, BV y)
+    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,x,y), n_zero(0), c(home) {
+    Advisor* a = new (home) Advisor(home,*this,c);
+    x.subscribe(home,*a);
+    y.subscribe(home,*a);
+  }
 
   template<class BV>
   forceinline
   NaryOr<BV>::NaryOr(Space& home, bool share, NaryOr<BV>& p)
-    : NaryOnePropagator<BV,PC_BOOL_VAL>(home,share,p) {}
+    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,share,p), n_zero(p.n_zero) {
+    c.update(home,share,p.c);
+  }
 
   template<class BV>
   Actor*
   NaryOr<BV>::copy(Space& home, bool share) {
-    if (x.size() == 1)
-      return new (home) Eq<BV,BV>(home,share,*this,x[0],y);
-    if (x.size() == 2)
-      return new (home) Or<BV,BV,BV>(home,share,*this,x[0],x[1],y);
+    assert(n_zero < x.size());
+    if (n_zero > 0) {
+      int n=x.size();
+      // Eliminate all zeros
+      for (int i=n; i--; )
+        if (x[i].zero())
+          x[i]=x[--n];
+      x.size(n);
+      n_zero = 0;
+    }
+    assert(n_zero < x.size());
     return new (home) NaryOr<BV>(home,share,*this);
   }
 
   template<class BV>
   inline ExecStatus
-  NaryOr<BV>::post(Space& home, ViewArray<BV>& b, BV c) {
-    if (c.one())
-      return NaryOrTrue<BV>::post(home,b);
-    if (c.zero()) {
-      for (int i=b.size(); i--; )
-        GECODE_ME_CHECK(b[i].zero(home));
+  NaryOr<BV>::post(Space& home, ViewArray<BV>& x, BV y) {
+    assert(!x.shared(home));
+    if (y.one())
+      return NaryOrTrue<BV>::post(home,x);
+    if (y.zero()) {
+      for (int i=x.size(); i--; )
+        GECODE_ME_CHECK(x[i].zero(home));
       return ES_OK;
     }
-    for (int i=b.size(); i--; )
-      if (b[i].one()) {
-        GECODE_ME_CHECK(c.one_none(home));
+    for (int i=x.size(); i--; )
+      if (x[i].one()) {
+        GECODE_ME_CHECK(y.one_none(home));
         return ES_OK;
-      } else if (b[i].zero()) {
-        b.move_lst(i);
+      } else if (x[i].zero()) {
+        x.move_lst(i);
       }
-    if (b.size() == 0) {
-      GECODE_ME_CHECK(c.zero_none(home));
-    } else if (b.size() == 1) {
-      return Eq<BV,BV>::post(home,b[0],c);
-    } else if (b.size() == 2) {
-      return Or<BV,BV,BV>::post(home,b[0],b[1],c);
+    if (x.size() == 0) {
+      GECODE_ME_CHECK(y.zero_none(home));
+    } else if (x.size() == 1) {
+      return Eq<BV,BV>::post(home,x[0],y);
+    } else if (x.size() == 2) {
+      return Or<BV,BV,BV>::post(home,x[0],x[1],y);
     } else {
-      (void) new (home) NaryOr(home,b,c);
+      (void) new (home) NaryOr(home,x,y);
     }
     return ES_OK;
   }
 
   template<class BV>
+  PropCost
+  NaryOr<BV>::cost(const Space&, const ModEventDelta&) const {
+    return PC_UNARY_HI;
+  }
+
+  template<class BV>
+  ExecStatus
+  NaryOr<BV>::advise(Space& home, Advisor& a, const Delta& d) {
+    // Decides whether the propagator must be run and also
+    // cancels all subscriptions so that the advisor is not
+    // executed when its propagator runs.
+    if (!y.none()) {
+      x.cancel(home,a);
+    } else {
+      if (BV::zero(d)) {
+        if (++n_zero < x.size())
+          return ES_FIX;
+      } else {
+        x.cancel(home,a);
+      }
+      y.cancel(home,a);
+    }
+    return ES_SUBSUMED_NOFIX(a,home,c);
+  }
+
+  template<class BV>
   ExecStatus
   NaryOr<BV>::propagate(Space& home, const ModEventDelta&) {
+    if (y.one())
+      GECODE_REWRITE(*this,NaryOrTrue<BV>::post(home,x));
+    c.dispose(home);
     if (y.zero()) {
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
-    if (y.one())
-      GECODE_REWRITE(*this,NaryOrTrue<BV>::post(home,x));
-    for (int i = x.size(); i--; ) {
-      if (x[i].one()) {
-        GECODE_ME_CHECK(y.one_none(home));
-        return ES_SUBSUMED(*this,home);
-      }
-      if (x[i].zero())
-        x.move_lst(i);
-    }
-    if (x.size() == 0) {
+    } else if (n_zero == x.size()) {
+      // All views are zero
       GECODE_ME_CHECK(y.zero_none(home));
-      return ES_SUBSUMED(*this,sizeof(*this));
+    } else {
+      // There is exactly one view which is one
+      GECODE_ME_CHECK(y.one_none(home));
     }
-    return ES_FIX;
+    return ES_SUBSUMED(*this,sizeof(*this));
+  }
+
+  template<class BV>
+  size_t
+  NaryOr<BV>::dispose(Space& home) {
+    Advisors<Advisor> as(c);
+    if (as()) {
+      // Otherwise, advise and propagate already did the cleanup
+      Advisor* a = as.advisor();
+      y.cancel(home,*a);
+      x.cancel(home,*a);
+      c.dispose(home);
+    }
+    (void) NaryOnePropagator<BV,PC_BOOL_NONE>::dispose(home);
+    return sizeof(*this);
   }
 
   template <class BV>
@@ -980,7 +1029,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   Reflection::ActorSpec
   NaryOr<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryOnePropagator<BV,PC_BOOL_VAL>::spec(home, m, ati());      
+    return NaryOnePropagator<BV,PC_BOOL_NONE>::spec(home, m, ati());      
   }
 
   template<class BV>

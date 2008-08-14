@@ -2433,6 +2433,7 @@ namespace Gecode {
     // in inverse order.
     do {
       Advisor* a = Advisor::cast(*la);
+      assert(!a->disposed());
       Propagator& p = a->propagator();
       switch (p.advise(home,*a,d)) {
       case ES_FIX:

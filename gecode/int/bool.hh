@@ -375,29 +375,39 @@ namespace Gecode { namespace Int { namespace Bool {
    * \ingroup FuncIntProp
    */
   template<class BV>
-  class NaryOr : public NaryOnePropagator<BV,PC_BOOL_VAL> {
+  class NaryOr : public NaryOnePropagator<BV,PC_BOOL_NONE> {
   protected:
-    using NaryOnePropagator<BV,PC_BOOL_VAL>::x;
-    using NaryOnePropagator<BV,PC_BOOL_VAL>::y;
+    using NaryOnePropagator<BV,PC_BOOL_NONE>::x;
+    using NaryOnePropagator<BV,PC_BOOL_NONE>::y;
+    /// The number of views assigned to zero in \a x
+    int n_zero;
+    /// The advisor council
+    Council<Advisor> c;
     /// Constructor for posting
-    NaryOr(Space& home,  ViewArray<BV>& b, BV c);
+    NaryOr(Space& home,  ViewArray<BV>& x, BV y);
     /// Constructor for cloning \a p
     NaryOr(Space& home, bool share, NaryOr<BV>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
-    static  ExecStatus post(Space& home, ViewArray<BV>& b, BV c);
+    /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i = y\f$
+    static  ExecStatus post(Space& home, ViewArray<BV>& x, BV y);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
+                                       Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
   };
 
 

@@ -70,6 +70,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Now n-ary Boolean disjunction and conjunction are constant time
+(rather than linear time, as before), even when a variable for
+the result is used.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
