@@ -1011,9 +1011,9 @@ namespace Gecode { namespace Int { namespace Bool {
     Advisors<Advisor> as(c);
     if (as()) {
       // Otherwise, advise and propagate already did the cleanup
-      Advisor* a = as.advisor();
-      y.cancel(home,*a);
-      x.cancel(home,*a);
+      Advisor& a = as.advisor();
+      y.cancel(home,a);
+      x.cancel(home,a);
       c.dispose(home);
     }
     (void) NaryOnePropagator<BV,PC_BOOL_NONE>::dispose(home);

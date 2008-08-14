@@ -818,7 +818,7 @@ namespace Gecode {
     /// Move iterator to next advisor
     void operator++(void);
     /// Return advisor
-    A* advisor(void) const;
+    A& advisor(void) const;
   };
 
 
@@ -2116,9 +2116,9 @@ namespace Gecode {
   }
 
   template <class A>
-  forceinline A*
+  forceinline A&
   Advisors<A>::advisor(void) const {
-    return static_cast<A*>(a);
+    return *static_cast<A*>(a);
   }
 
 

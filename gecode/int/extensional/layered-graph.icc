@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     layers += i;
     x.drop_fst(i);
     for (Advisors<Index> as(c); as(); ++as)
-      as.advisor()->i -= i;
+      as.advisor().i -= i;
   }
 
   template <class View, class Degree, class StateIdx>
