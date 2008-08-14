@@ -321,15 +321,15 @@ namespace Gecode { namespace Int {
     return d.modevent();
   }
   forceinline int 
-  IntVarImp::min(const Delta& d) const {
+  IntVarImp::min(const Delta& d) {
     return static_cast<const IntDelta&>(d).min();
   }
   forceinline int 
-  IntVarImp::max(const Delta& d) const {
+  IntVarImp::max(const Delta& d) {
     return static_cast<const IntDelta&>(d).max();
   }
   forceinline bool 
-  IntVarImp::any(const Delta& d) const {
+  IntVarImp::any(const Delta& d) {
     return static_cast<const IntDelta&>(d).any(); 
   }
 

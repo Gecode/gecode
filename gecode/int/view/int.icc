@@ -229,15 +229,15 @@ namespace Gecode { namespace Int {
   }
   forceinline int
   IntView::min(const Delta& d) const {
-    return varimp->min(d);
+    return IntVarImp::min(d);
   }
   forceinline int
   IntView::max(const Delta& d) const {
-    return varimp->max(d);
+    return IntVarImp::max(d);
   }
   forceinline bool
   IntView::any(const Delta& d) const {
-    return varimp->any(d);
+    return IntVarImp::any(d);
   }
 
 

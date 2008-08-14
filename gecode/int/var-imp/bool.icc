@@ -154,15 +154,15 @@ namespace Gecode { namespace Int {
     return ME_BOOL_VAL;
   }
   forceinline int 
-  BoolVarImp::min(const Delta&) const {
-    return 1-val();
+  BoolVarImp::min(const Delta& d) {
+    return static_cast<const IntDelta&>(d).min();
   }
   forceinline int 
-  BoolVarImp::max(const Delta&) const {
-    return 1-val();
+  BoolVarImp::max(const Delta& d) {
+    return static_cast<const IntDelta&>(d).min();
   }
   forceinline bool 
-  BoolVarImp::any(const Delta&) const {
+  BoolVarImp::any(const Delta&) {
     return false;
   }
 

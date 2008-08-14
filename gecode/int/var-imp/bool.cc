@@ -47,7 +47,7 @@ namespace Gecode { namespace Int {
     assert(none());
     bits() ^= (NONE ^ ONE);
     assert(one());
-    IntDelta d(false);
+    IntDelta d(0);
     return notify(home,ME_BOOL_VAL,d);
   }
 
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int {
     assert(none());
     bits() ^= (NONE ^ ZERO);
     assert(zero());
-    IntDelta d(false);
+    IntDelta d(1);
     return notify(home,ME_BOOL_VAL,d);
   }
 

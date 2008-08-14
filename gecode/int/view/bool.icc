@@ -274,15 +274,15 @@ namespace Gecode {
     }
     forceinline int
     BoolView::min(const Delta& d) const {
-      return varimp->min(d);
+      return BoolVarImp::min(d);
     }
     forceinline int
     BoolView::max(const Delta& d) const {
-      return varimp->max(d);
+      return BoolVarImp::max(d);
     }
     forceinline bool
     BoolView::any(const Delta& d) const {
-      return varimp->any(d);
+      return BoolVarImp::any(d);
     }
 
 

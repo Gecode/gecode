@@ -63,6 +63,8 @@ namespace Gecode { namespace Int {
     IntDelta(bool any=true);
     /// Create integer delta with \a min and \a max
     IntDelta(int min, int max);
+    /// Create integer delta with \a min
+    IntDelta(int min);
   private:
     /// Return minimum
     int min(void) const;
@@ -384,11 +386,11 @@ namespace Gecode { namespace Int {
     /// Return modification event
     static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned
-    int min(const Delta& d) const;
+    static int min(const Delta& d);
     /// Return maximum value just pruned
-    int max(const Delta& d) const;
+    static int max(const Delta& d);
     /// Test whether arbitrary values got pruned
-    bool any(const Delta& d) const;
+    static bool any(const Delta& d);
     //@}
   };
 
@@ -704,11 +706,11 @@ namespace Gecode { namespace Int {
     /// Return modification event
     static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned
-    int min(const Delta& d) const;
+    static int min(const Delta& d);
     /// Return maximum value just pruned
-    int max(const Delta& d) const;
+    static int max(const Delta& d);
     /// Test whether arbitrary values got pruned
-    bool any(const Delta& d) const;
+    static bool any(const Delta& d);
     //@}
 
     /// \name Cloning
