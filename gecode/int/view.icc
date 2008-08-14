@@ -1525,6 +1525,10 @@ namespace Gecode {
       int max(const Delta& d) const;
       /// Test whether arbitrary values got pruned
       bool any(const Delta& d) const;
+      /// Test whether a view has been assigned to zero
+      static bool zero(const Delta& d);
+      /// Test whether a view has been assigned to one
+      static bool one(const Delta& d);
       //@}
 
       /// \name View-dependent propagator support
@@ -1703,6 +1707,10 @@ namespace Gecode {
       int max(const Delta& d) const;
       /// Test whether arbitrary values got pruned
       bool any(const Delta& d) const;
+      /// Test whether a view has been assigned to zero
+      static bool zero(const Delta& d);
+      /// Test whether a view has been assigned to one
+      static bool one(const Delta& d);
       //@}
 
       /// \name Cloning

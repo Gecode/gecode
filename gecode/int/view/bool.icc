@@ -284,6 +284,14 @@ namespace Gecode {
     BoolView::any(const Delta& d) const {
       return BoolVarImp::any(d);
     }
+    forceinline bool
+    BoolView::zero(const Delta& d) {
+      return BoolVarImp::zero(d);
+    }
+    forceinline bool
+    BoolView::one(const Delta& d) {
+      return BoolVarImp::one(d);
+    }
 
 
 
@@ -471,6 +479,14 @@ namespace Gecode {
     forceinline bool
     NegBoolView::any(const Delta& d) const {
       return view.any(d);
+    }
+    forceinline bool
+    NegBoolView::zero(const Delta& d) {
+      return BoolView::one(d);
+    }
+    forceinline bool
+    NegBoolView::one(const Delta& d) {
+      return BoolView::zero(d);
     }
 
 

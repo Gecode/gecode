@@ -711,6 +711,10 @@ namespace Gecode { namespace Int {
     static int max(const Delta& d);
     /// Test whether arbitrary values got pruned
     static bool any(const Delta& d);
+    /// Test whether a variable has been assigned to zero
+    static bool zero(const Delta& d);
+    /// Test whether a variable has been assigned to one
+    static bool one(const Delta& d);
     //@}
 
     /// \name Cloning

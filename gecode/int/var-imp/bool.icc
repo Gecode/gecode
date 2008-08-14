@@ -165,6 +165,14 @@ namespace Gecode { namespace Int {
   BoolVarImp::any(const Delta&) {
     return false;
   }
+  forceinline bool
+  BoolVarImp::zero(const Delta& d) {
+    return static_cast<const IntDelta&>(d).min() != 0;
+  }
+  forceinline bool
+  BoolVarImp::one(const Delta& d) {
+    return static_cast<const IntDelta&>(d).min() == 0;
+  }
 
 
   /*
