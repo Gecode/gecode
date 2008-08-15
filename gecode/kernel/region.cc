@@ -74,8 +74,10 @@ namespace Gecode {
       HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
       for (unsigned int i=h->n; i--; )
         heap.rfree(h->blocks[i]);
+      heap.rfree(h);
+    } else {
+      heap.rfree(hi);
     }
-    heap.rfree(hi);
   }
 
 }
