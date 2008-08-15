@@ -433,7 +433,7 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_LINEAR_LO)
+    /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -447,6 +447,8 @@ namespace Gecode { namespace Int { namespace Bool {
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::Symbol ati(void);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
   };
 
 

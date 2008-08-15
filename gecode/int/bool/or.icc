@@ -752,7 +752,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   PropCost
   NaryOrTrue<BV>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(x.size(),PC_LINEAR_LO);
+    return PC_BINARY_LO;
   }
 
   template<class BV>
@@ -767,11 +767,6 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOrTrue<BV>::copy(Space& home, bool share) {
     int n = x.size();
     if (n > 0) {
-      // Check whether the original has already been purged
-      if (x[0].one()) {
-        x.size(1); // The rest does not matter any longer
-        return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
-      }
       // Eliminate all zeros and find a one
       for (int i=n; i--; )
         if (x[i].one()) {
@@ -891,6 +886,14 @@ namespace Gecode { namespace Int { namespace Bool {
     bb[b.size()+1] = b1;
     (void) new (home) NaryOrTrue<BV>(home,bb);
   }
+
+  template<class BV>
+  size_t
+  NaryOrTrue<BV>::dispose(Space& home) {
+    (void) BinaryPropagator<BV,PC_BOOL_VAL>::dispose(home);
+    return sizeof(*this);
+  }
+
 
   /*
    * N-ary Boolean disjunction propagator
