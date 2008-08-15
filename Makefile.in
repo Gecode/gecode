@@ -277,6 +277,7 @@ INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	arithmetic/sqr.icc arithmetic/sqrt.icc arithmetic/divmod.icc \
 	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
+	bool/clause.icc \
 	branch/post-val-int.icc branch/post-val-bool.icc \
 	branch/select-val.icc \
 	branch/select-values.icc branch/select-view.icc \

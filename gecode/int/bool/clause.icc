@@ -1,0 +1,381 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2008
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Bool {
+
+  /*
+   * Boolean clause propagator (disjunctive, true)
+   *
+   */
+
+  template<class VX, class VY>
+  forceinline
+  ClauseTrue<VX,VY>::ClauseTrue(Space& home, 
+                                ViewArray<VX>& x0, ViewArray<VY>& y0)
+    : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>
+  (home,x0[x0.size()-1],y0[y0.size()-1]), x(x0), y(y0) {
+    assert((x.size() > 0) && (y.size() > 0));
+    x.size(x.size()-1); y.size(y.size()-1);
+  }
+
+  template<class VX, class VY>
+  PropCost
+  ClauseTrue<VX,VY>::cost(const Space&, const ModEventDelta&) const {
+    return PC_BINARY_LO;
+  }
+
+  template<class VX, class VY>
+  forceinline
+  ClauseTrue<VX,VY>::ClauseTrue(Space& home, bool share, ClauseTrue<VX,VY>& p)
+    : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>(home,share,p) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
+
+  template<class VX, class VY>
+  Actor*
+  ClauseTrue<VX,VY>::copy(Space& home, bool share) {
+    {
+      int n = x.size();
+      if (n > 0) {
+        // Eliminate all zeros and find a one
+        for (int i=n; i--; )
+          if (x[i].one()) {
+            // Only keep the one
+            x[0]=x[i]; n=1; break;
+          } else if (x[i].zero()) {
+            // Eliminate the zero
+            x[i]=x[--n];
+          }
+        x.size(n);
+      }
+    }
+    {
+      int n = y.size();
+      if (n > 0) {
+        // Eliminate all zeros and find a one
+        for (int i=n; i--; )
+          if (y[i].one()) {
+            // Only keep the one
+            y[0]=y[i]; n=1; break;
+          } else if (y[i].zero()) {
+            // Eliminate the zero
+            y[i]=y[--n];
+          }
+        y.size(n);
+      }
+    }
+    if ((x.size() == 0) && (y.size() == 0))
+      return new (home) BinOrTrue<VX,VY>(home,share,*this,x0,x1);
+    else
+      return new (home) ClauseTrue<VX,VY>(home,share,*this);
+  }
+
+  template<class VX, class VY>
+  inline ExecStatus
+  ClauseTrue<VX,VY>::post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y) {
+    for (int i=x.size(); i--; )
+      if (x[i].one())
+        return ES_OK;
+      else if (x[i].zero())
+        x.move_lst(i);
+    for (int i=y.size(); i--; )
+      if (y[i].one())
+        return ES_OK;
+      else if (y[i].zero())
+        y.move_lst(i);
+    if ((x.size() == 0) && (y.size() == 0))
+      return ES_FAILED;
+    if ((x.size() == 1) && (y.size() == 0)) {
+      GECODE_ME_CHECK(x[0].one(home));
+    } else if ((x.size() == 0) && (y.size() == 1)) {
+      GECODE_ME_CHECK(y[0].one(home));
+    } else if ((x.size() == 2) && (y.size() == 0)) {
+       return BinOrTrue<VX,VX>::post(home,x[0],x[1]);
+    } else if ((x.size() == 1) && (y.size() == 1)) {
+       return BinOrTrue<VX,VY>::post(home,x[0],y[0]);
+    } else if ((x.size() == 0) && (y.size() == 2)) {
+       return BinOrTrue<VY,VY>::post(home,y[0],y[1]);
+    } else {
+      (void) new (home) ClauseTrue(home,x,y);
+    }
+    return ES_OK;
+  }
+
+  /*
+  template<class VX, class VY>
+  forceinline ExecStatus
+  ClauseTrue<VX,VY>::resubscribe(Space& home, BV& x0, BV x1) {
+    if (x0.zero()) {
+      int n = x.size();
+      for (int i=n; i--; )
+        if (x[i].one()) {
+          x.size(n);
+          return ES_SUBSUMED(*this,home);
+        } else if (x[i].zero()) {
+          x[i] = x[--n];
+        } else {
+          // Rewrite if there is just one view left
+          if (i == 0) {
+            BV y = x[0]; x.size(0);
+            GECODE_REWRITE(*this,(BinOrTrue<BV,BV>::post(home,x1,y)));
+          }
+          // Move to x0 and subscribe
+          x0=x[i]; x[i]=x[--n]; 
+          x.size(n);
+          x0.subscribe(home,*this,PC_BOOL_VAL,false);
+          return ES_FIX;
+        }
+      // All views have been assigned!
+      x.size(0);
+      GECODE_ME_CHECK(x1.one(home));
+      return ES_SUBSUMED(*this,sizeof(*this));
+    }
+    return ES_FIX;
+  }
+  */
+
+  template<class VX, class VY>
+  ExecStatus
+  ClauseTrue<VX,VY>::propagate(Space& home, const ModEventDelta&) {
+    if (x0.one() || x1.one())
+      return ES_SUBSUMED(*this,home);
+    //    GECODE_ES_CHECK(resubscribe(home,x0,x1));
+    //    GECODE_ES_CHECK(resubscribe(home,x1,x0));
+    return ES_FIX;
+  }
+
+  template <class VX, class VY>
+  Support::Symbol
+  ClauseTrue<VX,VY>::ati(void) {
+    return Reflection::mangle<VX,VY>("Gecode::Int::Bool::ClauseTrue");
+  }
+
+  template<class VX, class VY>
+  Reflection::ActorSpec
+  ClauseTrue<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
+    return MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>
+      ::spec(home, m, ati())
+        << x.spec(home, m)
+        << y.spec(home, m);
+  }
+
+  template<class VX, class VY>
+  void
+  ClauseTrue<VX,VY>::post(Space& home, Reflection::VarMap& vars,
+                          const Reflection::ActorSpec& spec) {
+    spec.checkArity(4);
+    VX x0(home, vars, spec[0]);
+    VY x1(home, vars, spec[1]);
+    ViewArray<VX> x(home, vars, spec[2]);
+    ViewArray<VX> xx(home, x.size()+1);
+    for (int i=x.size(); i--;)
+      xx[i] = x[i];
+    xx[x.size()] = x0;
+    ViewArray<VY> y(home, vars, spec[3]);
+    ViewArray<VY> yy(home, y.size()+1);
+    for (int i=y.size(); i--;)
+      yy[i] = y[i];
+    yy[y.size()] = x1;
+    (void) new (home) ClauseTrue<VX,VY>(home,xx,yy);
+  }
+
+  template<class VX, class VY>
+  size_t
+  ClauseTrue<VX,VY>::dispose(Space& home) {
+    (void) MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::dispose(home);
+    return sizeof(*this);
+  }
+
+
+  /*
+   * Boolean clause propagator (disjunctive)
+   *
+   */
+
+  /*
+
+  template<class VX, class VY>
+  forceinline
+  Clause<VX,VY>::Clause(Space& home, ViewArray<VX>& x, BV y)
+    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,x,y), n_zero(0), c(home) {
+    Advisor* a = new (home) Advisor(home,*this,c);
+    x.subscribe(home,*a);
+    y.subscribe(home,*a);
+  }
+
+  template<class VX, class VY>
+  forceinline
+  Clause<VX,VY>::Clause(Space& home, bool share, Clause<VX,VY>& p)
+    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,share,p), n_zero(p.n_zero) {
+    c.update(home,share,p.c);
+  }
+
+  template<class VX, class VY>
+  Actor*
+  Clause<VX,VY>::copy(Space& home, bool share) {
+    assert(n_zero < x.size());
+    if (n_zero > 0) {
+      int n=x.size();
+      // Eliminate all zeros
+      for (int i=n; i--; )
+        if (x[i].zero())
+          x[i]=x[--n];
+      x.size(n);
+      n_zero = 0;
+    }
+    assert(n_zero < x.size());
+    return new (home) Clause<VX,VY>(home,share,*this);
+  }
+
+  template<class VX, class VY>
+  inline ExecStatus
+  Clause<VX,VY>::post(Space& home, ViewArray<VX>& x, BV y) {
+    assert(!x.shared(home));
+    if (y.one())
+      return ClauseTrue<VX,VY>::post(home,x);
+    if (y.zero()) {
+      for (int i=x.size(); i--; )
+        GECODE_ME_CHECK(x[i].zero(home));
+      return ES_OK;
+    }
+    for (int i=x.size(); i--; )
+      if (x[i].one()) {
+        GECODE_ME_CHECK(y.one_none(home));
+        return ES_OK;
+      } else if (x[i].zero()) {
+        x.move_lst(i);
+      }
+    if (x.size() == 0) {
+      GECODE_ME_CHECK(y.zero_none(home));
+    } else if (x.size() == 1) {
+      return Eq<BV,BV>::post(home,x[0],y);
+    } else if (x.size() == 2) {
+      return Or<BV,BV,BV>::post(home,x[0],x[1],y);
+    } else {
+      (void) new (home) Clause(home,x,y);
+    }
+    return ES_OK;
+  }
+
+  template<class VX, class VY>
+  PropCost
+  Clause<VX,VY>::cost(const Space&, const ModEventDelta&) const {
+    return PC_UNARY_HI;
+  }
+
+  template<class VX, class VY>
+  ExecStatus
+  Clause<VX,VY>::advise(Space& home, Advisor& a, const Delta& d) {
+    // Decides whether the propagator must be run and also
+    // cancels all subscriptions so that the advisor is not
+    // executed when its propagator runs.
+    if (!y.none()) {
+      x.cancel(home,a);
+    } else {
+      if (BV::zero(d)) {
+        if (++n_zero < x.size())
+          return ES_FIX;
+      } else {
+        x.cancel(home,a);
+      }
+      y.cancel(home,a);
+    }
+    return ES_SUBSUMED_NOFIX(a,home,c);
+  }
+
+  template<class VX, class VY>
+  ExecStatus
+  Clause<VX,VY>::propagate(Space& home, const ModEventDelta&) {
+    if (y.one())
+      GECODE_REWRITE(*this,ClauseTrue<VX,VY>::post(home,x));
+    c.dispose(home);
+    if (y.zero()) {
+      for (int i = x.size(); i--; )
+        GECODE_ME_CHECK(x[i].zero(home));
+    } else if (n_zero == x.size()) {
+      // All views are zero
+      GECODE_ME_CHECK(y.zero_none(home));
+    } else {
+      // There is exactly one view which is one
+      GECODE_ME_CHECK(y.one_none(home));
+    }
+    return ES_SUBSUMED(*this,sizeof(*this));
+  }
+
+  template<class VX, class VY>
+  size_t
+  Clause<VX,VY>::dispose(Space& home) {
+    Advisors<Advisor> as(c);
+    if (as()) {
+      // Otherwise, advise and propagate already did the cleanup
+      Advisor& a = as.advisor();
+      y.cancel(home,a);
+      x.cancel(home,a);
+      c.dispose(home);
+    }
+    (void) NaryOnePropagator<BV,PC_BOOL_NONE>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class VX, class VY>
+  Support::Symbol
+  Clause<VX,VY>::ati(void) {
+    return Reflection::mangle<VX,VY>("Gecode::Int::Bool::Clause");
+  }
+
+  template<class VX, class VY>
+  Reflection::ActorSpec
+  Clause<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
+    return NaryOnePropagator<BV,PC_BOOL_NONE>::spec(home, m, ati());      
+  }
+
+  template<class VX, class VY>
+  void
+  Clause<VX,VY>::post(Space& home, Reflection::VarMap& vars,
+                   const Reflection::ActorSpec& spec) {
+    spec.checkArity(2);
+    ViewArray<VX> b(home, vars, spec[0]);
+    BV b0(home, vars, spec[1]);
+    (void) new (home) Clause<VX,VY>(home,b,b0);
+  }
+  */  
+
+}}}
+
+// STATISTICS: int-prop
+

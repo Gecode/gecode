@@ -124,8 +124,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ b_0 = b_1\f$
-    static  ExecStatus post(Space& home, BVA b0, BVB b1);
+    /// Post propagator \f$ x_0 = x_1\f$
+    static  ExecStatus post(Space& home, BVA x0, BVB x1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
@@ -485,6 +485,99 @@ namespace Gecode { namespace Int { namespace Bool {
     static Support::Symbol ati(void);
   };
 
+
+  /**
+   * \brief Boolean clause propagator (disjunctive)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class VX, class VY>
+  class Clause : public Propagator {
+  protected:
+    /// Positive views
+    ViewArray<VX> x;
+    /// Positive views (origin from negative variables)
+    ViewArray<VY> y;
+    /// Result
+    VX z;
+    /// The number of views assigned to zero in \a x and \a y
+    int n_zero;
+    /// The advisor council
+    Council<Advisor> c;
+    /// Constructor for posting
+    Clause(Space& home,  ViewArray<VX>& x, ViewArray<VY>& y, VX z);
+    /// Constructor for cloning \a p
+    Clause(Space& home, bool share, Clause<VX,VY>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|x|-1} y_i = z\f$
+    static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y, 
+                            VX z);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space& home,
+                                       Reflection::VarMap& m) const;
+    /// Post using specification
+    static void post(Space& home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+
+  /**
+   * \brief Boolean clause propagator (disjunctive, true)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class VX, class VY>
+  class ClauseTrue 
+    : public MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL> {
+  protected:
+    using MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::x0;
+    using MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::x1;
+    /// Views not yet subscribed to
+    ViewArray<VX> x;
+    /// Views not yet subscribed to (origin from negative variables)
+    ViewArray<VY> y;
+    /// Update subscription
+    //    ExecStatus resubscribe(Space& home, & x0, BV x1);
+    /// Constructor for posting
+    ClauseTrue(Space& home, ViewArray<VX>& x, ViewArray<VY>& y);
+    /// Constructor for cloning \a p
+    ClauseTrue(Space& home, bool share, ClauseTrue<VX,VY>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function (defined as PC_BINARY_LO)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|y|-1} y_i = 1\f$
+    static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec spec(const Space& home,
+                                       Reflection::VarMap& m) const;
+    /// Post using specification
+    static void post(Space& home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+
 }}}
 
 #include "gecode/int/bool/base.icc"
@@ -492,6 +585,7 @@ namespace Gecode { namespace Int { namespace Bool {
 #include "gecode/int/bool/lq.icc"
 #include "gecode/int/bool/or.icc"
 #include "gecode/int/bool/eqv.icc"
+#include "gecode/int/bool/clause.icc"
 
 #endif
 

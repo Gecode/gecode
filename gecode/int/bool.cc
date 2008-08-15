@@ -691,6 +691,72 @@ namespace Gecode {
     }
   }
 
+  void
+  clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
+         int n, IntConLevel, PropKind) {
+    using namespace Int;
+    if ((n < 0) || (n > 1))
+      throw NotZeroOne("Int::rel");
+    if (home.failed()) return;
+    switch (o) {
+    case BOT_AND:
+      if (n == 0) {
+        ViewArray<NegBoolView> xv(home,x.size());
+        for (int i=x.size(); i--; ) {
+          NegBoolView n(x[i]); xv[i]=n;
+        }
+        ViewArray<BoolView> yv(home,y);
+        xv.unique(home); yv.unique(home);
+        GECODE_ES_FAIL(home,(Bool::ClauseTrue<NegBoolView,BoolView>
+                             ::post(home,xv,yv)));
+      } else {
+        for (int i=x.size(); i--; ) {
+          BoolView b(x[i]); GECODE_ME_FAIL(home,b.one(home));
+        }
+        for (int i=y.size(); i--; ) {
+          BoolView b(y[i]); GECODE_ME_FAIL(home,b.zero(home));
+        }
+      }
+      break;
+    case BOT_OR:
+      if (n == 0) {
+        for (int i=x.size(); i--; ) {
+          BoolView b(x[i]); GECODE_ME_FAIL(home,b.zero(home));
+        }
+        for (int i=y.size(); i--; ) {
+          BoolView b(y[i]); GECODE_ME_FAIL(home,b.one(home));
+        }
+      } else {
+        ViewArray<BoolView> xv(home,x);
+        ViewArray<NegBoolView> yv(home,y.size());
+        for (int i=y.size(); i--; ) {
+          NegBoolView n(y[i]); yv[i]=n;
+        }
+        xv.unique(home); yv.unique(home);
+        GECODE_ES_FAIL(home,(Bool::ClauseTrue<BoolView,NegBoolView>
+                             ::post(home,xv,yv)));
+      }
+      break;
+    default:
+      throw IllegalBoolOp("Int::clause");
+    }
+  }
+
+  void
+  clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
+         BoolVar z, IntConLevel, PropKind) {
+    using namespace Int;
+    if (home.failed()) return;
+    switch (o) {
+    case BOT_AND:
+      break;
+    case BOT_OR:
+      break;
+    default:
+      throw IllegalBoolOp("Int::clause");
+    }
+  }
+
   namespace {
     using namespace Int;
     GECODE_REGISTER2(Bool::BinOrTrue<NegBoolView, BoolView>);

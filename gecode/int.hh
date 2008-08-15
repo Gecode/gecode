@@ -962,6 +962,33 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space& home, BoolOpType o, const BoolVarArgs& x, int n,
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
+   *
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
+   * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0 
+   * \diamond_{\mathit{o}} \cdots \diamond_{\mathit{o}} \neg y_{|y|-1}= z\f$
+   *
+   * Throws an exception of type Int::IllegalBoolOp, if \a o is different 
+   * from BOT_AND or BOT_OR.
+   */
+  GECODE_INT_EXPORT void
+  clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
+         BoolVar z, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
+   *
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
+   * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0 
+   * \diamond_{\mathit{o}} \cdots \diamond_{\mathit{o}} \neg y_{|y|-1}= n\f$
+   *
+   * Throws an exception of type Int::NotZeroOne, if \a n is neither
+   * 0 or 1.
+   *
+   * Throws an exception of type Int::IllegalBoolOp, if \a o is different 
+   * from BOT_AND or BOT_OR.
+   */
+  GECODE_INT_EXPORT void
+  clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
+         int n, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 
 
