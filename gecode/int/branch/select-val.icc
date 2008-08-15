@@ -94,11 +94,13 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline int
   ValRnd<View>::val(Space&, View x) {
     unsigned int p = r(x.size());
-    int n = x.min();
-    for (ViewRanges<View> i(x); p >= i.width(); ++i) {
-      n = i.min(); p -= i.width();
+    for (ViewRanges<View> i(x); i(); ++i) {
+      if (i.width() > p)
+        return i.min() + static_cast<int>(p);
+      p -= i.width();
     }
-    return n + p;
+    GECODE_NEVER;
+    return 0;
   }
   template<class View>
   forceinline ModEvent
