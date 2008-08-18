@@ -781,9 +781,10 @@ namespace Gecode {
 
   namespace {
     using namespace Int;
+    GECODE_REGISTER2(Bool::BinOrTrue<BoolView, BoolView>);
+    GECODE_REGISTER2(Bool::BinOrTrue<BoolView, NegBoolView>);
     GECODE_REGISTER2(Bool::BinOrTrue<NegBoolView, BoolView>);
     GECODE_REGISTER2(Bool::BinOrTrue<NegBoolView, NegBoolView>);
-    GECODE_REGISTER2(Bool::BinOrTrue<BoolView, BoolView>);
     
     GECODE_REGISTER2(Bool::Eq<NegBoolView, BoolView>);
     GECODE_REGISTER2(Bool::Eq<NegBoolView, NegBoolView>);
@@ -804,10 +805,14 @@ namespace Gecode {
     GECODE_REGISTER1(Bool::NaryOrTrue<NegBoolView>);
     GECODE_REGISTER1(Bool::NaryOrTrue<BoolView>);
     
-    GECODE_REGISTER3(Bool::Or<NegBoolView, BoolView, BoolView>);
-    GECODE_REGISTER3(Bool::Or<NegBoolView, NegBoolView, NegBoolView>);
     GECODE_REGISTER3(Bool::Or<BoolView, BoolView, BoolView>);
+    GECODE_REGISTER3(Bool::Or<BoolView, BoolView, NegBoolView>);
+    GECODE_REGISTER3(Bool::Or<BoolView, NegBoolView, BoolView>);
     GECODE_REGISTER3(Bool::Or<BoolView, NegBoolView, NegBoolView>);
+    GECODE_REGISTER3(Bool::Or<NegBoolView, BoolView, BoolView>);
+    GECODE_REGISTER3(Bool::Or<NegBoolView, BoolView, NegBoolView>);
+    GECODE_REGISTER3(Bool::Or<NegBoolView, NegBoolView, BoolView>);
+    GECODE_REGISTER3(Bool::Or<NegBoolView, NegBoolView, NegBoolView>);
     
     GECODE_REGISTER1(Bool::OrTrueSubsumed<NegBoolView>);
     GECODE_REGISTER1(Bool::OrTrueSubsumed<BoolView>);

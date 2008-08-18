@@ -129,8 +129,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       Index(Space& home, Propagator& p, Council<Index>& c, StateIdx i);
       /// Clone index advisor \a a
       Index(Space& home, bool share, Index& a);
-      /// Dispose advisor
-      void dispose(Space& home, Council<Index>& c);
     };
     /// Range approximation of which positions have changed
     class IndexRange {

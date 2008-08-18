@@ -730,7 +730,7 @@ namespace Gecode { namespace Int { namespace Bool {
     spec.checkArity(3);
     BVA b0(home, vars, spec[0]);
     BVB b1(home, vars, spec[1]);
-    BVB b2(home, vars, spec[2]);
+    BVC b2(home, vars, spec[2]);
     (void) new (home) Or<BVA,BVB,BVC>(home,b0,b1,b2);
   }
 
@@ -905,17 +905,15 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   forceinline
   NaryOr<VX,VY>::NaryOr(Space& home, ViewArray<VX>& x, VY y)
-    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>(home,x,y), 
+    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>(home,x,y), 
       n_zero(0), c(home) {
-    Advisor* a = new (home) Advisor(home,*this,c);
-    x.subscribe(home,*a);
-    y.subscribe(home,*a);
+    x.subscribe(home,*new (home) Advisor(home,*this,c));
   }
 
   template<class VX, class VY>
   forceinline
   NaryOr<VX,VY>::NaryOr(Space& home, bool share, NaryOr<VX,VY>& p)
-    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>(home,share,p), 
+    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>(home,share,p), 
       n_zero(p.n_zero) {
     c.update(home,share,p.c);
   }
@@ -975,22 +973,12 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   ExecStatus
-  NaryOr<VX,VY>::advise(Space& home, Advisor& a, const Delta& d) {
-    // Decides whether the propagator must be run and also
-    // cancels all subscriptions so that the advisor is not
-    // executed when its propagator runs.
-    if (!y.none()) {
-      x.cancel(home,a);
-    } else {
-      if (VX::zero(d)) {
-        if (++n_zero < x.size())
-          return ES_FIX;
-      } else {
-        x.cancel(home,a);
-      }
-      y.cancel(home,a);
-    }
-    return ES_SUBSUMED_NOFIX(a,home,c);
+  NaryOr<VX,VY>::advise(Space& home, Advisor&, const Delta& d) {
+    // Decides whether the propagator must be run
+    if (VX::zero(d) && (++n_zero < x.size()))
+      return ES_FIX;
+    else
+      return ES_NOFIX;
   }
 
   template<class VX, class VY>
@@ -998,6 +986,8 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOr<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (y.one())
       GECODE_REWRITE(*this,NaryOrTrue<VX>::post(home,x));
+    Advisors<Advisor> as(c);
+    x.cancel(home,as.advisor());
     c.dispose(home);
     if (y.zero()) {
       for (int i = x.size(); i--; )
@@ -1016,13 +1006,9 @@ namespace Gecode { namespace Int { namespace Bool {
   size_t
   NaryOr<VX,VY>::dispose(Space& home) {
     Advisors<Advisor> as(c);
-    if (as()) {
-      // Otherwise, advise and propagate already did the cleanup
-      y.cancel(home,as.advisor());
-      x.cancel(home,as.advisor());
-      c.dispose(home);
-    }
-    (void) MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>
+    x.cancel(home,as.advisor());
+    c.dispose(home);
+    (void) MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>
       ::dispose(home);
     return sizeof(*this);
   }
@@ -1036,7 +1022,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   Reflection::ActorSpec
   NaryOr<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>::
+    return MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::
       spec(home, m, ati());      
   }
 

@@ -440,11 +440,9 @@ namespace Test { namespace Int {
              (void) new Clause(bots.bot(),2);
              (void) new Clause(bots.bot(),6);
              (void) new Clause(bots.bot(),10);
-             /*
              (void) new ClauseShared(bots.bot(),2);
              (void) new ClauseShared(bots.bot(),6);
              (void) new ClauseShared(bots.bot(),10);
-             */
              (void) new ClauseConst(bots.bot(),2,0);
              (void) new ClauseConst(bots.bot(),6,0);
              (void) new ClauseConst(bots.bot(),10,0);

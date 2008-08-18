@@ -376,10 +376,10 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class VX,class VY>
   class NaryOr 
-    : public MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE> {
+    : public MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL> {
   protected:
-    using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>::x;
-    using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>::y;
+    using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::x;
+    using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::y;
     /// The number of views assigned to zero in \a x
     int n_zero;
     /// The advisor council
@@ -513,13 +513,11 @@ namespace Gecode { namespace Int { namespace Bool {
       Tagged(Space& home, Propagator& p, Council<Tagged>& c, bool x);
       /// Clone tagged advisor \a a
       Tagged(Space& home, bool share, Tagged& a);
-      /// Dispose advisor
-      //      void dispose(Space& home, Council<Index>& c);
     };
     /// The advisor council
     Council<Tagged> c;
-    /// Cancel subscriptions on \a x and \a y (if \a cxy is true) and on \a z (if \a cz is true)
-    bool cancel(Space& home, bool cxy, bool cz);
+    /// Cancel subscriptions
+    void cancel(Space& home);
     /// Constructor for posting
     Clause(Space& home,  ViewArray<VX>& x, ViewArray<VY>& y, VX z);
     /// Constructor for cloning \a p

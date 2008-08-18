@@ -108,13 +108,6 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                    Index& a)
     : Advisor(home,share,a), i(a.i) {}
 
-  template <class View, class Degree, class StateIdx>
-  forceinline void
-  LayeredGraph<View,Degree,StateIdx>::Index::dispose(Space& home, 
-                                                     Council<Index>& c) {
-    Advisor::dispose(home,c);
-  }
-
 
   /*
    * Index ranges

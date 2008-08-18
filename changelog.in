@@ -71,6 +71,14 @@ This is a release.
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a Boolean clause constraint that support conjunction and
+disjunction of both positive and negative variables.
+
+[ENTRY]
+Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]

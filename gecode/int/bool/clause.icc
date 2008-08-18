@@ -238,25 +238,14 @@ namespace Gecode { namespace Int { namespace Bool {
   Clause<VX,VY>::Tagged::Tagged(Space& home, bool share, Tagged& a)
     : Advisor(home,share,a), x(a.x) {}
 
-  /*
-  template<class VX, class VY>
-  forceinline void
-  Clause<VX,VY>::Tagged::dispose(Space& home, 
-                                                     Council<Tagged>& c) {
-    Advisor::dispose(home,c);
-  }
-  */
-
   template<class VX, class VY>
   forceinline
   Clause<VX,VY>::Clause(Space& home, ViewArray<VX>& x0, ViewArray<VY>& y0,
                         VX z0)
     : Propagator(home), x(x0), y(y0), z(z0), n_zero(0), c(home) {
-    Tagged* ax = new (home) Tagged(home,*this,c,true);
-    x.subscribe(home,*ax);
-    z.subscribe(home,*ax);
-    Tagged* ay = new (home) Tagged(home,*this,c,false);
-    y.subscribe(home,*ay);
+    x.subscribe(home,*new (home) Tagged(home,*this,c,true));
+    y.subscribe(home,*new (home) Tagged(home,*this,c,false));
+    z.subscribe(home,*this,PC_BOOL_VAL);
   }
 
   template<class VX, class VY>
@@ -337,32 +326,17 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
-  forceinline bool
-  Clause<VX,VY>::cancel(Space& home, bool cxy, bool cz) {
-    Advisors<Tagged> as(c);
-    // Otherwise, the advisors have already been cancelled and disposed
-    if (!as())
-      return false;
-    do {
-      if (as.advisor().x) {
-        if (cxy) {
-          //          std::cout << "cancel(x) ["  << this << "]" << std::endl;
-          x.cancel(home,as.advisor());
-        }
-        if (cz) {
-          //          std::cout << "cancel(z) ["  << this << "]" << std::endl;
-          z.cancel(home,as.advisor());
-        }
-      } else {
-        if (cxy) {
-          //          std::cout << "cancel(y) ["  << this << "]" << std::endl;
-          y.cancel(home,as.advisor());
-        }
-      }
+  forceinline void
+  Clause<VX,VY>::cancel(Space& home) {
+    for (Advisors<Tagged> as(c); as(); ++as) {
+      if (as.advisor().x)
+        x.cancel(home,as.advisor());
+      else
+        y.cancel(home,as.advisor());
       as.advisor().dispose(home,c);
-      ++as;
-    } while (as());
-    return true;
+    }
+    c.dispose(home);
+    z.cancel(home,*this,PC_BOOL_VAL);
   }
 
 
@@ -371,45 +345,26 @@ namespace Gecode { namespace Int { namespace Bool {
   Clause<VX,VY>::advise(Space& home, Advisor& _a, const Delta& d) {
     Tagged& a = static_cast<Tagged&>(_a);
     // Decides whether the propagator must be run and also
-    // cancels all subscriptions so that the advisor is not
-    // executed when its propagator runs.
-    if (!z.none()) {
-      //      std::cout << "advise(z=0) [" << this << "]" << std::endl;
-      (void) cancel(home,true,false);
-    } else {
-      if ((a.x && VX::zero(d)) || (!a.x && VY::zero(d))) {
-        if (++n_zero < x.size() + y.size())
-          return ES_FIX;
-        //        std::cout << "advise(x+y=0) ["  << this << "]" << std::endl;
-        (void) cancel(home,false,true);
-      } else {
-        //        std::cout << "advise(x or y = 1) ["  << this << "]" << std::endl;
-        (void) cancel(home,true,true);
-      }
-    }
+    if ((a.x && VX::zero(d)) || (!a.x && VY::zero(d)))
+      if (++n_zero < x.size() + y.size())
+        return ES_FIX;
     return ES_NOFIX;
   }
 
   template<class VX, class VY>
   ExecStatus
   Clause<VX,VY>::propagate(Space& home, const ModEventDelta&) {
-    if (z.one()) {
-      //      std::cout << "propagate(z=1) ["  << this << "]" << std::endl;
+    if (z.one())
       GECODE_REWRITE(*this,(ClauseTrue<VX,VY>::post(home,x,y)));
-    }
-    c.dispose(home);
+    cancel(home);
     if (z.zero()) {
-      //      std::cout << "propagate(z=0) ["  << this << "]" << std::endl;
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
       for (int i = y.size(); i--; )
         GECODE_ME_CHECK(y[i].zero(home));
     } else if (n_zero == x.size() + y.size()) {
-      //      std::cout << "propagate(x+y=0) ["  << this << "]" << std::endl;
-      // All views are zero
       GECODE_ME_CHECK(z.zero_none(home));
     } else {
-      //      std::cout << "propagate(x or y = 1) ["  << this << "]" << std::endl;
       // There is exactly one view which is one
       GECODE_ME_CHECK(z.one_none(home));
     }
@@ -419,8 +374,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   size_t
   Clause<VX,VY>::dispose(Space& home) {
-    if (cancel(home,true,true))
-      c.dispose(home);
+    cancel(home);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
