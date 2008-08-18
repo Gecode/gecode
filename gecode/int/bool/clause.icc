@@ -113,69 +113,65 @@ namespace Gecode { namespace Int { namespace Bool {
         return ES_OK;
       else if (x[i].zero())
         x.move_lst(i);
+    if (x.size() == 0)
+      return NaryOrTrue<VY>::post(home,y);
     for (int i=y.size(); i--; )
       if (y[i].one())
         return ES_OK;
       else if (y[i].zero())
         y.move_lst(i);
-    if ((x.size() == 0) && (y.size() == 0))
-      return ES_FAILED;
-    if ((x.size() == 1) && (y.size() == 0)) {
-      GECODE_ME_CHECK(x[0].one(home));
-    } else if ((x.size() == 0) && (y.size() == 1)) {
-      GECODE_ME_CHECK(y[0].one(home));
-    } else if ((x.size() == 2) && (y.size() == 0)) {
-       return BinOrTrue<VX,VX>::post(home,x[0],x[1]);
-    } else if ((x.size() == 1) && (y.size() == 1)) {
-       return BinOrTrue<VX,VY>::post(home,x[0],y[0]);
-    } else if ((x.size() == 0) && (y.size() == 2)) {
-       return BinOrTrue<VY,VY>::post(home,y[0],y[1]);
+    if (y.size() == 0)
+      return NaryOrTrue<VX>::post(home,x);
+    if ((x.size() == 1) && (y.size() == 1)) {
+      return BinOrTrue<VX,VY>::post(home,x[0],y[0]);
     } else {
       (void) new (home) ClauseTrue(home,x,y);
     }
     return ES_OK;
   }
 
-  /*
   template<class VX, class VY>
   forceinline ExecStatus
-  ClauseTrue<VX,VY>::resubscribe(Space& home, BV& x0, BV x1) {
+  resubscribe(Space& home, Propagator& p,
+              VX& x0, ViewArray<VX>& x, 
+              VY& x1, ViewArray<VY>& y) {
     if (x0.zero()) {
       int n = x.size();
       for (int i=n; i--; )
         if (x[i].one()) {
           x.size(n);
-          return ES_SUBSUMED(*this,home);
+          return ES_SUBSUMED(p,home);
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
           // Rewrite if there is just one view left
-          if (i == 0) {
-            BV y = x[0]; x.size(0);
-            GECODE_REWRITE(*this,(BinOrTrue<BV,BV>::post(home,x1,y)));
+          if ((i == 0) && (y.size() == 0)) {
+            VX z = x[0]; x.size(0);
+            GECODE_REWRITE(p,(BinOrTrue<VX,VY>::post(home,z,x1)));
           }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n]; 
           x.size(n);
-          x0.subscribe(home,*this,PC_BOOL_VAL,false);
+          x0.subscribe(home,p,PC_BOOL_VAL,false);
           return ES_FIX;
         }
-      // All views have been assigned!
-      x.size(0);
-      GECODE_ME_CHECK(x1.one(home));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      // All x-views have been assigned!
+      ViewArray<VY> z(home,y.size()+1);
+      for (int i=y.size(); i--; )
+        z[i]=y[i];
+      z[y.size()] = x1;
+      GECODE_REWRITE(p,(NaryOrTrue<VY>::post(home,z)));
     }
     return ES_FIX;
   }
-  */
 
   template<class VX, class VY>
   ExecStatus
   ClauseTrue<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (x0.one() || x1.one())
       return ES_SUBSUMED(*this,home);
-    //    GECODE_ES_CHECK(resubscribe(home,x0,x1));
-    //    GECODE_ES_CHECK(resubscribe(home,x1,x0));
+    GECODE_ES_CHECK(resubscribe(home,*this,x0,x,x1,y));
+    GECODE_ES_CHECK(resubscribe(home,*this,x1,y,x0,x));
     return ES_FIX;
   }
 
@@ -228,66 +224,108 @@ namespace Gecode { namespace Int { namespace Bool {
    */
 
   /*
+   * Index advisors
+   *
+   */
+  template<class VX, class VY>
+  forceinline
+  Clause<VX,VY>::Tagged::Tagged(Space& home, Propagator& p,
+                                Council<Tagged>& c, bool x0)
+    : Advisor(home,p,c), x(x0) {}
 
   template<class VX, class VY>
   forceinline
-  Clause<VX,VY>::Clause(Space& home, ViewArray<VX>& x, BV y)
-    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,x,y), n_zero(0), c(home) {
-    Advisor* a = new (home) Advisor(home,*this,c);
-    x.subscribe(home,*a);
-    y.subscribe(home,*a);
+  Clause<VX,VY>::Tagged::Tagged(Space& home, bool share, Tagged& a)
+    : Advisor(home,share,a), x(a.x) {}
+
+  /*
+  template<class VX, class VY>
+  forceinline void
+  Clause<VX,VY>::Tagged::dispose(Space& home, 
+                                                     Council<Tagged>& c) {
+    Advisor::dispose(home,c);
+  }
+  */
+
+  template<class VX, class VY>
+  forceinline
+  Clause<VX,VY>::Clause(Space& home, ViewArray<VX>& x0, ViewArray<VY>& y0,
+                        VX z0)
+    : Propagator(home), x(x0), y(y0), z(z0), n_zero(0), c(home) {
+    Tagged* ax = new (home) Tagged(home,*this,c,true);
+    x.subscribe(home,*ax);
+    z.subscribe(home,*ax);
+    Tagged* ay = new (home) Tagged(home,*this,c,false);
+    y.subscribe(home,*ay);
   }
 
   template<class VX, class VY>
   forceinline
   Clause<VX,VY>::Clause(Space& home, bool share, Clause<VX,VY>& p)
-    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,share,p), n_zero(p.n_zero) {
+    : Propagator(home,share,p), n_zero(p.n_zero) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+    z.update(home,share,p.z);
     c.update(home,share,p.c);
+  }
+
+  template<class VX>
+  forceinline void
+  eliminate_zero(ViewArray<VX>& x, int& n_zero) {
+    if (n_zero > 0) {
+      int n=x.size();
+      // Eliminate all zeros
+      for (int i=n; i--; )
+        if (x[i].zero()) {
+          x[i]=x[--n]; n_zero--;
+        }
+      x.size(n);
+    }
   }
 
   template<class VX, class VY>
   Actor*
   Clause<VX,VY>::copy(Space& home, bool share) {
-    assert(n_zero < x.size());
-    if (n_zero > 0) {
-      int n=x.size();
-      // Eliminate all zeros
-      for (int i=n; i--; )
-        if (x[i].zero())
-          x[i]=x[--n];
-      x.size(n);
-      n_zero = 0;
-    }
-    assert(n_zero < x.size());
+    eliminate_zero(x,n_zero);
+    eliminate_zero(y,n_zero);
     return new (home) Clause<VX,VY>(home,share,*this);
   }
 
   template<class VX, class VY>
   inline ExecStatus
-  Clause<VX,VY>::post(Space& home, ViewArray<VX>& x, BV y) {
-    assert(!x.shared(home));
-    if (y.one())
-      return ClauseTrue<VX,VY>::post(home,x);
-    if (y.zero()) {
+  Clause<VX,VY>::post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y, VX z) {
+    assert(!x.shared(home) && !y.shared(home));
+    if (z.one())
+      return ClauseTrue<VX,VY>::post(home,x,y);
+    if (z.zero()) {
       for (int i=x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
+      for (int i=y.size(); i--; )
+        GECODE_ME_CHECK(y[i].zero(home));
       return ES_OK;
     }
     for (int i=x.size(); i--; )
       if (x[i].one()) {
-        GECODE_ME_CHECK(y.one_none(home));
+        GECODE_ME_CHECK(z.one_none(home));
         return ES_OK;
       } else if (x[i].zero()) {
         x.move_lst(i);
       }
-    if (x.size() == 0) {
-      GECODE_ME_CHECK(y.zero_none(home));
-    } else if (x.size() == 1) {
-      return Eq<BV,BV>::post(home,x[0],y);
-    } else if (x.size() == 2) {
-      return Or<BV,BV,BV>::post(home,x[0],x[1],y);
+    if (x.size() == 0)
+      return NaryOr<VY,VX>::post(home,y,z);
+    for (int i=y.size(); i--; )
+      if (y[i].one()) {
+        GECODE_ME_CHECK(z.one_none(home));
+        return ES_OK;
+      } else if (y[i].zero()) {
+        y.move_lst(i);
+      }
+    if (y.size() == 0)
+      return NaryOr<VX,VX>::post(home,x,z);
+    if ((x.size() == 1) && (y.size() == 1)) {
+      return Or<VX,VY,VX>::post(home,x[0],y[0],z);
     } else {
-      (void) new (home) Clause(home,x,y);
+      (void) new (home) Clause<VX,VY>(home,x,y,z);
     }
     return ES_OK;
   }
@@ -299,40 +337,81 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
+  forceinline bool
+  Clause<VX,VY>::cancel(Space& home, bool cxy, bool cz) {
+    Advisors<Tagged> as(c);
+    // Otherwise, the advisors have already been cancelled and disposed
+    if (!as())
+      return false;
+    do {
+      if (as.advisor().x) {
+        if (cxy) {
+          //          std::cout << "cancel(x) ["  << this << "]" << std::endl;
+          x.cancel(home,as.advisor());
+        }
+        if (cz) {
+          //          std::cout << "cancel(z) ["  << this << "]" << std::endl;
+          z.cancel(home,as.advisor());
+        }
+      } else {
+        if (cxy) {
+          //          std::cout << "cancel(y) ["  << this << "]" << std::endl;
+          y.cancel(home,as.advisor());
+        }
+      }
+      as.advisor().dispose(home,c);
+      ++as;
+    } while (as());
+    return true;
+  }
+
+
+  template<class VX, class VY>
   ExecStatus
-  Clause<VX,VY>::advise(Space& home, Advisor& a, const Delta& d) {
+  Clause<VX,VY>::advise(Space& home, Advisor& _a, const Delta& d) {
+    Tagged& a = static_cast<Tagged&>(_a);
     // Decides whether the propagator must be run and also
     // cancels all subscriptions so that the advisor is not
     // executed when its propagator runs.
-    if (!y.none()) {
-      x.cancel(home,a);
+    if (!z.none()) {
+      //      std::cout << "advise(z=0) [" << this << "]" << std::endl;
+      (void) cancel(home,true,false);
     } else {
-      if (BV::zero(d)) {
-        if (++n_zero < x.size())
+      if ((a.x && VX::zero(d)) || (!a.x && VY::zero(d))) {
+        if (++n_zero < x.size() + y.size())
           return ES_FIX;
+        //        std::cout << "advise(x+y=0) ["  << this << "]" << std::endl;
+        (void) cancel(home,false,true);
       } else {
-        x.cancel(home,a);
+        //        std::cout << "advise(x or y = 1) ["  << this << "]" << std::endl;
+        (void) cancel(home,true,true);
       }
-      y.cancel(home,a);
     }
-    return ES_SUBSUMED_NOFIX(a,home,c);
+    return ES_NOFIX;
   }
 
   template<class VX, class VY>
   ExecStatus
   Clause<VX,VY>::propagate(Space& home, const ModEventDelta&) {
-    if (y.one())
-      GECODE_REWRITE(*this,ClauseTrue<VX,VY>::post(home,x));
+    if (z.one()) {
+      //      std::cout << "propagate(z=1) ["  << this << "]" << std::endl;
+      GECODE_REWRITE(*this,(ClauseTrue<VX,VY>::post(home,x,y)));
+    }
     c.dispose(home);
-    if (y.zero()) {
+    if (z.zero()) {
+      //      std::cout << "propagate(z=0) ["  << this << "]" << std::endl;
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
-    } else if (n_zero == x.size()) {
+      for (int i = y.size(); i--; )
+        GECODE_ME_CHECK(y[i].zero(home));
+    } else if (n_zero == x.size() + y.size()) {
+      //      std::cout << "propagate(x+y=0) ["  << this << "]" << std::endl;
       // All views are zero
-      GECODE_ME_CHECK(y.zero_none(home));
+      GECODE_ME_CHECK(z.zero_none(home));
     } else {
+      //      std::cout << "propagate(x or y = 1) ["  << this << "]" << std::endl;
       // There is exactly one view which is one
-      GECODE_ME_CHECK(y.one_none(home));
+      GECODE_ME_CHECK(z.one_none(home));
     }
     return ES_SUBSUMED(*this,sizeof(*this));
   }
@@ -340,15 +419,9 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   size_t
   Clause<VX,VY>::dispose(Space& home) {
-    Advisors<Advisor> as(c);
-    if (as()) {
-      // Otherwise, advise and propagate already did the cleanup
-      Advisor& a = as.advisor();
-      y.cancel(home,a);
-      x.cancel(home,a);
+    if (cancel(home,true,true))
       c.dispose(home);
-    }
-    (void) NaryOnePropagator<BV,PC_BOOL_NONE>::dispose(home);
+    (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
@@ -361,19 +434,22 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   Reflection::ActorSpec
   Clause<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryOnePropagator<BV,PC_BOOL_NONE>::spec(home, m, ati());      
+    Reflection::ActorSpec s(ati());
+    return s << x.spec(home,m)
+             << y.spec(home,m)
+             << z.spec(home,m);
   }
 
   template<class VX, class VY>
   void
   Clause<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                   const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<VX> b(home, vars, spec[0]);
-    BV b0(home, vars, spec[1]);
-    (void) new (home) Clause<VX,VY>(home,b,b0);
+                      const Reflection::ActorSpec& spec) {
+    spec.checkArity(3);
+    ViewArray<VX> x(home, vars, spec[0]);
+    ViewArray<VY> y(home, vars, spec[1]);
+    VX z(home, vars, spec[2]);
+    (void) post(home,x,y,z);
   }
-  */  
 
 }}}
 

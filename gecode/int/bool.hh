@@ -374,19 +374,20 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template<class BV>
-  class NaryOr : public NaryOnePropagator<BV,PC_BOOL_NONE> {
+  template<class VX,class VY>
+  class NaryOr 
+    : public MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE> {
   protected:
-    using NaryOnePropagator<BV,PC_BOOL_NONE>::x;
-    using NaryOnePropagator<BV,PC_BOOL_NONE>::y;
+    using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>::x;
+    using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>::y;
     /// The number of views assigned to zero in \a x
     int n_zero;
     /// The advisor council
     Council<Advisor> c;
     /// Constructor for posting
-    NaryOr(Space& home,  ViewArray<BV>& x, BV y);
+    NaryOr(Space& home,  ViewArray<VX>& x, VY y);
     /// Constructor for cloning \a p
-    NaryOr(Space& home, bool share, NaryOr<BV>& p);
+    NaryOr(Space& home, bool share, NaryOr<VX,VY>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -397,7 +398,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i = y\f$
-    static  ExecStatus post(Space& home, ViewArray<BV>& x, BV y);
+    static  ExecStatus post(Space& home, ViewArray<VX>& x, VY y);
     /// Specification for this propagator
     virtual Reflection::ActorSpec spec(const Space& home,
                                        Reflection::VarMap& m) const;
@@ -427,7 +428,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Update subscription
     ExecStatus resubscribe(Space& home, BV& x0, BV x1);
     /// Constructor for posting
-    NaryOrTrue(Space& home,  ViewArray<BV>& b);
+    NaryOrTrue(Space& home, ViewArray<BV>& x);
     /// Constructor for cloning \a p
     NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p);
   public:
@@ -503,8 +504,22 @@ namespace Gecode { namespace Int { namespace Bool {
     VX z;
     /// The number of views assigned to zero in \a x and \a y
     int n_zero;
+    /// Advisors for views (tagged whether for \a x or \a y)
+    class Tagged : public Advisor {
+    public:
+      /// Whether advises a view for x or y
+      const bool x;
+      /// Create tagged advisor
+      Tagged(Space& home, Propagator& p, Council<Tagged>& c, bool x);
+      /// Clone tagged advisor \a a
+      Tagged(Space& home, bool share, Tagged& a);
+      /// Dispose advisor
+      //      void dispose(Space& home, Council<Index>& c);
+    };
     /// The advisor council
-    Council<Advisor> c;
+    Council<Tagged> c;
+    /// Cancel subscriptions on \a x and \a y (if \a cxy is true) and on \a z (if \a cz is true)
+    bool cancel(Space& home, bool cxy, bool cz);
     /// Constructor for posting
     Clause(Space& home,  ViewArray<VX>& x, ViewArray<VY>& y, VX z);
     /// Constructor for cloning \a p

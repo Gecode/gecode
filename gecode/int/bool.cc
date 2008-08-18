@@ -564,14 +564,15 @@ namespace Gecode {
         }
         NegBoolView ny(y);
         b.unique(home);
-        GECODE_ES_FAIL(home,Bool::NaryOr<NegBoolView>::post(home,b,ny));
+        GECODE_ES_FAIL(home,(Bool::NaryOr<NegBoolView,NegBoolView>
+                             ::post(home,b,ny)));
       }
       break;
     case BOT_OR:
       {
         ViewArray<BoolView> b(home,x);
         b.unique(home);
-        GECODE_ES_FAIL(home,Bool::NaryOr<BoolView>::post(home,b,y));
+        GECODE_ES_FAIL(home,(Bool::NaryOr<BoolView,BoolView>::post(home,b,y)));
       }
       break;
     case BOT_IMP:
@@ -749,8 +750,29 @@ namespace Gecode {
     if (home.failed()) return;
     switch (o) {
     case BOT_AND:
+      {
+        ViewArray<NegBoolView> xv(home,x.size());
+        for (int i=x.size(); i--; ) {
+          NegBoolView n(x[i]); xv[i]=n;
+        }
+        ViewArray<BoolView> yv(home,y);
+        xv.unique(home); yv.unique(home);
+        NegBoolView nz(z);
+        GECODE_ES_FAIL(home,(Bool::Clause<NegBoolView,BoolView>
+                             ::post(home,xv,yv,nz)));
+      }
       break;
     case BOT_OR:
+      {
+        ViewArray<BoolView> xv(home,x);
+        ViewArray<NegBoolView> yv(home,y.size());
+        for (int i=y.size(); i--; ) {
+          NegBoolView n(y[i]); yv[i]=n;
+        }
+        xv.unique(home); yv.unique(home);
+        GECODE_ES_FAIL(home,(Bool::Clause<BoolView,NegBoolView>
+                             ::post(home,xv,yv,z)));
+      }
       break;
     default:
       throw IllegalBoolOp("Int::clause");
@@ -774,8 +796,10 @@ namespace Gecode {
     
     GECODE_REGISTER1(Bool::Lq<BoolView>);
     
-    GECODE_REGISTER1(Bool::NaryOr<NegBoolView>);
-    GECODE_REGISTER1(Bool::NaryOr<BoolView>);
+    GECODE_REGISTER2(Bool::NaryOr<BoolView,BoolView>);
+    GECODE_REGISTER2(Bool::NaryOr<BoolView,NegBoolView>);
+    GECODE_REGISTER2(Bool::NaryOr<NegBoolView,BoolView>);
+    GECODE_REGISTER2(Bool::NaryOr<NegBoolView,NegBoolView>);
     
     GECODE_REGISTER1(Bool::NaryOrTrue<NegBoolView>);
     GECODE_REGISTER1(Bool::NaryOrTrue<BoolView>);
@@ -793,6 +817,13 @@ namespace Gecode {
     
     GECODE_REGISTER1(Bool::TerOrTrue<NegBoolView>);
     GECODE_REGISTER1(Bool::TerOrTrue<BoolView>);
+
+    GECODE_REGISTER2(Bool::Clause<BoolView,NegBoolView>);
+    GECODE_REGISTER2(Bool::Clause<NegBoolView,BoolView>);
+
+    GECODE_REGISTER2(Bool::ClauseTrue<BoolView,NegBoolView>);
+    GECODE_REGISTER2(Bool::ClauseTrue<NegBoolView,BoolView>);
+
   }
 
 }

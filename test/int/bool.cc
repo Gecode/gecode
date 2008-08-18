@@ -297,6 +297,116 @@ namespace Test { namespace Int {
          rel(home, op, b, c);
        }
      };
+
+     
+     /// Test for Clause Boolean operation
+     class Clause : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       Clause(Gecode::BoolOpType op0, int n) 
+         : Test("Bool::Clause::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = (x.size()-1) / 2;
+         int b;
+         if (n == 1) {
+           b = check(x[0],op,!x[1]);
+         } else {
+           b = check(x[0],op,!x[n]);
+           for (int i=1; i<n; i++)
+             b = check(b,op,check(x[i],op,!x[n+i]));
+         }
+         return b == x[x.size()-1];
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n = (x.size()-1) / 2;
+         BoolVarArgs a(n), b(n);
+         for (int i=n; i--; ) {
+           a[i]=channel(home,x[i]);
+           b[i]=channel(home,x[i+n]);
+         }
+         clause(home, op, a, b, channel(home,x[x.size()-1]));
+       }
+     };
+     
+     /// Test for Clause Boolean operation
+     class ClauseShared : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       ClauseShared(Gecode::BoolOpType op0, int n) 
+         : Test("Bool::Clause::Shared::"+str(op0)+"::"+str(n),n,0,1), 
+           op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size() / 2;
+         int b;
+         if (n == 1) {
+           b = check(x[0],op,!x[1]);
+         } else {
+           b = check(x[0],op,!x[n]);
+           for (int i=1; i<n; i++)
+             b = check(b,op,check(x[i],op,!x[n+i]));
+         }
+         return b == x[0];
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n = x.size() / 2;
+         BoolVarArgs a(2*n), b(2*n);
+         for (int i=n; i--; ) {
+           a[i]=a[i+n]=channel(home,x[i]);
+           b[i]=b[i+n]=channel(home,x[i+n]);
+         }
+         clause(home, op, a, b, a[0]);
+       }
+     };
+     
+     /// Test for Clause Boolean operation with constant
+     class ClauseConst : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+       /// Integer constant
+       int c;
+     public:
+       /// Construct and register test
+       ClauseConst(Gecode::BoolOpType op0, int n, int c0) 
+         : Test("Bool::Clause::"+str(op0)+"::"+str(n)+"::"+str(c0),n,0,1), 
+           op(op0), c(c0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size() / 2;
+         int b;
+         if (n == 1) {
+           b = check(x[0],op,!x[1]);
+         } else {
+           b = check(x[0],op,!x[n]);
+           for (int i=1; i<n; i++)
+             b = check(b,op,check(x[i],op,!x[n+i]));
+         }
+         return b == c;
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n = x.size() / 2;
+         BoolVarArgs a(n), b(n);
+         for (int i=n; i--; ) {
+           a[i]=channel(home,x[i]);
+           b[i]=channel(home,x[i+n]);
+         }
+         clause(home, op, a, b, c);
+       }
+     };
      
      /// Help class to create and register tests
      class Create {
@@ -326,6 +436,22 @@ namespace Test { namespace Int {
            (void) new NaryConst(bots.bot(),2,1);
            (void) new NaryConst(bots.bot(),6,1);
            (void) new NaryConst(bots.bot(),10,1);
+           if ((bots.bot() == BOT_AND) || (bots.bot() == BOT_OR)) {
+             (void) new Clause(bots.bot(),2);
+             (void) new Clause(bots.bot(),6);
+             (void) new Clause(bots.bot(),10);
+             /*
+             (void) new ClauseShared(bots.bot(),2);
+             (void) new ClauseShared(bots.bot(),6);
+             (void) new ClauseShared(bots.bot(),10);
+             */
+             (void) new ClauseConst(bots.bot(),2,0);
+             (void) new ClauseConst(bots.bot(),6,0);
+             (void) new ClauseConst(bots.bot(),10,0);
+             (void) new ClauseConst(bots.bot(),2,1);
+             (void) new ClauseConst(bots.bot(),6,1);
+             (void) new ClauseConst(bots.bot(),10,1);
+           }
          }
        }
      };

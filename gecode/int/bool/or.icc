@@ -822,17 +822,14 @@ namespace Gecode { namespace Int { namespace Bool {
       int n = x.size();
       for (int i=n; i--; )
         if (x[i].one()) {
-          x.size(n);
-          return ES_SUBSUMED(*this,home);
+          x1.cancel(home,*this,PC_BOOL_VAL);
+          return ES_SUBSUMED(*this,sizeof(*this));
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
-          // New unassigned view found
-          assert(!x[i].zero() && !x[i].one());
           // Rewrite if there is just one view left
           if (i == 0) {
-            BV y = x[0]; x.size(0);
-            GECODE_REWRITE(*this,(BinOrTrue<BV,BV>::post(home,x1,y)));
+            GECODE_REWRITE(*this,(BinOrTrue<BV,BV>::post(home,x1,x[0])));
           }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n]; 
@@ -841,7 +838,6 @@ namespace Gecode { namespace Int { namespace Bool {
           return ES_FIX;
         }
       // All views have been assigned!
-      x.size(0);
       GECODE_ME_CHECK(x1.one(home));
       return ES_SUBSUMED(*this,sizeof(*this));
     }
@@ -851,8 +847,14 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   ExecStatus
   NaryOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.one() || x1.one())
-      return ES_SUBSUMED(*this,home);
+    if (x0.one()) {
+      x1.cancel(home,*this,PC_BOOL_VAL);
+      return ES_SUBSUMED(*this,sizeof(*this));
+    }
+    if (x1.one()) {
+      x0.cancel(home,*this,PC_BOOL_VAL);
+      return ES_SUBSUMED(*this,sizeof(*this));
+    }
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
     GECODE_ES_CHECK(resubscribe(home,x1,x0));
     return ES_FIX;
@@ -884,7 +886,7 @@ namespace Gecode { namespace Int { namespace Bool {
       bb[i] = b[i];
     bb[b.size()]   = b0;
     bb[b.size()+1] = b1;
-    (void) new (home) NaryOrTrue<BV>(home,bb);
+    (void) post(home,bb);
   }
 
   template<class BV>
@@ -900,25 +902,27 @@ namespace Gecode { namespace Int { namespace Bool {
    *
    */
 
-  template<class BV>
+  template<class VX, class VY>
   forceinline
-  NaryOr<BV>::NaryOr(Space& home, ViewArray<BV>& x, BV y)
-    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,x,y), n_zero(0), c(home) {
+  NaryOr<VX,VY>::NaryOr(Space& home, ViewArray<VX>& x, VY y)
+    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>(home,x,y), 
+      n_zero(0), c(home) {
     Advisor* a = new (home) Advisor(home,*this,c);
     x.subscribe(home,*a);
     y.subscribe(home,*a);
   }
 
-  template<class BV>
+  template<class VX, class VY>
   forceinline
-  NaryOr<BV>::NaryOr(Space& home, bool share, NaryOr<BV>& p)
-    : NaryOnePropagator<BV,PC_BOOL_NONE>(home,share,p), n_zero(p.n_zero) {
+  NaryOr<VX,VY>::NaryOr(Space& home, bool share, NaryOr<VX,VY>& p)
+    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>(home,share,p), 
+      n_zero(p.n_zero) {
     c.update(home,share,p.c);
   }
 
-  template<class BV>
+  template<class VX, class VY>
   Actor*
-  NaryOr<BV>::copy(Space& home, bool share) {
+  NaryOr<VX,VY>::copy(Space& home, bool share) {
     assert(n_zero < x.size());
     if (n_zero > 0) {
       int n=x.size();
@@ -930,15 +934,15 @@ namespace Gecode { namespace Int { namespace Bool {
       n_zero = 0;
     }
     assert(n_zero < x.size());
-    return new (home) NaryOr<BV>(home,share,*this);
+    return new (home) NaryOr<VX,VY>(home,share,*this);
   }
 
-  template<class BV>
+  template<class VX, class VY>
   inline ExecStatus
-  NaryOr<BV>::post(Space& home, ViewArray<BV>& x, BV y) {
+  NaryOr<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y) {
     assert(!x.shared(home));
     if (y.one())
-      return NaryOrTrue<BV>::post(home,x);
+      return NaryOrTrue<VX>::post(home,x);
     if (y.zero()) {
       for (int i=x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
@@ -954,31 +958,31 @@ namespace Gecode { namespace Int { namespace Bool {
     if (x.size() == 0) {
       GECODE_ME_CHECK(y.zero_none(home));
     } else if (x.size() == 1) {
-      return Eq<BV,BV>::post(home,x[0],y);
+      return Eq<VX,VY>::post(home,x[0],y);
     } else if (x.size() == 2) {
-      return Or<BV,BV,BV>::post(home,x[0],x[1],y);
+      return Or<VX,VX,VY>::post(home,x[0],x[1],y);
     } else {
       (void) new (home) NaryOr(home,x,y);
     }
     return ES_OK;
   }
 
-  template<class BV>
+  template<class VX, class VY>
   PropCost
-  NaryOr<BV>::cost(const Space&, const ModEventDelta&) const {
+  NaryOr<VX,VY>::cost(const Space&, const ModEventDelta&) const {
     return PC_UNARY_HI;
   }
 
-  template<class BV>
+  template<class VX, class VY>
   ExecStatus
-  NaryOr<BV>::advise(Space& home, Advisor& a, const Delta& d) {
+  NaryOr<VX,VY>::advise(Space& home, Advisor& a, const Delta& d) {
     // Decides whether the propagator must be run and also
     // cancels all subscriptions so that the advisor is not
     // executed when its propagator runs.
     if (!y.none()) {
       x.cancel(home,a);
     } else {
-      if (BV::zero(d)) {
+      if (VX::zero(d)) {
         if (++n_zero < x.size())
           return ES_FIX;
       } else {
@@ -989,11 +993,11 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_SUBSUMED_NOFIX(a,home,c);
   }
 
-  template<class BV>
+  template<class VX, class VY>
   ExecStatus
-  NaryOr<BV>::propagate(Space& home, const ModEventDelta&) {
+  NaryOr<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (y.one())
-      GECODE_REWRITE(*this,NaryOrTrue<BV>::post(home,x));
+      GECODE_REWRITE(*this,NaryOrTrue<VX>::post(home,x));
     c.dispose(home);
     if (y.zero()) {
       for (int i = x.size(); i--; )
@@ -1008,41 +1012,42 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_SUBSUMED(*this,sizeof(*this));
   }
 
-  template<class BV>
+  template<class VX, class VY>
   size_t
-  NaryOr<BV>::dispose(Space& home) {
+  NaryOr<VX,VY>::dispose(Space& home) {
     Advisors<Advisor> as(c);
     if (as()) {
       // Otherwise, advise and propagate already did the cleanup
-      Advisor& a = as.advisor();
-      y.cancel(home,a);
-      x.cancel(home,a);
+      y.cancel(home,as.advisor());
+      x.cancel(home,as.advisor());
       c.dispose(home);
     }
-    (void) NaryOnePropagator<BV,PC_BOOL_NONE>::dispose(home);
+    (void) MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>
+      ::dispose(home);
     return sizeof(*this);
   }
 
-  template <class BV>
+  template <class VX, class VY>
   Support::Symbol
-  NaryOr<BV>::ati(void) {
-    return Reflection::mangle<BV>("Gecode::Int::Bool::NaryOr");
+  NaryOr<VX,VY>::ati(void) {
+    return Reflection::mangle<VX,VY>("Gecode::Int::Bool::NaryOr");
   }
 
-  template<class BV>
+  template<class VX, class VY>
   Reflection::ActorSpec
-  NaryOr<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryOnePropagator<BV,PC_BOOL_NONE>::spec(home, m, ati());      
+  NaryOr<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
+    return MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_NONE>::
+      spec(home, m, ati());      
   }
 
-  template<class BV>
+  template<class VX, class VY>
   void
-  NaryOr<BV>::post(Space& home, Reflection::VarMap& vars,
+  NaryOr<VX,VY>::post(Space& home, Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
-    ViewArray<BV> b(home, vars, spec[0]);
-    BV b0(home, vars, spec[1]);
-    (void) new (home) NaryOr<BV>(home,b,b0);
+    ViewArray<VX> b(home, vars, spec[0]);
+    VY b0(home, vars, spec[1]);
+    (void) post(home,b,b0);
   }
   
 
