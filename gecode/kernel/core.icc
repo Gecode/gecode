@@ -1131,7 +1131,21 @@ namespace Gecode {
 
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
+    /// Used for default arguments
     GECODE_KERNEL_EXPORT static bool unused_b;
+
+    /**
+     * \brief Query space status
+     *
+     * Propagates the space until fixpoint or failure and
+     * increments \a pn by the number of propagator executions and
+     * returns:
+     *  - if the space is failed, SpaceStatus::SS_FAILED is returned.
+     *  - if the space is not failed but the space has no branching left,
+     *    SpaceStatus::SS_SOLVED is returned.
+     *  - otherwise, SpaceStatus::SS_BRANCH is returned.
+     */
+    GECODE_KERNEL_EXPORT SpaceStatus _status(unsigned long int& pn=unused_uli);
   public:
     /**
      * \brief Default constructor
@@ -1203,8 +1217,7 @@ namespace Gecode {
      *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT SpaceStatus status(unsigned long int& pn=unused_uli,
-                                            bool& wmp=unused_b);
+    SpaceStatus status(unsigned long int& pn=unused_uli, bool& wmp=unused_b);
 
     /**
      * \brief Create new branching description for current branching
@@ -2511,6 +2524,15 @@ namespace Gecode {
     do {
       x->dispose(home); x = static_cast<VarType*>(x->next_d());
     } while (x != NULL);
+  }
+
+
+  forceinline SpaceStatus
+  Space::status(unsigned long int& pn, bool& wmp) {
+    SpaceStatus s = _status(pn);
+    wmp = (n_wmp > 0);
+    if (n_wmp == 1) n_wmp = 0;
+    return s;
   }
 
 }

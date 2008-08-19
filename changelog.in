@@ -89,6 +89,24 @@ the result is used.
 [ENTRY]
 Module: kernel
 What:   change
+Rank:   major
+[DESCRIPTION]
+
+Gecode now supports weakly monotonic propagators. A weakly
+monotonic propagator must only be able to decide for assignments
+wether they are solutions or not (which is a very natural
+property as it means the propagator must be a correct
+implementation of a constraint). Otherwise, the propagator does
+not have to be monotonic, it can even be indeterministic.
+
+Weakly monotonic but not monotonic propagators must notify a
+space about their existence: if a weakly monotonic propagator is
+created, it must execute "home.notice(*this,AP_WEAKLY)"; if it is
+disposed, it must execute "home.ignore(*this,AP_WEAKLY)".
+
+[ENTRY]
+Module: kernel
+What:   change
 Rank:   minor
 [DESCRIPTION]
 The functions force and unforce of an actor to force disposal
