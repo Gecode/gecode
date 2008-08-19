@@ -660,6 +660,7 @@ namespace Gecode { namespace Reflection {
     assert(_args != NULL);
     int ns = _args->size * 3 / 2;
     _args->a = heap.realloc<Arg*>(_args->a, _args->size, ns);
+    _args->size = ns;
   }
 
   ActorSpec::ActorSpec(void) : _args(NULL) {}
