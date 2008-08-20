@@ -168,8 +168,8 @@ namespace Test {
         return new HasSolutions(share,*this);
       }
       /// Add constraint for next better solution
-      virtual void constrain(const Space* _s) {
-        const HasSolutions* s = static_cast<const HasSolutions*>(_s);
+      virtual void constrain(const Space& _s) {
+        const HasSolutions& s = static_cast<const HasSolutions&>(_s);
         switch (htc) {
         case HTC_NONE:
           break;
@@ -178,7 +178,7 @@ namespace Test {
           {
             IntVarArgs y(6);
             for (int i=0; i<6; i++)
-              y[i].init(*this, s->x[i].val(), s->x[i].val());
+              y[i].init(*this, s.x[i].val(), s.x[i].val());
             lex(*this, x, (htc == HTC_LEX_LE) ? IRT_LE : IRT_GR, y);
             break;
           }
@@ -187,7 +187,7 @@ namespace Test {
           {
             IntVarArgs y(6);
             for (int i=0; i<6; i++)
-              y[i].init(*this, s->x[i].val(), s->x[i].val());
+              y[i].init(*this, s.x[i].val(), s.x[i].val());
             IntVar xs(*this, -18, 18);
             IntVar ys(*this, -18, 18);
             post(*this, x[0]+x[1]+x[2]-x[3]-x[4]-x[5] == xs);
