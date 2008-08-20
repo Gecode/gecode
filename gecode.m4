@@ -669,7 +669,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_GECODE_CHECK_COMPILERFLAG([-arch:SSE2])
   AC_GECODE_ADD_TO_CFLAGS([-D_CRT_SECURE_NO_DEPRECATE])
   AC_GECODE_ADD_TO_CXXFLAGS([-EHsc])
-  AC_DEFINE(GECODE_MEMORY_ALIGNMENT, 4)
+  AC_DEFINE(GECODE_MEMORY_ALIGNMENT, [sizeof(void*)])
 
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
