@@ -244,8 +244,14 @@ namespace Gecode { namespace Search {
       if (i<n-1) {
         // Propagate to fixpoint
         SpaceStatus ss = s->status(stat.propagate);
-        // Again, the space might already propagate to failure
-        if (constrained &&  (ss == SS_FAILED)) {
+        /*
+         * Again, the space might already propagate to failure
+         *
+         * This can be for two reasons:
+         *  - constrain is true, so we fail
+         *  - the space has weakly monotonic propagators
+         */
+        if (ss == SS_FAILED) {
           // s must be deleted as it is not on the stack
           delete s;
           stat.commit += (i-l);

@@ -177,21 +177,17 @@ namespace Gecode {
     const int _pos;
     /// Value to assign to
     const Val _val;
-    /// Start position in view array
-    const int _start;
   public:
     /** \brief Initialize description for branching \a b, position \a p, value \a n, and start position \a s.
       *
       * The start position can be used in the commit function to eliminate 
       * assigned variables from the array.
       */
-    PosValDesc(const Branching* b, const int p, const Val& n, const int s=0);
+    PosValDesc(const Branching* b, const int p, const Val& n);
     /// Return position in array
     int pos(void) const;
     /// Return value to branch with
     Val val(void) const;
-    /// Return the start index in the array
-    int start(void) const;
     /// Report size occupied
     virtual size_t size(void) const;
   };
@@ -211,8 +207,8 @@ namespace Gecode {
   template <class Val, unsigned int alt>
   forceinline
   PosValDesc<Val,alt>::PosValDesc(const Branching* b, const int p,
-                                  const Val& n, const int s)
-    : BranchingDesc(b,alt), _pos(p), _val(n), _start(s) {}
+                                  const Val& n)
+    : BranchingDesc(b,alt), _pos(p), _val(n) {}
 
   template <class Val, unsigned int alt>
   forceinline int
@@ -224,12 +220,6 @@ namespace Gecode {
   forceinline Val
   PosValDesc<Val,alt>::val(void) const {
     return _val;
-  }
-
-  template <class Val, unsigned int alt>
-  forceinline int
-  PosValDesc<Val,alt>::start(void) const {
-    return _start;
   }
 
   template <class Val, unsigned int alt>
@@ -297,7 +287,7 @@ namespace Gecode {
           default:         GECODE_NEVER;
           }
   create:
-    return new PosValDesc<Val,2>(this,b-start,vl.val(home,x[b]),start);
+    return new PosValDesc<Val,2>(this,b,vl.val(home,x[b]));
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
@@ -305,8 +295,6 @@ namespace Gecode {
   ViewValBranching<View,Val,ViewSel,ValSel>
   ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
     const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
-    // Eliminate views from x[0] ... x[d->start()-1]
-    x.drop_fst(pvd->start()); start = 0;
     ValSel vs;
     return me_failed(vs.tell(home,a,x[pvd->pos()],pvd->val()))
       ? ES_FAILED : ES_OK;
@@ -343,7 +331,7 @@ namespace Gecode {
     Reflection::BranchingSpec bs(d);
     const PosValDesc<Val,2>* pvd = static_cast<const PosValDesc<Val,2>*>(d);
     ValSel vs;
-    vs.branchingSpec(home, m, bs, 2, x[pvd->start()+pvd->pos()], pvd->val());
+    vs.branchingSpec(home, m, bs, 2, x[pvd->pos()], pvd->val());
     return bs;
   }
 
@@ -392,7 +380,7 @@ namespace Gecode {
   ::description(const Space* home) const {
     assert(!x[start].assigned());
     ValSel vl; // For value selection
-    return new PosValDesc<Val,1>(this,0,vl.val(home,x[start]),start);
+    return new PosValDesc<Val,1>(this,start,vl.val(home,x[start]));
   }
 
   template <class View, class Val, class ValSel>
@@ -400,8 +388,6 @@ namespace Gecode {
   ViewValAssignment<View,Val,ValSel>
   ::commit(Space* home, const BranchingDesc* d, unsigned int) {
     const PosValDesc<Val,1>* pvd = static_cast<const PosValDesc<Val,1>*>(d);
-    // Eliminate views from x[0] ... x[d->start()-1]
-    x.drop_fst(pvd->start()); start = 0;
     ValSel vs;
     return me_failed(vs.tell(home,0,x[pvd->pos()],pvd->val()))
       ? ES_FAILED : ES_OK;
@@ -438,7 +424,7 @@ namespace Gecode {
     Reflection::BranchingSpec bs(d);
     const PosValDesc<Val,1>* pvd = static_cast<const PosValDesc<Val,1>*>(d);
     ValSel vs;
-    vs.branchingSpec(home, m, bs, 1, x[pvd->start()+pvd->pos()], pvd->val());
+    vs.branchingSpec(home, m, bs, 1, x[pvd->pos()], pvd->val());
     return bs;
   }
 
