@@ -2543,7 +2543,7 @@ namespace Gecode {
     // Recover from copy
     x->base = base;
     x->u.idx[0] = u.idx[0];
-    if (pc_max > 1 && sizeof(ActorLink**) > sizeof(unsigned int))
+    if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
       x->u.idx[1] = u.idx[1];
 
     ActorLink** f = x->base;
