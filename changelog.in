@@ -345,9 +345,17 @@ Date: ?
 This release adds many domain consistent propagators for
 arithmetic constraints and fixes a number of bugs. Some of these
 bugs fixed are potentially serious, in particular as they occur
-very seldom. Please change to 2.2.0 as soon as possible. And,
-of course, the usual small fixes and changes.
+very seldom. Please change to 2.2.0 as soon as possible (in
+particular if you are using the 64bit Microsoft Visual C++
+compiler). And, of course, the usual small fixes and changes.
 
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed a bug in the memory alignment on Windows 64bit (very hard to reproduce).
+	
 [ENTRY]
 Module: other
 What:   new
