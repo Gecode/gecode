@@ -275,10 +275,8 @@ namespace Gecode {
   MemoryManager::alloc(size_t sz) {
     // Size must be a multiple of four
     assert((sz > 0) && ((sz % 4) == 0));
-#if GECODE_MEMORY_ALIGNMENT == 8
     // Performs alignment to 8 bytes
-    sz += sz & 4;
-#endif
+    sz += sz & ((GECODE_MEMORY_ALIGNMENT >> 1) & 4);
     // Check whether sufficient memory left
     if (sz > lsz)
       alloc_refill(sz);
@@ -335,9 +333,7 @@ namespace Gecode {
   forceinline
   MemoryManager::MemoryManager(MemoryManager& mm, size_t s_sub)
     : cur_hcsz(mm.cur_hcsz), requested(0), slack(NULL) {
-#if GECODE_MEMORY_ALIGNMENT == 8
-    s_sub += s_sub & 4;
-#endif
+    s_sub += s_sub & ((GECODE_MEMORY_ALIGNMENT >> 1) & 4);
     if ((mm.requested < Memory::Config::hcsz_dec_ratio*mm.cur_hcsz) &&
         (cur_hcsz > Memory::Config::hcsz_min) &&
         (s_sub*2 < cur_hcsz))
