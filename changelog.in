@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The index structure for variable dependencies is now implemented using ints
+instead of pointers, saving memory on 64 bit machines.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor
