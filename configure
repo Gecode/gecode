@@ -9032,7 +9032,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   CFLAGS="${CFLAGS}${CFLAGS:+ }-D_CRT_SECURE_NO_DEPRECATE"
   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-EHsc"
   cat >>confdefs.h <<\_ACEOF
-#define GECODE_MEMORY_ALIGNMENT 4
+#define GECODE_MEMORY_ALIGNMENT sizeof(void*)
 _ACEOF
 
 
@@ -11047,7 +11047,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   CFLAGS="${CFLAGS}${CFLAGS:+ }-D_CRT_SECURE_NO_DEPRECATE"
   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-EHsc"
   cat >>confdefs.h <<\_ACEOF
-#define GECODE_MEMORY_ALIGNMENT 4
+#define GECODE_MEMORY_ALIGNMENT sizeof(void*)
 _ACEOF
 
 
