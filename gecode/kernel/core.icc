@@ -320,22 +320,19 @@ namespace Gecode {
        * The entries between base[idx[pc_max]] and base[idx[pc_max+1]] are the
        * advisors subscribed to the variable implementation.
        */
-      int idx[pc_max+2];
+      unsigned int idx[pc_max+2];
       /// During cloning, points to the next copied variable
       VarImp<VIC>* next;
     } u;
 
-    /// Return subscribed actor at index \a i
-    ActorLink** actor(int i);
-
-    /// Return subscribed actor at index \a i, where \a i is non-zero
-    ActorLink** actorNonZero(int i);
-
-    /// Return reference to index \a i, where \a i is non-zero
-    int& idx(int i);
-
-    /// Return index \a i, where \a i is non-zero
-    int idx(int i) const;
+    /// Return subscribed actor at index \a pc
+    ActorLink** actor(PropCond pc);
+    /// Return subscribed actor at index \a pc, where \a pc is non-zero
+    ActorLink** actorNonZero(PropCond pc);
+    /// Return reference to index \a pc, where \a pc is non-zero
+    unsigned int& idx(PropCond pc);
+    /// Return index \a pc, where \a pc is non-zero
+    unsigned int idx(PropCond pc) const;
 
     /**
      * \brief Update copied variable \a x
@@ -2203,38 +2200,38 @@ namespace Gecode {
    */
   template <class VIC>
   forceinline ActorLink**
-  VarImp<VIC>::actor(int i) {
-    assert(i >= 0  && i <= pc_max+2);
-    return (i == 0 ? base : base+u.idx[i-1]);
+  VarImp<VIC>::actor(PropCond pc) {
+    assert((pc >= 0)  && (pc <= pc_max+2));
+    return (pc == 0) ? base : base+u.idx[pc-1];
   }
 
   template <class VIC>
   forceinline ActorLink**
-  VarImp<VIC>::actorNonZero(int i) {
-    assert(i > 0 && i <= pc_max+2);
-    return base+u.idx[i-1];
+  VarImp<VIC>::actorNonZero(PropCond pc) {
+    assert((pc > 0)  && (pc <= pc_max+2));
+    return base+u.idx[pc-1];
   }
 
   template <class VIC>
-  forceinline int&
-  VarImp<VIC>::idx(int i) {
-    assert(i > 0 && i <= pc_max+2);
-    return u.idx[i-1];
+  forceinline unsigned int&
+  VarImp<VIC>::idx(PropCond pc) {
+    assert((pc > 0)  && (pc <= pc_max+2));
+    return u.idx[pc-1];
   }
 
   template <class VIC>
-  forceinline int
-  VarImp<VIC>::idx(int i) const {
-    assert(i > 0 && i <= pc_max+2);
-    return u.idx[i-1];
+  forceinline unsigned int
+  VarImp<VIC>::idx(PropCond pc) const {
+    assert((pc > 0)  && (pc <= pc_max+2));
+    return u.idx[pc-1];
   }
 
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space&) {
     base = NULL;
-    for (PropCond i=1; i<pc_max+3; i++)
-      idx(i) = 0;
+    for (PropCond pc=1; pc<pc_max+3; pc++)
+      idx(pc) = 0;
     free_and_bits = 0;
   }
 
@@ -2242,8 +2239,8 @@ namespace Gecode {
   forceinline
   VarImp<VIC>::VarImp(void) {
     base = NULL;
-    for (PropCond i=1; i<pc_max+3; i++)
-      idx(i) = 0;
+    for (PropCond pc=1; pc<pc_max+3; pc++)
+      idx(pc) = 0;
     free_and_bits = 0;
   }
 
@@ -2251,7 +2248,7 @@ namespace Gecode {
   forceinline unsigned int
   VarImp<VIC>::degree(void) const {
     assert(!copied());
-    return static_cast<unsigned int>(idx(pc_max+2));
+    return idx(pc_max+2);
   }
 
   template <class VIC>
@@ -2314,8 +2311,8 @@ namespace Gecode {
     }
     // Save subscriptions in copy
     base = x.base;
-    for (PropCond i=1; i<pc_max+3; i++)
-      idx(i) = x.idx(i);
+    for (PropCond pc=1; pc<pc_max+3; pc++)
+      idx(pc) = x.idx(pc);
 
     // Set forwarding pointer
     x.base = reinterpret_cast<ActorLink**>(Support::mark(this));
@@ -2482,7 +2479,7 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::cancel(Space& home) {
     // Entries in index structure are disabled. However they
-    // must still work for cloning (idx[0]) and degree (idx[PC+2])
+    // must still work for cloning (base) and degree (idx(pc_max+2))
     int n_sub = degree();
     home.pc.p.n_sub -= n_sub;
     unsigned int n = (free_and_bits >> VIC::free_bits) + n_sub;
@@ -2534,7 +2531,7 @@ namespace Gecode {
     // Recover from copy
     x->base = base;
     x->u.idx[0] = u.idx[0];
-    if (sizeof(ActorLink**) > sizeof(int))
+    if (sizeof(ActorLink**) > sizeof(unsigned int))
       x->u.idx[1] = u.idx[1];
 
     ActorLink** f = x->base;
