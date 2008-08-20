@@ -75,7 +75,9 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The index structure for variable dependencies is now implemented using ints
-instead of pointers, saving memory on 64 bit machines.
+instead of pointers, saving memory on 64 bit machines. For example, the index 
+structure of integer variables is now 40% smaller, for Boolean variables 
+(which have the smallest possible index structure) we still save 16%.
 
 [ENTRY]
 Module: int
