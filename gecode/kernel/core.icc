@@ -286,6 +286,19 @@ namespace Gecode {
     friend class Propagator;
     template <class VarType> friend class VarDisposer;
   private:
+    /**
+     * \brief Subscribed actors
+     *
+     * The base pointer of the array of subscribed actors.
+     *
+     * During cloning, it is reused as the forwarding pointer for the
+     * variable. The original value is saved in the copy and restored after
+     * cloning.
+     *
+     * This pointer must be first to avoid padding on 64 bit machines.
+     */
+    ActorLink** base;
+
     /// Index for update
     static const int idx_c = VIC::idx_c;
     /// Index for disposal
@@ -296,18 +309,6 @@ namespace Gecode {
     unsigned int free_and_bits;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = VIC::pc_max;
-
-    /**
-     * \brief Subscribed actors
-     *
-     * The base pointer of the array of subscribed actors.
-     *
-     * During cloning, it is reused as the forwarding pointer for the
-     * variable. The original value is saved in the copy and restored after
-     * cloning.
-     *
-     */
-    ActorLink** base;
 
     union {
       /**
