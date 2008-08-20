@@ -188,6 +188,13 @@ namespace Gecode { namespace Gist {
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
           b.ownBest->acquireSpace(curBest);
+          if (b.ownBest->workingSpace->status() != SS_SOLVED) {
+            // in the presence of weakly monotonic propagators, we may have to
+            // use search to find the solution here
+            Space* dfsSpace = dfs(b.ownBest->workingSpace);
+            delete b.ownBest->workingSpace;
+            b.ownBest->workingSpace = dfsSpace;
+          }
           curBest->b->constrain(curSpace, b.ownBest->workingSpace);
           lastBest = b.ownBest;
         }
@@ -219,6 +226,13 @@ namespace Gecode { namespace Gist {
       
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
+          if (ownBest->workingSpace->status() != SS_SOLVED) {
+            // in the presence of weakly monotonic propagators, we may have to
+            // use search to find the solution here
+            Space* dfsSpace = dfs(ownBest->workingSpace);
+            delete ownBest->workingSpace;
+            ownBest->workingSpace = dfsSpace;
+          }
           curBest->b->constrain(workingSpace, ownBest->workingSpace);
         }
       }
@@ -247,6 +261,13 @@ namespace Gecode { namespace Gist {
 
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest);
+          if (ownBest->workingSpace->status() != SS_SOLVED) {
+            // in the presence of weakly monotonic propagators, we may have to
+            // use search to find the solution here
+            Space* dfsSpace = dfs(ownBest->workingSpace);
+            delete ownBest->workingSpace;
+            ownBest->workingSpace = dfsSpace;
+          }
           curBest->b->constrain(copy, ownBest->workingSpace);
         }
         if (copy->status() == SS_FAILED) {
@@ -344,7 +365,8 @@ namespace Gecode { namespace Gist {
     if (isUndetermined()) {
       stats.undetermined--;
       acquireSpace(curBest);
-      switch (workingSpace->status()) {
+      long unsigned int noOfProps;
+      switch (workingSpace->status(noOfProps)) {
       case SS_FAILED:
         {
           delete workingSpace;
@@ -384,7 +406,6 @@ namespace Gecode { namespace Gist {
           setHasSolvedChildren(true);
           setHasFailedChildren(false);
           stats.solutions++;
-          // stats.newDepth(getDepth());
           if (curBest != NULL) {
             curBest->s = this;
           }
@@ -419,8 +440,6 @@ namespace Gecode { namespace Gist {
 #endif
         stats.choices++;
         stats.undetermined += kids;
-        // stats.newOpen();
-        // stats.newDepth(getDepth() + 1);
         break;
       }
       static_cast<VisualNode*>(this)->changedStatus();
