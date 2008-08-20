@@ -102,6 +102,80 @@ AC_DEFUN([AC_GECODE_ADD_TO_DLLFLAGS],
 
 
 dnl Macro:
+dnl   AC_GECODE_CHECK_MS_CL_FLAG (FLAG, ACTION-IF-TRUE,
+dnl                                ACTION-IF-FALSE)
+dnl
+dnl Description:
+dnl   Check whether FLAG is supported by the Microsoft C++ compiler.  Run
+dnl   the shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
+dnl   otherwise.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+dnl
+AC_DEFUN([AC_GECODE_CHECK_MS_CL_FLAG],
+  [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
+   if ${CXX} $1 2>&1 | grep D9002 -q; then
+     AC_MSG_RESULT([no])
+     ifelse([$3], , :, [$3])
+   else
+     AC_MSG_RESULT([yes])
+     ifelse([$2], , :, [$2])
+   fi])
+
+dnl Macro:
+dnl   AC_GECODE_CHECK_GXX_FLAG (FLAG, ACTION-IF-TRUE,
+dnl                                ACTION-IF-FALSE)
+dnl
+dnl Description:
+dnl   Check whether FLAG is supported by the Gnu C++ compiler.  Run
+dnl   the shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
+dnl   otherwise.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+dnl
+AC_DEFUN([AC_GECODE_CHECK_GXX_FLAG],
+   [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
+   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
+   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1 -Werror"
+   AC_LANG_PUSH(C++)
+   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
+     [CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+      AC_MSG_RESULT([yes])
+      ifelse([$2], , :, [$2])],
+     [CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+      AC_MSG_RESULT([no])
+      ifelse([$3], , :, [$3])])
+   AC_LANG_POP])
+
+dnl Macro:
+dnl   AC_GECODE_CHECK_GCC_FLAG (FLAG, ACTION-IF-TRUE,
+dnl                                ACTION-IF-FALSE)
+dnl
+dnl Description:
+dnl   Check whether FLAG is supported by the Gnu C compiler.  Run
+dnl   the shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
+dnl   otherwise.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+dnl
+AC_DEFUN([AC_GECODE_CHECK_GCC_FLAG],[
+   AC_MSG_CHECKING(whether ${CC} accepts [$1])
+   ac_gecode_save_CFLAGS="${CFLAGS}"
+   CFLAGS="${CFLAGS}${CFLAGS:+ }$1 -Werror"
+   AC_LANG_PUSH(C)
+   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
+     [CFLAGS="${ac_gecode_save_CFLAGS}"
+      AC_MSG_RESULT([yes])
+      ifelse([$2], , :, [$2])],
+     [CFLAGS="${ac_gecode_save_CFLAGS}"
+      AC_MSG_RESULT([no])
+      ifelse([$3], , :, [$3])])
+   AC_LANG_POP])
+
+dnl Macro:
 dnl   AC_GECODE_CHECK_CXXFLAG (FLAG, [ACTION-IF-TRUE,
 dnl                                [ACTION-IF-FALSE]])
 dnl
@@ -116,43 +190,29 @@ dnl   Leif Kornstaedt <kornstae@ps.uni-sb.de>
 dnl   Marco Kuhlmann <kuhlmann@ps.uni-sb.de>
 dnl
 AC_DEFUN([AC_GECODE_CHECK_CXXFLAG],
-  [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
-   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1 -Werror"
-   AC_LANG_PUSH(C++)
-   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
-     [AC_MSG_RESULT(yes)
-      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      ifelse([$2], , [CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"], [$2])],
-     [AC_MSG_RESULT(no)
-      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      ifelse([$3], , :, [$3])])
-   AC_LANG_POP])dnl
+  [if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
+     AC_GECODE_CHECK_MS_CL_FLAG($1,[
+       ifelse([$2], , CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1", [$2])],
+       [ifelse([$3], , :, [$3])])
+   else
+     AC_GECODE_CHECK_GXX_FLAG($1,[
+       ifelse([$2], , CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1", [$2])],
+       [ifelse([$3], , :, [$3])])
+   fi
+  ])dnl
 
 AC_DEFUN([AC_GECODE_CHECK_COMPILERFLAG],
-  [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
-   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1 -Werror"
-   AC_LANG_PUSH(C++)
-   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
-     [AC_MSG_RESULT(yes)
-      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"],
-     [AC_MSG_RESULT(no)
-      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"])
-   AC_LANG_POP
-   
-   AC_MSG_CHECKING(whether ${CC} accepts [$1])
-   ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }$1 -Werror"
-   AC_LANG_PUSH(C)
-   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
-     [AC_MSG_RESULT(yes)
-      CFLAGS="${ac_gecode_save_CFLAGS}"
-      CFLAGS="${CFLAGS}${CFLAGS:+ }$1"],
-     [AC_MSG_RESULT(no)
-      CFLAGS="${ac_gecode_save_CFLAGS}"])
-   AC_LANG_POP])dnl
+  [
+   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
+     AC_GECODE_CHECK_MS_CL_FLAG($1,[
+       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"
+       CFLAGS="${CFLAGS}${CFLAGS:+ }$1"],[])
+   else
+     AC_GECODE_CHECK_GXX_FLAG($1,[
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"],[])
+      AC_GECODE_CHECK_GCC_FLAG($1,[
+        CFLAGS="${CFLAGS}${CFLAGS:+ }$1"],[])
+   fi])dnl
 
 dnl Macro:
 dnl   AC_GECODE_CHECK_GLDFLAG (FLAG, [ACTION-IF-TRUE,
@@ -606,6 +666,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
  [dnl general compiler flags
   AC_DEFINE(forceinline,[__forceinline])
   AC_GECODE_ADD_TO_COMPILERFLAGS([-nologo])
+  AC_GECODE_CHECK_COMPILERFLAG([-arch:SSE2])
   AC_GECODE_ADD_TO_CFLAGS([-D_CRT_SECURE_NO_DEPRECATE])
   AC_GECODE_ADD_TO_CXXFLAGS([-EHsc])
   AC_DEFINE(GECODE_MEMORY_ALIGNMENT, 4)
