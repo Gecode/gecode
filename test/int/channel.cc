@@ -60,7 +60,9 @@ namespace Test { namespace Int {
                    unsigned int xoff0 = 0, unsigned int yoff0 = 0)
          : Test("Channel::Full::"+str(icl)+"::"+
                 str(xoff0)+"::"+str(yoff0),8,0,3,false,icl),
-           xoff(xoff0), yoff(yoff0) {}
+           xoff(xoff0), yoff(yoff0) {
+         testdomcon = false;
+       }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<4; i++)
@@ -97,7 +99,9 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelHalf(Gecode::IntConLevel icl)
-         : Test("Channel::Half::"+str(icl),6,0,5,false,icl) {}
+         : Test("Channel::Half::"+str(icl),6,0,5,false,icl) {
+         testdomcon = false;
+       }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<6; i++)

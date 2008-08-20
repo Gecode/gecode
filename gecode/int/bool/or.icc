@@ -752,7 +752,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   PropCost
   NaryOrTrue<BV>::cost(ModEventDelta) const {
-    return cost_lo(x.size(),PC_LINEAR_LO);
+    return PC_BINARY_LO;
   }
 
   template<class BV>
