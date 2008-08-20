@@ -305,6 +305,8 @@ namespace Gecode {
     static const int idx_d = VIC::idx_d;
     /// Number of freely available bits
     static const int free_bits = VIC::free_bits;
+    /// Number of used subscription entries
+    unsigned int entries;
     /// Number of free subscription entries
     unsigned int free_and_bits;
     /// Maximal propagation condition
@@ -321,7 +323,7 @@ namespace Gecode {
        * The entries between base[idx[pc_max]] and base[idx[pc_max+1]] are the
        * advisors subscribed to the variable implementation.
        */
-      unsigned int idx[pc_max+2];
+      unsigned int idx[pc_max+1];
       /// During cloning, points to the next copied variable
       VarImp<VIC>* next;
     } u;
@@ -2202,36 +2204,36 @@ namespace Gecode {
   template <class VIC>
   forceinline ActorLink**
   VarImp<VIC>::actor(PropCond pc) {
-    assert((pc >= 0)  && (pc <= pc_max+2));
+    assert((pc >= 0)  && (pc < pc_max+2));
     return (pc == 0) ? base : base+u.idx[pc-1];
   }
 
   template <class VIC>
   forceinline ActorLink**
   VarImp<VIC>::actorNonZero(PropCond pc) {
-    assert((pc > 0)  && (pc <= pc_max+2));
+    assert((pc > 0)  && (pc < pc_max+2));
     return base+u.idx[pc-1];
   }
 
   template <class VIC>
   forceinline unsigned int&
   VarImp<VIC>::idx(PropCond pc) {
-    assert((pc > 0)  && (pc <= pc_max+2));
+    assert((pc > 0)  && (pc < pc_max+2));
     return u.idx[pc-1];
   }
 
   template <class VIC>
   forceinline unsigned int
   VarImp<VIC>::idx(PropCond pc) const {
-    assert((pc > 0)  && (pc <= pc_max+2));
+    assert((pc > 0)  && (pc < pc_max+2));
     return u.idx[pc-1];
   }
 
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space&) {
-    base = NULL;
-    for (PropCond pc=1; pc<pc_max+3; pc++)
+    base = NULL; entries = 0;
+    for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
   }
@@ -2239,8 +2241,8 @@ namespace Gecode {
   template <class VIC>
   forceinline
   VarImp<VIC>::VarImp(void) {
-    base = NULL;
-    for (PropCond pc=1; pc<pc_max+3; pc++)
+    base = NULL; entries = 0;
+    for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
   }
@@ -2249,7 +2251,7 @@ namespace Gecode {
   forceinline unsigned int
   VarImp<VIC>::degree(void) const {
     assert(!copied());
-    return idx(pc_max+2);
+    return entries;
   }
 
   template <class VIC>
@@ -2312,7 +2314,8 @@ namespace Gecode {
     }
     // Save subscriptions in copy
     base = x.base;
-    for (PropCond pc=1; pc<pc_max+3; pc++)
+    entries = x.entries;
+    for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = x.idx(pc);
 
     // Set forwarding pointer
@@ -2365,7 +2368,9 @@ namespace Gecode {
     free_and_bits -= 1 << free_bits;
 
     // Enter subscription
-    for (PropCond j = pc_max+1; j > pc; j--) {
+    base[entries] = *actorNonZero(pc_max+1);
+    entries++;
+    for (PropCond j = pc_max; j > pc; j--) {
       *actorNonZero(j+1) = *actorNonZero(j);
       idx(j+1)++;
     }
@@ -2375,7 +2380,7 @@ namespace Gecode {
 
 #ifdef GECODE_AUDIT    
     ActorLink** f = actor(pc);
-    while (f < actorNonZero(pc+1))
+    while (f < (pc == pc_max+1 ? base+entries : actorNonZero(pc+1)))
       if (*f == a)
         goto found;
       else
@@ -2441,7 +2446,7 @@ namespace Gecode {
     // Find actor in dependency array
     ActorLink** f = actor(pc);
 #ifdef GECODE_AUDIT
-    while (f < actorNonZero(pc+1))
+    while (f < (pc == pc_max+1 ? base+entries : actorNonZero(pc+1)))
       if (*f == a)
         goto found;
       else
@@ -2452,12 +2457,18 @@ namespace Gecode {
     while (*f != a) f++;
 #endif
     // Remove actor
-    *f = *(actorNonZero(pc+1)-1);
-    for (PropCond j = pc+1; j< pc_max+2; j++) {
-      *(actorNonZero(j)-1) = *(actorNonZero(j+1)-1);
-      idx(j)--;
+    if (pc == pc_max+1) {
+      *f = base[entries-1];
+    } else {
+      *f = *(actorNonZero(pc+1)-1);
+      for (PropCond j = pc+1; j< pc_max+1; j++) {
+        *(actorNonZero(j)-1) = *(actorNonZero(j+1)-1);
+        idx(j)--;
+      }
+      *(actorNonZero(pc_max+1)-1) = base[entries-1];
+      idx(pc_max+1)--;
     }
-    idx(pc_max+2)--;
+    entries--;
     free_and_bits += 1 << free_bits;
     home.pc.p.n_sub -= 1;
   }
@@ -2486,7 +2497,7 @@ namespace Gecode {
     unsigned int n = (free_and_bits >> VIC::free_bits) + n_sub;
     home.free<ActorLink*>(base,n);
     base = NULL;
-    idx(pc_max+2) = 0;
+    entries = 0;
   }
 
   template <class VIC>
@@ -2498,7 +2509,7 @@ namespace Gecode {
      * be iterated in forward direction.
      */
     ActorLink** la = actorNonZero(pc_max+1);
-    ActorLink** le = actorNonZero(pc_max+2);
+    ActorLink** le = base+entries;
     if (la == le)
       return true;
     d.me = me;
@@ -2532,7 +2543,7 @@ namespace Gecode {
     // Recover from copy
     x->base = base;
     x->u.idx[0] = u.idx[0];
-    if (sizeof(ActorLink**) > sizeof(unsigned int))
+    if (pc_max > 1 && sizeof(ActorLink**) > sizeof(unsigned int))
       x->u.idx[1] = u.idx[1];
 
     ActorLink** f = x->base;
