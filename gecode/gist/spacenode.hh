@@ -111,7 +111,10 @@ namespace Gecode { namespace Gist {
     Space* copy;
     /// Working space used for computing the status
     Space* workingSpace;
-    
+  private:
+    /// Reference to best space when the node was created
+    SpaceNode* ownBest;
+  protected:
     union {
       /// Branching description
       const BranchingDesc* branch;
@@ -134,9 +137,6 @@ namespace Gecode { namespace Gist {
     static const int LASTBIT = HASSOLVEDCHILDREN;
 
   private:
-    /// Reference to best space when the node was created
-    SpaceNode* ownBest;
-
     /// Set whether the node has children that are not fully explored
     void setHasOpenChildren(bool b);
     /// Set whether the subtree of this node is known to contain failure

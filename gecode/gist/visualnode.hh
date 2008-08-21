@@ -120,10 +120,7 @@ namespace Gecode { namespace Gist {
   
   /// \brief Node class that supports visual layout
   class VisualNode : public SpaceNode {
-  protected:
-    /// Relative offset from the parent node
-    int offset;
-    
+  protected:    
     /// Flags for VisualNodes
     enum VisualNodeFlags {
       DIRTY = SpaceNode::LASTBIT+1,
@@ -135,6 +132,8 @@ namespace Gecode { namespace Gist {
 
     /// Shape of this node
     Shape* shape;
+    /// Relative offset from the parent node
+    int offset;
     /// Bounding box of this node
     BoundingBox box;
     /// Check if the \a x at depth \a depth lies in this subtree
