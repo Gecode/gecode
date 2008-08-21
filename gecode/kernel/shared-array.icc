@@ -144,15 +144,13 @@ namespace Gecode {
   SharedArray<T>::SAO::copy(void) const {
     SAO* o = new SAO(n);
     for (int i=n; i--;)
-      new (&(o->a[i])) T(a[i]);
+      o->a[i] = a[i];
     return o;
   }
 
   template <class T>
   SharedArray<T>::SAO::~SAO(void) {
     if (n>0) {
-      for (int i=n; i--;)
-        a[i].~T();
       heap.free<T>(a,n);
     }
   }
