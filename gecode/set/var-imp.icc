@@ -160,6 +160,8 @@ namespace Gecode { namespace Set {
   protected:
     /// The size of this set
     unsigned int _size;
+    /// The cardinality this set represents
+    unsigned int _card;
     /// Set first range to \a r
     void fst(RangeList* r);
     /// Set last range to \a r
@@ -202,6 +204,10 @@ namespace Gecode { namespace Set {
     int minN(unsigned int n) const;
     /// Return size
     unsigned int size(void) const;
+    /// Return cardinality
+    unsigned int card(void) const;
+    /// Set cardinality
+    void card(unsigned int c);
     //@}
 
     /// \name Tests
@@ -517,10 +523,6 @@ namespace Gecode { namespace Set {
     LUBndSet lub;
     /// The greatest lower bound of the domain
     GLBndSet glb;
-    /// The minimum cardinality
-    unsigned int _cardMin;
-    /// The maximum cardinality
-    unsigned int _cardMax;
 
   protected:
     /// Constructor for cloning \a x

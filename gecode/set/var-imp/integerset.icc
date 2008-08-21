@@ -121,7 +121,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   BndSet::BndSet(void) :
-    first(NULL), last(NULL), _size(0) {}
+    first(NULL), last(NULL), _size(0), _card(0) {}
 
   forceinline RangeList*
   BndSet::fst(void) const {
@@ -193,6 +193,16 @@ namespace Gecode { namespace Set {
       n -= c->width();
     }
     return MIN_OF_EMPTY;
+  }
+
+  forceinline unsigned int
+  BndSet::card(void) const {
+    return _card;
+  }
+
+  forceinline void
+  BndSet::card(unsigned int c) {
+    _card = c;
   }
 
   forceinline void

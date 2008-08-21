@@ -49,7 +49,7 @@ namespace Gecode { namespace Set {
   ModEvent
   SetVarImp::cardMin_full(Space& home) {
     ModEvent me = ME_SET_CARD;
-    if (_cardMin == lub.size()) {
+    if (cardMin() == lub.size()) {
       glb.become(home, lub);
       me = ME_SET_VAL;
     }
@@ -60,7 +60,7 @@ namespace Gecode { namespace Set {
   ModEvent
   SetVarImp::cardMax_full(Space& home) {
     ModEvent me = ME_SET_CARD;
-    if (_cardMax == glb.size()) {
+    if (cardMax() == glb.size()) {
       lub.become(home, glb);
       me = ME_SET_VAL;
     }
@@ -71,17 +71,17 @@ namespace Gecode { namespace Set {
   ModEvent
   SetVarImp::processLubChange(Space& home, SetDelta& d) {
     ModEvent me = ME_SET_LUB;
-    if (_cardMax > lub.size()) {
-      _cardMax = lub.size();
-      if (_cardMin > _cardMax) {
+    if (cardMax() > lub.size()) {
+      lub.card(lub.size());
+      if (cardMin() > cardMax()) {
         glb.become(home, lub);
-        _cardMin = glb.size();
-        _cardMax = glb.size();
+        glb.card(glb.size());
+        lub.card(glb.size());
         return ME_SET_FAILED;
       }
       me = ME_SET_CLUB;
     }
-    if (_cardMax == lub.size() && _cardMin == _cardMax) {
+    if (cardMax() == lub.size() && cardMin() == cardMax()) {
       glb.become(home, lub);
       me = ME_SET_VAL;
       assert(d.glbMin() == 1);
@@ -93,17 +93,17 @@ namespace Gecode { namespace Set {
   ModEvent
   SetVarImp::processGlbChange(Space& home, SetDelta& d) {
     ModEvent me = ME_SET_GLB;
-    if (_cardMin < glb.size()) {
-      _cardMin = glb.size();
-      if (_cardMin > _cardMax) {
+    if (cardMin() < glb.size()) {
+      glb.card(glb.size());
+      if (cardMin() > cardMax()) {
         glb.become(home, lub);
-        _cardMin = glb.size();
-        _cardMax = glb.size();
+        glb.card(glb.size());
+        lub.card(glb.size());
         return ME_SET_FAILED;
       }
       me = ME_SET_CGLB;
     }
-    if (_cardMin == glb.size() && _cardMin == _cardMax) {
+    if (cardMin() == glb.size() && cardMin() == cardMax()) {
       lub.become(home, glb);
       me = ME_SET_VAL;
       assert(d.lubMin() == 1);
@@ -119,9 +119,10 @@ namespace Gecode { namespace Set {
 
   forceinline
   SetVarImp::SetVarImp(Space& home, bool share, SetVarImp& x)
-    : SetVarImpBase(home,share,x),
-      _cardMin(x._cardMin), _cardMax(x._cardMax) {
+    : SetVarImpBase(home,share,x) {
     lub.update(home, x.lub);
+    glb.card(x.cardMin());
+    lub.card(x.cardMax());
     if (x.assigned()) {
       glb.become(home,lub);
     } else {
@@ -169,8 +170,8 @@ namespace Gecode { namespace Set {
 
     Reflection::Arg* pair =
       Reflection::Arg::newPair(
-        Reflection::Arg::newPair(glbdom, Reflection::Arg::newInt(_cardMin)),
-        Reflection::Arg::newPair(lubdom, Reflection::Arg::newInt(_cardMax)));
+        Reflection::Arg::newPair(glbdom, Reflection::Arg::newInt(cardMin())),
+        Reflection::Arg::newPair(lubdom, Reflection::Arg::newInt(cardMax())));
 
     Reflection::VarSpec* spec = new Reflection::VarSpec(vti, pair, 
                                                         assigned());

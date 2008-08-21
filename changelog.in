@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Reorganized the internal data structures of set variables so that each 
+variable takes up 8 bytes less memory on 64 bit machines.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
