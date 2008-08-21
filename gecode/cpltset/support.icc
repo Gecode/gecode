@@ -247,7 +247,6 @@ namespace Gecode { namespace CpltSet {
     inter.last();
     for (unsigned int i = 1; i <= c; i++) {
       int k = inter.min();
-      layer[i].init();
       layer[i] = x.element(k - xmin);
       layer[i] &= y.element(k - ymin);
     }

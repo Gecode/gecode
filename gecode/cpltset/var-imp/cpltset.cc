@@ -517,11 +517,6 @@ namespace Gecode { namespace CpltSet {
       SharedArray<bdd> dummy(n);
       nodes = dummy;
     
-      for (int i = n; i--; ){
-        new (&nodes[i]) bdd;
-        nodes[i].init();
-      }
-
       assert(!manager.leaf(c));
       // insert bdd root into dqueue
       nodes[l] = c;
@@ -634,7 +629,7 @@ namespace Gecode { namespace CpltSet {
         }
         r--;
         nodes[shift] = nodes[norm];
-        nodes[norm].init();
+        nodes[norm] = bdd();
         l--;
       }
       // symmetric case
@@ -654,7 +649,7 @@ namespace Gecode { namespace CpltSet {
           manager.mark(nodes[n - 1]); markref++;
         }
         r--;
-        nodes[shift].init();
+        nodes[shift] = bdd();
         l--;
       }
 
@@ -663,7 +658,7 @@ namespace Gecode { namespace CpltSet {
       markref--; 
       cur = nodes[l];
       assert(!manager.marked(cur));
-      nodes[l].init();
+      nodes[l] = bdd();
 
       // cur is an internal node, 
       // that is nor true nor else branch are leaves
@@ -782,7 +777,7 @@ namespace Gecode { namespace CpltSet {
           }
           l++;
           nodes[shift] = nodes[norm];
-          nodes[norm].init();
+          nodes[norm] = bdd();
           r++;
         }
       while ((r < n - 2) && manager.bddidx(nodes[r + 1]) > 
@@ -801,7 +796,7 @@ namespace Gecode { namespace CpltSet {
           manager.mark(nodes[0]); markref++;
         }
         l++;
-        nodes[shift].init();
+        nodes[shift] = bdd();
         r++;
       }
       // check whether right-hand side nodes has fixed vars
@@ -811,7 +806,7 @@ namespace Gecode { namespace CpltSet {
       cur = nodes[r];
       assert(!manager.marked(cur));
 
-      nodes[r].init();
+      nodes[r] = bdd();
       // cur is internal node, that is cur is neither
       // bdd_false() nor bdd_true()
       if (!manager.leaf(cur)) {

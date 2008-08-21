@@ -81,7 +81,6 @@ namespace Gecode { namespace CpltSet {
     // build the nodes of the lowest layer
     layer[0] = bdd_true();
     for (int i = 1; i <= c; i++) {
-      layer[i].init();
       layer[i] = manager.bddpos(offset + r - i + 1);
     }
 
@@ -387,7 +386,7 @@ namespace Gecode { namespace CpltSet {
         }
         r--;
         nodes[shift] = nodes[norm];
-        nodes[norm].init();
+        nodes[norm] = bdd();
         l--;
       }
       // symmetric case
@@ -406,7 +405,7 @@ namespace Gecode { namespace CpltSet {
           manager.mark(nodes[n - 1]); markref++;
         }
         r--;
-        nodes[shift].init();
+        nodes[shift] = bdd();
         l--;
       }
   
@@ -415,7 +414,7 @@ namespace Gecode { namespace CpltSet {
       markref--; 
       cur = nodes[l];
       assert(!manager.marked(cur));
-      nodes[l].init();
+      nodes[l] = bdd();
   
       // cur is an internal node 
       if (!manager.leaf(cur)) {
@@ -518,7 +517,7 @@ namespace Gecode { namespace CpltSet {
         }
         l++;
         nodes[shift] = nodes[norm];
-        nodes[norm].init();
+        nodes[norm] = bdd();
         r++;
       }
   
@@ -537,7 +536,7 @@ namespace Gecode { namespace CpltSet {
           manager.mark(nodes[0]); markref++;
         }
         l++;
-        nodes[shift].init();
+        nodes[shift] = bdd();
         r++;
       }
   
@@ -549,7 +548,7 @@ namespace Gecode { namespace CpltSet {
       cur = nodes[r];
       assert(!manager.marked(cur));
   
-      nodes[r].init();
+      nodes[r] = bdd();
       // cur is internal node, that is cur is neither
       // bdd_false() nor bdd_true()
       if (!manager.leaf(cur)) {
@@ -633,11 +632,6 @@ namespace Gecode { namespace CpltSet {
     
     // the given ROBDD c has internal nodes
     if (!manager.leaf(c)) {
-
-      for (int i = csize; i--; ) {       
-        nodes[i].init();
-      }
-
       nodes[l] = c;
       manager.lbCard(nodes[l], 0);
       manager.ubCard(nodes[l], 0);
