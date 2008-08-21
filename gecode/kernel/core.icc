@@ -352,12 +352,16 @@ namespace Gecode {
      */
     static void update(Space& home, ActorLink**& sub);
 
-    /// Enter propagator or advisor to subscription array
-    void enter(Space& home, ActorLink* a, PropCond pc);
+    /// Enter propagator to subscription array
+    void enter(Space& home, Propagator* p, PropCond pc);
+    /// Enter advisor to subscription array
+    void enter(Space& home, Advisor* a);
     /// Resize subscription array
     void resize(Space& home);
-    /// Remove propagator or advisor from subscription array
-    void remove(Space& home, ActorLink* a, PropCond pc);
+    /// Remove propagator from subscription array
+    void remove(Space& home, Propagator* p, PropCond pc);
+    /// Remove advisor from subscription array
+    void remove(Space& home, Advisor* a);
 
   protected:
 #ifdef GECODE_HAS_VAR_DISPOSE
@@ -2360,7 +2364,8 @@ namespace Gecode {
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::enter(Space& home, ActorLink* a, PropCond pc) {
+  VarImp<VIC>::enter(Space& home, Propagator* p, PropCond pc) {
+    assert(pc <= pc_max);
     // Count one new subscription
     home.pc.p.n_sub += 1;
     if ((free_and_bits >> free_bits) == 0)
@@ -2376,7 +2381,7 @@ namespace Gecode {
     }
     *actorNonZero(pc+1) = *actor(pc);
     idx(pc+1)++;
-    *actor(pc) = a;
+    *actor(pc) = ActorLink::cast(p);
 
 #ifdef GECODE_AUDIT    
     ActorLink** f = actor(pc);
@@ -2388,6 +2393,20 @@ namespace Gecode {
     GECODE_NEVER;
     found: ;
 #endif
+  }
+
+  template <class VIC>
+  forceinline void
+  VarImp<VIC>::enter(Space& home, Advisor* a) {
+    // Count one new subscription
+    home.pc.p.n_sub += 1;
+    if ((free_and_bits >> free_bits) == 0)
+      resize(home);
+    free_and_bits -= 1 << free_bits;
+
+    // Enter subscription
+    base[entries++] = *actorNonZero(pc_max+1);
+    *actorNonZero(pc_max+1) = a;
   }
 
   template <class VIC>
@@ -2426,7 +2445,7 @@ namespace Gecode {
       if (schedule)
         VarImp<VIC>::schedule(home,p,ME_GEN_ASSIGNED);
     } else {
-      enter(home,ActorLink::cast(&p),pc);
+      enter(home,&p,pc);
       // Schedule propagator
       if (schedule && (pc != PC_GEN_ASSIGNED))
         VarImp<VIC>::schedule(home,p,me);
@@ -2437,16 +2456,18 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned) {
     if (!assigned)
-      enter(home,&a,pc_max+1);
+      enter(home,&a);
   }
 
   template <class VIC>
   forceinline void
-  VarImp<VIC>::remove(Space& home, ActorLink* a, PropCond pc) {
+  VarImp<VIC>::remove(Space& home, Propagator* p, PropCond pc) {
+    assert(pc <= pc_max);
+    ActorLink* a = ActorLink::cast(p);
     // Find actor in dependency array
     ActorLink** f = actor(pc);
 #ifdef GECODE_AUDIT
-    while (f < (pc == pc_max+1 ? base+entries : actorNonZero(pc+1)))
+    while (f < actorNonZero(pc+1))
       if (*f == a)
         goto found;
       else
@@ -2457,18 +2478,36 @@ namespace Gecode {
     while (*f != a) f++;
 #endif
     // Remove actor
-    if (pc == pc_max+1) {
-      *f = base[entries-1];
-    } else {
-      *f = *(actorNonZero(pc+1)-1);
-      for (PropCond j = pc+1; j< pc_max+1; j++) {
-        *(actorNonZero(j)-1) = *(actorNonZero(j+1)-1);
-        idx(j)--;
-      }
-      *(actorNonZero(pc_max+1)-1) = base[entries-1];
-      idx(pc_max+1)--;
+    *f = *(actorNonZero(pc+1)-1);
+    for (PropCond j = pc+1; j< pc_max+1; j++) {
+      *(actorNonZero(j)-1) = *(actorNonZero(j+1)-1);
+      idx(j)--;
     }
+    *(actorNonZero(pc_max+1)-1) = base[entries-1];
+    idx(pc_max+1)--;
     entries--;
+    free_and_bits += 1 << free_bits;
+    home.pc.p.n_sub -= 1;
+  }
+
+  template <class VIC>
+  forceinline void
+  VarImp<VIC>::remove(Space& home, Advisor* a) {
+    // Find actor in dependency array
+    ActorLink** f = actorNonZero(pc_max+1);
+#ifdef GECODE_AUDIT
+    while (f < base+entries)
+      if (*f == a)
+        goto found;
+      else
+        f++;
+    GECODE_NEVER;
+  found: ;
+#else
+    while (*f != a) f++;
+#endif
+    // Remove actor
+    *f = base[--entries];
     free_and_bits += 1 << free_bits;
     home.pc.p.n_sub -= 1;
   }
@@ -2477,14 +2516,14 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::cancel(Space& home, Propagator& p, PropCond pc, bool assigned) {
     if (!assigned)
-      remove(home,ActorLink::cast(&p),pc);
+      remove(home,&p,pc);
   }
 
   template <class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home, Advisor& a, bool assigned) {
     if (!assigned)
-      remove(home,&a,pc_max+1);
+      remove(home,&a);
   }
 
   template <class VIC>
