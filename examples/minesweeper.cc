@@ -70,7 +70,7 @@ private:
   }
 
   /// Return the fields in \a m around position (\a x,\a y)
-  BoolVarArgs fieldsAround(MiniModel::Matrix<BoolVarArray>& m,
+  BoolVarArgs fieldsAround(Matrix<BoolVarArray>& m,
                            int x, int y) {
     int bvsize=0;
     for (int ix = std::max(0, x-1); ix<=x+1 && ix<size; ix++)
@@ -93,7 +93,7 @@ public:
     : spec(specs[opt.size()]), 
       size(spec_size(spec)),
       b(*this,size*size,0,1) {
-    MiniModel::Matrix<BoolVarArray> m(b, size, size);
+    Matrix<BoolVarArray> m(b, size, size);
 
     // Initialize matrix and post constraints
     for (int h=0; h<size; h++)

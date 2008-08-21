@@ -40,7 +40,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode {
 
   template <class A>
   inline
@@ -49,9 +49,9 @@ namespace Gecode { namespace MiniModel {
                           unsigned int fr, unsigned int tr)
     : _r(0), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
     if (tc > a.width() || tr > a.height())
-      throw ArgumentOutOfRange("MiniModel::Matrix::Slice::Slice");
+      throw MiniModel::ArgumentOutOfRange("Matrix::Slice::Slice");
     if (fc >= tc || fr >= tr)
-      throw ArgumentOutOfRange("MiniModel::Matrix::Slice::Slice");
+      throw MiniModel::ArgumentOutOfRange("Matrix::Slice::Slice");
 
     _r = args_type((tc-fc)*(tr-fr));
 
@@ -88,7 +88,7 @@ namespace Gecode { namespace MiniModel {
   Matrix<A>::Matrix(A a, unsigned int w, unsigned int h)
     : _a(a), _w(w), _h(h) {
     if (_w * _h != static_cast<unsigned int>(_a.size()))
-      throw ArgumentSizeMismatch("MiniModel::Matrix::Matrix(A, w, h)");
+      throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, w, h)");
   }
 
   template <class A>
@@ -96,7 +96,7 @@ namespace Gecode { namespace MiniModel {
   Matrix<A>::Matrix(A a, unsigned int n)
     : _a(a), _w(n), _h(n) {
     if (n*n != static_cast<unsigned int>(_a.size()))
-      throw ArgumentSizeMismatch("MiniModel::Matrix::Matrix(A, n)");
+      throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, n)");
   }
 
   template <class A>
@@ -114,9 +114,8 @@ namespace Gecode { namespace MiniModel {
   template <class A>
   inline typename Matrix<A>::value_type&
   Matrix<A>::operator()(unsigned int c, unsigned int r) {
-    if (c >= _w || r >= _h)
-      throw ArgumentOutOfRange("MiniModel::Matrix::operator()");
-
+    if ((c >= _w) || (r >= _h))
+      throw MiniModel::ArgumentOutOfRange("Matrix::operator()");
     return _a[r*_w + c];
   }
 
@@ -139,6 +138,6 @@ namespace Gecode { namespace MiniModel {
     return slice(c, c+1, 0, height());
   }
 
-}}
+}
 
 // STATISTICS: minimodel-any

@@ -70,6 +70,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: minimodel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Matrix class is now in the Gecode namespace (and not in
+Gecode::MiniModel).
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor

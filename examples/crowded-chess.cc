@@ -68,7 +68,7 @@ namespace {
     }
     Bishops(int size)
       : n(size), k(*this,n*n,0,1) {
-      MiniModel::Matrix<BoolVarArray> kb(k, n, n);
+      Matrix<BoolVarArray> kb(k, n, n);
       for (int l = n; l--; ) {
         const int il = (n-1) - l;
         BoolVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
@@ -212,7 +212,7 @@ protected:
     static const int kmoves[4][2] = {
       {-1,2}, {1,2}, {2,-1}, {2,1}
     };
-    MiniModel::Matrix<BoolVarArray> kb(knights, n, n);
+    Matrix<BoolVarArray> kb(knights, n, n);
     for (int x = n; x--; )
       for (int y = n; y--; )
         for (int i = 4; i--; )
@@ -245,7 +245,7 @@ public:
 
     assert(nn == (e + q + r + b + k));
 
-    MiniModel::Matrix<IntVarArray> m(s, n);
+    Matrix<IntVarArray> m(s, n);
 
     // ***********************
     // Basic model
@@ -359,7 +359,7 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) {
-    MiniModel::Matrix<IntVarArray> m(s, n);
+    Matrix<IntVarArray> m(s, n);
     char names[PMAX];
     names[E] = '.'; names[Q] = 'Q'; names[R] = 'R';
     names[B] = 'B'; names[K] = 'K';

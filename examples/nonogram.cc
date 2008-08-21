@@ -101,7 +101,7 @@ public:
   Nonogram(const SizeOptions& opt)
     : spec(specs[opt.size()]), b(*this,width()*height(),0,1) {
     int spos = 2;
-    MiniModel::Matrix<BoolVarArray> m(b, width(), height());
+    Matrix<BoolVarArray> m(b, width(), height());
 
     // Post constraints for columns
     for (int w = 0; w < width(); ++w)

@@ -108,7 +108,7 @@ public:
   SudokuInt(const SizeOptions& opt)
     : Sudoku(opt), x(*this, n*n*n*n, 1, n*n) {
     const int nn = n*n;
-    MiniModel::Matrix<IntVarArray> m(x, nn, nn);
+    Matrix<IntVarArray> m(x, nn, nn);
 
     // Constraints for rows and columns
     for (int i=0; i<nn; i++) {
@@ -213,15 +213,13 @@ private:
 
   /// Extract column \a bc from block starting at (\a i,\a j)
   IntVarArgs
-  block_col(MiniModel::Matrix<IntVarArray> m,
-            int bc, int i, int j) {
+  block_col(Matrix<IntVarArray> m, int bc, int i, int j) {
     return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
   }
 
   /// Extract row \a br from block starting at (\a i,\a j)
   IntVarArgs
-  block_row(MiniModel::Matrix<IntVarArray> m,
-            int br, int i, int j) {
+  block_row(Matrix<IntVarArray> m, int br, int i, int j) {
     return m.slice(j*n, (j+1)*n, br*n+i, br*n+i+1);
   }
 #endif

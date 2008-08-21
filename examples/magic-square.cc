@@ -66,7 +66,7 @@ public:
     const int s  = nn*(nn+1) / (2*n);
 
     // Matrix-wrapper for the square
-    MiniModel::Matrix<IntVarArray> m(x, n, n);
+    Matrix<IntVarArray> m(x, n, n);
 
     for (int i = n; i--; ) {
         linear(*this, m.row(i), IRT_EQ, s, opt.icl());
@@ -108,7 +108,7 @@ public:
   virtual void
   print(std::ostream& os) {
     // Matrix-wrapper for the square
-    MiniModel::Matrix<IntVarArray> m(x, n, n);
+    Matrix<IntVarArray> m(x, n, n);
     for (int i = 0; i<n; i++) {
       os << "\t";
       for (int j = 0; j<n; j++) {

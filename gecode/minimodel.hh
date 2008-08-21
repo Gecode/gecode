@@ -1079,7 +1079,7 @@ namespace Gecode {
  * \ingroup TaskModelMiniModel
  */
 //@{
-namespace Gecode { namespace MiniModel {
+namespace Gecode {
 
   /** \brief Matrix-interface for arrays
    *
@@ -1194,7 +1194,7 @@ namespace Gecode { namespace MiniModel {
     /// Access column \a c.
     Slice col(int c);
   };
-}}
+}
 //@}
 
 #include "gecode/minimodel/matrix.icc"
