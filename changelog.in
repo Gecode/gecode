@@ -70,6 +70,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Changed naming scheme: All files with extension .cc have been renamed to .cpp, 
+and .icc has become .hpp. This avoids conflicts as .icc is typically used for 
+other file types.
+
+[ENTRY]
 Module: minimodel
 What:   change
 Rank:   minor
