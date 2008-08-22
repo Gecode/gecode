@@ -238,8 +238,9 @@ namespace Gecode {
         Gecode::Reflection::Arg* b = scriptValToArg(v.property("b"));
         return Gecode::Reflection::Arg::newPair(a,b);
       } else if (v.isString()) {
+        QByteArray vba = v.toString().toLatin1();
         return Gecode::Reflection::Arg::newString(
-                 v.toString().toStdString().c_str());
+                 vba.data());
       } else {
         return NULL;
       }
@@ -254,19 +255,21 @@ namespace Gecode {
     QScriptValue
     GJSSpace::variable(const QString& vti, QScriptValue args) {
       assert(args.isArray());
-      Support::Symbol vtiSymbol(vti.toStdString().c_str(), true);
+      QByteArray vtiba = vti.toLatin1();
+      Support::Symbol vtiSymbol(vtiba.data(), true);
       int size = static_cast<int>(args.property("length").toNumber());
       if (size < 1 || size > 2) {
         throw Exception("Serialization", "Argument mismatch");
       }
       int newVar = vm.size();
       Gecode::Reflection::Arg* dom =
-        scriptValToArg(args.property(size == 1 ? "0" : "1"));
+        scriptValToArg(args.property(size == 1 ? 0 : 1));
       Reflection::VarSpec vs(vtiSymbol, dom);
       if (size == 2) {
-        Support::Symbol nameSymbol(
-          args.property("0").toString().toStdString().c_str(), true);
-          vs.name(nameSymbol);
+	assert(args.property(0).isString());
+	QByteArray sba = args.property(0).toString().toLatin1();
+        Support::Symbol nameSymbol(sba.data(), true);
+        vs.name(nameSymbol);
       }
       d.var(vs);
       QScriptValue object = engine()->newObject();
@@ -277,7 +280,7 @@ namespace Gecode {
 
     void
     GJSSpace::constraint(const QString& name, QScriptValue args) {
-      Gecode::Support::Symbol nameSymbol(name.toStdString().c_str(), true);
+      Gecode::Support::Symbol nameSymbol(name.toLatin1().data(), true);
       Gecode::Reflection::ActorSpec as(nameSymbol);
       assert(args.isArray());
       QScriptValueIterator argsI(args);
@@ -301,8 +304,8 @@ namespace Gecode {
   
   void fromJavaScript(Space* space, const std::string& model) {
     QScriptEngine engine;
-    Serialization::GJSSpace gjsspace(&engine, space);
-    QScriptValue spaceValue = engine.newQObject(&gjsspace);
+    Serialization::GJSSpace* gjsspace = new Serialization::GJSSpace(&engine, space);
+    QScriptValue spaceValue = engine.newQObject(gjsspace);
     engine.globalObject().setProperty("Space", spaceValue);
 
     QString prelude = 
