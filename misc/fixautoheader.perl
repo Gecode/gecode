@@ -1,13 +1,16 @@
+#!/usr/bin/perl -w
+
+print <<EOF
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Guido Tack <tack\@gecode.org>
  *
  *  Copyright:
  *     Guido Tack, 2008
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     \$Date: 2008-08-22 11:36:11 +0200 (Fr, 22 Aug 2008) \$ by \$Author: tack \$
+ *     \$Revision: 7678 \$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,46 +37,19 @@
  *
  */
 
-/* Whether to include audit code */
-#undef GECODE_AUDIT
+EOF
+;
 
-/* Whether gcc understands visibility attributes */
-#undef GECODE_GCC_HAS_CLASS_VISIBILITY
+my $prev = "";
 
-/* Whether to compile boost dependent parts */
-#undef GECODE_HAS_BOOST
+while (my $l = <>) {
+  if ($l =~ /\#undef.*GECODE.*/ || $l =~/.*forceinline*/) {
+    print $prev;
+    print $l;
+    print "\n";
+  } else {
+    $prev = $l;
+  }
+}
 
-/* Whether to build CPLTSET variables */
-#undef GECODE_HAS_CPLTSET_VARS
-
-/* Whether dds support is built */
-#undef GECODE_HAS_DDS
-
-/* Whether Gist is available */
-#undef GECODE_HAS_GIST
-
-/* Whether to build INT variables */
-#undef GECODE_HAS_INT_VARS
-
-/* Whether we have mtrace for memory leak debugging */
-#undef GECODE_HAS_MTRACE
-
-/* Whether Qt is available */
-#undef GECODE_HAS_QT
-
-/* Whether serialization support is built */
-#undef GECODE_HAS_SERIALIZATION
-
-/* Whether to build SET variables */
-#undef GECODE_HAS_SET_VARS
-
-/* Heap memory alignment */
-#undef GECODE_MEMORY_ALIGNMENT
-
-/* Whether we are compiling static libraries */
-#undef GECODE_STATIC_LIBS
-
-/* How to tell the compiler to really, really inline */
-#undef forceinline
-
-// STATISTICS: support-any
+print "// STATISTICS: support-any\n";

@@ -315,7 +315,8 @@ dnl
 dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_ADD_VTI],
-   [AC_DEFINE(GECODE_HAS_$1_VARS)])
+   [echo "defining GECODE_HAS_$1_VARS"
+    AC_DEFINE(GECODE_HAS_$1_VARS, [], [Whether to build $1 variables])])
 AC_DEFUN([AC_GECODE_VTI],
    [
    AC_ARG_ENABLE([$1-vars],
@@ -392,7 +393,8 @@ AC_DEFUN([AC_GECODE_STATICLIBS],
 	     [build static libraries @<:@default=no@:>@]))
 	  AC_MSG_CHECKING(whether to build static libraries)
  	  if test "${enable_static:-no}" = "yes"; then
- 	     AC_DEFINE(GECODE_STATIC_LIBS)
+ 	     AC_DEFINE([GECODE_STATIC_LIBS],[],
+                       [Whether we are compiling static libraries])
  	     AC_SUBST(BUILDSTATIC, "yes")
  	     AC_MSG_RESULT(yes)
  	  else
@@ -436,7 +438,8 @@ AC_DEFUN([AC_GECODE_LEAK_DEBUG],
 	 if test "${enable_leak_debug:-no}" = "yes"; then
 	    AC_MSG_RESULT(yes)
 	    AC_CHECK_DECL(mtrace,
-			  [AC_DEFINE(GECODE_HAS_MTRACE)],
+			  [AC_DEFINE([GECODE_HAS_MTRACE],[],
+	                   [Whether we have mtrace for memory leak debugging])],
 			  [AC_MSG_ERROR(mtrace not available.)],
 			  [[#include <mcheck.h>]])	    
 	 else
@@ -449,7 +452,8 @@ AC_DEFUN([AC_GECODE_AUDIT],
 	     [build with auditing code @<:@default=no@:>@]))
 	 AC_MSG_CHECKING(whether to build with auditing code)
 	 if test "${enable_audit:-no}" = "yes"; then
-	    AC_DEFINE(GECODE_AUDIT)
+	    AC_DEFINE([GECODE_AUDIT],[],
+	              [Whether to include audit code])
 	    AC_MSG_RESULT(yes)
 	 else
 	    AC_MSG_RESULT(no)
@@ -516,7 +520,8 @@ AC_DEFUN([AC_GECODE_CHECK_ARITH],
 	 AC_LANG_POP([C])])
 
 AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
- [AC_DEFINE(forceinline, [inline])
+ [AC_DEFINE(forceinline, [inline],
+            [How to tell the compiler to really, really inline])
   AC_GECODE_CHECK_COMPILERFLAG([-fPIC])
   AC_GECODE_CHECK_COMPILERFLAG([-Wextra])
   AC_GECODE_CHECK_COMPILERFLAG([-Wall])
@@ -581,7 +586,8 @@ AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
 	 if test "${enable_gcc_visibility:-yes}" = "yes"; then
 	    AC_MSG_RESULT(yes)
 	    AC_GECODE_CHECK_CXXFLAG([-fvisibility=hidden],
-	      [AC_DEFINE(GECODE_GCC_HAS_CLASS_VISIBILITY)
+	      [AC_DEFINE([GECODE_GCC_HAS_CLASS_VISIBILITY],[],
+	        [Whether gcc understands visibility attributes])
 	       AC_GECODE_ADD_TO_COMPILERFLAGS([-fvisibility=hidden])],
 	       [])
 	 else
@@ -669,7 +675,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_GECODE_CHECK_COMPILERFLAG([-arch:SSE2])
   AC_GECODE_ADD_TO_CFLAGS([-D_CRT_SECURE_NO_DEPRECATE])
   AC_GECODE_ADD_TO_CXXFLAGS([-EHsc])
-  AC_DEFINE(GECODE_MEMORY_ALIGNMENT, [sizeof(void*)])
+  AC_DEFINE([GECODE_MEMORY_ALIGNMENT], [sizeof(void*)],
+            [Heap memory alignment])
 
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
@@ -920,7 +927,8 @@ AC_DEFUN([AC_GECODE_BOOST],
   if test "${with_boost_include:-no}" != "no"; then
       AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost_include}])
       AC_SUBST(BOOST_LINK,["-L${with_boost_include}/../../lib -lboost_serialization"])
-      AC_DEFINE(GECODE_HAS_BOOST)
+      AC_DEFINE([GECODE_HAS_BOOST],[],
+                [Whether to compile boost dependent parts])
   fi
 ])
 
@@ -941,7 +949,7 @@ AC_DEFUN([AC_GECODE_QT],
   AC_MSG_CHECKING(whether to build with Qt support)
   if test "${enable_qt:-no}" = "yes"; then
     AC_MSG_RESULT(yes)
-    AC_DEFINE(GECODE_HAS_QT)
+    AC_DEFINE([GECODE_HAS_QT],[],[Whether Qt is available])
 
     AC_CHECK_PROG(QMAKE, qmake, [found])
     if test "${QMAKE}x" = "x"; then
@@ -1012,7 +1020,7 @@ AC_DEFUN([AC_GECODE_GIST],
   if test "${enable_gist:-no}" = "yes"; then
     enable_qt="yes";
     AC_MSG_RESULT(yes)
-    AC_DEFINE(GECODE_HAS_GIST)
+    AC_DEFINE([GECODE_HAS_GIST],[],[Whether Gist is available])
   else
     AC_MSG_RESULT(no)
   fi
