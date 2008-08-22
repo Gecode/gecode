@@ -239,7 +239,7 @@ namespace Gecode {
         return Gecode::Reflection::Arg::newPair(a,b);
       } else if (v.isString()) {
         return Gecode::Reflection::Arg::newString(
-                 v.toString().toStdString().c_str());
+                 v.toString().toLatin1().data());
       } else {
         return NULL;
       }
@@ -254,7 +254,7 @@ namespace Gecode {
     QScriptValue
     GJSSpace::variable(const QString& vti, QScriptValue args) {
       assert(args.isArray());
-      Support::Symbol vtiSymbol(vti.toStdString().c_str(), true);
+      Support::Symbol vtiSymbol(vti.toLatin1().data(), true);
       int size = static_cast<int>(args.property("length").toNumber());
       if (size < 1 || size > 2) {
         throw Exception("Serialization", "Argument mismatch");
@@ -265,7 +265,7 @@ namespace Gecode {
       Reflection::VarSpec vs(vtiSymbol, dom);
       if (size == 2) {
         Support::Symbol nameSymbol(
-          args.property("0").toString().toStdString().c_str(), true);
+          args.property("0").toString().toLatin1().data(), true);
           vs.name(nameSymbol);
       }
       d.var(vs);
@@ -277,7 +277,7 @@ namespace Gecode {
 
     void
     GJSSpace::constraint(const QString& name, QScriptValue args) {
-      Gecode::Support::Symbol nameSymbol(name.toStdString().c_str(), true);
+      Gecode::Support::Symbol nameSymbol(name.toLatin1().data(), true);
       Gecode::Reflection::ActorSpec as(nameSymbol);
       assert(args.isArray());
       QScriptValueIterator argsI(args);
