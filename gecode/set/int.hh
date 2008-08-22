@@ -379,12 +379,12 @@ namespace Gecode { namespace Set { namespace Int {
 
 }}}
 
-#include "gecode/set/int/minmax.icc"
-#include "gecode/set/int/card.icc"
-#include "gecode/set/int/match.icc"
-#include "gecode/set/int/channel-int.icc"
-#include "gecode/set/int/channel-bool.icc"
-#include "gecode/set/int/weights.icc"
+#include "gecode/set/int/minmax.hpp"
+#include "gecode/set/int/card.hpp"
+#include "gecode/set/int/match.hpp"
+#include "gecode/set/int/channel-int.hpp"
+#include "gecode/set/int/channel-bool.hpp"
+#include "gecode/set/int/weights.hpp"
 
 #endif
 

@@ -279,7 +279,7 @@ namespace Test {
 std::ostream&
 operator<<(std::ostream&, const Test::Set::SetAssignment& a);
 
-#include "test/set.icc"
+#include "test/set.hpp"
 
 #endif
 

@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/int-bin.icc"
+#include "gecode/int/linear/int-bin.hpp"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -552,7 +552,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/int-ter.icc"
+#include "gecode/int/linear/int-ter.hpp"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -889,8 +889,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/int-nary.icc"
-#include "gecode/int/linear/int-dom.icc"
+#include "gecode/int/linear/int-nary.hpp"
+#include "gecode/int/linear/int-dom.hpp"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -1133,7 +1133,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/bool-int.icc"
+#include "gecode/int/linear/bool-int.hpp"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -1364,7 +1364,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/bool-view.icc"
+#include "gecode/int/linear/bool-view.hpp"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -1593,7 +1593,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/bool-scale.icc"
+#include "gecode/int/linear/bool-scale.hpp"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -1842,7 +1842,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/post.icc"
+#include "gecode/int/linear/post.hpp"
 
 #endif
 

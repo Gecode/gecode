@@ -66,7 +66,7 @@
 
 #endif
 
-#include "gecode/cpltset/exception.icc"
+#include "gecode/cpltset/exception.hpp"
 
 /** 
  * \namespace Gecode::CpltSet
@@ -82,10 +82,10 @@
  *
  */
 
-#include "gecode/cpltset/bddmanager.icc"
+#include "gecode/cpltset/bddmanager.hpp"
 
-#include "gecode/cpltset/support.icc"
-#include "gecode/cpltset/var-imp.icc"
+#include "gecode/cpltset/support.hpp"
+#include "gecode/cpltset/var-imp.hpp"
 
 namespace Gecode { 
   /**
@@ -415,7 +415,7 @@ namespace Gecode {
 GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::CpltSetVar& x);
 
-#include "gecode/cpltset/view.icc"
+#include "gecode/cpltset/view.hpp"
 
 namespace Gecode {
   /**
@@ -499,7 +499,7 @@ namespace Gecode {
   };
 }
 
-#include "gecode/cpltset/array.icc"
+#include "gecode/cpltset/array.hpp"
 
 
 namespace Gecode {

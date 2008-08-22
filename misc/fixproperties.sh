@@ -38,7 +38,7 @@
 set -e
 
 # List of file extensions for which properties should be set
-KEYWORDEXTS="cc icc hh sh perl ac in vsl vis"
+KEYWORDEXTS="cpp hpp hh sh perl ac in vsl vis"
 
 for ext in ${KEYWORDEXTS}; do
     find . -name "*.$ext" ! -path './contribs/*' -prune \

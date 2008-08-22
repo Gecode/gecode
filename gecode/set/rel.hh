@@ -308,13 +308,13 @@ namespace Gecode { namespace Set { namespace Rel {
 
 }}}
 
-#include "gecode/set/rel/common.icc"
-#include "gecode/set/rel/subset.icc"
-#include "gecode/set/rel/nosubset.icc"
-#include "gecode/set/rel/re-subset.icc"
-#include "gecode/set/rel/eq.icc"
-#include "gecode/set/rel/re-eq.icc"
-#include "gecode/set/rel/nq.icc"
+#include "gecode/set/rel/common.hpp"
+#include "gecode/set/rel/subset.hpp"
+#include "gecode/set/rel/nosubset.hpp"
+#include "gecode/set/rel/re-subset.hpp"
+#include "gecode/set/rel/eq.hpp"
+#include "gecode/set/rel/re-eq.hpp"
+#include "gecode/set/rel/nq.hpp"
 
 #endif
 

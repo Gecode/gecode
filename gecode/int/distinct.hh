@@ -330,10 +330,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 }}}
 
-#include "gecode/int/distinct/val.icc"
-#include "gecode/int/distinct/bnd.icc"
-#include "gecode/int/distinct/ter-dom.icc"
-#include "gecode/int/distinct/dom.icc"
+#include "gecode/int/distinct/val.hpp"
+#include "gecode/int/distinct/bnd.hpp"
+#include "gecode/int/distinct/ter-dom.hpp"
+#include "gecode/int/distinct/dom.hpp"
 
 #endif
 

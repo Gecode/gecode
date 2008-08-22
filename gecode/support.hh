@@ -40,7 +40,7 @@
 
 #include <cassert>
 
-#include "gecode/support/config.icc"
+#include "gecode/support/config.hpp"
 
 /*
  * Linking and compiler workarounds
@@ -83,26 +83,26 @@
  *
  */
 
-#include "gecode/support/macros.icc"
-#include "gecode/support/exception.icc"
-#include "gecode/support/cast.icc"
-#include "gecode/support/heap.icc"
-#include "gecode/support/marked-pointer.icc"
-#include "gecode/support/int-type.icc"
+#include "gecode/support/macros.hpp"
+#include "gecode/support/exception.hpp"
+#include "gecode/support/cast.hpp"
+#include "gecode/support/heap.hpp"
+#include "gecode/support/marked-pointer.hpp"
+#include "gecode/support/int-type.hpp"
 
 /*
  * Common datastructures and algorithms
  *
  */
 
-#include "gecode/support/block-allocator.icc"
-#include "gecode/support/dynamic-array.icc"
-#include "gecode/support/dynamic-stack.icc"
-#include "gecode/support/random.icc"
-#include "gecode/support/sort.icc"
-#include "gecode/support/static-stack.icc"
-#include "gecode/support/symbol.icc"
-#include "gecode/support/map.icc"
+#include "gecode/support/block-allocator.hpp"
+#include "gecode/support/dynamic-array.hpp"
+#include "gecode/support/dynamic-stack.hpp"
+#include "gecode/support/random.hpp"
+#include "gecode/support/sort.hpp"
+#include "gecode/support/static-stack.hpp"
+#include "gecode/support/symbol.hpp"
+#include "gecode/support/map.hpp"
 
 #endif
 

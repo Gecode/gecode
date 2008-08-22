@@ -323,12 +323,12 @@ namespace Gecode { namespace CpltSet {
 
 }}
 
-#include "gecode/cpltset/propagators/nary.icc"
-#include "gecode/cpltset/propagators/naryone.icc"
-#include "gecode/cpltset/propagators/narytwo.icc"
-#include "gecode/cpltset/propagators/binary.icc"
-#include "gecode/cpltset/propagators/unary.icc"
-#include "gecode/cpltset/propagators/singleton.icc" 
+#include "gecode/cpltset/propagators/nary.hpp"
+#include "gecode/cpltset/propagators/naryone.hpp"
+#include "gecode/cpltset/propagators/narytwo.hpp"
+#include "gecode/cpltset/propagators/binary.hpp"
+#include "gecode/cpltset/propagators/unary.hpp"
+#include "gecode/cpltset/propagators/singleton.hpp" 
 
 #endif
 

@@ -2861,7 +2861,7 @@ Rank:   minor
 Bug:    31
 [DESCRIPTION]
 The preprocessor macro NDEBUG for disabling assertions is no longer
-put into config.icc. Without this fix, user programs could not use
+put into config.hpp. Without this fix, user programs could not use
 assert if %Gecode was compiled with NDEBUG.
 
 [ENTRY]

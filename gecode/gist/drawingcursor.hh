@@ -96,7 +96,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/drawingcursor.icc"
+#include "gecode/gist/drawingcursor.hpp"
 
 #endif
 

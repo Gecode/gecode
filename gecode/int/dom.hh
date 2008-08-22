@@ -125,8 +125,8 @@ namespace Gecode { namespace Int { namespace Dom {
 
 }}}
 
-#include "gecode/int/dom/range.icc"
-#include "gecode/int/dom/spec.icc"
+#include "gecode/int/dom/range.hpp"
+#include "gecode/int/dom/spec.hpp"
 
 #endif
 

@@ -140,7 +140,7 @@ namespace Gecode { namespace Gist {
   
 }}
 
-#include "gecode/gist/nodecursor.icc"
+#include "gecode/gist/nodecursor.hpp"
 
 #endif
 

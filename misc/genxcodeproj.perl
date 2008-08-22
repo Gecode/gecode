@@ -20,9 +20,9 @@ EOF
 
 findFiles("h","sourcecode.c.h");
 findFiles("c","sourcecode.c.c");
-findFiles("icc","sourcecode.cpp.h");
+findFiles("hpp","sourcecode.cpp.h");
 findFiles("hh","sourcecode.cpp.h");
-findFiles("cc","sourcecode.cpp.cpp");
+findFiles("cpp","sourcecode.cpp.cpp");
 
 foreach my $k (keys %files) {
   my $relpath = $k;

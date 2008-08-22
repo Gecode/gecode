@@ -219,7 +219,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/spacenode.icc"
+#include "gecode/gist/spacenode.hpp"
 
 #endif
 

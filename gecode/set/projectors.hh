@@ -428,10 +428,10 @@ operator<<(std::ostream&, const Gecode::Projector& p);
 GECODE_SET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::ProjectorSet& ps);
 
-#include "gecode/set/projectors/set-expr.icc"
-#include "gecode/set/projectors/projector.icc"
-#include "gecode/set/projectors/projector-set.icc"
-#include "gecode/set/projectors/formula.icc"
+#include "gecode/set/projectors/set-expr.hpp"
+#include "gecode/set/projectors/projector.hpp"
+#include "gecode/set/projectors/projector-set.hpp"
+#include "gecode/set/projectors/formula.hpp"
 
 #endif
 

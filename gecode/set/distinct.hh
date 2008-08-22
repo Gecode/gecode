@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Distinct {
 
 }}}
 
-#include "gecode/set/distinct/atmostOne.icc"
+#include "gecode/set/distinct/atmostOne.hpp"
 
 #endif
 

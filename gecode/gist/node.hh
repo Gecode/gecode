@@ -110,7 +110,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/node.icc"
+#include "gecode/gist/node.hpp"
 
 #endif
 

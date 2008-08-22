@@ -249,9 +249,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 }}}
 
-#include "gecode/cpltset/branch/select-val.icc"
-#include "gecode/cpltset/branch/select-view.icc"
-#include "gecode/cpltset/branch/post-val.icc"
+#include "gecode/cpltset/branch/select-val.hpp"
+#include "gecode/cpltset/branch/select-view.hpp"
+#include "gecode/cpltset/branch/post-val.hpp"
 
 #endif
 

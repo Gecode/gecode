@@ -153,7 +153,7 @@ namespace Gecode {
 
 }
 
-#include "gecode/gist/gist.icc"
+#include "gecode/gist/gist.hpp"
 
 #endif
 

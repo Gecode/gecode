@@ -46,7 +46,7 @@
 #include "gecode/int.hh"
 #include "gecode/int/linear.hh"
 
-#include "gecode/minimodel/exception.icc"
+#include "gecode/minimodel/exception.hpp"
 
 #include <iostream>
 
@@ -660,10 +660,10 @@ namespace Gecode {
 
 }
 
-#include "gecode/minimodel/lin-expr.icc"
-#include "gecode/minimodel/lin-rel.icc"
-#include "gecode/minimodel/bool-expr.icc"
-#include "gecode/minimodel/bool-rel.icc"
+#include "gecode/minimodel/lin-expr.hpp"
+#include "gecode/minimodel/lin-rel.hpp"
+#include "gecode/minimodel/bool-expr.hpp"
+#include "gecode/minimodel/bool-rel.hpp"
 
 namespace Gecode {
 
@@ -822,7 +822,7 @@ namespace Gecode {
   //@}
 }
 
-#include "gecode/minimodel/arithmetic.icc"
+#include "gecode/minimodel/arithmetic.hpp"
 
 namespace Gecode {
 
@@ -1197,7 +1197,7 @@ namespace Gecode {
 }
 //@}
 
-#include "gecode/minimodel/matrix.icc"
+#include "gecode/minimodel/matrix.hpp"
 
 namespace Gecode {
 
@@ -1236,7 +1236,7 @@ namespace Gecode {
 //@}
 }
 
-#include "gecode/minimodel/optimize.icc"
+#include "gecode/minimodel/optimize.hpp"
 
 #endif
 

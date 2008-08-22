@@ -729,17 +729,17 @@ namespace Gecode {
 
 }
 
-#include "gecode/search/statistics.icc"
-#include "gecode/search/stop.icc"
-#include "gecode/search/options.icc"
-#include "gecode/search/engine-ctrl.icc"
+#include "gecode/search/statistics.hpp"
+#include "gecode/search/stop.hpp"
+#include "gecode/search/options.hpp"
+#include "gecode/search/engine-ctrl.hpp"
 
-#include "gecode/search/reco-stack.icc"
+#include "gecode/search/reco-stack.hpp"
 
-#include "gecode/search/dfs.icc"
-#include "gecode/search/lds.icc"
-#include "gecode/search/bab.icc"
-#include "gecode/search/restart.icc"
+#include "gecode/search/dfs.hpp"
+#include "gecode/search/lds.hpp"
+#include "gecode/search/bab.hpp"
+#include "gecode/search/restart.hpp"
 
 #endif
 

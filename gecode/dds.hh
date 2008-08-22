@@ -207,8 +207,8 @@ namespace Gecode {
 
 }
 
-#include "gecode/dds/decomposing-branching.icc"
-#include "gecode/dds/dds.icc"
+#include "gecode/dds/decomposing-branching.hpp"
+#include "gecode/dds/dds.hpp"
 
 #endif
 

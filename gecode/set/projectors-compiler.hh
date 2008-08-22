@@ -86,7 +86,7 @@ namespace Gecode {
     Indent indent;
     /// The outstream for the header file (.hh)
     std::ostream& hhos;
-    /// The outstream for the implementation header file (.icc)
+    /// The outstream for the implementation header file (.hpp)
     std::ostream& iccos;
 
     /// The projector specification that gets compiled

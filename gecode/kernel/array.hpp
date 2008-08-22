@@ -171,7 +171,7 @@ namespace Gecode {
     template <class Var>
     ViewArray(Space& home, const VarArgArray<Var>& a)
       : n(a.size()) {
-      // This may not be in the icc file (to satisfy the MS compiler)
+      // This may not be in the hpp file (to satisfy the MS compiler)
       if (n>0) {
         x = home.alloc<View>(n);
         for (int i=n; i--; )

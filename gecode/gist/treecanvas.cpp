@@ -47,7 +47,7 @@
 #include "gecode/gist/drawingcursor.hh"
 #include "gecode/gist/addchild.hh"
 #include "gecode/gist/addvisualisationdialog.hh"
-#include "gecode/gist/zoomToFitIcon.icc"
+#include "gecode/gist/zoomToFitIcon.hpp"
 
 #include "gecode/search.hh"
 

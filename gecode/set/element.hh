@@ -222,10 +222,10 @@ namespace Gecode { namespace Set { namespace Element {
 
 }}}
 
-#include "gecode/set/element/inter.icc"
-#include "gecode/set/element/union.icc"
-#include "gecode/set/element/unionConst.icc"
-#include "gecode/set/element/disjoint.icc"
+#include "gecode/set/element/inter.hpp"
+#include "gecode/set/element/union.hpp"
+#include "gecode/set/element/unionConst.hpp"
+#include "gecode/set/element/disjoint.hpp"
 
 #endif
 

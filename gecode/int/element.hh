@@ -296,8 +296,8 @@ namespace Gecode { namespace Int { namespace Element {
 
 }}}
 
-#include "gecode/int/element/int.icc"
-#include "gecode/int/element/view.icc"
+#include "gecode/int/element/int.hpp"
+#include "gecode/int/element/view.hpp"
 
 #endif
 

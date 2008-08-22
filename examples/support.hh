@@ -305,7 +305,7 @@ public:
   unsigned int size(void) const;
 };
 
-#include "examples/support/options.icc"
+#include "examples/support/options.hpp"
 
 
 /**
@@ -342,7 +342,7 @@ typedef ExampleBase<MinimizeSpace> MinimizeExample;
 typedef ExampleBase<MaximizeSpace> MaximizeExample;
 
 
-#include "examples/support/example.icc"
+#include "examples/support/example.hpp"
 
 #endif
 

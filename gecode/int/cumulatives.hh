@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
 }}}
 
-#include "gecode/int/cumulatives/val.icc"
+#include "gecode/int/cumulatives/val.hpp"
 
 #endif
 

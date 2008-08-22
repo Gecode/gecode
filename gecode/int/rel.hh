@@ -615,10 +615,10 @@ namespace Gecode { namespace Int { namespace Rel {
 
 }}}
 
-#include "gecode/int/rel/eq.icc"
-#include "gecode/int/rel/nq.icc"
-#include "gecode/int/rel/lq-le.icc"
-#include "gecode/int/rel/lex.icc"
+#include "gecode/int/rel/eq.hpp"
+#include "gecode/int/rel/nq.hpp"
+#include "gecode/int/rel/lq-le.hpp"
+#include "gecode/int/rel/lex.hpp"
 
 #endif
 

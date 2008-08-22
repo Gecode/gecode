@@ -124,10 +124,10 @@ namespace Gecode { namespace Set { namespace Sequence {
 }}}
 
 #include "gecode/set/rel.hh"
-#include "gecode/set/rel-op/common.icc"
-#include "gecode/set/sequence/common.icc"
-#include "gecode/set/sequence/seq.icc"
-#include "gecode/set/sequence/seq-u.icc"
+#include "gecode/set/rel-op/common.hpp"
+#include "gecode/set/sequence/common.hpp"
+#include "gecode/set/sequence/seq.hpp"
+#include "gecode/set/sequence/seq-u.hpp"
 
 #endif
 

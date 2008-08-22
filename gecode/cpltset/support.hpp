@@ -686,7 +686,7 @@ namespace Gecode { namespace CpltSet {
     int s = x.offset();
     int w = s + x.tableWidth() - 1;
     manager.existquant(p, dom, s, w);
-    // \todo check the update line from naryrec.icc "dom = p" ()
+    // \todo check the update line from naryrec.hpp "dom = p" ()
   }
 
 }}

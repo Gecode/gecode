@@ -574,11 +574,11 @@ namespace Gecode { namespace Int { namespace Branch {
 
 }}}
 
-#include "gecode/int/branch/select-val.icc"
-#include "gecode/int/branch/select-values.icc"
-#include "gecode/int/branch/select-view.icc"
-#include "gecode/int/branch/post-val-int.icc"
-#include "gecode/int/branch/post-val-bool.icc"
+#include "gecode/int/branch/select-val.hpp"
+#include "gecode/int/branch/select-values.hpp"
+#include "gecode/int/branch/select-view.hpp"
+#include "gecode/int/branch/post-val-int.hpp"
+#include "gecode/int/branch/post-val-bool.hpp"
 
 #endif
 

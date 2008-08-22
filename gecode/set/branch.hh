@@ -257,9 +257,9 @@ namespace Gecode { namespace Set { namespace Branch {
 
 }}}
 
-#include "gecode/set/branch/select-val.icc"
-#include "gecode/set/branch/select-view.icc"
-#include "gecode/set/branch/post-val.icc"
+#include "gecode/set/branch/select-val.hpp"
+#include "gecode/set/branch/select-view.hpp"
+#include "gecode/set/branch/post-val.hpp"
 
 #endif
 // STATISTICS: set-branch

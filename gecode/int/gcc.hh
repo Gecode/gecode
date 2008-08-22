@@ -40,9 +40,9 @@
 
 #include "gecode/int.hh"
 
-#include "gecode/int/gcc/gccbndsup.icc"
-#include "gecode/int/gcc/graphsup.icc"
-#include "gecode/int/gcc/occur.icc"
+#include "gecode/int/gcc/gccbndsup.hpp"
+#include "gecode/int/gcc/graphsup.hpp"
+#include "gecode/int/gcc/occur.hpp"
 
 /**
  * \namespace Gecode::Int::GCC
@@ -316,11 +316,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
 }}}
 
-#include "gecode/int/gcc/ubc.icc"
-#include "gecode/int/gcc/lbc.icc"
-#include "gecode/int/gcc/val.icc"
-#include "gecode/int/gcc/bnd.icc"
-#include "gecode/int/gcc/dom.icc"
+#include "gecode/int/gcc/ubc.hpp"
+#include "gecode/int/gcc/lbc.hpp"
+#include "gecode/int/gcc/val.hpp"
+#include "gecode/int/gcc/bnd.hpp"
+#include "gecode/int/gcc/dom.hpp"
 
 #endif
 

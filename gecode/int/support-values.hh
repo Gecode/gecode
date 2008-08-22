@@ -154,7 +154,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/support-values.icc"
+#include "gecode/int/support-values.hpp"
 
 #endif
 

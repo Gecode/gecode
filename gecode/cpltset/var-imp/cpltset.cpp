@@ -585,7 +585,7 @@ namespace Gecode { namespace CpltSet {
 
     // a true path ending on a previous level was detected
     // hence the current level cannot be fixed
-    // description of onlyleaves and bypassed in var.icc
+    // description of onlyleaves and bypassed in var.hpp
     if (onlyleaves || bypassed) {
       flag = UNDET;
     } else {

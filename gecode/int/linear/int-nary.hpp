@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/int/linear/int-noview.icc"
+#include "gecode/int/linear/int-noview.hpp"
 
 namespace Gecode { namespace Int { namespace Linear {
 

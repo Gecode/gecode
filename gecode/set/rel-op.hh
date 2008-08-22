@@ -340,13 +340,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 
 }}}
 
-#include "gecode/set/rel-op/common.icc"
-#include "gecode/set/rel-op/superofinter.icc"
-#include "gecode/set/rel-op/subofunion.icc"
-#include "gecode/set/rel-op/inter.icc"
-#include "gecode/set/rel-op/union.icc"
-#include "gecode/set/rel-op/partition.icc"
-#include "gecode/set/rel-op/post.icc"
+#include "gecode/set/rel-op/common.hpp"
+#include "gecode/set/rel-op/superofinter.hpp"
+#include "gecode/set/rel-op/subofunion.hpp"
+#include "gecode/set/rel-op/inter.hpp"
+#include "gecode/set/rel-op/union.hpp"
+#include "gecode/set/rel-op/partition.hpp"
+#include "gecode/set/rel-op/post.hpp"
 
 #endif
 

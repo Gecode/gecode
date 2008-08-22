@@ -139,7 +139,7 @@ namespace Gecode {
     std::vector<Reflection::ActorSpec>& actors);
 }
 
-#include "gecode/serialization/boost.icc"
+#include "gecode/serialization/boost.hpp"
 
 #endif
 

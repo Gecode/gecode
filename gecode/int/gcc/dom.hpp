@@ -39,7 +39,7 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   /*
-   * Analogously to "gcc/bnd.icc" we split the algorithm
+   * Analogously to "gcc/bnd.hpp" we split the algorithm
    * in two parts:
    *   1) the UBC (Upper Bound Constraint) stating that there are
    *      at most k[i].max() occurences of the value v_i

@@ -207,10 +207,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 }}}
 
-#include "gecode/int/extensional/layered-graph.icc"
+#include "gecode/int/extensional/layered-graph.hpp"
 
 
-#include "gecode/int/extensional/bitset.icc"
+#include "gecode/int/extensional/bitset.hpp"
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 }}}
 
-#include "gecode/int/extensional/base.icc"
+#include "gecode/int/extensional/base.hpp"
 
 
 namespace Gecode { namespace Int { namespace Extensional {
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 }}}
 
-#include "gecode/int/extensional/basic.icc"
+#include "gecode/int/extensional/basic.hpp"
 
 
 namespace Gecode { namespace Int { namespace Extensional {
@@ -500,7 +500,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   
 }}}
 
-#include "gecode/int/extensional/incremental.icc"
+#include "gecode/int/extensional/incremental.hpp"
 
 
 #endif

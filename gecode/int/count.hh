@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include "gecode/int/count/rel.icc"
+#include "gecode/int/count/rel.hpp"
 
 
 namespace Gecode { namespace Int { namespace Count {
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include "gecode/int/count/int.icc"
+#include "gecode/int/count/int.hpp"
 
 
 namespace Gecode { namespace Int { namespace Count {
@@ -479,7 +479,7 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include "gecode/int/count/view.icc"
+#include "gecode/int/count/view.hpp"
 
 #endif
 

@@ -159,9 +159,9 @@ namespace Gecode { namespace Set { namespace Projection {
   
 }}}
 
-#include "gecode/set/projectors/propagator/nary.icc"
-#include "gecode/set/projectors/propagator/re-nary.icc"
-#include "gecode/set/projectors/propagator/card.icc"
+#include "gecode/set/projectors/propagator/nary.hpp"
+#include "gecode/set/projectors/propagator/re-nary.hpp"
+#include "gecode/set/projectors/propagator/card.hpp"
   
 #endif
 

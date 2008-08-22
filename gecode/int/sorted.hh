@@ -105,11 +105,11 @@ namespace Gecode { namespace Int { namespace Sorted {
 
 }}}
 
-#include "gecode/int/sorted/sortsup.icc"
-#include "gecode/int/sorted/order.icc"
-#include "gecode/int/sorted/matching.icc"
-#include "gecode/int/sorted/narrowing.icc"
-#include "gecode/int/sorted/propagate.icc"
+#include "gecode/int/sorted/sortsup.hpp"
+#include "gecode/int/sorted/order.hpp"
+#include "gecode/int/sorted/matching.hpp"
+#include "gecode/int/sorted/narrowing.hpp"
+#include "gecode/int/sorted/propagate.hpp"
 
 #endif
 

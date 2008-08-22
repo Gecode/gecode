@@ -82,7 +82,7 @@
  *
  */
 
-#include "gecode/set/exception.icc"
+#include "gecode/set/exception.hpp"
 
 namespace Gecode { namespace Set {
 
@@ -104,9 +104,9 @@ namespace Gecode { namespace Set {
 
 }}
 
-#include "gecode/set/limits.icc"
+#include "gecode/set/limits.hpp"
 
-#include "gecode/set/var-imp.icc"
+#include "gecode/set/var-imp.hpp"
 
 namespace Gecode {
   
@@ -508,8 +508,8 @@ namespace Gecode {
 GECODE_SET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::SetVar& x);
 
-#include "gecode/set/view.icc"
-#include "gecode/set/propagator.icc"
+#include "gecode/set/view.hpp"
+#include "gecode/set/propagator.hpp"
 
 namespace Gecode {
   /**
@@ -593,7 +593,7 @@ namespace Gecode {
 
 }
 
-#include "gecode/set/array.icc"
+#include "gecode/set/array.hpp"
 
 namespace Gecode {
 

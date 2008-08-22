@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace GCC {
          * therefore d can be decreased. If d equals zero the intervals
          * minimum capacity is met and thepath can be compressed to the
          * next value having an empty bucket.
-         * see DOMINATION in "gcc/ubc.icc"
+         * see DOMINATION in "gcc/ubc.hpp"
          */
         if (--hall[z].d == 0) {
           hall[z].t = z + 1;
@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace GCC {
          * If an unstable set is discovered
          * the difference between the interval bounds is equal to the
          * number of variables whose domain intersect the interval
-         * (see ZEROTEST in "gcc/ubc.icc")
+         * (see ZEROTEST in "gcc/ubc.hpp")
          */
         // CLEARLY THIS WAS NOT STABLE == UNSTABLE
         if (hall[z].d == lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {

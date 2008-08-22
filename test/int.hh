@@ -259,7 +259,7 @@ namespace Test {
  */
 std::ostream& operator<<(std::ostream& os, const Test::Int::Assignment& a);
 
-#include "test/int.icc"
+#include "test/int.hpp"
 
 #endif
 

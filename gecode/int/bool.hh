@@ -593,12 +593,12 @@ namespace Gecode { namespace Int { namespace Bool {
 
 }}}
 
-#include "gecode/int/bool/base.icc"
-#include "gecode/int/bool/eq.icc"
-#include "gecode/int/bool/lq.icc"
-#include "gecode/int/bool/or.icc"
-#include "gecode/int/bool/eqv.icc"
-#include "gecode/int/bool/clause.icc"
+#include "gecode/int/bool/base.hpp"
+#include "gecode/int/bool/eq.hpp"
+#include "gecode/int/bool/lq.hpp"
+#include "gecode/int/bool/or.hpp"
+#include "gecode/int/bool/eqv.hpp"
+#include "gecode/int/bool/clause.hpp"
 
 #endif
 

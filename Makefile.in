@@ -134,7 +134,7 @@ BUDDYSRC0 = \
 	bddop.c \
 	bvec.c \
 	cache.c \
-	cppext.cc \
+	cppext.cpp \
 	fdd.c \
 	imatrix.c \
 	kernel.c \
@@ -157,13 +157,13 @@ BUDDYHDR0 = \
 BUDDYSRC = $(BUDDYSRC0:%=gecode/support/buddy/%)
 BUDDYHDR = $(BUDDYHDR0:%=gecode/support/buddy/%)
 BUDDYOBJ0 = $(BUDDYSRC:%.c=%$(OBJSUFFIX))
-BUDDYOBJ = $(BUDDYOBJ0:%.cc=%$(OBJSUFFIX))
+BUDDYOBJ = $(BUDDYOBJ0:%.cpp=%$(OBJSUFFIX))
 
-SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cc)
+SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR  =  gecode/support.hh \
-	$(SUPPORTHDR0:%=gecode/support/%.icc) \
+	$(SUPPORTHDR0:%=gecode/support/%.hpp) \
 	$(BUDDYHDR)
-SUPPORTOBJ  =  $(SUPPORTSRC1:%.cc=%$(OBJSUFFIX)) $(BUDDYOBJ)
+SUPPORTOBJ  =  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX)) $(BUDDYOBJ)
 SUPPORTSRC  =  $(SUPPORTSRC1) $(BUDDYSRC)
 
 export SUPPORTDLL	= $(LIBPREFIX)@SUPPORT@$(DLLSUFFIX)
@@ -185,10 +185,10 @@ SUPPORTBUILDDIRS = support support/buddy
 #
 
 VARIMPHDR = \
-	gecode/kernel/var-type.icc \
-	gecode/kernel/var-imp.icc
+	gecode/kernel/var-type.hpp \
+	gecode/kernel/var-imp.hpp
 
-VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cc
+VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cpp
 
 KERNELSRC0 = \
 	core reflection var-map var-type memory-manager branch \
@@ -201,12 +201,12 @@ KERNELHDR0 = \
 	branch branching branching-view branching-tiebreak \
 	branching-val
 
-KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cc)
+KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
 	gecode/kernel.hh \
-	$(KERNELHDR0:%=gecode/kernel/%.icc) \
+	$(KERNELHDR0:%=gecode/kernel/%.hpp) \
 	$(VARIMPHDR)
-KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
+KERNELOBJ	= $(KERNELSRC:%.cpp=%$(OBJSUFFIX))
 
 export KERNELDLL	= $(LIBPREFIX)@KERNEL@$(DLLSUFFIX)
 export KERNELLIB	= $(LIBPREFIX)@KERNEL@$(LIBSUFFIX)
@@ -220,22 +220,22 @@ export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
 export LINKKERNEL      = $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
 KERNELBUILDDIRS = kernel
 
-EXTRA_HEADERS   = gecode/support/config.icc
+EXTRA_HEADERS   = gecode/support/config.hpp
 
 #
 # SEARCH COMPONENTS
 #
 
 SEARCHSRC0 = \
-	dfs.cc lds.cc bab.cc stop.cc options.cc reco-stack.cc
+	dfs.cpp lds.cpp bab.cpp stop.cpp options.cpp reco-stack.cpp
 SEARCHHDR0 = \
-	bab.icc dfs.icc lds.icc restart.icc  \
-	reco-stack.icc statistics.icc \
-	engine-ctrl.icc stop.icc options.icc
+	bab.hpp dfs.hpp lds.hpp restart.hpp  \
+	reco-stack.hpp statistics.hpp \
+	engine-ctrl.hpp stop.hpp options.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
-SEARCHOBJ	= $(SEARCHSRC:%.cc=%$(OBJSUFFIX))
+SEARCHOBJ	= $(SEARCHSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_search@" "yes"
 export SEARCHDLL	= $(LIBPREFIX)@SEARCH@$(DLLSUFFIX)
@@ -261,65 +261,66 @@ SEARCHBUILDDIRS = search
 #
 
 INTSRC0 = \
-	int-set.cc var-imp/int.cc var-imp/bool.cc var/int.cc var/bool.cc \
-	view/print.cc array.cc bool.cc \
-	extensional/dfa.cc extensional/tuple-set.cc extensional.cc \
-	dom.cc rel.cc element.cc count.cc arithmetic.cc \
-	linear/int-post.cc linear-int.cc \
-	linear/bool-post.cc linear-bool.cc \
-	branch.cc \
-	distinct.cc cumulatives.cc \
-	sorted.cc gcc.cc \
-	channel.cc channel/link-single.cc channel/link-multi.cc \
-	circuit.cc unshare.cc
+	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
+	var/bool.cpp \
+	view/print.cpp array.cpp bool.cpp \
+	extensional/dfa.cpp extensional/tuple-set.cpp extensional.cpp \
+	dom.cpp rel.cpp element.cpp count.cpp arithmetic.cpp \
+	linear/int-post.cpp linear-int.cpp \
+	linear/bool-post.cpp linear-bool.cpp \
+	branch.cpp \
+	distinct.cpp cumulatives.cpp \
+	sorted.cpp gcc.cpp \
+	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
+	circuit.cpp unshare.cpp
 INTHDR0 = \
-	limits.icc support-values.hh support-values.icc \
-	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
-	arithmetic/sqr.icc arithmetic/sqrt.icc arithmetic/divmod.icc \
-	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
-	bool/clause.icc \
-	branch/post-val-int.icc branch/post-val-bool.icc \
-	branch/select-val.icc \
-	branch/select-values.icc branch/select-view.icc \
-	count/view.icc count/int.icc count/rel.icc \
-	cumulatives/val.icc \
-	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \
-	distinct/dom.icc distinct/edge.icc distinct/node.icc \
-	distinct/val.icc distinct/ter-dom.icc \
-	dom/range.icc dom/spec.icc \
-	element/int.icc element/view.icc \
-	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
-	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
-	linear/post.icc \
-	linear/int-noview.icc linear/int-bin.icc linear/int-ter.icc \
-	linear/int-nary.icc linear/int-dom.icc \
-	linear/bool-int.icc linear/bool-view.icc linear/bool-scale.icc \
-	extensional/dfa.icc extensional/layered-graph.icc \
-	extensional/tuple-set.icc extensional/base.icc \
-	extensional/basic.icc extensional/incremental.icc \
-	extensional/bitset.icc \
-	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
-	sorted/matching.icc sorted/narrowing.icc \
-	sorted/order.icc sorted/propagate.icc sorted/sortsup.icc \
-	int-set.icc var-imp/delta.icc var/bool.icc \
-	var-imp/int.icc var-imp/bool.icc var/int.icc \
-	view/bool.icc view/constint.icc view/zero.icc view/int.icc \
-	view/minus.icc \
-	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
-	arithmetic.hh array.icc bool.hh branch.hh \
+	limits.hpp support-values.hh support-values.hpp \
+	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/mult.hpp \
+	arithmetic/sqr.hpp arithmetic/sqrt.hpp arithmetic/divmod.hpp \
+	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
+	bool/clause.hpp \
+	branch/post-val-int.hpp branch/post-val-bool.hpp \
+	branch/select-val.hpp \
+	branch/select-values.hpp branch/select-view.hpp \
+	count/view.hpp count/int.hpp count/rel.hpp \
+	cumulatives/val.hpp \
+	distinct/bilink.hpp distinct/bnd.hpp distinct/combptr.hpp \
+	distinct/dom.hpp distinct/edge.hpp distinct/node.hpp \
+	distinct/val.hpp distinct/ter-dom.hpp \
+	dom/range.hpp dom/spec.hpp \
+	element/int.hpp element/view.hpp \
+	gcc/bnd.hpp gcc/dom.hpp gcc/gccbndsup.hpp gcc/graphsup.hpp \
+	gcc/lbc.hpp gcc/ubc.hpp gcc/val.hpp gcc/occur.hpp \
+	linear/post.hpp \
+	linear/int-noview.hpp linear/int-bin.hpp linear/int-ter.hpp \
+	linear/int-nary.hpp linear/int-dom.hpp \
+	linear/bool-int.hpp linear/bool-view.hpp linear/bool-scale.hpp \
+	extensional/dfa.hpp extensional/layered-graph.hpp \
+	extensional/tuple-set.hpp extensional/base.hpp \
+	extensional/basic.hpp extensional/incremental.hpp \
+	extensional/bitset.hpp \
+	rel/eq.hpp rel/lex.hpp rel/lq-le.hpp rel/nq.hpp \
+	sorted/matching.hpp sorted/narrowing.hpp \
+	sorted/order.hpp sorted/propagate.hpp sorted/sortsup.hpp \
+	int-set.hpp var-imp/delta.hpp var/bool.hpp \
+	var-imp/int.hpp var-imp/bool.hpp var/int.hpp \
+	view/bool.hpp view/constint.hpp view/zero.hpp view/int.hpp \
+	view/minus.hpp \
+	view/offset.hpp view/rtest.hpp view/scale.hpp view/iter.hpp \
+	arithmetic.hh array.hpp bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \
-	element.hh exception.icc  gcc.hh linear.hh \
-	propagator.icc extensional.hh rel.hh \
-	sorted.hh var-imp.icc view.icc \
-	channel.hh channel/dom.icc channel/val.icc \
-	channel/base.icc channel/link-single.icc channel/link-multi.icc \
-	circuit.hh circuit/base.icc circuit/val.icc circuit/dom.icc
+	element.hh exception.hpp  gcc.hh linear.hh \
+	propagator.hpp extensional.hh rel.hh \
+	sorted.hh var-imp.hpp view.hpp \
+	channel.hh channel/dom.hpp channel/val.hpp \
+	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
+	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
-	$(top_srcdir)/gecode/int/branch/post-view-int.cc \
-	$(top_srcdir)/gecode/int/branch/post-view-bool.cc
+	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
+	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
-INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
+INTOBJ		= $(INTSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_int_vars@" "yes"
 export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
@@ -349,55 +350,55 @@ INTBUILDDIRS	= \
 #
 
 SETSRC0 =								 \
-	cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
-	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
-	int.cc								 \
-	element.cc element/disjoint.cc sequence.cc			 \
-	distinct.cc distinct/atmostOne.cc				 \
-	sequence/seq.cc sequence/seq-u.cc array.cc var-imp/set.cc	 \
-	var-imp/integerset.cc var/set.cc view/print.cc			 \
-	projectors.cc							 \
-	projectors/set-expr.cc projectors/projector.cc			 \
-	projectors/projector-set.cc					 \
-	projectors/propagator/re-nary.cc				 \
-	projectors/compiler.cc						 \
-	projectors/formula.cc
+	cardinality.cpp convex.cpp convex/conv.cpp convex/hull.cpp \
+	dom.cpp rel.cpp rel-op.cpp rel-op-const.cpp				 \
+	int.cpp								 \
+	element.cpp element/disjoint.cpp sequence.cpp			 \
+	distinct.cpp distinct/atmostOne.cpp				 \
+	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
+	var-imp/integerset.cpp var/set.cpp view/print.cpp			 \
+	projectors.cpp							 \
+	projectors/set-expr.cpp projectors/projector.cpp			 \
+	projectors/projector-set.cpp					 \
+	projectors/propagator/re-nary.cpp				 \
+	projectors/compiler.cpp						 \
+	projectors/formula.cpp
 SETHDR0 =								     \
-	limits.icc \
-	view.icc exception.icc int.hh element.hh var-imp.icc                 \
-	int/card.icc     						     \
-	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
-	int/channel-bool.icc element/idxarray.hh			     \
-	element/idxarray.icc element/inter.icc element/union.icc             \
-	element/unionConst.icc                                               \
-	element/disjoint.icc array.icc					     \
-	var-imp/set.icc var-imp/integerset.icc	     			     \
-	var-imp/delta.icc var-imp/iter.icc 				     \
-	var/set.icc							     \
-	view/complement.icc view/const.icc view/set.icc view/singleton.icc   \
-	view/offset.icc                                                      \
-	rel/subset.icc rel/re-subset.icc rel/eq.icc rel/nq.icc rel/re-eq.icc \
-	rel/common.icc rel/nosubset.icc sequence.hh	                     \
-	rel-op/union.icc rel-op/partition.icc rel-op/subofunion.icc	     \
-	rel-op/inter.icc rel-op/superofinter.icc			     \
-	rel-op/post.icc rel-op/common.icc rel.hh			     \
-	distinct.hh distinct/atmostOne.icc				     \
-	sequence/seq.icc sequence/seq-u.icc				     \
-	sequence/common.icc convex/conv.icc convex/hull.icc convex.hh	     \
-	propagator.icc rel-op.hh					     \
-	branch.hh branch/select-val.icc branch/select-view.icc		     \
-	branch/post-val.icc \
+	limits.hpp \
+	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
+	int/card.hpp     						     \
+	int/match.hpp int/channel-int.hpp int/minmax.hpp int/weights.hpp     \
+	int/channel-bool.hpp element/idxarray.hh			     \
+	element/idxarray.hpp element/inter.hpp element/union.hpp             \
+	element/unionConst.hpp                                               \
+	element/disjoint.hpp array.hpp					     \
+	var-imp/set.hpp var-imp/integerset.hpp	     			     \
+	var-imp/delta.hpp var-imp/iter.hpp 				     \
+	var/set.hpp							     \
+	view/complement.hpp view/const.hpp view/set.hpp view/singleton.hpp   \
+	view/offset.hpp                                                      \
+	rel/subset.hpp rel/re-subset.hpp rel/eq.hpp rel/nq.hpp rel/re-eq.hpp \
+	rel/common.hpp rel/nosubset.hpp sequence.hh	                     \
+	rel-op/union.hpp rel-op/partition.hpp rel-op/subofunion.hpp	     \
+	rel-op/inter.hpp rel-op/superofinter.hpp			     \
+	rel-op/post.hpp rel-op/common.hpp rel.hh			     \
+	distinct.hh distinct/atmostOne.hpp				     \
+	sequence/seq.hpp sequence/seq-u.hpp				     \
+	sequence/common.hpp convex/conv.hpp convex/hull.hpp convex.hh	     \
+	propagator.hpp rel-op.hh					     \
+	branch.hh branch/select-val.hpp branch/select-view.hpp		     \
+	branch/post-val.hpp \
 	projectors.hh projectors-compiler.hh				     \
-	projectors/projector.icc					     \
-	projectors/projector-set.icc projectors/set-expr.icc		     \
-	projectors/propagator.hh projectors/propagator/nary.icc		     \
-	projectors/propagator/card.icc projectors/propagator/re-nary.icc     \
-	projectors/formula.icc
+	projectors/projector.hpp					     \
+	projectors/projector-set.hpp projectors/set-expr.hpp		     \
+	projectors/propagator.hh projectors/propagator/nary.hpp		     \
+	projectors/propagator/card.hpp projectors/propagator/re-nary.hpp     \
+	projectors/formula.hpp
 
 SETSRC		= $(SETSRC0:%=gecode/set/%) \
-	$(top_srcdir)/gecode/set/branch.cc
+	$(top_srcdir)/gecode/set/branch.cpp
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
-SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
+SETOBJ		= $(SETSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_set_vars@" "yes"
 export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
@@ -428,31 +429,31 @@ SETBUILDDIRS	=						\
 #
 
 CPLTSETSRC0 =	\
-	array.cc support.cc             			          \
-	bddmanager.cc 							  \
-	var-imp/cpltset.cc var/cpltset.cc  view/print.cc                  \
-	constraints/singleton.cc 					  \
-	constraints/dom.cc constraints/rel.cc constraints/cardinality.cc  \
-	constraints/atmost.cc constraints/partition.cc 			  \
-	constraints/select.cc constraints/distinct.cc  			  \
-	constraints/rangeroots.cc
+	array.cpp support.cpp             			          \
+	bddmanager.cpp 							  \
+	var-imp/cpltset.cpp var/cpltset.cpp  view/print.cpp                  \
+	constraints/singleton.cpp 					  \
+	constraints/dom.cpp constraints/rel.cpp constraints/cardinality.cpp  \
+	constraints/atmost.cpp constraints/partition.cpp 			  \
+	constraints/select.cpp constraints/distinct.cpp  			  \
+	constraints/rangeroots.cpp
 
 CPLTSETHDR0 =		                \
-	view.icc bddmanager.icc exception.icc array.icc \
-	support.icc var-imp.icc \
-	var-imp/cpltset.icc var/cpltset.icc view/cpltset.icc \
+	view.hpp bddmanager.hpp exception.hpp array.hpp \
+	support.hpp var-imp.hpp \
+	var-imp/cpltset.hpp var/cpltset.hpp view/cpltset.hpp \
 	propagators.hh \
-	propagators/unary.icc propagators/binary.icc \
-	propagators/nary.icc propagators/naryone.icc propagators/narytwo.icc \
-	propagators/singleton.icc \
-	branch.hh branch/select-val.icc branch/select-view.icc	\
-	branch/post-val.icc
+	propagators/unary.hpp propagators/binary.hpp \
+	propagators/nary.hpp propagators/naryone.hpp propagators/narytwo.hpp \
+	propagators/singleton.hpp \
+	branch.hh branch/select-val.hpp branch/select-view.hpp	\
+	branch/post-val.hpp
 
 
 CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/cpltset/%) \
-	$(top_srcdir)/gecode/cpltset/branch.cc
+	$(top_srcdir)/gecode/cpltset/branch.cpp
 CPLTSETHDR	= gecode/cpltset.hh $(CPLTSETHDR0:%=gecode/cpltset/%)
-CPLTSETOBJ	= $(CPLTSETSRC:%.cc=%$(OBJSUFFIX))
+CPLTSETOBJ	= $(CPLTSETSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_cpltset_vars@" "yes"
 export CPLTSETDLL		= $(LIBPREFIX)@CPLTSET@$(DLLSUFFIX)
@@ -485,15 +486,15 @@ CPLTSETBUILDDIRS	=						\
 #
 
 MMSRC0 = \
-	bool-expr.cc reg.cc 
+	bool-expr.cpp reg.cpp 
 MMHDR0 = \
-	lin-expr.icc lin-rel.icc exception.icc matrix.icc \
-	bool-expr.icc bool-rel.icc optimize.icc arithmetic.icc
+	lin-expr.hpp lin-rel.hpp exception.hpp matrix.hpp \
+	bool-expr.hpp bool-rel.hpp optimize.hpp arithmetic.hpp
 
 MMSRC 		= $(MMSRC0:%=gecode/minimodel/%)
 MMHDR 		= gecode/minimodel.hh $(MMHDR0:%=gecode/minimodel/%)
-MMOBJ		= $(MMSRC:%.cc=%$(OBJSUFFIX))
-MMSBJ		= $(MMSRC:%.cc=%$(SBJSUFFIX))
+MMOBJ		= $(MMSRC:%.cpp=%$(OBJSUFFIX))
+MMSBJ		= $(MMSRC:%.cpp=%$(SBJSUFFIX))
 
 ifeq "@enable_minimodel@" "yes"
 export MMDLL		= $(LIBPREFIX)@MM@$(DLLSUFFIX)
@@ -519,30 +520,30 @@ MMBUILDDIRS	= minimodel
 #
 
 SERSRC0 = \
-	flatzinc.cc javascript.cc boost.cc
+	flatzinc.cpp javascript.cpp boost.cpp
 
-SERREGSRC = gecode/serialization/register.cc
+SERREGSRC = gecode/serialization/register.cpp
 
 ifeq "@enable_qt@" "yes"
-SERMOCSRC0 = moc_javascript.cc
+SERMOCSRC0 = moc_javascript.cpp
 else
 SERMOCSRC0 =
 endif
 
 SERHDR0 = \
-	boost.icc
+	boost.hpp
 
 SERSRC 		= $(SERSRC0:%=gecode/serialization/%) 
 SERMOCSRC	= $(SERMOCSRC0:%=gecode/serialization/%)
 SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)
 SEROBJ		= \
-	$(SERSRC:%.cc=%$(OBJSUFFIX)) \
-	$(SERMOCSRC:%.cc=%$(OBJSUFFIX)) \
-	$(SERREGSRC:%.cc=%$(OBJSUFFIX))
+	$(SERSRC:%.cpp=%$(OBJSUFFIX)) \
+	$(SERMOCSRC:%.cpp=%$(OBJSUFFIX)) \
+	$(SERREGSRC:%.cpp=%$(OBJSUFFIX))
 SERSBJ		= \
-	$(SERSRC:%.cc=%$(SBJSUFFIX)) \
-	$(SERMOCSRC:%.cc=%$(SBJSUFFIX)) \
-	$(SERREGSRC:%.cc=%$(SBJSUFFIX))
+	$(SERSRC:%.cpp=%$(SBJSUFFIX)) \
+	$(SERMOCSRC:%.cpp=%$(SBJSUFFIX)) \
+	$(SERREGSRC:%.cpp=%$(SBJSUFFIX))
 
 ifeq "@enable_serialization@" "yes"
 export SERDLL		= $(LIBPREFIX)@SER@$(DLLSUFFIX)
@@ -582,7 +583,7 @@ ITERHDR0 =							\
 	virtual-ranges-inter virtual-ranges-compl               \
 	priority-queue
 ITERHDR = gecode/iter.hh \
-	$(ITERHDR0:%=gecode/iter/%.icc)
+	$(ITERHDR0:%=gecode/iter/%.hpp)
 
 #
 # DDS
@@ -591,10 +592,10 @@ ITERHDR = gecode/iter.hh \
 DDSSRC0 = decomposing-branching dds
 DDSHDR0 = decomposing-branching dds
 
-DDSSRC 		= $(DDSSRC0:%=gecode/dds/%.cc) 
-DDSHDR 		= gecode/dds.hh $(DDSHDR0:%=gecode/dds/%.icc)
-DDSOBJ		= $(DDSSRC:%.cc=%$(OBJSUFFIX))
-DDSSBJ		= $(DDSSRC:%.cc=%$(SBJSUFFIX))
+DDSSRC 		= $(DDSSRC0:%=gecode/dds/%.cpp) 
+DDSHDR 		= gecode/dds.hh $(DDSHDR0:%=gecode/dds/%.hpp)
+DDSOBJ		= $(DDSSRC:%.cpp=%$(OBJSUFFIX))
+DDSSBJ		= $(DDSSRC:%.cpp=%$(SBJSUFFIX))
 
 ifeq "@enable_dds@" "yes"
 export DDSDLL		= $(LIBPREFIX)@DDS@$(DLLSUFFIX)
@@ -621,11 +622,11 @@ DDSBUILDDIRS	= dds
 
 GISTHDR0 = \
 	better.hh drawingcursor.hh \
-	gist.icc gecodelogo.hh node.hh node.icc \
-	nodecursor.hh nodecursor.icc nodevisitor.hh \
-	nodevisitor.icc layoutcursor.hh layoutcursor.icc \
-	spacenode.hh spacenode.icc textoutput.hh treecanvas.hh zoomToFitIcon.icc \
-	visualnode.hh visualnode.icc \
+	gist.hpp gecodelogo.hh node.hh node.hpp \
+	nodecursor.hh nodecursor.hpp nodevisitor.hh \
+	nodevisitor.hpp layoutcursor.hh layoutcursor.hpp \
+	spacenode.hh spacenode.hpp textoutput.hh treecanvas.hh zoomToFitIcon.hpp \
+	visualnode.hh visualnode.hpp \
 	mainwindow.hh \
 	addchild.hh addvisualisationdialog.hh \
 	ui_addchild.hh ui_addvisualisationdialog.hh\
@@ -636,28 +637,28 @@ GISTHDR0 = \
 	visualisation/setvaritem.hh
 
 GISTSRC0 = \
-	drawingcursor.cc gist.cc gecodelogo.cc node.cc nodecursor.cc \
-	layoutcursor.cc spacenode.cc \
-	textoutput.cc treecanvas.cc visualnode.cc \
-	mainwindow.cc preferences.cc \
-	addchild.cc addvisualisationdialog.cc \
-	config.cc \
-	visualisation/vararrayview.cc \
-	visualisation/varitem.cc \
-	visualisation/intvaritem.cc \
-	visualisation/setvaritem.cc
+	drawingcursor.cpp gist.cpp gecodelogo.cpp node.cpp nodecursor.cpp \
+	layoutcursor.cpp spacenode.cpp \
+	textoutput.cpp treecanvas.cpp visualnode.cpp \
+	mainwindow.cpp preferences.cpp \
+	addchild.cpp addvisualisationdialog.cpp \
+	config.cpp \
+	visualisation/vararrayview.cpp \
+	visualisation/varitem.cpp \
+	visualisation/intvaritem.cpp \
+	visualisation/setvaritem.cpp
 
 GISTMOCSRC0 = \
-	moc_treecanvas.cc moc_mainwindow.cc moc_preferences.cc \
-	moc_addchild.cc moc_addvisualisationdialog.cc \
-	visualisation/moc_vararrayview.cc
+	moc_treecanvas.cpp moc_mainwindow.cpp moc_preferences.cpp \
+	moc_addchild.cpp moc_addvisualisationdialog.cpp \
+	visualisation/moc_vararrayview.cpp
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
 GISTHDR = $(GISTHDR0:%=gecode/gist/%) gecode/gist.hh
 
-GISTOBJ	= $(GISTSRC:%.cc=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(OBJSUFFIX))
-GISTSBJ	= $(GISTSRC:%.cc=%$(SBJSUFFIX)) $(GISTMOCSRC:%.cc=%$(SBJSUFFIX))
+GISTOBJ	= $(GISTSRC:%.cpp=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
+GISTSBJ	= $(GISTSRC:%.cpp=%$(SBJSUFFIX)) $(GISTMOCSRC:%.cpp=%$(SBJSUFFIX))
 
 GISTBUILDDIRS = gist gist/visualisation
 
@@ -700,42 +701,42 @@ INTEXAMPLESRC0 =						\
 	stress-element stress-min stress-distinct		\
 	stress-extensional stress-linear-bool
 
-INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
-INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
-INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
+INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
+INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
 ifeq "@enable_int_vars@" "yes"
-INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cc=%$(EXESUFFIX))
+INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
 INTEXAMPLEEXE  =
 endif
 
 SETEXAMPLESRC0 = \
 	crew golf hamming steiner queen-armies
-SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cc)
-SETEXAMPLEOBJ  = $(SETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
-SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cpp)
+SETEXAMPLEOBJ  = $(SETEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
+SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
 ifeq "@enable_set_vars@" "yes"
-SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cc=%$(EXESUFFIX))
+SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
 SETEXAMPLEEXE  = 
 endif
 
 CPLTSETEXAMPLESRC0 = \
-CPLTSETEXAMPLESRC  = $(CPLTSETEXAMPLESRC0:%=examples/%.cc)
-CPLTSETEXAMPLEOBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
-CPLTSETEXAMPLESBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+CPLTSETEXAMPLESRC  = $(CPLTSETEXAMPLESRC0:%=examples/%.cpp)
+CPLTSETEXAMPLEOBJ  = $(CPLTSETEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
+CPLTSETEXAMPLESBJ  = $(CPLTSETEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
 ifeq "@enable_cpltset_vars@" "yes"
-CPLTSETEXAMPLEEXE  = $(CPLTSETEXAMPLESRC:%.cc=%$(EXESUFFIX))
+CPLTSETEXAMPLEEXE  = $(CPLTSETEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
 CPLTSETEXAMPLEEXE  =
 endif
 
 JSEXAMPLESRC0 = javascript
-JSEXAMPLESRC  = $(JSEXAMPLESRC0:%=examples/%.cc)
-JSEXAMPLEOBJ  = $(JSEXAMPLESRC:%.cc=%$(OBJSUFFIX))
-JSEXAMPLESBJ  = $(JSEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+JSEXAMPLESRC  = $(JSEXAMPLESRC0:%=examples/%.cpp)
+JSEXAMPLEOBJ  = $(JSEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
+JSEXAMPLESBJ  = $(JSEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
 ifeq "@enable_qt@" "yes"
-JSEXAMPLEEXE  = $(JSEXAMPLESRC:%.cc=%$(EXESUFFIX))
+JSEXAMPLEEXE  = $(JSEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
 JSEXAMPLESRC  =
 endif
@@ -748,11 +749,11 @@ EXAMPLEEXE = \
 EXSUPPORTSRC0 = \
 	support/options support/example
 EXSUPPORTHDR0 = \
-	support.hh support/options.icc support/example.icc
-EXSUPPORTSRC = 	$(EXSUPPORTSRC0:%=examples/%.cc)
+	support.hh support/options.hpp support/example.hpp
+EXSUPPORTSRC = 	$(EXSUPPORTSRC0:%=examples/%.cpp)
 EXSUPPORTHDR  = $(EXSUPPORTHDR0:%=examples/%)
-export EXSUPPORTOBJ = $(EXSUPPORTSRC:%.cc=%$(OBJSUFFIX))
-EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cc=%$(SBJSUFFIX))
+export EXSUPPORTOBJ = $(EXSUPPORTSRC:%.cpp=%$(OBJSUFFIX))
+EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 
 
 #
@@ -768,11 +769,11 @@ ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SERHDR) $(DDSHDR) \
 	$(ITERHDR) $(GISTHDR)
-ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX)) \
-	$(GISTMOCSRC:%.cc=%$(OBJSUFFIX)) \
-	$(SERMOCSRC:%.cc=%$(OBJSUFFIX))
+ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
+	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
+	$(SERMOCSRC:%.cpp=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
-ALLSBJ0 = $(ALLSRC:%.cc=%$(SBJSUFFIX))
+ALLSBJ0 = $(ALLSRC:%.cpp=%$(SBJSUFFIX))
 ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
 export LINKALL = \
@@ -830,13 +831,13 @@ INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
 	rel linear scheduling gcc sorted circuit unshare \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel
-INTTESTSRC0 = test/int.cc $(INTTESTSRC00:%=test/int/%.cc)
+INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 SETTESTSRC00 = \
 	dom rel rel-op rel-op-const convex sequence int select distinct projection 
-SETTESTSRC0 = test/set.cc $(SETTESTSRC00:%=test/set/%.cc)
+SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
 CPLTSETTESTSRC00 = \
 	dom rel atmost partition cardinality select
-CPLTSETTESTSRC0 = test/cpltset.cc $(CPLTSETTESTSRC00:%=test/cpltset/%.cc)
+CPLTSETTESTSRC0 = test/cpltset.cpp $(CPLTSETTESTSRC00:%=test/cpltset/%.cpp)
 
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC=$(SETTESTSRC0)
@@ -850,14 +851,14 @@ CPLTSETTESTSRC =
 endif
 
 BRANCHTESTSRC0 = \
-	test/branch.cc test/branch/int.cc test/branch/bool.cc \
-	test/branch/set.cc test/branch/cpltset.cc \
-	test/assign.cc test/assign/int.cc test/assign/bool.cc
+	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
+	test/branch/set.cpp test/branch/cpltset.cpp \
+	test/assign.cpp test/assign/int.cpp test/assign/bool.cpp
 
 SEARCHTESTSRC0 = \
-	test/search.cc
+	test/search.cpp
 
-TESTSRC0 = test/test.cc
+TESTSRC0 = test/test.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) \
@@ -865,11 +866,11 @@ TESTSRC = \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0)
 
 TESTHDR0 = \
-	test.hh test.icc int.hh int.icc set.hh cpltset.hh \
+	test.hh test.hpp int.hh int.hpp set.hh cpltset.hh \
 	branch.hh assign.hh
 TESTHDR = $(TESTHDR0:%=test/%)
-TESTOBJ	= $(TESTSRC:%.cc=%$(OBJSUFFIX))
-TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))
+TESTOBJ	= $(TESTSRC:%.cpp=%$(OBJSUFFIX))
+TESTSBJ	= $(TESTSRC:%.cpp=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
 TESTBUILDDIRS = test test/int test/set test/branch test/cpltset test/assign
 
@@ -963,35 +964,35 @@ ALLVIS = \
 	$(ALLVIS0:%=$(top_srcdir)/%.vis) \
 	$(top_srcdir)/misc/genvariables.perl
 
-$(top_srcdir)/gecode/kernel/var-type.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
-	perl $(top_srcdir)/misc/genvariables.perl -typeicc $< > $@
-$(top_srcdir)/gecode/kernel/var-type.cc: $(top_srcdir)/variables.vsl $(ALLVIS)
-	perl $(top_srcdir)/misc/genvariables.perl -typecc $< > $@
-$(top_srcdir)/gecode/kernel/var-imp.icc: $(top_srcdir)/variables.vsl $(ALLVIS)
+$(top_srcdir)/gecode/kernel/var-type.hpp: $(top_srcdir)/variables.vsl $(ALLVIS)
+	perl $(top_srcdir)/misc/genvariables.perl -typehpp $< > $@
+$(top_srcdir)/gecode/kernel/var-type.cpp: $(top_srcdir)/variables.vsl $(ALLVIS)
+	perl $(top_srcdir)/misc/genvariables.perl -typecpp $< > $@
+$(top_srcdir)/gecode/kernel/var-imp.hpp: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
 
 #
 # Generated branchings
 #
 GENBRANCHSRC = \
-	$(top_srcdir)/gecode/int/branch/post-view-int.cc \
-	$(top_srcdir)/gecode/int/branch/post-view-bool.cc \
-	$(top_srcdir)/gecode/set/branch.cc \
-	$(top_srcdir)/gecode/cpltset/branch.cc
+	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
+	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp \
+	$(top_srcdir)/gecode/set/branch.cpp \
+	$(top_srcdir)/gecode/cpltset/branch.cpp
 
-$(top_srcdir)/gecode/int/branch/post-view-int.cc: \
+$(top_srcdir)/gecode/int/branch/post-view-int.cpp: \
 	$(top_srcdir)/gecode/int/branch/post-view-int.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/int/branch/post-view-bool.cc: \
+$(top_srcdir)/gecode/int/branch/post-view-bool.cpp: \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/set/branch.cc: \
+$(top_srcdir)/gecode/set/branch.cpp: \
 	$(top_srcdir)/gecode/set/branch/post-view.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/cpltset/branch.cc: \
+$(top_srcdir)/gecode/cpltset/branch.cpp: \
 	$(top_srcdir)/gecode/cpltset/branch/post-view.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
@@ -1002,23 +1003,23 @@ $(top_srcdir)/gecode/cpltset/branch.cc: \
 
 POSTHDR = $(POSTINT) $(POSTSET)
 
-$(top_srcdir)/gecode/serialization/register.cc: \
+$(top_srcdir)/gecode/serialization/register.cpp: \
 	$(top_srcdir)/gecode/int.hh $(top_srcdir)/gecode/set.hh \
 	$(top_srcdir)/gecode/minimodel.hh $(top_srcdir)/misc/genregistry.perl
 	(cd $(top_srcdir) && \
 	 perl misc/genregistry.perl \
 	  gecode/int.hh gecode/set.hh gecode/minimodel.hh \
-	  > gecode/serialization/register.cc 2>/dev/null)
+	  > gecode/serialization/register.cpp 2>/dev/null)
 
 
 #
 # Object targets
 #
 
-gecode/support/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/%.cc
+gecode/support/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SUPPORT_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/support/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/%.cc
+gecode/support/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SUPPORT_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 gecode/support/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/%.c
@@ -1028,120 +1029,120 @@ gecode/support/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/%.c
 	$(CC) $(CFLAGS) @GECODE_BUILD_SUPPORT_FLAG@ \
 	@COMPILESBJ@$@ @CCIN@$<
 
-gecode/kernel/%$(OBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
+gecode/kernel/%$(OBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cpp
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/kernel/%$(SBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
+gecode/kernel/%$(SBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cpp
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/search/%$(OBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
+gecode/search/%$(OBJSUFFIX): $(top_srcdir)/gecode/search/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SEARCH_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/search/%$(SBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
+gecode/search/%$(SBJSUFFIX): $(top_srcdir)/gecode/search/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SEARCH_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/int/%$(OBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
+gecode/int/%$(OBJSUFFIX): $(top_srcdir)/gecode/int/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_INT_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/int/%$(SBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
+gecode/int/%$(SBJSUFFIX): $(top_srcdir)/gecode/int/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_INT_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
+gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
+gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/cpltset/%$(OBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cc
+gecode/cpltset/%$(OBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/cpltset/%$(SBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cc
+gecode/cpltset/%$(SBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
+gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
+gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/dds/%$(OBJSUFFIX): $(top_srcdir)/gecode/dds/%.cc
+gecode/dds/%$(OBJSUFFIX): $(top_srcdir)/gecode/dds/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DDS_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/dds/%$(SBJSUFFIX): $(top_srcdir)/gecode/dds/%.cc
+gecode/dds/%$(SBJSUFFIX): $(top_srcdir)/gecode/dds/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DDS_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/serialization/%$(OBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
+gecode/serialization/%$(OBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cpp
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/serialization/%$(SBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
+gecode/serialization/%$(SBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cpp
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
-gecode/serialization/moc_%$(OBJSUFFIX): gecode/serialization/moc_%.cc
+gecode/serialization/moc_%$(OBJSUFFIX): gecode/serialization/moc_%.cpp
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-.PRECIOUS: gecode/serialization/moc_%.cc
-gecode/serialization/moc_%.cc: $(top_srcdir)/gecode/serialization/%.hh
+.PRECIOUS: gecode/serialization/moc_%.cpp
+gecode/serialization/moc_%.cpp: $(top_srcdir)/gecode/serialization/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/serialization $< -o $@
 
-examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
+examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
 	@COMPILEOBJ@$@ @CXXIN@$<
-examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cc
+examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 
-test/%$(OBJSUFFIX): $(top_srcdir)/test/%.cc
+test/%$(OBJSUFFIX): $(top_srcdir)/test/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
 		@COMPILEOBJ@$@ @CXXIN@$<
-test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
+test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
 		@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
+gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
-gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cc
+gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
-gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cc
+gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
-.PRECIOUS: gecode/gist/moc_%.cc
-gecode/gist/moc_%.cc: $(top_srcdir)/gecode/gist/%.hh
+.PRECIOUS: gecode/gist/moc_%.cpp
+gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
-gecode/gist/visualisation/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cc
+gecode/gist/visualisation/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
-gecode/gist/visualisation/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cc
+gecode/gist/visualisation/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
-gecode/gist/visualisation/moc_%$(OBJSUFFIX): gecode/gist/visualisation/moc_%.cc
+gecode/gist/visualisation/moc_%$(OBJSUFFIX): gecode/gist/visualisation/moc_%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
-.PRECIOUS: gecode/gist/visualisation/moc_%.cc
-gecode/gist/visualisation/moc_%.cc: $(top_srcdir)/gecode/gist/visualisation/%.hh
+.PRECIOUS: gecode/gist/visualisation/moc_%.cpp
+gecode/gist/visualisation/moc_%.cpp: $(top_srcdir)/gecode/gist/visualisation/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist/visualisation $< -o $@
 
 #
@@ -1353,7 +1354,7 @@ DIST_FILES= \
 	doxygen.conf.in doxygen.hh.in install-sh misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
 	misc/gecode-serialization.pc.in misc/gecode-gist.pc.in \
-	gecode/support/config.icc.in \
+	gecode/support/config.hpp.in \
 	gecode/int/var-imp/int.vis \
 	gecode/int/var-imp/bool.vis \
 	gecode/set/var-imp.vis \
@@ -1363,8 +1364,8 @@ DIST_FILES= \
 	gecode/support/buddy/NEWS \
 	gecode/support/buddy/README \
 	examples/support.hh \
-	examples/support/example.icc \
-	examples/support/options.icc \
+	examples/support/example.hpp \
+	examples/support/options.hpp \
 	misc/doxygen/back.png misc/doxygen/gecode-logo-100.png \
 	misc/doxygen/stylesheet.css misc/doxygen/footer.html \
 	misc/doxygen/header.html misc/genlicense.perl \
@@ -1643,7 +1644,7 @@ clean:
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(TESTOBJ) $(TESTSBJ) $(TESTOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(GISTMOCSRC) $(SERMOCSRC)
-	$(RMF) $(SERREGSRC:%.cc=%$(OBJSUFFIX))
+	$(RMF) $(SERREGSRC:%.cpp=%$(OBJSUFFIX))
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
@@ -1659,7 +1660,7 @@ veryclean: clean
 	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
-	$(RMF) $(SERREGSRC:%.cc=%.gcda) $(SERREGSRC:%.cc=%.gcno)
+	$(RMF) $(SERREGSRC:%.cpp=%.gcda) $(SERREGSRC:%.cpp=%.gcno)
 
 distclean: veryclean
 	$(RMF) $(VARIMP:%=$(top_srcdir)/%)

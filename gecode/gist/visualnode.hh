@@ -218,7 +218,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/visualnode.icc"
+#include "gecode/gist/visualnode.hpp"
 
 #endif
 

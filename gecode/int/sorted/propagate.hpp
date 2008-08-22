@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     /*
      * STEP 1:
-     *  normalization is implemented in "order.icc"
+     *  normalization is implemented in "order.hpp"
      *    o  setting the lower bounds of the y_i domains (\lb E_i)
      *       to max(\lb E_{i-1},\lb E_i)
      *    o  setting the upper bounds of the y_i domains (\ub E_i)
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace Sorted {
      *  with Glover's matching algorithm.
      *        o  phi is computed with the glover function
      *        o  phiprime is computed with the revglover function
-     *  glover and revglover are implemented in "matching.icc"
+     *  glover and revglover are implemented in "matching.hpp"
      */
 
     if (!match_fixed) {
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Sorted {
      *  Compute the strongly connected components in
      *  the oriented intersection graph
      *  the computation of the sccs is implemented in
-     *  "narrowing.icc" in the function narrow_domx
+     *  "narrowing.hpp" in the function narrow_domx
      */
 
     int* scclist = r.alloc<int>(n);
@@ -295,7 +295,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     /*
      * STEP 5:
      *  Narrow the domains of the variables
-     *  Also implemented in "narrowing.icc"
+     *  Also implemented in "narrowing.hpp"
      *  in the functions narrow_domx and narrow_domy
      */
 

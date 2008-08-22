@@ -209,10 +209,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 }}}
 
-#include "gecode/int/distinct/combptr.icc"
-#include "gecode/int/distinct/bilink.icc"
-#include "gecode/int/distinct/edge.icc"
-#include "gecode/int/distinct/node.icc"
+#include "gecode/int/distinct/combptr.hpp"
+#include "gecode/int/distinct/bilink.hpp"
+#include "gecode/int/distinct/edge.hpp"
+#include "gecode/int/distinct/node.hpp"
 
 namespace Gecode { namespace Int { namespace Distinct {
 

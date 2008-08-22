@@ -246,12 +246,12 @@ namespace Gecode { namespace Int { namespace Channel {
 
 }}}
 
-#include "gecode/int/channel/base.icc"
-#include "gecode/int/channel/val.icc"
-#include "gecode/int/channel/dom.icc"
+#include "gecode/int/channel/base.hpp"
+#include "gecode/int/channel/val.hpp"
+#include "gecode/int/channel/dom.hpp"
 
-#include "gecode/int/channel/link-single.icc"
-#include "gecode/int/channel/link-multi.icc"
+#include "gecode/int/channel/link-single.hpp"
+#include "gecode/int/channel/link-multi.hpp"
 
 #endif
 

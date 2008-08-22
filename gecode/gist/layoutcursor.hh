@@ -68,7 +68,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/layoutcursor.icc"
+#include "gecode/gist/layoutcursor.hpp"
 
 #endif
 

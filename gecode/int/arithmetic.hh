@@ -814,12 +814,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 }}}
 
-#include "gecode/int/arithmetic/abs.icc"
-#include "gecode/int/arithmetic/max.icc"
-#include "gecode/int/arithmetic/sqr.icc"
-#include "gecode/int/arithmetic/sqrt.icc"
-#include "gecode/int/arithmetic/mult.icc"
-#include "gecode/int/arithmetic/divmod.icc"
+#include "gecode/int/arithmetic/abs.hpp"
+#include "gecode/int/arithmetic/max.hpp"
+#include "gecode/int/arithmetic/sqr.hpp"
+#include "gecode/int/arithmetic/sqrt.hpp"
+#include "gecode/int/arithmetic/mult.hpp"
+#include "gecode/int/arithmetic/divmod.hpp"
 
 #endif
 

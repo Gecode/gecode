@@ -76,7 +76,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/var-imp/delta.icc"
+#include "gecode/int/var-imp/delta.hpp"
 
 namespace Gecode { namespace Int {
 
@@ -480,7 +480,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/var-imp/int.icc"
+#include "gecode/int/var-imp/int.hpp"
 
 namespace Gecode {
   
@@ -740,7 +740,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/var-imp/bool.icc"
+#include "gecode/int/var-imp/bool.hpp"
 
 namespace Gecode {
   /** \brief Traits class for variable implementations and variables */

@@ -118,8 +118,8 @@ namespace Gecode { namespace Set { namespace Convex {
 
 }}}
 
-#include "gecode/set/convex/conv.icc"
-#include "gecode/set/convex/hull.icc"
+#include "gecode/set/convex/conv.hpp"
+#include "gecode/set/convex/hull.hpp"
 
 #endif
 

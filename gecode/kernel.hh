@@ -90,7 +90,7 @@
  *
  */
 
-#include "gecode/kernel/exception.icc"
+#include "gecode/kernel/exception.hpp"
 
 
 
@@ -99,8 +99,8 @@
  *
  */
 
-#include "gecode/kernel/memory-config.icc"
-#include "gecode/kernel/memory-manager.icc"
+#include "gecode/kernel/memory-config.hpp"
+#include "gecode/kernel/memory-manager.hpp"
 
 
 /*
@@ -108,7 +108,7 @@
  *
  */
 
-#include "gecode/kernel/macros.icc"
+#include "gecode/kernel/macros.hpp"
 
 
 /*
@@ -116,8 +116,8 @@
  *
  */
 
-#include "gecode/kernel/core.icc"
-#include "gecode/kernel/modevent.icc"
+#include "gecode/kernel/core.hpp"
+#include "gecode/kernel/modevent.hpp"
 
 
 /*
@@ -125,7 +125,7 @@
  *
  */
 
-#include "gecode/kernel/region.icc"
+#include "gecode/kernel/region.hpp"
 
 
 /*
@@ -133,7 +133,7 @@
  *
  */
 
-#include "gecode/kernel/var-traits.icc"
+#include "gecode/kernel/var-traits.hpp"
 
 
 /*
@@ -141,7 +141,7 @@
  *
  */
 
-#include "gecode/kernel/var.icc"
+#include "gecode/kernel/var.hpp"
 
 
 /*
@@ -149,7 +149,7 @@
  *
  */
 
-#include "gecode/kernel/reflection.icc"
+#include "gecode/kernel/reflection.hpp"
 
 
 /*
@@ -157,7 +157,7 @@
  *
  */
 
-#include "gecode/kernel/view.icc"
+#include "gecode/kernel/view.hpp"
 
 
 /*
@@ -165,7 +165,7 @@
  *
  */
 
-#include "gecode/kernel/array.icc"
+#include "gecode/kernel/array.hpp"
 
 
 /*
@@ -173,7 +173,7 @@
  *
  */
 
-#include "gecode/kernel/var-map.icc"
+#include "gecode/kernel/var-map.hpp"
 
 
 /*
@@ -181,7 +181,7 @@
  *
  */
 
-#include "gecode/kernel/shared-array.icc"
+#include "gecode/kernel/shared-array.hpp"
 
 
 /*
@@ -189,13 +189,13 @@
  *
  */
 
-#include "gecode/kernel/propagator.icc"
-#include "gecode/kernel/advisor.icc"
-#include "gecode/kernel/branch.icc"
-#include "gecode/kernel/branching.icc"
-#include "gecode/kernel/branching-view.icc"
-#include "gecode/kernel/branching-tiebreak.icc"
-#include "gecode/kernel/branching-val.icc"
+#include "gecode/kernel/propagator.hpp"
+#include "gecode/kernel/advisor.hpp"
+#include "gecode/kernel/branch.hpp"
+#include "gecode/kernel/branching.hpp"
+#include "gecode/kernel/branching-view.hpp"
+#include "gecode/kernel/branching-tiebreak.hpp"
+#include "gecode/kernel/branching-val.hpp"
 
 
 /*
@@ -203,7 +203,7 @@
  *
  */
 
-#include "gecode/kernel/var-imp.icc"
+#include "gecode/kernel/var-imp.hpp"
 
 #endif
 

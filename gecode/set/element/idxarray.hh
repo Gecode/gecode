@@ -107,7 +107,7 @@ namespace Gecode { namespace Set { namespace Element {
 
 }}}
 
-#include "gecode/set/element/idxarray.icc"
+#include "gecode/set/element/idxarray.hpp"
 
 // STATISTICS: set-prop
 

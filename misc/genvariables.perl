@@ -41,10 +41,10 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   $i++;
   if ($arg eq "-header") {
     $gen_header = 1;
-  } elsif ($arg eq "-typeicc") {
-    $gen_typeicc   = 1;
-  } elsif ($arg eq "-typecc") {
-    $gen_typecc   = 1;
+  } elsif ($arg eq "-typehpp") {
+    $gen_typehpp   = 1;
+  } elsif ($arg eq "-typecpp") {
+    $gen_typecpp   = 1;
   }
 }
 
@@ -332,7 +332,7 @@ for ($f=0; $f<$n_files; $f++) {
   $bits[$f] = $b;
 }
 
-if ($gen_typeicc) {
+if ($gen_typehpp) {
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];
     print $hdr[$f];
@@ -655,7 +655,7 @@ if ($gen_typeicc) {
   print "  }\n}\n\n";
 }
 
-if ($gen_typecc) {
+if ($gen_typecpp) {
   print "#include \"gecode/kernel.hh\"\n";
   print "\n";
   for ($f = 0; $f<$n_files; $f++) {

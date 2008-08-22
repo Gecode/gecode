@@ -168,7 +168,7 @@ int main(int argc, char* argv[]);
 std::ostream&
 operator<<(std::ostream& os, const Test::ind& i);
 
-#include "test/test.icc"
+#include "test/test.hpp"
 
 #endif
 

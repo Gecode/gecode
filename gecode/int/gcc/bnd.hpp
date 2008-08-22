@@ -476,7 +476,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *  Setup rank and bounds info
      *  Since this implementation is based on the theory of Hall Intervals
      *  additional datastructures are needed in order to represent these
-     *  intervals and the "partial-sum" data structure (cf."gcc/gccbndsup.icc")
+     *  intervals and the "partial-sum" data structure (cf."gcc/gccbndsup.hpp")
      *
      */
 

@@ -166,9 +166,9 @@ namespace Gecode { namespace Int { namespace Circuit {
 
 }}}
 
-#include "gecode/int/circuit/base.icc"
-#include "gecode/int/circuit/val.icc"
-#include "gecode/int/circuit/dom.icc"
+#include "gecode/int/circuit/base.hpp"
+#include "gecode/int/circuit/val.hpp"
+#include "gecode/int/circuit/dom.hpp"
 
 #endif
 

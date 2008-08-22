@@ -468,7 +468,7 @@ namespace Gecode { namespace CpltSet {
 
 }}
 
-#include "gecode/cpltset/var-imp/cpltset.icc"
+#include "gecode/cpltset/var-imp/cpltset.hpp"
 
 namespace Gecode {
 
