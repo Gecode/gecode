@@ -81,12 +81,12 @@ namespace Gecode {
       friend class Space;
       friend class SharedHandle;
     private:
-      /// The counter used for reference counting
-      unsigned int use_cnt;
       /// The next shared object collected during copying
       Object* next;
       /// The forwarding pointer used for forwarding
       Object* fwd;
+      /// The counter used for reference counting
+      unsigned int use_cnt;
     public:
       /// Initialize
       Object(void);
@@ -2531,7 +2531,7 @@ namespace Gecode {
   VarImp<VIC>::cancel(Space& home) {
     // Entries in index structure are disabled. However they
     // must still work for cloning (base) and degree (idx(pc_max+2))
-    int n_sub = degree();
+    unsigned int n_sub = degree();
     home.pc.p.n_sub -= n_sub;
     unsigned int n = (free_and_bits >> VIC::free_bits) + n_sub;
     home.free<ActorLink*>(base,n);
@@ -2586,7 +2586,7 @@ namespace Gecode {
       x->u.idx[1] = u.idx[1];
 
     ActorLink** f = x->base;
-    int n = x->degree();
+    unsigned int n = x->degree();
     ActorLink** t = sub;
     sub += n;
     base = t;

@@ -130,7 +130,8 @@ namespace Gecode {
   VarBranchOptions::VarBranchOptions(void) : seed(0) {}
   forceinline VarBranchOptions
   VarBranchOptions::time(void) {
-    VarBranchOptions o; o.seed=::time(NULL); return o;
+    VarBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL)); 
+    return o;
   }
 
   // Value branch options
@@ -138,7 +139,8 @@ namespace Gecode {
   ValBranchOptions::ValBranchOptions(void) : seed(0) {}
   forceinline ValBranchOptions
   ValBranchOptions::time(void) {
-    ValBranchOptions o; o.seed=::time(NULL); return o;
+    ValBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL)); 
+    return o;
   }
 
 

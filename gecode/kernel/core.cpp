@@ -145,7 +145,7 @@ namespace Gecode {
       d_lst = d_fst+4;
     } else {
       // Resize existing array
-      ptrdiff_t n = d_lst - d_fst;
+      unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
       assert(n != 0);
       d_fst = realloc<Actor*>(d_fst,n,2*n);
       d_cur = d_fst+n;
@@ -386,7 +386,7 @@ namespace Gecode {
     }
     // Setup array for actor disposal
     {
-      ptrdiff_t n = s.d_cur - s.d_fst;
+      unsigned int n = static_cast<unsigned int>(s.d_cur - s.d_fst);
       if (n == 0) {
         // No actors
         d_fst = d_cur = d_lst = NULL;

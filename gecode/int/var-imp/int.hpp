@@ -196,11 +196,11 @@ namespace Gecode { namespace Int {
   IntVarImp::IntVarImp(Space& home, const IntSet& d)
     : IntVarImpBase(home), dom(d.min(),d.max()) {
     if (d.size() > 1) {
-      int n = d.size();
+      unsigned int n = d.size();
       RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
       unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
-      for (int i = n; i--; ) {
+      for (unsigned int i = n; i--; ) {
         h -= d.width(i);
         r[i].min(d.min(i)); r[i].max(d.max(i));
         r[i].prevnext(&r[i-1],&r[i+1]);
