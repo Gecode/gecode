@@ -141,7 +141,7 @@ foreach $file (@ARGV) {
     if ($withinPost && $l =~ /;/) {
       $withinPost = 0;
       if ($currentPost =~ 
-          /([a-z][a-zA-Z_]*)\(Space\s*\*\s*home\s*,\s*([^)]*)\)/) 
+          /([a-z][a-zA-Z_]*)\(Space\s*&\s*home\s*,\s*([^)]*)\)/) 
       {
         my $postFunName = $1;
         if (exists $ignore{$postFunName}) {
@@ -278,7 +278,7 @@ public:
   }
   
   /// Post constraint described by \\a spec
-  static void post(Gecode::Space* home, Gecode::Reflection::VarMap& vm,
+  static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
     switch(spec.noOfArgs()) {
 EOF
