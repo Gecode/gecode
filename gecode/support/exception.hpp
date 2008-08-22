@@ -45,7 +45,7 @@ namespace Gecode {
    */
   class GECODE_SUPPORT_EXPORT Exception : public std::exception {
   private:
-    static const int li_max = 128;
+    static const int li_max = 127;
     char li[li_max+1];
   public:
     /// Initialize with location \a l and information \a i

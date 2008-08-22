@@ -60,12 +60,12 @@ namespace Gecode { namespace Support {
 
   forceinline unsigned int
   Symbol::SO::size(void) const {
-    return strlen(s);
+    return static_cast<unsigned int>(strlen(s));
   }
 
   forceinline char*
   Symbol::SO::strdup(const char* s) {
-    unsigned int n = strlen(s)+1;
+    unsigned int n = static_cast<unsigned int>(strlen(s)+1);
     char* d = static_cast<char*>(heap.ralloc(sizeof(char)*n));
     for (unsigned int i=n; i--; )
       d[i]=s[i];
@@ -91,8 +91,8 @@ namespace Gecode { namespace Support {
   Symbol::SO::append(SO* so0) {
     if (so0 == NULL)
       return;
-    unsigned int n1 = strlen(s);
-    unsigned int n2 = strlen(so0->s);
+    unsigned int n1 = static_cast<unsigned int>(strlen(s));
+    unsigned int n2 = static_cast<unsigned int>(strlen(so0->s));
     char* d = static_cast<char*>(heap.ralloc(sizeof(char)*(n1+n2+1)));
     for (unsigned int i=n1; i--; )
       d[i] = s[i];
