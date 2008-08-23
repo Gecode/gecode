@@ -299,7 +299,7 @@ public:
   // Constructor
   MyGenericPropagator(Space*,View0,ViewArray<View1>&,int);
   // Actor type identifier
-  static Gecode::Symbol ati(void) const {
+  static Gecode::Support::Symbol ati(void) const {
     return Gecode::Reflection::mangle<View0,View1>("MyGenericPropagator");
   }
   // Return specification for reflection
