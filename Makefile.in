@@ -1209,7 +1209,7 @@ framework: $(STATICTARGETS)
 	$(CXX) -all_load -compatibility_version @GECODE_SOVERSION@.0 \
 	  -current_version @GECODE_SOVERSION@.0 \
 	  -install_name /Library/Frameworks/gecode.framework/Versions/@GECODE_SOVERSION@/gecode \
-	  $(DLLFLAGS) \
+	  $(DLLFLAGS) $(LINKQT) \
 	  -o gecode.framework/Versions/@GECODE_SOVERSION@/gecode $^
 	$(MAKE) doinstallheaders \
 	  prefix=gecode.framework/Versions/@GECODE_SOVERSION@ DESTDIR=
