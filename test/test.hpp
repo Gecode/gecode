@@ -83,6 +83,10 @@ namespace Test {
   Base::next(void) const {
     return _next;
   }
+  inline void 
+  Base::next(Base* n) {
+    _next=n;
+  }
   inline bool
   Base::fixpoint(void) {
     return rand(opt.fixprob) == 0;

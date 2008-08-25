@@ -69,28 +69,38 @@ namespace Test {
    *
    */
   Base::Base(const std::string& s)
-    : _name(s) {
-    if (_tests == NULL) {
-      _tests = this; _next = NULL;
-    } else {
-      // Search alphabetic_testsy
-      Base* p = NULL;
-      Base* c = _tests;
-      while ((c != NULL) && (c->name() < s)) {
-        p = c; c = c->_next;
-      }
-      if (c == NULL) {
-        p->_next = this; _next = NULL;
-      } else if (c == _tests) {
-        _next = _tests; _tests = this;
-      } else {
-        p->_next = this; _next = c;
-      }
-    }
+    : _name(s), _next(_tests) {
+    _tests = this; _n_tests++;
   }
 
   Base* Base::_tests = NULL;
-  
+  unsigned int Base::_n_tests = 0;
+
+  /// Sort tests by name
+  class SortByName {
+  public:
+    forceinline bool
+    operator()(Base* x, Base* y) {
+      return x->name() > y->name();
+    }
+  };
+
+  void
+  Base::sort(void) {
+    Base** b = Gecode::heap.alloc<Base*>(_n_tests);
+    unsigned int i=0;
+    for (Base* t = _tests; t != NULL; t = t->next())
+      b[i++] = t;
+    SortByName sbn;
+    Gecode::Support::quicksort(b,_n_tests,sbn);
+    i=0;
+    _tests = NULL;
+    for ( ; i < _n_tests; i++) {
+      b[i]->next(_tests); _tests = b[i];
+    }
+    Gecode::heap.free(b,_n_tests);
+  }
+
   Base::~Base(void) {}
   
   Gecode::Support::RandomGenerator Base::rand 
@@ -215,6 +225,8 @@ main(int argc, char* argv[]) {
 
   opt.parse(argc, argv);
   
+  Base::sort();
+
   if (list) {
     for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
       std::cout << t->name() << std::endl;

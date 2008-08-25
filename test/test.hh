@@ -132,15 +132,21 @@ namespace Test {
     Base* _next;
     /// All tests
     static Base* _tests;
+    /// How many tests
+    static unsigned int _n_tests;
   public:
     /// Create and register test with name \a s
     Base(const std::string& s);
+    /// Sort tests alphabetically
+    static void sort(void);
     /// Return name of test
     const std::string& name(void) const;
     /// Return all tests
     static Base* tests(void);
     /// Return next test
     Base* next(void) const;
+    /// Set next test
+    void next(Base* n);
     /// Run test
     virtual bool run(void) = 0;
     /// Throw a coin whether to compute a fixpoint
