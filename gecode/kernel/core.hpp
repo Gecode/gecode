@@ -2591,13 +2591,13 @@ namespace Gecode {
     sub += n;
     base = t;
     // Set subscriptions using actor forwarding pointers
-    while ((n-4) >= 0) {
+    while (n >= 4) {
       n -= 4;
       t[0]=f[0]->prev(); t[1]=f[1]->prev();
       t[2]=f[2]->prev(); t[3]=f[3]->prev();
       t += 4; f += 4;
     }
-    if ((n-2) >= 0) {
+    if (n >= 2) {
       n -= 2;
       t[0]=f[0]->prev(); t[1]=f[1]->prev();
       t += 2; f += 2;
