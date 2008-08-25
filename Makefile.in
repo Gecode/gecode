@@ -1193,6 +1193,9 @@ $(MMSTATICLIB): $(MMOBJ)
 $(SERSTATICLIB): $(SEROBJ)
 	$(AR) $(ARFLAGS) $@ $(SEROBJ)
 	$(RANLIB) $@
+$(GISTSTATICLIB): $(GISTOBJ)
+	$(AR) $(ARFLAGS) $@ $(GISTOBJ)
+	$(RANLIB) $@
 
 #
 # Mac OS X Framework
