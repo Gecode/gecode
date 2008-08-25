@@ -121,16 +121,6 @@ namespace Gecode { namespace MiniModel {
             icl, pk);
       }
       break;
-    case NT_IMP:
-      rel(home, 
-          l->post(home, icl, pk), BOT_IMP, r->post(home, icl, pk), b, 
-          icl, pk);
-      break;
-    case NT_XOR:
-      rel(home, 
-          l->post(home, icl, pk), BOT_XOR, r->post(home, icl, pk), b, 
-          icl, pk);
-      break;
     case NT_EQV:
       rel(home, 
           l->post(home, icl, pk), BOT_EQV, r->post(home, icl, pk), b, 
@@ -157,6 +147,10 @@ namespace Gecode { namespace MiniModel {
       case NT_NOT:
         l->post(home, false, icl, pk);
         break;
+      case NT_AND:
+        l->post(home, true, icl, pk); 
+        r->post(home, true, icl, pk);
+        break;
       case NT_OR:
         if (same > 2) {
           BoolVarArgs ba(same);
@@ -167,10 +161,6 @@ namespace Gecode { namespace MiniModel {
               l->post(home, icl, pk), BOT_OR, r->post(home, icl, pk), 1, 
               icl, pk);
         }
-        break;
-      case NT_AND:
-        l->post(home, true, icl, pk); 
-        r->post(home, true, icl, pk);
         break;
       case NT_EQV:
         if ((l->t == NT_VAR) && (r->t != NT_VAR)) {
@@ -193,11 +183,7 @@ namespace Gecode { namespace MiniModel {
         rl_bool.post(home, true, icl, pk);
         break;
       default:
-        {
-          BoolVar b(home, 1, 1);
-          post(home, b, icl, pk);
-        }
-        break;
+        GECODE_NEVER;
       }
     } else {
       switch (t) {
@@ -206,10 +192,6 @@ namespace Gecode { namespace MiniModel {
         break;
       case NT_NOT:
         l->post(home, true, icl, pk);
-        break;
-      case NT_OR:
-        l->post(home, false, icl, pk); 
-        r->post(home, false, icl, pk);
         break;
       case NT_AND:
         if (same > 2) {
@@ -222,20 +204,12 @@ namespace Gecode { namespace MiniModel {
               icl, pk);
         }
         break;
-      case NT_IMP:
-        l->post(home, true, icl, pk);
+      case NT_OR:
+        l->post(home, false, icl, pk); 
         r->post(home, false, icl, pk);
         break;
-      case NT_XOR:
-        if ((l->t == NT_VAR) && (r->t != NT_VAR)) {
-          r->post(home, l->x, icl, pk);
-        } else if ((l->t != NT_VAR) && (r->t == NT_VAR)) {
-          l->post(home, r->x, icl, pk);
-        } else if ((l->t != NT_VAR) && (r->t != NT_VAR)) {
-          BoolVar b(home, 0, 1);
-          l->post(home, b, icl, pk);
-          r->post(home, b, icl, pk);
-        } else {
+      case NT_EQV:
+        {
           BoolVar b(home, 0, 0);
           post(home, b, icl, pk);
         }
@@ -247,11 +221,7 @@ namespace Gecode { namespace MiniModel {
         rl_bool.post(home, false, icl, pk);
         break;
       default:
-        {
-          BoolVar b(home, 0, 0);
-          post(home, b, icl, pk);
-        }
-        break;
+        GECODE_NEVER;
       }
     }
   }
@@ -276,15 +246,20 @@ namespace Gecode { namespace MiniModel {
     n->r->use++;
   }
 
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t)
-    : n(new Node) {
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) {
     (void) t;
     assert(t == NT_NOT);
-    n->same = 1;
-    n->t    = NT_NOT;
-    n->l    = l.n;
-    n->l->use++;
-    n->r    = NULL;
+    if (l.n->t == NT_NOT) {
+      n = l.n->l;
+      n->use++;
+    } else {
+      n = new Node;
+      n->same = 1;
+      n->t    = NT_NOT;
+      n->l    = l.n;
+      n->l->use++;
+      n->r    = NULL;
+    }
   }
 
   BoolExpr::BoolExpr(const LinRel<IntVar>& rl)

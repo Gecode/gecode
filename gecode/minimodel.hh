@@ -456,8 +456,6 @@ namespace Gecode {
         NT_NOT,       ///< Negation
         NT_AND,       ///< Conjunction
         NT_OR,        ///< Disjunction
-        NT_IMP,       ///< Implication
-        NT_XOR,       ///< Exclusive or
         NT_EQV,       ///< Equivalence
         NT_RLIN_INT,  ///< Reified linear relation (integer variables)
         NT_RLIN_BOOL  ///< Reified linear relation (Boolean variables)

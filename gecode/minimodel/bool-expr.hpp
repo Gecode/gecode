@@ -78,9 +78,10 @@ operator||(const Gecode::MiniModel::BoolExpr& l,
 inline Gecode::MiniModel::BoolExpr
 operator^(const Gecode::MiniModel::BoolExpr& l,
           const Gecode::MiniModel::BoolExpr& r) {
-  return Gecode::MiniModel::BoolExpr(l,
-                                     Gecode::MiniModel::BoolExpr::NT_XOR,
-                                     r);
+  return Gecode::MiniModel::BoolExpr
+    (Gecode::MiniModel::BoolExpr(l,
+                                 Gecode::MiniModel::BoolExpr::NT_EQV,
+                                 r),Gecode::MiniModel::BoolExpr::NT_NOT);
 }
 
 template <class Var>
@@ -108,9 +109,10 @@ namespace Gecode {
   inline MiniModel::BoolExpr
   imp(const MiniModel::BoolExpr& l,
       const MiniModel::BoolExpr& r) {
-    return MiniModel::BoolExpr(l,
-                               MiniModel::BoolExpr::NT_IMP,
-                               r);
+    return MiniModel::BoolExpr
+      (MiniModel::BoolExpr(l,MiniModel::BoolExpr::NT_NOT),
+       MiniModel::BoolExpr::NT_OR,
+       r);
   }
 
 
