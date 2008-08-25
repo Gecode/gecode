@@ -65,7 +65,7 @@
 
 [RELEASE]
 Version: 2.2.0
-Date: ?
+Date: 2008-08-25
 [DESCRIPTION]
 This release adds many domain consistent propagators for
 arithmetic constraints and fixes a number of bugs. Some of these
