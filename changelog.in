@@ -70,6 +70,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Decomposition during search (DDS) has been added as a new search engine. DDS 
+is an implementation of And/Or search. It tries to decompose the problem into 
+independent subproblems, potentially reducing the search space dramatically. 
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor
@@ -367,7 +376,7 @@ expressed by view and value branchings.
 
 [RELEASE]
 Version: 2.2.0
-Date: ?
+Date: 2008-08-25
 [DESCRIPTION]
 This release adds many domain consistent propagators for
 arithmetic constraints and fixes a number of bugs. Some of these
@@ -521,15 +530,6 @@ Rank:   minor
 Thanks: David Rijsman
 [DESCRIPTION]
 Cumulatives did not do all the pruning it should do.
-
-[ENTRY]
-Module: search
-What:   new
-Rank:   major
-[DESCRIPTION]
-Decomposition during search (DDS) has been added as a new search engine. DDS 
-is an implementation of And/Or search. It tries to decompose the problem into 
-independent subproblems, potentially reducing the search space dramatically. 
 
 [ENTRY]
 Module: int
