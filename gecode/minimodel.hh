@@ -173,8 +173,8 @@ namespace Gecode {
       /// Post propagator for relation (if \a t is false for negated relation)
       void post(Space& home, bool t, 
                 IntConLevel icl, PropKind pk) const;
-      /// Post reified propagator for relation
-      void post(Space& home, const BoolVar& b,
+      /// Post reified propagator for relation (if \a t is false for negated relation)
+      void post(Space& home, const BoolVar& b, bool t,
                 IntConLevel icl, PropKind pk) const;
     };
 
@@ -483,10 +483,46 @@ namespace Gecode {
         /// Decrement reference count and possibly free memory
         GECODE_MINIMODEL_EXPORT 
         bool decrement(void);
+        /// Memory management
+        static void* operator new(size_t size);
+        /// Memory management
+        static void  operator delete(void* p, size_t size);
+      };
+      /// Node for negation normalform (NNF)
+      class NNF {
+      public:
+        /// Type of node (NT_VAR is just any atomic formula)
+        NodeType t;
+        /// Number of positive literals for node type
+        unsigned int p;
+        /// Number of negative literals for node type
+        unsigned int n;
+        /// Union depending on nodetype \a t
+        union {
+          /// For binary nodes (and, or, eqv)
+          struct {
+            /// Left subtree
+            NNF* l; 
+            /// Right subtree
+            NNF* r;
+          } b;
+          /// For atomic nodes
+          struct {
+            /// Is atomic formula negative
+            bool neg;
+            /// Pointer to corresponding Boolean expression node
+            Node* x;
+          } a;
+        } u;
+        /// Create negation normalform
+        GECODE_MINIMODEL_EXPORT
+        static NNF* nnf(Region& r, Node* n, bool neg);
         /// Post propagators for nested conjunctive and disjunctive expression
         GECODE_MINIMODEL_EXPORT         
-        int post(Space& home, NodeType t, BoolVarArgs& b, int i,
-                 IntConLevel icl, PropKind pk) const;
+        void post(Space& home, NodeType t, 
+                  BoolVarArgs& bp, BoolVarArgs& bn,
+                  int& ip, int& in,
+                  IntConLevel icl, PropKind pk) const;
         /// Post propagators for expression
         GECODE_MINIMODEL_EXPORT
         void post(Space& home, BoolVar b,
@@ -499,11 +535,12 @@ namespace Gecode {
         GECODE_MINIMODEL_EXPORT
         void post(Space& home, bool t,
                   IntConLevel icl, PropKind pk) const;
-        
-        /// Memory management
-        static void* operator new(size_t size);
-        /// Memory management
-        static void  operator delete(void* p,size_t size);
+        /// Allocate memory from region
+        static void* operator new(size_t s, Region& r);
+        /// No-op (for exceptions)
+        static void operator delete(void*);
+        /// No-op
+        static void operator delete(void*, Region&);
       };
     private:
       /// Pointer to node for expression

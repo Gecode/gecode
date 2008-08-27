@@ -70,6 +70,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: minimodel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Posting constraints according to Boolean expressions now uses a
+negation normalform and by this avoids any propagator for
+negation and uses fewer propagators due to the new clause constraint.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major

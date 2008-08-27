@@ -91,9 +91,13 @@ namespace Gecode {
 
     template<class Var>
     forceinline void
-    LinRel<Var>::post(Space& home, const BoolVar& b,
+    LinRel<Var>::post(Space& home, const BoolVar& b, bool t,
                       IntConLevel icl, PropKind pk) const {
-      e.post(home,irt,b,icl,pk);
+      if (t) {
+        e.post(home,irt,b,icl,pk);
+      } else {
+        e.post(home,neg(irt),b,icl,pk);
+      }
     }
 
   }

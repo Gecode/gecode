@@ -49,12 +49,14 @@ namespace Gecode { namespace MiniModel {
 
   forceinline BoolVar
   BoolExpr::post(Space& home, IntConLevel icl, PropKind pk) const {
-    return n->post(home,icl,pk);
+    Region r(home);
+    return NNF::nnf(r,n,false)->post(home,icl,pk);
   }
 
   forceinline void
   BoolExpr::post(Space& home, bool t, IntConLevel icl, PropKind pk) const {
-    n->post(home,t,icl,pk);
+    Region r(home);
+    return NNF::nnf(r,n,false)->post(home,t,icl,pk);
   }
 
 }}

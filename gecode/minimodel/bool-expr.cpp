@@ -70,162 +70,6 @@ namespace Gecode { namespace MiniModel {
     return false;
   }
   
-  BoolVar
-  BoolExpr::Node::post(Space& home, IntConLevel icl, PropKind pk) const {
-    if (t == NT_VAR)
-      return x;
-    BoolVar b(home, 0, 1);
-    post(home, b, icl, pk);
-    return b;
-  }
-  
-  int
-  BoolExpr::Node::post(Space& home, NodeType t, 
-                       BoolVarArgs& b, int i, 
-                       IntConLevel icl, PropKind pk) const {
-    if (this->t != t) {
-      b[i] = post(home, icl, pk);
-      return i+1;
-    } else {
-      return l->post(home, t, b, r->post(home, t, b, i, icl, pk), icl, pk);
-    }
-  }
-  
-  void
-  BoolExpr::Node::post(Space& home, BoolVar b, 
-                       IntConLevel icl, PropKind pk) const {
-    assert(t != NT_VAR);
-    switch (t) {
-    case NT_NOT:
-      rel(home, l->post(home, icl, pk), IRT_NQ, b, icl, pk);
-      break;
-    case NT_AND:
-      if (same > 2) {
-        BoolVarArgs ba(same);
-        (void) post(home, NT_AND, ba, 0, icl, pk);
-        rel(home, BOT_AND, ba, b, icl, pk);
-      } else {
-        rel(home, 
-            l->post(home, icl, pk), BOT_AND, r->post(home, icl, pk), b, 
-            icl, pk);
-      }
-      break;
-    case NT_OR:
-      if (same > 2) {
-        BoolVarArgs ba(same);
-        (void) post(home, NT_OR, ba, 0, icl, pk);
-        rel(home, BOT_OR, ba, b, icl, pk);
-      } else {
-        rel(home, 
-            l->post(home, icl, pk), BOT_OR, r->post(home, icl, pk), b, 
-            icl, pk);
-      }
-      break;
-    case NT_EQV:
-      rel(home, 
-          l->post(home, icl, pk), BOT_EQV, r->post(home, icl, pk), b, 
-          icl, pk);
-      break;
-    case NT_RLIN_INT:
-      rl_int.post(home, b, icl, pk);
-      break;
-    case NT_RLIN_BOOL:
-      rl_bool.post(home, b, icl, pk);
-      break;
-    default: GECODE_NEVER;
-    }
-  }
-  
-  void
-  BoolExpr::Node::post(Space& home, bool b, 
-                       IntConLevel icl, PropKind pk) const {
-    if (b) {
-      switch (t) {
-      case NT_VAR:
-        rel(home, x, IRT_EQ, 1);
-        break;
-      case NT_NOT:
-        l->post(home, false, icl, pk);
-        break;
-      case NT_AND:
-        l->post(home, true, icl, pk); 
-        r->post(home, true, icl, pk);
-        break;
-      case NT_OR:
-        if (same > 2) {
-          BoolVarArgs ba(same);
-          (void) post(home, NT_OR, ba, 0, icl, pk);
-          rel(home, BOT_OR, ba, 1, icl, pk);
-        } else {
-          rel(home, 
-              l->post(home, icl, pk), BOT_OR, r->post(home, icl, pk), 1, 
-              icl, pk);
-        }
-        break;
-      case NT_EQV:
-        if ((l->t == NT_VAR) && (r->t != NT_VAR)) {
-          r->post(home, l->x, icl, pk);
-        } else if ((l->t != NT_VAR) && (r->t == NT_VAR)) {
-          l->post(home, r->x, icl, pk);
-        } else if ((l->t != NT_VAR) && (r->t != NT_VAR)) {
-          BoolVar b(home, 0, 1);
-          l->post(home, b, icl, pk);
-          r->post(home, b, icl, pk);
-        } else {
-          BoolVar b(home, 1, 1);
-          post(home, b, icl, pk);
-        }
-        break;
-      case NT_RLIN_INT:
-        rl_int.post(home, true, icl, pk);
-        break;
-      case NT_RLIN_BOOL:
-        rl_bool.post(home, true, icl, pk);
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    } else {
-      switch (t) {
-      case NT_VAR:
-        rel(home, x, IRT_EQ, 0, icl, pk);
-        break;
-      case NT_NOT:
-        l->post(home, true, icl, pk);
-        break;
-      case NT_AND:
-        if (same > 2) {
-          BoolVarArgs ba(same);
-          (void) post(home, NT_AND, ba, 0, icl, pk);
-          rel(home, BOT_AND, ba, 0, icl, pk);
-        } else {
-          rel(home, 
-              l->post(home, icl, pk), BOT_AND, r->post(home, icl, pk), 0, 
-              icl, pk);
-        }
-        break;
-      case NT_OR:
-        l->post(home, false, icl, pk); 
-        r->post(home, false, icl, pk);
-        break;
-      case NT_EQV:
-        {
-          BoolVar b(home, 0, 0);
-          post(home, b, icl, pk);
-        }
-        break;
-      case NT_RLIN_INT:
-        rl_int.post(home, false, icl, pk);
-        break;
-      case NT_RLIN_BOOL:
-        rl_bool.post(home, false, icl, pk);
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    }
-  }
-
   BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
     n->same = 1;
     n->t    = NT_VAR;
@@ -296,7 +140,278 @@ namespace Gecode { namespace MiniModel {
       delete n;
   }
 
+  /*
+   * Operations for negation normalform
+   *
+   */
+  forceinline void
+  BoolExpr::NNF::operator delete(void*) {}
 
+  forceinline void
+  BoolExpr::NNF::operator delete(void*, Region&) {}
+
+  forceinline void*
+  BoolExpr::NNF::operator new(size_t s, Region& r) {
+    return r.ralloc(s);
+  }
+
+  BoolVar
+  BoolExpr::NNF::post(Space& home, IntConLevel icl, PropKind pk) const {
+    if (t == NT_VAR) {
+      switch (u.a.x->t) {
+      case NT_VAR:
+        if (u.a.neg) {
+          BoolVar b(home,0,1);
+          rel(home, u.a.x->x, IRT_NQ, b);
+          return b;
+        } else {
+          return u.a.x->x;
+        }
+      case NT_RLIN_INT:
+        {
+          BoolVar b(home,0,1);
+          u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
+          return b;
+        }
+      case NT_RLIN_BOOL:
+        {
+          BoolVar b(home,0,1);
+          u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
+          return b;
+        }
+      default:
+        GECODE_NEVER;
+      }
+    }
+    BoolVar b(home, 0, 1);
+    post(home, b, icl, pk);
+    return b;
+  }
+  
+  void
+  BoolExpr::NNF::post(Space& home, NodeType t, 
+                      BoolVarArgs& bp, BoolVarArgs& bn,
+                      int& ip, int& in, 
+                      IntConLevel icl, PropKind pk) const {
+    if (this->t != t) {
+      if (this->t == NT_VAR) {
+        switch (u.a.x->t) {
+        case NT_VAR:
+          if (u.a.neg) {
+            bn[in++]=u.a.x->x;
+          } else {
+            bp[ip++]=u.a.x->x;
+          }
+          break;
+        case NT_RLIN_INT:
+          {
+            BoolVar b(home,0,1);
+            u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
+            bp[ip++]=b;
+          }
+          break;
+        case NT_RLIN_BOOL:
+          {
+            BoolVar b(home,0,1);
+            u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
+            bp[ip++]=b;
+          }
+          break;
+        default:
+          GECODE_NEVER;
+        }
+      } else {
+        bp[ip++] = post(home, icl, pk); 
+      }
+    } else {
+      u.b.l->post(home, t, bp, bn, ip, in, icl, pk);
+      u.b.r->post(home, t, bp, bn, ip, in, icl, pk);
+    }
+  }
+
+  void
+  BoolExpr::NNF::post(Space& home, BoolVar b, 
+                      IntConLevel icl, PropKind pk) const {
+    assert(t != NT_VAR);
+    switch (t) {
+    case NT_AND:
+      {
+        BoolVarArgs bp(p), bn(n);
+        int ip=0, in=0;
+        post(home, NT_AND, bp, bn, ip, in, icl, pk);
+        clause(home, BOT_AND, bp, bn, b);
+      }
+      break;
+    case NT_OR:
+      {
+        BoolVarArgs bp(p), bn(n);
+        int ip=0, in=0;
+        post(home, NT_OR, bp, bn, ip, in, icl, pk);
+        clause(home, BOT_OR, bp, bn, b);
+      }
+      break;
+    case NT_EQV:
+      {
+        bool n = false;
+        BoolVar l;
+        if ((u.b.l->t == NT_VAR) && (u.b.l->u.a.x->t == NT_VAR)) {
+          l = u.b.l->u.a.x->x;
+          if (u.b.l->u.a.neg) n = !n;
+        } else {
+          l = u.b.l->post(home,icl,pk);
+        }
+        BoolVar r;
+        if ((u.b.r->t == NT_VAR) && (u.b.r->u.a.x->t == NT_VAR)) {
+          r = u.b.r->u.a.x->x;
+          if (u.b.r->u.a.neg) n = !n;
+        } else {
+          r = u.b.r->post(home,icl,pk);
+        }
+        rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, icl, pk);
+      }
+      break;
+    default:
+      GECODE_NEVER;
+    }
+  }
+  
+  void
+  BoolExpr::NNF::post(Space& home, bool b, 
+                      IntConLevel icl, PropKind pk) const {
+    if (b) {
+      switch (t) {
+      case NT_VAR:
+        switch (u.a.x->t) {
+        case NT_VAR:
+          rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
+          break;
+        case NT_RLIN_INT:
+          u.a.x->rl_int.post(home, !u.a.neg, icl, pk);
+          break;
+        case NT_RLIN_BOOL:
+          u.a.x->rl_bool.post(home, !u.a.neg, icl, pk);
+          break;
+        default:
+          GECODE_NEVER;
+        }
+        break;
+      case NT_AND:
+        u.b.l->post(home, true, icl, pk); 
+        u.b.r->post(home, true, icl, pk);
+        break;
+      case NT_OR:
+        {
+          BoolVarArgs bp(p), bn(n);
+          int ip=0, in=0;
+          post(home, NT_OR, bp, bn, ip, in, icl, pk);
+          clause(home, BOT_OR, bp, bn, 1);
+        }
+        break;
+      case NT_EQV:
+        {
+          BoolVar b(home,1,1);
+          post(home, b, icl, pk);
+        }
+        break;
+      default:
+        GECODE_NEVER;
+      }
+    } else {
+      switch (t) {
+      case NT_VAR:
+        switch (u.a.x->t) {
+        case NT_VAR:
+          rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 1 : 0);
+          break;
+        case NT_RLIN_INT:
+          u.a.x->rl_int.post(home, u.a.neg, icl, pk);
+          break;
+        case NT_RLIN_BOOL:
+          u.a.x->rl_bool.post(home, u.a.neg, icl, pk);
+          break;
+        default:
+          GECODE_NEVER;
+        }
+        break;
+      case NT_AND:
+        {
+          BoolVarArgs bp(p), bn(n);
+          int ip=0, in=0;
+          post(home, NT_AND, bp, bn, ip, in, icl, pk);
+          clause(home, BOT_AND, bp, bn, 0);
+        }
+        break;
+      case NT_OR:
+        u.b.l->post(home, false, icl, pk); 
+        u.b.r->post(home, false, icl, pk);
+        break;
+      case NT_EQV:
+        {
+          BoolVar b(home,0,0);
+          post(home, b, icl, pk);
+        }
+        break;
+      default:
+        GECODE_NEVER;
+      }
+    }
+  }
+
+  BoolExpr::NNF*
+  BoolExpr::NNF::nnf(Region& r, Node* n, bool neg) {
+    switch (n->t) {
+    case NT_VAR: case NT_RLIN_INT: case NT_RLIN_BOOL:
+      {
+        NNF* x = new (r) NNF;
+        x->t = NT_VAR; x->u.a.neg = neg; x->u.a.x = n;
+        if (neg) {
+          x->p = 0; x->n = 1;
+        } else {
+          x->p = 1; x->n = 0;
+        }
+        return x;
+      }
+    case NT_NOT:
+      return nnf(r,n->l,!neg);
+    case NT_AND: case NT_OR:
+      {
+        NodeType t = ((n->t == NT_AND) == neg) ? NT_OR : NT_AND;
+        NNF* x = new (r) NNF;
+        x->t = t;
+        x->u.b.l = nnf(r,n->l,neg);
+        x->u.b.r = nnf(r,n->r,neg);
+        unsigned int p_l, n_l;
+        if ((x->u.b.l->t == t) || (x->u.b.l->t == NT_VAR)) {
+          p_l=x->u.b.l->p; n_l=x->u.b.l->n;
+        } else {
+          p_l=1; n_l=0;
+        } 
+        unsigned int p_r, n_r;
+        if ((x->u.b.r->t == t) || (x->u.b.r->t == NT_VAR)) {
+          p_r=x->u.b.r->p; n_r=x->u.b.r->n;
+        } else {
+          p_r=1; n_r=0;
+        }
+        x->p = p_l+p_r;
+        x->n = n_l+n_r;
+        return x;
+      }
+    case NT_EQV:
+      {
+        NNF* x = new (r) NNF;
+        x->t = NT_EQV;
+        x->u.b.l = nnf(r,n->l,neg);
+        x->u.b.r = nnf(r,n->r,false);
+        x->p = 2; x->n = 0;
+        return x;
+      }
+    default:
+      GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return NULL;
+  }
+  
 }}
 
 // STATISTICS: minimodel-any
