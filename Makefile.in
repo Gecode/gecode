@@ -621,7 +621,7 @@ DDSBUILDDIRS	= dds
 #
 
 GISTHDR0 = \
-	better.hh drawingcursor.hh \
+	drawingcursor.hh \
 	gist.hpp gecodelogo.hh node.hh node.hpp \
 	nodecursor.hh nodecursor.hpp nodevisitor.hh \
 	nodevisitor.hpp layoutcursor.hh layoutcursor.hpp \
