@@ -1646,7 +1646,7 @@ namespace Gecode {
    */
   forceinline
   SharedHandle::Object::Object(void) 
-    : use_cnt(0), fwd(NULL) {}
+    : fwd(NULL), use_cnt(0) {}
   forceinline
   SharedHandle::Object::~Object(void) {
     assert(use_cnt == 0);
