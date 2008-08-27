@@ -196,6 +196,16 @@ dnl Definition of variable types
 dnl Include contributor's vtis
 dnl @VTIS@
 
+AC_GECODE_VTI(float,
+        [float variable library (requires boost interval library)],
+        no,[
+	ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
+   	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
+	AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
+	AC_MSG_ERROR([The boost interval library could not be found.])])
+	CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
+        ],[])
+
 AC_GECODE_VTI(set,
 	[finite set library (implies --enable-int-vars)],
 	yes,
