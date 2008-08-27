@@ -204,9 +204,7 @@ AC_GECODE_VTI(float,
         [float variable library (requires boost interval library)],
         no,[
 	ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
-	echo "Old Path: ${CPPFLAGS}"
    	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
-	echo "Path: ${CPPFLAGS}"
 	AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
 	AC_MSG_ERROR([The boost interval library could not be found.])])
 	CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
