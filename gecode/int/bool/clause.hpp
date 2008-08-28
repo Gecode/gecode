@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Bool {
       return NaryOrTrue<VX>::post(home,x);
     if ((x.size() == 1) && (y.size() == 1)) {
       return BinOrTrue<VX,VY>::post(home,x[0],y[0]);
-    } else {
+    } else if (!x.shared(home,y)) {
       (void) new (home) ClauseTrue(home,x,y);
     }
     return ES_OK;
@@ -313,6 +313,8 @@ namespace Gecode { namespace Int { namespace Bool {
       return NaryOr<VX,VX>::post(home,x,z);
     if ((x.size() == 1) && (y.size() == 1)) {
       return Or<VX,VY,VX>::post(home,x[0],y[0],z);
+    } else if (x.shared(home,y)) {
+      GECODE_ME_CHECK(z.one_none(home));
     } else {
       (void) new (home) Clause<VX,VY>(home,x,y,z);
     }

@@ -300,14 +300,14 @@ namespace Test { namespace Int {
 
      
      /// Test for Clause Boolean operation
-     class Clause : public Test {
+     class ClauseXYZ : public Test {
      protected:
        /// Boolean operation type for test
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       Clause(Gecode::BoolOpType op0, int n) 
-         : Test("Bool::Clause::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
+       ClauseXYZ(Gecode::BoolOpType op0, int n) 
+         : Test("Bool::Clause::XYZ::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n = (x.size()-1) / 2;
@@ -335,14 +335,14 @@ namespace Test { namespace Int {
      };
      
      /// Test for Clause Boolean operation
-     class ClauseShared : public Test {
+     class ClauseXXYYX : public Test {
      protected:
        /// Boolean operation type for test
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       ClauseShared(Gecode::BoolOpType op0, int n) 
-         : Test("Bool::Clause::Shared::"+str(op0)+"::"+str(n),n,0,1), 
+       ClauseXXYYX(Gecode::BoolOpType op0, int n) 
+         : Test("Bool::Clause::XXYYX::"+str(op0)+"::"+str(n),n,0,1), 
            op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -365,6 +365,33 @@ namespace Test { namespace Int {
          for (int i=n; i--; ) {
            a[i]=a[i+n]=channel(home,x[i]);
            b[i]=b[i+n]=channel(home,x[i+n]);
+         }
+         clause(home, op, a, b, a[0]);
+       }
+     };
+     
+     /// Test for Clause Boolean operation
+     class ClauseXXY : public Test {
+     protected:
+       /// Boolean operation type for test
+       Gecode::BoolOpType op;
+     public:
+       /// Construct and register test
+       ClauseXXY(Gecode::BoolOpType op0, int n) 
+         : Test("Bool::Clause::XXY::"+str(op0)+"::"+str(n),n,0,1), 
+           op(op0) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 1) == (op == Gecode::BOT_OR);
+       }
+       /// Post constraint
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n = x.size() / 2;
+         BoolVarArgs a(2*n), b(2*n);
+         for (int i=n; i--; ) {
+           a[i]=b[i+n]=channel(home,x[i]);
+           b[i]=a[i+n]=channel(home,x[i+n]);
          }
          clause(home, op, a, b, a[0]);
        }
@@ -437,12 +464,15 @@ namespace Test { namespace Int {
            (void) new NaryConst(bots.bot(),6,1);
            (void) new NaryConst(bots.bot(),10,1);
            if ((bots.bot() == BOT_AND) || (bots.bot() == BOT_OR)) {
-             (void) new Clause(bots.bot(),2);
-             (void) new Clause(bots.bot(),6);
-             (void) new Clause(bots.bot(),10);
-             (void) new ClauseShared(bots.bot(),2);
-             (void) new ClauseShared(bots.bot(),6);
-             (void) new ClauseShared(bots.bot(),10);
+             (void) new ClauseXYZ(bots.bot(),2);
+             (void) new ClauseXYZ(bots.bot(),6);
+             (void) new ClauseXYZ(bots.bot(),10);
+             (void) new ClauseXXYYX(bots.bot(),2);
+             (void) new ClauseXXYYX(bots.bot(),6);
+             (void) new ClauseXXYYX(bots.bot(),10);
+             (void) new ClauseXXY(bots.bot(),2);
+             (void) new ClauseXXY(bots.bot(),6);
+             (void) new ClauseXXY(bots.bot(),10);
              (void) new ClauseConst(bots.bot(),2,0);
              (void) new ClauseConst(bots.bot(),6,0);
              (void) new ClauseConst(bots.bot(),10,0);

@@ -140,9 +140,10 @@ namespace Gecode {
     /// Views
     View* x;
     /// Sort order for views
+    template <class X>
     class ViewLess {
     public:
-      bool operator()(const View&, const View&);
+      bool operator()(const X&, const X&);
     };
     /// Sort \a n views \a x according to \a ViewLess
     static void sort(View* x, int n);
@@ -325,7 +326,15 @@ namespace Gecode {
      *
      * Note that assigned views are ignored.
      */
-    bool shared(const Space& home, const View& y) const;
+    template <class ViewY>
+    bool shared(const Space& home, const ViewY& y) const;
+    /**
+     * \brief Test whether array together with array \a y contains shared views
+     *
+     * Note that assigned views are ignored.
+     */
+    template <class ViewY>
+    bool shared(const Space& home, const ViewArray<ViewY>& y) const;
     //@}
 
     /// \name Reflection
@@ -889,27 +898,27 @@ namespace Gecode {
     return before(x,y);
   }
 
-  template <class View>
+  template <class View> template <class X>
   forceinline bool
-  ViewArray<View>::ViewLess::operator()(const View& a, const View& b) {
+  ViewArray<View>::ViewLess<X>::operator()(const X& a, const X& b) {
     return __before(a,b);
   }
 
   template <class View>
   void
   ViewArray<View>::sort(View* y, int m) {
-    ViewLess vl;
-    Support::quicksort<View,ViewLess>(y,m,vl);
+    ViewLess<View> vl;
+    Support::quicksort<View,ViewLess<View> >(y,m,vl);
   }
 
-  template <class View>
+  template <class X, class Y>
   forceinline bool
-  __same(const View& x, const View& y) {
+  __same(const X& x, const Y& y) {
     return same(x,y);
   }
-  template <class View>
+  template <class X, class Y>
   forceinline bool
-  __shared(const View& x, const View& y) {
+  __shared(const X& x, const Y& y) {
     return shared(x,y);
   }
 
@@ -975,14 +984,48 @@ namespace Gecode {
     return false;
   }
 
-  template <class View>
+  template <class View> template <class ViewY>
   bool
-  ViewArray<View>::shared(const Space&, const View& y) const {
+  ViewArray<View>::shared(const Space&, const ViewY& y) const {
     if (y.assigned())
       return false;
     for (int i = n; i--; )
-      if (__shared(x[i],y))
+      if (!x[i].assigned() && __shared(x[i],y))
         return true;
+    return false;
+  }
+
+  template <class View> template <class ViewY>
+  bool
+  ViewArray<View>::shared(const Space& home, const ViewArray<ViewY>& y) const {
+    if ((size() < 1) || (y.size() < 1))
+      return false;
+    Region r(home);
+    View* xs = r.alloc<View>(size());
+    for (int i=size(); i--; )
+      xs[i] = x[i];
+    ViewLess<View> xvl;
+    Support::quicksort<View,ViewLess<View> >(xs,size(),xvl);
+    ViewY* ys = r.alloc<ViewY>(y.size());
+    for (int j=y.size(); j--; )
+      ys[j] = y[j];
+    ViewLess<ViewY> yvl;
+    Support::quicksort<ViewY,ViewLess<ViewY> >(ys,y.size(),yvl);
+    {
+      int i=0, j=0;
+      while ((i < size()) && (j < y.size()))
+        if (!x[i].assigned() && __shared(x[i],y[j])) {
+          r.free<View>(xs,size());
+          r.free<ViewY>(ys,y.size());
+          return true;
+        } else if (before(x[i],y[j])) {
+          i++;
+        } else {
+          j++;
+        }
+    }
+    r.free<View>(xs,size());
+    r.free<ViewY>(ys,y.size());
     return false;
   }
 
