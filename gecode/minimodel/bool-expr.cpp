@@ -155,85 +155,27 @@ namespace Gecode { namespace MiniModel {
     return r.ralloc(s);
   }
 
-  BoolVar
-  BoolExpr::NNF::post(Space& home, IntConLevel icl, PropKind pk) const {
-    if (t == NT_VAR) {
-      switch (u.a.x->t) {
-      case NT_VAR:
-        if (u.a.neg) {
-          BoolVar b(home,0,1);
-          rel(home, u.a.x->x, IRT_NQ, b);
-          return b;
-        } else {
-          return u.a.x->x;
-        }
-      case NT_RLIN_INT:
-        {
-          BoolVar b(home,0,1);
-          u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
-          return b;
-        }
-      case NT_RLIN_BOOL:
-        {
-          BoolVar b(home,0,1);
-          u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
-          return b;
-        }
-      default:
-        GECODE_NEVER;
-      }
-    }
-    BoolVar b(home, 0, 1);
-    post(home, b, icl, pk);
-    return b;
-  }
-  
-  void
-  BoolExpr::NNF::post(Space& home, NodeType t, 
-                      BoolVarArgs& bp, BoolVarArgs& bn,
-                      int& ip, int& in, 
-                      IntConLevel icl, PropKind pk) const {
-    if (this->t != t) {
-      if (this->t == NT_VAR) {
-        switch (u.a.x->t) {
-        case NT_VAR:
-          if (u.a.neg) {
-            bn[in++]=u.a.x->x;
-          } else {
-            bp[ip++]=u.a.x->x;
-          }
-          break;
-        case NT_RLIN_INT:
-          {
-            BoolVar b(home,0,1);
-            u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
-            bp[ip++]=b;
-          }
-          break;
-        case NT_RLIN_BOOL:
-          {
-            BoolVar b(home,0,1);
-            u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
-            bp[ip++]=b;
-          }
-          break;
-        default:
-          GECODE_NEVER;
-        }
-      } else {
-        bp[ip++] = post(home, icl, pk); 
-      }
-    } else {
-      u.b.l->post(home, t, bp, bn, ip, in, icl, pk);
-      u.b.r->post(home, t, bp, bn, ip, in, icl, pk);
-    }
+  forceinline bool
+  BoolExpr::NNF::atomic(void) const {
+    return (t == NT_VAR) || (t == NT_RLIN_INT) || (t == NT_RLIN_BOOL);
   }
 
-  void
-  BoolExpr::NNF::post(Space& home, BoolVar b, 
-                      IntConLevel icl, PropKind pk) const {
-    assert(t != NT_VAR);
+  BoolVar
+  BoolExpr::NNF::post(Space& home, IntConLevel icl, PropKind pk) const {
+    if ((t == NT_VAR) && !u.a.neg)
+      return u.a.x->x;
+    BoolVar b(home,0,1);
     switch (t) {
+    case NT_VAR:
+      assert(u.a.neg);
+      rel(home, u.a.x->x, IRT_NQ, b);
+      break;
+    case NT_RLIN_INT:
+      u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
+      break;
+    case NT_RLIN_BOOL:
+      u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
+      break;
     case NT_AND:
       {
         BoolVarArgs bp(p), bn(n);
@@ -254,14 +196,14 @@ namespace Gecode { namespace MiniModel {
       {
         bool n = false;
         BoolVar l;
-        if ((u.b.l->t == NT_VAR) && (u.b.l->u.a.x->t == NT_VAR)) {
+        if (u.b.l->t == NT_VAR) {
           l = u.b.l->u.a.x->x;
           if (u.b.l->u.a.neg) n = !n;
         } else {
           l = u.b.l->post(home,icl,pk);
         }
         BoolVar r;
-        if ((u.b.r->t == NT_VAR) && (u.b.r->u.a.x->t == NT_VAR)) {
+        if (u.b.r->t == NT_VAR) {
           r = u.b.r->u.a.x->x;
           if (u.b.r->u.a.neg) n = !n;
         } else {
@@ -273,27 +215,60 @@ namespace Gecode { namespace MiniModel {
     default:
       GECODE_NEVER;
     }
+    return b;
   }
   
+  void
+  BoolExpr::NNF::post(Space& home, NodeType t, 
+                      BoolVarArgs& bp, BoolVarArgs& bn,
+                      int& ip, int& in, 
+                      IntConLevel icl, PropKind pk) const {
+    if (this->t != t) {
+      switch (this->t) {
+      case NT_VAR:
+        if (u.a.neg) {
+          bn[in++]=u.a.x->x;
+        } else {
+          bp[ip++]=u.a.x->x;
+        }
+        break;
+      case NT_RLIN_INT:
+        {
+          BoolVar b(home,0,1);
+          u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
+          bp[ip++]=b;
+        }
+        break;
+      case NT_RLIN_BOOL:
+        {
+          BoolVar b(home,0,1);
+          u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
+          bp[ip++]=b;
+        }
+        break;
+      default:
+        bp[ip++] = post(home, icl, pk); 
+        break;
+      }
+    } else {
+      u.b.l->post(home, t, bp, bn, ip, in, icl, pk);
+      u.b.r->post(home, t, bp, bn, ip, in, icl, pk);
+    }
+  }
+
   void
   BoolExpr::NNF::post(Space& home, bool b, 
                       IntConLevel icl, PropKind pk) const {
     if (b) {
       switch (t) {
       case NT_VAR:
-        switch (u.a.x->t) {
-        case NT_VAR:
-          rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
-          break;
-        case NT_RLIN_INT:
-          u.a.x->rl_int.post(home, !u.a.neg, icl, pk);
-          break;
-        case NT_RLIN_BOOL:
-          u.a.x->rl_bool.post(home, !u.a.neg, icl, pk);
-          break;
-        default:
-          GECODE_NEVER;
-        }
+        rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
+        break;
+      case NT_RLIN_INT:
+        u.a.x->rl_int.post(home, !u.a.neg, icl, pk);
+        break;
+      case NT_RLIN_BOOL:
+        u.a.x->rl_bool.post(home, !u.a.neg, icl, pk);
         break;
       case NT_AND:
         u.b.l->post(home, true, icl, pk); 
@@ -308,10 +283,7 @@ namespace Gecode { namespace MiniModel {
         }
         break;
       case NT_EQV:
-        {
-          BoolVar b(home,1,1);
-          post(home, b, icl, pk);
-        }
+        rel(home, post(home, icl, pk), IRT_EQ, 1);
         break;
       default:
         GECODE_NEVER;
@@ -319,19 +291,13 @@ namespace Gecode { namespace MiniModel {
     } else {
       switch (t) {
       case NT_VAR:
-        switch (u.a.x->t) {
-        case NT_VAR:
-          rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 1 : 0);
-          break;
-        case NT_RLIN_INT:
-          u.a.x->rl_int.post(home, u.a.neg, icl, pk);
-          break;
-        case NT_RLIN_BOOL:
-          u.a.x->rl_bool.post(home, u.a.neg, icl, pk);
-          break;
-        default:
-          GECODE_NEVER;
-        }
+        rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 1 : 0);
+        break;
+      case NT_RLIN_INT:
+        u.a.x->rl_int.post(home, u.a.neg, icl, pk);
+        break;
+      case NT_RLIN_BOOL:
+        u.a.x->rl_bool.post(home, u.a.neg, icl, pk);
         break;
       case NT_AND:
         {
@@ -346,10 +312,7 @@ namespace Gecode { namespace MiniModel {
         u.b.r->post(home, false, icl, pk);
         break;
       case NT_EQV:
-        {
-          BoolVar b(home,0,0);
-          post(home, b, icl, pk);
-        }
+        rel(home, post(home, icl, pk), IRT_EQ, 0);
         break;
       default:
         GECODE_NEVER;
@@ -363,7 +326,7 @@ namespace Gecode { namespace MiniModel {
     case NT_VAR: case NT_RLIN_INT: case NT_RLIN_BOOL:
       {
         NNF* x = new (r) NNF;
-        x->t = NT_VAR; x->u.a.neg = neg; x->u.a.x = n;
+        x->t = n->t; x->u.a.neg = neg; x->u.a.x = n;
         if (neg) {
           x->p = 0; x->n = 1;
         } else {
@@ -381,13 +344,13 @@ namespace Gecode { namespace MiniModel {
         x->u.b.l = nnf(r,n->l,neg);
         x->u.b.r = nnf(r,n->r,neg);
         unsigned int p_l, n_l;
-        if ((x->u.b.l->t == t) || (x->u.b.l->t == NT_VAR)) {
+        if ((x->u.b.l->t == t) || x->u.b.l->atomic()) {
           p_l=x->u.b.l->p; n_l=x->u.b.l->n;
         } else {
           p_l=1; n_l=0;
         } 
         unsigned int p_r, n_r;
-        if ((x->u.b.r->t == t) || (x->u.b.r->t == NT_VAR)) {
+        if ((x->u.b.r->t == t) || x->u.b.r->atomic()) {
           p_r=x->u.b.r->p; n_r=x->u.b.r->n;
         } else {
           p_r=1; n_r=0;

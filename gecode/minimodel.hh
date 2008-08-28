@@ -491,7 +491,7 @@ namespace Gecode {
       /// Node for negation normalform (NNF)
       class NNF {
       public:
-        /// Type of node (NT_VAR is just any atomic formula)
+        /// Type of node
         NodeType t;
         /// Number of positive literals for node type
         unsigned int p;
@@ -514,6 +514,8 @@ namespace Gecode {
             Node* x;
           } a;
         } u;
+        /// Check whether node is atomic
+        bool atomic(void) const;
         /// Create negation normalform
         GECODE_MINIMODEL_EXPORT
         static NNF* nnf(Region& r, Node* n, bool neg);
@@ -522,10 +524,6 @@ namespace Gecode {
         void post(Space& home, NodeType t, 
                   BoolVarArgs& bp, BoolVarArgs& bn,
                   int& ip, int& in,
-                  IntConLevel icl, PropKind pk) const;
-        /// Post propagators for expression
-        GECODE_MINIMODEL_EXPORT
-        void post(Space& home, BoolVar b,
                   IntConLevel icl, PropKind pk) const;
         /// Post propagators for expression
         GECODE_MINIMODEL_EXPORT
