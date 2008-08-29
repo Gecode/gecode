@@ -6826,10 +6826,76 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
 
        ;;
   esac
+  { echo "$as_me:$LINENO: checking if compiler supports forced inlining" >&5
+echo $ECHO_N "checking if compiler supports forced inlining... $ECHO_C" >&6; }
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+  ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
+  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ } -Werror"
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+      inline __attribute__ ((__always_inline__)) void foo(void) {}
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define forceinline __attribute__ ((__always_inline__))
+_ACEOF
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	{ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
 
 cat >>confdefs.h <<\_ACEOF
 #define forceinline inline
 _ACEOF
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  CXXFLAGS=${ac_gecode_save_CXXFLAGS}
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
@@ -8150,152 +8216,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
-     { echo "$as_me:$LINENO: checking whether ${CXX} accepts -finline-limit=3000" >&5
-echo $ECHO_N "checking whether ${CXX} accepts -finline-limit=3000... $ECHO_C" >&6; }
-   if ${CXX} -finline-limit=3000 2>&1 | grep D9002 -q; then
-     { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-     :
-   else
-     { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; }
-
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-finline-limit=3000"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-finline-limit=3000"
-   fi
-   else
-     { echo "$as_me:$LINENO: checking whether ${CXX} accepts -finline-limit=3000" >&5
-echo $ECHO_N "checking whether ${CXX} accepts -finline-limit=3000... $ECHO_C" >&6; }
-   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-finline-limit=3000 -Werror"
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-   cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_cxx_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; }
-
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-finline-limit=3000"
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-      :
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-
-   { echo "$as_me:$LINENO: checking whether ${CC} accepts -finline-limit=3000" >&5
-echo $ECHO_N "checking whether ${CC} accepts -finline-limit=3000... $ECHO_C" >&6; }
-   ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-finline-limit=3000 -Werror"
-   ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-   cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  CFLAGS="${ac_gecode_save_CFLAGS}"
-      { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; }
-
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-finline-limit=3000"
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	CFLAGS="${ac_gecode_save_CFLAGS}"
-      { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-      :
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-   fi
-
-   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ffast-math" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ffast-math... $ECHO_C" >&6; }
    if ${CXX} -ffast-math 2>&1 | grep D9002 -q; then
@@ -9285,10 +9205,76 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
 
        ;;
   esac
+       { echo "$as_me:$LINENO: checking if compiler supports forced inlining" >&5
+echo $ECHO_N "checking if compiler supports forced inlining... $ECHO_C" >&6; }
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+  ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
+  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ } -Werror"
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+      inline __attribute__ ((__always_inline__)) void foo(void) {}
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define forceinline __attribute__ ((__always_inline__))
+_ACEOF
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	{ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
 
 cat >>confdefs.h <<\_ACEOF
 #define forceinline inline
 _ACEOF
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  CXXFLAGS=${ac_gecode_save_CXXFLAGS}
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
