@@ -63,6 +63,12 @@
 
 #endif
 
+// Configure auto-linking
+#ifndef GECODE_BUILD_GIST
+#define GECODE_LIBRARY_NAME "Gist"
+#include "gecode/support/auto-link.hpp"
+#endif
+
 class QWidget;
 
 #include <string>

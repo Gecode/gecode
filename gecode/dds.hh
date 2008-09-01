@@ -68,6 +68,12 @@
 
 #endif
 
+// Configure auto-linking
+#ifndef GECODE_BUILD_DDS
+#define GECODE_LIBRARY_NAME "DDS"
+#include "gecode/support/auto-link.hpp"
+#endif
+
 namespace Gecode {
   namespace Decomposition {
 

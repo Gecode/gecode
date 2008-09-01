@@ -70,6 +70,17 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+[DESCRIPTION]
+For the Microsoft compiler, auto-link information is added during
+compilation. That is, by including Gecode headers during
+compilation the right libraries will be found automatically
+during linking.
+
+
+[ENTRY]
 Module: minimodel
 What:   performance
 Rank:   minor

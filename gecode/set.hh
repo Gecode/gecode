@@ -71,6 +71,13 @@
 
 #endif
 
+// Configure auto-linking
+#ifndef GECODE_BUILD_SET
+#define GECODE_LIBRARY_NAME "Set"
+#include "gecode/support/auto-link.hpp"
+#endif
+
+
 /** 
  * \namespace Gecode::Set
  * \brief Finite integer sets

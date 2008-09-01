@@ -67,6 +67,12 @@
 #endif
 #endif
 
+// Configure auto-linking
+#ifndef GECODE_BUILD_SERIALIZATION
+#define GECODE_LIBRARY_NAME "Serialization"
+#include "gecode/support/auto-link.hpp"
+#endif
+
 #include <iostream>
 #include <vector>
 

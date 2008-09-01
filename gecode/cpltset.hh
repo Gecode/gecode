@@ -66,6 +66,12 @@
 
 #endif
 
+// Configure auto-linking
+#ifndef GECODE_BUILD_CPLTSET
+#define GECODE_LIBRARY_NAME "CpltSet"
+#include "gecode/support/auto-link.hpp"
+#endif
+
 #include "gecode/cpltset/exception.hpp"
 
 /** 

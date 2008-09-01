@@ -72,6 +72,12 @@
 
 #endif
 
+// Configure auto-linking
+#ifndef GECODE_BUILD_KERNEL
+#define GECODE_LIBRARY_NAME "Kernel"
+#include "gecode/support/auto-link.hpp"
+#endif
+
 /**
  * \namespace Gecode
  * \brief Gecode toplevel namespace
