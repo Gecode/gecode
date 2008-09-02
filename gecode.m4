@@ -268,7 +268,7 @@ dnl @version 20040907
 dnl @author  Ludovic Court�s <ludo@chbouib.org>
 dnl Modified by G. Tack to recognize only those compilers we need.
 AC_DEFUN([AC_ADD_DLL_ARCH],
-  [ac_gecode_library_architecture="${ac_gecode_library_architecture}-$1"])
+  [ac_gecode_library_architecture="-$1${ac_gecode_library_architecture}"])
 
 AC_DEFUN([AC_CXX_COMPILER_VENDOR],
   [AC_ARG_WITH([compiler-vendor],
