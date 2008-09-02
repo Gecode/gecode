@@ -153,19 +153,18 @@ public:
           // Note that when i == j, only one of the orientations are used.
           REG valids;
           for (int pos = 0; pos < (width+1)*height; ++pos) {
-            if ((pos+1) % width+1 != 0) { // not end-col
+            if ((pos+1) % (width+1) != 0) { // not end-col
               if (board[pos] == i && board[pos+1] == j)
                 valids |= REG(pos) + REG(pos+1);
               if (board[pos] == j && board[pos+1] == i && i != j)
                 valids |= REG(pos+1) + REG(pos);
             }
-            if (pos/(width+1) < height) { // not end-row
+            if (pos/(width+1) < height-1) { // not end-row
               if (board[pos] == i && board[pos+width+1] == j)
                 valids |= REG(pos) + REG(pos+width+1);
               if (board[pos] == j && board[pos+width+1] == i && i != j)
                 valids |= REG(pos+width+1) + REG(pos);
             }
-
           }
           IntVarArgs piece(2); 
           piece[0] = p1[dominoCount];
