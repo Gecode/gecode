@@ -673,7 +673,6 @@ PROG_MAKE
 PROG_SED
 PROG_PERL
 CXXCPP
-USERSUFFIX
 BUILDSTATIC
 BUILDDLL
 BUILD_MACOS_FRAMEWORK
@@ -755,6 +754,7 @@ PKG_CONFIG_CXXFLAGS
 VERSION
 DLLFLAGS
 GLDFLAGS
+DLL_ARCH
 LIBOBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -1382,8 +1382,6 @@ Optional Packages:
                           Linux, Darwin, and Windows.
   --with-compiler-vendor  Override compiler test. Valid values are gnu, intel,
                           and microsoft.
-  --with-lib-prefix       add user-defined prefix to library names
-  --with-lib-suffix       add user-defined suffix to library names
   --with-sdk              SDK to use on Mac OS X
   --with-macosx-version-min
                           minimum version of Mac OS X to support
@@ -1895,9 +1893,9 @@ GECODE_SOVERSION=${ac_gecode_soversion}
 
 
 
+
+
 # Test for platform specific behaviour of arithmetic
-
-
 
 
 
@@ -3982,11 +3980,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-
-cat >>confdefs.h <<\_ACEOF
-#define GECODE_MSVC_ARCH x86
-_ACEOF
-
+  ac_gecode_library_architecture="${ac_gecode_library_architecture}-x86"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4020,10 +4014,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-  cat >>confdefs.h <<\_ACEOF
-#define GECODE_MSVC_ARCH ia64
-_ACEOF
-
+  ac_gecode_library_architecture="${ac_gecode_library_architecture}-ia64"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4057,10 +4048,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-  cat >>confdefs.h <<\_ACEOF
-#define GECODE_MSVC_ARCH x64
-_ACEOF
-
+  ac_gecode_library_architecture="${ac_gecode_library_architecture}-x64"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4100,45 +4088,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
        ac_cv_cxx_compiler_vendor=${with_compiler_vendor}
      fi
      ac_gecode_compiler_vendor="$ac_cv_cxx_compiler_vendor"
-
-
-
-# Check whether --with-lib-prefix was given.
-if test "${with_lib_prefix+set}" = set; then
-  withval=$with_lib_prefix;
-fi
-
-  { echo "$as_me:$LINENO: checking for user-defined library name prefix" >&5
-echo $ECHO_N "checking for user-defined library name prefix... $ECHO_C" >&6; }
-  if test "x${withval}" != "x"; then
-    ac_gecode_userprefix=${withval}
-		{ echo "$as_me:$LINENO: result: ${withval}" >&5
-echo "${ECHO_T}${withval}" >&6; }
-  else
-    ac_gecode_userprefix=
-		{ echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-  fi
-
-# Check whether --with-lib-suffix was given.
-if test "${with_lib_suffix+set}" = set; then
-  withval=$with_lib_suffix;
-fi
-
-  { echo "$as_me:$LINENO: checking for user-defined library name suffix" >&5
-echo $ECHO_N "checking for user-defined library name suffix... $ECHO_C" >&6; }
-  if test "x${withval}" != "x"; then
-    USERSUFFIX=${withval}
-
-		{ echo "$as_me:$LINENO: result: ${withval}" >&5
-echo "${ECHO_T}${withval}" >&6; }
-  else
-    USERSUFFIX=""
-
-		{ echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-  fi
-
 
 
 # Check whether --with-sdk was given.
@@ -4716,9 +4665,11 @@ fi
 	 { echo "$as_me:$LINENO: checking whether to build with debug symbols and assertions" >&5
 echo $ECHO_N "checking whether to build with debug symbols and assertions... $ECHO_C" >&6; }
 	 if test "${enable_debug:-no}" = "yes"; then
+            ac_gecode_library_architecture="${ac_gecode_library_architecture}-d"
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 	 else
+            ac_gecode_library_architecture="${ac_gecode_library_architecture}-r"
 	    { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
        	    CFLAGS="${CFLAGS}${CFLAGS:+ }-DNDEBUG"
@@ -7963,7 +7914,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   LIBEXT="${DLLEXT}"
 
-  LIBPREFIX="lib${ac_gecode_userprefix}gecode"
+  LIBPREFIX="libgecode"
 
   STATICLIBEXT="a"
 
@@ -7991,7 +7942,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     INSTALLLIBS="no"
 
 
-  LINKPREFIX="-l${ac_gecode_userprefix}gecode"
+  LINKPREFIX="-lgecode"
 
   LINKSUFFIX=""
 
@@ -9107,9 +9058,9 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   LIBEXT="lib"
 
-  LIBPREFIX="${ac_gecode_userprefix}Gecode"
+  LIBPREFIX="Gecode"
 
-  LINKPREFIX="${ac_gecode_userprefix}Gecode"
+  LINKPREFIX="Gecode"
 
   LINKSUFFIX=".lib"
 
@@ -10342,7 +10293,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   LIBEXT="${DLLEXT}"
 
-  LIBPREFIX="lib${ac_gecode_userprefix}gecode"
+  LIBPREFIX="libgecode"
 
   STATICLIBEXT="a"
 
@@ -10370,7 +10321,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     INSTALLLIBS="no"
 
 
-  LINKPREFIX="-l${ac_gecode_userprefix}gecode"
+  LINKPREFIX="-lgecode"
 
   LINKSUFFIX=""
 
@@ -11190,9 +11141,9 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   LIBEXT="lib"
 
-  LIBPREFIX="${ac_gecode_userprefix}Gecode"
+  LIBPREFIX="Gecode"
 
-  LINKPREFIX="${ac_gecode_userprefix}Gecode"
+  LINKPREFIX="Gecode"
 
   LINKSUFFIX=".lib"
 
@@ -11578,7 +11529,6 @@ fi
 
 	CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
 
-     echo "defining GECODE_HAS_FLOAT_VARS"
 
 cat >>confdefs.h <<\_ACEOF
 #define GECODE_HAS_FLOAT_VARS
@@ -11607,10 +11557,9 @@ echo $ECHO_N "checking whether to build the set variables library... $ECHO_C" >&
 echo "${ECHO_T}yes" >&6; }
      enable_set_vars="yes";
      enable_int_vars="yes";
-	 LINKSET=${LINKLIBDIR}${LINKPREFIX}${SET}${USERSUFFIX}${LINKSUFFIX}
+	 LINKSET=${LINKLIBDIR}${LINKPREFIX}${SET}${DLL_ARCH}${LINKSUFFIX}
 
 
-     echo "defining GECODE_HAS_SET_VARS"
 
 cat >>confdefs.h <<\_ACEOF
 #define GECODE_HAS_SET_VARS
@@ -11646,10 +11595,9 @@ echo $ECHO_N "checking whether to build the cpltset variables library... $ECHO_C
 echo "${ECHO_T}yes" >&6; }
      enable_cpltset_vars="yes";
 
-	LINKCPLTSET=${LINKLIBDIR}${LINKPREFIX}${CPLTSET}${USERSUFFIX}${LINKSUFFIX}
+	LINKCPLTSET=${LINKLIBDIR}${LINKPREFIX}${CPLTSET}${DLL_ARCH}${LINKSUFFIX}
 
 
-     echo "defining GECODE_HAS_CPLTSET_VARS"
 
 cat >>confdefs.h <<\_ACEOF
 #define GECODE_HAS_CPLTSET_VARS
@@ -11680,10 +11628,9 @@ echo $ECHO_N "checking whether to build the int variables library... $ECHO_C" >&
 echo "${ECHO_T}yes" >&6; }
      enable_int_vars="yes";
 
-  	 LINKINT=${LINKLIBDIR}${LINKPREFIX}${INT}${USERSUFFIX}${LINKSUFFIX}
+  	 LINKINT=${LINKLIBDIR}${LINKPREFIX}${INT}${DLL_ARCH}${LINKSUFFIX}
 
 
-     echo "defining GECODE_HAS_INT_VARS"
 
 cat >>confdefs.h <<\_ACEOF
 #define GECODE_HAS_INT_VARS
@@ -11997,6 +11944,23 @@ DLLFLAGS=${DLLFLAGS}
 
 GLDFLAGS=${GLDFLAGS}
 
+
+if test "$ac_gecode_compiler_vendor" == "microsoft"; then
+  DLL_ARCH=${ac_gecode_library_architecture}
+
+
+cat >>confdefs.h <<_ACEOF
+#define GECODE_LIBRARY_ARCHITECTURE "${ac_gecode_library_architecture}"
+_ACEOF
+
+else
+
+
+cat >>confdefs.h <<\_ACEOF
+#define GECODE_LIBRARY_ARCHITECTURE ""
+_ACEOF
+
+fi
 
 ac_config_files="$ac_config_files Makefile"
 
@@ -12693,7 +12657,6 @@ PROG_MAKE!$PROG_MAKE$ac_delim
 PROG_SED!$PROG_SED$ac_delim
 PROG_PERL!$PROG_PERL$ac_delim
 CXXCPP!$CXXCPP$ac_delim
-USERSUFFIX!$USERSUFFIX$ac_delim
 BUILDSTATIC!$BUILDSTATIC$ac_delim
 BUILDDLL!$BUILDDLL$ac_delim
 BUILD_MACOS_FRAMEWORK!$BUILD_MACOS_FRAMEWORK$ac_delim
@@ -12733,6 +12696,7 @@ CCIN!$CCIN$ac_delim
 EXAMPLES_EXTRA_CXXFLAGS!$EXAMPLES_EXTRA_CXXFLAGS$ac_delim
 INSTALLLIBS!$INSTALLLIBS$ac_delim
 LINKPREFIX!$LINKPREFIX$ac_delim
+LINKSUFFIX!$LINKSUFFIX$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -12774,7 +12738,6 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
-LINKSUFFIX!$LINKSUFFIX$ac_delim
 LINKOUTPUT!$LINKOUTPUT$ac_delim
 EXEOUTPUT!$EXEOUTPUT$ac_delim
 SUPPORT!$SUPPORT$ac_delim
@@ -12816,6 +12779,7 @@ PKG_CONFIG_CXXFLAGS!$PKG_CONFIG_CXXFLAGS$ac_delim
 VERSION!$VERSION$ac_delim
 DLLFLAGS!$DLLFLAGS$ac_delim
 GLDFLAGS!$GLDFLAGS$ac_delim
+DLL_ARCH!$DLL_ARCH$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF

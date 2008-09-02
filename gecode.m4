@@ -267,6 +267,9 @@ dnl
 dnl @version 20040907
 dnl @author  Ludovic Court�s <ludo@chbouib.org>
 dnl Modified by G. Tack to recognize only those compilers we need.
+AC_DEFUN([AC_ADD_DLL_ARCH],
+  [ac_gecode_library_architecture="${ac_gecode_library_architecture}-$1"])
+
 AC_DEFUN([AC_CXX_COMPILER_VENDOR],
   [AC_ARG_WITH([compiler-vendor],
      AC_HELP_STRING([--with-compiler-vendor],
@@ -287,12 +290,11 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
         _AC_C_IFDEF([_MSC_VER],
                     [ac_cv_cxx_compiler_vendor=microsoft
                      _AC_C_IFDEF([_M_IX86],
-                       [AC_DEFINE([GECODE_MSVC_ARCH],[x86],
-                          [Platform architecture (only Microsoft)])],[])
+                       [AC_ADD_DLL_ARCH([x86])],[])
                      _AC_C_IFDEF([_M_IA64],
-                       [AC_DEFINE([GECODE_MSVC_ARCH],[ia64])],[])
+                       [AC_ADD_DLL_ARCH([ia64])],[])
                      _AC_C_IFDEF([_M_X64],
-                       [AC_DEFINE([GECODE_MSVC_ARCH],[x64])],[])],
+                       [AC_ADD_DLL_ARCH([x64])],[])],
                     [ac_cv_cxx_compiler_vendor=unknown])
         AC_LANG_POP()])])
 
@@ -317,8 +319,7 @@ dnl
 dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_ADD_VTI],
-   [echo "defining GECODE_HAS_$1_VARS"
-    AC_DEFINE(GECODE_HAS_$1_VARS, [], [Whether to build $1 variables])])
+   [AC_DEFINE(GECODE_HAS_$1_VARS, [], [Whether to build $1 variables])])
 AC_DEFUN([AC_GECODE_VTI],
    [
    AC_ARG_ENABLE([$1-vars],
@@ -426,8 +427,10 @@ AC_DEFUN([AC_GECODE_DEBUG],
 	     [build with assertions @<:@default=no@:>@]))
 	 AC_MSG_CHECKING(whether to build with debug symbols and assertions)
 	 if test "${enable_debug:-no}" = "yes"; then
+            AC_ADD_DLL_ARCH([d])
 	    AC_MSG_RESULT(yes)
 	 else
+            AC_ADD_DLL_ARCH([r])
 	    AC_MSG_RESULT(no)
        	    AC_GECODE_ADD_TO_COMPILERFLAGS(-DNDEBUG)
 	 fi])
@@ -551,7 +554,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   dnl file extensions
   AC_SUBST(SBJEXT, "s")
   AC_SUBST(LIBEXT, "${DLLEXT}")
-  AC_SUBST(LIBPREFIX, "lib${ac_gecode_userprefix}gecode")
+  AC_SUBST(LIBPREFIX, "libgecode")
   AC_SUBST(STATICLIBEXT, "a")
   AC_SUBST(MINUSLDIR, "-L${libdir}")
   AC_SUBST(LINKLIBDIR, "")
@@ -569,7 +572,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   dnl Do not install stub .lib files (required for msvc)
   AC_SUBST(INSTALLLIBS, "no")
 
-  AC_SUBST(LINKPREFIX, "-l${ac_gecode_userprefix}gecode")
+  AC_SUBST(LINKPREFIX, "-lgecode")
   AC_SUBST(LINKSUFFIX, "")
 
   dnl how to tell the compiler to output an object file
@@ -726,8 +729,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(SOLINKSUFFIX, "")
   AC_SUBST(WLSONAME, "")
   AC_SUBST(LIBEXT, "lib")
-  AC_SUBST(LIBPREFIX, "${ac_gecode_userprefix}Gecode")
-  AC_SUBST(LINKPREFIX, "${ac_gecode_userprefix}Gecode")
+  AC_SUBST(LIBPREFIX, "Gecode")
+  AC_SUBST(LINKPREFIX, "Gecode")
   AC_SUBST(LINKSUFFIX, ".lib")
   AC_SUBST(MINUSLDIR, "")
   AC_SUBST(LINKLIBDIR, "${libdir}/")
@@ -1041,30 +1044,4 @@ AC_DEFUN([AC_GECODE_GIST],
     AC_MSG_RESULT(no)
   fi
   AC_SUBST(enable_gist, ${enable_gist})
-])
-
-AC_DEFUN([AC_GECODE_USER_SUFFIX],
-  [
-  AC_ARG_WITH([lib-prefix],
-    AC_HELP_STRING([--with-lib-prefix],
-      [add user-defined prefix to library names]))
-  AC_MSG_CHECKING(for user-defined library name prefix)
-  if test "x${withval}" != "x"; then
-    ac_gecode_userprefix=${withval}
-		AC_MSG_RESULT(${withval})
-  else
-    ac_gecode_userprefix=
-		AC_MSG_RESULT(no)
-  fi
-  AC_ARG_WITH([lib-suffix],
-    AC_HELP_STRING([--with-lib-suffix],
-      [add user-defined suffix to library names]))
-  AC_MSG_CHECKING(for user-defined library name suffix)
-  if test "x${withval}" != "x"; then
-    AC_SUBST(USERSUFFIX,${withval})
-		AC_MSG_RESULT(${withval})
-  else
-    AC_SUBST(USERSUFFIX,[""])
-		AC_MSG_RESULT(no)
-  fi
 ])

@@ -70,11 +70,11 @@
 /* Whether to build SET variables */
 #undef GECODE_HAS_SET_VARS
 
+/* Architecture Gecode was built for (only for Microsoft compiler) */
+#undef GECODE_LIBRARY_ARCHITECTURE
+
 /* Heap memory alignment */
 #undef GECODE_MEMORY_ALIGNMENT
-
-/* Platform architecture (only Microsoft) */
-#undef GECODE_MSVC_ARCH
 
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS

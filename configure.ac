@@ -100,9 +100,6 @@ AC_CHECK_PROG(PROG_PERL, perl, [ok])
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)
 
-dnl check for user-supplied prefix and suffix
-AC_GECODE_USER_SUFFIX
-
 dnl check whether we want to build universal binaries on Mac OS X
 AC_GECODE_UNIVERSAL
 
@@ -213,7 +210,7 @@ AC_GECODE_VTI(set,
 	[finite set library (implies --enable-int-vars)],
 	yes,
 	[enable_int_vars="yes";
-	 AC_SUBST(LINKSET,[${LINKLIBDIR}${LINKPREFIX}${SET}${USERSUFFIX}${LINKSUFFIX}])
+	 AC_SUBST(LINKSET,[${LINKLIBDIR}${LINKPREFIX}${SET}${DLL_ARCH}${LINKSUFFIX}])
 	],
 	[
 	 AC_SUBST(LINKSET,[])
@@ -225,14 +222,14 @@ if test "${enable_set_vars}" != "yes"; then
 fi
 
 AC_GECODE_VTI(cpltset, finite set library using complete domain representation (can only be used with --enable-set-vars), yes, [
-	AC_SUBST(LINKCPLTSET,[${LINKLIBDIR}${LINKPREFIX}${CPLTSET}${USERSUFFIX}${LINKSUFFIX}])
+	AC_SUBST(LINKCPLTSET,[${LINKLIBDIR}${LINKPREFIX}${CPLTSET}${DLL_ARCH}${LINKSUFFIX}])
 	],
 	[
 	 AC_SUBST(LINKCPLSET,[])
 	])
 
 AC_GECODE_VTI(int, finite domain library, yes, [
-  	 AC_SUBST(LINKINT,[${LINKLIBDIR}${LINKPREFIX}${INT}${USERSUFFIX}${LINKSUFFIX}])
+  	 AC_SUBST(LINKINT,[${LINKLIBDIR}${LINKPREFIX}${INT}${DLL_ARCH}${LINKSUFFIX}])
 	],
 	[
 	 AC_SUBST(LINKINT,[])
@@ -276,6 +273,17 @@ AC_SUBST(PKG_CONFIG_CXXFLAGS, ${ac_gecode_pkg_cxxflags})
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
+
+if test "$ac_gecode_compiler_vendor" == "microsoft"; then
+  AC_SUBST(DLL_ARCH,[${ac_gecode_library_architecture}])
+  AC_DEFINE_UNQUOTED(GECODE_LIBRARY_ARCHITECTURE,
+    "${ac_gecode_library_architecture}",
+    [Architecture Gecode was built for (only for Microsoft compiler)])
+else
+  AC_SUBST(DLL_ARCH,[])
+  AC_DEFINE(GECODE_LIBRARY_ARCHITECTURE, [""],
+    [Architecture Gecode was built for (only for Microsoft compiler)])
+fi
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])

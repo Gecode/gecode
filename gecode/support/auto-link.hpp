@@ -42,7 +42,7 @@
 
 #if defined(_MSC_VER)
 
-#pragma comment(lib, "Gecode" GECODE_LIBRARY_NAME)
+#pragma comment(lib, "Gecode" GECODE_LIBRARY_NAME GECODE_LIBRARY_ARCHITECTURE)
 
 #endif
 
