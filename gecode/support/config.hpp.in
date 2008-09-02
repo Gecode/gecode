@@ -73,6 +73,9 @@
 /* Heap memory alignment */
 #undef GECODE_MEMORY_ALIGNMENT
 
+/* Platform architecture (only Microsoft) */
+#undef GECODE_MSVC_ARCH
+
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
 

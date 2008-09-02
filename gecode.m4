@@ -273,13 +273,8 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
        [Override compiler test. Valid values are gnu, intel, and microsoft.]))
    AC_REQUIRE([AC_PROG_CXX])
    AC_REQUIRE([AC_PROG_CXXCPP])
-   AC_CACHE_CHECK([the C++ compiler vendor],
-    [ac_cv_cxx_compiler_vendor],
-
-    [if test "${with_compiler_vendor:-no}" = "no"; then
-
+   if test "${with_compiler_vendor:-no}" = "no"; then
      AC_LANG_PUSH([C++])
-
      dnl GNU C++
      _AC_C_IFDEF([__GNUG__],
        [ac_cv_cxx_compiler_vendor=gnu],
@@ -290,7 +285,14 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
         dnl extension and requires `/TP' to be passed.
         AC_LANG_PUSH([C])
         _AC_C_IFDEF([_MSC_VER],
-                    [ac_cv_cxx_compiler_vendor=microsoft],
+                    [ac_cv_cxx_compiler_vendor=microsoft
+                     _AC_C_IFDEF([_M_IX86],
+                       [AC_DEFINE([GECODE_MSVC_ARCH],[x86],
+                          [Platform architecture (only Microsoft)])],[])
+                     _AC_C_IFDEF([_M_IA64],
+                       [AC_DEFINE([GECODE_MSVC_ARCH],[ia64])],[])
+                     _AC_C_IFDEF([_M_X64],
+                       [AC_DEFINE([GECODE_MSVC_ARCH],[x64])],[])],
                     [ac_cv_cxx_compiler_vendor=unknown])
         AC_LANG_POP()])])
 
@@ -298,7 +300,7 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
      else
        ac_cv_cxx_compiler_vendor=${with_compiler_vendor}
      fi
-     $1="$ac_cv_cxx_compiler_vendor"])])dnl
+     $1="$ac_cv_cxx_compiler_vendor"])dnl
 
 
 dnl Macro:
