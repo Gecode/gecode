@@ -1657,8 +1657,10 @@ veryclean: clean
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
 	$(RMF) $(EXAMPLEEXE) $(EXAMPLEEXE:%.exe=%.pdb) \
-		$(EXAMPLEEXE:%.exe=%.ilk)
-	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk)
+		$(EXAMPLEEXE:%.exe=%.ilk) \
+		$(EXAMPLEEXE:%=%.manifest)
+	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk) \
+		 $(TESTEXE:%=%.manifest)
 	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)

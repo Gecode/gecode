@@ -12,4 +12,5 @@
 *.suo
 *.sln
 *.exe
+*.manifest
 moc_*.cc
