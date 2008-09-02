@@ -428,9 +428,11 @@ AC_DEFUN([AC_GECODE_DEBUG],
 	 AC_MSG_CHECKING(whether to build with debug symbols and assertions)
 	 if test "${enable_debug:-no}" = "yes"; then
             AC_ADD_DLL_ARCH([d])
+            AC_SUBST(DEBUG_BUILD, [yes])
 	    AC_MSG_RESULT(yes)
 	 else
             AC_ADD_DLL_ARCH([r])
+            AC_SUBST(DEBUG_BUILD, [no])
 	    AC_MSG_RESULT(no)
        	    AC_GECODE_ADD_TO_COMPILERFLAGS(-DNDEBUG)
 	 fi])

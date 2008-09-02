@@ -814,10 +814,14 @@ else
 export LIBLINKTARGETS =
 endif
 
+ifeq "@DEBUG_BUILD@" "yes"
+PDBS = $(ALLLIB:%$(LIBSUFFIX)=%@DLL_ARCH@.pdb)
+else
+PDBS = 
+endif
+
 ifeq "@INSTALLLIBS@" "yes"
-LIBLIBTARGETS = \
-	$(ALLLIB) \
-	$(ALLLIB:%$(LIBSUFFIX)=%@DLL_ARCH@.pdb)
+LIBLIBTARGETS = $(ALLLIB) $(PDBS)
 else
 LIBLIBTARGETS =
 endif
