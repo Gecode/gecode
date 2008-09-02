@@ -93,6 +93,7 @@ export TAR = tar
 export OBJSUFFIX	= .@OBJEXT@
 export SBJSUFFIX	= .@SBJEXT@
 export DLLSUFFIX	= @DLL_ARCH@.@DLLEXT@
+export MANIFESTSUFFIX	= @DLL_ARCH@.@DLLEXT@.manifest
 export LIBSUFFIX	= @DLL_ARCH@.@LIBEXT@
 export PDBSUFFIX	= @DLL_ARCH@.pdb
 export EXPSUFFIX	= @DLL_ARCH@.exp
@@ -1644,6 +1645,7 @@ clean:
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%$(MANIFESTSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(EXPSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(LIBSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(ILKSUFFIX)) \

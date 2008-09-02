@@ -691,7 +691,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
  [dnl general compiler flags
   AC_DEFINE(forceinline,[__forceinline])
   AC_GECODE_ADD_TO_COMPILERFLAGS([-nologo])
-  AC_GECODE_CHECK_COMPILERFLAG([-arch:SSE2])
   AC_GECODE_ADD_TO_CFLAGS([-D_CRT_SECURE_NO_DEPRECATE])
   AC_GECODE_ADD_TO_CXXFLAGS([-EHsc])
   AC_DEFINE([GECODE_MEMORY_ALIGNMENT], [sizeof(void*)],
@@ -699,19 +698,19 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
 
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
-    AC_GECODE_ADD_TO_COMPILERFLAGS([-Ox -fp:fast -GS- -wd4355])
-    dnl AC_GECODE_ADD_TO_COMPILERFLAGS([-Ox -fp:fast -GS- -wd4355 -w34640 -w34365 -w34800 -w34265])
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-MD -Ox -fp:fast -GS- -wd4355])
+    AC_GECODE_CHECK_COMPILERFLAG([-arch:SSE2])
 
     dnl flags for creating optimized dlls
-    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD -MD])
+    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD])
     dnl linker flags
-    GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
+    dnl GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
   else
     dnl compiler flags for a debug build
-    AC_GECODE_ADD_TO_COMPILERFLAGS([-Zi -wd4355])  
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-MDd -Zi -wd4355])  
 
     dnl flags for creating debug dlls
-    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd -MDd])
+    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd])
   fi
 
   AC_SUBST(sharedlibdir, "${bindir}")
