@@ -751,15 +751,16 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * \subsection SULA Windows with Visual Studio
  *
- *  - Support library and DLL: GecodeSupport.lib and GecodeSupport.dll
- *  - Kernel library and DLL: GecodeKernel.lib and GecodeKernel.dll
- *  - Search library and DLL: GecodeSearch.lib and GecodeSearch.dll
- *  - Integer library and DLL: GecodeInt.lib and GecodeInt.dll
- *  - Set library and DLL: GecodeSet.lib and GecodeSet.dll
- *  - CpltSet library and DLL: GecodeCpltSet.lib and GecodeCpltSet.dll
- *  - Minimodel library and DLL: GecodeMiniModel.lib and GecodeMiniModel.dll
- *  - Serialization library and DLL: GecodeSerialization.lib and 
- *    GecodeSerialization.dll
+ * Gecode uses a technique called auto-linking with Visual Studio: by
+ * including Gecode header files, the compiler/linker knows which library
+ * and DLL must be linked against. Hence, it is sufficient to just provide
+ * information to the compiler where the libraries reside.
+ *
+ * The library and DLL names encode the Gecode version, the platform (x86,
+ * x64, or ia64), and whether Gecode has been built as release (optimized)
+ * or debug. That has the advantage that a single set of header files
+ * can be shared among different platforms and builds and the appropriate
+ * libraries and DLLs are selected automatically.
  *
  * \subsection SULB Unix (Linux, MacOS X)
  *
@@ -788,6 +789,25 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * to link the kernel library, if the libraries are found in
  * <code>$GPREFIX/lib</code>.
+ *
+ * \section SecUsageMSVCIDE Using Gecode with Visual Studios Integrated Development Environment
+ *
+ * The following steps have to be taken when your solution uses
+ * Gecode (all of which can be configured in the properties dialog
+ * of your solution):
+ *  - Configuration Properties, C++, General: set the "Additional Include 
+ *    Directories" to include the directory that contain the headers (that 
+ *    is, to the directory that has the single directory "gecode"). When 
+ *    using the pre-built MSI packages, this is "<Program Files>/Gecode".
+ *  - Configuration Properties, Linker, General: set the "Additional
+ *    Library Directories" to include the directory containing the libraries.
+ *    When using the pre-built MSI packages, this is 
+ *    "<Program Files>/Gecode/lib".
+ *  - You must use dynamic linking against a multithreaded library (that is,
+ *    either /MD or /MDd.
+ *  - Depending on whether /MD or /MDd is used, relese or debug libraries and
+ *    DLLs will be used automatically.
+ *
  */
  
 /**
@@ -818,9 +838,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * We currently support
  *   - the Microsoft Visual C++ compilers for Windows. The Microsoft
- *     Visual C++ 2005 Express Edition is available free of charge from
- *     <a href="http://msdn.microsoft.com/vstudio/express/visualc/">the MSDN
- *     web pages</a>. 
+ *     Visual C++ 2008 Express Edition is available free of charge from
+ *     <a href="http://www.microsoft.com/Express">Microsoft</a>.
  *   - the GNU Compiler Collection (gcc) for Windows and Unix flavors such as
  *     Linux and MacOS X. The GNU gcc is open source software and available
  *     from <a href="http://gcc.gnu.org/">the GCC home page</a>. It is included
@@ -829,7 +848,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *     4.2 or higher. Very unfortunately, the parser used in versions of gcc
  *     before 3.4 is broken and hence cannot compile %Gecode.
  *
- * The Intel C++ compiler is currently not supported.
+ * The Intel C++ compiler is currently not supported (even though Gecode is
+ * likely to compile with it).
  *
  * \section CompConf Configuring the sources
  *
