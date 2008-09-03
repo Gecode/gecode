@@ -536,7 +536,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
       [inline __attribute__ ((__always_inline__)) void foo(void) {}]],
       [])],
     [AC_MSG_RESULT(yes)
-     AC_DEFINE(forceinline, [__attribute__ ((__always_inline__))],
+     AC_DEFINE(forceinline, [inline __attribute__ ((__always_inline__))],
        [How to tell the compiler to really, really inline])],
     [AC_MSG_RESULT(no)
      AC_DEFINE(forceinline, [inline],
