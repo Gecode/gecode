@@ -106,6 +106,9 @@ AC_GECODE_UNIVERSAL
 dnl check whether we want to build static libraries
 AC_GECODE_STATICLIBS
 
+dnl check whether the user wants a prefix or suffixes for the libraries
+AC_GECODE_USER_SUFFIX
+
 dnl check whether we want to build a framework bundle on Mac OS X
 AC_GECODE_FRAMEWORK
 

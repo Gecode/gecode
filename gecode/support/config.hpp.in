@@ -37,6 +37,12 @@
 /* Whether to include audit code */
 #undef GECODE_AUDIT
 
+/* User-defined prefix of dll names */
+#undef GECODE_DLL_USERPREFIX
+
+/* User-defined suffix of dll names */
+#undef GECODE_DLL_USERSUFFIX
+
 /* Whether gcc understands visibility attributes */
 #undef GECODE_GCC_HAS_CLASS_VISIBILITY
 
