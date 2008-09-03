@@ -805,7 +805,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    "<Program Files>/Gecode/lib".
  *  - You must use dynamic linking against a multithreaded library (that is,
  *    either /MD or /MDd.
- *  - Depending on whether /MD or /MDd is used, relese or debug libraries and
+ *  - Depending on whether /MD or /MDd is used, release or debug libraries and
  *    DLLs will be used automatically.
  *
  */
