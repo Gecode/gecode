@@ -754,7 +754,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * Gecode uses a technique called auto-linking with Visual Studio: by
  * including Gecode header files, the compiler/linker knows which library
  * and DLL must be linked against. Hence, it is sufficient to just provide
- * information to the compiler where the libraries reside.
+ * information to the compiler where the libraries reside. When using the
+ * compiler cl for linking and assuming that the libraries reside in the 
+ * directory dir, you should add at the end of the commandline:
+ * <code>/link /LIBPATH:dir</code>
  *
  * The library and DLL names encode the Gecode version, the platform (x86,
  * x64, or ia64), and whether Gecode has been built as release (optimized)
