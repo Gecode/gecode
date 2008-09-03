@@ -53,7 +53,8 @@ for dir in ${NORMALDIRS}; do
     ! -path '*.svn*' \
     -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
 done
-svn propset svn:ignore -F misc/svn-ignore.txt '.'
+
+svn propset svn:ignore -F misc/svn-ignore-root.txt '.'
 
 IGNORESUPPORT=`mktemp -t fixproperties`
 (echo config.hpp; svn propget svn:ignore './gecode/support') \
