@@ -110,9 +110,9 @@ namespace Gecode {
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the region
      *
      * Note that this function implements C++ semantics: the copy constructor
-     * of \a T is run for all \f$\min(n,m)$\f objects, the default
+     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
      * constructor of \a T is run for all remaining 
-     * \f$\max(n,m)-\min(n,m)$\f objects, and the destrucor of \a T is
+     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
      * run for all \a n objects in \a b.
      *
      * Returns the address of the new block.

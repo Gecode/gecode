@@ -42,5 +42,25 @@
 Generated on $datetime for $projectname by&nbsp;<a href="http://www.doxygen.org/index.html">doxygen</a> $doxygenversion</small></address>
 </div>
 
+  <script type="text/javascript">
+    function showInfo(i, show) {
+      var moreinfo = "moreinfo"+i;
+      var morelink = "morelink"+i;
+      var lesslink = "lesslink"+i;
+      var linkstyle = "inline";
+      var infostyle = "block";
+      if (show) {
+        document.getElementById(lesslink).style.display="none";
+        document.getElementById(morelink).style.display=linkstyle;
+        document.getElementById(moreinfo).style.display=infostyle;
+      } else {
+        document.getElementById(lesslink).style.display=linkstyle;        
+        document.getElementById(morelink).style.display="none";        
+        document.getElementById(moreinfo).style.display="none";        
+      }
+    }
+  </script>
+
+
 <div id="scrollable">
 <div id="content">

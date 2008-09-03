@@ -61,7 +61,11 @@
 #   [DESCRIPTION]
 #   ... All the text up to the next [ENTRY] or [RELEASE] is included 
 #   as description
+#   [MORE]
+#    ... If a more section is included, then it will be displayed as an
+#    optional section in the html page.
 #
+
 
 [RELEASE]
 Version: 3.x
@@ -163,13 +167,12 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-
-Gecode now supports weakly monotonic propagators. A weakly
-monotonic propagator must only be able to decide for assignments
-wether they are solutions or not (which is a very natural
-property as it means the propagator must be a correct
-implementation of a constraint). Otherwise, the propagator does
-not have to be monotonic, it can even be indeterministic.
+Gecode now supports weakly monotonic propagators. A weakly monotonic
+propagator must only be able to decide for assignments wether they are
+solutions or not (which is a very natural property as it means the
+propagator must be a correct implementation of a
+constraint). Otherwise, the propagator does not have to be monotonic,
+it can even be indeterministic.
 
 Weakly monotonic but not monotonic propagators must notify a
 space about their existence: if a weakly monotonic propagator is
@@ -242,6 +245,7 @@ Gecode. For models this is easy enough:
  - Replace "(Space* home" by "(Space& home".
  - Replace "home->" by "home.".
  - Replace "(this" by "(*this".
+ .
 That should do the trick for 99% of the models.
 
 For the other changes, just lookout for the changes in types and
@@ -345,15 +349,16 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 The values for variable and value selection for branching have
-been made consistent and extended. The following values have 
-been renamed:
+been made consistent and extended. 
+[MORE]
+The following values have been renamed:
  - SET_VAR_MIN_CARD -> SET_VAR_SIZE_MIN
  - SET_VAR_MAX_CARD -> SET_VAR_SIZE_MAX
  - SET_VAR_MIN_UNKNOWN_ELEM -> SET_VAR_MIN_MIN
  - SET_VAR_MAX_UNKNOWN_ELEM -> SET_VAR_MAX_MAX
  - SET_VAL_MIN -> SET_VAL_MIN_INC
  - SET_VAL_MAX -> SET_VAL_MAX_INC
-
+ .
 Tie-breaking and random selection is now supported.
 
 [ENTRY]
@@ -362,7 +367,9 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 The values for variable and value selection for branching have
-been made consistent and extended. The following values have 
+been made consistent and extended. 
+[MORE]
+The following values have 
 been renamed:
  - CPLTSET_VAR_MIN_CARD -> CPLTSET_VAR_SIZE_MIN
  - CPLTSET_VAR_MAX_CARD -> CPLTSET_VAR_SIZE_MAX
@@ -372,7 +379,7 @@ been renamed:
  - CPLTSET_VAL_MAX_UNKNOWN -> CPLTSET_VAL_MAX_INC
  - CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MIN_EXC
  - CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MAX_EXC
-
+ .
 Tie-breaking and random selection is now supported.
 
 [ENTRY]

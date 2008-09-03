@@ -75,7 +75,7 @@ $whatclear{"change"} = "Other changes";
 $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
-@modorder = ("kernel","search","int","set","clptset","minimodel",
+@modorder = ("kernel","search","int","set","cpltset","minimodel",
 	     "iter","support","example","test","gist","other");
 
 @whatorder = ("new","change","bug","performance","documentation");
@@ -160,11 +160,13 @@ while ($l = <>) {
 	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
        $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
-	if ($desc eq "") {
-	    $desc = $l;
-	} else {
-	    $desc = $desc . "      " . $l;
-	}
+       if (!($l =~ /\[MORE\]/)) {
+	   if ($desc eq "") {
+	       $desc = $l;
+	   } else {
+	       $desc = $desc . "      " . $l;
+	   }
+       }
     }
     chop $desc;
     $hastext{$mod} = 1;

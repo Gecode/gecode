@@ -3,8 +3,12 @@
 #  Main authors:
 #     Christian Schulte <schulte@gecode.org>
 #
+#  Contributing authors:
+#     Mikael Lagerkvist <lagerkvist@gecode.org>
+#
 #  Copyright:
 #     Christian Schulte, 2005
+#     Mikael Lagerkvist, 2008
 #
 #  Last modified:
 #     $Date$ by $Author$
@@ -48,6 +52,7 @@ EOF
 
 $first   = 1;
 $version = "";
+$moreinfocnt = 1;
 $info    = "";
 
 $modclear{"kernel"} = "Kernel";
@@ -135,8 +140,9 @@ while ($l = <>) {
     goto LINE;
   }
   if ($l =~ /^\[ENTRY\]/) {
-    my $mod, $what, $rank, $bug, $desc, $thanks;
+    my $mod, $what, $rank, $bug, $desc, $more, $thanks;
     $desc = "";
+    $more = "";
     $bug = "";
     $rank = "";
     $what = "";
@@ -157,10 +163,20 @@ while ($l = <>) {
     }
     
     while (($l = <>) && 
-	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
-      chop $l;
-      $desc = $desc . " " . $l;
+	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/) || ($l =~ /\[MORE\]/))) {
+	$desc = $desc . "        " . $l;
     }
+    $desc =~ s/^        //;
+    $desc =~ s/[ \t\n\r]*$//;
+    $desc =~ s/\n([ \t]*)\n/\n\1<br\/>\n/g;
+    if ($l =~ /^\[MORE\]/) {
+	while (($l = <>) && 
+	       !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
+	    $more = $more . "        " . $l;
+	}
+    }
+    $more =~ s/[ \t\n\r]*$//;
+    $more =~ s/\n([ \t]*)\n/\n\1<br\/>\n/g;
     $hastext{$mod} = 1;
     $rb = $rankclear{$rank};
     if (!($bug eq "")) {
@@ -170,8 +186,22 @@ while ($l = <>) {
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
     }
+    if (!($more eq "")) {
+	$more =~ s/^        //;
+	$more =~ s/[ \t\n\r]*$//;
+	$more = 
+	    "        <span id=lesslink" . $moreinfocnt . " style=\"display: inline\">\n" .
+	    "        <a href=\"javascript:showInfo(" . $moreinfocnt . ", true)\">Details</a></span>\n" . 
+	    "        <span id=morelink" . $moreinfocnt . " style=\"display: none\">\n" .
+	    "        <a href=\"javascript:showInfo(" . $moreinfocnt . ", false)\">Hide details</a></span>\n" . 
+	    "        <div id=moreinfo" . $moreinfocnt . " style=\"display: none\">\n" .
+	    "        ". $more . "</div>\n";
+	$moreinfocnt = $moreinfocnt + 1;
+    }
+    
     $text{"$mod-$what"} = 
-      ($text{"$mod-$what"} . "      - $desc (" . $rb . ")\n");
+      ($text{"$mod-$what"} . "      - $desc (" . $rb . ")\n"
+       . $more);
     goto LINE;
   }
 }
