@@ -40,9 +40,9 @@
 #define GECODE_GIST_ADDCHILD_HH
 
 #include <QtGui/QDialog>
-#include "gecode/gist/ui_addchild.hh"
+#include <gecode/gist/ui_addchild.hh>
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
 namespace Gecode { namespace Gist {
 

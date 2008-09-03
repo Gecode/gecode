@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_NODE_HH
 #define GECODE_GIST_NODE_HH
 
-#include "gecode/support.hh"
+#include <gecode/support.hh>
 
 namespace Gecode { namespace Gist {
 
@@ -110,7 +110,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/node.hpp"
+#include <gecode/gist/node.hpp>
 
 #endif
 

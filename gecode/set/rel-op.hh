@@ -44,8 +44,8 @@
 #ifndef __GECODE_SET_RELOP_HH__
 #define __GECODE_SET_RELOP_HH__
 
-#include "gecode/set.hh"
-#include "gecode/set/rel.hh"
+#include <gecode/set.hh>
+#include <gecode/set/rel.hh>
 
 namespace Gecode { namespace Set { namespace RelOp {
 
@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   /**
    * \brief %Propagator for the superset of intersection
    *
-   * Requires \code #include "gecode/set/rel-op.hh" \endcode
+   * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
   
@@ -96,7 +96,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   /**
    * \brief %Propagator for the subset of union
    *
-   * Requires \code #include "gecode/set/rel-op.hh" \endcode
+   * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View0, class View1, class View2>
@@ -135,7 +135,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    /**
     * \brief %Propagator for ternary intersection
     *
-    * Requires \code #include "gecode/set/rel-op.hh" \endcode
+    * Requires \code #include <gecode/set/rel-op.hh> \endcode
     * \ingroup FuncSetProp
     */
   template <class View0, class View1, class View2>
@@ -173,7 +173,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   /**
    * \brief %Propagator for ternary union
    *
-   * Requires \code #include "gecode/set/rel-op.hh" \endcode
+   * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View0, class View1, class View2>
@@ -211,7 +211,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    /**
     * \brief %Propagator for nary intersection
     *
-    * Requires \code #include "gecode/set/rel-op.hh" \endcode
+    * Requires \code #include <gecode/set/rel-op.hh> \endcode
     * \ingroup FuncSetProp
     */
   template <class View0, class View1>
@@ -254,7 +254,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   /**
    * \brief %Propagator for nary union
    *
-   * Requires \code #include "gecode/set/rel-op.hh" \endcode
+   * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
@@ -298,7 +298,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   /**
    * \brief %Propagator for nary partition
    *
-   * Requires \code #include "gecode/set/rel-op.hh" \endcode
+   * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
@@ -340,13 +340,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 
 }}}
 
-#include "gecode/set/rel-op/common.hpp"
-#include "gecode/set/rel-op/superofinter.hpp"
-#include "gecode/set/rel-op/subofunion.hpp"
-#include "gecode/set/rel-op/inter.hpp"
-#include "gecode/set/rel-op/union.hpp"
-#include "gecode/set/rel-op/partition.hpp"
-#include "gecode/set/rel-op/post.hpp"
+#include <gecode/set/rel-op/common.hpp>
+#include <gecode/set/rel-op/superofinter.hpp>
+#include <gecode/set/rel-op/subofunion.hpp>
+#include <gecode/set/rel-op/inter.hpp>
+#include <gecode/set/rel-op/union.hpp>
+#include <gecode/set/rel-op/partition.hpp>
+#include <gecode/set/rel-op/post.hpp>
 
 #endif
 

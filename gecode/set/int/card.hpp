@@ -39,8 +39,8 @@
  *
  */
 
-#include "gecode/set.hh"
-#include "gecode/int.hh"
+#include <gecode/set.hh>
+#include <gecode/int.hh>
 
 namespace Gecode { namespace Set { namespace Int {
 

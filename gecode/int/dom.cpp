@@ -36,7 +36,7 @@
  */
 
 
-#include "gecode/int/dom.hh"
+#include <gecode/int/dom.hh>
 
 namespace Gecode {
 

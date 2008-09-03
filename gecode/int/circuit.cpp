@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/int/circuit.hh"
+#include <gecode/int/circuit.hh>
 
 namespace Gecode {
 

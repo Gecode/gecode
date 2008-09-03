@@ -42,7 +42,7 @@
 #include <QList>
 #include <QGraphicsView>
 
-#include "gecode/gist.hh"
+#include <gecode/gist.hh>
 
 typedef QWidget* (*pt2createView)(Gecode::Reflection::VarMap&, int, QStringList, QWidget*);
 

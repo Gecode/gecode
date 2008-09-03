@@ -36,7 +36,7 @@
  */
 
 #include "examples/support.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 /**
  * \name Graph specification for independent sets

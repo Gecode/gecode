@@ -35,12 +35,12 @@
  *
  */
 
-#include "gecode/serialization.hh"
+#include <gecode/serialization.hh>
 #ifdef GECODE_HAS_INT_VARS
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 #endif
 #ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #endif
 
 namespace Gecode {

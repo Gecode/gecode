@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/support.hh"
+#include <gecode/support.hh>
 #ifdef GECODE_HAS_BOOST
 
 #include <fstream>
@@ -51,7 +51,7 @@
 #pragma GCC visibility pop
 #endif
 
-#include "gecode/serialization.hh"
+#include <gecode/serialization.hh>
 
 namespace Gecode {
 

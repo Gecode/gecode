@@ -51,7 +51,7 @@
 #include "gecode/minimodel.hh"
 #endif
 
-#include "gecode/serialization.hh"
+#include <gecode/serialization.hh>
 
 namespace {
 #if defined(GECODE_HAS_INT_VARS)

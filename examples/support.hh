@@ -38,13 +38,13 @@
 #ifndef __GECODE_EXAMPLES_SUPPORT_HH__
 #define __GECODE_EXAMPLES_SUPPORT_HH__
 
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
-#include "gecode/search.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/kernel.hh>
+#include <gecode/int.hh>
+#include <gecode/search.hh>
+#include <gecode/minimodel.hh>
 
 #ifdef GECODE_HAS_GIST
-#include "gecode/gist.hh"
+#include <gecode/gist.hh>
 #endif
 
 using namespace Gecode;

@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 #include "qecode.hh"
 #include <vector>
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 #include "vartype.hh"
 
 using namespace Gecode;

@@ -37,7 +37,7 @@
  *
  */
 
-#include "gecode/int/extensional.hh"
+#include <gecode/int/extensional.hh>
 
 namespace Gecode {
 

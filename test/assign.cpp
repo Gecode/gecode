@@ -37,9 +37,9 @@
 
 #include "test/assign.hh"
 
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
-#include "gecode/search.hh"
+#include <gecode/kernel.hh>
+#include <gecode/int.hh>
+#include <gecode/search.hh>
 
 namespace Test { namespace Assign {
 

@@ -40,8 +40,8 @@
 #ifndef __GECODE_DDS_HH__
 #define __GECODE_DDS_HH__
 
-#include "gecode/search.hh"
-#include "gecode/int.hh"
+#include <gecode/search.hh>
+#include <gecode/int.hh>
 
 #include <vector>
 
@@ -71,7 +71,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_DDS
 #define GECODE_LIBRARY_NAME "DDS"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 namespace Gecode {
@@ -213,8 +213,8 @@ namespace Gecode {
 
 }
 
-#include "gecode/dds/decomposing-branching.hpp"
-#include "gecode/dds/dds.hpp"
+#include <gecode/dds/decomposing-branching.hpp>
+#include <gecode/dds/dds.hpp>
 
 #endif
 

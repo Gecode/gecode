@@ -34,14 +34,14 @@
  *
  */
 
-#include "gecode/gist/config.hh"
+#include <gecode/gist/config.hh>
 
-#include "gecode/gist/visualisation/vararrayviewt.hh"
+#include <gecode/gist/visualisation/vararrayviewt.hh>
 #ifdef GECODE_HAS_INT_VARS
-#include "gecode/gist/visualisation/intvaritem.hh"
+#include <gecode/gist/visualisation/intvaritem.hh>
 #endif
 #ifdef GECODE_HAS_SET_VARS
-#include "gecode/gist/visualisation/setvaritem.hh"
+#include <gecode/gist/visualisation/setvaritem.hh>
 #endif
 
 namespace Gecode { namespace Gist {

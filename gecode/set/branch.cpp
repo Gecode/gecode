@@ -39,7 +39,7 @@
  *
  */
 
-#include "gecode/set/branch.hh"
+#include <gecode/set/branch.hh>
 
 namespace Gecode { namespace Set { namespace Branch { 
 

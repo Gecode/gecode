@@ -37,8 +37,8 @@
 
 
 #include "examples/support.hh"
-#include "gecode/set.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/set.hh>
+#include <gecode/minimodel.hh>
 
 
 /** \name Constant sets for attacking queens.

@@ -38,11 +38,11 @@
 #ifndef __GECODE_INT_GCC_HH__
 #define __GECODE_INT_GCC_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
-#include "gecode/int/gcc/gccbndsup.hpp"
-#include "gecode/int/gcc/graphsup.hpp"
-#include "gecode/int/gcc/occur.hpp"
+#include <gecode/int/gcc/gccbndsup.hpp>
+#include <gecode/int/gcc/graphsup.hpp>
+#include <gecode/int/gcc/occur.hpp>
 
 /**
  * \namespace Gecode::Int::GCC
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * The Bnd class is used to post the propagator and BndImp
    * is the actual implementation taking shared variables into account.
    *
-   * Requires \code #include "gecode/int/gcc.hh" \endcode
+   * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class Card, bool isView>
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace GCC {
      }
      \endverbatim
    *
-   * Requires \code #include "gecode/int/gcc.hh" \endcode
+   * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class Card, bool isView>
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /**
    * \brief Value consistent global cardinality propagator
    *
-   * Requires \code #include "gecode/int/gcc.hh" \endcode
+   * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class Card, bool isView>
@@ -316,11 +316,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
 }}}
 
-#include "gecode/int/gcc/ubc.hpp"
-#include "gecode/int/gcc/lbc.hpp"
-#include "gecode/int/gcc/val.hpp"
-#include "gecode/int/gcc/bnd.hpp"
-#include "gecode/int/gcc/dom.hpp"
+#include <gecode/int/gcc/ubc.hpp>
+#include <gecode/int/gcc/lbc.hpp>
+#include <gecode/int/gcc/val.hpp>
+#include <gecode/int/gcc/bnd.hpp>
+#include <gecode/int/gcc/dom.hpp>
 
 #endif
 

@@ -40,8 +40,8 @@
 #ifndef __GECODE_INT_ELEMENT_HH__
 #define __GECODE_INT_ELEMENT_HH__
 
-#include "gecode/int.hh"
-#include "gecode/int/rel.hh"
+#include <gecode/int.hh>
+#include <gecode/int/rel.hh>
 
 /**
  * \namespace Gecode::Int::Element
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Element {
   /**
    * \brief %Element propagator for array of integers
    *
-   * Requires \code #include "gecode/int/element.hh" \endcode
+   * Requires \code #include <gecode/int/element.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class V0, class V1, class Idx, class Val>
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace Element {
   /**
    * \brief Bounds consistent element propagator for array of views
    *
-   * Requires \code #include "gecode/int/element.hh" \endcode
+   * Requires \code #include <gecode/int/element.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VA, class VB, class VC>
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Element {
    * bounds-propagation on the array of views and the uses
    * domain-propagation on the array of views.
    *
-   * Requires \code #include "gecode/int/element.hh" \endcode
+   * Requires \code #include <gecode/int/element.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VA, class VB, class VC>
@@ -296,8 +296,8 @@ namespace Gecode { namespace Int { namespace Element {
 
 }}}
 
-#include "gecode/int/element/int.hpp"
-#include "gecode/int/element/view.hpp"
+#include <gecode/int/element/int.hpp>
+#include <gecode/int/element/view.hpp>
 
 #endif
 

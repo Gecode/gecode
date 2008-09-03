@@ -215,8 +215,8 @@ namespace Gecode {
 
 }
 
-#include "gecode/cpltset/var/cpltset.hpp"
-#include "gecode/cpltset/view/cpltset.hpp"
+#include <gecode/cpltset/var/cpltset.hpp>
+#include <gecode/cpltset/view/cpltset.hpp>
 
 /**
  * \brief Print set variable view

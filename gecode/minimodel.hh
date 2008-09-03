@@ -42,11 +42,11 @@
 #ifndef __GECODE_MINIMODEL_HH__
 #define __GECODE_MINIMODEL_HH__
 
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
-#include "gecode/int/linear.hh"
+#include <gecode/kernel.hh>
+#include <gecode/int.hh>
+#include <gecode/int/linear.hh>
 
-#include "gecode/minimodel/exception.hpp"
+#include <gecode/minimodel/exception.hpp>
 
 #include <iostream>
 
@@ -80,7 +80,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_MINIMODEL
 #define GECODE_LIBRARY_NAME "MiniModel"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 namespace Gecode {
@@ -699,10 +699,10 @@ namespace Gecode {
 
 }
 
-#include "gecode/minimodel/lin-expr.hpp"
-#include "gecode/minimodel/lin-rel.hpp"
-#include "gecode/minimodel/bool-expr.hpp"
-#include "gecode/minimodel/bool-rel.hpp"
+#include <gecode/minimodel/lin-expr.hpp>
+#include <gecode/minimodel/lin-rel.hpp>
+#include <gecode/minimodel/bool-expr.hpp>
+#include <gecode/minimodel/bool-rel.hpp>
 
 namespace Gecode {
 
@@ -861,7 +861,7 @@ namespace Gecode {
   //@}
 }
 
-#include "gecode/minimodel/arithmetic.hpp"
+#include <gecode/minimodel/arithmetic.hpp>
 
 namespace Gecode {
 
@@ -1236,7 +1236,7 @@ namespace Gecode {
 }
 //@}
 
-#include "gecode/minimodel/matrix.hpp"
+#include <gecode/minimodel/matrix.hpp>
 
 namespace Gecode {
 
@@ -1275,7 +1275,7 @@ namespace Gecode {
 //@}
 }
 
-#include "gecode/minimodel/optimize.hpp"
+#include <gecode/minimodel/optimize.hpp>
 
 #endif
 

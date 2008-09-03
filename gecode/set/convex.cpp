@@ -37,7 +37,7 @@
  *
  */
 
-#include "gecode/set/convex.hh"
+#include <gecode/set/convex.hh>
 
 using namespace Gecode::Set;
 

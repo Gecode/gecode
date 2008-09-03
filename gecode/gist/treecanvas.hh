@@ -39,10 +39,10 @@
 
 #include <QtGui>
 
-#include "gecode/kernel.hh"
-#include "gecode/gist.hh"
+#include <gecode/kernel.hh>
+#include <gecode/gist.hh>
 
-#include "gecode/gist/visualnode.hh"
+#include <gecode/gist/visualnode.hh>
 
 namespace Gecode {  namespace Gist {
   

@@ -38,8 +38,8 @@
 #ifndef __GECODE_INT_CHANNEL_HH__
 #define __GECODE_INT_CHANNEL_HH__
 
-#include "gecode/int.hh"
-#include "gecode/int/distinct.hh"
+#include <gecode/int.hh>
+#include <gecode/int/distinct.hh>
 
 /**
  * \namespace Gecode::Int::Channel
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * Only propagates if views become assigned. If \a shared is true,
    * the same views can be contained in both \a x and \a y.
    *
-   * Requires \code #include "gecode/int/channel.hh" \endcode
+   * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, bool shared>
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * If \a shared is true, the same views can be contained in both 
    * \a x and \a y.   
    *
-   * Requires \code #include "gecode/int/channel.hh" \endcode
+   * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, bool shared>
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Channel {
   /**
    * \brief Link propagator for a single Boolean view
    *
-   * Requires \code #include "gecode/int/channel.hh" \endcode
+   * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
   class LinkSingle :
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Channel {
   /**
    * \brief Link propagator for multiple Boolean views
    *
-   * Requires \code #include "gecode/int/channel.hh" \endcode
+   * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
   class LinkMulti :
@@ -246,12 +246,12 @@ namespace Gecode { namespace Int { namespace Channel {
 
 }}}
 
-#include "gecode/int/channel/base.hpp"
-#include "gecode/int/channel/val.hpp"
-#include "gecode/int/channel/dom.hpp"
+#include <gecode/int/channel/base.hpp>
+#include <gecode/int/channel/val.hpp>
+#include <gecode/int/channel/dom.hpp>
 
-#include "gecode/int/channel/link-single.hpp"
-#include "gecode/int/channel/link-multi.hpp"
+#include <gecode/int/channel/link-single.hpp>
+#include <gecode/int/channel/link-multi.hpp>
 
 #endif
 

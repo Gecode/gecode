@@ -117,7 +117,9 @@ Rank:   minor
 [DESCRIPTION]
 Changed naming scheme: All files with extension .cc have been renamed to .cpp, 
 and .icc has become .hpp. This avoids conflicts as .icc is typically used for 
-other file types.
+other file types. All include directives are now specified using <...>
+notation instead of "...", so that Gecode headers do not clutter the include
+namespace of a client program.
 
 [ENTRY]
 Module: minimodel

@@ -38,7 +38,7 @@
 #ifndef _BDD_H
 #define _BDD_H
 
-#include "gecode/support/config.hpp"
+#include <gecode/support/config.hpp>
 
 #ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility push(default)

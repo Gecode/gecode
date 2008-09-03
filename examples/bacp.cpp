@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 #include "examples/support.hh"
 
 #include <map>

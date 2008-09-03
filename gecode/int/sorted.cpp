@@ -35,7 +35,7 @@
  *
  */        
 
-#include "gecode/int/sorted.hh"
+#include <gecode/int/sorted.hh>
 
 namespace Gecode {
 

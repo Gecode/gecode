@@ -49,7 +49,7 @@
 #pragma GCC visibility pop
 #endif
 
-#include "gecode/support.hh"
+#include <gecode/support.hh>
 #include <sstream>
 
 namespace boost { namespace serialization {

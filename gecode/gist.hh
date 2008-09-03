@@ -37,7 +37,7 @@
 #ifndef __GECODE_GIST_HH__
 #define __GECODE_GIST_HH__
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
 /*
  * Configure linking
@@ -66,7 +66,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_GIST
 #define GECODE_LIBRARY_NAME "Gist"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 class QWidget;
@@ -159,7 +159,7 @@ namespace Gecode {
 
 }
 
-#include "gecode/gist/gist.hpp"
+#include <gecode/gist/gist.hpp>
 
 #endif
 

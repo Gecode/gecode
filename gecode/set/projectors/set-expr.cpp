@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/set/projectors.hh"
+#include <gecode/set/projectors.hh>
 
 using namespace Gecode::Set;
 

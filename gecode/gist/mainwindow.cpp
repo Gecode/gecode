@@ -34,11 +34,11 @@
  *
  */
 
-#include "gecode/gist/mainwindow.hh"
-#include "gecode/gist/preferences.hh"
-#include "gecode/gist/drawingcursor.hh"
+#include <gecode/gist/mainwindow.hh>
+#include <gecode/gist/preferences.hh>
+#include <gecode/gist/drawingcursor.hh>
 
-#include "gecode/gist/gecodelogo.hh"
+#include <gecode/gist/gecodelogo.hh>
 
 namespace Gecode { namespace Gist {
   

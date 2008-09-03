@@ -25,8 +25,8 @@ THE SOFTWARE.
 #include "Implicative.hh"
 #include <iostream>
 #include <cstdlib>
-#include "gecode/minimodel.hh"
-#include "gecode/search.hh"
+#include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 #include "Strategy.hh"
 #include "qecode.hh"
 

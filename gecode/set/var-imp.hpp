@@ -83,7 +83,7 @@ namespace Gecode { namespace Set {
 
 }}
 
-#include "gecode/set/var-imp/delta.hpp"
+#include <gecode/set/var-imp/delta.hpp>
 
 namespace Gecode { namespace Set {
 
@@ -505,8 +505,8 @@ namespace Gecode { namespace Set {
   
 }}
 
-#include "gecode/set/var-imp/integerset.hpp"
-#include "gecode/set/var-imp/iter.hpp"
+#include <gecode/set/var-imp/integerset.hpp>
+#include <gecode/set/var-imp/iter.hpp>
 
 namespace Gecode { namespace Set {
 
@@ -728,7 +728,7 @@ namespace Gecode { namespace Set {
 
 }}
 
-#include "gecode/set/var-imp/set.hpp"
+#include <gecode/set/var-imp/set.hpp>
 
 namespace Gecode {
 

@@ -35,8 +35,8 @@
   DATE:  (C) may 1999
 *************************************************************************/
 #include <stdlib.h>
-#include "gecode/support/buddy/kernel.h"
-#include "gecode/support/buddy/bvec.h"
+#include <gecode/support/buddy/kernel.h>
+#include <gecode/support/buddy/bvec.h>
 
 #define DEFAULT(v) { v.bitnum=0; v.bitvec=NULL; }
 

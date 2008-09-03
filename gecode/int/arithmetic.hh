@@ -40,10 +40,10 @@
 #ifndef __GECODE_INT_ARITHMETIC_HH__
 #define __GECODE_INT_ARITHMETIC_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
-#include "gecode/int/rel.hh"
-#include "gecode/int/linear.hh"
+#include <gecode/int/rel.hh>
+#include <gecode/int/linear.hh>
 
 /**
  * \namespace Gecode::Int::Arithmetic
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent absolute value propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Domain consistent absolute value propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent ternary maximum propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent n-ary maximum propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Domain consistent ternary maximum propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -252,7 +252,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Domain consistent n-ary maximum propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -327,7 +327,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent square propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Domain consistent square propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -444,7 +444,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent square root propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -477,7 +477,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Domain consistent square root propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -520,7 +520,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds or domain consistent propagator for \f$x_0\times x_1=x_0\f$
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, PropCond pc>
@@ -590,7 +590,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent multiplication propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    *
    * \ingroup FuncIntProp
    */
@@ -667,7 +667,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Domain consistent multiplication propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    *
    * \ingroup FuncIntProp
    */
@@ -743,7 +743,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent division propagator
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    *
    * \ingroup FuncIntProp
    */
@@ -781,7 +781,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator implements the relation between divisor and
    * modulo of an integer division.
    *
-   * Requires \code #include "gecode/int/arithmetic.hh" \endcode
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    *
    * \ingroup FuncIntProp
    */
@@ -814,12 +814,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 }}}
 
-#include "gecode/int/arithmetic/abs.hpp"
-#include "gecode/int/arithmetic/max.hpp"
-#include "gecode/int/arithmetic/sqr.hpp"
-#include "gecode/int/arithmetic/sqrt.hpp"
-#include "gecode/int/arithmetic/mult.hpp"
-#include "gecode/int/arithmetic/divmod.hpp"
+#include <gecode/int/arithmetic/abs.hpp>
+#include <gecode/int/arithmetic/max.hpp>
+#include <gecode/int/arithmetic/sqr.hpp>
+#include <gecode/int/arithmetic/sqrt.hpp>
+#include <gecode/int/arithmetic/mult.hpp>
+#include <gecode/int/arithmetic/divmod.hpp>
 
 #endif
 

@@ -37,10 +37,10 @@
  *
  */
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
-#include "gecode/set/int.hh"
-#include "gecode/set/rel.hh"
+#include <gecode/set/int.hh>
+#include <gecode/set/rel.hh>
 
 using namespace Gecode::Int;
 

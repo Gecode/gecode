@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/set/distinct.hh"
+#include <gecode/set/distinct.hh>
 
 using namespace Gecode::Set;
 

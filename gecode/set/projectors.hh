@@ -42,7 +42,7 @@
 #ifndef __GECODE_GENERATOR_PROJECOTRS_HH
 #define __GECODE_GENERATOR_PROJECTORS_HH
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 namespace Gecode {
 
@@ -428,10 +428,10 @@ operator<<(std::ostream&, const Gecode::Projector& p);
 GECODE_SET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::ProjectorSet& ps);
 
-#include "gecode/set/projectors/set-expr.hpp"
-#include "gecode/set/projectors/projector.hpp"
-#include "gecode/set/projectors/projector-set.hpp"
-#include "gecode/set/projectors/formula.hpp"
+#include <gecode/set/projectors/set-expr.hpp>
+#include <gecode/set/projectors/projector.hpp>
+#include <gecode/set/projectors/projector-set.hpp>
+#include <gecode/set/projectors/formula.hpp>
 
 #endif
 

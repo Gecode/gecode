@@ -24,8 +24,8 @@
  *
  */
 
-#include "gecode/dds.hh"
-#include "gecode/int/branch.hh"
+#include <gecode/dds.hh>
+#include <gecode/int/branch.hh>
 
 namespace Gecode { namespace Decomposition {
 

@@ -1391,12 +1391,12 @@ namespace Gecode {
 
 }
 
-#include "gecode/set/var/set.hpp"
-#include "gecode/set/view/set.hpp"
-#include "gecode/set/view/const.hpp"
-#include "gecode/set/view/singleton.hpp"
-#include "gecode/set/view/complement.hpp"
-#include "gecode/set/view/offset.hpp"
+#include <gecode/set/var/set.hpp>
+#include <gecode/set/view/set.hpp>
+#include <gecode/set/view/const.hpp>
+#include <gecode/set/view/singleton.hpp>
+#include <gecode/set/view/complement.hpp>
+#include <gecode/set/view/offset.hpp>
 
 /**
  * \brief Print set variable view

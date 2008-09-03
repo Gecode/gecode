@@ -46,8 +46,8 @@
 #include <climits>
 #include <iostream>
 
-#include "gecode/kernel.hh"
-#include "gecode/iter.hh"
+#include <gecode/kernel.hh>
+#include <gecode/iter.hh>
 
 /*
  * Configure linking
@@ -75,7 +75,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_INT
 #define GECODE_LIBRARY_NAME "Int"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 /**
@@ -89,7 +89,7 @@
  *
  */
 
-#include "gecode/int/exception.hpp"
+#include <gecode/int/exception.hpp>
 
 namespace Gecode { namespace Int {
 
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/limits.hpp"
+#include <gecode/int/limits.hpp>
 
 namespace Gecode {
 
@@ -285,9 +285,9 @@ namespace Gecode {
 GECODE_INT_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::IntSet& s);
 
-#include "gecode/int/int-set.hpp"
+#include <gecode/int/int-set.hpp>
 
-#include "gecode/int/var-imp.hpp"
+#include <gecode/int/var-imp.hpp>
 
 namespace Gecode {
 
@@ -579,8 +579,8 @@ operator<<(std::ostream&, const Gecode::IntVar& x);
 std::ostream&
 operator<<(std::ostream&, const Gecode::BoolVar& x);
 
-#include "gecode/int/view.hpp"
-#include "gecode/int/propagator.hpp"
+#include <gecode/int/view.hpp>
+#include <gecode/int/propagator.hpp>
 
 namespace Gecode {
 
@@ -689,7 +689,7 @@ namespace Gecode {
 
 }
 
-#include "gecode/int/array.hpp"
+#include <gecode/int/array.hpp>
 
 namespace Gecode {
 
@@ -1717,8 +1717,8 @@ namespace Gecode {
  //@}
 }
 
-#include "gecode/int/extensional/dfa.hpp"
-#include "gecode/int/extensional/tuple-set.hpp"
+#include <gecode/int/extensional/dfa.hpp>
+#include <gecode/int/extensional/tuple-set.hpp>
 
 namespace Gecode {
 

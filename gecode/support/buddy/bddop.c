@@ -40,8 +40,8 @@
 #include <time.h>
 #include <assert.h>
 
-#include "gecode/support/buddy/kernel.h"
-#include "gecode/support/buddy/cache.h"
+#include <gecode/support/buddy/kernel.h>
+#include <gecode/support/buddy/cache.h>
 
    /* Hash value modifiers to distinguish between entries in misccache */
 #define CACHEID_CONSTRAIN   0x0

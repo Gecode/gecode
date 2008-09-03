@@ -38,10 +38,10 @@
 #ifndef __GECODE_CPLTSET_HH__
 #define __GECODE_CPLTSET_HH__
 
-#include "gecode/kernel.hh"
-#include "gecode/iter.hh"
-#include "gecode/int.hh"
-#include "gecode/set.hh"
+#include <gecode/kernel.hh>
+#include <gecode/iter.hh>
+#include <gecode/int.hh>
+#include <gecode/set.hh>
 
 /*
  * Configure linking
@@ -69,10 +69,10 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_CPLTSET
 #define GECODE_LIBRARY_NAME "CpltSet"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
-#include "gecode/cpltset/exception.hpp"
+#include <gecode/cpltset/exception.hpp>
 
 /** 
  * \namespace Gecode::CpltSet
@@ -88,10 +88,10 @@
  *
  */
 
-#include "gecode/cpltset/bddmanager.hpp"
+#include <gecode/cpltset/bddmanager.hpp>
 
-#include "gecode/cpltset/support.hpp"
-#include "gecode/cpltset/var-imp.hpp"
+#include <gecode/cpltset/support.hpp>
+#include <gecode/cpltset/var-imp.hpp>
 
 namespace Gecode { 
   /**
@@ -421,7 +421,7 @@ namespace Gecode {
 GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::CpltSetVar& x);
 
-#include "gecode/cpltset/view.hpp"
+#include <gecode/cpltset/view.hpp>
 
 namespace Gecode {
   /**
@@ -505,7 +505,7 @@ namespace Gecode {
   };
 }
 
-#include "gecode/cpltset/array.hpp"
+#include <gecode/cpltset/array.hpp>
 
 
 namespace Gecode {

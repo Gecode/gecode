@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/set/projectors/propagator.hh"
+#include <gecode/set/projectors/propagator.hh>
 
 using namespace Gecode::Set;
 

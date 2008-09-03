@@ -38,8 +38,8 @@
 #ifndef __GECODE_INT_CIRCUIT_HH__
 #define __GECODE_INT_CIRCUIT_HH__
 
-#include "gecode/int.hh"
-#include "gecode/int/distinct.hh"
+#include <gecode/int.hh>
+#include <gecode/int/distinct.hh>
 
 /**
  * \namespace Gecode::Int::Circuit
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Circuit {
    * the induced variable value graph is stronlgy connected, and
    * prunes too short cycles.
    *
-   * Requires \code #include "gecode/int/circuit.hh" \endcode
+   * Requires \code #include <gecode/int/circuit.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Circuit {
    * the induced variable value graph is stronlgy connected, and
    * prunes too shot cycles.
    *
-   * Requires \code #include "gecode/int/circuit.hh" \endcode
+   * Requires \code #include <gecode/int/circuit.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -166,9 +166,9 @@ namespace Gecode { namespace Int { namespace Circuit {
 
 }}}
 
-#include "gecode/int/circuit/base.hpp"
-#include "gecode/int/circuit/val.hpp"
-#include "gecode/int/circuit/dom.hpp"
+#include <gecode/int/circuit/base.hpp>
+#include <gecode/int/circuit/val.hpp>
+#include <gecode/int/circuit/dom.hpp>
 
 #endif
 

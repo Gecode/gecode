@@ -41,7 +41,7 @@
  *
  */
 
-#include "gecode/set/sequence.hh"
+#include <gecode/set/sequence.hh>
 
 namespace Gecode { namespace Set { namespace Sequence {
 

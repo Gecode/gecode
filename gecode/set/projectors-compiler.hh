@@ -38,7 +38,7 @@
 #ifndef __GECODE_GENERATOR_PROJECOTRS_COMPILER_HH
 #define __GECODE_GENERATOR_PROJECTORS_COMPILER_HH
 
-#include "gecode/set/projectors.hh"
+#include <gecode/set/projectors.hh>
 
 namespace Gecode {
 

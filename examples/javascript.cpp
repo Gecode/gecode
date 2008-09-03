@@ -36,7 +36,7 @@
  */
 
 #include "examples/support.hh"
-#include "gecode/serialization.hh"
+#include <gecode/serialization.hh>
 #include <fstream>
 #include <string>
 

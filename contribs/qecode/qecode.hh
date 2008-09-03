@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef __QECODE_HH__
 #define __QECODE_HH__
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
 #if !defined(GECODE_STATIC_LIBS) && \
 (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))

@@ -36,7 +36,7 @@
  *
  */
 
-#include "gecode/cpltset.hh"
+#include <gecode/cpltset.hh>
 
 namespace Gecode { namespace CpltSet {
   

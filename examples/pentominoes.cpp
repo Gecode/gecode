@@ -40,7 +40,7 @@
  */
 
 #include "examples/support.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 /** \brief Specification of one tile
  *

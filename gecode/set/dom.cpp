@@ -38,8 +38,8 @@
  *
  */
 
-#include "gecode/set.hh"
-#include "gecode/set/rel.hh"
+#include <gecode/set.hh>
+#include <gecode/set/rel.hh>
 
 namespace Gecode {
 

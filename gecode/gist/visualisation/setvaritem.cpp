@@ -34,13 +34,13 @@
  *
  */
 
-#include "gecode/support.hh"
+#include <gecode/support.hh>
 
 #ifdef GECODE_HAS_SET_VARS
 #include <QtGui/QBrush>
 
-#include "gecode/gist/visualisation/setvaritem.hh"
-#include "gecode/set.hh"
+#include <gecode/gist/visualisation/setvaritem.hh>
+#include <gecode/set.hh>
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 

@@ -35,12 +35,12 @@
  *
  */
 
-#include "gecode/kernel.hh"
-#include "gecode/serialization.hh"
+#include <gecode/kernel.hh>
+#include <gecode/serialization.hh>
 
 #ifdef GECODE_HAS_QT
-#include "gecode/serialization/javascript.hh"
-#include "gecode/serialization.hh"
+#include <gecode/serialization/javascript.hh>
+#include <gecode/serialization.hh>
 #endif
 
 namespace Gecode {

@@ -36,7 +36,7 @@
  */
 
 #include "examples/support.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 /// Base-class for Knights tour example
 class Knights : public Example {

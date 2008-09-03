@@ -656,7 +656,7 @@ if ($gen_typehpp) {
 }
 
 if ($gen_typecpp) {
-  print "#include \"gecode/kernel.hh\"\n";
+  print "#include <gecode/kernel.hh>\n";
   print "\n";
   for ($f = 0; $f<$n_files; $f++) {
     print $ifdef[$f];

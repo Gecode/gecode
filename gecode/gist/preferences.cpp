@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/preferences.hh"
+#include <gecode/gist/preferences.hh>
 
 namespace Gecode { namespace Gist {
   

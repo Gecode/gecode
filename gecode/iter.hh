@@ -77,48 +77,48 @@ namespace Gecode {
   }
 }
 
-#include "gecode/iter/priority-queue.hpp"
+#include <gecode/iter/priority-queue.hpp>
 
-#include "gecode/iter/ranges-operations.hpp"
-#include "gecode/iter/ranges-minmax.hpp"
+#include <gecode/iter/ranges-operations.hpp>
+#include <gecode/iter/ranges-minmax.hpp>
 
-#include "gecode/iter/ranges-append.hpp"
-#include "gecode/iter/ranges-array.hpp"
-#include "gecode/iter/ranges-cache.hpp"
-#include "gecode/iter/ranges-compl.hpp"
-#include "gecode/iter/ranges-diff.hpp"
-#include "gecode/iter/ranges-empty.hpp"
-#include "gecode/iter/ranges-inter.hpp"
-#include "gecode/iter/ranges-map.hpp"
-#include "gecode/iter/ranges-minus.hpp"
-#include "gecode/iter/ranges-negative.hpp"
-#include "gecode/iter/ranges-offset.hpp"
-#include "gecode/iter/ranges-positive.hpp"
-#include "gecode/iter/ranges-scale.hpp"
-#include "gecode/iter/ranges-singleton.hpp"
-#include "gecode/iter/ranges-union.hpp"
-#include "gecode/iter/ranges-values.hpp"
-#include "gecode/iter/ranges-add.hpp"
-#include "gecode/iter/ranges-singleton-append.hpp"
+#include <gecode/iter/ranges-append.hpp>
+#include <gecode/iter/ranges-array.hpp>
+#include <gecode/iter/ranges-cache.hpp>
+#include <gecode/iter/ranges-compl.hpp>
+#include <gecode/iter/ranges-diff.hpp>
+#include <gecode/iter/ranges-empty.hpp>
+#include <gecode/iter/ranges-inter.hpp>
+#include <gecode/iter/ranges-map.hpp>
+#include <gecode/iter/ranges-minus.hpp>
+#include <gecode/iter/ranges-negative.hpp>
+#include <gecode/iter/ranges-offset.hpp>
+#include <gecode/iter/ranges-positive.hpp>
+#include <gecode/iter/ranges-scale.hpp>
+#include <gecode/iter/ranges-singleton.hpp>
+#include <gecode/iter/ranges-union.hpp>
+#include <gecode/iter/ranges-values.hpp>
+#include <gecode/iter/ranges-add.hpp>
+#include <gecode/iter/ranges-singleton-append.hpp>
 
-#include "gecode/iter/values-array.hpp"
-#include "gecode/iter/values-inter.hpp"
-#include "gecode/iter/values-map.hpp"
-#include "gecode/iter/values-minus.hpp"
-#include "gecode/iter/values-negative.hpp"
-#include "gecode/iter/values-offset.hpp"
-#include "gecode/iter/values-positive.hpp"
-#include "gecode/iter/values-ranges.hpp"
-#include "gecode/iter/values-singleton.hpp"
-#include "gecode/iter/values-union.hpp"
-#include "gecode/iter/values-unique.hpp"
+#include <gecode/iter/values-array.hpp>
+#include <gecode/iter/values-inter.hpp>
+#include <gecode/iter/values-map.hpp>
+#include <gecode/iter/values-minus.hpp>
+#include <gecode/iter/values-negative.hpp>
+#include <gecode/iter/values-offset.hpp>
+#include <gecode/iter/values-positive.hpp>
+#include <gecode/iter/values-ranges.hpp>
+#include <gecode/iter/values-singleton.hpp>
+#include <gecode/iter/values-union.hpp>
+#include <gecode/iter/values-unique.hpp>
 
-#include "gecode/iter/ranges-size.hpp"
+#include <gecode/iter/ranges-size.hpp>
 
-#include "gecode/iter/virtual-ranges.hpp"
-#include "gecode/iter/virtual-ranges-union.hpp"
-#include "gecode/iter/virtual-ranges-inter.hpp"
-#include "gecode/iter/virtual-ranges-compl.hpp"
+#include <gecode/iter/virtual-ranges.hpp>
+#include <gecode/iter/virtual-ranges-union.hpp>
+#include <gecode/iter/virtual-ranges-inter.hpp>
+#include <gecode/iter/virtual-ranges-compl.hpp>
 
 #endif
 

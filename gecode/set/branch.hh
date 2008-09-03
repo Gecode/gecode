@@ -44,7 +44,7 @@
 #ifndef __GECODE_SET_BRANCH_HH__
 #define __GECODE_SET_BRANCH_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 /**
  * \namespace Gecode::Set::Branch
@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \brief Class for selecting minimum value
    *
    * All value selection classes require 
-   * \code #include "gecode/set/branch.hh" \endcode
+   * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelVal
    */
   template <bool inc>
@@ -89,7 +89,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \brief Class for selecting maximum value
    *
    * All value selection classes require 
-   * \code #include "gecode/set/branch.hh" \endcode
+   * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelVal
    */
   template <bool inc>
@@ -120,7 +120,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief View selection class for view with smallest minimum element in lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelView
    */
   class ByMinMin : public ViewSelBase<SetView> {
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief View selection class for view with largest minimum element in lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelView
    */
   class ByMinMax : public ViewSelBase<SetView> {
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief View selection class for view with smallest maximal element in lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelView
    */
   class ByMaxMin : public ViewSelBase<SetView> {
@@ -189,7 +189,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief View selection class for view with largest maximal element in lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelView
    */
   class ByMaxMax : public ViewSelBase<SetView> {
@@ -212,7 +212,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief View selection class for view with smallest cardinality of lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelView
    */
   class BySizeMin : public ViewSelBase<SetView> {
@@ -235,7 +235,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief View selection class for view with largest cardinality of lub-glb
    *
-   * Requires \code #include "gecode/set/branch.hh" \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelView
    */
   class BySizeMax : public ViewSelBase<SetView> {
@@ -257,9 +257,9 @@ namespace Gecode { namespace Set { namespace Branch {
 
 }}}
 
-#include "gecode/set/branch/select-val.hpp"
-#include "gecode/set/branch/select-view.hpp"
-#include "gecode/set/branch/post-val.hpp"
+#include <gecode/set/branch/select-val.hpp>
+#include <gecode/set/branch/select-view.hpp>
+#include <gecode/set/branch/post-val.hpp>
 
 #endif
 // STATISTICS: set-branch

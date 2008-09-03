@@ -24,7 +24,7 @@
  *
  */
 
-#include "gecode/dds.hh"
+#include <gecode/dds.hh>
 
 #include <queue>
 #include <vector>

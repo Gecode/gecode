@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/int/channel.hh"
+#include <gecode/int/channel.hh>
 
 namespace Gecode { namespace Int { namespace Channel {
 

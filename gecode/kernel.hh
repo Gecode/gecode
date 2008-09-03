@@ -47,7 +47,7 @@
 #include <cstring>
 #include <cassert>
 
-#include "gecode/support.hh"
+#include <gecode/support.hh>
 
 /*
  * Configure linking
@@ -75,7 +75,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_KERNEL
 #define GECODE_LIBRARY_NAME "Kernel"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 /**
@@ -96,7 +96,7 @@
  *
  */
 
-#include "gecode/kernel/exception.hpp"
+#include <gecode/kernel/exception.hpp>
 
 
 
@@ -105,8 +105,8 @@
  *
  */
 
-#include "gecode/kernel/memory-config.hpp"
-#include "gecode/kernel/memory-manager.hpp"
+#include <gecode/kernel/memory-config.hpp>
+#include <gecode/kernel/memory-manager.hpp>
 
 
 /*
@@ -114,7 +114,7 @@
  *
  */
 
-#include "gecode/kernel/macros.hpp"
+#include <gecode/kernel/macros.hpp>
 
 
 /*
@@ -122,8 +122,8 @@
  *
  */
 
-#include "gecode/kernel/core.hpp"
-#include "gecode/kernel/modevent.hpp"
+#include <gecode/kernel/core.hpp>
+#include <gecode/kernel/modevent.hpp>
 
 
 /*
@@ -131,7 +131,7 @@
  *
  */
 
-#include "gecode/kernel/region.hpp"
+#include <gecode/kernel/region.hpp>
 
 
 /*
@@ -139,7 +139,7 @@
  *
  */
 
-#include "gecode/kernel/var-traits.hpp"
+#include <gecode/kernel/var-traits.hpp>
 
 
 /*
@@ -147,7 +147,7 @@
  *
  */
 
-#include "gecode/kernel/var.hpp"
+#include <gecode/kernel/var.hpp>
 
 
 /*
@@ -155,7 +155,7 @@
  *
  */
 
-#include "gecode/kernel/reflection.hpp"
+#include <gecode/kernel/reflection.hpp>
 
 
 /*
@@ -163,7 +163,7 @@
  *
  */
 
-#include "gecode/kernel/view.hpp"
+#include <gecode/kernel/view.hpp>
 
 
 /*
@@ -171,7 +171,7 @@
  *
  */
 
-#include "gecode/kernel/array.hpp"
+#include <gecode/kernel/array.hpp>
 
 
 /*
@@ -179,7 +179,7 @@
  *
  */
 
-#include "gecode/kernel/var-map.hpp"
+#include <gecode/kernel/var-map.hpp>
 
 
 /*
@@ -187,7 +187,7 @@
  *
  */
 
-#include "gecode/kernel/shared-array.hpp"
+#include <gecode/kernel/shared-array.hpp>
 
 
 /*
@@ -195,13 +195,13 @@
  *
  */
 
-#include "gecode/kernel/propagator.hpp"
-#include "gecode/kernel/advisor.hpp"
-#include "gecode/kernel/branch.hpp"
-#include "gecode/kernel/branching.hpp"
-#include "gecode/kernel/branching-view.hpp"
-#include "gecode/kernel/branching-tiebreak.hpp"
-#include "gecode/kernel/branching-val.hpp"
+#include <gecode/kernel/propagator.hpp>
+#include <gecode/kernel/advisor.hpp>
+#include <gecode/kernel/branch.hpp>
+#include <gecode/kernel/branching.hpp>
+#include <gecode/kernel/branching-view.hpp>
+#include <gecode/kernel/branching-tiebreak.hpp>
+#include <gecode/kernel/branching-val.hpp>
 
 
 /*
@@ -209,7 +209,7 @@
  *
  */
 
-#include "gecode/kernel/var-imp.hpp"
+#include <gecode/kernel/var-imp.hpp>
 
 #endif
 

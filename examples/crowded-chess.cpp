@@ -38,7 +38,7 @@
  */
 
 #include "examples/support.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 /** The maximum number of knights placeable.
  *

@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/layoutcursor.hh"
+#include <gecode/gist/layoutcursor.hh>
 
 namespace Gecode { namespace Gist {
 

@@ -38,9 +38,9 @@
  *
  */
 
-#include "gecode/set/rel.hh"
-#include "gecode/set/rel-op.hh"
-#include "gecode/set/int.hh"
+#include <gecode/set/rel.hh>
+#include <gecode/set/rel-op.hh>
+#include <gecode/set/int.hh>
 
 namespace Gecode {
   using namespace Set;

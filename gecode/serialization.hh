@@ -38,7 +38,7 @@
 #ifndef __GECODE_SERIALIZATION_HH__
 #define __GECODE_SERIALIZATION_HH__
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
 /*
  * Support for DLLs under Windows
@@ -70,7 +70,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_SERIALIZATION
 #define GECODE_LIBRARY_NAME "Serialization"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 #include <iostream>
@@ -145,7 +145,7 @@ namespace Gecode {
     std::vector<Reflection::ActorSpec>& actors);
 }
 
-#include "gecode/serialization/boost.hpp"
+#include <gecode/serialization/boost.hpp>
 
 #endif
 

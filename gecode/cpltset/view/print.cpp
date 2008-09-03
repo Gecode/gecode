@@ -35,8 +35,8 @@
  *
  */
 
-#include "gecode/cpltset.hh"
-#include "gecode/support/buddy/kernel.h"
+#include <gecode/cpltset.hh>
+#include <gecode/support/buddy/kernel.h>
 
 namespace Gecode { namespace CpltSet {
 

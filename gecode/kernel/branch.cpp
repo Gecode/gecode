@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
 namespace Gecode {
   

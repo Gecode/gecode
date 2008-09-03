@@ -42,8 +42,8 @@
 #ifndef __GECODE_TEST_TEST_HH__
 #define __GECODE_TEST_TEST_HH__
 
-#include "gecode/kernel.hh"
-#include "gecode/search.hh"
+#include <gecode/kernel.hh>
+#include <gecode/search.hh>
 
 #include <iostream>
 #include <sstream>

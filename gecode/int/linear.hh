@@ -40,7 +40,7 @@
 #ifndef __GECODE_INT_LINEAR_HH__
 #define __GECODE_INT_LINEAR_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 /**
  * \namespace Gecode::Int::Linear
@@ -131,7 +131,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B>
@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B, class Ctrl>
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B>
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B>
@@ -300,7 +300,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B>
@@ -342,7 +342,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B>
@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/int-bin.hpp"
+#include <gecode/int/linear/int-bin.hpp>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -430,7 +430,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to all three views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B, class C>
@@ -473,7 +473,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to all three views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B, class C>
@@ -516,7 +516,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to all three views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class A, class B, class C>
@@ -552,7 +552,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/int-ter.hpp"
+#include <gecode/int/linear/int-ter.hpp>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -647,7 +647,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class P, class N>
@@ -686,7 +686,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * numerical precision during propagation. The types \a View
    * give the type of the view.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class View>
@@ -730,7 +730,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class P, class N, class Ctrl>
@@ -772,7 +772,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class P, class N>
@@ -813,7 +813,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class P, class N>
@@ -854,7 +854,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class Val, class P, class N>
@@ -889,8 +889,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/int-nary.hpp"
-#include "gecode/int/linear/int-dom.hpp"
+#include <gecode/int/linear/int-nary.hpp>
+#include <gecode/int/linear/int-dom.hpp>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -958,7 +958,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for integer equal to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX>
@@ -1026,7 +1026,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for integer less or equal to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX>
@@ -1094,7 +1094,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for integer disequal to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX>
@@ -1133,7 +1133,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/bool-int.hpp"
+#include <gecode/int/linear/bool-int.hpp>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -1193,7 +1193,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for equality to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class XV, class YV>
@@ -1227,7 +1227,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for disequality to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class XV, class YV>
@@ -1261,7 +1261,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for greater or equal to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class XV, class YV>
@@ -1295,7 +1295,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for reified equality to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class XV, class YV, class BV>
@@ -1330,7 +1330,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for reified greater or equal to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class XV, class YV, class BV>
@@ -1364,7 +1364,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/bool-view.hpp"
+#include <gecode/int/linear/bool-view.hpp>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -1489,7 +1489,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for equality to Boolean sum with coefficients
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class SBAP, class SBAN, class VX>
@@ -1524,7 +1524,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for inequality to Boolean sum with coefficients
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class SBAP, class SBAN, class VX>
@@ -1559,7 +1559,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for disequality to Boolean sum with coefficients
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class SBAP, class SBAN, class VX>
@@ -1593,7 +1593,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/bool-scale.hpp"
+#include <gecode/int/linear/bool-scale.hpp>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -1678,7 +1678,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
@@ -1710,7 +1710,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
@@ -1740,7 +1740,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
@@ -1771,7 +1771,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
@@ -1802,7 +1802,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
@@ -1833,7 +1833,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
@@ -1842,7 +1842,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/post.hpp"
+#include <gecode/int/linear/post.hpp>
 
 #endif
 

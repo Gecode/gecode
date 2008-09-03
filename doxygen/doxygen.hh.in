@@ -78,7 +78,7 @@
  * is controlled by a passing a search option object (see the class 
  * Gecode::Search::Options).
  *
- * Requires \code #include "gecode/search.hh" \endcode
+ * Requires \code #include <gecode/search.hh> \endcode
  * \ingroup TaskModel
  */
 
@@ -165,7 +165,7 @@
  * and variables in a space. More detailed, step-by-step information can be 
  * found in the \ref PageReflection "reflection tutorial".
  *
- * Requires \code #include "gecode/kernel.hh" \endcode
+ * Requires \code #include <gecode/kernel.hh> \endcode
  *
  * \ingroup TaskReflSer
  */
@@ -180,7 +180,7 @@
  * It provides funcionality for creating variables and posting propagators in 
  * a space using the specifications obtained through reflection.
  *
- * Requires \code #include "gecode/serialization.hh" \endcode
+ * Requires \code #include <gecode/serialization.hh> \endcode
  *
  * \ingroup TaskReflSer
  */
@@ -228,7 +228,7 @@
  * width of the current range by \c min(), \c max(), and \c width()
  * respectively.
  * 
- * Requires \code #include "gecode/iter.hh" \endcode
+ * Requires \code #include <gecode/iter.hh> \endcode
  * \ingroup Func
  */
 
@@ -238,7 +238,7 @@
  * A range iterator provides incremental access to a sequence of increasing
  * ranges.
  *
- * Requires \code #include "gecode/iter.hh" \endcode
+ * Requires \code #include <gecode/iter.hh> \endcode
  * \ingroup FuncIter
  */
 
@@ -250,7 +250,7 @@
  * they are combined dynamically, and the actual types hence cannot be
  * specified as template arguments.
  *
- * Requires \code #include "gecode/iter.hh" \endcode
+ * Requires \code #include <gecode/iter.hh> \endcode
  * \ingroup FuncIterRanges
  */
 
@@ -260,7 +260,7 @@
  * A value iterator provides incremental access to a sequence of increasing
  * values. 
  *
- * Requires \code #include "gecode/iter.hh" \endcode
+ * Requires \code #include <gecode/iter.hh> \endcode
  * \ingroup FuncIter
  */
 
@@ -272,7 +272,7 @@
  * they are combined dynamically, and the actual types hence cannot be
  * specified as template arguments.
  *
- * Requires \code #include "gecode/iter.hh" \endcode
+ * Requires \code #include <gecode/iter.hh> \endcode
  * \ingroup FuncIterValues
  */
 
@@ -299,7 +299,7 @@
  * branching class Gecode::ViewValBranching (argument \a ViewSel).
  *
  * All view selection classes require 
- * \code #include "gecode/int/branch.hh" \endcode
+ * \code #include <gecode/int/branch.hh> \endcode
  * \ingroup Other
  */
 
@@ -311,7 +311,7 @@
  * branching class Gecode::ViewValBranching (argument \a ValSel).
  *
  * All value selection classes require 
- * \code #include "gecode/int/branch.hh" \endcode
+ * \code #include <gecode/int/branch.hh> \endcode
  * \ingroup Other
  */
 
@@ -333,7 +333,7 @@
  * branching class Gecode::ViewValBranching (argument \a ViewSel).
  *
  * All view selection classes require 
- * \code #include "gecode/set/branch.hh" \endcode
+ * \code #include <gecode/set/branch.hh> \endcode
  * \ingroup Other
  */
 
@@ -345,7 +345,7 @@
  * branching class Gecode::ViewValBranching (argument \a ValSel).
  *
  * All value selection classes require 
- * \code #include "gecode/set/branch.hh" \endcode
+ * \code #include <gecode/set/branch.hh> \endcode
  * \ingroup Other
  */
 
@@ -367,7 +367,7 @@
  * branching class Gecode::ViewValBranching (argument \a ViewSel).
  *
  * All view selection classes require 
- * \code #include "gecode/cpltset/branch.hh" \endcode
+ * \code #include <gecode/cpltset/branch.hh> \endcode
  * \ingroup Other
  */
 
@@ -379,7 +379,7 @@
  * branching class Gecode::ViewValBranching (argument \a ValSel).
  *
  * All value selection classes require 
- * \code #include "gecode/cpltset/branch.hh" \endcode
+ * \code #include <gecode/cpltset/branch.hh> \endcode
  * \ingroup Other
  */
 
@@ -1094,7 +1094,7 @@ all, it is an extensionally specified constraint). The old name
 is still available in the MiniModel module. 
 
 If you want to use regular expressions, you have to add
-   \code #include "gecode/int/minimodel.hh" \endcode
+   \code #include <gecode/int/minimodel.hh> \endcode
 to your file as they moved to the MiniModel module.
 
 \section SecChange2Bool Boolean constraints

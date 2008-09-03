@@ -40,7 +40,7 @@
  */        
 
 #include "examples/support.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 /**
  * \brief Options taking two additional parameters

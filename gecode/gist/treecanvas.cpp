@@ -39,17 +39,17 @@
 #include <stack>
 #include <fstream>
 
-#include "gecode/gist/treecanvas.hh"
+#include <gecode/gist/treecanvas.hh>
 
-#include "gecode/gist/nodevisitor.hh"
-#include "gecode/gist/layoutcursor.hh"
-#include "gecode/gist/visualnode.hh"
-#include "gecode/gist/drawingcursor.hh"
-#include "gecode/gist/addchild.hh"
-#include "gecode/gist/addvisualisationdialog.hh"
-#include "gecode/gist/zoomToFitIcon.hpp"
+#include <gecode/gist/nodevisitor.hh>
+#include <gecode/gist/layoutcursor.hh>
+#include <gecode/gist/visualnode.hh>
+#include <gecode/gist/drawingcursor.hh>
+#include <gecode/gist/addchild.hh>
+#include <gecode/gist/addvisualisationdialog.hh>
+#include <gecode/gist/zoomToFitIcon.hpp>
 
-#include "gecode/search.hh"
+#include <gecode/search.hh>
 
 namespace Gecode { namespace Gist {
 

@@ -37,8 +37,8 @@
 #ifndef GECODE_GIST_LAYOUTCURSOR_HH
 #define GECODE_GIST_LAYOUTCURSOR_HH
 
-#include "gecode/gist/nodecursor.hh"
-#include "gecode/gist/visualnode.hh"
+#include <gecode/gist/nodecursor.hh>
+#include <gecode/gist/visualnode.hh>
 
 namespace Gecode { namespace Gist {
   
@@ -68,7 +68,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/layoutcursor.hpp"
+#include <gecode/gist/layoutcursor.hpp>
 
 #endif
 

@@ -36,10 +36,10 @@
 
 #include <QtGui>
 
-#include "gecode/gist.hh"
-#include "gecode/gist/treecanvas.hh"
-#include "gecode/gist/textoutput.hh"
-#include "gecode/gist/mainwindow.hh"
+#include <gecode/gist.hh>
+#include <gecode/gist/treecanvas.hh>
+#include <gecode/gist/textoutput.hh>
+#include <gecode/gist/mainwindow.hh>
 
 namespace Gecode {
 

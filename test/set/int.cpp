@@ -37,7 +37,7 @@
 
 #include "test/set.hh"
 #include "test/int.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 using namespace Gecode;
 

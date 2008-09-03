@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/nodecursor.hh"
+#include <gecode/gist/nodecursor.hh>
 
 namespace Gecode { namespace Gist {
   

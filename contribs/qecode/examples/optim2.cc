@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
 
-#include "gecode/minimodel.hh"
-#include "gecode/search.hh"
+#include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 #include "Implicative.hh"
 #include "qsolver.hh"
 #include <iostream>

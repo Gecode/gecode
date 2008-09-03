@@ -35,8 +35,8 @@
  *
  */
 
-#include "gecode/minimodel.hh"
-#include "gecode/search.hh"
+#include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 
 #include "test/test.hh"
 

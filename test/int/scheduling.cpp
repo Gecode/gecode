@@ -37,8 +37,8 @@
 
 #include "test/int.hh"
 
-#include "gecode/minimodel.hh"
-#include "gecode/search.hh"
+#include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 
 #include <vector>
 #include <algorithm>

@@ -42,13 +42,13 @@
 #include <vector>
 #include <iostream>
 
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
+#include <gecode/kernel.hh>
+#include <gecode/int.hh>
 #ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #endif
 
-#include "gecode/search.hh"
+#include <gecode/search.hh>
 
 namespace Test { namespace Branch {
 

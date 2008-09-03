@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/support/buddy/bdd.h"
+#include <gecode/support/buddy/bdd.h>
 
 namespace Gecode {
   

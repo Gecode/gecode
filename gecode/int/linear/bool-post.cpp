@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/int/linear.hh"
+#include <gecode/int/linear.hh>
 
 namespace Gecode { namespace Int { namespace Linear {
 

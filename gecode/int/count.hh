@@ -40,7 +40,7 @@
 #ifndef __GECODE_INT_COUNT_HH__
 #define __GECODE_INT_COUNT_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 /**
  * \namespace Gecode::Int::Count
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include "gecode/int/count/rel.hpp"
+#include <gecode/int/count/rel.hpp>
 
 
 namespace Gecode { namespace Int { namespace Count {
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX, class VY>
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX, class VY>
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX, class VY>
@@ -227,7 +227,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VY>
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include "gecode/int/count/int.hpp"
+#include <gecode/int/count/int.hpp>
 
 
 namespace Gecode { namespace Int { namespace Count {
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
@@ -442,7 +442,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Requires \code #include "gecode/int/count.hh" \endcode
+   * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
@@ -479,7 +479,7 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include "gecode/int/count/view.hpp"
+#include <gecode/int/count/view.hpp>
 
 #endif
 

@@ -37,7 +37,7 @@
  *
  */
 
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 namespace Gecode { namespace MiniModel {
 

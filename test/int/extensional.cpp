@@ -39,7 +39,7 @@
 
 #include "test/int.hh"
 
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 namespace Test { namespace Int {
 

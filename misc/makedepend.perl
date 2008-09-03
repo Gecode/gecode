@@ -54,7 +54,7 @@ while ($target = $ARGV[$i++]) {
       open FILE, "$f" or die "File missing: $root/$f\n";
     
     while ($l = <FILE>) {
-      if ($l =~ /^\#include "(.*)"/) {
+      if ($l =~ /^\#include <(gecode\/.*)>/ || $l =~ /^\#include "(.*)"/) {
 	$g = $1;
 	$g =~ s|^\./||og;
 	if (!$done{$g}) {

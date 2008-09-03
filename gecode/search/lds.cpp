@@ -38,7 +38,7 @@
  *
  */
 
-#include "gecode/search.hh"
+#include <gecode/search.hh>
 
 namespace Gecode { namespace Search {
 

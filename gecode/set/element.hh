@@ -40,11 +40,11 @@
 #ifndef __GECODE_SET_SELECT_HH__
 #define __GECODE_SET_SELECT_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
-#include "gecode/set/element/idxarray.hh"
-#include "gecode/set/rel.hh"
-#include "gecode/set/rel-op.hh"
+#include <gecode/set/element/idxarray.hh>
+#include <gecode/set/rel.hh>
+#include <gecode/set/rel-op.hh>
 
 namespace Gecode { namespace Set { namespace Element {
 
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with intersection
    *
-   * Requires \code #include "gecode/set/element.hh" \endcode
+   * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
@@ -101,7 +101,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with union
    *
-   * Requires \code #include "gecode/set/element.hh" \endcode
+   * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
@@ -144,7 +144,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with union of constant sets
    *
-   * Requires \code #include "gecode/set/element.hh" \endcode
+   * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Element {
   /**
    * \brief %Propagator for element with disjointness
    *
-   * Requires \code #include "gecode/set/element.hh" \endcode
+   * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
   class ElementDisjoint :
@@ -222,10 +222,10 @@ namespace Gecode { namespace Set { namespace Element {
 
 }}}
 
-#include "gecode/set/element/inter.hpp"
-#include "gecode/set/element/union.hpp"
-#include "gecode/set/element/unionConst.hpp"
-#include "gecode/set/element/disjoint.hpp"
+#include <gecode/set/element/inter.hpp>
+#include <gecode/set/element/union.hpp>
+#include <gecode/set/element/unionConst.hpp>
+#include <gecode/set/element/disjoint.hpp>
 
 #endif
 

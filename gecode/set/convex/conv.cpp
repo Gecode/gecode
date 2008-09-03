@@ -39,7 +39,7 @@
  *
  */
 
-#include "gecode/set/convex.hh"
+#include <gecode/set/convex.hh>
 
 namespace Gecode { namespace Set { namespace Convex {
 

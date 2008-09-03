@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/visualisation/vararrayview.hh"
+#include <gecode/gist/visualisation/vararrayview.hh>
 
 #include <QGraphicsTextItem>
 

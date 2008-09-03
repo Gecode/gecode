@@ -40,7 +40,7 @@
 #ifndef __GECODE_INT_BOOL_HH__
 #define __GECODE_INT_BOOL_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 /**
  * \namespace Gecode::Int::Bool
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean equality propagator
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BVA, class BVB>
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief n-ary Boolean equality propagator
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BV>
@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean less or equal propagator
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BV>
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean less propagator
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BV>
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Binary Boolean disjunction propagator (true)
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BVA, class BVB>
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Ternary Boolean disjunction propagator (true)
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BV>
@@ -295,7 +295,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Quarternary Boolean disjunction propagator (true)
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BV>
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean disjunction propagator
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BVA, class BVB, class BVC>
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean n-ary disjunction propagator
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX,class VY>
@@ -415,7 +415,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean n-ary disjunction propagator (true)
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BV>
@@ -456,7 +456,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean equivalence propagator
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class BVA, class BVB, class BVC>
@@ -490,7 +490,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean clause propagator (disjunctive)
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VY>
@@ -550,7 +550,7 @@ namespace Gecode { namespace Int { namespace Bool {
   /**
    * \brief Boolean clause propagator (disjunctive, true)
    *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VY>
@@ -593,12 +593,12 @@ namespace Gecode { namespace Int { namespace Bool {
 
 }}}
 
-#include "gecode/int/bool/base.hpp"
-#include "gecode/int/bool/eq.hpp"
-#include "gecode/int/bool/lq.hpp"
-#include "gecode/int/bool/or.hpp"
-#include "gecode/int/bool/eqv.hpp"
-#include "gecode/int/bool/clause.hpp"
+#include <gecode/int/bool/base.hpp>
+#include <gecode/int/bool/eq.hpp>
+#include <gecode/int/bool/lq.hpp>
+#include <gecode/int/bool/or.hpp>
+#include <gecode/int/bool/eqv.hpp>
+#include <gecode/int/bool/clause.hpp>
 
 #endif
 

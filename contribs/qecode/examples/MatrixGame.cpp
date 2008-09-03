@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 #include <iostream>
 
-#include "gecode/minimodel.hh"
-#include "gecode/int/element.hh"
+#include <gecode/minimodel.hh>
+#include <gecode/int/element.hh>
 
 #include "qsolver.hh"
 #include "implicative.hh"

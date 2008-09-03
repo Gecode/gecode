@@ -40,7 +40,7 @@
 
 #include <cassert>
 
-#include "gecode/support/config.hpp"
+#include <gecode/support/config.hpp>
 
 /*
  * Linking and compiler workarounds
@@ -81,7 +81,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_SUPPORT
 #define GECODE_LIBRARY_NAME "Support"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 /*
@@ -89,26 +89,26 @@
  *
  */
 
-#include "gecode/support/macros.hpp"
-#include "gecode/support/exception.hpp"
-#include "gecode/support/cast.hpp"
-#include "gecode/support/heap.hpp"
-#include "gecode/support/marked-pointer.hpp"
-#include "gecode/support/int-type.hpp"
+#include <gecode/support/macros.hpp>
+#include <gecode/support/exception.hpp>
+#include <gecode/support/cast.hpp>
+#include <gecode/support/heap.hpp>
+#include <gecode/support/marked-pointer.hpp>
+#include <gecode/support/int-type.hpp>
 
 /*
  * Common datastructures and algorithms
  *
  */
 
-#include "gecode/support/block-allocator.hpp"
-#include "gecode/support/dynamic-array.hpp"
-#include "gecode/support/dynamic-stack.hpp"
-#include "gecode/support/random.hpp"
-#include "gecode/support/sort.hpp"
-#include "gecode/support/static-stack.hpp"
-#include "gecode/support/symbol.hpp"
-#include "gecode/support/map.hpp"
+#include <gecode/support/block-allocator.hpp>
+#include <gecode/support/dynamic-array.hpp>
+#include <gecode/support/dynamic-stack.hpp>
+#include <gecode/support/random.hpp>
+#include <gecode/support/sort.hpp>
+#include <gecode/support/static-stack.hpp>
+#include <gecode/support/symbol.hpp>
+#include <gecode/support/map.hpp>
 
 #endif
 

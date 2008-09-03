@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/visualisation/varitem.hh"
+#include <gecode/gist/visualisation/varitem.hh>
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 

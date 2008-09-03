@@ -84,7 +84,7 @@ namespace Gecode { namespace Gist {
   
 }}
 
-#include "gecode/gist/nodevisitor.hpp"
+#include <gecode/gist/nodevisitor.hpp>
 
 #endif
 

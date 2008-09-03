@@ -42,7 +42,7 @@
 
 #include <ctime>
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
 /*
  * Configure linking
@@ -70,7 +70,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_SEARCH
 #define GECODE_LIBRARY_NAME "Search"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 
@@ -736,17 +736,17 @@ namespace Gecode {
 
 }
 
-#include "gecode/search/statistics.hpp"
-#include "gecode/search/stop.hpp"
-#include "gecode/search/options.hpp"
-#include "gecode/search/engine-ctrl.hpp"
+#include <gecode/search/statistics.hpp>
+#include <gecode/search/stop.hpp>
+#include <gecode/search/options.hpp>
+#include <gecode/search/engine-ctrl.hpp>
 
-#include "gecode/search/reco-stack.hpp"
+#include <gecode/search/reco-stack.hpp>
 
-#include "gecode/search/dfs.hpp"
-#include "gecode/search/lds.hpp"
-#include "gecode/search/bab.hpp"
-#include "gecode/search/restart.hpp"
+#include <gecode/search/dfs.hpp>
+#include <gecode/search/lds.hpp>
+#include <gecode/search/bab.hpp>
+#include <gecode/search/restart.hpp>
 
 #endif
 

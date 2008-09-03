@@ -40,8 +40,8 @@
 
 #include <QtScript>
 #include <iostream>
-#include "gecode/kernel.hh"
-#include "gecode/serialization.hh"
+#include <gecode/kernel.hh>
+#include <gecode/serialization.hh>
 
 namespace Gecode { namespace Serialization {
 

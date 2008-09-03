@@ -35,8 +35,8 @@
  *
  */
 
-#include "gecode/cpltset.hh"
-#include "gecode/cpltset/propagators.hh"
+#include <gecode/cpltset.hh>
+#include <gecode/cpltset/propagators.hh>
 
 using namespace Gecode::CpltSet;
 

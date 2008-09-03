@@ -41,7 +41,7 @@
 
 
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 namespace Gecode {
 

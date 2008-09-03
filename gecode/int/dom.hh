@@ -40,8 +40,8 @@
 #ifndef __GECODE_INT_DOM_HH__
 #define __GECODE_INT_DOM_HH__
 
-#include "gecode/int.hh"
-#include "gecode/int/rel.hh"
+#include <gecode/int.hh>
+#include <gecode/int/rel.hh>
 
 /**
  * \namespace Gecode::Int::Dom
@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Dom {
   /**
    * \brief Reified range dom-propagator
    *
-   * Requires \code #include "gecode/int/dom.hh" \endcode
+   * Requires \code #include <gecode/int/dom.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Dom {
   /**
    * \brief Reified domain dom-propagator
    *
-   * Requires \code #include "gecode/int/dom.hh" \endcode
+   * Requires \code #include <gecode/int/dom.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -125,8 +125,8 @@ namespace Gecode { namespace Int { namespace Dom {
 
 }}}
 
-#include "gecode/int/dom/range.hpp"
-#include "gecode/int/dom/spec.hpp"
+#include <gecode/int/dom/range.hpp>
+#include <gecode/int/dom/spec.hpp>
 
 #endif
 

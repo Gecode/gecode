@@ -37,7 +37,7 @@
  *
  */
 
-#include "gecode/set/sequence.hh"
+#include <gecode/set/sequence.hh>
 
 using namespace Gecode::Set;
 

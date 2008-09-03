@@ -38,7 +38,7 @@
 #ifndef __GECODE_INT_BRANCH_HH__
 #define __GECODE_INT_BRANCH_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 /**
  * \namespace Gecode::Int::Branch
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief Class for selecting minimum value
    *
    * All value selection classes require
-   * \code #include "gecode/int/branch.hh" \endcode
+   * \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
   template<class View>
@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief Class for selecting median value
    *
    * Requires
-   * \code #include "gecode/int/branch.hh" \endcode
+   * \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
   template<class View>
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief Class for random value selection
    *
    * Requires
-   * \code #include "gecode/int/branch.hh" \endcode
+   * \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
   template<class _View>
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief Class for splitting domain (lower half first)
    *
    * Requires
-   * \code #include "gecode/int/branch.hh" \endcode
+   * \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
   template<class View>
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief Class for trying zero and then one
    *
    * Requires
-   * \code #include "gecode/int/branch.hh" \endcode
+   * \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
   template<class View>
@@ -297,7 +297,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with smallest min
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByMinMin : public ViewSelBase<IntView> {
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with largest min
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByMinMax : public ViewSelBase<IntView> {
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with smallest max
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByMaxMin : public ViewSelBase<IntView> {
@@ -366,7 +366,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with largest max
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByMaxMax : public ViewSelBase<IntView> {
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with smallest size
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class BySizeMin : public ViewSelBase<IntView> {
@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with largest size
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class BySizeMax : public ViewSelBase<IntView> {
@@ -436,7 +436,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief View selection class for view with smallest size divided
    * by degree.
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class BySizeDegreeMin : public ViewSelBase<IntView> {
@@ -460,7 +460,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief View selection class for view with largest size divided
    * by degree.
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class BySizeDegreeMax : public ViewSelBase<IntView> {
@@ -483,7 +483,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with smallest min-regret
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByRegretMinMin : public ViewSelBase<IntView> {
@@ -506,7 +506,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with largest min-regret
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByRegretMinMax : public ViewSelBase<IntView> {
@@ -529,7 +529,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with smallest max-regret
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByRegretMaxMin : public ViewSelBase<IntView> {
@@ -552,7 +552,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief View selection class for view with largest max-regret
    *
-   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class ByRegretMaxMax : public ViewSelBase<IntView> {
@@ -574,11 +574,11 @@ namespace Gecode { namespace Int { namespace Branch {
 
 }}}
 
-#include "gecode/int/branch/select-val.hpp"
-#include "gecode/int/branch/select-values.hpp"
-#include "gecode/int/branch/select-view.hpp"
-#include "gecode/int/branch/post-val-int.hpp"
-#include "gecode/int/branch/post-val-bool.hpp"
+#include <gecode/int/branch/select-val.hpp>
+#include <gecode/int/branch/select-values.hpp>
+#include <gecode/int/branch/select-view.hpp>
+#include <gecode/int/branch/post-val-int.hpp>
+#include <gecode/int/branch/post-val-bool.hpp>
 
 #endif
 

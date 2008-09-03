@@ -44,7 +44,7 @@
 #ifndef __GECODE_SET_REL_HH__
 #define __GECODE_SET_REL_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 namespace Gecode { namespace Set { namespace Rel {
 
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Rel {
   /**
    * \brief %Propagator for the subset constraint
    *
-   * Requires \code #include "gecode/set/rel.hh" \endcode
+   * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
 
@@ -90,7 +90,7 @@ namespace Gecode { namespace Set { namespace Rel {
   /**
    * \brief %Propagator for the negated subset constraint
    *
-   * Requires \code #include "gecode/set/rel.hh" \endcode
+   * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
 
@@ -124,7 +124,7 @@ namespace Gecode { namespace Set { namespace Rel {
   /**
    * \brief %Reified subset propagator
    *
-   * Requires \code #include "gecode/set/rel.hh" \endcode
+   * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
@@ -164,7 +164,7 @@ namespace Gecode { namespace Set { namespace Rel {
   /**
    * \brief %Propagator for set equality
    *
-   * Requires \code #include "gecode/set/rel.hh" \endcode
+   * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
 
@@ -198,7 +198,7 @@ namespace Gecode { namespace Set { namespace Rel {
   /**
    * \brief %Reified equality propagator
    *
-   * Requires \code #include "gecode/set/rel.hh" \endcode
+   * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
@@ -238,7 +238,7 @@ namespace Gecode { namespace Set { namespace Rel {
   /**
    * \brief %Propagator for negated equality
    *
-   * Requires \code #include "gecode/set/rel.hh" \endcode
+   * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp   
    */
 
@@ -276,7 +276,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Distinct propagator waited for one variable to become
    * assigned.
    *
-   * Requires \code #include "gecode/set/rel.hh" \endcode
+   * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp   
    */
   template <class View0>
@@ -308,13 +308,13 @@ namespace Gecode { namespace Set { namespace Rel {
 
 }}}
 
-#include "gecode/set/rel/common.hpp"
-#include "gecode/set/rel/subset.hpp"
-#include "gecode/set/rel/nosubset.hpp"
-#include "gecode/set/rel/re-subset.hpp"
-#include "gecode/set/rel/eq.hpp"
-#include "gecode/set/rel/re-eq.hpp"
-#include "gecode/set/rel/nq.hpp"
+#include <gecode/set/rel/common.hpp>
+#include <gecode/set/rel/subset.hpp>
+#include <gecode/set/rel/nosubset.hpp>
+#include <gecode/set/rel/re-subset.hpp>
+#include <gecode/set/rel/eq.hpp>
+#include <gecode/set/rel/re-eq.hpp>
+#include <gecode/set/rel/nq.hpp>
 
 #endif
 

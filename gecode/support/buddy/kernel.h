@@ -38,7 +38,7 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
-#include "gecode/support/config.hpp"
+#include <gecode/support/config.hpp>
 
 #ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #pragma GCC visibility push(default)
@@ -48,7 +48,7 @@
 
 #include <limits.h>
 #include <setjmp.h>
-#include "gecode/support/buddy/bdd.h"
+#include <gecode/support/buddy/bdd.h>
 
 /*=== SANITY CHECKS ====================================================*/
 

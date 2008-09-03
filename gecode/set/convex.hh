@@ -44,7 +44,7 @@
 #ifndef __GECODE_SET_CONVEX_HH__
 #define __GECODE_SET_CONVEX_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 namespace Gecode { namespace Set { namespace Convex {
 
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Convex {
   /**
    * \brief %Propagator for the convex constraint
    *
-   * Requires \code #include "gecode/set/convex.hh" \endcode
+   * Requires \code #include <gecode/set/convex.hh> \endcode
    * \ingroup FuncSetProp
    */
 
@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Convex {
   /**
    * \brief %Propagator for the convex hull constraint
    *
-   * Requires \code #include "gecode/set/convex.hh" \endcode
+   * Requires \code #include <gecode/set/convex.hh> \endcode
    * \ingroup FuncSetProp
    */
 
@@ -118,8 +118,8 @@ namespace Gecode { namespace Set { namespace Convex {
 
 }}}
 
-#include "gecode/set/convex/conv.hpp"
-#include "gecode/set/convex/hull.hpp"
+#include <gecode/set/convex/conv.hpp>
+#include <gecode/set/convex/hull.hpp>
 
 #endif
 

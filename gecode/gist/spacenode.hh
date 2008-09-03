@@ -37,8 +37,8 @@
 #ifndef GECODE_GIST_SPACENODE_HH
 #define GECODE_GIST_SPACENODE_HH
 
-#include "gecode/gist/node.hh"
-#include "gecode/kernel.hh"
+#include <gecode/gist/node.hh>
+#include <gecode/kernel.hh>
 
 namespace Gecode { namespace Gist {
 
@@ -219,7 +219,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/spacenode.hpp"
+#include <gecode/gist/spacenode.hpp>
 
 #endif
 

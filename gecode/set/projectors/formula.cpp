@@ -35,9 +35,9 @@
  *
  */
 
-#include "gecode/set/projectors.hh"
+#include <gecode/set/projectors.hh>
 
-#include "gecode/support/buddy/bdd.h"
+#include <gecode/support/buddy/bdd.h>
 #include <set>
 
 using namespace Gecode::Set;

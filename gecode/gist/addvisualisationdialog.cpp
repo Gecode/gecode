@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/addvisualisationdialog.hh"
+#include <gecode/gist/addvisualisationdialog.hh>
 
 namespace Gecode { namespace Gist {
 

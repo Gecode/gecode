@@ -167,7 +167,7 @@ namespace Gecode {
 
 }
 
-#include "gecode/kernel/var-type.hpp"
+#include <gecode/kernel/var-type.hpp>
 
 namespace Gecode {
 

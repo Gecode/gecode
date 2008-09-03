@@ -34,9 +34,9 @@
  *
  */
 
-#include "gecode/support.hh"
-#include "gecode/gist/node.hh"
-#include "gecode/gist/visualnode.hh"
+#include <gecode/support.hh>
+#include <gecode/gist/node.hh>
+#include <gecode/gist/visualnode.hh>
 #include <cassert>
 
 namespace Gecode { namespace Gist {

@@ -39,7 +39,7 @@
 #ifndef __GECODE_INT_SORTED_HH__
 #define __GECODE_INT_SORTED_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 /**
  * \namespace Gecode::Int::Sorted
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    * for Constraint Propagation and for Processing Tree Descriptions,
    * PhD thesis, Universität des Saarlandes, Germany, 2004, pages 39-59.
    *
-   * Requires \code #include "gecode/int/sorted.hh" \endcode
+   * Requires \code #include <gecode/int/sorted.hh> \endcode
    * \ingroup FuncIntProp
    */
 
@@ -105,11 +105,11 @@ namespace Gecode { namespace Int { namespace Sorted {
 
 }}}
 
-#include "gecode/int/sorted/sortsup.hpp"
-#include "gecode/int/sorted/order.hpp"
-#include "gecode/int/sorted/matching.hpp"
-#include "gecode/int/sorted/narrowing.hpp"
-#include "gecode/int/sorted/propagate.hpp"
+#include <gecode/int/sorted/sortsup.hpp>
+#include <gecode/int/sorted/order.hpp>
+#include <gecode/int/sorted/matching.hpp>
+#include <gecode/int/sorted/narrowing.hpp>
+#include <gecode/int/sorted/propagate.hpp>
 
 #endif
 

@@ -42,7 +42,7 @@
  *
  */
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
 #ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 

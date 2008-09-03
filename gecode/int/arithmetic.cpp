@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/int/arithmetic.hh"
+#include <gecode/int/arithmetic.hh>
 
 namespace Gecode {
 

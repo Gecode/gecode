@@ -44,9 +44,9 @@
 #ifndef __GECODE_SET_HH__
 #define __GECODE_SET_HH__
 
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
-#include "gecode/iter.hh"
+#include <gecode/kernel.hh>
+#include <gecode/int.hh>
+#include <gecode/iter.hh>
 
 /*
  * Configure linking
@@ -74,7 +74,7 @@
 // Configure auto-linking
 #ifndef GECODE_BUILD_SET
 #define GECODE_LIBRARY_NAME "Set"
-#include "gecode/support/auto-link.hpp"
+#include <gecode/support/auto-link.hpp>
 #endif
 
 
@@ -89,7 +89,7 @@
  *
  */
 
-#include "gecode/set/exception.hpp"
+#include <gecode/set/exception.hpp>
 
 namespace Gecode { namespace Set {
 
@@ -111,9 +111,9 @@ namespace Gecode { namespace Set {
 
 }}
 
-#include "gecode/set/limits.hpp"
+#include <gecode/set/limits.hpp>
 
-#include "gecode/set/var-imp.hpp"
+#include <gecode/set/var-imp.hpp>
 
 namespace Gecode {
   
@@ -515,8 +515,8 @@ namespace Gecode {
 GECODE_SET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::SetVar& x);
 
-#include "gecode/set/view.hpp"
-#include "gecode/set/propagator.hpp"
+#include <gecode/set/view.hpp>
+#include <gecode/set/propagator.hpp>
 
 namespace Gecode {
   /**
@@ -600,7 +600,7 @@ namespace Gecode {
 
 }
 
-#include "gecode/set/array.hpp"
+#include <gecode/set/array.hpp>
 
 namespace Gecode {
 

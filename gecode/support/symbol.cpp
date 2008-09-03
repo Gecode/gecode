@@ -39,7 +39,7 @@
  *
  */
 
-#include "gecode/support.hh"
+#include <gecode/support.hh>
 #include <sstream>
 
 namespace Gecode { namespace Support {

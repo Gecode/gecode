@@ -44,7 +44,7 @@
 #ifndef __GECODE_SET_SEQUENCE_HH__
 #define __GECODE_SET_SEQUENCE_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 namespace Gecode { namespace Set { namespace Sequence {
 
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   /**
    * \brief %Propagator for the sequence constraint
    *
-   * Requires \code #include "gecode/set/sequence.hh" \endcode
+   * Requires \code #include <gecode/set/sequence.hh> \endcode
    * \ingroup FuncSetProp   
    */
 
@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   /**
    * \brief %Propagator for the sequenced union constraint
    *
-   * Requires \code #include "gecode/set/sequence.hh" \endcode
+   * Requires \code #include <gecode/set/sequence.hh> \endcode
    * \ingroup FuncSetProp   
    */
 
@@ -123,11 +123,11 @@ namespace Gecode { namespace Set { namespace Sequence {
 
 }}}
 
-#include "gecode/set/rel.hh"
-#include "gecode/set/rel-op/common.hpp"
-#include "gecode/set/sequence/common.hpp"
-#include "gecode/set/sequence/seq.hpp"
-#include "gecode/set/sequence/seq-u.hpp"
+#include <gecode/set/rel.hh>
+#include <gecode/set/rel-op/common.hpp>
+#include <gecode/set/sequence/common.hpp>
+#include <gecode/set/sequence/seq.hpp>
+#include <gecode/set/sequence/seq-u.hpp>
 
 #endif
 

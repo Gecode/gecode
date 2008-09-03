@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/int/count.hh"
+#include <gecode/int/count.hh>
 
 namespace Gecode {
 

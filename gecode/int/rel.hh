@@ -44,7 +44,7 @@
 #ifndef __GECODE_INT_REL_HH__
 #define __GECODE_INT_REL_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 /**
  * \namespace Gecode::Int::Rel
@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Uses staging by first performing bounds propagation and only
    * then domain propagation.
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View0,class View1>
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Binary bounds consistent equality propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View0, class View1>
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Uses staging by first performing bounds propagation and only
    * then domain propagation.
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief n-ary bounds consistent equality propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Reified binary domain consistent equality propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class CtrlView>
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Reified binary bounds consistent equality propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class CtrlView>
@@ -294,7 +294,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Reified domain consistent equality with integer propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class CtrlView>
@@ -329,7 +329,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Reified bounds consistent equality with integer propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class CtrlView>
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Binary disequality propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Less or equal propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
 
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Less propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Reified less or equal propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
 
@@ -520,7 +520,7 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief Reified less or equal with integer propagator
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
 
@@ -577,7 +577,7 @@ namespace Gecode { namespace Int { namespace Rel {
    *  - It is not incremental with respect to states 3 and 4
    *    as no propagation event information is available
    *
-   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -615,10 +615,10 @@ namespace Gecode { namespace Int { namespace Rel {
 
 }}}
 
-#include "gecode/int/rel/eq.hpp"
-#include "gecode/int/rel/nq.hpp"
-#include "gecode/int/rel/lq-le.hpp"
-#include "gecode/int/rel/lex.hpp"
+#include <gecode/int/rel/eq.hpp>
+#include <gecode/int/rel/nq.hpp>
+#include <gecode/int/rel/lq-le.hpp>
+#include <gecode/int/rel/lex.hpp>
 
 #endif
 

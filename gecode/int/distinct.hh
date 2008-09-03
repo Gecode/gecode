@@ -44,9 +44,9 @@
 #ifndef __GECODE_INT_DISTINCT_HH__
 #define __GECODE_INT_DISTINCT_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
-#include "gecode/int/rel.hh"
+#include <gecode/int/rel.hh>
 
 /**
  * \namespace Gecode::Int::Distinct
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    *
    * Eliminates values of assigned views of type \a View.
    *
-   * Requires \code #include "gecode/int/distinct.hh" \endcode
+   * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * and uses a more efficient layout of datastructures (keeping the number
    * of different arrays small).
    *
-   * Requires \code #include "gecode/int/distinct.hh" \endcode
+   * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * performing incremental domain consistent distinct propagation
    * so that the routines can be reused easily.
    *
-   * Requires \code #include "gecode/int/distinct.hh" \endcode
+   * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -257,7 +257,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    *    Conference on Artificial Intelligence, pages 362--367.
    *    Seattle, WA, USA, 1994.
    *
-   * Requires \code #include "gecode/int/distinct.hh" \endcode
+   * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -297,7 +297,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   /**
    * \brief Ternary domain consistent distinct propagator
    *
-   * Requires \code #include "gecode/int/distinct.hh" \endcode
+   * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -330,10 +330,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 }}}
 
-#include "gecode/int/distinct/val.hpp"
-#include "gecode/int/distinct/bnd.hpp"
-#include "gecode/int/distinct/ter-dom.hpp"
-#include "gecode/int/distinct/dom.hpp"
+#include <gecode/int/distinct/val.hpp>
+#include <gecode/int/distinct/bnd.hpp>
+#include <gecode/int/distinct/ter-dom.hpp>
+#include <gecode/int/distinct/dom.hpp>
 
 #endif
 

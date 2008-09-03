@@ -40,8 +40,8 @@
 #include <QtGui/QGraphicsRectItem>
 #include <QtCore/QVector>
 
-#include "gecode/minimodel.hh"
-#include "gecode/gist/visualisation/varitem.hh"
+#include <gecode/minimodel.hh>
+#include <gecode/gist/visualisation/varitem.hh>
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 

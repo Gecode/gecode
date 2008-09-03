@@ -37,8 +37,8 @@
 #ifndef GECODE_GIST_QT_DRAWINGCURSOR_HH
 #define GECODE_GIST_QT_DRAWINGCURSOR_HH
 
-#include "gecode/gist/nodecursor.hh"
-#include "gecode/gist/layoutcursor.hh"
+#include <gecode/gist/nodecursor.hh>
+#include <gecode/gist/layoutcursor.hh>
 #include <QtGui>
 
 namespace Gecode { namespace Gist {
@@ -96,7 +96,7 @@ namespace Gecode { namespace Gist {
 
 }}
 
-#include "gecode/gist/drawingcursor.hpp"
+#include <gecode/gist/drawingcursor.hpp>
 
 #endif
 

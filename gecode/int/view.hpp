@@ -112,7 +112,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/view/iter.hpp"
+#include <gecode/int/view/iter.hpp>
 
 namespace Gecode {
 
@@ -1779,18 +1779,18 @@ namespace Gecode {
 
 }
 
-#include "gecode/int/var/int.hpp"
-#include "gecode/int/var/bool.hpp"
+#include <gecode/int/var/int.hpp>
+#include <gecode/int/var/bool.hpp>
 
-#include "gecode/int/view/int.hpp"
-#include "gecode/int/view/bool.hpp"
+#include <gecode/int/view/int.hpp>
+#include <gecode/int/view/bool.hpp>
 
-#include "gecode/int/view/constint.hpp"
-#include "gecode/int/view/zero.hpp"
+#include <gecode/int/view/constint.hpp>
+#include <gecode/int/view/zero.hpp>
 
-#include "gecode/int/view/minus.hpp"
-#include "gecode/int/view/offset.hpp"
-#include "gecode/int/view/scale.hpp"
+#include <gecode/int/view/minus.hpp>
+#include <gecode/int/view/offset.hpp>
+#include <gecode/int/view/scale.hpp>
 
 /**
  * \brief Print integer variable view
@@ -1921,6 +1921,6 @@ namespace Gecode {
 
 }
 
-#include "gecode/int/view/rtest.hpp"
+#include <gecode/int/view/rtest.hpp>
 
 // STATISTICS: int-var

@@ -38,7 +38,7 @@
 #include <cctype>
 
 #include "examples/support.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 namespace {
   extern const char *specs[];

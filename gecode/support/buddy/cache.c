@@ -35,9 +35,9 @@
   DATE:  (C) june 1997
 *************************************************************************/
 #include <stdlib.h>
-#include "gecode/support/buddy/kernel.h"
-#include "gecode/support/buddy/cache.h"
-#include "gecode/support/buddy/prime.h"
+#include <gecode/support/buddy/kernel.h>
+#include <gecode/support/buddy/cache.h>
+#include <gecode/support/buddy/prime.h>
 
 /*************************************************************************
 *************************************************************************/

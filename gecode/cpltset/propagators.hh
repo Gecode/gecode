@@ -38,7 +38,7 @@
 #ifndef __GECODE_CPLTSETPROP_HH
 #define __GECODE_CPLTSETPROP_HH
 
-#include "gecode/cpltset.hh"
+#include <gecode/cpltset.hh>
 
 namespace Gecode { namespace CpltSet { 
 
@@ -47,7 +47,7 @@ namespace Gecode { namespace CpltSet {
    *
    * Propagates a constraint specified as a bdd.
    *
-   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * Requires \code #include <gecode/cpltset/propagators.hh> \endcode
    * \ingroup FuncCpltSetProp
    */
   template <class View>
@@ -101,7 +101,7 @@ namespace Gecode { namespace CpltSet {
    *
    * Propagates a constraint specified as a bdd.
    *
-   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * Requires \code #include <gecode/cpltset/propagators.hh> \endcode
    * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
@@ -173,7 +173,7 @@ namespace Gecode { namespace CpltSet {
    *
    * Propagates a constraint specified as a bdd.
    *
-   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * Requires \code #include <gecode/cpltset/propagators.hh> \endcode
    * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
@@ -215,7 +215,7 @@ namespace Gecode { namespace CpltSet {
    *
    * Propagates a constraint specified as a bdd.
    *
-   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * Requires \code #include <gecode/cpltset/propagators.hh> \endcode
    * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
@@ -262,7 +262,7 @@ namespace Gecode { namespace CpltSet {
    *
    * Propagates a constraint specified as a bdd.
    *
-   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * Requires \code #include <gecode/cpltset/propagators.hh> \endcode
    * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
@@ -289,7 +289,7 @@ namespace Gecode { namespace CpltSet {
   /**
    * \brief Singleton channel propagator from IntVar to CpltSetVar
    *
-   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * Requires \code #include <gecode/cpltset/propagators.hh> \endcode
    * \ingroup FuncCpltSetProp
    */
   template <class View1, class View2>
@@ -323,12 +323,12 @@ namespace Gecode { namespace CpltSet {
 
 }}
 
-#include "gecode/cpltset/propagators/nary.hpp"
-#include "gecode/cpltset/propagators/naryone.hpp"
-#include "gecode/cpltset/propagators/narytwo.hpp"
-#include "gecode/cpltset/propagators/binary.hpp"
-#include "gecode/cpltset/propagators/unary.hpp"
-#include "gecode/cpltset/propagators/singleton.hpp" 
+#include <gecode/cpltset/propagators/nary.hpp>
+#include <gecode/cpltset/propagators/naryone.hpp>
+#include <gecode/cpltset/propagators/narytwo.hpp>
+#include <gecode/cpltset/propagators/binary.hpp>
+#include <gecode/cpltset/propagators/unary.hpp>
+#include <gecode/cpltset/propagators/singleton.hpp> 
 
 #endif
 

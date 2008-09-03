@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/set/distinct.hh"
+#include <gecode/set/distinct.hh>
 
 /*
  * These propagators implement the scheme discussed in

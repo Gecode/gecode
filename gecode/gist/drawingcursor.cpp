@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/drawingcursor.hh"
+#include <gecode/gist/drawingcursor.hh>
 
 namespace Gecode { namespace Gist {
   

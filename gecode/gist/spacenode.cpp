@@ -34,13 +34,13 @@
  *
  */
 
-#include "gecode/gist/spacenode.hh"
-#include "gecode/gist/visualnode.hh"
-#include "gecode/search.hh"
+#include <gecode/gist/spacenode.hh>
+#include <gecode/gist/visualnode.hh>
+#include <gecode/search.hh>
 #include <stack>
 
 #ifdef GECODE_HAS_DDS
-#include "gecode/dds.hh"
+#include <gecode/dds.hh>
 #endif
 
 namespace Gecode { namespace Gist {

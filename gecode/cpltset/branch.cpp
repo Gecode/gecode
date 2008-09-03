@@ -39,7 +39,7 @@
  *
  */
 
-#include "gecode/cpltset/branch.hh"
+#include <gecode/cpltset/branch.hh>
 
 namespace Gecode { namespace CpltSet { namespace Branch { 
 

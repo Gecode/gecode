@@ -35,8 +35,8 @@
  *
  */
 
-#include "gecode/int/rel.hh"
-#include "gecode/int/bool.hh"
+#include <gecode/int/rel.hh>
+#include <gecode/int/bool.hh>
 
 #include <algorithm>
 

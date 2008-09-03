@@ -36,8 +36,8 @@
  */
 
 #include "test/set.hh"
-#include "gecode/set/projectors.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/set/projectors.hh>
+#include <gecode/minimodel.hh>
 
 using namespace Gecode;
 

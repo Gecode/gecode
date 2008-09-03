@@ -41,9 +41,9 @@
 
 #include <QtGui/QDialog>
 
-#include "gecode/kernel.hh"
-#include "gecode/gist/ui_addvisualisationdialog.hh"
-#include "gecode/gist/config.hh"
+#include <gecode/kernel.hh>
+#include <gecode/gist/ui_addvisualisationdialog.hh>
+#include <gecode/gist/config.hh>
 
 namespace Gecode { namespace Gist {
 

@@ -40,7 +40,7 @@
 #ifndef __GECODE_SET_INT_HH__
 #define __GECODE_SET_INT_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 namespace Gecode { namespace Set { namespace Int {
 
@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propator for minimum element
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View>
@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propator for maximum element
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View>
@@ -120,7 +120,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propagator for cardinality
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View>
@@ -155,7 +155,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propagator for the match constraint
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View>
@@ -207,7 +207,7 @@ namespace Gecode { namespace Set { namespace Int {
    *    Christian Bessiere, Emmanuel Hebrard, Brahim Hnich, Toby Walsh
    *    CP 2004
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View>
@@ -254,7 +254,7 @@ namespace Gecode { namespace Set { namespace Int {
    * For BoolVars \f$x_0,\dots,x_n\f$ and SetVar \f$y\f$ it
    * propagates the constraint \f$x_i=1 \Leftrightarrow i\in y\f$.
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View>
@@ -332,7 +332,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propagator for weight of a set
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template <class View>
@@ -379,12 +379,12 @@ namespace Gecode { namespace Set { namespace Int {
 
 }}}
 
-#include "gecode/set/int/minmax.hpp"
-#include "gecode/set/int/card.hpp"
-#include "gecode/set/int/match.hpp"
-#include "gecode/set/int/channel-int.hpp"
-#include "gecode/set/int/channel-bool.hpp"
-#include "gecode/set/int/weights.hpp"
+#include <gecode/set/int/minmax.hpp>
+#include <gecode/set/int/card.hpp>
+#include <gecode/set/int/match.hpp>
+#include <gecode/set/int/channel-int.hpp>
+#include <gecode/set/int/channel-bool.hpp>
+#include <gecode/set/int/weights.hpp>
 
 #endif
 

@@ -42,13 +42,13 @@
 #include "examples/support.hh"
 
 #ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #endif
 #ifdef GECODE_HAS_CPLTSET_VARS
-#include "gecode/cpltset.hh"
+#include <gecode/cpltset.hh>
 #endif
 
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 #include <string>
 #include <cmath>

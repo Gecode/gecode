@@ -38,14 +38,14 @@
 #ifndef __GECODE_INT_SUPPORT_VALUES_HH__
 #define __GECODE_INT_SUPPORT_VALUES_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 namespace Gecode { namespace Int {
 
   /**
    * \brief Support value iterator and recorder
    *
-   * Requires \code #include "gecode/int/support-values.hh" \endcode
+   * Requires \code #include <gecode/int/support-values.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class View, class A>
@@ -154,7 +154,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/support-values.hpp"
+#include <gecode/int/support-values.hpp>
 
 #endif
 

@@ -38,7 +38,7 @@
 #ifndef __GECODE_CPLTSET_BRANCH_HH__
 #define __GECODE_CPLTSET_BRANCH_HH__
 
-#include "gecode/cpltset.hh"
+#include <gecode/cpltset.hh>
 
 /**
  * \namespace Gecode::CpltSet::Branch
@@ -56,7 +56,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief Class for selecting minimum value of unknown ranges
    *
    * All value selection classes require 
-   * \code #include "gecode/cpltset/branch.hh" \endcode
+   * \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelVal
    */
   template <bool inc>
@@ -82,7 +82,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief Class for selecting maximum value of unknown ranges
    *
    * All value selection classes require 
-   * \code #include "gecode/cpltset/branch.hh" \endcode
+   * \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelVal
    */
   template <bool inc>
@@ -112,7 +112,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with smallest minimum element in lub-glb
    *
-   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * Requires \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByMinMin : public ViewSelBase<CpltSetView> {
@@ -135,7 +135,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with largest minimum element in lub-glb
    *
-   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * Requires \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByMinMax : public ViewSelBase<CpltSetView> {
@@ -158,7 +158,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with smallest maximal element in lub-glb
    *
-   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * Requires \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByMaxMin : public ViewSelBase<CpltSetView> {
@@ -181,7 +181,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with largest maximal element in lub-glb
    *
-   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * Requires \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelView
    */
   class ByMaxMax : public ViewSelBase<CpltSetView> {
@@ -204,7 +204,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with smallest cardinality of lub-glb
    *
-   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * Requires \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelView
    */
   class BySizeMin : public ViewSelBase<CpltSetView> {
@@ -227,7 +227,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief View selection class for view with largest cardinality of lub-glb
    *
-   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
+   * Requires \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelView
    */
   class BySizeMax : public ViewSelBase<CpltSetView> {
@@ -249,9 +249,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 }}}
 
-#include "gecode/cpltset/branch/select-val.hpp"
-#include "gecode/cpltset/branch/select-view.hpp"
-#include "gecode/cpltset/branch/post-val.hpp"
+#include <gecode/cpltset/branch/select-val.hpp>
+#include <gecode/cpltset/branch/select-view.hpp>
+#include <gecode/cpltset/branch/post-val.hpp>
 
 #endif
 

@@ -39,7 +39,7 @@
 #ifndef __GECODE_TEST_CPLTSET_HH__
 #define __GECODE_TEST_CPLTSET_HH__
 
-#include "gecode/cpltset.hh"
+#include <gecode/cpltset.hh>
 
 #include "test/test.hh"
 #include "test/set.hh"

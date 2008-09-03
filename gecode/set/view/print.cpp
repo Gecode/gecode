@@ -37,7 +37,7 @@
  *
  */
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 using namespace Gecode::Set;
 using namespace Gecode::Int;

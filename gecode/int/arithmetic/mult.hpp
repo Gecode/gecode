@@ -38,7 +38,7 @@
 #include <cmath>
 #include <climits>
 
-#include "gecode/int/support-values.hh"
+#include <gecode/int/support-values.hh>
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 

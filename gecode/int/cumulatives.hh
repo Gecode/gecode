@@ -41,7 +41,7 @@
 #ifndef __GECODE_INT_CUMULATIVES_HH__
 #define __GECODE_INT_CUMULATIVES_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 #include <vector>
 #include <list>
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
    * This class implements Beldiceanu's and Carlsson's sweep-line
    * propagation algorithm for the cumulatives constraint.
    *
-   * Requires \code #include "gecode/int/cumulatives.hh" \endcode
+   * Requires \code #include <gecode/int/cumulatives.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class ViewM, class ViewD, class ViewH, class View>
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
 }}}
 
-#include "gecode/int/cumulatives/val.hpp"
+#include <gecode/int/cumulatives/val.hpp>
 
 #endif
 

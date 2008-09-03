@@ -34,7 +34,7 @@
  *
  */
 
-#include "gecode/gist/visualisation/intvaritem.hh"
+#include <gecode/gist/visualisation/intvaritem.hh>
 
 #include <QtGui/QBrush>
 

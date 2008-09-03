@@ -40,7 +40,7 @@
 #ifndef __GECODE_TEST_SET_HH__
 #define __GECODE_TEST_SET_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #include "test/test.hh"
 #include "test/int.hh"
 

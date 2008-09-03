@@ -35,8 +35,8 @@
  *
  */        
 
-#include "gecode/int/rel.hh"
-#include "gecode/int/distinct.hh"
+#include <gecode/int/rel.hh>
+#include <gecode/int/distinct.hh>
 
 namespace Gecode { namespace Int { namespace Sorted {
 

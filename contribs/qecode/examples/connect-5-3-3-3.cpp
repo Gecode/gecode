@@ -2,8 +2,8 @@
 // with a board of size 3x3 (widthxheight), a winning
 // line of length 3, analyzed up to 5 moves for the initial/existential player
 
-#include "gecode/minimodel.hh"
-#include "gecode/int/element.hh"
+#include <gecode/minimodel.hh>
+#include <gecode/int/element.hh>
 
 #include "qsolver.hh"
 #include "implicative.hh"

@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_MAINWINDOW_HH
 #define GECODE_GIST_MAINWINDOW_HH
 
-#include "gecode/gist/treecanvas.hh"
+#include <gecode/gist/treecanvas.hh>
 
 namespace Gecode { namespace Gist {
   

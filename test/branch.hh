@@ -38,16 +38,16 @@
 #ifndef __GECODE_TEST_BRANCH_HH__
 #define __GECODE_TEST_BRANCH_HH__
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
 #ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #endif
 
 #ifdef GECODE_HAS_CPLTSET_VARS
-#include "gecode/cpltset.hh"
+#include <gecode/cpltset.hh>
 #endif
 
 #include "test/test.hh"

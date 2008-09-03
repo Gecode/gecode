@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/set/projectors-compiler.hh"
+#include <gecode/set/projectors-compiler.hh>
 #include <iostream>
 #include <sstream>
 #include <string>

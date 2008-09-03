@@ -37,8 +37,8 @@
 #include <QtGui>
 
 #include <iostream>
-#include "gecode/gist/textoutput.hh"
-#include "gecode/gist/gecodelogo.hh"
+#include <gecode/gist/textoutput.hh>
+#include <gecode/gist/gecodelogo.hh>
 
 namespace Gecode { namespace Gist {
   

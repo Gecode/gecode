@@ -191,7 +191,7 @@ foreach $file (@ARGV) {
 
 print <<EOF
 
-#include "gecode/serialization.hh"
+#include <gecode/serialization.hh>
 
 namespace {
 EOF

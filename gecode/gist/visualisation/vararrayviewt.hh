@@ -37,7 +37,7 @@
 #ifndef GECODE_GIST_VISUALISATION_VARARRAYVIEWT_HH
 #define GECODE_GIST_VISUALISATION_VARARRAYVIEWT_HH
 
-#include "gecode/gist/visualisation/vararrayview.hh"
+#include <gecode/gist/visualisation/vararrayview.hh>
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 

@@ -40,8 +40,8 @@
 
 #include "test/cpltset.hh"
 
-#include "gecode/int.hh"
-#include "gecode/iter.hh"
+#include <gecode/int.hh>
+#include <gecode/iter.hh>
 #include <algorithm>
 
   /// Check the test result and handle failed test

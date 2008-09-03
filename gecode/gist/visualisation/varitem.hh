@@ -39,7 +39,7 @@
 
 #include <QtGui/QGraphicsRectItem>
 
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 

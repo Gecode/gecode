@@ -38,7 +38,7 @@
 #ifndef __GECODE_SET_ATMOSTONE_HH__
 #define __GECODE_SET_ATMOSTONE_HH__
 
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 
 namespace Gecode { namespace Set { namespace Distinct {
 
@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   /**
    * \brief %Propagator for the AtMostOneIntersection constraint
    *
-   * Requires \code #include "gecode/set/distinct.hh" \endcode
+   * Requires \code #include <gecode/set/distinct.hh> \endcode
    * \ingroup FuncSetProp   
    */
 
@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Distinct {
 
 }}}
 
-#include "gecode/set/distinct/atmostOne.hpp"
+#include <gecode/set/distinct/atmostOne.hpp>
 
 #endif
 

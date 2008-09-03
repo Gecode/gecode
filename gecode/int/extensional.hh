@@ -40,9 +40,9 @@
 #ifndef __GECODE_INT_EXTENSIONAL_HH__
 #define __GECODE_INT_EXTENSIONAL_HH__
 
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 
-#include "gecode/int/rel.hh"
+#include <gecode/int/rel.hh>
 
 /**
  * \namespace Gecode::Int::Extensional
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * The propagator is not capable of dealing with multiple occurences
    * of the same view.
    *
-   * Requires \code #include "gecode/int/extensional.hh" \endcode
+   * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, class Degree, class StateIdx>
@@ -207,10 +207,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 }}}
 
-#include "gecode/int/extensional/layered-graph.hpp"
+#include <gecode/int/extensional/layered-graph.hpp>
 
 
-#include "gecode/int/extensional/bitset.hpp"
+#include <gecode/int/extensional/bitset.hpp>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * extensional propagation algorithms that use positive tuple sets and
    * a \a last data structure.
    *
-   * Requires \code #include "gecode/int/extensional.hh" \endcode
+   * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, bool subscribe = true>
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 }}}
 
-#include "gecode/int/extensional/base.hpp"
+#include <gecode/int/extensional/base.hpp>
 
 
 namespace Gecode { namespace Int { namespace Extensional {
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    *
    * If \a shared is true, the same view can occur multiply.
    *
-   * Requires \code #include "gecode/int/extensional.hh" \endcode
+   * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View, bool shared>
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 }}}
 
-#include "gecode/int/extensional/basic.hpp"
+#include <gecode/int/extensional/basic.hpp>
 
 
 namespace Gecode { namespace Int { namespace Extensional {
@@ -329,7 +329,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * This propagator implements an incremental propagation algorithm
    * where supports are maintained explicitly.
    *
-   * Requires \code #include "gecode/int/extensional.hh" \endcode
+   * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
@@ -500,7 +500,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   
 }}}
 
-#include "gecode/int/extensional/incremental.hpp"
+#include <gecode/int/extensional/incremental.hpp>
 
 
 #endif
