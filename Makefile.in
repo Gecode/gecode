@@ -324,7 +324,8 @@ INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
-INTOBJ		= $(INTSRC:%.cpp=%$(OBJSUFFIX))
+INTOBJ0		= $(INTSRC:%.cpp=%$(OBJSUFFIX))
+INTOBJ		= $(subst $(top_srcdir)/,,$(INTOBJ0))
 
 ifeq "@enable_int_vars@" "yes"
 export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
@@ -402,7 +403,8 @@ SETHDR0 =								     \
 SETSRC		= $(SETSRC0:%=gecode/set/%) \
 	$(top_srcdir)/gecode/set/branch.cpp
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
-SETOBJ		= $(SETSRC:%.cpp=%$(OBJSUFFIX))
+SETOBJ0		= $(SETSRC:%.cpp=%$(OBJSUFFIX))
+SETOBJ		= $(subst $(top_srcdir)/,,$(SETOBJ0))
 
 ifeq "@enable_set_vars@" "yes"
 export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
@@ -457,7 +459,8 @@ CPLTSETHDR0 =		                \
 CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/cpltset/%) \
 	$(top_srcdir)/gecode/cpltset/branch.cpp
 CPLTSETHDR	= gecode/cpltset.hh $(CPLTSETHDR0:%=gecode/cpltset/%)
-CPLTSETOBJ	= $(CPLTSETSRC:%.cpp=%$(OBJSUFFIX))
+CPLTSETOBJ0	= $(CPLTSETSRC:%.cpp=%$(OBJSUFFIX))
+CPLTSETOBJ	= $(subst $(top_srcdir)/,,$(CPLTSETOBJ0))
 
 ifeq "@enable_cpltset_vars@" "yes"
 export CPLTSETDLL		= $(LIBPREFIX)@CPLTSET@$(DLLSUFFIX)
