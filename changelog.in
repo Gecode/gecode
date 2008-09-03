@@ -76,7 +76,6 @@ Rank:   minor
 [DESCRIPTION]
 Fixed a bug in the extensional propagation-version of the domino example.
 
-
 [ENTRY]
 Module: other
 What:   new
@@ -85,8 +84,9 @@ Rank:   minor
 For the Microsoft compiler, auto-link information is added during
 compilation. That is, by including Gecode headers during
 compilation the right libraries will be found automatically
-during linking.
-
+during linking. To simplify development and deployment, the
+libraries (and DLLs) encode version, platform, and build type
+(release or debug) in their filename.
 
 [ENTRY]
 Module: minimodel
