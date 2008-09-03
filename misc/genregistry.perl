@@ -181,11 +181,11 @@ foreach $key (keys %postFunctions) {
   $postFunctions{$key} = [ sort {@{$a} <=> @{$b}} (@{$postFunctions{$key}}) ];
 }
 
-print "#include \"gecode/kernel.hh\"\n";
+print "#include <gecode/kernel.hh>\n";
 
 foreach $file (@ARGV) {
   print "#if $ifdefs{$file}\n";
-  print "#include \"$file\"\n";
+  print "#include <$file>\n";
   print "#endif\n";
 }
 

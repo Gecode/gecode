@@ -40,15 +40,15 @@
  *
  */
 
-#include "gecode/kernel.hh"
+#include <gecode/kernel.hh>
 #if defined(GECODE_HAS_INT_VARS)
-#include "gecode/int.hh"
+#include <gecode/int.hh>
 #endif
 #if defined(GECODE_HAS_SET_VARS)
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #endif
 #if defined(GECODE_HAS_INT_VARS)
-#include "gecode/minimodel.hh"
+#include <gecode/minimodel.hh>
 #endif
 
 #include <gecode/serialization.hh>
