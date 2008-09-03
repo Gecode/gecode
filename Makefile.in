@@ -538,7 +538,7 @@ SERMOCSRC0 =
 endif
 
 SERHDR0 = \
-	boost.hpp
+	boost.hpp javascript.hh
 
 SERSRC 		= $(SERSRC0:%=gecode/serialization/%) 
 SERMOCSRC	= $(SERMOCSRC0:%=gecode/serialization/%)
@@ -628,13 +628,13 @@ DDSBUILDDIRS	= dds
 #
 
 GISTHDR0 = \
-	drawingcursor.hh \
+	drawingcursor.hh drawingcursor.hpp \
 	gist.hpp gecodelogo.hh node.hh node.hpp \
 	nodecursor.hh nodecursor.hpp nodevisitor.hh \
 	nodevisitor.hpp layoutcursor.hh layoutcursor.hpp \
 	spacenode.hh spacenode.hpp textoutput.hh treecanvas.hh zoomToFitIcon.hpp \
 	visualnode.hh visualnode.hpp \
-	mainwindow.hh \
+	mainwindow.hh preferences.hh \
 	addchild.hh addvisualisationdialog.hh \
 	ui_addchild.hh ui_addvisualisationdialog.hh\
 	config.hh \
@@ -745,7 +745,7 @@ JSEXAMPLESBJ  = $(JSEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
 ifeq "@enable_qt@" "yes"
 JSEXAMPLEEXE  = $(JSEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
-JSEXAMPLESRC  =
+JSEXAMPLEEXE  =
 endif
 
 EXAMPLEBUILDDIRS = examples examples/support
@@ -838,6 +838,7 @@ INTTESTSRC00 = \
 	rel linear scheduling gcc sorted circuit unshare \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
+INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 SETTESTSRC00 = \
 	dom rel rel-op rel-op-const convex sequence int select distinct projection 
 SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
@@ -846,14 +847,14 @@ CPLTSETTESTSRC00 = \
 CPLTSETTESTSRC0 = test/cpltset.cpp $(CPLTSETTESTSRC00:%=test/cpltset/%.cpp)
 
 ifeq "@enable_set_vars@" "yes"
-SETTESTSRC=$(SETTESTSRC0)
+SETTESTOBJ = $(SETTESTSRC0:%.cpp=%$(OBJSUFFIX))
 else
-SETTESTSRC=
+SETTESTOBJ=
 endif
 ifeq "@enable_cpltset_vars@" "yes"
-CPLTSETTESTSRC = $(CPLTSETTESTSRC0)
+CPLTSETTESTOBJ = $(CPLTSETTESTSRC0:%.cpp=%$(OBJSUFFIX))
 else
-CPLTSETTESTSRC =
+CPLTSETTESTOBJ =
 endif
 
 BRANCHTESTSRC0 = \
@@ -868,15 +869,18 @@ TESTSRC0 = test/test.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) \
-	$(SETTESTSRC) $(CPLTSETTESTSRC) \
+	$(SETTESTSRC0) $(CPLTSETTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0)
 
 TESTHDR0 = \
-	test.hh test.hpp int.hh int.hpp set.hh cpltset.hh \
+	test.hh test.hpp int.hh int.hpp set.hh set.hpp cpltset.hh \
 	branch.hh assign.hh
 TESTHDR = $(TESTHDR0:%=test/%)
-TESTOBJ	= $(TESTSRC:%.cpp=%$(OBJSUFFIX))
-TESTSBJ	= $(TESTSRC:%.cpp=%$(SBJSUFFIX))
+TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(CPLTSETTESTOBJ) \
+	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
+	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
+	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
+TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
 TESTBUILDDIRS = test test/int test/set test/branch test/cpltset test/assign
 
@@ -1355,14 +1359,20 @@ doxygen.hh: $(top_srcdir)/doxygen/doxygen.hh.in config.status
 DIST_FILES= \
 	configure.ac configure Makefile.in gecode.m4 \
 	changelog.in LICENSE \
-	doxygen.conf.in doxygen.hh.in install-sh misc/gecode.pc.in \
+	doxygen/doxygen.conf.in doxygen/doxygen.hh.in install-sh \
+	misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
 	misc/gecode-serialization.pc.in misc/gecode-gist.pc.in \
 	gecode/support/config.hpp.in \
+	variables.vsl \
 	gecode/int/var-imp/int.vis \
 	gecode/int/var-imp/bool.vis \
-	gecode/set/var-imp.vis \
-	gecode/cpltset/var-imp.vis \
+	gecode/set/var-imp/set.vis \
+	gecode/cpltset/var-imp/cpltset.vis \
+	gecode/int/branch/post-view-int.bs \
+	gecode/int/branch/post-view-bool.bs \
+	gecode/set/branch/post-view.bs \
+	gecode/cpltset/branch/post-view.bs \
 	gecode/support/buddy/AUTHORS \
 	gecode/support/buddy/ChangeLog \
 	gecode/support/buddy/NEWS \
@@ -1376,6 +1386,7 @@ DIST_FILES= \
 	misc/genstatistics.perl misc/getrevision.perl \
 	misc/genchangelog.perl misc/genvariables.perl \
 	misc/gentxtchangelog.perl misc/makedepend.perl \
+	misc/genbranch.perl misc/genregistry.perl \
 	misc/AppleHelpbookInfo.plist
 
 distdir:
@@ -1383,8 +1394,7 @@ distdir:
 	mkdir -p gecode-$(VERSION) && \
 	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLSRC)) | \
 	  (cd gecode-$(VERSION) && tar xf -) && \
-	(cd $(top_srcdir) && tar cf - $(TESTSRC0) $(INTTESTSRC0) \
-	  $(SETTESTSRC0) $(CPLTSETTESTSRC0) $(BRANCHTESTSRC0) $(TESTHDR) $(DIST_FILES)) | \
+	(cd $(top_srcdir) && tar cf - $(TESTSRC) $(TESTHDR) $(DIST_FILES)) | \
 	  (cd gecode-$(VERSION) && tar xf -)
 
 dist: distdir
