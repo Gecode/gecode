@@ -42,9 +42,29 @@
 
 #if defined(_MSC_VER)
 
+#if defined(_M_IX86)
+#define GECODE_DLL_PLATFORM "x86"
+#elif defined(_M_IA64)
+#define GECODE_DLL_PLATFORM "ia64"
+#elif defined(_M_X64)
+#define GECODE_DLL_PLATFORM "x64"
+#else
+#error Unsupported platform.
+#endif
+
+#if defined(_DEBUG)
+#define GECODE_DLL_RELEASE "d"
+#else
+#define GECODE_DLL_RELEASE "r"
+#endif
+
 #pragma comment(lib, \
   GECODE_DLL_USERPREFIX "Gecode" GECODE_LIBRARY_NAME\
-  GECODE_LIBRARY_ARCHITECTURE GECODE_DLL_USERSUFFIX)
+  "-" GECODE_LIBRARY_VERSION \
+  "-" GECODE_DLL_RELEASE "-" GECODE_DLL_PLATFORM GECODE_DLL_USERSUFFIX)
+
+#undef GECODE_DLL_PLATFORM
+#undef GECODE_DLL_RELEASE
 
 #endif
 

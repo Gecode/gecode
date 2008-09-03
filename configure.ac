@@ -281,13 +281,13 @@ VERSION_DASHES=`echo $PACKAGE_VERSION | sed -e s/\\\\./-/g`
 ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}
 if test "$ac_gecode_compiler_vendor" == "microsoft"; then
   AC_SUBST(DLL_ARCH,[${ac_gecode_library_architecture}])
-  AC_DEFINE_UNQUOTED(GECODE_LIBRARY_ARCHITECTURE,
-    "${ac_gecode_library_architecture}",
-    [Architecture Gecode was built for (only for Microsoft compiler)])
+  AC_DEFINE_UNQUOTED(GECODE_LIBRARY_VERSION,
+    "${VERSION_DASHES}",
+    [Gecode version (only for Microsoft compiler)])
 else
   AC_SUBST(DLL_ARCH,[])
-  AC_DEFINE(GECODE_LIBRARY_ARCHITECTURE, [""],
-    [Architecture Gecode was built for (only for Microsoft compiler)])
+  AC_DEFINE(GECODE_LIBRARY_VERSION, [""],
+    [Gecode version (only for Microsoft compiler)])
 fi
 
 AC_CONFIG_FILES([Makefile])
