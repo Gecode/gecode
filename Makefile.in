@@ -1359,7 +1359,8 @@ doxygen.hh: $(top_srcdir)/doxygen/doxygen.hh.in config.status
 DIST_FILES= \
 	configure.ac configure Makefile.in gecode.m4 \
 	changelog.in LICENSE \
-	doxygen/doxygen.conf.in doxygen/doxygen.hh.in install-sh \
+	doxygen/doxygen.conf.in doxygen/doxygen.hh.in doxygen/reflection.hh \
+	install-sh \
 	misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
 	misc/gecode-serialization.pc.in misc/gecode-gist.pc.in \
