@@ -275,7 +275,7 @@ AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 
 VERSION_DASHES=`echo $PACKAGE_VERSION | sed -e s/\\\\./-/g`
-ac_gecode_library_architecture=${ac_gecode_library_architecture}-${VERSION_DASHES}
+ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}
 if test "$ac_gecode_compiler_vendor" == "microsoft"; then
   AC_SUBST(DLL_ARCH,[${ac_gecode_library_architecture}])
   AC_DEFINE_UNQUOTED(GECODE_LIBRARY_ARCHITECTURE,
