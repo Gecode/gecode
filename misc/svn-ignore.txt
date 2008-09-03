@@ -13,4 +13,4 @@
 *.sln
 *.exe
 *.manifest
-moc_*.cc
+moc_*.cpp

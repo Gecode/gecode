@@ -53,11 +53,18 @@ for dir in ${NORMALDIRS}; do
     ! -path '*.svn*' \
     -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
 done
+svn propset svn:ignore -F misc/svn-ignore.txt '.'
+
+IGNORESUPPORT=`mktemp -t fixproperties`
+(echo config.hpp; svn propget svn:ignore './gecode/support') \
+  > ${IGNORESUPPORT}
+svn propset svn:ignore -F ${IGNORESUPPORT} './gecode/support'
+rm -f ${IGNORESUPPORT}
 
 # Create list of executable examples, append it to svn-ignore.txt
 IGNOREEXAMPLES=`mktemp -t fixproperties` || exit 1
 (cat misc/svn-ignore.txt; \
-  find "./examples" -name "*.cc" | sed -e 's/\.cc//g' | xargs -n1 basename) \
+  find "./examples" -name "*.cpp" | sed -e 's/\.cpp//g' | xargs -n1 basename) \
   > ${IGNOREEXAMPLES}
 svn propset svn:ignore -F ${IGNOREEXAMPLES} './examples'
 rm -f ${IGNOREEXAMPLES}
