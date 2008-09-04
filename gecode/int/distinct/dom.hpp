@@ -272,6 +272,42 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
+  forceinline void
+  DomCtrl<View>::ViewValGraph::init(Space& home, ViewNode<View>* x) {
+    Edge<View>** edge_p = x->val_edges_ref();
+    ViewValues<View> xi(x->view());
+    ValNode<View>** v = &val;
+    while (xi() && (*v != NULL)) {
+      if ((*v)->val() == xi.val()) {
+        // Value node does already exist, create new edge
+        *edge_p = new (home) Edge<View>(*v,x);
+        edge_p = (*edge_p)->next_edge_ref();
+        v = (*v)->next_val_ref();
+        ++xi;
+      } else if ((*v)->val() < xi.val()) {
+        // Skip to next value node
+        v = (*v)->next_val_ref();
+      } else {
+        // Value node does not yet exist, create and link it
+        ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
+        *v = nv; v = nv->next_val_ref();
+        *edge_p = new (home) Edge<View>(nv,x);
+        edge_p = (*edge_p)->next_edge_ref();
+        ++xi; n_val++;
+      }
+    }
+    // Create missing value nodes
+    while (xi()) {
+      ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
+      *v = nv; v = nv->next_val_ref();
+      *edge_p = new (home) Edge<View>(nv,x);
+      edge_p = (*edge_p)->next_edge_ref();
+      ++xi; n_val++;
+    }
+    *edge_p = NULL;
+  }
+
+  template <class View>
   ExecStatus
   DomCtrl<View>::ViewValGraph::init(Space& home, int n, View* x) {
     n_view = n; 
@@ -291,6 +327,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (width < static_cast<unsigned int>(n_view))
       return ES_FAILED;
 
+    // Initialize view nodes
+    for (int i=n; i--; )
+      view[i] = new (home) ViewNode<View>(x[i]);
+
     n_val = 0;
     val = NULL;
 
@@ -304,15 +344,12 @@ namespace Gecode { namespace Int { namespace Distinct {
         val2node[i]=NULL;
 
       for (int i=n; i--; ) {
-        view[i] = new (home) ViewNode<View>(x[i]);
         Edge<View>** edge_p = view[i]->val_edges_ref();
-        ViewValues<View> xi(x[i]);
-        while (xi()) {
+        for (ViewValues<View> xi(x[i]); xi(); ++xi) {
           if (val2node[xi.val()-min] == NULL)
             val2node[xi.val()-min] = new (home) ValNode<View>(xi.val());
           *edge_p = new (home) Edge<View>(val2node[xi.val()-min],view[i]);
           edge_p = (*edge_p)->next_edge_ref();
-          ++xi;
         }
         *edge_p = NULL;
       }
@@ -326,40 +363,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     } else {
       // Values are sparse
-      for (int i=n; i--; ) {
-        view[i] = new (home) ViewNode<View>(x[i]);
-        Edge<View>** edge_p = view[i]->val_edges_ref();
-        ViewValues<View> xi(x[i]);
-        ValNode<View>** v = &val;
-        while (xi() && (*v != NULL)) {
-          if ((*v)->val() == xi.val()) {
-            // Value node does already exist, create new edge
-            *edge_p = new (home) Edge<View>(*v,view[i]);
-            edge_p = (*edge_p)->next_edge_ref();
-            v = (*v)->next_val_ref();
-            ++xi;
-          } else if ((*v)->val() < xi.val()) {
-            // Skip to next value node
-            v = (*v)->next_val_ref();
-          } else {
-            // Value node does not yet exist, create and link it
-            ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
-            *v = nv; v = nv->next_val_ref();
-            *edge_p = new (home) Edge<View>(nv,view[i]);
-            edge_p = (*edge_p)->next_edge_ref();
-            ++xi; n_val++;
-          }
-        }
-        // Create missing value nodes
-        while (xi()) {
-          ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
-          *v = nv; v = nv->next_val_ref();
-          *edge_p = new (home) Edge<View>(nv,view[i]);
-          edge_p = (*edge_p)->next_edge_ref();
-          ++xi; n_val++;
-        }
-        *edge_p = NULL;
-      }
+      for (int i=n; i--; )
+        init(home,view[i]);
     }
 
     ViewNodeStack m(r,n_view);

@@ -214,6 +214,8 @@ namespace Gecode { namespace Int { namespace Distinct {
       ViewValGraph(void);
       /// Test whether graph has been initialized
       bool initialized(void) const;
+      /// Initialize single view node \a x
+      void init(Space& home, ViewNode<View>* x);
       /// Initialize graph
       ExecStatus init(Space& home, int n, View* x);
       /// Mark edges in graph
