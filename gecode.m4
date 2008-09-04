@@ -282,7 +282,13 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
      _AC_C_IFDEF([__GNUG__],
        [ac_cv_cxx_compiler_vendor=gnu],
        [_AC_C_IFDEF([__INTEL_COMPILER],
-                    [ac_cv_cxx_compiler_vendor=intel],
+                    [ac_cv_cxx_compiler_vendor=intel
+                     _AC_C_IFDEF([_M_IX86],
+                       [AC_ADD_DLL_ARCH([x86])],[])
+                     _AC_C_IFDEF([_M_IA64],
+                       [AC_ADD_DLL_ARCH([ia64])],[])
+                     _AC_C_IFDEF([_M_X64],
+                       [AC_ADD_DLL_ARCH([x64])],[])],
        [dnl Note:  We are using the C compiler because VC++ doesn't
         dnl recognize `.cc'(which is used by `configure') as a C++ file
         dnl extension and requires `/TP' to be passed.
