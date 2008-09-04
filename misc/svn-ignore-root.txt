@@ -7,6 +7,9 @@
 *.s
 *.obj
 *.sbj
+*.dll
+*.lib
+*.exp
 *.ilk
 *.pdb
 *.suo
