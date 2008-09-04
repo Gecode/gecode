@@ -817,11 +817,7 @@ else
 export LIBLINKTARGETS =
 endif
 
-ifeq "@DEBUG_BUILD@" "yes"
 PDBS = $(ALLLIB:%$(LIBSUFFIX)=%$(PDBSUFFIX))
-else
-PDBS = 
-endif
 
 ifeq "@INSTALLLIBS@" "yes"
 LIBLIBTARGETS = $(ALLLIB) $(PDBS)

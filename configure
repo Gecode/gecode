@@ -9086,7 +9086,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    fi
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD"
-          else
+        GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
+  else
         CFLAGS="${CFLAGS}${CFLAGS:+ }-MDd -Zi -wd4355"
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-MDd -Zi -wd4355"
 
@@ -11168,7 +11169,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    fi
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD"
-          else
+        GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
+  else
         CFLAGS="${CFLAGS}${CFLAGS:+ }-MDd -Zi -wd4355"
     CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-MDd -Zi -wd4355"
 
