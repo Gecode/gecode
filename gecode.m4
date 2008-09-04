@@ -115,7 +115,7 @@ dnl   Guido Tack <tack@gecode.org>
 dnl
 AC_DEFUN([AC_GECODE_CHECK_MS_CL_FLAG],
   [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
-   if ${CXX} $1 2>&1 | grep D9002 -q; then
+   if ${CXX} $1 2>&1 | grep "ignoring unknown option" -q; then
      AC_MSG_RESULT([no])
      ifelse([$3], , :, [$3])
    else

@@ -76,7 +76,7 @@
 /* Whether to build SET variables */
 #undef GECODE_HAS_SET_VARS
 
-/* Gecode version (only for Microsoft compiler) */
+/* Gecode version */
 #undef GECODE_LIBRARY_VERSION
 
 /* Heap memory alignment */

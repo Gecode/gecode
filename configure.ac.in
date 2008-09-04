@@ -274,16 +274,17 @@ AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 
 VERSION_DASHES=`echo $PACKAGE_VERSION | sed -e s/\\\\./-/g`
+AC_DEFINE_UNQUOTED(GECODE_LIBRARY_VERSION,
+  "${VERSION_DASHES}",
+  [Gecode version])
+
 ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}
-if test "$ac_gecode_compiler_vendor" == "microsoft"; then
+if test   "$ac_gecode_compiler_vendor" == "microsoft" \
+       -o \( "$ac_gecode_compiler_vendor" == "intel" \
+            -a "$host_os" == "windows" \) ; then
   AC_SUBST(DLL_ARCH,[${ac_gecode_library_architecture}])
-  AC_DEFINE_UNQUOTED(GECODE_LIBRARY_VERSION,
-    "${VERSION_DASHES}",
-    [Gecode version (only for Microsoft compiler)])
 else
-  AC_SUBST(DLL_ARCH,[])
-  AC_DEFINE(GECODE_LIBRARY_VERSION, [""],
-    [Gecode version (only for Microsoft compiler)])
+  AC_SUBST(DLL_ARCH,[""])
 fi
 
 AC_CONFIG_FILES([Makefile])
