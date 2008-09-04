@@ -121,9 +121,6 @@ AC_GECODE_LEAK_DEBUG
 dnl check whether we want audit code in our build
 AC_GECODE_AUDIT
 
-dnl check whether we want to use visibility attributes with gcc
-AC_GECODE_GCC_VISIBILITY
-
 dnl check whether we want to produce code suitable for profiling
 AC_GECODE_PROFILE
 
@@ -141,6 +138,8 @@ gnu)
   dnl general compiler flags
   AC_GECODE_UNIX_PATHS
   AC_GECODE_GCC_GENERAL_SWITCHES
+  dnl check whether we want to use visibility attributes with gcc
+  AC_GECODE_GCC_VISIBILITY
 
   if test "${enable_debug:-no}" = "no" -a "${enable_gcov:-no}" = "no"; then
     dnl compiler flags for an optimized build
@@ -163,6 +162,8 @@ intel)
        AC_GECODE_MSVC_SWITCHES
        ;;
      *)
+       dnl check whether we want to use visibility attributes with gcc
+       AC_GECODE_GCC_VISIBILITY
        dnl general compiler flags
        AC_GECODE_UNIX_PATHS
        AC_GECODE_GCC_GENERAL_SWITCHES
