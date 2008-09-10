@@ -148,16 +148,13 @@ namespace Gecode {
   channel(Space& home, const BoolVarArgs& x, SetVar y) {
     if (home.failed()) return;
     ViewArray<Int::BoolView> xv(home,x);
-    Set::SetView yv(y);
     GECODE_ES_FAIL(home,(Set::Int::ChannelBool<Set::SetView>
-                         ::post(home,xv,yv)));
+                         ::post(home,xv,y)));
   }
 
   void weights(Space& home, const IntArgs& elements, const IntArgs& weights,
                SetVar x, IntVar y) {
     if (home.failed()) return;
-    Set::SetView xv(x);
-    Int::IntView yv(y);
     GECODE_ES_FAIL(home,Set::Int::Weights<Set::SetView>::post(home,elements,
                                                               weights,x,y));
   }
