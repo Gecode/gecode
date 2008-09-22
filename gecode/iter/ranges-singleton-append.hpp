@@ -99,13 +99,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline
   SingletonAppend<J>::SingletonAppend(int i0, int i1, J& j0)
     : j(j0) {
-    mi = i0; ma=i1;
+    mi=i0; ma=i1;
   }
 
   template <class J>
   forceinline void
   SingletonAppend<J>::init(int i0, int i1, J& j0) {
-    mi = i0; ma=i1;
+    mi=i0; ma=i1; j=j0;
   }
 
 }}}

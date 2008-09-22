@@ -74,6 +74,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: iter
+What:   bug
+Rank:   minor
+Thanks: Stefano Gualandi
+[DESCRIPTION]
+Fixed init method of SingletonAppend range iterator.
+
+[ENTRY]
 Module: example
 What:   bug
 Rank:   minor
