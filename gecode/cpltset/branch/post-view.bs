@@ -51,7 +51,7 @@ ValBranch:	CpltSetValBranch
 # Exception to be thrown if variable branch selection unknown
 Exception:	UnknownBranching("CpltSet::branch")
 # Header file to include
-Include:	"gecode/cpltset/branch.hh"
+Include:	<gecode/cpltset/branch.hh>
 # Local namespace
 LNS:		Gecode::CpltSet::Branch
 # Global namespace

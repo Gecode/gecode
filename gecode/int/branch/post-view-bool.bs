@@ -51,7 +51,7 @@ ValBranch:	IntValBranch
 # Exception to be thrown if variable branch selection unknown
 Exception:	UnknownBranching("Int::branch")
 # Header file to include
-Include:	"gecode/int/branch.hh"
+Include:	<gecode/int/branch.hh>
 # Local namespace
 LNS:		Gecode::Int::Branch
 # Global namespace

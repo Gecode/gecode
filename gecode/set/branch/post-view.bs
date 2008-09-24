@@ -51,7 +51,7 @@ ValBranch:	SetValBranch
 # Exception to be thrown if variable branch selection unknown
 Exception:	UnknownBranching("Set::branch")
 # Header file to include
-Include:	"gecode/set/branch.hh"
+Include:	<gecode/set/branch.hh>
 # Local namespace
 LNS:		Gecode::Set::Branch
 # Global namespace
