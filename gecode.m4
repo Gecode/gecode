@@ -533,22 +533,8 @@ AC_DEFUN([AC_GECODE_CHECK_ARITH],
 	 AC_LANG_POP([C])])
 
 AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
- [AC_MSG_CHECKING([if compiler supports forced inlining])
-  AC_LANG_PUSH([C++])
-  ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1 -Werror"
-  AC_COMPILE_IFELSE(
-    [AC_LANG_PROGRAM([
-      [inline __attribute__ ((__always_inline__)) void foo(void) {}]],
-      [])],
-    [AC_MSG_RESULT(yes)
-     AC_DEFINE(forceinline, [inline __attribute__ ((__always_inline__))],
-       [How to tell the compiler to really, really inline])],
-    [AC_MSG_RESULT(no)
-     AC_DEFINE(forceinline, [inline],
-       [How to tell the compiler to really, really inline])])
-  CXXFLAGS=${ac_gecode_save_CXXFLAGS}
-  AC_LANG_POP([C++])
+ [AC_DEFINE(forceinline, [inline],
+       [How to tell the compiler to really, really inline])
   AC_GECODE_CHECK_COMPILERFLAG([-fPIC])
   AC_GECODE_CHECK_COMPILERFLAG([-Wextra])
   AC_GECODE_CHECK_COMPILERFLAG([-Wall])
@@ -602,7 +588,23 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
 
 AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
- [AC_GECODE_CHECK_COMPILERFLAG([-O3])
+ [AC_MSG_CHECKING([if compiler supports forced inlining])
+  AC_LANG_PUSH([C++])
+  ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
+  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1 -Werror"
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM([
+      [inline __attribute__ ((__always_inline__)) void foo(void) {}]],
+      [])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE(forceinline, [inline __attribute__ ((__always_inline__))],
+       [How to tell the compiler to really, really inline])],
+    [AC_MSG_RESULT(no)
+     AC_DEFINE(forceinline, [inline],
+       [How to tell the compiler to really, really inline])])
+  CXXFLAGS=${ac_gecode_save_CXXFLAGS}
+  AC_LANG_POP([C++])
+	AC_GECODE_CHECK_COMPILERFLAG([-O3])
   AC_GECODE_CHECK_COMPILERFLAG([-fno-strict-aliasing])])
 
 AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
