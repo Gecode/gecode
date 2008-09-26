@@ -6936,11 +6936,6 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
        ;;
   esac
 
-cat >>confdefs.h <<\_ACEOF
-#define forceinline inline
-_ACEOF
-
-
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fPIC... $ECHO_C" >&6; }
@@ -8729,6 +8724,11 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   else
     if test "${enable_debug:-no}" = "yes"; then
 
+cat >>confdefs.h <<\_ACEOF
+#define forceinline inline
+_ACEOF
+
+
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-inline-functions... $ECHO_C" >&6; }
@@ -9531,11 +9531,6 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
 
        ;;
   esac
-
-cat >>confdefs.h <<\_ACEOF
-#define forceinline inline
-_ACEOF
-
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fPIC" >&5
@@ -10924,6 +10919,11 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
        else
+
+cat >>confdefs.h <<\_ACEOF
+#define forceinline inline
+_ACEOF
+
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-inline-functions" >&5

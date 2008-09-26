@@ -533,9 +533,7 @@ AC_DEFUN([AC_GECODE_CHECK_ARITH],
 	 AC_LANG_POP([C])])
 
 AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
- [AC_DEFINE(forceinline, [inline],
-       [How to tell the compiler to really, really inline])
-  AC_GECODE_CHECK_COMPILERFLAG([-fPIC])
+ [AC_GECODE_CHECK_COMPILERFLAG([-fPIC])
   AC_GECODE_CHECK_COMPILERFLAG([-Wextra])
   AC_GECODE_CHECK_COMPILERFLAG([-Wall])
   AC_GECODE_CHECK_COMPILERFLAG([-pipe])
@@ -624,7 +622,9 @@ AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
 	 fi])
 
 AC_DEFUN([AC_GECODE_GCC_DEBUG_SWITCHES],
-  [AC_GECODE_CHECK_COMPILERFLAG([-fno-inline-functions])
+  [AC_DEFINE(forceinline, [inline],
+       [How to tell the compiler to really, really inline])
+   AC_GECODE_CHECK_COMPILERFLAG([-fno-inline-functions])
    AC_GECODE_CHECK_COMPILERFLAG([-fimplement-inlines])])
 
 AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
