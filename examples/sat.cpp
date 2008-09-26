@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Raphael Reischuk <raphael@ps.uni-sb.de>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
  *     Raphael Reischuk, 2008
+ *     Guido Tack, 2008
  *
  *  Last modified:
  *     $Date: 2008-09-03 14:14:11 +0200 (Mi, 03 Sep 2008) $ by $Author: tack $
@@ -36,54 +38,21 @@
  */        
 
 #include "examples/support.hh"
-#include "gecode/minimodel.hh"
 
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
 #include <vector>
 
-/**
- * \brief %Example: CNF SAT solver
+
+/** \brief Options for %SAT problems
  *
- * SAT finds assignments of Boolean variables such
- * that a set of clauses is satisfied or shows that
- * no such assignment exists.
- *
- * This example parses a dimacs CNF file in which
- * the constraints are specified. For each line of
- * the file a clause propagator is posted.
- *
- * Format of dimacs CNF files:
- *
- * A dimacs file starts with comments (each line
- * starts with c). The number of variables and the
- * number of clauses is defined by the line 
- *
- *    p cnf <variables> <clauses>
- *
- * Each of the subsequent lines specifies a clause.
- * A positive literal is denoted by the a positive
- * integer, a negative literal is denoted by the
- * corresponding negative integer. Each line is
- * terminated by 0.
- *
- * c sample CNF file
- * p cnf 3 2
- * 3 -1 0
- * 1 2 -1 0
- *
- * Benchmarks on satlib.org, for instance, 
- * are in the dimacs CNF format.
- *
- * \ingroup ExProblem
+ * \relates SAT
  */
-
-
 class SatOptions : public Options {
 public:
+  /// Name of the DIMACS file to parse
   std::string filename;
+  /// Initialize options with file name \a s
   SatOptions(const char* s) 
     : Options(s) {}
   /// Parse options from arguments \a argv (number is \a argc)
@@ -106,37 +75,55 @@ public:
   }
 };
 
-
-class Li {
-private:
-  int _n;
-  Li* _next;
-public:
-  Li() {_next = NULL; _n = 0;}
-  Li(Li* l, int n) {_next = l; _n = n;}
-  void add(int n) {_next = new Li(_next, n); _n++;} 
-  Li* next() {return _next;}
-  int n(void) {return _n;}
-  int size(void) {return _n;}
-  ~Li() {delete _next;}
-};
-
-
+/**
+ * \brief %Example: CNF SAT solver
+ *
+ * SAT finds assignments of Boolean variables such
+ * that a set of clauses is satisfied or shows that
+ * no such assignment exists.
+ *
+ * This example parses a dimacs CNF file in which
+ * the constraints are specified. For each line of
+ * the file a clause propagator is posted.
+ *
+ * Format of dimacs CNF files:
+ *
+ * A dimacs file starts with comments (each line
+ * starts with c). The number of variables and the
+ * number of clauses is defined by the line 
+ *
+ *    p cnf <variables> <clauses>
+ *
+ * Each of the subsequent lines specifies a clause.
+ * A positive literal is denoted by a positive
+ * integer, a negative literal is denoted by the
+ * corresponding negative integer. Each line is
+ * terminated by 0.
+ *
+ * c sample CNF file
+ * p cnf 3 2
+ * 3 -1 0
+ * 1 2 -1 0
+ *
+ * Benchmarks on satlib.org, for instance, 
+ * are in the dimacs CNF format.
+ *
+ * \ingroup ExProblem
+ */
 class Sat : public Example {
 private:
-    /// BoolVarArray \a BA for branching
-    BoolVarArray BA;
-
+  /// The Boolean variables
+  BoolVarArray x;
 public:
   /// The actual problem
   Sat(const SatOptions& opt) {
     parseDIMACS(opt.filename.c_str()); 
-    branch(*this, BA, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
-  /// Constructor for Cloning
+  /// Constructor for cloning
   Sat(bool share, Sat& s) : Example(share,s) {
-    BA.update(*this, share, s.BA);
+    x.update(*this, share, s.x);
   }
 
   /// Perform copying during cloning
@@ -148,15 +135,11 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) {
-    os << "\tsolution: ";
-    for (int i = 0; i < BA.size(); i++)
-      os << BA[i].val();
-    os << std::endl;
+    os << "solution:\n" << x << std::endl;
   }
 
-
-  forceinline void 
-  parseDIMACS(const char* f) {
+  /// Post constraints according to DIMACS file \a f
+  void parseDIMACS(const char* f) {
     int variables = 0;
     int clauses = 0;
     std::ifstream dimacs(f);
@@ -164,8 +147,8 @@ public:
       std::cerr << "error: file '" << f << "' not found" << std::endl;
       exit(1);
     }
-    printf("+---------------------------------------------------+\n");
-    std::cout << "| Parsing file '" << f << "'" << std::endl;
+    std::cout << "Solving problem from DIMACS file '" << f << "'"
+              << std::endl;
     std::string line;
     int c = 0;
     while (dimacs.good()) {
@@ -188,24 +171,17 @@ public:
           clauses = 10*clauses + line[i] - '0';
           i++;
         }
-        printf("+---------------------------------------------------|\n");
-        printf("|%8d variables                                 |\n",variables);
-        printf("|%8d clauses                                   |\n",clauses);
-        printf("+---------------------------------------------------+\n");
-        // Add variables to Array (for branching)
-        BA = BoolVarArray(*this, 0);
-        BoolVar bv;
-        for (int i=0; i<variables; i++) {
-          bv = BoolVar(*this, 0, 1);
-          BA.add(*this, bv);
-        }
+        std::cout << "(" << variables << " variables, "
+                  << clauses << " clauses)" << std::endl << std::endl;
+        // Add variables to array
+        x = BoolVarArray(*this, variables, 0, 1);
       }
       // Parse regular clause
       else if (variables > 0 && 
       ((line[0] >= '0' && line[0] <= '9') || line[0] == '-' || line[0] == ' ')) {
         c++;
-        Li* pos = new Li();
-        Li* neg = new Li();
+        std::vector<int> pos;
+        std::vector<int> neg;
         int i = 0;
         while (line[i] != 0) {
           if (line[i] == ' ') {
@@ -224,35 +200,24 @@ public:
           }
           if (value != 0) {
             if (positive) 
-              pos->add(value-1);
+              pos.push_back(value-1);
             else
-              neg->add(value-1);
+              neg.push_back(value-1);
             i++;
           }
         }
         
         // Create positive BoolVarArgs
-        BoolVarArgs positives(pos->size());
-        Li* tmp = pos->next();
-        i = 0;
-        while (tmp) {
-          positives[i++] = BA[tmp->n()];
-          tmp = tmp->next();
-        }
+        BoolVarArgs positives(pos.size());
+        for (int i=pos.size(); i--;)
+          positives[i] = x[pos[i]];
 
-        // Create negative BoolVarArgs
-        BoolVarArgs negatives(neg->size());
-        tmp = neg->next();
-        i = 0;
-        while (tmp) {
-          negatives[i++] = BA[tmp->n()];
-          tmp = tmp->next();
-        }
+        BoolVarArgs negatives(neg.size());
+        for (int i=neg.size(); i--;)
+          negatives[i] = x[neg[i]];
         
         // Post propagators
         clause(*this, BOT_OR, positives, negatives, 1);
-        delete pos;
-        delete neg;
       } 
       else {
         std::cerr << "format error in dimacs file" << std::endl;
@@ -262,11 +227,10 @@ public:
     }
     dimacs.close();
     if (clauses != c) {
-      printf("error: number of specified clauses seems to be wrong.\n");
-      exit(1);
+      std::cerr << "error: number of specified clauses seems to be wrong."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
     }
-    printf("| Parsing done.                                     |\n");
-    printf("*---------------------------------------------------*\n");
   }
 };
 
@@ -281,14 +245,12 @@ int main(int argc, char* argv[]) {
   
   // Check whether all arguments are successfully parsed
   if (argc > 1) {
-    fprintf(stderr,"Could not parse all arguments.\n");
+    std::cerr << "Could not parse all arguments." << std::endl;
     opt.help();
-    exit(1);
+    std::exit(EXIT_FAILURE);
   }
   
   // Run SAT solver
   Example::run<Sat,DFS,SatOptions>(opt);
   return 0;
 }
-
-
