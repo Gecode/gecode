@@ -73,6 +73,9 @@
 /* Whether serialization support is built */
 #undef GECODE_HAS_SERIALIZATION
 
+/* Whether scheduling support is built */
+#undef GECODE_HAS_SCHEDULING
+
 /* Whether to build SET variables */
 #undef GECODE_HAS_SET_VARS
 

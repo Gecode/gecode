@@ -71,6 +71,11 @@
  */
 
 /**
+ * \defgroup TaskModelScheduling Using scheduling support
+ * \ingroup TaskModel
+ */
+
+/**
  * \defgroup TaskModelSearch Search engines
  *
  * Defines search engines. All search engines (but Gecode::LDS, where

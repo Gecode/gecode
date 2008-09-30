@@ -256,6 +256,11 @@ AC_GECODE_ENABLE_MODULE(examples, yes,
 AC_GECODE_ENABLE_MODULE(minimodel, yes,
 	[build modeling support library for the enabled variable types])
 
+AC_GECODE_ENABLE_MODULE(scheduling, yes,
+	[build scheduling library],
+	[AC_DEFINE([GECODE_HAS_SCHEDULING],[],
+	 [Whether scheduling support is built])])
+
 AC_GECODE_ENABLE_MODULE(serialization, yes,
 	[build serialization library],
 	[AC_DEFINE([GECODE_HAS_SERIALIZATION],[],
@@ -299,5 +304,6 @@ AC_CONFIG_FILES([misc/gecode.pc])
 AC_CONFIG_FILES([misc/gecode-search.pc])
 AC_CONFIG_FILES([misc/gecode-serialization.pc])
 AC_CONFIG_FILES([misc/gecode-minimodel.pc])
+AC_CONFIG_FILES([misc/gecode-scheduling.pc])
 AC_CONFIG_FILES([misc/gecode-gist.pc])
 AC_OUTPUT

@@ -523,6 +523,40 @@ endif
 MMBUILDDIRS	= minimodel
 
 #
+# SCHEDULING COMPONENTS
+#
+
+SCHEDSRC0 = \
+	unary.cpp
+SCHEDHDR0 = \
+	exception.hpp \
+	imp/schedule.hpp imp/resource.hpp imp/task.hpp
+
+SCHEDSRC 	= $(SCHEDSRC0:%=gecode/scheduling/%)
+SCHEDHDR 	= gecode/scheduling.hh $(MMHDR0:%=gecode/scheduling/%)
+SCHEDOBJ	= $(SCHEDSRC:%.cpp=%$(OBJSUFFIX))
+SCHEDSBJ	= $(SCHEDSRC:%.cpp=%$(SBJSUFFIX))
+
+ifeq "@enable_scheduling@" "yes"
+export SCHEDDLL		= $(LIBPREFIX)@SCHED@$(DLLSUFFIX)
+export SCHEDSTATICLIB	= $(LIBPREFIX)@SCHED@$(STATICLIBSUFFIX)
+export SCHEDLIB		= $(LIBPREFIX)@SCHED@$(LIBSUFFIX)
+export LINKSCHED      	= $(LINKPREFIX)@SCHED@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export SCHEDSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@SCHED@$(SOSUFFIX)
+else
+export SCHEDSONAME     = 
+endif
+else
+export SCHEDDLL		=
+export SCHEDSTATICLIB	=
+export SCHEDLIB		=
+export LINKSCHED      	=
+endif
+SCHEDBUILDDIRS	= scheduling
+
+#
 # SERIALIZATION COMPONENTS
 #
 
@@ -769,12 +803,14 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 
 ALLSRC = \
 	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) $(DDSSRC) \
+        $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SCHEDSRC) \
+	$(SERSRC) $(DDSSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
 	$(JSEXAMPLESRC) $(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SERHDR) $(DDSHDR) \
+        $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SCHEDHDR) \
+	$(SERHDR) $(DDSHDR) \
 	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
@@ -786,23 +822,25 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(CPLTSETDLL) $(MMDLL) $(SERDLL) $(GISTDLL) $(DDSDLL)
+	$(CPLTSETDLL) $(MMDLL) $(SCHEDDLL) $(SERDLL) $(GISTDLL) $(DDSDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(CPLTSETLIB) $(MMLIB) $(SERLIB) $(GISTLIB) $(DDSLIB)
+	$(CPLTSETLIB) $(MMLIB) $(SCHEDLIB) $(SERLIB) $(GISTLIB) $(DDSLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB) $(DDSSTATICLIB)
+	$(MMSTATICLIB) $(SCHEDSTATICLIB) $(SERSTATICLIB) \
+	$(GISTSTATICLIB) $(DDSSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB) $(GISTSTATICLIB) $(DDSSTATICLIB)
+	$(MMSTATICLIB) $(SCHEDSTATICLIB) $(SERSTATICLIB) \
+	$(GISTSTATICLIB) $(DDSSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -887,8 +925,10 @@ BUILDDIRS = \
 	$(CPLTSETBUILDDIRS:%=gecode/%) \
 	$(SERBUILDDIRS:%=gecode/%) \
 	$(DDSBUILDDIRS:%=gecode/%) \
-	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS) \
-	$(GISTBUILDDIRS:%=gecode/%)
+	$(MMBUILDDIRS:%=gecode/%)  \
+	$(SCHEDBUILDDIRS:%=gecode/%) \
+	$(GISTBUILDDIRS:%=gecode/%) \
+	$(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
 all: compilelib
@@ -1010,8 +1050,11 @@ $(top_srcdir)/gecode/cpltset/branch.cpp: \
 POSTHDR = $(POSTINT) $(POSTSET)
 
 $(top_srcdir)/gecode/serialization/register.cpp: \
-	$(top_srcdir)/gecode/int.hh $(top_srcdir)/gecode/set.hh \
-	$(top_srcdir)/gecode/minimodel.hh $(top_srcdir)/misc/genregistry.perl
+	$(top_srcdir)/gecode/int.hh \
+	$(top_srcdir)/gecode/set.hh \
+	$(top_srcdir)/gecode/minimodel.hh \
+	$(top_srcdir)/gecode/scheduling.hh \
+	$(top_srcdir)/misc/genregistry.perl
 	(cd $(top_srcdir) && \
 	 perl misc/genregistry.perl \
 	  gecode/int.hh gecode/set.hh gecode/minimodel.hh \
@@ -1075,6 +1118,13 @@ gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
+
+gecode/scheduling/%$(OBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/dds/%$(OBJSUFFIX): $(top_srcdir)/gecode/dds/%.cpp
@@ -1157,8 +1207,8 @@ gecode/gist/visualisation/moc_%.cpp: $(top_srcdir)/gecode/gist/visualisation/%.h
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
-	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKDDS) $(LINKSER) \
-        $(LINKCPLTSET) $(LINKSET) $(LINKINT) \
+	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKSCHED) $(LINKDDS) \
+	$(LINKSER) $(LINKCPLTSET) $(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) $(SUPPORTSONAME) \
@@ -1202,16 +1252,22 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(SCHEDDLL): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(SCHEDOBJ) $(SCHEDSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(SCHEDDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(DDSDLL): $(DDSOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(DDSOBJ) $(DDSSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(DDSDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) 
+$(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) $(SCHEDDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		$(LINKSET) $(LINKMM) $(BOOST_LINK) $(LINKQT) \
+		$(LINKSET) $(LINKMM) $(SCHEDDLL) $(BOOST_LINK) $(LINKQT) \
 		@LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1244,10 +1300,13 @@ $(CPLTSETDLL) $(CPLTSETLIB): $(CPLTSETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) 
 $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
+$(SCHEDDLL) $(SCHEDLIB): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(SCHEDOBJ) \
+		@DLLPATH@ @LINKOUTPUT@$(SCHEDDLL) $(GLDFLAGS)
 $(DDSDLL) $(DDSLIB): $(DDSOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(DDSOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(DDSDLL) $(GLDFLAGS)
-$(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL)
+$(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) $(SCHEDDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) \
 		@DLLPATH@ $(BOOST_LINK) $(LINKQT) \
 		@LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
@@ -1281,6 +1340,9 @@ $(CPLTSETSTATICLIB): $(CPLTSETOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)
+	$(RANLIB) $@
+$(SCHEDSTATICLIB): $(SCHEDOBJ)
+	$(AR) $(ARFLAGS) $@ $(SCHEDOBJ)
 	$(RANLIB) $@
 $(DDSSTATICLIB): $(DDSOBJ)
 	$(AR) $(ARFLAGS) $@ $(DDSOBJ)
