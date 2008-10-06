@@ -152,7 +152,7 @@ namespace Gecode {
     //@{
     /// Default constructor (array of size 0)
     ViewArray(void);
-    /// Allocate array with \a m variables
+    /// Allocate array with \a m views
     ViewArray(Space& home, int m);
     /// Initialize from view array \a a (share elements)
     ViewArray(const ViewArray<View>& a);
