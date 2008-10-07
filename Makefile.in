@@ -736,7 +736,7 @@ INTEXAMPLESRC0 =						\
 	partition photo queens					\
 	sudoku kakuro nonogram pentominoes			\
 	crowded-chess black-hole minesweeper domino		\
-	sports-league all-interval				\
+	steel-mill sports-league all-interval			\
 	langford-number warehouses				\
 	stress-domain stress-exec stress-search baseline	\
 	stress-element stress-min stress-distinct		\

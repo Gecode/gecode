@@ -74,6 +74,20 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+New example: the steel mill slab design problem (Problem 38 in <a
+href="http://csplib.org">CSPLib</a>).
+[MORE]
+The model used is from Gargani and Refalo, "An efficient model and
+strategy for the steel mill slab design problem.", CP 2007. The
+symmetry-breaking search is from Van Hentenryck and Michel, "The Steel
+Mill Slab Design Problem Revisited", CPAIOR 2008.
+
+
+[ENTRY]
 Module: iter
 What:   bug
 Rank:   minor
