@@ -254,3 +254,5 @@ int main(int argc, char* argv[]) {
   Example::run<Sat,DFS,SatOptions>(opt);
   return 0;
 }
+
+// STATISTICS: example-any

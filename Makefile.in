@@ -533,7 +533,7 @@ SCHEDHDR0 = \
 	imp/schedule.hpp imp/resource.hpp imp/task.hpp
 
 SCHEDSRC 	= $(SCHEDSRC0:%=gecode/scheduling/%)
-SCHEDHDR 	= gecode/scheduling.hh $(MMHDR0:%=gecode/scheduling/%)
+SCHEDHDR 	= gecode/scheduling.hh $(SCHEDHDR0:%=gecode/scheduling/%)
 SCHEDOBJ	= $(SCHEDSRC:%.cpp=%$(OBJSUFFIX))
 SCHEDSBJ	= $(SCHEDSRC:%.cpp=%$(SBJSUFFIX))
 
