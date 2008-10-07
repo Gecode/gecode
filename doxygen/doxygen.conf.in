@@ -497,7 +497,7 @@ INPUT                  = . @top_srcdir@
 FILE_PATTERNS          = *.h \
 			 *.c \
 			 *.hh \
-                         *.cc \
+                         *.cpp \
                          *.hpp
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
@@ -513,8 +513,8 @@ RECURSIVE              = YES
 EXCLUDE                = \
 	contribs gecode/support/buddy \
 	gecode/serialization/boost.hpp \
-	gecode/serialization/boost.cc \
-	gecode/gist.hh gecode/gist
+	gecode/serialization/boost.cpp \
+	gecode/gist.hpp gecode/gist
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
@@ -539,7 +539,7 @@ EXAMPLE_PATH           =
 # and *.h) to filter out the source-files in the directories. If left 
 # blank all files are included.
 
-EXAMPLE_PATTERNS       = *.cc
+EXAMPLE_PATTERNS       = *.cpp
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be 
 # searched for input files to be used with the \include or \dontinclude 
