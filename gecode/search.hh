@@ -660,7 +660,7 @@ namespace Gecode {
    * \brief Depth-first branch-and-bound search engine
    *
    * Additionally, \a s must implement a member function 
-   * \code void constrain(T* t) \endcode
+   * \code virtual void constrain(const T& t) \endcode
    * Whenever exploration requires to add a constraint
    * to the space \a c currently being explored, the engine
    * executes \c c->constrain(t) where \a t is the so-far
