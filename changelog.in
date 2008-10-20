@@ -74,6 +74,20 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Jonathan Cederberg
+[DESCRIPTION]
+The binary min and max propagators did not do all pruning it
+should do.
+[MORE]
+Given the constraint x = max(y,z) with the store {x->{1,2,3},
+y->{1,2}, z->{3}}, propagation did not yield any new information
+(now it gives the correct result {x->{3}, y->{1,2}, z->{3}}).
+
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

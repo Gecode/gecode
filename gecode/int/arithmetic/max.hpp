@@ -126,9 +126,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   MaxBnd<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
-    if (x0.max() <= x1.min())
+    if (x0.max() <= x1.min() || x0.max() < x2.min())
       GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x1,x2)));
-    if (x1.max() <= x0.min())
+    if (x1.max() <= x0.min() || x1.max() < x2.min())
       GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x0,x2)));
     return x0.assigned() && x1.assigned() && x2.assigned() ?
       ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
@@ -339,9 +339,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MaxDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
-      if (x0.max() <= x1.min())
+      if (x0.max() <= x1.min() || x0.max() < x2.min())
         GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x1,x2)));
-      if (x1.max() <= x0.min())
+      if (x1.max() <= x0.min() || x1.max() < x2.min())
         GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
       return x0.assigned() && x1.assigned() && x2.assigned() ?
         ES_SUBSUMED(*this,sizeof(*this)) : 
