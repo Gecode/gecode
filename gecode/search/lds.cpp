@@ -166,6 +166,7 @@ namespace Gecode { namespace Search {
         }
         return s;
       }
+      node++;
       switch (cur->status(propagate)) {
       case SS_FAILED:
         fail++;

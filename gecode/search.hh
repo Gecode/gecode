@@ -105,6 +105,10 @@ namespace Gecode {
       unsigned long int clone;
       /// Number of commit operations performed
       unsigned long int commit;
+      /// Number of nodes expanded
+      unsigned long int node;
+      /// Maximum depth of search stack
+      unsigned long int depth;
       /// Peak memory allocated
       size_t memory;
       /// Initialize with all numbers zero
@@ -347,7 +351,7 @@ namespace Gecode {
       /// Initialize with adaptive recomputation distance \a a_d
       ReCoStack(unsigned int a_d);
       /// Push space \a c (a clone of \a s or NULL)
-      const BranchingDesc* push(Space* s, Space* c);
+      const BranchingDesc* push(EngineCtrl& stat, Space* s, Space* c);
       /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
       template <class DescType>
       const BranchingDesc* nextDesc(EngineCtrl& s, int& alt,

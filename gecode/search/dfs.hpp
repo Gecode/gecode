@@ -84,6 +84,7 @@ namespace Gecode {
         while (cur) {
           if (stop(stacksize()))
             return NULL;
+          node++;
           switch (cur->status(propagate)) {
           case SS_FAILED:
             fail++;
@@ -109,7 +110,7 @@ namespace Gecode {
                 c = NULL;
                 d++;
               }
-              const BranchingDesc* desc = rcs.push(cur,c);
+              const BranchingDesc* desc = rcs.push(*this,cur,c);
               EngineCtrl::push(c,desc);
               commit++;
               cur->commit(*desc,0);

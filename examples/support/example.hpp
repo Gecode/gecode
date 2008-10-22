@@ -229,6 +229,8 @@ ExampleBase<Space>::run(const Options& o) {
              << "\tfailures:      " << stat.fail << endl
              << "\tclones:        " << stat.clone << endl
              << "\tcommits:       " << stat.commit << endl
+             << "\tnodes:         " << stat.node << endl
+             << "\tmax depth:     " << stat.depth << endl
              << "\tpeak memory:   "
              << static_cast<int>((stat.memory+1023) / 1024) << " KB"
              << endl;
@@ -263,6 +265,8 @@ ExampleBase<Space>::run(const Options& o) {
              << "\tfailures:      " << stat.fail << endl
              << "\tclones:        " << stat.clone << endl
              << "\tcommits:       " << stat.commit << endl
+             << "\tnodes:         " << stat.node << endl
+             << "\tmax depth:     " << stat.depth << endl
              << "\tpeak memory:   "
              << static_cast<int>((stat.memory+1023) / 1024) << " KB"
              << endl;

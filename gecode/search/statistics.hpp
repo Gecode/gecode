@@ -39,7 +39,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   Statistics::Statistics(void)
-    : propagate(0), fail(0), clone(0), commit(0), memory(0) {}
+    : propagate(0), fail(0), clone(0), commit(0), node(0), depth(0), memory(0) {}
 
 }}
 

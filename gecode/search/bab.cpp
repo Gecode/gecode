@@ -57,6 +57,7 @@ namespace Gecode { namespace Search {
       while (cur) {
         if (stop(stacksize()))
           return NULL;
+        node++;
         switch (cur->status(propagate)) {
         case SS_FAILED:
           fail++;
@@ -83,7 +84,7 @@ namespace Gecode { namespace Search {
               c = NULL;
               d++;
             }
-            const BranchingDesc* desc = rcs.push(cur,c);
+            const BranchingDesc* desc = rcs.push(*this,cur,c);
             EngineCtrl::push(c,desc);
             cur->commit(*desc,0);
             commit++;

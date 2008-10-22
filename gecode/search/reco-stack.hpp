@@ -93,9 +93,11 @@ namespace Gecode { namespace Search {
   ReCoStack::ReCoStack(unsigned int a_d0) : ds(heap), a_d(a_d0) {}
 
   forceinline const BranchingDesc*
-  ReCoStack::push(Space* s, Space* c) {
+  ReCoStack::push(EngineCtrl& stat, Space* s, Space* c) {
     ReCoNode sn(s,c);
     ds.push(sn);
+    if (stat.depth < static_cast<unsigned int>(ds.entries()))
+      stat.depth = ds.entries();
     return sn.desc();
   }
 
