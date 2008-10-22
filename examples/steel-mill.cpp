@@ -7,8 +7,8 @@
  *     Mikael Lagerkvist, 2008
  *
  *  Last modified:
- *     $Date: 2008-06-02 21:07:11 +0200 (Mon, 02 Jun 2008) $ by $Author: schulte $
- *     $Revision: 7001 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -36,40 +36,134 @@
  */
 
 #include "examples/support.hh"
-
 #include "gecode/minimodel.hh"
 
+#include <fstream>
 
-extern int capacities[];
-extern int loss[];
-extern int ncolors;
-extern unsigned int maxOrders;
-extern const int order_weight;
-extern const int order_color;
-extern int orders[][2];
+/** \breif Order-specifications
+ *
+ * Used in the \ref SteelMill example.
+ *
+ */
+//@{
+typedef int (*order_t)[2];     ///< Type of the order-specification
+extern const int order_weight; ///< Weight-position in order-array elements
+extern const int order_color;  ///< Color-position in order-array elements
+//@}
 
+/** \breif Constants for CSPLib instance of the Steel Mill Slab Design Problem.
+ *
+ * Used in the \ref SteelMill example.
+ */
+//@{
+extern int csplib_capacities[];         ///< Capacities
+extern unsigned int csplib_ncapacities; ///< Number of capacities
+extern unsigned int csplib_maxcapacity; ///< Maximum capacity
+extern int csplib_loss[];               ///< Loss for all sizes
+extern int csplib_orders[][2];          ///< Orders
+extern unsigned int csplib_ncolors;     ///< Number of colors
+extern unsigned int csplib_norders;     ///< Number of orders
+//@}
+
+
+/** \brief SteelMillOptions for examples with size option and an additional
+ * optional file name parameter.
+ *
+ * Used in the \ref SteelMill example.
+ */
+class SteelMillOptions : public Options {
+private:
+  unsigned int _size;    ///< Size value
+  int* _capacities;      ///< Capacities
+  int  _ncapacities;     ///< Number of capacities
+  int  _maxcapacity;     ///< Maximum capacity
+  int* _loss;            ///< Loss for all sizes
+  order_t _orders;       ///< Orders
+  int  _ncolors;         ///< Number of colors
+  unsigned int _norders; ///< Number of orders
+public:
+  /// Initialize options for example with name \a n
+  SteelMillOptions(const char* n)
+    : Options(n), _size(csplib_norders), 
+      _capacities(csplib_capacities), _ncapacities(csplib_ncapacities),
+      _maxcapacity(csplib_maxcapacity),
+      _loss(csplib_loss), _orders(&(csplib_orders[0])), _ncolors(csplib_ncolors),
+      _norders(csplib_norders) {}
+  /// Print help text
+  virtual void help(void);
+  /// Parse options from arguments \a argv (number is \a argc)
+  bool parse(int& argc, char* argv[]);
+
+  /// Return size
+  unsigned int size(void) const { return _size;        }
+  /// Return capacities
+  int* capacities(void) const   { return _capacities;  }
+  /// Return number of capacities
+  int ncapacities(void) const   { return _ncapacities; }
+  /// Return maximum of capacities
+  int maxcapacity(void) const   { return _maxcapacity; }
+  /// Return loss values
+  int* loss(void) const         { return _loss;        }
+  /// Return orders
+  order_t orders(void) const    { return _orders;      }
+  /// Return number of colors
+  int ncolors(void) const       { return _ncolors;     }
+  /// Return number of orders
+  int norders(void) const       { return _norders;     }
+};
 
 
 /**
  * \brief %Example: Steel-Mill Slab Design Problem
  *
  * This model solves the Steel Mill Slab Design Problem (Problem 38 in
- * <a href="http://csplib.org">CSPLib</a>). The model used is from
- * Gargani and Refalo, "An efficient model and strategy for the steel
- * mill slab design problem.", CP 2007. The symmetry-breaking search
- * is from Van Hentenryck and Michel, "The Steel Mill Slab Design
- * Problem Revisited", CPAIOR 2008.
+ * <a href="http://csplib.org">CSPLib</a>). The model is from Gargani
+ * and Refalo, "An efficient model and strategy for the steel mill
+ * slab design problem.", CP 2007, except that a decomposition of the
+ * packing constraint is used. The symmetry-breaking search is from
+ * Van Hentenryck and Michel, "The Steel Mill Slab Design Problem
+ * Revisited", CPAIOR 2008.
  *
+ * The program accepts an optional argument for a data-file containing
+ * an instance of the problem. The format for the data-file is the following:
+ * <pre>
+ * "number of slab capacities" "sequence of capacities in increasing order"
+ * "number of colors"
+ * "number of orders"
+ * "size order 1" "color of order 1"
+ * "size order 2" "color of order 2"
+ * ...
+ * </pre>
+ * Hard instances are available from <a href=
+ * "http://becool.info.ucl.ac.be/steelmillslab">
+ * http://becool.info.ucl.ac.be/steelmillslab</a>.
+ * 
  * \ingroup ExProblem
  *
  */
 class SteelMill : public MinimizeExample {
 protected:
-  int norders, nslabs;
+  /** \name Instance specification
+   */
+  //@{
+  int* capacities;      ///< Capacities
+  int  ncapacities;     ///< Number of capacities
+  int  maxcapacity;     ///< Maximum capacity
+  int* loss;            ///< Loss for all sizes
+  int  ncolors;         ///< Number of colors
+  order_t orders;       ///< Orders
+  unsigned int norders; ///< Number of orders
+  unsigned int nslabs;  ///< Number of slabs
+  //@}
+
+  /** \name Problem variables
+   */
+  //@{
   IntVarArray slab, ///< Slab assigned to order i
     slabload, ///< Load of slab j
     slabcost; ///< Cost of slab j
   IntVar total_cost; ///< Total cost
+  //@}
 
 public:
   /// Branching variants
@@ -77,17 +171,23 @@ public:
     BRANCHING_NAIVE,   ///< Simple branching
     BRANCHING_SYMMETRY ///< Breaking symmetries with branching
   };
+
   /// Actual model
-  SteelMill(const SizeOptions& opt) 
-    : norders(opt.size()), nslabs(opt.size()),
-      slab(*this, norders, 0,nslabs-1), 
+  SteelMill(const SteelMillOptions& opt) 
+    : // Initialize instance data
+      capacities(opt.capacities()), ncapacities(opt.ncapacities()),
+      maxcapacity(opt.maxcapacity()), loss(opt.loss()),
+      ncolors(opt.ncolors()), orders(opt.orders()),
+      norders(opt.size()), nslabs(opt.size()),
+      // Initialize problem variables
+      slab(*this, norders, 0,nslabs-1),
       slabload(*this, nslabs, 0,45),
       slabcost(*this, nslabs, 0, Int::Limits::max),
       total_cost(*this, 0, Int::Limits::max)
   {
     // Boolean variables for slab[o]==s
     BoolVarArgs boolslab(norders*nslabs);
-    for (int i = 0; i < norders; ++i) {
+    for (unsigned int i = 0; i < norders; ++i) {
       BoolVarArgs tmp(nslabs);
       for (int j = nslabs; j--; ) {
         boolslab[j + i*nslabs] = tmp[j] = BoolVar(*this, 0, 1);
@@ -96,7 +196,7 @@ public:
     }
     
     // Packing constraints
-    for (int s = 0; s < nslabs; ++s) {
+    for (unsigned int s = 0; s < nslabs; ++s) {
       IntArgs c(norders);
       BoolVarArgs x(norders);
       for (int i = norders; i--; ) {
@@ -115,7 +215,7 @@ public:
       }
     }
     BoolVar f(*this, 0, 0);
-    for (int s = 0; s < nslabs; ++s) {
+    for (unsigned int s = 0; s < nslabs; ++s) {
       BoolVarArgs hascolor(ncolors);
       for (int c = ncolors; c--; ) {
         if (nofcolor[c]) {
@@ -132,11 +232,11 @@ public:
           hascolor[c] = f;
         }
       }
-      linear(*this, hascolor, IRT_LQ, 2);
+      linear(*this, hascolor, IRT_LQ, 2, ICL_DEF, opt.pk());
     }
 
     // Compute slabcost
-    IntArgs l(45, loss);
+    IntArgs l(maxcapacity, loss);
     for (int s = nslabs; s--; ) {
       element(*this, l, slabload[s], slabcost[s]);
     }
@@ -177,8 +277,12 @@ public:
   }
 
   /// Constructor for cloning \a s
-  SteelMill(bool share, SteelMill& s) : 
-    MinimizeExample(share,s), norders(s.norders), nslabs(s.nslabs) {
+  SteelMill(bool share, SteelMill& s) 
+    : MinimizeExample(share,s), 
+      capacities(s.capacities), ncapacities(s.ncapacities),
+      maxcapacity(s.maxcapacity), loss(s.loss),
+      ncolors(s.ncolors), orders(s.orders),
+      norders(s.norders), nslabs(s.nslabs) {
     slab.update(*this, share, s.slab);
     slabload.update(*this, share, s.slabload);
     slabcost.update(*this, share, s.slabcost);
@@ -236,7 +340,7 @@ public:
     /// Check status of branching, return true if alternatives left. 
     virtual bool status(const Space& home) const {
       const SteelMill& sm = static_cast<const SteelMill&>(home);
-      for (int i = start; i < sm.norders; ++i)
+      for (unsigned int i = start; i < sm.norders; ++i)
         if (!sm.slab[i].assigned()) {
           start = i;
           return true;
@@ -250,23 +354,23 @@ public:
       assert(!sm.slab[start].assigned());
       // Find order with a) minimum size, b) largest weight
       unsigned int size = sm.norders;
-      int weight = 45;
-      int pos = start;
-      for (int i = start; i<sm.norders; ++i) {
+      int weight = sm.maxcapacity;
+      unsigned int pos = start;
+      for (unsigned int i = start; i<sm.norders; ++i) {
         if (!sm.slab[i].assigned()) {
-          if (sm.slab[i].size() == size && orders[i][order_weight] > weight) {
-            weight = orders[i][order_weight];
+          if (sm.slab[i].size() == size && sm.orders[i][order_weight] > weight) {
+            weight = sm.orders[i][order_weight];
             pos = i;
           } else if (sm.slab[i].size() < size) {
             size = sm.slab[i].size() < size;
-            weight = orders[i][order_weight];
+            weight = sm.orders[i][order_weight];
             pos = i;
           }
         }
       }
-      int val = sm.slab[pos].min();
+      unsigned int val = sm.slab[pos].min();
       // Find first still empty slab (all such slabs are symmetric)
-      int firstzero = 0;
+      unsigned int firstzero = 0;
       while (firstzero < sm.nslabs && sm.slabload[firstzero].min() > 0)
         ++firstzero;
       assert(pos >= 0 && pos < sm.nslabs && 
@@ -306,36 +410,116 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Steel Mill Slab design");
+  SteelMillOptions opt("Steel Mill Slab design");
   opt.branching(SteelMill::BRANCHING_SYMMETRY);
   opt.branching(SteelMill::BRANCHING_NAIVE,"naive");
   opt.branching(SteelMill::BRANCHING_SYMMETRY,"symmetry");
-  opt.size(1);
   opt.solutions(0);
-  opt.parse(argc,argv);
-  if (opt.size() <= 0 || opt.size() > maxOrders) {
-    std::cerr << "Size must be between 1 and " << maxOrders << std::endl;
+  opt.pk(PK_SPEED);
+  if (!opt.parse(argc,argv)) {
     return 1;
   }
-  // Fill in the loss-values
-  loss[0] = 0;
-  int currcap = 0;
-  for (int c = 1; c < 45; ++c) {
-    if (c > capacities[currcap]) ++currcap;
-    loss[c] = capacities[currcap] - c;
-  }
-  Example::run<SteelMill,BAB,SizeOptions>(opt);
+  Example::run<SteelMill,BAB,SteelMillOptions>(opt);
   return 0;
 }
 
 
-int capacities[] = {12, 14, 17, 18, 19, 20, 23, 24, 25, 26, 27, 28, 29, 30, 32, 35, 39, 42, 43, 44};
-int loss[45];
-int ncolors = 89;
-unsigned int maxOrders = 111;
+void
+SteelMillOptions::help(void) {
+  Options::help();
+  std::cerr << "\t(string), optional" << std::endl
+            << "\t\tBenchmark to load." << std::endl
+            << "\t\tIf none is given, the standard CSPLib instance is used." 
+            << std::endl;
+  std::cerr << "\t(unsigned int), optional" << std::endl
+            << "\t\tNumber of orders to use, in the interval [0..norders]." 
+            << std::endl
+            << "\t\tIf none is given, all orders are used." << std::endl;
+}
+
+bool
+SteelMillOptions::parse(int& argc, char* argv[]) {
+  Options::parse(argc,argv);
+  // Check number of arguments
+  if (argc >= 4) {
+    std::cerr << "Too many arguments given, max two allowed (given={";
+    for (int i = 1; i < argc; ++i) {
+      std::cerr << "\"" << argv[i] << "\"";
+      if (i < argc-1) std::cerr << ",";
+    }
+    std::cerr << "})." << std::endl;
+    return false;
+  }
+  // Parse options
+  while (argc >= 2) {
+    bool issize = true;
+    for (int i = strlen(argv[argc-1]); i-- && issize; )
+      issize &= isdigit(argv[argc-1][i]);
+    if (issize) {
+      _size = atoi(argv[argc-1]);
+    } else {
+      std::ifstream instance(argv[argc-1]);
+      if (instance.fail()) {
+        std::cerr << "Argument \"" << argv[argc-1] 
+                  << "\" is neither an integer nor a readable file" 
+                  << std::endl;
+        return false;
+      }
+      // Read file instance
+      instance >> _ncapacities;
+      _capacities = new int[_ncapacities];
+      _maxcapacity = -1;
+      for (int i = 0; i < _ncapacities; ++i) {
+        instance >> _capacities[i];
+        _maxcapacity = std::max(_maxcapacity, _capacities[i]);
+      }
+      instance >> _ncolors >> _norders;
+      _orders = new int[_norders][2];
+      for (unsigned int i = 0; i < _norders; ++i) {
+        instance >> _orders[i][order_weight] >> _orders[i][order_color];
+      }
+    }
+
+    --argc;
+  }
+  // Compute loss
+  {
+    _loss = new int[_maxcapacity+1];
+    _loss[0] = 0;
+    int currcap = 0;
+    for (int c = 1; c < _maxcapacity; ++c) {
+      if (c > _capacities[currcap]) ++currcap;
+      _loss[c] = _capacities[currcap] - c;
+    }
+  }
+  // Set size, if none given
+  if (_size == 0) {
+    _size = _norders;
+  }
+  // Check size reasonability
+  if (_size == 0 || _size > _norders) {
+    std::cerr << "Size must be between 1 and " << _norders << std::endl;
+    return false;
+  }
+  return true;
+}
+
+// Positions in order array
 const int order_weight = 0;
 const int order_color = 1;
-int orders[][2] = {
+
+// CSPLib instance
+int csplib_capacities[] = 
+  {12, 14, 17, 18, 19, 
+   20, 23, 24, 25, 26, 
+   27, 28, 29, 30, 32, 
+   35, 39, 42, 43, 44};
+unsigned int csplib_ncapacities = 20;
+unsigned int csplib_maxcapacity = 44;
+int csplib_loss[45];
+unsigned int csplib_ncolors = 89;
+unsigned int csplib_norders = 111;
+int csplib_orders[][2] = {
   {4, 1},
   {22, 2},
   {9, 3},
