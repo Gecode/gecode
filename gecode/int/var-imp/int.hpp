@@ -200,7 +200,7 @@ namespace Gecode { namespace Int {
       RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
       unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
-      for (unsigned int i = n; i--; ) {
+      for (int i = n; i--; ) {
         h -= d.width(i);
         r[i].min(d.min(i)); r[i].max(d.max(i));
         r[i].prevnext(&r[i-1],&r[i+1]);
