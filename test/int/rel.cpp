@@ -98,9 +98,10 @@ namespace Test { namespace Int {
          : Test("Rel::Int::Var::XX::"+str(irt0)+"::"+str(icl),
                 1,-3,3,true,icl), 
            irt(irt0) {
-         testdomcon = ((irt != Gecode::IRT_LE) && 
-                       (irt != Gecode::IRT_GR) &&
-                       (irt != Gecode::IRT_NQ));
+         contest = ((irt != Gecode::IRT_LE) && 
+                    (irt != Gecode::IRT_GR) &&
+                    (irt != Gecode::IRT_NQ))
+           ? CTL_DOMAIN : CTL_NONE;
        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -168,9 +169,10 @@ namespace Test { namespace Int {
        BoolVarXX(Gecode::IntRelType irt0) 
          : Test("Rel::Bool::Var::XX::"+str(irt0),1,0,1), 
            irt(irt0) {
-         testdomcon = ((irt != Gecode::IRT_LE) && 
-                       (irt != Gecode::IRT_GR) &&
-                       (irt != Gecode::IRT_NQ));
+         contest = ((irt != Gecode::IRT_LE) && 
+                    (irt != Gecode::IRT_GR) &&
+                    (irt != Gecode::IRT_NQ))
+           ? CTL_DOMAIN : CTL_NONE;
        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {

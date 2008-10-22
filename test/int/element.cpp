@@ -180,7 +180,7 @@ namespace Test { namespace Int {
        VarIntInt(Gecode::IntConLevel icl, int r0)
          : Test("Element::Var::Int::Int::"+str(icl)+"::"+str(r0),
                 5,-1,3,false,icl), r(r0) {
-         testdomcon = false;
+         contest = CTL_NONE;
        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {

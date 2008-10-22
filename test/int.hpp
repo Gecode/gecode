@@ -119,13 +119,15 @@ namespace Test { namespace Int {
   Test::Test(const std::string& s, int a, const Gecode::IntSet& d, 
              bool r, Gecode::IntConLevel i, Gecode::PropKind p)
     : Base("Int::"+s), arity(a), dom(d), reified(r), icl(i), pk(p),
-      testdomcon(true), testsearch(true) {}
+      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE), 
+      testsearch(true) {}
 
   inline
   Test::Test(const std::string& s, int a, int min, int max, 
              bool r, Gecode::IntConLevel i, Gecode::PropKind p)
     : Base("Int::"+s), arity(a), dom(min,max), reified(r), icl(i), pk(p), 
-      testdomcon(true), testsearch(true) {}
+      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE), 
+      testsearch(true) {}
 
   inline
   std::string

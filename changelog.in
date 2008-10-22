@@ -74,13 +74,25 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: test
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tests for testing claims of bounds(Z) and bounds(D) consistency. These
+tests would have found the bug in the binary min and max propagators.
+[MORE]
+An integer test can enable these new tests by setting the contest member
+to CTL_BOUNDS_Z or CTL_BOUNDS_D. For domain-consistency propagators
+the contest member is set automatically to CTL_DOMAIN. If no
+consistency-testing should be done, contest should be set to CTL_NONE.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   minor
 [DESCRIPTION]
 The search-engines now collect statistics for the number of nodes
 visited and the maximum depth of the search tree.
-
 
 [ENTRY]
 Module: int
@@ -95,7 +107,6 @@ Given the constraint x = max(y,z) with the store {x->{1,2,3},
 y->{1,2}, z->{3}}, propagation did not yield any new information
 (now it gives the correct result {x->{3}, y->{1,2}, z->{3}}).
 
-
 [ENTRY]
 Module: example
 What:   new
@@ -108,7 +119,6 @@ The model used is from Gargani and Refalo, "An efficient model and
 strategy for the steel mill slab design problem.", CP 2007. The
 symmetry-breaking search is from Van Hentenryck and Michel, "The Steel
 Mill Slab Design Problem Revisited", CPAIOR 2008.
-
 
 [ENTRY]
 Module: iter
@@ -131,7 +141,7 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 For the Microsoft compiler, auto-link information is added during
-compilation. That is, by including Gecode headers during
+compilation. That is, by including %Gecode headers during
 compilation the right libraries will be found automatically
 during linking. To simplify development and deployment, the
 libraries (and DLLs) encode version, platform, and build type
@@ -163,7 +173,7 @@ Rank:   minor
 Changed naming scheme: All files with extension .cc have been renamed to .cpp, 
 and .icc has become .hpp. This avoids conflicts as .icc is typically used for 
 other file types. All include directives are now specified using <...>
-notation instead of "...", so that Gecode headers do not clutter the include
+notation instead of "...", so that %Gecode headers do not clutter the include
 namespace of a client program.
 
 [ENTRY]
@@ -214,7 +224,7 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-Gecode now supports weakly monotonic propagators. A weakly monotonic
+%Gecode now supports weakly monotonic propagators. A weakly monotonic
 propagator must only be able to decide for assignments wether they are
 solutions or not (which is a very natural property as it means the
 propagator must be a correct implementation of a
@@ -288,7 +298,7 @@ as copy, clone, or description) still return a pointer to an
 object (so that it can actually be deleted!).
 
 You will have to rewrite your models and other programs using
-Gecode. For models this is easy enough:
+%Gecode. For models this is easy enough:
  - Replace "(Space* home" by "(Space& home".
  - Replace "home->" by "home.".
  - Replace "(this" by "(*this".
@@ -936,8 +946,8 @@ Module: other
 What:   new
 Rank:   major
 [DESCRIPTION]
-The serialization library now contains a registry of all the Gecode post 
-functions. This makes interfacing to Gecode much easier. The registry is 
+The serialization library now contains a registry of all the %Gecode post 
+functions. This makes interfacing to %Gecode much easier. The registry is 
 automatically generated from the post functions defined in gecode/int.hh and 
 gecode/set.hh.
 
@@ -1031,7 +1041,7 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 A generic variable class has been added that can be used for interfacing. It 
-can store arbitrary Gecode variables (e.g. IntVar and SetVar), and cast them 
+can store arbitrary %Gecode variables (e.g. IntVar and SetVar), and cast them 
 back using a run-time type check. The update, reflection, and output 
 operations are implemented through the reflection registry.
 

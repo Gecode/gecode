@@ -54,7 +54,7 @@ namespace Test { namespace Int {
        Circuit(int n, int min, int max, Gecode::IntConLevel icl)
          : Test("Circuit::" + str(icl) + "::" + str(n),
                    n,min,max,false,icl) {
-         testdomcon = false;
+         contest = CTL_NONE;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {

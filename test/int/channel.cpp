@@ -61,7 +61,7 @@ namespace Test { namespace Int {
          : Test("Channel::Full::"+str(icl)+"::"+
                 str(xoff0)+"::"+str(yoff0),8,0,3,false,icl),
            xoff(xoff0), yoff(yoff0) {
-         testdomcon = false;
+         contest = CTL_NONE;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -100,7 +100,7 @@ namespace Test { namespace Int {
        /// Construct and register test
        ChannelHalf(Gecode::IntConLevel icl)
          : Test("Channel::Half::"+str(icl),6,0,5,false,icl) {
-         testdomcon = false;
+         contest = CTL_NONE;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -132,7 +132,7 @@ namespace Test { namespace Int {
        /// Construct and register test
        ChannelShared(Gecode::IntConLevel icl)
          : Test("Channel::Shared::"+str(icl),6,0,5,false,icl) {
-         testdomcon = false;
+         contest = CTL_NONE;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -154,7 +154,7 @@ namespace Test { namespace Int {
        /// Construct and register test
        ChannelLinkSingle(void)
          : Test("Channel::Bool::Single",2,-1,2) {
-         testdomcon = false;
+         contest = CTL_NONE;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -177,7 +177,7 @@ namespace Test { namespace Int {
        /// Construct and register test
        ChannelLinkMulti(const std::string& s, int min, int max, int o0)
          : Test("Channel::Bool::Multi::"+s,7,min,max), o(o0) {
-         testdomcon = false;
+         contest = CTL_NONE;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {

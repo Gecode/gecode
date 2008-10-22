@@ -416,7 +416,9 @@ namespace Test { namespace Int {
        /// Create and register test
        MaxXYZ(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Bin::XYZ::"+str(icl)+"::"+s,3,d) {}
+         : Test("Arithmetic::Max::Bin::XYZ::"+str(icl)+"::"+s,3,d) {
+         contest = CTL_BOUNDS_Z;
+       }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[2];

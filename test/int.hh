@@ -115,7 +115,15 @@ namespace Test {
       /// Destructor
       virtual ~RandomAssignment(void);
     };
-        
+      
+    /// Level of consistency to test for
+    enum ConTestLevel {
+      CTL_NONE,     ///< No consistency-test
+      CTL_DOMAIN,   ///< Test for domain-consistency
+      CTL_BOUNDS_D, ///< Test for bounds(d)-consistency
+      CTL_BOUNDS_Z, ///< Test for bounds(z)-consistency
+    };
+
     /**
      * \brief Base class for tests with integer constraints
      *
@@ -132,8 +140,8 @@ namespace Test {
       Gecode::IntConLevel icl;
       /// Propagation kind
       Gecode::PropKind pk;
-      /// Whether to test for domain consistency
-      bool testdomcon;
+      /// Whether to test for certain consistency
+      ConTestLevel contest;
       /// Whether to perform search test
       bool testsearch;
     

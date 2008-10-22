@@ -242,6 +242,53 @@ namespace Test { namespace Int {
             return;
         }
     }
+    /// Assing a random variable to a random bound
+    void bound(void) {
+      using namespace Gecode;
+      // Select variable to be assigned
+      int i = Base::rand(x.size());
+      while (x[i].assigned()) {
+        i = (i+1) % x.size();
+      }
+      bool min = Base::rand(2);
+      rel(i, IRT_EQ, min ? x[i].min() : x[i].max());
+    }
+    /** \brief Prune some random values from variable \a i
+     *
+     * If \a bounds_only is true, then the pruning is only done on the
+     * bounds of the variable.
+     */
+    void prune(int i, bool bounds_only) {
+      using namespace Gecode;
+      // Prune values
+      if (bounds_only) {
+        if (Base::rand(2)) {
+          int v=x[i].min()+1+Base::rand(static_cast
+                                        <unsigned int>(x[i].max()-x[i].min()));
+          assert((v > a[i]) && (v <= x[i].max()));
+          rel(i, Gecode::IRT_LE, v);
+        }
+        if (Base::rand(2)) {
+          int v=x[i].min()+Base::rand(static_cast
+                                      <unsigned int>(x[i].max()-x[i].min()));
+          assert((v < a[i]) && (v >= x[i].min()));
+          rel(i, Gecode::IRT_GR, v);
+        }
+      } else {
+        for (int vals = Base::rand(x[i].size()-1)+1; vals--; ) {
+          int v;
+          Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
+          unsigned int skip = Base::rand(x[i].size()-1);
+          while (true) {
+            if (it.width() > skip) {
+              v = it.min() + skip; break;
+            }
+            skip -= it.width(); ++it;
+          }
+          rel(i, IRT_NQ, v);
+        }
+      }
+    }
     /// Prune some random values for some random variable
     void prune(void) {
       using namespace Gecode;
@@ -250,19 +297,7 @@ namespace Test { namespace Int {
       while (x[i].assigned()) {
         i = (i+1) % x.size();
       }
-      // Prune values
-      for (int vals = Base::rand(x[i].size()-1)+1; vals--; ) {
-        int v;
-        Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
-        unsigned int skip = Base::rand(x[i].size()-1);
-        while (true) {
-          if (it.width() > skip) {
-            v = it.min() + skip; break;
-          }
-          skip -= it.width(); ++it;
-        }
-        rel(i, IRT_NQ, v);
-      }
+      prune(i, false);
     }
     /// Prune values but not those in assignment \a a
     bool prune(const Assignment& a) {
@@ -654,15 +689,51 @@ if (!(T)) {                                                     \
       }
     }
 
-    if ((icl == ICL_DOM) && testdomcon) {
+    switch (contest) {
+    case CTL_NONE: break;
+    case CTL_DOMAIN: {
       START_TEST("Full domain consistency");
       TestSpace* s = new TestSpace(arity,dom,false,this);
       s->post();
-      while (!s->failed() && !s->assigned())
-        s->prune();
-      CHECK_TEST(!s->failed(), "Failed");
-      CHECK_TEST(s->propagators()==0, "No subsumption");
+      if (!s->failed()) {
+        while (!s->failed() && !s->assigned())
+          s->prune();
+        CHECK_TEST(!s->failed(), "Failed");
+        CHECK_TEST(s->propagators()==0, "No subsumption");
+      }
       delete s;
+      break;
+    }
+    case CTL_BOUNDS_D: {
+      START_TEST("Bounds(D)-consistency");
+      TestSpace* s = new TestSpace(arity,dom,false,this);
+      s->post();
+      for (int i = s->x.size(); i--; )
+        s->prune(i, false);
+      if (!s->failed()) {
+        while (!s->failed() && !s->assigned())
+          s->bound();
+        CHECK_TEST(!s->failed(), "Failed");
+        CHECK_TEST(s->propagators()==0, "No subsumption");
+      }
+      delete s;      
+      break;
+    }
+    case CTL_BOUNDS_Z: {
+      START_TEST("Bounds(Z)-consistency");
+      TestSpace* s = new TestSpace(arity,dom,false,this);
+      s->post();
+      for (int i = s->x.size(); i--; )
+        s->prune(i, true);
+      if (!s->failed()) {
+        while (!s->failed() && !s->assigned())
+          s->bound();
+        CHECK_TEST(!s->failed(), "Failed");
+        CHECK_TEST(s->propagators()==0, "No subsumption");
+      }
+      delete s;   
+      break;
+    }
     }
 
     delete ap;
