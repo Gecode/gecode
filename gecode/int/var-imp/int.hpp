@@ -197,16 +197,21 @@ namespace Gecode { namespace Int {
     : IntVarImpBase(home), dom(d.min(),d.max()) {
     if (d.size() > 1) {
       unsigned int n = d.size();
+      assert(n >= 2);
       RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
       unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
-      for (int i = n; i--; ) {
+      h -= d.width(0);
+      r[0].min(d.min(0)); r[0].max(d.max(0));
+      r[0].prevnext(NULL,&r[1]);
+      for (unsigned int i = 1; i < n-1; i++) {
         h -= d.width(i);
         r[i].min(d.min(i)); r[i].max(d.max(i));
         r[i].prevnext(&r[i-1],&r[i+1]);
       }
-      r[0].prev(&r[-1],NULL);
-      r[n-1].next(&r[n],NULL);
+      h -= d.width(n-1);
+      r[n-1].min(d.min(n-1)); r[n-1].max(d.max(n-1));
+      r[n-1].prevnext(&r[n-2],NULL);
       holes = h;
     } else {
       fst(NULL); holes = 0;
