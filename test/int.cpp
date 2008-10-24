@@ -265,13 +265,13 @@ namespace Test { namespace Int {
         if (Base::rand(2)) {
           int v=x[i].min()+1+Base::rand(static_cast
                                         <unsigned int>(x[i].max()-x[i].min()));
-          //          assert((v > a[i]) && (v <= x[i].max()));
+          assert((v > x[i].min()) && (v <= x[i].max()));
           rel(i, Gecode::IRT_LE, v);
         }
         if (Base::rand(2)) {
           int v=x[i].min()+Base::rand(static_cast
                                       <unsigned int>(x[i].max()-x[i].min()));
-          //          assert((v < a[i]) && (v >= x[i].min()));
+          assert((v < x[i].max()) && (v >= x[i].min()));
           rel(i, Gecode::IRT_GR, v);
         }
       } else {

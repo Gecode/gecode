@@ -2386,7 +2386,7 @@ namespace Gecode {
 #ifdef GECODE_AUDIT    
     ActorLink** f = actor(pc);
     while (f < (pc == pc_max+1 ? base+entries : actorNonZero(pc+1)))
-      if (*f == a)
+      if (*f == p)
         goto found;
       else
         f++;
