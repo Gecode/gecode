@@ -85,49 +85,48 @@ namespace Gecode { namespace Int {
     }
   }
 
-}}
-
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::IntView& x) {
-  return Gecode::Int::print_view(os,x);
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::BoolView& x) {
-  return Gecode::Int::print_view(os,x);
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::MinusView& x) {
-  return Gecode::Int::print_view(os,x);
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::OffsetView& x) {
-  return Gecode::Int::print_view(os,x);
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::IntScaleView& x) {
-  return Gecode::Int::print_scale<int,unsigned int>(os,x);
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::DoubleScaleView& x) {
-  return Gecode::Int::print_scale<double,double>(os,x);
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::ConstIntView& x) {
-  return os << x.val();
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::ZeroIntView&) {
-  return os << 0;
-}
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Int::NegBoolView& x) {
-  if (x.one())
-    return os << 1;
-  if (x.zero())
+  std::ostream&
+  operator<<(std::ostream& os, const IntView& x) {
+    return print_view(os,x);
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const BoolView& x) {
+    return print_view(os,x);
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const MinusView& x) {
+    return print_view(os,x);
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const OffsetView& x) {
+    return print_view(os,x);
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const IntScaleView& x) {
+    return print_scale<int,unsigned int>(os,x);
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const DoubleScaleView& x) {
+    return print_scale<double,double>(os,x);
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const ConstIntView& x) {
+    return os << x.val();
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const ZeroIntView&) {
     return os << 0;
-  return os << "[0..1]";
-}
+  }
+  std::ostream&
+  operator<<(std::ostream& os, const NegBoolView& x) {
+    if (x.one())
+      return os << 1;
+    if (x.zero())
+      return os << 0;
+    return os << "[0..1]";
+  }
 
+}}
 
 // STATISTICS: int-var
 

@@ -39,7 +39,7 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode {
 
   /*
    * Operations for nodes
@@ -375,6 +375,6 @@ namespace Gecode { namespace MiniModel {
     return NULL;
   }
   
-}}
+}
 
 // STATISTICS: minimodel-any

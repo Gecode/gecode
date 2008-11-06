@@ -74,6 +74,22 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+Thanks: Max
+[DESCRIPTION]
+All operators are now in their correct namespace.
+
+[ENTRY]
+Module: minimodel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+LinExpr, LinRel, BoolExpr are now part of the Gecode namespace
+rather than Gecode::MiniModel (to support operator resolution).
+
+[ENTRY]
 Module: test
 What:   new
 Rank:   minor

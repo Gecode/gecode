@@ -85,23 +85,23 @@ namespace {
 
 }
 
-
-std::ostream&
-operator<<(std::ostream& os, const Gecode::TupleSet& ts) {
-  os << "Number of tuples: " << ts.tuples() << std::endl
-     << "Tuples:" << std::endl;
-  for (int i = 0; i < ts.tuples(); ++i) {
-    os << '\t';
-    for (int j = 0; j < ts.arity(); ++j) {
-      os.width(3);
-      os << " " << ts[i][j];
-    }
-    os << std::endl;
-  }
-  return os;
-}
-
 namespace Gecode {
+
+  std::ostream&
+  operator<<(std::ostream& os, const TupleSet& ts) {
+    os << "Number of tuples: " << ts.tuples() << std::endl
+       << "Tuples:" << std::endl;
+    for (int i = 0; i < ts.tuples(); ++i) {
+      os << '\t';
+      for (int j = 0; j < ts.arity(); ++j) {
+        os.width(3);
+        os << " " << ts[i][j];
+      }
+      os << std::endl;
+    }
+    return os;
+  }
+
 
   void
   TupleSet::TupleSetI::finalize(void) {

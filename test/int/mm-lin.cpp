@@ -112,7 +112,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::MiniModel::LinExpr<IntVar> reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr<IntVar> reg[3] = {x[0],x[1],x[2]};
          rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
        }
      };
@@ -141,8 +141,8 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::MiniModel::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::MiniModel::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
            Gecode::post(home, tt(0 == eval(l_lis,l_reg) - eval(r_lis,r_reg))); 
@@ -169,8 +169,8 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          using namespace Gecode;
-         Gecode::MiniModel::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::MiniModel::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
            rel(home, Gecode::post(home, 
@@ -223,7 +223,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::MiniModel::LinExpr<BoolVar> reg[3] = {
+         Gecode::LinExpr<BoolVar> reg[3] = {
            channel(home,x[0]),channel(home,x[1]),channel(home,x[2])
          };
          rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
@@ -257,8 +257,8 @@ namespace Test { namespace Int {
          BoolVarArgs y(3);
          y[0] = channel(home,x[0]); y[1] = channel(home,x[1]); 
          y[2] = channel(home,x[2]);
-         Gecode::MiniModel::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
-         Gecode::MiniModel::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
            Gecode::post(home, tt(eval(l_lis,l_reg) - eval(r_lis,r_reg) == 0)); 
@@ -288,8 +288,8 @@ namespace Test { namespace Int {
          BoolVarArgs y(3);
          y[0] = channel(home,x[0]); y[1] = channel(home,x[1]); 
          y[2] = channel(home,x[2]);
-         Gecode::MiniModel::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
-         Gecode::MiniModel::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
            rel(home, Gecode::post(home, 

@@ -402,54 +402,51 @@ namespace Gecode { namespace Reflection {
     //@}
   };
 
-}}
+  /** \brief Add \a a to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator<<(ActorSpec s, Arg* arg);
 
-/** \brief Add \a a to specification
- *  \relates Gecode::Reflection::ActorSpec
- */
-Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, Gecode::Reflection::Arg* arg);
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator<<(ActorSpec s, int i);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator<<(ActorSpec s, unsigned int i);
+  
+  /** \brief Add \a d to specification, where \a d is cast into an integer
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator<<(ActorSpec s, double i);
 
 
-/** \brief Add \a i to specification
- *  \relates Gecode::Reflection::ActorSpec
- */
-Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, int i);
+  /* Implementation of ActorSpec operators */
 
-/** \brief Add \a i to specification
- *  \relates Gecode::Reflection::ActorSpec
- */
-Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, unsigned int i);
+  forceinline ActorSpec
+  operator<<(ActorSpec s, Arg* arg) {
+    s.add(arg);
+    return s;
+  }
+  forceinline ActorSpec
+  operator<<(ActorSpec s, int i) {
+    return s << Arg::newInt(i);
+  }
+  forceinline ActorSpec
+  operator<<(ActorSpec s, unsigned int i) {
+    return s << Arg::newInt(static_cast<int>(i));
+  }
+  forceinline ActorSpec
+  operator<<(ActorSpec s, double i) {
+    return s << Arg::newInt(static_cast<int>(i));
+  }
 
-/** \brief Add \a d to specification, where \a d is cast into an integer
- *  \relates Gecode::Reflection::ActorSpec
- */
-Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, double i);
-
-/* Implementation of ActorSpec operators */
-
-forceinline Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, Gecode::Reflection::Arg* arg) {
-  s.add(arg);
-  return s;
-}
-forceinline Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, int i) {
-  return s << Gecode::Reflection::Arg::newInt(i);
-}
-forceinline Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, unsigned int i) {
-  return s << Gecode::Reflection::Arg::newInt(static_cast<int>(i));
-}
-forceinline Gecode::Reflection::ActorSpec
-operator<<(Gecode::Reflection::ActorSpec s, double i) {
-  return s << Gecode::Reflection::Arg::newInt(static_cast<int>(i));
-}
-
-namespace Gecode { namespace Reflection {
 
   /**
     * \brief %Branching specification
@@ -726,6 +723,11 @@ namespace Gecode { namespace Reflection {
     template <class VarImp>
     VarImp* var(void) const;
   };
+
+  /// Print \a v to \a os
+  GECODE_KERNEL_EXPORT std::ostream&
+  operator<<(std::ostream& os, const Var& v);
+
 
   /**
    * \brief Unreflection from VarSpec and ActorSpec
@@ -1212,8 +1214,5 @@ namespace Reflection {
 
 }}
 
-/// Print \a v to \a os
-GECODE_KERNEL_EXPORT std::ostream&
-operator<<(std::ostream& os, const Gecode::Reflection::Var& v);
 
 // STATISTICS: kernel-other

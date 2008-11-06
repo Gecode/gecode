@@ -567,34 +567,34 @@ namespace Gecode {
     }
   }
 
-}
-
-std::ostream&
-operator<<(std::ostream& os, const Gecode::DFA& dfa) {
-  os << "Start state: 0" << std::endl
-     << "States:      0..." << dfa.n_states()-1 << std::endl
-     << "Transitions:";
-  for (int s = 0; s < static_cast<int>(dfa.n_states()); s++) {
-    Gecode::DFA::Transitions t(dfa);
-    int n = 0;
-    while (t()) {
-      if (t.i_state() == s) {
-        if ((n % 4) == 0)
-          os << std::endl << "\t";
-        os << "[" << t.i_state() << "]"
-           << "- " << t.symbol() << " >"
-           << "[" << t.o_state() << "]  ";
-        ++n;
+  std::ostream&
+  operator<<(std::ostream& os, const DFA& dfa) {
+    os << "Start state: 0" << std::endl
+       << "States:      0..." << dfa.n_states()-1 << std::endl
+       << "Transitions:";
+    for (int s = 0; s < static_cast<int>(dfa.n_states()); s++) {
+      DFA::Transitions t(dfa);
+      int n = 0;
+      while (t()) {
+        if (t.i_state() == s) {
+          if ((n % 4) == 0)
+            os << std::endl << "\t";
+          os << "[" << t.i_state() << "]"
+             << "- " << t.symbol() << " >"
+             << "[" << t.o_state() << "]  ";
+          ++n;
+        }
+        ++t;
       }
-      ++t;
     }
+    os << std::endl << "Final states: "
+       << std::endl
+       << "\t[" << dfa.final_fst() << "] ... ["
+       << dfa.final_lst()-1 << "]"
+       << std::endl;
+    return os;
   }
-  os << std::endl << "Final states: "
-     << std::endl
-     << "\t[" << dfa.final_fst() << "] ... ["
-     << dfa.final_lst()-1 << "]"
-     << std::endl;
-  return os;
+
 }
 
 // STATISTICS: int-prop

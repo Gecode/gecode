@@ -276,14 +276,14 @@ namespace Gecode {
     //@}
   };
 
-}
+  /**
+   * \brief Print integer set \a s
+   * \relates Gecode::IntSet
+   */
+  GECODE_INT_EXPORT std::ostream&
+  operator<<(std::ostream&, const IntSet& s);
 
-/**
- * \brief Print integer set \a s
- * \relates Gecode::IntSet
- */
-GECODE_INT_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::IntSet& s);
+}
 
 #include <gecode/int/int-set.hpp>
 
@@ -564,20 +564,21 @@ namespace Gecode {
     
   };
 
+  /**
+   * \brief Print integer variable \a x
+   * \relates Gecode::IntVar
+   */
+  std::ostream&
+  operator<<(std::ostream&, const IntVar& x);
+  /**
+   * \brief Print Boolean variable \a x
+   * \relates Gecode::BoolVar
+   */
+  std::ostream&
+  operator<<(std::ostream&, const BoolVar& x);
+
 }
 
-/**
- * \brief Print integer variable \a x
- * \relates Gecode::IntVar
- */
-std::ostream&
-operator<<(std::ostream&, const Gecode::IntVar& x);
-/**
- * \brief Print Boolean variable \a x
- * \relates Gecode::BoolVar
- */
-std::ostream&
-operator<<(std::ostream&, const Gecode::BoolVar& x);
 
 #include <gecode/int/view.hpp>
 #include <gecode/int/propagator.hpp>
@@ -2139,19 +2140,19 @@ namespace Gecode {
 
   //@}
 
+  /** \relates Gecode::DFA
+   * Print DFA \a d
+   */
+  GECODE_INT_EXPORT std::ostream&
+  operator<<(std::ostream&, const DFA& d);
+  
+  /** \relates Gecode::TupleSet
+   * Print TupleSet \a ts
+   */
+  GECODE_INT_EXPORT std::ostream&
+  operator<<(std::ostream&, const TupleSet& ts);
+
 }
-
-/** \relates Gecode::DFA
- * Print DFA \a d
- */
-GECODE_INT_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::DFA& d);
-
-/** \relates Gecode::TupleSet
- * Print TupleSet \a ts
- */
-GECODE_INT_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::TupleSet& ts);
 
 #endif
 

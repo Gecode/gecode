@@ -37,34 +37,30 @@
 
 namespace Gecode {
 
-  namespace MiniModel {
-
-    /*
-     * Operations for Boolean relations
-     *
-     */
-    forceinline
-    BoolRel::BoolRel(const BoolExpr& e0, bool t0)
-      : e(e0), t(t0) {}
-
-    forceinline void
-    BoolRel::post(Space& home, IntConLevel icl, PropKind pk) const {
-      e.post(home,t,icl,pk);
-    }
-
+  /*
+   * Operations for Boolean relations
+   *
+   */
+  forceinline
+  BoolRel::BoolRel(const BoolExpr& e0, bool t0)
+    : e(e0), t(t0) {}
+  
+  forceinline void
+  BoolRel::post(Space& home, IntConLevel icl, PropKind pk) const {
+    e.post(home,t,icl,pk);
   }
-
+  
   /*
    * Construction of linear relations
    *
    */
-  inline MiniModel::BoolRel
-  tt(const MiniModel::BoolExpr& e) {
-    return MiniModel::BoolRel(e,true);
+  inline BoolRel
+  tt(const BoolExpr& e) {
+    return BoolRel(e,true);
   }
-  inline MiniModel::BoolRel
-  ff(const MiniModel::BoolExpr& e) {
-    return MiniModel::BoolRel(e,false);
+  inline BoolRel
+  ff(const BoolExpr& e) {
+    return BoolRel(e,false);
   }
 
   /*
@@ -72,8 +68,7 @@ namespace Gecode {
    *
    */
   inline void
-  post(Space& home, const MiniModel::BoolRel& r, 
-       IntConLevel icl, PropKind pk) {
+  post(Space& home, const BoolRel& r, IntConLevel icl, PropKind pk) {
     if (home.failed()) return;
     r.post(home,icl,pk);
   }

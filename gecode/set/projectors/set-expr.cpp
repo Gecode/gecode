@@ -317,23 +317,23 @@ namespace Gecode {
     i = new Iter(codeToIterator(x, c, monotone));
   }
 
-}
-
-std::ostream&
-operator<<(std::ostream& os, const Gecode::SetExprCode& sec) {
-  for (int i=0; i<sec.size(); i++) {
-    switch (sec[i]) {
-    case Gecode::SetExprCode::COMPLEMENT: os << " CMPL "; break;
-    case Gecode::SetExprCode::INTER: os << " INTER "; break;
-    case Gecode::SetExprCode::UNION: os << " UNION "; break;
-    case Gecode::SetExprCode::GLB: os << " GLB "; break;
-    case Gecode::SetExprCode::LUB: os << " LUB "; break;
-    case Gecode::SetExprCode::EMPTY: os << " EMPTY "; break;
-    case Gecode::SetExprCode::UNIVERSE: os << " UNIVERSE "; break;
-    default: os << " x[" << sec[i]-Gecode::SetExprCode::LAST << "] "; break;
+  std::ostream&
+  operator<<(std::ostream& os, const SetExprCode& sec) {
+    for (int i=0; i<sec.size(); i++) {
+      switch (sec[i]) {
+      case Gecode::SetExprCode::COMPLEMENT: os << " CMPL "; break;
+      case Gecode::SetExprCode::INTER: os << " INTER "; break;
+      case Gecode::SetExprCode::UNION: os << " UNION "; break;
+      case Gecode::SetExprCode::GLB: os << " GLB "; break;
+      case Gecode::SetExprCode::LUB: os << " LUB "; break;
+      case Gecode::SetExprCode::EMPTY: os << " EMPTY "; break;
+      case Gecode::SetExprCode::UNIVERSE: os << " UNIVERSE "; break;
+      default: os << " x[" << sec[i]-Gecode::SetExprCode::LAST << "] "; break;
+      }
     }
+    return os;
   }
-  return os;
+
 }
 
 // STATISTICS: set-prop

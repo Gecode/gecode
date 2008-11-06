@@ -123,12 +123,12 @@ namespace Gecode { namespace Support {
     GECODE_MSC_VIRTUAL ~Symbol(void);
   };
   
-}}
+  forceinline
+  std::ostream&
+  operator<<(std::ostream& os, const Gecode::Support::Symbol& x) {
+    return x.print(os);
+  }
 
-forceinline
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Support::Symbol& x) {
-  return x.print(os);
-}
+}}
 
 // STATISTICS: support-any

@@ -78,14 +78,14 @@ namespace Gecode {
     return es;
   }
 
-}
-
-std::ostream&
-operator<<(std::ostream& os, const Gecode::ProjectorSet& ps) {
-  for (int i=0; i<ps.size(); i++) {
-    os << ps[i] << std::endl;
+  std::ostream&
+  operator<<(std::ostream& os, const ProjectorSet& ps) {
+    for (int i=0; i<ps.size(); i++) {
+      os << ps[i] << std::endl;
+    }
+    return os;
   }
-  return os;
+
 }
 
 // STATISTICS: set-prop

@@ -506,14 +506,14 @@ namespace Gecode {
 
   //@}
 
-}
+  /**
+   * \brief Print set variable \a x
+   * \relates Gecode::SetVar
+   */
+  GECODE_SET_EXPORT std::ostream&
+  operator<<(std::ostream&, const Gecode::SetVar& x);
 
-/**
- * \brief Print set variable \a x
- * \relates Gecode::SetVar
- */
-GECODE_SET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::SetVar& x);
+}
 
 #include <gecode/set/view.hpp>
 #include <gecode/set/propagator.hpp>

@@ -412,14 +412,14 @@ namespace Gecode {
     unsigned int width(void) const;
   };
 
+  /**
+   * \brief Print bdd variable \a x
+   * \relates Gecode::CpltSetVar
+   */
+  GECODE_CPLTSET_EXPORT std::ostream&
+  operator<<(std::ostream&, const CpltSetVar& x);
+  
 }
-
-/**
- * \brief Print bdd variable \a x
- * \relates Gecode::CpltSetVar
- */
-GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::CpltSetVar& x);
 
 #include <gecode/cpltset/view.hpp>
 

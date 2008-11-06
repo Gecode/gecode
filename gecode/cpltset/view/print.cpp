@@ -127,40 +127,41 @@ namespace Gecode { namespace CpltSet {
     return first;
   }
 
+  /**
+   * \brief Print set variable view
+   * \relates Gecode::CpltSet::CpltSetView
+   */
+  std::ostream&
+  operator<<(std::ostream& os, const CpltSetView& x) {
+    bool assigned = x.assigned();
+    if (assigned) {
+      GlbValues<CpltSetView> glb(x);
+      Iter::Values::ToRanges<GlbValues<CpltSetView> > glbr(glb);
+      printBound(os, glbr);
+    } else {
+      bdd dom = x.dom();
+      os << "{";
+      char* profile = heap.alloc<char>(x.tableWidth());
+      for (int i=x.tableWidth(); i--;)
+        profile[i] = -1;
+      printBddDom(os, x.offset(), x.initialLubMin(), x.tableWidth(), true, 
+                  profile, dom);
+      heap.rfree(profile);
+      os << "}";
+    }
+    return os;
+  }
+  
 }}
 
-using namespace Gecode;
-using namespace Gecode::CpltSet;
+namespace Gecode {
 
-/**
- * \brief Print set variable view
- * \relates Gecode::CpltSet::CpltSetView
- */
-std::ostream&
-operator<<(std::ostream& os, const CpltSetView& x) {
-  bool assigned = x.assigned();
-  if (assigned) {
-    GlbValues<CpltSetView> glb(x);
-    Iter::Values::ToRanges<GlbValues<CpltSetView> > glbr(glb);
-    printBound(os, glbr);
-  } else {
-    bdd dom = x.dom();
-    os << "{";
-    char* profile = heap.alloc<char>(x.tableWidth());
-    for (int i=x.tableWidth(); i--;)
-      profile[i] = -1;
-    printBddDom(os, x.offset(), x.initialLubMin(), x.tableWidth(), true, 
-                profile, dom);
-    heap.rfree(profile);
-    os << "}";
+  std::ostream&
+  operator<< (std::ostream& os, const CpltSetVar& x) {
+    CpltSet::CpltSetView xv(x);
+    return os << xv;
   }
-  return os;
-}
 
-std::ostream&
-operator<< (std::ostream& os, const CpltSetVar& x) {
-  CpltSetView xv(x);
-  return os << xv;
 }
 
 // STATISTICS: cpltset-var

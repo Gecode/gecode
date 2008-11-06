@@ -82,8 +82,8 @@ namespace Test { namespace Int {
      }
 
      /// Executes Boolean instruction for constructing Boolean expressions
-     Gecode::MiniModel::BoolExpr 
-     eval(const BoolInstr* pc, Gecode::MiniModel::BoolExpr reg[]) {
+     Gecode::BoolExpr 
+     eval(const BoolInstr* pc, Gecode::BoolExpr reg[]) {
        using namespace Gecode;
        while (true) {
          switch (pc->o) {
@@ -126,7 +126,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::MiniModel::BoolExpr reg[4] = {
+         Gecode::BoolExpr reg[4] = {
            channel(home,x[0]),channel(home,x[1]),
            channel(home,x[2]),channel(home,x[3])
          };
@@ -154,7 +154,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::MiniModel::BoolExpr reg[4] = {
+         Gecode::BoolExpr reg[4] = {
            channel(home,x[0]),channel(home,x[1]),
            channel(home,x[2]),channel(home,x[3])
          };

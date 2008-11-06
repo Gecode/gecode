@@ -35,32 +35,36 @@
  *
  */
 
-/*
- * Operations for formulas
- *
- */
+namespace Gecode {
 
-inline Gecode::Formula
-operator-(const Gecode::Formula& f) { return Gecode::Formula(f, -1); }
+  /*
+   * Operations for formulas
+   *
+   */
+  
+  inline Formula
+  operator-(const Formula& f) { return Formula(f, -1); }
+  
+  inline Formula
+  operator|(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::OR, g, 1);
+  }
+  
+  inline Formula
+  operator&(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::AND, g, 1);
+  }
+  
+  inline Formula
+  operator>>(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::IMPL, g, 1);
+  }
+  
+  inline Formula
+  operator==(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::EQUIV, g, 1);
+  }
 
-inline Gecode::Formula
-operator|(const Gecode::Formula& f, const Gecode::Formula& g) {
-  return Gecode::Formula(f, 1, Gecode::Formula::OR, g, 1);
-}
-
-inline Gecode::Formula
-operator&(const Gecode::Formula& f, const Gecode::Formula& g) {
-  return Gecode::Formula(f, 1, Gecode::Formula::AND, g, 1);
-}
-
-inline Gecode::Formula
-operator>>(const Gecode::Formula& f, const Gecode::Formula& g) {
-  return Gecode::Formula(f, 1, Gecode::Formula::IMPL, g, 1);
-}
-
-inline Gecode::Formula
-operator==(const Gecode::Formula& f, const Gecode::Formula& g) {
-  return Gecode::Formula(f, 1, Gecode::Formula::EQUIV, g, 1);
 }
 
 // STATISTICS: set-prop

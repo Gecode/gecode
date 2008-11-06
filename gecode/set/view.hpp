@@ -1398,54 +1398,55 @@ namespace Gecode {
 #include <gecode/set/view/complement.hpp>
 #include <gecode/set/view/offset.hpp>
 
-/**
- * \brief Print set variable view
- * \relates Gecode::Set::SetView
- */
-GECODE_SET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Set::SetView&);
+namespace Gecode { namespace Set {
+  /**
+   * \brief Print set variable view
+   * \relates Gecode::Set::SetView
+   */
+  GECODE_SET_EXPORT std::ostream&
+  operator<<(std::ostream&, const SetView&);
+  /**
+   * \brief Print empty set view
+   * \relates Gecode::Set::EmptyView
+   */
+  GECODE_SET_EXPORT std::ostream&
+  operator<<(std::ostream&, const EmptyView&);
+  /**
+   * \brief Print universe set view
+   * \relates Gecode::Set::UniverseView
+   */
+  GECODE_SET_EXPORT std::ostream&
+  operator<<(std::ostream&, const UniverseView&);
+  /**
+   * \brief Print set constant view
+   * \relates Gecode::Set::ConstantView
+   */
+  GECODE_SET_EXPORT std::ostream&
+  operator<<(std::ostream&, const ConstantView&);
+  /**
+   * \brief Print singelton set view
+   * \relates Gecode::Set::SingletonView
+   */
+  GECODE_SET_EXPORT std::ostream&
+  operator<<(std::ostream&, const SingletonView&);
+  /**
+   * \brief Print set complement view
+   * \relates Gecode::Set::ComplementView
+   */
+  template <class View>
+  std::ostream&
+  operator<<(std::ostream&, const ComplementView<View>&);
 
+}}
 
-/**
- * \brief Print empty set view
- * \relates Gecode::Set::EmptyView
- */
-GECODE_SET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Set::EmptyView&);
+namespace Gecode {
 
-/**
- * \brief Print universe set view
- * \relates Gecode::Set::UniverseView
- */
-GECODE_SET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Set::UniverseView&);
+  inline std::ostream&
+  operator<<(std::ostream& os, const SetVar& x) {
+    Gecode::Set::SetView vx(x);
+    return os << vx;
+  }
 
-/**
- * \brief Print set constant view
- * \relates Gecode::Set::ConstantView
- */
-GECODE_SET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Set::ConstantView&);
-
-/**
- * \brief Print singelton set view
- * \relates Gecode::Set::SingletonView
- */
-GECODE_SET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Set::SingletonView&);
-
-/**
- * \brief Print set complement view
- * \relates Gecode::Set::ComplementView
- */
-template <class View>
-std::ostream&
-operator<<(std::ostream&, const Gecode::Set::ComplementView<View>&);
-
-inline std::ostream&
-operator<<(std::ostream& os, const Gecode::SetVar& x) {
-  Gecode::Set::SetView vx(x);
-  return os << vx;
 }
 
 // STATISTICS: set-var

@@ -113,16 +113,13 @@ namespace Gecode {
     
   };
 
-}
+  /**
+   * \brief Print array elements enclosed in curly brackets
+   * \relates SharedArray
+   */
+  template<class T>
+  std::ostream& operator<<(std::ostream& os, const SharedArray<T>& x);
 
-/**
- * \brief Print array elements enclosed in curly brackets
- * \relates SharedArray
- */
-template<class T>
-std::ostream& operator<<(std::ostream& os, const Gecode::SharedArray<T>& x);
-
-namespace Gecode {
 
   /*
    * Implementation
@@ -267,18 +264,18 @@ namespace Gecode {
     }
   }
 
-}
-
-template<class T>
-std::ostream& 
-operator<<(std::ostream& os, const Gecode::SharedArray<T>& x) {
-  os << '{';
-  if (x.size() > 0) {
-    os << x[0];
-    for (int i=1; i<x.size(); i++)
-      os << ", " << x[i];
+  template<class T>
+  std::ostream& 
+  operator<<(std::ostream& os, const SharedArray<T>& x) {
+    os << '{';
+    if (x.size() > 0) {
+      os << x[0];
+      for (int i=1; i<x.size(); i++)
+        os << ", " << x[i];
+    }
+    return os << '}';
   }
-  return os << '}';
+
 }
 
 // STATISTICS: kernel-other

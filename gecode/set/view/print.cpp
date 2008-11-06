@@ -39,9 +39,6 @@
 
 #include <gecode/set.hh>
 
-using namespace Gecode::Set;
-using namespace Gecode::Int;
-
 namespace Gecode { namespace Set {
 
   /* 
@@ -91,52 +88,52 @@ namespace Gecode { namespace Set {
     }
   }
 
-}}
-
-std::ostream&
-operator<<(std::ostream& os, const SetVarImp& x) {
-  LubRanges<SetVarImp*> ub(&x);
-  GlbRanges<SetVarImp*> lb(&x);
-  printVar(os, x.assigned(), lb, ub, x.cardMin(), x.cardMax()) ;
-  return os;
-}
-
-std::ostream&
-operator<<(std::ostream& os, const SetView& x) {
-  LubRanges<SetView> ub(x);
-  GlbRanges<SetView> lb(x);
-  printVar(os, x.assigned(), lb, ub, x.cardMin(), x.cardMax()) ;
-  return os;
-}
-
-std::ostream&
-operator<<(std::ostream& os, const EmptyView&) {
-  return os << "{}#0";
-}
-
-std::ostream&
-operator<<(std::ostream& os, const UniverseView&) {
-  return os << "{" << Gecode::Set::Limits::min << ".."
-            << Gecode::Set::Limits::max << "}#("
-            << Gecode::Set::Limits::card << ")";
-}
-
-std::ostream&
-operator<<(std::ostream& os, const ConstantView& s) {
-  LubRanges<ConstantView> ub(s);
-  printBound(os, ub);
-  return os << "#(" << s.cardMin() << ")";
-}
-
-std::ostream&
-operator<<(std::ostream& os, const SingletonView& s) {
-  if (s.assigned()) {
-    return os << "{" << s.glbMin() << "}#(1)";
+  std::ostream&
+  operator<<(std::ostream& os, const SetVarImp& x) {
+    LubRanges<SetVarImp*> ub(&x);
+    GlbRanges<SetVarImp*> lb(&x);
+    printVar(os, x.assigned(), lb, ub, x.cardMin(), x.cardMax()) ;
+    return os;
   }
-  LubRanges<SingletonView> ub(s);
-  os << "{}..";
-  printBound(os, ub);
-  return os << "#(1)";
-}
+  
+  std::ostream&
+  operator<<(std::ostream& os, const SetView& x) {
+    LubRanges<SetView> ub(x);
+    GlbRanges<SetView> lb(x);
+    printVar(os, x.assigned(), lb, ub, x.cardMin(), x.cardMax()) ;
+    return os;
+  }
+  
+  std::ostream&
+  operator<<(std::ostream& os, const EmptyView&) {
+    return os << "{}#0";
+  }
+  
+  std::ostream&
+  operator<<(std::ostream& os, const UniverseView&) {
+    return os << "{" << Gecode::Set::Limits::min << ".."
+              << Gecode::Set::Limits::max << "}#("
+              << Gecode::Set::Limits::card << ")";
+  }
+  
+  std::ostream&
+  operator<<(std::ostream& os, const ConstantView& s) {
+    LubRanges<ConstantView> ub(s);
+    printBound(os, ub);
+    return os << "#(" << s.cardMin() << ")";
+  }
+  
+  std::ostream&
+  operator<<(std::ostream& os, const SingletonView& s) {
+    if (s.assigned()) {
+      return os << "{" << s.glbMin() << "}#(1)";
+    }
+    LubRanges<SingletonView> ub(s);
+    os << "{}..";
+    printBound(os, ub);
+    return os << "#(1)";
+  }
+
+}}
 
 // STATISTICS: set-var

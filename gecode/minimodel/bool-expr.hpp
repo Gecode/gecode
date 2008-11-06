@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode {
 
   /*
    * Operations for expressions
@@ -59,67 +59,48 @@ namespace Gecode { namespace MiniModel {
     return NNF::nnf(r,n,false)->post(home,t,icl,pk);
   }
 
-}}
 
-inline Gecode::MiniModel::BoolExpr
-operator&&(const Gecode::MiniModel::BoolExpr& l,
-           const Gecode::MiniModel::BoolExpr& r) {
-  return Gecode::MiniModel::BoolExpr(l,
-                                     Gecode::MiniModel::BoolExpr::NT_AND,
-                                     r);
-}
-
-inline Gecode::MiniModel::BoolExpr
-operator||(const Gecode::MiniModel::BoolExpr& l,
-           const Gecode::MiniModel::BoolExpr& r) {
-  return Gecode::MiniModel::BoolExpr(l,
-                                     Gecode::MiniModel::BoolExpr::NT_OR,
-                                     r);
-}
-
-inline Gecode::MiniModel::BoolExpr
-operator^(const Gecode::MiniModel::BoolExpr& l,
-          const Gecode::MiniModel::BoolExpr& r) {
-  return Gecode::MiniModel::BoolExpr
-    (Gecode::MiniModel::BoolExpr(l,
-                                 Gecode::MiniModel::BoolExpr::NT_EQV,
-                                 r),Gecode::MiniModel::BoolExpr::NT_NOT);
-}
-
-template <class Var>
-inline Gecode::MiniModel::BoolExpr
-operator~(const Gecode::MiniModel::LinRel<Var>& rl) {
-  return Gecode::MiniModel::BoolExpr(rl);
-}
-
-inline Gecode::MiniModel::BoolExpr
-operator!(const Gecode::MiniModel::BoolExpr& e) {
-  return Gecode::MiniModel::BoolExpr(e,
-                                     Gecode::MiniModel::BoolExpr::NT_NOT);
-}
-
-namespace Gecode {
-
-  inline MiniModel::BoolExpr
-  eqv(const MiniModel::BoolExpr& l,
-      const MiniModel::BoolExpr& r) {
-    return MiniModel::BoolExpr(l,
-                               MiniModel::BoolExpr::NT_EQV,
-                               r);
+  inline BoolExpr
+  operator&&(const BoolExpr& l, const BoolExpr& r) {
+    return BoolExpr(l,BoolExpr::NT_AND,r);
   }
 
-  inline MiniModel::BoolExpr
-  imp(const MiniModel::BoolExpr& l,
-      const MiniModel::BoolExpr& r) {
-    return MiniModel::BoolExpr
-      (MiniModel::BoolExpr(l,MiniModel::BoolExpr::NT_NOT),
-       MiniModel::BoolExpr::NT_OR,
-       r);
+  inline BoolExpr
+  operator||(const BoolExpr& l, const BoolExpr& r) {
+    return BoolExpr(l,BoolExpr::NT_OR,r);
+  }
+  
+  inline BoolExpr
+  operator^(const BoolExpr& l, const BoolExpr& r) {
+    return BoolExpr(BoolExpr(l,BoolExpr::NT_EQV,r),BoolExpr::NT_NOT);
+  }
+  
+  template <class Var>
+  inline BoolExpr
+  operator~(const LinRel<Var>& rl) {
+    return BoolExpr(rl);
+  }
+  
+  inline BoolExpr
+  operator!(const BoolExpr& e) {
+    return BoolExpr(e,BoolExpr::NT_NOT);
   }
 
+
+  inline BoolExpr
+  eqv(const BoolExpr& l, const BoolExpr& r) {
+    return BoolExpr(l, BoolExpr::NT_EQV, r);
+  }
+
+  inline BoolExpr
+  imp(const BoolExpr& l, const BoolExpr& r) {
+    return BoolExpr(BoolExpr(l,BoolExpr::NT_NOT),
+                    BoolExpr::NT_OR,r);
+  }
+  
 
   inline BoolVar
-  post(Space& home, const MiniModel::BoolExpr& e, 
+  post(Space& home, const BoolExpr& e, 
        IntConLevel icl, PropKind pk) {
     return e.post(home,icl,pk);
   }

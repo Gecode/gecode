@@ -494,31 +494,29 @@ namespace Gecode {
     //@}
   };
 
-}
+  /**
+   * \brief Print array elements enclosed in curly brackets
+   * \relates VarArray
+   */
+  template<class Var>
+  std::ostream& operator<<(std::ostream& os, const VarArray<Var>& x);
 
-/**
- * \brief Print array elements enclosed in curly brackets
- * \relates VarArray
- */
-template<class Var>
-std::ostream& operator<<(std::ostream& os, const Gecode::VarArray<Var>& x);
+  /**
+   * \brief Print array elements enclosed in curly brackets
+   * \relates ViewArray
+   */
+  template<class View>
+  std::ostream& operator<<(std::ostream& os, const ViewArray<View>& x);
 
-/**
- * \brief Print array elements enclosed in curly brackets
- * \relates ViewArray
- */
-template<class View>
-std::ostream& operator<<(std::ostream& os, const Gecode::ViewArray<View>& x);
-
-/**
- * \brief Print array elements enclosed in curly brackets
- * \relates ArgArrayBase
- */
-template<class T>
-std::ostream& operator<<(std::ostream& os, const Gecode::ArgArrayBase<T>& x);
+  /**
+   * \brief Print array elements enclosed in curly brackets
+   * \relates ArgArrayBase
+   */
+  template<class T>
+  std::ostream& operator<<(std::ostream& os, const ArgArrayBase<T>& x);
 
 
-namespace Gecode {
+
   /** \brief Traits of arrays in Gecode
    *
    * This class collects the traits of an array in Gecode.
@@ -1256,47 +1254,47 @@ namespace Gecode {
     }
   }
 
-}
 
-
-/*
- * Printing of arrays
- *
- */
-template<class Var>
-std::ostream& 
-operator<<(std::ostream& os, const Gecode::VarArray<Var>& x) {
-  os << '{';
-  if (x.size() > 0) {
-    os << x[0];
-    for (int i=1; i<x.size(); i++)
-      os << ", " << x[i];
+  /*
+   * Printing of arrays
+   *
+   */
+  template<class Var>
+  std::ostream& 
+  operator<<(std::ostream& os, const VarArray<Var>& x) {
+    os << '{';
+    if (x.size() > 0) {
+      os << x[0];
+      for (int i=1; i<x.size(); i++)
+        os << ", " << x[i];
+    }
+    return os << '}';
   }
-  return os << '}';
-}
-
-template<class View>
-std::ostream& 
-operator<<(std::ostream& os, const Gecode::ViewArray<View>& x) {
-  os << '{';
-  if (x.size() > 0) {
-    os << x[0];
-    for (int i=1; i<x.size(); i++)
-      os << ", " << x[i];
+  
+  template<class View>
+  std::ostream& 
+  operator<<(std::ostream& os, const ViewArray<View>& x) {
+    os << '{';
+    if (x.size() > 0) {
+      os << x[0];
+      for (int i=1; i<x.size(); i++)
+        os << ", " << x[i];
+    }
+    return os << '}';
   }
-  return os << '}';
-}
-
-template<class T>
-std::ostream& 
-operator<<(std::ostream& os, const Gecode::ArgArrayBase<T>& x) {
-  os << '{';
-  if (x.size() > 0) {
-    os << x[0];
-    for (int i=1; i<x.size(); i++)
-      os << ", " << x[i];
+  
+  template<class T>
+  std::ostream& 
+  operator<<(std::ostream& os, const ArgArrayBase<T>& x) {
+    os << '{';
+    if (x.size() > 0) {
+      os << x[0];
+      for (int i=1; i<x.size(); i++)
+        os << ", " << x[i];
+    }
+    return os << '}';
   }
-  return os << '}';
+
 }
 
 // STATISTICS: kernel-other

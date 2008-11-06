@@ -808,19 +808,13 @@ namespace Gecode {
     return DFA(0,tb.transitions(),fb.finals(),true);
   }
 
+
+  std::ostream&
+  operator<<(std::ostream& os, const Gecode::REG& r) {
+    return r.print(os);
+  }
+
 }
-
-/*
- * Computing with expressions
- *
- */
-
-
-std::ostream&
-operator<<(std::ostream& os, const Gecode::REG& r) {
-  return r.print(os);
-}
-
 
 // STATISTICS: int-prop
 

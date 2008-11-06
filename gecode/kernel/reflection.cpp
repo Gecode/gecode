@@ -933,12 +933,11 @@ namespace Gecode { namespace Reflection {
     return registry().spec(home, vm, _var, _vti);
   }
 
+  std::ostream&
+  operator<<(std::ostream& os, const Var& v) {
+    return v.print(os);
+  }
+
 }}
-
-std::ostream&
-operator<<(std::ostream& os, const Gecode::Reflection::Var& v) {
-  return v.print(os);
-}
-
 
 // STATISTICS: kernel-other
