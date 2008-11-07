@@ -262,13 +262,13 @@ namespace Test { namespace Int {
       using namespace Gecode;
       // Prune values
       if (bounds_only) {
-        if (Base::rand(2)) {
+        if (Base::rand(2) && !x[i].assigned()) {
           int v=x[i].min()+1+Base::rand(static_cast
                                         <unsigned int>(x[i].max()-x[i].min()));
           assert((v > x[i].min()) && (v <= x[i].max()));
           rel(i, Gecode::IRT_LE, v);
         }
-        if (Base::rand(2)) {
+        if (Base::rand(2) && !x[i].assigned()) {
           int v=x[i].min()+Base::rand(static_cast
                                       <unsigned int>(x[i].max()-x[i].min()));
           assert((v < x[i].max()) && (v >= x[i].min()));
@@ -702,7 +702,7 @@ if (!(T)) {                                                     \
         CHECK_TEST(s->propagators()==0, "No subsumption");
       }
       delete s;
-      break;
+      // Fall-through -- domain implies bounds(d) and bounds(z)
     }
     case CTL_BOUNDS_D: {
       START_TEST("Bounds(D)-consistency");
@@ -717,7 +717,7 @@ if (!(T)) {                                                     \
         CHECK_TEST(s->propagators()==0, "No subsumption");
       }
       delete s;      
-      break;
+      // Fall-through -- bounds(d) implies bounds(z)
     }
     case CTL_BOUNDS_Z: {
       START_TEST("Bounds(Z)-consistency");
