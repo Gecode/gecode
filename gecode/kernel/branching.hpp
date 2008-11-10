@@ -406,6 +406,7 @@ namespace Gecode {
   ViewValBranching<ViewSel,ValSel>
   ::branchingSpec(const Space& home, 
                   Reflection::VarMap& m, const BranchingDesc& d) const {
+    (void) home; (void) m;
     const PosValDesc<ViewSel,ValSel>& pvd 
       = static_cast<const PosValDesc<ViewSel,ValSel>&>(d);
     Reflection::BranchingSpec bs(3);

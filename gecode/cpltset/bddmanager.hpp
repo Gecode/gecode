@@ -126,7 +126,7 @@ namespace Gecode {
     /// Return the false branch of a bdd \a b.
     bdd iffalse(bdd& b);
     /// Returns the index of the variable labeling the bdd \a b
-    const unsigned int bddidx(const bdd& b);
+    unsigned int bddidx(const bdd& b);
     
     /// Set the bdd \a dom to \f$ \exists_{V(var)} \left(dom \wedge d\right)\f$
     void existquant(bdd& dom, bdd& d, int* var, int s);
@@ -323,7 +323,7 @@ namespace Gecode {
   forceinline bdd 
   BddMgr::iffalse(bdd& b) { return bdd_low(b); }
 
-  forceinline const unsigned int
+  forceinline unsigned int
   BddMgr::bddidx(const bdd& b) {
     if (marked(b)) {
       unmark(b);

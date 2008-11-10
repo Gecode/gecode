@@ -973,7 +973,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   ExecStatus
-  NaryOr<VX,VY>::advise(Space& home, Advisor&, const Delta& d) {
+  NaryOr<VX,VY>::advise(Space&, Advisor&, const Delta& d) {
     // Decides whether the propagator must be run
     if (VX::zero(d) && (++n_zero < x.size()))
       return ES_FIX;

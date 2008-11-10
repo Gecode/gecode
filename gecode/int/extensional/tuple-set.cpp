@@ -157,11 +157,11 @@ namespace Gecode {
     last = heap.alloc<Tuple*>(domsize*arity);
     for (int i = arity; i--; ) {
       Tuple* t = tuples[i];
-      for (int d = 0; d < domsize; ++d) {
-        while (t && *t && (*t)[i] < min+d) {
+      for (unsigned int d = 0; d < domsize; ++d) {
+        while (t && *t && (*t)[i] < static_cast<int>(min+d)) {
           ++t;
         }
-        if (t && *t && (*t)[i] == min+d) {
+        if (t && *t && (*t)[i] == static_cast<int>(min+d)) {
           last[(i*domsize) + d] = t;
           ++t;
         } else {

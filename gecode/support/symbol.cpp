@@ -74,8 +74,7 @@ namespace Gecode { namespace Support {
 
   forceinline 
   Symbol::SO::SO(const char* s0, bool copy)
-    : use_cnt(0),
-      s(copy ? strdup(s0) : const_cast<char*>(s0)), own(copy) {}
+    : s(copy ? strdup(s0) : const_cast<char*>(s0)), own(copy), use_cnt(0) {}
 
   forceinline int
   Symbol::SO::hash(int m) const {

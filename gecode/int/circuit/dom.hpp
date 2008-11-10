@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template <class View>
   PropCost
-  Dom<View>::cost(const Space& home, const ModEventDelta& med) const {
+  Dom<View>::cost(const Space&, const ModEventDelta& med) const {
     return (View::me(med) == ME_INT_VAL) ? PC_LINEAR_HI : PC_QUADRATIC_HI;
   }
 

@@ -283,7 +283,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class VA, class VB>
   PropCost
-  SqrPlusDom<VA,VB>::cost(const Space& home, const ModEventDelta& med) const {
+  SqrPlusDom<VA,VB>::cost(const Space&, const ModEventDelta& med) const {
     if (VA::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
     if (VA::me(med) == ME_INT_DOM)
@@ -386,7 +386,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   PropCost
-  SqrDom<View>::cost(const Space& home, const ModEventDelta& med) const {
+  SqrDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
       return PC_UNARY_LO;
     if (View::me(med) == ME_INT_DOM)

@@ -190,8 +190,10 @@ namespace Gecode { namespace Int { namespace Branch {
   ViewValuesBranching<ViewSel,View>
   ::branchingSpec(const Space& home, 
                   Reflection::VarMap& m, const BranchingDesc& d) const {
+    (void) home; (void) m;
     const PosValuesDesc<ViewSel,View>& pvd 
       = static_cast<const PosValuesDesc<ViewSel,View>&>(d);
+    (void) pvd;
     Reflection::BranchingSpec bs(1);
     //    bs[0] = view(pvd->pos()).spec(home, m);
     //    bs[1] = Reflection::Arg::newString(ValSel::type());

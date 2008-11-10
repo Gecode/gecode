@@ -59,14 +59,15 @@ namespace Gecode { namespace Support {
       /// Whether the SO owns the Symbol
       bool own;
 
-      /// Duplicate string \a s
-      static char* strdup(const char* s);
       /// The reference count
       unsigned int use_cnt;
       /// Reference counting: cancel subscription
       bool cancel(void);
       /// Reference counting: subscribe to an SO
       void subscribe(void);
+
+      /// Duplicate string \a s
+      static char* strdup(const char* s);
 
       /// Construct from a given Symbol \a s0, which is copied if \a copy is true.
       SO(const char* s0, bool copy);

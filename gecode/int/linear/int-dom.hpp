@@ -395,7 +395,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   PropCost
-  DomEq<Val,View>::cost(const Space& home, const ModEventDelta& med) const {
+  DomEq<Val,View>::cost(const Space&, const ModEventDelta& med) const {
     return (View::me(med) != ME_INT_DOM)
       ? cost_hi(x.size()+y.size(),PC_LINEAR_LO)
       : cost_hi(x.size()+y.size(),PC_CRAZY_HI);

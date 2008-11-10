@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   ExecStatus
-  Clause<VX,VY>::advise(Space& home, Advisor& _a, const Delta& d) {
+  Clause<VX,VY>::advise(Space&, Advisor& _a, const Delta& d) {
     Tagged& a = static_cast<Tagged&>(_a);
     // Decides whether the propagator must be run and also
     if ((a.x && VX::zero(d)) || (!a.x && VY::zero(d)))

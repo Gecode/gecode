@@ -406,7 +406,7 @@ namespace Gecode {
         re[i] = m_states++;
 
     // Count number of remaining transitions
-    int m_trans = 0;
+    unsigned int m_trans = 0;
     for (int i = n_trans; i--; )
       if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0))
         m_trans++;

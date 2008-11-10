@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   PropCost
-  LinkMulti::cost(const Space& home, const ModEventDelta& med) const {
+  LinkMulti::cost(const Space&, const ModEventDelta& med) const {
     return (IntView::me(med) == ME_INT_VAL) ? 
       PC_UNARY_LO : cost_lo(x.size(),PC_LINEAR_LO);
   }
