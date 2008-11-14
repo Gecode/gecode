@@ -331,29 +331,41 @@ namespace Test { namespace Set {
     public:
       IntArgs elements;
       IntArgs weights;
-
+      int minWeight;
+      int maxWeight;
       /// Create and register test
-      Weights(const char* t)
+      Weights(const char* t, IntArgs& el, IntArgs& w,
+              int min = -10000, int max = 10000)
         : SetTest(t,1,ds_33,false,1),
-          elements(7), weights(7) {
-        for (int i=-3; i<=3; i++)
-          elements[i+3] = i;
-        for (int i=0; i<7; i++)
-          weights[i] = 1;
-        weights[1] = -2;
-        weights[5] = 6;
-      }
+          elements(el), weights(w), minWeight(min), maxWeight(max) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges x0(x.lub, x[0]);
-        return x.intval()==weightI(elements,weights,x0);
+        return x.intval()==weightI(elements,weights,x0) &&
+               x.intval() >= minWeight && x.intval() <= maxWeight;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
+        Gecode::post(home, minWeight <= y[0]);
+        Gecode::post(home, maxWeight >= y[0]);
         Gecode::weights(home, elements, weights, x[0], y[0]);
       }
     };
-    Weights _weights("Int::Weights");
+
+    const int el1v[] = {-3,-2,-1,0,1,2,3};
+    IntArgs el1(7,el1v);
+    const int w1v[] = {1,-2,1,1,1,6,1};
+    IntArgs w1(7,w1v);
+    Weights _weights1("Int::Weights::1", el1, w1);
+
+    const int w2v[] = {-1,-1,-1,10,-1,-1,-1};
+    IntArgs w2(7,w2v);
+    Weights _weights2("Int::Weights::2", el1, w2);
+    Weights _weights3("Int::Weights::3", el1, w2, 3);
+
+    const int w4v[] = {1,1,0,0,0,0,0};
+    IntArgs w4(7,w4v);
+    Weights _weights4("Int::Weights::4", el1, w4);
 
     /// Test for match constraint
     class Match : public SetTest {

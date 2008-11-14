@@ -209,32 +209,22 @@ namespace Gecode { namespace Set { namespace Int {
     return new (home) Weights(home,share,*this);
   }
 
-  enum CostType { POS_COST, NEG_COST, ALL_COST };
-
-  template <class I, CostType c>
+  /// Compute the weight of the elements in the iterator \a I
+  template <class I>
   forceinline
   int weightI(SharedArray<int>& elements,
               SharedArray<int>& weights,
               I& iter) {
     int sum = 0;
     int i = 0;
-    for (Iter::Ranges::ToValues<I> v(iter); v(); ++v) {
+    Iter::Ranges::ToValues<I> v(iter);
+    for (; v(); ++v) {
       // Skip all elements below the current
       while (elements[i]<v.val()) i++;
       assert(elements[i] == v.val());
-      switch (c) {
-      case ALL_COST:
-        sum += weights[i];
-        break;
-      case POS_COST:
-        if (weights[i] > 0) sum += weights[i];
-        break;
-      case NEG_COST:
-        if (weights[i] < 0) sum += weights[i];
-        break;
-      default: GECODE_NEVER;
-      }
+      sum += weights[i];
     }
+    assert(!v());
     return sum;
   }
 
@@ -254,82 +244,99 @@ namespace Gecode { namespace Set { namespace Int {
   ExecStatus
   Weights<View>::propagate(Space& home, const ModEventDelta&) {
 
-    if (x.assigned()) {
-      GlbRanges<View> glb(x);
-      int w = 
-        weightI<GlbRanges<View>,ALL_COST>(elements, weights, glb);
-      GECODE_ME_CHECK(y.eq(home, w));
-      return ES_SUBSUMED(*this,home);
-    }
-
-    int lowCost;
-    int lowestCost;
-    int highestCost;
-    int size = elements.size();
-    {
-      UnknownRanges<View> ur(x);
-      Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur);
-      Region r(home);
-      int* currentWeights = r.alloc<int>(size);
-      for (int i=0; i<size; i++) {
-        if (!urv() || elements[i]<urv.val()) {
-          currentWeights[i] = 0;
-        } else {
-          assert(elements[i] == urv.val());
-          currentWeights[i] = weights[i];
-          ++urv;
-        }
-      }
-
-      IntLt ilt;
-      Support::quicksort<int>(currentWeights, size, ilt);
-
-      GlbRanges<View> glb(x);
-      lowCost = weightI<GlbRanges<View>,ALL_COST>(elements, weights, glb);
-      highestCost =
-        weightI<GlbRanges<View>,ALL_COST>(elements, weights, glb);
-
-      int delta = std::min(x.unknownSize(), x.cardMax() - x.glbSize());
-
-      for (int i=0; i<delta-1; i++) {
-        if (currentWeights[i] >= 0)
-          break;
-        lowCost+=currentWeights[i];
-      }
-      lowestCost = lowCost;
-      if (delta>0 && currentWeights[delta-1]<0)
-        lowestCost+=currentWeights[delta-1];
-
-      for (int i=0; i<delta; i++) {
-        if (currentWeights[size-i-1]<=0)
-          break;
-        highestCost += currentWeights[size-i-1];
-      }
-
-    }
-
-    GECODE_ME_CHECK(y.gq(home, lowestCost));
-    GECODE_ME_CHECK(y.lq(home, highestCost));
-
     ModEvent me;
-    {
-      UnknownRanges<View> ur2(x);
-      Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur2);
-      OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View> > >
-        ov(y.max()-lowCost, elements, weights, urv);
-      Iter::Values::ToRanges<OverweightValues<
-        Iter::Ranges::ToValues<UnknownRanges<View> > > > ovr(ov);
-      me = x.excludeI(home, ovr);
-      GECODE_ME_CHECK(me);
-    }
 
+    if (!x.assigned()) {
+      int lowWeight;                  //
+      int lowestWeight;               //
+      int highestWeight;              //
+      int size = elements.size();
+      {
+        UnknownRanges<View> ur(x);
+        Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur);
+        Region r(home);
+        int* currentWeights = r.alloc<int>(size);
+        for (int i=0; i<size; i++) {
+          if (!urv() || elements[i]<urv.val()) {
+            currentWeights[i] = 0;
+          } else {
+            assert(elements[i] == urv.val());
+            currentWeights[i] = weights[i];
+            ++urv;
+          }
+        }
+
+        IntLt ilt;
+        Support::quicksort<int>(currentWeights, size, ilt);
+
+
+        // The maximum number of elements that can still be added to x
+        int delta = std::min(x.unknownSize(), x.cardMax() - x.glbSize());
+
+        // The weight of the elements already in x
+        GlbRanges<View> glb(x);
+        int glbWeight = weightI<GlbRanges<View> >(elements, weights, glb);
+
+        // Compute the weight of the current lower bound of x, plus at most
+        // delta-1 further elements with smallest negative weights. This weight
+        // determines which elements in the upper bound cannot possibly be
+        // added to x (those whose weight would exceed the capacity even if
+        // all other elements are minimal)
+        lowWeight = glbWeight;
+        for (int i=0; i<delta-1; i++) {
+          if (currentWeights[i] >= 0)
+            break;
+          lowWeight+=currentWeights[i];
+        }
+
+        // Compute the lowest possible weight of x. If there is another element
+        // with negative weight left, then add its weight to lowWeight.
+        // Otherwise lowWeight is already the lowest possible weight.
+        lowestWeight = lowWeight;
+        if (delta>0 && currentWeights[delta-1]<0)
+          lowestWeight+=currentWeights[delta-1];
+
+        // Compute the highest possible weight of x as the weight of the lower
+        // bound plus the weight of the delta heaviest elements still in the
+        // upper bound.
+        highestWeight = glbWeight;
+        for (int i=0; i<delta; i++) {
+          if (currentWeights[size-i-1]<=0)
+            break;
+          highestWeight += currentWeights[size-i-1];
+        }
+
+      }
+
+      // Prune the weight using the computed bounds
+      GECODE_ME_CHECK(y.gq(home, lowestWeight));
+      GECODE_ME_CHECK(y.lq(home, highestWeight));
+
+      {
+        // Exclude all elements that are too heavy from the set x.
+        // Elements are too heavy if their weight alone already
+        // exceeds the remaining capacity
+        int remainingCapacity = y.max()-lowWeight;
+        
+        UnknownRanges<View> ur2(x);
+        Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur2);
+        OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View> > >
+          ov(remainingCapacity, elements, weights, urv);
+        Iter::Values::ToRanges<OverweightValues<
+          Iter::Ranges::ToValues<UnknownRanges<View> > > > ovr(ov);
+        me = x.excludeI(home, ovr);
+        GECODE_ME_CHECK(me);
+      }
+    }
     if (x.assigned()) {
+      // If x is assigned, just compute its weight and assign y.
       GlbRanges<View> glb(x);
       int w = 
-        weightI<GlbRanges<View>,ALL_COST>(elements, weights, glb);
+        weightI<GlbRanges<View> >(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(*this,home);      
     }
+
     return me_modified(me) ? ES_NOFIX : ES_FIX;
   }
 
