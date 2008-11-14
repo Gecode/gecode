@@ -247,86 +247,80 @@ namespace Gecode { namespace Set { namespace Int {
     ModEvent me;
 
     if (!x.assigned()) {
-      int lowWeight;                  //
-      int lowestWeight;               //
-      int highestWeight;              //
+      // Collect the weights of the elements in the unknown set in an array
       int size = elements.size();
-      {
-        UnknownRanges<View> ur(x);
-        Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur);
-        Region r(home);
-        int* currentWeights = r.alloc<int>(size);
-        for (int i=0; i<size; i++) {
-          if (!urv() || elements[i]<urv.val()) {
-            currentWeights[i] = 0;
-          } else {
-            assert(elements[i] == urv.val());
-            currentWeights[i] = weights[i];
-            ++urv;
-          }
+      Region r(home);
+      int* currentWeights = r.alloc<int>(size);
+
+      UnknownRanges<View> ur(x);
+      Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur);
+      for (int i=0; i<size; i++) {
+        if (!urv() || elements[i]<urv.val()) {
+          currentWeights[i] = 0;
+        } else {
+          assert(elements[i] == urv.val());
+          currentWeights[i] = weights[i];
+          ++urv;
         }
+      }
 
-        IntLt ilt;
-        Support::quicksort<int>(currentWeights, size, ilt);
+      // Sort the weights of the unknown elements
+      IntLt ilt;
+      Support::quicksort<int>(currentWeights, size, ilt);
 
+      // The maximum number of elements that can still be added to x
+      int delta = std::min(x.unknownSize(), x.cardMax() - x.glbSize());
 
-        // The maximum number of elements that can still be added to x
-        int delta = std::min(x.unknownSize(), x.cardMax() - x.glbSize());
+      // The weight of the elements already in x
+      GlbRanges<View> glb(x);
+      int glbWeight = weightI<GlbRanges<View> >(elements, weights, glb);
 
-        // The weight of the elements already in x
-        GlbRanges<View> glb(x);
-        int glbWeight = weightI<GlbRanges<View> >(elements, weights, glb);
+      // Compute the weight of the current lower bound of x, plus at most
+      // delta-1 further elements with smallest negative weights. This weight
+      // determines which elements in the upper bound cannot possibly be
+      // added to x (those whose weight would exceed the capacity even if
+      // all other elements are minimal)
+      int lowWeight = glbWeight;
+      for (int i=0; i<delta-1; i++) {
+        if (currentWeights[i] >= 0)
+          break;
+        lowWeight+=currentWeights[i];
+      }
 
-        // Compute the weight of the current lower bound of x, plus at most
-        // delta-1 further elements with smallest negative weights. This weight
-        // determines which elements in the upper bound cannot possibly be
-        // added to x (those whose weight would exceed the capacity even if
-        // all other elements are minimal)
-        lowWeight = glbWeight;
-        for (int i=0; i<delta-1; i++) {
-          if (currentWeights[i] >= 0)
-            break;
-          lowWeight+=currentWeights[i];
-        }
+      // Compute the lowest possible weight of x. If there is another element
+      // with negative weight left, then add its weight to lowWeight.
+      // Otherwise lowWeight is already the lowest possible weight.
+      int lowestWeight = lowWeight;
+      if (delta>0 && currentWeights[delta-1]<0)
+        lowestWeight+=currentWeights[delta-1];
 
-        // Compute the lowest possible weight of x. If there is another element
-        // with negative weight left, then add its weight to lowWeight.
-        // Otherwise lowWeight is already the lowest possible weight.
-        lowestWeight = lowWeight;
-        if (delta>0 && currentWeights[delta-1]<0)
-          lowestWeight+=currentWeights[delta-1];
-
-        // Compute the highest possible weight of x as the weight of the lower
-        // bound plus the weight of the delta heaviest elements still in the
-        // upper bound.
-        highestWeight = glbWeight;
-        for (int i=0; i<delta; i++) {
-          if (currentWeights[size-i-1]<=0)
-            break;
-          highestWeight += currentWeights[size-i-1];
-        }
-
+      // Compute the highest possible weight of x as the weight of the lower
+      // bound plus the weight of the delta heaviest elements still in the
+      // upper bound.
+      int highestWeight = glbWeight;
+      for (int i=0; i<delta; i++) {
+        if (currentWeights[size-i-1]<=0)
+          break;
+        highestWeight += currentWeights[size-i-1];
       }
 
       // Prune the weight using the computed bounds
       GECODE_ME_CHECK(y.gq(home, lowestWeight));
       GECODE_ME_CHECK(y.lq(home, highestWeight));
 
-      {
-        // Exclude all elements that are too heavy from the set x.
-        // Elements are too heavy if their weight alone already
-        // exceeds the remaining capacity
-        int remainingCapacity = y.max()-lowWeight;
-        
-        UnknownRanges<View> ur2(x);
-        Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur2);
-        OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View> > >
-          ov(remainingCapacity, elements, weights, urv);
-        Iter::Values::ToRanges<OverweightValues<
-          Iter::Ranges::ToValues<UnknownRanges<View> > > > ovr(ov);
-        me = x.excludeI(home, ovr);
-        GECODE_ME_CHECK(me);
-      }
+      // Exclude all elements that are too heavy from the set x.
+      // Elements are too heavy if their weight alone already
+      // exceeds the remaining capacity
+      int remainingCapacity = y.max()-lowWeight;
+      
+      UnknownRanges<View> ur2(x);
+      Iter::Ranges::ToValues<UnknownRanges<View> > urv2(ur2);
+      OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View> > >
+        ov(remainingCapacity, elements, weights, urv2);
+      Iter::Values::ToRanges<OverweightValues<
+        Iter::Ranges::ToValues<UnknownRanges<View> > > > ovr(ov);
+      me = x.excludeI(home, ovr);
+      GECODE_ME_CHECK(me);
     }
     if (x.assigned()) {
       // If x is assigned, just compute its weight and assign y.
