@@ -280,14 +280,29 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) {
-    os << "\tTour: ";
-    int i=0;
-    do {
-      os << i << " -> ";
-      i=succ[i].val();
-    } while (i != 0);
-    os << 0 << std::endl;
-    os << "\tCost: " << total << std::endl;
+    bool assigned = true;
+    for (int i=0; i<succ.size(); i++) {
+      if (!succ[i].assigned()) {
+        assigned = false;
+        break;
+      }
+    }
+    if (assigned) {
+      os << "\tTour: ";
+      int i=0;
+      do {
+        os << i << " -> ";
+        i=succ[i].val();
+      } while (i != 0);
+      os << 0 << std::endl;
+      os << "\tCost: " << total << std::endl;
+    } else {
+      os << "\tTour: " << std::endl;
+      for (int i=0; i<succ.size(); i++) {
+        os << "\t" << i << " -> " << succ[i] << std::endl;
+      }
+      os << "\tCost: " << total << std::endl;
+    }
   }
 };
 
