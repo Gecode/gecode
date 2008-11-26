@@ -454,7 +454,7 @@ SteelMillOptions::parse(int& argc, char* argv[]) {
   while (argc >= 2) {
     bool issize = true;
     for (int i = strlen(argv[argc-1]); i-- && issize; )
-      issize &= isdigit(argv[argc-1][i]);
+      issize &= (isdigit(argv[argc-1][i]) != 0);
     if (issize) {
       _size = atoi(argv[argc-1]);
     } else {
