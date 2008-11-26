@@ -74,6 +74,13 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Domain constraints (dom) also accept integers now.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor

@@ -37,13 +37,35 @@
 
 
 #include <gecode/int/dom.hh>
+#include <gecode/int/rel.hh>
 
 namespace Gecode {
 
   using namespace Int;
 
   void
-  dom(Space& home, IntVar x, int min, int max, IntConLevel, PropKind) {
+  dom(Space& home, IntVar x, int n, 
+      IntConLevel, PropKind) {
+    Limits::check(n,"Int::dom");
+    if (home.failed()) return;
+    IntView xv(x);
+    GECODE_ME_FAIL(home,xv.eq(home,n));
+  }
+
+  void
+  dom(Space& home, const IntVarArgs& x, int n,
+      IntConLevel, PropKind) {
+    Limits::check(n,"Int::dom");
+    if (home.failed()) return;
+    for (int i=x.size(); i--; ) {
+      IntView xv(x[i]);
+      GECODE_ME_FAIL(home,xv.eq(home,n));
+    }
+  }
+
+  void
+  dom(Space& home, IntVar x, int min, int max, 
+      IntConLevel, PropKind) {
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
     if (home.failed()) return;
@@ -53,7 +75,8 @@ namespace Gecode {
   }
 
   void
-  dom(Space& home, const IntVarArgs& x, int min, int max, IntConLevel, PropKind) {
+  dom(Space& home, const IntVarArgs& x, int min, int max,
+      IntConLevel, PropKind) {
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
     if (home.failed()) return;
@@ -75,7 +98,8 @@ namespace Gecode {
   }
 
   void
-  dom(Space& home, const IntVarArgs& x, const IntSet& is, IntConLevel, PropKind) {
+  dom(Space& home, const IntVarArgs& x, const IntSet& is, 
+      IntConLevel, PropKind) {
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
     if (home.failed()) return;
@@ -87,8 +111,16 @@ namespace Gecode {
   }
 
   void
-  dom(Space& home, IntVar x, int min, int max, BoolVar b, IntConLevel, 
-      PropKind) {
+  dom(Space& home, IntVar x, int n, BoolVar b, 
+      IntConLevel, PropKind) {
+    Limits::check(n,"Int::dom");
+    if (home.failed()) return;
+    GECODE_ES_FAIL(home,(Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)));
+  }
+
+  void
+  dom(Space& home, IntVar x, int min, int max, BoolVar b, 
+      IntConLevel, PropKind) {
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
     if (home.failed()) return;
@@ -97,8 +129,8 @@ namespace Gecode {
 
 
   void
-  dom(Space& home, IntVar x, const IntSet& is, BoolVar b, IntConLevel, 
-      PropKind) {
+  dom(Space& home, IntVar x, const IntSet& is, BoolVar b, 
+      IntConLevel, PropKind) {
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
     if (home.failed()) return;

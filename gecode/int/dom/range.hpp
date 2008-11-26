@@ -35,6 +35,8 @@
  *
  */
 
+#include <gecode/int/rel.hh>
+
 namespace Gecode { namespace Int { namespace Dom {
 
   template <class View>
@@ -46,9 +48,11 @@ namespace Gecode { namespace Int { namespace Dom {
   template <class View>
   ExecStatus
   ReRange<View>::post(Space& home, View x, int min, int max, BoolView b) {
-    if (min > max)
+    if (min > max) {
       return ES_FAILED;
-    if ((max < x.min()) || (min > x.max())) {
+    } else if (min == max) {
+      return Rel::ReEqDomInt<View,BoolView>::post(home,x,min,b);
+    } else if ((max < x.min()) || (min > x.max())) {
       GECODE_ME_CHECK(b.zero(home));
     } else if ((min <= x.min()) && (x.max() <= max)) {
       GECODE_ME_CHECK(b.one(home));
