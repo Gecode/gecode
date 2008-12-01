@@ -68,7 +68,7 @@
 
 
 namespace Gecode { namespace Int { namespace Cumulatives {
-
+      
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
   Val<ViewM,ViewD,ViewH,View>::Val(Space& home, 
@@ -213,8 +213,11 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       : e(_e), task(_task), date(_date), inc(_inc), first_prof(_first_prof)
     {}
 
+    // Default constructor for region-allocated memory
+    Event(void) {}
+
     /// Order events based on date.
-    bool operator<(const Event& ev) {
+    bool operator<(const Event& ev) const {
       if (date == ev.date) {
         if (e == EVENT_PROF && ev.e != EVENT_PROF) return true;
         if (e == EVENT_CHCK && ev.e == EVENT_PRUN) return true;
@@ -228,8 +231,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>::prune(Space& home, int low, int up, int r,
                                      int ntask, int sheight,
-                                     const std::vector<int>& contribution,
-                                     std::list<int>& prune_tasks) {
+                                     int* contribution,
+                                     int* prune_tasks, int& prune_tasks_size) {
 
     if (ntask > 0 &&
         (at_most ? sheight > limit[r]
@@ -237,9 +240,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       return ES_FAILED;
     }
 
-    std::list<int>::iterator it = prune_tasks.begin();
-    while (it != prune_tasks.end()) {
-      int t = *it;
+    int pti = 0;
+    while (pti != prune_tasks_size) {
+      int t = prune_tasks[pti];
+
       // Algorithm 2.
       // Prune the machine, start, and end for required
       // tasks for machine r that have heights possibly greater than 0.
@@ -255,8 +259,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             me_failed(end[t].gq(home, up+1))||
             me_failed(duration[t].gq(home,std::min(up-start[t].max()+1,
                                                    end[t].min()-low)))
-            )
+            ) {
           return ES_FAILED;
+        }
       }
 
       // Algorithm 3.
@@ -268,8 +273,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
           if (end[t].min() > low  &&
               start[t].max() <= up &&
               duration[t].min() > 0) {
-            if (me_failed(machine[t].nq(home, r)))
+            if (me_failed(machine[t].nq(home, r))) {
               return ES_FAILED;
+            }
           } else if (machine[t].assigned()) {
             int dtmin = duration[t].min();
             if (dtmin > 0) {
@@ -282,8 +288,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             if (me_failed(duration[t].lq(home,
                                          std::max(std::max(low-start[t].min(),
                                                            end[t].max()-up-1),
-                                                  0))))
+                                                  0)))) {
               return ES_FAILED;
+            }
           }
         }
       }
@@ -301,21 +308,33 @@ namespace Gecode { namespace Int { namespace Cumulatives {
           duration[t].min() > 0 ) {
         if (me_failed(at_most
                       ? height[t].lq(home, limit[r]-sheight+contribution[t])
-                      : height[t].gq(home, limit[r]-sheight+contribution[t])))
+                      : height[t].gq(home, limit[r]-sheight+contribution[t]))) {
           return ES_FAILED;
+        }
       }
 
       // Remove tasks that are no longer relevant.
       if ((!machine[t].in(r)) ||
           end[t].max() <= up+1) {
-        std::list<int>::iterator old = it++;
-        prune_tasks.erase(old);
+        //        std::list<int>::iterator old = it++;
+        //        prune_tasks.erase(old);
+        prune_tasks[pti] = prune_tasks[--prune_tasks_size];
       } else {
-        ++it;
+        ++pti;
       }
     }
 
     return ES_OK;
+  }
+      
+  namespace {
+    template <class C>
+    class LT {
+    public:
+      bool operator()(const C& lhs, const C& rhs) {
+        return lhs < rhs;
+      }
+    };
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
@@ -331,9 +350,17 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         break;
       }
     // Propagate information for machine r
+    Region region(home);
+    Event *events = region.alloc<Event>(start.size()*8);
+    int  events_size;
+    int *prune_tasks = region.alloc<int>(start.size());
+    int  prune_tasks_size;
+    int *contribution = region.alloc<int>(start.size());
     for (int r = limit.size(); r--; ) {
-      std::list<Event> events;
-
+      events_size = 0;
+#define GECODE_PUSH_EVENTS(E) assert(events_size < start.size()*8);     \
+        events[events_size++] = E
+      
       // Find events for sweep-line
       for (int t = start.size(); t--; ) {
         if (machine[t].assigned() &&
@@ -342,16 +369,16 @@ namespace Gecode { namespace Int { namespace Cumulatives {
           if (at_most
               ? height[t].min() > std::min(0, limit[r])
               : height[t].max() < std::max(0, limit[r])) {
-            events.push_back(Event(EVENT_CHCK, t, start[t].max(), 1));
-            events.push_back(Event(EVENT_CHCK, t, end[t].min(), -1));
+            GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, start[t].max(), 1));
+            GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, end[t].min(), -1));
           }
           if (at_most
               ? height[t].min() > 0
               : height[t].max() < 0) {
-            events.push_back(Event(EVENT_PROF, t, start[t].max(),
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, start[t].max(),
                                    at_most ? height[t].min()
                                    : height[t].max(), true));
-            events.push_back(Event(EVENT_PROF, t, end[t].min(),
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, end[t].min(),
                                    at_most ? -height[t].min()
                                    : -height[t].max()));
           }
@@ -361,10 +388,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
           if (at_most
               ? height[t].min() < 0
               : height[t].max() > 0) {
-            events.push_back(Event(EVENT_PROF, t, start[t].min(),
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, start[t].min(),
                                    at_most ? height[t].min()
                                    : height[t].max(), true));
-            events.push_back(Event(EVENT_PROF, t, end[t].max(),
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, end[t].max(),
                                    at_most ? -height[t].min()
                                    : -height[t].max()));
           }
@@ -372,61 +399,62 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                  height[t].assigned() &&
                   start[t].assigned() &&
                     end[t].assigned())) {
-            events.push_back(Event(EVENT_PRUN, t, start[t].min()));
+            GECODE_PUSH_EVENTS(Event(EVENT_PRUN, t, start[t].min()));
           }
         }
       }
+#undef GECODE_PUSH_EVENTS
 
       // If there are no events, continue with next machine
-      if (events.size() == 0)
+      if (events_size == 0) {
         continue;
+      }
 
       // Sort the events according to date
-      events.sort();
+      LT<Event> lt;
+      Support::insertion(&events[0], events_size, lt);
 
       // Sweep line along d, starting at 0
       int d        = 0;
       int ntask    = 0;
       int sheight  = 0;
-      std::list<Event>::iterator it = events.begin();
-      std::list<int> prune_tasks;
-      std::vector<int> contribution(start.size(), 0);
-                                    /*
-                                      at_most
-                                    ? Limits::max
-                                    : Limits::min);*/
-
-      d = it->date;
-      while (it != events.end()) {
-        if (it->e != EVENT_PRUN) {
-          if (d != it->date) {
-            GECODE_ES_CHECK(prune(home, d, it->date-1, r,
+      int ei = 0;
+      
+      prune_tasks_size = 0;
+      for (int i = start.size(); i--; ) contribution[i] = 0;
+      
+      d = events[ei].date;
+      while (ei < events_size) {
+        if (events[ei].e != EVENT_PRUN) {
+          if (d != events[ei].date) {
+            GECODE_ES_CHECK(prune(home, d, events[ei].date-1, r,
                                   ntask, sheight,
-                                  contribution, prune_tasks));
-            d = it->date;
+                                  contribution, prune_tasks, prune_tasks_size));
+            d = events[ei].date;
           }
-          if (it->e == EVENT_CHCK) {
-            ntask += it->inc;
-          } else /* if (it->e == EVENT_PROF) */ {
-            sheight += it->inc;
-            if(it->first_prof)
-              contribution[it->task] = at_most
-                ? std::max(contribution[it->task], it->inc)
-                : std::min(contribution[it->task], it->inc);
+          if (events[ei].e == EVENT_CHCK) {
+            ntask += events[ei].inc;
+          } else /* if (events[ei].e == EVENT_PROF) */ {
+            sheight += events[ei].inc;
+            if(events[ei].first_prof)
+              contribution[events[ei].task] = at_most
+                ? std::max(contribution[events[ei].task], events[ei].inc)
+                : std::min(contribution[events[ei].task], events[ei].inc);
           }
-        } else /* if (it->e == EVENT_PRUN) */ {
-          prune_tasks.push_back(it->task);
+        } else /* if (events[ei].e == EVENT_PRUN) */ {
+          assert(prune_tasks_size<start.size());
+          prune_tasks[prune_tasks_size++] = events[ei].task;
         }
-        ++it;
+        ei++;
       }
-
+      
       GECODE_ES_CHECK(prune(home, d, d, r,
                             ntask, sheight,
-                            contribution, prune_tasks));
+                            contribution, prune_tasks, prune_tasks_size));
     }
     return subsumed ? ES_SUBSUMED(*this,home): ES_NOFIX;
   }
-
+      
 }}}
 
 // STATISTICS: int-prop
