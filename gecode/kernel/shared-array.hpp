@@ -39,6 +39,7 @@
 
 #include <cstdarg>
 #include <iostream>
+#include <sstream>
 
 namespace Gecode {
 
@@ -117,8 +118,10 @@ namespace Gecode {
    * \brief Print array elements enclosed in curly brackets
    * \relates SharedArray
    */
-  template<class T>
-  std::ostream& operator<<(std::ostream& os, const SharedArray<T>& x);
+  template<class Char, class Traits, class T>
+  std::basic_ostream<Char,Traits>& 
+  operator<<(std::basic_ostream<Char,Traits>& os, 
+             const SharedArray<T>& x);
 
 
   /*
@@ -264,16 +267,20 @@ namespace Gecode {
     }
   }
 
-  template<class T>
-  std::ostream& 
-  operator<<(std::ostream& os, const SharedArray<T>& x) {
-    os << '{';
+  template<class Char, class Traits, class T>
+  std::basic_ostream<Char,Traits>& 
+  operator<<(std::basic_ostream<Char,Traits>& os, 
+             const SharedArray<T>& x) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << '{';
     if (x.size() > 0) {
-      os << x[0];
+      s << x[0];
       for (int i=1; i<x.size(); i++)
-        os << ", " << x[i];
+        s << ", " << x[i];
     }
-    return os << '}';
+    s << '}';
+    return os << s.str();
   }
 
 }
