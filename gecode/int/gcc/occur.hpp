@@ -35,8 +35,9 @@
  */
 
 namespace Gecode { namespace Int { namespace GCC {
+
   /**
-   * \brief Tuple conataining the lower and upper cardinality bounds
+   * \brief Tuple containing the lower and upper cardinality bounds
    *
    */
   class OccurBndsView {
@@ -179,18 +180,6 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-}}}
-
-/// \brief Debugging: print a fixed cardinality
-inline std::ostream&
-operator <<(std::ostream& os, Gecode::Int::GCC::OccurBndsView& xs) {
-  os << xs.card() << "("<< xs.counter() <<")[";
-  os << xs.min() << "," << xs.max() << "]";
-  return os;
-}
-
-namespace Gecode { namespace Int { namespace GCC {
-
   forceinline void
   OccurBndsView::update(Space&, bool, OccurBndsView& oc) {
     _min = oc._min;
@@ -303,7 +292,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Value access
     //@{
+    /// Assignment operator
     void operator =(const IntView& x);
+    /// Assignment operator
     void operator =(const Gecode::Int::GCC::CardView& x);
     /// Return minimum of domain
     int min(void) const;
@@ -781,33 +772,6 @@ namespace Gecode { namespace Int { namespace GCC {
     void init(const GCC::CardView& x);
     ///@}
   };
-
-}}
-
-/// \brief Debugging: print a cardinality variable
-inline std::ostream&
-operator <<(std::ostream& os, Gecode::Int::GCC::CardView& v) {
-  os << "("<<v.card() << ","<< v.counter() <<",";
-  if (v.min() == v.max()) {
-    os << v.min() <<" ";
-  } else {
-    if (v.range()){
-      os << "["<<v.min() <<".."<<v.max()<<"] ";
-    } else {
-      os << "{";
-      Gecode::Int::ViewValues<Gecode::Int::GCC::CardView> iter(v);
-      while(iter()){
-        os << iter.val() <<",";
-        ++iter;
-      }
-      os << "}";
-    }
-  }
-  os << ")";
-  return os;
-}
-
-namespace Gecode { namespace Int {
 
   forceinline
   ViewRanges<GCC::CardView>::ViewRanges(void) :

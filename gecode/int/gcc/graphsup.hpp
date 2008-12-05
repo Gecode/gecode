@@ -434,32 +434,6 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   };
 
-}}}
-
-/// Debugging: print a variable node
-inline std::ostream&
-operator <<(std::ostream& os, Gecode::Int::GCC::VarNode* v) {
-  os << v->var<<":{";
-  for (Gecode::Int::GCC::Edge* e = v->first(); e != NULL; e = e->next()) {
-    os << e->getVal()->val<<",";
-  }
-  os << "}(";
-  os << v->xindex << ") ";
-  return os;
-}
-
-/// Debugging: print a value node
-inline std::ostream&
-operator <<(std::ostream& os, Gecode::Int::GCC::ValNode* v) {
-  os << v->val<<":{";
-  for (Gecode::Int::GCC::Edge* e = v->first(); e != NULL; e = e->vnext()) {
-    os << e->getVar()->var<<",";
-  }
-  os << "} ";
-  return os;
-}
-
-namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Variable-value-graph used during propagation
@@ -554,17 +528,6 @@ namespace Gecode { namespace Int { namespace GCC {
      * variable domains.
      */
     bool sync(Space& home);
-
-    /// Print graph information for debugging
-    void print_graph(void);
-    /// Print matching information for debugging
-    template <BC>
-    void print_matching(void);
-    /// Gather matching information
-    void print_match(void);
-
-    /// Print edge information
-    void print_edges(void);
 
     /// Allocate memory for the graph
     void* operator new(size_t t);
@@ -1001,22 +964,6 @@ namespace Gecode { namespace Int { namespace GCC {
     is_sink = (_klb - lb == noe);
     return is_sink;
   }
-
-}}}
-
-/// Edge
-/// Debugging: print an edge
-inline std::ostream&
-operator <<(std::ostream& os, Gecode::Int::GCC::Edge* e){
-  if (e== NULL) {
-    os << "(N)";
-  } else {
-    os << "e("<<e->getVar()->var<<","<<e->getVal()->val<<")";
-  }
-  return os;
-}
-
-namespace Gecode { namespace Int { namespace GCC {
 
   forceinline void
   Edge::unlink(void){
@@ -2253,147 +2200,6 @@ namespace Gecode { namespace Int { namespace GCC {
       dfs<direction>(vars[i], inscc, in_unfinished, dfsnum,
                      roots, unfinished, count);
   }
-
-
-  template <class View, class Card, bool isView>
-  void
-  VarValGraph<View, Card, isView>::print_match(void) {
-    print_matching<UBC>();
-    print_matching<LBC>();
-  }
-
-
-  template <class View, class Card, bool isView>
-  void
-  VarValGraph<View, Card, isView>::print_edges(void) {
-    for (int i = 0; i < n_var; i++) {
-      std::cout << vars[i]->var<<": ";
-      for (Edge* e = vars[i]->first(); e != NULL; e = e->next()) {
-        bool ml = e->template matched<LBC>();
-        bool ul = e->template used<LBC>();
-        bool mu = e->template matched<UBC>();
-        bool uu = e->template used<UBC>();
-        bool condition = (ml || ul || mu || uu);
-        if (ml) {
-          std::cout << e->getVal()->val<<" mL, ";
-        }
-        if (ul) {
-          std::cout << e->getVal()->val<<" uL, ";
-        }
-        if (mu) {
-          std::cout << e->getVal()->val<<" mU, ";
-        }
-        if (uu) {
-          std::cout << e->getVal()->val<<" uU, ";
-        }
-        if (!condition) {
-          std::cout << e->getVal()->val<<" x ";
-        }
-      }
-      std::cout <<"\n";
-    }
-    std::cout <<"\n";
-  }
-
-  // for debugging purposes
-  template <class View, class Card, bool isView> template <BC direction>
-  void
-  VarValGraph<View, Card, isView>::print_matching(void) {
-    if (direction == UBC) {
-      std::cout << "UBM - check:\n";
-    } else {
-      std::cout << "LBM - check:\n";
-    }
-
-    for (int i = 0; i < n_var; i++ ){
-      std::cout << vars[i]->var <<"  ";
-      if (vars[i]->template matched<direction>()) {
-        if (vars[i]->template get_match<direction>() == NULL) {
-          std::cout << "N  ";
-        } else {
-          std::cout << vars[i]->template get_match<direction>() << " ";
-          std::cout << vars[i]->template get_match<direction>()->getVal()->val << "  ";
-        }
-      }
-      std::cout << " <==" << vars[i] <<"\n";
-    }
-    std::cout <<"\n";
-
-    for (int i = 0; i < n_val; i++ ){
-      if (vals[i]->template matched<direction>()) {
-        std::cout << "X  ";
-      } else {
-        std::cout << "-  ";
-      }
-      std::cout << vals[i]->template cap<direction>()  << "  ";
-      std::cout << vals[i]->get_maxlow()  << "  ";
-      std::cout << vals[i]->val  << "  <==";
-      for (Edge* e = vals[i]->first(); e != NULL; e = e->vnext()) {
-        if (e->template matched<direction>()) {
-          std::cout << e->getVar()->var << ",";
-        }
-      }
-      std::cout <<"\n";
-    }
-    std::cout <<"\n";
-  }
-
-  template <class View, class Card, bool isView>
-  void
-  VarValGraph<View, Card, isView>::print_graph(void) {
-    std::cout << "Graph-size = "<<node_size<<" ";
-    std::cout << "sum_min ="<<sum_min << " & "
-              << "sum_max ="<<sum_max << "\n";
-    std::cout << "X-Partition: \n";
-    for (int i = 0; i < n_var; i++) {
-      VarNode* vrn = vars[i];
-      std::cout << "X("<<vars[i]->get_info()<<") ";
-      std::cout << "["<<vrn->xindex <<"]";
-      std::cout << "|"<<vrn->noe <<"|";
-      std::cout << "{";
-      for (Edge* e = vrn->first(); e != NULL; e = e->next()){
-        assert(e != NULL);
-        assert(e->getVal() != NULL);
-        std::cout << e->getVal()->val<<",";
-      }
-      std::cout <<"}\t";
-      std::cout << "F"<<vrn->first() << ", L" << vrn->last() << " ";
-      std::cout <<"\n";
-    }
-    std::cout <<"\n";
-
-    std::cout << "V-Partition: \n";
-    for (int i = 0; i < n_val; i++) {
-      ValNode* vln = vals[i];
-      std::cout << vln->val <<" ";
-      std::cout << "V(" << i << ") ";
-      std::cout << "k(" << vln->kmin() << "," <<vln->kmax() << ") ";
-      std::cout << "c(" << vln->template cap<LBC>() << ","
-                << vln->template cap<UBC>() << ") ";
-      std::cout << "ublow: "<<vln->get_maxlow() <<" ";
-      std::cout << "|"<<vln->noe <<"|";
-      std::cout << "{";
-      if (vln->noe == 0 || vln->first() == NULL) {
-        std::cout << "EMPTY";
-      } else {
-        for(Edge* c = vln->first(); c != NULL; c = c->vnext()){
-          assert(c != NULL);
-          assert(c->getVar() != NULL);
-          std::cout << c->getVar()->var << ",";
-        }
-      }
-      std::cout <<"}\t";
-      std::cout <<"\t";
-      if (vln->noe == 0 || vln->first() == NULL) {
-        std::cout <<"no-ptr";
-      } else {
-        std::cout << "F"<<vln->first() << ", L" <<vln->last() << " ";
-      }
-      std::cout <<"\n";
-    }
-    std::cout <<"\n";
-  }
-
 
   template <class View, class Card, bool isView>
   forceinline

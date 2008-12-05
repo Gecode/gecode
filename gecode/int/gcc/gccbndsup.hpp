@@ -260,7 +260,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int skipNonNullElementsLeft(int);
     void* operator new(size_t s);
     void operator delete(void* p);
-    void print(void);
     bool check_update_max(ViewArray<Card>& k);
     bool check_update_min(ViewArray<Card>& k);
     int getsize(void) const;
@@ -433,35 +432,6 @@ namespace Gecode { namespace Int { namespace GCC {
   PartialSum<Card>::skipNonNullElementsLeft(int value) {
     value -= firstValue;
     return (ds[value] > value ? ds[ds[value]] : value) + firstValue;
-  }
-
-  /// \brief Debugging: print a partial sum structure
-  template <class Card>
-  void
-  PartialSum<Card>::print(void){
-    std::cout << "----------\n";
-    std::cout << "smallest elem = "<< minValue() << " - "
-              << "largest  elem = "<< maxValue() << "\n";
-    std::cout << "fsv: "<< firstValue <<" lsv: " << lastValue
-              << " size = "<< size << "\n";
-    std::cout << "number of elements = "<< size - 5<<"\n";
-    std::cout << "elements: ";
-    for (int i = 3; i < size - 2; i++) {
-      std::cout << sum[i] - sum[i-1] << " ";
-    }
-    std::cout <<"\n";
-
-    std::cout << "sum: ";
-    for (int i = 0; i < size; i++) {
-      std::cout <<sum[i] << " ";
-    }
-    std::cout <<"\n";
-    std::cout << "ds: ";
-    for (int i = 0; i < size; i++) {
-      std::cout <<sum[i] << " ";
-    }
-    std::cout <<"\n";
-
   }
 
   /**
