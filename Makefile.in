@@ -266,8 +266,7 @@ SEARCHBUILDDIRS = search
 
 INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
-	var/bool.cpp \
-	view/print.cpp array.cpp bool.cpp \
+	var/bool.cpp array.cpp bool.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp extensional.cpp \
 	dom.cpp rel.cpp element.cpp count.cpp arithmetic.cpp \
 	linear/int-post.cpp linear-int.cpp \
@@ -306,10 +305,10 @@ INTHDR0 = \
 	rel/eq.hpp rel/lex.hpp rel/lq-le.hpp rel/nq.hpp \
 	sorted/matching.hpp sorted/narrowing.hpp \
 	sorted/order.hpp sorted/propagate.hpp sorted/sortsup.hpp \
-	int-set.hpp var-imp/delta.hpp var/bool.hpp \
+	int-set.hpp var-imp/delta.hpp var/print.hpp var/bool.hpp \
 	var-imp/int.hpp var-imp/bool.hpp var/int.hpp \
 	view/bool.hpp view/constint.hpp view/zero.hpp view/int.hpp \
-	view/minus.hpp \
+	view/minus.hpp view/print.hpp \
 	view/offset.hpp view/rtest.hpp view/scale.hpp view/iter.hpp \
 	arithmetic.hh array.hpp bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \

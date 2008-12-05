@@ -35,6 +35,8 @@
  *
  */
 
+#include <sstream>
+
 namespace Gecode {
 
   /**
@@ -239,6 +241,38 @@ namespace Gecode {
   forceinline int
   DFA::Symbols::val(void) const {
     return c_trans->symbol;
+  }
+
+
+  template<class Char, class Traits, class T>
+  std::basic_ostream<Char,Traits>& 
+  operator<<(std::basic_ostream<Char,Traits>& os, const DFA& d) {
+    std::basic_ostringstream<Char,Traits> st;
+    st.copyfmt(os); st.width(0);
+    st << "Start state: 0" << std::endl
+       << "States:      0..." << dfa.n_states()-1 << std::endl
+       << "Transitions:";
+    for (int s = 0; s < static_cast<int>(dfa.n_states()); s++) {
+      DFA::Transitions t(dfa);
+      int n = 0;
+      while (t()) {
+        if (t.i_state() == s) {
+          if ((n % 4) == 0)
+            st << std::endl << "\t";
+          st << "[" << t.i_state() << "]"
+             << "- " << t.symbol() << " >"
+             << "[" << t.o_state() << "]  ";
+          ++n;
+        }
+        ++t;
+      }
+    }
+    st << std::endl << "Final states: "
+       << std::endl
+       << "\t[" << dfa.final_fst() << "] ... ["
+       << dfa.final_lst()-1 << "]"
+       << std::endl;
+    return os << st.str();
   }
 
 }

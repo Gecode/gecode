@@ -285,6 +285,14 @@ namespace Gecode {
       
     };
 
+    /**
+     * \brief Print integer variable view
+     * \relates Gecode::Int::IntView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const IntView& x);
+
   }
 
   /**
@@ -501,6 +509,14 @@ namespace Gecode {
       //@}
     };
 
+    /**
+     * \brief Print integer minus view
+     * \relates Gecode::Int::MinusView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
+
   }
 
   /** \name View comparison
@@ -708,6 +724,14 @@ namespace Gecode {
       static Support::Symbol type(void);
       //@}
     };
+
+    /**
+     * \brief Print integer offset view
+     * \relates Gecode::Int::OffsetView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
 
   }
 
@@ -918,6 +942,22 @@ namespace Gecode {
      */
     typedef ScaleView<double,double> DoubleScaleView;
 
+    /**
+     * \brief Print integer-precision integer scale view
+     * \relates Gecode::Int::ScaleView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x);
+
+    /**
+     * \brief Print double-precision integer scale view
+     * \relates Gecode::Int::ScaleView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x);
+
   }
 
   /** \name View comparison
@@ -1127,6 +1167,14 @@ namespace Gecode {
       //@}
     };
 
+    /**
+     * \brief Print integer constant integer view
+     * \relates Gecode::Int::ConstIntView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x);
+
   }
 
   /**
@@ -1325,6 +1373,14 @@ namespace Gecode {
       static Support::Symbol type(void);
       //@}
     };
+
+    /**
+     * \brief Print integer zero view
+     * \relates Gecode::Int::ScaleView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x);
 
   }
 
@@ -1551,6 +1607,14 @@ namespace Gecode {
       //@}
     };
 
+    /**
+     * \brief Print Boolean view
+     * \relates Gecode::Int::BoolView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const BoolView& x);
+
   }
 
   /**
@@ -1728,6 +1792,15 @@ namespace Gecode {
     };
 
     /**
+     * \brief Print negated Boolean view
+     * \relates Gecode::Int::NegBoolView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    operator<<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
+
+
+    /**
      * \brief Boolean tests
      *
      */
@@ -1792,79 +1865,10 @@ namespace Gecode {
 #include <gecode/int/view/offset.hpp>
 #include <gecode/int/view/scale.hpp>
 
+#include <gecode/int/view/print.hpp>
+
 namespace Gecode {
 
-  namespace Int {
-    /**
-     * \brief Print integer variable view
-     * \relates Gecode::Int::IntView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const IntView&);
-    /**
-     * \brief Print minus integer view
-     * \relates Gecode::Int::MinusView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const MinusView&);
-    /**
-     * \brief Print offset integer view
-     * \relates Gecode::Int::OffsetView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const OffsetView&);
-    /**
-     * \brief Print constant integer view
-     * \relates Gecode::Int::ConstIntView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const ConstIntView&);
-    /**
-     * \brief Print zero integer view
-     * \relates Gecode::Int::ZeroIntView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const ZeroIntView&);
-    /**
-     * \brief Print integer-precision scale integer view
-     * \relates Gecode::Int::ScaleView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const IntScaleView&);
-    /**
-     * \brief Print double-precision scale integer view
-     * \relates Gecode::Int::ScaleView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const DoubleScaleView&);
-    
-    /**
-     * \brief Print Boolean variable view
-     * \relates Gecode::Int::BoolView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const BoolView&);
-    /**
-     * \brief Print negated Boolean view
-     * \relates Gecode::Int::NegBoolView
-     */
-    GECODE_INT_EXPORT std::ostream&
-    operator<<(std::ostream&, const NegBoolView&);
-
-  }
-  
-  inline std::ostream&
-  operator<<(std::ostream& os, const IntVar& x) {
-    Gecode::Int::IntView vx(x);
-    return os << vx;
-  }
-  
-  inline std::ostream&
-  operator<<(std::ostream& os, const BoolVar& x) {
-    Gecode::Int::BoolView vx(x);
-    return os << vx;
-  }
-  
   namespace Int {
 
     /**
@@ -1877,7 +1881,7 @@ namespace Gecode {
     enum RelTest {
       RT_FALSE = 0, ///< Relation does not hold
       RT_MAYBE = 1, ///< Relation may hold or not
-      RT_TRUE  = 2   ///< Relation does hold
+      RT_TRUE  = 2  ///< Relation does hold
     };
 
     /// Test whether views \a x and \a y are equal (use bounds information)

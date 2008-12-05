@@ -35,6 +35,8 @@
  *
  */
 
+#include <sstream>
+
 namespace Gecode {
 
   /**
@@ -201,6 +203,26 @@ namespace Gecode {
     assert(imp->finalized());
     return imp->max;
   }
+
+
+  template<class Char, class Traits, class T>
+  std::basic_ostream<Char,Traits>& 
+  operator<<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << "Number of tuples: " << ts.tuples() << std::endl
+      << "Tuples:" << std::endl;
+    for (int i = 0; i < ts.tuples(); ++i) {
+      s << '\t';
+      for (int j = 0; j < ts.arity(); ++j) {
+        s.width(3);
+        s << " " << ts[i][j];
+      }
+      s << std::endl;
+    }
+    return os << s.str();
+  }
+
 }
 
 // STATISTICS: int-prop

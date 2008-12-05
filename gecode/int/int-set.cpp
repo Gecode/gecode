@@ -135,23 +135,6 @@ namespace Gecode {
 
   const IntSet IntSet::empty;
 
-  std::ostream&
-  operator<<(std::ostream& os, const IntSet& is) {
-    os << '{';
-    for (int i = 0; i < is.size(); ) {
-      int min = is.min(i);
-      int max = is.max(i);
-      if (min == max)
-        os << min;
-      else
-        os << min << ".." << max;
-      i++;
-      if (i < is.size())
-        os << ',';
-    }
-    return os << '}';
-  }
-
 }
 
 // STATISTICS: int-var

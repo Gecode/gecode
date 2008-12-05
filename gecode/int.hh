@@ -280,8 +280,9 @@ namespace Gecode {
    * \brief Print integer set \a s
    * \relates Gecode::IntSet
    */
-  GECODE_INT_EXPORT std::ostream&
-  operator<<(std::ostream&, const IntSet& s);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator<<(std::basic_ostream<Char,Traits>& os, const IntSet& s);
 
 }
 
@@ -420,6 +421,13 @@ namespace Gecode {
     //@}    
   };
 
+  /**
+   * \brief Print integer variable \a x
+   * \relates Gecode::IntVar
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator<<(std::basic_ostream<Char,Traits>& os, const IntVar& x);
 
   /**
    * \brief %Range iterator for integer variables
@@ -565,22 +573,18 @@ namespace Gecode {
   };
 
   /**
-   * \brief Print integer variable \a x
-   * \relates Gecode::IntVar
-   */
-  std::ostream&
-  operator<<(std::ostream&, const IntVar& x);
-  /**
    * \brief Print Boolean variable \a x
    * \relates Gecode::BoolVar
    */
-  std::ostream&
-  operator<<(std::ostream&, const BoolVar& x);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator<<(std::basic_ostream<Char,Traits>& os, const BoolVar& x);
 
 }
 
 
 #include <gecode/int/view.hpp>
+#include <gecode/int/var/print.hpp>
 #include <gecode/int/propagator.hpp>
 
 namespace Gecode {
@@ -2153,17 +2157,19 @@ namespace Gecode {
 
   //@}
 
-  /** \relates Gecode::DFA
-   * Print DFA \a d
+  /** Print DFA \a d
+   * \relates Gecode::DFA
    */
-  GECODE_INT_EXPORT std::ostream&
-  operator<<(std::ostream&, const DFA& d);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator<<(std::basic_ostream<Char,Traits>& os, const DFA& d);
   
-  /** \relates Gecode::TupleSet
-   * Print TupleSet \a ts
+  /** Print TupleSet \a ts
+   * \relates Gecode::TupleSet
    */
-  GECODE_INT_EXPORT std::ostream&
-  operator<<(std::ostream&, const TupleSet& ts);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator<<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts);
 
 }
 

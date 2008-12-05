@@ -35,6 +35,8 @@
  *
  */
 
+#include <sstream>
+
 namespace Gecode {
 
   /*
@@ -189,6 +191,28 @@ namespace Gecode {
     IntSetRanges r(s);
     Iter::Ranges::ToValues<IntSetRanges>::init(r);
   }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator<<(std::basic_ostream<Char,Traits>& os, const IntSet& is) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << '{';
+    for (int i = 0; i < is.size(); ) {
+      int min = is.min(i);
+      int max = is.max(i);
+      if (min == max)
+        s << min;
+      else
+        s << min << ".." << max;
+      i++;
+      if (i < is.size())
+        s << ',';
+    }
+    s << '}';
+    return os << s.str();
+  }
+
 
 }
 
