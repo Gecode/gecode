@@ -320,18 +320,6 @@ namespace Gecode {
     typedef Int::IntView View;
   };
 
-  /**
-   * \brief Class providing domain size info
-   *
-   * This class specializes the DomainSize class for integer views.
-   */
-  template<>
-  class DomainSize<Int::IntView> {
-  public:
-    /// The size of an integer domain
-    static int size(const Int::IntView& iv) { return iv.size(); }
-  };
-
   namespace Int {
 
     /**
@@ -1640,18 +1628,6 @@ namespace Gecode {
   public:
     /// The variable type of an IntView
     typedef Int::BoolView View;
-  };
-
-  /**
-   * \brief Class providing domain size info
-   *
-   * This class specializes the DomainSize class for Boolean views.
-   */
-  template<>
-  class DomainSize<Int::BoolView> {
-  public:
-    /// The size of an integer domain
-    static int size(const Int::BoolView& iv) { return iv.size(); }
   };
 
   namespace Int {

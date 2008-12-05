@@ -67,13 +67,6 @@ namespace Gecode {
   template <class View>
   class ViewVarImpTraits {};
 
-  /**
-   * \brief Traits class for variable domain size
-   *
-   */
-  template <class View>
-  class DomainSize {};
-
 }
 
 // STATISTICS: kernel-other
