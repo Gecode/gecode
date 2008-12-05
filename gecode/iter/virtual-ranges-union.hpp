@@ -73,9 +73,9 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
+    virtual bool operator ()(void);
     //@}
   };
 
@@ -92,7 +92,7 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
     /// Order for iterators: by increasing minimum of next range
     class RangeUnionOrder {
     public:
-      bool operator()(const Iterator*, const Iterator*) const;
+      bool operator ()(const Iterator*, const Iterator*) const;
     };
     /// Instance for order
     RangeUnionOrder order;
@@ -120,9 +120,9 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
+    virtual bool operator ()(void);
     //@}
   };
 
@@ -134,7 +134,7 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
    */
 
   forceinline void
-  Union::operator++(void) {
+  Union::operator ++(void) {
     if (!(*i)() && !(*j)()) {
       finish(); return;
     }
@@ -168,14 +168,14 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
   forceinline
   Union::Union(Iterator* i0, Iterator* j0)
     : i(i0), j(j0) {
-    operator++();
+    operator ++();
   }
 
   forceinline
   Union::~Union(void) { delete i; delete j; }
 
   forceinline bool
-  Union::operator()(void) { return MinMax::operator()(); }
+  Union::operator ()(void) { return MinMax::operator ()(); }
 
   forceinline int
   Union::min(void) const { return MinMax::min(); }
@@ -192,13 +192,13 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
    */
 
   forceinline bool
-  NaryUnion::RangeUnionOrder::operator()(const Iterator* a,
+  NaryUnion::RangeUnionOrder::operator ()(const Iterator* a,
                                          const Iterator* b) const {
     return a->min() > b->min();
   }
 
   inline void
-  NaryUnion::operator++(void) {
+  NaryUnion::operator ++(void) {
     if (r.empty()) {
       finish(); return;
     }
@@ -228,11 +228,11 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
     for (int i = n; i--; )
       if ((*(r0[i]))())
         r.insert(r0[i]);
-    operator++();
+    operator ++();
   }
 
   forceinline bool
-  NaryUnion::operator()(void) { return MinMax::operator()(); }
+  NaryUnion::operator ()(void) { return MinMax::operator ()(); }
 
   forceinline int
   NaryUnion::min(void) const { return MinMax::min(); }

@@ -80,9 +80,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
     /// \name Value access
     //@{
@@ -135,11 +135,11 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class I>
   forceinline bool
-  OverweightValues<I>::operator()(void) const { return iter(); }
+  OverweightValues<I>::operator ()(void) const { return iter(); }
 
   template <class I>
   forceinline void
-  OverweightValues<I>::operator++(void) { ++iter; next(); }
+  OverweightValues<I>::operator ++(void) { ++iter; next(); }
 
   template <class I>
   forceinline int
@@ -232,11 +232,11 @@ namespace Gecode { namespace Set { namespace Int {
   /// Sort order for integers
   class IntLt {
   public:
-    bool operator()(int x, int y);
+    bool operator ()(int x, int y);
   };
 
   forceinline bool 
-  IntLt::operator()(int x, int y) {
+  IntLt::operator ()(int x, int y) {
     return x < y;
   }
 

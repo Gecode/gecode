@@ -66,7 +66,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -74,7 +74,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I, class J>
   forceinline void
-  Diff<I,J>::operator++(void) {
+  Diff<I,J>::operator ++(void) {
     // Precondition: mi <= ma
     // Task: find next mi greater than ma
     while (true) {
@@ -122,7 +122,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       finish();
     } else {
       mi = i.min()-1; ma = mi;
-      operator++();
+      operator ++();
     }
   }
 
@@ -134,7 +134,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       finish();
     } else {
       mi = i.min()-1; ma = mi;
-      operator++();
+      operator ++();
     }
   }
 

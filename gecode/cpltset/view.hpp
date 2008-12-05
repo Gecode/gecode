@@ -204,7 +204,7 @@ namespace Gecode {
      * \relates Gecode::CpltSet::CpltSetView
      */
     GECODE_CPLTSET_EXPORT std::ostream&
-    operator<<(std::ostream&, const Gecode::CpltSet::CpltSetView& x);
+    operator <<(std::ostream&, const Gecode::CpltSet::CpltSetView& x);
   }
 
 

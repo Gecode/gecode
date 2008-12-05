@@ -161,11 +161,11 @@ namespace Gecode {
 
   forceinline
   bool
-  SetVarGlbRanges::operator()(void) const { return iter(); }
+  SetVarGlbRanges::operator ()(void) const { return iter(); }
 
   forceinline
   void
-  SetVarGlbRanges::operator++(void) { ++iter; }
+  SetVarGlbRanges::operator ++(void) { ++iter; }
 
   forceinline
   int
@@ -188,11 +188,11 @@ namespace Gecode {
 
   forceinline
   bool
-  SetVarLubRanges::operator()(void) const { return iter(); }
+  SetVarLubRanges::operator ()(void) const { return iter(); }
 
   forceinline
   void
-  SetVarLubRanges::operator++(void) { ++iter; }
+  SetVarLubRanges::operator ++(void) { ++iter; }
 
   forceinline
   int
@@ -216,11 +216,11 @@ namespace Gecode {
 
   forceinline
   bool
-  SetVarUnknownRanges::operator()(void) const { return iter(); }
+  SetVarUnknownRanges::operator ()(void) const { return iter(); }
 
   forceinline
   void
-  SetVarUnknownRanges::operator++(void) { ++iter; }
+  SetVarUnknownRanges::operator ++(void) { ++iter; }
 
   forceinline
   int
@@ -241,12 +241,12 @@ namespace Gecode {
   }
 
   forceinline bool
-  SetVarGlbValues::operator()(void) const {
+  SetVarGlbValues::operator ()(void) const {
     return iter();
   }
 
   forceinline void
-  SetVarGlbValues::operator++(void) {
+  SetVarGlbValues::operator ++(void) {
     ++iter;
   }
 
@@ -262,12 +262,12 @@ namespace Gecode {
   }
 
   forceinline bool
-  SetVarLubValues::operator()(void) const {
+  SetVarLubValues::operator ()(void) const {
     return iter();
   }
 
   forceinline void
-  SetVarLubValues::operator++(void) {
+  SetVarLubValues::operator ++(void) {
     ++iter;
   }
 
@@ -283,12 +283,12 @@ namespace Gecode {
   }
 
   forceinline bool
-  SetVarUnknownValues::operator()(void) const {
+  SetVarUnknownValues::operator ()(void) const {
     return iter();
   }
 
   forceinline void
-  SetVarUnknownValues::operator++(void) {
+  SetVarUnknownValues::operator ++(void) {
     ++iter;
   }
 

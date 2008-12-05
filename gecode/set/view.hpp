@@ -1404,45 +1404,45 @@ namespace Gecode { namespace Set {
    * \relates Gecode::Set::SetView
    */
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const SetView&);
+  operator <<(std::ostream&, const SetView&);
   /**
    * \brief Print empty set view
    * \relates Gecode::Set::EmptyView
    */
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const EmptyView&);
+  operator <<(std::ostream&, const EmptyView&);
   /**
    * \brief Print universe set view
    * \relates Gecode::Set::UniverseView
    */
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const UniverseView&);
+  operator <<(std::ostream&, const UniverseView&);
   /**
    * \brief Print set constant view
    * \relates Gecode::Set::ConstantView
    */
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const ConstantView&);
+  operator <<(std::ostream&, const ConstantView&);
   /**
    * \brief Print singelton set view
    * \relates Gecode::Set::SingletonView
    */
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const SingletonView&);
+  operator <<(std::ostream&, const SingletonView&);
   /**
    * \brief Print set complement view
    * \relates Gecode::Set::ComplementView
    */
   template <class View>
   std::ostream&
-  operator<<(std::ostream&, const ComplementView<View>&);
+  operator <<(std::ostream&, const ComplementView<View>&);
 
 }}
 
 namespace Gecode {
 
   inline std::ostream&
-  operator<<(std::ostream& os, const SetVar& x) {
+  operator <<(std::ostream& os, const SetVar& x) {
     Gecode::Set::SetView vx(x);
     return os << vx;
   }

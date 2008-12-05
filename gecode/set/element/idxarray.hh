@@ -83,9 +83,9 @@ namespace Gecode { namespace Set { namespace Element {
     void size(int n);
 
     /// Access element \a n
-    IdxView<View>& operator[](int n);
+    IdxView<View>& operator [](int n);
     /// Access element \a n
-    const IdxView<View>& operator[](int) const;
+    const IdxView<View>& operator [](int) const;
 
     /**
      * Subscribe propagator \a p with propagation condition \a pc

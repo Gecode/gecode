@@ -69,7 +69,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -88,7 +88,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Order for iterators: by increasing minimum of next range
     class RangeUnionOrder {
     public:
-      bool operator()(const I&, const I&) const;
+      bool operator ()(const I&, const I&) const;
     };
     /// Instance for order
     RangeUnionOrder order;
@@ -108,7 +108,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -121,7 +121,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I, class J>
   inline void
-  Union<I,J>::operator++(void) {
+  Union<I,J>::operator ++(void) {
     if (!i() && !j()) {
       finish(); return;
     }
@@ -157,14 +157,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline
   Union<I,J>::Union(I& i0, J& j0)
     : i(i0), j(j0) {
-    operator++();
+    operator ++();
   }
 
   template <class I, class J>
   forceinline void
   Union<I,J>::init(I& i0, J& j0) {
     i = i0; j = j0;
-    operator++();
+    operator ++();
   }
 
 
@@ -176,13 +176,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline bool
-  NaryUnion<I>::RangeUnionOrder::operator()(const I& a, const I& b) const {
+  NaryUnion<I>::RangeUnionOrder::operator ()(const I& a, const I& b) const {
     return a.min() > b.min();
   }
 
   template <class I>
   inline void
-  NaryUnion<I>::operator++(void) {
+  NaryUnion<I>::operator ++(void) {
     if (r.empty()) {
       finish(); return;
     }
@@ -214,7 +214,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     for (int i = n; i--; )
       if (r0[i]())
         r.insert(r0[i]);
-    operator++();
+    operator ++();
   }
 
   template <class I>
@@ -224,7 +224,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     for (int i = n; i--; )
       if (r0[i]())
         r.insert(r0[i]);
-    operator++();
+    operator ++();
   }
 
 }}}

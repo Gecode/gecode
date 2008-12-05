@@ -195,7 +195,7 @@ namespace Gecode {
   }
 
   const REG&
-  REG::operator=(const REG& r) {
+  REG::operator =(const REG& r) {
     if (&r != this) {
       r.e->inc();
       e->dec();
@@ -259,7 +259,7 @@ namespace Gecode {
   }
 
   REG
-  REG::operator|(const REG& r2) {
+  REG::operator |(const REG& r2) {
     if (e == r2.e)
       return *this;
     Exp* f = new Exp();
@@ -273,7 +273,7 @@ namespace Gecode {
   }
 
   REG&
-  REG::operator|=(const REG& r2) {
+  REG::operator |=(const REG& r2) {
     if (e == r2.e)
       return *this;
     Exp* f = new Exp();
@@ -287,7 +287,7 @@ namespace Gecode {
   }
 
   REG
-  REG::operator+(const REG& r2) {
+  REG::operator +(const REG& r2) {
     if (e == NULL)    return r2;
     if (r2.e == NULL) return *this;
     Exp* f = new Exp();
@@ -301,7 +301,7 @@ namespace Gecode {
   }
 
   REG&
-  REG::operator+=(const REG& r2) {
+  REG::operator +=(const REG& r2) {
     if (r2.e == NULL) 
       return *this;
     if (e == NULL) {
@@ -319,7 +319,7 @@ namespace Gecode {
   }
 
   REG
-  REG::operator*(void) {
+  REG::operator *(void) {
     if ((e == NULL) || (e->type == REG::Exp::ET_STAR))
       return *this;
     Exp* f = new Exp();
@@ -332,7 +332,7 @@ namespace Gecode {
   }
 
   REG
-  REG::operator()(unsigned int n, unsigned int m) {
+  REG::operator ()(unsigned int n, unsigned int m) {
     REG r;
     if ((n>m) || (m == 0))
       return r;
@@ -363,7 +363,7 @@ namespace Gecode {
   }
 
   REG
-  REG::operator()(unsigned int n) {
+  REG::operator ()(unsigned int n) {
     REG r;
     if (n > 0) {
       REG r0 = *this;
@@ -379,8 +379,8 @@ namespace Gecode {
   }
 
   REG
-  REG::operator+(void) {
-    return this->operator()(1);
+  REG::operator +(void) {
+    return this->operator ()(1);
   }
 
 
@@ -657,7 +657,7 @@ namespace Gecode {
     class SymbolsInc {
     public:
       forceinline bool
-      operator()(int x, int y) {
+      operator ()(int x, int y) {
         return x < y;
       }
       forceinline static void
@@ -810,7 +810,7 @@ namespace Gecode {
 
 
   std::ostream&
-  operator<<(std::ostream& os, const Gecode::REG& r) {
+  operator <<(std::ostream& os, const Gecode::REG& r) {
     return r.print(os);
   }
 

@@ -438,7 +438,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 /// Debugging: print a variable node
 inline std::ostream&
-operator<<(std::ostream& os, Gecode::Int::GCC::VarNode* v) {
+operator <<(std::ostream& os, Gecode::Int::GCC::VarNode* v) {
   os << v->var<<":{";
   for (Gecode::Int::GCC::Edge* e = v->first(); e != NULL; e = e->next()) {
     os << e->getVal()->val<<",";
@@ -450,7 +450,7 @@ operator<<(std::ostream& os, Gecode::Int::GCC::VarNode* v) {
 
 /// Debugging: print a value node
 inline std::ostream&
-operator<<(std::ostream& os, Gecode::Int::GCC::ValNode* v) {
+operator <<(std::ostream& os, Gecode::Int::GCC::ValNode* v) {
   os << v->val<<":{";
   for (Gecode::Int::GCC::Edge* e = v->first(); e != NULL; e = e->vnext()) {
     os << e->getVar()->var<<",";
@@ -1007,7 +1007,7 @@ namespace Gecode { namespace Int { namespace GCC {
 /// Edge
 /// Debugging: print an edge
 inline std::ostream&
-operator<<(std::ostream& os, Gecode::Int::GCC::Edge* e){
+operator <<(std::ostream& os, Gecode::Int::GCC::Edge* e){
   if (e== NULL) {
     os << "(N)";
   } else {

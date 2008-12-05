@@ -132,7 +132,7 @@ namespace Gecode { namespace CpltSet {
    * \relates Gecode::CpltSet::CpltSetView
    */
   std::ostream&
-  operator<<(std::ostream& os, const CpltSetView& x) {
+  operator <<(std::ostream& os, const CpltSetView& x) {
     bool assigned = x.assigned();
     if (assigned) {
       GlbValues<CpltSetView> glb(x);
@@ -157,7 +157,7 @@ namespace Gecode { namespace CpltSet {
 namespace Gecode {
 
   std::ostream&
-  operator<< (std::ostream& os, const CpltSetVar& x) {
+  operator << (std::ostream& os, const CpltSetVar& x) {
     CpltSet::CpltSetView xv(x);
     return os << xv;
   }

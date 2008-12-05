@@ -73,9 +73,9 @@ namespace Gecode { namespace Iter { namespace Values {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Value access
@@ -112,7 +112,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template <class I, class M, bool strict>
   forceinline void
-  Map<I,M,strict>::operator++(void) {
+  Map<I,M,strict>::operator ++(void) {
     if (strict) {
       ++i;
     } else {
@@ -124,7 +124,7 @@ namespace Gecode { namespace Iter { namespace Values {
   }
   template <class I, class M, bool strict>
   forceinline bool
-  Map<I,M,strict>::operator()(void) const {
+  Map<I,M,strict>::operator ()(void) const {
     return i();
   }
 

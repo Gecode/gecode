@@ -72,8 +72,8 @@ namespace Gecode { namespace Reflection {
     VarMap(void);
     /// Copy constructor
     VarMap(const VarMap&);
-    /// Assignment operator
-    VarMap& operator=(const VarMap&);
+    /// Assignment operator 
+    VarMap& operator =(const VarMap&);
     /// Destructor
     GECODE_MSC_VIRTUAL ~VarMap(void);
     
@@ -167,7 +167,7 @@ namespace Gecode { namespace Reflection {
     /// Construct iterator for variable map \a m
     VarMapIter(VarMap& m);
     /// Test whether iterator still has variables or is done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Return variable specification for current iterator position
     VarSpec& spec(void) const;
     /// Return variable implementation for current iterator position
@@ -175,7 +175,7 @@ namespace Gecode { namespace Reflection {
     /// Return variable for current iterator position
     Var var(void) const;
     /// Move iterator to next variable
-    void operator++(void);
+    void operator ++(void);
   };
 
   template <> void

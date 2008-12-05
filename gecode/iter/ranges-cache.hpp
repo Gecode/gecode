@@ -75,9 +75,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Reset iterator to start from beginning
     void reset(void);
     //@}
@@ -121,12 +121,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline void
-  Cache<I>::operator++(void) {
+  Cache<I>::operator ++(void) {
     c++;
   }
   template <class I>
   forceinline bool
-  Cache<I>::operator()(void) const {
+  Cache<I>::operator ()(void) const {
     return c < r.size();
   }
 
@@ -188,11 +188,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Move iterator to previous range (if possible)
-    void operator--(void);
+    void operator --(void);
     /// Reset iterator to start from beginning
     void reset(void);
     /// Start iteration from end
@@ -257,19 +257,19 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline void
-  ValCache<I>::operator++(void) {
+  ValCache<I>::operator ++(void) {
     c++;
   }
 
   template <class I>
   forceinline void
-  ValCache<I>::operator--(void) {
+  ValCache<I>::operator --(void) {
     c--;
   }
 
   template <class I>
   forceinline bool
-  ValCache<I>::operator()(void) const {
+  ValCache<I>::operator ()(void) const {
     return -1 < c && c < n;
   }
 

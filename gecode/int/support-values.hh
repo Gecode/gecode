@@ -82,9 +82,9 @@ namespace Gecode { namespace Int {
       /// \name Iteration control
       //@{
       /// Test whether iterator is still at a value or done
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move iterator to next value (if possible)
-      void operator++(void);
+      void operator ++(void);
       //@}
       
       /// \name Value access
@@ -128,9 +128,9 @@ namespace Gecode { namespace Int {
     /// Reset iterator
     void reset(void);
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
     
     /// \name Value access

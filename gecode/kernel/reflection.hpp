@@ -227,9 +227,9 @@ namespace Gecode { namespace Reflection {
     ArrayArg(void);
   public:
     /// Element access
-    const Arg* operator[](int i) const;
+    const Arg* operator [](int i) const;
     /// Element access
-    Arg*& operator[](int i);
+    Arg*& operator [](int i);
     /// Size of the array
     int size(void) const;
   };
@@ -248,9 +248,9 @@ namespace Gecode { namespace Reflection {
     IntArrayArg(void);
   public:
     /// Element access
-    const int& operator[](int i) const;
+    const int& operator [](int i) const;
     /// Element access
-    int& operator[](int i);
+    int& operator [](int i);
     /// Size of the array
     int size(void) const;
   };
@@ -271,9 +271,9 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     IntArrayArgRanges(Reflection::IntArrayArg* a0);
     /// %Test whether iterator is still at a valid range
-    bool operator()(void);
+    bool operator ()(void);
     /// Move iterator to next range
-    void operator++(void);
+    void operator ++(void);
     /// Minimum of current range
     int min(void) const;
     /// Maximum of current range
@@ -310,8 +310,8 @@ namespace Gecode { namespace Reflection {
     VarSpec(Support::Symbol vti, Arg* domain, bool assigned=false);
     /// Copy constructor
     VarSpec(const VarSpec& s);
-    /// Assignment operator
-    const VarSpec& operator=(const VarSpec& s);
+    /// Assignment operator 
+    const VarSpec& operator =(const VarSpec& s);
     /// Destructor
     GECODE_MSC_VIRTUAL ~VarSpec(void);
     /// Set the name for this variable
@@ -371,8 +371,8 @@ namespace Gecode { namespace Reflection {
     ActorSpec(const Support::Symbol& name);
     /// Copy constructor
     ActorSpec(const ActorSpec& s);
-    /// Assignment operator
-    const ActorSpec& operator=(const ActorSpec& s);
+    /// Assignment operator 
+    const ActorSpec& operator =(const ActorSpec& s);
     /// Destructor
     GECODE_MSC_VIRTUAL ~ActorSpec(void);
     
@@ -385,7 +385,7 @@ namespace Gecode { namespace Reflection {
     /// Check that the number of arguments is \a n, throw exception otherwise
     void checkArity(int n) const;
     /// Return argument \a i
-    Arg* operator[](int i) const;
+    Arg* operator [](int i) const;
 
     /// Return whether the actor is a branching
     bool isBranching(void) const;
@@ -406,44 +406,44 @@ namespace Gecode { namespace Reflection {
    *  \relates Gecode::Reflection::ActorSpec
    */
   ActorSpec
-  operator<<(ActorSpec s, Arg* arg);
+  operator <<(ActorSpec s, Arg* arg);
 
   /** \brief Add \a i to specification
    *  \relates Gecode::Reflection::ActorSpec
    */
   ActorSpec
-  operator<<(ActorSpec s, int i);
+  operator <<(ActorSpec s, int i);
 
   /** \brief Add \a i to specification
    *  \relates Gecode::Reflection::ActorSpec
    */
   ActorSpec
-  operator<<(ActorSpec s, unsigned int i);
+  operator <<(ActorSpec s, unsigned int i);
   
   /** \brief Add \a d to specification, where \a d is cast into an integer
    *  \relates Gecode::Reflection::ActorSpec
    */
   ActorSpec
-  operator<<(ActorSpec s, double i);
+  operator <<(ActorSpec s, double i);
 
 
-  /* Implementation of ActorSpec operators */
+  /* Implementation of ActorSpec operator s */
 
   forceinline ActorSpec
-  operator<<(ActorSpec s, Arg* arg) {
+  operator <<(ActorSpec s, Arg* arg) {
     s.add(arg);
     return s;
   }
   forceinline ActorSpec
-  operator<<(ActorSpec s, int i) {
+  operator <<(ActorSpec s, int i) {
     return s << Arg::newInt(i);
   }
   forceinline ActorSpec
-  operator<<(ActorSpec s, unsigned int i) {
+  operator <<(ActorSpec s, unsigned int i) {
     return s << Arg::newInt(static_cast<int>(i));
   }
   forceinline ActorSpec
-  operator<<(ActorSpec s, double i) {
+  operator <<(ActorSpec s, double i) {
     return s << Arg::newInt(static_cast<int>(i));
   }
 
@@ -475,8 +475,8 @@ namespace Gecode { namespace Reflection {
     BranchingSpec(unsigned int n);
     /// Copy constructor
     BranchingSpec(const BranchingSpec& s);
-    /// Assignment operator
-    const BranchingSpec& operator=(const BranchingSpec& s);
+    /// Assignment operator 
+    const BranchingSpec& operator =(const BranchingSpec& s);
     /// Destructor
     GECODE_MSC_VIRTUAL ~BranchingSpec(void);
     
@@ -485,10 +485,10 @@ namespace Gecode { namespace Reflection {
     /// Return number of fields
     unsigned int size(void) const;
     /// Return specification of alternative \a i
-    Arg* operator[](int i) const;
+    Arg* operator [](int i) const;
     
     /// Return specification of alternative \a i
-    Arg*& operator[](int i);
+    Arg*& operator [](int i);
     //@}
   };
   
@@ -519,9 +519,9 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     ActorSpecIter(const Space&, VarMap&);
     /// %Test whether iterator still has actor specifications or is done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next actor
-    void operator++(void);
+    void operator ++(void);
     /// Return actor specification for current iterator position
     ActorSpec actor(void) const;
   };
@@ -598,7 +598,7 @@ namespace Gecode { namespace Reflection {
     /// Do not allow copying
     Registry(const Registry&);
     /// Do not allow assignment
-    Registry& operator=(const Registry&);
+    Registry& operator =(const Registry&);
   };
   
   /// The registry object \ingroup TaskReflection
@@ -726,7 +726,7 @@ namespace Gecode { namespace Reflection {
 
   /// Print \a v to \a os
   GECODE_KERNEL_EXPORT std::ostream&
-  operator<<(std::ostream& os, const Var& v);
+  operator <<(std::ostream& os, const Var& v);
 
 
   /**

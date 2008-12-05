@@ -161,9 +161,9 @@ namespace Gecode {
       /// Destructor
       GECODE_DDS_EXPORT ~Partition(void);
       /// Return element at position \a i
-      const int& operator[](int i) const;
+      const int& operator [](int i) const;
       /// Return element at position \a i
-      int& operator[](int i);
+      int& operator [](int i);
       /// Return start index of component \a i
       int component(int i) const;
       /// Return start index of component \a i
@@ -193,7 +193,7 @@ namespace Gecode {
       /// Destructor
       GECODE_DDS_EXPORT ~DecompDesc(void);
       /// Return the stored label
-      int operator[](int i) const;
+      int operator [](int i) const;
       /// Return the start index for component \a alt
       int componentStart(unsigned int alt) const;
       /// Return the start index
@@ -254,11 +254,11 @@ namespace Gecode {
     }
 
     forceinline const int&
-    Partition::operator[](int i) const {
+    Partition::operator [](int i) const {
       return elements[i];
     }
     forceinline int&
-    Partition::operator[](int i) {
+    Partition::operator [](int i) {
       return elements[i];
     }
     forceinline int
@@ -315,7 +315,7 @@ namespace Gecode {
 
     forceinline
     int
-    DecompDesc::operator[](int i) const {
+    DecompDesc::operator [](int i) const {
       return element[i*2];
     }
   

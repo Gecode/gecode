@@ -136,7 +136,7 @@ namespace Gecode {
     /// Copy constructor (disabled)
     Heap(const Heap&) {}
     /// Assignment operator (disabled)
-    const Heap& operator=(const Heap&) { return *this; }
+    const Heap& operator =(const Heap&) { return *this; }
   };
 
   /// The single global heap

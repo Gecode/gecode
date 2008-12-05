@@ -58,7 +58,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -76,7 +76,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
   forceinline void
-  Singleton::operator++(void) {
+  Singleton::operator ++(void) {
     mi=1; ma=0;
   }
 

@@ -177,7 +177,7 @@ namespace Gecode {
 
   template <class Var>
   inline const LinExpr<Var>&
-  LinExpr<Var>::operator=(const LinExpr<Var>& e) {
+  LinExpr<Var>::operator =(const LinExpr<Var>& e) {
     if (this != &e) {
       if (n->decrement())
         delete n;
@@ -249,185 +249,185 @@ namespace Gecode {
   }
 
   inline LinExpr<IntVar>
-  operator+(int c, const IntVar& x) {
+  operator +(int c, const IntVar& x) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_ADD,c);
   }
   inline LinExpr<IntVar>
-  operator+(int c, const LinExpr<IntVar>& e) {
+  operator +(int c, const LinExpr<IntVar>& e) {
     return LinExpr<IntVar>(e,LinExpr<IntVar>::NT_ADD,c);
   }
   inline LinExpr<IntVar>
-  operator+(const IntVar& x, int c) {
+  operator +(const IntVar& x, int c) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_ADD,c);
   }
   inline LinExpr<IntVar>
-  operator+(const LinExpr<IntVar>& e, int c) {
+  operator +(const LinExpr<IntVar>& e, int c) {
     return LinExpr<IntVar>(e,LinExpr<IntVar>::NT_ADD,c);
   }
   inline LinExpr<IntVar>
-  operator+(const IntVar& x, const IntVar& y) {
+  operator +(const IntVar& x, const IntVar& y) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_ADD,y);
   }
   inline LinExpr<IntVar>
-  operator+(const IntVar& x, const LinExpr<IntVar>& e) {
+  operator +(const IntVar& x, const LinExpr<IntVar>& e) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_ADD,e);
   }
   inline LinExpr<IntVar>
-  operator+(const LinExpr<IntVar>& e, const IntVar& x) {
+  operator +(const LinExpr<IntVar>& e, const IntVar& x) {
     return LinExpr<IntVar>(e,LinExpr<IntVar>::NT_ADD,x);
   }
   inline LinExpr<IntVar>
-  operator+(const LinExpr<IntVar>& e1, const LinExpr<IntVar>& e2) {
+  operator +(const LinExpr<IntVar>& e1, const LinExpr<IntVar>& e2) {
     return LinExpr<IntVar>(e1,LinExpr<IntVar>::NT_ADD,e2);
   }
 
   inline LinExpr<IntVar>
-  operator-(int c, const IntVar& x) {
+  operator -(int c, const IntVar& x) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_SUB,c);
   }
   inline LinExpr<IntVar>
-  operator-(int c, const LinExpr<IntVar>& e) {
+  operator -(int c, const LinExpr<IntVar>& e) {
     return LinExpr<IntVar>(e,LinExpr<IntVar>::NT_SUB,c);
   }
   inline LinExpr<IntVar>
-  operator-(const IntVar& x, int c) {
+  operator -(const IntVar& x, int c) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_ADD,-c);
   }
   inline LinExpr<IntVar>
-  operator-(const LinExpr<IntVar>& e, int c) {
+  operator -(const LinExpr<IntVar>& e, int c) {
     return LinExpr<IntVar>(e,LinExpr<IntVar>::NT_ADD,-c);
   }
   inline LinExpr<IntVar>
-  operator-(const IntVar& x, const IntVar& y) {
+  operator -(const IntVar& x, const IntVar& y) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_SUB,y);
   }
   inline LinExpr<IntVar>
-  operator-(const IntVar& x, const LinExpr<IntVar>& e) {
+  operator -(const IntVar& x, const LinExpr<IntVar>& e) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_SUB,e);
   }
   inline LinExpr<IntVar>
-  operator-(const LinExpr<IntVar>& e, const IntVar& x) {
+  operator -(const LinExpr<IntVar>& e, const IntVar& x) {
     return LinExpr<IntVar>(e,LinExpr<IntVar>::NT_SUB,x);
   }
   inline LinExpr<IntVar>
-  operator-(const LinExpr<IntVar>& e1, const LinExpr<IntVar>& e2) {
+  operator -(const LinExpr<IntVar>& e1, const LinExpr<IntVar>& e2) {
     return LinExpr<IntVar>(e1,LinExpr<IntVar>::NT_SUB,e2);
   }
   inline LinExpr<IntVar>
-  operator-(const IntVar& x) {
+  operator -(const IntVar& x) {
     return LinExpr<IntVar>(x,LinExpr<IntVar>::NT_SUB,0);
   }
   inline LinExpr<IntVar>
-  operator-(const LinExpr<IntVar>& e) {
+  operator -(const LinExpr<IntVar>& e) {
     return LinExpr<IntVar>(e,LinExpr<IntVar>::NT_SUB,0);
   }
 
   inline LinExpr<IntVar>
-  operator*(int a, const IntVar& x) {
+  operator *(int a, const IntVar& x) {
     return LinExpr<IntVar>(x,a);
   }
   inline LinExpr<IntVar>
-  operator*(const IntVar& x, int a) {
+  operator *(const IntVar& x, int a) {
     return LinExpr<IntVar>(x,a);
   }
   inline LinExpr<IntVar>
-  operator*(const LinExpr<IntVar>& e, int a) {
+  operator *(const LinExpr<IntVar>& e, int a) {
     return LinExpr<IntVar>(a,e);
   }
   inline LinExpr<IntVar>
-  operator*(int a, const LinExpr<IntVar>& e) {
+  operator *(int a, const LinExpr<IntVar>& e) {
     return LinExpr<IntVar>(a,e);
   }
 
 
   inline LinExpr<BoolVar>
-  operator+(int c, const BoolVar& x) {
+  operator +(int c, const BoolVar& x) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_ADD,c);
   }
   inline LinExpr<BoolVar>
-  operator+(int c, const LinExpr<BoolVar>& e) {
+  operator +(int c, const LinExpr<BoolVar>& e) {
     return LinExpr<BoolVar>(e,LinExpr<BoolVar>::NT_ADD,c);
   }
   inline LinExpr<BoolVar>
-  operator+(const BoolVar& x, int c) {
+  operator +(const BoolVar& x, int c) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_ADD,c);
   }
   inline LinExpr<BoolVar>
-  operator+(const LinExpr<BoolVar>& e, int c) {
+  operator +(const LinExpr<BoolVar>& e, int c) {
     return LinExpr<BoolVar>(e,LinExpr<BoolVar>::NT_ADD,c);
   }
   inline LinExpr<BoolVar>
-  operator+(const BoolVar& x, const BoolVar& y) {
+  operator +(const BoolVar& x, const BoolVar& y) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_ADD,y);
   }
   inline LinExpr<BoolVar>
-  operator+(const BoolVar& x, const LinExpr<BoolVar>& e) {
+  operator +(const BoolVar& x, const LinExpr<BoolVar>& e) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_ADD,e);
   }
   inline LinExpr<BoolVar>
-  operator+(const LinExpr<BoolVar>& e, const BoolVar& x) {
+  operator +(const LinExpr<BoolVar>& e, const BoolVar& x) {
     return LinExpr<BoolVar>(e,LinExpr<BoolVar>::NT_ADD,x);
   }
   inline LinExpr<BoolVar>
-  operator+(const LinExpr<BoolVar>& e1, const LinExpr<BoolVar>& e2) {
+  operator +(const LinExpr<BoolVar>& e1, const LinExpr<BoolVar>& e2) {
     return LinExpr<BoolVar>(e1,LinExpr<BoolVar>::NT_ADD,e2);
   }
 
   inline LinExpr<BoolVar>
-  operator-(int c, const BoolVar& x) {
+  operator -(int c, const BoolVar& x) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_SUB,c);
   }
   inline LinExpr<BoolVar>
-  operator-(int c, const LinExpr<BoolVar>& e) {
+  operator -(int c, const LinExpr<BoolVar>& e) {
     return LinExpr<BoolVar>(e,LinExpr<BoolVar>::NT_SUB,c);
   }
   inline LinExpr<BoolVar>
-  operator-(const BoolVar& x, int c) {
+  operator -(const BoolVar& x, int c) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_ADD,-c);
   }
   inline LinExpr<BoolVar>
-  operator-(const LinExpr<BoolVar>& e, int c) {
+  operator -(const LinExpr<BoolVar>& e, int c) {
     return LinExpr<BoolVar>(e,LinExpr<BoolVar>::NT_ADD,-c);
   }
   inline LinExpr<BoolVar>
-  operator-(const BoolVar& x, const BoolVar& y) {
+  operator -(const BoolVar& x, const BoolVar& y) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_SUB,y);
   }
   inline LinExpr<BoolVar>
-  operator-(const BoolVar& x, const LinExpr<BoolVar>& e) {
+  operator -(const BoolVar& x, const LinExpr<BoolVar>& e) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_SUB,e);
   }
   inline LinExpr<BoolVar>
-  operator-(const LinExpr<BoolVar>& e, const BoolVar& x) {
+  operator -(const LinExpr<BoolVar>& e, const BoolVar& x) {
     return LinExpr<BoolVar>(e,LinExpr<BoolVar>::NT_SUB,x);
   }
   inline LinExpr<BoolVar>
-  operator-(const LinExpr<BoolVar>& e1, const LinExpr<BoolVar>& e2) {
+  operator -(const LinExpr<BoolVar>& e1, const LinExpr<BoolVar>& e2) {
     return LinExpr<BoolVar>(e1,LinExpr<BoolVar>::NT_SUB,e2);
   }
   inline LinExpr<BoolVar>
-  operator-(const BoolVar& x) {
+  operator -(const BoolVar& x) {
     return LinExpr<BoolVar>(x,LinExpr<BoolVar>::NT_SUB,0);
   }
   inline LinExpr<BoolVar>
-  operator-(const LinExpr<BoolVar>& e) {
+  operator -(const LinExpr<BoolVar>& e) {
     return LinExpr<BoolVar>(e,LinExpr<BoolVar>::NT_SUB,0);
   }
 
   inline LinExpr<BoolVar>
-  operator*(int a, const BoolVar& x) {
+  operator *(int a, const BoolVar& x) {
     return LinExpr<BoolVar>(x,a);
   }
   inline LinExpr<BoolVar>
-  operator*(const BoolVar& x, int a) {
+  operator *(const BoolVar& x, int a) {
     return LinExpr<BoolVar>(x,a);
   }
   inline LinExpr<BoolVar>
-  operator*(const LinExpr<BoolVar>& e, int a) {
+  operator *(const LinExpr<BoolVar>& e, int a) {
     return LinExpr<BoolVar>(a,e);
   }
   inline LinExpr<BoolVar>
-  operator*(int a, const LinExpr<BoolVar>& e) {
+  operator *(int a, const LinExpr<BoolVar>& e) {
     return LinExpr<BoolVar>(a,e);
   }
 

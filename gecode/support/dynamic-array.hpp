@@ -67,7 +67,7 @@ namespace Gecode { namespace Support {
     const DynamicArray<T,A>& operator =(const DynamicArray<T,A>& da);
 
     /// Return element at position \a i (possibly resize)
-    T& operator[](int i);
+    T& operator [](int i);
     /// Return element at position \a i
     const T& operator [](int) const;
 

@@ -1416,7 +1416,7 @@ namespace Gecode { namespace Int { namespace Linear {
     class ScaleDec {
     public:
       bool
-      operator()(const ScaleBool& x, const ScaleBool& y);
+      operator ()(const ScaleBool& x, const ScaleBool& y);
     };
   public:
     /// Sort array in decreasing order of coefficients

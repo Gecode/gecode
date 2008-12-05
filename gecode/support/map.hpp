@@ -88,9 +88,9 @@ namespace Gecode { namespace Support {
     /// Constructor
     Pointer(P* p0) : p(p0) {}
     /// Cast
-    P* operator()(void) { return p; }
+    P* operator ()(void) { return p; }
     /// Comparison
-    bool operator==(const Pointer<P>& p0) const { 
+    bool operator ==(const Pointer<P>& p0) const { 
       return p == p0.p; 
     }
     /// Hash function

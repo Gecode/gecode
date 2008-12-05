@@ -43,25 +43,25 @@ namespace Gecode {
    */
   
   inline Formula
-  operator-(const Formula& f) { return Formula(f, -1); }
+  operator -(const Formula& f) { return Formula(f, -1); }
   
   inline Formula
-  operator|(const Formula& f, const Formula& g) {
+  operator |(const Formula& f, const Formula& g) {
     return Formula(f, 1, Formula::OR, g, 1);
   }
   
   inline Formula
-  operator&(const Formula& f, const Formula& g) {
+  operator &(const Formula& f, const Formula& g) {
     return Formula(f, 1, Formula::AND, g, 1);
   }
   
   inline Formula
-  operator>>(const Formula& f, const Formula& g) {
+  operator >>(const Formula& f, const Formula& g) {
     return Formula(f, 1, Formula::IMPL, g, 1);
   }
   
   inline Formula
-  operator==(const Formula& f, const Formula& g) {
+  operator ==(const Formula& f, const Formula& g) {
     return Formula(f, 1, Formula::EQUIV, g, 1);
   }
 

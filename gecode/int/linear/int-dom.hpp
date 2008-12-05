@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Initialize iterator
       ResultIter(const SupportSet* s0, const IntView& x);
       /// Increment to next supported value
-      void operator++(void);
+      void operator ++(void);
     };
 
   public:
@@ -186,15 +186,15 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   SupportSet::ResultIter::ResultIter(const SupportSet* s0, const IntView& x)
     : ViewValues<IntView>(x), s(s0), p(0) {
-    while (ViewValues<IntView>::operator()() && s->supported(p)) {
-      ViewValues<IntView>::operator++(); ++p;
+    while (ViewValues<IntView>::operator ()() && s->supported(p)) {
+      ViewValues<IntView>::operator ++(); ++p;
     }
   }
   forceinline void
-  SupportSet::ResultIter::operator++(void) {
+  SupportSet::ResultIter::operator ++(void) {
     do {
-      ViewValues<IntView>::operator++(); ++p;
-    } while (ViewValues<IntView>::operator()() && s->supported(p));
+      ViewValues<IntView>::operator ++(); ++p;
+    } while (ViewValues<IntView>::operator ()() && s->supported(p));
   }
 
 

@@ -68,7 +68,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -98,7 +98,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline void
-  AddRange<I>::operator++(void) {
+  AddRange<I>::operator ++(void) {
     if (i()) {
       mi = r_min + i.min();
       ma = r_max + i.max();
@@ -115,14 +115,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline
   AddRange<I>::AddRange(I& i0, int r_min0, int r_max0)
     : i(i0), r_min(r_min0), r_max(r_max0) {
-    operator++();
+    operator ++();
   }
 
   template <class I>
   forceinline void
   AddRange<I>::init(I& i0, int r_min0, int r_max0) {
     i = i0; r_min = r_min0; r_max = r_max0;
-    operator++();
+    operator ++();
   }
 
 

@@ -52,7 +52,7 @@ namespace Gecode {
     class VarPtrLess {
     public:
       forceinline bool 
-      operator()(const Var* a, const Var* b) {
+      operator ()(const Var* a, const Var* b) {
         return before(*a,*b);
       }
     };

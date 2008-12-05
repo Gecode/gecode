@@ -78,7 +78,7 @@ namespace Gecode {
   ProjectorSet::size(void) const { return _count; }
 
   forceinline const Projector&
-  ProjectorSet::operator[](int i) const { return _ps[i]; }
+  ProjectorSet::operator [](int i) const { return _ps[i]; }
 
 }
 

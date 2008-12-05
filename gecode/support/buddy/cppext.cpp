@@ -145,7 +145,7 @@ int bdd_anodecountpp(const bdd *r, int num)
   BDD class functions
 *************************************************************************/
 
-bdd bdd::operator=(const bdd &r)
+bdd bdd::operator =(const bdd &r)
 {
    if (root != r.root)
    {
@@ -157,7 +157,7 @@ bdd bdd::operator=(const bdd &r)
 }
 
 
-bdd bdd::operator=(int r)
+bdd bdd::operator =(int r)
 {
    if (root != r)
    {
@@ -170,7 +170,7 @@ bdd bdd::operator=(int r)
 
 
 /*************************************************************************
-  C++ iostream operators
+  C++ iostream operator s
 *************************************************************************/
 
 /*
@@ -207,7 +207,7 @@ bddstrmhandler bdd_strm_hook(bddstrmhandler handler)
 }
 
 
-ostream &operator<<(ostream &o, const bdd &r)
+ostream &operator <<(ostream &o, const bdd &r)
 {
    if (bdd_ioformat::curformat == IOFORMAT_SET)
    {
@@ -296,11 +296,11 @@ ostream &operator<<(ostream &o, const bdd &r)
 
 
 /*
-NAME    {* operator{\tt<<} *}
+NAME    {* operator {\tt<<} *}
 SECTION {* fileio *}
 SHORT   {* C++ output operator for BDDs *}
-PROTO   {* ostream &operator<<(ostream &o, const bdd_ioformat &f)
-ostream &operator<<(ostream &o, const bdd &r) *}
+PROTO   {* ostream &operator <<(ostream &o, const bdd_ioformat &f)
+ostream &operator <<(ostream &o, const bdd &r) *}
 DESCR   {* BDDs can be printed in various formats using the C++ iostreams
            library. The formats are the those used in {\tt bdd\_printset},
            {\tt bdd\_printtable}, {\tt fdd\_printset} and {\tt bdd\_printdot}.
@@ -322,7 +322,7 @@ DESCR   {* BDDs can be printed in various formats using the C++ iostreams
 RETURN  {* The specified output stream *}
 ALSO    {* bdd\_strm\_hook, fdd\_strm\_hook *}
 */
-ostream &operator<<(ostream &o, const bdd_ioformat &f)
+ostream &operator <<(ostream &o, const bdd_ioformat &f)
 {
    if (f.format == IOFORMAT_SET  ||  f.format == IOFORMAT_TABLE  ||
        f.format == IOFORMAT_DOT  ||  f.format == IOFORMAT_FDDSET)
@@ -535,7 +535,7 @@ bddstrmhandler fdd_strm_hook(bddstrmhandler handler)
    bvec functions
 *************************************************************************/
 
-bvec bvec::operator=(const bvec &src)
+bvec bvec::operator =(const bvec &src)
 {
    if (&src != this)
    {
@@ -610,7 +610,7 @@ bvec bvec_map3(const bvec &a, const bvec &b, const bvec &c,
 }
 
 
-ostream &operator<<(ostream &o, const bvec &v)
+ostream &operator <<(ostream &o, const bvec &v)
 {
   for (int i=0 ; i<v.bitnum() ; ++i)
   {

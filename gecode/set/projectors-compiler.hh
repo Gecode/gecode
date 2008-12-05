@@ -77,9 +77,9 @@ namespace Gecode {
       /// Default constructor
       Indent(void);
       /// Increment indentation level
-      void operator++(void);
+      void operator ++(void);
       /// Decrement indentation level
-      void operator--(void);
+      void operator --(void);
     };
   private:
     /// Indentation to use

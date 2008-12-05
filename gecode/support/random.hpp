@@ -63,7 +63,7 @@ namespace Gecode { namespace Support {
     /// Return current seed
     unsigned int seed(void) const;
     /// Returns a random integer from the interval [0..n)
-    unsigned int operator()(unsigned int n);
+    unsigned int operator ()(unsigned int n);
     /// Report size occupied
     size_t size(void) const;
   };
@@ -95,7 +95,7 @@ namespace Gecode { namespace Support {
   }
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
   forceinline unsigned int 
-  LinearCongruentialGenerator<m,a,q,r>::operator()(unsigned int n) {
+  LinearCongruentialGenerator<m,a,q,r>::operator ()(unsigned int n) {
     unsigned int x1 = next() & ((1<<16)-1);
     unsigned int x2 = next() & ((1<<16)-1);
     if (n < 2) return 0;

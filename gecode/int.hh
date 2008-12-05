@@ -242,9 +242,9 @@ namespace Gecode {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -282,7 +282,7 @@ namespace Gecode {
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const IntSet& s);
+  operator <<(std::basic_ostream<Char,Traits>& os, const IntSet& s);
 
 }
 
@@ -427,7 +427,7 @@ namespace Gecode {
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const IntVar& x);
+  operator <<(std::basic_ostream<Char,Traits>& os, const IntVar& x);
 
   /**
    * \brief %Range iterator for integer variables
@@ -578,7 +578,7 @@ namespace Gecode {
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const BoolVar& x);
+  operator <<(std::basic_ostream<Char,Traits>& os, const BoolVar& x);
 
 }
 
@@ -1557,9 +1557,9 @@ namespace Gecode {
       /// Initialize to transitions of DFA \a d for symbol \a n
       Transitions(const DFA& d, int n);
       /// Test whether iterator still at a transition
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move iterator to next transition
-      void operator++(void);
+      void operator ++(void);
       /// Return in-state of current transition
       int i_state(void) const;
       /// Return symbol of current transition
@@ -1578,9 +1578,9 @@ namespace Gecode {
       /// Initialize to symbols of DFA \a d
       Symbols(const DFA& d);
       /// Test whether iterator still at a symbol
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move iterator to next symbol
-      void operator++(void);
+      void operator ++(void);
       /// Return current symbol
       int val(void) const;
     };
@@ -1689,7 +1689,7 @@ namespace Gecode {
     /// Number of tuples
     int tuples(void) const;
     /// Get tuple i
-    Tuple operator[](int i) const;
+    Tuple operator [](int i) const;
     /// Minimum domain element
     int min(void) const;
     /// Maximum domain element
@@ -2162,14 +2162,14 @@ namespace Gecode {
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const DFA& d);
+  operator <<(std::basic_ostream<Char,Traits>& os, const DFA& d);
   
   /** Print TupleSet \a ts
    * \relates Gecode::TupleSet
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts);
+  operator <<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts);
 
 }
 

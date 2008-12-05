@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   public:
     MaxInc(const ViewArray<View>& x0) : x(x0) {}
     forceinline bool
-    operator()(const int i, const int j) {
+    operator ()(const int i, const int j) {
       return x[i].max() < x[j].max();
     }
   };
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   class MinInc {
   public:
     forceinline bool
-    operator()(const View& x, const View& y) {
+    operator ()(const View& x, const View& y) {
       return x.min() < y.min();
     }
   };

@@ -46,12 +46,12 @@ namespace Gecode {
   ProjectorCompiler::Indent::Indent(void) : i(0) {}
 
   void
-  ProjectorCompiler::Indent::operator++(void) { i+=2; }
+  ProjectorCompiler::Indent::operator ++(void) { i+=2; }
   void
-  ProjectorCompiler::Indent::operator--(void) { i-=2; }
+  ProjectorCompiler::Indent::operator --(void) { i-=2; }
 
   std::ostream&
-  operator<<(std::ostream& os, const ProjectorCompiler::Indent& indent) {
+  operator <<(std::ostream& os, const ProjectorCompiler::Indent& indent) {
     for (int i=0; i<indent.i; i++)
       os << " ";
     return os;

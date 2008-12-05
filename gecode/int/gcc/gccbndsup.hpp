@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     MaxInc(const ViewArray<View>& x0) : x(x0) {}
     forceinline bool
-    operator()(const int i, const int j) {
+    operator ()(const int i, const int j) {
       return x[i].max() < x[j].max();
     }
   };
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     MinInc(const ViewArray<View>& x0) : x(x0) {}
     forceinline bool
-    operator()(const int i, const int j) {
+    operator ()(const int i, const int j) {
       return x[i].min() < x[j].min();
     }
   };

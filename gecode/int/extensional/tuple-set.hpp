@@ -183,7 +183,7 @@ namespace Gecode {
     return imp->size-1;
   }
   forceinline TupleSet::Tuple
-  TupleSet::operator[](int i) const {
+  TupleSet::operator [](int i) const {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
     assert(imp);
     assert(imp->finalized());
@@ -207,7 +207,7 @@ namespace Gecode {
 
   template<class Char, class Traits, class T>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << "Number of tuples: " << ts.tuples() << std::endl

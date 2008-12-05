@@ -81,14 +81,14 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class View>
   forceinline IdxView<View>&
-  IdxViewArray<View>::operator[](int i) {
+  IdxViewArray<View>::operator [](int i) {
     assert((i >= 0) && (i < size()));
     return xs[i];
   }
 
   template <class View>
   forceinline const IdxView<View>&
-  IdxViewArray<View>::operator[](int i) const {
+  IdxViewArray<View>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return xs[i];
   }

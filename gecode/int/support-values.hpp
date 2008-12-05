@@ -90,7 +90,7 @@ namespace Gecode { namespace Int {
   
   template<class View, class A>
   forceinline void
-  SupportValues<View,A>::operator++(void) {
+  SupportValues<View,A>::operator ++(void) {
     if (++v > max)
       if (++rp < rp_lst) {
         v = rp->min;
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int {
   
   template<class View, class A>
   forceinline bool
-  SupportValues<View,A>::operator()(void) const {
+  SupportValues<View,A>::operator ()(void) const {
     return rp < rp_lst;
   }
   
@@ -175,13 +175,13 @@ namespace Gecode { namespace Int {
 
   template<class View, class A>
   forceinline void
-  SupportValues<View,A>::Unsupported::operator++(void) {
+  SupportValues<View,A>::Unsupported::operator ++(void) {
     p++; find();
   }
 
   template<class View, class A>
   forceinline bool
-  SupportValues<View,A>::Unsupported::operator()(void) const {
+  SupportValues<View,A>::Unsupported::operator ()(void) const {
     return rp < sv.rp_lst;
   }
 

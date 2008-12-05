@@ -207,8 +207,8 @@ namespace Gecode {
       Desc(Space& home, ViewSelVirtualBase<_View>** tb, int n0);
       /// Copy constructor
       Desc(const Desc& de);
-      /// Assignment operator
-      const Desc& operator=(const Desc& de);
+      /// Assignment operator 
+      const Desc& operator =(const Desc& de);
       /// Perform commit
       void commit(Space& home, unsigned int a, 
                   ViewSelVirtualBase<_View>** tb)  const;
@@ -433,7 +433,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline const typename ViewSelTieBreakDynamic<View>::Desc& 
-  ViewSelTieBreakDynamic<View>::Desc::operator=(const Desc& de) {
+  ViewSelTieBreakDynamic<View>::Desc::operator =(const Desc& de) {
     if (&de != this) {
       assert(de.n == n);
       for (int i=n; i--; ) {

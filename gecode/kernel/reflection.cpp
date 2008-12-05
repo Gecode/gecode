@@ -432,13 +432,13 @@ namespace Gecode { namespace Reflection {
   }
 
   const Arg*
-  ArrayArg::operator[](int i) const {
+  ArrayArg::operator [](int i) const {
     if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
     return arg2.aa[i];
   }
   Arg*&
-  ArrayArg::operator[](int i) {
+  ArrayArg::operator [](int i) {
     if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
     return arg2.aa[i];
@@ -449,13 +449,13 @@ namespace Gecode { namespace Reflection {
   }
 
   const int&
-  IntArrayArg::operator[](int i) const {
+  IntArrayArg::operator [](int i) const {
     if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
     return arg2.ia[i];
   }
   int&
-  IntArrayArg::operator[](int i) {
+  IntArrayArg::operator [](int i) {
     if (i >= arg1.i)
       throw ReflectionException("Array index out of range");
     return arg2.ia[i];
@@ -469,10 +469,10 @@ namespace Gecode { namespace Reflection {
     : a(a0), n(0) {}
 
   bool
-  IntArrayArgRanges::operator()(void) { return n < a->size(); }
+  IntArrayArgRanges::operator ()(void) { return n < a->size(); }
 
   void
-  IntArrayArgRanges::operator++(void) { n += 2; }
+  IntArrayArgRanges::operator ++(void) { n += 2; }
 
   int
   IntArrayArgRanges::min(void) const { return (*a)[n]; }
@@ -554,7 +554,7 @@ namespace Gecode { namespace Reflection {
   }
   
   const VarSpec&
-  VarSpec::operator=(const VarSpec& s) {
+  VarSpec::operator =(const VarSpec& s) {
     if (this != &s) {
       if (_dom && --_dom->r == 0)
         delete _dom;
@@ -675,7 +675,7 @@ namespace Gecode { namespace Reflection {
   }
   
   const ActorSpec&
-  ActorSpec::operator=(const ActorSpec& s) {
+  ActorSpec::operator =(const ActorSpec& s) {
     if (this != &s) {
       if (_args && --_args->r == 0)
         delete _args;
@@ -687,7 +687,7 @@ namespace Gecode { namespace Reflection {
   }
 
   Arg*
-  ActorSpec::operator[](int i) const {
+  ActorSpec::operator [](int i) const {
     if (_args == NULL || i < 0 || i >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
@@ -803,7 +803,7 @@ namespace Gecode { namespace Reflection {
   }
   
   const BranchingSpec&
-  BranchingSpec::operator=(const BranchingSpec& s) {
+  BranchingSpec::operator =(const BranchingSpec& s) {
     if (this != &s) {
       if (_args && --_args->r == 0)
         delete _args;
@@ -815,14 +815,14 @@ namespace Gecode { namespace Reflection {
   }
 
   Arg*
-  BranchingSpec::operator[](int i) const {
+  BranchingSpec::operator [](int i) const {
     if (_args == NULL || i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
   Arg*&
-  BranchingSpec::operator[](int i) {
+  BranchingSpec::operator [](int i) {
     if (_args == NULL || i < 0 || static_cast<unsigned int>(i) >= _args->n)
       throw ReflectionException("Array index out of range");
     return _args->a[i];
@@ -845,12 +845,12 @@ namespace Gecode { namespace Reflection {
    */
    
   bool
-  ActorSpecIter::operator()(void) const {
+  ActorSpecIter::operator ()(void) const {
     return cur != &s.a_actors;
   }
 
   void
-  ActorSpecIter::operator++(void) {
+  ActorSpecIter::operator ++(void) {
     cur = cur->next();
     while (active > &s.pc.p.queue[0] && (cur == active)) {
       active--;
@@ -934,7 +934,7 @@ namespace Gecode { namespace Reflection {
   }
 
   std::ostream&
-  operator<<(std::ostream& os, const Var& v) {
+  operator <<(std::ostream& os, const Var& v) {
     return v.print(os);
   }
 

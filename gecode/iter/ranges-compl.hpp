@@ -73,7 +73,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -114,7 +114,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -158,7 +158,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <int UMIN, int UMAX, class I>
   forceinline void
-  Compl<UMIN,UMAX,I>::operator++(void) {
+  Compl<UMIN,UMAX,I>::operator ++(void) {
     assert(!i() || (i.max() <= UMAX));
     if (i() && (i.max() < UMAX)) {
       mi = i.max()+1;
@@ -209,7 +209,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline void
-  ComplVal<I>::operator++(void) {
+  ComplVal<I>::operator ++(void) {
     assert(!i() || (i.max() <= UMAX));
     if (i() && (i.max() < UMAX)) {
       mi = i.max()+1;

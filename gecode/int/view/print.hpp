@@ -94,46 +94,46 @@ namespace Gecode { namespace Int {
 
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const IntView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const IntView& x) {
     return print_view(os,x);
   }
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const MinusView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x) {
     return print_view(os,x);
   }
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const OffsetView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x) {
     return print_view(os,x);
   }
 
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x) {
     return print_scale<int,unsigned int>(os,x);
   }
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x) {
     return print_scale<double,double>(os,x);
   }
 
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x) {
     return os << x.val();
   }
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x) {
     return os << 0;
   }
 
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const BoolView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const BoolView& x) {
     if (x.one())
       return os << 1;
     if (x.zero())
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int {
   }
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x) {
     if (x.one())
       return os << 0;
     if (x.zero())

@@ -113,9 +113,9 @@ namespace Gecode {
 
   template <class A>
   inline typename Matrix<A>::value_type&
-  Matrix<A>::operator()(unsigned int c, unsigned int r) {
+  Matrix<A>::operator ()(unsigned int c, unsigned int r) {
     if ((c >= _w) || (r >= _h))
-      throw MiniModel::ArgumentOutOfRange("Matrix::operator()");
+      throw MiniModel::ArgumentOutOfRange("Matrix::operator ()");
     return _a[r*_w + c];
   }
 

@@ -137,7 +137,7 @@ namespace Gecode {
   }
 
   std::ostream&
-  operator<<(std::ostream& os, const Projector& p) {
+  operator <<(std::ostream& os, const Projector& p) {
     return os << p.getGlb() << " <= x[" << p.getIdx() << "] <= " << p.getLub()
               << std::endl;
   }

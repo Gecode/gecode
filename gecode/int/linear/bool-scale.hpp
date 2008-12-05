@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Linear {
     return static_cast<int>(_lst - _fst);
   }
   forceinline bool
-  ScaleBoolArray::ScaleDec::operator()(const ScaleBool& x, 
+  ScaleBoolArray::ScaleDec::operator ()(const ScaleBool& x, 
                                        const ScaleBool& y) {
     return x.a > y.a;
   }

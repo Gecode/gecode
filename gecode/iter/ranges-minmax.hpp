@@ -68,7 +68,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     //@}
 
     /// \name Range access
@@ -95,7 +95,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     : mi(min), ma(max) {}
 
   forceinline bool
-  MinMax::operator()(void) const {
+  MinMax::operator ()(void) const {
     return mi <= ma;
   }
 

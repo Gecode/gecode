@@ -243,7 +243,7 @@ namespace Gecode {
     /// Initialize
     ViewArray(Space&, const Reflection::VarMap&, Reflection::Arg*) {}
     /// Initialize
-    const ViewArray<Int::Linear::NoView>& operator=(const ViewArray<Int::Linear::NoView>&) { return *this; }
+    const ViewArray<Int::Linear::NoView>& operator =(const ViewArray<Int::Linear::NoView>&) { return *this; }
     //@}
 
     /// \name Array size
@@ -257,7 +257,7 @@ namespace Gecode {
     /// \name Array elements
     //@{
     /// Return view at position \a i
-    Int::Linear::NoView operator[](int i) {
+    Int::Linear::NoView operator [](int i) {
       (void)  i;
       Int::Linear::NoView n;
       return n;

@@ -63,12 +63,12 @@ namespace Gecode { namespace Int { namespace Element {
   }
   template <class V0, class V1, class Idx, class Val>
   forceinline bool
-  Int<V0,V1,Idx,Val>::IterIdx::operator()(void) const {
+  Int<V0,V1,Idx,Val>::IterIdx::operator ()(void) const {
     return i != 0;
   }
   template <class V0, class V1, class Idx, class Val>
   forceinline void
-  Int<V0,V1,Idx,Val>::IterIdx::operator++(void) {
+  Int<V0,V1,Idx,Val>::IterIdx::operator ++(void) {
     int p=i;
     i = iv[p].idx_next;
     while ((i != 0) && iv[i].marked())
@@ -90,12 +90,12 @@ namespace Gecode { namespace Int { namespace Element {
     : iv(iv0), i(iv[0].val_next) {}
   template <class V0, class V1, class Idx, class Val>
   forceinline bool
-  Int<V0,V1,Idx,Val>::IterVal::operator()(void) const {
+  Int<V0,V1,Idx,Val>::IterVal::operator ()(void) const {
     return i != 0;
   }
   template <class V0, class V1, class Idx, class Val>
   forceinline void
-  Int<V0,V1,Idx,Val>::IterVal::operator++(void) {
+  Int<V0,V1,Idx,Val>::IterVal::operator ++(void) {
     i=iv[i].val_next;
   }
   template <class V0, class V1, class Idx, class Val>
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Element {
     : iv(iv0) {}
   template <class V0, class V1, class Idx, class Val>
   forceinline bool
-  Int<V0,V1,Idx,Val>::ByVal::operator()(Idx& i, Idx& j) {
+  Int<V0,V1,Idx,Val>::ByVal::operator ()(Idx& i, Idx& j) {
     return iv[i].val < iv[j].val;
   }
 

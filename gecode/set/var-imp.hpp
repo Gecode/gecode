@@ -267,9 +267,9 @@ namespace Gecode { namespace Set {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -318,7 +318,7 @@ namespace Gecode { namespace Set {
     //@}
   private:
     GLBndSet(const GLBndSet&);
-    const GLBndSet& operator=(const GLBndSet&);
+    const GLBndSet& operator =(const GLBndSet&);
   };
 
   /**
@@ -362,7 +362,7 @@ namespace Gecode { namespace Set {
     //@}
   private:
     LUBndSet(const LUBndSet&);
-    const LUBndSet& operator=(const LUBndSet&);
+    const LUBndSet& operator =(const LUBndSet&);
   };
 
   /*
@@ -417,9 +417,9 @@ namespace Gecode { namespace Set {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -459,9 +459,9 @@ namespace Gecode { namespace Set {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access

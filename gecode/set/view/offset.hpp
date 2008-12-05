@@ -345,9 +345,9 @@ namespace Gecode { namespace Set {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -375,11 +375,11 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline bool
-  LubRanges<OffsetSetView<View> >::operator()(void) const { return ubo(); }
+  LubRanges<OffsetSetView<View> >::operator ()(void) const { return ubo(); }
 
   template <class View>
   forceinline void
-  LubRanges<OffsetSetView<View> >::operator++(void) { return ++ubo; }
+  LubRanges<OffsetSetView<View> >::operator ++(void) { return ++ubo; }
 
   template <class View>
   forceinline int
@@ -416,9 +416,9 @@ namespace Gecode { namespace Set {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -446,11 +446,11 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline bool
-  GlbRanges<OffsetSetView<View> >::operator()(void) const { return lbo(); }
+  GlbRanges<OffsetSetView<View> >::operator ()(void) const { return lbo(); }
 
   template <class View>
   forceinline void
-  GlbRanges<OffsetSetView<View> >::operator++(void) { return ++lbo; }
+  GlbRanges<OffsetSetView<View> >::operator ++(void) { return ++lbo; }
 
   template <class View>
   forceinline int
@@ -489,7 +489,7 @@ namespace Gecode { namespace Set {
 template <class View>
 forceinline
 std::ostream&
-operator<<(std::ostream& os, const Gecode::Set::OffsetSetView<View>& s) {
+operator <<(std::ostream& os, const Gecode::Set::OffsetSetView<View>& s) {
   return os << "(" << s.base() << ")+"<<s.offset();
 }
 

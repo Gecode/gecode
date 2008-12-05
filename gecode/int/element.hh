@@ -99,9 +99,9 @@ namespace Gecode { namespace Int { namespace Element {
       /// Initialize with start
       IterIdx(IdxVal* iv);
       /// Test whether more pairs to be iterated
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move to next index value pair (next index)
-      void operator++(void);
+      void operator ++(void);
       /// Return index of current index value pair
       Idx val(void) const;
     };
@@ -119,9 +119,9 @@ namespace Gecode { namespace Int { namespace Element {
       /// Initialize with start
       IterVal(IdxVal* iv);
       /// Test whether more pairs to be iterated
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move to next index value pair (next value)
-      void operator++(void);
+      void operator ++(void);
       /// Return value of current index value pair
       Val val(void) const;
     };
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Element {
       /// Initialize with index value pairs
       ByVal(const IdxVal* iv);
       /// Compare pairs at positions \a i and \a j
-      bool operator()(Idx& i, Idx& j);
+      bool operator ()(Idx& i, Idx& j);
     };
 
     /// View for index

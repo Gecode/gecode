@@ -441,11 +441,11 @@ namespace Gecode { namespace Int {
   }
 
   forceinline bool
-  IntVarImpFwd::operator()(void) const {
+  IntVarImpFwd::operator ()(void) const {
     return c != NULL;
   }
   forceinline void
-  IntVarImpFwd::operator++(void) {
+  IntVarImpFwd::operator ++(void) {
     const IntVarImp::RangeList* n=c->next(p); p=c; c=n;
   }
 
@@ -479,11 +479,11 @@ namespace Gecode { namespace Int {
   }
 
   forceinline bool
-  IntVarImpBwd::operator()(void) const {
+  IntVarImpBwd::operator ()(void) const {
     return c != NULL;
   }
   forceinline void
-  IntVarImpBwd::operator++(void) {
+  IntVarImpBwd::operator ++(void) {
     const IntVarImp::RangeList* p=c->prev(n); n=c; c=p;
   }
 

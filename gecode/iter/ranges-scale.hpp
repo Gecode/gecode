@@ -77,9 +77,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -122,7 +122,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -159,7 +159,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class Val, class UnsVal, class I>
   forceinline void
-  ScaleUp<Val,UnsVal,I>::operator++(void) {
+  ScaleUp<Val,UnsVal,I>::operator ++(void) {
     if (a == 1) {
       ++i;
     } else {
@@ -175,7 +175,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
   template <class Val, class UnsVal, class I>
   forceinline bool
-  ScaleUp<Val,UnsVal,I>::operator()(void) const {
+  ScaleUp<Val,UnsVal,I>::operator ()(void) const {
     return (a == 1) ? i() : (cur <= end);
   }
 
@@ -201,7 +201,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline void
-  ScaleDown<I>::operator++(void) {
+  ScaleDown<I>::operator ++(void) {
     finish();
     while ((mi > ma) && i()) {
       mi = static_cast<int>(ceil(static_cast<double>(i.min())/a));
@@ -228,14 +228,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
   inline void
   ScaleDown<I>::init(I& i0, int a0) {
     i = i0; a = a0;
-    operator++();
+    operator ++();
   }
 
   template <class I>
   inline
   ScaleDown<I>::ScaleDown(I& i0, int a0) : i(i0), a(a0) {
     i = i0; a = a0;
-    operator++();
+    operator ++();
   }
 
 }}}

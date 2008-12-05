@@ -314,10 +314,10 @@ namespace Gecode { namespace Set {
   BndSetRanges::init(const BndSet& s) { c = s.ranges(); }
 
   forceinline bool
-  BndSetRanges::operator()(void) const { return c != NULL; }
+  BndSetRanges::operator ()(void) const { return c != NULL; }
   
   forceinline void
-  BndSetRanges::operator++(void) {
+  BndSetRanges::operator ++(void) {
     c = c->next();
   }
 

@@ -82,14 +82,14 @@ namespace Gecode { namespace Support {
      * whereas position \c entries()-1 corresponds to the
      * element pushed last.
      */
-    T& operator[](int i);
+    T& operator [](int i);
     /** \brief Return entry at position \a i
      *
      * Position 0 corresponds to the element first pushed,
      * whereas position \c entries()-1 corresponds to the
      * element pushed last.
      */
-    const T& operator[](int i) const;
+    const T& operator [](int i) const;
 
     /// Return size of stack
     size_t size(void) const;
@@ -101,7 +101,7 @@ namespace Gecode { namespace Support {
     /// Copy constructor (disabled)
     DynamicStack(const DynamicStack& s) : a(s.a) {}
     /// Assignment operator (disabled)
-    const DynamicStack& operator=(const DynamicStack&) { return *this; }
+    const DynamicStack& operator =(const DynamicStack&) { return *this; }
   };
 
 
@@ -164,13 +164,13 @@ namespace Gecode { namespace Support {
 
   template <class T, class A>
   forceinline T&
-  DynamicStack<T,A>::operator[](int i) {
+  DynamicStack<T,A>::operator [](int i) {
     return stack[i];
   }
 
   template <class T, class A>
   forceinline const T&
-  DynamicStack<T,A>::operator[](int i) const {
+  DynamicStack<T,A>::operator [](int i) const {
     return stack[i];
   }
 

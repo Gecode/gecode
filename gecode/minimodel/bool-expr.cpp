@@ -125,7 +125,7 @@ namespace Gecode {
   }
 
   const BoolExpr&
-  BoolExpr::operator=(const BoolExpr& e) {
+  BoolExpr::operator =(const BoolExpr& e) {
     if (this != &e) {
       if (n->decrement())
         delete n;

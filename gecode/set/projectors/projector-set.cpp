@@ -79,7 +79,7 @@ namespace Gecode {
   }
 
   std::ostream&
-  operator<<(std::ostream& os, const ProjectorSet& ps) {
+  operator <<(std::ostream& os, const ProjectorSet& ps) {
     for (int i=0; i<ps.size(); i++) {
       os << ps[i] << std::endl;
     }

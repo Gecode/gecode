@@ -50,7 +50,7 @@ namespace {
     forceinline
     FullTupleCompare(int a) : arity(a) {}
     forceinline bool
-    operator()(const Tuple& a, const Tuple& b) {
+    operator ()(const Tuple& a, const Tuple& b) {
       for (int i = 0; i < arity; ++i) {
         if (a[i] < b[i]) {
           return true;
@@ -77,7 +77,7 @@ namespace {
     TuplePosCompare(int p) : pos(p) {}
 
     forceinline bool
-    operator()(const Tuple& a, const Tuple& b) {
+    operator ()(const Tuple& a, const Tuple& b) {
       if (a[pos] == b[pos]) return a < b;
       return a[pos] < b[pos];
     }

@@ -62,9 +62,9 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
     /// \name Value access
     //@{
@@ -88,9 +88,9 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
     /// \name Value access
     //@{
@@ -116,9 +116,9 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
     /// \name Value access
     //@{
@@ -408,9 +408,9 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still valid or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next level in the bdd
-    GECODE_CPLTSET_EXPORT void operator++(void);
+    GECODE_CPLTSET_EXPORT void operator ++(void);
     //@}
     /// \name Status information
     //@{
@@ -453,9 +453,9 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still valid or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next level in the bdd
-    void operator++(void);
+    void operator ++(void);
     //@}
     /// \name Status information
     //@{

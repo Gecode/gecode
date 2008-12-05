@@ -70,9 +70,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void);
+    bool operator ()(void);
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name %Range access
@@ -111,13 +111,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline void
-  Size<I>::operator++(void) {
+  Size<I>::operator ++(void) {
     _size += i.width();
     ++i;
   }
   template <class I>
   forceinline bool
-  Size<I>::operator()(void) {
+  Size<I>::operator ()(void) {
     return i();
   }
 

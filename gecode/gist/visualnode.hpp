@@ -60,13 +60,13 @@ namespace Gecode { namespace Gist {
   }
   
   forceinline const Extent&
-  Shape::operator[](int i) const {
+  Shape::operator [](int i) const {
     assert(i < _depth);
     return shape[i];
   }
 
   forceinline Extent&
-  Shape::operator[](int i) {
+  Shape::operator [](int i) {
     assert(i < _depth);
     return shape[i];
   }

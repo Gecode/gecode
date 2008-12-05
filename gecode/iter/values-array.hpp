@@ -68,9 +68,9 @@ namespace Gecode { namespace Iter { namespace Values {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Reset iterator to start from beginning
     void reset(void);
     //@}
@@ -96,11 +96,11 @@ namespace Gecode { namespace Iter { namespace Values {
   }
 
   forceinline void
-  Array::operator++(void) {
+  Array::operator ++(void) {
     c++;
   }
   forceinline bool
-  Array::operator()(void) const {
+  Array::operator ()(void) const {
     return c<n;
   }
   forceinline void

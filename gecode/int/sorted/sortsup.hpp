@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     void makeset(void);
     /// Return the size of the Offline-Min item
     int  size(void);
-    OfflineMinItem& operator[](int);
+    OfflineMinItem& operator [](int);
   };
 
   OfflineMin::OfflineMin(void){
@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     ViewArray<View> x;
   public:
     TupleMaxInc(const ViewArray<View>& x0) : x(x0) {}
-    bool operator()(const int i, const int j) {
+    bool operator ()(const int i, const int j) {
       if (x[i].max() == x[j].max()) {
         return x[i].min() < x[j].min();
       } else {
@@ -294,7 +294,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   public:
     TupleMaxIncExt(const ViewArray<View>& x0,
                    const ViewArray<View>& z0) : x(x0), z(z0) {}
-    bool operator()(const int i, const int j) {
+    bool operator ()(const int i, const int j) {
       if (x[i].max() == x[j].max()) {
         if (x[i].min() == x[j].min()) {
           if (z[i].max() == z[j].max()) {
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   template <class View>
   class TupleMinInc {
   public:
-    bool operator()(const View& x, const View& y) {
+    bool operator ()(const View& x, const View& y) {
       if (x.min() == y.min()) {
         return x.max() < y.max();
       } else {
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   template <class View>
   class TupleMinIncExt {
   public:
-    bool operator()(const ViewPair<View>& x, const ViewPair<View>& y) {
+    bool operator ()(const ViewPair<View>& x, const ViewPair<View>& y) {
       if (x.x.min() == y.x.min()) {
         if (x.x.max() == y.x.max()) {
           if (x.z.min() == y.z.min()) {

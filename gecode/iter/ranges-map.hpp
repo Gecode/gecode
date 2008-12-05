@@ -68,9 +68,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -115,7 +115,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -148,9 +148,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -208,7 +208,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I, class M>
   forceinline void
-  Map<I,M,false>::operator++(void) {
+  Map<I,M,false>::operator ++(void) {
     next();
   }
 
@@ -238,12 +238,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I, class M>
   forceinline bool
-  Map<I,M,true>::operator()(void) const {
+  Map<I,M,true>::operator ()(void) const {
     return i();
   }
   template <class I, class M>
   forceinline void
-  Map<I,M,true>::operator++(void) {
+  Map<I,M,true>::operator ++(void) {
     ++i;
   }
 

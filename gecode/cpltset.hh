@@ -337,8 +337,8 @@ namespace Gecode {
   public:
     CpltSetVarGlbRanges(void);
     CpltSetVarGlbRanges(const CpltSetVar& x);
-    bool operator()(void) const;
-    void operator++(void);
+    bool operator ()(void) const;
+    void operator ++(void);
     int min(void) const;
     int max(void) const;
     unsigned int width(void) const;
@@ -355,8 +355,8 @@ namespace Gecode {
   public:
     CpltSetVarGlbValues(void);
     CpltSetVarGlbValues(const CpltSetVar& x);
-    bool operator()(void) const;
-    void operator++(void);
+    bool operator ()(void) const;
+    void operator ++(void);
     int val(void) const;
   };
 
@@ -371,8 +371,8 @@ namespace Gecode {
   public:
     CpltSetVarLubRanges(void);
     CpltSetVarLubRanges(const CpltSetVar& x);
-    bool operator()(void) const;
-    void operator++(void);
+    bool operator ()(void) const;
+    void operator ++(void);
     int min(void) const;
     int max(void) const;
     unsigned int width(void) const;
@@ -389,8 +389,8 @@ namespace Gecode {
   public:
     CpltSetVarLubValues(void);
     CpltSetVarLubValues(const CpltSetVar& x);
-    bool operator()(void) const;
-    void operator++(void);
+    bool operator ()(void) const;
+    void operator ++(void);
     int val(void) const;
   };
 
@@ -405,8 +405,8 @@ namespace Gecode {
   public:
     CpltSetVarUnknownRanges(void);
     CpltSetVarUnknownRanges(const CpltSetVar& x);
-    bool operator()(void) const;
-    void operator++(void);
+    bool operator ()(void) const;
+    void operator ++(void);
     int min(void) const;
     int max(void) const;
     unsigned int width(void) const;
@@ -417,7 +417,7 @@ namespace Gecode {
    * \relates Gecode::CpltSetVar
    */
   GECODE_CPLTSET_EXPORT std::ostream&
-  operator<<(std::ostream&, const CpltSetVar& x);
+  operator <<(std::ostream&, const CpltSetVar& x);
   
 }
 

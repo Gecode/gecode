@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter {
    *
    * The order is implemented by an instance of the class \a Less which
    * must provide the single member function
-   * \code bool operator()(const T&, const T&) \endcode
+   * \code bool operator ()(const T&, const T&) \endcode
    * for comparing elements.
    *
    * \ingroup FuncSupport
@@ -88,7 +88,7 @@ namespace Gecode { namespace Iter {
     /// Assign queue from queue \a p (elements are shared)
     PriorityQueue(const PriorityQueue& p);
     /// Assign queue from queue \a p (elements are shared)
-    const PriorityQueue& operator=(const PriorityQueue&);
+    const PriorityQueue& operator =(const PriorityQueue&);
     /// Release queue
     ~PriorityQueue(void);
 

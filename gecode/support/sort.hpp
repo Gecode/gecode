@@ -165,7 +165,7 @@ namespace Gecode { namespace Support {
    * Sorts by insertion the \a n first elements of array \a x according
    * to the order \a lt as instance of class \a LessThan. The class
    * \a LessThan must implement the single member function
-   * \code bool operator()(const Type&, const Type&) \endcode
+   * \code bool operator ()(const Type&, const Type&) \endcode
    * for comparing elements.
    *
    * The algorithm is largely based on the following book:
@@ -187,7 +187,7 @@ namespace Gecode { namespace Support {
    * Sorts with quicksort the \a n first elements of array \a x according
    * to the order \a lt as instance of class \a LessThan. The class
    * \a LessThan must implement the single member function
-   * \code bool operator()(const Type&, const Type&) \endcode
+   * \code bool operator ()(const Type&, const Type&) \endcode
    * for comparing elements.
    *
    * The algorithm is largely based on the following book:

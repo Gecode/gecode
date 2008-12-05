@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Linear {
   class TermLess {
   public:
     forceinline bool
-    operator()(const Term<View>& a, const Term<View>& b) {
+    operator ()(const Term<View>& a, const Term<View>& b) {
       return before(a.x,b.x);
     }
   };

@@ -82,7 +82,7 @@ namespace Gecode { namespace Reflection {
   VarMap::VarMap(const VarMap& v) : vo(v.vo) { vo->r++; }
 
   VarMap&
-  VarMap::operator=(const VarMap& v) {
+  VarMap::operator =(const VarMap& v) {
     if (this != &v) {
       if (--vo->r == 0) {
         for (int i=vo->n; i--;)
@@ -250,7 +250,7 @@ namespace Gecode { namespace Reflection {
   VarMapIter::VarMapIter(VarMap& m0) : m(&m0), i(0) {}
 
   bool
-  VarMapIter::operator()(void) const { return i<m->vo->n; }
+  VarMapIter::operator ()(void) const { return i<m->vo->n; }
 
   VarSpec&
   VarMapIter::spec(void) const { return *m->vo->specs[i]; }
@@ -259,7 +259,7 @@ namespace Gecode { namespace Reflection {
   VarMapIter::varImpBase(void) const { return m->vo->vars[i]; }
 
   void
-  VarMapIter::operator++(void) { i++; }  
+  VarMapIter::operator ++(void) { i++; }  
 
   Var
   VarMapIter::var(void) const {

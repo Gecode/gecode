@@ -152,11 +152,11 @@ namespace Gecode {
 
   
   forceinline void
-  IntSetRanges::operator++(void) {
+  IntSetRanges::operator ++(void) {
     i++;
   }
   forceinline bool
-  IntSetRanges::operator()(void) const {
+  IntSetRanges::operator ()(void) const {
     return i<e;
   }
 
@@ -194,7 +194,7 @@ namespace Gecode {
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator<<(std::basic_ostream<Char,Traits>& os, const IntSet& is) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const IntSet& is) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << '{';

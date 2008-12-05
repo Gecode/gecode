@@ -201,7 +201,7 @@ namespace Gecode {
   }
 
   const Formula&
-  Formula::operator=(const Formula& f) {
+  Formula::operator =(const Formula& f) {
     if (this != &f) {
       if ((ax != NULL) && ax->decrement())
         delete ax;

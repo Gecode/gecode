@@ -196,7 +196,7 @@ namespace Gecode {
   }
 
   const SetExpr&
-  SetExpr::operator=(const SetExpr& s) {
+  SetExpr::operator =(const SetExpr& s) {
     if (this != &s) {
       if ((ax != NULL) && ax->decrement())
         delete ax;
@@ -318,7 +318,7 @@ namespace Gecode {
   }
 
   std::ostream&
-  operator<<(std::ostream& os, const SetExprCode& sec) {
+  operator <<(std::ostream& os, const SetExprCode& sec) {
     for (int i=0; i<sec.size(); i++) {
       switch (sec[i]) {
       case Gecode::SetExprCode::COMPLEMENT: os << " CMPL "; break;

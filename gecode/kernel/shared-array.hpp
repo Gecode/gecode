@@ -69,9 +69,9 @@ namespace Gecode {
       virtual ~SAO(void);
       
       /// Access element at position \a i
-      T& operator[](int i);
+      T& operator [](int i);
       /// Access element at position \a i
-      const T& operator[](int i) const;
+      const T& operator [](int i) const;
       
       /// Return number of elements
       int size(void) const;
@@ -81,7 +81,7 @@ namespace Gecode {
      * \brief Construct as not yet intialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized shared array is init and the assignment operator.
+     * yet initialized shared array is init and the assignment operator .
      *
      */
     SharedArray(void);
@@ -99,9 +99,9 @@ namespace Gecode {
     SharedArray(const SharedArray& a);
 
     /// Access element at position \a i
-    T& operator[](int i);
+    T& operator [](int i);
     /// Access element at position \a i
-    const T& operator[](int i) const;
+    const T& operator [](int i) const;
 
     /// Return number of elements
     int size(void) const;
@@ -120,7 +120,7 @@ namespace Gecode {
    */
   template<class Char, class Traits, class T>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os, 
              const SharedArray<T>& x);
 
 
@@ -157,14 +157,14 @@ namespace Gecode {
 
   template <class T>
   forceinline T&
-  SharedArray<T>::SAO::operator[](int i) {
+  SharedArray<T>::SAO::operator [](int i) {
     assert((i>=0) && (i<n));
     return a[i];
   }
 
   template <class T>
   forceinline const T&
-  SharedArray<T>::SAO::operator[](int i) const {
+  SharedArray<T>::SAO::operator [](int i) const {
     assert((i>=0) && (i<n));
     return a[i];
   }
@@ -200,14 +200,14 @@ namespace Gecode {
 
   template <class T>
   forceinline T&
-  SharedArray<T>::operator[](int i) {
+  SharedArray<T>::operator [](int i) {
     assert(object() != NULL);
     return (*static_cast<SAO*>(object()))[i];
   }
 
   template <class T>
   forceinline const T&
-  SharedArray<T>::operator[](int i) const {
+  SharedArray<T>::operator [](int i) const {
     assert(object() != NULL);
     return (*static_cast<SAO*>(object()))[i];
   }
@@ -269,7 +269,7 @@ namespace Gecode {
 
   template<class Char, class Traits, class T>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os, 
              const SharedArray<T>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

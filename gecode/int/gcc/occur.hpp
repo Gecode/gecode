@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 /// \brief Debugging: print a fixed cardinality
 inline std::ostream&
-operator<<(std::ostream& os, Gecode::Int::GCC::OccurBndsView& xs) {
+operator <<(std::ostream& os, Gecode::Int::GCC::OccurBndsView& xs) {
   os << xs.card() << "("<< xs.counter() <<")[";
   os << xs.min() << "," << xs.max() << "]";
   return os;
@@ -303,8 +303,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Value access
     //@{
-    void operator=(const IntView& x);
-    void operator=(const Gecode::Int::GCC::CardView& x);
+    void operator =(const IntView& x);
+    void operator =(const Gecode::Int::GCC::CardView& x);
     /// Return minimum of domain
     int min(void) const;
     /// Return maximum of domain
@@ -518,14 +518,14 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   forceinline void
-  CardView::operator=(const IntView& x) {
+  CardView::operator =(const IntView& x) {
     view  = x;
     c     = 0;
     count = 0;
   }
 
   forceinline void
-  CardView::operator=(const CardView& x) {
+  CardView::operator =(const CardView& x) {
     view  = x.view;
     c     = x.c;
     count = x.count;
@@ -786,7 +786,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 /// \brief Debugging: print a cardinality variable
 inline std::ostream&
-operator<<(std::ostream& os, Gecode::Int::GCC::CardView& v) {
+operator <<(std::ostream& os, Gecode::Int::GCC::CardView& v) {
   os << "("<<v.card() << ","<< v.counter() <<",";
   if (v.min() == v.max()) {
     os << v.min() <<" ";

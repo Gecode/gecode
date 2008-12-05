@@ -151,7 +151,7 @@ namespace Gecode { namespace Support {
   }
 
   const Symbol&
-  Symbol::operator=(const Symbol& s0) {
+  Symbol::operator =(const Symbol& s0) {
     if (this != &s0) {
       if (so && so->cancel()) {
         if (so->own)
@@ -183,7 +183,7 @@ namespace Gecode { namespace Support {
   }
 
   Symbol&
-  Symbol::operator+=(const Symbol& s0) {
+  Symbol::operator +=(const Symbol& s0) {
     if (so == NULL) {
       so = s0.so;
       if (so)
@@ -202,14 +202,14 @@ namespace Gecode { namespace Support {
   }
 
   bool
-  Symbol::operator==(const Symbol& s0) const {
+  Symbol::operator ==(const Symbol& s0) const {
     if (so == NULL)
       return (s0.so == NULL);
     return so->eq(s0.so);
   }
 
   bool
-  Symbol::operator==(const char* s0) const {
+  Symbol::operator ==(const char* s0) const {
     if (so==NULL)
       return s0[0] == 0;
     return so->eq(s0);

@@ -72,9 +72,9 @@ namespace Gecode { namespace Int {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -291,7 +291,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const IntView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const IntView& x);
 
   }
 
@@ -503,7 +503,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
 
   }
 
@@ -719,7 +719,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
 
   }
 
@@ -936,7 +936,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x);
 
     /**
      * \brief Print double-precision integer scale view
@@ -944,7 +944,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x);
 
   }
 
@@ -1161,7 +1161,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x);
 
   }
 
@@ -1368,7 +1368,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x);
 
   }
 
@@ -1601,7 +1601,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const BoolView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const BoolView& x);
 
   }
 
@@ -1773,7 +1773,7 @@ namespace Gecode {
      */
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>& 
-    operator<<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
+    operator <<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
 
 
     /**

@@ -524,8 +524,8 @@ namespace Gecode { namespace CpltSet {
       markref++;
       l++;      
     }
-    if (operator()()) {
-      operator++();
+    if (operator ()()) {
+      operator ++();
     }
   }
 
@@ -575,7 +575,7 @@ namespace Gecode { namespace CpltSet {
 
   // iterate to the next level of nodes
   void 
-  BddIterator::operator++(void) {
+  BddIterator::operator ++(void) {
     if (empty()) { // no more nodes on the stack to be iterated
       singleton = false;
       cache_unmark();

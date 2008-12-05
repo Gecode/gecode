@@ -92,7 +92,7 @@ namespace Gecode {
       /// Return size of code stream
       int size(void) const;
       /// Return instruction at position \a i
-      int operator[](int i) const;
+      int operator [](int i) const;
     };
  
     ///\name Construction and initialization
@@ -112,7 +112,7 @@ namespace Gecode {
     int size(void) const;
 
     /// Return instruction at position \a i
-    int operator[](int i) const;
+    int operator [](int i) const;
 
   };
   
@@ -150,8 +150,8 @@ namespace Gecode {
     GECODE_SET_EXPORT SetExpr(const SetExpr& s, int ssign,
                               RelType r,
                               const SetExpr& t, int tsign);
-    /// Assignment operator
-    GECODE_SET_EXPORT const SetExpr& operator=(const SetExpr& e);
+    /// Assignment operator 
+    GECODE_SET_EXPORT const SetExpr& operator =(const SetExpr& e);
     /// Returns the arity of the set expression
     GECODE_SET_EXPORT int arity(void) const;
     /// Returns code for this set expression
@@ -163,13 +163,13 @@ namespace Gecode {
   ///\name Specifying finite set projectors
   //@{
   /// Return set expression for the complement of \a s
-  SetExpr operator-(const SetExpr& s);
+  SetExpr operator -(const SetExpr& s);
   /// Return set expression for the union of \a s and \a t
-  SetExpr operator||(const SetExpr& s, const SetExpr& t);
+  SetExpr operator ||(const SetExpr& s, const SetExpr& t);
   /// Return set expression for the intersection of \a s and \a t
-  SetExpr operator&&(const SetExpr& s, const SetExpr& t);
+  SetExpr operator &&(const SetExpr& s, const SetExpr& t);
   /// Return set expression for the difference of \a s and \a t
-  SetExpr operator-(const SetExpr& s, const SetExpr& t);
+  SetExpr operator -(const SetExpr& s, const SetExpr& t);
   //@}
 
 
@@ -261,7 +261,7 @@ namespace Gecode {
     int size(void) const;
 
     /// Return projector \a i from the set
-    const Projector& operator[](int i) const;
+    const Projector& operator [](int i) const;
 
   };
 
@@ -280,8 +280,8 @@ namespace Gecode {
   public:
     /// Copy constructor
     GECODE_SET_EXPORT Formula(const Formula& f);
-    /// Assignment operator
-    GECODE_SET_EXPORT const Formula& operator=(const Formula& f);
+    /// Assignment operator 
+    GECODE_SET_EXPORT const Formula& operator =(const Formula& f);
     /// Destructor
     GECODE_SET_EXPORT ~Formula(void);
     /// Construct formula for variable \a var
@@ -302,15 +302,15 @@ namespace Gecode {
   ///\name Operations on formulas for specifying set constraints
   //@{
   /// Return formula \f$f\land g\f$ \relates Formula
-  Formula operator&(const Formula& f, const Formula& g);
+  Formula operator &(const Formula& f, const Formula& g);
   /// Return formula \f$f\lor g\f$ \relates Formula
-  Formula operator|(const Formula& f, const Formula& g);
+  Formula operator |(const Formula& f, const Formula& g);
   /// Return formula \f$\lnot f\f$ \relates Formula
-  Formula operator-(const Formula& f);
+  Formula operator -(const Formula& f);
   /// Return formula \f$f\rightarrow f\f$ \relates Formula
-  Formula operator>>(const Formula& f, const Formula& g);
+  Formula operator >>(const Formula& f, const Formula& g);
   /// Return formula \f$f\leftrightarrow g\f$ \relates Formula
-  Formula operator==(const Formula& f, const Formula& g);
+  Formula operator ==(const Formula& f, const Formula& g);
   //@}
 
 
@@ -401,13 +401,13 @@ namespace Gecode {
   //@}
 
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const SetExprCode& sec);
+  operator <<(std::ostream&, const SetExprCode& sec);
 
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const Projector& p);
+  operator <<(std::ostream&, const Projector& p);
   
   GECODE_SET_EXPORT std::ostream&
-  operator<<(std::ostream&, const ProjectorSet& ps);
+  operator <<(std::ostream&, const ProjectorSet& ps);
 
 }
 

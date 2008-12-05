@@ -85,8 +85,8 @@ namespace Gecode { namespace Gist {
     Extent shape[1];
     /// Copy construtor
     Shape(const Shape&);
-    /// Assignment operator
-    Shape& operator=(const Shape&);
+    /// Assignment operator 
+    Shape& operator =(const Shape&);
     /// Constructor
     Shape(void);
   public:
@@ -109,9 +109,9 @@ namespace Gecode { namespace Gist {
     /// Return depth of the shape
     int depth(void) const;
     /// Return extent at depth \a i
-    const Extent& operator[](int i) const;
+    const Extent& operator [](int i) const;
     /// Return extent at depth \a i
-    Extent& operator[](int i);
+    Extent& operator [](int i);
     /// Return if extent exists at \a depth, if yes return it in \a extent
     bool getExtentAtDepth(int depth, Extent& extent);
     /// Return bounding box

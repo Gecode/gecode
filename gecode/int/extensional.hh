@@ -114,9 +114,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Initialize for support of layer \a l
       void init(const Layer& l);
       /// Test whether more values supported
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move to next supported value
-      void operator++(void);
+      void operator ++(void);
       /// Return supported value
       int val(void) const;
     };

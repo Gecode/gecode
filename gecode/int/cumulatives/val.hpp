@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     Event(void) {}
 
     /// Order events based on date.
-    bool operator<(const Event& ev) const {
+    bool operator <(const Event& ev) const {
       if (date == ev.date) {
         if (e == EVENT_PROF && ev.e != EVENT_PROF) return true;
         if (e == EVENT_CHCK && ev.e == EVENT_PRUN) return true;
@@ -331,7 +331,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     template <class C>
     class LT {
     public:
-      bool operator()(const C& lhs, const C& rhs) {
+      bool operator ()(const C& lhs, const C& rhs) {
         return lhs < rhs;
       }
     };

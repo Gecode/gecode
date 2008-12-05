@@ -69,7 +69,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -81,7 +81,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class J>
   inline void
-  SingletonAppend<J>::operator++(void) {
+  SingletonAppend<J>::operator ++(void) {
     if (j()) {
       mi = j.min();  ma = j.max();
       ++j;

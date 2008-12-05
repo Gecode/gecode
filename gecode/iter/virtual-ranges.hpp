@@ -47,9 +47,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    virtual void operator++(void) = 0;
+    virtual void operator ++(void) = 0;
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void) = 0;
+    virtual bool operator ()(void) = 0;
     //@}
     /// \name Range access
     //@{
@@ -95,9 +95,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    virtual void operator++(void);
+    virtual void operator ++(void);
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
+    virtual bool operator ()(void);
     //@}
 
     /// \name Range access
@@ -120,11 +120,11 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
 
   template <class I>
   bool
-  RangesTemplate<I>::operator()(void) { return i(); }
+  RangesTemplate<I>::operator ()(void) { return i(); }
 
   template <class I>
   void
-  RangesTemplate<I>::operator++(void) { ++i; }
+  RangesTemplate<I>::operator ++(void) { ++i; }
 
   template <class I>
   int

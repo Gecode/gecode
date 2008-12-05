@@ -70,9 +70,9 @@ namespace Gecode { namespace Iter { namespace Values {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Value access
@@ -89,7 +89,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template <class I, class J>
   forceinline void
-  Union<I,J>::operator++(void) {
+  Union<I,J>::operator ++(void) {
     if (i()) {
       if (j()) {
         if (i.val() == j.val()) {
@@ -113,18 +113,18 @@ namespace Gecode { namespace Iter { namespace Values {
   inline void
   Union<I,J>::init(I& i0, J& j0) {
     i=i0; j=j0; done=false;
-    operator++();
+    operator ++();
   }
 
   template <class I, class J>
   forceinline
   Union<I,J>::Union(I& i0, J& j0) : i(i0), j(j0), done(false) {
-    operator++();
+    operator ++();
   }
 
   template <class I, class J>
   forceinline bool
-  Union<I,J>::operator()(void) const {
+  Union<I,J>::operator ()(void) const {
     return !done;
   }
 

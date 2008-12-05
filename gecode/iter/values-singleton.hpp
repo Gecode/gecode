@@ -63,9 +63,9 @@ namespace Gecode { namespace Iter { namespace Values {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name %Value access
@@ -89,11 +89,11 @@ namespace Gecode { namespace Iter { namespace Values {
   }
 
   forceinline void
-  Singleton::operator++(void) {
+  Singleton::operator ++(void) {
     done=true;
   }
   forceinline bool
-  Singleton::operator()(void) const {
+  Singleton::operator ()(void) const {
     return !done;
   }
 

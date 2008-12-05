@@ -142,7 +142,7 @@ namespace Gecode {
     /// Copy constructor (disabled)
     Region(const Region& r) : home(r.home) {}
     /// Assignment operator (disabled)
-    const Region& operator=(const Region&) { return *this; }
+    const Region& operator =(const Region&) { return *this; }
   };
   //@}
 

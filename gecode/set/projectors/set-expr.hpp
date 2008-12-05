@@ -60,7 +60,7 @@ namespace Gecode {
   }
 
   forceinline int 
-  SetExprCode::Stream::operator[](int i) const {
+  SetExprCode::Stream::operator [](int i) const {
     return is[i];
   }
 
@@ -88,7 +88,7 @@ namespace Gecode {
   SetExprCode::size(void) const { return c.size(); }
 
   forceinline int
-  SetExprCode::operator[](int i) const { return c[i]; }
+  SetExprCode::operator [](int i) const { return c[i]; }
 
 
   /*
@@ -100,20 +100,20 @@ namespace Gecode {
   SetExpr::SetExpr(void) : ax(NULL), sign(1) {}
 
   inline SetExpr
-  operator-(const SetExpr& s) { return SetExpr(s, -1); }
+  operator -(const SetExpr& s) { return SetExpr(s, -1); }
   
   inline SetExpr
-  operator||(const SetExpr& s, const SetExpr& t) {
+  operator ||(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_UNION, t, 1);
   }
   
   inline SetExpr
-  operator&&(const SetExpr& s, const SetExpr& t) {
+  operator &&(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_INTER, t, 1);
   }
   
   inline SetExpr
-  operator-(const SetExpr& s, const SetExpr& t) {
+  operator -(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_INTER, t, -1);
   }
 
@@ -128,7 +128,7 @@ namespace Gecode {
     class Iter;
     /// The actual iterator
     Iter *i;
-    const SetExprRanges& operator=(const SetExprRanges&);
+    const SetExprRanges& operator =(const SetExprRanges&);
   public:
     /// \name Constructors and destructor
     //@{    
@@ -154,9 +154,9 @@ namespace Gecode {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    bool operator()(void);
+    bool operator ()(void);
     /// Test whether iterator is still at a range or done
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Range access
@@ -216,10 +216,10 @@ namespace Gecode {
   }
 
   forceinline bool
-  SetExprRanges::operator()(void) { return (*(i->i))(); }
+  SetExprRanges::operator ()(void) { return (*(i->i))(); }
   
   forceinline void
-  SetExprRanges::operator++(void) { ++(*(i->i)); }
+  SetExprRanges::operator ++(void) { ++(*(i->i)); }
 
   forceinline int
   SetExprRanges::min(void) const { return i->i->min(); }

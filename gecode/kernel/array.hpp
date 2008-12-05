@@ -82,7 +82,7 @@ namespace Gecode {
     /// Initialize from variable array \a a (share elements)
     VarArray(const VarArray<Var>& a);
     /// Initialize from variable array \a a (share elements)
-    const VarArray<Var>& operator=(const VarArray<Var>& a);
+    const VarArray<Var>& operator =(const VarArray<Var>& a);
     /// Destructor
     ~VarArray(void);
     //@}
@@ -101,9 +101,9 @@ namespace Gecode {
     /// \name Array elements
     //@{
     /// Return variable at position \a i
-    Var& operator[](int i);
+    Var& operator [](int i);
     /// Return variable at position \a i
-    const Var& operator[](int i) const;
+    const Var& operator [](int i) const;
     /// Insert a new element \a v at the end of the array (increase size by 1)
     void add(Space& home, const Var& v);
     //@}
@@ -144,7 +144,7 @@ namespace Gecode {
     template <class X>
     class ViewLess {
     public:
-      bool operator()(const X&, const X&);
+      bool operator ()(const X&, const X&);
     };
     /// Sort \a n views \a x according to \a ViewLess
     static void sort(View* x, int n);
@@ -163,7 +163,7 @@ namespace Gecode {
     /// Initialize from view array \a a (copy elements)
     ViewArray(Space& home, const ViewArray<View>& a);
     /// Initialize from view array \a a (share elements)
-    const ViewArray<View>& operator=(const ViewArray<View>& a);
+    const ViewArray<View>& operator =(const ViewArray<View>& a);
     /**
      * \brief Initialize from variable argument array \a a (copy elements)
      *
@@ -195,9 +195,9 @@ namespace Gecode {
     /// \name Array elements
     //@{
     /// Return view at position \a i
-    View& operator[](int i);
+    View& operator [](int i);
     /// Return view at position \a i
-    const View& operator[](int i) const;
+    const View& operator [](int i) const;
     //@}
 
     /// \name Dependencies
@@ -382,7 +382,7 @@ namespace Gecode {
     /// Initialize from argument array \a a (copy elements)
     ArgArrayBase(const ArgArrayBase<T>& a);
     /// Initialize from view array \a a (copy elements)
-    const ArgArrayBase<T>& operator=(const ArgArrayBase<T>& a);
+    const ArgArrayBase<T>& operator =(const ArgArrayBase<T>& a);
     //@}
 
     /// \name Array size
@@ -394,9 +394,9 @@ namespace Gecode {
     /// \name Array elements
     //@{
     /// Return element at position \a i
-    T& operator[](int i);
+    T& operator [](int i);
     /// Return element at position \a i
-    const T& operator[](int i) const;
+    const T& operator [](int i) const;
     //@}
 
     /// \name Destructor
@@ -459,7 +459,7 @@ namespace Gecode {
     /// Sort order for variables
     class VarLess {
     public:
-      bool operator()(const Var&, const Var&);
+      bool operator ()(const Var&, const Var&);
     };
   public:
     using ArgArrayBase<Var>::size;
@@ -501,7 +501,7 @@ namespace Gecode {
    */
   template<class Char, class Traits, class Var>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os, 
              const VarArray<Var>& x);
 
   /**
@@ -510,7 +510,7 @@ namespace Gecode {
    */
   template<class Char, class Traits, class View>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, const ViewArray<View>& x);
+  operator <<(std::basic_ostream<Char,Traits>& os, const ViewArray<View>& x);
 
   /**
    * \brief Print array elements enclosed in curly brackets
@@ -518,7 +518,7 @@ namespace Gecode {
    */
   template<class Char, class Traits, class T>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, const ArgArrayBase<T>& x);
+  operator <<(std::basic_ostream<Char,Traits>& os, const ArgArrayBase<T>& x);
 
 
 
@@ -581,7 +581,7 @@ namespace Gecode {
 
   template <class Var>
   forceinline const VarArray<Var>&
-  VarArray<Var>::operator=(const VarArray<Var>& a) {
+  VarArray<Var>::operator =(const VarArray<Var>& a) {
     n = a.n; capacity = a.capacity; x = a.x;
     return *this;
   }
@@ -624,14 +624,14 @@ namespace Gecode {
 
   template <class Var>
   forceinline Var&
-  VarArray<Var>::operator[](int i) {
+  VarArray<Var>::operator [](int i) {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
 
   template <class Var>
   forceinline const Var&
-  VarArray<Var>::operator[](int i) const {
+  VarArray<Var>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
@@ -718,7 +718,7 @@ namespace Gecode {
 
   template <class View>
   forceinline const ViewArray<View>&
-  ViewArray<View>::operator=(const ViewArray<View>& a) {
+  ViewArray<View>::operator =(const ViewArray<View>& a) {
     n = a.n; x = a.x;
     return *this;
   }
@@ -737,14 +737,14 @@ namespace Gecode {
 
   template <class View>
   forceinline View&
-  ViewArray<View>::operator[](int i) {
+  ViewArray<View>::operator [](int i) {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
 
   template <class View>
   forceinline const View&
-  ViewArray<View>::operator[](int i) const {
+  ViewArray<View>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
@@ -903,7 +903,7 @@ namespace Gecode {
 
   template <class View> template <class X>
   forceinline bool
-  ViewArray<View>::ViewLess<X>::operator()(const X& a, const X& b) {
+  ViewArray<View>::ViewLess<X>::operator ()(const X& a, const X& b) {
     return __before(a,b);
   }
 
@@ -1086,7 +1086,7 @@ namespace Gecode {
 
   template <class T>
   forceinline const ArgArrayBase<T>&
-  ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
+  ArgArrayBase<T>::operator =(const ArgArrayBase<T>& aa) {
     if (&aa != this) {
       if (n > onstack_size)
         heap.free(a,n);
@@ -1105,14 +1105,14 @@ namespace Gecode {
 
   template <class T>
   forceinline T&
-  ArgArrayBase<T>::operator[](int i) {
+  ArgArrayBase<T>::operator [](int i) {
     assert((i>=0) && (i < n));
     return a[i];
   }
 
   template <class T>
   forceinline const T&
-  ArgArrayBase<T>::operator[](int i) const {
+  ArgArrayBase<T>::operator [](int i) const {
     assert((i>=0) && (i < n));
     return a[i];
   }
@@ -1178,7 +1178,7 @@ namespace Gecode {
 
   template <class Var>
   forceinline bool
-  VarArgArray<Var>::VarLess::operator()(const Var& a, const Var& b) {
+  VarArgArray<Var>::VarLess::operator ()(const Var& a, const Var& b) {
     return a.var() < b.var();
   }
 
@@ -1266,7 +1266,7 @@ namespace Gecode {
    */
   template<class Char, class Traits, class Var>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os, 
              const VarArray<Var>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
@@ -1282,7 +1282,7 @@ namespace Gecode {
   
   template<class Char, class Traits, class View>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os, 
              const ViewArray<View>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
@@ -1298,7 +1298,7 @@ namespace Gecode {
   
   template<class Char, class Traits, class T>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os, 
              const ArgArrayBase<T>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

@@ -83,7 +83,7 @@ namespace Gecode { namespace Support {
     /// Copy constructor (disabled)
     StaticStack(const StaticStack& s) : a(s.a) {}
     /// Assignment operator (disabled)
-    const StaticStack& operator=(const StaticStack&) { return *this; }
+    const StaticStack& operator =(const StaticStack&) { return *this; }
   };
 
   template <class T, class A>

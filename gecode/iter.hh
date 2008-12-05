@@ -47,8 +47,8 @@ namespace Gecode {
       template <class I> struct IsRangeIter {
         /// Checking function
         static void constraints(I* p) {
-          bool b = p->operator()(); (void) b;
-          p->operator++();
+          bool b = p->operator ()(); (void) b;
+          p->operator ++();
           int min = p->min(); (void) min;
           int max = p->max(); (void) max;
           unsigned int width = p->width(); (void) width;
@@ -66,8 +66,8 @@ namespace Gecode {
       template <class I> struct IsValueIter {
         /// Checking function
         static void constraints(I* p) {
-          bool b = p->operator()(); (void) b;
-          p->operator++();
+          bool b = p->operator ()(); (void) b;
+          p->operator ++();
           int val = p->val(); (void) val;
         }
         /// Constructor

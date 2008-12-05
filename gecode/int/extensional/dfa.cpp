@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   class TransByI_State {
   public:
     forceinline bool
-    operator()(const DFA::Transition& x, const DFA::Transition& y) {
+    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
       return x.i_state < y.i_state;
     }
     forceinline static void
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   class TransBySymbol {
   public:
     forceinline bool
-    operator()(const DFA::Transition& x, const DFA::Transition& y) {
+    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
       return x.symbol < y.symbol;
     }
     forceinline static void
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   class TransBySymbolI_State {
   public:
     forceinline bool
-    operator()(const DFA::Transition& x, const DFA::Transition& y) {
+    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
       return ((x.symbol < y.symbol) ||
               ((x.symbol == y.symbol) && (x.i_state < y.i_state)));
     }
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   class TransByO_State {
   public:
     forceinline bool
-    operator()(const DFA::Transition& x, const DFA::Transition& y) {
+    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
       return x.o_state < y.o_state;
     }
     forceinline static void
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   class StateGroupByGroup {
   public:
     forceinline bool
-    operator()(const StateGroup& x, const StateGroup& y) {
+    operator ()(const StateGroup& x, const StateGroup& y) {
       return ((x.group < y.group) ||
               ((x.group == y.group) && (x.state < y.state)));
     }

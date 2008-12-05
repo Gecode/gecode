@@ -62,11 +62,11 @@ namespace Gecode {
   /// Sort ranges according to increasing minimum
   class IntSet::MinInc {
   public:
-    bool operator()(const Range &x, const Range &y);
+    bool operator ()(const Range &x, const Range &y);
   };
 
   forceinline bool
-  IntSet::MinInc::operator()(const Range &x, const Range &y) {
+  IntSet::MinInc::operator ()(const Range &x, const Range &y) {
     return x.min < y.min;
   }
 

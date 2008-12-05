@@ -76,12 +76,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
   template <class View, class Degree, class StateIdx>
   forceinline bool
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::operator()(void) const {
+  LayeredGraph<View,Degree,StateIdx>::LayerValues::operator ()(void) const {
     return s1<s2;
   }
   template <class View, class Degree, class StateIdx>
   forceinline void
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::operator++(void) {
+  LayeredGraph<View,Degree,StateIdx>::LayerValues::operator ++(void) {
     s1++;
   }
   template <class View, class Degree, class StateIdx>

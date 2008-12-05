@@ -255,9 +255,9 @@ namespace Gecode {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a resource
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next resource (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Resource access
@@ -288,9 +288,9 @@ namespace Gecode {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a task
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next task (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Task access
@@ -307,19 +307,19 @@ namespace Gecode {
  * \relates Gecode::Task
  */
 GECODE_SCHEDULING_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Task& t);
+operator <<(std::ostream&, const Gecode::Task& t);
 /**
  * \brief Print resource \a r
  * \relates Gecode::Resource
  */
 GECODE_SCHEDULING_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Resource& r);
+operator <<(std::ostream&, const Gecode::Resource& r);
 /**
  * \brief Print schedule \a s
  * \relates Gecode::Resource
  */
 GECODE_SCHEDULING_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Schedule& s);
+operator <<(std::ostream&, const Gecode::Schedule& s);
 
 
 namespace Gecode {

@@ -185,12 +185,12 @@ namespace Gecode {
   }
 
   forceinline bool
-  DFA::Transitions::operator()(void) const {
+  DFA::Transitions::operator ()(void) const {
     return c_trans < e_trans;
   }
 
   forceinline void
-  DFA::Transitions::operator++(void) {
+  DFA::Transitions::operator ++(void) {
     c_trans++;
   }
 
@@ -226,12 +226,12 @@ namespace Gecode {
   }
 
   forceinline bool
-  DFA::Symbols::operator()(void) const {
+  DFA::Symbols::operator ()(void) const {
     return c_trans < e_trans;
   }
 
   forceinline void
-  DFA::Symbols::operator++(void) {
+  DFA::Symbols::operator ++(void) {
     int s = c_trans->symbol;
     do {
       c_trans++;
@@ -246,7 +246,7 @@ namespace Gecode {
 
   template<class Char, class Traits, class T>
   std::basic_ostream<Char,Traits>& 
-  operator<<(std::basic_ostream<Char,Traits>& os, const DFA& d) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const DFA& d) {
     std::basic_ostringstream<Char,Traits> st;
     st.copyfmt(os); st.width(0);
     st << "Start state: 0" << std::endl

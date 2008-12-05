@@ -63,9 +63,9 @@ namespace Gecode { namespace Set {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
-    bool operator()(void) const { return _pos<_size; }
+    bool operator ()(void) const { return _pos<_size; }
     /// Move iterator to next range (if possible)
-    void operator++(void) { _pos++; }
+    void operator ++(void) { _pos++; }
     //@}
 
     /// \name Range access
@@ -829,9 +829,9 @@ namespace Gecode { namespace Set {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const { return ar(); }
+    bool operator ()(void) const { return ar(); }
     /// Move iterator to next value (if possible)
-    void operator++(void) { ++ar; }
+    void operator ++(void) { ++ar; }
     //@}
 
     /// \name Range access

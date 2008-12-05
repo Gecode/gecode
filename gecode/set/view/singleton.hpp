@@ -369,9 +369,9 @@ namespace Gecode {
       /// \name Iteration control
       //@{
       /// Test whether iterator is still at a range or done
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move iterator to next range (if possible)
-      void operator++(void);
+      void operator ++(void);
       //@}
 
       /// \name Range access
@@ -405,10 +405,10 @@ namespace Gecode {
     }
 
     forceinline bool
-    GlbRanges<SingletonView>::operator()(void) const { return flag; }
+    GlbRanges<SingletonView>::operator ()(void) const { return flag; }
 
     forceinline void
-    GlbRanges<SingletonView>::operator++(void) { flag=false; }
+    GlbRanges<SingletonView>::operator ++(void) { flag=false; }
 
     forceinline int
     GlbRanges<SingletonView>::min(void) const { return val; }

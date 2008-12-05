@@ -76,9 +76,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    virtual void operator++(void);
+    virtual void operator ++(void);
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
+    virtual bool operator ()(void);
     //@}
   };
 
@@ -118,9 +118,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
+    virtual bool operator ()(void);
     //@}
   };
 
@@ -131,7 +131,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
    */
 
   inline void
-  Inter::operator++(void) {
+  Inter::operator ++(void) {
     if (!(*i)() || !(*j)()) goto done;
     do {
       while ((*i)() && (i->max() < j->min())) ++(*i);
@@ -154,14 +154,14 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   forceinline
   Inter::Inter(Iterator* i0, Iterator* j0)
     : i(i0), j(j0) {
-    operator++();
+    operator ++();
   }
 
   forceinline
   Inter::~Inter(void) { delete i; delete j; }
 
   forceinline bool
-  Inter::operator()(void) { return MinMax::operator()(); }
+  Inter::operator ()(void) { return MinMax::operator ()(); }
 
   forceinline int
   Inter::min(void) const { return MinMax::min(); }
@@ -178,7 +178,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
    */
 
   inline void
-  NaryInter::operator++(void) {
+  NaryInter::operator ++(void) {
     // The next interval to be returned must have a hole
     // between it and the previously returned range.
     mi = ma+2;
@@ -219,12 +219,12 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
       finish();
     } else {
       ma=is[0]->min()-2;
-      operator++();
+      operator ++();
     }
   }
 
   forceinline bool
-  NaryInter::operator()(void) { return MinMax::operator()(); }
+  NaryInter::operator ()(void) { return MinMax::operator ()(); }
 
   forceinline int
   NaryInter::min(void) const { return MinMax::min(); }

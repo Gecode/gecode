@@ -69,7 +69,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -108,7 +108,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -120,7 +120,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I, class J>
   inline void
-  Append<I,J>::operator++(void) {
+  Append<I,J>::operator ++(void) {
     if (i()) {
       mi = i.min(); ma = i.max();
       ++i;
@@ -146,7 +146,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Append<I,J>::Append(I& i0, J& j0)
     : i(i0), j(j0) {
     if (i() || j())
-      operator++();
+      operator ++();
     else
       finish();
   }
@@ -156,7 +156,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Append<I,J>::init(I& i0, J& j0) {
     i = i0; j = j0;
     if (i() || j())
-      operator++();
+      operator ++();
     else
       finish();
   }
@@ -169,7 +169,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   inline void
-  NaryAppend<I>::operator++(void) {
+  NaryAppend<I>::operator ++(void) {
     mi = r[active].min();
     ma = r[active].max();
     ++r[active];
@@ -201,7 +201,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     while (active < n && !r[active]())
       active++;
     if (active < n){
-      operator++();
+      operator ++();
     } else {
       finish();
     }
@@ -214,7 +214,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     while (active < n && !r[active]())
       active++;
     if (active < n){
-      operator++();
+      operator ++();
     } else {
       finish();
     }

@@ -114,7 +114,7 @@ namespace Gecode {
     /// Copy constructor maintaining reference count
     SharedHandle(const SharedHandle& sh);
     /// Assignment operator mainitaining reference count
-    SharedHandle& operator=(const SharedHandle& sh);
+    SharedHandle& operator =(const SharedHandle& sh);
     /// Updating during cloning
     void update(Space& home, bool share, SharedHandle& sh);
     /// Destructor that maintains reference count
@@ -842,9 +842,9 @@ namespace Gecode {
     /// Initialize
     Advisors(const Council<A>& c);
     /// Test whether there advisors left
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next advisor
-    void operator++(void);
+    void operator ++(void);
     /// Return advisor
     A& advisor(void) const;
   };
@@ -1673,7 +1673,7 @@ namespace Gecode {
     subscribe();
   }
   forceinline SharedHandle& 
-  SharedHandle::operator=(const SharedHandle& sh) {
+  SharedHandle::operator =(const SharedHandle& sh) {
     if (&sh != this) {
       cancel(); o = sh.o; subscribe();
     }
@@ -2144,13 +2144,13 @@ namespace Gecode {
 
   template <class A>
   forceinline bool
-  Advisors<A>::operator()(void) const {
+  Advisors<A>::operator ()(void) const {
     return a != NULL;
   }
 
   template <class A>
   forceinline void
-  Advisors<A>::operator++(void) {
+  Advisors<A>::operator ++(void) {
     do {
       a = a->next();
     } while ((a != NULL) && static_cast<A*>(a)->disposed());

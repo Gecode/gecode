@@ -102,18 +102,18 @@ namespace Gecode { namespace Support {
     Symbol(unsigned int i);
     /// Copy constructor
     Symbol(const Symbol& s0);
-    /// Assignment operator
-    const Symbol& operator=(const Symbol& s0);
+    /// Assignment operator 
+    const Symbol& operator =(const Symbol& s0);
     /// Test if this Symbol is equal to \a s0
-    bool operator==(const Symbol& s0) const;
+    bool operator ==(const Symbol& s0) const;
     /// Test if this Symbol is equal to \a s0
-    bool operator==(const char* s0) const;
+    bool operator ==(const char* s0) const;
     /// Return if Symbol is empty
     bool empty(void) const;
     /// Return a copy
     Symbol copy(void) const;
     /// Concatenate with \a s
-    Symbol& operator+=(const Symbol& s);
+    Symbol& operator +=(const Symbol& s);
     /// Hash value according to modulo \a M
     int hash(int m) const;
     /// Print this Symbol to \a os
@@ -126,7 +126,7 @@ namespace Gecode { namespace Support {
   
   forceinline
   std::ostream&
-  operator<<(std::ostream& os, const Gecode::Support::Symbol& x) {
+  operator <<(std::ostream& os, const Gecode::Support::Symbol& x) {
     return x.print(os);
   }
 

@@ -80,9 +80,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
+    virtual bool operator ()(void);
     //@}
   };
 
@@ -129,9 +129,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
+    virtual bool operator ()(void);
     //@}
   };
 
@@ -172,7 +172,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
 
   template <int UMIN, int UMAX>
   forceinline void
-  Compl<UMIN,UMAX>::operator++(void) {
+  Compl<UMIN,UMAX>::operator ++(void) {
     assert(!(*i)() || (i->max() <= UMAX));
     if ((*i)() && (i->max() < UMAX)) {
       mi = i->max()+1;
@@ -185,7 +185,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
 
   template <int UMIN, int UMAX>
   forceinline bool
-  Compl<UMIN,UMAX>::operator()(void) { return MinMax::operator()(); }
+  Compl<UMIN,UMAX>::operator ()(void) { return MinMax::operator ()(); }
 
   template <int UMIN, int UMAX>
   forceinline int
@@ -232,7 +232,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   ComplVal::~ComplVal(void) { delete i; }
 
   forceinline void
-  ComplVal::operator++(void) {
+  ComplVal::operator ++(void) {
     assert(!(*i)() || (i->max() <= UMAX));
     if ((*i)() && (i->max() < UMAX)) {
       mi = i->max()+1;
@@ -244,7 +244,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   }
 
   forceinline bool
-  ComplVal::operator()(void) { return MinMax::operator()(); }
+  ComplVal::operator ()(void) { return MinMax::operator ()(); }
 
   forceinline int
   ComplVal::min(void) const { return MinMax::min(); }

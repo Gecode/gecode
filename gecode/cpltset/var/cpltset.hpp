@@ -133,10 +133,10 @@ namespace Gecode {
   : iter(x.var()) {}
   
   forceinline bool
-  CpltSetVarGlbRanges::operator()(void) const { return iter(); }
+  CpltSetVarGlbRanges::operator ()(void) const { return iter(); }
   
   forceinline void
-  CpltSetVarGlbRanges::operator++(void) { ++iter; }
+  CpltSetVarGlbRanges::operator ++(void) { ++iter; }
 
   forceinline int
   CpltSetVarGlbRanges::min(void) const { return iter.min(); }
@@ -155,10 +155,10 @@ namespace Gecode {
   : iter(x.var()) {}
   
   forceinline bool
-  CpltSetVarGlbValues::operator()(void) const { return iter(); }
+  CpltSetVarGlbValues::operator ()(void) const { return iter(); }
   
   forceinline void
-  CpltSetVarGlbValues::operator++(void) { ++iter; }
+  CpltSetVarGlbValues::operator ++(void) { ++iter; }
 
   forceinline int
   CpltSetVarGlbValues::val(void) const { return iter.val(); }
@@ -171,10 +171,10 @@ namespace Gecode {
   : iter(x.var()) {}
   
   forceinline bool
-  CpltSetVarLubRanges::operator()(void) const { return iter(); }
+  CpltSetVarLubRanges::operator ()(void) const { return iter(); }
   
   forceinline void
-  CpltSetVarLubRanges::operator++(void) { ++iter; }
+  CpltSetVarLubRanges::operator ++(void) { ++iter; }
 
   forceinline int
   CpltSetVarLubRanges::min(void) const { return iter.min(); }
@@ -193,10 +193,10 @@ namespace Gecode {
   : iter(x.var()) {}
   
   forceinline bool
-  CpltSetVarLubValues::operator()(void) const { return iter(); }
+  CpltSetVarLubValues::operator ()(void) const { return iter(); }
   
   forceinline void
-  CpltSetVarLubValues::operator++(void) { ++iter; }
+  CpltSetVarLubValues::operator ++(void) { ++iter; }
 
   forceinline int
   CpltSetVarLubValues::val(void) const {return iter.val();}
@@ -209,10 +209,10 @@ namespace Gecode {
   : iter(x.var()) {}
   
   forceinline bool
-  CpltSetVarUnknownRanges::operator()(void) const { return iter(); }
+  CpltSetVarUnknownRanges::operator ()(void) const { return iter(); }
   
   forceinline void
-  CpltSetVarUnknownRanges::operator++(void) { ++iter; }
+  CpltSetVarUnknownRanges::operator ++(void) { ++iter; }
 
   forceinline int
   CpltSetVarUnknownRanges::min(void) const { return iter.min(); }

@@ -281,7 +281,7 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Iterate to the next glb value
-    void operator++(void);
+    void operator ++(void);
     //@}    
     int val(void) const;
   };
@@ -305,9 +305,9 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Iterate to the next glb value
-    void operator++(void);
+    void operator ++(void);
     /// Check validity
-    bool operator()(void) const;
+    bool operator ()(void) const;
     //@}    
     int val(void) const;
   };
@@ -335,7 +335,7 @@ namespace Gecode { namespace CpltSet {
     /// \name Iteration control
     //@{
     /// Iterate to the next glb value
-    void operator++(void);
+    void operator ++(void);
     //@}    
     int val(void) const;
   };
@@ -363,14 +363,14 @@ namespace Gecode { namespace CpltSet {
   BddIterator::empty(void) const { return (l == 0) && (r == n - 1); }
 
   inline bool
-  BddIterator::operator()(void) const {
+  BddIterator::operator ()(void) const {
     bool valid = (!empty() || singleton );
     return valid;
   }
 
   inline int 
   BddIterator::label(void) const { 
-    if (!operator()()) { 
+    if (!operator ()()) { 
       return -1; 
     } else {
       return manager.bddidx(cur); 
@@ -433,14 +433,14 @@ namespace Gecode { namespace CpltSet {
   DomBddIterator::same(void) const { return bdd_level == vector_level; }
 
   forceinline bool
-  DomBddIterator::operator()(void) const {
+  DomBddIterator::operator ()(void) const {
     return vector_level < (ma-mi+1);
   }
 
   inline void
-  DomBddIterator::operator++(void) {
+  DomBddIterator::operator ++(void) {
     if (same()) {
-      BddIterator::operator++();
+      BddIterator::operator ++();
       bdd_level   = BddIterator::label() - off;
     } 
     vector_level++;
@@ -463,8 +463,8 @@ namespace Gecode { namespace CpltSet {
   GlbValues<CpltSetVarImp*>::GlbValues(const CpltSetVarImp* x) 
     : mi(x->min), ma(x->max) {
     DomBddIterator::init(x);
-    while (operator()() && status() != FIX_GLB) {
-      DomBddIterator::operator++();
+    while (operator ()() && status() != FIX_GLB) {
+      DomBddIterator::operator ++();
     }
 
   }
@@ -474,16 +474,16 @@ namespace Gecode { namespace CpltSet {
     mi = x->min;  
     ma = x->max;
     DomBddIterator::init(x);
-    while (operator()() && status() != FIX_GLB) {
-      DomBddIterator::operator++();
+    while (operator ()() && status() != FIX_GLB) {
+      DomBddIterator::operator ++();
     }
   }
 
   inline void 
-  GlbValues<CpltSetVarImp*>::operator++(void) {
-    DomBddIterator::operator++();
-    while (operator()() && status() != FIX_GLB) {
-      DomBddIterator::operator++();
+  GlbValues<CpltSetVarImp*>::operator ++(void) {
+    DomBddIterator::operator ++();
+    while (operator ()() && status() != FIX_GLB) {
+      DomBddIterator::operator ++();
     }
   }
 
@@ -499,8 +499,8 @@ namespace Gecode { namespace CpltSet {
   LubValues<CpltSetVarImp*>::LubValues(const CpltSetVarImp* x) 
     : mi(x->min), ma(x->max) {
     DomBddIterator::init(x);
-    while (DomBddIterator::operator()() && status() == FIX_NOT_LUB) {
-      DomBddIterator::operator++();
+    while (DomBddIterator::operator ()() && status() == FIX_NOT_LUB) {
+      DomBddIterator::operator ++();
     }
   }
 
@@ -510,22 +510,22 @@ namespace Gecode { namespace CpltSet {
     ma = x->max;
 
     DomBddIterator::init(x);
-    while (DomBddIterator::operator()() && status() == FIX_NOT_LUB) {
-      DomBddIterator::operator++();
+    while (DomBddIterator::operator ()() && status() == FIX_NOT_LUB) {
+      DomBddIterator::operator ++();
     }
   }
 
   inline void 
-  LubValues<CpltSetVarImp*>::operator++(void) {
-    DomBddIterator::operator++();
-    while (DomBddIterator::operator()() && status() == FIX_NOT_LUB) {
-      DomBddIterator::operator++();
+  LubValues<CpltSetVarImp*>::operator ++(void) {
+    DomBddIterator::operator ++();
+    while (DomBddIterator::operator ()() && status() == FIX_NOT_LUB) {
+      DomBddIterator::operator ++();
     }
   }
 
   inline bool
-  LubValues<CpltSetVarImp*>::operator()(void) const {
-    return DomBddIterator::operator()() && status() != FIX_NOT_LUB;
+  LubValues<CpltSetVarImp*>::operator ()(void) const {
+    return DomBddIterator::operator ()() && status() != FIX_NOT_LUB;
   }
 
   inline int
@@ -540,9 +540,9 @@ namespace Gecode { namespace CpltSet {
   UnknownValues<CpltSetVarImp*>::UnknownValues(const CpltSetVarImp* x) 
     : mi(x->min), ma(x->max) {
     DomBddIterator::init(x);
-    while (operator()() && 
+    while (operator ()() && 
            !(status() == FIX_UNKNOWN || status() == UNDET)) {
-      DomBddIterator::operator++();
+      DomBddIterator::operator ++();
     }
   }
 
@@ -552,18 +552,18 @@ namespace Gecode { namespace CpltSet {
     ma = x->max;
 
     DomBddIterator::init(x);
-    while (operator()() && 
+    while (operator ()() && 
            !(status() == FIX_UNKNOWN || status() == UNDET)) {
-      DomBddIterator::operator++();
+      DomBddIterator::operator ++();
     }
   }
 
   inline void 
-  UnknownValues<CpltSetVarImp*>::operator++(void) {
-    DomBddIterator::operator++();
-    while (operator()() && 
+  UnknownValues<CpltSetVarImp*>::operator ++(void) {
+    DomBddIterator::operator ++();
+    while (operator ()() && 
            !(status() == FIX_UNKNOWN || status() == UNDET)) {
-      DomBddIterator::operator++();
+      DomBddIterator::operator ++();
     }
   }
 

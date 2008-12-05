@@ -70,7 +70,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -104,7 +104,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// \name Iteration control
     //@{
     /// Move iterator to next range (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
   };
 
@@ -116,7 +116,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I, class J>
   inline void
-  Inter<I,J>::operator++(void) {
+  Inter<I,J>::operator ++(void) {
     if (!i() || !j()) goto done;
     do {
       while (i() && (i.max() < j.min())) ++i;
@@ -141,14 +141,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline
   Inter<I,J>::Inter(I& i0, J& j0)
     : i(i0), j(j0) {
-    operator++();
+    operator ++();
   }
 
   template <class I, class J>
   forceinline void
   Inter<I,J>::init(I& i0, J& j0) {
     i = i0; j = j0;
-    operator++();
+    operator ++();
   }
 
 
@@ -159,7 +159,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   inline void
-  NaryInter<I>::operator++(void) {
+  NaryInter<I>::operator ++(void) {
     // The next interval to be returned must have a hole
     // between it and the previously returned range.
     mi = ma+2;
@@ -202,7 +202,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       finish();
     } else {
       ma=is[0].min()-2;
-      operator++();
+      operator ++();
     }
   }
 
@@ -214,7 +214,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       finish();
     } else {
       ma=is[0].min()-2;
-      operator++();
+      operator ++();
     }
   }
 

@@ -332,9 +332,9 @@ namespace Gecode {
       /// \name Iteration control
       //@{
       /// Test whether iterator is still at a range or done
-      bool operator()(void) const;
+      bool operator ()(void) const;
       /// Move iterator to next range (if possible)
-      void operator++(void);
+      void operator ++(void);
       //@}
 
       /// \name Range access
@@ -356,11 +356,11 @@ namespace Gecode {
       : n(x.val()) {}
 
     forceinline bool
-    ViewRanges<ConstIntView>::operator()(void) const {
+    ViewRanges<ConstIntView>::operator ()(void) const {
       return n <= Limits::max;
     }
     forceinline void
-    ViewRanges<ConstIntView>::operator++(void) {
+    ViewRanges<ConstIntView>::operator ++(void) {
       n = Limits::max+1;
     }
 

@@ -487,9 +487,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const;
+    bool operator ()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void);
+    void operator ++(void);
     //@}
 
     /// \name Value access
@@ -508,12 +508,12 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
   template <class View>
   forceinline bool 
-  PruneVal<View>::operator()(void) const {
+  PruneVal<View>::operator ()(void) const {
     return e != NULL;
   }
   template <class View>
   forceinline void 
-  PruneVal<View>::operator++(void) {
+  PruneVal<View>::operator ++(void) {
     do {
       e = e->next_edge();
     } while ((e != NULL) && e->used(x));

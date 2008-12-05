@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VC>
   class RelTestBnd {
   public:
-    RelTest operator()(VA,VC);
+    RelTest operator ()(VA,VC);
   };
   /**
    * \brief Class for bounds-equality test (specialized)
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA>
   class RelTestBnd<VA,ConstIntView> {
   public:
-    RelTest operator()(VA,ConstIntView);
+    RelTest operator ()(VA,ConstIntView);
   };
 
   /**
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VC>
   class RelTestDom {
   public:
-    RelTest operator()(VA,VC);
+    RelTest operator ()(VA,VC);
   };
   /**
    * \brief Class for domain-equality test (specialized)
@@ -128,29 +128,29 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA>
   class RelTestDom<VA,ConstIntView> {
   public:
-    RelTest operator()(VA,ConstIntView);
+    RelTest operator ()(VA,ConstIntView);
   };
 
 
   template <class VA, class VC>
   forceinline RelTest
-  RelTestBnd<VA,VC>::operator()(VA x, VC y) {
+  RelTestBnd<VA,VC>::operator ()(VA x, VC y) {
     return rtest_eq_bnd(x,y);
   }
   template <class VA>
   forceinline RelTest
-  RelTestBnd<VA,ConstIntView>::operator()(VA x, ConstIntView y) {
+  RelTestBnd<VA,ConstIntView>::operator ()(VA x, ConstIntView y) {
     return rtest_eq_bnd(x,y.val());
   }
 
   template <class VA, class VC>
   forceinline RelTest
-  RelTestDom<VA,VC>::operator()(VA x, VC y) {
+  RelTestDom<VA,VC>::operator ()(VA x, VC y) {
     return rtest_eq_dom(x,y);
   }
   template <class VA>
   forceinline RelTest
-  RelTestDom<VA,ConstIntView>::operator()(VA x, ConstIntView y) {
+  RelTestDom<VA,ConstIntView>::operator ()(VA x, ConstIntView y) {
     return rtest_eq_dom(x,y.val());
   }
 
@@ -237,8 +237,8 @@ namespace Gecode { namespace Int { namespace Element {
     IterIdxView(void);
     IterIdxView(const IdxView<View>*, const IdxView<View>*);
     void init(const IdxView<View>*, const IdxView<View>*);
-    bool operator()(void) const;
-    void operator++(void);
+    bool operator ()(void) const;
+    void operator ++(void);
     int  val(void) const;
   };
 
@@ -258,12 +258,12 @@ namespace Gecode { namespace Int { namespace Element {
   }
   template <class View>
   forceinline bool
-  IterIdxView<View>::operator()(void) const {
+  IterIdxView<View>::operator ()(void) const {
     return cur < end;
   }
   template <class View>
   forceinline void
-  IterIdxView<View>::operator++(void) {
+  IterIdxView<View>::operator ++(void) {
     cur++;
   }
   template <class View>
