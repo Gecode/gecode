@@ -436,7 +436,7 @@ SETBUILDDIRS	=						\
 CPLTSETSRC0 =	\
 	array.cpp support.cpp             			          \
 	bddmanager.cpp 							  \
-	var-imp/cpltset.cpp var/cpltset.cpp  view/print.cpp                  \
+	var-imp/cpltset.cpp var/cpltset.cpp                    \
 	constraints/singleton.cpp 					  \
 	constraints/dom.cpp constraints/rel.cpp constraints/cardinality.cpp  \
 	constraints/atmost.cpp constraints/partition.cpp 			  \
@@ -446,7 +446,9 @@ CPLTSETSRC0 =	\
 CPLTSETHDR0 =		                \
 	view.hpp bddmanager.hpp exception.hpp array.hpp \
 	support.hpp var-imp.hpp \
-	var-imp/cpltset.hpp var/cpltset.hpp view/cpltset.hpp \
+	var-imp/cpltset.hpp \
+	var/cpltset.hpp var/print.hpp \
+	view/cpltset.hpp view/print.hpp \
 	propagators.hh \
 	propagators/unary.hpp propagators/binary.hpp \
 	propagators/nary.hpp propagators/naryone.hpp propagators/narytwo.hpp \

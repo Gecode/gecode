@@ -35,41 +35,39 @@
  *
  */
 
-#include <gecode/cpltset.hh>
+#include <sstream>
 #include <gecode/support/buddy/kernel.h>
 
 namespace Gecode { namespace CpltSet {
 
-  /* 
-   * Printing a bound
-   *
-   */
-  template <class I>
-  static void
-  printBound(std::ostream& os, I& r) {
-    os << '{';
+  /// Print bound of complete set variable
+  template<class Char, class Traits, class I>
+  void
+  printBound(std::basic_ostream<Char,Traits>& s, I& r) {
+    s << '{';
     while (r()) {
       if (r.min() == r.max()) {
-        os << r.min();
+        s << r.min();
       } else if (r.min()+1 == r.max()) {
-        os << r.min() << "," << r.max();
+        s << r.min() << "," << r.max();
       } else {
-        os << r.min() << ".." << r.max();
+        s << r.min() << ".." << r.max();
       }
       ++r;
       if (!r()) break;
-      os << ',';
+      s << ',';
     }
-    os << '}';
+    s << '}';
   }
 
-  /// Print the domain represented by \a r to \a os
-  bool printBddDom(std::ostream& os, int off, int min, int width, bool first,
-                   char* profile, bdd& r) {
-    if (r == bdd_true())
-    {
+  /// Print complete set variable domain represented by \a r to \a os
+  template<class Char, class Traits>
+  bool
+  printDom(std::basic_ostream<Char,Traits>& s, 
+           int off, int min, int width, bool first, char* profile, bdd& r) {
+    if (r == bdd_true()) {
       if (!first)
-        os << ",";
+        s << ",";
       bool assigned = true;
       int last = -1;
       int lastUnknown = -1;
@@ -82,24 +80,24 @@ namespace Gecode { namespace CpltSet {
         }
       }
       if (assigned) {
-        os << "{";
+        s << "{";
         for (int i = 0; i<=last; i++) {
           if (profile[i] == 1)
-            os << min+i << (i<last ? "," : "");
+            s << min+i << (i<last ? "," : "");
         }
-        os << "}";
+        s << "}";
       } else {
-        os << "{";
+        s << "{";
         for (int i = 0; i<=last; i++) {
           if (profile[i] == 1)
-            os << min+i << (i<last ? "," : "");
+            s << min+i << (i<last ? "," : "");
         }
-        os << "}..{";
+        s << "}..{";
         for (int i = 0; i<=lastUnknown; i++) {
           if (profile[i] != 0)
-            os << min+i << (i<lastUnknown ? "," : "");
+            s << min+i << (i<lastUnknown ? "," : "");
         }
-        os << "}";
+        s << "}";
       }
       return false;
     }
@@ -109,59 +107,47 @@ namespace Gecode { namespace CpltSet {
 
     if (bdd_low(r) != bdd_false()) {
       profile[bddlevel2var[r.getlevel()]-off] = 0;
-      for (int v=bdd_low(r).getlevel()-1 ; v>r.getlevel() ; --v) {
+      for (int v=bdd_low(r).getlevel()-1 ; v>r.getlevel() ; --v)
         profile[bddlevel2var[v]-off] = -1;
-      }
       bdd rlow = bdd_low(r);
-      first = printBddDom(os, off, min, width, first, profile, rlow);
+      first = printDom(s, off, min, width, first, profile, rlow);
     }
 
     if (bdd_high(r) != bdd_false()) {
       profile[bddlevel2var[r.getlevel()]-off] = 1;
-      for (int v=bdd_high(r).getlevel()-1 ; v>r.getlevel() ; --v) {
+      for (int v=bdd_high(r).getlevel()-1 ; v>r.getlevel() ; --v)
         profile[bddlevel2var[v]-off] = -1;
-      }
       bdd rhigh = bdd_high(r);
-      first = printBddDom(os, off, min, width, first, profile, rhigh);
+      first = printDom(s, off, min, width, first, profile, rhigh);
     }
     return first;
   }
 
-  /**
-   * \brief Print set variable view
-   * \relates Gecode::CpltSet::CpltSetView
-   */
-  std::ostream&
-  operator <<(std::ostream& os, const CpltSetView& x) {
-    bool assigned = x.assigned();
-    if (assigned) {
+
+
+  template<class Char, class Traits>
+  inline std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const CpltSetView& x) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    if (x.assigned()) {
       GlbValues<CpltSetView> glb(x);
       Iter::Values::ToRanges<GlbValues<CpltSetView> > glbr(glb);
-      printBound(os, glbr);
+      printBound(s, glbr);
     } else {
       bdd dom = x.dom();
-      os << "{";
+      s << "{";
       char* profile = heap.alloc<char>(x.tableWidth());
-      for (int i=x.tableWidth(); i--;)
+      for (int i=x.tableWidth(); i--; )
         profile[i] = -1;
-      printBddDom(os, x.offset(), x.initialLubMin(), x.tableWidth(), true, 
-                  profile, dom);
+      printDom(s, x.offset(), x.initialLubMin(), x.tableWidth(), true, 
+               profile, dom);
       heap.rfree(profile);
-      os << "}";
+      s << "}";
     }
-    return os;
+    return os << s.str();
   }
   
 }}
-
-namespace Gecode {
-
-  std::ostream&
-  operator << (std::ostream& os, const CpltSetVar& x) {
-    CpltSet::CpltSetView xv(x);
-    return os << xv;
-  }
-
-}
 
 // STATISTICS: cpltset-var

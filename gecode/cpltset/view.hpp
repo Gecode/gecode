@@ -200,11 +200,13 @@ namespace Gecode {
     };
 
     /**
-     * \brief Print set variable view
+     * \brief Print complete set variable view
      * \relates Gecode::CpltSet::CpltSetView
      */
-    GECODE_CPLTSET_EXPORT std::ostream&
-    operator <<(std::ostream&, const Gecode::CpltSet::CpltSetView& x);
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const CpltSetView& x);
+
   }
 
 
@@ -224,6 +226,10 @@ namespace Gecode {
 }
 
 #include <gecode/cpltset/var/cpltset.hpp>
+
 #include <gecode/cpltset/view/cpltset.hpp>
+
+#include <gecode/cpltset/view/print.hpp>
+#include <gecode/cpltset/var/print.hpp>
 
 // STATISTICS: cpltset-var

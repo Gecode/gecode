@@ -413,11 +413,12 @@ namespace Gecode {
   };
 
   /**
-   * \brief Print bdd variable \a x
+   * \brief Print complete set variable \a x
    * \relates Gecode::CpltSetVar
    */
-  GECODE_CPLTSET_EXPORT std::ostream&
-  operator <<(std::ostream&, const CpltSetVar& x);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const CpltSetVar& x);
   
 }
 
