@@ -186,6 +186,14 @@ namespace Gecode {
       
     };
 
+    /**
+     * \brief Print set variable view
+     * \relates Gecode::Set::SetView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const SetView& x);
+
   }
 
   /**
@@ -390,6 +398,13 @@ namespace Gecode {
       
     };
 
+    /**
+     * \brief Print constant set view
+     * \relates Gecode::Set::ConstantView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const ConstantView& x);
   }
 
   /** \name View comparison
@@ -573,6 +588,14 @@ namespace Gecode {
       //@}
       
     };
+
+    /**
+     * \brief Print empty set view
+     * \relates Gecode::Set::EmptyView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const EmptyView& x);
 
   }
 
@@ -758,6 +781,14 @@ namespace Gecode {
       //@}
       
     };
+
+    /**
+     * \brief Print universe set view
+     * \relates Gecode::Set::UniverseView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const UniverseView& x);
 
   }
 
@@ -959,6 +990,14 @@ namespace Gecode {
       
     };
 
+    /**
+     * \brief Print singleton set view
+     * \relates Gecode::Set::SingletonView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const SingletonView& x);
+
   }
 
   /** \name View comparison
@@ -1158,6 +1197,14 @@ namespace Gecode {
       
     };
 
+    /**
+     * \brief Print complement set view
+     * \relates Gecode::Set::ComplementView
+     */
+    template<class Char, class Traits, class View>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, 
+                const ComplementView<View>& x);
   }
 
   /** \name View comparison
@@ -1355,8 +1402,16 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-      
     };
+
+    /**
+     * \brief Print offset set view
+     * \relates Gecode::Set::OffsetSetView
+     */
+    template<class Char, class Traits, class View>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, 
+                const OffsetSetView<View>& x);
 
   }
 
@@ -1392,61 +1447,15 @@ namespace Gecode {
 }
 
 #include <gecode/set/var/set.hpp>
+
 #include <gecode/set/view/set.hpp>
+
 #include <gecode/set/view/const.hpp>
 #include <gecode/set/view/singleton.hpp>
 #include <gecode/set/view/complement.hpp>
 #include <gecode/set/view/offset.hpp>
 
-namespace Gecode { namespace Set {
-  /**
-   * \brief Print set variable view
-   * \relates Gecode::Set::SetView
-   */
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const SetView&);
-  /**
-   * \brief Print empty set view
-   * \relates Gecode::Set::EmptyView
-   */
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const EmptyView&);
-  /**
-   * \brief Print universe set view
-   * \relates Gecode::Set::UniverseView
-   */
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const UniverseView&);
-  /**
-   * \brief Print set constant view
-   * \relates Gecode::Set::ConstantView
-   */
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const ConstantView&);
-  /**
-   * \brief Print singelton set view
-   * \relates Gecode::Set::SingletonView
-   */
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const SingletonView&);
-  /**
-   * \brief Print set complement view
-   * \relates Gecode::Set::ComplementView
-   */
-  template <class View>
-  std::ostream&
-  operator <<(std::ostream&, const ComplementView<View>&);
-
-}}
-
-namespace Gecode {
-
-  inline std::ostream&
-  operator <<(std::ostream& os, const SetVar& x) {
-    Gecode::Set::SetView vx(x);
-    return os << vx;
-  }
-
-}
+#include <gecode/set/view/print.hpp>
+#include <gecode/set/var/print.hpp>
 
 // STATISTICS: set-var

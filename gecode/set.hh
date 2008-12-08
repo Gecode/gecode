@@ -510,8 +510,9 @@ namespace Gecode {
    * \brief Print set variable \a x
    * \relates Gecode::SetVar
    */
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const Gecode::SetVar& x);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const SetVar& x);
 
 }
 

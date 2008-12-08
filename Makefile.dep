@@ -1559,15 +1559,16 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/set/rel/eq.hpp ./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp \
 	./gecode/set/rel/re-eq.hpp ./gecode/set/rel/re-subset.hpp ./gecode/set/rel/subset.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1602,15 +1603,16 @@ gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/set/convex.hh ./gecode/set/convex/conv.hpp ./gecode/set/convex/hull.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1645,15 +1647,16 @@ gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/set/convex.hh ./gecode/set/convex/conv.hpp ./gecode/set/convex/hull.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1688,15 +1691,16 @@ gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/set/convex.hh ./gecode/set/convex/conv.hpp ./gecode/set/convex/hull.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1733,15 +1737,15 @@ gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp ./gecode/set/rel/re-eq.hpp \
 	./gecode/set/rel/re-subset.hpp ./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1783,15 +1787,15 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp ./gecode/set/rel/re-eq.hpp \
 	./gecode/set/rel/re-subset.hpp ./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1831,14 +1835,15 @@ gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/set/rel/nq.hpp ./gecode/set/rel/re-eq.hpp ./gecode/set/rel/re-subset.hpp \
 	./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1878,14 +1883,15 @@ gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/set/rel/nq.hpp ./gecode/set/rel/re-eq.hpp ./gecode/set/rel/re-subset.hpp \
 	./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1924,15 +1930,16 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/set/rel/eq.hpp ./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp \
 	./gecode/set/rel/re-eq.hpp ./gecode/set/rel/re-subset.hpp ./gecode/set/rel/subset.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -1974,15 +1981,15 @@ gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp ./gecode/set/rel/re-eq.hpp \
 	./gecode/set/rel/re-subset.hpp ./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/element/disjoint$(OBJSUFFIX) gecode/set/element/disjoint$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2024,15 +2031,15 @@ gecode/set/element/disjoint$(OBJSUFFIX) gecode/set/element/disjoint$(SBJSUFFIX):
 	./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp ./gecode/set/rel/re-eq.hpp \
 	./gecode/set/rel/re-subset.hpp ./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2071,14 +2078,15 @@ gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/set/sequence.hh ./gecode/set/sequence/common.hpp ./gecode/set/sequence/seq-u.hpp \
 	./gecode/set/sequence/seq.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2113,15 +2121,15 @@ gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/set/distinct.hh ./gecode/set/distinct/atmostOne.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2156,15 +2164,15 @@ gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFF
 	./gecode/set/distinct.hh ./gecode/set/distinct/atmostOne.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2203,14 +2211,15 @@ gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/set/sequence.hh ./gecode/set/sequence/common.hpp ./gecode/set/sequence/seq-u.hpp \
 	./gecode/set/sequence/seq.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2249,14 +2258,15 @@ gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/set/sequence.hh ./gecode/set/sequence/common.hpp ./gecode/set/sequence/seq-u.hpp \
 	./gecode/set/sequence/seq.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2290,15 +2300,16 @@ gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/kernel/view.hpp ./gecode/set.hh ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/var-imp/set$(OBJSUFFIX) gecode/set/var-imp/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2332,15 +2343,16 @@ gecode/set/var-imp/set$(OBJSUFFIX) gecode/set/var-imp/set$(SBJSUFFIX): \
 	./gecode/kernel/view.hpp ./gecode/set.hh ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/var-imp/integerset$(OBJSUFFIX) gecode/set/var-imp/integerset$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2374,15 +2386,16 @@ gecode/set/var-imp/integerset$(OBJSUFFIX) gecode/set/var-imp/integerset$(SBJSUFF
 	./gecode/kernel/view.hpp ./gecode/set.hh ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2416,57 +2429,16 @@ gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/kernel/view.hpp ./gecode/set.hh ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
-gecode/set/view/print$(OBJSUFFIX) gecode/set/view/print$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
-	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/var-imp.hpp \
-	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
-	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
-	./gecode/int/view.hpp ./gecode/int/view/bool.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rtest.hpp \
-	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
-	./gecode/iter/priority-queue.hpp ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
-	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
-	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp \
-	./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp \
-	./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
-	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
-	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
-	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
-	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
-	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
-	./gecode/kernel/propagator.hpp ./gecode/kernel/reflection.hpp ./gecode/kernel/region.hpp \
-	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-map.hpp \
-	./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
-	./gecode/kernel/view.hpp ./gecode/set.hh ./gecode/set/array.hpp \
-	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
-	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/projectors$(OBJSUFFIX) gecode/set/projectors$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2503,15 +2475,16 @@ gecode/set/projectors$(OBJSUFFIX) gecode/set/projectors$(SBJSUFFIX): \
 	./gecode/set/projectors/propagator.hh ./gecode/set/projectors/propagator/card.hpp ./gecode/set/projectors/propagator/nary.hpp \
 	./gecode/set/projectors/propagator/re-nary.hpp ./gecode/set/projectors/set-expr.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/projectors/set-expr$(OBJSUFFIX) gecode/set/projectors/set-expr$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2547,15 +2520,15 @@ gecode/set/projectors/set-expr$(OBJSUFFIX) gecode/set/projectors/set-expr$(SBJSU
 	./gecode/set/projectors/formula.hpp ./gecode/set/projectors/projector-set.hpp ./gecode/set/projectors/projector.hpp \
 	./gecode/set/projectors/set-expr.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/projectors/projector$(OBJSUFFIX) gecode/set/projectors/projector$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2591,15 +2564,15 @@ gecode/set/projectors/projector$(OBJSUFFIX) gecode/set/projectors/projector$(SBJ
 	./gecode/set/projectors/formula.hpp ./gecode/set/projectors/projector-set.hpp ./gecode/set/projectors/projector.hpp \
 	./gecode/set/projectors/set-expr.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/projectors/projector-set$(OBJSUFFIX) gecode/set/projectors/projector-set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2635,15 +2608,15 @@ gecode/set/projectors/projector-set$(OBJSUFFIX) gecode/set/projectors/projector-
 	./gecode/set/projectors/formula.hpp ./gecode/set/projectors/projector-set.hpp ./gecode/set/projectors/projector.hpp \
 	./gecode/set/projectors/set-expr.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/set/projectors/propagator/re-nary$(OBJSUFFIX) gecode/set/projectors/propagator/re-nary$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2680,15 +2653,16 @@ gecode/set/projectors/propagator/re-nary$(OBJSUFFIX) gecode/set/projectors/propa
 	./gecode/set/projectors/propagator.hh ./gecode/set/projectors/propagator/card.hpp ./gecode/set/projectors/propagator/nary.hpp \
 	./gecode/set/projectors/propagator/re-nary.hpp ./gecode/set/projectors/set-expr.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/projectors/compiler$(OBJSUFFIX) gecode/set/projectors/compiler$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2724,15 +2698,16 @@ gecode/set/projectors/compiler$(OBJSUFFIX) gecode/set/projectors/compiler$(SBJSU
 	./gecode/set/projectors.hh ./gecode/set/projectors/formula.hpp ./gecode/set/projectors/projector-set.hpp \
 	./gecode/set/projectors/projector.hpp ./gecode/set/projectors/set-expr.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2768,15 +2743,16 @@ gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFF
 	./gecode/set/projectors/formula.hpp ./gecode/set/projectors/projector-set.hpp ./gecode/set/projectors/projector.hpp \
 	./gecode/set/projectors/set-expr.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 ./gecode/set/branch$(OBJSUFFIX) ./gecode/set/branch$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -2812,14 +2788,15 @@ gecode/set/projectors/formula$(OBJSUFFIX) gecode/set/projectors/formula$(SBJSUFF
 	./gecode/set/branch/select-view.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -2857,15 +2834,15 @@ gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -2903,15 +2880,15 @@ gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/cpltset/bddmanager$(OBJSUFFIX) gecode/cpltset/bddmanager$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -2949,15 +2926,15 @@ gecode/cpltset/bddmanager$(OBJSUFFIX) gecode/cpltset/bddmanager$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/cpltset/var-imp/cpltset$(OBJSUFFIX) gecode/cpltset/var-imp/cpltset$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -2995,15 +2972,15 @@ gecode/cpltset/var-imp/cpltset$(OBJSUFFIX) gecode/cpltset/var-imp/cpltset$(SBJSU
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -3041,15 +3018,15 @@ gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -3087,15 +3064,16 @@ gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/buddy/bdd.h ./gecode/support/buddy/kernel.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/singleton$(OBJSUFFIX) gecode/cpltset/constraints/singleton$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3135,15 +3113,16 @@ gecode/cpltset/constraints/singleton$(OBJSUFFIX) gecode/cpltset/constraints/sing
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/dom$(OBJSUFFIX) gecode/cpltset/constraints/dom$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -3181,15 +3160,15 @@ gecode/cpltset/constraints/dom$(OBJSUFFIX) gecode/cpltset/constraints/dom$(SBJSU
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/rel$(OBJSUFFIX) gecode/cpltset/constraints/rel$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3229,15 +3208,16 @@ gecode/cpltset/constraints/rel$(OBJSUFFIX) gecode/cpltset/constraints/rel$(SBJSU
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/cardinality$(OBJSUFFIX) gecode/cpltset/constraints/cardinality$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3277,15 +3257,16 @@ gecode/cpltset/constraints/cardinality$(OBJSUFFIX) gecode/cpltset/constraints/ca
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/atmost$(OBJSUFFIX) gecode/cpltset/constraints/atmost$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3325,15 +3306,16 @@ gecode/cpltset/constraints/atmost$(OBJSUFFIX) gecode/cpltset/constraints/atmost$
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/partition$(OBJSUFFIX) gecode/cpltset/constraints/partition$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3373,15 +3355,16 @@ gecode/cpltset/constraints/partition$(OBJSUFFIX) gecode/cpltset/constraints/part
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/select$(OBJSUFFIX) gecode/cpltset/constraints/select$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3421,15 +3404,16 @@ gecode/cpltset/constraints/select$(OBJSUFFIX) gecode/cpltset/constraints/select$
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/distinct$(OBJSUFFIX) gecode/cpltset/constraints/distinct$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3469,15 +3453,16 @@ gecode/cpltset/constraints/distinct$(OBJSUFFIX) gecode/cpltset/constraints/disti
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/rangeroots$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/propagators.hh ./gecode/cpltset/propagators/binary.hpp \
@@ -3517,15 +3502,16 @@ gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/ran
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 ./gecode/cpltset/branch$(OBJSUFFIX) ./gecode/cpltset/branch$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/branch.hh ./gecode/cpltset/branch/post-val.hpp ./gecode/cpltset/branch/select-val.hpp \
@@ -3564,15 +3550,16 @@ gecode/cpltset/constraints/rangeroots$(OBJSUFFIX) gecode/cpltset/constraints/ran
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -3731,15 +3718,15 @@ gecode/serialization/flatzinc$(OBJSUFFIX) gecode/serialization/flatzinc$(SBJSUFF
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/serialization/javascript$(OBJSUFFIX) gecode/serialization/javascript$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/array.hpp \
 	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
@@ -4816,15 +4803,16 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -5926,14 +5914,15 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -5979,14 +5968,15 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -6032,14 +6022,15 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -6085,14 +6076,15 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -6138,14 +6130,15 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 examples/javascript$(OBJSUFFIX) examples/javascript$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -6530,15 +6523,15 @@ gecode/gist/addchild$(OBJSUFFIX) gecode/gist/addchild$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
 gecode/gist/addvisualisationdialog$(OBJSUFFIX) gecode/gist/addvisualisationdialog$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/addvisualisationdialog.hh ./gecode/gist/config.hh \
 	./gecode/gist/gist.hpp ./gecode/gist/ui_addvisualisationdialog.hh ./gecode/kernel.hh \
@@ -6772,15 +6765,16 @@ gecode/gist/visualisation/setvaritem$(OBJSUFFIX) gecode/gist/visualisation/setva
 	./gecode/minimodel/optimize.hpp ./gecode/set.hh ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 gecode/serialization/register$(OBJSUFFIX) gecode/serialization/register$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -6821,15 +6815,16 @@ gecode/serialization/register$(OBJSUFFIX) gecode/serialization/register$(SBJSUFF
 	./gecode/serialization/boost.hpp ./gecode/set.hh ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
-	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp \
-	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp 
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp 
 test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/array.hpp \
 	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
@@ -7866,16 +7861,17 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -7913,16 +7909,17 @@ test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -7960,16 +7957,17 @@ test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8007,16 +8005,17 @@ test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8054,16 +8053,17 @@ test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8101,16 +8101,17 @@ test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8148,16 +8149,17 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8201,17 +8203,17 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/symbol.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
+	./test/int.hh ./test/int.hpp ./test/set.hh \
+	./test/set.hpp ./test/test.hh ./test/test.hpp 
 test/set/select$(OBJSUFFIX) test/set/select$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8249,16 +8251,17 @@ test/set/select$(OBJSUFFIX) test/set/select$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8296,16 +8299,17 @@ test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/projection$(OBJSUFFIX) test/set/projection$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \
@@ -8351,16 +8355,17 @@ test/set/projection$(OBJSUFFIX) test/set/projection$(SBJSUFFIX): \
 	./gecode/set/projectors/projector-set.hpp ./gecode/set/projectors/projector.hpp ./gecode/set/projectors/set-expr.hpp \
 	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
 	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
-	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/set.hpp \
-	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/cpltset$(OBJSUFFIX) test/cpltset$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8401,17 +8406,18 @@ test/cpltset$(OBJSUFFIX) test/cpltset$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/cpltset.hh \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/cpltset.hh ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/cpltset/dom$(OBJSUFFIX) test/cpltset/dom$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8452,17 +8458,18 @@ test/cpltset/dom$(OBJSUFFIX) test/cpltset/dom$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/cpltset.hh \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/cpltset.hh ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/cpltset/rel$(OBJSUFFIX) test/cpltset/rel$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8503,17 +8510,18 @@ test/cpltset/rel$(OBJSUFFIX) test/cpltset/rel$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/cpltset.hh \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/cpltset.hh ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/cpltset/atmost$(OBJSUFFIX) test/cpltset/atmost$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8554,17 +8562,18 @@ test/cpltset/atmost$(OBJSUFFIX) test/cpltset/atmost$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/cpltset.hh \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/cpltset.hh ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/cpltset/partition$(OBJSUFFIX) test/cpltset/partition$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8605,17 +8614,18 @@ test/cpltset/partition$(OBJSUFFIX) test/cpltset/partition$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/cpltset.hh \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/cpltset.hh ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/cpltset/cardinality$(OBJSUFFIX) test/cpltset/cardinality$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8656,17 +8666,18 @@ test/cpltset/cardinality$(OBJSUFFIX) test/cpltset/cardinality$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/cpltset.hh \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/cpltset.hh ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/cpltset/select$(OBJSUFFIX) test/cpltset/select$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8707,17 +8718,18 @@ test/cpltset/select$(OBJSUFFIX) test/cpltset/select$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/cpltset.hh \
-	./test/int.hh ./test/int.hpp ./test/set.hh \
-	./test/set.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/cpltset.hh ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8758,16 +8770,17 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/branch.hh \
-	./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/branch.hh ./test/test.hh \
+	./test/test.hpp 
 test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8808,16 +8821,17 @@ test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/branch.hh \
-	./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/branch.hh ./test/test.hh \
+	./test/test.hpp 
 test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8858,16 +8872,17 @@ test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/branch.hh \
-	./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/branch.hh ./test/test.hh \
+	./test/test.hpp 
 test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8908,16 +8923,17 @@ test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/branch.hh \
-	./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/branch.hh ./test/test.hh \
+	./test/test.hpp 
 test/branch/cpltset$(OBJSUFFIX) test/branch/cpltset$(SBJSUFFIX): \
 	./gecode/cpltset.hh ./gecode/cpltset/array.hpp ./gecode/cpltset/bddmanager.hpp \
 	./gecode/cpltset/exception.hpp ./gecode/cpltset/support.hpp ./gecode/cpltset/var-imp.hpp \
@@ -8958,16 +8974,17 @@ test/branch/cpltset$(OBJSUFFIX) test/branch/cpltset$(SBJSUFFIX): \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
-	./gecode/set/var-imp/set.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/map.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/symbol.hpp ./test/branch.hh \
-	./test/test.hh ./test/test.hpp 
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/buddy/bdd.h ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/map.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/symbol.hpp ./test/branch.hh ./test/test.hh \
+	./test/test.hpp 
 test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set.hpp \

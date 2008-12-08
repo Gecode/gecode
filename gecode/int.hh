@@ -584,7 +584,6 @@ namespace Gecode {
 
 
 #include <gecode/int/view.hpp>
-#include <gecode/int/var/print.hpp>
 #include <gecode/int/propagator.hpp>
 
 namespace Gecode {

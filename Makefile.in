@@ -360,7 +360,7 @@ SETSRC0 =								 \
 	element.cpp element/disjoint.cpp sequence.cpp			 \
 	distinct.cpp distinct/atmostOne.cpp				 \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
-	var-imp/integerset.cpp var/set.cpp view/print.cpp			 \
+	var-imp/integerset.cpp var/set.cpp 		 \
 	projectors.cpp							 \
 	projectors/set-expr.cpp projectors/projector.cpp			 \
 	projectors/projector-set.cpp					 \
@@ -378,9 +378,9 @@ SETHDR0 =								     \
 	element/disjoint.hpp array.hpp					     \
 	var-imp/set.hpp var-imp/integerset.hpp	     			     \
 	var-imp/delta.hpp var-imp/iter.hpp 				     \
-	var/set.hpp							     \
+	var/set.hpp var/print.hpp					     \
 	view/complement.hpp view/const.hpp view/set.hpp view/singleton.hpp   \
-	view/offset.hpp                                                      \
+	view/offset.hpp view/print.hpp                                       \
 	rel/subset.hpp rel/re-subset.hpp rel/eq.hpp rel/nq.hpp rel/re-eq.hpp \
 	rel/common.hpp rel/nosubset.hpp sequence.hh	                     \
 	rel-op/union.hpp rel-op/partition.hpp rel-op/subofunion.hpp	     \

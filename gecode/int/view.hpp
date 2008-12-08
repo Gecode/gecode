@@ -1836,12 +1836,12 @@ namespace Gecode {
 
 #include <gecode/int/view/constint.hpp>
 #include <gecode/int/view/zero.hpp>
-
 #include <gecode/int/view/minus.hpp>
 #include <gecode/int/view/offset.hpp>
 #include <gecode/int/view/scale.hpp>
 
 #include <gecode/int/view/print.hpp>
+#include <gecode/int/var/print.hpp>
 
 namespace Gecode {
 
