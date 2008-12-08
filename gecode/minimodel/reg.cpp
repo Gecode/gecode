@@ -55,6 +55,7 @@ namespace Gecode {
   /// Implementation of the actual expression tree
   class REG::Exp {
   public:
+    /// Reference counter
     unsigned int use_cnt;
     unsigned int _n_pos;
     /**
@@ -66,9 +67,13 @@ namespace Gecode {
       ET_OR,
       ET_STAR
     };
+    /// Type of regular expression
     ExpType type;
+    /// Symbol or subexpressions
     union {
+      /// Symbole
       int  symbol;
+      /// Subexpressions
       Exp* kids[2];
     } data;
 
@@ -79,7 +84,10 @@ namespace Gecode {
     void inc(void);
     void dec(void);
     unsigned int n_pos(void) const;
-    std::ostream& print(std::ostream&) const;
+    /// Print expression
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    print(std::basic_ostream<Char,Traits>& os) const;
 
     static void* operator new(size_t);
     static void  operator delete(void*);
@@ -140,40 +148,6 @@ namespace Gecode {
     return (this != NULL) ? _n_pos : 0;
   }
 
-  std::ostream&
-  REG::Exp::print(std::ostream& os) const {
-    if (this == NULL)
-      return os << "[]";
-    switch (type) {
-    case ET_SYMBOL:
-      return os << "[" << data.symbol << "]";
-    case ET_STAR:
-      {
-        bool par = ((data.kids[0] != NULL) &&
-                    ((data.kids[0]->type == ET_CONC) ||
-                     (data.kids[0]->type == ET_OR)));
-        return data.kids[0]->print(os << (par ? "*(" : "*"))
-                                      << (par ? ")" : "");
-      }
-    case ET_CONC:
-      {
-        bool par0 = ((data.kids[0] != NULL) &&
-                     (data.kids[0]->type == ET_OR));
-        std::ostream& os1 = data.kids[0]->print(os << (par0 ? "(" : ""))
-                                                   << (par0 ? ")+" : "+");
-        bool par1 = ((data.kids[1] != NULL) &&
-                     (data.kids[1]->type == ET_OR));
-        return data.kids[1]->print(os1 << (par1 ? "(" : "") )
-                                       << (par1 ? ")" : "");
-      }
-    case ET_OR:
-      return data.kids[1]->print(data.kids[0]->print(os) << "|");
-    default: GECODE_NEVER;
-    }
-    GECODE_NEVER;
-    return os;
-  }
-
 
   /*
    * Regular expressions
@@ -187,11 +161,6 @@ namespace Gecode {
 
   REG::REG(const REG& r) : e(r.e) {
     e->inc();
-  }
-
-  std::ostream&
-  REG::print(std::ostream& os) const {
-    return e->print(os);
   }
 
   const REG&
@@ -808,13 +777,7 @@ namespace Gecode {
     return DFA(0,tb.transitions(),fb.finals(),true);
   }
 
-
-  std::ostream&
-  operator <<(std::ostream& os, const Gecode::REG& r) {
-    return r.print(os);
-  }
-
 }
 
-// STATISTICS: int-prop
+// STATISTICS: minimodel-any
 

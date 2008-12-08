@@ -926,7 +926,9 @@ namespace Gecode {
     /// Return expression for: this expression at least \a n times
     REG operator ()(unsigned int n);
     /// Print expression
-    std::ostream& print(std::ostream&) const;
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    print(std::basic_ostream<Char,Traits>& os) const;
     /// Return DFA for regular expression
     operator DFA(void);
     /// Destructor
@@ -936,8 +938,9 @@ namespace Gecode {
   /** \relates Gecode::REG
    * Print regular expression \a r
    */
-  GECODE_MINIMODEL_EXPORT std::ostream&
-  operator <<(std::ostream&, const REG& r);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const REG& r);
 
 
   /**

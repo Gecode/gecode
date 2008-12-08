@@ -497,7 +497,8 @@ MMSRC0 = \
 	bool-expr.cpp reg.cpp 
 MMHDR0 = \
 	lin-expr.hpp lin-rel.hpp exception.hpp matrix.hpp \
-	bool-expr.hpp bool-rel.hpp optimize.hpp arithmetic.hpp
+	bool-expr.hpp bool-rel.hpp optimize.hpp arithmetic.hpp \
+	reg.hpp
 
 MMSRC 		= $(MMSRC0:%=gecode/minimodel/%)
 MMHDR 		= gecode/minimodel.hh $(MMHDR0:%=gecode/minimodel/%)
