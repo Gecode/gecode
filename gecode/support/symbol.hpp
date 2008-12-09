@@ -82,7 +82,9 @@ namespace Gecode { namespace Support {
       /// Hash value according to modulo \a M
       int hash(int m) const;
       /// Output to \a os
-      std::ostream& print(std::ostream& os) const;
+      template<class Char, class Traits>
+      std::basic_ostream<Char,Traits>& 
+      print(std::basic_ostream<Char,Traits>& os) const;
       /// Allocate memory from heap
       static void* operator new(size_t s);
       /// Free memory allocated from heap
@@ -117,16 +119,36 @@ namespace Gecode { namespace Support {
     /// Hash value according to modulo \a M
     int hash(int m) const;
     /// Print this Symbol to \a os
-    std::ostream& print(std::ostream& os) const;    
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>& 
+    print(std::basic_ostream<Char,Traits>& os) const;    
     /// Return the Symbol as string
     std::string toString(void) const;
     /// Destructor
     GECODE_MSC_VIRTUAL ~Symbol(void);
   };
+
+
   
+  template<class Char, class Traits>
+  forceinline std::basic_ostream<Char,Traits>& 
+  Symbol::SO::print(std::basic_ostream<Char,Traits>& os) const {
+    return os << s;
+  }
+
   forceinline
-  std::ostream&
-  operator <<(std::ostream& os, const Gecode::Support::Symbol& x) {
+  Symbol::Symbol(void) : so(NULL) {}
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  Symbol::print(std::basic_ostream<Char,Traits>& os) const {
+    if (so) return so->print(os);
+    return os;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const Symbol& x) {
     return x.print(os);
   }
 

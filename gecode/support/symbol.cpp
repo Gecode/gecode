@@ -117,13 +117,6 @@ namespace Gecode { namespace Support {
     return (!strcmp(s, other));
   }
   
-  std::ostream&
-  Symbol::SO::print(std::ostream& os) const {
-    return os << s;
-  }
-
-
-  Symbol::Symbol(void) : so(NULL) {}
 
   Symbol::Symbol(const char* s0, bool copy)
     : so(new SO(s0, copy)) {
@@ -215,12 +208,6 @@ namespace Gecode { namespace Support {
     return so->eq(s0);
   }
   
-  std::ostream&
-  Symbol::print(std::ostream& os) const {
-    if (so) return so->print(os);
-    return os;
-  }
-
   std::string
   Symbol::toString(void) const {
     if (so) return so->s;
