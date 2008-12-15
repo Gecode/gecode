@@ -78,23 +78,22 @@ namespace Gecode {
 
   template<class Var>
   inline void
-  LinRel<Var>::post(Space& home, bool t,
-                    IntConLevel icl, PropKind pk) const {
+  LinRel<Var>::post(Space& home, bool t, IntConLevel icl) const {
     if (t) {
-      e.post(home,irt,icl,pk);
+      e.post(home,irt,icl);
     } else {
-      e.post(home,neg(irt),icl,pk);
+      e.post(home,neg(irt),icl);
     }
   }
 
   template<class Var>
   forceinline void
   LinRel<Var>::post(Space& home, const BoolVar& b, bool t,
-                    IntConLevel icl, PropKind pk) const {
+                    IntConLevel icl) const {
     if (t) {
-      e.post(home,irt,b,icl,pk);
+      e.post(home,irt,b,icl);
     } else {
-      e.post(home,neg(irt),b,icl,pk);
+      e.post(home,neg(irt),b,icl);
     }
   }
 
@@ -509,13 +508,12 @@ namespace Gecode {
 
   template<class Var>
   forceinline void
-  post(Space& home, const LinRel<Var>& r, 
-       IntConLevel icl, PropKind pk) {
+  post(Space& home, const LinRel<Var>& r, IntConLevel icl) {
     if (home.failed()) return;
-    r.post(home,true,icl,pk);
+    r.post(home,true,icl);
   }
   forceinline void
-  post(Space& home, bool r, IntConLevel, PropKind) {
+  post(Space& home, bool r, IntConLevel) {
     if (home.failed()) return;
     if (!r)
       home.fail();

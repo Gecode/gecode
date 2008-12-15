@@ -195,31 +195,30 @@ namespace Gecode {
 
   template <class Var>
   inline void
-  LinExpr<Var>::post(Space& home, IntRelType irt, 
-                     IntConLevel icl, PropKind pk) const {
+  LinExpr<Var>::post(Space& home, IntRelType irt, IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<typename VarViewTraits<Var>::View>* ts = 
       r.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
-    Int::Linear::post(home, ts, i, irt, -c_o, icl, pk);
+    Int::Linear::post(home, ts, i, irt, -c_o, icl);
   }
 
   template <class Var>
   inline void
   LinExpr<Var>::post(Space& home, IntRelType irt, const BoolVar& b,
-                     IntConLevel icl, PropKind pk) const {
+                     IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<typename VarViewTraits<Var>::View>* ts = 
       r.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
-    Int::Linear::post(home, ts, i, irt, -c_o, b, icl, pk);
+    Int::Linear::post(home, ts, i, irt, -c_o, b, icl);
   }
 
   template <>
   inline IntVar
-  LinExpr<IntVar>::post(Space& home, IntConLevel icl, PropKind pk) const {
+  LinExpr<IntVar>::post(Space& home, IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<Int::IntView>* ts = 
       r.alloc<Int::Linear::Term<Int::IntView> >(n->n+1);
@@ -229,13 +228,13 @@ namespace Gecode {
     Int::Linear::estimate(&ts[0],i,c_o,min,max);
     IntVar x(home, min, max);
     ts[i].x = x; ts[i].a = -1;
-    Int::Linear::post(home, ts, i+1, IRT_EQ, -c_o, icl, pk);
+    Int::Linear::post(home, ts, i+1, IRT_EQ, -c_o, icl);
     return x;
   }
 
   template <>
   inline IntVar
-  LinExpr<BoolVar>::post(Space& home, IntConLevel icl, PropKind pk) const {
+  LinExpr<BoolVar>::post(Space& home, IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<Int::BoolView>* ts = 
       r.alloc<Int::Linear::Term<Int::BoolView> >(n->n);
@@ -244,7 +243,7 @@ namespace Gecode {
     int min, max;
     Int::Linear::estimate(&ts[0],i,c_o,min,max);
     IntVar x(home, min, max);
-    Int::Linear::post(home, ts, i, IRT_EQ, x, -c_o, icl, pk);
+    Int::Linear::post(home, ts, i, IRT_EQ, x, -c_o, icl);
     return x;
   }
 
@@ -433,22 +432,21 @@ namespace Gecode {
 
 
   forceinline IntVar
-  post(Space&, const IntVar& x, IntConLevel, PropKind) {
+  post(Space&, const IntVar& x, IntConLevel) {
     return x;
   }
 
   inline IntVar
-  post(Space& home, int n, IntConLevel, PropKind) {
+  post(Space& home, int n, IntConLevel) {
     IntVar x(home, n, n);
     return x;
   }
 
   template <class Var>
   inline IntVar
-  post(Space& home, const LinExpr<Var>& e, 
-       IntConLevel icl, PropKind pk) {
+  post(Space& home, const LinExpr<Var>& e, IntConLevel icl) {
     if (!home.failed())
-      return e.post(home,icl,pk);
+      return e.post(home,icl);
     IntVar x(home,Int::Limits::min,Int::Limits::max);
     return x;
   }

@@ -48,15 +48,15 @@ namespace Gecode {
   }
 
   forceinline BoolVar
-  BoolExpr::post(Space& home, IntConLevel icl, PropKind pk) const {
+  BoolExpr::post(Space& home, IntConLevel icl) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->post(home,icl,pk);
+    return NNF::nnf(r,n,false)->post(home,icl);
   }
 
   forceinline void
-  BoolExpr::post(Space& home, bool t, IntConLevel icl, PropKind pk) const {
+  BoolExpr::post(Space& home, bool t, IntConLevel icl) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->post(home,t,icl,pk);
+    return NNF::nnf(r,n,false)->post(home,t,icl);
   }
 
 
@@ -100,13 +100,12 @@ namespace Gecode {
   
 
   inline BoolVar
-  post(Space& home, const BoolExpr& e, 
-       IntConLevel icl, PropKind pk) {
-    return e.post(home,icl,pk);
+  post(Space& home, const BoolExpr& e, IntConLevel icl) {
+    return e.post(home,icl);
   }
 
   inline BoolVar
-  post(Space&, const BoolVar& b, IntConLevel, PropKind) {
+  post(Space&, const BoolVar& b, IntConLevel) {
     return b;
   }
 

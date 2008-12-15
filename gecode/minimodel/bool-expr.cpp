@@ -161,7 +161,7 @@ namespace Gecode {
   }
 
   BoolVar
-  BoolExpr::NNF::post(Space& home, IntConLevel icl, PropKind pk) const {
+  BoolExpr::NNF::post(Space& home, IntConLevel icl) const {
     if ((t == NT_VAR) && !u.a.neg)
       return u.a.x->x;
     BoolVar b(home,0,1);
@@ -171,16 +171,16 @@ namespace Gecode {
       rel(home, u.a.x->x, IRT_NQ, b);
       break;
     case NT_RLIN_INT:
-      u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
+      u.a.x->rl_int.post(home, b, !u.a.neg, icl);
       break;
     case NT_RLIN_BOOL:
-      u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
+      u.a.x->rl_bool.post(home, b, !u.a.neg, icl);
       break;
     case NT_AND:
       {
         BoolVarArgs bp(p), bn(n);
         int ip=0, in=0;
-        post(home, NT_AND, bp, bn, ip, in, icl, pk);
+        post(home, NT_AND, bp, bn, ip, in, icl);
         clause(home, BOT_AND, bp, bn, b);
       }
       break;
@@ -188,7 +188,7 @@ namespace Gecode {
       {
         BoolVarArgs bp(p), bn(n);
         int ip=0, in=0;
-        post(home, NT_OR, bp, bn, ip, in, icl, pk);
+        post(home, NT_OR, bp, bn, ip, in, icl);
         clause(home, BOT_OR, bp, bn, b);
       }
       break;
@@ -200,16 +200,16 @@ namespace Gecode {
           l = u.b.l->u.a.x->x;
           if (u.b.l->u.a.neg) n = !n;
         } else {
-          l = u.b.l->post(home,icl,pk);
+          l = u.b.l->post(home,icl);
         }
         BoolVar r;
         if (u.b.r->t == NT_VAR) {
           r = u.b.r->u.a.x->x;
           if (u.b.r->u.a.neg) n = !n;
         } else {
-          r = u.b.r->post(home,icl,pk);
+          r = u.b.r->post(home,icl);
         }
-        rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, icl, pk);
+        rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, icl);
       }
       break;
     default:
@@ -222,7 +222,7 @@ namespace Gecode {
   BoolExpr::NNF::post(Space& home, NodeType t, 
                       BoolVarArgs& bp, BoolVarArgs& bn,
                       int& ip, int& in, 
-                      IntConLevel icl, PropKind pk) const {
+                      IntConLevel icl) const {
     if (this->t != t) {
       switch (this->t) {
       case NT_VAR:
@@ -235,55 +235,54 @@ namespace Gecode {
       case NT_RLIN_INT:
         {
           BoolVar b(home,0,1);
-          u.a.x->rl_int.post(home, b, !u.a.neg, icl, pk);
+          u.a.x->rl_int.post(home, b, !u.a.neg, icl);
           bp[ip++]=b;
         }
         break;
       case NT_RLIN_BOOL:
         {
           BoolVar b(home,0,1);
-          u.a.x->rl_bool.post(home, b, !u.a.neg, icl, pk);
+          u.a.x->rl_bool.post(home, b, !u.a.neg, icl);
           bp[ip++]=b;
         }
         break;
       default:
-        bp[ip++] = post(home, icl, pk); 
+        bp[ip++] = post(home, icl); 
         break;
       }
     } else {
-      u.b.l->post(home, t, bp, bn, ip, in, icl, pk);
-      u.b.r->post(home, t, bp, bn, ip, in, icl, pk);
+      u.b.l->post(home, t, bp, bn, ip, in, icl);
+      u.b.r->post(home, t, bp, bn, ip, in, icl);
     }
   }
 
   void
-  BoolExpr::NNF::post(Space& home, bool b, 
-                      IntConLevel icl, PropKind pk) const {
+  BoolExpr::NNF::post(Space& home, bool b, IntConLevel icl) const {
     if (b) {
       switch (t) {
       case NT_VAR:
         rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
         break;
       case NT_RLIN_INT:
-        u.a.x->rl_int.post(home, !u.a.neg, icl, pk);
+        u.a.x->rl_int.post(home, !u.a.neg, icl);
         break;
       case NT_RLIN_BOOL:
-        u.a.x->rl_bool.post(home, !u.a.neg, icl, pk);
+        u.a.x->rl_bool.post(home, !u.a.neg, icl);
         break;
       case NT_AND:
-        u.b.l->post(home, true, icl, pk); 
-        u.b.r->post(home, true, icl, pk);
+        u.b.l->post(home, true, icl); 
+        u.b.r->post(home, true, icl);
         break;
       case NT_OR:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, NT_OR, bp, bn, ip, in, icl, pk);
+          post(home, NT_OR, bp, bn, ip, in, icl);
           clause(home, BOT_OR, bp, bn, 1);
         }
         break;
       case NT_EQV:
-        rel(home, post(home, icl, pk), IRT_EQ, 1);
+        rel(home, post(home, icl), IRT_EQ, 1);
         break;
       default:
         GECODE_NEVER;
@@ -294,25 +293,25 @@ namespace Gecode {
         rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 1 : 0);
         break;
       case NT_RLIN_INT:
-        u.a.x->rl_int.post(home, u.a.neg, icl, pk);
+        u.a.x->rl_int.post(home, u.a.neg, icl);
         break;
       case NT_RLIN_BOOL:
-        u.a.x->rl_bool.post(home, u.a.neg, icl, pk);
+        u.a.x->rl_bool.post(home, u.a.neg, icl);
         break;
       case NT_AND:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, NT_AND, bp, bn, ip, in, icl, pk);
+          post(home, NT_AND, bp, bn, ip, in, icl);
           clause(home, BOT_AND, bp, bn, 0);
         }
         break;
       case NT_OR:
-        u.b.l->post(home, false, icl, pk); 
-        u.b.r->post(home, false, icl, pk);
+        u.b.l->post(home, false, icl); 
+        u.b.r->post(home, false, icl);
         break;
       case NT_EQV:
-        rel(home, post(home, icl, pk), IRT_EQ, 0);
+        rel(home, post(home, icl), IRT_EQ, 0);
         break;
       default:
         GECODE_NEVER;

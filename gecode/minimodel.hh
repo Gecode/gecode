@@ -145,14 +145,12 @@ namespace Gecode {
     /// Assignment operator 
     const LinExpr& operator =(const LinExpr& e);
     /// Post propagator
-    void post(Space& home, IntRelType irt, 
-              IntConLevel icl, PropKind pk) const;
+    void post(Space& home, IntRelType irt, IntConLevel icl) const;
     /// Post reified propagator
     void post(Space& home, IntRelType irt, const BoolVar& b,
-              IntConLevel icl, PropKind pk) const;
+              IntConLevel icl) const;
     /// Post propagator and return variable for value
-    IntVar post(Space& home, 
-                IntConLevel icl, PropKind pk) const;
+    IntVar post(Space& home, IntConLevel icl) const;
     /// Destructor
     ~LinExpr(void);
   };
@@ -177,10 +175,9 @@ namespace Gecode {
     /// Create linear relation for integer \a l and expression \a r
     LinRel(int l, IntRelType irt, const LinExpr<Var>& r);
     /// Post propagator for relation (if \a t is false for negated relation)
-    void post(Space& home, bool t,  IntConLevel icl, PropKind pk) const;
+    void post(Space& home, bool t,  IntConLevel icl) const;
     /// Post reified propagator for relation (if \a t is false for negated relation)
-    void post(Space& home, const BoolVar& b, bool t,
-              IntConLevel icl, PropKind pk) const;
+    void post(Space& home, const BoolVar& b, bool t, IntConLevel icl) const;
   };
   
   /**
@@ -722,15 +719,13 @@ Node* x;
       void post(Space& home, NodeType t, 
                 BoolVarArgs& bp, BoolVarArgs& bn,
                 int& ip, int& in,
-                IntConLevel icl, PropKind pk) const;
+                IntConLevel icl) const;
       /// Post propagators for expression
       GECODE_MINIMODEL_EXPORT
-      BoolVar post(Space& home,
-                   IntConLevel icl, PropKind pk) const;
+      BoolVar post(Space& home, IntConLevel icl) const;
       /// Post propagators for relation
       GECODE_MINIMODEL_EXPORT
-      void post(Space& home, bool t,
-                IntConLevel icl, PropKind pk) const;
+      void post(Space& home, bool t, IntConLevel icl) const;
       /// Allocate memory from region
       static void* operator new(size_t s, Region& r);
       /// No-op (for exceptions)
@@ -760,9 +755,9 @@ Node* x;
     GECODE_MINIMODEL_EXPORT 
     BoolExpr(const LinRel<BoolVar>& rl);
     /// Post propagators for expression
-    BoolVar post(Space& home, IntConLevel icl, PropKind pk) const;
+    BoolVar post(Space& home, IntConLevel icl) const;
     /// Post propagators for relation
-    void post(Space& home, bool t, IntConLevel icl, PropKind pk) const;
+    void post(Space& home, bool t, IntConLevel icl) const;
 
     /// Assignment operator 
     GECODE_MINIMODEL_EXPORT 
@@ -783,7 +778,7 @@ Node* x;
     /// Constructor
     BoolRel(const BoolExpr& e, bool t);
     /// Post propagators for relation
-    void post(Space& home, IntConLevel icl, PropKind pk) const;
+    void post(Space& home, IntConLevel icl) const;
   };
 
   /**
@@ -842,31 +837,31 @@ Node* x;
   /// Post linear expression and return its value
   template <class Var>
   IntVar post(Space& home, const LinExpr<Var>& e,
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for integer variable) and return its value
   IntVar post(Space& home, const IntVar& x,
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for constant) and return its value
   IntVar post(Space& home, int n,
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
 
   /// Post linear relation
   template <class Var>
   void post(Space& home, const LinRel<Var>& r,
-            IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+            IntConLevel icl=ICL_DEF);
   /// Make it work for special integer only-case
   void post(Space& home, bool r,
-            IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+            IntConLevel icl=ICL_DEF);
 
   /// Post Boolean expression and return its value
   BoolVar post(Space& home, const BoolExpr& e,
-               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+               IntConLevel icl=ICL_DEF);
   /// Post Boolean expression (special case for variable) and return its value
   BoolVar post(Space& home, const BoolVar& b,
-               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+               IntConLevel icl=ICL_DEF);
   /// Post Boolean relation
   void post(Space& home, const BoolRel& r,
-            IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+            IntConLevel icl=ICL_DEF);
   //@}
 
 }
@@ -956,7 +951,7 @@ namespace Gecode {
    */
   IntVar
   abs(Space& home, IntVar x, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x,y)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -964,7 +959,7 @@ namespace Gecode {
    */
   IntVar
   min(Space& home, IntVar x, IntVar y, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -972,7 +967,7 @@ namespace Gecode {
    */
   IntVar
   min(Space& home, const IntVarArgs& x, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\max(x,y)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -980,7 +975,7 @@ namespace Gecode {
    */
   IntVar
   max(Space& home, IntVar x, IntVar y, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\max(x)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -988,7 +983,7 @@ namespace Gecode {
    */
   IntVar
   max(Space& home, const IntVarArgs& x, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\cdot y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -996,7 +991,7 @@ namespace Gecode {
    */
   IntVar
   mult(Space& home, IntVar x, IntVar y, 
-       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x^2\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -1004,7 +999,7 @@ namespace Gecode {
    */
   IntVar
   sqr(Space& home, IntVar x, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -1012,7 +1007,7 @@ namespace Gecode {
    */
   IntVar
   sqrt(Space& home, IntVar x, 
-       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x+y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -1020,7 +1015,7 @@ namespace Gecode {
    */
   IntVar
   plus(Space& home, IntVar x, IntVar y, 
-       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+       IntConLevel icl=ICL_DEF);
   /** Return variable constrained to \f$x-y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -1028,7 +1023,7 @@ namespace Gecode {
    */
   IntVar
   minus(Space& home, IntVar x, IntVar y, 
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
   //@}
 }
 
@@ -1045,16 +1040,16 @@ namespace Gecode {
   /// Return Boolean variable equal to \f$x\f$
   inline BoolVar
   channel(Space& home, IntVar x, 
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) icl; (void) pk;
+          IntConLevel icl=ICL_DEF) {
+    (void) icl;
     BoolVar b(home,0,1); channel(home,b,x);
     return b;
   }
   /// Return integer variable equal to \f$b\f$
   inline IntVar
   channel(Space& home, BoolVar b, 
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    (void) icl; (void) pk;
+          IntConLevel icl=ICL_DEF) {
+    (void) icl;
     IntVar x(home,0,1); channel(home,b,x);
     return x;
   }
@@ -1080,8 +1075,8 @@ namespace Gecode {
    */
   inline void
   atmost(Space& home, const IntVarArgs& x, int n, int m,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,n,IRT_LQ,m,icl,pk);
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_LQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
    *
@@ -1089,8 +1084,8 @@ namespace Gecode {
    */
   inline void
   atmost(Space& home, const IntVarArgs& x, IntVar y, int m,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_LQ,m,icl,pk);
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
    *
@@ -1101,8 +1096,8 @@ namespace Gecode {
    */
   inline void
   atmost(Space& home, const IntVarArgs& x, const IntArgs& y, int m,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_LQ,m,icl,pk);
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
    *
@@ -1110,8 +1105,8 @@ namespace Gecode {
    */
   inline void
   atmost(Space& home, const IntVarArgs& x, int n, IntVar z,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,n,IRT_LQ,z,icl,pk);
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_LQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
    *
@@ -1119,8 +1114,8 @@ namespace Gecode {
    */
   inline void
   atmost(Space& home, const IntVarArgs& x, IntVar y, IntVar z,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_LQ,z,icl,pk);
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
    *
@@ -1131,8 +1126,8 @@ namespace Gecode {
    */
   inline void
   atmost(Space& home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_LQ,z,icl,pk);
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,z,icl);
   }
 
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
@@ -1141,8 +1136,8 @@ namespace Gecode {
    */
   inline void
   atleast(Space& home, const IntVarArgs& x, int n, int m,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,n,IRT_GQ,m,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_GQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
    *
@@ -1150,8 +1145,8 @@ namespace Gecode {
    */
   inline void
   atleast(Space& home, const IntVarArgs& x, IntVar y, int m,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_GQ,m,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
    *
@@ -1162,8 +1157,8 @@ namespace Gecode {
    */
   inline void
   atleast(Space& home, const IntVarArgs& x, const IntArgs& y, int m,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_GQ,m,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
    *
@@ -1171,8 +1166,8 @@ namespace Gecode {
    */
   inline void
   atleast(Space& home, const IntVarArgs& x, int n, IntVar z,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,n,IRT_GQ,z,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_GQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
    *
@@ -1180,8 +1175,8 @@ namespace Gecode {
    */
   inline void
   atleast(Space& home, const IntVarArgs& x, IntVar y, IntVar z,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_GQ,z,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
    *
@@ -1192,8 +1187,8 @@ namespace Gecode {
    */
   inline void
   atleast(Space& home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_GQ,z,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,z,icl);
   }
 
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
@@ -1202,8 +1197,8 @@ namespace Gecode {
    */
   inline void
   exactly(Space& home, const IntVarArgs& x, int n, int m,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,n,IRT_EQ,m,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_EQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
    *
@@ -1211,8 +1206,8 @@ namespace Gecode {
    */
   inline void
   exactly(Space& home, const IntVarArgs& x, IntVar y, int m,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_EQ,m,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
    *
@@ -1223,8 +1218,8 @@ namespace Gecode {
    */
   inline void
   exactly(Space& home, const IntVarArgs& x, const IntArgs& y, int m,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_EQ,m,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
    *
@@ -1232,8 +1227,8 @@ namespace Gecode {
    */
   inline void
   exactly(Space& home, const IntVarArgs& x, int n, IntVar z,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,n,IRT_EQ,z,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_EQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
    *
@@ -1241,8 +1236,8 @@ namespace Gecode {
    */
   inline void
   exactly(Space& home, const IntVarArgs& x, IntVar y, IntVar z,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_EQ,z,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
    *
@@ -1253,8 +1248,8 @@ namespace Gecode {
    */
   inline void
   exactly(Space& home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    count(home,x,y,IRT_EQ,z,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,z,icl);
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
    *
@@ -1263,8 +1258,8 @@ namespace Gecode {
    */
   inline void
   lex(Space& home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    rel(home,x,r,y,icl,pk);
+      IntConLevel icl=ICL_DEF) {
+    rel(home,x,r,y,icl);
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
    *
@@ -1273,8 +1268,8 @@ namespace Gecode {
    */
   inline void
   lex(Space& home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    rel(home,x,r,y,icl,pk);
+      IntConLevel icl=ICL_DEF) {
+    rel(home,x,r,y,icl);
   }
 
   //@}
