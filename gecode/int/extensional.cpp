@@ -65,7 +65,7 @@ namespace Gecode {
 
   void
   extensional(Space& home, const IntVarArgs& x, const TupleSet& t, 
-              IntConLevel, PropKind pk) {
+              ExtensionalPropKind epk, IntConLevel) {
     using namespace Int;
     if (!t.finalized())
       const_cast<TupleSet&>(t).finalize();
@@ -75,8 +75,8 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
-    switch (pk) {
-    case PK_SPEED:
+    switch (epk) {
+    case EPK_SPEED:
       GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>
                            ::post(home,xv,t)));
       break;
@@ -94,7 +94,7 @@ namespace Gecode {
 
   void
   extensional(Space& home, const BoolVarArgs& x, const TupleSet& t, 
-              IntConLevel, PropKind pk) {
+              ExtensionalPropKind epk, IntConLevel) {
     using namespace Int;
     if (!t.finalized())
       const_cast<TupleSet&>(t).finalize();
@@ -104,8 +104,8 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<BoolView> xv(home,x);
-    switch (pk) {
-    case PK_SPEED:
+    switch (epk) {
+    case EPK_SPEED:
       GECODE_ES_FAIL(home,(Extensional::Incremental<BoolView>
                            ::post(home,xv,t)));
       break;

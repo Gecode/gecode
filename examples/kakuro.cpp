@@ -580,7 +580,7 @@ public:
           element(*this, e, x[0], x[1]);
           return;
         } else {
-          extensional(*this, x, dc.get(n,c), opt.icl());
+          extensional(*this, x, dc.get(n,c));
           return;
         }
       }

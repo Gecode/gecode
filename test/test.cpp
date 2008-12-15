@@ -57,14 +57,6 @@ namespace Test {
   std::ostringstream olog;
 
   /*
-   * Iterator for propagation kinds
-   *
-   */
-  const Gecode::PropKind PropKinds::pks[] =
-    {Gecode::PK_MEMORY,Gecode::PK_SPEED};
-  
-
-  /*
    * Base class for tests
    *
    */

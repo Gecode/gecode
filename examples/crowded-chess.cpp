@@ -308,7 +308,7 @@ public:
       IntVarArgs b(s.size());
       for (int i = s.size(); i--; )
         b[i] = channel(*this, post(*this, ~(s[i] == B)));
-      extensional(*this, b, bishops, opt.icl());
+      extensional(*this, b, bishops, EPK_DEF, opt.icl());
     }
 
     // Handle knigths

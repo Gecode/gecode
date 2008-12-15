@@ -89,8 +89,9 @@ EOF
 ;
 
 my %postFunctions;
-my %enumerations = ("PropKind" => [ ("gecode/kernel.hh",
-                                     "PK_DEF", "PK_SPEED", "PK_MEMORY") ]);
+my %enumerations = ("ExtensionalPropKind" => 
+		    [ ("gecode/int.hh",
+		       "EPK_DEF", "EPK_SPEED", "EPK_MEMORY") ]);
 
 my %ifdefs = ("gecode/kernel.hh" => "1");
 

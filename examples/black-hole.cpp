@@ -289,7 +289,7 @@ public:
       for (int i = 51; i--; ) {
         IntVarArgs iva(2);
         iva[0] = x[i]; iva[1] = x[i+1];
-        extensional(*this, iva, tupleSet, ICL_DOM);
+        extensional(*this, iva, tupleSet, EPK_DEF, ICL_DOM);
       }
     }
     // A card must be played before the one under it.

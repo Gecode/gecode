@@ -75,6 +75,13 @@ This is a release.
 
 [ENTRY]
 Module: int
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Support for PropKind has been removed for all but extensional constraints.
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]

@@ -117,25 +117,25 @@ namespace Test { namespace Int {
    */
   inline
   Test::Test(const std::string& s, int a, const Gecode::IntSet& d, 
-             bool r, Gecode::IntConLevel i, Gecode::PropKind p)
-    : Base("Int::"+s), arity(a), dom(d), reified(r), icl(i), pk(p),
+             bool r, Gecode::IntConLevel i)
+    : Base("Int::"+s), arity(a), dom(d), reified(r), icl(i),
       contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE), 
       testsearch(true) {}
 
   inline
   Test::Test(const std::string& s, int a, int min, int max, 
-             bool r, Gecode::IntConLevel i, Gecode::PropKind p)
-    : Base("Int::"+s), arity(a), dom(min,max), reified(r), icl(i), pk(p), 
+             bool r, Gecode::IntConLevel i)
+    : Base("Int::"+s), arity(a), dom(min,max), reified(r), icl(i),
       contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE), 
       testsearch(true) {}
 
   inline
   std::string
-  Test::str(Gecode::PropKind pk) {
+  Test::str(Gecode::ExtensionalPropKind epk) {
     using namespace Gecode;
-    switch (pk) {
-    case PK_MEMORY: return "Memory";
-    case PK_SPEED:  return "Speed";
+    switch (epk) {
+    case EPK_MEMORY: return "Memory";
+    case EPK_SPEED:  return "Speed";
     default: return "Def";
     }
   }

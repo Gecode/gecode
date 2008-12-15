@@ -40,21 +40,6 @@
 namespace Gecode {
 
   /**
-   * \brief Propagation kind
-   *
-   * Signals that a particular kind is used in propagation for
-   * the implementation of a particular constraint.
-   *
-   * \ingroup TaskActor
-   */
-  enum PropKind {
-    PK_DEF,    ///< Make a default decision
-    PK_SPEED,  ///< Prefer speed over memory consumption
-    PK_MEMORY  ///< Prefer little memory over speed
-  };
-
-
-  /**
    * \brief Dynamic low-propagation cost computation
    *
    * If \a n is less than 4, use constant low-costs, otherwise use \a pc.

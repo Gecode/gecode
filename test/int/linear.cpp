@@ -157,11 +157,10 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        BoolInt(const std::string& s, const Gecode::IntArgs& a0, 
-               Gecode::IntRelType irt0, int c0,
-               Gecode::PropKind pk=Gecode::PK_DEF)
+               Gecode::IntRelType irt0, int c0)
          : Test("Linear::Bool::Int::"+
-                str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0)+"::"+str(pk),
-                a0.size(),0,1,true,Gecode::ICL_DEF,pk), 
+                str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0),
+                a0.size(),0,1,true,Gecode::ICL_DEF), 
            a(a0), irt(irt0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -176,9 +175,9 @@ namespace Test { namespace Int {
          for (int i=x.size(); i--; )
            y[i]=Gecode::channel(home,x[i]);
          if (one(a))
-           Gecode::linear(home, y, irt, c, Gecode::ICL_DEF, pk);
+           Gecode::linear(home, y, irt, c, Gecode::ICL_DEF);
          else
-           Gecode::linear(home, a, y, irt, c, Gecode::ICL_DEF, pk);
+           Gecode::linear(home, a, y, irt, c, Gecode::ICL_DEF);
        }
        /// Post reified constraint on \a x for \a b
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
@@ -187,9 +186,9 @@ namespace Test { namespace Int {
          for (int i=x.size(); i--; )
            y[i]=Gecode::channel(home,x[i]);
          if (one(a))
-           Gecode::linear(home, y, irt, c, b, Gecode::ICL_DEF, pk);
+           Gecode::linear(home, y, irt, c, b, Gecode::ICL_DEF);
          else
-           Gecode::linear(home, a, y, irt, c, b, Gecode::ICL_DEF, pk);
+           Gecode::linear(home, a, y, irt, c, b, Gecode::ICL_DEF);
        }
      };
    
@@ -329,11 +328,10 @@ namespace Test { namespace Int {
              IntArgs a1(i, av1);
              IntArgs a2(i, av2);
              for (int c=0; c<=6; c += 3)
-               for (IntRelTypes irts; irts(); ++irts)
-                 for (PropKinds pks; pks(); ++pks) {
-                   (void) new BoolInt("1",a1,irts.irt(),c,pks.pk());
-                   (void) new BoolInt("2",a2,irts.irt(),-c,pks.pk());
-                 }
+               for (IntRelTypes irts; irts(); ++irts) {
+                 (void) new BoolInt("1",a1,irts.irt(),c);
+                 (void) new BoolInt("2",a2,irts.irt(),-c);
+               }
            }
            
            IntArgs a3(5, 1,2,3,4,5);

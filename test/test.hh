@@ -76,24 +76,6 @@ namespace Test {
   };
 
 
-  /// Iterator for propagation kinds
-  class PropKinds {
-  private:
-    /// Array of propagation kinds
-    static const Gecode::PropKind pks[2];
-    /// Current position in array
-    int i; 
-  public:
-    /// Initialize iterator
-    PropKinds(void);
-    /// Test whether iterator is done
-    bool operator()(void) const;
-    /// Increment to next propagation kind
-    void operator++(void);
-    /// Return current propagation kind
-    Gecode::PropKind pk(void) const;
-  };
-
   /// Commandline options
   class Options {
   public:

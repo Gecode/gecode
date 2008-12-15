@@ -38,27 +38,6 @@
 namespace Test {
 
   /*
-   * Iterator for propagation kinds
-   *
-   */
-  inline
-  PropKinds::PropKinds(void) 
-    : i(sizeof(pks)/sizeof(Gecode::PropKind)-1) {}
-  inline bool 
-  PropKinds::operator()(void) const {
-    return i>=0;
-  }
-  inline void 
-  PropKinds::operator++(void) {
-    i--;
-  }
-  inline Gecode::PropKind
-  PropKinds::pk(void) const {
-    return pks[i];
-  }
-
-
-  /*
    * Commandline options
    *
    */

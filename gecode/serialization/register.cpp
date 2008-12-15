@@ -386,27 +386,27 @@ bool isEnum_BoolOpType(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
-#if 1
-Gecode::PropKind toEnum_PropKind(Gecode::Reflection::Arg* a) {
+#if defined(GECODE_HAS_INT_VARS)
+Gecode::ExtensionalPropKind toEnum_ExtensionalPropKind(Gecode::Reflection::Arg* a) {
   assert(a->isString());
   const char* av = a->toString();
-  if (!strcmp(av, "PK_DEF"))
-    return Gecode::PK_DEF;
-  if (!strcmp(av, "PK_SPEED"))
-    return Gecode::PK_SPEED;
-  if (!strcmp(av, "PK_MEMORY"))
-    return Gecode::PK_MEMORY;
+  if (!strcmp(av, "EPK_DEF"))
+    return Gecode::EPK_DEF;
+  if (!strcmp(av, "EPK_SPEED"))
+    return Gecode::EPK_SPEED;
+  if (!strcmp(av, "EPK_MEMORY"))
+    return Gecode::EPK_MEMORY;
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
-bool isEnum_PropKind(Gecode::Reflection::Arg* a) {
+bool isEnum_ExtensionalPropKind(Gecode::Reflection::Arg* a) {
   if (!a->isString())
     return false;
   const char* av = a->toString();
-  if (!strcmp(av, "PK_DEF"))
+  if (!strcmp(av, "EPK_DEF"))
     return true;
-  if (!strcmp(av, "PK_SPEED"))
+  if (!strcmp(av, "EPK_SPEED"))
     return true;
-  if (!strcmp(av, "PK_MEMORY"))
+  if (!strcmp(av, "EPK_MEMORY"))
     return true;
   return false;
 }

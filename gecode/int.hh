@@ -1625,6 +1625,20 @@ namespace Gecode {
     GECODE_INT_EXPORT Reflection::Arg* spec(Reflection::VarMap& vm) const;
   };
 
+
+  /**
+   * \brief Extensional propagation kind
+   *
+   * Signals that a particular kind is used in propagation for
+   * the implementation of a extensional constraint.
+   *
+   */
+  enum ExtensionalPropKind {
+    EPK_DEF,    ///< Make a default decision
+    EPK_SPEED,  ///< Prefer speed over memory consumption
+    EPK_MEMORY  ///< Prefer little memory over speed
+  };
+
   /**
    * \brief Post propagator for extensional constraint described by a DFA
    *
@@ -1702,8 +1716,8 @@ namespace Gecode {
  
   /** \brief Post propagator for \f$x\in T\f$.
    *
-   * \li Supports implementations optimized for memory (\a pk = \a
-   *     PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
+   * \li Supports implementations optimized for memory (\a epk = \a
+   *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
    * \li Supports domain consistency (\a icl = ICL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
@@ -1712,25 +1726,25 @@ namespace Gecode {
    * have similar bounds, lots of memory will be wasted (memory
    * consumption is in \f$
    * O\left(|x|\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the basic algorithm (\a pk = \a PK_MEMORY) and additionally \f$
+   * for the basic algorithm (\a epk = \a EPK_MEMORY) and additionally \f$
    * O\left(|x|^2\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the incremental algorithm (\a pk = \a PK_SPEED).
+   * for the incremental algorithm (\a epk = \a EPK_SPEED).
    */
   GECODE_INT_EXPORT void
   extensional(Space& home, const IntVarArgs& x, const TupleSet& t, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x\in T\f$.
    *
-   * \li Supports implementations optimized for memory (\a pk = \a
-   *     PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
+   * \li Supports implementations optimized for memory (\a epk = \a
+   *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
    * \li Supports domain consistency (\a icl = ICL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
    */
   GECODE_INT_EXPORT void
   extensional(Space& home, const BoolVarArgs& x, const TupleSet& t, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
  //@}
 }
 

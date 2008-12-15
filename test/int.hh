@@ -138,8 +138,6 @@ namespace Test {
       bool reified;
       /// Consistency level
       Gecode::IntConLevel icl;
-      /// Propagation kind
-      Gecode::PropKind pk;
       /// Whether to test for certain consistency
       ConTestLevel contest;
       /// Whether to perform search test
@@ -151,23 +149,21 @@ namespace Test {
        *
        * Constructs a test with name \a s and arity \a a and variable
        * domain \a d. Also tests for a reified constraint, 
-       * if \a r is true. Consistency level and propagation kind are 
+       * if \a r is true. The consistency level is
        * maintained for convenience.
        */
       Test(const std::string& s, int a, const Gecode::IntSet& d, bool r=false, 
-           Gecode::IntConLevel i=Gecode::ICL_DEF,
-           Gecode::PropKind p=Gecode::PK_DEF);
+           Gecode::IntConLevel i=Gecode::ICL_DEF);
       /**
        * \brief Constructor
        *
        * Constructs a test with name \a s and arity \a a and variable
        * domain \a min ... \a max. Also tests for a reified constraint, 
-       * if \a r is true. Consistency level and propagation kind are
+       * if \a r is true. The consistency level is
        * maintained for convenience.
        */
       Test(const std::string& s, int a, int min, int max, bool r=false,
-           Gecode::IntConLevel i=Gecode::ICL_DEF,
-           Gecode::PropKind p=Gecode::PK_DEF);
+           Gecode::IntConLevel i=Gecode::ICL_DEF);
       /// Create assignment
       virtual Assignment* assignment(void) const;
       /// Check for solution
@@ -183,12 +179,12 @@ namespace Test {
       virtual bool run(void);
       /// \name Mapping scalar values to strings
       //@{
-      /// Map propagation kind to string
-      static std::string str(Gecode::PropKind pk);
+      /// Map extensional propagation kind to string
+      static std::string str(Gecode::ExtensionalPropKind epk);
       /// Map integer consistency level to string
       static std::string str(Gecode::IntConLevel icl);
       /// Map integer relation to string
-      static std::string str(Gecode::IntRelType pk);
+      static std::string str(Gecode::IntRelType irl);
       /// Map Boolean operation to string
       static std::string str(Gecode::BoolOpType bot);
       /// Map integer to string
