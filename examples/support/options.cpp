@@ -144,7 +144,6 @@ Options::Options(const char* n)
 
     _model("-model","model variants"),
     _propagation("-propagation","propagation variants"),
-    _pk("-pk","propagation kind",PK_DEF),
     _icl("-icl","integer consistency level",ICL_DEF),
     _branching("-branching","branching variants"),
     
@@ -160,9 +159,6 @@ Options::Options(const char* n)
     _iterations("-iterations","iterations per sample (time mode)",1)
 {
 
-  _pk.add(PK_DEF, "def"); _pk.add(PK_SPEED, "speed");
-  _pk.add(PK_MEMORY, "memory");
-
   _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
   _icl.add(ICL_BND, "bnd"); _icl.add(ICL_DOM, "dom");
 
@@ -173,7 +169,7 @@ Options::Options(const char* n)
   _mode.add(EM_GIST, "gist");
 #endif
 
-  add(_model); add(_propagation); add(_pk); add(_icl); add(_branching);
+  add(_model); add(_propagation); add(_icl); add(_branching);
   add(_search); add(_solutions); add(_c_d); add(_a_d); add(_fail); add(_time);
   add(_mode); add(_iterations); add(_samples);
 }

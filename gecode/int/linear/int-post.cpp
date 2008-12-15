@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   void
   post(Space& home, Term<IntView>* t, int n, IntRelType r, int c,
-       IntConLevel icl, PropKind) {
+       IntConLevel icl) {
 
     Limits::check(c,"Int::linear");
 
@@ -330,7 +330,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post(Space& home,
        Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
-       IntConLevel,PropKind) {
+       IntConLevel) {
 
     Limits::check(c,"Int::linear");
 

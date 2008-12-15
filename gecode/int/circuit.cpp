@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void
-  circuit(Space& home, const IntVarArgs& x, IntConLevel icl, PropKind) {
+  circuit(Space& home, const IntVarArgs& x, IntConLevel icl) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::circuit");

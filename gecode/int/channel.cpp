@@ -42,7 +42,7 @@ namespace Gecode {
   void
   channel(Space& home, const IntVarArgs& x, unsigned int xoff,
           const IntVarArgs& y, unsigned int yoff,
-          IntConLevel icl, PropKind) {
+          IntConLevel icl) {
     using namespace Int;
     using namespace Channel;
     int n = x.size();
@@ -124,11 +124,11 @@ namespace Gecode {
 
   void
   channel(Space& home, const IntVarArgs& x, const IntVarArgs& y,
-          IntConLevel icl, PropKind pk) {
-    channel(home, x, 0, y, 0, icl, pk);
+          IntConLevel icl) {
+    channel(home, x, 0, y, 0, icl);
   }
   void
-  channel(Space& home, BoolVar x0, IntVar x1, IntConLevel, PropKind) {
+  channel(Space& home, BoolVar x0, IntVar x1, IntConLevel) {
     using namespace Int;
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Channel::LinkSingle::post(home,x0,x1));
@@ -136,7 +136,7 @@ namespace Gecode {
 
   void
   channel(Space& home, const BoolVarArgs& x, IntVar y, int o, 
-          IntConLevel, PropKind) {
+          IntConLevel) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::channel");

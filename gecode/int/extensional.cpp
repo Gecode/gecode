@@ -43,7 +43,7 @@ namespace Gecode {
 
   void
   extensional(Space& home, const IntVarArgs& x, DFA dfa, 
-              IntConLevel, PropKind) {
+              IntConLevel) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
@@ -54,7 +54,7 @@ namespace Gecode {
 
   void
   extensional(Space& home, const BoolVarArgs& x, DFA dfa, 
-              IntConLevel, PropKind) {
+              IntConLevel) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");

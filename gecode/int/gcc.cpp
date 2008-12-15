@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   void count(Space& home, const  IntVarArgs& x,
              const  IntVarArgs& c, const  IntArgs& v, 
-             IntConLevel icl, PropKind) {
+             IntConLevel icl) {
 
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
     
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   // domain is 0..|cards|- 1
   void count(Space& home, const IntVarArgs& x, const IntVarArgs& c,
-             IntConLevel icl, PropKind) {
+             IntConLevel icl) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; )
       values[i] = i;
@@ -246,7 +246,7 @@ namespace Gecode { namespace Int { namespace GCC {
   // constant cards
   void count(Space& home, const IntVarArgs& x,
              const IntSetArgs& c, const IntArgs& v,
-             IntConLevel icl, PropKind) {
+             IntConLevel icl) {
     int vsize = v.size();
     int csize = c.size();
     if (vsize != csize)
@@ -345,7 +345,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   // domain is 0..|cards|- 1
   void count(Space& home, const IntVarArgs& x, const IntSetArgs& c,
-             IntConLevel icl, PropKind) {
+             IntConLevel icl) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; ) 
       values[i] = i;
@@ -354,7 +354,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   void count(Space& home, const IntVarArgs& x,
              const IntSet& c, const IntArgs& v,
-             IntConLevel icl, PropKind) {
+             IntConLevel icl) {
     IntSetArgs cards(v.size());
     for (int i = v.size(); i--; )
       cards[i] = c;

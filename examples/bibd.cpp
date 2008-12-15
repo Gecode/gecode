@@ -110,14 +110,14 @@ public:
       BoolVarArgs row(opt.b);
       for (int j=opt.b; j--; )
         row[j] = p(i,j);
-      linear(*this, row, IRT_EQ, opt.r, ICL_DEF, opt.pk());
+      linear(*this, row, IRT_EQ, opt.r);
     }
     // k ones per column
     for (int j=opt.b; j--; ) {
       BoolVarArgs col(opt.v);
       for (int i=opt.v; i--; )
         col[i] = p(i,j);
-      linear(*this, col, IRT_EQ, opt.k, ICL_DEF, opt.pk());
+      linear(*this, col, IRT_EQ, opt.k);
     }
     // Exactly lambda ones in scalar product between two different rows
     for (int i1=0; i1<opt.v; i1++)
@@ -128,7 +128,7 @@ public:
           rel(*this,p(i1,j),BOT_AND,p(i2,j),b);
           row[j] = b;
         }
-        linear(*this, row, IRT_EQ, opt.lambda, ICL_DEF, opt.pk());
+        linear(*this, row, IRT_EQ, opt.lambda);
       }
 
     for (int i=1;i<opt.v;i++) {

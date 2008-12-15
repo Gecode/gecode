@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::post(Space& home, ViewArray<VX>& x, int c, PropKind pk) {
+  GqBoolInt<VX>::post(Space& home, ViewArray<VX>& x, int c) {
     // Eliminate assigned views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -379,8 +379,7 @@ namespace Gecode { namespace Int { namespace Linear {
     // This is the needed invariant as c+1 subscriptions must be created
     assert(n_x > c);
     x.size(n_x);
-    if ((pk == PK_SPEED) || 
-        ((pk == PK_DEF) && (x.size() > threshold)))
+    if (x.size() > threshold)
       (void) new (home) Speed(home,x,c);
     else
       (void) new (home) Memory(home,x,c);
@@ -580,7 +579,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::post(Space& home, ViewArray<VX>& x, int c, PropKind pk) {
+  EqBoolInt<VX>::post(Space& home, ViewArray<VX>& x, int c) {
     // Eliminate assigned views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -605,8 +604,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_OK;
     }
     x.size(n_x);
-    if ((pk == PK_SPEED) || 
-        ((pk == PK_DEF) && (x.size() > threshold)))
+    if (x.size() > threshold)
       (void) new (home) Speed(home,x,c);
     else
       (void) new (home) Memory(home,x,c);

@@ -943,23 +943,6 @@ public:
 #if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::rel(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
             isEnum_IntConLevel(spec[3]))
         {
@@ -1083,23 +1066,6 @@ public:
           for (int i=a2.size(); i--;)
             x2[i] = Gecode::BoolVar(vm.var(a2[i]->toVar()));
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::rel(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
           Gecode::rel(home, x0,x1,x2,x3);
           return;
         }
@@ -1255,76 +1221,6 @@ public:
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
             isVar<Gecode::BoolVar>(vm, spec[3]) &&
             isEnum_IntConLevel(spec[4]))
         {
@@ -1354,44 +1250,6 @@ public:
         }
 #endif
 #if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             isVar<Gecode::BoolVar>(vm, spec[2]) &&
@@ -1408,41 +1266,6 @@ public:
         }
 #endif
 #if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
@@ -1454,47 +1277,6 @@ public:
           int x2 = static_cast<int>(spec[2]->toInt());
           Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::BoolVar(vm.var(a2[i]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
@@ -1527,44 +1309,6 @@ public:
           Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
           int x3 = static_cast<int>(spec[3]->toInt());
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isEnum_BoolOpType(spec[0]) &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isEnum_BoolOpType(spec[0]) &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
           Gecode::rel(home, x0,x1,x2,x3,x4);
           return;
         }
@@ -1676,119 +1420,6 @@ public:
           Gecode::Reflection::IntArrayArgRanges ar4(a4);
           Gecode::IntSet x4(ar4);
           Gecode::rel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::rel");
-      }
-      break;
-    case 6:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_BoolOpType(spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
-          Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_BoolOpType(spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
-          Gecode::BoolOpType x1 = toEnum_BoolOpType(spec[1]);
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::rel(home, x0,x1,x2,x3,x4,x5);
           return;
         }
 #endif
@@ -1837,25 +1468,6 @@ public:
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
           Gecode::sqrt(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqrt");
-      }
-      break;
-    case 4:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::sqrt(home, x0,x1,x2,x3);
           return;
         }
 #endif
@@ -1948,31 +1560,6 @@ public:
             x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
           Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
           Gecode::sorted(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sorted");
-      }
-      break;
-    case 4:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::sorted(home, x0,x1,x2,x3);
           return;
         }
 #endif
@@ -2297,44 +1884,6 @@ public:
           return;
         }
 #endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::max(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::max");
-      }
-      break;
-    case 5:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::max(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::max");
       }
       break;
@@ -2388,29 +1937,6 @@ public:
           Gecode::IntVar x3(vm.var(spec[3]->toVar()));
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
           Gecode::divmod(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::divmod");
-      }
-      break;
-    case 6:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::divmod(home, x0,x1,x2,x3,x4,x5);
           return;
         }
 #endif
@@ -2485,21 +2011,6 @@ public:
     case 3:
       {
 #if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntConLevel(spec[1]) &&
-            isEnum_PropKind(spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntConLevel x1 = toEnum_IntConLevel(spec[1]);
-          Gecode::PropKind x2 = toEnum_PropKind(spec[2]);
-          Gecode::distinct(home, x0,x1,x2);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntConLevel(spec[2]))
@@ -2513,30 +2024,6 @@ public:
             x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
           Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
           Gecode::distinct(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::distinct");
-      }
-      break;
-    case 4:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::distinct(home, x0,x1,x2,x3);
           return;
         }
 #endif
@@ -2761,37 +2248,6 @@ public:
 #if defined(GECODE_HAS_INT_VARS)
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::dom(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::dom(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
             spec[2]->isInt() &&
             isEnum_IntConLevel(spec[3]))
         {
@@ -2816,41 +2272,6 @@ public:
           int x1 = static_cast<int>(spec[1]->toInt());
           int x2 = static_cast<int>(spec[2]->toInt());
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::dom(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isIntArray() &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
-          Gecode::Reflection::IntArrayArgRanges ar1(a1);
-          Gecode::IntSet x1(ar1);
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::dom(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isIntArray() &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
-          Gecode::Reflection::IntArrayArgRanges ar1(a1);
-          Gecode::IntSet x1(ar1);
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
           Gecode::dom(home, x0,x1,x2,x3);
           return;
         }
@@ -2952,57 +2373,6 @@ public:
         if (isVar<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::dom(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::dom(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::dom(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            spec[2]->isInt() &&
             isVar<Gecode::BoolVar>(vm, spec[3]) &&
             isEnum_IntConLevel(spec[4]))
         {
@@ -3011,24 +2381,6 @@ public:
           int x2 = static_cast<int>(spec[2]->toInt());
           Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::dom(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isIntArray() &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
-          Gecode::Reflection::IntArrayArgRanges ar1(a1);
-          Gecode::IntSet x1(ar1);
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
           Gecode::dom(home, x0,x1,x2,x3,x4);
           return;
         }
@@ -3046,29 +2398,6 @@ public:
           int x3 = static_cast<int>(spec[3]->toInt());
           Gecode::BoolVar x4(vm.var(spec[4]->toVar()));
           Gecode::dom(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::dom");
-      }
-      break;
-    case 6:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            spec[2]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::dom(home, x0,x1,x2,x3,x4,x5);
           return;
         }
 #endif
@@ -3348,49 +2677,6 @@ public:
 #if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::count(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isIntSetArgs(spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::IntSetArgs x1(a1.size());
-          for (int i=a1.size(); i--;) {
-            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
-            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
-            x1[i] = Gecode::IntSet(aar1);
-          }
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::count(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             spec[2]->isIntArray() &&
             isEnum_IntConLevel(spec[3]))
         {
@@ -3576,215 +2862,6 @@ public:
           Gecode::IntVar x3(vm.var(spec[3]->toVar()));
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
           Gecode::count(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isIntArray() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
-          Gecode::IntArgs x2(a2.size());
-          for (int i=a2.size(); i--;) x2[i] = a2[i];
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::count(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isIntSetArgs(spec[1]) &&
-            spec[2]->isIntArray() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::IntSetArgs x1(a1.size());
-          for (int i=a1.size(); i--;) {
-            Gecode::Reflection::IntArrayArg* aa1 = a1[i]->toIntArray();
-            Gecode::Reflection::IntArrayArgRanges aar1(aa1);
-            x1[i] = Gecode::IntSet(aar1);
-          }
-          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
-          Gecode::IntArgs x2(a2.size());
-          for (int i=a2.size(); i--;) x2[i] = a2[i];
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::count(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isIntArray() &&
-            spec[2]->isIntArray() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::IntArrayArg* a1 = spec[1]->toIntArray();
-          Gecode::Reflection::IntArrayArgRanges ar1(a1);
-          Gecode::IntSet x1(ar1);
-          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
-          Gecode::IntArgs x2(a2.size());
-          for (int i=a2.size(); i--;) x2[i] = a2[i];
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::count(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::count");
-      }
-      break;
-    case 6:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            isEnum_IntRelType(spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::count(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::count(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isIntArray() &&
-            isEnum_IntRelType(spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a1 = *spec[1]->toIntArray();
-          Gecode::IntArgs x1(a1.size());
-          for (int i=a1.size(); i--;) x1[i] = a1[i];
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::count(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            isEnum_IntRelType(spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          int x1 = static_cast<int>(spec[1]->toInt());
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::count(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::count(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isIntArray() &&
-            isEnum_IntRelType(spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a1 = *spec[1]->toIntArray();
-          Gecode::IntArgs x1(a1.size());
-          for (int i=a1.size(); i--;) x1[i] = a1[i];
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::count(home, x0,x1,x2,x3,x4,x5);
           return;
         }
 #endif
@@ -4102,141 +3179,6 @@ public:
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::element");
       }
       break;
-    case 5:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::element(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::element(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::element(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::element(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::element(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::BoolVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::element(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::element(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::element");
-      }
-      break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::element");
     }
   }
@@ -4279,25 +3221,6 @@ public:
           Gecode::IntVar x1(vm.var(spec[1]->toVar()));
           Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
           Gecode::abs(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::abs");
-      }
-      break;
-    case 4:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::abs(home, x0,x1,x2,x3);
           return;
         }
 #endif
@@ -4634,26 +3557,6 @@ public:
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::circuit");
       }
       break;
-    case 3:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntConLevel(spec[1]) &&
-            isEnum_PropKind(spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntConLevel x1 = toEnum_IntConLevel(spec[1]);
-          Gecode::PropKind x2 = toEnum_PropKind(spec[2]);
-          Gecode::circuit(home, x0,x1,x2);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::circuit");
-      }
-      break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::circuit");
     }
   }
@@ -4753,27 +3656,6 @@ public:
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mult");
       }
       break;
-    case 5:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::mult(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mult");
-      }
-      break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mult");
     }
   }
@@ -4854,27 +3736,6 @@ public:
           Gecode::IntVar x2(vm.var(spec[2]->toVar()));
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
           Gecode::div(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::div");
-      }
-      break;
-    case 5:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::div(home, x0,x1,x2,x3,x4);
           return;
         }
 #endif
@@ -4978,41 +3839,6 @@ public:
             x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
           Gecode::IntConLevel x1 = toEnum_IntConLevel(spec[1]);
           Gecode::unshare(home, x0,x1);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::unshare");
-      }
-      break;
-    case 3:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntConLevel(spec[1]) &&
-            isEnum_PropKind(spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntConLevel x1 = toEnum_IntConLevel(spec[1]);
-          Gecode::PropKind x2 = toEnum_PropKind(spec[2]);
-          Gecode::unshare(home, x0,x1,x2);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntConLevel(spec[1]) &&
-            isEnum_PropKind(spec[2]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntConLevel x1 = toEnum_IntConLevel(spec[1]);
-          Gecode::PropKind x2 = toEnum_PropKind(spec[2]);
-          Gecode::unshare(home, x0,x1,x2);
           return;
         }
 #endif
@@ -5362,44 +4188,6 @@ public:
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::linear(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::linear(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
             isVar<Gecode::BoolVar>(vm, spec[3]) &&
             isEnum_IntConLevel(spec[4]))
         {
@@ -5522,25 +4310,6 @@ public:
         if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
             isEnum_IntRelType(spec[1]) &&
             spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::linear(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
             isVar<Gecode::BoolVar>(vm, spec[3]) &&
             isEnum_IntConLevel(spec[4]))
         {
@@ -5552,25 +4321,6 @@ public:
           int x2 = static_cast<int>(spec[2]->toInt());
           Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::linear(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
           Gecode::linear(home, x0,x1,x2,x3,x4);
           return;
         }
@@ -5684,94 +4434,6 @@ public:
     case 6:
       {
 #if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5818,71 +4480,6 @@ public:
         }
 #endif
 #if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            spec[2]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isEnum_IntRelType(spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntRelType x1 = toEnum_IntRelType(spec[1]);
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
         if (spec[0]->isIntArray() &&
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
@@ -5910,29 +4507,6 @@ public:
             isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
             isEnum_IntRelType(spec[2]) &&
             isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
             isVar<Gecode::BoolVar>(vm, spec[4]) &&
             isEnum_IntConLevel(spec[5]))
         {
@@ -5948,111 +4522,6 @@ public:
           Gecode::BoolVar x4(vm.var(spec[4]->toVar()));
           Gecode::IntConLevel x5 = toEnum_IntConLevel(spec[5]);
           Gecode::linear(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::linear");
-      }
-      break;
-    case 7:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            spec[3]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[4]) &&
-            isEnum_IntConLevel(spec[5]) &&
-            isEnum_PropKind(spec[6]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::BoolVar x4(vm.var(spec[4]->toVar()));
-          Gecode::IntConLevel x5 = toEnum_IntConLevel(spec[5]);
-          Gecode::PropKind x6 = toEnum_PropKind(spec[6]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isVar<Gecode::BoolVar>(vm, spec[4]) &&
-            isEnum_IntConLevel(spec[5]) &&
-            isEnum_PropKind(spec[6]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::BoolVar x4(vm.var(spec[4]->toVar()));
-          Gecode::IntConLevel x5 = toEnum_IntConLevel(spec[5]);
-          Gecode::PropKind x6 = toEnum_PropKind(spec[6]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            spec[3]->isInt() &&
-            isVar<Gecode::BoolVar>(vm, spec[4]) &&
-            isEnum_IntConLevel(spec[5]) &&
-            isEnum_PropKind(spec[6]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::BoolVar x4(vm.var(spec[4]->toVar()));
-          Gecode::IntConLevel x5 = toEnum_IntConLevel(spec[5]);
-          Gecode::PropKind x6 = toEnum_PropKind(spec[6]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            isEnum_IntRelType(spec[2]) &&
-            isVar<Gecode::IntVar>(vm, spec[3]) &&
-            isVar<Gecode::BoolVar>(vm, spec[4]) &&
-            isEnum_IntConLevel(spec[5]) &&
-            isEnum_PropKind(spec[6]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          Gecode::IntRelType x2 = toEnum_IntRelType(spec[2]);
-          Gecode::IntVar x3(vm.var(spec[3]->toVar()));
-          Gecode::BoolVar x4(vm.var(spec[4]->toVar()));
-          Gecode::IntConLevel x5 = toEnum_IntConLevel(spec[5]);
-          Gecode::PropKind x6 = toEnum_PropKind(spec[6]);
-          Gecode::linear(home, x0,x1,x2,x3,x4,x5,x6);
           return;
         }
 #endif
@@ -6669,327 +5138,6 @@ public:
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cumulatives");
       }
       break;
-    case 9:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a4 = *spec[4]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x4(a4.size());
-          for (int i=a4.size(); i--;)
-            x4[i] = Gecode::IntVar(vm.var(a4[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a4 = *spec[4]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x4(a4.size());
-          for (int i=a4.size(); i--;)
-            x4[i] = Gecode::IntVar(vm.var(a4[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
-          Gecode::IntArgs x2(a2.size());
-          for (int i=a2.size(); i--;) x2[i] = a2[i];
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a4 = *spec[4]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x4(a4.size());
-          for (int i=a4.size(); i--;)
-            x4[i] = Gecode::IntVar(vm.var(a4[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[4]) &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
-          Gecode::IntArgs x2(a2.size());
-          for (int i=a2.size(); i--;) x2[i] = a2[i];
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a4 = *spec[4]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x4(a4.size());
-          for (int i=a4.size(); i--;)
-            x4[i] = Gecode::IntVar(vm.var(a4[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            spec[4]->isIntArray() &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a4 = *spec[4]->toIntArray();
-          Gecode::IntArgs x4(a4.size());
-          for (int i=a4.size(); i--;) x4[i] = a4[i];
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            spec[4]->isIntArray() &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a4 = *spec[4]->toIntArray();
-          Gecode::IntArgs x4(a4.size());
-          for (int i=a4.size(); i--;) x4[i] = a4[i];
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            spec[4]->isIntArray() &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
-          Gecode::IntArgs x2(a2.size());
-          for (int i=a2.size(); i--;) x2[i] = a2[i];
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a4 = *spec[4]->toIntArray();
-          Gecode::IntArgs x4(a4.size());
-          for (int i=a4.size(); i--;) x4[i] = a4[i];
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (spec[0]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isIntArray() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[3]) &&
-            spec[4]->isIntArray() &&
-            spec[5]->isIntArray() &&
-            spec[6]->isInt() &&
-            isEnum_IntConLevel(spec[7]) &&
-            isEnum_PropKind(spec[8]))
-        {
-          Gecode::Reflection::IntArrayArg& a0 = *spec[0]->toIntArray();
-          Gecode::IntArgs x0(a0.size());
-          for (int i=a0.size(); i--;) x0[i] = a0[i];
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a2 = *spec[2]->toIntArray();
-          Gecode::IntArgs x2(a2.size());
-          for (int i=a2.size(); i--;) x2[i] = a2[i];
-          Gecode::Reflection::ArrayArg& a3 = *spec[3]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x3(a3.size());
-          for (int i=a3.size(); i--;)
-            x3[i] = Gecode::IntVar(vm.var(a3[i]->toVar()));
-          Gecode::Reflection::IntArrayArg& a4 = *spec[4]->toIntArray();
-          Gecode::IntArgs x4(a4.size());
-          for (int i=a4.size(); i--;) x4[i] = a4[i];
-          Gecode::Reflection::IntArrayArg& a5 = *spec[5]->toIntArray();
-          Gecode::IntArgs x5(a5.size());
-          for (int i=a5.size(); i--;) x5[i] = a5[i];
-          bool x6 = static_cast<bool>(spec[6]->toInt());
-          Gecode::IntConLevel x7 = toEnum_IntConLevel(spec[7]);
-          Gecode::PropKind x8 = toEnum_PropKind(spec[8]);
-          Gecode::cumulatives(home, x0,x1,x2,x3,x4,x5,x6,x7,x8);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cumulatives");
-      }
-      break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::cumulatives");
     }
   }
@@ -7155,26 +5303,6 @@ public:
       {
 #if defined(GECODE_HAS_INT_VARS)
         if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVarArgs<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::IntVar(vm.var(a1[i]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::channel(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
             spec[1]->isInt() &&
             isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
             spec[3]->isInt())
@@ -7189,34 +5317,6 @@ public:
           for (int i=a2.size(); i--;)
             x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
           unsigned int x3 = static_cast<unsigned int>(spec[3]->toInt());
-          Gecode::channel(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::BoolVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::BoolVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::channel(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::BoolVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::BoolVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
           Gecode::channel(home, x0,x1,x2,x3);
           return;
         }
@@ -7262,54 +5362,6 @@ public:
           unsigned int x3 = static_cast<unsigned int>(spec[3]->toInt());
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
           Gecode::channel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::BoolVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            spec[2]->isInt() &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          int x2 = static_cast<int>(spec[2]->toInt());
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::channel(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::channel");
-      }
-      break;
-    case 6:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            spec[1]->isInt() &&
-            isVarArgs<Gecode::IntVar>(vm, spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          unsigned int x1 = static_cast<unsigned int>(spec[1]->toInt());
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::IntVar(vm.var(a2[i]->toVar()));
-          unsigned int x3 = static_cast<unsigned int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::channel(home, x0,x1,x2,x3,x4,x5);
           return;
         }
 #endif
@@ -7487,44 +5539,6 @@ public:
           Gecode::IntVar x2(vm.var(spec[2]->toVar()));
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
           Gecode::min(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVarArgs<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
-          Gecode::VarArgArray<Gecode::IntVar> x0(a0.size());
-          for (int i=a0.size(); i--;)
-            x0[i] = Gecode::IntVar(vm.var(a0[i]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::min(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::min");
-      }
-      break;
-    case 5:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::min(home, x0,x1,x2,x3,x4);
           return;
         }
 #endif
@@ -7996,25 +6010,6 @@ public:
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqr");
       }
       break;
-    case 4:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isEnum_IntConLevel(spec[2]) &&
-            isEnum_PropKind(spec[3]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntConLevel x2 = toEnum_IntConLevel(spec[2]);
-          Gecode::PropKind x3 = toEnum_PropKind(spec[3]);
-          Gecode::sqr(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqr");
-      }
-      break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sqr");
     }
   }
@@ -8119,59 +6114,6 @@ public:
           int x3 = static_cast<int>(spec[3]->toInt());
           Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
           Gecode::clause(home, x0,x1,x2,x3,x4);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::clause");
-      }
-      break;
-    case 6:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isEnum_BoolOpType(spec[0]) &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
-            isVar<Gecode::BoolVar>(vm, spec[3]) &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::BoolVar(vm.var(a2[i]->toVar()));
-          Gecode::BoolVar x3(vm.var(spec[3]->toVar()));
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::clause(home, x0,x1,x2,x3,x4,x5);
-          return;
-        }
-#endif
-#if defined(GECODE_HAS_INT_VARS)
-        if (isEnum_BoolOpType(spec[0]) &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[1]) &&
-            isVarArgs<Gecode::BoolVar>(vm, spec[2]) &&
-            spec[3]->isInt() &&
-            isEnum_IntConLevel(spec[4]) &&
-            isEnum_PropKind(spec[5]))
-        {
-          Gecode::BoolOpType x0 = toEnum_BoolOpType(spec[0]);
-          Gecode::Reflection::ArrayArg& a1 = *spec[1]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x1(a1.size());
-          for (int i=a1.size(); i--;)
-            x1[i] = Gecode::BoolVar(vm.var(a1[i]->toVar()));
-          Gecode::Reflection::ArrayArg& a2 = *spec[2]->toArray();
-          Gecode::VarArgArray<Gecode::BoolVar> x2(a2.size());
-          for (int i=a2.size(); i--;)
-            x2[i] = Gecode::BoolVar(vm.var(a2[i]->toVar()));
-          int x3 = static_cast<int>(spec[3]->toInt());
-          Gecode::IntConLevel x4 = toEnum_IntConLevel(spec[4]);
-          Gecode::PropKind x5 = toEnum_PropKind(spec[5]);
-          Gecode::clause(home, x0,x1,x2,x3,x4,x5);
           return;
         }
 #endif
@@ -8326,27 +6268,6 @@ public:
           Gecode::IntVar x2(vm.var(spec[2]->toVar()));
           Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
           Gecode::mod(home, x0,x1,x2,x3);
-          return;
-        }
-#endif
-        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::mod");
-      }
-      break;
-    case 5:
-      {
-#if defined(GECODE_HAS_INT_VARS)
-        if (isVar<Gecode::IntVar>(vm, spec[0]) &&
-            isVar<Gecode::IntVar>(vm, spec[1]) &&
-            isVar<Gecode::IntVar>(vm, spec[2]) &&
-            isEnum_IntConLevel(spec[3]) &&
-            isEnum_PropKind(spec[4]))
-        {
-          Gecode::IntVar x0(vm.var(spec[0]->toVar()));
-          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
-          Gecode::IntVar x2(vm.var(spec[2]->toVar()));
-          Gecode::IntConLevel x3 = toEnum_IntConLevel(spec[3]);
-          Gecode::PropKind x4 = toEnum_PropKind(spec[4]);
-          Gecode::mod(home, x0,x1,x2,x3,x4);
           return;
         }
 #endif

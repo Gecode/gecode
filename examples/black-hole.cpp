@@ -289,7 +289,7 @@ public:
       for (int i = 51; i--; ) {
         IntVarArgs iva(2);
         iva[0] = x[i]; iva[1] = x[i+1];
-        extensional(*this, iva, tupleSet, ICL_DOM, opt.pk());
+        extensional(*this, iva, tupleSet, ICL_DOM);
       }
     }
     // A card must be played before the one under it.
@@ -400,7 +400,6 @@ main(int argc, char* argv[]) {
   opt.propagation(BlackHole::PROPAGATION_TUPLE_SET,
                   "tuple-set", "use TupleSet-based extensional propagation");
   opt.icl(ICL_DOM);
-  opt.pk(PK_SPEED);
   opt.parse(argc,argv);
   // Generates the new board
   generate(opt.size());

@@ -754,42 +754,42 @@ namespace Gecode {
   /// Propagates \f$ x=n\f$
   GECODE_INT_EXPORT void
   dom(Space& home, IntVar x, int n,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Propagates \f$ x_i=n\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Space& home, const IntVarArgs& x, int n,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
 
   /// Propagates \f$ l\leq x\leq m\f$
   GECODE_INT_EXPORT void
   dom(Space& home, IntVar x, int l, int m,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Propagates \f$ l\leq x_i\leq m\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Space& home, const IntVarArgs& x, int l, int m,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
 
   /// Propagates \f$ x\in s \f$
   GECODE_INT_EXPORT void
   dom(Space& home, IntVar x, const IntSet& s,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Propagates \f$ x_i\in s\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Space& home, const IntVarArgs& x, const IntSet& s,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
 
   /// Post propagator for \f$ (x=n) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   dom(Space& home, IntVar x, int n, BoolVar b,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   dom(Space& home, IntVar x, int l, int m, BoolVar b,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ (x \in s) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   dom(Space& home, IntVar x, const IntSet& s, BoolVar b,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -805,7 +805,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x0, IntRelType r, IntVar x1,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -813,15 +813,15 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r, IntVar y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Propagates \f$ x \sim_r c\f$
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x, IntRelType r, int c,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Propagates \f$ x_i \sim_r c \f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r, int c,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ (x_0 \sim_r x_1)\Leftrightarrow b\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -829,7 +829,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$(x \sim_r c)\Leftrightarrow b\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -837,7 +837,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x, IntRelType r, int c, BoolVar b,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for pairwise relation on \a x.
    *
    * States that the elements of \a x are in the following relation:
@@ -857,7 +857,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
    * Note that for the inequality relations this corresponds to
@@ -871,7 +871,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -883,15 +883,15 @@ namespace Gecode {
   /// Post propagator for \f$ x_0 \sim_r x_1\f$
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r, BoolVar y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /**
    * \brief Propagates \f$ x \sim_r n\f$
    *
@@ -900,7 +900,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x, IntRelType r, int n,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /**
    * \brief Propagates \f$(x \sim_r n)\Leftrightarrow b\f$
    *
@@ -909,7 +909,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x, IntRelType r, int n, BoolVar b,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /**
    * \brief Propagates \f$ x_i \sim_r n \f$ for all \f$0\leq i<|x|\f$
    *
@@ -918,7 +918,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r, int n,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
    * Note that for the inequality relations this corresponds to
@@ -929,7 +929,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for pairwise relation on \a x.
    *
    * States that the elements of \a x are in the following relation:
@@ -942,14 +942,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x0 and \a x1
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = x_2\f$
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x0 and \a x1
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = n\f$
@@ -959,7 +959,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, int n, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
@@ -970,7 +970,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
@@ -984,7 +984,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolOpType o, const BoolVarArgs& x, int n,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
@@ -996,7 +996,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         BoolVar z, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         BoolVar z, IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
@@ -1011,7 +1011,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         int n, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         int n, IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1028,7 +1028,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space& home, const IntArgs& n, IntVar x0, IntVar x1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
@@ -1036,7 +1036,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space& home, const IntArgs& n, IntVar x0, BoolVar x1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
@@ -1044,7 +1044,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space& home, const IntArgs& n, IntVar x0, int x1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -1052,7 +1052,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space& home, const IntVarArgs& x, IntVar y0, IntVar y1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -1060,15 +1060,15 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space& home, const IntVarArgs& x, IntVar y0, int y1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Space& home, const BoolVarArgs& x, IntVar y0, BoolVar y1, 
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Space& home, const BoolVarArgs& x, IntVar y0, int y1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1088,7 +1088,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   distinct(Space& home, const IntVarArgs& x,
-           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_i+n_i\neq x_j+n_j\f$ for all \f$0\leq i\neq j<|x|\f$
    *
    * \li Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
@@ -1103,7 +1103,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   distinct(Space& home, const IntArgs& n, const IntVarArgs& x,
-           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+           IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1126,7 +1126,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   channel(Space& home, const IntVarArgs& x, const IntVarArgs& y,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$ x_i - \mathit{xoff} = j\leftrightarrow y_j - \mathit{yoff} = i\f$ for all \f$0\leq i<|x|\f$
    *
@@ -1142,17 +1142,17 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   channel(Space& home, const IntVarArgs& x, unsigned int xoff,
           const IntVarArgs& y, unsigned int yoff,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
 
   /// Post propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
   GECODE_INT_EXPORT void
   channel(Space& home, BoolVar x0, IntVar x1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /// Post propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
   forceinline void
   channel(Space& home, IntVar x0, BoolVar x1,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    channel(home,x1,x0,icl,pk);
+          IntConLevel icl=ICL_DEF) {
+    channel(home,x1,x0,icl);
   }
   /** \brief Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
    *
@@ -1161,7 +1161,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   channel(Space& home, const BoolVarArgs& x, IntVar y, int o=0,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1185,7 +1185,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   circuit(Space& home, const IntVarArgs& x, 
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1237,7 +1237,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -1247,7 +1247,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -1257,7 +1257,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -1267,7 +1267,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -1277,7 +1277,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -1287,7 +1287,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -1297,7 +1297,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -1307,7 +1307,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most, 
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1329,7 +1329,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
 
   /**
    * \brief Post propagator that \a y is \a x sorted in increasing order
@@ -1345,7 +1345,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   sorted(Space&, const IntVarArgs& x, const IntVarArgs& y,
          const IntVarArgs& z,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1369,14 +1369,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, int n, IntRelType r, int m,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
    *
    * Supports domain consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r m\f$
    *
    * Supports domain consistent propagation only.
@@ -1386,21 +1386,21 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, const IntArgs& y, IntRelType r, int m,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
    *
    * Supports domain consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
    *
    * Supports domain consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r z\f$
    *
    * Supports domain consistent propagation only.
@@ -1410,7 +1410,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, const IntArgs& y, IntRelType r, IntVar z,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1427,7 +1427,7 @@ namespace Gecode {
     */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, const IntVarArgs& c,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1444,7 +1444,7 @@ namespace Gecode {
     */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x, const IntSetArgs& c,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1465,7 +1465,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
         const IntVarArgs& c, const IntArgs& v, 
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1486,7 +1486,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
         const IntSetArgs& c, const IntArgs& v, 
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF); 
+        IntConLevel icl=ICL_DEF); 
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1507,7 +1507,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
         const IntSet& c, const IntArgs& v,
-        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+        IntConLevel icl=ICL_DEF);
 
   //@}
 
@@ -1637,7 +1637,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Space& home, const IntVarArgs& x, DFA d,
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
 
   /**
    * \brief Post propagator for extensional constraint described by a DFA
@@ -1651,7 +1651,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Space& home, const BoolVarArgs& x, DFA d,
-              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+              IntConLevel icl=ICL_DEF);
 
   /** \brief Class represeting a set of tuples.
    *
@@ -1752,7 +1752,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   min(Space& home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ \min x=y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -1762,7 +1762,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   min(Space& home, const IntVarArgs& x, IntVar y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -1770,7 +1770,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   max(Space& home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ \max x=y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
@@ -1780,7 +1780,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   max(Space& home, const IntVarArgs& x, IntVar y,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
    *
@@ -1789,7 +1789,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   abs(Space& home, IntVar x0, IntVar x1,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$
    *
@@ -1798,7 +1798,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   mult(Space& home, IntVar x0, IntVar x1, IntVar x2,
-       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+       IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\cdot x_0=x_1\f$
    *
@@ -1807,7 +1807,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   sqr(Space& home, IntVar x0, IntVar x1,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
    *
@@ -1816,7 +1816,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   sqrt(Space& home, IntVar x0, IntVar x1,
-       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+       IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\mathrm{div} x_1=x_2 \land x_0\mathrm{mod} x_1 = x_3\f$
    *
@@ -1824,7 +1824,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   divmod(Space& home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\mathrm{div} x_1=x_2\f$
    *
@@ -1832,7 +1832,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   div(Space& home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\mathrm{mod} x_1=x_2\f$
    *
@@ -1840,7 +1840,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   mod(Space& home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+      IntConLevel icl=ICL_DEF);
   //@}
 
   /**
@@ -1876,22 +1876,22 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, int c,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, IntVar y,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, int c, BoolVar b, 
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, IntVar y, BoolVar b, 
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1900,7 +1900,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, int c,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1909,7 +1909,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, IntVar y,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1918,7 +1918,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, int c, BoolVar b,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1927,7 +1927,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -1960,22 +1960,22 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, int c,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, int c, BoolVar b,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, IntVar y,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1984,7 +1984,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, int c,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1993,7 +1993,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, int c, BoolVar b,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2002,7 +2002,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, IntVar y,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2011,7 +2011,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
-         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+         IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -2042,11 +2042,11 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   unshare(Space& home, IntVarArgs& x,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   /// Replace multiple variable occurences in \a x by fresh variables
   GECODE_INT_EXPORT void
   unshare(Space& home, BoolVarArgs& x,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+          IntConLevel icl=ICL_DEF);
   //@}
 
 

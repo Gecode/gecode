@@ -158,7 +158,6 @@ protected:
   //@{
   StringOption _model;       ///< General model options
   StringOption _propagation; ///< Propagation options
-  StringOption _pk;          ///< Propagation kind
   StringOption _icl;         ///< Integer consistency level
   StringOption _branching;   ///< Branching options
   //@}
@@ -208,11 +207,6 @@ public:
   void propagation(int v, const char* o, const char* h = NULL);
   /// Return propagation value
   int propagation(void) const;
-
-  /// Set default propagation kind
-  void pk(PropKind p);
-  /// Return propagation kind
-  PropKind pk(void) const;
 
   /// Set default integer consistency level
   void icl(IntConLevel i);

@@ -232,7 +232,7 @@ public:
           hascolor[c] = f;
         }
       }
-      linear(*this, hascolor, IRT_LQ, 2, ICL_DEF, opt.pk());
+      linear(*this, hascolor, IRT_LQ, 2);
     }
 
     // Compute slabcost
@@ -415,10 +415,8 @@ main(int argc, char* argv[]) {
   opt.branching(SteelMill::BRANCHING_NAIVE,"naive");
   opt.branching(SteelMill::BRANCHING_SYMMETRY,"symmetry");
   opt.solutions(0);
-  opt.pk(PK_SPEED);
-  if (!opt.parse(argc,argv)) {
+  if (!opt.parse(argc,argv))
     return 1;
-  }
   Example::run<SteelMill,BAB,SteelMillOptions>(opt);
   return 0;
 }
