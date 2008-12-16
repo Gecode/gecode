@@ -57,7 +57,8 @@ namespace Gecode {
     Set::Limits::check(ubMin,"SetVar::SetVar");
     Set::Limits::check(ubMax,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");
-    if (minCard > maxCard)
+    if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() ||
+        lbMin < ubMin || lbMax > ubMax)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
@@ -69,9 +70,8 @@ namespace Gecode {
     Set::Limits::check(ubMin,"SetVar::SetVar");
     Set::Limits::check(ubMax,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");
-    if (minCard > maxCard)
-      throw Set::VariableEmptyDomain("SetVar::SetVar");
-    if (minCard > maxCard)
+    if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() ||
+        glb.min() < ubMin || glb.max() > ubMax)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
@@ -83,7 +83,10 @@ namespace Gecode {
     Set::Limits::check(lbMax,"SetVar::SetVar");
     Set::Limits::check(lub,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");
-    if (minCard > maxCard)
+    Iter::Ranges::Singleton glbr(lbMin,lbMax);
+    IntSetRanges lubr(lub);
+    if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() ||
+        !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 
@@ -95,7 +98,10 @@ namespace Gecode {
     Set::Limits::check(glb,"SetVar::SetVar");
     Set::Limits::check(lub,"SetVar::SetVar");
     Set::Limits::check(maxCard,"SetVar::SetVar");
-    if (minCard > maxCard)
+    IntSetRanges glbr(glb);
+    IntSetRanges lubr(lub);
+    if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() ||
+        !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar::SetVar");
   }
 

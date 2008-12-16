@@ -151,10 +151,14 @@ namespace Gecode { namespace Set {
 
   forceinline
   BndSet::BndSet(Space& home, int mn, int mx) {
-    RangeList* p = 
-      new (home) RangeList(mn,mx,NULL);
-    fst(p); lst(p);
-    _size = mx-mn+1;
+    if (mn>mx) {
+      fst(NULL); lst(NULL); _size = 0;
+    } else {
+      RangeList* p = 
+        new (home) RangeList(mn,mx,NULL);
+      fst(p); lst(p);
+      _size = mx-mn+1;
+    }
   }
 
   forceinline RangeList*
@@ -347,7 +351,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   GLBndSet::GLBndSet(Space& home, int mi, int ma)
-    : BndSet(home,mi,ma) { assert(mi<=ma); }
+    : BndSet(home,mi,ma) {}
 
   forceinline
   GLBndSet::GLBndSet(Space& home, const IntSet& s)
@@ -405,7 +409,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   LUBndSet::LUBndSet(Space& home, int mi, int ma)
-    : BndSet(home,mi,ma) { assert(mi<=ma); }
+    : BndSet(home,mi,ma) {}
 
   forceinline
   LUBndSet::LUBndSet(Space& home, const IntSet& s)

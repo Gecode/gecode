@@ -75,6 +75,15 @@ This is a release.
 
 [ENTRY]
 Module: set
+What:   bug
+Rank:   minor
+Thanks: Denys Duchier
+[DESCRIPTION]
+Fixed constructors for set variables. They now throw proper exceptions when 
+trying to create empty variable domains.
+
+[ENTRY]
+Module: set
 What:   new
 Rank:   minor
 Thanks: Denys Duchier
