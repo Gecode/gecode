@@ -826,11 +826,31 @@ namespace Gecode {
    *  minimal element of \a s, and that \a s is not empty */
   GECODE_SET_EXPORT void
   min(Space& home, SetVar s, IntVar x);
+
+  /** \brief Post propagator that propagates that \a x is not the
+   *  minimal element of \a s */
+  GECODE_SET_EXPORT void
+  notMin(Space& home, SetVar s, IntVar x);
+
+  /** \brief Post reified propagator for \a b iff \a x is the
+   *  minimal element of \a s */
+  GECODE_SET_EXPORT void
+  min(Space& home, SetVar s, IntVar x, BoolVar b);
   
   /** \brief Post propagator that propagates that \a x is the
    *  maximal element of \a s, and that \a s is not empty */
   GECODE_SET_EXPORT void
   max(Space& home, SetVar s, IntVar x);
+
+  /** \brief Post propagator that propagates that \a x is not the
+   *  maximal element of \a s */
+  GECODE_SET_EXPORT void
+  notMax(Space& home, SetVar s, IntVar x);
+
+  /** \brief Post reified propagator for \a b iff \a x is the
+   *  maximal element of \a s */
+  GECODE_SET_EXPORT void
+  max(Space& home, SetVar s, IntVar x, BoolVar b);
   
   /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
   GECODE_SET_EXPORT void

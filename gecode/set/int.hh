@@ -84,6 +84,79 @@ namespace Gecode { namespace Set { namespace Int {
   };
 
   /**
+   * \brief %Propagator for not minimum element
+   *
+   * Requires \code #include "gecode/set/int.hh" \endcode
+   * \ingroup FuncSetProp
+   */
+  template <class View>
+  class NotMinElement :
+    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+  protected:
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    /// Constructor for cloning \a p
+    NotMinElement(Space& home, bool share,NotMinElement& p);
+    /// Constructor for posting
+    NotMinElement(Space& home, View, Gecode::Int::IntView);
+  public:
+    /// Copy propagator during cloning
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    /// Perform propagation
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, 
+                                                   const ModEventDelta& med);
+    /// Post propagator for \a x is not the minimal element of \a s 
+    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec spec(const Space& home,
+                                        Reflection::VarMap& m) const;
+    /// Post using specification
+    static void post(Space& home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief %Propagator for reified minimum element
+   *
+   * Requires \code #include "gecode/set/int.hh" \endcode
+   * \ingroup FuncSetProp
+   */
+  template <class View>
+  class ReMinElement :
+    public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+  protected:
+    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
+    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
+    /// Constructor for cloning \a p
+    ReMinElement(Space& home, bool share,ReMinElement& p);
+    /// Constructor for posting
+    ReMinElement(Space& home, View, Gecode::Int::IntView,
+                 Gecode::Int::BoolView);
+  public:
+    /// Copy propagator during cloning
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    /// Perform propagation
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
+                                                   const ModEventDelta& med);
+    /// Post reified propagator for \a b iff \a x is the minimal element of \a s
+    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
+                           Gecode::Int::BoolView b);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec spec(const Space& home,
+                                        Reflection::VarMap& m) const;
+    /// Post using specification
+    static void post(Space& home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
    * \brief %Propagator for maximum element
    *
    * Requires \code #include <gecode/set/int.hh> \endcode
@@ -103,13 +176,86 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
+                                                   const ModEventDelta& med);
     /// Post propagator for \a x is the largest element of \a s 
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec spec(const Space& home,
                                         Reflection::VarMap& m) const;
+    /// Post using specification
+    static void post(Space& home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief %Propagator for not maximum element
+   *
+   * Requires \code #include "gecode/set/int.hh" \endcode
+   * \ingroup FuncSetProp
+   */
+  template <class View>
+  class NotMaxElement :
+    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+  protected:
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    /// Constructor for cloning \a p
+    NotMaxElement(Space& home, bool share,NotMaxElement& p);
+    /// Constructor for posting
+    NotMaxElement(Space& home, View, Gecode::Int::IntView);
+  public:
+    /// Copy propagator during cloning
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    /// Perform propagation
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
+                                                   const ModEventDelta& med);
+    /// Post propagator for \a x is not the largest element of \a s 
+    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec spec(const Space& home,
+                                       Reflection::VarMap& m) const;
+    /// Post using specification
+    static void post(Space& home, Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Name of this propagator
+    static Support::Symbol ati(void);
+  };
+
+  /**
+   * \brief %Reified propagator for maximum element
+   *
+   * Requires \code #include "gecode/set/int.hh" \endcode
+   * \ingroup FuncSetProp
+   */
+  template <class View>
+  class ReMaxElement :
+    public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+  protected:
+    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
+    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
+    /// Constructor for cloning \a p
+    ReMaxElement(Space& home, bool share,ReMaxElement& p);
+    /// Constructor for posting
+    ReMaxElement(Space& home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
+  public:
+    /// Copy propagator during cloning
+    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    /// Perform propagation
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
+                                                   const ModEventDelta& med);
+    /// Post reified propagator for \a b iff \a x is the largest element of \a s 
+    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
+                           Gecode::Int::BoolView b);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec spec(const Space& home,
+                                       Reflection::VarMap& m) const;
     /// Post using specification
     static void post(Space& home, Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

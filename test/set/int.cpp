@@ -90,7 +90,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       Min(const char* t)
-        : SetTest(t,1,ds_33,false,1) {}
+        : SetTest(t,1,ds_33,true,1) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -100,15 +100,38 @@ namespace Test { namespace Set {
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::min(home, x[0], y[0]);
       }
+      /// Post reified constraint on \a x
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
+                        BoolVar b) {
+        Gecode::min(home, x[0], y[0], b);
+      }
     };
     Min _min("Int::Min");
+
+    /// Test for negated minimal element constraint
+    class NotMin : public SetTest {
+    public:
+      /// Create and register test
+      NotMin(const char* t)
+        : SetTest(t,1,ds_33,false,1) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr0(x.lub, x[0]);
+        return !(xr0() && xr0.min()==x.intval());
+      }
+      /// Post constraint on \a x
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
+        Gecode::notMin(home, x[0], y[0]);
+      }
+    };
+    NotMin _notmin("Int::NotMin");
 
     /// Test for maximal element constraint
     class Max : public SetTest {
     public:
       /// Create and register test
       Max(const char* t)
-        : SetTest(t,1,ds_33,false,1) {}
+        : SetTest(t,1,ds_33,true,1) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -119,8 +142,32 @@ namespace Test { namespace Set {
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::max(home, x[0], y[0]);
       }
+      /// Post reified constraint on \a x
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
+                        BoolVar b) {
+        Gecode::max(home, x[0], y[0], b);
+      }
     };
     Max _max("Int::Max");
+
+    /// Test for negated maximal element constraint
+    class NotMax : public SetTest {
+    public:
+      /// Create and register test
+      NotMax(const char* t)
+        : SetTest(t,1,ds_33,false,1) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr0(x.lub, x[0]);
+        IntSet x0(xr0);
+        return !(x0.size() > 0 && x0.max()==x.intval());
+      }
+      /// Post constraint on \a x
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
+        Gecode::notMax(home, x[0], y[0]);
+      }
+    };
+    NotMax _notmax("Int::NotMax");
 
     /// Test for element constraint
     class Elem : public SetTest {

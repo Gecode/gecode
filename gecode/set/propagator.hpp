@@ -73,6 +73,33 @@ namespace Gecode {
                                 const Support::Symbol& name) const;
   };
 
+  /**
+   * \brief Set/Int reified connection propagator
+   *
+   * Stores a single view of type \a View with propagation condition \a pcs
+   * and an integer variable with propagation condition \a pci.
+   */
+  template <class View, PropCond pcs, PropCond pci>
+  class IntSetRePropagator : public Propagator {
+  protected:
+    View x0;
+    Gecode::Int::IntView x1;
+    Gecode::Int::BoolView b;
+    /// Constructor for cloning
+    IntSetRePropagator(Space& home,bool,IntSetRePropagator&);
+    /// Constructor for creation
+    IntSetRePropagator(Space& home,View,Gecode::Int::IntView,
+                       Gecode::Int::BoolView);
+  public:
+    /// Cost function (defined as PC_TERNARY_LO)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+    /// Return specification given a variable map \a m and a \a name
+    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
+                               const Support::Symbol& name) const;
+  };
+
   //@}
 
   template <class View, PropCond pcs, PropCond pci>
@@ -117,6 +144,55 @@ namespace Gecode {
     Reflection::ActorSpec s(name);
     return s << x0.spec(home, m)
              << x1.spec(home, m);
+  }
+
+  template <class View, PropCond pcs, PropCond pci>
+  IntSetRePropagator<View,pcs,pci>::IntSetRePropagator
+  (Space& home, View y0, Gecode::Int::IntView y1, Gecode::Int::BoolView b2)
+    : Propagator(home), x0(y0), x1(y1), b(b2) {
+    x0.subscribe(home,*this,pcs);
+    x1.subscribe(home,*this,pci);
+    b.subscribe(home,*this,Gecode::Int::PC_INT_VAL);
+  }
+
+  template <class View, PropCond pcs, PropCond pci>
+  forceinline
+  IntSetRePropagator<View,pcs,pci>::IntSetRePropagator
+  (Space& home, bool share, IntSetRePropagator<View,pcs,pci>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    b.update(home,share,p.b);
+  }
+
+  template <class View, PropCond pcs, PropCond pci>
+  PropCost
+  IntSetRePropagator<View,pcs,pci>
+  ::cost(const Space&, const ModEventDelta&) const {
+    return PC_TERNARY_LO;
+  }
+
+  template <class View, PropCond pcs, PropCond pci>
+  size_t
+  IntSetRePropagator<View,pcs,pci>::dispose(Space& home) {
+    if (!home.failed()) {
+      x0.cancel(home,*this,pcs);
+      x1.cancel(home,*this,pci);
+      b.cancel(home,*this,Gecode::Int::PC_INT_VAL);
+    }
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View, PropCond pcs, PropCond pci>
+  Reflection::ActorSpec
+  IntSetRePropagator<View,pcs,pci>::spec(const Space& home,
+                                         Reflection::VarMap& m,
+                                         const Support::Symbol& name) const {
+    Reflection::ActorSpec s(name);
+    return s << x0.spec(home, m)
+             << x1.spec(home, m)
+             << b.spec(home, m);
   }
 
 }

@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   minor
+Thanks: Denys Duchier
+[DESCRIPTION]
+Added reified propagators constraining an integer variable to be the minimum 
+or maximum element of a set variable.
+
+[ENTRY]
 Module: int
 What:   removed
 Rank:   minor

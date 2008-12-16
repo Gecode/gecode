@@ -123,9 +123,31 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,x));
   }
   void
+  notMin(Space& home, SetVar s, IntVar x){
+    if (home.failed()) return;
+    GECODE_ES_FAIL(home,Set::Int::NotMinElement<Set::SetView>::post(home,s,x));
+  }
+  void
+  min(Space& home, SetVar s, IntVar x, BoolVar b){
+    if (home.failed()) return;
+    GECODE_ES_FAIL(home,
+                   Set::Int::ReMinElement<Set::SetView>::post(home,s,x,b));
+  }
+  void
   max(Space& home, SetVar s, IntVar x){
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Set::Int::MaxElement<Set::SetView>::post(home,s,x));
+  }
+  void
+  notMax(Space& home, SetVar s, IntVar x){
+    if (home.failed()) return;
+    GECODE_ES_FAIL(home,Set::Int::NotMaxElement<Set::SetView>::post(home,s,x));
+  }
+  void
+  max(Space& home, SetVar s, IntVar x, BoolVar b){
+    if (home.failed()) return;
+    GECODE_ES_FAIL(home,
+                   Set::Int::ReMaxElement<Set::SetView>::post(home,s,x,b));
   }
 
   void
@@ -162,6 +184,10 @@ namespace Gecode {
   namespace {
     GECODE_REGISTER1(Set::Int::MinElement<Set::SetView>);
     GECODE_REGISTER1(Set::Int::MaxElement<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::NotMinElement<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::NotMaxElement<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::ReMinElement<Set::SetView>);
+    GECODE_REGISTER1(Set::Int::ReMaxElement<Set::SetView>);
     GECODE_REGISTER1(Set::Int::Card<Set::SetView>);
     GECODE_REGISTER1(Set::Int::Match<Set::SetView>);
     GECODE_REGISTER1(Set::Int::ChannelInt<Set::SetView>);

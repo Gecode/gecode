@@ -1865,6 +1865,18 @@ public:
           return;
         }
 #endif
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
+        {
+          Gecode::SetVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
+          Gecode::max(home, x0,x1,x2);
+          return;
+        }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::max");
       }
       break;
@@ -5143,6 +5155,37 @@ public:
   }
 };
 
+class Register_notMax {
+public:
+  /// Identifier for this post function
+  static Gecode::Support::Symbol ati(void) {
+    return "Gecode::Post::notMax";
+  }
+  
+  /// Post constraint described by \a spec
+  static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
+                   const Gecode::Reflection::ActorSpec& spec) {
+    switch(spec.noOfArgs()) {
+    case 2:
+      {
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
+        {
+          Gecode::SetVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::notMax(home, x0,x1);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::notMax");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::notMax");
+    }
+  }
+};
+
 class Register_channel {
 public:
   /// Identifier for this post function
@@ -5523,6 +5566,18 @@ public:
           return;
         }
 #endif
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]) &&
+            isVar<Gecode::BoolVar>(vm, spec[2]))
+        {
+          Gecode::SetVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::BoolVar x2(vm.var(spec[2]->toVar()));
+          Gecode::min(home, x0,x1,x2);
+          return;
+        }
+#endif
         throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::min");
       }
       break;
@@ -5580,6 +5635,37 @@ public:
       }
       break;
     default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::sequentialUnion");
+    }
+  }
+};
+
+class Register_notMin {
+public:
+  /// Identifier for this post function
+  static Gecode::Support::Symbol ati(void) {
+    return "Gecode::Post::notMin";
+  }
+  
+  /// Post constraint described by \a spec
+  static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
+                   const Gecode::Reflection::ActorSpec& spec) {
+    switch(spec.noOfArgs()) {
+    case 2:
+      {
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVar<Gecode::SetVar>(vm, spec[0]) &&
+            isVar<Gecode::IntVar>(vm, spec[1]))
+        {
+          Gecode::SetVar x0(vm.var(spec[0]->toVar()));
+          Gecode::IntVar x1(vm.var(spec[1]->toVar()));
+          Gecode::notMin(home, x0,x1);
+          return;
+        }
+#endif
+        throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::notMin");
+      }
+      break;
+    default: throw Gecode::Reflection::ReflectionException("Argument type mismatch for Gecode::Post::notMin");
     }
   }
 };
@@ -6305,11 +6391,13 @@ class PostRegistrar {
   GECODE_REGISTER1(Register_weights);
   GECODE_REGISTER1(Register_linear);
   GECODE_REGISTER1(Register_cumulatives);
+  GECODE_REGISTER1(Register_notMax);
   GECODE_REGISTER1(Register_channel);
   GECODE_REGISTER1(Register_cardinality);
   GECODE_REGISTER1(Register_elementsDisjoint);
   GECODE_REGISTER1(Register_min);
   GECODE_REGISTER1(Register_sequentialUnion);
+  GECODE_REGISTER1(Register_notMin);
   GECODE_REGISTER1(Register_branch);
   GECODE_REGISTER1(Register_atleast);
   GECODE_REGISTER1(Register_convexHull);
