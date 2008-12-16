@@ -1832,7 +1832,7 @@ namespace Gecode {
   sqrt(Space& home, IntVar x0, IntVar x1,
        IntConLevel icl=ICL_DEF);
 
-  /** \brief Post propagator for \f$x_0\mathrm{div} x_1=x_2 \land x_0\mathrm{mod} x_1 = x_3\f$
+  /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
@@ -1840,7 +1840,7 @@ namespace Gecode {
   divmod(Space& home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
          IntConLevel icl=ICL_DEF);
 
-  /** \brief Post propagator for \f$x_0\mathrm{div} x_1=x_2\f$
+  /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
@@ -1848,7 +1848,7 @@ namespace Gecode {
   div(Space& home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF);
 
-  /** \brief Post propagator for \f$x_0\mathrm{mod} x_1=x_2\f$
+  /** \brief Post propagator for \f$x_0\ \mathrm{mod}\ x_1=x_2\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
