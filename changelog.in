@@ -74,6 +74,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks: Denys Duchier
+[DESCRIPTION]
+Made macros semicolon-safe.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
