@@ -411,7 +411,7 @@ namespace Gecode {
         return
           new Decomposition::SingletonDesc<typename ValSel::Val,ValSel::alternatives>(
             this,vl.val(home,x[0].view),
-            0, x[0].idx, DomainSize<typename ValSel::View>::size(x[0].view));
+            0, x[0].idx, x[0].view.size());
       } else {
         return new PosValDesc<typename ValSel::Val,ValSel::alternatives>
           (this,0,0,vl.val(home,x[0].view));
@@ -499,7 +499,7 @@ namespace Gecode {
           vl.val(home,x[start].view),
           start,
           x[start].idx,
-          DomainSize<typename ValSel::View>::size(x[start].view));
+          x[start].view.size());
     }
 
     // do normal branching
