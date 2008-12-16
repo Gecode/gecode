@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Int {
    */
 
   /**
-   * \brief %Propator for minimum element
+   * \brief %Propagator for minimum element
    *
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace Int {
   };
 
   /**
-   * \brief %Propator for maximum element
+   * \brief %Propagator for maximum element
    *
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
