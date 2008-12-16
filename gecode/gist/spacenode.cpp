@@ -162,8 +162,12 @@ namespace Gecode { namespace Gist {
             middleNode->getStatus() != SPECIAL &&
             middleNode->getStatus() != STEP &&
             curDist == rdist / 2) {
-              curSpace->status();
+            if (curSpace->status() == SS_FAILED) {
+              workingSpace = curSpace;
+              return rdist;
+            } else {
               middleNode->copy = curSpace->clone();
+            }
         }
         Branch b = stck.top(); stck.pop();
         
