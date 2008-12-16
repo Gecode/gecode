@@ -992,6 +992,20 @@ namespace Gecode {
   IntVar
   mult(Space& home, IntVar x, IntVar y, 
        IntConLevel icl=ICL_DEF);
+  /** \brief Return variable constrained to \f$x\ \mathrm{div}\ y\f$
+   *
+   * Supports bounds consistency (\a icl = ICL_BND, default).
+   */
+  IntVar
+  div(Space& home, IntVar x, IntVar y, 
+      IntConLevel icl=ICL_DEF);
+  /** \brief Return variable constrained to \f$x\ \mathrm{mod}\ y\f$
+   *
+   * Supports bounds consistency (\a icl = ICL_BND, default).
+   */
+  IntVar
+  mod(Space& home, IntVar x, IntVar y, 
+      IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x^2\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)

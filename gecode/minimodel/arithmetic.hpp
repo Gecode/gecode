@@ -82,6 +82,20 @@ namespace Gecode {
   }
 
   inline IntVar
+  div(Space& home, IntVar x, IntVar y, IntConLevel icl) {
+    IntVar z(home, Int::Limits::min, Int::Limits::max);
+    div(home, x, y, z, icl);
+    return z;
+  }
+
+  inline IntVar
+  mod(Space& home, IntVar x, IntVar y, IntConLevel icl) {
+    IntVar z(home, Int::Limits::min, Int::Limits::max);
+    mod(home, x, y, z, icl);
+    return z;
+  }
+
+  inline IntVar
   sqr(Space& home, IntVar x, IntConLevel icl) {
     IntVar y(home, 0, Int::Limits::max);
     sqr(home, x, y, icl);
