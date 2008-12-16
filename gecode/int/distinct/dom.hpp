@@ -670,7 +670,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return TerDom<View>::post(home,x[0],x[1],x[2]);
     if (x.size() > 3) {
       // Do bounds propagation to make view-value graph smaller
-      GECODE_ES_CHECK(prop_bnd<View>(home,x))
+      GECODE_ES_CHECK(prop_bnd<View>(home,x));
       (void) new (home) Dom<View>(home,x);
     }
     return ES_OK;
