@@ -47,4 +47,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: int-post
+// STATISTICS: kernel-branch
