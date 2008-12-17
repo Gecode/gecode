@@ -1251,6 +1251,7 @@ namespace Gecode {
     class OffsetSetView : public DerivedViewBase<View> {
     protected:
       using DerivedViewBase<View>::view;
+      /// The offset
       int k;
     public:
       /// \name Constructors and initialization
@@ -1266,7 +1267,6 @@ namespace Gecode {
 
       /// \name Value access
       //@{
-
       /// Return minimum cardinality
       unsigned int cardMin(void) const;
       /// Return maximum cardinality
