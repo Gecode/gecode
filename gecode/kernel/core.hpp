@@ -64,7 +64,12 @@ namespace Gecode {
   /**
    * \brief The copied handle
    *
-   * Copied handles must inherit from this base class.
+   * A copied handle provides access to an object that lives in a space, and
+   * is used by entities inside the space. The handle has an update mechanism
+   * that makes sure that a single copy of the object is created when the
+   * space is copied.
+   *
+   * This is the base class that all copied handles must inherit from.
    *
    * \ingroup FuncSupportShared
    */
@@ -95,8 +100,8 @@ namespace Gecode {
       /// Allocate memory from space
       static void* operator new(size_t s, Space& s);
       /// Free memory
-      static void operator delete(void*);
-      /// Free memory
+      static void operator delete(void*, size_t);
+      /// No-op (for exceptions)
       static void operator delete(void*, Space&);
     private:
       static void* operator new(size_t s);
@@ -127,10 +132,13 @@ namespace Gecode {
   /**
    * \brief The shared handle
    *
-   * Shared handles must inherit from this base class where
-   * \a Object must be a subclass of SharedObject. Shared
-   * handles support that the handle has no object it currently
-   * refers to.
+   * A shared handle provides access to an object that lives outside a space, 
+   * and is shared between entities that possibly reside inside different 
+   * spaces. The handle has an update mechanism that supports updates with and
+   * without sharing. An update without sharing makes sure that a
+   * single copy of the object is created when the space is copied.
+   *
+   * This is the base class that all shared handles must inherit from.
    *
    * \ingroup FuncSupportShared
    */
@@ -1173,8 +1181,8 @@ namespace Gecode {
         VarImpBase* vars_u[AllVarConf::idx_c];
         /// Keep variables during copying without index structure
         VarImpBase* vars_noidx;
-        /// Linked list of shared objects
-        CopiedHandle::Object* shared;
+        /// Linked list of copied objects
+        CopiedHandle::Object* copied;
       } c;
     } pc;
     /// Put propagator \a p into right queue
@@ -1698,7 +1706,7 @@ namespace Gecode {
   }
 
   forceinline void
-  CopiedHandle::Object::operator delete(void*) {}
+  CopiedHandle::Object::operator delete(void*, size_t) {}
   forceinline void
   CopiedHandle::Object::operator delete(void*, Space&) {}
   forceinline void*
@@ -1736,8 +1744,8 @@ namespace Gecode {
     } else {
       o = sh.o->copy(); 
       sh.o->fwd = o;
-      sh.o->next = home.pc.c.shared; 
-      home.pc.c.shared = sh.o;
+      sh.o->next = home.pc.c.copied; 
+      home.pc.c.copied = sh.o;
     }
   }
   forceinline void
