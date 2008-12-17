@@ -230,13 +230,13 @@ namespace Gecode { namespace Set { namespace Int {
 
 
   /// Sort order for integers
-  class IntLt {
+  class IntLess {
   public:
     bool operator ()(int x, int y);
   };
 
   forceinline bool 
-  IntLt::operator ()(int x, int y) {
+  IntLess::operator ()(int x, int y) {
     return x < y;
   }
 
@@ -265,8 +265,8 @@ namespace Gecode { namespace Set { namespace Int {
       }
 
       // Sort the weights of the unknown elements
-      IntLt ilt;
-      Support::quicksort<int>(currentWeights, size, ilt);
+      IntLess il;
+      Support::quicksort<int>(currentWeights, size, il);
 
       // The maximum number of elements that can still be added to x
       int delta = std::min(x.unknownSize(), x.cardMax() - x.glbSize());

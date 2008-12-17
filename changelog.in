@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: support
+What:   bug
+Rank:   minor
+Thanks:	Michal Dobrogost
+[DESCRIPTION]
+Sorting (quicksort and insertion) require strict orders and now
+work with arrays of more than 2^32 elements.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

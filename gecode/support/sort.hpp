@@ -36,14 +36,15 @@
  */
 
 #include <algorithm>
+#include <climits>
 
 namespace Gecode { namespace Support {
 
   /// Exchange elements according to order
-  template <class Type, class LessThan>
+  template <class Type, class Less>
   forceinline void
-  exchange(Type &a, Type &b, LessThan &lt) {
-    if (lt(b,a)) std::swap(a,b);
+  exchange(Type &a, Type &b, Less &less) {
+    if (less(b,a)) std::swap(a,b);
   }
 
   /// Perform quicksort only for more elements
@@ -54,7 +55,7 @@ namespace Gecode { namespace Support {
   class QuickSortStack {
   private:
     /// Maximal stacksize quicksort ever needs
-    static const int maxsize = 32;
+    static const int maxsize = sizeof(int) * CHAR_BIT;
     /// Top of stack
     Type** tos;
     /// Stack entries (terminated by NULL entry)
@@ -95,15 +96,15 @@ namespace Gecode { namespace Support {
   }
 
   /// Standard insertion sort
-  template <class Type, class LessThan>
+  template <class Type, class Less>
   forceinline void
-  insertion(Type* l, Type* r, LessThan &lt) {
+  insertion(Type* l, Type* r, Less &less) {
     for (Type* i = r; i > l; i--)
-      exchange(*(i-1),*i,lt);
+      exchange(*(i-1),*i,less);
     for (Type* i = l+2; i <= r; i++) {
       Type* j = i;
       Type v = *i;
-      while (lt(v,*(j-1))) {
+      while (less(v,*(j-1))) {
         *j = *(j-1); j--;
       }
       *j = v;
@@ -111,15 +112,15 @@ namespace Gecode { namespace Support {
   }
 
   /// Standard partioning
-  template <class Type, class LessThan>
+  template <class Type, class Less>
   forceinline Type*
-  partition(Type* l, Type* r, LessThan &lt) {
+  partition(Type* l, Type* r, Less &less) {
     Type* i = l-1;
     Type* j = r;
     Type v = *r;
     while (true) {
-      while (lt(*(++i),v)) {}
-      while (lt(v,*(--j))) if (j == l) break;
+      while (less(*(++i),v)) {}
+      while (less(v,*(--j))) if (j == l) break;
         if (i >= j) break;
         std::swap(*i,*j);
     }
@@ -128,16 +129,16 @@ namespace Gecode { namespace Support {
   }
 
   /// Standard quick sort
-  template <class Type, class LessThan>
+  template <class Type, class Less>
   inline void
-  quicksort(Type* l, Type* r, LessThan &lt) {
+  quicksort(Type* l, Type* r, Less &less) {
     QuickSortStack<Type> s;
     while (true) {
       std::swap(*(l+((r-l) >> 1)),*(r-1));
-      exchange(*l,*(r-1),lt);
-      exchange(*l,*r,lt);
-      exchange(*(r-1),*r,lt);
-      Type* i = partition(l+1,r-1,lt);
+      exchange(*l,*(r-1),less);
+      exchange(*l,*r,less);
+      exchange(*(r-1),*r,less);
+      Type* i = partition(l+1,r-1,less);
       if (i-l > r-i) {
         if (r-i > QuickSortCutoff) {
           s.push(l,i-1); l=i+1; continue;
@@ -163,46 +164,50 @@ namespace Gecode { namespace Support {
    * \brief Insertion sort
    *
    * Sorts by insertion the \a n first elements of array \a x according
-   * to the order \a lt as instance of class \a LessThan. The class
-   * \a LessThan must implement the single member function
+   * to the order \a l as instance of class \a Less. The class
+   * \a Less must implement the single member function
    * \code bool operator ()(const Type&, const Type&) \endcode
-   * for comparing elements.
+   * for comparing elements. Note that the order must be strict, that
+   * is: comparing an element with itself must return false.
    *
    * The algorithm is largely based on the following book:
    * Robert Sedgewick, Algorithms in C++, 3rd edition, 1998, Addison Wesley.
    *
    * \ingroup FuncSupport
    */
-  template <class Type, class LessThan>
+  template <class Type, class Less>
   forceinline void
-  insertion(Type* x, int n, LessThan &lt) {
+  insertion(Type* x, int n, Less &l) {
     if (n < 2)
       return;
-    insertion(x,x+n-1,lt);
+    assert(!l(x[0],x[0]));
+    insertion(x,x+n-1,l);
   }
 
   /**
    * \brief Quicksort
    *
    * Sorts with quicksort the \a n first elements of array \a x according
-   * to the order \a lt as instance of class \a LessThan. The class
-   * \a LessThan must implement the single member function
+   * to the order \a l as instance of class \a Less. The class
+   * \a Less must implement the single member function
    * \code bool operator ()(const Type&, const Type&) \endcode
-   * for comparing elements.
+   * for comparing elements. Note that the order must be strict, that
+   * is: comparing an element with itself must return false.
    *
    * The algorithm is largely based on the following book:
    * Robert Sedgewick, Algorithms in C++, 3rd edition, 1998, Addison Wesley.
    *
    * \ingroup FuncSupport
    */
-  template <class Type, class LessThan>
+  template <class Type, class Less>
   forceinline void
-  quicksort(Type* x, int n, LessThan &lt) {
+  quicksort(Type* x, int n, Less &l) {
     if (n < 2)
       return;
+    assert(!l(x[0],x[0]));
     if (n > QuickSortCutoff)
-      quicksort(x,x+n-1,lt);
-    insertion(x,x+n-1,lt);
+      quicksort(x,x+n-1,l);
+    insertion(x,x+n-1,l);
   }
 
 }}

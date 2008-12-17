@@ -235,8 +235,8 @@ namespace Gecode { namespace Int { namespace Element {
       Idx* by_val = r.alloc<Idx>(size);
       for (Idx i = size; i--; )
         by_val[i] = i+1;
-      ByVal lt(iv);
-      Support::quicksort<Idx>(by_val,size,lt);
+      ByVal less(iv);
+      Support::quicksort<Idx>(by_val,size,less);
       // Create val links
       for (Idx i = size-1; i--; ) {
         by_idx[i].idx_next = i+2;

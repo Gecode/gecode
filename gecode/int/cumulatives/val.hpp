@@ -35,37 +35,16 @@
  *
  */
 
-/* This is the propagation algorithm of the cumulatives constraint as presented in
-   @inproceedings{DBLP:conf/cp/BeldiceanuC02,
-     author    = {Nicolas Beldiceanu and Mats Carlsson},
-     title     = {A New Multi-resource cumulatives Constraint with Negative Heights.},
-     booktitle = {CP},
-     year      = {2002},
-     pages     = {63-79},
-     ee        = {http://link.springer.de/link/service/series/0558/bibs/2470/24700063.htm},
-     crossref  = {DBLP:conf/cp/2002},
-     bibsource = {DBLP, http://dblp.uni-trier.de}
-   }
-   @proceedings{DBLP:conf/cp/2002,
-     editor    = {Pascal Van Hentenryck},
-     title     = {Principles and Practice of Constraint Programming - CP 2002,
-                  8th International Conference, CP 2002,
-                  Ithaca, NY, USA, September 9-13, 2002, Proceedings},
-     booktitle = {CP},
-     publisher = {Springer},
-     series    = {Lecture Notes in Computer Science},
-     volume    = {2470},
-     year      = {2002},
-     isbn      = {3-540-44120-4},
-     bibsource = {DBLP, http://dblp.uni-trier.de}
-   }
-
- */
-
 #include <vector>
 #include <list>
 #include <algorithm>
 
+/* 
+ * This is the propagation algorithm of the cumulatives constraint as 
+ * presented in: 
+ *   Nicolas Beldiceanu and Mats Carlsson, A New Multi-resource cumulatives 
+ *   Constraint with Negative Heights. CP 2002, pages 63-79, Springer-Verlag.
+ */
 
 namespace Gecode { namespace Int { namespace Cumulatives {
       
@@ -314,10 +293,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       }
 
       // Remove tasks that are no longer relevant.
-      if ((!machine[t].in(r)) ||
-          end[t].max() <= up+1) {
-        //        std::list<int>::iterator old = it++;
-        //        prune_tasks.erase(old);
+      if (!machine[t].in(r) || (end[t].max() <= up+1)) {
         prune_tasks[pti] = prune_tasks[--prune_tasks_size];
       } else {
         ++pti;
@@ -329,7 +305,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       
   namespace {
     template <class C>
-    class LT {
+    class Less {
     public:
       bool operator ()(const C& lhs, const C& rhs) {
         return lhs < rhs;
@@ -411,8 +387,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       }
 
       // Sort the events according to date
-      LT<Event> lt;
-      Support::insertion(&events[0], events_size, lt);
+      Less<Event> less;
+      Support::insertion(&events[0], events_size, less);
 
       // Sweep line along d, starting at 0
       int d        = 0;

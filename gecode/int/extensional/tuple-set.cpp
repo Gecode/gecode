@@ -45,21 +45,22 @@ namespace {
    * \brief Full Tuple compare
    */
   class FullTupleCompare {
+  private:
+    /// The arity of the tuples to compare
     int arity;
   public:
+    /// Initialize with arity \a a
     forceinline
     FullTupleCompare(int a) : arity(a) {}
+    /// Strict comparison of tuples \a a and \a b
     forceinline bool
     operator ()(const Tuple& a, const Tuple& b) {
-      for (int i = 0; i < arity; ++i) {
-        if (a[i] < b[i]) {
+      for (int i = 0; i < arity; i++) 
+        if (a[i] < b[i])
           return true;
-        }
-        if (a[i] > b[i]) {
+        else if (a[i] > b[i])
           return false;
-        }
-      }
-      return true;
+      return false;
     }
   };
 
@@ -71,15 +72,19 @@ namespace {
    */
   class TuplePosCompare {
   private:
+    /// Position of tuple
     int pos;
   public:
+    /// Initialize with position \a p
     forceinline
     TuplePosCompare(int p) : pos(p) {}
-
+    /// Perform strict comparison of tuples \a a and \a b
     forceinline bool
     operator ()(const Tuple& a, const Tuple& b) {
-      if (a[pos] == b[pos]) return a < b;
-      return a[pos] < b[pos];
+      if (a[pos] == b[pos]) 
+        return a < b;
+      else
+        return a[pos] < b[pos];
     }
   };
 
@@ -94,7 +99,8 @@ namespace Gecode {
 
     // Add final largest tuple
     IntArgs ia(arity);
-    for (int i = arity; i--; ) ia[i] = Int::Limits::max+1;
+    for (int i = arity; i--; ) 
+      ia[i] = Int::Limits::max+1;
     int real_min = min, real_max = max;
     add(ia);
     min = real_min; max = real_max;
@@ -118,11 +124,9 @@ namespace Gecode {
     Support::quicksort(tuples[0], size, ftc);
     assert(tuples[0][size-1][0] == ia[0]);
     int* new_data = heap.alloc<int>(size*arity);
-    for (int t = size; t--; ) {
-      for (int i = arity; i--; ) {
+    for (int t = size; t--; )
+      for (int i = arity; i--; )
         new_data[t*arity + i] = tuples[0][t][i];
-      }
-    }
 
     heap.rfree(data);
     data = new_data;
