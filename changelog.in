@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+Thanks: Chris Mears
+[DESCRIPTION]
+Output operators (<<) now respect formatting width and work with
+output streams using arbitrary character types.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

@@ -1776,31 +1776,6 @@ namespace Gecode {
     operator <<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
 
 
-    /**
-     * \brief Boolean tests
-     *
-     */
-    enum BoolTest {
-      BT_NONE, ///< No sharing
-      BT_SAME, ///< Same variable
-      BT_COMP  ///< Same variable but complement
-    };
-
-    /**
-     * \name Test sharing between Boolean and negated Boolean views
-     * \relates BoolView NegBoolView
-     */
-    //@{
-    /// Test whether views \a b0 and \a b1 are the same
-    BoolTest bool_test(const BoolView& b0, const BoolView& b1);
-    /// Test whether views \a b0 and \a b1 are complementary
-    BoolTest bool_test(const BoolView& b0, const NegBoolView& b1);
-    /// Test whether views \a b0 and \a b1 are complementary
-    BoolTest bool_test(const NegBoolView& b0, const BoolView& b1);
-    /// Test whether views \a b0 and \a b1 are the same
-    BoolTest bool_test(const NegBoolView& b0, const NegBoolView& b1);
-    //@}
-
   }
 
   /** \name View comparison
@@ -1832,13 +1807,16 @@ namespace Gecode {
 #include <gecode/int/var/bool.hpp>
 
 #include <gecode/int/view/int.hpp>
-#include <gecode/int/view/bool.hpp>
 
 #include <gecode/int/view/constint.hpp>
 #include <gecode/int/view/zero.hpp>
 #include <gecode/int/view/minus.hpp>
 #include <gecode/int/view/offset.hpp>
 #include <gecode/int/view/scale.hpp>
+
+#include <gecode/int/view/bool.hpp>
+
+#include <gecode/int/view/neg-bool.hpp>
 
 #include <gecode/int/view/print.hpp>
 #include <gecode/int/var/print.hpp>
@@ -1899,10 +1877,37 @@ namespace Gecode {
     template <class View> RelTest rtest_gr(View x, int n);
     //@}
 
+
+    /**
+     * \brief Boolean tests
+     *
+     */
+    enum BoolTest {
+      BT_NONE, ///< No sharing
+      BT_SAME, ///< Same variable
+      BT_COMP  ///< Same variable but complement
+    };
+
+    /**
+     * \name Test sharing between Boolean and negated Boolean views
+     * \relates BoolView NegBoolView
+     */
+    //@{
+    /// Test whether views \a b0 and \a b1 are the same
+    BoolTest bool_test(const BoolView& b0, const BoolView& b1);
+    /// Test whether views \a b0 and \a b1 are complementary
+    BoolTest bool_test(const BoolView& b0, const NegBoolView& b1);
+    /// Test whether views \a b0 and \a b1 are complementary
+    BoolTest bool_test(const NegBoolView& b0, const BoolView& b1);
+    /// Test whether views \a b0 and \a b1 are the same
+    BoolTest bool_test(const NegBoolView& b0, const NegBoolView& b1);
+    //@}
+
   }
 
 }
 
-#include <gecode/int/view/rtest.hpp>
+#include <gecode/int/view/rel-test.hpp>
+#include <gecode/int/view/bool-test.hpp>
 
 // STATISTICS: int-var
