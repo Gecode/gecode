@@ -922,11 +922,6 @@ namespace Gecode { namespace Reflection {
     new (&_vti) Support::Symbol(v._vti);
     _var = registry().updateVariable(home, share, v._var, v._vti);
   }
-
-  std::ostream&
-  Var::print(std::ostream& os) const {
-    return registry().printVariable(os, _var, _vti);
-  }
   
   Arg*
   Var::spec(const Space& home, VarMap& vm) const {
@@ -935,7 +930,9 @@ namespace Gecode { namespace Reflection {
 
   std::ostream&
   operator <<(std::ostream& os, const Var& v) {
-    return v.print(os);
+    std::ostringstream s;
+    registry().printVariable(s, v._var, v._vti);
+    return os << s.str();
   }
 
 }}

@@ -93,6 +93,17 @@ namespace Gecode {
   forceinline int
   Projector::getIdx(void) const { return i; }
 
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const Projector& p) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+
+    s << p.getGlb() << " <= x[" << p.getIdx() << "] <= " << p.getLub()
+      << std::endl;
+    return os << s.str();
+  }
+
 }
 
 // STATISTICS: set-prop

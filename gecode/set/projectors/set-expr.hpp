@@ -230,6 +230,26 @@ namespace Gecode {
   forceinline unsigned int
   SetExprRanges::width(void) const { return i->i->width(); }
 
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const SetExprCode& sec) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    for (int i=0; i<sec.size(); i++) {
+      switch (sec[i]) {
+      case Gecode::SetExprCode::COMPLEMENT: s << " CMPL "; break;
+      case Gecode::SetExprCode::INTER: s << " INTER "; break;
+      case Gecode::SetExprCode::UNION: s << " UNION "; break;
+      case Gecode::SetExprCode::GLB: s << " GLB "; break;
+      case Gecode::SetExprCode::LUB: s << " LUB "; break;
+      case Gecode::SetExprCode::EMPTY: s << " EMPTY "; break;
+      case Gecode::SetExprCode::UNIVERSE: s << " UNIVERSE "; break;
+      default: s << " x[" << sec[i]-Gecode::SetExprCode::LAST << "] "; break;
+      }
+    }
+    return os << s.str();
+  }
+
 }
 
 // STATISTICS: set-prop

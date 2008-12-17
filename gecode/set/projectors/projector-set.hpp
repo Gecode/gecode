@@ -80,6 +80,17 @@ namespace Gecode {
   forceinline const Projector&
   ProjectorSet::operator [](int i) const { return _ps[i]; }
 
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const ProjectorSet& ps) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    for (int i=0; i<ps.size(); i++) {
+      s << ps[i] << std::endl;
+    }
+    return os << s.str();
+  }
+
 }
 
 // STATISTICS: set-prop

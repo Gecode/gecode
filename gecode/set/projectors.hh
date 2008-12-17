@@ -400,14 +400,17 @@ namespace Gecode {
             Projector& p);
   //@}
 
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const SetExprCode& sec);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const SetExprCode& sec);
 
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const Projector& p);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const Projector& p);
   
-  GECODE_SET_EXPORT std::ostream&
-  operator <<(std::ostream&, const ProjectorSet& ps);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const ProjectorSet& ps);
 
 }
 

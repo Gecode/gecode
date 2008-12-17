@@ -697,6 +697,7 @@ namespace Gecode { namespace Reflection {
    *
    */
   class Var {
+    friend std::ostream& operator <<(std::ostream& os, const Var& v);
   private:
     /// The actual variable
     VarImpBase* _var;
@@ -713,8 +714,6 @@ namespace Gecode { namespace Reflection {
     Var(VarImpBase* var, const Support::Symbol& vti);
     /// Update during cloning
     GECODE_KERNEL_EXPORT void update(Space& home, bool share, Var& v);
-    /// Output to \a os
-    GECODE_KERNEL_EXPORT std::ostream& print(std::ostream& os) const;
     /// Reflection
     GECODE_KERNEL_EXPORT Arg* spec(const Space& home, VarMap& vm) const;
     /// Cast to variable implementation base

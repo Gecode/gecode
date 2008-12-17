@@ -136,12 +136,6 @@ namespace Gecode {
     return __ES_SUBSUMED;
   }
 
-  std::ostream&
-  operator <<(std::ostream& os, const Projector& p) {
-    return os << p.getGlb() << " <= x[" << p.getIdx() << "] <= " << p.getLub()
-              << std::endl;
-  }
-
 }
 
 // STATISTICS: set-prop
