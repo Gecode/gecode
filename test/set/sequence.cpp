@@ -64,7 +64,7 @@ namespace Test { namespace Set {
         for (int i=0; i<4; i++) {
           CountableSetRanges xir(x.lub, x[i]);
           IntSet xi(xir);
-          if (xi.size() > 0) {
+          if (xi.ranges() > 0) {
             int oldMax = max;
             max = xi.max();
             if (xi.min() <= oldMax)
@@ -94,7 +94,7 @@ namespace Test { namespace Set {
         for (int i=0; i<n; i++) {
           CountableSetRanges xir(x.lub, x[i]);
           IntSet xi(xir);
-          if (xi.size() > 0) {
+          if (xi.ranges() > 0) {
             int oldMax = max;
             max = xi.max();
             if (xi.min() <= oldMax)

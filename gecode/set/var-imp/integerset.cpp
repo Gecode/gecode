@@ -42,10 +42,10 @@
 namespace Gecode { namespace Set {
 
   BndSet::BndSet(Space& home, const IntSet& is)  {
-    if (is.size()==0) {
+    if (is.ranges()==0) {
       fst(NULL); lst(NULL); _size = 0;
     } else {
-      int n = is.size();
+      int n = is.ranges();
       RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
       unsigned int s = 0;

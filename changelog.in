@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module:	int
+What:	change
+Rank:	minor
+[DESCRIPTION]
+Renamed size() to ranges() for IntSet (returning the number of
+ranges). Added a size() and width() function that return the size
+and width of the set respectively.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

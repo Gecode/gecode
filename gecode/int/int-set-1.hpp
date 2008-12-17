@@ -51,14 +51,16 @@ namespace Gecode {
     Iter::Ranges::IsRangeIter<I>();
     Support::DynamicArray<Range,Heap> d(heap);
     int n=0;
+    unsigned int s = 0;
     while (i()) {
-      d[n].min = i.min(); d[n].max = i.max();
+      d[n].min = i.min(); d[n].max = i.max(); s += i.width();
       ++n; ++i;
     }
     if (n > 0) {
       IntSetObject* o = IntSetObject::allocate(n);
       for (int j=n; j--; )
         o->r[j]=d[j];
+      o->size = s;
       object(o);
     }
   }
@@ -112,7 +114,7 @@ namespace Gecode {
   }
 
   forceinline int
-  IntSet::size(void) const {
+  IntSet::ranges(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
     return (o == NULL) ? 0 : o->n;
   }
@@ -129,6 +131,17 @@ namespace Gecode {
     return (o == NULL) ? 0 : o->r[o->n-1].max;
   }
 
+  forceinline unsigned int
+  IntSet::size(void) const {
+    IntSetObject* o = static_cast<IntSetObject*>(object());
+    return (o == NULL) ? 0 : o->size;
+  }
+
+  forceinline unsigned int
+  IntSet::width(void) const {
+    return static_cast<unsigned int>(max()-min()+1);
+  }
+
 
   /*
    * Range iterator for integer sets
@@ -140,7 +153,7 @@ namespace Gecode {
   forceinline
   void
   IntSetRanges::init(const IntSet& s) {
-    int n = s.size();
+    int n = s.ranges();
     if (n > 0) {
       i = &static_cast<IntSet::IntSetObject*>(s.object())->r[0]; e = i+n;
     } else {
@@ -198,7 +211,7 @@ namespace Gecode {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << '{';
-    for (int i = 0; i < is.size(); ) {
+    for (int i = 0; i < is.ranges(); ) {
       int min = is.min(i);
       int max = is.max(i);
       if (min == max)
@@ -206,7 +219,7 @@ namespace Gecode {
       else
         s << min << ".." << max;
       i++;
-      if (i < is.size())
+      if (i < is.ranges())
         s << ',';
     }
     s << '}';

@@ -87,7 +87,7 @@ namespace Gecode { namespace Set {
   forceinline
   void
   ConstantView::init(Space& home, const IntSet& dom) {
-    size = dom.size();
+    size = dom.ranges();
     domSize = 0;
     if (size > 0) {
       ranges = home.alloc<int>(2*size);

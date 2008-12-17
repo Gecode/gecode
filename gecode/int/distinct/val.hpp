@@ -89,13 +89,9 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (c_n > 31) {
         // Many values, use full domain operation
         IntSet d(&c_v[0],c_n);
-        // Check for failure
-        unsigned int s = 0;
-        for (int i = d.size(); i--; )
-          s += d.width(i);
         // If the size s of d is different from the number of values,
         // a value must have appeared multiply: failure
-        if (s != static_cast<unsigned int>(c_n))
+        if (d.size() != static_cast<unsigned int>(c_n))
           goto failed;
         // We do not need the values on the stack any longer, reset
         c_n = 0;

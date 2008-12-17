@@ -136,7 +136,7 @@ namespace Test { namespace Set {
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         IntSet x0(xr0);
-        return x0.size() > 0 && x0.max()==x.intval();
+        return x0.ranges() > 0 && x0.max()==x.intval();
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
@@ -160,7 +160,7 @@ namespace Test { namespace Set {
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         IntSet x0(xr0);
-        return !(x0.size() > 0 && x0.max()==x.intval());
+        return !(x0.ranges() > 0 && x0.max()==x.intval());
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {

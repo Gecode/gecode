@@ -50,6 +50,7 @@ namespace Gecode {
   SharedHandle::Object*
   IntSet::IntSetObject::copy(void) const {
     IntSetObject* o = allocate(n);
+    o->size = size;
     for (int i=n; i--; )
       o->r[i]=r[i];
     return o;
@@ -96,8 +97,12 @@ namespace Gecode {
         n=j+1;
       }
       IntSetObject* o = IntSetObject::allocate(n);
-      for (int i=n; i--; )
+      unsigned int s = 0;
+      for (int i=n; i--; ) {
+        s += static_cast<unsigned int>(r[i].max-r[i].min+1);
         o->r[i]=r[i];
+      }
+      o->size = s;
       object(o);
     }
   }
@@ -129,6 +134,7 @@ namespace Gecode {
     if (n <= m) {
       IntSetObject* o = IntSetObject::allocate(1);
       o->r[0].min = n; o->r[0].max = m;
+      o->size = static_cast<unsigned int>(m - n + 1);
       object(o);
     }
   }

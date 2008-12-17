@@ -278,9 +278,10 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     
     bool hole_found = false;
-    for (int i = vsize; i--; ) {
-      hole_found |= (c[i].size() > 1);
-    }
+    for (int i = vsize; i--; )
+      if (c[i].ranges() > 1) {
+        hole_found = true; break;
+      }
 
     if (hole_found) {
       // create temporary variables

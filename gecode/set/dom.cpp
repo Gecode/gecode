@@ -68,7 +68,7 @@ namespace Gecode {
     switch(r) {
     case SRT_EQ:
       {
-        if (is.size() == 1) {
+        if (is.ranges() == 1) {
           GECODE_ME_FAIL(home,_s.include(home, is.min(), is.max()));
           GECODE_ME_FAIL(home,_s.intersect(home, is.min(), is.max()));
         } else {
@@ -81,7 +81,7 @@ namespace Gecode {
       break;
     case SRT_DISJ:
       {
-        if (is.size() == 1) {
+        if (is.ranges() == 1) {
           GECODE_ME_FAIL(home,_s.exclude(home, is.min(), is.max()));
         } else {
           IntSetRanges rd(is);
@@ -99,7 +99,7 @@ namespace Gecode {
       break;
     case SRT_SUB:
       {
-         if (is.size() == 1) {
+         if (is.ranges() == 1) {
            GECODE_ME_FAIL(home,_s.intersect(home, is.min(), is.max()));
          } else {
           IntSetRanges rd(is);
@@ -109,7 +109,7 @@ namespace Gecode {
       break;
     case SRT_SUP:
       {
-        if (is.size() == 1) {
+        if (is.ranges() == 1) {
           GECODE_ME_FAIL(home,_s.include(home, is.min(), is.max()));
         } else {
           IntSetRanges rd(is);
@@ -119,7 +119,7 @@ namespace Gecode {
       break;
     case SRT_CMPL:
       {
-        if (is.size() == 1) {
+        if (is.ranges() == 1) {
           GECODE_ME_FAIL(home,_s.exclude(home, is.min(), is.max()));
           GECODE_ME_FAIL(home,
                          _s.include(home,

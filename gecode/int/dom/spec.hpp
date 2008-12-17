@@ -57,9 +57,9 @@ namespace Gecode { namespace Int { namespace Dom {
   template <class View>
   ExecStatus
   ReIntSet<View>::post(Space& home, View x, const IntSet& s, BoolView b) {
-    if (s.size() == 0) {
+    if (s.ranges() == 0) {
       GECODE_ME_CHECK(b.zero(home));
-    } else if (s.size() == 1) {
+    } else if (s.ranges() == 1) {
       return ReRange<View>::post(home,x,s.min(),s.max(),b);
     } else {
       (void) new (home) ReIntSet<View>(home,x,s,b);

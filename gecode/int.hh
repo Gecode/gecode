@@ -136,6 +136,8 @@ namespace Gecode {
     };
     class IntSetObject : public SharedHandle::Object {
     public:
+      /// Size of set
+      unsigned int size;
       /// Number of ranges
       int n;
       /// Array of ranges
@@ -186,14 +188,10 @@ namespace Gecode {
 #endif
     //@}
 
-    /// \name Range length
-    //@{
-    /// Return number of ranges of the specification
-    int size(void) const;
-    //@}
-
     /// \name Range access
     //@{
+    /// Return number of ranges of the specification
+    int ranges(void) const;
     /// Return minimum of range at position \a i
     int min(int i) const;
     /// Return maximum of range at position \a i
@@ -204,6 +202,10 @@ namespace Gecode {
 
     /// \name Entire set access
     //@{
+    /// Return size (cardinality) of set
+    unsigned int size(void) const;
+    /// Return width of set (distance between maximum and minimum)
+    unsigned int width(void) const;
     /// Return minimum of entire set
     int min(void) const;
     /// Return maximum of entire set

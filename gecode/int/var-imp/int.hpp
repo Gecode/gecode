@@ -195,8 +195,8 @@ namespace Gecode { namespace Int {
   forceinline
   IntVarImp::IntVarImp(Space& home, const IntSet& d)
     : IntVarImpBase(home), dom(d.min(),d.max()) {
-    if (d.size() > 1) {
-      unsigned int n = d.size();
+    if (d.ranges() > 1) {
+      unsigned int n = d.ranges();
       assert(n >= 2);
       RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
